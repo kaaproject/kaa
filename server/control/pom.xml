@@ -315,7 +315,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>
@@ -380,7 +379,6 @@
                 <configuration>
                     <systemPropertyVariables>
                         <server_log_dir>./logs</server_log_dir>
-                        <server_log_sufix></server_log_sufix>
                         <server_home_dir>${project.build.directory}</server_home_dir>
                     </systemPropertyVariables>
                 </configuration>

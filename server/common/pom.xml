@@ -32,7 +32,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.dir>${basedir}/../..</main.dir>
-        <mongo-driver.version>2.11.4</mongo-driver.version>
     </properties>
 
     <modules>
@@ -51,25 +50,5 @@
         <module>avro-ui</module>
         <module>transport-shared</module>
     </modules>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.mongodb</groupId>
-                <artifactId>mongo-java-driver</artifactId>
-                <version>${mongo-driver.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>${commons-lang.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-jaxrs</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 </project>

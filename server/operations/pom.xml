@@ -106,7 +106,6 @@
         <dependency>
             <groupId>org.kaaproject.kaa.common</groupId>
             <artifactId>core</artifactId>
-            <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -199,21 +198,18 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
             <artifactId>appender</artifactId>
-            <version>${project.version}</version>
             <classifier>file</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.mongo</groupId>
             <artifactId>appender</artifactId>
-            <version>${project.version}</version>
             <classifier>mongo</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
             <artifactId>appender</artifactId>
-            <version>${project.version}</version>
             <classifier>flume</classifier>
             <scope>runtime</scope>
         </dependency>
@@ -293,7 +289,6 @@
                 <configuration>
                     <systemPropertyVariables>
                         <server_log_dir>./logs</server_log_dir>
-                        <server_log_sufix></server_log_sufix>
                         <server_home_dir>.</server_home_dir>
                     </systemPropertyVariables>
                 </configuration>
@@ -301,7 +296,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>

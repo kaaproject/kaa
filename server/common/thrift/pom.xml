@@ -54,7 +54,10 @@ Copyright 2014 CyberVision, Inc.
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>dto</artifactId>
-            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
     </dependencies>
 

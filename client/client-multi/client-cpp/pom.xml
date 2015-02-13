@@ -37,7 +37,6 @@
 		<dependency>
 			<groupId>org.kaaproject.kaa.common</groupId>
 			<artifactId>endpoint-shared</artifactId>
-			<version>${project.version}</version>
 			<classifier>avro</classifier>
 			<type>zip</type>
 		</dependency>
