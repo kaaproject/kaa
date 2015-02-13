@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.client.logging;
 
+import javax.annotation.Generated;
+
 import org.kaaproject.kaa.schema.base.Log;
 
 /**
@@ -36,6 +38,7 @@ import org.kaaproject.kaa.schema.base.Log;
  * @see LogUploadStrategy
  * @see LogUploadConfiguration
  */
+@Generated("LogCollector.java.template")
 public interface LogCollector extends GenericLogCollector{
 
     /**

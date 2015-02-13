@@ -23,6 +23,12 @@ import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.client.util.Base64;
 
+/**
+ * Represents platform specific context for Kaa client initialization
+ * 
+ * @author Andrew Shvayka
+ *
+ */
 public interface KaaClientPlatformContext {
 
     KaaClientProperties getProperties();

@@ -13,22 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.demo.smarthousedemo.profile;
+package org.kaaproject.kaa.client.exceptions;
 
-import java.util.ArrayList;
-import java.util.List;
+public class KaaClusterConnectionException extends KaaClientException {
 
-import org.kaaproject.kaa.schema.base.Profile;
-import org.kaaproject.kaa.client.profile.AbstractProfileContainer;
+    private static final long serialVersionUID = 2904740158735824231L;
 
-
-/** Profile container used to set up endpoint profile */
-public class SmartHouseProfileContainer extends AbstractProfileContainer {
-
-    public SmartHouseProfileContainer() {}
-
-    @Override
-    public Profile getProfile() {
-        return new Profile();
+    public KaaClusterConnectionException(Exception cause) {
+        super(cause);
     }
+
 }

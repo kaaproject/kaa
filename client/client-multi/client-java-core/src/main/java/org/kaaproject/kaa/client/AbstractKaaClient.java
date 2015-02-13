@@ -18,10 +18,9 @@ package org.kaaproject.kaa.client;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.security.NoSuchAlgorithmException;
+import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -71,6 +70,8 @@ import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.EventManager;
 import org.kaaproject.kaa.client.event.registration.DefaultEndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
+import org.kaaproject.kaa.client.exceptions.KaaClientException;
+import org.kaaproject.kaa.client.exceptions.KaaClusterConnectionException;
 import org.kaaproject.kaa.client.logging.AbstractLogCollector;
 import org.kaaproject.kaa.client.logging.DefaultLogCollector;
 import org.kaaproject.kaa.client.logging.LogStorage;
@@ -158,11 +159,13 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     private final KaaInternalChannelManager channelManager;
 
     private final EndpointObjectHash publicKeyHash;
-    
-    protected final KaaClientPlatformContext context;
 
-    AbstractKaaClient(KaaClientPlatformContext context) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
+    protected final KaaClientPlatformContext context;
+    protected final KaaClientStateListener stateListener;
+
+    AbstractKaaClient(KaaClientPlatformContext context, KaaClientStateListener listener) throws IOException, GeneralSecurityException {
         this.context = context;
+        this.stateListener = listener;
         if (context.getProperties() != null) {
             this.properties = context.getProperties();
         } else {
@@ -281,46 +284,80 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             }
         }
     }
-    
-    public AbstractHttpClient createHttpClient(String url,
-            PrivateKey privateKey, PublicKey publicKey,
-            PublicKey remotePublicKey) {
+
+    public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
         return context.createHttpClient(url, privateKey, publicKey, remotePublicKey);
     }
 
     @Override
-    public void start() throws IOException, TransportException {
-        if (!isInitialized) {
-            initKaaConfiguration();
-            isInitialized = true;
-        } else {
-            LOG.warn("Client is already initialized!");
-            return;
+    public void start() {
+        try {
+            if (!isInitialized) {
+                initKaaConfiguration();
+                isInitialized = true;
+            } else {
+                LOG.warn("Client is already initialized!");
+                return;
+            }
+            if (schemaProcessor.getSchema() == null || configurationPersistenceManager.getConfigurationHash() == null) {
+                LOG.debug("Initializing client state with default configuration");
+                kaaClientState.setAppStateSeqNumber(0);
+                setDefaultConfiguration();
+            }
+            bootstrapManager.receiveOperationsServerList();
+            if (stateListener != null) {
+                stateListener.onStarted();
+            }
+        } catch (IOException | TransportException e) {
+            if (stateListener != null) {
+                stateListener.onStartupFailure(new KaaClusterConnectionException(e));
+            }
         }
-        if (schemaProcessor.getSchema() == null || configurationPersistenceManager.getConfigurationHash() == null) {
-            LOG.debug("Initializing client state with default configuration");
-            kaaClientState.setAppStateSeqNumber(0);
-            setDefaultConfiguration();
-        }
-        bootstrapManager.receiveOperationsServerList();
     }
 
     @Override
     public void stop() {
-        kaaClientState.persist();
-        channelManager.shutdown();
-        isInitialized = false;
+        try {
+            kaaClientState.persist();
+            channelManager.shutdown();
+            isInitialized = false;
+            if (stateListener != null) {
+                stateListener.onStopped();
+            }
+        } catch (Exception e) {
+            if (stateListener != null) {
+                stateListener.onStopFailure(new KaaClientException(e));
+            }
+        }
     }
 
     @Override
     public void pause() {
-        kaaClientState.persist();
-        channelManager.pause();
+        try {
+            kaaClientState.persist();
+            channelManager.pause();
+            if (stateListener != null) {
+                stateListener.onPaused();
+            }
+        } catch (Exception e) {
+            if (stateListener != null) {
+                stateListener.onPauseFailure(new KaaClientException(e));
+            }
+        }
     }
 
     @Override
     public void resume() {
-        channelManager.resume();
+        try {
+            channelManager.resume();
+            if (stateListener != null) {
+                stateListener.onResume();
+            }
+        } catch (Exception e) {
+            if (stateListener != null) {
+                stateListener.onResumeFailure(new KaaClientException(e));
+            }
+        }
     }
 
     @Override

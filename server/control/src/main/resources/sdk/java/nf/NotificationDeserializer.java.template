@@ -16,7 +16,7 @@ public class NotificationDeserializer {
 
     private final AvroByteArrayConverter<${notification_class}> converter = new AvroByteArrayConverter<${notification_class}>(${notification_class}.class);
 
-    ${notification_class} fromByteArray(byte[] data) throws IOException{
+    ${notification_class} fromByteArray(byte[] data) throws IOException {
         return converter.fromByteArray(data);
     }
 

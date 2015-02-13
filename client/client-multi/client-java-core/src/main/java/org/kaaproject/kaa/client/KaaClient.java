@@ -16,18 +16,46 @@
 
 package org.kaaproject.kaa.client;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
+import javax.annotation.Generated;
+
+import org.kaaproject.kaa.client.channel.KaaChannelManager;
+import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.configuration.delta.manager.DeltaManager;
+import org.kaaproject.kaa.client.configuration.manager.ConfigurationManager;
+import org.kaaproject.kaa.client.configuration.storage.ConfigurationPersistenceManager;
+import org.kaaproject.kaa.client.event.EventFamilyFactory;
+import org.kaaproject.kaa.client.event.EventListenersResolver;
+import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
+import org.kaaproject.kaa.client.notification.NotificationManager;
+import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
 import org.kaaproject.kaa.schema.base.Log;
 
 /**
 * <p>
 * Base interface to operate with {@link Kaa} library.
 * 
-* This interface contain methods that are auto-generated based on client structures.
 * </p>
 * 
 * @author Yaroslav Zeygerman
 * @author Andrew Shvayka
+* 
+* @see ConfigurationManager
+* @see DeltaManager
+* @see ConfigurationPersistenceManager
+* @see SchemaPersistenceManager
+* @see NotificationManager
+* @see EventFamilyFactory
+* @see EndpointRegistrationManager
+* @see EventListenersResolver
+* @see KaaChannelManager
+* @see PublicKey
+* @see PrivateKey
+* @see KaaDataChannel
 */
+@Generated("KaaClient.java.template")
 public interface KaaClient extends GenericKaaClient{
 
     /**

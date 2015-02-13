@@ -17,6 +17,8 @@ package org.kaaproject.kaa.client.logging;
 
 import java.io.IOException;
 
+import javax.annotation.Generated;
+
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.schema.base.Log;
@@ -28,6 +30,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Andrew Shvayka
  */
+@Generated("DefaultLogCollector.java.template")
 public class DefaultLogCollector extends AbstractLogCollector{
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLogCollector.class);
     

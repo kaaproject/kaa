@@ -74,7 +74,7 @@ public final class Topic extends GenericModel<TopicDto> implements Serializable 
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Application application;
 
-    @ManyToMany(mappedBy = "topics", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "topics")
     private Set<EndpointGroup> endpointGroups = new HashSet<>();
 
     public Topic() {

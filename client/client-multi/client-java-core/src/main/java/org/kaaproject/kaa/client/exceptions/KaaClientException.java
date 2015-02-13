@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kaaproject.kaa.client.exceptions;
 
-package org.kaaproject.kaa.sandbox.demo;
+/**
+ * Basic exception of Kaa client SDK.
+ * 
+ * @author Andrew Shvayka
+ *
+ */
+public class KaaClientException extends Exception{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -859911925908759066L;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class DemoBuildersRegistry {
-
-    private static final List<DemoBuilder> demoBuilders = new ArrayList<>();
-    
-    static {
-//          TODO: KAA-343 uncomment this
-//        demoBuilders.add(new SmartHouseDemoBuilder());
-//        demoBuilders.add(new RobotRunDemoBuilder());
+    public KaaClientException(Exception cause){
+        super(cause);
     }
-    
-    public static List<DemoBuilder> getRegisteredDemoBuilders() {
-        return demoBuilders;
-    }
-    
 }

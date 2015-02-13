@@ -18,6 +18,8 @@ package org.kaaproject.kaa.client.logging;
 
 import java.io.IOException;
 
+import javax.annotation.Generated;
+
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.schema.base.Log;
 
@@ -26,6 +28,7 @@ import org.kaaproject.kaa.schema.base.Log;
  *
  * <p>Used for Kaa own needs.</p>
  */
+@Generated("LogRecord.java.template")
 public class LogRecord {
     /**
      * Thread-local converter of log records to bytes.
