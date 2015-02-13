@@ -143,8 +143,6 @@ void test_create_kaa_tcp_channel()
 {
     KAA_TRACE_IN(logger);
 
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"test_create_kaa_tcp_channel starting...");
-
     kaa_error_t error_code;
 
     kaa_transport_channel_interface_t *channel = NULL;
@@ -181,7 +179,7 @@ void test_create_kaa_tcp_channel()
 
     channel->destroy(channel->context);
 
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"test_create_kaa_tcp_channel complete.");
+    KAA_TRACE_OUT(logger);
 
     KAA_FREE(channel);
 }
@@ -196,8 +194,6 @@ void test_create_kaa_tcp_channel()
 void test_set_access_point_full_success_bootstrap()
 {
     KAA_TRACE_IN(logger);
-
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"set_access_point starting...");
 
     kaa_error_t error_code;
 
@@ -217,7 +213,7 @@ void test_set_access_point_full_success_bootstrap()
 
     channel->destroy(channel->context);
 
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"set_access_point complete.");
+    KAA_TRACE_OUT(logger);
 
     KAA_FREE(channel);
 }
@@ -228,8 +224,6 @@ void test_set_access_point_full_success_bootstrap()
 void test_set_access_point_connecting_error()
 {
     KAA_TRACE_IN(logger);
-
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"set_access_point_connecting_error starting...");
 
     kaa_error_t error_code;
 
@@ -260,7 +254,7 @@ void test_set_access_point_connecting_error()
 
     channel->destroy(channel->context);
 
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"set_access_point connecting error complete.");
+    KAA_TRACE_OUT(logger);
 
     KAA_FREE(channel);
 }
@@ -274,8 +268,6 @@ void test_set_access_point_connecting_error()
 void test_set_access_point_io_error()
 {
     KAA_TRACE_IN(logger);
-
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"set_access_point_io_error starting...");
 
     kaa_error_t error_code;
 
@@ -325,7 +317,7 @@ void test_set_access_point_io_error()
 
     channel->destroy(channel->context);
 
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"set_access_point io error complete.");
+    KAA_TRACE_OUT(logger);
 
     KAA_FREE(channel);
 }
@@ -345,8 +337,6 @@ void test_set_access_point_io_error()
 void test_bootstrap_sync_success()
 {
     KAA_TRACE_IN(logger);
-
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"bootstrap_sync_success starting...");
 
     kaa_error_t error_code;
 
@@ -373,7 +363,7 @@ void test_bootstrap_sync_success()
 
     channel->destroy(channel->context);
 
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"bootstrap_sync_success complete.");
+    KAA_TRACE_OUT(logger);
 
     KAA_FREE(channel);
 }
@@ -535,9 +525,7 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
                                                     , const char *buffer
                                                     , size_t buffer_size)
 {
-    if (!buffer) {
-        return KAA_ERR_BADPARAM;
-    }
+    KAA_RETURN_IF_NIL(buffer,KAA_TCP_SOCK_IO_ERROR);
 
     if (!memcmp(buffer, KAASYNC_BOOTSTRAP_MESSAGE, strlen(KAASYNC_BOOTSTRAP_MESSAGE))) {
         access_point_test_info.kaasync_processed = true;
@@ -557,12 +545,12 @@ kaa_error_t ext_tcp_utils_tcp_socket_close(kaa_fd_t fd)
 
 ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd, char *buffer, size_t buffer_size, size_t *bytes_read)
 {
+    KAA_RETURN_IF_NIL(buffer,KAA_TCP_SOCK_IO_ERROR);
+
     if (fd != access_point_test_info.fd) {
         return KAA_TCP_SOCK_IO_ERROR;
     }
-    if (!buffer) {
-        return KAA_TCP_SOCK_IO_ERROR;
-    }
+
     if (access_point_test_info.socket_connecting_error_scenario) {
         *bytes_read = 0;
         return KAA_TCP_SOCK_IO_ERROR;
@@ -581,12 +569,12 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd, char *buff
 
 ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd, const char *buffer, size_t buffer_size, size_t *bytes_written)
 {
+    KAA_RETURN_IF_NIL(buffer,KAA_TCP_SOCK_IO_ERROR);
+
     if (fd != access_point_test_info.fd) {
         return KAA_TCP_SOCK_IO_ERROR;
     }
-    if (!buffer) {
-        return KAA_TCP_SOCK_IO_ERROR;
-    }
+
     if (!access_point_test_info.auth_packet_written) {
         if (buffer_size != (sizeof(CONNECT_HEAD)+sizeof(CONNECT_PACK))) {
             return KAA_TCP_SOCK_IO_ERROR;

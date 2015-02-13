@@ -154,8 +154,6 @@ void test_create_kaa_tcp_channel()
 {
     KAA_TRACE_IN(logger);
 
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"test_create_kaa_tcp_channel starting...");
-
     kaa_error_t error_code;
 
     kaa_transport_channel_interface_t *channel = NULL;
@@ -199,7 +197,7 @@ void test_create_kaa_tcp_channel()
 
     channel->destroy(channel->context);
 
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"test_create_kaa_tcp_channel complete.");
+    KAA_TRACE_OUT(logger);
 
     KAA_FREE(channel);
 }
@@ -214,8 +212,6 @@ void test_create_kaa_tcp_channel()
 void test_kaa_tcp_channel_success_flow()
 {
     KAA_TRACE_IN(logger);
-
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"test_create_kaa_tcp_channel_success_flow starting...");
 
     kaa_error_t error_code;
 
@@ -239,7 +235,7 @@ void test_kaa_tcp_channel_success_flow()
 
     channel->destroy(channel->context);
 
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"test_create_kaa_tcp_channel_success_flow complete.");
+    KAA_TRACE_OUT(logger);
 
     KAA_FREE(channel);
 }
@@ -254,8 +250,6 @@ void test_kaa_tcp_channel_success_flow()
 void test_kaa_tcp_channel_sync_flow()
 {
     KAA_TRACE_IN(logger);
-
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"test_kaa_tcp_channel_sync_flow starting...");
 
     kaa_error_t error_code;
 
@@ -295,7 +289,7 @@ void test_kaa_tcp_channel_sync_flow()
 
     channel->destroy(channel->context);
 
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"test_kaa_tcp_channel_sync_flow complete.");
+    KAA_TRACE_OUT(logger);
 
     KAA_FREE(channel);
 }
@@ -310,8 +304,6 @@ void test_kaa_tcp_channel_sync_flow()
 void test_kaa_tcp_channel_io_error_flow()
 {
     KAA_TRACE_IN(logger);
-
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"test_kaa_tcp_channel_io_error_flow starting...");
 
     kaa_error_t error_code;
 
@@ -351,7 +343,7 @@ void test_kaa_tcp_channel_io_error_flow()
 
     channel->destroy(channel->context);
 
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"test_kaa_tcp_channel_io_error_flow complete.");
+    KAA_TRACE_OUT(logger);
 
     KAA_FREE(channel);
 }
@@ -614,9 +606,7 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
                                                     , const char *buffer
                                                     , size_t buffer_size)
 {
-    if (!buffer) {
-        return KAA_ERR_BADPARAM;
-    }
+    KAA_RETURN_IF_NIL(buffer,KAA_ERR_BADPARAM);
 
     if (!memcmp(buffer, KAASYNC_OP_MESSAGE, strlen(KAASYNC_OP_MESSAGE))) {
         access_point_test_info.kaasync_processed = true;
@@ -728,12 +718,12 @@ kaa_error_t ext_tcp_utils_tcp_socket_close(kaa_fd_t fd)
 
 ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd, char *buffer, size_t buffer_size, size_t *bytes_read)
 {
+    KAA_RETURN_IF_NIL(buffer,KAA_TCP_SOCK_IO_ERROR);
+
     if (fd != access_point_test_info.fd) {
         return KAA_TCP_SOCK_IO_ERROR;
     }
-    if (!buffer) {
-        return KAA_TCP_SOCK_IO_ERROR;
-    }
+
     if (access_point_test_info.socket_connecting_error_scenario) {
         *bytes_read = 0;
         return KAA_TCP_SOCK_IO_ERROR;
@@ -756,12 +746,12 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd, char *buff
 
 ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd, const char *buffer, size_t buffer_size, size_t *bytes_written)
 {
+    KAA_RETURN_IF_NIL(buffer,KAA_TCP_SOCK_IO_ERROR);
+
     if (fd != access_point_test_info.fd) {
         return KAA_TCP_SOCK_IO_ERROR;
     }
-    if (!buffer) {
-        return KAA_TCP_SOCK_IO_ERROR;
-    }
+
     if (access_point_test_info.kaasync_read_scenario) {
         if (!memcmp(buffer,KAASYNC_OP_SERV,sizeof(KAASYNC_OP_SERV))) {
             access_point_test_info.kaasync_write = true;
