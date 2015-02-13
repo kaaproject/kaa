@@ -69,8 +69,8 @@ public class TwitterUserVerifier extends AbstractKaaUserVerifier<TwitterAvroConf
     }
 
     @Override
-    public void checkAccessToken(String userExternalId, String accessToken, UserVerifierCallback callback) {
-        tokenVerifiersPool.submit(new TokenVerifier(userExternalId, accessToken, callback));
+    public void checkAccessToken(String userExternalId, String tokenAndSecret, UserVerifierCallback callback) {
+        tokenVerifiersPool.submit(new TokenVerifier(userExternalId, tokenAndSecret, callback));
     }
 
     private class TokenVerifier implements Runnable {
@@ -159,11 +159,16 @@ public class TwitterUserVerifier extends AbstractKaaUserVerifier<TwitterAvroConf
         }
     }
 
-    protected CloseableHttpResponse establishConnection(String accessToken) throws IOException {
+    protected CloseableHttpResponse establishConnection(String tokenAndSecret) throws IOException {
         HttpRequest request = null;
         try {
             request = new BasicHttpEntityEnclosingRequest(REQUEST_METHOD, TWITTER_PATH);
-            request.setHeader(REQUEST_HEADER_NAME, oAuthHeaderBuilder.generateHeader(accessToken));
+
+            String[] tokenThenSecret = tokenAndSecret.split(" ");   // now user access token is tokenThenSecret[0]
+                                                                    // and user secret is tokenAndSecret[1]
+
+            request.setHeader(REQUEST_HEADER_NAME,
+                    oAuthHeaderBuilder.generateHeader(tokenThenSecret[0], tokenThenSecret[1]));
         } catch (InvalidKeyException e) {
             LOG.debug("Invalid key for Encryption", e);
         }
@@ -181,7 +186,7 @@ public class TwitterUserVerifier extends AbstractKaaUserVerifier<TwitterAvroConf
         // Increase max total connection
         connectionManager.setMaxTotal(configuration.getMaxParallelConnections());
         oAuthHeaderBuilder = new OAuthHeaderBuilder(SIGNATURE_METHOD, REQUEST_METHOD, TWITTER_URL, ENCRYPTION_ALGO,
-                configuration.getConsumerKey(), configuration.getConsumerSecret(), configuration.getAccessTokenSecret());
+                configuration.getConsumerKey(), configuration.getConsumerSecret());
     }
 
     @Override

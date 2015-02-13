@@ -60,7 +60,7 @@ public class TwitterUserVerifierTest extends TwitterUserVerifier {
         verifier.init(null, config);
         verifier.start();
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
-        verifier.checkAccessToken(userId, "someToken", callback);
+        verifier.checkAccessToken(userId, "someToken someSecret", callback);
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onSuccess();
         verifier.stop();
     }
@@ -79,7 +79,7 @@ public class TwitterUserVerifierTest extends TwitterUserVerifier {
         verifier.init(null, config);
         verifier.start();
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
-        verifier.checkAccessToken(invalidUserId, "falseUserAccessToken", callback);
+        verifier.checkAccessToken(invalidUserId, "someToken someSecret", callback);
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onVerificationFailure(anyString());
         verifier.stop();
     }
@@ -91,7 +91,7 @@ public class TwitterUserVerifierTest extends TwitterUserVerifier {
         verifier.init(null, config);
         verifier.start();
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
-        verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
+        verifier.checkAccessToken("invalidUserId", "someToken someSecret", callback);
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onTokenInvalid();
     }
 
@@ -103,7 +103,7 @@ public class TwitterUserVerifierTest extends TwitterUserVerifier {
 
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
 
-        verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
+        verifier.checkAccessToken("invalidUserId", "someToken someSecret", callback);
 
         // no exception is thrown, if onVerificationFailure(String) was called
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onVerificationFailure(anyString());
@@ -118,7 +118,7 @@ public class TwitterUserVerifierTest extends TwitterUserVerifier {
         verifier.init(null, config);
         verifier.start();
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
-        verifier.checkAccessToken("invalidUserId", "falseUserAccessToken", callback);
+        verifier.checkAccessToken("invalidUserId", "someToken someSecret", callback);
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onVerificationFailure(any(String.class));
     }
 
@@ -131,7 +131,7 @@ public class TwitterUserVerifierTest extends TwitterUserVerifier {
         doThrow(new IOException()).when(httpClientMock).execute(any(HttpHost.class), any(HttpRequest.class));
         ReflectionTestUtils.setField(verifier, "httpClient", httpClientMock);
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
-        verifier.checkAccessToken("id", "token", callback);
+        verifier.checkAccessToken("id", "token secret", callback);
         Mockito.verify(callback, Mockito.timeout(1000)).onConnectionError(any(String.class));
     }
 
@@ -145,7 +145,7 @@ public class TwitterUserVerifierTest extends TwitterUserVerifier {
         doThrow(new NullPointerException()).when(httpClientMock).execute(any(HttpGet.class));
         ReflectionTestUtils.setField(verifier, "httpClient", httpClientMock);
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
-        verifier.checkAccessToken("id", "token", callback);
+        verifier.checkAccessToken("id", "token secret", callback);
         Mockito.verify(callback, Mockito.timeout(1000)).onInternalError(any(String.class));
     }
 

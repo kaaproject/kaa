@@ -31,25 +31,23 @@ public class OAuthHeaderBuilder {
     private final String ENCRYPTION_ALGO;
     private final String CONSUMER_KEY;
     private final String CONSUMER_SECRET;
-    private final String ACCESS_TOKEN_SECRET;
 
     public OAuthHeaderBuilder(String SIGNATURE_METHOD, String REQUEST_METHOD, String URL, String ENCRYPTION_ALGO,
-                              String CONSUMER_KEY, String CONSUMER_SECRET, String ACCESS_TOKEN_SECRET) {
+                              String CONSUMER_KEY, String CONSUMER_SECRET) {
         this.SIGNATURE_METHOD = SIGNATURE_METHOD;
         this.REQUEST_METHOD = REQUEST_METHOD;
         this.URL = URL;
         this.ENCRYPTION_ALGO = ENCRYPTION_ALGO;
         this.CONSUMER_KEY = CONSUMER_KEY;
         this.CONSUMER_SECRET = CONSUMER_SECRET;
-        this.ACCESS_TOKEN_SECRET = ACCESS_TOKEN_SECRET;
     }
 
-    public String generateHeader(String accessToken) throws InvalidKeyException {
+    public String generateHeader(String accessToken, String accessTokenSecret) throws InvalidKeyException {
         String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
         String nonce = UUID.randomUUID().toString().replaceAll("-", "");
 
         String signatureBase = generateSignatureBase(CONSUMER_KEY, accessToken, timestamp, nonce);
-        String signature = generateSignature(signatureBase);
+        String signature = generateSignature(signatureBase, accessTokenSecret);
 
         String header = getKeyValueString("OAuth " + OAuth.OAUTH_CONSUMER_KEY, CONSUMER_KEY,
                 OAuth.OAUTH_SIGNATURE_METHOD, SIGNATURE_METHOD,
@@ -77,12 +75,12 @@ public class OAuthHeaderBuilder {
         return signatureBase.toString();
     }
 
-    private String generateSignature(String signatureBase)
+    private String generateSignature(String signatureBase, String accessTokenSecret)
             throws InvalidKeyException {
         String signature = null;
         try {
             Mac mac = Mac.getInstance(ENCRYPTION_ALGO);
-            mac.init(new SecretKeySpec((CONSUMER_SECRET + "&" + ACCESS_TOKEN_SECRET).getBytes(), ENCRYPTION_ALGO));
+            mac.init(new SecretKeySpec((CONSUMER_SECRET + "&" + accessTokenSecret).getBytes(), ENCRYPTION_ALGO));
             mac.update(signatureBase.getBytes());
             byte[] res = mac.doFinal();
             signature = new String(Base64.encodeBase64(res)).trim();

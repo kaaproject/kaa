@@ -7,11 +7,10 @@ package org.kaaproject.kaa.server.verifiers.twitter.config.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"TwitterAvroConfig\",\"namespace\":\"org.kaaproject.kaa.server.verifiers.twitter.config.gen\",\"fields\":[{\"name\":\"consumer_key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Consumer key\"},{\"name\":\"consumer_secret\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Consumer Secret\"},{\"name\":\"access_token_secret\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Access Token Secret\"},{\"name\":\"max_parallel_connections\",\"type\":\"int\",\"displayName\":\"Maximal number of allowed connections per verifier\",\"by_default\":\"5\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"TwitterAvroConfig\",\"namespace\":\"org.kaaproject.kaa.server.verifiers.twitter.config.gen\",\"fields\":[{\"name\":\"consumer_key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Consumer key\"},{\"name\":\"consumer_secret\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Consumer Secret\"},{\"name\":\"max_parallel_connections\",\"type\":\"int\",\"displayName\":\"Maximal number of allowed connections per verifier\",\"by_default\":\"5\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String consumer_key;
    private java.lang.String consumer_secret;
-   private java.lang.String access_token_secret;
    private int max_parallel_connections;
 
   /**
@@ -24,10 +23,9 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
   /**
    * All-args constructor.
    */
-  public TwitterAvroConfig(java.lang.String consumer_key, java.lang.String consumer_secret, java.lang.String access_token_secret, java.lang.Integer max_parallel_connections) {
+  public TwitterAvroConfig(java.lang.String consumer_key, java.lang.String consumer_secret, java.lang.Integer max_parallel_connections) {
     this.consumer_key = consumer_key;
     this.consumer_secret = consumer_secret;
-    this.access_token_secret = access_token_secret;
     this.max_parallel_connections = max_parallel_connections;
   }
 
@@ -37,8 +35,7 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
     switch (field$) {
     case 0: return consumer_key;
     case 1: return consumer_secret;
-    case 2: return access_token_secret;
-    case 3: return max_parallel_connections;
+    case 2: return max_parallel_connections;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -48,8 +45,7 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
     switch (field$) {
     case 0: consumer_key = (java.lang.String)value$; break;
     case 1: consumer_secret = (java.lang.String)value$; break;
-    case 2: access_token_secret = (java.lang.String)value$; break;
-    case 3: max_parallel_connections = (java.lang.Integer)value$; break;
+    case 2: max_parallel_connections = (java.lang.Integer)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -82,21 +78,6 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
    */
   public void setConsumerSecret(java.lang.String value) {
     this.consumer_secret = value;
-  }
-
-  /**
-   * Gets the value of the 'access_token_secret' field.
-   */
-  public java.lang.String getAccessTokenSecret() {
-    return access_token_secret;
-  }
-
-  /**
-   * Sets the value of the 'access_token_secret' field.
-   * @param value the value to set.
-   */
-  public void setAccessTokenSecret(java.lang.String value) {
-    this.access_token_secret = value;
   }
 
   /**
@@ -137,7 +118,6 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
 
     private java.lang.String consumer_key;
     private java.lang.String consumer_secret;
-    private java.lang.String access_token_secret;
     private int max_parallel_connections;
 
     /** Creates a new Builder */
@@ -156,13 +136,9 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
         this.consumer_secret = data().deepCopy(fields()[1].schema(), other.consumer_secret);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.access_token_secret)) {
-        this.access_token_secret = data().deepCopy(fields()[2].schema(), other.access_token_secret);
+      if (isValidValue(fields()[2], other.max_parallel_connections)) {
+        this.max_parallel_connections = data().deepCopy(fields()[2].schema(), other.max_parallel_connections);
         fieldSetFlags()[2] = true;
-      }
-      if (isValidValue(fields()[3], other.max_parallel_connections)) {
-        this.max_parallel_connections = data().deepCopy(fields()[3].schema(), other.max_parallel_connections);
-        fieldSetFlags()[3] = true;
       }
     }
     
@@ -177,13 +153,9 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
         this.consumer_secret = data().deepCopy(fields()[1].schema(), other.consumer_secret);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.access_token_secret)) {
-        this.access_token_secret = data().deepCopy(fields()[2].schema(), other.access_token_secret);
+      if (isValidValue(fields()[2], other.max_parallel_connections)) {
+        this.max_parallel_connections = data().deepCopy(fields()[2].schema(), other.max_parallel_connections);
         fieldSetFlags()[2] = true;
-      }
-      if (isValidValue(fields()[3], other.max_parallel_connections)) {
-        this.max_parallel_connections = data().deepCopy(fields()[3].schema(), other.max_parallel_connections);
-        fieldSetFlags()[3] = true;
       }
     }
 
@@ -237,31 +209,6 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
-    /** Gets the value of the 'access_token_secret' field */
-    public java.lang.String getAccessTokenSecret() {
-      return access_token_secret;
-    }
-    
-    /** Sets the value of the 'access_token_secret' field */
-    public org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder setAccessTokenSecret(java.lang.String value) {
-      validate(fields()[2], value);
-      this.access_token_secret = value;
-      fieldSetFlags()[2] = true;
-      return this; 
-    }
-    
-    /** Checks whether the 'access_token_secret' field has been set */
-    public boolean hasAccessTokenSecret() {
-      return fieldSetFlags()[2];
-    }
-    
-    /** Clears the value of the 'access_token_secret' field */
-    public org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder clearAccessTokenSecret() {
-      access_token_secret = null;
-      fieldSetFlags()[2] = false;
-      return this;
-    }
-
     /** Gets the value of the 'max_parallel_connections' field */
     public java.lang.Integer getMaxParallelConnections() {
       return max_parallel_connections;
@@ -269,20 +216,20 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
     
     /** Sets the value of the 'max_parallel_connections' field */
     public org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder setMaxParallelConnections(int value) {
-      validate(fields()[3], value);
+      validate(fields()[2], value);
       this.max_parallel_connections = value;
-      fieldSetFlags()[3] = true;
+      fieldSetFlags()[2] = true;
       return this; 
     }
     
     /** Checks whether the 'max_parallel_connections' field has been set */
     public boolean hasMaxParallelConnections() {
-      return fieldSetFlags()[3];
+      return fieldSetFlags()[2];
     }
     
     /** Clears the value of the 'max_parallel_connections' field */
     public org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig.Builder clearMaxParallelConnections() {
-      fieldSetFlags()[3] = false;
+      fieldSetFlags()[2] = false;
       return this;
     }
 
@@ -292,8 +239,7 @@ public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBa
         TwitterAvroConfig record = new TwitterAvroConfig();
         record.consumer_key = fieldSetFlags()[0] ? this.consumer_key : (java.lang.String) defaultValue(fields()[0]);
         record.consumer_secret = fieldSetFlags()[1] ? this.consumer_secret : (java.lang.String) defaultValue(fields()[1]);
-        record.access_token_secret = fieldSetFlags()[2] ? this.access_token_secret : (java.lang.String) defaultValue(fields()[2]);
-        record.max_parallel_connections = fieldSetFlags()[3] ? this.max_parallel_connections : (java.lang.Integer) defaultValue(fields()[3]);
+        record.max_parallel_connections = fieldSetFlags()[2] ? this.max_parallel_connections : (java.lang.Integer) defaultValue(fields()[2]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

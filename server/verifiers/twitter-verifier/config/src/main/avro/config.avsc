@@ -14,11 +14,6 @@
         "type": "string"
    },
    {
-        "name": "access_token_secret",
-        "displayName": "Access Token Secret",
-        "type": "string"
-   },
-   {
        "name": "max_parallel_connections",
        "displayName": "Maximal number of allowed connections per verifier",
        "type": "int", "by_default": "5"
