@@ -22,6 +22,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <netdb.h>
+#include <string.h>
 
 #include "../kaa_test.h"
 

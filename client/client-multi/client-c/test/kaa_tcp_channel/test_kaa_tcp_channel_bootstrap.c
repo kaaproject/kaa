@@ -22,9 +22,12 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <netdb.h>
+#include <string.h>
 
 #include "../kaa_test.h"
 
+#include "kaa_common.h"
+#include "kaa_error.h"
 #include "utilities/kaa_log.h"
 #include "utilities/kaa_mem.h"
 #include "platform/ext_transport_channel.h"
@@ -454,10 +457,10 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     //Keepalive will be tested latter during CONNECT message creation
-    error_code = kaa_tcp_channel_set_keepalive_timeout(channel,KEEPALIVE);
+    error_code = kaa_tcp_channel_set_keepalive_timeout(channel, KEEPALIVE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_tcp_channel_set_socket_events_callback(channel,kaa_tcp_channel_event_callback_fn,channel);
+    error_code = kaa_tcp_channel_set_socket_events_callback(channel, kaa_tcp_channel_event_callback_fn, channel);
     //Use connection data to destination 192.168.77.2:9888
     kaa_access_point_t access_point;
     access_point.id = 10;
@@ -525,7 +528,7 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
                                                     , const char *buffer
                                                     , size_t buffer_size)
 {
-    KAA_RETURN_IF_NIL(buffer,KAA_TCP_SOCK_IO_ERROR);
+    KAA_RETURN_IF_NIL(buffer, KAA_ERR_BADPARAM);
 
     if (!memcmp(buffer, KAASYNC_BOOTSTRAP_MESSAGE, strlen(KAASYNC_BOOTSTRAP_MESSAGE))) {
         access_point_test_info.kaasync_processed = true;
@@ -545,7 +548,7 @@ kaa_error_t ext_tcp_utils_tcp_socket_close(kaa_fd_t fd)
 
 ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd, char *buffer, size_t buffer_size, size_t *bytes_read)
 {
-    KAA_RETURN_IF_NIL(buffer,KAA_TCP_SOCK_IO_ERROR);
+    KAA_RETURN_IF_NIL(buffer, KAA_TCP_SOCK_IO_ERROR);
 
     if (fd != access_point_test_info.fd) {
         return KAA_TCP_SOCK_IO_ERROR;
@@ -569,7 +572,7 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd, char *buff
 
 ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd, const char *buffer, size_t buffer_size, size_t *bytes_written)
 {
-    KAA_RETURN_IF_NIL(buffer,KAA_TCP_SOCK_IO_ERROR);
+    KAA_RETURN_IF_NIL(buffer, KAA_TCP_SOCK_IO_ERROR);
 
     if (fd != access_point_test_info.fd) {
         return KAA_TCP_SOCK_IO_ERROR;
@@ -621,9 +624,9 @@ kaatcp_error_t kaatcp_get_request_connect(const kaatcp_connect_t *message
         return KAATCP_ERR_BAD_PARAM;
     }
     if (message->sync_request && message->sync_request_size == sizeof(CONNECT_PACK)) {
-        if (!memcmp(CONNECT_PACK,message->sync_request,message->sync_request_size)) {
+        if (!memcmp(CONNECT_PACK ,message->sync_request, message->sync_request_size)) {
             *buf_size = 0;
-            memcpy(buf,CONNECT_HEAD,sizeof(CONNECT_HEAD));
+            memcpy(buf, CONNECT_HEAD, sizeof(CONNECT_HEAD));
             *buf_size += sizeof(CONNECT_HEAD);
             memcpy(buf+(*buf_size),message->sync_request,message->sync_request_size);
             *buf_size += message->sync_request_size;
@@ -647,7 +650,7 @@ kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_pro
         return KAATCP_ERR_BAD_PARAM;
     }
     if (sync_request && sync_request_size == sizeof(CONNECT_PACK)) {
-        if (!memcmp(CONNECT_PACK,sync_request,sync_request_size)) {
+        if (!memcmp(CONNECT_PACK, sync_request, sync_request_size)) {
             memset(message, 0, sizeof(kaatcp_connect_t));
 
             message->protocol_name_length = KAA_TCP_NAME_LENGTH;
@@ -692,9 +695,9 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
     if (info->services_count == 1
             && info->services[0] == KAA_SERVICE_BOOTSTRAP) {
         if (info->allocator && info->allocator_context) {
-            char *alloc_buffer = info->allocator(info->allocator_context,sizeof(CONNECT_PACK));
+            char *alloc_buffer = info->allocator(info->allocator_context, sizeof(CONNECT_PACK));
             if (alloc_buffer) {
-                memcpy(alloc_buffer,CONNECT_PACK,sizeof(CONNECT_PACK));
+                memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
                 *buffer = alloc_buffer;
                 *buffer_size = sizeof(CONNECT_PACK);
                 return KAA_ERR_NONE;
@@ -705,6 +708,7 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
 
     return KAA_ERR_BADPARAM;
 }
+
 ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd, const kaa_sockaddr_t *destination, kaa_socklen_t destination_size)
 {
 
@@ -732,7 +736,7 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolv
     memcpy(hostname_str, resolve_props->hostname, resolve_props->hostname_length);
     hostname_str[resolve_props->hostname_length] = '\0';
 
-    KAA_LOG_INFO(logger,KAA_ERR_NONE,"gethostbyaddr() Hostname=%s:%d",hostname_str,resolve_props->port);
+    KAA_LOG_INFO(logger, KAA_ERR_NONE, "gethostbyaddr() Hostname=%s:%d", hostname_str, resolve_props->port);
 
 
     struct addrinfo hints;
