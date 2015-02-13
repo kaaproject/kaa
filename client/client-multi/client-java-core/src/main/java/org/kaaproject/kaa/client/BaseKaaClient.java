@@ -18,6 +18,8 @@ package org.kaaproject.kaa.client;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import javax.annotation.Generated;
+
 import org.kaaproject.kaa.schema.base.Log;
 
 /**
@@ -31,6 +33,7 @@ import org.kaaproject.kaa.schema.base.Log;
  * @see KaaClient
  * @see AbstractKaaClient
  */
+@Generated("BaseKaaClient.java.template")
 public class BaseKaaClient extends AbstractKaaClient implements KaaClient {
 
     public BaseKaaClient(KaaClientPlatformContext context, KaaClientStateListener listener) throws IOException, GeneralSecurityException{

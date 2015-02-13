@@ -16,11 +16,14 @@
 
 package org.kaaproject.kaa.client.profile;
 
+import javax.annotation.Generated;
+
 import org.kaaproject.kaa.schema.base.Profile;
 
 /**
  * Interface for the profile container.
  */
+@Generated("ProfileContainer.java.template")
 public interface ProfileContainer {
 
     /**

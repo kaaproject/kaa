@@ -17,6 +17,8 @@ package org.kaaproject.kaa.client.profile;
 
 import java.io.IOException;
 
+import javax.annotation.Generated;
+
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.schema.base.Profile;
 
@@ -29,6 +31,7 @@ import org.kaaproject.kaa.schema.base.Profile;
  *
  * @author Andrew Shvayka
  */
+@Generated("ProfileSerializer.java.template")
 class ProfileSerializer {
     private final AvroByteArrayConverter<Profile> converter = new AvroByteArrayConverter<Profile>(Profile.class);
 

@@ -17,6 +17,8 @@ package org.kaaproject.kaa.client.notification;
 
 import java.io.IOException;
 
+import javax.annotation.Generated;
+
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.schema.base.Notification;
 
@@ -28,6 +30,7 @@ import org.kaaproject.kaa.schema.base.Notification;
  * @author Andrew Shvayka
  *
  */
+@Generated("NotificationDeserializer.java.template")
 public class NotificationDeserializer {
 
     private final AvroByteArrayConverter<Notification> converter = new AvroByteArrayConverter<Notification>(Notification.class);

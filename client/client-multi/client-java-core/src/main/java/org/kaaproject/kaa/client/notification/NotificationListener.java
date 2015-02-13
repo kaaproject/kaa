@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.client.notification;
 
+import javax.annotation.Generated;
+
 import org.kaaproject.kaa.schema.base.Notification;
 
 /**
@@ -25,6 +27,7 @@ import org.kaaproject.kaa.schema.base.Notification;
  * @author Andrew Shvayka
  *
  */
+@Generated("NotificationListener.java.template")
 public interface NotificationListener {
 
     /**
