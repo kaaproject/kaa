@@ -21,7 +21,7 @@ PREREQUISITES
 Before building the C endpoint SDK, ensure the following components 
 are installed:
 
-1. C compiler supporting the C11 standard
+1. C compiler supporting the C99 standard
 2. cmake 2.8.8 or later
 
 To build the Kaa SDK for the x86-64 platform, ensure that OpenSSL libraries
@@ -38,12 +38,18 @@ To build the C endpoint SDK, do the following:
 
     mkdir build
     cd build
+
+For x86-64:
     cmake ..
     make
     make install
 
+For iOS:
+    cmake -DKAA_PLATFORM=ios -DCMAKE_TOOLCHAIN_FILE=../toolchains/iOS.cmake -GXcode ..
+    xcodebuild
+
 ************************************
-CONFIGURATION
+GENERAL CONFIGURATION
 ************************************
 
 To configure the C endpoint SDK build, you can optionally specify
@@ -87,6 +93,7 @@ KAA_PLATFORM - SDK target platform.
 
 Values:
 x86-64
+ios
 
 Default:
 x86-64
@@ -130,6 +137,24 @@ for a platform other than x86-64, do the following:
     )
 
 ************************************
+PLATFORM-SPECIFIC CONFIGURATION
+************************************
+
+To configure platform-specific options, you can optionally specify
+the following parameters for the cmake command:
+
+------------------------------------
+IOS_PLATFORM - applicable for the iOS build (KAA_PLATFORM=ios). It specifies the target iOS platform
+               (armv7/arm64 - for mobile devices, i386 - for the simulator).
+
+Values:
+OS - build for the mobile device (armv7/arm64)
+SIMULATOR - build for the simulator (i386)
+
+Default:
+OS
+
+************************************
 BUILD EXAMPLE
 ************************************
 
@@ -141,3 +166,9 @@ the debug x86-64 build with the INFO log level and the LOGGING module:
     cmake -DKAA_DEBUG_ENABLED=1 -DKAA_MAX_LOG_LEVEL=4 -DKAA_WITHOUT_EVENTS=1 ..
     make
     make install
+
+To build the C SDK for the iOS simulator with maximum log level:
+   mkdir build
+   cd build
+   cmake -DKAA_PLATFORM=ios -DCMAKE_TOOLCHAIN_FILE=../toolchains/iOS.cmake -DIOS_PLATFORM=SIMULATOR -DKAA_MAX_LOG_LEVEL=6  -GXcode ..
+   xcodebuild
