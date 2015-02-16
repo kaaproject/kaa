@@ -1,0 +1,256 @@
+{
+  "namespace": "org.kaaproject.kaa.server.appenders.cassandra.config.gen",
+  "type": "record",
+  "name": "CassandraConfig",
+  "fields": [
+    {
+      "name": "cassandraServers",
+      "displayName": "Cassandra nodes",
+      "minRowCount": 1,
+      "type": {
+        "type": "array",
+        "items": {
+          "namespace": "org.kaaproject.kaa.server.appenders.cassandra.config.gen",
+          "type": "record",
+          "name": "CassandraServer",
+          "fields": [
+            {
+              "name": "host",
+              "displayName": "Host",
+              "weight": 0.75,
+              "by_default": "localhost",
+              "type": "string"
+            },
+            {
+              "name": "port",
+              "displayName": "Port",
+              "weight": 0.25,
+              "by_default": 9042,
+              "type": "int"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "keySpace",
+      "displayName": "Keyspace name",
+      "type": "string"
+    },
+    {
+      "displayName": "Authentication credentials",
+      "namespace": "org.kaaproject.kaa.server.appenders.cassandra.config.gen",
+      "name": "cassandraCredential",
+      "type": [
+        {
+          "type": "record",
+          "name": "CassandraCredential",
+          "optional": true,
+          "fields": [
+            {
+              "name": "user",
+              "displayName": "User",
+              "weight": 0.5,
+              "by_default": "user",
+              "type": "string"
+            },
+            {
+              "name": "password",
+              "displayName": "Password",
+              "weight": 0.5,
+              "by_default": "password",
+              "type": "string"
+            }
+          ]
+        },
+        "null"
+      ]
+    },
+    {
+      "namespace": "org.kaaproject.kaa.server.appenders.cassandra.config.gen",
+      "by_default": "UNLOGGED",
+      "optional": true,
+      "name": "cassandraBatchType",
+      "displayName": "Cassandra batch type",
+      "type": [
+        {
+          "name": "CassandraBatchType",
+          "type": "enum",
+          "symbols": [
+            "LOGGED",
+            "UNLOGGED"
+          ]
+        },
+        "null"
+      ]
+    },
+    {
+      "namespace": "org.kaaproject.kaa.server.appenders.cassandra.config.gen",
+      "name": "cassandraSocketOption",
+      "displayName": "Cassandra socket option",
+      "optional": true,
+      "type": [
+        {
+          "name": "CassandraSocketOption",
+          "type": "record",
+          "fields": [
+            {
+              "name": "sendBufferSize",
+              "displayName": "Set send buffer size",
+              "by_default": 8192,
+              "optional": true,
+              "type": [
+                "int",
+                "null"
+              ]
+            },
+            {
+              "name": "receiveBufferSize",
+              "displayName": "Set receive buffer size",
+              "by_default": 8192,
+              "optional": true,
+              "type": [
+                "int",
+                "null"
+              ]
+            },
+            {
+              "name": "soLinger",
+              "displayName": "Delay before a reset is sent",
+              "by_default": 0,
+              "optional": true,
+              "type": [
+                "int",
+                "null"
+              ]
+            },
+            {
+              "name": "connectionTimeout",
+              "displayName": "Connection timeout (ms)",
+              "by_default": 5000,
+              "optional": true,
+              "type": [
+                "int",
+                "null"
+              ]
+            },
+            {
+              "name": "readTimeout",
+              "displayName": "Read timeout (ms)",
+              "by_default": 12000,
+              "optional": true,
+              "type": [
+                "int",
+                "null"
+              ]
+            },
+            {
+              "name": "reuseAddress",
+              "displayName": "Reuse address",
+              "by_default": false,
+              "optional": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            {
+              "name": "keepAlive",
+              "displayName": "Use keep alive",
+              "by_default": false,
+              "optional": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            {
+              "name": "tcpNoDelay",
+              "displayName": "Tcp no delay",
+              "by_default": false,
+              "optional": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          ]
+        },
+        "null"
+      ]
+    },
+    {
+      "name": "callbackThreadPoolSize",
+      "displayName": "Callback thread pool size",
+      "by_default": 2,
+      "type": [
+        "int",
+        "null"
+      ]
+    },
+    {
+      "namespace": "org.kaaproject.kaa.server.appenders.cassandra.config.gen",
+      "name": "cassandraWriteConsistencyLevel",
+      "displayName": "Write consistency level",
+      "by_default": "ONE",
+      "type": [
+        {
+          "name": "CassandraWriteConsistencyLevel",
+          "type": "enum",
+          "optional": true,
+          "symbols": [
+            "ANY",
+            "ONE",
+            "TWO",
+            "THREE",
+            "QUORUM",
+            "ALL",
+            "LOCAL_QUORUM",
+            "EACH_QUORUM",
+            "SERIAL",
+            "LOCAL_SERIAL",
+            "LOCAL_ONE"
+          ]
+        },
+        "null"
+      ]
+    },
+    {
+      "namespace": "org.kaaproject.kaa.server.appenders.cassandra.config.gen",
+      "name": "cassandraCompression",
+      "by_default": "NONE",
+      "optional": true,
+      "displayName": "Compression type",
+      "type": [
+        {
+          "name": "CassandraCompression",
+          "type": "enum",
+          "symbols": [
+            "NONE",
+            "SNAPPY",
+            "LZ4"
+          ]
+        },
+        "null"
+      ]
+    },
+    {
+      "namespace": "org.kaaproject.kaa.server.appenders.cassandra.config.gen",
+      "name": "cassandraExecuteRequestType",
+      "by_default": "SYNC",
+      "optional": true,
+      "displayName": "Cassandra execute request type",
+      "type": [
+        {
+          "name": "CassandraExecuteRequestType",
+          "type": "enum",
+          "symbols": [
+            "SYNC",
+            "ASYNC"
+          ]
+        },
+        "null"
+      ]
+    }
+  ]
+}

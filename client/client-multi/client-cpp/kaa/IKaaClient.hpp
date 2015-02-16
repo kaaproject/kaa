@@ -28,7 +28,6 @@ class EventFamilyFactory;
 class INotificationManager;
 class IConfigurationManager;
 class IEventListenersResolver;
-class IExternalTransportManager;
 class ISchemaPersistenceManager;
 class IEndpointRegistrationManager;
 class IConfigurationPersistenceManager;

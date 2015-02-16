@@ -85,6 +85,10 @@ Copyright 2014 CyberVision, Inc.
         <javassist.version>3.18.1-GA</javassist.version>
         <signpost-core.version>1.2.1.2</signpost-core.version>
 
+        <cassandra.driver.version>2.1.4</cassandra.driver.version>
+        <cassandra.driver.mapping>2.1.4</cassandra.driver.mapping>
+        <cassandra-unit.version>2.0.2.2</cassandra-unit.version>
+
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>

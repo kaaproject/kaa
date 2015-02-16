@@ -20,15 +20,12 @@
 #include <vector>
 #include <map>
 
-#include "kaa/gen/BootstrapGen.hpp"
+#include "kaa/channel/ServerType.hpp"
 #include "kaa/common/TransportType.hpp"
 #include "kaa/channel/ChannelDirection.hpp"
-#include "kaa/channel/server/IServerInfo.hpp"
 #include "kaa/channel/IKaaDataMultiplexer.hpp"
 #include "kaa/channel/IKaaDataDemultiplexer.hpp"
-#include "kaa/gen/BootstrapGen.hpp"
-#include "kaa/channel/server/IServerInfo.hpp"
-#include "kaa/channel/ServerType.hpp"
+#include "kaa/channel/ITransportConnectionInfo.hpp"
 #include "kaa/channel/connectivity/IConnectivityChecker.hpp"
 
 namespace kaa {
@@ -70,13 +67,13 @@ public:
     virtual const std::string& getId() const  = 0;
 
     /**
-     * Retrieves the channel's type (i.e. HTTP, TCP, etc.).
+     * Retrieves the @link TransportProtocolId @endlink.
      *
-     * @return the channel's type.
-     * @see ChannelType
+     * @return the transport protocol id.
+     * @see TransportProtocolId
      *
      */
-    virtual ChannelType getChannelType() const  = 0;
+    virtual TransportProtocolId getTransportProtocolId() const  = 0;
 
     /**
      * Retrieves the channel's server type (i.e. BOOTSTRAP or OPERATIONS).
@@ -106,13 +103,13 @@ public:
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer) = 0;
 
     /**
-     * Sets the server's parameters for the current channel.
+     * Sets the connection data for the current channel.
      *
-     * @param server server's parameters.
-     * @see IServerInfo
+     * @param connectionInfo The server's connection data.
+     * @see ITransportConnectionInfo
      *
      */
-    virtual void setServer(IServerInfoPtr server) = 0;
+    virtual void setServer(ITransportConnectionInfoPtr connectionInfo) = 0;
 
     /**
      * Retrieves current used server.
@@ -121,7 +118,7 @@ public:
      * @see IServerInfo
      *
      */
-    virtual IServerInfoPtr getServer() = 0;
+    virtual ITransportConnectionInfoPtr getServer() = 0;
 
     /**
      * Retrieves the map of transport types and their directions supported by this channel.

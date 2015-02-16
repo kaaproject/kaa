@@ -17,10 +17,10 @@
 #ifndef BOOTSTRAPMANAGER_HPP_
 #define BOOTSTRAPMANAGER_HPP_
 
+#include "kaa/KaaThread.hpp"
 #include "kaa/bootstrap/IBootstrapManager.hpp"
 #include "kaa/bootstrap/BootstrapTransport.hpp"
-#include "kaa/gen/BootstrapGen.hpp"
-#include "kaa/KaaThread.hpp"
+#include "kaa/channel/GenericTransportInfo.hpp"
 
 namespace kaa {
 
@@ -30,28 +30,26 @@ public:
     ~BootstrapManager() { }
 
     virtual void receiveOperationsServerList();
-    virtual void useNextOperationsServer(ChannelType type);
-    virtual void useNextOperationsServerByDnsName(const std::string& name);
+    virtual void useNextOperationsServer(const TransportProtocolId& protocolId);
+    virtual void useNextOperationsServerByAccessPointId(std::int32_t id);
     virtual void setTransport(IBootstrapTransport* transport);
     virtual void setChannelManager(IKaaChannelManager* manager);
-    virtual void onServerListUpdated(const OperationsServerList& list);
-    virtual const std::vector<OperationsServer>& getOperationsServerList();
+    virtual void onServerListUpdated(const std::vector<ProtocolMetaData>& operationsServers);
 
 private:
+    typedef std::list<ITransportConnectionInfoPtr> OperationsServers;
 
-    const OperationsServer* getOPSByDnsName(const std::string& name);
-    IServerInfoPtr          getServerInfoByChannel(const OperationsServer& server, const SupportedChannel& channel);
-    IServerInfoPtr          getServerInfoByChannelType(const OperationsServer& server, ChannelType channelType);
-    void                    notifyChannelManangerAboutServer(const OperationsServer& server);
+    OperationsServers getOPSByAccessPointId(std::int32_t id);
+    void              notifyChannelManangerAboutServer(const OperationsServers& servers);
 
-    std::vector<OperationsServer> operationServerList_;
-    std::map<ChannelType, std::vector<OperationsServer> > operationServers_;
-    std::map<ChannelType, /*std::vector<OperationsServer>::const_iterator*/ std::size_t  > operationServersIterators_;
+private:
+    std::map<TransportProtocolId, OperationsServers > operationServers_;
+    std::map<TransportProtocolId, OperationsServers::iterator > lastOperationsServers_;
 
     BootstrapTransport *bootstrapTransport_;
     IKaaChannelManager *channelManager_;
 
-    std::string serverToApply;
+    std::unique_ptr<std::int32_t> serverToApply;
 
     KAA_R_MUTEX_MUTABLE_DECLARE(guard_);
 };

@@ -24,10 +24,10 @@ namespace kaa {
 KeyPair KeyUtils::generateKeyPair(std::size_t length)
 {
     Botan::RSA_PrivateKey key(rng_, length);
-    return std::make_pair(Botan::X509::BER_encode(key), Botan::PKCS8::PEM_encode(key));
+    return KeyPair(Botan::X509::BER_encode(key), Botan::PKCS8::PEM_encode(key));
 }
 
-Botan::SymmetricKey KeyUtils::generateSessionKey(std::size_t length)
+SessionKey KeyUtils::generateSessionKey(std::size_t length)
 {
     return Botan::SymmetricKey(rng_, length);
 }
@@ -53,37 +53,37 @@ void KeyUtils::readFile(const std::string& fileName, boost::scoped_array<char>& 
     }
 }
 
-Botan::MemoryVector<std::uint8_t> KeyUtils::loadPublicKey(const std::string& fileName)
+PublicKey KeyUtils::loadPublicKey(const std::string& fileName)
 {
     std::size_t length = 0;
     boost::scoped_array<char> buf;
     readFile(fileName, buf, length);
-    return Botan::MemoryVector<std::uint8_t>(reinterpret_cast<const std::uint8_t *>(buf.get()), length);
+    return PublicKey(reinterpret_cast<const std::uint8_t *>(buf.get()), length);
 }
 
-std::string KeyUtils::loadPrivateKey(const std::string& fileName)
+PrivateKey KeyUtils::loadPrivateKey(const std::string& fileName)
 {
     std::size_t length = 0;
     boost::scoped_array<char> buf;
     readFile(fileName, buf, length);
-    return std::string(buf.get(), length);
+    return PrivateKey(buf.get(), length);
 }
 
 KeyPair KeyUtils::loadKeyPair(const std::string& pubFileName, const std::string& privFileName)
 {
-    const Botan::MemoryVector<std::uint8_t>& pub = loadPublicKey(pubFileName);
+    const PublicKey& pub = loadPublicKey(pubFileName);
     const std::string& priv = loadPrivateKey(privFileName);
-    return std::make_pair(pub, priv);
+    return KeyPair(pub, priv);
 }
 
-void KeyUtils::savePublicKey(const Botan::MemoryVector<std::uint8_t>& key, const std::string& pubFileName)
+void KeyUtils::savePublicKey(const PublicKey& key, const std::string& pubFileName)
 {
     std::ofstream file(pubFileName, std::ofstream::binary);
     file.write(reinterpret_cast<const char *>(key.begin()), key.size());
     file.close();
 }
 
-void KeyUtils::savePrivateKey(const std::string& key, const std::string& privFileName)
+void KeyUtils::savePrivateKey(const PrivateKey& key, const std::string& privFileName)
 {
     std::ofstream file(privFileName);
     file << key;
@@ -92,8 +92,8 @@ void KeyUtils::savePrivateKey(const std::string& key, const std::string& privFil
 
 void KeyUtils::saveKeyPair(const KeyPair& pair, const std::string& pubFileName, const std::string& privFileName)
 {
-    savePublicKey(pair.first, pubFileName);
-    savePrivateKey(pair.second, privFileName);
+    savePublicKey(pair.getPublicKey(), pubFileName);
+    savePrivateKey(pair.getPrivateKey(), privFileName);
 }
 
 }

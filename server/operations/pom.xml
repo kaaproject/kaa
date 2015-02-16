@@ -744,6 +744,18 @@
             </dependencies>
         </profile>
         <profile>
+            <id>cassandra</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.appenders.cassandra</groupId>
+                    <artifactId>appender</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>cassandra</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>mongo-dao</id>
             <properties>
                 <db.context>../common/nosql/mongo-dao/src/main/resources/common-dao-mongodb-context.xml</db.context>

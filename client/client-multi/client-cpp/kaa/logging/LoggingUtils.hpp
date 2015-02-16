@@ -25,7 +25,6 @@
 
 #include <boost/shared_array.hpp>
 
-#include "kaa/gen/BootstrapGen.hpp"
 #include "kaa/gen/EndpointGen.hpp"
 #include "kaa/common/EndpointObjectHash.hpp"
 #include "kaa/common/TransportType.hpp"
@@ -64,6 +63,41 @@ public:
         return ss.str();
     }
 
+    static std::string ProtocolVersionToString(const ProtocolVersionPair& protocolVersion) {
+        std::ostringstream ss;
+
+        ss << "[" << std::hex << "id=0x" << protocolVersion.id << std::dec << ",";
+        ss << KVSTRING(version, protocolVersion.version) << "]";
+
+        return ss.str();
+    }
+
+    static std::string BootstrapSyncRequestToString(const SyncRequest::bootstrapSyncRequest_t& request) {
+        std::ostringstream ss;
+        if (!request.is_null()) {
+            const auto& syncRequest = request.get_BootstrapSyncRequest();
+            ss << KVSTRING(requestId, syncRequest.requestId) << ",";
+            ss << "protocols: ";
+
+            const auto& protocols = syncRequest.supportedProtocols;
+            size_t protocolCount = protocols.size();
+
+            if (protocolCount > 0) {
+                for (const auto& protocol : protocols) {
+                    ss << ProtocolVersionToString(protocol);
+                    if (--protocolCount > 0) {
+                        ss << ",";
+                    }
+                }
+            } else {
+                ss << "null";
+            }
+        } else {
+            ss << "null";
+        }
+        return ss.str();
+    }
+
     static std::string ProfileSyncRequestToString(const SyncRequest::profileSyncRequest_t& request) {
         std::ostringstream ss;
         if (!request.is_null()) {
@@ -96,14 +130,27 @@ public:
     static std::string MetaDataSyncRequestToString(const SyncRequest::syncRequestMetaData_t& request) {
         std::ostringstream ss;
         if (!request.is_null()) {
-            ss << KVSTRING(applicationToken, request.get_SyncRequestMetaData().applicationToken) << ", ";
-            ss << KVSTRING(endpointPublicKeyHash, ByteArrayToString(request.get_SyncRequestMetaData().endpointPublicKeyHash)) << ", ";
-            if (request.get_SyncRequestMetaData().profileHash.is_null()) {
+            const auto& syncRequest = request.get_SyncRequestMetaData();
+
+            ss << KVSTRING(applicationToken, syncRequest.applicationToken) << ", ";
+
+            if (syncRequest.endpointPublicKeyHash.is_null()) {
+                ss << KVSTRING(endpointPublicKeyHash, "null") << ",";
+            } else {
+                ss << KVSTRING(endpointPublicKeyHash, ByteArrayToString(syncRequest.endpointPublicKeyHash.get_bytes())) << ",";
+            }
+
+            if (syncRequest.profileHash.is_null()) {
                 ss << KVSTRING(profileHash, "null") << ",";
             } else {
-                ss << KVSTRING(profileHash, ByteArrayToString(request.get_SyncRequestMetaData().profileHash.get_bytes())) << ",";
+                ss << KVSTRING(profileHash, ByteArrayToString(syncRequest.profileHash.get_bytes())) << ",";
             }
-            ss << KVSTRING(timeout, request.get_SyncRequestMetaData().timeout);
+
+            if (syncRequest.timeout.is_null()) {
+                ss << KVSTRING(timeout, "null") << ",";
+            } else {
+                ss << KVSTRING(timeout, syncRequest.timeout.get_long()) << ",";
+            }
         } else {
             ss << "null";
         }
@@ -175,11 +222,41 @@ public:
         return ss.str();
     }
 
+    static std::string BootstrapSyncResponseToString(const SyncResponse::bootstrapSyncResponse_t& response) {
+        std::ostringstream ss;
+        if (!response.is_null()) {
+            const auto& bootstrapSync = response.get_BootstrapSyncResponse();
+            const auto& supportedChannels = bootstrapSync.supportedProtocols;
+            size_t supportedChannelCount = supportedChannels.size();
+
+            ss << KVSTRING(requestId, bootstrapSync.requestId) << ", ";
+            ss << "supportedChannels: ";
+
+            if (supportedChannelCount > 0) {
+                for (const auto& supportedChannel : supportedChannels) {
+                    ss << "[" << std::hex << "accessPointId=0x" << supportedChannel.accessPointId << std::dec << ",";
+                    ss << ProtocolVersionToString(supportedChannel.protocolVersionInfo) << ",";
+                    ss << KVSTRING(connectionInfoLen, supportedChannel.connectionInfo.size()) << "]";
+
+                    if (--supportedChannelCount > 0) {
+                        ss << ",";
+                    }
+                }
+            } else {
+                ss << "null";
+            }
+        } else {
+            ss << "null";
+        }
+        return ss.str();
+    }
+
     static std::string EventSyncResponseToString(const SyncResponse::eventSyncResponse_t& response) {
         std::ostringstream ss;
         if (!response.is_null()) {
             ss << KVSTRING(events, IncomingEventsToString(response.get_EventSyncResponse().events));
             ss << KVSTRING(eventListenersResponse, EventListenersResponseToString(response.get_EventSyncResponse().eventListenersResponses));
+            ss << KVSTRING(eventSequenceNumberResponse, EventSequenceNumberResponseToString(response.get_EventSyncResponse().eventSequenceNumberResponse));
         } else {
             ss << "null";
         }
@@ -209,12 +286,23 @@ public:
         return ss.str();
     }
 
+    static std::string DetachUserNotificationToString(const UserSyncResponse::userDetachNotification_t& response) {
+        std::ostringstream ss;
+        if (!response.is_null()) {
+            ss << KVSTRING(accessToken, response.get_UserDetachNotification().endpointAccessToken);
+        } else {
+            ss << "null";
+        }
+        return ss.str();
+    }
+
     static std::string UserSyncResponseToString(const SyncResponse::userSyncResponse_t& response) {
         std::ostringstream ss;
         if (!response.is_null()) {
             ss << KVSTRING(endpointAttachResponses, AttachEPResponsesToString(response.get_UserSyncResponse().endpointAttachResponses));
             ss << KVSTRING(endpointDetachResponses, DetachEPResponsesToString(response.get_UserSyncResponse().endpointDetachResponses));
             ss << KVSTRING(userAttachResponse, AttachUserResponseToString(response.get_UserSyncResponse().userAttachResponse));
+            ss << KVSTRING(userDetachNotification, DetachUserNotificationToString(response.get_UserSyncResponse().userDetachNotification));
         } else {
             ss << "null";
         }
@@ -224,101 +312,21 @@ public:
     static std::string RedirectSyncResponseToString(const SyncResponse::redirectSyncResponse_t& response) {
         std::ostringstream ss;
         if (!response.is_null()) {
-            ss << KVSTRING(dnsName, response.get_RedirectSyncResponse().dnsName);
+            ss << std::hex << "accessPointId: 0x" << response.get_RedirectSyncResponse().accessPointId;
         } else {
             ss << "null";
         }
         return ss.str();
     }
 
-
-    static std::string OperationServerToString(const OperationsServer &ops) {
-        std::stringstream ss;
-        ss  << "{ " << KVSTRING(name, ops.name)
-            << ", " << KVSTRING(priority, ops.priority)
-            << ", " << KVSTRING(publicKey, ByteArrayToString(ops.publicKey))
-            << ", " << KVSTRING(supportedChannels, SupportedChannelArrayToString(ops.supportedChannelsArray))
-            << "}";
-        return ss.str();
-    }
-
-    static std::string OperationServerListToString(const OperationsServerList &opsList) {
-        std::stringstream ss;
-        ss  << "[ ";
-        for (const OperationsServer& ops : opsList.operationsServerArray) {
-            ss << OperationServerToString(ops) << ", ";
-        }
-        ss  << "]";
-        return ss.str();
-    }
-
-    static std::string OperationServerArrayToString(const std::vector<OperationsServer > &opsList) {
-        std::stringstream ss;
-        ss  << "[ ";
-        for (const OperationsServer& ops : opsList) {
-            ss << OperationServerToString(ops) << ", ";
-        }
-        ss  << "]";
-        return ss.str();
-    }
-
-    static std::string ChannelTypeToString(ChannelType type) {
-        switch (type) {
-            case ChannelType::HTTP:
-                return "HTTP";
-            case ChannelType::HTTP_LP:
-                return "HTTP_LP";
-            case ChannelType::BOOTSTRAP:
-                return "BOOTSTRAP";
-            case ChannelType::KAATCP:
-                return "KAATCP";
-        }
-        return "null";
-    }
-
-    static std::string HTTPParametersToString(const SupportedChannel::communicationParameters_t& params) {
-        std::stringstream ss;
-        ss  << "{ " << KVSTRING(hostName, params.get_HTTPComunicationParameters().hostName)
-            << ", " << KVSTRING(port, params.get_HTTPComunicationParameters().port)
-            << "}";
-        return ss.str();
-    }
-
-    static std::string HTTPLPParametersToString(const SupportedChannel::communicationParameters_t& params) {
-        std::stringstream ss;
-        ss  << "{ " << KVSTRING(hostName, params.get_HTTPLPComunicationParameters().hostName)
-            << ", " << KVSTRING(port, params.get_HTTPLPComunicationParameters().port)
-            << "}";
-        return ss.str();
-    }
-
-    static std::string SupportedChannelToString(const SupportedChannel& supportedChannel) {
-        std::stringstream ss;
-        ss  << "{ " << KVSTRING(channelType, ChannelTypeToString(supportedChannel.channelType))
-            << ", " << KVSTRING(communicationParameters,
-                                    (supportedChannel.channelType == ChannelType::HTTP
-                                            ? HTTPParametersToString(supportedChannel.communicationParameters)
-                                            : (supportedChannel.channelType == ChannelType::HTTP_LP
-                                                    ? HTTPLPParametersToString(supportedChannel.communicationParameters)
-                                                    : "null")
-                                    )
-                               )
-            << "}";
-        return ss.str();
-    }
-
-    static std::string SupportedChannelArrayToString(const std::vector<SupportedChannel > &supportedChannels) {
-        std::stringstream ss;
-        ss  << "[ ";
-        for (const SupportedChannel& channel : supportedChannels) {
-            ss << SupportedChannelToString(channel) << ", ";
-        }
-        ss  << "]";
+    static std::string TransportProtocolIdToString(const TransportProtocolId& protocolId) {
+        std::ostringstream ss;
+        ss << "(protocol: id=0x" << std::hex << protocolId.getId() << ", version=" << std::dec << protocolId.getVersion() << ")";
         return ss.str();
     }
 
     static std::string ByteArrayToString(const std::uint8_t* vec, const size_t& length) {
-        std::stringstream ss;
+        std::ostringstream ss;
         ss << "[ ";
         if (vec != nullptr && length > 0) {
             for (size_t i = 0; i < length; ++i) {
@@ -352,8 +360,6 @@ public:
             case NO_DELTA: description = "NO_DELTA"; break;
             case DELTA: description = "DELTA"; break;
             case RESYNC: description = "RESYNC"; break;
-//            case CONF_RESYNC: description = "CONF_RESYNC"; break;
-//            case REDIRECT: description = "REDIRECT"; break;
             default: description = "UNKNOWN"; break;
         }
 
@@ -679,6 +685,15 @@ public:
         return stream.str();
     }
 
+    static std::string EventSequenceNumberResponseToString(const EventSyncResponse::eventSequenceNumberResponse_t& response) {
+        std::ostringstream ss;
+        if (!response.is_null()) {
+            ss << KVSTRING(sequenceNumber, response.get_EventSequenceNumberResponse().seqNum);
+        } else {
+            ss << "null";
+        }
+        return ss.str();
+    }
 
     static std::string TransportTypeToString(TransportType type) {
         std::string description;
@@ -711,8 +726,6 @@ public:
 
     static std::string LogSyncResponseToString(const SyncResponse::logSyncResponse_t& logSyncResponse) {
         if (!logSyncResponse.is_null()) {
-/*
-<<<<<<< HEAD
             const auto& syncResponse = logSyncResponse.get_LogSyncResponse();
             if (!syncResponse.deliveryStatuses.is_null()) {
                 const auto& deliveryStatuses = syncResponse.deliveryStatuses.get_array();
@@ -729,13 +742,6 @@ public:
                 }
                 return stream.str();
             }
-=======
-*/
-            std::ostringstream stream;
-            std::string result = RequestResultTypeToString(logSyncResponse.get_LogSyncResponse().result);
-            stream << "{ requestId: " << logSyncResponse.get_LogSyncResponse().requestId << ", result: " << result << "}";
-            return stream.str();
-//>>>>>>> master
         }
         static std::string null("null");
         return null;

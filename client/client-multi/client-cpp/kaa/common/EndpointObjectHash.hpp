@@ -19,6 +19,7 @@
 
 #include <utility>
 #include <cstring>
+#include <vector>
 
 #include <botan/sha160.h>
 

@@ -38,20 +38,7 @@ void HttpDataProcessor::verifyResponse(const IHttpResponse& response)
 
 std::shared_ptr<IHttpRequest> HttpDataProcessor::createOperationRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data)
 {
-    const Botan::SecureVector<std::uint8_t>& encodedSessionKey = encDec_->getEncodedSessionKey();
-    const std::string& bodyEncoded = encDec_->encodeData(data.data(), data.size());
-    const Botan::SecureVector<std::uint8_t>& clientSignature =
-            encDec_->signData(reinterpret_cast<const std::uint8_t *>(
-                    encodedSessionKey.begin()), encodedSessionKey.size());
-
-    std::shared_ptr<MultipartPostHttpRequest> post(new MultipartPostHttpRequest(url));
-    post->setBodyField("signature",
-            std::vector<std::uint8_t>(
-                    reinterpret_cast<const std::uint8_t *>(clientSignature.begin()),
-                    reinterpret_cast<const std::uint8_t *>(clientSignature.end())));
-    post->setBodyField("requestKey", std::vector<std::uint8_t>(encodedSessionKey.begin(), encodedSessionKey.end()));
-    post->setBodyField("requestData", std::vector<std::uint8_t>(bodyEncoded.begin(), bodyEncoded.end()));
-    return post;
+    return createHttpRequest(url, data, true);
 }
 
 std::string HttpDataProcessor::retrieveOperationResponse(const IHttpResponse& response)
@@ -62,16 +49,35 @@ std::string HttpDataProcessor::retrieveOperationResponse(const IHttpResponse& re
 
 std::shared_ptr<IHttpRequest> HttpDataProcessor::createBootstrapRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data)
 {
-    std::shared_ptr<MultipartPostHttpRequest> post(new MultipartPostHttpRequest(url));
-    post->setBodyField("Application-Token", data);
-    return post;
+    return createHttpRequest(url, data, false);
 }
 
 std::string HttpDataProcessor::retrieveBootstrapResponse(const IHttpResponse& response)
 {
-    verifyResponse(response);
-    SharedBody body = response.getBody();
-    return std::string(reinterpret_cast<const char *>(body.first.get()), body.second);
+    return retrieveOperationResponse(response);
+}
+
+std::shared_ptr<IHttpRequest> HttpDataProcessor::createHttpRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data, bool sign)
+{
+    std::shared_ptr<MultipartPostHttpRequest> post(new MultipartPostHttpRequest(url));
+    const EncodedSessionKey& encodedSessionKey = encDec_->getEncodedSessionKey();
+    const std::string& bodyEncoded = encDec_->encodeData(data.data(), data.size());
+
+    if (sign) {
+        const Signature& clientSignature =
+                encDec_->signData(reinterpret_cast<const std::uint8_t *>(
+                        encodedSessionKey.begin()), encodedSessionKey.size());
+
+        post->setBodyField("signature",
+                std::vector<std::uint8_t>(
+                        reinterpret_cast<const std::uint8_t *>(clientSignature.begin()),
+                        reinterpret_cast<const std::uint8_t *>(clientSignature.end())));
+    }
+
+    post->setBodyField("requestKey", std::vector<std::uint8_t>(encodedSessionKey.begin(), encodedSessionKey.end()));
+    post->setBodyField("requestData", std::vector<std::uint8_t>(bodyEncoded.begin(), bodyEncoded.end()));
+
+    return post;
 }
 
 }

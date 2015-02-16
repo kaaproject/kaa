@@ -26,9 +26,9 @@
 namespace kaa {
 
 RsaEncoderDecoder::RsaEncoderDecoder(
-        const Botan::MemoryVector<std::uint8_t>& pubKey,
-        const std::string& privKey,
-        const Botan::MemoryVector<std::uint8_t>& remoteKey)
+        const PublicKey& pubKey,
+        const PrivateKey& privKey,
+        const PublicKey& remoteKey)
     : pubKey_(nullptr), privKey_(nullptr), remoteKey_(nullptr), sessionKey_(KeyUtils().generateSessionKey(16))
 {
     KAA_LOG_TRACE("Creating MessageEncoderDecoder with following parameters: ");
