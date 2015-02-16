@@ -72,8 +72,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is an implementation of {@link PlatformEncDec} that
- * uses internal binary protocol for data serialization.
+ * This class is an implementation of {@link PlatformEncDec} that uses internal
+ * binary protocol for data serialization.
  *
  * @author Andrew Shvayka
  *
@@ -83,6 +83,7 @@ public class BinaryEncDec implements PlatformEncDec {
 
     private static final int EVENT_SEQ_NUMBER_REQUEST_OPTION = 0x02;
     private static final int CONFIGURATION_HASH_OPTION = 0x02;
+    private static final int CONFIGURATION_RESYNC_OPTION = 0x04;
     public static final short PROTOCOL_VERSION = 1;
     public static final int MIN_SUPPORTED_VERSION = 1;
     public static final int MAX_SUPPORTED_VERSION = 1;
@@ -111,7 +112,6 @@ public class BinaryEncDec implements PlatformEncDec {
     private static final int CLIENT_META_SYNC_PROFILE_HASH_OPTION = 0x04;
     private static final int CLIENT_META_SYNC_KEY_HASH_OPTION = 0x02;
     private static final int CLIENT_META_SYNC_TIMEOUT_OPTION = 0x01;
-
 
     // Notification types
     static final byte SYSTEM = 0x00;
@@ -178,7 +178,7 @@ public class BinaryEncDec implements PlatformEncDec {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.
      * PlatformEncDec#getId()
@@ -262,7 +262,7 @@ public class BinaryEncDec implements PlatformEncDec {
         }
 
         buf.putShort(EXTENSIONS_COUNT_POSITION, extensionCount);
-        byte[] result =  buf.toByteArray();
+        byte[] result = buf.toByteArray();
         if (LOG.isTraceEnabled()) {
             LOG.trace("Encoded binary data {}", result);
         }
@@ -281,17 +281,17 @@ public class BinaryEncDec implements PlatformEncDec {
         buildExtensionHeader(buf, META_DATA_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
         buf.putInt(sync.getRequestId());
     }
-    
+
     private void encode(GrowingByteBuffer buf, BootstrapServerSync bootstrapSync) {
         buildExtensionHeader(buf, BOOTSTRAP_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 0);
         int extPosition = buf.position();
-        buf.putShort((short)bootstrapSync.getRequestId());
-        buf.putShort((short)bootstrapSync.getProtocolList().size());
-        for(ProtocolConnectionData data : bootstrapSync.getProtocolList()){
+        buf.putShort((short) bootstrapSync.getRequestId());
+        buf.putShort((short) bootstrapSync.getProtocolList().size());
+        for (ProtocolConnectionData data : bootstrapSync.getProtocolList()) {
             buf.putInt(data.getAccessPointId());
             buf.putInt(data.getProtocolId());
-            buf.putShort((short)data.getProtocolVersion());
-            buf.putShort((short)data.getConnectionData().length);
+            buf.putShort((short) data.getProtocolVersion());
+            buf.putShort((short) data.getConnectionData().length);
             put(buf, data.getConnectionData());
         }
         buf.putInt(extPosition - SIZE_OF_INT, buf.position() - extPosition);
@@ -311,13 +311,13 @@ public class BinaryEncDec implements PlatformEncDec {
             buf.put(NOTHING);
             buf.put(uaResponse.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
             buf.put(NOTHING);
-            buf.putShort((short)(uaResponse.getErrorCode() != null ? uaResponse.getErrorCode().ordinal() : 0));
-            if(uaResponse.getErrorReason() != null){
+            buf.putShort((short) (uaResponse.getErrorCode() != null ? uaResponse.getErrorCode().ordinal() : 0));
+            if (uaResponse.getErrorReason() != null) {
                 byte[] data = uaResponse.getErrorReason().getBytes(UTF8);
-                buf.putShort((short)data.length);
+                buf.putShort((short) data.length);
                 put(buf, data);
-            }else{
-                buf.putShort((short)0);
+            } else {
+                buf.putShort((short) 0);
             }
         }
         if (userSync.getUserAttachNotification() != null) {
@@ -365,7 +365,7 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     private void encode(GrowingByteBuffer buf, LogServerSync logSync) {
-        for(LogDeliveryStatus status : logSync.getDeliveryStatuses()){
+        for (LogDeliveryStatus status : logSync.getDeliveryStatuses()) {
             buildExtensionHeader(buf, LOGGING_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
             buf.putShort((short) Integer.valueOf(status.getRequestId()).intValue());
             buf.put(status.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
@@ -574,14 +574,14 @@ public class BinaryEncDec implements PlatformEncDec {
         }
         sync.setClientSyncMetaData(md);
     }
-    
+
     private void parseBootstrapClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
         int requestId = buf.getShort();
         int protocolCount = buf.getShort();
         List<ProtocolVersionId> keys = new ArrayList<>(protocolCount);
-        for(int i = 0; i < protocolCount; i++){
+        for (int i = 0; i < protocolCount; i++) {
             keys.add(new ProtocolVersionId(buf.getInt(), buf.getShort()));
-            //reserved
+            // reserved
             buf.getShort();
         }
         sync.setBootstrapSync(new BootstrapClientSync(requestId, keys));
@@ -662,6 +662,9 @@ public class BinaryEncDec implements PlatformEncDec {
         confSync.setAppStateSeqNumber(buf.getInt());
         if (hasOption(options, CONFIGURATION_HASH_OPTION)) {
             confSync.setConfigurationHash(getNewByteBuffer(buf, CONFIGURATION_HASH_SIZE));
+        }
+        if (hasOption(options, CONFIGURATION_RESYNC_OPTION)) {
+            confSync.setResyncOnly(true);
         }
         sync.setConfigurationSync(confSync);
     }
@@ -827,7 +830,7 @@ public class BinaryEncDec implements PlatformEncDec {
         int extIdLength = buf.get() & 0xFF;
         int tokenLength = getIntFromUnsignedShort(buf);
         int verifierTokenLength = getIntFromUnsignedShort(buf);
-        //reserved
+        // reserved
         buf.getShort();
         String userExternalId = getUTF8String(buf, extIdLength);
         String userAccessToken = getUTF8String(buf, tokenLength);
