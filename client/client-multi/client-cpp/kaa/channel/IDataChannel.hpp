@@ -118,7 +118,7 @@ public:
      * @see IServerInfo
      *
      */
-    virtual IServerInfoPtr getServer() = 0;
+    virtual ITransportConnectionInfoPtr getServer() = 0;
 
     /**
      * Retrieves the map of transport types and their directions supported by this channel.

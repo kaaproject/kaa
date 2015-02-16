@@ -62,8 +62,8 @@ public:
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
     virtual void setServer(ITransportConnectionInfoPtr server);
 
-    virtual IServerInfoPtr getServer() {
-        return currentServer_;
+    virtual ITransportConnectionInfoPtr getServer() {
+        return std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_);
     }
 
     virtual void shutdown();

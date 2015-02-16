@@ -55,9 +55,12 @@ public:
     virtual void syncAck(TransportType type);
     virtual void setMultiplexer(IKaaDataMultiplexer *multiplexer);
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
+
     virtual void setServer(ITransportConnectionInfoPtr server);
 
-    virtual ChannelType getChannelType() const  { return Type; }
+    virtual ITransportConnectionInfoPtr getServer() {
+        return std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_);
+    }
 
     virtual TransportProtocolId getTransportProtocolId() const {
         return TransportProtocolIdConstants::HTTP_TRANSPORT_ID;

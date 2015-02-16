@@ -726,8 +726,6 @@ public:
 
     static std::string LogSyncResponseToString(const SyncResponse::logSyncResponse_t& logSyncResponse) {
         if (!logSyncResponse.is_null()) {
-/*
-<<<<<<< HEAD
             const auto& syncResponse = logSyncResponse.get_LogSyncResponse();
             if (!syncResponse.deliveryStatuses.is_null()) {
                 const auto& deliveryStatuses = syncResponse.deliveryStatuses.get_array();
@@ -744,13 +742,6 @@ public:
                 }
                 return stream.str();
             }
-=======
-*/
-            std::ostringstream stream;
-            std::string result = RequestResultTypeToString(logSyncResponse.get_LogSyncResponse().result);
-            stream << "{ requestId: " << logSyncResponse.get_LogSyncResponse().requestId << ", result: " << result << "}";
-            return stream.str();
-//>>>>>>> master
         }
         static std::string null("null");
         return null;

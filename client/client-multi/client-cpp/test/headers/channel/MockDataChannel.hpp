@@ -45,8 +45,8 @@ public:
 
     virtual void setServer(ITransportConnectionInfoPtr server) {}
 
-    virtual IServerInfoPtr getServer() {
-        return IServerInfoPtr();
+    virtual ITransportConnectionInfoPtr getServer() {
+        return ITransportConnectionInfoPtr();
     }
 
     virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const {

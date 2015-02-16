@@ -71,6 +71,10 @@ public:
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
 
+    virtual ITransportConnectionInfoPtr getServer() {
+        return std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_);
+    }
+
 protected:
     std::string getURLSuffix() {
         return "/EP/LongSync";

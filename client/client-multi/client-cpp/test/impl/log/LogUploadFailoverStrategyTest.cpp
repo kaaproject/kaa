@@ -37,7 +37,7 @@ public:
         return channel_;
     }
 
-    virtual void onServerFailed(IServerInfoPtr server) {
+    virtual void onServerFailed(ITransportConnectionInfoPtr server) {
         onServerFailed_ = true;
     }
 
