@@ -15,6 +15,22 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_APPLICATION_ID;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_CREATED_TIME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_CREATED_USERNAME;
@@ -23,37 +39,15 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDP
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_NAME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_SEQUENCE_NUMBER;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_TOPICS_ENDPOINT_GROUP_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_TOPICS_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_TOPICS_TOPIC_ID;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_WEIGHT;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getTopic;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getTopicIds;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-
 @Entity
 @Table(name = ENDPOINT_GROUP_TABLE_NAME, uniqueConstraints = {
-    @UniqueConstraint(columnNames = {ENDPOINT_GROUP_WEIGHT, ENDPOINT_GROUP_APPLICATION_ID}),
-    @UniqueConstraint(columnNames = {ENDPOINT_GROUP_NAME, ENDPOINT_GROUP_APPLICATION_ID})})
+        @UniqueConstraint(columnNames = {ENDPOINT_GROUP_WEIGHT, ENDPOINT_GROUP_APPLICATION_ID}),
+        @UniqueConstraint(columnNames = {ENDPOINT_GROUP_NAME, ENDPOINT_GROUP_APPLICATION_ID})})
 public final class EndpointGroup extends GenericModel<EndpointGroupDto> implements Serializable {
 
     private static final long serialVersionUID = -2160369956685033697L;
@@ -84,12 +78,7 @@ public final class EndpointGroup extends GenericModel<EndpointGroupDto> implemen
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Application application;
 
-    @ManyToMany(cascade = CascadeType.MERGE)
-    @JoinTable(name = ENDPOINT_GROUP_TOPICS_TABLE_NAME,
-            joinColumns = {
-                @JoinColumn(name = ENDPOINT_GROUP_TOPICS_ENDPOINT_GROUP_ID)},
-            inverseJoinColumns = {
-                @JoinColumn(name = ENDPOINT_GROUP_TOPICS_TOPIC_ID)})
+    @ManyToMany(mappedBy = "endpointGroups")
     private Set<Topic> topics = new HashSet<>();
 
     public EndpointGroup() {
@@ -197,7 +186,6 @@ public final class EndpointGroup extends GenericModel<EndpointGroupDto> implemen
                 + ", description=" + description + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime + ", id=" + id + "]";
     }
 
-    @Override
     protected EndpointGroupDto createDto() {
         return new EndpointGroupDto();
     }

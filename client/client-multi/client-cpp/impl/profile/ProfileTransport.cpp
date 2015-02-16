@@ -23,7 +23,7 @@
 namespace kaa {
 
 ProfileTransport::ProfileTransport(IKaaChannelManager& channelManager
-        , const Botan::MemoryVector<std::uint8_t>& publicKey)
+        , const PublicKey& publicKey)
     : AbstractKaaTransport(channelManager), profileManager_(nullptr),
       publicKey_(publicKey.begin(), publicKey.end()) {}
 

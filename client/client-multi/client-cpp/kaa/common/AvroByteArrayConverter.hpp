@@ -78,9 +78,17 @@ public:
     SharedDataBuffer toByteArray(const T& datum);
 
     /**
+     * Converts object to byte array
+     * @param datum the encoding avro object
+     * @param dest the buffer that encoded data will be put in
+     * @return serialized bytes
+     */
+    void toByteArray(const T& datum, std::vector<std::uint8_t>& dest);
+
+    /**
      * Converts object to stream
      * @param datum the encoding avro object
-     * @param stream the output stream into which encoded data will be put
+     * @param stream the output stream that encoded data will be put in
      */
     void toByteArray(const T& datum, std::ostream& stream);
 
@@ -140,7 +148,7 @@ void AvroByteArrayConverter<T>::fromByteArray(const std::uint8_t* data, const st
 template<typename T>
 SharedDataBuffer AvroByteArrayConverter<T>::toByteArray(const T& datum)
 {
-    std::ostringstream ostream;
+    std::stringstream ostream;
     std::unique_ptr<avro::OutputStream> out = avro::ostreamOutputStream(ostream);
 
     encoder_->init(*out);
@@ -148,14 +156,38 @@ SharedDataBuffer AvroByteArrayConverter<T>::toByteArray(const T& datum)
     encoder_->flush();
 
     SharedDataBuffer buffer;
-    const std::string& encodedData = ostream.str();
-    const size_t encodedDataSize = encodedData.size();
 
-    buffer.second = encodedDataSize;
-    buffer.first.reset(new uint8_t[encodedDataSize]);
-    memcpy(buffer.first.get(), encodedData.data(), encodedDataSize);
+    std::streampos beg = ostream.tellg();
+    ostream.seekg(0, std::ios_base::end);
+
+    std::streampos end = ostream.tellg();
+    ostream.seekg(0, std::ios_base::beg);
+
+    buffer.second = end - beg;
+    buffer.first.reset(new uint8_t[buffer.second]);
+    std::copy(std::istreambuf_iterator<char>(ostream), std::istreambuf_iterator<char>(), buffer.first.get());
 
     return buffer;
+}
+
+template<typename T>
+void AvroByteArrayConverter<T>::toByteArray(const T& datum, std::vector<std::uint8_t>& dest)
+{
+    std::stringstream ostream;
+    std::unique_ptr<avro::OutputStream> out = avro::ostreamOutputStream(ostream);
+
+    encoder_->init(*out);
+    avro::encode(*encoder_, datum);
+    encoder_->flush();
+
+    std::streampos beg = ostream.tellg();
+    ostream.seekg(0, std::ios_base::end);
+
+    std::streampos end = ostream.tellg();
+    ostream.seekg(0, std::ios_base::beg);
+
+    dest.reserve(end - beg);
+    dest.assign(std::istreambuf_iterator<char>(ostream), std::istreambuf_iterator<char>());
 }
 
 template<typename T>

@@ -24,18 +24,13 @@ namespace kaa {
 class MockBootstrapManager: public IBootstrapManager {
     virtual void receiveOperationsServerList() {}
 
-    virtual void useNextOperationsServer(ChannelType type) {}
-    virtual void useNextOperationsServerByDnsName(const std::string& name) {}
+    virtual void useNextOperationsServer(const TransportProtocolId& protocolId) {}
+    virtual void useNextOperationsServerByAccessPointId(std::int32_t id) {}
 
     virtual void setTransport(IBootstrapTransport* transport) {}
     virtual void setChannelManager(IKaaChannelManager* manager) {}
 
-    virtual void onServerListUpdated(const OperationsServerList& list) {}
-
-    virtual const std::vector<OperationsServer>& getOperationsServerList() {
-        static std::vector<OperationsServer> servers = {{}};
-        return servers;
-    }
+    virtual void onServerListUpdated(const std::vector<ProtocolMetaData>& operationsServers) {}
 };
 
 } /* namespace kaa */

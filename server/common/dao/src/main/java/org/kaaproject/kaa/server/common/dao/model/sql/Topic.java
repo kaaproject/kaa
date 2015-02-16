@@ -15,6 +15,28 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.TopicTypeDto;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_TOPICS_ENDPOINT_GROUP_ID;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_TOPICS_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_TOPICS_TOPIC_ID;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TOPIC_APPLICATION_ID;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TOPIC_CREATED_TIME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TOPIC_CREATED_USERNAME;
@@ -24,25 +46,6 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TOPI
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TOPIC_TABLE_NAME;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TOPIC_TYPE;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
-
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.TopicTypeDto;
 
 @Entity
 @Table(name = TOPIC_TABLE_NAME)
@@ -74,7 +77,12 @@ public final class Topic extends GenericModel<TopicDto> implements Serializable 
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Application application;
 
-    @ManyToMany(mappedBy = "topics")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = ENDPOINT_GROUP_TOPICS_TABLE_NAME,
+            joinColumns = {
+                    @JoinColumn(name = ENDPOINT_GROUP_TOPICS_TOPIC_ID)},
+            inverseJoinColumns = {
+                    @JoinColumn(name = ENDPOINT_GROUP_TOPICS_ENDPOINT_GROUP_ID)})
     private Set<EndpointGroup> endpointGroups = new HashSet<>();
 
     public Topic() {

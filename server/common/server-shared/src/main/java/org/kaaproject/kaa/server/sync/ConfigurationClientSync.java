@@ -20,6 +20,7 @@ import java.nio.ByteBuffer;
 public class ConfigurationClientSync {
     private int appStateSeqNumber;
     private ByteBuffer configurationHash;
+    private boolean resyncOnly;
 
     public ConfigurationClientSync() {
     }
@@ -27,9 +28,10 @@ public class ConfigurationClientSync {
     /**
      * All-args constructor.
      */
-    public ConfigurationClientSync(int appStateSeqNumber, ByteBuffer configurationHash) {
+    public ConfigurationClientSync(int appStateSeqNumber, ByteBuffer configurationHash, boolean resyncOnly) {
         this.appStateSeqNumber = appStateSeqNumber;
         this.configurationHash = configurationHash;
+        this.resyncOnly = resyncOnly;
     }
 
     /**
@@ -66,12 +68,31 @@ public class ConfigurationClientSync {
         this.configurationHash = value;
     }
 
+    /**
+     * Indicates if client is interested only in resync delta encoded using base schema.
+     * 
+     * @return value
+     *             the value of the flag
+     */
+    public boolean isResyncOnly() {
+        return resyncOnly;
+    }
+
+    /**
+     * Sets that client is interested only in resync delta encoded using base schema
+     * @param resyncOnly
+     */
+    public void setResyncOnly(boolean resyncOnly) {
+        this.resyncOnly = resyncOnly;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + appStateSeqNumber;
         result = prime * result + ((configurationHash == null) ? 0 : configurationHash.hashCode());
+        result = prime * result + (resyncOnly ? 1231 : 1237);
         return result;
     }
 
@@ -97,6 +118,9 @@ public class ConfigurationClientSync {
         } else if (!configurationHash.equals(other.configurationHash)) {
             return false;
         }
+        if (resyncOnly != other.resyncOnly) {
+            return false;
+        }
         return true;
     }
 
@@ -107,6 +131,8 @@ public class ConfigurationClientSync {
         builder.append(appStateSeqNumber);
         builder.append(", configurationHash=");
         builder.append(configurationHash);
+        builder.append(", resyncOnly=");
+        builder.append(resyncOnly);
         builder.append("]");
         return builder.toString();
     }

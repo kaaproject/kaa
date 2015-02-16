@@ -290,10 +290,18 @@
             <classifier>flume</classifier>
             <scope>runtime</scope>
         </dependency>
+
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
             <artifactId>config</artifactId>
             <classifier>trustful</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
+            <artifactId>config</artifactId>
+            <version>${project.version}</version>
+            <classifier>gplus</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -860,6 +868,18 @@
                     <artifactId>config</artifactId>
                     <version>${project.version}</version>
                     <classifier>oracle-nosql</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>cassandra</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.appenders.cassandra</groupId>
+                    <artifactId>config</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>cassandra</classifier>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>

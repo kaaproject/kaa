@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,16 +45,16 @@ extern "C" {
 
 
 
-typedef struct kaa_events_schema_version_ {
+typedef struct {
     const char *    name;
     uint16_t         version;
-} kaa_events_schema_version;
+} kaa_events_schema_version_t;
 
 #if ($eventFamilies)
 #set ($familyCounter = $eventFamilies.size())
 # define KAA_EVENT_SCHEMA_VERSIONS_SIZE    $familyCounter
 
-static const kaa_events_schema_version KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEMA_VERSIONS_SIZE] = {
+static const kaa_events_schema_version_t KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEMA_VERSIONS_SIZE] = {
 #foreach ($family in $eventFamilies)
 #set ($familyCounter = $familyCounter - 1)
     {
@@ -81,7 +81,7 @@ static const kaa_events_schema_version KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEM
  */
 typedef struct {
     kaa_transport_protocol_id_t    protocol_id;
-    kaa_access_point_t             access_point; /*!< Connection data of Bootstrap servers is Base64-encoded. */
+    kaa_access_point_t             access_point;
 } kaa_bootstrap_server_connection_data_t;
 
 #set ($accessPointCounter = 0)
@@ -100,13 +100,19 @@ static const kaa_bootstrap_server_connection_data_t KAA_BOOTSTRAP_ACCESS_POINTS[
 #set($protocolId = $Integer.toHexString($transport.getId()))
 #foreach ($connectionInfo in $transport.getConnectionInfo())
 #set($accessPointCounter = $accessPointCounter - 1)
-#set($connectionData = $Base64.encodeBase64String($connectionInfo.getConenctionInfo().array()))
+#set($connectionData = $connectionInfo.getConenctionInfo().array())
+#set($connectionDataLength = $connectionData.size())
     {
         { 0x${protocolId}, $connectionInfo.getVersion() },
         {
             0x${accessPointId},
-            $connectionData.length(),
-            "$connectionData"
+            $connectionDataLength,
+            (char []) {
+            #foreach ($b in $connectionData)
+#set($connectionDataLength = $connectionDataLength - 1)
+$b #if($connectionDataLength > 0), #end
+#end
+            }
         }
     }#if($accessPointCounter > 0),
 #end

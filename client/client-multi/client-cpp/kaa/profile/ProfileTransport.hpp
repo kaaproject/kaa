@@ -21,10 +21,9 @@
 
 #include <cstdint>
 
-#include <botan/botan.h>
-
 #include "kaa/channel/transport/IProfileTransport.hpp"
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
+#include "kaa/security/SecurityDefinitions.hpp"
 
 namespace kaa {
 
@@ -35,7 +34,7 @@ class ProfileTransport: public AbstractKaaTransport<TransportType::PROFILE>,
 {
 public:
     ProfileTransport(IKaaChannelManager& channelManager,
-                     const Botan::MemoryVector<std::uint8_t>& publicKey);
+                     const PublicKey& publicKey);
 
     virtual void sync() {
         syncAll();

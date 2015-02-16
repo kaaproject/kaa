@@ -246,6 +246,13 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
+            <artifactId>verifier</artifactId>
+            <version>${project.version}</version>
+            <classifier>gplus</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
             <artifactId>verifier</artifactId>
             <version>${project.version}</version>
@@ -732,6 +739,18 @@
                     <artifactId>appender</artifactId>
                     <version>${project.version}</version>
                     <classifier>oracle-nosql</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>cassandra</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.appenders.cassandra</groupId>
+                    <artifactId>appender</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>cassandra</classifier>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
