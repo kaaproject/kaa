@@ -300,7 +300,8 @@
  "direction": "out",
  "fields": [
      {"name": "appStateSeqNumber", "type": "int"},
-     {"name": "configurationHash",  "type": ["bytes", "null"]}
+     {"name": "configurationHash",  "type": ["bytes", "null"]},
+     {"name": "resyncOnly", "type": ["boolean", "null"]}
  ]
 },
 
