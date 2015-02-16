@@ -75,28 +75,28 @@ public class TwitterUserVerifier extends AbstractKaaUserVerifier<TwitterAvroConf
 
     private class TokenVerifier implements Runnable {
         private final String userExternalId;
-        private final String accessToken;
+        private final String tokenAndSecret;
         private final UserVerifierCallback callback;
 
-        public TokenVerifier(String userExternalId, String accessToken, UserVerifierCallback callback) {
+        public TokenVerifier(String userExternalId, String tokenAndSecret, UserVerifierCallback callback) {
             this.userExternalId = userExternalId;
-            this.accessToken = accessToken;
+            this.tokenAndSecret = tokenAndSecret;
             this.callback = callback;
         }
 
         @Override
         public void run() {
-            LOG.trace("Started twitter token verification of [{}] accessToken", accessToken);
+            LOG.trace("Started twitter token verification of [{}] tokenAndSecret", tokenAndSecret);
             CloseableHttpResponse closeableHttpResponse = null;
 
             try {
-                closeableHttpResponse = establishConnection(accessToken);
-                LOG.trace("Connection established [{}]", accessToken);
+                closeableHttpResponse = establishConnection(tokenAndSecret);
+                LOG.trace("Connection established [{}]", tokenAndSecret);
                 int responseCode = closeableHttpResponse.getStatusLine().getStatusCode();
                 if (responseCode == HTTP_BAD_REQUEST || responseCode == HTTP_UNATHORIZED) {
                     handleBadResponse(closeableHttpResponse, callback);
                 } else if (responseCode == HTTP_OK) {
-                    handleResponse(closeableHttpResponse, userExternalId, callback, accessToken);
+                    handleResponse(closeableHttpResponse, userExternalId, callback, tokenAndSecret);
                 } else {                                                // other response codes
                     LOG.warn("Server response code: {}, no data can be retrieved", responseCode);
                     callback.onVerificationFailure("Server response code:" + responseCode
