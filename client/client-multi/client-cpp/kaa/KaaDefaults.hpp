@@ -24,8 +24,8 @@
 #include <botan/base64.h>
 #include <cstdint>
 
-#include "kaa/channel/server/IServerInfo.hpp"
 #include "kaa/common/EndpointObjectHash.hpp"
+#include "kaa/channel/ITransportConnectionInfo.hpp"
 
 #define KAA_LOG_LEVEL_NONE        0
 #define KAA_LOG_LEVEL_FATAL       1
@@ -67,8 +67,8 @@ extern const char * const CLIENT_PRIV_KEY_LOCATION;
 
 extern const char * const CLIENT_STATUS_FILE_LOCATION;
 
-typedef std::vector<IServerInfoPtr> BootstrapServers;
-const BootstrapServers& getServerInfoList();
+typedef std::vector<ITransportConnectionInfoPtr> BootstrapServers;
+const BootstrapServers& getBootstrapServers();
 
 const Botan::SecureVector<std::uint8_t>& getDefaultConfigData();
 const std::string& getDefaultConfigSchema();
