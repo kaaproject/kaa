@@ -1,0 +1,17 @@
+digraph "kaatcp_parser_t"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="kaatcp_parser_t",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" handlers" ,fontname="FreeSans"];
+  Node2 [label="kaatcp_parser_handlers_t",height=0.2,width=0.4,color="black",URL="$structkaatcp__parser__handlers__t.html"];
+  Node3 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" disconnect_handler" ,fontname="FreeSans"];
+  Node3 [label="kaatcp_disconnect_t",height=0.2,width=0.4,color="black",URL="$structkaatcp__disconnect__t.html"];
+  Node4 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" connack_handler" ,fontname="FreeSans"];
+  Node4 [label="kaatcp_connack_t",height=0.2,width=0.4,color="black",URL="$structkaatcp__connack__t.html"];
+  Node5 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" kaasync_handler" ,fontname="FreeSans"];
+  Node5 [label="kaatcp_kaasync_t",height=0.2,width=0.4,color="black",URL="$structkaatcp__kaasync__t.html"];
+  Node6 -> Node5 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" sync_header" ,fontname="FreeSans"];
+  Node6 [label="kaatcp_kaasync_header_t",height=0.2,width=0.4,color="black",URL="$structkaatcp__kaasync__header__t.html"];
+}

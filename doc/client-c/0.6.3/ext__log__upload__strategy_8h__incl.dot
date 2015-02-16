@@ -1,0 +1,11 @@
+digraph "/var/lib/jenkins/workspace/kaa_stable/client/client-multi/client-c/src/platform/ext_log_upload_strategy.h"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/platform\l/ext_log_upload_strategy.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="../platform/ext_log\l_storage.h",height=0.2,width=0.4,color="black",URL="$ext__log__storage_8h.html",tooltip="External log storage interface used by Kaa data collection subsystem to temporarily store the logs be..."];
+  Node2 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="../kaa_error.h",height=0.2,width=0.4,color="black",URL="$kaa__error_8h.html",tooltip="Kaa error codes. "];
+}

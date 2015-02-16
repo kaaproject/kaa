@@ -1,0 +1,10 @@
+digraph "/var/lib/jenkins/workspace/kaa_stable/client/client-multi/client-c/src/platform-impl/Econais/EC19D" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_686a18d29d9f1a305a5b602ff80d0670 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="Econais" fontname="FreeSans", fontsize="10", URL="dir_686a18d29d9f1a305a5b602ff80d0670.html"]
+  dir_8659c0e11182d8e3de498f47ad2aaf40 [shape=box, label="EC19D", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_8659c0e11182d8e3de498f47ad2aaf40.html"];
+  }
+}

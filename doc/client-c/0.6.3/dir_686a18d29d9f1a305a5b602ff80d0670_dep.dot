@@ -1,0 +1,14 @@
+digraph "/var/lib/jenkins/workspace/kaa_stable/client/client-multi/client-c/src/platform-impl/Econais" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_346e8d593b2885652f90d7d5423aa9d6 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="platform-impl" fontname="FreeSans", fontsize="10", URL="dir_346e8d593b2885652f90d7d5423aa9d6.html"]
+  subgraph clusterdir_686a18d29d9f1a305a5b602ff80d0670 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_686a18d29d9f1a305a5b602ff80d0670.html"];
+    dir_686a18d29d9f1a305a5b602ff80d0670 [shape=plaintext label="Econais"];
+    dir_8659c0e11182d8e3de498f47ad2aaf40 [shape=box label="EC19D" color="black" fillcolor="white" style="filled" URL="dir_8659c0e11182d8e3de498f47ad2aaf40.html"];
+  }
+  }
+}
