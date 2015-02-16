@@ -27,12 +27,12 @@ import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
  * @see EndpointRegistrationManager
  *
  */
-public interface UserAuthResultListener {
+public interface UserAttachCallback {
     /**
      * Called when auth result is retrieved from operations server.
      *
      * @param response Result of user attaching
      * @see UserAttachResponse
      */
-    void onAuthResult(UserAttachResponse response);
+    void onAttachResult(UserAttachResponse response);
 }

@@ -26,7 +26,7 @@ package org.kaaproject.kaa.client.event.registration;
  * @author Taras Lemkin
  *
  * @see EndpointRegistrationManager
- * @see EndpointRegistrationManager#setAttachedListener(AttachEndpointToUserCallback)
+ * @see EndpointRegistrationManager#setAttachedCallback(AttachEndpointToUserCallback)
  */
 public interface AttachEndpointToUserCallback {
 

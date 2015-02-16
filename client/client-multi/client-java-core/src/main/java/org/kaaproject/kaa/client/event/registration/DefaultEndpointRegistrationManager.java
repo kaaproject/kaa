@@ -18,12 +18,9 @@ package org.kaaproject.kaa.client.event.registration;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.kaaproject.kaa.client.channel.ProfileTransport;
@@ -53,14 +50,14 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     private static final Random RANDOM = new Random();
 
     private final KaaClientState state;
-    private final Map<Integer, EndpointOperationCallback> endpointAttachListeners = new ConcurrentHashMap<Integer, EndpointOperationCallback>();
-    private final Map<Integer, EndpointOperationCallback> endpointDetachListeners = new ConcurrentHashMap<Integer, EndpointOperationCallback>();
+    private final Map<Integer, EndpointOperationCallback> endpointAttachListeners = new ConcurrentHashMap<>();
+    private final Map<Integer, EndpointOperationCallback> endpointDetachListeners = new ConcurrentHashMap<>();
 
-    private final Map<Integer, EndpointAccessToken> attachEndpointRequests = new ConcurrentHashMap<Integer, EndpointAccessToken>();
-    private final Map<Integer, EndpointKeyHash> detachEndpointRequests = new ConcurrentHashMap<Integer, EndpointKeyHash>();
+    private final Map<Integer, EndpointAccessToken> attachEndpointRequests = new ConcurrentHashMap<>();
+    private final Map<Integer, EndpointKeyHash> detachEndpointRequests = new ConcurrentHashMap<>();
 
     private UserAttachRequest userAttachRequest;
-    private UserAuthResultListener userAuthResultListener;
+    private UserAttachCallback userAttachCallback;
 
     private AttachEndpointToUserCallback attachEndpointToUserCallback;
     private DetachEndpointFromUserCallback detachEndpointFromUserCallback;
@@ -115,7 +112,7 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     }
 
     @Override
-    public void attachUser(String userExternalId, String userAccessToken, UserAuthResultListener callback) {
+    public void attachUser(String userExternalId, String userAccessToken, UserAttachCallback callback) {
         if (UserVerifierConstants.DEFAULT_USER_VERIFIER_TOKEN != null) {
             attachUser(UserVerifierConstants.DEFAULT_USER_VERIFIER_TOKEN, userExternalId, userAccessToken, callback);
         } else {
@@ -124,9 +121,9 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     }
 
     @Override
-    public void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAuthResultListener callback) {
+    public void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAttachCallback callback) {
         userAttachRequest = new UserAttachRequest(userVerifierToken, userExternalId, userAccessToken);
-        userAuthResultListener = callback;
+        userAttachCallback = callback;
         if (userTransport != null) {
             userTransport.sync();
         }
@@ -143,9 +140,9 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
             UserAttachNotification userAttachNotification,
             UserDetachNotification userDetachNotification) throws IOException {
         if (userResponse != null) {
-            if (userAuthResultListener != null) {
-                userAuthResultListener.onAuthResult(userResponse);
-                userAuthResultListener = null;
+            if (userAttachCallback != null) {
+                userAttachCallback.onAttachResult(userResponse);
+                userAttachCallback = null;
             }
             if (userResponse.getResult() == SyncResponseResultType.SUCCESS) {
                 state.setAttachedToUser(true);
@@ -242,13 +239,13 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     }
 
     @Override
-    public void setAttachedListener(AttachEndpointToUserCallback listener) {
-        attachEndpointToUserCallback = listener;
+    public void setAttachedCallback(AttachEndpointToUserCallback listener) {
+        this.attachEndpointToUserCallback = listener;
     }
 
     @Override
-    public void setDetachedListener(DetachEndpointFromUserCallback listener) {
-        detachEndpointFromUserCallback = listener;
+    public void setDetachedCallback(DetachEndpointFromUserCallback listener) {
+        this.detachEndpointFromUserCallback = listener;
     }
 
     private synchronized int getRandomInt() {

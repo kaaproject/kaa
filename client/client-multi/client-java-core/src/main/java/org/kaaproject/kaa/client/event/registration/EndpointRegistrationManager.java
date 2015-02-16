@@ -29,7 +29,7 @@ import org.kaaproject.kaa.client.event.EndpointKeyHash;
  * otherwise attach/detach operations will fail.<br>
  * Current endpoint can be attached to user in two ways:
  * <il>
- * <li>By calling {@link #attachUser(String, String, UserAuthResultListener)}</li>
+ * <li>By calling {@link #attachUser(String, String, UserAttachCallback)}</li>
  * <li>Attached from another endpoint</li>
  * </il>
  * <br>
@@ -73,7 +73,7 @@ import org.kaaproject.kaa.client.event.EndpointKeyHash;
  * @see EndpointAccessToken
  * @see EndpointKeyHash
  * @see EndpointOperationCallback
- * @see UserAuthResultListener
+ * @see UserAttachCallback
  * @see ChangedAttachedEndpointListCallback
  * @see AttachEndpointToUserCallback
  * @see DetachEndpointFromUserCallback
@@ -115,9 +115,9 @@ public interface EndpointRegistrationManager {
      * @param userAccessToken
      * @param callback called when authentication result received
      *
-     * @see UserAuthResultListener
+     * @see UserAttachCallback
      */
-    void attachUser(String userExternalId, String userAccessToken, UserAuthResultListener callback);
+    void attachUser(String userExternalId, String userAccessToken, UserAttachCallback callback);
 
     /**
      * Creates user attach request using specified verifier.
@@ -127,9 +127,9 @@ public interface EndpointRegistrationManager {
      * @param userAccessToken
      * @param callback called when authentication result received
      *
-     * @see UserAuthResultListener
+     * @see UserAttachCallback
      */
-    void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAuthResultListener callback);
+    void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAttachCallback callback);
 
     /**
      * Checks if current endpoint is attached to user.
@@ -141,18 +141,18 @@ public interface EndpointRegistrationManager {
     /**
      * Sets callback for notifications when current endpoint is attached to user
      *
-     * @param listener
+     * @param callback
      *
      * @see AttachEndpointToUserCallback
      */
-    void setAttachedListener(AttachEndpointToUserCallback listener);
+    void setAttachedCallback(AttachEndpointToUserCallback callback);
 
     /**
      * Sets callback for notifications when current endpoint is detached from user
      *
-     * @param listener
+     * @param callback
      *
      * @see DetachEndpointFromUserCallback
      */
-    void setDetachedListener(DetachEndpointFromUserCallback listener);
+    void setDetachedCallback(DetachEndpointFromUserCallback callback);
 }

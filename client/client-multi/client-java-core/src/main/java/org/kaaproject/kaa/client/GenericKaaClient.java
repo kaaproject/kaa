@@ -27,12 +27,14 @@ import org.kaaproject.kaa.client.configuration.manager.ConfigurationManager;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationPersistenceManager;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
+import org.kaaproject.kaa.client.event.EventFamily;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback;
 import org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback;
 import org.kaaproject.kaa.client.event.registration.EndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
+import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.client.logging.LogStorage;
 import org.kaaproject.kaa.client.logging.LogUploadStrategy;
 import org.kaaproject.kaa.client.notification.NotificationListener;
@@ -41,6 +43,7 @@ import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
 import org.kaaproject.kaa.client.notification.UnavailableTopicException;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
+import org.kaaproject.kaa.client.transact.TransactionId;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 
@@ -71,10 +74,6 @@ public interface GenericKaaClient {
     /**
      * <p>
      * Starts Kaa's workflow.
-     * </p>
-     *
-     * <p>
-     * Should be called after each call to {@link Kaa#init()}.
      * </p>
      *
      * @see AbstractKaaClient#start()
@@ -562,9 +561,9 @@ public interface GenericKaaClient {
      * @param userAccessToken
      * @param callback called when authentication result received
      *
-     * @see UserAuthResultListener
+     * @see UserAttachCallback
      */
-    void attachUser(String userExternalId, String userAccessToken, UserAuthResultListener callback);
+    void attachUser(String userExternalId, String userAccessToken, UserAttachCallback callback);
 
     /**
      * Creates user attach request using specified verifier.
@@ -574,9 +573,9 @@ public interface GenericKaaClient {
      * @param userAccessToken
      * @param callback called when authentication result received
      *
-     * @see UserAuthResultListener
+     * @see UserAttachCallback
      */
-    void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAuthResultListener callback);
+    void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAttachCallback callback);
 
     /**
      * Checks if current endpoint is attached to user.
