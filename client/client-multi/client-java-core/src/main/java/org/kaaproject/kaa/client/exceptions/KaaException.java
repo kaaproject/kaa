@@ -21,13 +21,11 @@ package org.kaaproject.kaa.client.exceptions;
  * @author Andrew Shvayka
  *
  */
-public class KaaClientException extends Exception{
-    /**
-     * 
-     */
+public class KaaException extends Exception{
+
     private static final long serialVersionUID = -859911925908759066L;
 
-    public KaaClientException(Exception cause){
+    public KaaException(Exception cause){
         super(cause);
     }
 }

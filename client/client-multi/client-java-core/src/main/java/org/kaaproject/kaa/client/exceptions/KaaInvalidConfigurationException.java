@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.client.exceptions;
 
-public class KaaInvalidConfigurationException extends KaaClientException{
+public class KaaInvalidConfigurationException extends KaaRuntimeException {
 
     private static final long serialVersionUID = 3377204017776257012L;
 

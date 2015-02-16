@@ -70,7 +70,7 @@ import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.EventManager;
 import org.kaaproject.kaa.client.event.registration.DefaultEndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
-import org.kaaproject.kaa.client.exceptions.KaaClientException;
+import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.client.exceptions.KaaClusterConnectionException;
 import org.kaaproject.kaa.client.logging.AbstractLogCollector;
 import org.kaaproject.kaa.client.logging.DefaultLogCollector;
@@ -310,7 +310,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             }
         } catch (IOException | TransportException e) {
             if (stateListener != null) {
-                stateListener.onStartupFailure(new KaaClusterConnectionException(e));
+                stateListener.onStartFailure(new KaaClusterConnectionException(e));
             }
         }
     }
@@ -326,7 +326,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             }
         } catch (Exception e) {
             if (stateListener != null) {
-                stateListener.onStopFailure(new KaaClientException(e));
+                stateListener.onStopFailure(new KaaException(e));
             }
         }
     }
@@ -341,7 +341,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             }
         } catch (Exception e) {
             if (stateListener != null) {
-                stateListener.onPauseFailure(new KaaClientException(e));
+                stateListener.onPauseFailure(new KaaException(e));
             }
         }
     }
@@ -355,7 +355,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             }
         } catch (Exception e) {
             if (stateListener != null) {
-                stateListener.onResumeFailure(new KaaClientException(e));
+                stateListener.onResumeFailure(new KaaException(e));
             }
         }
     }

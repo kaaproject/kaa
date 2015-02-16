@@ -18,8 +18,8 @@ package org.kaaproject.kaa.client;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import org.kaaproject.kaa.client.exceptions.KaaClientException;
 import org.kaaproject.kaa.client.exceptions.KaaInvalidConfigurationException;
+import org.kaaproject.kaa.client.exceptions.KaaRuntimeException;
 import org.kaaproject.kaa.client.exceptions.KaaUnsupportedPlatformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,11 +34,11 @@ import org.slf4j.LoggerFactory;
 public class Kaa {
     private static final Logger LOG = LoggerFactory.getLogger(Kaa.class);
 
-    public static KaaClient newClient(KaaClientPlatformContext context) throws KaaClientException {
+    public static KaaClient newClient(KaaClientPlatformContext context) throws KaaRuntimeException {
         return newClient(context, null);
     }
 
-    public static KaaClient newClient(KaaClientPlatformContext context, KaaClientStateListener listener) throws KaaClientException {
+    public static KaaClient newClient(KaaClientPlatformContext context, KaaClientStateListener listener) throws KaaRuntimeException {
         try {
             return new BaseKaaClient(context, listener);
         } catch (GeneralSecurityException e) {
