@@ -5,7 +5,7 @@
  "fields": [
    {
         "name": "consumer_key",
-        "displayName": "Consumer key",
+        "displayName": "Consumer Key",
         "type": "string"
    },
    {

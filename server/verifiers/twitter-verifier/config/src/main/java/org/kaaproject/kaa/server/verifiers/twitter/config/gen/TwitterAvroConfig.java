@@ -7,7 +7,7 @@ package org.kaaproject.kaa.server.verifiers.twitter.config.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class TwitterAvroConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"TwitterAvroConfig\",\"namespace\":\"org.kaaproject.kaa.server.verifiers.twitter.config.gen\",\"fields\":[{\"name\":\"consumer_key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Consumer key\"},{\"name\":\"consumer_secret\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Consumer Secret\"},{\"name\":\"max_parallel_connections\",\"type\":\"int\",\"displayName\":\"Maximal number of allowed connections per verifier\",\"by_default\":\"5\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"TwitterAvroConfig\",\"namespace\":\"org.kaaproject.kaa.server.verifiers.twitter.config.gen\",\"fields\":[{\"name\":\"consumer_key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Consumer Key\"},{\"name\":\"consumer_secret\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Consumer Secret\"},{\"name\":\"max_parallel_connections\",\"type\":\"int\",\"displayName\":\"Maximal number of allowed connections per verifier\",\"by_default\":\"5\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String consumer_key;
    private java.lang.String consumer_secret;
