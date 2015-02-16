@@ -121,8 +121,7 @@ public class HibernateTopicDao extends HibernateAbstractDao<Topic> implements To
     public Topic getNextSeqNumber(String topicId) {
         Topic topic = findById(topicId);
         topic.incrementSeqNumber();
-        save(topic);
-        return topic;
+        return save(topic);
     }
 
     @Override

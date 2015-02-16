@@ -98,8 +98,8 @@ set ( KAA_TEST_SOURCES
         ../impl/channel/impl/DefaultOperationHttpChannel.cpp
         ../impl/channel/impl/DefaultBootstrapChannel.cpp
         ../impl/channel/impl/DefaultOperationTcpChannel.cpp
-        ../impl/channel/OperationsDataProcessor.cpp
-        ../impl/channel/BootstrapDataProcessor.cpp
+        ../impl/channel/impl/AbstractHttpChannel.cpp
+        ../impl/channel/SyncDataProcessor.cpp
         ../impl/channel/RedirectionTransport.cpp
         ../impl/channel/KaaChannelManager.cpp
         ../impl/notification/NotificationTransport.cpp
@@ -113,7 +113,9 @@ set ( KAA_TEST_SOURCES
         ../impl/kaatcp/ConnackMessage.cpp
         ../impl/kaatcp/KaaSyncResponse.cpp
         ../impl/kaatcp/KaaTcpResponseProcessor.cpp
-        ../impl/channel/connectivity/PingConnectivityChecker.cpp
+        ../impl/channel/connectivity/IPConnectivityChecker.cpp
+        ../impl/channel/TransportProtocolIdConstants.cpp
+        ../impl/channel/IPTransportInfo.cpp
         TestRunner.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp
@@ -132,16 +134,13 @@ set ( KAA_TEST_SOURCES
         impl/http/HttpRequestTest.cpp
         impl/ClientStatusTest.cpp
         impl/event/EndpointRegistrationManagerTest.cpp
-        impl/bootstrap/ServerInfoTest.cpp
-        impl/channel/HttpServerInfoTest.cpp
         impl/security/KeyUtilsTest.cpp
         impl/event/EventTransportTest.cpp
-        impl/channel/AbstractServerInfoTest.cpp
         impl/channel/KaaChannelManagerTest.cpp
         impl/notification/NotificationTransportTest.cpp
         impl/notification/NotificationManagerTest.cpp
         impl/kaatcp/KaaTcpTest.cpp
-        impl/channel/PingConnectivityCheckerTest.cpp
+        impl/channel/IPConnectivityCheckerTest.cpp
         impl/log/LogUploadFailoverStrategyTest.cpp
 ##        impl/bootstrap/BootstrapManagerTest.cpp
 ##        impl/event/EventFamilyFactoryTest.cpp

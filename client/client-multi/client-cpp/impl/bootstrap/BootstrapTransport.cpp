@@ -15,12 +15,17 @@
  */
 
 #include "kaa/bootstrap/BootstrapTransport.hpp"
-#include "kaa/KaaDefaults.hpp"
+
+#include <set>
+
+#include "kaa/channel/IKaaChannelManager.hpp"
+#include "kaa/bootstrap/IBootstrapManager.hpp"
 
 namespace kaa {
 
 BootstrapTransport::BootstrapTransport(IKaaChannelManager& channelManager, IBootstrapManager &bootstrapManager)
     : AbstractKaaTransport(channelManager)
+    , requestId_(0)
     , bootstrapManager_(bootstrapManager)
 {
 
@@ -31,20 +36,41 @@ void BootstrapTransport::sync()
     syncByType();
 }
 
-std::shared_ptr<Resolve> BootstrapTransport::createResolveRequest()
+std::shared_ptr<BootstrapSyncRequest> BootstrapTransport::createBootstrapSyncRequest()
 {
-    std::shared_ptr<Resolve> request(new Resolve);
+    std::shared_ptr<BootstrapSyncRequest> sync;
 
-    request->Application_Token = APPLICATION_TOKEN;
+    const auto& channels = channelManager_.getChannels();
 
-    return request;
+    if (channels.size()) {
+        /**
+         * To avoid duplicates.
+         */
+        std::set<TransportProtocolId> protocolIds;
+
+        for (const auto& channel : channels) {
+            protocolIds.insert(channel->getTransportProtocolId());
+        }
+
+        sync.reset(new BootstrapSyncRequest);
+        sync->requestId = ++requestId_;
+        sync->supportedProtocols.reserve(protocolIds.size());
+
+        ProtocolVersionPair protocolVersion;
+        for (auto& protocolId : protocolIds) {
+            protocolVersion.id = protocolId.getId();
+            protocolVersion.version = protocolId.getVersion();
+
+            sync->supportedProtocols.push_back(protocolVersion);
+        }
+    }
+
+    return sync;
 }
 
-void BootstrapTransport::onResolveResponse(OperationsServerList servers)
+void BootstrapTransport::onBootstrapResponse(const BootstrapSyncResponse& response)
 {
-    if (!servers.operationsServerArray.empty()) {
-        bootstrapManager_.onServerListUpdated(servers);
-    }
+    bootstrapManager_.onServerListUpdated(response.supportedProtocols);
 }
 
 }  // namespace kaa

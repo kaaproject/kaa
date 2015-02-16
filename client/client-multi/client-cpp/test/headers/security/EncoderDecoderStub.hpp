@@ -33,10 +33,10 @@ public:
 
     }
 
-    Botan::SecureVector<std::uint8_t> getEncodedSessionKey() {
+    EncodedSessionKey getEncodedSessionKey() {
         return encodedSessionKey_;
     }
-    void setEncodedSessionKey(Botan::SecureVector<std::uint8_t> key) {
+    void setEncodedSessionKey(EncodedSessionKey key) {
         encodedSessionKey_ = key;
     }
 
@@ -56,7 +56,7 @@ public:
         data_ = data;
     }
 
-    Botan::SecureVector<std::uint8_t> signData(const std::uint8_t *data, size_t size) {
+    Signature signData(const std::uint8_t *data, size_t size) {
         return signData_;
     }
     void setSignData(Botan::SecureVector<std::uint8_t> data) {
@@ -71,10 +71,10 @@ public:
     }
 
 private:
-    Botan::SecureVector<std::uint8_t> encodedSessionKey_;
+    EncodedSessionKey                   encodedSessionKey_;
     std::string                         encodeData_;
     std::string                         decodeData_;
-    Botan::SecureVector<std::uint8_t> signData_;
+    Signature                           signData_;
     bool                                signatureVerified_;
     std::string                         data_;
 };
