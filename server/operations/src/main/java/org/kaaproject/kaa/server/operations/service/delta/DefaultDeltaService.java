@@ -217,19 +217,20 @@ public class DefaultDeltaService implements DeltaService {
                             BaseData mergedConfiguration = getMergedConfiguration(endpointId, deltaKey.getEndpointGroups());
 
                             LOG.trace("[{}] Merged configuration {}", endpointId, mergedConfiguration.getRawData());
-                            
-                            if(deltaKey.isResyncOnly()){
+
+                            if (deltaKey.isResyncOnly()) {
                                 deltaCache = buildBaseResyncDelta(endpointId, mergedConfiguration);
-                            }else{
+                            } else {
                                 ProtocolSchema protocolSchema = new ProtocolSchema(latestConfigurationSchema.getProtocolSchema());
                                 BaseSchema baseSchema = new BaseSchema(latestConfigurationSchema.getBaseSchema());
                                 DeltaCalculationAlgorithm deltaCalculator = deltaCalculatorFactory.createDeltaCalculator(protocolSchema,
                                         baseSchema);
-    
+
                                 if (deltaKey.getEndpointConfHash() == null) {
                                     deltaCache = buildResyncDelta(endpointId, deltaCalculator, mergedConfiguration);
                                 } else {
-                                    EndpointConfigurationDto endpointConfiguration = cacheService.getConfByHash(deltaKey.getEndpointConfHash());
+                                    EndpointConfigurationDto endpointConfiguration = cacheService.getConfByHash(deltaKey
+                                            .getEndpointConfHash());
                                     deltaCache = calculateDelta(endpointId, deltaCalculator, endpointConfiguration, mergedConfiguration);
                                 }
                                 if (cacheService.getConfByHash(deltaCache.getHash()) == null) {
@@ -239,7 +240,7 @@ public class DefaultDeltaService implements DeltaService {
                                     cacheService.putConfiguration(deltaCache.getHash(), newConfiguration);
                                 }
                             }
-                            
+
                             LOG.debug("[{}] Configuration hash for {} is {}", endpointId, deltaKey,
                                     MessageEncoderDecoder.bytesToHex(deltaCache.getHash().getData()));
                             return deltaCache;
@@ -384,9 +385,10 @@ public class DefaultDeltaService implements DeltaService {
             throw new GetDeltaException(e);
         }
     }
-    
+
     private DeltaCacheEntry buildBaseResyncDelta(String endpointId, BaseData mergedConfiguration) {
-        byte[] configuration = GenericAvroConverter.toRawData(mergedConfiguration.getRawData(), mergedConfiguration.getSchema().getRawSchema());
+        byte[] configuration = GenericAvroConverter.toRawData(mergedConfiguration.getRawData(), mergedConfiguration.getSchema()
+                .getRawSchema());
         return new DeltaCacheEntry(configuration, new BaseBinaryDelta(configuration), EndpointObjectHash.fromSHA1(configuration));
     }
 }
