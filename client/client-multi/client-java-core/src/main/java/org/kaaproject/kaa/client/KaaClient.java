@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,45 +23,44 @@ import javax.annotation.Generated;
 
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
-import org.kaaproject.kaa.client.configuration.delta.manager.DeltaManager;
-import org.kaaproject.kaa.client.configuration.manager.ConfigurationManager;
-import org.kaaproject.kaa.client.configuration.storage.ConfigurationPersistenceManager;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
-import org.kaaproject.kaa.client.notification.NotificationManager;
-import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
+import org.kaaproject.kaa.schema.base.Configuration;
 import org.kaaproject.kaa.schema.base.Log;
 
 /**
-* <p>
-* Base interface to operate with {@link Kaa} library.
-* 
-* </p>
-* 
-* @author Yaroslav Zeygerman
-* @author Andrew Shvayka
-* 
-* @see ConfigurationManager
-* @see DeltaManager
-* @see ConfigurationPersistenceManager
-* @see SchemaPersistenceManager
-* @see NotificationManager
-* @see EventFamilyFactory
-* @see EndpointRegistrationManager
-* @see EventListenersResolver
-* @see KaaChannelManager
-* @see PublicKey
-* @see PrivateKey
-* @see KaaDataChannel
-*/
+ * <p>
+ * Base interface to operate with {@link Kaa} library.
+ * 
+ * </p>
+ * 
+ * @author Yaroslav Zeygerman
+ * @author Andrew Shvayka
+ * 
+ * @see EventFamilyFactory
+ * @see EndpointRegistrationManager
+ * @see EventListenersResolver
+ * @see KaaChannelManager
+ * @see PublicKey
+ * @see PrivateKey
+ * @see KaaDataChannel
+ */
 @Generated("KaaClient.java.template")
-public interface KaaClient extends GenericKaaClient{
+public interface KaaClient extends GenericKaaClient {
 
     /**
      * Adds new log record to local storage.
      *
-     * @param record New log record object
+     * @param record
+     *            New log record object
      */
     void addLogRecord(Log record);
+
+    /**
+     * Returns latest configuration.
+     * 
+     * @return configuration
+     */
+    Configuration getConfiguration();
 }

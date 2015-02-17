@@ -21,9 +21,8 @@ import java.util.List;
 
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
-import org.kaaproject.kaa.client.configuration.delta.manager.DeltaManager;
-import org.kaaproject.kaa.client.configuration.manager.ConfigurationManager;
-import org.kaaproject.kaa.client.configuration.storage.ConfigurationPersistenceManager;
+import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
+import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
@@ -34,7 +33,6 @@ import org.kaaproject.kaa.client.notification.NotificationManager;
 import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
 import org.kaaproject.kaa.client.notification.UnavailableTopicException;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
-import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 
 /**
@@ -47,10 +45,7 @@ import org.kaaproject.kaa.common.endpoint.gen.Topic;
  * @author Yaroslav Zeygerman
  * @author Andrew Shvayka
  *
- * @see ConfigurationManager
- * @see DeltaManager
- * @see ConfigurationPersistenceManager
- * @see SchemaPersistenceManager
+ * @see ConfigurationStorage
  * @see NotificationManager
  * @see EventFamilyFactory
  * @see EndpointRegistrationManager
@@ -104,6 +99,29 @@ public interface GenericKaaClient {
      * Sync of updated profile with server
      */
     void updateProfile();
+    
+    /**
+     * Sets the configuration storage that will be used to persist configuration.
+     * 
+     * @param storage to use for configuration persistence
+     */
+    void setConfigurationStorage(ConfigurationStorage storage);
+
+    /**
+     * Register configuration update listener
+     * 
+     * @param listener to register
+     * @return true if listener is registered, false if already registered
+     */
+    boolean addListener(ConfigurationListener listener);
+
+    /**
+     * Removes configuration update listener
+     * 
+     * @param listener to register
+     * @return true if listener is removed, false if not found
+     */
+    boolean removeListener(ConfigurationListener listener);
 
     /**
      * <p>
@@ -407,38 +425,6 @@ public interface GenericKaaClient {
      * @param strategy User-defined log upload strategy object.
      */
     void setLogUploadStrategy(LogUploadStrategy strategy);
-
-    /**
-     * Retrieves Kaa configuration manager.
-     *
-     * @return {@link ConfigurationManager} object.
-     *
-     */
-    ConfigurationManager getConfigurationManager();
-
-    /**
-     * Retrieves Kaa delta manager.
-     *
-     * @return {@link DeltaManager} object.
-     *
-     */
-    DeltaManager getDeltaManager();
-
-    /**
-     * Retrieves Kaa configuration persistence manager.
-     *
-     * @return {@link ConfigurationPersistenceManager} object.
-     *
-     */
-    ConfigurationPersistenceManager getConfigurationPersistenceManager();
-
-    /**
-     * Retrieves Kaa schema persistence manager.
-     *
-     * @return {@link SchemaPersistenceManager} object.
-     *
-     */
-    SchemaPersistenceManager getSchemaPersistenceManager();
 
     /**
      * Retrieves Kaa event family factory.

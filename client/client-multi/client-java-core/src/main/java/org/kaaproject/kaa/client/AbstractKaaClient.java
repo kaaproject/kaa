@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.client;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -57,21 +56,18 @@ import org.kaaproject.kaa.client.channel.impl.transports.DefaultNotificationTran
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultProfileTransport;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultRedirectionTransport;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultUserTransport;
-import org.kaaproject.kaa.client.configuration.DefaultConfigurationProcessor;
-import org.kaaproject.kaa.client.configuration.delta.manager.DefaultDeltaManager;
-import org.kaaproject.kaa.client.configuration.delta.manager.DeltaManager;
-import org.kaaproject.kaa.client.configuration.manager.ConfigurationManager;
-import org.kaaproject.kaa.client.configuration.manager.DefaultConfigurationManager;
-import org.kaaproject.kaa.client.configuration.storage.ConfigurationPersistenceManager;
-import org.kaaproject.kaa.client.configuration.storage.DefaultConfigurationPersistenceManager;
+import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
+import org.kaaproject.kaa.client.configuration.base.ConfigurationManager;
+import org.kaaproject.kaa.client.configuration.base.ResyncConfigurationManager;
+import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
 import org.kaaproject.kaa.client.event.DefaultEventManager;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.EventManager;
 import org.kaaproject.kaa.client.event.registration.DefaultEndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
-import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.client.exceptions.KaaClusterConnectionException;
+import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.client.logging.AbstractLogCollector;
 import org.kaaproject.kaa.client.logging.DefaultLogCollector;
 import org.kaaproject.kaa.client.logging.LogStorage;
@@ -85,9 +81,6 @@ import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.profile.DefaultProfileManager;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
-import org.kaaproject.kaa.client.schema.DefaultSchemaProcessor;
-import org.kaaproject.kaa.client.schema.storage.DefaultSchemaPersistenceManager;
-import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.TransportType;
@@ -130,15 +123,9 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaClient.class);
     private static final long LONG_POLL_TIMEOUT = 60000L;
 
-    private final DefaultConfigurationProcessor configurationProcessor = new DefaultConfigurationProcessor();
     private boolean isInitialized = false;
 
-    private final DefaultSchemaProcessor schemaProcessor = new DefaultSchemaProcessor();
-    private final DefaultSchemaPersistenceManager schemaPersistenceManager = new DefaultSchemaPersistenceManager(schemaProcessor);
-    private final DefaultConfigurationPersistenceManager configurationPersistenceManager;
-
-    private final DefaultConfigurationManager configurationManager = new DefaultConfigurationManager();
-    private final DefaultDeltaManager deltaManager = new DefaultDeltaManager();
+    protected final ConfigurationManager configurationManager;
 
     private final DefaultNotificationManager notificationManager;
     private final DefaultProfileManager profileManager;
@@ -182,8 +169,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         }
 
         kaaClientState = new KaaClientPropertiesState(context.createPersistentStorage(), context.getBase64(), this.properties);
-
-        configurationPersistenceManager = new DefaultConfigurationPersistenceManager(kaaClientState, configurationProcessor);
 
         BootstrapTransport bootstrapTransport = new DefaultBootstrapTransport(this.properties.getApplicationToken());
         ProfileTransport profileTransport = new DefaultProfileTransport();
@@ -235,6 +220,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
         bootstrapTransport.setBootstrapManager(bootstrapManager);
 
+        configurationManager = new ResyncConfigurationManager(properties);
+        
         transports.put(TransportType.BOOTSTRAP, bootstrapTransport);
         profileTransport.setProfileManager(profileManager);
         profileTransport.setClientProperties(this.properties);
@@ -243,9 +230,10 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         transports.put(TransportType.EVENT, eventTransport);
         notificationTransport.setNotificationProcessor(notificationManager);
         transports.put(TransportType.NOTIFICATION, notificationTransport);
-        configurationTransport.setConfigurationHashContainer(configurationPersistenceManager);
-        configurationTransport.setConfigurationProcessor(configurationProcessor);
-        configurationTransport.setSchemaProcessor(schemaProcessor);
+        configurationTransport.setConfigurationHashContainer(configurationManager.getConfigurationHashContainer());
+        configurationTransport.setConfigurationProcessor(configurationManager.getConfigurationProcessor());
+        //TODO: this should be part of properties and provided by user during SDK generation
+        configurationTransport.setResyncOnly(true);
         transports.put(TransportType.CONFIGURATION, configurationTransport);
         userTransport.setEndpointRegistrationProcessor(endpointRegistrationManager);
         transports.put(TransportType.USER, userTransport);
@@ -261,30 +249,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         channelManager.setConnectivityChecker(context.createConnectivityChecker());
     }
 
-    private void initKaaConfiguration() {
-        schemaProcessor.subscribeForSchemaUpdates(configurationProcessor);
-        schemaProcessor.subscribeForSchemaUpdates(schemaPersistenceManager);
-        schemaProcessor.subscribeForSchemaUpdates(configurationPersistenceManager);
-
-        configurationProcessor.subscribeForUpdates(configurationManager);
-        configurationProcessor.subscribeForUpdates(deltaManager);
-        configurationProcessor.addOnProcessedCallback(configurationManager);
-
-        configurationManager.subscribeForConfigurationUpdates(configurationPersistenceManager);
-
-    }
-
-    private void setDefaultConfiguration() throws IOException {
-        byte[] schema = properties.getDefaultConfigSchema();
-        if (schema != null && schema.length > 0) {
-            schemaProcessor.loadSchema(ByteBuffer.wrap(schema));
-            byte[] config = properties.getDefaultConfigData();
-            if (config != null && config.length > 0) {
-                configurationProcessor.processConfigurationData(ByteBuffer.wrap(config), true);
-            }
-        }
-    }
-
     public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
         return context.createHttpClient(url, privateKey, publicKey, remotePublicKey);
     }
@@ -293,22 +257,18 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     public void start() {
         try {
             if (!isInitialized) {
-                initKaaConfiguration();
                 isInitialized = true;
             } else {
                 LOG.warn("Client is already initialized!");
                 return;
             }
-            if (schemaProcessor.getSchema() == null || configurationPersistenceManager.getConfigurationHash() == null) {
-                LOG.debug("Initializing client state with default configuration");
-                kaaClientState.setAppStateSeqNumber(0);
-                setDefaultConfiguration();
-            }
+            //Load configuration
+            configurationManager.getConfiguration();
             bootstrapManager.receiveOperationsServerList();
             if (stateListener != null) {
                 stateListener.onStarted();
             }
-        } catch (IOException | TransportException e) {
+        } catch (TransportException e) {
             if (stateListener != null) {
                 stateListener.onStartFailure(new KaaClusterConnectionException(e));
             }
@@ -368,6 +328,21 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     @Override
     public void updateProfile() {
         this.profileManager.updateProfile();
+    }
+    
+    @Override
+    public void setConfigurationStorage(ConfigurationStorage storage) {
+        this.configurationManager.setConfigurationStorage(storage);
+    }
+
+    @Override
+    public boolean addListener(ConfigurationListener listener) {
+        return this.configurationManager.addListener(listener);
+    }
+
+    @Override
+    public boolean removeListener(ConfigurationListener listener) {
+        return this.configurationManager.removeListener(listener);
     }
 
     @Override
@@ -458,26 +433,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     @Override
     public void setLogUploadStrategy(LogUploadStrategy strategy) {
         this.logCollector.setStrategy(strategy);
-    }
-
-    @Override
-    public ConfigurationManager getConfigurationManager() {
-        return configurationManager;
-    }
-
-    @Override
-    public DeltaManager getDeltaManager() {
-        return deltaManager;
-    }
-
-    @Override
-    public ConfigurationPersistenceManager getConfigurationPersistenceManager() {
-        return configurationPersistenceManager;
-    }
-
-    @Override
-    public SchemaPersistenceManager getSchemaPersistenceManager() {
-        return schemaPersistenceManager;
     }
 
     @Override

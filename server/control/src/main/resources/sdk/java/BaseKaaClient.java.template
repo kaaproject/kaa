@@ -18,6 +18,9 @@ package org.kaaproject.kaa.client;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import javax.annotation.Generated;
+
+import ${configuration_record_class_package}.${configuration_record_class};
 import ${log_record_class_package}.${log_record_class};
 
 /**
@@ -31,14 +34,20 @@ import ${log_record_class_package}.${log_record_class};
  * @see KaaClient
  * @see AbstractKaaClient
  */
+@Generated("BaseKaaClient.java.template")
 public class BaseKaaClient extends AbstractKaaClient implements KaaClient {
 
-    public BaseKaaClient(KaaClientPlatformContext context, KaaClientStateListener listener) throws IOException, GeneralSecurityException{
+    public BaseKaaClient(KaaClientPlatformContext context, KaaClientStateListener listener) throws IOException, GeneralSecurityException {
         super(context, listener);
     }
 
     @Override
     public void addLogRecord(${log_record_class} record) {
         logCollector.addLogRecord(record);
+    }
+
+    @Override
+    public ${configuration_record_class} getConfiguration() {
+        return configurationManager.getConfiguration();
     }
 }

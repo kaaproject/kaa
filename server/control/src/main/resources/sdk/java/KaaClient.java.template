@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,39 @@
 
 package org.kaaproject.kaa.client;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
+import javax.annotation.Generated;
+
+import org.kaaproject.kaa.client.channel.KaaChannelManager;
+import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.event.EventFamilyFactory;
+import org.kaaproject.kaa.client.event.EventListenersResolver;
+import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
+
+import ${configuration_record_class_package}.${configuration_record_class};
 import ${log_record_class_package}.${log_record_class};
 
 /**
 * <p>
 * Base interface to operate with {@link Kaa} library.
 * 
-* This interface contain methods that are auto-generated based on client structures.
 * </p>
 * 
 * @author Yaroslav Zeygerman
 * @author Andrew Shvayka
+* 
+* @see EventFamilyFactory
+* @see EndpointRegistrationManager
+* @see EventListenersResolver
+* @see KaaChannelManager
+* @see PublicKey
+* @see PrivateKey
+* @see KaaDataChannel
 */
-public interface KaaClient extends GenericKaaClient{
+@Generated("KaaClient.java.template")
+public interface KaaClient extends GenericKaaClient {
 
     /**
      * Adds new log record to local storage.
@@ -36,4 +56,11 @@ public interface KaaClient extends GenericKaaClient{
      * @param record New log record object
      */
     void addLogRecord(${log_record_class} record);
+
+    /**
+     * Returns latest configuration.
+     * 
+     * @return configuration
+     */
+    ${configuration_record_class} getConfiguration();
 }
