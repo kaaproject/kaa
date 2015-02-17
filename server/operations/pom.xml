@@ -555,7 +555,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>../common/dao/src/main/resources/default_configuration_schema.json</src>
+                                    <src>../../common/endpoint-shared/src/main/avro/default_configuration_schema.avsc</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
