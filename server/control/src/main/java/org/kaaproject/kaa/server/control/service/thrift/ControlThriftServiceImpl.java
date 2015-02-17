@@ -885,16 +885,26 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
                 throw new TException("Log schema not found!");
             }
 
-            DataSchema profileDataSchema = new DataSchema(profileSchema.getSchema());
-            DataSchema notificationDataSchema = new DataSchema(notificationSchema.getSchema());
-            ProtocolSchema protocolSchema = new ProtocolSchema(configurationShema.getProtocolSchema());
-            BaseSchema baseSchema = new BaseSchema(configurationShema.getBaseSchema());
-            DataSchema logDataSchema = new DataSchema(logSchema.getSchema());
-
             String appToken = application.getApplicationToken();
+            DataSchema profileDataSchema = new DataSchema(profileSchema.getSchema());
             String profileSchemaBody = profileDataSchema.getRawSchema();
-            DeltaCalculationAlgorithm calculator = new DefaultDeltaCalculatorFactory().createDeltaCalculator(protocolSchema, baseSchema);
-            byte[] defaultConfigurationData = calculator.calculate(new BaseData(baseSchema, defaultConfiguration.getBody())).getData();
+            DataSchema logDataSchema = new DataSchema(logSchema.getSchema());
+            DataSchema notificationDataSchema = new DataSchema(notificationSchema.getSchema());
+
+            byte[] defaultConfigurationData = null;
+            String defaultConfigurationSchema = null;
+
+            if (sdkPlatform != SdkPlatform.C) {
+                ProtocolSchema protocolSchema = new ProtocolSchema(configurationShema.getProtocolSchema());
+                BaseSchema baseSchema = new BaseSchema(configurationShema.getBaseSchema());
+
+                DeltaCalculationAlgorithm calculator = new DefaultDeltaCalculatorFactory().createDeltaCalculator(protocolSchema, baseSchema);
+
+                defaultConfigurationData = calculator.calculate(new BaseData(baseSchema, defaultConfiguration.getBody())).getData();
+                defaultConfigurationSchema = protocolSchema.getRawSchema();
+            } else {
+                defaultConfigurationSchema = configurationShema.getBaseSchema();
+            }
 
             List<EventFamilyMetadata> eventFamilies = new ArrayList<>();
             if (aefMapIds != null) {
@@ -920,19 +930,19 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
             SdkGenerator generator = SdkGeneratorFactory.createSdkGenerator(sdkPlatform);
             return generator.generateSdk(Version.PROJECT_VERSION,
-                    controlZKService.getCurrentBootstrapNodes(),
-                    appToken,
-                    profileSchemaVersion,
-                    configurationSchemaVersion,
-                    notificationSchemaVersion,
-                    logSchemaVersion,
-                    profileSchemaBody,
-                    notificationDataSchema.getRawSchema(),
-                    configurationShema.getBaseSchema(),
-                    defaultConfigurationData,
-                    eventFamilies,
-                    logDataSchema.getRawSchema(),
-                    defaultVerifierToken);
+                                         controlZKService.getCurrentBootstrapNodes(),
+                                         appToken,
+                                         profileSchemaVersion,
+                                         configurationSchemaVersion,
+                                         notificationSchemaVersion,
+                                         logSchemaVersion,
+                                         profileSchemaBody,
+                                         notificationDataSchema.getRawSchema(),
+                                         defaultConfigurationSchema,
+                                         defaultConfigurationData,
+                                         eventFamilies,
+                                         logDataSchema.getRawSchema(),
+                                         defaultVerifierToken);
         } catch (Exception e) {
             LOG.error("Unable to generate SDK", e);
             throw new TException(e);
