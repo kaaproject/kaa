@@ -143,8 +143,9 @@
                       <exclude>**/gen/*.java</exclude>
                       <exclude>**/*.avsc</exclude>
                       <exclude>src/main/java/org/kaaproject/kaa/schema/base/Profile.java</exclude>
-					  <exclude>src/main/java/org/kaaproject/kaa/schema/base/Log.java</exclude>
-					  <exclude>src/main/java/org/kaaproject/kaa/schema/base/Notification.java</exclude>
+                      <exclude>src/main/java/org/kaaproject/kaa/schema/base/Log.java</exclude>
+                      <exclude>src/main/java/org/kaaproject/kaa/schema/base/Notification.java</exclude>
+                      <exclude>src/main/java/org/kaaproject/kaa/schema/base/Configuration.java</exclude>
                   </excludes>
               </configuration>
           </plugin>
