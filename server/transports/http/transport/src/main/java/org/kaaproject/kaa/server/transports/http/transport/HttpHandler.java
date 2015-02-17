@@ -48,7 +48,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<AbstractCommand>  i
     /**
      * Instantiates a new akka handler.
      *
-     * @param UUID
+     * @param uuid
      *            - session uuid
      * @param messageHandler
      *            the message handler
