@@ -349,6 +349,115 @@ void test_kaa_tcp_channel_io_error_flow()
     KAA_FREE(channel);
 }
 
+/**
+ * Test authorization sequence according to bug KAA-362
+ * 1. Set access point
+ * 2. Call sync several times before authorization complete, check that CONNECT is generated only once.
+ * 3. Disconnect.
+ */
+void test_kaa_tcp_channel_auth_double_sync_flow()
+{
+    KAA_TRACE_IN(logger);
+
+    kaa_error_t error_code;
+
+    kaa_transport_channel_interface_t *channel = NULL;
+    channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
+
+    kaa_service_t operation_services[] = {
+            KAA_SERVICE_PROFILE,
+            KAA_SERVICE_USER,
+            KAA_SERVICE_EVENT,
+            KAA_SERVICE_LOGGING};
+
+    error_code = kaa_tcp_channel_create(channel,logger,operation_services,4);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    test_set_access_point(channel);
+
+
+    access_point_test_info.socket_connected          = false;
+    access_point_test_info.socket_connected_callback = false;
+    access_point_test_info.fill_connect_message      = false;
+    access_point_test_info.request_connect           = false;
+    access_point_test_info.auth_packet_written       = false;
+    access_point_test_info.connack_read              = false;
+
+    //Imitate WR event, and wait socket connect call, channel should start authorization, prepare
+    //CONNECT message
+    error_code = kaa_tcp_channel_process_event(channel,FD_WRITE);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(access_point_test_info.socket_connected, true);
+    ASSERT_EQUAL(access_point_test_info.socket_connected_callback, true);
+    ASSERT_EQUAL(access_point_test_info.fill_connect_message, true);
+    ASSERT_EQUAL(access_point_test_info.request_connect, true);
+
+    //Check correct RD,WR operation, in this point we waiting for RD,WR operations true
+    CHECK_SOCKET_RW(channel,true,true);
+
+    //Test first sync during AUTH waiting
+    access_point_test_info.fill_connect_message      = false;
+    access_point_test_info.request_connect           = false;
+
+    //Call sync
+    kaa_service_t services1[] = {KAA_SERVICE_PROFILE, KAA_SERVICE_USER};
+    channel->sync_handler(channel->context, services1, 2);
+    ASSERT_EQUAL(access_point_test_info.fill_connect_message, false);
+    ASSERT_EQUAL(access_point_test_info.request_connect, false);
+
+    //Imitate socket ready for writing, and writing CONNECT message
+    error_code = kaa_tcp_channel_process_event(channel,FD_WRITE);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(access_point_test_info.auth_packet_written, true);
+    ASSERT_EQUAL(access_point_test_info.fill_connect_message, false);
+    ASSERT_EQUAL(access_point_test_info.request_connect, false);
+    //Check correct RD,WR operation, in this point we waiting for RD operations true
+    //and WR false, no pending services and empty buffer.
+    CHECK_SOCKET_RW(channel,true,false);
+    KAA_LOG_INFO(logger,KAA_ERR_NONE,">>>>>>>>>>D4");
+    //Test second sync during AUTH waiting
+    access_point_test_info.fill_connect_message      = false;
+    access_point_test_info.request_connect           = false;
+    access_point_test_info.auth_packet_written       = false;
+
+    kaa_service_t services2[] = {KAA_SERVICE_PROFILE, KAA_SERVICE_EVENT};
+    channel->sync_handler(channel->context, services2, 2);
+    ASSERT_EQUAL(access_point_test_info.fill_connect_message, false);
+    ASSERT_EQUAL(access_point_test_info.request_connect, false);
+    //Check correct RD,WR operation, in this point we waiting for RD operations true
+    //and WR false, no pending services and empty buffer.
+    CHECK_SOCKET_RW(channel,true,false);
+
+    //Imitate socket ready for reading, and read CONNACK message
+    error_code = kaa_tcp_channel_process_event(channel,FD_READ);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(access_point_test_info.connack_read, true);
+
+    //Check correct RD,WR operation, in this point we waiting for RD operations true
+    //and WR true, number of pending services and empty buffer.
+    //Checking receiving KAA_SYNC message
+    CHECK_SOCKET_RW(channel,true,true);
+
+    //Third sync
+    kaa_service_t services3[] = {KAA_SERVICE_LOGGING};
+    channel->sync_handler(channel->context, services3, 1);
+
+    //Check correct RD,WR operation, in this point we waiting for RD operations true
+    //and WR true, pending services and empty buffer.
+    CHECK_SOCKET_RW(channel,true,true);
+
+    test_sync_exchange(channel);
+
+    test_send_disconnect(channel);
+
+    channel->destroy(channel->context);
+
+    KAA_TRACE_OUT(logger);
+
+    KAA_FREE(channel);
+}
+
+
 void test_sync_exchange(kaa_transport_channel_interface_t *channel)
 {
     ASSERT_NOT_NULL(channel);
@@ -491,7 +600,6 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
     CHECK_SOCKET_RW(channel,false,true);
 }
 
-//not equal
 kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self
                                                        , kaa_transport_protocol_id_t *protocol_id
                                                        , kaa_server_type_t type)
@@ -616,7 +724,6 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
     return KAA_ERR_BADPARAM;
 }
 
-//Not equal
 kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self
                                                       , const kaa_serialize_info_t *info
                                                       , char **buffer
@@ -824,4 +931,5 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit,
         KAA_TEST_CASE(create_kaa_tcp_channel_success_flow, test_kaa_tcp_channel_success_flow)
         KAA_TEST_CASE(create_kaa_tcp_channel_sync_flow, test_kaa_tcp_channel_sync_flow)
         KAA_TEST_CASE(create_kaa_tcp_channel_io_error_flow, test_kaa_tcp_channel_io_error_flow)
+        KAA_TEST_CASE(create_kaa_tcp_channel_auth_double_sync_flow, test_kaa_tcp_channel_auth_double_sync_flow)
         )
