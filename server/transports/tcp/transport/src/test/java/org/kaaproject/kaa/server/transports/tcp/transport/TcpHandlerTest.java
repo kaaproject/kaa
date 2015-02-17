@@ -112,9 +112,11 @@ public class TcpHandlerTest {
         UUID uuid = UUID.randomUUID();
         MessageHandler akkaService = Mockito.mock(MessageHandler.class);
         AbstractKaaTcpCommandProcessor msg = Mockito.mock(AbstractKaaTcpCommandProcessor.class);
-        Mockito.when(msg.getRequest()).thenReturn(new SyncRequest());
+        Mockito.when(msg.getRequest()).thenReturn(new KaaSync());
         TcpHandler handler = new TcpHandler(uuid, akkaService);
-        handler.channelRead0(null, msg);
+        ChannelHandlerContext context = buildDummyCtxMock();
+        handler.channelRead0(context, msg);
+        Mockito.verify(context).writeAndFlush(Mockito.any(ConnAck.class));
         Mockito.verify(akkaService, Mockito.never()).process(Mockito.any(NettyTcpConnectMessage.class));
     }
 
