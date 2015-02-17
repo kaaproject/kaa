@@ -48,7 +48,10 @@ import org.kaaproject.kaa.server.transports.tcp.transport.messages.NettyTcpConne
 import org.kaaproject.kaa.server.transports.tcp.transport.messages.NettyTcpDisconnectMessage;
 import org.kaaproject.kaa.server.transports.tcp.transport.messages.NettyTcpSyncMessage;
 import org.kaaproject.kaa.server.transports.tcp.transport.netty.AbstractKaaTcpCommandProcessor;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+
+import static org.junit.Assert.assertEquals;
 
 public class TcpHandlerTest {
 
@@ -57,13 +60,13 @@ public class TcpHandlerTest {
         @Override
         public void process(SessionInitMessage message) {
             Object[] response = message.getMessageBuilder().build("response".getBytes(), false);
-            Assert.assertEquals(2, response.length);
+            assertEquals(2, response.length);
             Assert.assertTrue(response[0] instanceof ConnAck);
             Assert.assertTrue(response[1] instanceof KaaSync);
             response = message.getErrorBuilder().build(Mockito.mock(GeneralSecurityException.class));
             Assert.assertTrue(response[0] instanceof ConnAck);
             ConnAck connAck = (ConnAck) response[0];
-            Assert.assertEquals(ReturnCode.REFUSE_BAD_CREDENTIALS, connAck.getReturnCode());
+            assertEquals(ReturnCode.REFUSE_BAD_CREDENTIALS, connAck.getReturnCode());
         }
 
         @Override
@@ -74,11 +77,11 @@ public class TcpHandlerTest {
                 response = request.getErrorBuilder().build(Mockito.mock(GeneralSecurityException.class));
                 Assert.assertTrue(response[0] instanceof Disconnect);
                 Disconnect disconnect = (Disconnect) response[0];
-                Assert.assertEquals(DisconnectReason.BAD_REQUEST, disconnect.getReason());
+                assertEquals(DisconnectReason.BAD_REQUEST, disconnect.getReason());
                 response = request.getErrorBuilder().build(Mockito.mock(RuntimeException.class));
                 Assert.assertTrue(response[0] instanceof Disconnect);
                 disconnect = (Disconnect) response[0];
-                Assert.assertEquals(DisconnectReason.INTERNAL_ERROR, disconnect.getReason());
+                assertEquals(DisconnectReason.INTERNAL_ERROR, disconnect.getReason());
             }
 
         }
@@ -116,7 +119,9 @@ public class TcpHandlerTest {
         TcpHandler handler = new TcpHandler(uuid, akkaService);
         ChannelHandlerContext context = buildDummyCtxMock();
         handler.channelRead0(context, msg);
-        Mockito.verify(context).writeAndFlush(Mockito.any(ConnAck.class));
+        ArgumentCaptor<ConnAck> captor = ArgumentCaptor.forClass(ConnAck.class);
+        Mockito.verify(context).writeAndFlush(captor.capture());
+        Assert.assertTrue(captor.getValue().getReturnCode() == ReturnCode.REFUSE_BAD_PROTOCOL);
         Mockito.verify(akkaService, Mockito.never()).process(Mockito.any(NettyTcpConnectMessage.class));
     }
 
