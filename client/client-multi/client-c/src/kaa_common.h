@@ -60,6 +60,7 @@ typedef enum {
     KAA_SERVICE_USER = 2,
     KAA_SERVICE_EVENT = 3,
     KAA_SERVICE_LOGGING = 4,
+    KAA_SERVICE_CONFIGURATION = 5,
 } kaa_service_t;
 
 /**

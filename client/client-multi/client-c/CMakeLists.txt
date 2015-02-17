@@ -121,6 +121,7 @@ set (KAA_SOURCE_FILES
         src/kaa_event.c
         src/kaa_logging.c
         src/kaa_profile.c
+        src/kaa_configuration_manager.c
         src/kaa_status.c
         src/kaa_user.c
         src/kaa.c
