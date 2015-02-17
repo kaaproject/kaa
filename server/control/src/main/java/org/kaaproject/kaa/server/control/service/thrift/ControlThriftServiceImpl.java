@@ -165,7 +165,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     @Autowired
     private LogAppendersService logAppenderService;
-    
+
     @Autowired
     private UserVerifierService userVerifierService;
 
@@ -855,7 +855,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     @Override
     public Sdk generateSdk(SdkPlatform sdkPlatform, String applicationId,
             int profileSchemaVersion, int configurationSchemaVersion,
-            int notificationSchemaVersion, List<String> aefMapIds, 
+            int notificationSchemaVersion, List<String> aefMapIds,
             int logSchemaVersion, String defaultVerifierToken) throws TException {
 
         try {
@@ -928,7 +928,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
                     logSchemaVersion,
                     profileSchemaBody,
                     notificationDataSchema.getRawSchema(),
-                    protocolSchema.getRawSchema(),
+                    configurationShema.getBaseSchema(),
                     defaultConfigurationData,
                     eventFamilies,
                     logDataSchema.getRawSchema(),
@@ -1566,7 +1566,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         LOG.info("Send notification to operation servers about removing appender.");
         controlZKService.sendEndpointNotification(thriftNotification);
     }
-    
+
     @Override
     public List<DataStruct> getUserVerifiersByApplicationId(String applicationId)
             throws ControlThriftException, TException {
@@ -1616,7 +1616,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         thriftNotification.setUserVerifierToken(userVerifierDto.getVerifierToken());
         thriftNotification.setOp(Operation.REMOVE_USER_VERIFIER);
         LOG.info("Send notification to operation servers about removing user verifier.");
-        controlZKService.sendEndpointNotification(thriftNotification);    
+        controlZKService.sendEndpointNotification(thriftNotification);
     }
 
     @Override
