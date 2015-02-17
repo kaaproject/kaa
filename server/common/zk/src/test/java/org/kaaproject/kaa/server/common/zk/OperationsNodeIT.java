@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.zk;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
@@ -145,6 +146,40 @@ public class OperationsNodeIT {
 
             Assert.assertFalse(endpointNode.isConnected());
             endpointNode.close();
+        } finally {
+            cluster.close();
+        }
+    }
+
+    @Test
+    public void outdatedRemovalTest() throws Exception {
+        Timing timing = new Timing();
+        TestingCluster cluster = new TestingCluster(3);
+        cluster.start();
+        try {
+            OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
+            Long removeTime = System.currentTimeMillis();
+
+            BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
+
+            BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
+            OperationsNodeListener mockListener = mock(OperationsNodeListener.class);
+            bootstrapNode.addListener(mockListener);
+            bootstrapNode.start();
+
+            OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
+
+            endpointNode.start();
+            timing.sleepABit();
+            verify(mockListener).onNodeAdded(endpointNodeInfo);
+
+            // pretend receiving remove before add
+            endpointNodeInfo.setTimeStarted(removeTime);
+
+            endpointNode.close();
+            timing.sleepABit();
+            verify(mockListener, never()).onNodeRemoved(endpointNodeInfo);
+            bootstrapNode.close();
         } finally {
             cluster.close();
         }
