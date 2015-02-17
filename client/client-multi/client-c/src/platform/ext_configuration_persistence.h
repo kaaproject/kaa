@@ -18,6 +18,11 @@
 #define EXT_CONFIGURATION_PERSISTENCE_H_
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 /**
  * @brief Called on Kaa startup to restore the persisted configuration data (if present).
  *
@@ -44,4 +49,7 @@ void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deal
 void ext_configuration_store(const char *buffer, size_t buffer_size);
 
 
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* EXT_CONFIGURATION_PERSISTENCE_H_ */

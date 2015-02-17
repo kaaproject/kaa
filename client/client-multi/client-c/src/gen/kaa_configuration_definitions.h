@@ -19,9 +19,15 @@
 
 # include "kaa_configuration_gen.h"
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 typedef kaa_configuration_root_record_t kaa_root_configuration_t;
 # define KAA_CONFIGURATION_DESERIALIZE(reader)  kaa_configuration_root_record_deserialize(reader)
 
 
-
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 # endif /* KAA_CONFIGURATION_DEFINITIONS_H_ */

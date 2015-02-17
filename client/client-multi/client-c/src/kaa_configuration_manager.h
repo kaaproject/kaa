@@ -17,6 +17,14 @@
 #ifndef KAA_CONFIGURATION_MANAGER_H_
 #define KAA_CONFIGURATION_MANAGER_H_
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+
+
 #include "gen/kaa_configuration_definitions.h"
 #include "platform/ext_configuration_receiver.h"
 
@@ -36,5 +44,9 @@ const kaa_root_configuration_t *kaa_configuration_manager_get_configuration(kaa_
 kaa_error_t kaa_configuration_manager_set_root_receiver(kaa_configuration_manager_t *self, const kaa_configuration_root_receiver_t *receiver);
 
 
+#endif /* KAA_DISABLE_FEATURE_CONFIGURATION */
 
+#ifdef __cplusplus
+} // extern "C"
+#endif
 #endif /* KAA_CONFIGURATION_MANAGER_H_ */
