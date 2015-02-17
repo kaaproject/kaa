@@ -35,13 +35,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
 public class TwitterUserVerifier extends AbstractKaaUserVerifier<TwitterAvroConfig> {
     private static final Logger LOG = LoggerFactory.getLogger(TwitterUserVerifier.class);
-    private static final String TWITTER_URL = "https://api.twitter.com/1.1/account/verify_credentials.json";
     private static final String TWITTER_PATH = "/1.1/account/verify_credentials.json";
     private static final String SIGNATURE_METHOD = "HMAC-SHA1";
     private static final String ENCRYPTION_ALGO = "HmacSHA1";
@@ -159,19 +159,15 @@ public class TwitterUserVerifier extends AbstractKaaUserVerifier<TwitterAvroConf
         }
     }
 
-    protected CloseableHttpResponse establishConnection(String tokenAndSecret) throws IOException {
+    protected CloseableHttpResponse establishConnection(String tokenAndSecret) throws IOException,
+            NoSuchAlgorithmException, InvalidKeyException {
         HttpRequest request = null;
-        try {
-            request = new BasicHttpEntityEnclosingRequest(REQUEST_METHOD, TWITTER_PATH);
+        request = new BasicHttpEntityEnclosingRequest(REQUEST_METHOD, TWITTER_PATH);
 
-            String[] tokenThenSecret = tokenAndSecret.split(" ");   // now user access token is tokenThenSecret[0]
-                                                                    // and user secret is tokenAndSecret[1]
-
-            request.setHeader(REQUEST_HEADER_NAME,
+        String[] tokenThenSecret = tokenAndSecret.split(" ");   // now user access token is tokenThenSecret[0]
+                                                                // and user secret is tokenAndSecret[1]
+        request.setHeader(REQUEST_HEADER_NAME,
                     oAuthHeaderBuilder.generateHeader(tokenThenSecret[0], tokenThenSecret[1]));
-        } catch (InvalidKeyException e) {
-            LOG.debug("Invalid key for Encryption", e);
-        }
 
         return httpClient.execute(TWITTER_HOST, request);
     }
@@ -185,7 +181,8 @@ public class TwitterUserVerifier extends AbstractKaaUserVerifier<TwitterAvroConf
         httpClient = HttpClients.custom().setConnectionManager(connectionManager).build();
         // Increase max total connection
         connectionManager.setMaxTotal(configuration.getMaxParallelConnections());
-        oAuthHeaderBuilder = new OAuthHeaderBuilder(SIGNATURE_METHOD, REQUEST_METHOD, TWITTER_URL, ENCRYPTION_ALGO,
+        oAuthHeaderBuilder = new OAuthHeaderBuilder(SIGNATURE_METHOD, REQUEST_METHOD,
+                configuration.getTwitterVerifyUrl(), ENCRYPTION_ALGO,
                 configuration.getConsumerKey(), configuration.getConsumerSecret());
     }
 

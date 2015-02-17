@@ -42,7 +42,7 @@ public class OAuthHeaderBuilder {
         this.CONSUMER_SECRET = CONSUMER_SECRET;
     }
 
-    public String generateHeader(String accessToken, String accessTokenSecret) throws InvalidKeyException {
+    public String generateHeader(String accessToken, String accessTokenSecret) throws InvalidKeyException, NoSuchAlgorithmException {
         String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
         String nonce = UUID.randomUUID().toString().replaceAll("-", "");
 
@@ -76,17 +76,13 @@ public class OAuthHeaderBuilder {
     }
 
     private String generateSignature(String signatureBase, String accessTokenSecret)
-            throws InvalidKeyException {
-        String signature = null;
-        try {
-            Mac mac = Mac.getInstance(ENCRYPTION_ALGO);
-            mac.init(new SecretKeySpec((CONSUMER_SECRET + "&" + accessTokenSecret).getBytes(), ENCRYPTION_ALGO));
-            mac.update(signatureBase.getBytes());
-            byte[] res = mac.doFinal();
-            signature = new String(Base64.encodeBase64(res)).trim();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+            throws InvalidKeyException, NoSuchAlgorithmException {
+
+        Mac mac = Mac.getInstance(ENCRYPTION_ALGO);
+        mac.init(new SecretKeySpec((CONSUMER_SECRET + "&" + accessTokenSecret).getBytes(), ENCRYPTION_ALGO));
+        mac.update(signatureBase.getBytes());
+        byte[] res = mac.doFinal();
+        String signature = new String(Base64.encodeBase64(res)).trim();
 
         return signature;
     }

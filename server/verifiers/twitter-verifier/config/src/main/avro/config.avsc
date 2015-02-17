@@ -17,6 +17,11 @@
        "name": "max_parallel_connections",
        "displayName": "Maximal number of allowed connections per verifier",
        "type": "int", "by_default": "5"
-    }
+   },
+   {
+       "name": "twitter_verify_url",
+       "displayName": "Twitter verification URL",
+       "type": "string", "by_default": "https://api.twitter.com/1.1/account/verify_credentials.json"
+   }
  ]
 }
