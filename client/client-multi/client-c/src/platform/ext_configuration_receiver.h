@@ -20,6 +20,9 @@
 #include "../kaa_error.h"
 #include "../gen/kaa_configuration_definitions.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 typedef kaa_error_t (*on_configuration_updated_fn)(void *context, const kaa_root_configuration_t *configuration);
@@ -33,5 +36,7 @@ typedef struct
 } kaa_configuration_root_receiver_t;
 
 
-
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 #endif /* EXT_CONFIGURATION_RECEIVER_H_ */

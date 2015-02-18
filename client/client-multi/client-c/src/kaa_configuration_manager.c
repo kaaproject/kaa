@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+
 #include "kaa_configuration_manager.h"
 
 #include <stdbool.h>
@@ -193,16 +195,23 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
 
 }
 
+
+
 const kaa_root_configuration_t *kaa_configuration_manager_get_configuration(kaa_configuration_manager_t *self)
 {
     return self ? self->root_record : NULL;
 }
 
+
+
 kaa_error_t kaa_configuration_manager_set_root_receiver(kaa_configuration_manager_t *self, const kaa_configuration_root_receiver_t *receiver)
 {
-    KAA_RETURN_IF_NIL3(self, receiver, receiver->on_configuration_updated, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(self, receiver, KAA_ERR_BADPARAM);
 
     self->root_receiver = *receiver;
 
     return KAA_ERR_NONE;
 }
+
+
+#endif /* KAA_DISABLE_FEATURE_CONFIGURATION */
