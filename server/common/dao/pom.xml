@@ -154,9 +154,10 @@
              <resource>
                  <directory>../../../common/endpoint-shared/src/main/avro</directory>
                  <includes>
-                     <include>default_log_schema.avsc</include>
-                     <include>default_notification_schema.avsc</include>
                      <include>default_profile_schema.avsc</include>
+                     <include>default_notification_schema.avsc</include>
+                     <include>default_configuration_schema.avsc</include>
+                     <include>default_log_schema.avsc</include>
                  </includes>
              </resource>
         </resources>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kaaproject.kaa.client.configuration.base;
 
-package org.kaaproject.kaa.sandbox.demo;
+import javax.annotation.Generated;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.kaaproject.kaa.schema.base.Configuration;
 
-public class DemoBuildersRegistry {
-
-    private static final List<DemoBuilder> demoBuilders = new ArrayList<>();
-    
-    static {
-        demoBuilders.add(new SmartHouseDemoBuilder());
-//        demoBuilders.add(new RobotRunDemoBuilder());
-    }
-    
-    public static List<DemoBuilder> getRegisteredDemoBuilders() {
-        return demoBuilders;
-    }
-    
+/**
+ * The listener to configuration updates.
+ *
+ * @author Andrew Shvayka
+ *
+ */
+@Generated("ConfigurationListener.java.template")
+public interface ConfigurationListener {
+    /**
+     * Called on each configuration update.
+     *
+     * @param configuration the configuration object.
+     *
+     */
+    void onConfigurationUpdate(Configuration configuration);
 }

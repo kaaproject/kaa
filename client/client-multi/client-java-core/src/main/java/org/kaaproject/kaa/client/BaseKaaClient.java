@@ -20,12 +20,13 @@ import java.security.GeneralSecurityException;
 
 import javax.annotation.Generated;
 
+import org.kaaproject.kaa.schema.base.Configuration;
 import org.kaaproject.kaa.schema.base.Log;
 
 /**
  * <p>
- * Auto-generated class based on user data structures.
- * Provides implementation of {@link KaaClient}.
+ * Auto-generated class based on user data structures. Provides implementation
+ * of {@link KaaClient}.
  * </p>
  *
  * @author Andrew Shvayka
@@ -36,12 +37,17 @@ import org.kaaproject.kaa.schema.base.Log;
 @Generated("BaseKaaClient.java.template")
 public class BaseKaaClient extends AbstractKaaClient implements KaaClient {
 
-    public BaseKaaClient(KaaClientPlatformContext context, KaaClientStateListener listener) throws IOException, GeneralSecurityException{
+    public BaseKaaClient(KaaClientPlatformContext context, KaaClientStateListener listener) throws IOException, GeneralSecurityException {
         super(context, listener);
     }
 
     @Override
     public void addLogRecord(Log record) {
         logCollector.addLogRecord(record);
+    }
+
+    @Override
+    public Configuration getConfiguration() {
+        return configurationManager.getConfiguration();
     }
 }

@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.client.notification;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.annotation.Generated;
 
@@ -36,8 +37,11 @@ class NotificationDeserializer {
 
     private final AvroByteArrayConverter<Notification> converter = new AvroByteArrayConverter<Notification>(Notification.class);
 
-    void notify(NotificationListener listener, Topic topic, byte[] notificationData) throws IOException{
-        listener.onNotification(topic.getId(), fromByteArray(notificationData));
+    void notify(Collection<NotificationListener> listeners, Topic topic, byte[] notificationData) throws IOException{
+        Notification notification = fromByteArray(notificationData);
+        for(NotificationListener listener : listeners){
+            listener.onNotification(topic.getId(), notification);
+        }
     }
     
     private Notification fromByteArray(byte[] data) throws IOException {

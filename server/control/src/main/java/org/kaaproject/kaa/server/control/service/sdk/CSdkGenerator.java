@@ -120,6 +120,7 @@ public class CSdkGenerator extends SdkGenerator {
             String profileSchemaBody,
             String notificationSchemaBody,
             String configurationProtocolSchemaBody,
+            String configurationSchema,
             byte[] defaultConfigurationData,
             List<EventFamilyMetadata> eventFamilies,
             String logSchemaBody,

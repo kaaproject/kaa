@@ -126,6 +126,18 @@ public class JavaSdkGenerator extends SdkGenerator {
     /** The Constant BASE_KAA_CLIENT_SOURCE_TEMPLATE. */
     private static final String BASE_KAA_CLIENT_SOURCE_TEMPLATE = "sdk/java/BaseKaaClient.java.template";
 
+    /** The Constant CONFIGURATION_MANAGER_SOURCE_TEMPLATE. */
+    private static final String CONFIGURATION_MANAGER_SOURCE_TEMPLATE = "sdk/java/cf/ConfigurationManager.java.template";
+    
+    /** The Constant CONFIGURATION_MANAGER_IMPL_SOURCE_TEMPLATE. */
+    private static final String CONFIGURATION_MANAGER_IMPL_SOURCE_TEMPLATE = "sdk/java/cf/ResyncConfigurationManager.java.template";
+
+    /** The Constant CONFIGURATION_LISTENER_SOURCE_TEMPLATE. */
+    private static final String CONFIGURATION_LISTENER_SOURCE_TEMPLATE = "sdk/java/cf/ConfigurationListener.java.template";
+
+    /** The Constant CONFIGURATION_DESERIALIZER_SOURCE_TEMPLATE. */
+    private static final String CONFIGURATION_DESERIALIZER_SOURCE_TEMPLATE = "sdk/java/cf/ConfigurationDeserializer.java.template";
+
     /** The Constant NOTIFICATION_LISTENER_SOURCE_TEMPLATE. */
     private static final String NOTIFICATION_LISTENER_SOURCE_TEMPLATE = "sdk/java/nf/NotificationListener.java.template";
 
@@ -159,6 +171,18 @@ public class JavaSdkGenerator extends SdkGenerator {
     /** The Constant ABSTRACT_PROFILE_CONTAINER. */
     private static final String PROFILE_SERIALIZER = "ProfileSerializer";
 
+    /** The Constant CONFIGURATION_MANAGER. */
+    private static final String CONFIGURATION_MANAGER = "ConfigurationManager";
+    
+    /** The Constant CONFIGURATION_MANAGER. */
+    private static final String CONFIGURATION_MANAGER_IMPL = "ResyncConfigurationManager";
+
+    /** The Constant CONFIGURATION_LISTENER. */
+    private static final String CONFIGURATION_LISTENER = "ConfigurationListener";
+
+    /** The Constant CONFIGURATION_DESERIALIZER. */
+    private static final String CONFIGURATION_DESERIALIZER = "ConfigurationDeserializer";
+
     /** The Constant NOTIFICATION_LISTENER. */
     private static final String NOTIFICATION_LISTENER = "NotificationListener";
 
@@ -191,6 +215,12 @@ public class JavaSdkGenerator extends SdkGenerator {
 
     /** The Constant PROFILE_CLASS_VAR. */
     private static final String PROFILE_CLASS_VAR = "\\$\\{profile_class\\}";
+
+    /** The Constant CONFIGURATION_CLASS_PACKAGE_VAR. */
+    private static final String CONFIGURATION_CLASS_PACKAGE_VAR = "\\$\\{configuration_class_package\\}";
+
+    /** The Constant CONFIGURATION_CLASS_VAR. */
+    private static final String CONFIGURATION_CLASS_VAR = "\\$\\{configuration_class\\}";
 
     /** The Constant NOTIFICATION_CLASS_PACKAGE_VAR. */
     private static final String NOTIFICATION_CLASS_PACKAGE_VAR = "\\$\\{notification_class_package\\}";
@@ -228,8 +258,9 @@ public class JavaSdkGenerator extends SdkGenerator {
     @Override
     public Sdk generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, String appToken, int profileSchemaVersion,
             int configurationSchemaVersion, int notificationSchemaVersion, int logSchemaVersion, String profileSchemaBody,
-            String notificationSchemaBody, String configurationProtocolSchemaBody, byte[] defaultConfigurationData,
-            List<EventFamilyMetadata> eventFamilies, String logSchemaBody, String defaultVerifierToken) throws Exception {
+            String notificationSchemaBody, String configurationProtocolSchemaBody, String configurationSchemaBody,
+            byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies, String logSchemaBody, String defaultVerifierToken)
+            throws Exception {
 
         String sdkTemplateLocation;
         if (sdkPlatform == SdkPlatform.JAVA) {
@@ -254,15 +285,52 @@ public class JavaSdkGenerator extends SdkGenerator {
 
         replacementData.put(CLIENT_PROPERTIES, new ZipEntryData(new ZipEntry(CLIENT_PROPERTIES), clientPropertiesData));
 
+        List<JavaDynamicBean> javaSources = new ArrayList<JavaDynamicBean>();
+
+        Schema configurationSchema = new Schema.Parser().parse(configurationSchemaBody);
+        String configurationClassName = configurationSchema.getName();
+        String configurationClassPackage = configurationSchema.getNamespace();
+
+        javaSources.addAll(generateSchemaSources(configurationSchema));
+
+        String configurationManagerImplTemplate = readResource(CONFIGURATION_MANAGER_IMPL_SOURCE_TEMPLATE);
+        String configurationManagerImplSource = configurationManagerImplTemplate.replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR,
+                configurationClassPackage).replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
+        
+        JavaDynamicBean configurationManagerImplClassBean = new JavaDynamicBean(CONFIGURATION_MANAGER_IMPL, configurationManagerImplSource);
+        javaSources.add(configurationManagerImplClassBean);
+        
+        String configurationManagerTemplate = readResource(CONFIGURATION_MANAGER_SOURCE_TEMPLATE);
+        String configurationManagerSource = configurationManagerTemplate.replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR,
+                configurationClassPackage).replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
+        
+        JavaDynamicBean configurationManagerClassBean = new JavaDynamicBean(CONFIGURATION_MANAGER, configurationManagerSource);
+        javaSources.add(configurationManagerClassBean);
+
+        String configurationListenerTemplate = readResource(CONFIGURATION_LISTENER_SOURCE_TEMPLATE);
+        String configurationListenerSource = configurationListenerTemplate.replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR,
+                configurationClassPackage).replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
+
+        JavaDynamicBean configurationListenerClassBean = new JavaDynamicBean(CONFIGURATION_LISTENER, configurationListenerSource);
+        javaSources.add(configurationListenerClassBean);
+
+
+        String configurationDeserializerSourceTemplate = readResource(CONFIGURATION_DESERIALIZER_SOURCE_TEMPLATE);
+        String configurationDeserializerSource = configurationDeserializerSourceTemplate.replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR,
+                configurationClassPackage).replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
+
+        JavaDynamicBean configurationDeserializerClassBean = new JavaDynamicBean(CONFIGURATION_DESERIALIZER,
+                configurationDeserializerSource);
+        javaSources.add(configurationDeserializerClassBean);
+
         Schema profileSchema = new Schema.Parser().parse(profileSchemaBody);
         String profileClassName = profileSchema.getName();
         String profileClassPackage = profileSchema.getNamespace();
 
-        List<JavaDynamicBean> javaSources = new ArrayList<JavaDynamicBean>();
-        if(profileSchemaVersion != DEFAULT_SCHEMA_VERSION){
+        if (profileSchemaVersion != DEFAULT_SCHEMA_VERSION) {
             javaSources.addAll(generateSchemaSources(profileSchema));
         }
-        
+
         String profileContainerTemplate = readResource(PROFILE_CONTAINER_SOURCE_TEMPLATE);
         String profileContainerSource = profileContainerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage).replaceAll(
                 PROFILE_CLASS_VAR, profileClassName);
@@ -284,7 +352,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         String notificationClassName = notificationSchema.getName();
         String notificationClassPackage = notificationSchema.getNamespace();
 
-        if(notificationSchemaVersion != DEFAULT_SCHEMA_VERSION){
+        if (notificationSchemaVersion != DEFAULT_SCHEMA_VERSION) {
             javaSources.addAll(generateSchemaSources(notificationSchema));
         }
 
@@ -303,7 +371,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         javaSources.add(notificationDeserializerClassBean);
 
         Schema logSchema = new Schema.Parser().parse(logSchemaBody);
-        if(logSchemaVersion != DEFAULT_SCHEMA_VERSION){
+        if (logSchemaVersion != DEFAULT_SCHEMA_VERSION) {
             javaSources.addAll(generateSchemaSources(logSchema));
         }
 
@@ -348,14 +416,18 @@ public class JavaSdkGenerator extends SdkGenerator {
         javaSources.add(userVerifierConstantsClassBean);
 
         String kaaClientTemplate = readResource(KAA_CLIENT_SOURCE_TEMPLATE);
-        String kaaClientSource = kaaClientTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace()).replaceAll(
-                LOG_RECORD_CLASS_VAR, logSchema.getName());
+        String kaaClientSource = kaaClientTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace())
+                .replaceAll(LOG_RECORD_CLASS_VAR, logSchema.getName())
+                .replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR, configurationClassPackage)
+                .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
         JavaDynamicBean kaaClientClassBean = new JavaDynamicBean(KAA_CLIENT, kaaClientSource);
         javaSources.add(kaaClientClassBean);
 
         String baseKaaClientTemplate = readResource(BASE_KAA_CLIENT_SOURCE_TEMPLATE);
-        String baseKaaClientSource = baseKaaClientTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace()).replaceAll(
-                LOG_RECORD_CLASS_VAR, logSchema.getName());
+        String baseKaaClientSource = baseKaaClientTemplate.replaceAll(LOG_RECORD_CLASS_PACKAGE_VAR, logSchema.getNamespace())
+                .replaceAll(LOG_RECORD_CLASS_VAR, logSchema.getName())
+                .replaceAll(CONFIGURATION_CLASS_PACKAGE_VAR, configurationClassPackage)
+                .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
         JavaDynamicBean baseKaaClientClassBean = new JavaDynamicBean(BASE_KAA_CLIENT, baseKaaClientSource);
         javaSources.add(baseKaaClientClassBean);
 
