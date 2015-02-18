@@ -16,27 +16,33 @@
 
 package org.kaaproject.kaa.client.profile;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
+import java.io.IOException;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.ProfileTransport;
+import org.kaaproject.kaa.schema.base.Profile;
+import org.mockito.Mockito;
 
 public class DefaultProfileManagerTest {
 
     @Test
-    public void testProfileManager() {
+    public void testProfileManager() throws IOException {
         ProfileTransport transport = mock(ProfileTransport.class);
-        ProfileContainer container = mock(ProfileContainer.class);
 
         DefaultProfileManager profileManager = new DefaultProfileManager(transport);
-        profileManager.setProfileContainer(container);
-
-        assertNotNull(profileManager.getSerializedProfileContainer());
-        verify(container, times(1)).setProfileListener(any(ProfileListener.class));
+        profileManager.setProfileContainer(new ProfileContainer() {
+            
+            @Override
+            public Profile getProfile() {
+                return new Profile();
+            }
+        });
+        Assert.assertNotNull(profileManager.getSerializedProfile());
+        profileManager.updateProfile();
+        Mockito.verify(transport).sync();
     }
 
 }

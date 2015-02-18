@@ -25,14 +25,14 @@ import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultProfileTransport;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
-import org.kaaproject.kaa.client.profile.DefaultProfileListener;
-import org.kaaproject.kaa.client.profile.ProfileListener;
+import org.kaaproject.kaa.client.profile.DefaultProfileManager;
+import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.client.profile.ProfileManager;
-import org.kaaproject.kaa.client.profile.SerializedProfileContainer;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.schema.base.Profile;
 import org.mockito.Mockito;
 
 public class DefaultProfileTransportTest {
@@ -76,9 +76,7 @@ public class DefaultProfileTransportTest {
         Mockito.when(clientState.isRegistered()).thenReturn(false);
         KaaClientProperties properties = Mockito.mock(KaaClientProperties.class);
         ProfileManager profileManager = Mockito.mock(ProfileManager.class);
-        SerializedProfileContainer profileContainer = Mockito.mock(SerializedProfileContainer.class);
-        Mockito.when(profileContainer.getSerializedProfile()).thenReturn(new byte [] { 1, 2, 3 });
-        Mockito.when(profileManager.getSerializedProfileContainer()).thenReturn(profileContainer);
+        Mockito.when(profileManager.getSerializedProfile()).thenReturn(new byte [] { 1, 2, 3 });
 
         ProfileTransport transport = new DefaultProfileTransport();
         transport.createProfileRequest();
@@ -91,7 +89,7 @@ public class DefaultProfileTransportTest {
         transport.createProfileRequest();
         Mockito.verify(clientState, Mockito.times(1)).getEndpointAccessToken();
         Mockito.verify(properties, Mockito.times(1)).getVersionInfo();
-        Mockito.verify(profileContainer, Mockito.times(1)).getSerializedProfile();
+        Mockito.verify(profileManager, Mockito.times(1)).getSerializedProfile();
     }
 
     @Test
@@ -102,9 +100,7 @@ public class DefaultProfileTransportTest {
         Mockito.when(clientState.getProfileHash()).thenReturn(EndpointObjectHash.fromSHA1(profile));
         KaaClientProperties properties = Mockito.mock(KaaClientProperties.class);
         ProfileManager profileManager = Mockito.mock(ProfileManager.class);
-        SerializedProfileContainer profileContainer = Mockito.mock(SerializedProfileContainer.class);
-        Mockito.when(profileContainer.getSerializedProfile()).thenReturn(new byte [] { 1, 2, 3 });
-        Mockito.when(profileManager.getSerializedProfileContainer()).thenReturn(profileContainer);
+        Mockito.when(profileManager.getSerializedProfile()).thenReturn(new byte [] { 1, 2, 3 });
 
         ProfileTransport transport = new DefaultProfileTransport();
         transport.createProfileRequest();
@@ -159,10 +155,16 @@ public class DefaultProfileTransportTest {
     @Test
     public void testProfileListener() throws Exception {
         ProfileTransport transport = Mockito.mock(ProfileTransport.class);
-        ProfileListener listener = new DefaultProfileListener(transport);
+        ProfileManager manager = new DefaultProfileManager(transport);
 
-        listener.onProfileUpdated(null);
-        listener.onProfileUpdated(new byte[1]);
+        manager.setProfileContainer(new ProfileContainer() {
+            
+            @Override
+            public Profile getProfile() {
+                return new Profile();
+            }
+        });
+        manager.updateProfile();
 
         Mockito.verify(transport, Mockito.times(1)).sync();
     }

@@ -30,7 +30,6 @@ import org.kaaproject.kaa.server.sync.LogClientSync;
 import org.kaaproject.kaa.server.sync.NotificationClientSync;
 import org.kaaproject.kaa.server.sync.ProfileClientSync;
 import org.kaaproject.kaa.server.sync.UserClientSync;
-import org.kaaproject.kaa.server.sync.platform.AvroEncDec;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
@@ -58,7 +57,7 @@ public class SyncRequestMessageTest {
         Assert.assertTrue(message.isValid(TransportType.PROFILE));
 
         Assert.assertFalse(message.isValid(TransportType.CONFIGURATION));
-        other.setConfigurationSync(new ConfigurationClientSync(10, ByteBuffer.wrap("String".getBytes())));
+        other.setConfigurationSync(new ConfigurationClientSync(10, ByteBuffer.wrap("String".getBytes()), false));
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.CONFIGURATION));
 

@@ -17,15 +17,18 @@
 package org.kaaproject.kaa.client;
 
 import java.io.File;
+import java.io.IOException;
 
-import org.junit.Assert;
+import org.apache.commons.codec.binary.Base64;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
+import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+import org.kaaproject.kaa.schema.base.Configuration;
+import org.kaaproject.kaa.schema.base.Profile;
 import org.mockito.Mockito;
 
 public class DesktopKaaClientTest {
-
 
     @Before
     public void cleanup() {
@@ -36,64 +39,50 @@ public class DesktopKaaClientTest {
     }
 
     @Test
-    public void testClientInit() throws Exception{
+    public void testClientInit() throws Exception {
 
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        DesktopKaaClient clientSpy = Mockito.spy(new DesktopKaaClient());
+        KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null));
 
-        clientSpy.init();
+        try {
+            clientSpy.start();
+        } finally {
+            clientSpy.stop();
+        }
 
-        Assert.assertNotNull(clientSpy.getConfigurationManager());
-        Assert.assertNotNull(clientSpy.getConfigurationPersistenceManager());
-        Assert.assertNotNull(clientSpy.getDeltaManager());
-        Assert.assertNotNull(clientSpy.getNotificationManager());
-        Assert.assertNotNull(clientSpy.getProfileManager());
-        Assert.assertNotNull(clientSpy.getSchemaPersistenceManager());
+    }
+    
+    public static void main(String[] args) throws IOException{
+        GenericAvroConverter<Configuration> converter = new GenericAvroConverter<Configuration>(Configuration.getClassSchema());
+        System.out.println(Base64.encodeBase64String(converter.encode(new Configuration())));
     }
 
     @Test
-    public void testClientStartBeforeInit() throws Exception{
+    public void testClientStartBeforeInit() throws Exception {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        DesktopKaaClient clientSpy = Mockito.spy(new DesktopKaaClient());
+        KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null));
 
-        //does nothing before initialization;
+        // does nothing before initialization;
         clientSpy.start();
-
-        Assert.assertNotNull(clientSpy.getConfigurationManager());
-        Assert.assertNotNull(clientSpy.getConfigurationPersistenceManager());
-        Assert.assertNotNull(clientSpy.getDeltaManager());
-        Assert.assertNotNull(clientSpy.getNotificationManager());
-        Assert.assertNotNull(clientSpy.getProfileManager());
-        Assert.assertNotNull(clientSpy.getSchemaPersistenceManager());
     }
 
     @Test
-    public void testClientStartPollAfterInit() throws Exception{
+    public void testClientStartPollAfterInit() throws Exception {
 
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
 
-        DesktopKaaClient clientSpy = Mockito.spy(new DesktopKaaClient());
+        KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null));
         ProfileContainer profileContainerMock = Mockito.mock(ProfileContainer.class);
 
-        clientSpy.init();
+        clientSpy.setProfileContainer(profileContainerMock);
 
-        clientSpy.getProfileManager().setProfileContainer(profileContainerMock);
-
-        Mockito.when(profileContainerMock.getSerializedProfile()).thenReturn(new byte[0]);
+        Mockito.when(profileContainerMock.getProfile()).thenReturn(new Profile());
 
         clientSpy.start();
 
         Thread.sleep(5000L);
 
         clientSpy.stop();
-
-        Assert.assertNotNull(clientSpy.getConfigurationManager());
-        Assert.assertNotNull(clientSpy.getConfigurationPersistenceManager());
-        Assert.assertNotNull(clientSpy.getDeltaManager());
-        Assert.assertNotNull(clientSpy.getNotificationManager());
-        Assert.assertNotNull(clientSpy.getProfileManager());
-        Assert.assertNotNull(clientSpy.getSchemaPersistenceManager());
     }
-
 
 }

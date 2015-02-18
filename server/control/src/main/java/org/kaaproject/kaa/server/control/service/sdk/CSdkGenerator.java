@@ -102,15 +102,13 @@ public class CSdkGenerator extends SdkGenerator {
      */
     @Override
     public Sdk generateSdk(String buildVersion,
-                           List<BootstrapNodeInfo> bootstrapNodes,
-                           String appToken,
-                           int profileSchemaVersion,
-                           int configurationSchemaVersion,
-                           int notificationSchemaVersion,
-                           int logSchemaVersion,
+                           List<BootstrapNodeInfo> bootstrapNodes, String appToken,
+                           int profileSchemaVersion, int configurationSchemaVersion,
+                           int notificationSchemaVersion, int logSchemaVersion,
                            String profileSchemaBody,
                            String notificationSchemaBody,
                            String configurationProtocolSchemaBody,
+                           String configurationBaseSchemaBody,
                            byte[] defaultConfigurationData,
                            List<EventFamilyMetadata> eventFamilies,
                            String logSchemaBody,
@@ -144,7 +142,7 @@ public class CSdkGenerator extends SdkGenerator {
             cSources.addAll(generateLogSources(logSchemaBody));
         }
 
-        if (!StringUtils.isBlank(configurationProtocolSchemaBody)) {
+        if (!StringUtils.isBlank(configurationBaseSchemaBody)) {
             cSources.addAll(generateConfigurationSources(configurationProtocolSchemaBody));
         }
 
@@ -308,6 +306,7 @@ public class CSdkGenerator extends SdkGenerator {
 
         context.put("eventFamilies", eventFamilies);
         context.put("bootstrapNodes", bootstrapNodes);
+        context.put("configurationData", defaultConfigurationData);
 
         context.put("Base64", Base64.class);
         context.put("Integer", Integer.class);

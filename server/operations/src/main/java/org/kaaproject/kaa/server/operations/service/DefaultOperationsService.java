@@ -534,7 +534,7 @@ public class DefaultOperationsService implements OperationsService {
         if (request.getConfigurationHash() != null) {
             deltaRequest = new GetDeltaRequest(metaData.getApplicationToken(),
                     EndpointObjectHash.fromBytes(request.getConfigurationHash().array()),
-                    request.getAppStateSeqNumber());
+                    request.getAppStateSeqNumber(), request.isResyncOnly());
         } else {
             deltaRequest = new GetDeltaRequest(metaData.getApplicationToken(), request.getAppStateSeqNumber());
         }

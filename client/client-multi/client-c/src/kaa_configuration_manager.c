@@ -26,6 +26,7 @@
 #include "collections/kaa_list.h"
 #include "kaa_common.h"
 #include "kaa_status.h"
+#include "kaa_defaults.h"
 #include "kaa_platform_utils.h"
 #include "kaa_platform_common.h"
 #include "utilities/kaa_mem.h"
@@ -76,21 +77,27 @@ kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **confi
     bool need_deallocation = false;
     ext_configuration_read(&buffer, &buffer_size, &need_deallocation);
     if (!buffer || !buffer_size) {
-        // TODO: use default configuration
+        need_deallocation = false;
+#if KAA_CONFIGURATION_DATA_LENGTH > 0
+        buffer = (char *)KAA_CONFIGURATION_DATA;
+        buffer_size = KAA_CONFIGURATION_DATA_LENGTH;
+#endif
     }
 
-    ext_calculate_sha_hash(buffer, buffer_size, manager->configuration_hash);
+    if (buffer && buffer_size > 0) {
+        ext_calculate_sha_hash(buffer, buffer_size, manager->configuration_hash);
+        manager->root_record = kaa_configuration_manager_deserialize(buffer, buffer_size);
 
-    manager->root_record = kaa_configuration_manager_deserialize(buffer, buffer_size);
-    if (!manager->root_record) {
-        KAA_FREE(manager);
-        if (need_deallocation && buffer)
+        if (!manager->root_record) {
+            KAA_FREE(manager);
+            if (need_deallocation && buffer)
+                KAA_FREE(buffer);
+            return KAA_ERR_NOMEM;
+        }
+
+        if (need_deallocation)
             KAA_FREE(buffer);
-        return KAA_ERR_NOMEM;
     }
-
-    if (need_deallocation)
-        KAA_FREE(buffer);
 
     *configuration_manager_p = manager;
     return KAA_ERR_NONE;

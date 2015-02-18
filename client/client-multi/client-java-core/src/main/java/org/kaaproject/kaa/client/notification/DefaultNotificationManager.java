@@ -45,6 +45,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
 
     private Map<String, Topic> topics = new HashMap<String, Topic>();
 
+    private final NotificationDeserializer deserializer = new NotificationDeserializer();
     private final Set<NotificationListener> mandatoryListeners = new HashSet<NotificationListener>();
     private final Map<String, List<NotificationListener>> optionalListeners = new HashMap<String, List<NotificationListener>>();
     private final Set<NotificationTopicListListener> topicsListeners = new HashSet<NotificationTopicListListener>();
@@ -54,6 +55,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     private final KaaClientState state;
 
     private volatile NotificationTransport transport;
+    
 
     public DefaultNotificationManager(KaaClientState state, NotificationTransport transport) {
         this.state = state;
@@ -92,74 +94,6 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
         synchronized (mandatoryListeners) {
             mandatoryListeners.remove(listener);
         }
-    }
-
-    @Deprecated
-    @Override
-    public void updateTopicSubscriptions(Map<String, List<NotificationListenerInfo>> subscribers)
-            throws UnavailableTopicException
-    {
-        if (subscribers == null) {
-            LOG.warn("Failed to update topic subsciptions: null subscribers");
-            throw new IllegalArgumentException("NUll subscribers");
-        }
-
-        List<SubscriptionCommand> subscriptionUpdate = new LinkedList<>();
-
-        for (Map.Entry<String, List<NotificationListenerInfo>> cursor : subscribers.entrySet()) {
-            Topic listenerTopic = findTopicById(cursor.getKey());
-
-            synchronized (optionalListeners) {
-                List<NotificationListener> listeners = optionalListeners.get(cursor.getKey());
-
-                if (cursor.getValue() != null) {
-                    for (NotificationListenerInfo subscriberInfo : cursor.getValue()) {
-                        if (subscriberInfo.getAction() == NotificationListenerInfo.Action.ADD) {
-                            if (listeners == null) {
-                                listeners = new LinkedList<NotificationListener>();
-                                optionalListeners.put(listenerTopic.getId(), listeners);
-                            }
-
-                            if (listeners.isEmpty() && listenerTopic.getSubscriptionType() == SubscriptionType.OPTIONAL) {
-                                subscriptionUpdate.add(new SubscriptionCommand(
-                                        listenerTopic.getId(), SubscriptionCommandType.ADD));
-                            }
-
-                            if (subscriberInfo.getListener() != null && !listeners.contains(subscriberInfo.getListener())) {
-                                listeners.add(subscriberInfo.getListener());
-                            }
-                        } else if (listeners != null) {
-                            listeners.remove(subscriberInfo.getListener());
-
-                            if (listeners.isEmpty() && listenerTopic.getSubscriptionType() == SubscriptionType.OPTIONAL) {
-                                subscriptionUpdate.add(new SubscriptionCommand(
-                                        listenerTopic.getId(), SubscriptionCommandType.REMOVE));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!subscriptionUpdate.isEmpty()) {
-            updateSubscriptionInfo(subscriptionUpdate);
-        }
-
-        if (transport != null) {
-            transport.sync();
-        }
-    }
-
-    @Deprecated
-    @Override
-    public void addMandatoryTopicsListener(NotificationListener listener) {
-        addNotificationListener(listener);
-    }
-
-    @Deprecated
-    @Override
-    public void removeMandatoryTopicsListener(NotificationListener listener) {
-        removeNotificationListener(listener);
     }
 
     @Override
@@ -372,7 +306,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
                     if (listeners != null && !listeners.isEmpty()) {
                         hasOwner = true;
                         for (NotificationListener listener : listeners) {
-                            listener.onNotificationRaw(topic.getId(), notification.getBody());
+                            notifyListeners(listener, topic, notification);
                         }
                     }
                 }
@@ -380,7 +314,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
                 if (!hasOwner) {
                     synchronized (mandatoryListeners) {
                         for (NotificationListener listener : mandatoryListeners) {
-                            listener.onNotificationRaw(topic.getId(), notification.getBody());
+                            notifyListeners(listener, topic, notification);
                         }
                     }
                 }
@@ -388,6 +322,12 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
                 LOG.warn("Received notification for an unknown topic (id={})"
                                                     , notification.getTopicId());
             }
+        }
+    }
+
+    private void notifyListeners(NotificationListener listener, Topic topic, Notification notification) throws IOException {
+        if(notification.getBody() != null){
+            deserializer.notify(listener, topic, notification.getBody().array());
         }
     }
 
