@@ -70,7 +70,7 @@ public abstract class SdkGenerator {
             String profileSchemaBody, 
             String notificationSchemaBody, 
             String configurationProtocolSchemaBody,
-            String configurationSchemaBody,
+            String configurationBaseSchemaBody,
             byte[] defaultConfigurationData, 
             List<EventFamilyMetadata> eventFamilies, 
             String logSchemaBody,

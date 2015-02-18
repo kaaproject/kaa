@@ -17,14 +17,10 @@
 package org.kaaproject.kaa.client;
 
 import java.io.File;
-import java.io.IOException;
 
-import org.apache.commons.codec.binary.Base64;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
-import org.kaaproject.kaa.common.avro.GenericAvroConverter;
-import org.kaaproject.kaa.schema.base.Configuration;
 import org.kaaproject.kaa.schema.base.Profile;
 import org.mockito.Mockito;
 
@@ -50,11 +46,6 @@ public class DesktopKaaClientTest {
             clientSpy.stop();
         }
 
-    }
-    
-    public static void main(String[] args) throws IOException{
-        GenericAvroConverter<Configuration> converter = new GenericAvroConverter<Configuration>(Configuration.getClassSchema());
-        System.out.println(Base64.encodeBase64String(converter.encode(new Configuration())));
     }
 
     @Test

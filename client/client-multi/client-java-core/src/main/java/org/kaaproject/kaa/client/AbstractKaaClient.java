@@ -346,7 +346,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     @Override
-    public boolean removeListener(ConfigurationListener listener) {
+    public boolean removeConfigurationListener(ConfigurationListener listener) {
         return this.configurationManager.removeListener(listener);
     }
 

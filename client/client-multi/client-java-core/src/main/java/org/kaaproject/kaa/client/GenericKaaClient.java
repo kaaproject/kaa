@@ -121,7 +121,7 @@ public interface GenericKaaClient {
      * @param listener to register
      * @return true if listener is removed, false if not found
      */
-    boolean removeListener(ConfigurationListener listener);
+    boolean removeConfigurationListener(ConfigurationListener listener);
 
     /**
      * <p>

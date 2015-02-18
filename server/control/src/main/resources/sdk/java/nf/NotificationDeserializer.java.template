@@ -36,8 +36,11 @@ class NotificationDeserializer {
 
     private final AvroByteArrayConverter<${notification_class}> converter = new AvroByteArrayConverter<${notification_class}>(${notification_class}.class);
 
-    void notify(NotificationListener listener, Topic topic, byte[] notificationData) throws IOException{
-        listener.onNotification(topic.getId(), fromByteArray(notificationData));
+    void notify(Collection<NotificationListener> listeners, Topic topic, byte[] notificationData) throws IOException{
+        ${notification_class} notification = fromByteArray(notificationData);
+        for(NotificationListener listener : listeners){
+            listener.onNotification(topic.getId(), notification);
+        }
     }
     
     private ${notification_class} fromByteArray(byte[] data) throws IOException {

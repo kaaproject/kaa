@@ -36,8 +36,11 @@ class ConfigurationDeserializer {
 
     private final AvroByteArrayConverter<${configuration_class}> converter = new AvroByteArrayConverter<${configuration_class}>(${configuration_class}.class);
 
-    void notify(ConfigurationListener listener, byte[] configurationData) throws IOException {
-        listener.onConfigurationUpdate(fromByteArray(configurationData));
+    void notify(Collection<ConfigurationListener> listeners, byte[] configurationData) throws IOException {
+        ${configuration_class} configuration = fromByteArray(configurationData);
+        for(ConfigurationListener listener : listeners){
+            listener.onConfigurationUpdate(configuration);
+        }
     }
 
     ${configuration_class} fromByteArray(byte[] data) throws IOException {
