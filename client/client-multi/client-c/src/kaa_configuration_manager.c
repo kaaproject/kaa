@@ -172,10 +172,12 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
         reader->current += sizeof(uint32_t);
         if (extension_options & KAA_CONFIGURATION_BODY_PRESENT) {
             uint32_t body_size = KAA_NTOHL(*((uint32_t *) reader->current));
+            reader->current += sizeof(uint32_t);
+
             char body[body_size];
             kaa_error_t error_code = kaa_platform_message_read_aligned(reader, body, body_size);
             if (error_code) {
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to read configuration body");
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to read configuration body, size %u", body_size);
                 return KAA_ERR_READ_FAILED;
             }
 #if KAA_CONFIGURATION_DELTA_SUPPORT
@@ -185,15 +187,14 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
                 self->root_record->destroy(self->root_record);
 
             self->root_record = kaa_configuration_manager_deserialize(body, body_size);
-            if (self->root_record) {
-                KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Failed to deserialize configuration body");
+            if (!self->root_record) {
+                KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Failed to deserialize configuration body, size %u", body_size);
                 return KAA_ERR_READ_FAILED;
             }
 
             ext_calculate_sha_hash(body, body_size, self->configuration_hash);
             ext_configuration_store(body, body_size);
 #endif
-
             if (self->root_receiver.on_configuration_updated)
                 self->root_receiver.on_configuration_updated(self->root_receiver.context, self->root_record);
         }

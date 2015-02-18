@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file ext_configuration_persistence.h
+ * @brief External interface for storing/loading the configuration data used by Kaa Configuration subsystem.
+ */
+
 #ifndef EXT_CONFIGURATION_PERSISTENCE_H_
 #define EXT_CONFIGURATION_PERSISTENCE_H_
 
@@ -21,6 +26,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 
 /**
@@ -47,6 +53,7 @@ void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deal
  *
  */
 void ext_configuration_store(const char *buffer, size_t buffer_size);
+
 
 
 #ifdef __cplusplus

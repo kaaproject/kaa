@@ -18,16 +18,15 @@
 #define KAA_CONFIGURATION_MANAGER_H_
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
 
 
 #include "gen/kaa_configuration_definitions.h"
 #include "platform/ext_configuration_receiver.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 #ifndef KAA_CONFIGURATION_MANAGER_T
@@ -37,16 +36,32 @@ extern "C" {
 
 
 
+/**
+ * @brief Retrieves the current configuration data.
+ *
+ * @param[in] self      The valid pointer to @link kaa_configuration_manager_t @endlink instance.
+ *
+ * @return  The current configuration data (NOTE: don't modify this instance), or NULL if something went wrong.
+ */
 const kaa_root_configuration_t *kaa_configuration_manager_get_configuration(kaa_configuration_manager_t *self);
 
 
 
+/**
+ * @brief Sets the new receiver of updated configuration data. See @link kaa_configuration_root_receiver_t @endlink .
+ *
+ * @param[in] self      The valid pointer to @link kaa_configuration_manager_t @endlink instance.
+ * @param[in] receiver  The new receiver instance. This callback will be called each time when the new configuration arrives.
+ *
+ * @return  Error code.
+ */
 kaa_error_t kaa_configuration_manager_set_root_receiver(kaa_configuration_manager_t *self, const kaa_configuration_root_receiver_t *receiver);
 
 
-#endif /* KAA_DISABLE_FEATURE_CONFIGURATION */
 
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
+#endif /* KAA_DISABLE_FEATURE_CONFIGURATION */
 #endif /* KAA_CONFIGURATION_MANAGER_H_ */

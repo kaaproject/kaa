@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+/**
+ * @file ext_configuration_receiver.h
+ * @brief External interface for receiving configuration updates used by Kaa Configuration subsystem.
+ * Should be implemented to automatically receive configuration updates.
+ */
+
 #ifndef EXT_CONFIGURATION_RECEIVER_H_
 #define EXT_CONFIGURATION_RECEIVER_H_
 
@@ -25,15 +31,29 @@ extern "C" {
 #endif
 
 
+
+/**
+ * @brief Notifies about the new configuration data. See @link kaa_configuration_manager_set_root_receiver @endlink .
+ *
+ * @param[in] context           Callback's context.
+ * @param[in] configuration     The latest configuration data. NOTE: don't modify this instance.
+ *
+ * @return  Error code.
+ */
 typedef kaa_error_t (*on_configuration_updated_fn)(void *context, const kaa_root_configuration_t *configuration);
 
 
 
+/**
+ * @brief Interface for the configuration receiver.
+ */
 typedef struct
 {
-    void *context;
-    on_configuration_updated_fn on_configuration_updated;
+    void *context;                                              /**< Context to pass to the function below. */
+    on_configuration_updated_fn on_configuration_updated;       /**< Called when the new configuration data arrives. */
 } kaa_configuration_root_receiver_t;
+
+
 
 
 #ifdef __cplusplus
