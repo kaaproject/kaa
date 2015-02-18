@@ -25,10 +25,11 @@ import org.kaaproject.kaa.client.AndroidKaaPlatformContext;
 import org.kaaproject.kaa.client.Kaa;
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.KaaClientStateListener;
+import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.registration.CurrentEndpointAttachListener;
 import org.kaaproject.kaa.client.event.registration.CurrentEndpointDetachListener;
-import org.kaaproject.kaa.client.exceptions.KaaClientException;
+import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.client.notification.NotificationListener;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
 import org.kaaproject.kaa.demo.smarthouse.device.DeviceEventClassFamily;
@@ -281,7 +282,7 @@ public class SmartHouseController implements DeviceEventClassFamily.DefaultEvent
         protected void executeAsync() {
             try {
                 Log.d("Kaa", "Initializing Kaa client..."); 
-                client = Kaa.newClient(new AndroidKaaPlatformContext(context), new KaaStateListener());
+                client = Kaa.newClient(new AndroidKaaPlatformContext(context), new SimpleKaaClientStateListener());
 
                 EventFamilyFactory eventFamilyFactory = client.getEventFamilyFactory();
                 devices = eventFamilyFactory.getDeviceEventClassFamily();
@@ -606,51 +607,6 @@ public class SmartHouseController implements DeviceEventClassFamily.DefaultEvent
     public void onEvent(PlaybackInfoResponse playbackInfoResponse, String sourceEndpointKey) {
         if (deviceStore != null) {
             deviceStore.onDeviceInfoDiscovered(sourceEndpointKey, DeviceType.SOUND_SYSTEM, playbackInfoResponse.getPlaybackInfo());
-        }
-    }
-
-    public static class KaaStateListener implements KaaClientStateListener{
-
-
-        @Override
-        public void onStarted() {
-            Log.i(TAG, "Kaa client started");
-        }
-
-        @Override
-        public void onStopped() {
-            Log.i(TAG, "Kaa client stopped");
-        }
-        
-        @Override
-        public void onPaused() {
-            Log.i(TAG, "Kaa client paused");
-        }
-
-        @Override
-        public void onResume() {
-            Log.i(TAG, "Kaa client resumed");
-        }
-
-        @Override
-        public void onPauseFailure(KaaClientException e) {
-            Log.e(TAG, "Failure during kaa client pause", e);
-        }
-
-        
-        @Override
-        public void onResumeFailure(KaaClientException e) {
-            Log.e(TAG, "Failure during kaa client resume", e);
-        }
-        
-        @Override
-        public void onStartupFailure(KaaClientException e) {
-            Log.e(TAG, "Failure during kaa client start", e);
-        }
-
-        @Override
-        public void onStopFailure(KaaClientException e) {
-            Log.e(TAG, "Failure during kaa client stop", e);
         }
     }
 }

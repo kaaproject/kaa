@@ -20,7 +20,7 @@ import java.io.IOException;
 import javax.annotation.Generated;
 
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
-import ${configuration_record_class_package}.${configuration_record_class};
+import ${configuration_class_package}.${configuration_class};
 
 /**
  * This class deserialize binary data to configuration object.
@@ -34,13 +34,13 @@ import ${configuration_record_class_package}.${configuration_record_class};
 @Generated("ConfigurationDeserializer.java.template")
 class ConfigurationDeserializer {
 
-    private final AvroByteArrayConverter<${configuration_record_class}> converter = new AvroByteArrayConverter<${configuration_record_class}>(${configuration_record_class}.class);
+    private final AvroByteArrayConverter<${configuration_class}> converter = new AvroByteArrayConverter<${configuration_class}>(${configuration_class}.class);
 
     void notify(ConfigurationListener listener, byte[] configurationData) throws IOException {
         listener.onConfigurationUpdate(fromByteArray(configurationData));
     }
 
-    ${configuration_record_class} fromByteArray(byte[] data) throws IOException {
+    ${configuration_class} fromByteArray(byte[] data) throws IOException {
         return converter.fromByteArray(data);
     }
 }

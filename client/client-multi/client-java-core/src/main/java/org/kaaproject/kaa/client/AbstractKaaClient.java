@@ -68,6 +68,7 @@ import org.kaaproject.kaa.client.event.registration.DefaultEndpointRegistrationM
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
 import org.kaaproject.kaa.client.exceptions.KaaClusterConnectionException;
 import org.kaaproject.kaa.client.exceptions.KaaException;
+import org.kaaproject.kaa.client.exceptions.KaaRuntimeException;
 import org.kaaproject.kaa.client.logging.AbstractLogCollector;
 import org.kaaproject.kaa.client.logging.DefaultLogCollector;
 import org.kaaproject.kaa.client.logging.LogStorage;
@@ -263,7 +264,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 return;
             }
             //Load configuration
-            configurationManager.getConfiguration();
+            configurationManager.init();
             bootstrapManager.receiveOperationsServerList();
             if (stateListener != null) {
                 stateListener.onStarted();
@@ -271,6 +272,10 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         } catch (TransportException e) {
             if (stateListener != null) {
                 stateListener.onStartFailure(new KaaClusterConnectionException(e));
+            }
+        } catch (KaaRuntimeException e) {
+            if (stateListener != null) {
+                stateListener.onStartFailure(new KaaException(e));
             }
         }
     }
@@ -336,7 +341,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     @Override
-    public boolean addListener(ConfigurationListener listener) {
+    public boolean addConfigurationListener(ConfigurationListener listener) {
         return this.configurationManager.addListener(listener);
     }
 

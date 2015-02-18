@@ -20,7 +20,7 @@ import java.security.GeneralSecurityException;
 
 import javax.annotation.Generated;
 
-import ${configuration_record_class_package}.${configuration_record_class};
+import ${configuration_class_package}.${configuration_class};
 import ${log_record_class_package}.${log_record_class};
 
 /**
@@ -47,7 +47,7 @@ public class BaseKaaClient extends AbstractKaaClient implements KaaClient {
     }
 
     @Override
-    public ${configuration_record_class} getConfiguration() {
+    public ${configuration_class} getConfiguration() {
         return configurationManager.getConfiguration();
     }
 }

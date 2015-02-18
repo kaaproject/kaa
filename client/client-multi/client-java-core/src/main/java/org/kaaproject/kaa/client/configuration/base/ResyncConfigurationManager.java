@@ -48,5 +48,4 @@ public class ResyncConfigurationManager extends AbstractConfigurationManager imp
             }
         }
     }
-
 }

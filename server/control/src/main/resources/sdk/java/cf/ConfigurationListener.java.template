@@ -17,7 +17,7 @@ package org.kaaproject.kaa.client.configuration.base;
 
 import javax.annotation.Generated;
 
-import ${configuration_record_class_package}.${configuration_record_class};
+import ${configuration_class_package}.${configuration_class};
 
 /**
  * The listener to configuration updates.
@@ -33,5 +33,5 @@ public interface ConfigurationListener {
      * @param configuration the configuration object.
      *
      */
-    void onConfigurationUpdate(${configuration_record_class} configuration);
+    void onConfigurationUpdate(${configuration_class} configuration);
 }

@@ -24,7 +24,7 @@ import org.kaaproject.kaa.client.KaaClientProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ${configuration_record_class_package}.${configuration_record_class};
+import ${configuration_class_package}.${configuration_class};
 
 @Generated("ResyncConfigurationManager.java.template")
 public class ResyncConfigurationManager extends AbstractConfigurationManager implements ConfigurationManager{
@@ -36,7 +36,7 @@ public class ResyncConfigurationManager extends AbstractConfigurationManager imp
     }
 
     @Override
-    public ${configuration_record_class} getConfiguration() {
+    public ${configuration_class} getConfiguration() {
         try {
             return deserializer.fromByteArray(getConfigurationData());
         } catch (IOException e) {

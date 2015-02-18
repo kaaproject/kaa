@@ -17,7 +17,7 @@ package org.kaaproject.kaa.client.configuration.base;
 
 import javax.annotation.Generated;
 
-import ${configuration_record_class_package}.${configuration_record_class};
+import ${configuration_class_package}.${configuration_class};
 
 /**
  * Interface for the configuration manager.<br>
@@ -40,5 +40,5 @@ public interface ConfigurationManager extends GenericConfigurationManager {
      * 
      * @return configuration
      */
-    Configuration getConfiguration();
+    ${configuration_class} getConfiguration();
 }

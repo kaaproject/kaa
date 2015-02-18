@@ -21,6 +21,8 @@ import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
 
 public interface GenericConfigurationManager {
 
+    void init();
+
     boolean addListener(ConfigurationListener listener);
 
     boolean removeListener(ConfigurationListener listener);

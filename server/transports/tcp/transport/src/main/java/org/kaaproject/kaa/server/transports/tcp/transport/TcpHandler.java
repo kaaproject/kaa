@@ -146,16 +146,20 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
             closeFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
                 @Override
                 public void operationComplete(Future<? super Void> future) throws Exception {
-                    if(!sessionDisconnected){
-                        handler.process(new NettyTcpDisconnectMessage(session));
+                    if (!sessionDisconnected) {
+                        if (session != null) {
+                            handler.process(new NettyTcpDisconnectMessage(session));
+                            LOG.trace("[{}] Channel is closed - sending disconnect", uuid);
+                        } else {
+                            LOG.trace("[{}] Session is not yet established. Skip sending disconnect", uuid);
+                        }
                         sessionDisconnected = true;
-                        LOG.trace("[{}] Channel is closed - sending disconnect", uuid);
-                    }else{
+                    } else {
                         LOG.trace("[{}] Channel is closed and disconnect is already sent", uuid);
                     }
                 }
             });
-            
+
             if (session == null) {
                 handler.process(new NettyTcpConnectMessage(uuid, new NettyChannelContext(ctx), (Connect) frame, ChannelType.ASYNC, this,
                         connectResponseConverter, connectErrorConverter));

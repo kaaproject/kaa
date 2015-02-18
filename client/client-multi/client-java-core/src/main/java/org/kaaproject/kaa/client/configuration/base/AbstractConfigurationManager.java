@@ -45,6 +45,11 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
         this.properties = properties;
         container = new HashContainer();
     }
+    
+    @Override
+    public void init() {
+        getConfigurationData();
+    }
 
     @Override
     public boolean addListener(ConfigurationListener listener) {

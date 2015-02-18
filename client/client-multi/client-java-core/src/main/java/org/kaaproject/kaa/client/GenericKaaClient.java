@@ -113,7 +113,7 @@ public interface GenericKaaClient {
      * @param listener to register
      * @return true if listener is registered, false if already registered
      */
-    boolean addListener(ConfigurationListener listener);
+    boolean addConfigurationListener(ConfigurationListener listener);
 
     /**
      * Removes configuration update listener
