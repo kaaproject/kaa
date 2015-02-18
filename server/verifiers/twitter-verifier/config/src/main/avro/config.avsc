@@ -1,0 +1,27 @@
+{
+ "namespace": "org.kaaproject.kaa.server.verifiers.twitter.config.gen",
+ "type": "record",
+ "name": "TwitterAvroConfig",
+ "fields": [
+   {
+        "name": "consumer_key",
+        "displayName": "Consumer Key",
+        "type": "string"
+   },
+   {
+        "name": "consumer_secret",
+        "displayName": "Consumer Secret",
+        "type": "string"
+   },
+   {
+       "name": "max_parallel_connections",
+       "displayName": "Maximal number of allowed connections per verifier",
+       "type": "int", "by_default": "5"
+   },
+   {
+       "name": "twitter_verify_url",
+       "displayName": "Twitter verification URL",
+       "type": "string", "by_default": "https://api.twitter.com/1.1/account/verify_credentials.json"
+   }
+ ]
+}
