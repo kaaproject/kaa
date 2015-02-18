@@ -72,10 +72,11 @@ public class CSdkGenerator extends SdkGenerator {
     private static final String C_HEADER_SUFFIX = ".h";
     private static final String C_SOURCE_SUFFIX = ".c";
 
-    private static final String KAA_CMAKEGEN        = "listfiles/CMakeGen.cmake";
-    private static final String KAA_DEFAULTS_HEADER = "src/kaa_defaults.h";
-    private static final String PROFILE_HEADER      = "src/kaa_profile.h";
-    private static final String LOG_HEADER          = "src/kaa_logging.h";
+    private static final String KAA_CMAKEGEN         = "listfiles/CMakeGen.cmake";
+    private static final String KAA_DEFAULTS_HEADER  = "src/kaa_defaults.h";
+    private static final String PROFILE_HEADER       = "src/kaa_profile.h";
+    private static final String LOG_HEADER           = "src/kaa_logging.h";
+    private static final String CONFIGURATION_HEADER = "src/gen/kaa_configuration_definitions.h";
 
     private static final String KAA_PROFILE_SOURCE_NAME_PATTERN       = "kaa_profile_gen";
     private static final String KAA_LOG_SOURCE_NAME_PATTERN           = "kaa_logging_gen";
@@ -182,7 +183,7 @@ public class CSdkGenerator extends SdkGenerator {
 
                     VelocityContext context = new VelocityContext();
                     context.put("sourceNames", sourceNames);
-                    String cSourceData = processTemplate(TEMPLATE_DIR + File.separator + "CMakeGen.vm", context);
+                    String cSourceData = generateSourceFromTemplate(TEMPLATE_DIR + File.separator + "CMakeGen.vm", context);
 
                     TarArchiveEntry kaaCMakeEntry = new TarArchiveEntry(KAA_CMAKEGEN);
                     kaaCMakeEntry.setSize(cSourceData.length());
@@ -229,10 +230,42 @@ public class CSdkGenerator extends SdkGenerator {
         return sdk;
     }
 
-    private String processTemplate(String templateFullName, VelocityContext context) {
+    private List<TarEntryData> generateSourcesFromSchema(Schema schema, String sourceName, String namespace) {
+        List<TarEntryData> tarEntries = new LinkedList<>();
+
+        try (
+            OutputStream headerStream = new ByteArrayOutputStream();
+            OutputStream sourceStream = new ByteArrayOutputStream();
+        ) {
+            Compiler compiler = new Compiler(schema, sourceName, headerStream, sourceStream);
+            compiler.setNamespacePrefix(KAA_SOURCE_PREFIX + "_" + namespace);
+            compiler.generate();
+
+            tarEntries.add(createTarEntry(KAA_GEN_SOURCE_DIR + sourceName + C_HEADER_SUFFIX, headerStream.toString()));
+            tarEntries.add(createTarEntry(KAA_GEN_SOURCE_DIR + sourceName + C_SOURCE_SUFFIX, sourceStream.toString()));
+        } catch (Exception e) {
+            LOG.error("Failed to generate C sdk sources", e);
+        }
+
+        return tarEntries;
+    }
+
+    private String generateSourceFromTemplate(String templateFullName, VelocityContext context) {
         StringWriter writer = new StringWriter();
         velocityEngine.getTemplate(templateFullName).merge(context, writer);
         return writer.toString();
+    }
+
+    private String processHeaderTemplate(String templateName, Schema schema) {
+        VelocityContext context = new VelocityContext();
+        context.put("record_name", StyleUtils.toLowerUnderScore(schema.getName()));
+        return generateSourceFromTemplate(TEMPLATE_DIR + File.separator + templateName, context);
+    }
+
+    private TarEntryData createTarEntry(String tarEntryName, String data) {
+        TarArchiveEntry entry = new TarArchiveEntry(tarEntryName);
+        entry.setSize(data.length());
+        return new TarEntryData(entry, data.getBytes());
     }
 
     /**
@@ -280,77 +313,47 @@ public class CSdkGenerator extends SdkGenerator {
         context.put("Integer", Integer.class);
         context.put("ServerNameUtil", ServerNameUtil.class);
 
-        return processTemplate(TEMPLATE_DIR + File.separator + "kaa_defaults.vm", context).getBytes();
+        return generateSourceFromTemplate(TEMPLATE_DIR + File.separator + "kaa_defaults.vm", context).getBytes();
     }
 
     private List<TarEntryData> generateProfileSources(String profileSchemaBody) {
+        Schema schema = new Schema.Parser().parse(profileSchemaBody);
         List<TarEntryData> tarEntries = new LinkedList<>();
 
-        VelocityContext profileContext = new VelocityContext();
-        profileContext.put("profileName", StyleUtils.toLowerUnderScore(getRecordName(profileSchemaBody)));
+        tarEntries.add(createTarEntry(PROFILE_HEADER,
+                                      processHeaderTemplate("kaa_profile.vm", schema)));
 
-        String profileHeaderStr = processTemplate(TEMPLATE_DIR + File.separator + "kaa_profile.vm", profileContext);
-
-        TarArchiveEntry entry = new TarArchiveEntry(PROFILE_HEADER);
-        entry.setSize(profileHeaderStr.length());
-        TarEntryData tarEntry = new TarEntryData(entry, profileHeaderStr.getBytes());
-        tarEntries.add(tarEntry);
-
-        tarEntries.addAll(generateSourcesFromSchema(profileSchemaBody, KAA_PROFILE_SOURCE_NAME_PATTERN, "profile"));
+        tarEntries.addAll(generateSourcesFromSchema(schema,
+                                                    KAA_PROFILE_SOURCE_NAME_PATTERN,
+                                                    "profile"));
 
         return tarEntries;
     }
 
     private List<TarEntryData> generateLogSources(String logSchemaBody) {
+        Schema schema = new Schema.Parser().parse(logSchemaBody);
         List<TarEntryData> tarEntries = new LinkedList<>();
 
-        VelocityContext logContext = new VelocityContext();
-        logContext.put("logName", StyleUtils.toLowerUnderScore(getRecordName(logSchemaBody)));
+        tarEntries.add(createTarEntry(LOG_HEADER,
+                                      processHeaderTemplate("kaa_logging.vm", schema)));
 
-        String logHeaderStr = processTemplate(TEMPLATE_DIR + File.separator + "kaa_logging.vm", logContext);
-
-        TarArchiveEntry entry = new TarArchiveEntry(LOG_HEADER);
-        entry.setSize(logHeaderStr.length());
-        tarEntries.add(new TarEntryData(entry, logHeaderStr.getBytes()));
-
-        tarEntries.addAll(generateSourcesFromSchema(logSchemaBody, KAA_LOG_SOURCE_NAME_PATTERN, "logging"));
+        tarEntries.addAll(generateSourcesFromSchema(schema,
+                                                    KAA_LOG_SOURCE_NAME_PATTERN,
+                                                    "logging"));
 
         return tarEntries;
     }
 
     private List<TarEntryData> generateConfigurationSources(String configurationSchemaBody) {
-        return generateSourcesFromSchema(configurationSchemaBody, KAA_CONFIGURATION_SOURCE_NAME_PATTERN, "configuration");
-    }
-
-    private String getRecordName(String schemaStr) {
-        return new Schema.Parser().parse(schemaStr).getName();
-    }
-
-    private List<TarEntryData> generateSourcesFromSchema(String schemaStr, String sourceName, String namespace) {
+        Schema schema = new Schema.Parser().parse(configurationSchemaBody);
         List<TarEntryData> tarEntries = new LinkedList<>();
 
-        Schema schema = new Schema.Parser().parse(schemaStr);
+        tarEntries.add(createTarEntry(CONFIGURATION_HEADER,
+                                      processHeaderTemplate("kaa_configuration_definitions.vm", schema)));
 
-        OutputStream headerStream = new ByteArrayOutputStream();
-        OutputStream sourceStream = new ByteArrayOutputStream();
-
-        try {
-            Compiler compiler = new Compiler(schema, sourceName, headerStream, sourceStream);
-            compiler.setNamespacePrefix(KAA_SOURCE_PREFIX + "_" + namespace);
-            compiler.generate();
-
-            String headerStr = headerStream.toString();
-            TarArchiveEntry headerEntry = new TarArchiveEntry(KAA_GEN_SOURCE_DIR + sourceName + C_HEADER_SUFFIX);
-            headerEntry.setSize(headerStr.length());
-            tarEntries.add(new TarEntryData(headerEntry, headerStr.getBytes()));
-
-            String sourceStr = sourceStream.toString();
-            TarArchiveEntry sourceEntry = new TarArchiveEntry(KAA_GEN_SOURCE_DIR + sourceName + C_SOURCE_SUFFIX);
-            sourceEntry.setSize(sourceStr.length());
-            tarEntries.add(new TarEntryData(sourceEntry, sourceStr.getBytes()));
-        } catch (Exception e) {
-            LOG.error("Failed to generate C sdk sources", e);
-        }
+        tarEntries.addAll(generateSourcesFromSchema(schema,
+                                                    KAA_CONFIGURATION_SOURCE_NAME_PATTERN,
+                                                    "configuration"));
 
         return tarEntries;
     }

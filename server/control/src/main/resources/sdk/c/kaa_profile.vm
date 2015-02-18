@@ -37,7 +37,7 @@ extern "C" {
 /**
  * User defined endpoint profile structure
  */
-typedef kaa_profile_${profileName}_t kaa_profile_t;
+typedef kaa_profile_${record_name}_t kaa_profile_t;
 
 
 
