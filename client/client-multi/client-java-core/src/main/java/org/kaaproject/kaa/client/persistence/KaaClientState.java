@@ -74,4 +74,6 @@ public interface KaaClientState {
     boolean isConfigurationVersionUpdated();
 
     void persist();
+
+    String refreshEndpointAccessToken();
 }

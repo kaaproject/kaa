@@ -21,11 +21,21 @@ import java.util.List;
 
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.configuration.delta.manager.DeltaManager;
+import org.kaaproject.kaa.client.configuration.manager.ConfigurationManager;
+import org.kaaproject.kaa.client.configuration.storage.ConfigurationPersistenceManager;
+import org.kaaproject.kaa.client.event.EndpointAccessToken;
+import org.kaaproject.kaa.client.event.EndpointKeyHash;
+import org.kaaproject.kaa.client.event.EventFamily;
 import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
+import org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback;
+import org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback;
+import org.kaaproject.kaa.client.event.registration.EndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
+import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.client.logging.LogStorage;
 import org.kaaproject.kaa.client.logging.LogUploadStrategy;
 import org.kaaproject.kaa.client.notification.NotificationListener;
@@ -33,6 +43,9 @@ import org.kaaproject.kaa.client.notification.NotificationManager;
 import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
 import org.kaaproject.kaa.client.notification.UnavailableTopicException;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
+import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
+import org.kaaproject.kaa.client.transact.TransactionId;
+import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 
 /**
@@ -59,10 +72,6 @@ public interface GenericKaaClient {
     /**
      * <p>
      * Starts Kaa's workflow.
-     * </p>
-     *
-     * <p>
-     * Should be called after each call to {@link Kaa#init()}.
      * </p>
      *
      * @see AbstractKaaClient#start()
@@ -166,7 +175,7 @@ public interface GenericKaaClient {
      * @param listener
      *            Listener to receive notifications
      *
-     * @see AbstractNotificationListener
+     * @see NotificationListener
      */
     void addNotificationListener(NotificationListener listener);
 
@@ -188,7 +197,7 @@ public interface GenericKaaClient {
      * @throws UnavailableTopicException
      *             Throw if unknown topic id is provided.
      *
-     * @see AbstractNotificationListener
+     * @see NotificationListener
      */
     void addNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException;
 
@@ -201,7 +210,7 @@ public interface GenericKaaClient {
      * @param listener
      *            Listener to receive notifications
      *
-     * @see AbstractNotificationListener
+     * @see NotificationListener
      */
     void removeNotificationListener(NotificationListener listener);
 
@@ -223,7 +232,7 @@ public interface GenericKaaClient {
      * @throws UnavailableTopicException
      *             Throw if unknown topic id is provided.
      *
-     * @see AbstractNotificationListener
+     * @see NotificationListener
      */
     void removeNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException;
 
@@ -453,7 +462,7 @@ public interface GenericKaaClient {
      *
      * @return {@link KaaChannelManager} object
      */
-    KaaChannelManager getChannelMananager();
+    KaaChannelManager getChannelManager();
 
     /**
      * <p>
@@ -497,4 +506,88 @@ public interface GenericKaaClient {
      * @return client's private key
      */
     PrivateKey getClientPrivateKey();
+
+    /**
+     * Generate new access token for a current endpoint
+     */
+    String regenerateEndpointAccessToken();
+
+    /**
+     * Retrieve an access token for a current endpoint
+     */
+    String getEndpointAccessToken();
+
+    /**
+     * Updates with new endpoint attach request<br>
+     * <br>
+     * {@link org.kaaproject.kaa.client.event.registration.EndpointOperationCallback} is populated with {@link org.kaaproject.kaa.client.event.EndpointKeyHash} of an
+     * attached endpoint.
+     *
+     * @param endpointAccessToken Access token of the attaching endpoint
+     * @param resultListener Listener to notify about result of the endpoint attaching
+     *
+     * @see org.kaaproject.kaa.client.event.EndpointAccessToken
+     * @see org.kaaproject.kaa.client.event.registration.EndpointOperationCallback
+     */
+    void attachEndpoint(EndpointAccessToken endpointAccessToken, EndpointOperationCallback resultListener);
+
+    /**
+     * Updates with new endpoint detach request
+     *
+     * @param endpointKeyHash Key hash of the detaching endpoint
+     * @param resultListener Listener to notify about result of the enpoint attaching
+     *
+     * @see org.kaaproject.kaa.client.event.EndpointKeyHash
+     * @see EndpointOperationCallback
+     */
+    void detachEndpoint(EndpointKeyHash endpointKeyHash, EndpointOperationCallback resultListener);
+
+    /**
+     * Creates user attach request using default verifier. Default verifier is selected during SDK generation.
+     * If there was no default verifier selected this method will throw runtime exception.
+     *
+     * @param userExternalId
+     * @param userAccessToken
+     * @param callback called when authentication result received
+     *
+     * @see UserAttachCallback
+     */
+    void attachUser(String userExternalId, String userAccessToken, UserAttachCallback callback);
+
+    /**
+     * Creates user attach request using specified verifier.
+     *
+     * @param userVerifierToken
+     * @param userExternalId
+     * @param userAccessToken
+     * @param callback called when authentication result received
+     *
+     * @see UserAttachCallback
+     */
+    void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAttachCallback callback);
+
+    /**
+     * Checks if current endpoint is attached to user.
+     *
+     * @return true if current endpoint is attached to any user, false otherwise.
+     */
+    boolean isAttachedToUser();
+
+    /**
+     * Sets callback for notifications when current endpoint is attached to user
+     *
+     * @param listener
+     *
+     * @see org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback
+     */
+    void setAttachedListener(AttachEndpointToUserCallback listener);
+
+    /**
+     * Sets callback for notifications when current endpoint is detached from user
+     *
+     * @param listener
+     *
+     * @see org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback
+     */
+    void setDetachedListener(DetachEndpointFromUserCallback listener);
 }

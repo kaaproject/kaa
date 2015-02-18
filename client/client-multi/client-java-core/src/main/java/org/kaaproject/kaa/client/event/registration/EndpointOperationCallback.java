@@ -34,25 +34,30 @@ import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
  * and additional data if available.
  *
  * @author Taras Lemkin
- *
  * @see EndpointRegistrationManager
  */
-public interface EndpointOperationResultListener {
+public interface EndpointOperationCallback {
 
     /**
-     * Callback on sending response to client<br>
+     * Callback on endpoint attach response<br>
      * <br>
      * <b>NOTE:</b> {@code resultContext} is not {@code null} for endpoint attach
      * operation and contains {@link EndpointKeyHash} object with key hash of attached
      * endpoint.
      *
-     * @param operation         String representation of processed operation for this callback
-     * @param result            Enum value [{@code SUCCESS, FAILURE}]
-     * @param resultContext     Additional data of operation result. May be {@code null}.
-     *                           For AttachEndpoint operation is populated with {@link EndpointKeyHash}
-     *                           of attached endpoint.
-     *
+     * @param result        The enum value [{@code SUCCESS, FAILURE}]
+     * @param resultContext Additional data of operation result. May be {@code null}.
+     *                      For AttachEndpoint operation is populated with {@link EndpointKeyHash}
+     *                      of attached endpoint.
      * @see SyncResponseResultType
      */
-    void sendResponse(String operation, SyncResponseResultType result, Object resultContext);
+    void onAttach(SyncResponseResultType result, Object resultContext);
+
+    /**
+     * Callback on endpoint detach response<br>
+     *
+     * @param result The enum value [{@code SUCCESS, FAILURE}]
+     * @see SyncResponseResultType
+     */
+    void onDetach(SyncResponseResultType result);
 }

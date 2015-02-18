@@ -18,12 +18,10 @@ package org.kaaproject.kaa.client.event.registration;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.kaaproject.kaa.client.channel.ProfileTransport;
 import org.kaaproject.kaa.client.channel.UserTransport;
@@ -47,67 +45,51 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class DefaultEndpointRegistrationManager implements EndpointRegistrationManager, EndpointRegistrationProcessor {
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultEndpointRegistrationManager.class);
+    private static final Random RANDOM = new Random();
 
     private final KaaClientState state;
-    private final Set<AttachedEndpointListChangedListener> attachedListChangedListeners = new HashSet<AttachedEndpointListChangedListener>();
-    private final Map<Integer, EndpointOperationResultListener> endpointAttachListeners = new HashMap<Integer, EndpointOperationResultListener>();
-    private final Map<Integer, EndpointOperationResultListener> endpointDetachListeners = new HashMap<Integer, EndpointOperationResultListener>();
+    private final Map<Integer, EndpointOperationCallback> endpointAttachListeners = new ConcurrentHashMap<>();
+    private final Map<Integer, EndpointOperationCallback> endpointDetachListeners = new ConcurrentHashMap<>();
 
-    private final Map<Integer, EndpointAccessToken> attachEndpointRequests = new HashMap<Integer, EndpointAccessToken>();
-    private final Map<Integer, EndpointKeyHash> detachEndpointRequests = new HashMap<Integer, EndpointKeyHash>();
+    private final Map<Integer, EndpointAccessToken> attachEndpointRequests = new ConcurrentHashMap<>();
+    private final Map<Integer, EndpointKeyHash> detachEndpointRequests = new ConcurrentHashMap<>();
 
     private UserAttachRequest userAttachRequest;
-    private UserAuthResultListener userAuthResultListener;
+    private UserAttachCallback userAttachCallback;
 
-    private CurrentEndpointAttachListener currentEndpointAttachListener;
-    private CurrentEndpointDetachListener currentEndpointDetachListener;
+    private AttachEndpointToUserCallback attachEndpointToUserCallback;
+    private DetachEndpointFromUserCallback detachEndpointFromUserCallback;
 
     private volatile UserTransport userTransport;
     private volatile ProfileTransport profileTransport;
 
-    private String endpointAccessToken = new String();
-
     public DefaultEndpointRegistrationManager(KaaClientState state, UserTransport userTransport, ProfileTransport profileTransport) {
-        this.state = state;
-        this.endpointAccessToken = state.getEndpointAccessToken();
-
-        if (endpointAccessToken.isEmpty()) {
-            regenerateEndpointAccessToken();
-        }
         this.userTransport = userTransport;
         this.profileTransport = profileTransport;
+        this.state = state;
+        String endpointAccessToken = state.getEndpointAccessToken();
+        if (endpointAccessToken == null || endpointAccessToken.length() == 0) {
+            regenerateEndpointAccessToken();
+        }
     }
 
-    @Override
-    public void regenerateEndpointAccessToken() {
-        boolean isRegenerated = !endpointAccessToken.isEmpty();
-        String oldToken = endpointAccessToken;
-
-        endpointAccessToken = UUID.randomUUID().toString();
-
-        state.setEndpointAccessToken(endpointAccessToken);
-
-        LOG.info("New endpoint access token is generated: '{}'", endpointAccessToken);
-
-        if (isRegenerated) {
+    private String regenerateEndpointAccessToken() {
+        String oldToken = state.getEndpointAccessToken();
+        String newEndpointAccessToken = state.refreshEndpointAccessToken();
+        LOG.info("New endpoint access token is generated: '{}'", newEndpointAccessToken);
+        if (oldToken != null && oldToken.length() > 0) {
             onEndpointAccessTokenChanged(oldToken);
         }
+        return newEndpointAccessToken;
     }
 
     @Override
-    public String getEndpointAccessToken() {
-        return endpointAccessToken;
-    }
-
-    @Override
-    public void attachEndpoint(EndpointAccessToken endpointAccessToken, EndpointOperationResultListener resultListener) {
-        int requestId;
-        synchronized (attachEndpointRequests) {
-            requestId = new Random().nextInt();
-            LOG.info("Going to attach Endpoint by access token: {}", endpointAccessToken);
-            attachEndpointRequests.put(requestId, endpointAccessToken);
-        }
+    public void attachEndpoint(EndpointAccessToken endpointAccessToken, EndpointOperationCallback resultListener) {
+        int requestId = getRandomInt();
+        LOG.info("Going to attach Endpoint by access token: {}", endpointAccessToken);
+        attachEndpointRequests.put(requestId, endpointAccessToken);
         if (resultListener != null) {
             endpointAttachListeners.put(requestId, resultListener);
         }
@@ -117,13 +99,10 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     }
 
     @Override
-    public void detachEndpoint(EndpointKeyHash endpointKeyHash, EndpointOperationResultListener resultListener) {
-        int requestId;
-        synchronized (detachEndpointRequests) {
-            requestId = new Random().nextInt();
-            LOG.info("Going to detach Endpoint by endpoint key hash: {}", endpointKeyHash);
-            detachEndpointRequests.put(requestId, endpointKeyHash);
-        }
+    public void detachEndpoint(EndpointKeyHash endpointKeyHash, EndpointOperationCallback resultListener) {
+        int requestId = getRandomInt();
+        LOG.info("Going to detach Endpoint by endpoint key hash: {}", endpointKeyHash);
+        detachEndpointRequests.put(requestId, endpointKeyHash);
         if (resultListener != null) {
             endpointDetachListeners.put(requestId, resultListener);
         }
@@ -131,42 +110,27 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
             userTransport.sync();
         }
     }
-    
+
     @Override
-    public void attachUser(String userExternalId, String userAccessToken, UserAuthResultListener callback) {
-        if(UserVerifierConstants.DEFAULT_USER_VERIFIER_TOKEN != null){
+    public void attachUser(String userExternalId, String userAccessToken, UserAttachCallback callback) {
+        if (UserVerifierConstants.DEFAULT_USER_VERIFIER_TOKEN != null) {
             attachUser(UserVerifierConstants.DEFAULT_USER_VERIFIER_TOKEN, userExternalId, userAccessToken, callback);
-        }else{
+        } else {
             throw new IllegalStateException("Default user verifier was not defined during SDK generation process!");
         }
     }
 
     @Override
-    public void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAuthResultListener callback) {
+    public void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAttachCallback callback) {
         userAttachRequest = new UserAttachRequest(userVerifierToken, userExternalId, userAccessToken);
-        userAuthResultListener = callback;
+        userAttachCallback = callback;
         if (userTransport != null) {
             userTransport.sync();
         }
     }
 
-    @Override
     public Map<EndpointAccessToken, EndpointKeyHash> getAttachedEndpointList() {
         return state.getAttachedEndpointsList();
-    }
-
-    @Override
-    public void addAttachedEndpointListChangeListener(AttachedEndpointListChangedListener listener) {
-        synchronized (attachedListChangedListeners) {
-            attachedListChangedListeners.add(listener);
-        }
-    }
-
-    @Override
-    public void removeAttachedEndpointListChangeListener(AttachedEndpointListChangedListener listener) {
-        synchronized (attachedListChangedListeners) {
-            attachedListChangedListeners.remove(listener);
-        }
     }
 
     @Override
@@ -176,14 +140,14 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
             UserAttachNotification userAttachNotification,
             UserDetachNotification userDetachNotification) throws IOException {
         if (userResponse != null) {
-            if (userAuthResultListener != null) {
-                userAuthResultListener.onAuthResult(userResponse);
-                userAuthResultListener = null;
+            if (userAttachCallback != null) {
+                userAttachCallback.onAttachResult(userResponse);
+                userAttachCallback = null;
             }
             if (userResponse.getResult() == SyncResponseResultType.SUCCESS) {
                 state.setAttachedToUser(true);
-                if (currentEndpointAttachListener != null) {
-                    currentEndpointAttachListener.onAttachedToUser(userAttachRequest.getUserExternalId(), endpointAccessToken);
+                if (attachEndpointToUserCallback != null) {
+                    attachEndpointToUserCallback.onAttachedToUser(userAttachRequest.getUserExternalId(), state.getEndpointAccessToken());
                 }
             }
             userAttachRequest = null;
@@ -207,45 +171,31 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
                 }
             }
         }
-        if ((attachResponses != null && !attachResponses.isEmpty())
-                || (detachResponses != null && !detachResponses.isEmpty())) {
-            notifyListeners();
-        }
 
         if (userAttachNotification != null) {
             state.setAttachedToUser(true);
-            if (currentEndpointAttachListener != null) {
-                currentEndpointAttachListener.onAttachedToUser(userAttachNotification.getUserExternalId(), userAttachNotification.getEndpointAccessToken());
+            if (attachEndpointToUserCallback != null) {
+                attachEndpointToUserCallback.onAttachedToUser(userAttachNotification.getUserExternalId(), userAttachNotification.getEndpointAccessToken());
             }
         }
 
         if (userDetachNotification != null) {
             state.setAttachedToUser(false);
-            if (currentEndpointDetachListener != null) {
-                currentEndpointDetachListener.onDetachedFromUser(userDetachNotification.getEndpointAccessToken());
+            if (detachEndpointFromUserCallback != null) {
+                detachEndpointFromUserCallback.onDetachedFromUser(userDetachNotification.getEndpointAccessToken());
             }
         }
     }
 
-    private void notifyAttachedListener(org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result,
-            EndpointOperationResultListener resultListener, EndpointKeyHash keyHash) {
-        if(resultListener != null){
-            resultListener.sendResponse("endpoint attached", result, keyHash);
+    private void notifyAttachedListener(SyncResponseResultType result, EndpointOperationCallback operationCallback, EndpointKeyHash keyHash) {
+        if(operationCallback != null){
+            operationCallback.onAttach(result, keyHash);
         }
     }
 
-    private void notifyDetachedListener(org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType result,
-            EndpointOperationResultListener resultListener) {
-        if(resultListener != null){
-            resultListener.sendResponse("endpoint detached", result, null);
-        }
-    }
-
-    private void notifyListeners() {
-        synchronized (attachedListChangedListeners) {
-            for (AttachedEndpointListChangedListener listener : attachedListChangedListeners) {
-                listener.onAttachedEndpointListChanged(getAttachedEndpointList());
-            }
+    private void notifyDetachedListener(SyncResponseResultType result, EndpointOperationCallback operationCallback) {
+        if(operationCallback != null){
+            operationCallback.onDetach(result);
         }
     }
 
@@ -284,28 +234,21 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     }
 
     @Override
-    public void setUserTransport(UserTransport transport) {
-        this.userTransport = transport;
-    }
-
-    @Override
-    public void setProfileTransport(ProfileTransport transport) {
-        this.profileTransport = transport;
-    }
-
-    @Override
     public boolean isAttachedToUser() {
         return state.isAttachedToUser();
     }
 
     @Override
-    public void setAttachedListener(CurrentEndpointAttachListener listener) {
-        currentEndpointAttachListener = listener;
+    public void setAttachedCallback(AttachEndpointToUserCallback listener) {
+        this.attachEndpointToUserCallback = listener;
     }
 
     @Override
-    public void setDetachedListener(CurrentEndpointDetachListener listener) {
-        currentEndpointDetachListener = listener;
+    public void setDetachedCallback(DetachEndpointFromUserCallback listener) {
+        this.detachEndpointFromUserCallback = listener;
     }
 
+    private synchronized int getRandomInt() {
+        return RANDOM.nextInt();
+    }
 }

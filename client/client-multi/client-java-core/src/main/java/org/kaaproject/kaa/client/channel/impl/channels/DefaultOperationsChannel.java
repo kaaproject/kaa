@@ -204,7 +204,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
             synchronized (this) {
                 stopPollScheduler(false);
             }
-            client.getChannelMananager().onServerFailed(info);
+            client.getChannelManager().onServerFailed(info);
         } else {
             LOG.debug("Channel [{}] connection aborted", getId());
         }
