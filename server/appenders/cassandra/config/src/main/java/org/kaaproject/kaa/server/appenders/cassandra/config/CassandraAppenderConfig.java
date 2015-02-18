@@ -2,24 +2,25 @@ package org.kaaproject.kaa.server.appenders.cassandra.config;
 
 import org.apache.avro.Schema;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig;
-import org.kaaproject.kaa.server.common.log.shared.annotation.KaaAppenderConfig;
-import org.kaaproject.kaa.server.common.log.shared.config.AppenderConfig;
+import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginType;
 
-@KaaAppenderConfig
-public class CassandraAppenderConfig implements AppenderConfig {
+@KaaPluginConfig(pluginType = PluginType.LOG_APPENDER)
+public class CassandraAppenderConfig implements PluginConfig {
 
     @Override
-    public String getName() {
+    public String getPluginTypeName() {
         return "Cassandra";
     }
 
     @Override
-    public String getLogAppenderClass() {
+    public String getPluginClassName() {
         return "org.kaaproject.kaa.server.appenders.cassandra.appender.CassandraLogAppender";
     }
 
     @Override
-    public Schema getConfigSchema() {
+    public Schema getPluginConfigSchema() {
         return CassandraConfig.getClassSchema();
     }
 }
