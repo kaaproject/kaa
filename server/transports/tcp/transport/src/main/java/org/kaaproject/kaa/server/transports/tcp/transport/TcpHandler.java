@@ -182,6 +182,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
                 }
             } else {
                 LOG.warn("[{}] Ignoring {} message due to incomplete CONNECT sequence", uuid, frame.getMessageType());
+                ctx.writeAndFlush(new ConnAck(ReturnCode.REFUSE_BAD_PROTOCOL));
             }
         }
     }
