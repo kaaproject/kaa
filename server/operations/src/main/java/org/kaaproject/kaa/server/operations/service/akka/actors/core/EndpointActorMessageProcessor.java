@@ -398,6 +398,7 @@ public class EndpointActorMessageProcessor {
                 }
                 logPack.setEvents(logEvents);
                 logPack.setLogSchemaVersion(responseHolder.getEndpointProfile().getLogSchemaVersion());
+                logPack.setUserId(userId);
                 context.parent().tell(new LogEventPackMessage(request.getRequestId(), context.self(), logPack), context.self());
             }
             if (logUploadResponseMap.size() > 0) {
@@ -565,7 +566,7 @@ public class EndpointActorMessageProcessor {
     /**
      * Send reply.
      *
-     * @param pendingRequest
+     * @param request
      *            the pending request
      * @param syncResponse
      *            the sync response
