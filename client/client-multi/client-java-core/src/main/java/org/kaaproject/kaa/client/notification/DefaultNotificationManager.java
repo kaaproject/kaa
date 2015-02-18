@@ -305,20 +305,16 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
                     List<NotificationListener> listeners = optionalListeners.get(topic.getId());
                     if (listeners != null && !listeners.isEmpty()) {
                         hasOwner = true;
-                        if(notification.getBody() != null){
-                            for (NotificationListener listener : listeners) {
-                                listener.onNotification(topic.getId(), deserializer.fromByteArray(notification.getBody().array()));
-                            }
+                        for (NotificationListener listener : listeners) {
+                            notifyListeners(listener, topic, notification);
                         }
                     }
                 }
 
                 if (!hasOwner) {
                     synchronized (mandatoryListeners) {
-                        if(notification.getBody() != null){
-                            for (NotificationListener listener : mandatoryListeners) {
-                                listener.onNotification(topic.getId(), deserializer.fromByteArray(notification.getBody().array()));
-                            }
+                        for (NotificationListener listener : mandatoryListeners) {
+                            notifyListeners(listener, topic, notification);
                         }
                     }
                 }
@@ -326,6 +322,12 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
                 LOG.warn("Received notification for an unknown topic (id={})"
                                                     , notification.getTopicId());
             }
+        }
+    }
+
+    private void notifyListeners(NotificationListener listener, Topic topic, Notification notification) throws IOException {
+        if(notification.getBody() != null){
+            deserializer.notify(listener, topic, notification.getBody().array());
         }
     }
 

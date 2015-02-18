@@ -15,7 +15,6 @@
  */
 package org.kaaproject.kaa.client;
 
-import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.List;
@@ -78,7 +77,7 @@ public interface GenericKaaClient {
      *
      * @see AbstractKaaClient#start()
      */
-    public void start() throws IOException, TransportException;
+    public void start();
 
     /**
      * Stops Kaa's workflow.

@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.client;
 
-import org.kaaproject.kaa.client.exceptions.KaaClientException;
+import org.kaaproject.kaa.client.exceptions.KaaException;
 
 /**
  * Notifies about Kaa client state changes and errors
@@ -37,7 +37,7 @@ public interface KaaClientStateListener {
      * 
      * @param exception - cause of failure
      */
-    void onStartupFailure(KaaClientException exception);
+    void onStartFailure(KaaException exception);
 
     /**
      * On successful pause of Kaa client. Kaa client is successfully paused
@@ -51,7 +51,7 @@ public interface KaaClientStateListener {
      * 
      * @param exception - cause of failure
      */
-    void onPauseFailure(KaaClientException exception);
+    void onPauseFailure(KaaException exception);
     
     /**
      * On successful resume of Kaa client. Kaa client is successfully connected
@@ -65,7 +65,7 @@ public interface KaaClientStateListener {
      * 
      * @param exception - cause of failure
      */
-    void onResumeFailure(KaaClientException exception);
+    void onResumeFailure(KaaException exception);
 
     /**
      * On successful stop of Kaa client. Kaa client is successfully stopped
@@ -79,6 +79,6 @@ public interface KaaClientStateListener {
      * 
      * @param exception - cause of failure
      */
-    void onStopFailure(KaaClientException exception);
+    void onStopFailure(KaaException exception);
 
 }

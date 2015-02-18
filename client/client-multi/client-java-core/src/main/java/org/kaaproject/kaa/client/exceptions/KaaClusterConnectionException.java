@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.client.exceptions;
 
-public class KaaClusterConnectionException extends KaaClientException {
+public class KaaClusterConnectionException extends KaaException {
 
     private static final long serialVersionUID = 2904740158735824231L;
 
