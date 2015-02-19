@@ -244,7 +244,8 @@ static kaa_error_t get_next_bootstrap_access_point_index(kaa_transport_protocol_
     KAA_RETURN_IF_NIL2(protocol_id,next_index, KAA_ERR_BADPARAM);
 
     if (index_from < KAA_BOOTSTRAP_ACCESS_POINT_COUNT) {
-        for (size_t i = index_from; i < KAA_BOOTSTRAP_ACCESS_POINT_COUNT; ++i) {
+        size_t i = index_from;
+        for (; i < KAA_BOOTSTRAP_ACCESS_POINT_COUNT; ++i) {
             if (0 == memcmp(&(KAA_BOOTSTRAP_ACCESS_POINTS[i].protocol_id), protocol_id, sizeof(kaa_transport_protocol_id_t))) {
                 *next_index = i;
                 return KAA_ERR_NONE;

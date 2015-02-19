@@ -67,6 +67,11 @@ extern kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector
 extern void        kaa_log_collector_destroy(kaa_log_collector_t *self);
 #endif
 
+#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+extern kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **configuration_manager_p, kaa_status_t *status, kaa_logger_t *logger);
+extern void kaa_configuration_manager_destroy(kaa_configuration_manager_t *self);
+#endif
+
 extern kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p
                                               , kaa_channel_manager_t *channel_manager
                                               , kaa_logger_t *logger);
@@ -135,6 +140,12 @@ static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *l
                 , (*context_p)->status->status_instance, (*context_p)->channel_manager, (*context_p)->logger);
 #endif
 
+#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+    if (!error)
+        error = kaa_configuration_manager_create(&((*context_p)->configuration_manager)
+                , (*context_p)->status->status_instance, (*context_p)->logger);
+#endif
+
     if (!error)
         error = kaa_user_manager_create(&((*context_p)->user_manager)
                 , (*context_p)->status->status_instance, (*context_p)->channel_manager, (*context_p)->logger);
@@ -165,6 +176,9 @@ static kaa_error_t kaa_context_destroy(kaa_context_t *context)
     KAA_FREE(context->status);
 #ifndef KAA_DISABLE_FEATURE_LOGGING
     kaa_log_collector_destroy(context->log_collector);
+#endif
+#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+    kaa_configuration_manager_destroy(context->configuration_manager);
 #endif
     kaa_platform_protocol_destroy(context->platfrom_protocol);
     KAA_FREE(context);

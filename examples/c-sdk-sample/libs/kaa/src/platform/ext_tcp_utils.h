@@ -58,7 +58,7 @@ typedef enum {
 
 
 /**
- * @brief Callback for successful DNS results. See @link ext_tcp_utils_gethostbyaddr @endlink.
+ * @brief The callback for successful DNS results. See @link ext_tcp_utils_gethostbyaddr @endlink.
  *
  * @param[in]   context     Callback's context.
  * @param[in]   addr        The sockaddr structure of the resolved target host.
@@ -72,7 +72,7 @@ typedef kaa_error_t (*on_dns_resolve_complete_fn)(void *context
 
 
 /**
- * @brief Callback for negative host resolve results.
+ * @brief The callback for negative host resolve results.
  *
  * See @link ext_tcp_utils_gethostbyaddr @endlink.
  *
@@ -89,14 +89,14 @@ typedef kaa_error_t (*on_dns_resolve_failed_fn)(void *context);
  * See @link ext_tcp_utils_gethostbyaddr @endlink.
  */
 typedef struct {
-    void                       *context;             /**< Context to pass to all functions below. */
+    void                       *context;             /**< The context to pass to all functions below. */
     on_dns_resolve_complete_fn  on_host_resolved;    /**< Called when the host is successfully resolved. */
     on_dns_resolve_failed_fn    on_resolve_failed;   /**< Called when the host resolve was failed. */
 } kaa_dns_resolve_listener_t;
 
 
 /**
- * @brief The target host information which is used for DNS resolve needs.
+ * @brief The target host information which is used for the DNS resolve needs.
  *
  * See @link ext_tcp_utils_gethostbyaddr @endlink.
  */
@@ -110,22 +110,22 @@ typedef struct {
 /**
  * @brief Resolves the hostname of the target host.
  *
- * @param[in]      resolve_listener    Listener's properties. Will be used
-*                                      in case when this function couldn't
-*                                      resolve a host right now.
- * @param[in]      resolve_props       Target host properties (like hostname
+ * @param[in]      resolve_listener    The listener properties. It is used
+*                                      in case when this function can't
+*                                      resolve a hostname right now.
+ * @param[in]      resolve_props       The target host properties (like hostname
  *                                     and port).
  * @param[out]     result              The sockaddr_* structure to which
 *                                      the result will be copied.
  * @param[in,out]  result_size         The total size of the given storage.
- *                                     Will be updated by the actual result size.
+ *                                     It will be updated by the actual result size.
  *
  * @return
- *      RET_STATE_VALUE_READY - address was successfully resolved.
- *      RET_STATE_VALUE_IN_PROGRESS - address will be resolved later.
+ *      RET_STATE_VALUE_READY - the address was successfully resolved.
+ *      RET_STATE_VALUE_IN_PROGRESS - the address will be resolved later.
  *                                    See @link kaa_dns_resolve_listener_t @endlink.
- *      RET_STATE_VALUE_ERROR - resolve failed.
- *      RET_STATE_BUFFER_NOT_ENOUGH - given buffer is not enough to store the result.
+ *      RET_STATE_VALUE_ERROR - the resolve failed.
+ *      RET_STATE_BUFFER_NOT_ENOUGH - the given buffer is not enough to store the result.
  */
 ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener
                                                                 , const kaa_dns_resolve_info_t *resolve_props
@@ -136,8 +136,8 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolv
 /**
  * @brief Sets a new port value to the given sockaddr structure.
  *
- * @param[in]   addr    A valid pointer to a sockaddr structure.
- * @param[in]   port    A new port value in a host byte order.
+ * @param[in]   addr    The valid pointer to a sockaddr structure.
+ * @param[in]   port    The new port value in a host byte order.
  *
  * @return Error code.
  */
@@ -145,12 +145,12 @@ kaa_error_t ext_tcp_utils_set_sockaddr_port(kaa_sockaddr_t *addr, uint16_t port)
 
 
 /**
- * @brief Creates a non blocking TCP socket and connects it to the given target host.
+ * @brief Creates a non-blocking TCP socket and connects it to the given target host.
  *
- * @param[out]  fd                  A valid pointer to a socket descriptor
+ * @param[out]  fd                  The valid pointer to a socket descriptor
  *                                  where the result will be saved.
  * @param[in]   destination         The destination address of the target host.
- * @param[in]   destination_size    Size of the destination address.
+ * @param[in]   destination_size    The size of the destination address.
  *
  * @return Error code.
  */
@@ -164,12 +164,12 @@ kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd
  *
  * @param[in]   fd                  The socket descriptor which is going to be checked.
  * @param[in]   destination         The destination address of the target host.
- * @param[in]   destination_size    Size of the destination address.
+ * @param[in]   destination_size    The size of the destination address.
  *
  * @return
- *      KAA_TCP_SOCK_ERROR - connection failed.
- *      KAA_TCP_SOCK_CONNECTING - socket is still connecting.
- *      KAA_TCP_SOCK_CONNECTED - socket was successfully connected.
+ *      KAA_TCP_SOCK_ERROR - the connection failed.
+ *      KAA_TCP_SOCK_CONNECTING - the socket is still connecting.
+ *      KAA_TCP_SOCK_CONNECTED - the socket was successfully connected.
  */
 ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd
                                                     , const kaa_sockaddr_t *destination
@@ -180,13 +180,13 @@ ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd
  * @brief Writes the buffer into the given socket.
  *
  * @param[in]   fd               The socket descriptor.
- * @param[in]   buffer           The buffer which is going to be written.
+ * @param[in]   buffer           The buffer which is going to be written into the socket.
  * @param[in]   buffer_size      The size of the given buffer.
- * @param[out]  bytes_written    The actual number of bytes which were successfully written.
+ * @param[out]  bytes_written    The actual number of bytes which were successfully written into the socket.
  *
  * @return
- *       KAA_TCP_SOCK_IO_OK - bytes were successfully written.
- *       KAA_TCP_SOCK_IO_ERROR - write failed.
+ *       KAA_TCP_SOCK_IO_OK - the buffer was successfully written into the socket.
+ *       KAA_TCP_SOCK_IO_ERROR - the operation failed.
  */
 ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd
                                                         , const char *buffer
@@ -203,9 +203,9 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd
  * @param[out]  bytes_read     The actual number of bytes which were read from the socket.
  *
  * @return
- *      KAA_TCP_SOCK_IO_OK - bytes were successfully obtained from the socket.
+ *      KAA_TCP_SOCK_IO_OK - the buffer was successfully obtained from the socket.
  *      KAA_TCP_SOCK_IO_EOF - EOF occurred.
- *      KAA_TCP_SOCK_IO_ERROR - read failed.
+ *      KAA_TCP_SOCK_IO_ERROR - the operation failed.
  */
 ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd
                                                        , char *buffer

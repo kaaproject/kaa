@@ -73,6 +73,13 @@ extern kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_
 extern kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
 #endif
 
+/** External configuration API */
+#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+extern kaa_error_t kaa_configuration_manager_get_size(kaa_configuration_manager_t *self, size_t *expected_size);
+extern kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manager_t *self, kaa_platform_message_writer_t *writer);
+extern kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
+#endif
+
 /** External status API */
 extern kaa_error_t kaa_status_save(kaa_status_t *self);
 
@@ -242,6 +249,15 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
             break;
         }
 #endif
+#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+        case KAA_SERVICE_CONFIGURATION: {
+            err_code = kaa_configuration_manager_get_size(self->kaa_context->configuration_manager
+                                                , &extension_size);
+            if (!err_code)
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated configuration extension size %u", extension_size);
+            break;
+        }
+#endif
         default:
             extension_size = 0;
             break;
@@ -327,6 +343,14 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
             error_code = kaa_logging_request_serialize(self->kaa_context->log_collector, writer);
             if (error_code)
                 KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the logging extension");
+            break;
+        }
+#endif
+#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+        case KAA_SERVICE_CONFIGURATION: {
+            error_code = kaa_configuration_manager_request_serialize(self->kaa_context->configuration_manager, writer);
+            if (error_code)
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the configuration extension");
             break;
         }
 #endif
@@ -462,6 +486,15 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
                                                     , extension_options
                                                     , extension_length
                                                     , request_id);
+            break;
+        }
+#endif
+#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+        case KAA_CONFIGURATION_EXTENSION_TYPE: {
+            error_code = kaa_configuration_manager_handle_server_sync(self->kaa_context->configuration_manager
+                                                    , reader
+                                                    , extension_options
+                                                    , extension_length);
             break;
         }
 #endif
