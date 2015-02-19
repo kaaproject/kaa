@@ -48,7 +48,7 @@ public interface EventManager extends EventListenersResolver, Transactable {
      * @param data      Event data
      * @param target    Event target, null for event broadcasting.
      */
-    void produceEvent(String eventFqn, byte[] data, String target) throws IOException;
+    void produceEvent(String eventFqn, byte[] data, String target);
 
     /**
      * Creates an Event and passes it to OPS
@@ -58,7 +58,7 @@ public interface EventManager extends EventListenersResolver, Transactable {
      * @param target    Event target, null for event broadcasting.
      * @param trxId     Transaction Id of event
      */
-    void produceEvent(String eventFqn, byte[] data, String target, TransactionId trxId) throws IOException;
+    void produceEvent(String eventFqn, byte[] data, String target, TransactionId trxId);
 
     /**
      * Retrieves an event.

@@ -16,25 +16,23 @@
 
 package org.kaaproject.kaa.client.event.registration;
 
+import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
+
 /**
- * Callback interface for attached to user notifications.<br>
+ * Retrieves result of user authentication<br>
  * <br>
- * Provide listener implementation to {@link EndpointRegistrationManager} to
- * retrieve notification when current endpoint is attached to user by another
- * endpoint.
+ * Use this listener to retrieve result of attaching current endpoint to user.
  *
  * @author Taras Lemkin
- *
  * @see EndpointRegistrationManager
- * @see EndpointRegistrationManager#setAttachedListener(CurrentEndpointAttachListener)
+ *
  */
-public interface CurrentEndpointAttachListener {
-
+public interface UserAttachCallback {
     /**
-     * Callback on current endpoint is attached to user.
+     * Called when auth result is retrieved from operations server.
      *
-     * @param userExternalId
-     * @param endpointAccessToken
+     * @param response Result of user attaching
+     * @see UserAttachResponse
      */
-    void onAttachedToUser(String userExternalId, String endpointAccessToken);
+    void onAttachResult(UserAttachResponse response);
 }
