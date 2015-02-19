@@ -110,9 +110,7 @@ public class TopicServiceImpl implements TopicService {
     public List<UpdateNotificationDto> removeTopicById(String id) {
         validateId(id, "Can't remove topic. Invalid topic id " + id);
         TopicDto topic = findTopicById(id);
-
         List<UpdateNotificationDto> updateNotificationDtos = new LinkedList<>();
-
         if (topic != null) {
             List<EndpointGroup> groups = endpointGroupDao.findEndpointGroupsByTopicIdAndAppId(topic.getApplicationId(), id);
             if (groups != null && !groups.isEmpty()) {
@@ -123,7 +121,6 @@ public class TopicServiceImpl implements TopicService {
             topicDao.removeById(id);
             notificationDao.removeNotificationsByTopicId(id);
         }
-
         return updateNotificationDtos;
     }
 
