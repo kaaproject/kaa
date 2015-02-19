@@ -24,8 +24,6 @@
 #include "utilities/kaa_mem.h"
 
 static const char test_ep_key[20] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14};
-static char *saved_configuration = NULL;
-static size_t saved_configuration_size = 0;
 
 void ext_status_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
@@ -52,17 +50,11 @@ void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs
 
 void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
-    *needs_deallocation = false;
-    *buffer = saved_configuration;
-    *buffer_size = saved_configuration_size;
+
 }
 
 void ext_configuration_store(const char *buffer, size_t buffer_size)
 {
-    if (saved_configuration)
-        KAA_FREE(saved_configuration);
-    saved_configuration = (char *) KAA_MALLOC(buffer_size);
-    memcpy(saved_configuration, buffer, buffer_size);
-    saved_configuration_size = buffer_size;
+
 }
 
