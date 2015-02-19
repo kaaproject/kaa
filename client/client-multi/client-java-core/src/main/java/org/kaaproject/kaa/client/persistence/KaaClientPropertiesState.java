@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.avro.io.BinaryDecoder;
@@ -254,6 +255,13 @@ public class KaaClientPropertiesState implements KaaClientState {
         finally {
             IOUtils.closeQuietly(os);
         }
+    }
+
+    @Override
+    public String refreshEndpointAccessToken() {
+        String newAccessToken = UUID.randomUUID().toString();
+        setEndpointAccessToken(newAccessToken);
+        return newAccessToken;
     }
 
     @Override

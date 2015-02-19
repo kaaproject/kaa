@@ -61,11 +61,18 @@ import org.kaaproject.kaa.client.configuration.base.ConfigurationManager;
 import org.kaaproject.kaa.client.configuration.base.ResyncConfigurationManager;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
 import org.kaaproject.kaa.client.event.DefaultEventManager;
+import org.kaaproject.kaa.client.event.EndpointAccessToken;
+import org.kaaproject.kaa.client.event.EndpointKeyHash;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.EventManager;
+import org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback;
 import org.kaaproject.kaa.client.event.registration.DefaultEndpointRegistrationManager;
+import org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
+import org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback;
+import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCallback;
+import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.client.exceptions.KaaClusterConnectionException;
 import org.kaaproject.kaa.client.exceptions.KaaException;
 import org.kaaproject.kaa.client.exceptions.KaaRuntimeException;
@@ -89,6 +96,16 @@ import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.security.GeneralSecurityException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -196,7 +213,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         notificationManager = new DefaultNotificationManager(this.kaaClientState, notificationTransport);
         eventManager = new DefaultEventManager(this.kaaClientState, eventTransport);
         eventFamilyFactory = new EventFamilyFactory(this.eventManager);
-        endpointRegistrationManager = new DefaultEndpointRegistrationManager(this.kaaClientState, userTransport, profileTransport);
+        endpointRegistrationManager = new DefaultEndpointRegistrationManager(kaaClientState, userTransport, profileTransport);
 
         channelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers);
         logCollector = new DefaultLogCollector(logTransport, channelManager);
@@ -456,7 +473,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     @Override
-    public KaaChannelManager getChannelMananager() {
+    public KaaChannelManager getChannelManager() {
         return channelManager;
     }
 
@@ -473,5 +490,50 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     @Override
     public PrivateKey getClientPrivateKey() {
         return kaaClientState.getPrivateKey();
+    }
+
+    @Override
+    public String refreshEndpointAccessToken() {
+        return kaaClientState.refreshEndpointAccessToken();
+    }
+
+    @Override
+    public String getEndpointAccessToken() {
+        return kaaClientState.getEndpointAccessToken();
+    }
+
+    @Override
+    public void attachEndpoint(EndpointAccessToken endpointAccessToken, OnAttachEndpointOperationCallback resultListener) {
+        endpointRegistrationManager.attachEndpoint(endpointAccessToken, resultListener);
+    }
+
+    @Override
+    public void detachEndpoint(EndpointKeyHash endpointKeyHash, OnDetachEndpointOperationCallback resultListener) {
+        endpointRegistrationManager.detachEndpoint(endpointKeyHash, resultListener);
+    }
+
+    @Override
+    public void attachUser(String userExternalId, String userAccessToken, UserAttachCallback callback) {
+        endpointRegistrationManager.attachUser(userExternalId, userAccessToken, callback);
+    }
+
+    @Override
+    public void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAttachCallback callback) {
+        endpointRegistrationManager.attachUser(userVerifierToken, userExternalId, userAccessToken, callback);
+    }
+
+    @Override
+    public boolean isAttachedToUser() {
+        return kaaClientState.isAttachedToUser();
+    }
+
+    @Override
+    public void setAttachedListener(AttachEndpointToUserCallback listener) {
+        endpointRegistrationManager.setAttachedCallback(listener);
+    }
+
+    @Override
+    public void setDetachedListener(DetachEndpointFromUserCallback listener) {
+        endpointRegistrationManager.setDetachedCallback(listener);
     }
 }

@@ -24,14 +24,10 @@ import java.util.concurrent.Executors;
 import org.kaaproject.kaa.client.AndroidKaaPlatformContext;
 import org.kaaproject.kaa.client.Kaa;
 import org.kaaproject.kaa.client.KaaClient;
-import org.kaaproject.kaa.client.KaaClientStateListener;
 import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
-import org.kaaproject.kaa.client.event.registration.CurrentEndpointAttachListener;
-import org.kaaproject.kaa.client.event.registration.CurrentEndpointDetachListener;
-import org.kaaproject.kaa.client.exceptions.KaaException;
-import org.kaaproject.kaa.client.notification.NotificationListener;
-import org.kaaproject.kaa.client.profile.ProfileContainer;
+import org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback;
+import org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback;
 import org.kaaproject.kaa.demo.smarthouse.device.DeviceEventClassFamily;
 import org.kaaproject.kaa.demo.smarthouse.device.DeviceInfo;
 import org.kaaproject.kaa.demo.smarthouse.device.DeviceInfoRequest;
@@ -65,8 +61,6 @@ import org.kaaproject.kaa.demo.smarthousedemo.concurrent.BlockingCallable;
 import org.kaaproject.kaa.demo.smarthousedemo.concurrent.TimeoutExecutor;
 import org.kaaproject.kaa.demo.smarthousedemo.data.DeviceStore;
 import org.kaaproject.kaa.demo.smarthousedemo.data.DeviceType;
-import org.kaaproject.kaa.schema.base.Profile;
-import org.kaaproject.kaa.schema.base.Notification;
 
 import android.content.Context;
 import android.util.Log;
@@ -74,8 +68,7 @@ import android.util.Log;
 public class SmartHouseController implements DeviceEventClassFamily.DefaultEventFamilyListener,
                                              ThermoEventClassFamily.DefaultEventFamilyListener,
                                              MusicEventClassFamily.DefaultEventFamilyListener,
-                                             CurrentEndpointAttachListener,
-                                             CurrentEndpointDetachListener
+                                             AttachEndpointToUserCallback, DetachEndpointFromUserCallback
 {
 
     private static final String TAG = SmartHouseController.class.getSimpleName();
@@ -207,7 +200,7 @@ public class SmartHouseController implements DeviceEventClassFamily.DefaultEvent
     
     public String getEndpointAccessToken() {
         checkInited();
-        return client.getEndpointRegistrationManager().getEndpointAccessToken();
+        return client.getEndpointAccessToken();
     }
     
     public boolean isAttachedToUser() {
@@ -296,8 +289,8 @@ public class SmartHouseController implements DeviceEventClassFamily.DefaultEvent
                     soundSystems.addListener(SmartHouseController.this);
                 }
                 if (deviceType != null) {
-                    client.getEndpointRegistrationManager().setAttachedListener(SmartHouseController.this);
-                    client.getEndpointRegistrationManager().setDetachedListener(SmartHouseController.this);
+                    client.setAttachedListener(SmartHouseController.this);
+                    client.setDetachedListener(SmartHouseController.this);
                 }
                 client.start();
                 Log.d("Kaa", "Kaa client initialization completed.");

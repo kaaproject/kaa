@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.demo.smarthousedemo.command;
 
 import org.kaaproject.kaa.client.KaaClient;
-import org.kaaproject.kaa.client.event.registration.UserAuthResultListener;
+import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
 import org.kaaproject.kaa.demo.smarthousedemo.exception.CommandException;
@@ -40,10 +40,9 @@ public class AttachUserCommand extends AbstractClientCommand<Boolean> {
     @Override
     protected void executeAsync() {
         Log.d("Kaa", "Attaching to user account!");
-        client.getEndpointRegistrationManager().attachUser(userAccount, USER_ACCESS_TOKEN, 
-                new UserAuthResultListener() {
-            @Override
-            public void onAuthResult(UserAttachResponse response) {
+        client.attachUser(userAccount, USER_ACCESS_TOKEN, new UserAttachCallback() {
+			@Override
+			public void onAttachResult(UserAttachResponse response) {
                 if (response.getResult()==SyncResponseResultType.SUCCESS) {
                     Log.d("Kaa", "Attached to user account!");
                     onComplete(true);
@@ -52,8 +51,7 @@ public class AttachUserCommand extends AbstractClientCommand<Boolean> {
                     Log.e("Kaa", "Unable to attach to user account!");
                     onException(new CommandException("Unable to attach to user account!"));
                 }
-            }
+			}
         });
     }
-
 }
