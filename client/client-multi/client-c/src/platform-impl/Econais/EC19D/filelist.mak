@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-CFILES-ECONAIS-PLAT = kaa/platform-impl/Econais/EC19D/__ashldi3.c kaa/platform-impl/Econais/EC19D/logger.c kaa/platform-impl/Econais/EC19D/sha.c
+CFILES-ECONAIS-PLAT = kaa/platform-impl/Econais/EC19D/__ashldi3.c kaa/platform-impl/Econais/EC19D/logger.c kaa/platform-impl/Econais/EC19D/sha.c kaa/platform-impl/Econais/EC19D/econais_ec19d_tcp_utils.c
 CFILES-PLAT-IMPL = kaa/platform-impl/ext_log_storage_memory.c kaa/platform-impl/ext_log_upload_strategy_by_volume.c
 CFILES-AVRO = kaa/avro_src/io.c kaa/avro_src/encoding_binary.c
 CFILES-COLLECTIONS = kaa/collections/kaa_deque.c kaa/collections/kaa_list.c
