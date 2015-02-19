@@ -7,7 +7,7 @@
     the specific language governing permissions and limitations under the License. -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
@@ -169,7 +169,8 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/generated-resources/demo/robotrun</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/robotrun
+                            </outputDirectory>
                             <includeGroupIds>org.kaaproject.kaa.examples.robotrun</includeGroupIds>
                             <includeArtifactIds>robotrun-shared</includeArtifactIds>
                             <excludeTransitive>true</excludeTransitive>
@@ -182,10 +183,26 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/generated-resources/demo/smarthouse</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/smarthouse
+                            </outputDirectory>
                             <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
                             <includeArtifactIds>smarthousedemo</includeArtifactIds>
                             <includeClassifiers>smarthouse-android-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-androidnotification-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/androidnotification
+                            </outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>androidnotificationdemo</includeArtifactIds>
+                            <includeClassifiers>notification-android-resources</includeClassifiers>
                             <excludeTransitive>true</excludeTransitive>
                         </configuration>
                     </execution>
@@ -226,6 +243,16 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
                                     <destFileName>smarthouse_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>androidnotificationdemo</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>notification-android-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
+                                    <destFileName>android_notification_demo.tar.gz</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
