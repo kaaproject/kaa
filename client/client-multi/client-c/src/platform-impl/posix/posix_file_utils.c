@@ -15,6 +15,7 @@
  */
 
 #include "posix_file_utils.h"
+#include <stdint.h>
 #include "../../platform/stdio.h"
 #include "../../utilities/kaa_mem.h"
 #include "../../kaa_common.h"
