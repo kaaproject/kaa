@@ -29,7 +29,7 @@ public class AndroidNotificationDemoBuilder extends AbstractDemoBuilder{
         sdkKey.setApplicationId(notificationApplication.getId());
         sdkKey.setProfileSchemaVersion(1);
         sdkKey.setConfigurationSchemaVersion(1);
-        sdkKey.setNotificationSchemaVersion(2);
+        sdkKey.setNotificationSchemaVersion(1);
         sdkKey.setLogSchemaVersion(1);
         sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
 
@@ -38,9 +38,9 @@ public class AndroidNotificationDemoBuilder extends AbstractDemoBuilder{
 
         NotificationSchemaDto notificationSchemaDto = new NotificationSchemaDto();
         notificationSchemaDto.setApplicationId(notificationApplication.getId());
-        notificationSchemaDto.setName("Labirynth schema");
-        notificationSchemaDto.setDescription("Configuration schema describing labirynth");
-        notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, "demo/robotrun/configSchema.json");
+        notificationSchemaDto.setName("Notification schema");
+        notificationSchemaDto.setDescription("Notification schema describing incoming notifications");
+        notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, "demo/androidnotificationdemo/notificationSchema.json");
         sdkKey.setNotificationSchemaVersion(notificationSchemaDto.getMajorVersion());
 
 
