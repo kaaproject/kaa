@@ -1,3 +1,0 @@
-/Users/zyoma/github/kaa/examples/c-sdk-sample/libs/kaa/build/CMakeFiles/kaac_o.dir
-/Users/zyoma/github/kaa/examples/c-sdk-sample/libs/kaa/build/CMakeFiles/kaac_s.dir
-/Users/zyoma/github/kaa/examples/c-sdk-sample/libs/kaa/build/CMakeFiles/kaac.dir
