@@ -143,7 +143,7 @@ public class CSdkGenerator extends SdkGenerator {
         }
 
         if (!StringUtils.isBlank(configurationBaseSchemaBody)) {
-            cSources.addAll(generateConfigurationSources(configurationProtocolSchemaBody));
+            cSources.addAll(generateConfigurationSources(configurationBaseSchemaBody));
         }
 
         if (eventFamilies != null && !eventFamilies.isEmpty()) {
