@@ -41,8 +41,12 @@ private:
 class TestEventDataProcessor : public IEventDataProcessor
 {
 public:
-    virtual std::list<Event> getPendingEvents() {
+    virtual std::list<Event> releasePendingEvents() {
         return events_;
+    }
+
+    virtual bool hasPendingEvents() const {
+        return !events_.empty();
     }
 
     void setPendingEvents(const std::list<Event>& newEvents) {
@@ -52,6 +56,11 @@ public:
     virtual std::map<std::int32_t, std::list<std::string> > getPendingListenerRequests() {
         static std::map<std::int32_t, std::list<std::string> > mock;
         return mock;
+    }
+
+    virtual bool hasPendingListenerRequests() const
+    {
+        return false;
     }
 
     virtual void onEventsReceived(const EventSyncResponse::events_t& events) {}

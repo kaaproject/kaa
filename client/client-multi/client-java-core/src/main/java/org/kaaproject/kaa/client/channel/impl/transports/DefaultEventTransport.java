@@ -109,12 +109,14 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
                     for (Set<Event> events : pendingEvents.values()) {
                         eventsSet.addAll(events);
                     }
+                    
+                    eventsSet.addAll(manager.getPendingEvents());
 
                     List<Event> events = new ArrayList<Event>(eventsSet);
                     Collections.sort(events, eventSeqNumberComparator);
 
                     clientState.setEventSeqNum(startEventSN + events.size());
-                    if (events.get(0).getSeqNum() != startEventSN) {
+                    if (!events.isEmpty() && events.get(0).getSeqNum() != startEventSN) {
                         LOG.info("Put in order event sequence numbers (expected: {}, actual: {})", startEventSN, events.get(0).getSeqNum());
 
                         for (Event e : events) {
@@ -164,13 +166,15 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
     public void onSyncResposeIdReceived(Integer requestId) {
         LOG.debug("Events sent with request id {} were accepted.", requestId);
         Set<Event> acceptedEvents = pendingEvents.remove(requestId);
-        Iterator<Entry<Integer, Set<Event>>> entrySetIterator = pendingEvents.entrySet().iterator();
-        while (entrySetIterator.hasNext()) {
-            Entry<Integer, Set<Event>> entry = entrySetIterator.next();
-            entry.getValue().removeAll(acceptedEvents);
-            if (entry.getValue().size() == 0) {
-                LOG.debug("Remove entry for request {}.", requestId);
-                entrySetIterator.remove();
+        if (acceptedEvents != null) {
+            Iterator<Entry<Integer, Set<Event>>> entrySetIterator = pendingEvents.entrySet().iterator();
+            while (entrySetIterator.hasNext()) {
+                Entry<Integer, Set<Event>> entry = entrySetIterator.next();
+                entry.getValue().removeAll(acceptedEvents);
+                if (entry.getValue().size() == 0) {
+                    LOG.debug("Remove entry for request {}.", requestId);
+                    entrySetIterator.remove();
+                }
             }
         }
     }

@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @param <T> the type parameter
  */
-public interface EndpointGroupDao<T> extends Dao<T> {
+public interface EndpointGroupDao<T> extends SqlDao<T> {
 
 
     /**

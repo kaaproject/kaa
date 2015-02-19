@@ -20,14 +20,11 @@
 #include <vector>
 #include <string>
 
-#include "kaa/gen/BootstrapGen.hpp"
-
 namespace kaa {
-
-typedef std::vector<OperationsServer> EndpointServerList;
 
 class IKaaChannelManager;
 class IBootstrapTransport;
+class TransportProtocolId;
 
 /**
  * Bootstrap manager manages the list of available operation servers.
@@ -46,7 +43,7 @@ public:
      * @param type the channel's type (i.e. HTTP channel, HTTP long poll channel, etc.).
      * @see ChannelType
      */
-    virtual void useNextOperationsServer(ChannelType type) = 0;
+    virtual void useNextOperationsServer(const TransportProtocolId& protocolId) = 0;
 
     /**
      * Update the Channel Manager with endpoint's properties retrieved by its DNS.
@@ -54,7 +51,7 @@ public:
      * @param name endpoint's DNS.
      *
      */
-    virtual void useNextOperationsServerByDnsName(const std::string& name) = 0;
+    virtual void useNextOperationsServerByAccessPointId(std::int32_t id) = 0;
 
     /**
      * Sets bootstrap transport object.
@@ -81,12 +78,7 @@ public:
      * @see OperationsServerList
      *
      */
-    virtual void onServerListUpdated(const OperationsServerList& list) = 0;
-
-    /**
-     * Retrieves current list of servers.
-     */
-    virtual const std::vector<OperationsServer>& getOperationsServerList() = 0;
+    virtual void onServerListUpdated(const std::vector<ProtocolMetaData>& operationsServers) = 0;
 
     virtual ~IBootstrapManager() { }
 };

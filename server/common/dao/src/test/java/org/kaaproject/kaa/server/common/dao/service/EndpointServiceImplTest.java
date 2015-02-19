@@ -27,7 +27,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.AbstractTest;
 
 @Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
 public class EndpointServiceImplTest extends AbstractTest {

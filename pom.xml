@@ -51,7 +51,7 @@ Copyright 2014 CyberVision, Inc.
         <netty.version>4.0.20.Final</netty.version>
         <avro.version>1.7.5</avro.version>
         <apache.velocity>1.7</apache.velocity>
-        <zookeeper.version>3.4.5</zookeeper.version>
+        <zookeeper.version>3.4.6</zookeeper.version>
         <curator.version>2.3.0</curator.version>
         <libthrift.version>0.9.1</libthrift.version>
         <commons-cli.version>1.2</commons-cli.version>
@@ -83,6 +83,11 @@ Copyright 2014 CyberVision, Inc.
         <checkstyle.version>2.9.1</checkstyle.version>
         <rat.version>0.10</rat.version>
         <javassist.version>3.18.1-GA</javassist.version>
+        <signpost-core.version>1.2.1.2</signpost-core.version>
+
+        <cassandra.driver.version>2.1.4</cassandra.driver.version>
+        <cassandra.driver.mapping>2.1.4</cassandra.driver.mapping>
+        <cassandra-unit.version>2.0.2.2</cassandra-unit.version>
 
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -106,9 +111,6 @@ Copyright 2014 CyberVision, Inc.
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <properties>
-                <build.commit>N/A</build.commit>
-            </properties>
         </profile>
         <profile>
             <id>examples</id>
@@ -131,9 +133,6 @@ Copyright 2014 CyberVision, Inc.
                 <module>it</module>
                 <module>sandbox</module>
             </modules>
-            <properties>
-                <build.commit>${GIT_COMMIT}</build.commit>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -452,6 +451,7 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/thirdparty/**</exclude>
                         <exclude>**/security.policy</exclude>
                         <exclude>**/*-transport.config</exclude>
+                        <exclude>**/*.cql</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -487,7 +487,12 @@ Copyright 2014 CyberVision, Inc.
             </dependency>
             <dependency>
                 <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
-                <artifactId>mongo</artifactId>
+                <artifactId>mongo-dao</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+                <artifactId>cassandra-dao</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -537,6 +542,12 @@ Copyright 2014 CyberVision, Inc.
                 <artifactId>transport</artifactId>
                 <classifier>tcp</classifier>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
@@ -595,7 +606,7 @@ Copyright 2014 CyberVision, Inc.
             </dependency>
             <dependency>
                 <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
-                <artifactId>mongo</artifactId>
+                <artifactId>mongo-dao</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
@@ -767,12 +778,6 @@ Copyright 2014 CyberVision, Inc.
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.driver.ver}</version>
@@ -853,15 +858,14 @@ Copyright 2014 CyberVision, Inc.
                 <version>${metrics.version}</version>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>oauth.signpost</groupId>
+                <artifactId>signpost-core</artifactId>
+                <version>${signpost-core.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -24,7 +24,7 @@ import java.util.List;
  * The interface Application dao.
  * @param <T>  the type parameter
  */
-public interface ApplicationDao<T> extends Dao<T> {
+public interface ApplicationDao<T> extends SqlDao<T> {
 
     /**
      * Find applications by  tenant id.

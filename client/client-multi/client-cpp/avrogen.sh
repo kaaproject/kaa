@@ -18,7 +18,6 @@
 
 mkdir -p avro/event
 
-avrogencpp -i avro/bootstrap.avsc -o kaa/gen/BootstrapGen.hpp -n kaa
 avrogencpp -i avro/endpoint.avsc -o kaa/gen/EndpointGen.hpp -n kaa
 avrogencpp -i avro/profile.avsc -o kaa/gen/ProfileGen.hpp -n kaa
 avrogencpp -i avro/notification.avsc -o kaa/gen/NotificationGen.hpp -n kaa

@@ -398,6 +398,7 @@ public class EndpointActorMessageProcessor {
                 }
                 logPack.setEvents(logEvents);
                 logPack.setLogSchemaVersion(responseHolder.getEndpointProfile().getLogSchemaVersion());
+                logPack.setUserId(userId);
                 context.parent().tell(new LogEventPackMessage(request.getRequestId(), context.self(), logPack), context.self());
             }
             if (logUploadResponseMap.size() > 0) {
@@ -516,7 +517,7 @@ public class EndpointActorMessageProcessor {
 
     /**
      * Subscribe to topics.
-     * 
+     *
      * @param response
      *            the response
      */
@@ -564,8 +565,8 @@ public class EndpointActorMessageProcessor {
 
     /**
      * Send reply.
-     * 
-     * @param pendingRequest
+     *
+     * @param request
      *            the pending request
      * @param syncResponse
      *            the sync response
@@ -575,8 +576,8 @@ public class EndpointActorMessageProcessor {
 
         ServerSync copy = deepCopy(syncResponse);
 
-        NettySessionResponseMessage response = new NettySessionResponseMessage(request.getSession(), copy, request.getCommand()
-                .getMessageBuilder(), request.getCommand().getErrorBuilder());
+        NettySessionResponseMessage response = new NettySessionResponseMessage(request.getSession(), copy, request
+                .getCommand().getMessageBuilder(), request.getCommand().getErrorBuilder());
 
         tellActor(context, request.getOriginator(), response);
         scheduleActorTimeout(context);
@@ -746,14 +747,32 @@ public class EndpointActorMessageProcessor {
         LOG.debug("[{}][{}] Current Endpoint was attached/detached from user. Need to close all current event channels {}", endpointKey,
                 actorKey, eventChannels.size());
         userRegistrationRequestSent = false;
+        
+        if (message instanceof EndpointUserAttachMessage) {
+            if (endpointProfile != null) {
+                endpointProfile.setEndpointUserId(message.getUserId());
+            }
+            LOG.debug("[{}][{}] Updating endpoint user id to {} in profile", endpointKey, actorKey, message.getUserId());
+        } else if (message instanceof EndpointUserDetachMessage) {
+            if (endpointProfile != null && message.getUserId().equals(endpointProfile.getEndpointUserId())) {
+                endpointProfile.setEndpointUserId(null);
+            }
+            LOG.debug("[{}][{}] Clanup endpoint user id in profile", endpointKey, actorKey, message.getUserId());
+        }
+
         if (!eventChannels.isEmpty()) {
+            updateUserConnection(context);
             for (ChannelMetaData channel : eventChannels) {
                 SyncRequestMessage pendingRequest = channel.getRequestMessage();
                 ServerSync pendingResponse = channel.getResponseHolder().getResponse();
 
                 UserServerSync userSyncResponse = pendingResponse.getUserSync();
-                if (userSyncResponse != null) {
-                    userSyncResponse.cleanupNotifications();
+
+                if (userSyncResponse == null && pendingRequest.isValid(TransportType.USER)) {
+                    userSyncResponse = new UserServerSync();
+                    pendingResponse.setUserSync(userSyncResponse);
+                }
+                if( userSyncResponse != null){
                     if (message instanceof EndpointUserAttachMessage) {
                         if (endpointProfile != null) {
                             endpointProfile.setEndpointUserId(message.getUserId());
@@ -762,9 +781,6 @@ public class EndpointActorMessageProcessor {
                                 .setUserAttachNotification(new UserAttachNotification(message.getUserId(), message.getOriginator()));
                         LOG.debug("[{}][{}] Adding user attach notification", endpointKey, actorKey);
                     } else if (message instanceof EndpointUserDetachMessage) {
-                        if (endpointProfile != null && message.getUserId().equals(endpointProfile.getEndpointUserId())) {
-                            endpointProfile.setEndpointUserId(null);
-                        }
                         userSyncResponse.setUserDetachNotification(new UserDetachNotification(message.getOriginator()));
                         LOG.debug("[{}][{}] Adding user detach notification", endpointKey, actorKey);
                     }
@@ -772,9 +788,7 @@ public class EndpointActorMessageProcessor {
 
                 LOG.debug("[{}][{}] sending reply to [{}] channel", endpointKey, actorKey, channel.getId());
                 sendReply(context, pendingRequest, pendingResponse);
-                if (channel.getType().isAsync()) {
-                    updateUserConnection(context);
-                } else {
+                if (!channel.getType().isAsync()) {
                     channelMap.removeChannel(channel);
                 }
             }

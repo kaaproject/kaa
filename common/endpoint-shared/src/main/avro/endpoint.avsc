@@ -277,7 +277,6 @@
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "record",
  "name": "ProtocolVersionPair",
- "direction": "out",
  "fields": [
      {"name": "id", "type": "int"},
      {"name": "version", "type": "int"}
@@ -300,7 +299,8 @@
  "direction": "out",
  "fields": [
      {"name": "appStateSeqNumber", "type": "int"},
-     {"name": "configurationHash",  "type": ["bytes", "null"]}
+     {"name": "configurationHash",  "type": ["bytes", "null"]},
+     {"name": "resyncOnly", "type": ["boolean", "null"]}
  ]
 },
 
@@ -353,7 +353,7 @@
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "record",
  "name": "ProtocolMetaData",
- "direction": "out",
+ "direction": "in",
  "fields": [
      {"name": "accessPointId", "type": "int"},
      {"name": "protocolVersionInfo", "type": "org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair"},
@@ -364,7 +364,7 @@
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "record",
  "name": "BootstrapSyncResponse",
- "direction": "out",
+ "direction": "in",
  "fields": [
      {"name": "requestId", "type": "int"},
      {"name": "supportedProtocols", "type": {"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData"}}

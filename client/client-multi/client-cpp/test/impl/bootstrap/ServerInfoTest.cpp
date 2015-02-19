@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(ServerInfoTest)
     std::string encodedPublicKey("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA211wMpVTtp1L6kg872SIk2rq1fcFl9LzTgqmq2T7fmLu6JluuB4vQ7Rbc3XZADipWe5EAMsSFQ3JuiwojuKQzN1hN9Jf+Y5/DMPYQYM3XKBd6h4qnQbnB51k5YHXnZy4g8+qU1br70g3IAZvc45WnkM5A9PQSDLEhrVeWNGuIeDWvR0OimcRz3z4FpdvZISfp639GBH6uj/fuYkstaoI/HsRmuESP4dcf38vr4OiJTmdZlr4nVydtYobqF3qa5hxwwmFZahXyGlvJc66GZd1S4SoqCtn3QI790Ybx1ntpc3yb/CgNPrGScSr/8R+k9JfaEOcVNa3DRQQnvc0Gx7ycQIDAQAB");
     ServerInfo serverInfo1(host, encodedPublicKey);
 
-    Botan::MemoryVector<std::uint8_t> decodedPublicKey(Botan::base64_decode(encodedPublicKey));
+    PublicKey decodedPublicKey(Botan::base64_decode(encodedPublicKey));
     ServerInfo *serverInfo2 = new ServerInfo(host, decodedPublicKey);
 
     BOOST_CHECK_MESSAGE(serverInfo1.isValid(), "Server host is invalid - " + serverInfo1.getHost());

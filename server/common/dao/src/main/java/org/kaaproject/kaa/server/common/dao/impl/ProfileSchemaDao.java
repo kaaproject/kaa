@@ -22,7 +22,7 @@ import java.util.List;
  * The interface Profile schema dao.
  * @param <T>  the type parameter
  */
-public interface ProfileSchemaDao<T> extends Dao<T> {
+public interface ProfileSchemaDao<T> extends SqlDao<T> {
 
     /**
      * Find profile schemas by application id.
