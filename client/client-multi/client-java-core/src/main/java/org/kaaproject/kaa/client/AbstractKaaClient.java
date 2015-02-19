@@ -493,8 +493,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     @Override
-    public String regenerateEndpointAccessToken() {
-        return null;
+    public String refreshEndpointAccessToken() {
+        return kaaClientState.refreshEndpointAccessToken();
     }
 
     @Override

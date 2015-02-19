@@ -504,7 +504,7 @@ public interface GenericKaaClient {
     /**
      * Generate new access token for a current endpoint
      */
-    String regenerateEndpointAccessToken();
+    String refreshEndpointAccessToken();
 
     /**
      * Retrieve an access token for a current endpoint
