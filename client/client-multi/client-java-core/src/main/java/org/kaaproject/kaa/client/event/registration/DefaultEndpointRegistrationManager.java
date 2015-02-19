@@ -50,8 +50,8 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     private static final Random RANDOM = new Random();
 
     private final KaaClientState state;
-    private final Map<Integer, EndpointOperationCallback> endpointAttachListeners = new ConcurrentHashMap<>();
-    private final Map<Integer, EndpointOperationCallback> endpointDetachListeners = new ConcurrentHashMap<>();
+    private final Map<Integer, OnAttachEndpointOperationCallback> endpointAttachListeners = new ConcurrentHashMap<>();
+    private final Map<Integer, OnDetachEndpointOperationCallback> endpointDetachListeners = new ConcurrentHashMap<>();
 
     private final Map<Integer, EndpointAccessToken> attachEndpointRequests = new ConcurrentHashMap<>();
     private final Map<Integer, EndpointKeyHash> detachEndpointRequests = new ConcurrentHashMap<>();
@@ -86,7 +86,7 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     }
 
     @Override
-    public void attachEndpoint(EndpointAccessToken endpointAccessToken, EndpointOperationCallback resultListener) {
+    public void attachEndpoint(EndpointAccessToken endpointAccessToken, OnAttachEndpointOperationCallback resultListener) {
         int requestId = getRandomInt();
         LOG.info("Going to attach Endpoint by access token: {}", endpointAccessToken);
         attachEndpointRequests.put(requestId, endpointAccessToken);
@@ -99,7 +99,7 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     }
 
     @Override
-    public void detachEndpoint(EndpointKeyHash endpointKeyHash, EndpointOperationCallback resultListener) {
+    public void detachEndpoint(EndpointKeyHash endpointKeyHash, OnDetachEndpointOperationCallback resultListener) {
         int requestId = getRandomInt();
         LOG.info("Going to detach Endpoint by endpoint key hash: {}", endpointKeyHash);
         detachEndpointRequests.put(requestId, endpointKeyHash);
@@ -187,13 +187,13 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
         }
     }
 
-    private void notifyAttachedListener(SyncResponseResultType result, EndpointOperationCallback operationCallback, EndpointKeyHash keyHash) {
+    private void notifyAttachedListener(SyncResponseResultType result, OnAttachEndpointOperationCallback operationCallback, EndpointKeyHash keyHash) {
         if(operationCallback != null){
             operationCallback.onAttach(result, keyHash);
         }
     }
 
-    private void notifyDetachedListener(SyncResponseResultType result, EndpointOperationCallback operationCallback) {
+    private void notifyDetachedListener(SyncResponseResultType result, OnDetachEndpointOperationCallback operationCallback) {
         if(operationCallback != null){
             operationCallback.onDetach(result);
         }

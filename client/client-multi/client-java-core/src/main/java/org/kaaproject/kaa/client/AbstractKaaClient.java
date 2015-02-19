@@ -69,8 +69,9 @@ import org.kaaproject.kaa.client.event.EventManager;
 import org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback;
 import org.kaaproject.kaa.client.event.registration.DefaultEndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback;
-import org.kaaproject.kaa.client.event.registration.EndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
+import org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback;
+import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.client.exceptions.KaaClusterConnectionException;
 import org.kaaproject.kaa.client.exceptions.KaaException;
@@ -502,12 +503,12 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     @Override
-    public void attachEndpoint(EndpointAccessToken endpointAccessToken, EndpointOperationCallback resultListener) {
+    public void attachEndpoint(EndpointAccessToken endpointAccessToken, OnAttachEndpointOperationCallback resultListener) {
         endpointRegistrationManager.attachEndpoint(endpointAccessToken, resultListener);
     }
 
     @Override
-    public void detachEndpoint(EndpointKeyHash endpointKeyHash, EndpointOperationCallback resultListener) {
+    public void detachEndpoint(EndpointKeyHash endpointKeyHash, OnDetachEndpointOperationCallback resultListener) {
         endpointRegistrationManager.detachEndpoint(endpointKeyHash, resultListener);
     }
 

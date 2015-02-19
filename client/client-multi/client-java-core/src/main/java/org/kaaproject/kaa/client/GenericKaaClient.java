@@ -15,26 +15,19 @@
  */
 package org.kaaproject.kaa.client;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.List;
-
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
-import org.kaaproject.kaa.client.configuration.delta.manager.DeltaManager;
-import org.kaaproject.kaa.client.configuration.manager.ConfigurationManager;
-import org.kaaproject.kaa.client.configuration.storage.ConfigurationPersistenceManager;
-import org.kaaproject.kaa.client.event.EndpointAccessToken;
-import org.kaaproject.kaa.client.event.EndpointKeyHash;
-import org.kaaproject.kaa.client.event.EventFamily;
 import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
+import org.kaaproject.kaa.client.event.EndpointAccessToken;
+import org.kaaproject.kaa.client.event.EndpointKeyHash;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback;
 import org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback;
-import org.kaaproject.kaa.client.event.registration.EndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
+import org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback;
+import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.client.logging.LogStorage;
 import org.kaaproject.kaa.client.logging.LogUploadStrategy;
@@ -43,10 +36,11 @@ import org.kaaproject.kaa.client.notification.NotificationManager;
 import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
 import org.kaaproject.kaa.client.notification.UnavailableTopicException;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
-import org.kaaproject.kaa.client.schema.storage.SchemaPersistenceManager;
-import org.kaaproject.kaa.client.transact.TransactionId;
-import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
+
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.List;
 
 /**
  * <p>
@@ -520,16 +514,16 @@ public interface GenericKaaClient {
     /**
      * Updates with new endpoint attach request<br>
      * <br>
-     * {@link org.kaaproject.kaa.client.event.registration.EndpointOperationCallback} is populated with {@link org.kaaproject.kaa.client.event.EndpointKeyHash} of an
+     * {@link org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback} is populated with {@link org.kaaproject.kaa.client.event.EndpointKeyHash} of an
      * attached endpoint.
      *
      * @param endpointAccessToken Access token of the attaching endpoint
      * @param resultListener Listener to notify about result of the endpoint attaching
      *
      * @see org.kaaproject.kaa.client.event.EndpointAccessToken
-     * @see org.kaaproject.kaa.client.event.registration.EndpointOperationCallback
+     * @see org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback
      */
-    void attachEndpoint(EndpointAccessToken endpointAccessToken, EndpointOperationCallback resultListener);
+    void attachEndpoint(EndpointAccessToken endpointAccessToken, OnAttachEndpointOperationCallback resultListener);
 
     /**
      * Updates with new endpoint detach request
@@ -538,9 +532,9 @@ public interface GenericKaaClient {
      * @param resultListener Listener to notify about result of the enpoint attaching
      *
      * @see org.kaaproject.kaa.client.event.EndpointKeyHash
-     * @see EndpointOperationCallback
+     * @see OnDetachEndpointOperationCallback
      */
-    void detachEndpoint(EndpointKeyHash endpointKeyHash, EndpointOperationCallback resultListener);
+    void detachEndpoint(EndpointKeyHash endpointKeyHash, OnDetachEndpointOperationCallback resultListener);
 
     /**
      * Creates user attach request using default verifier. Default verifier is selected during SDK generation.

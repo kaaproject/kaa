@@ -21,22 +21,19 @@ import org.kaaproject.kaa.client.event.EndpointKeyHash;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 
 /**
- * Callback interface for attached, detached endpoint notifications.<br>
+ * Callback interface for attached endpoint notifications.<br>
  * <br>
  * Use this interface to receive result of next operations:
- * <il>
- * <li> Attach endpoint to user by {@link EndpointAccessToken}; </li>
- * <li> Detach endpoint from user by {@link EndpointKeyHash};</li>
- * </il>
+ *
+ * Attach endpoint to user by {@link EndpointAccessToken}
  * <br>
  * Once result from Operations server is received, listener is notified with
  * string representation of operation name, result of the operation {@link SyncResponseResultType}
  * and additional data if available.
  *
- * @author Taras Lemkin
  * @see EndpointRegistrationManager
  */
-public interface EndpointOperationCallback {
+public interface OnAttachEndpointOperationCallback {
 
     /**
      * Callback on endpoint attach response<br>
@@ -51,13 +48,6 @@ public interface EndpointOperationCallback {
      *                      of attached endpoint.
      * @see SyncResponseResultType
      */
-    void onAttach(SyncResponseResultType result, Object resultContext);
+    void onAttach(SyncResponseResultType result, EndpointKeyHash resultContext);
 
-    /**
-     * Callback on endpoint detach response<br>
-     *
-     * @param result The enum value [{@code SUCCESS, FAILURE}]
-     * @see SyncResponseResultType
-     */
-    void onDetach(SyncResponseResultType result);
 }

@@ -58,7 +58,7 @@ import org.kaaproject.kaa.client.event.EndpointKeyHash;
  * }
  * </pre>
  * EndpointKeyHash for endpoint can be received with AttachEndpoint operation
- * provided from Operations server. See {@link EndpointOperationCallback}. <br>
+ * provided from Operations server. See {@link OnAttachEndpointOperationCallback}. <br>
  * <br>
  * If current endpoint is assumed to be attached or detached by another endpoint,
  * specific {@link AttachEndpointToUserCallback} and {@link DetachEndpointFromUserCallback}
@@ -72,7 +72,8 @@ import org.kaaproject.kaa.client.event.EndpointKeyHash;
  *
  * @see EndpointAccessToken
  * @see EndpointKeyHash
- * @see EndpointOperationCallback
+ * @see OnDetachEndpointOperationCallback
+ * @see OnAttachEndpointOperationCallback
  * @see UserAttachCallback
  * @see ChangedAttachedEndpointListCallback
  * @see AttachEndpointToUserCallback
@@ -85,16 +86,16 @@ public interface EndpointRegistrationManager {
     /**
      * Updates with new endpoint attach request<br>
      * <br>
-     * {@link EndpointOperationCallback} is populated with {@link EndpointKeyHash} of an
+     * {@link OnAttachEndpointOperationCallback} is populated with {@link EndpointKeyHash} of an
      * attached endpoint.
      *
      * @param endpointAccessToken Access token of the attaching endpoint
      * @param resultListener Listener to notify about result of the endpoint attaching
      *
      * @see EndpointAccessToken
-     * @see EndpointOperationCallback
+     * @see OnAttachEndpointOperationCallback
      */
-    void attachEndpoint(EndpointAccessToken endpointAccessToken, EndpointOperationCallback resultListener);
+    void attachEndpoint(EndpointAccessToken endpointAccessToken, OnAttachEndpointOperationCallback resultListener);
 
     /**
      * Updates with new endpoint detach request
@@ -103,9 +104,9 @@ public interface EndpointRegistrationManager {
      * @param resultListener Listener to notify about result of the enpoint attaching
      *
      * @see EndpointKeyHash
-     * @see EndpointOperationCallback
+     * @see OnDetachEndpointOperationCallback
      */
-    void detachEndpoint(EndpointKeyHash endpointKeyHash, EndpointOperationCallback resultListener);
+    void detachEndpoint(EndpointKeyHash endpointKeyHash, OnDetachEndpointOperationCallback resultListener);
 
     /**
      * Creates user attach request using default verifier. Default verifier is selected during SDK generation.
