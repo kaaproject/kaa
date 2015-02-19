@@ -434,3 +434,9 @@ kaa_error_t kaa_profile_manager_set_endpoint_access_token(kaa_profile_manager_t 
     KAA_RETURN_IF_NIL2(self, token, KAA_ERR_BADPARAM);
     return kaa_status_set_endpoint_access_token(self->status, token);
 }
+
+kaa_error_t kaa_profile_manager_get_endpoint_key_hash(kaa_profile_manager_t *self, kaa_digest_p result_hash)
+{
+    KAA_RETURN_IF_NIL2(self, result_hash, KAA_ERR_BADPARAM);
+    return ext_copy_sha_hash(result_hash, self->status->endpoint_public_key_hash);
+}

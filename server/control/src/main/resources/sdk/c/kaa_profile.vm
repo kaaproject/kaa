@@ -30,6 +30,7 @@ extern "C" {
 
 # include <stdbool.h>
 # include "kaa_error.h"
+# include "platform/ext_sha.h"
 # include "gen/kaa_profile_gen.h"
 
 
@@ -44,7 +45,10 @@ typedef kaa_profile_${record_name}_t kaa_profile_t;
 /**
  * Private profile manager data structure
  */
-typedef struct kaa_profile_manager_t kaa_profile_manager_t;
+# ifndef KAA_PROFILE_MANAGER_T
+# define KAA_PROFILE_MANAGER_T
+    typedef struct kaa_profile_manager_t    kaa_profile_manager_t;
+# endif
 
 
 
@@ -62,6 +66,7 @@ typedef struct kaa_profile_manager_t kaa_profile_manager_t;
 kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_profile_t *profile);
 
 
+
 /**
  * @brief Updates user's access token.
  *
@@ -71,6 +76,20 @@ kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_
  * @return      Error code.
  */
 kaa_error_t kaa_profile_manager_set_endpoint_access_token(kaa_profile_manager_t *self, const char *token);
+
+
+
+/**
+ * @brief Retrieves the endpoint key hash.
+ *
+ * @param[in]  self           Profile manager instance.
+ * @param[out] result_hash    The endpoint key hash.
+ *
+ * @return      Error code.
+ */
+kaa_error_t kaa_profile_manager_get_endpoint_key_hash(kaa_profile_manager_t *self, kaa_digest_p result_hash);
+
+
 
 # ifdef __cplusplus
 }      /* extern "C" */
