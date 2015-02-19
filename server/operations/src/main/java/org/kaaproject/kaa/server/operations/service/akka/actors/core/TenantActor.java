@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.CORE_DISPATCHER_NAME;
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.USER_DISPATCHER_NAME;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -69,7 +72,7 @@ public class TenantActor extends UntypedActor {
 
     /** The log appender service. */
     private final LogAppenderService logAppenderService;
-    
+
     /** The endpoint user service. */
     private final EndpointUserService endpointUserService;
 
@@ -82,7 +85,8 @@ public class TenantActor extends UntypedActor {
     private final String tenantId;
 
     private TenantActor(CacheService cacheService, OperationsService endpointService, NotificationDeltaService notificationDeltaService,
-            EventService eventService, ApplicationService applicationService, LogAppenderService logAppenderService, EndpointUserService endpointUserService, String tenantId) {
+            EventService eventService, ApplicationService applicationService, LogAppenderService logAppenderService,
+            EndpointUserService endpointUserService, String tenantId) {
         super();
         this.cacheService = cacheService;
         this.operationsService = endpointService;
@@ -251,7 +255,9 @@ public class TenantActor extends UntypedActor {
     private ActorRef getOrCreateUserActor(String userId) {
         ActorRef userActor = users.get(userId);
         if (userActor == null && userId != null) {
-            userActor = context().actorOf(Props.create(new UserActor.ActorCreator(cacheService, eventService, userId, tenantId)), userId);
+            userActor = context().actorOf(
+                    Props.create(new UserActor.ActorCreator(cacheService, eventService, userId, tenantId)).withDispatcher(
+                            USER_DISPATCHER_NAME), userId);
             LOG.debug("Create user actor with id {}", userId);
             users.put(userId, userActor);
         }
@@ -269,8 +275,9 @@ public class TenantActor extends UntypedActor {
         ActorRef applicationActor = applications.get(appToken);
         if (applicationActor == null) {
             applicationActor = context().actorOf(
-                    Props.create(new ApplicationActor.ActorCreator(operationsService, notificationDeltaService, applicationService,
-                            logAppenderService, endpointUserService, appToken)), appToken);
+                    Props.create(
+                            new ApplicationActor.ActorCreator(operationsService, notificationDeltaService, applicationService,
+                                    logAppenderService, endpointUserService, appToken)).withDispatcher(CORE_DISPATCHER_NAME), appToken);
             applications.put(appToken, applicationActor);
         }
         return applicationActor;

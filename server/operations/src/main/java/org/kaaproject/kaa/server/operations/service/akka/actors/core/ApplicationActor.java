@@ -16,6 +16,11 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.TOPIC_DISPATCHER_NAME;
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.LOG_DISPATCHER_NAME;
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.VERIFIER_DISPATCHER_NAME;
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.ENDPOINT_DISPATCHER_NAME;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -287,7 +292,9 @@ public class ApplicationActor extends UntypedActor {
     private ActorRef getOrCreateTopic(String topicId) {
         ActorRef topicActor = topicSessions.get(topicId);
         if (topicActor == null) {
-            topicActor = context().actorOf(Props.create(new TopicActor.ActorCreator(notificationDeltaService)), buildTopicKey(topicId));
+            topicActor = context().actorOf(
+                    Props.create(new TopicActor.ActorCreator(notificationDeltaService)).withDispatcher(TOPIC_DISPATCHER_NAME),
+                    buildTopicKey(topicId));
             topicSessions.put(topicId, topicActor);
             context().watch(topicActor);
         }
@@ -422,10 +429,10 @@ public class ApplicationActor extends UntypedActor {
             UUID uuid = UUID.randomUUID();
             String endpointActorId = uuid.toString().replaceAll("-", "");
             LOG.debug("[{}] Creating actor with endpointKey: {}", applicationToken, endpointActorId);
-            endpointMetaData = new ActorMetaData(context()
-                    .actorOf(
-                            Props.create(new EndpointActor.ActorCreator(operationsService, endpointActorId, message.getAppToken(), message
-                                    .getKey())), endpointActorId), endpointActorId);
+            endpointMetaData = new ActorMetaData(context().actorOf(
+                    Props.create(
+                            new EndpointActor.ActorCreator(operationsService, endpointActorId, message.getAppToken(), message.getKey()))
+                            .withDispatcher(ENDPOINT_DISPATCHER_NAME), endpointActorId), endpointActorId);
             endpointSessions.put(message.getKey(), endpointMetaData);
             endpointActorMap.put(endpointActorId, message.getKey());
             context().watch(endpointMetaData.actorRef);
@@ -501,7 +508,8 @@ public class ApplicationActor extends UntypedActor {
         ActorRef logActor = logsSessions.get(name);
         if (logActor == null) {
             logActor = context().actorOf(
-                    Props.create(new ApplicationLogActor.ActorCreator(logAppenderService, applicationService, applicationToken)));
+                    Props.create(new ApplicationLogActor.ActorCreator(logAppenderService, applicationService, applicationToken))
+                            .withDispatcher(LOG_DISPATCHER_NAME));
             context().watch(logActor);
             logsSessions.put(logActor.path().name(), logActor);
         }
@@ -513,7 +521,8 @@ public class ApplicationActor extends UntypedActor {
         ActorRef logActor = userVerifierSessions.get(name);
         if (logActor == null) {
             logActor = context().actorOf(
-                    Props.create(new ApplicationUserVerifierActor.ActorCreator(endpointUserService, applicationService, applicationToken)));
+                    Props.create(new ApplicationUserVerifierActor.ActorCreator(endpointUserService, applicationService, applicationToken))
+                            .withDispatcher(VERIFIER_DISPATCHER_NAME));
             context().watch(logActor);
             userVerifierSessions.put(logActor.path().name(), logActor);
         }
