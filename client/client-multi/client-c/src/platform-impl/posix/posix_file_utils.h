@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-#include <stdbool.h>
+#ifndef POSIX_FILE_UTILS_H_
+#define POSIX_FILE_UTILS_H_
+
 #include <stddef.h>
-#include "../../platform/ext_status.h"
-#include "posix_file_utils.h"
+#include <stdbool.h>
 
-#define KAA_STATUS_STORAGE    "kaa_status.bin"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-void ext_status_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
-{
-    posix_binary_file_read(KAA_STATUS_STORAGE, buffer, buffer_size, needs_deallocation);
-}
+int posix_binary_file_read(const char *file_name, char **buffer, size_t *buffer_size, bool *needs_deallocation);
 
-void ext_status_store(const char *buffer, size_t buffer_size)
-{
-    posix_binary_file_store(KAA_STATUS_STORAGE, buffer, buffer_size);
-}
+
+int posix_binary_file_store(const char *file_name, const char *buffer, size_t buffer_size);
+
+
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
+#endif /* POSIX_FILE_UTILS_H_ */

@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
+
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
-#include "../../platform/stdio.h"
+#include <sys/stat.h>
 #include "../../platform/ext_key_utils.h"
 #include "../../utilities/kaa_mem.h"
 #include "../../kaa_common.h"
+#include "posix_file_utils.h"
 
 
 #define KAA_KEY_STORAGE       "kaa_key.pub"
@@ -49,27 +52,15 @@ static void kaa_generate_pub_key()
 
 static int kaa_init_key()
 {
-    FILE* key_file = fopen(KAA_KEY_STORAGE, "rb");
+    struct stat stat_result;
+    int key_result = stat(KAA_KEY_STORAGE, &stat_result);
 
-    if (key_file) {
-        fseek(key_file, 0, SEEK_END);
-        kaa_public_key_length = ftell(key_file);
-        kaa_public_key = (char*) KAA_CALLOC(kaa_public_key_length, sizeof(char));
-        KAA_RETURN_IF_NIL(kaa_public_key, -1);
-
-        fseek(key_file, 0, SEEK_SET);
-        if (fread(kaa_public_key, kaa_public_key_length, 1, key_file) == 0) {
-            KAA_FREE(kaa_public_key);
-            return -1;
-        }
-        fclose(key_file);
+    if (!key_result) {
+        bool need_dealloc = false;
+        posix_binary_file_read(KAA_KEY_STORAGE, &kaa_public_key, &kaa_public_key_length, &need_dealloc);
     } else {
         kaa_generate_pub_key();
-        FILE* file = fopen(KAA_KEY_STORAGE, "wb");
-        if (file) {
-            fwrite(kaa_public_key, kaa_public_key_length, 1, file);
-            fclose(file);
-        }
+        posix_binary_file_store(KAA_KEY_STORAGE, kaa_public_key, kaa_public_key_length);
     }
 
     return 0;
