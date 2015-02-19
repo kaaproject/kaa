@@ -60,7 +60,6 @@ import akka.routing.RoundRobinPool;
 @Service
 public class DefaultAkkaService implements AkkaService {
 
-    private static final String AKKA_CONF_FILE_NAME = "application.conf";
     public static final String IO_DISPATCHER_NAME = "io-dispatcher";
     public static final String CORE_DISPATCHER_NAME = "core-dispatcher";
     public static final String USER_DISPATCHER_NAME = "user-dispatcher";
@@ -69,6 +68,7 @@ public class DefaultAkkaService implements AkkaService {
     public static final String VERIFIER_DISPATCHER_NAME = "verifier-dispatcher";
     public static final String TOPIC_DISPATCHER_NAME = "topic-dispatcher";
 
+    private static final String AKKA_CONF_FILE_NAME = "akka.conf";
     private static final String IO_ROUTER_ACTOR_NAME = "ioRouter";
 
     /** The Constant LOG. */
