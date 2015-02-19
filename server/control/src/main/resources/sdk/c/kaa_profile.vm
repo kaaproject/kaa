@@ -30,7 +30,7 @@ extern "C" {
 
 # include <stdbool.h>
 # include "kaa_error.h"
-# include "platform/ext_sha.h"
+# include "kaa_common.h"
 # include "gen/kaa_profile_gen.h"
 
 
@@ -80,14 +80,14 @@ kaa_error_t kaa_profile_manager_set_endpoint_access_token(kaa_profile_manager_t 
 
 
 /**
- * @brief Retrieves the endpoint key hash.
+ * @brief Retrieves the endpoint ID.
  *
  * @param[in]  self           Profile manager instance.
- * @param[out] result_hash    The endpoint key hash.
+ * @param[out] result_id      The buffer of size @link KAA_ENDPOINT_ID_LENGTH @endlink where the result will be stored.
  *
  * @return      Error code.
  */
-kaa_error_t kaa_profile_manager_get_endpoint_key_hash(kaa_profile_manager_t *self, kaa_digest_p result_hash);
+kaa_error_t kaa_profile_manager_get_endpoint_id(kaa_profile_manager_t *self, kaa_endpoint_id_p result_id);
 
 
 
