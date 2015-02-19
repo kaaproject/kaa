@@ -16,11 +16,10 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
-import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,9 +45,9 @@ public class ApplicationLogActor extends UntypedActor {
      *
      *            the log appender service
      */
-    private ApplicationLogActor(LogAppenderService logAppenderService, ApplicationService applicationService, String applicationToken) {
+    private ApplicationLogActor(AkkaContext context, String applicationToken) {
         this.applicationToken = applicationToken;
-        this.messageProcessor = new ApplicationLogActorMessageProcessor(logAppenderService, applicationService, applicationToken);
+        this.messageProcessor = new ApplicationLogActorMessageProcessor(context.getLogAppenderService(), context.getApplicationService(), applicationToken);
     }
 
     /**
@@ -59,11 +58,8 @@ public class ApplicationLogActor extends UntypedActor {
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
-        /** The log appender service. */
-        private final LogAppenderService logAppenderService;
-
-        /** The log application service. */
-        private final ApplicationService applicationService;
+        /** The Akka service context */
+        private final AkkaContext context;
 
         private final String applicationToken;
 
@@ -73,10 +69,9 @@ public class ApplicationLogActor extends UntypedActor {
          * @param logAppenderService
          *            the log appender service
          */
-        public ActorCreator(LogAppenderService logAppenderService, ApplicationService applicationService, String applicationToken) {
+        public ActorCreator(AkkaContext context, String applicationToken) {
             super();
-            this.logAppenderService = logAppenderService;
-            this.applicationService = applicationService;
+            this.context = context;
             this.applicationToken = applicationToken;
         }
 
@@ -87,7 +82,7 @@ public class ApplicationLogActor extends UntypedActor {
          */
         @Override
         public ApplicationLogActor create() throws Exception {
-            return new ApplicationLogActor(logAppenderService, applicationService, applicationToken);
+            return new ApplicationLogActor(context, applicationToken);
         }
     }
 
