@@ -37,5 +37,6 @@
         <module>trustful-verifier</module>
         <module>gplus-verifier</module>
         <module>facebook-verifier</module>
+        <module>twitter-verifier</module>
     </modules>
 </project>

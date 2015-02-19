@@ -167,6 +167,9 @@ public class DefaultAkkaServiceTest {
     @Before
     public void before() throws GeneralSecurityException {
         akkaService = new DefaultAkkaService();
+        
+        AkkaContext context = new AkkaContext();
+        
         cacheService = mock(CacheService.class);
         metricsService = mock(MetricsService.class);
         keyStoreService = mock(KeyStoreService.class);
@@ -177,16 +180,15 @@ public class DefaultAkkaServiceTest {
         logAppenderService = mock(LogAppenderService.class);
         endpointUserService = mock(EndpointUserService.class);
 
-        ReflectionTestUtils.setField(akkaService, "cacheService", cacheService);
-        ReflectionTestUtils.setField(akkaService, "metricsService", metricsService);
-        ReflectionTestUtils.setField(akkaService, "keyStoreService", keyStoreService);
-        ReflectionTestUtils.setField(akkaService, "operationsService", operationsService);
-        ReflectionTestUtils.setField(akkaService, "notificationDeltaService", notificationDeltaService);
-        ReflectionTestUtils.setField(akkaService, "applicationService", applicationService);
-        ReflectionTestUtils.setField(akkaService, "eventService", eventService);
-        ReflectionTestUtils.setField(akkaService, "logAppenderService", logAppenderService);
-        ReflectionTestUtils.setField(akkaService, "endpointUserService", endpointUserService);
-        
+        ReflectionTestUtils.setField(context, "cacheService", cacheService);
+        ReflectionTestUtils.setField(context, "metricsService", metricsService);
+        ReflectionTestUtils.setField(context, "keyStoreService", keyStoreService);
+        ReflectionTestUtils.setField(context, "operationsService", operationsService);
+        ReflectionTestUtils.setField(context, "notificationDeltaService", notificationDeltaService);
+        ReflectionTestUtils.setField(context, "applicationService", applicationService);
+        ReflectionTestUtils.setField(context, "eventService", eventService);
+        ReflectionTestUtils.setField(context, "logAppenderService", logAppenderService);
+        ReflectionTestUtils.setField(context, "endpointUserService", endpointUserService);
 
         clientPair = KeyUtil.generateKeyPair();
         targetPair = KeyUtil.generateKeyPair();
@@ -196,6 +198,8 @@ public class DefaultAkkaServiceTest {
         Mockito.when(keyStoreService.getPrivateKey()).thenReturn(serverPair.getPrivate());
         Mockito.when(metricsService.createMeter(Mockito.anyString(), Mockito.anyString())).thenReturn(Mockito.mock(MeterClient.class));
 
+        ReflectionTestUtils.setField(akkaService, "context", context);
+        
         if (akkaService.getActorSystem() == null) {
             akkaService.initActorSystem();
         }

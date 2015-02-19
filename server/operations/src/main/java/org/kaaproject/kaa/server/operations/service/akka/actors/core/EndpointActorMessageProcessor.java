@@ -37,6 +37,7 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.ChannelMap.ChannelMetaData;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
@@ -101,8 +102,6 @@ import akka.actor.ActorRef;
 
 public class EndpointActorMessageProcessor {
 
-    private static final int ENDPOINT_ACTOR_INACTIVITY_TIMEOUT = 600 * 1000;
-
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(EndpointActorMessageProcessor.class);
 
@@ -127,6 +126,8 @@ public class EndpointActorMessageProcessor {
     private final Map<Integer, LogDeliveryMessage> logUploadResponseMap;
     
     private final Map<UUID, UserVerificationResponseMessage> userAttachResponseMap;
+    
+    private final int inactivityTimeout;
 
     private long lastActivityTime;
 
@@ -138,9 +139,10 @@ public class EndpointActorMessageProcessor {
 
     private EndpointProfileDto endpointProfile;
 
-    protected EndpointActorMessageProcessor(OperationsService operationsService, String appToken, EndpointObjectHash key, String actorKey) {
+    protected EndpointActorMessageProcessor(AkkaContext context, String appToken, EndpointObjectHash key, String actorKey) {
         super();
-        this.operationsService = operationsService;
+        this.operationsService = context.getOperationsService();
+        this.inactivityTimeout = context.getInactivityTimeout();
         this.appToken = appToken;
         this.key = key;
         this.actorKey = actorKey;
@@ -398,6 +400,7 @@ public class EndpointActorMessageProcessor {
                 }
                 logPack.setEvents(logEvents);
                 logPack.setLogSchemaVersion(responseHolder.getEndpointProfile().getLogSchemaVersion());
+                logPack.setUserId(userId);
                 context.parent().tell(new LogEventPackMessage(request.getRequestId(), context.self(), logPack), context.self());
             }
             if (logUploadResponseMap.size() > 0) {
@@ -510,7 +513,7 @@ public class EndpointActorMessageProcessor {
 
     protected void scheduleActorTimeout(ActorContext context) {
         if (channelMap.isEmpty()) {
-            scheduleTimeoutMessage(context, new ActorTimeoutMessage(lastActivityTime), ENDPOINT_ACTOR_INACTIVITY_TIMEOUT);
+            scheduleTimeoutMessage(context, new ActorTimeoutMessage(lastActivityTime), inactivityTimeout);
         }
     }
 
@@ -565,7 +568,7 @@ public class EndpointActorMessageProcessor {
     /**
      * Send reply.
      *
-     * @param pendingRequest
+     * @param request
      *            the pending request
      * @param syncResponse
      *            the sync response
