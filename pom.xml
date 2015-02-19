@@ -83,6 +83,7 @@ Copyright 2014 CyberVision, Inc.
         <checkstyle.version>2.9.1</checkstyle.version>
         <rat.version>0.10</rat.version>
         <javassist.version>3.18.1-GA</javassist.version>
+        <signpost-core.version>1.2.1.2</signpost-core.version>
 
         <cassandra.driver.version>2.1.4</cassandra.driver.version>
         <cassandra.driver.mapping>2.1.4</cassandra.driver.mapping>
@@ -860,6 +861,11 @@ Copyright 2014 CyberVision, Inc.
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>oauth.signpost</groupId>
+                <artifactId>signpost-core</artifactId>
+                <version>${signpost-core.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

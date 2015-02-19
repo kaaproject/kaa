@@ -16,10 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.verification.UserVerificationRequestMessage;
-import org.kaaproject.kaa.server.operations.service.user.EndpointUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,9 +44,9 @@ public class ApplicationUserVerifierActor extends UntypedActor {
      *
      *            the log appender service
      */
-    private ApplicationUserVerifierActor(EndpointUserService endpointUserService, ApplicationService applicationService, String applicationToken) {
-        this.applicationId = applicationService.findAppByApplicationToken(applicationToken).getId();
-        this.messageProcessor = new ApplicationUserVerifierActorMessageProcessor(endpointUserService, applicationId);
+    private ApplicationUserVerifierActor(AkkaContext context, String applicationToken) {
+        this.applicationId = context.getApplicationService().findAppByApplicationToken(applicationToken).getId();
+        this.messageProcessor = new ApplicationUserVerifierActorMessageProcessor(context.getEndpointUserService(), applicationId);
     }
 
     /**
@@ -58,11 +57,8 @@ public class ApplicationUserVerifierActor extends UntypedActor {
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
-        /** The log appender service. */
-        private final EndpointUserService endpointUserService;
-
-        /** The log application service. */
-        private final ApplicationService applicationService;
+        /** The Akka service context */
+        private final AkkaContext context;
 
         private final String applicationToken;
 
@@ -72,10 +68,9 @@ public class ApplicationUserVerifierActor extends UntypedActor {
          * @param logAppenderService
          *            the log appender service
          */
-        public ActorCreator(EndpointUserService endpointUserService, ApplicationService applicationService, String applicationToken) {
+        public ActorCreator(AkkaContext context, String applicationToken) {
             super();
-            this.endpointUserService = endpointUserService;
-            this.applicationService = applicationService;
+            this.context = context;
             this.applicationToken = applicationToken;
         }
 
@@ -86,7 +81,7 @@ public class ApplicationUserVerifierActor extends UntypedActor {
          */
         @Override
         public ApplicationUserVerifierActor create() throws Exception {
-            return new ApplicationUserVerifierActor(endpointUserService, applicationService, applicationToken);
+            return new ApplicationUserVerifierActor(context, applicationToken);
         }
     }
 
