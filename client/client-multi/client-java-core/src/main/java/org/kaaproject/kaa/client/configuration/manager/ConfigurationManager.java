@@ -99,5 +99,4 @@ public interface ConfigurationManager {
      * @see CommonRecord
      */
     CommonRecord getConfiguration();
-
 }

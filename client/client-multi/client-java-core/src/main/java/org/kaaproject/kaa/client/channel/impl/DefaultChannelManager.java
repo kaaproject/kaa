@@ -22,21 +22,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
-import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
-import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
+import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
+import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
 import org.kaaproject.kaa.client.channel.KaaInvalidChannelException;
-import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
-import org.kaaproject.kaa.client.channel.connectivity.PingServerStorage;
 import org.kaaproject.kaa.common.TransportType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultChannelManager implements KaaChannelManager, PingServerStorage {
+public class DefaultChannelManager implements KaaInternalChannelManager {
 
     public static final Logger LOG = LoggerFactory //NOSONAR
             .getLogger(DefaultChannelManager.class);
@@ -52,6 +52,12 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
     private ConnectivityChecker connectivityChecker;
     private boolean isShutdown = false;
     private boolean isPaused = false;
+    
+    private KaaDataMultiplexer operationsMultiplexer;
+    private KaaDataDemultiplexer operationsDemultiplexer;
+    private KaaDataMultiplexer bootstrapMultiplexer;
+    private KaaDataDemultiplexer bootstrapDemultiplexer;
+
 
     public DefaultChannelManager(BootstrapManager manager, Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers) {
         if (manager == null || bootststrapServers == null || bootststrapServers.isEmpty()) {
@@ -146,6 +152,13 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
             return;
         }
         if (channel != null) {
+            if(ServerType.BOOTSTRAP == channel.getServerType()){
+                channel.setMultiplexer(bootstrapMultiplexer);
+                channel.setDemultiplexer(bootstrapDemultiplexer);
+            }else{
+                channel.setMultiplexer(operationsMultiplexer);
+                channel.setDemultiplexer(operationsDemultiplexer);
+            }
             if (isPaused) {
                 channel.pause();
             }
@@ -273,12 +286,6 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
     }
 
     @Override
-    public IPTransportInfo getCurrentPingServer() {
-        //TODO Modify algorithm for more extended
-        return (IPTransportInfo)lastBSServers.values().iterator().next();
-    }
-
-    @Override
     public synchronized void shutdown() {
         if (!isShutdown) {
             isShutdown = true;
@@ -314,6 +321,26 @@ public class DefaultChannelManager implements KaaChannelManager, PingServerStora
                 channel.resume();
             }
         }
+    }
+
+    @Override
+    public void setOperationMultiplexer(KaaDataMultiplexer multiplexer) {
+        this.operationsMultiplexer = multiplexer;
+    }
+
+    @Override
+    public void setOperationDemultiplexer(KaaDataDemultiplexer demultiplexer) {
+        this.operationsDemultiplexer = demultiplexer;
+    }
+
+    @Override
+    public void setBootstrapMultiplexer(KaaDataMultiplexer multiplexer) {
+        this.bootstrapMultiplexer = multiplexer;
+    }
+
+    @Override
+    public void setBootstrapDemultiplexer(KaaDataDemultiplexer demultiplexer) {
+        this.bootstrapDemultiplexer = demultiplexer;
     }
 
 }

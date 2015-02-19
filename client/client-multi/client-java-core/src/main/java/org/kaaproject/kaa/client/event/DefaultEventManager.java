@@ -42,15 +42,14 @@ import org.slf4j.LoggerFactory;
  * Default {@link EventManager} implementation.
  *
  * @author Taras Lemkin
- *
  */
 public class DefaultEventManager implements EventManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultEventManager.class);
-    private final Set<EventFamily>  registeredEventFamilies = new HashSet<EventFamily>();
-    private final List<Event>       currentEvents = new LinkedList<Event>();
-    private final Object            eventsGuard = new Object();
-    private final Object            trxGuard = new Object();
+    private final Set<EventFamily> registeredEventFamilies = new HashSet<EventFamily>();
+    private final List<Event> currentEvents = new LinkedList<Event>();
+    private final Object eventsGuard = new Object();
+    private final Object trxGuard = new Object();
     private final Map<Integer, EventListenersRequestBinding> eventListenersRequests = new HashMap<Integer, EventListenersRequestBinding>();
     private final EventTransport transport;
     private final KaaClientState state;
@@ -60,12 +59,12 @@ public class DefaultEventManager implements EventManager {
 
 
     private class EventListenersRequestBinding {
-        private final FetchEventListeners     listener;
-        private final EventListenersRequest   request;
-        private Boolean                 sent;
+        private final FetchEventListeners listener;
+        private final EventListenersRequest request;
+        private Boolean sent;
 
         public EventListenersRequestBinding(FetchEventListeners listener,
-                EventListenersRequest request) {
+                                            EventListenersRequest request) {
             this.listener = listener;
             this.request = request;
             this.sent = false;
@@ -118,12 +117,12 @@ public class DefaultEventManager implements EventManager {
     }
 
     @Override
-    public void produceEvent(String eventFqn, byte[] data, String target) throws IOException {
+    public void produceEvent(String eventFqn, byte[] data, String target) {
         produceEvent(eventFqn, data, target, null);
     }
 
     @Override
-    public void produceEvent(String eventFqn, byte[] data, String target, TransactionId trxId) throws IOException {
+    public void produceEvent(String eventFqn, byte[] data, String target, TransactionId trxId) {
         if (trxId == null) {
             LOG.info("Producing event [eventClassFQN: {}, target: {}]"
                     , eventFqn, (target != null ? target : "broadcast")); //NOSONAR
@@ -166,7 +165,7 @@ public class DefaultEventManager implements EventManager {
 
     @Override
     public int findEventListeners(List<String> eventClassFQNs,
-            FetchEventListeners listener) {
+                                  FetchEventListeners listener) {
         int requestId = new Random().nextInt();
         EventListenersRequest request = new EventListenersRequest(requestId, eventClassFQNs);
         EventListenersRequestBinding bind = new EventListenersRequestBinding(listener, request);

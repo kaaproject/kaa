@@ -17,12 +17,10 @@
 package org.kaaproject.kaa.client.connectivity;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.net.InetAddress;
+import java.text.MessageFormat;
 
-import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
-import org.kaaproject.kaa.client.channel.connectivity.PingServerStorage;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,25 +30,25 @@ public class PingConnectivityChecker implements ConnectivityChecker {
             .getLogger(DefaultBootstrapChannel.class);
 
     private static final int CONNECTION_TIMEOUT_MS = 3000;
+    private static final String DEFAULT_HOST = "www.google.com";
 
-    private final PingServerStorage serverStorage;
+    private final String host;
 
-    public PingConnectivityChecker(PingServerStorage serverStorage) {
-        this.serverStorage = serverStorage;
+    public PingConnectivityChecker() {
+        this(DEFAULT_HOST);
+    }
+    
+    public PingConnectivityChecker(String host) {
+        this.host = host;
     }
 
     @Override
     public boolean checkConnectivity() {
-        IPTransportInfo si = serverStorage.getCurrentPingServer();
-        LOG.info("Connectivity check will be performed on {}:{}", si.getHost(), si.getPort());
-        InetSocketAddress addr = new InetSocketAddress(si.getHost(), si.getPort());
-
-        try (Socket sock = new Socket()) {
-            sock.connect(addr, CONNECTION_TIMEOUT_MS);
-            LOG.info("Connection to the network exists");
-            return true;
-        } catch (IOException e) {}
-
-        return false;
+        try {
+            return InetAddress.getByName(host).isReachable(CONNECTION_TIMEOUT_MS);
+        } catch (IOException e) {
+            LOG.warn(MessageFormat.format("Host {0} is unreachable", host), e);
+            return false;
+        }
     }
 }

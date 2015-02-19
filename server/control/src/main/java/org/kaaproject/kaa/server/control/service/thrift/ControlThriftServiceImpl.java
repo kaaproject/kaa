@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.apache.avro.Schema;
 import org.apache.thrift.TException;
+import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
 import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
@@ -59,10 +60,6 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.Version;
-import org.kaaproject.kaa.server.common.core.algorithms.delta.DefaultDeltaCalculatorFactory;
-import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculationAlgorithm;
-import org.kaaproject.kaa.server.common.core.configuration.BaseData;
-import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
@@ -888,13 +885,12 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
             DataSchema profileDataSchema = new DataSchema(profileSchema.getSchema());
             DataSchema notificationDataSchema = new DataSchema(notificationSchema.getSchema());
             ProtocolSchema protocolSchema = new ProtocolSchema(configurationShema.getProtocolSchema());
-            BaseSchema baseSchema = new BaseSchema(configurationShema.getBaseSchema());
             DataSchema logDataSchema = new DataSchema(logSchema.getSchema());
 
             String appToken = application.getApplicationToken();
             String profileSchemaBody = profileDataSchema.getRawSchema();
-            DeltaCalculationAlgorithm calculator = new DefaultDeltaCalculatorFactory().createDeltaCalculator(protocolSchema, baseSchema);
-            byte[] defaultConfigurationData = calculator.calculate(new BaseData(baseSchema, defaultConfiguration.getBody())).getData();
+            
+            byte[] defaultConfigurationData = GenericAvroConverter.toRawData(defaultConfiguration.getBody(), configurationShema.getBaseSchema());
 
             List<EventFamilyMetadata> eventFamilies = new ArrayList<>();
             if (aefMapIds != null) {
@@ -929,6 +925,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
                     profileSchemaBody,
                     notificationDataSchema.getRawSchema(),
                     protocolSchema.getRawSchema(),
+                    configurationShema.getBaseSchema(),
                     defaultConfigurationData,
                     eventFamilies,
                     logDataSchema.getRawSchema(),

@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.client.logging;
 
-import java.io.IOException;
 import ${log_record_class_package}.${log_record_class};
 
 /**
@@ -29,53 +28,20 @@ import ${log_record_class_package}.${log_record_class};
  * Each of them may be set independently of others.</p>
  *
  * <p>Reference implementation of each module used by default.</p>
+ * 
+ * <p>This interface is auto-generated.</p>
  *
  * @see LogStorage
  * @see LogStorageStatus
  * @see LogUploadStrategy
  * @see LogUploadConfiguration
  */
-public interface LogCollector {
-    
+public interface LogCollector extends GenericLogCollector{
+
     /**
-     * Added new log record to local storage.
-     * 
+     * Adds new log record to local storage.
+     *
      * @param record New log record object
      */
-    void addLogRecord(${log_record_class} record) throws IOException;
-
-    /**
-     * Set user implementation of a log storage.
-     * 
-     * @param storage User-defined log storage object
-     */
-    void setStorage(LogStorage storage);
-
-    /**
-     * Set user implementation of a log storage status. 
-     *
-     * @param status User-defined log storage status object
-     */
-    void setStorageStatus(LogStorageStatus status);
-
-    /**
-     * Set user implementation of a log upload strategy.
-     *
-     * @param strategy User-defined log upload strategy object.
-     */
-    void setUploadStrategy(LogUploadStrategy strategy);
-
-    /**
-     * Set user implementation of a upload failover strategy.
-     *
-     * @param strategy User-defined upload failover strategy object.
-     */
-    void setFailoverStrategy(LogUploadFailoverStrategy strategy);
-
-    /**
-     * Set user implementation of a log upload configuration.
-     *
-     * @param configuration User-defined log upload configuration object.
-     */
-    void setConfiguration(LogUploadConfiguration configuration);
+    void addLogRecord(${log_record_class} record);
 }

@@ -26,9 +26,9 @@ import java.util.Map;
 
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.GenericTransportInfo;
-import org.kaaproject.kaa.client.channel.KaaChannelManager;
-import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
 import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
@@ -48,7 +48,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
 
     private BootstrapTransport transport;
     private List<ProtocolMetaData> operationsServerList;
-    private KaaChannelManager channelManager;
+    private KaaInternalChannelManager channelManager;
     private Integer serverToApply;
     private final Map<TransportProtocolId, List<ProtocolMetaData>> mappedOperationServerList = new HashMap<TransportProtocolId, List<ProtocolMetaData>>();
     private final Map<TransportProtocolId, Iterator<ProtocolMetaData>> mappedIterators = new HashMap<>();
@@ -113,7 +113,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
     }
 
     @Override
-    public synchronized void setChannelManager(KaaChannelManager manager) {
+    public synchronized void setChannelManager(KaaInternalChannelManager manager) {
         this.channelManager = manager;
     }
 
