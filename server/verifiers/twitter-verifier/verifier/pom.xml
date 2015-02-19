@@ -1,5 +1,5 @@
 <!--
-  Copyright 2015 CyberVision, Inc.
+  Copyright 2014 CyberVision, Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,18 +15,18 @@
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.kaaproject.kaa.server.appenders</groupId>
+        <groupId>org.kaaproject.kaa.server.verifiers</groupId>
         <version>0.7.0-SNAPSHOT</version>
-        <artifactId>cassandra</artifactId>
+        <artifactId>twitter-verifier</artifactId>
     </parent>
-    <groupId>org.kaaproject.kaa.server.appenders.cassandra</groupId>
-    <artifactId>appender</artifactId>
+    <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
+    <artifactId>verifier</artifactId>
     <packaging>jar</packaging>
 
-    <name>Kaa Cassandra Appender Implementation</name>
+    <name>Kaa Twitter verifier implementation</name>
     <url>http://kaaproject.org</url>
 
     <properties>
@@ -36,44 +36,56 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.appenders.cassandra</groupId>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>verifier-shared</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
             <artifactId>config</artifactId>
             <version>${project.version}</version>
-            <classifier>cassandra</classifier>
+            <classifier>twitter</classifier>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>log-shared</artifactId>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>utils</artifactId>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.datastax.cassandra</groupId>
-            <artifactId>cassandra-driver-core</artifactId>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.datastax.cassandra</groupId>
-            <artifactId>cassandra-driver-mapping</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.cassandraunit</groupId>
-            <artifactId>cassandra-unit</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>oauth.signpost</groupId>
+            <artifactId>signpost-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
         </dependency>
     </dependencies>
 
@@ -83,7 +95,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <classifier>cassandra</classifier>
+                    <classifier>twitter</classifier>
                 </configuration>
             </plugin>
         </plugins>

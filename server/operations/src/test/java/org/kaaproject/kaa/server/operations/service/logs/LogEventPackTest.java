@@ -33,13 +33,15 @@ public class LogEventPackTest {
     private static final LogSchema LOG_SCHEMA = new LogSchema(new LogSchemaDto());
     private static final int VERSION = 3;
     private static final List<LogEvent> EVENTS = new ArrayList<>();
-    
+    private static final String userId = "123454567878";
+
     @Test
     public void basicLogEventPackTest() {        
         LogEventPack logEventPack1 = new LogEventPack(ENDPOINT_KEY, DATE_CREATED, LOG_SCHEMA, EVENTS);
         logEventPack1.setLogSchemaVersion(VERSION);
         LogEventPack logEventPack2 = new LogEventPack();
-        
+        logEventPack1.setUserId(userId);
+
         Assert.assertEquals(ENDPOINT_KEY, logEventPack1.getEndpointKey());
         Assert.assertEquals(DATE_CREATED, logEventPack1.getDateCreated());
         Assert.assertEquals(LOG_SCHEMA, logEventPack1.getLogSchema());
@@ -57,11 +59,13 @@ public class LogEventPackTest {
         logEventPack2.setLogSchema(LOG_SCHEMA);
         logEventPack2.setLogSchemaVersion(VERSION);
         logEventPack2.setEvents(EVENTS);  
-        
+        logEventPack2.setUserId(userId);
+
         Assert.assertEquals(logEventPack1.getEndpointKey(), logEventPack2.getEndpointKey());
         Assert.assertEquals(logEventPack1.getDateCreated(), logEventPack2.getDateCreated());
         Assert.assertEquals(logEventPack1.getLogSchema(), logEventPack2.getLogSchema());
         Assert.assertEquals(logEventPack1.getLogSchemaVersion(), logEventPack2.getLogSchemaVersion());
         Assert.assertEquals(logEventPack1.getEvents(), logEventPack2.getEvents());
+        Assert.assertEquals(logEventPack1.getUserId(), logEventPack2.getUserId());
     }
 }

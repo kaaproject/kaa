@@ -198,7 +198,7 @@ public class Connect extends MqttFrame {
 
     /**
      * Next protocol ID setter.
-     * @param Next protocol ID int
+     * @param nextProtocolId protocol ID int
      */
     public void setNextProtocolId(int nextProtocolId) {
         this.nextProtocolId = nextProtocolId;

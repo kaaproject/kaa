@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.kaaproject.kaa.server.appenders.cassandra.config;
+package org.kaaproject.kaa.server.verifiers.twitter.config;
 
 import org.apache.avro.Schema;
-import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig;
 import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
+import org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig;
 
-@KaaPluginConfig(pluginType = PluginType.LOG_APPENDER)
-public class CassandraAppenderConfig implements PluginConfig {
+@KaaPluginConfig(pluginType = PluginType.USER_VERIFIER)
+public class TwitterVerifierConfig implements PluginConfig {
+
+    private static final String TWITTER_VERIFIER_NAME = "Twitter verifier";
 
     @Override
     public String getPluginTypeName() {
-        return "Cassandra";
+        return TWITTER_VERIFIER_NAME;
     }
 
     @Override
     public String getPluginClassName() {
-        return "org.kaaproject.kaa.server.appenders.cassandra.appender.CassandraLogAppender";
+        return "org.kaaproject.kaa.server.verifiers.twitter.verifier.TwitterUserVerifier";
     }
 
     @Override
     public Schema getPluginConfigSchema() {
-        return CassandraConfig.getClassSchema();
+        return TwitterAvroConfig.SCHEMA$;
     }
 }
