@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.CORE_DISPATCHER_NAME;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -238,7 +240,7 @@ public class OperationsServerActor extends UntypedActor {
         if (tenantActor == null) {
             tenantActor = context().actorOf(
                     Props.create(new TenantActor.ActorCreator(cacheService, operationsService, notificationDeltaService, eventService,
-                            applicationService, logAppenderService, endpointUserService, tenantId)), tenantId);
+                            applicationService, logAppenderService, endpointUserService, tenantId)).withDispatcher(CORE_DISPATCHER_NAME), tenantId);
             tenants.put(tenantId, tenantActor);
         }
         return tenantActor;

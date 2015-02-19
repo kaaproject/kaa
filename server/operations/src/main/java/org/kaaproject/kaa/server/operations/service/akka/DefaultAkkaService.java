@@ -46,6 +46,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.typesafe.config.ConfigFactory;
+
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
@@ -57,6 +59,15 @@ import akka.routing.RoundRobinPool;
  */
 @Service
 public class DefaultAkkaService implements AkkaService {
+
+    private static final String AKKA_CONF_FILE_NAME = "application.conf";
+    public static final String IO_DISPATCHER_NAME = "io-dispatcher";
+    public static final String CORE_DISPATCHER_NAME = "core-dispatcher";
+    public static final String USER_DISPATCHER_NAME = "user-dispatcher";
+    public static final String ENDPOINT_DISPATCHER_NAME = "endpoint-dispatcher";
+    public static final String LOG_DISPATCHER_NAME = "log-dispatcher";
+    public static final String VERIFIER_DISPATCHER_NAME = "verifier-dispatcher";
+    public static final String TOPIC_DISPATCHER_NAME = "topic-dispatcher";
 
     private static final String IO_ROUTER_ACTOR_NAME = "ioRouter";
 
@@ -122,16 +133,16 @@ public class DefaultAkkaService implements AkkaService {
     @PostConstruct
     public void initActorSystem() {
         LOG.info("Initializing Akka system...");
-        akka = ActorSystem.create(EPS);
+        akka = ActorSystem.create(EPS, ConfigFactory.parseResources(AKKA_CONF_FILE_NAME).withFallback(ConfigFactory.load()));
         LOG.info("Initializing Akka EPS actor...");
         opsActor = akka.actorOf(Props.create(new OperationsServerActor.ActorCreator(cacheService, operationsService,
-                notificationDeltaService, eventService, applicationService, logAppenderService, endpointUserService)), EPS);
+                notificationDeltaService, eventService, applicationService, logAppenderService, endpointUserService)).withDispatcher(CORE_DISPATCHER_NAME), EPS);
         LOG.info("Lookup platform protocols");
         Set<String> platformProtocols = PlatformLookup.lookupPlatformProtocols(PlatformLookup.DEFAULT_PROTOCOL_LOOKUP_PACKAGE_NAME);
         LOG.info("Initializing Akka io router...");
         ioRouter = akka.actorOf(new RoundRobinPool(IO_WORKERS_COUNT).props(Props.create(new EncDecActor.ActorCreator(opsActor,
                 metricsService, cacheService, new KeyPair(keyStoreService.getPublicKey(), keyStoreService.getPrivateKey()),
-                platformProtocols, supportUnencryptedConnection))), IO_ROUTER_ACTOR_NAME);
+                platformProtocols, supportUnencryptedConnection)).withDispatcher(IO_DISPATCHER_NAME)), IO_ROUTER_ACTOR_NAME);
         LOG.info("Initializing Akka event service listener...");
         listener = new AkkaEventServiceListener(opsActor);
         eventService.addListener(listener);
