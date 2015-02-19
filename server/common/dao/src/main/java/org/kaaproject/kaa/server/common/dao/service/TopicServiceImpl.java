@@ -110,18 +110,18 @@ public class TopicServiceImpl implements TopicService {
     public List<UpdateNotificationDto> removeTopicById(String id) {
         validateId(id, "Can't remove topic. Invalid topic id " + id);
         TopicDto topic = findTopicById(id);
-        List<UpdateNotificationDto> updateNotificationDtos = new LinkedList<>();
+        List<UpdateNotificationDto> notificationList = new LinkedList<>();
         if (topic != null) {
             List<EndpointGroup> groups = endpointGroupDao.findEndpointGroupsByTopicIdAndAppId(topic.getApplicationId(), id);
             if (groups != null && !groups.isEmpty()) {
                 for (EndpointGroup eg : groups) {
-                    updateNotificationDtos.add(endpointService.removeTopicFromEndpointGroup(eg.getId().toString(), id));
+                    notificationList.add(endpointService.removeTopicFromEndpointGroup(eg.getId().toString(), id));
                 }
             }
             topicDao.removeById(id);
             notificationDao.removeNotificationsByTopicId(id);
         }
-        return updateNotificationDtos;
+        return notificationList;
     }
 
     @Override
