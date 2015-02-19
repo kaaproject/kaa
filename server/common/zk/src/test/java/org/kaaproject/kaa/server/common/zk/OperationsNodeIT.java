@@ -193,6 +193,7 @@ public class OperationsNodeIT {
         BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
         ByteBuffer testKeyData = ByteBuffer.wrap(new byte[] { 10, 11, 12, 45, 34, 23, 67, 89, 66, 12 });
         nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, testKeyData));
+        nodeInfo.setTimeStarted(System.currentTimeMillis());
         nodeInfo.setTransports(BootstrapNodeIT.getHttpAndTcpTransportMD());
         return nodeInfo;
     }

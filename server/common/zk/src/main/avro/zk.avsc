@@ -64,7 +64,8 @@
  "name": "BootstrapNodeInfo",
  "fields": [
      {"name": "connectionInfo", "type": "org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo"},
-     {"name": "transports", "type":{"type": "array", "items": "org.kaaproject.kaa.server.common.zk.gen.TransportMetaData"}}
+     {"name": "transports", "type":{"type": "array", "items": "org.kaaproject.kaa.server.common.zk.gen.TransportMetaData"}},
+     {"name": "timeStarted",  "type": "long"}
  ]
 }
 ]
