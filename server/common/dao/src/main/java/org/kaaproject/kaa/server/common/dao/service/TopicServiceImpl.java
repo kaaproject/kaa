@@ -21,12 +21,14 @@ import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
+import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
@@ -105,19 +107,24 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public void removeTopicById(String id) {
+    public List<UpdateNotificationDto> removeTopicById(String id) {
         validateId(id, "Can't remove topic. Invalid topic id " + id);
         TopicDto topic = findTopicById(id);
+
+        List<UpdateNotificationDto> updateNotificationDtos = new LinkedList<>();
+
         if (topic != null) {
             List<EndpointGroup> groups = endpointGroupDao.findEndpointGroupsByTopicIdAndAppId(topic.getApplicationId(), id);
             if (groups != null && !groups.isEmpty()) {
                 for (EndpointGroup eg : groups) {
-                    endpointService.removeTopicFromEndpointGroup(eg.getId().toString(), id);
+                    updateNotificationDtos.add(endpointService.removeTopicFromEndpointGroup(eg.getId().toString(), id));
                 }
             }
             topicDao.removeById(id);
             notificationDao.removeNotificationsByTopicId(id);
         }
+
+        return updateNotificationDtos;
     }
 
     @Override
