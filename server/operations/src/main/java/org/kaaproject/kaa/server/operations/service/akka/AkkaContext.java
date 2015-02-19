@@ -19,6 +19,10 @@ import com.typesafe.config.ConfigFactory;
 @Component
 public class AkkaContext {
 
+    private static final String ENDPOINT_ACTOR_TIMEOUT = "endpoint_actor_timeout";
+
+    private static final String IO_WORKER_COUNT_PROP_NAME = "io_worker_count";
+
     private static final String AKKA_CONF_FILE_NAME = "akka.conf";
 
     /** The cache service. */
@@ -66,11 +70,11 @@ public class AkkaContext {
     }
 
     public int getIOWorkerCount(){
-        return config.getInt("io_worker_count");
+        return config.getInt(IO_WORKER_COUNT_PROP_NAME);
     }
 
     public int getInactivityTimeout() {
-        return config.getInt("endpoint_actor_timeout");
+        return config.getInt(ENDPOINT_ACTOR_TIMEOUT);
     }
 
     public CacheService getCacheService() {

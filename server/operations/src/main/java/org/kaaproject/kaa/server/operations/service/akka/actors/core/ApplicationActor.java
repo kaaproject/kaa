@@ -486,15 +486,15 @@ public class ApplicationActor extends UntypedActor {
     }
     
     private ActorRef getOrCreateUserVerifierActor(String name) {
-        ActorRef logActor = userVerifierSessions.get(name);
-        if (logActor == null) {
-            logActor = context().actorOf(
+        ActorRef userVerifierActor = userVerifierSessions.get(name);
+        if (userVerifierActor == null) {
+            userVerifierActor = context().actorOf(
                     Props.create(new ApplicationUserVerifierActor.ActorCreator(context, applicationToken))
                             .withDispatcher(VERIFIER_DISPATCHER_NAME));
-            context().watch(logActor);
-            userVerifierSessions.put(logActor.path().name(), logActor);
+            context().watch(userVerifierActor);
+            userVerifierSessions.put(userVerifierActor.path().name(), userVerifierActor);
         }
-        return logActor;
+        return userVerifierActor;
     }
 
     /**
