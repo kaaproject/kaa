@@ -257,12 +257,12 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
     
     @Override
     protected String getCreateTitle() {
-        return Utils.constants.generate_sdk();
+        return Utils.constants.generateSdk();
     }
 
     @Override
     protected String getViewTitle() {
-        return Utils.constants.generate_sdk();
+        return Utils.constants.generateSdk();
     }
 
     @Override
@@ -405,7 +405,7 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
 
     @Override
     protected void updateSaveButton(boolean enabled, boolean invalid) {
-        saveButton.setText(Utils.constants.generate_sdk());
+        saveButton.setText(Utils.constants.generateSdk());
         saveButton.setEnabled(!invalid);
     }
 

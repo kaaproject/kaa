@@ -81,12 +81,12 @@ public class SendNotificationViewImpl extends BaseDetailsViewImpl implements Sen
     
     @Override
     protected String getCreateTitle() {
-        return Utils.constants.send_notification();
+        return Utils.constants.sendNotification();
     }
 
     @Override
     protected String getViewTitle() {
-        return Utils.constants.send_notification();
+        return Utils.constants.sendNotification();
     }
 
     @Override

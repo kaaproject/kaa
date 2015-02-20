@@ -90,7 +90,7 @@ public class TopicGrid extends AbstractKaaGrid<TopicDto, String> {
             float result = 0;
             if (!embedded && (sendNotificationColumn == null || table.getColumnIndex(sendNotificationColumn) == -1)) {
                 Header<SafeHtml> sendNotificationHeader = new SafeHtmlHeader(
-                        SafeHtmlUtils.fromSafeConstant(Utils.constants.send_notification()));
+                        SafeHtmlUtils.fromSafeConstant(Utils.constants.sendNotification()));
 
                 sendNotificationColumn = constructSendNotificationColumn("");
                 table.addColumn(sendNotificationColumn, sendNotificationHeader);

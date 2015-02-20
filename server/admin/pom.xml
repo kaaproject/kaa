@@ -436,19 +436,31 @@
                 <version>${gwt.version}</version>
                 <executions>
                     <execution>
+                        <id>generateAsync</id>
                         <goals>
                             <goal>generateAsync</goal>
                         </goals>
+                        <configuration>
+                            <compileSourcesArtifacts>
+                                <artifact>org.kaaproject.kaa.server.common:dto</artifact>
+                            </compileSourcesArtifacts>
+                            <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
+                            <runTarget>KaaAdmin.html</runTarget>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>i18n</id>
+                        <goals>
+                            <goal>i18n</goal>
+                        </goals>
+                        <configuration>
+                            <i18nConstantsWithLookupBundle>org.kaaproject.kaa.server.admin.client.i18n.KaaAdminConstants</i18nConstantsWithLookupBundle>
+                            <i18nMessagesBundle>org.kaaproject.kaa.server.admin.client.i18n.KaaAdminMessages</i18nMessagesBundle>
+                            <generateDirectory>${basedir}/src/main/java</generateDirectory>
+                        </configuration>                    
                     </execution>
                 </executions>
-                <configuration>
-                    <compileSourcesArtifacts>
-                        <artifact>org.kaaproject.kaa.server.common:dto</artifact>
-                    </compileSourcesArtifacts>
-                    <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
-                    <runTarget>KaaAdmin.html</runTarget>
-                </configuration>
-            </plugin>
+            </plugin>           
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -515,25 +527,6 @@
                     </execution>                    
                 </executions>
             </plugin>
-			<plugin>
-				<groupId>org.apache.rat</groupId>
-				<artifactId>apache-rat-plugin</artifactId>
-				<version>${rat.version}</version>
-				<configuration>
-					<excludes>
-                        <exclude>**/deb/control/control</exclude>					    					    
-						<exclude>**/_remote.repositories</exclude>
-						<exclude>**/.gwt/**</exclude>
-						<exclude>**/*.css</exclude>
-						<exclude>**/*.html</exclude>
-						<exclude>**/*.properties</exclude>		
-                        <exclude>**/*.avsc</exclude>      
-                        <exclude>**/gen/**/*.java</exclude>
-						<exclude>src/main/sh/bin/jetty.sh</exclude>
-						<exclude>src/main/resources/jetty/**</exclude>
-					</excludes>
-				</configuration>
-			</plugin>            
 			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
@@ -700,6 +693,25 @@
                                         </versionRange>
                                         <goals>
                                             <goal>process</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.codehaus.mojo
+                                        </groupId>
+                                        <artifactId>
+                                            gwt-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [2.6.1,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>i18n</goal>
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>

@@ -453,6 +453,10 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/*-transport.config</exclude>
                         <exclude>**/akka.conf</exclude>
                         <exclude>**/*.cql</exclude>
+                        <exclude>**/client/i18n/*Constants.java</exclude>
+                        <exclude>**/client/i18n/*Messages.java</exclude>
+                        <exclude>**/src/main/sh/bin/jetty.sh</exclude>
+                        <exclude>**/src/main/resources/jetty/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
