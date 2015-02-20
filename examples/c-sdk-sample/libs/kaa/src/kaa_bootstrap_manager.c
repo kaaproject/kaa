@@ -86,7 +86,7 @@ static bool find_operations_access_points(void *data, void *context)
 {
     KAA_RETURN_IF_NIL2(data, context, false);
     kaa_transport_protocol_id_t *matcher = (kaa_transport_protocol_id_t *) context;
-    kaa_transport_protocol_id_t *source = &((kaa_operations_access_points_t *)data)->protocol_id;
+    kaa_transport_protocol_id_t *source = &(((kaa_operations_access_points_t *)data)->protocol_id);
     return kaa_transport_protocol_id_equals(matcher, source);
 }
 
@@ -94,7 +94,7 @@ static bool find_bootstrap_access_points(void *data, void *context)
 {
     KAA_RETURN_IF_NIL2(data, context, false);
     kaa_transport_protocol_id_t *matcher = (kaa_transport_protocol_id_t *) context;
-    kaa_transport_protocol_id_t *source = &((kaa_bootstrap_access_points_t *)data)->protocol_id;
+    kaa_transport_protocol_id_t *source = &(((kaa_bootstrap_access_points_t *)data)->protocol_id);
     return kaa_transport_protocol_id_equals(matcher, source);
 }
 

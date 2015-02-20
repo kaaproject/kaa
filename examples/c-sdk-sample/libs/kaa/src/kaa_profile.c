@@ -366,9 +366,8 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
     }
 
 
-    if (!self->status->is_registered) {
+    if (!self->status->is_registered)
         self->status->is_registered = true;
-    }
 
     return error_code;
 }

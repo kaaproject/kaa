@@ -178,7 +178,7 @@ public class BinaryEncDec implements PlatformEncDec {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.akka.actors.io.platform.
      * PlatformEncDec#getId()
@@ -378,10 +378,10 @@ public class BinaryEncDec implements PlatformEncDec {
         boolean confSchemaPresent = configurationSync.getConfSchemaBody() != null;
         boolean confBodyPresent = configurationSync.getConfDeltaBody() != null;
         if (confSchemaPresent) {
-            option &= 0x01;
+            option |= 0x01;
         }
         if (confBodyPresent) {
-            option &= 0x02;
+            option |= 0x02;
         }
         buildExtensionHeader(buf, CONFIGURATION_EXTENSION_ID, NOTHING, NOTHING, (byte) option, 0);
         int extPosition = buf.position();
