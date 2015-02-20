@@ -33,8 +33,6 @@ public class AndroidNotificationDemoBuilder extends AbstractDemoBuilder{
         sdkKey.setLogSchemaVersion(1);
         sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
 
-        loginTenantDeveloper(client);
-
 
         NotificationSchemaDto notificationSchemaDto = new NotificationSchemaDto();
         notificationSchemaDto.setApplicationId(notificationApplication.getId());
@@ -43,6 +41,8 @@ public class AndroidNotificationDemoBuilder extends AbstractDemoBuilder{
         notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, "demo/androidnotification/notificationSchema.json");
         sdkKey.setNotificationSchemaVersion(notificationSchemaDto.getMajorVersion());
 
+
+        loginTenantDeveloper(client);
 
         TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();
         UserVerifierDto trustfulUserVerifier = new UserVerifierDto();
