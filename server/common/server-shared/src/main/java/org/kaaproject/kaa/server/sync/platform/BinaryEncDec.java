@@ -394,10 +394,10 @@ public class BinaryEncDec implements PlatformEncDec {
             buf.putInt(configurationSync.getConfDeltaBody().array().length);
         }
         if (confSchemaPresent) {
-            buf.put(configurationSync.getConfSchemaBody().array());
+            put(buf, configurationSync.getConfSchemaBody().array());
         }
         if (confBodyPresent) {
-            buf.put(configurationSync.getConfDeltaBody().array());
+            put(buf, configurationSync.getConfDeltaBody().array());
         }
 
         buf.putInt(extPosition - SIZE_OF_INT, buf.position() - extPosition);
@@ -461,8 +461,8 @@ public class BinaryEncDec implements PlatformEncDec {
                 buf.putShort(response.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
                 if (response.getListeners() != null) {
                     buf.putInt(response.getListeners().size());
-                    for (String listner : response.getListeners()) {
-                        buf.put(Base64Util.decode(listner));
+                    for (String listener : response.getListeners()) {
+                        put(buf, Base64Util.decode(listener));
                     }
                 } else {
                     buf.putInt(0);
