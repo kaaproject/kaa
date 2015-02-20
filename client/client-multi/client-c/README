@@ -85,6 +85,7 @@ KAA_WITHOUT_<MODULE> - Kaa module to be omitted during the build.
 Values:
 EVENTS
 LOGGING
+CONFIGURATION
 
 Default:
 All modules are present in the build.

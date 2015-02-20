@@ -75,8 +75,8 @@ kaa_error_t kaa_base64_decode(const char *encoded_data, size_t encoded_data_leng
     if (encoded_data[encoded_data_length - 1] == '=') (*decoded_data_length)--;
     if (encoded_data[encoded_data_length - 2] == '=') (*decoded_data_length)--;
 
-    for (int i = 0, j = 0; i < encoded_data_length;) {
-
+    int i = 0, j = 0;
+    while (i < encoded_data_length) {
         uint32_t sextet_a = encoded_data[i] == '=' ? 0 & i++ : decoding_table[(int)encoded_data[i++]];
         uint32_t sextet_b = encoded_data[i] == '=' ? 0 & i++ : decoding_table[(int)encoded_data[i++]];
         uint32_t sextet_c = encoded_data[i] == '=' ? 0 & i++ : decoding_table[(int)encoded_data[i++]];

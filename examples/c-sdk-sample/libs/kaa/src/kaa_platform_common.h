@@ -47,11 +47,11 @@ extern "C" {
 #define KAA_PROFILE_EXTENSION_TYPE          2
 #define KAA_USER_EXTENSION_TYPE             3
 #define KAA_LOGGING_EXTENSION_TYPE          4
+#define KAA_CONFIGURATION_EXTENSION_TYPE    5
 #define KAA_EVENT_EXTENSION_TYPE            7
 /*
  * Not yet implemented
  */
-#define KAA_CONFIGURATION_EXTENSION_TYPE    5
 #define KAA_NOTIFICATION_EXTENSION_TYPE     6
 #define KAA_REDIRECT_EXTENSION_TYPE         8
 

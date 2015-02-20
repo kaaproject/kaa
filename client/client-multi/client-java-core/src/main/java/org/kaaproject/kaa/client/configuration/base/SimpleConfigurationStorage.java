@@ -63,17 +63,23 @@ public class SimpleConfigurationStorage implements ConfigurationStorage {
         while(true){
             int result = is.read(tmp);
             LOG.trace("Reading {} bytes from input stream", result);
-            size += result;
             if(result > 0){
+                size += result;
                 chunks.add(Arrays.copyOf(tmp, result));
             }
             if(result < tmp.length){
                 break;
             }
         }
-        ByteBuffer data = ByteBuffer.wrap(new byte[size]);
-        for(byte[] chunk : chunks){
-            data.put(chunk);
+        ByteBuffer data;
+        if(size > 0){
+            data = ByteBuffer.wrap(new byte[size]);
+            for(byte[] chunk : chunks){
+                data.put(chunk);
+            }
+            data.rewind();
+        }else{
+            data = null;
         }
         is.close();
         return data;

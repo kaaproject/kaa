@@ -85,17 +85,17 @@ static void destroy_operations_access_points(void *data)
 static bool find_operations_access_points(void *data, void *context)
 {
     KAA_RETURN_IF_NIL2(data, context, false);
-    return (0 == memcmp(&((kaa_operations_access_points_t *)data)->protocol_id
-                      , (kaa_transport_protocol_id_t *)context
-                      , sizeof(kaa_transport_protocol_id_t)));
+    kaa_transport_protocol_id_t *matcher = (kaa_transport_protocol_id_t *) context;
+    kaa_transport_protocol_id_t *source = &(((kaa_operations_access_points_t *)data)->protocol_id);
+    return kaa_transport_protocol_id_equals(matcher, source);
 }
 
 static bool find_bootstrap_access_points(void *data, void *context)
 {
     KAA_RETURN_IF_NIL2(data, context, false);
-    return (0 == memcmp(&((kaa_bootstrap_access_points_t *)data)->protocol_id
-                      , (kaa_transport_protocol_id_t *)context
-                      , sizeof(kaa_transport_protocol_id_t)));
+    kaa_transport_protocol_id_t *matcher = (kaa_transport_protocol_id_t *) context;
+    kaa_transport_protocol_id_t *source = &(((kaa_bootstrap_access_points_t *)data)->protocol_id);
+    return kaa_transport_protocol_id_equals(matcher, source);
 }
 
 static kaa_error_t do_sync(kaa_bootstrap_manager_t *self)
@@ -244,8 +244,9 @@ static kaa_error_t get_next_bootstrap_access_point_index(kaa_transport_protocol_
     KAA_RETURN_IF_NIL2(protocol_id,next_index, KAA_ERR_BADPARAM);
 
     if (index_from < KAA_BOOTSTRAP_ACCESS_POINT_COUNT) {
-        for (size_t i = index_from; i < KAA_BOOTSTRAP_ACCESS_POINT_COUNT; ++i) {
-            if (0 == memcmp(&(KAA_BOOTSTRAP_ACCESS_POINTS[i].protocol_id), protocol_id, sizeof(kaa_transport_protocol_id_t))) {
+        size_t i = index_from;
+        for (; i < KAA_BOOTSTRAP_ACCESS_POINT_COUNT; ++i) {
+            if (kaa_transport_protocol_id_equals(&(KAA_BOOTSTRAP_ACCESS_POINTS[i].protocol_id), protocol_id)) {
                 *next_index = i;
                 return KAA_ERR_NONE;
             }
@@ -325,6 +326,7 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
     kaa_list_destroy(self->operations_access_points, destroy_operations_access_points);
+    self->operations_access_points = NULL;
 
     kaa_error_t error_code = KAA_ERR_NONE;
 

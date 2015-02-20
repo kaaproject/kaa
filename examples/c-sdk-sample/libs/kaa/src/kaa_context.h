@@ -79,6 +79,15 @@ typedef struct kaa_channel_manager_t    kaa_channel_manager_t;
 
 #endif
 
+#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+
+#ifndef KAA_CONFIGURATION_MANAGER_T
+# define KAA_CONFIGURATION_MANAGER_T
+    typedef struct kaa_configuration_manager kaa_configuration_manager_t;
+#endif
+
+#endif
+
 #ifndef KAA_LOGGER_T
 # define KAA_LOGGER_T
     typedef struct kaa_logger_t             kaa_logger_t;
@@ -90,19 +99,22 @@ typedef struct kaa_channel_manager_t    kaa_channel_manager_t;
  * independently to perform API calls to specific subsystems.
  */
 typedef struct {
-    kaa_status_holder_t        *status;             /**< See @link kaa_status.h @endlink. */
-    kaa_platform_protocol_t    *platfrom_protocol;  /**< See @link kaa_platform_protocol.h @endlink. */
-    kaa_bootstrap_manager_t    *bootstrap_manager;  /**< See @link kaa_bootstrap.h @endlink. */
-    kaa_channel_manager_t      *channel_manager;    /**< See @link kaa_channel_manager.h @endlink. */
-    kaa_profile_manager_t      *profile_manager;    /**< See @link kaa_profile.h @endlink. */
-    kaa_user_manager_t         *user_manager;       /**< See @link kaa_user.h @endlink. */
+    kaa_status_holder_t         *status;                 /**< See @link kaa_status.h @endlink. */
+    kaa_platform_protocol_t     *platfrom_protocol;      /**< See @link kaa_platform_protocol.h @endlink. */
+    kaa_bootstrap_manager_t     *bootstrap_manager;      /**< See @link kaa_bootstrap.h @endlink. */
+    kaa_channel_manager_t       *channel_manager;        /**< See @link kaa_channel_manager.h @endlink. */
+    kaa_profile_manager_t       *profile_manager;        /**< See @link kaa_profile.h @endlink. */
+    kaa_user_manager_t          *user_manager;           /**< See @link kaa_user.h @endlink. */
 #ifndef KAA_DISABLE_FEATURE_EVENTS
-    kaa_event_manager_t        *event_manager;      /**< See @link kaa_event.h @endlink. */
+    kaa_event_manager_t         *event_manager;          /**< See @link kaa_event.h @endlink. */
 #endif
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-    kaa_log_collector_t        *log_collector;      /**< See @link kaa_logging.h @endlink. */
+    kaa_log_collector_t         *log_collector;          /**< See @link kaa_logging.h @endlink. */
 #endif
-    kaa_logger_t               *logger;             /**< See @link kaa_log.h @endlink. */
+#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+    kaa_configuration_manager_t *configuration_manager;  /**< See @link kaa_configuration_manager.h @endlink. */
+#endif
+    kaa_logger_t               *logger;                  /**< See @link kaa_log.h @endlink. */
 } kaa_context_t;
 
 #ifdef __cplusplus
