@@ -45,6 +45,7 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder {
         sdkKey.setLogSchemaVersion(1);
         sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
 
+/*
 
         NotificationSchemaDto notificationSchemaDto = new NotificationSchemaDto();
         notificationSchemaDto.setApplicationId(notificationApplication.getId());
@@ -53,6 +54,7 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder {
         notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, "demo/notification/notificationSchema.json");
         sdkKey.setNotificationSchemaVersion(notificationSchemaDto.getMajorVersion());
 
+*/
 
         loginTenantDeveloper(client);
 
