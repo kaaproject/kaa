@@ -128,7 +128,20 @@ kaa_error_t kaa_transport_channel_id_calculate(kaa_transport_channel_interface_t
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->set_access_point;
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->sync_handler;
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->get_protocol_id;
+    kaa_transport_protocol_id_t protoco_id = { 0, 0 };
+    channel->get_protocol_id(channel->context, &protoco_id);
+    *channel_id = prime * (*channel_id) + protoco_id.id;
+    *channel_id = prime * (*channel_id) + protoco_id.version;
+
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->get_supported_services;
+    size_t services_count = 0;
+    kaa_service_t *services = NULL;
+    channel->get_supported_services(channel->context, &services, &services_count);
+    if (services) {
+        size_t i = 0;
+        for (; i < services_count; ++i)
+            *channel_id = prime * (*channel_id) + (int) services[i];
+    }
 
     return KAA_ERR_NONE;
 }
