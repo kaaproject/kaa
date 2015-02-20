@@ -18,13 +18,13 @@ package org.kaaproject.kaa.server.admin.shared.services;
 
 public enum ServiceErrorCode {
 
-    GENERAL_ERROR("general_error", true),
-    NOT_AUTHORIZED("not_authorized", false),
-    PERMISSION_DENIED("permission_denied", false),
-    INVALID_ARGUMENTS("invalid_arguments", false),
-    INVALID_SCHEMA("invalid_schema", true),
-    FILE_NOT_FOUND("file_not_found", true),
-    ITEM_NOT_FOUND("item_not_found", false);
+    GENERAL_ERROR("generalError", true),
+    NOT_AUTHORIZED("notAuthorized", false),
+    PERMISSION_DENIED("permissionDenied", false),
+    INVALID_ARGUMENTS("invalidArguments", false),
+    INVALID_SCHEMA("invalidSchema", true),
+    FILE_NOT_FOUND("fileNotFound", true),
+    ITEM_NOT_FOUND("itemNotFound", false);
 
     String resKey;
     boolean showErrorMessage;

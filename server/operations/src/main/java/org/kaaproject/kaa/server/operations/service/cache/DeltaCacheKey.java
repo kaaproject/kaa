@@ -23,8 +23,9 @@ import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
 /**
- * The Class DeltaCacheKey is used to model key of cache entry for delta calculation.
- * Contains appToken, appSeqNumber, list of active endpoint groups and old configuration hash. 
+ * The Class DeltaCacheKey is used to model key of cache entry for delta
+ * calculation. Contains appToken, appSeqNumber, list of active endpoint groups
+ * and old configuration hash.
  * 
  * @author ashvayka
  */
@@ -35,23 +36,48 @@ public final class DeltaCacheKey implements Serializable {
 
     /** The app id. */
     private final AppVersionKey appConfigVersionKey;
-    
+
     /** The endpoint groups. */
     private final List<EndpointGroupStateDto> endpointGroups;
+
     /** The endpoint conf hash. */
     private final EndpointObjectHash endpointConfHash;
+    
+    /** Supports only resync delta encoded using base schema */
+    private final boolean resyncOnly;
+
+    /**
+     * Instantiates a new delta cache key.
+     *
+     * @param appConfigVersionKey
+     *            the app config version key
+     * @param endpointGroups
+     *            the endpoint groups
+     * @param endpointConfHash
+     *            the endpoint conf hash
+     */
+    public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups, EndpointObjectHash endpointConfHash) {
+        this(appConfigVersionKey, endpointGroups, endpointConfHash, false);
+    }
+
     
     /**
      * Instantiates a new delta cache key.
      *
-     * @param appConfigVersionKey the app config version key
-     * @param endpointGroups the endpoint groups
-     * @param endpointConfHash the endpoint conf hash
+     * @param appConfigVersionKey
+     *            the app config version key
+     * @param endpointGroups
+     *            the endpoint groups
+     * @param endpointConfHash
+     *            the endpoint conf hash
+     * @param resyncOnly
+     *            indicates that client want to receive resync based on base schema
      */
-    public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups, EndpointObjectHash endpointConfHash) {
+    public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups, EndpointObjectHash endpointConfHash, boolean resyncOnly) {
         this.appConfigVersionKey = appConfigVersionKey;
         this.endpointGroups = endpointGroups;
         this.endpointConfHash = endpointConfHash;
+        this.resyncOnly = resyncOnly;
     }
 
     /**
@@ -81,9 +107,16 @@ public final class DeltaCacheKey implements Serializable {
         return endpointConfHash;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
+    /**
+     * Indicate that client supports only resync delta encoded using base schema.
+     *
+     * @return the resync only flag
      */
+    public boolean isResyncOnly() {
+        return resyncOnly;
+    }
+
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -91,12 +124,11 @@ public final class DeltaCacheKey implements Serializable {
         result = prime * result + ((appConfigVersionKey == null) ? 0 : appConfigVersionKey.hashCode());
         result = prime * result + ((endpointConfHash == null) ? 0 : endpointConfHash.hashCode());
         result = prime * result + ((endpointGroups == null) ? 0 : endpointGroups.hashCode());
+        result = prime * result + (resyncOnly ? 1231 : 1237);
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -130,6 +162,25 @@ public final class DeltaCacheKey implements Serializable {
         } else if (!endpointGroups.equals(other.endpointGroups)) {
             return false;
         }
+        if (resyncOnly != other.resyncOnly) {
+            return false;
+        }
         return true;
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("DeltaCacheKey [appConfigVersionKey=");
+        builder.append(appConfigVersionKey);
+        builder.append(", endpointGroups=");
+        builder.append(endpointGroups);
+        builder.append(", endpointConfHash=");
+        builder.append(endpointConfHash);
+        builder.append(", resyncOnly=");
+        builder.append(resyncOnly);
+        builder.append("]");
+        return builder.toString();
     }
 }

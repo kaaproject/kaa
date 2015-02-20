@@ -104,8 +104,11 @@ public class DefaultConfigurationPersistenceManager implements
             }
             configurationHash = EndpointObjectHash.fromSHA1(byteArray);
             if (storage != null) {
-                ByteBuffer buffer = ByteBuffer.wrap(byteArray);
-                storage.saveConfiguration(buffer);
+                try{
+                    storage.saveConfiguration(ByteBuffer.wrap(byteArray));
+                } catch (IOException e) {
+                    LOG.error("Failed to write configuration to storage", e);
+                }
             }
         } else {
             ignoreNextUpdate = false;

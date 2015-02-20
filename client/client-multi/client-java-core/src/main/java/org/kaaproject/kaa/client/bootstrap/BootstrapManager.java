@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
+import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
@@ -68,7 +69,7 @@ public interface BootstrapManager {
      * @param manager the channel manager to be set.
      * @see KaaChannelManager
      */
-    void setChannelManager(KaaChannelManager manager);
+    void setChannelManager(KaaInternalChannelManager manager);
 
     /**
      * Updates the operation server list.

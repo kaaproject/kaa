@@ -70,5 +70,8 @@ public interface ConfigurationTransport extends KaaTransport {
      * @see SchemaProcessor
      */
     void setSchemaProcessor(SchemaProcessor processor);
+    
+    
+    void setResyncOnly(boolean resyncOnly);
 
 }

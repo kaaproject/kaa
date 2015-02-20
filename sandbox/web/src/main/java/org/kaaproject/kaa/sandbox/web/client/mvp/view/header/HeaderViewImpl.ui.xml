@@ -21,9 +21,7 @@
             <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
                 <gwt:HorizontalPanel height="100%">
 		            <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-		                <gwt:HTMLPanel styleName="b-app-header-title" width="100%" height="100%">
-		                    Kaa Sandbox - Try Kaa in action!
-		                </gwt:HTMLPanel>
+		                <gwt:HTMLPanel ui:field="headerTitlePanel" styleName="b-app-header-title" width="100%" height="100%"/>
 		            </gwt:cell>
                 </gwt:HorizontalPanel>
             </gwt:cell>

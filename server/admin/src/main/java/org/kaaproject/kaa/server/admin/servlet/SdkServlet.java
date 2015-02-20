@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import net.iharder.Base64;
 
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
-import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,16 +59,17 @@ public class SdkServlet extends HttpServlet implements Servlet {
         String sdkKeyBase64 = request.getParameter(SdkKey.SDK_KEY_PARAMETER);
         try {
             SdkKey key = (SdkKey)Base64.decodeToObject(sdkKeyBase64, Base64.URL_SAFE, null);
-            Sdk sdk = cacheService.getSdk(key);
-            response.setContentType(key.getTargetPlatform().getContentType());
-            ServletUtils.prepareDisposition(request, response, sdk.getFileName());
-            response.setContentLength(sdk.getData().length);
+            FileData sdkFile = cacheService.getSdk(key);
+            response.setContentType(sdkFile.getContentType());
+            ServletUtils.prepareDisposition(request, response, sdkFile.getFileName());
+            response.setContentLength(sdkFile.getFileData().length);
             response.setBufferSize(BUFFER);
-            response.getOutputStream().write(sdk.getData());
+            response.getOutputStream().write(sdkFile.getFileData());
             response.flushBuffer();
         }
         catch (Exception e) {
             logger.error("Unexpected error in SdkServlet.doGet: ", e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get Sdk file: " + e.getMessage());
         }
     }
 

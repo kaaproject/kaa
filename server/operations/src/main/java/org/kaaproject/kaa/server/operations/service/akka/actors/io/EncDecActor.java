@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.io;
 
-import java.security.KeyPair;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
@@ -24,10 +23,9 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.RuleTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.response.SessionResponse;
-import org.kaaproject.kaa.server.operations.service.cache.CacheService;
-import org.kaaproject.kaa.server.operations.service.metrics.MetricsService;
 import org.kaaproject.kaa.server.transport.message.SessionAwareMessage;
 import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.kaaproject.kaa.server.transport.session.SessionAware;
@@ -60,11 +58,9 @@ public class EncDecActor extends UntypedActor {
      *            the eps actor
      * @param supportUnencryptedConnection
      */
-    public EncDecActor(ActorRef epsActor, MetricsService metricsService, CacheService cacheService, KeyPair serverKeys,
-            Set<String> platformProtocols, Boolean supportUnencryptedConnection) {
+    public EncDecActor(ActorRef epsActor, AkkaContext context, Set<String> platformProtocols) {
         super();
-        this.messageProcessor = new EncDecActorMessageProcessor(epsActor, metricsService, cacheService, serverKeys, platformProtocols,
-                supportUnencryptedConnection);
+        this.messageProcessor = new EncDecActorMessageProcessor(epsActor, context, platformProtocols);
         this.redirectionRules = new HashMap<>();
         this.random = new Random();
     }
@@ -100,13 +96,8 @@ public class EncDecActor extends UntypedActor {
         /** The eps actor. */
         private final ActorRef epsActor;
 
-        private final MetricsService metricsService;
-
-        private final CacheService cacheService;
-
-        private final KeyPair serverKeys;
-
-        private final Boolean supportUnencryptedConnection;
+        /** The Akka service context */
+        private final AkkaContext context;
 
         private final Set<String> platformProtocols;
 
@@ -116,15 +107,11 @@ public class EncDecActor extends UntypedActor {
          * @param epsActor
          *            the eps actor
          */
-        public ActorCreator(ActorRef epsActor, MetricsService metricsService, CacheService cacheService, KeyPair serverKeys,
-                Set<String> platformProtocols, Boolean supportUnencryptedConnection) {
+        public ActorCreator(ActorRef epsActor, AkkaContext context, Set<String> platformProtocols) {
             super();
             this.epsActor = epsActor;
-            this.metricsService = metricsService;
-            this.cacheService = cacheService;
-            this.serverKeys = serverKeys;
+            this.context = context;
             this.platformProtocols = new HashSet<String>(platformProtocols);
-            this.supportUnencryptedConnection = supportUnencryptedConnection;
         }
 
         /*
@@ -134,7 +121,7 @@ public class EncDecActor extends UntypedActor {
          */
         @Override
         public EncDecActor create() throws Exception {
-            return new EncDecActor(epsActor, metricsService, cacheService, serverKeys, platformProtocols, supportUnencryptedConnection);
+            return new EncDecActor(epsActor, context, platformProtocols);
         }
 
         public Set<String> getPlatformProtocols() {

@@ -17,6 +17,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -51,13 +52,13 @@ public abstract class AbstractPluginActivity<T extends PluginDto, V extends Base
 
     @Override
     protected void onEntityRetrieved() {
-        loadPluginInfos(new AsyncCallback<List<PluginInfoDto>>() {
+        loadPluginInfos(new BusyAsyncCallback<List<PluginInfoDto>>() {
             @Override
-            public void onSuccess(List<PluginInfoDto> result) {
+            public void onSuccessImpl(List<PluginInfoDto> result) {
                 detailsView.getPluginInfo().setAcceptableValues(result);
             }
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailureImpl(Throwable caught) {
                 Utils.handleException(caught, detailsView);
             }
         });

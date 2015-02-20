@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
+@SuppressWarnings("deprecation")
 public class KaaDialog extends DialogBox {
 
     private BottomPanel bottomPanel;

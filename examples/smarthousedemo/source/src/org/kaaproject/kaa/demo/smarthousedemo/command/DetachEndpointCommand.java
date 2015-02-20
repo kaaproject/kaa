@@ -18,7 +18,7 @@ package org.kaaproject.kaa.demo.smarthousedemo.command;
 
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
-import org.kaaproject.kaa.client.event.registration.EndpointOperationResultListener;
+import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCallback;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 
 import android.util.Log;
@@ -37,19 +37,17 @@ public class DetachEndpointCommand extends AbstractClientCommand<Boolean> {
     protected void executeAsync() {
         Log.d("Kaa", "Detaching endpoint from user account!");
         EndpointKeyHash endpointKey = new EndpointKeyHash(endpointKeyHash);
-        client.getEndpointRegistrationManager().detachEndpoint(endpointKey, 
-            new EndpointOperationResultListener() {
-                @Override
-                public void sendResponse(String operation, SyncResponseResultType result, Object context) {
-                    if (result==SyncResponseResultType.SUCCESS) {
-                        Log.d("Kaa", "Endpoint detached from user account!");
-                        onComplete(true);
-                    }
-                    else {
-                        Log.w("Kaa", "Endpoint already detached from user account!");
-                        onComplete(false);
-                    }
+        client.detachEndpoint(endpointKey, new OnDetachEndpointOperationCallback() {
+            @Override
+            public void onDetach(SyncResponseResultType result) {
+                if (result == SyncResponseResultType.SUCCESS) {
+                    Log.d("Kaa", "Endpoint detached from user account!");
+                    onComplete(true);
+                } else {
+                    Log.w("Kaa", "Endpoint already detached from user account!");
+                    onComplete(false);
                 }
+            }
         });
     }
 

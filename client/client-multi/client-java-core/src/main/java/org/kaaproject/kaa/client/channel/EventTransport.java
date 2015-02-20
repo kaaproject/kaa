@@ -25,7 +25,6 @@ import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
  * Updates the Event manager state.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface EventTransport extends KaaTransport {
 
@@ -33,10 +32,8 @@ public interface EventTransport extends KaaTransport {
      * Creates the Event request.
      *
      * @param requestId new request id of the SyncRequest.
-     *
      * @return new Event request.
      * @see EventSyncRequest
-     *
      */
     EventSyncRequest createEventRequest(Integer requestId);
 
@@ -45,7 +42,6 @@ public interface EventTransport extends KaaTransport {
      *
      * @param response the response from the server.
      * @see EventSyncResponse
-     *
      */
     void onEventResponse(EventSyncResponse response);
 
@@ -64,7 +60,14 @@ public interface EventTransport extends KaaTransport {
      */
     void setEventManager(EventManager manager);
 
+    /**
+     *
+     */
     void blockEventManager();
+
+    /**
+     *
+     */
     void releaseEventManager();
 
 }

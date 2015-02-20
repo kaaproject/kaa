@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -50,13 +51,24 @@ public class ProfileSchemaActivity
     @Override
     protected void getEntity(String id,
             AsyncCallback<ProfileSchemaDto> callback) {
-        KaaAdmin.getDataSource().getProfileSchema(id, callback);
+        KaaAdmin.getDataSource().getProfileSchemaForm(id, callback);
     }
 
     @Override
     protected void editEntity(ProfileSchemaDto entity,
             AsyncCallback<ProfileSchemaDto> callback) {
-        KaaAdmin.getDataSource().editProfileSchema(entity, fileItemName, callback);
+        KaaAdmin.getDataSource().editProfileSchemaForm(entity, callback);
+    }
+
+    @Override
+    protected void createEmptySchemaForm(AsyncCallback<RecordField> callback) {
+        KaaAdmin.getDataSource().createSimpleEmptySchemaForm(callback);
+    }
+
+    @Override
+    public void loadFormData(String fileItemName,
+            AsyncCallback<RecordField> callback) {
+        KaaAdmin.getDataSource().generateSimpleSchemaForm(fileItemName, callback);
     }
 
 }
