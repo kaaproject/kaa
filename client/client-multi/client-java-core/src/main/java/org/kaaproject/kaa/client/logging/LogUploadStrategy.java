@@ -16,23 +16,57 @@
 
 package org.kaaproject.kaa.client.logging;
 
+import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode;
+
 /**
- * <p>Interface for log upload strategy.</p>
+ * <p>
+ * Interface for log upload strategy.
+ * </p>
  *
- * <p>Used by log collector on each adding of the new log record in order
- * to check whether to send logs to server or clean up local storage.</p>
+ * <p>
+ * Used by log collector on each adding of the new log record in order to check
+ * whether to send logs to server or clean up local storage.
+ * </p>
  *
- * <p>Reference implementation used by default ({@link DefaultLogUploadStrategy}).</p>
+ * <p>
+ * Reference implementation used by default ({@link DefaultLogUploadStrategy}).
+ * </p>
  */
 public interface LogUploadStrategy {
     /**
-     * Retrieves log upload decision based on current storage status
-     * and defined upload configuration.
+     * Retrieves log upload decision based on current storage status and defined
+     * upload configuration.
      *
-     * @param configuration Log upload configuration ({@link LogUploadConfiguration})
-     * @param status Log storage status
+     * @param status
+     *            Log storage status
      *
      * @return Upload decision ({@link LogUploadStrategyDecision})
      */
-    LogUploadStrategyDecision isUploadNeeded(LogUploadConfiguration configuration, LogStorageStatus status);
+    LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status);
+    
+    /**
+     * Retrieves maximum size of the report pack 
+     * that will be delivered in single request to server 
+     * @return size of the batch
+     */
+    long getBatchSize();
+
+    /**
+     * Maximum time to wait log delivery response.
+     *
+     * @return Time in seconds.
+     */
+    int getTimeout();
+
+    /**
+     * Handles timeout of log delivery
+     * @param controller
+     */
+    void onTimeout(LogFailoverCommand controller);
+
+    /**
+     * Handles failure of log delivery
+     * @param controller
+     */
+    void onFailure(LogFailoverCommand controller, LogDeliveryErrorCode code);
 }

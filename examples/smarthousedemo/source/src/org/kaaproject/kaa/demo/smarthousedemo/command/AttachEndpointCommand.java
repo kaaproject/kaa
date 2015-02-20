@@ -19,17 +19,19 @@ package org.kaaproject.kaa.demo.smarthousedemo.command;
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
-import org.kaaproject.kaa.client.event.registration.EndpointOperationResultListener;
+import org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.demo.smarthousedemo.exception.CommandException;
 
 import android.util.Log;
 
-/** Implementation of attach endpoint to user command. */
+/**
+ * Implementation of attach endpoint to user command.
+ */
 public class AttachEndpointCommand extends AbstractClientCommand<String> {
 
     private String endpointAccessToken;
-    
+
     public AttachEndpointCommand(KaaClient client, String endpointAccessToken) {
         super(client);
         this.endpointAccessToken = endpointAccessToken;
@@ -39,20 +41,18 @@ public class AttachEndpointCommand extends AbstractClientCommand<String> {
     protected void executeAsync() {
         Log.d("Kaa", "Attaching endpoint to user account!");
         EndpointAccessToken accessToken = new EndpointAccessToken(endpointAccessToken);
-        client.getEndpointRegistrationManager().attachEndpoint(accessToken, 
-            new EndpointOperationResultListener() {
-                @Override
-                public void sendResponse(String operation, SyncResponseResultType result, Object context) {
-                    if (result==SyncResponseResultType.SUCCESS) {
-                        Log.d("Kaa", "Endpoint attached to user account!");
-                        String endpointKeyHash = ((EndpointKeyHash)context).getKeyHash();
-                        onComplete(endpointKeyHash);
-                    }
-                    else {
-                        Log.e("Kaa", "Unable to attach endpoint to user account!");
-                        onException(new CommandException("Unable to attach endpoint to user account!"));
-                    }
+        client.attachEndpoint(accessToken, new OnAttachEndpointOperationCallback() {
+            @Override
+            public void onAttach(SyncResponseResultType result, EndpointKeyHash context) {
+                if (result == SyncResponseResultType.SUCCESS) {
+                    Log.d("Kaa", "Endpoint attached to user account!");
+                    String endpointKeyHash = ((EndpointKeyHash) context).getKeyHash();
+                    onComplete(endpointKeyHash);
+                } else {
+                    Log.e("Kaa", "Unable to attach endpoint to user account!");
+                    onException(new CommandException("Unable to attach endpoint to user account!"));
                 }
+            }
         });
     }
 

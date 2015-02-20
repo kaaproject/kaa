@@ -51,7 +51,7 @@ public class DefaultProfileTransport extends AbstractKaaTransport implements
     @Override
     public ProfileSyncRequest createProfileRequest() throws IOException {
         if (clientState != null && manager != null && properties != null) {
-            byte [] serializedProfile = manager.getSerializedProfileContainer().getSerializedProfile();
+            byte [] serializedProfile = manager.getSerializedProfile();
             EndpointObjectHash currentProfileHash = EndpointObjectHash.fromSHA1(serializedProfile);
             if (isProfileOutDated(currentProfileHash) || !clientState.isRegistered()) {
                 clientState.setProfileHash(currentProfileHash);

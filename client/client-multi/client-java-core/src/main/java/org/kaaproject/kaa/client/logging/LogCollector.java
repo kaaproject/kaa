@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.client.logging;
 
-import java.io.IOException;
+import javax.annotation.Generated;
 
-import org.kaaproject.kaa.client.logging.gen.SuperRecord;
+import org.kaaproject.kaa.schema.base.Log;
 
 /**
  * <p>Interface for a log collector.</p>
@@ -30,53 +30,21 @@ import org.kaaproject.kaa.client.logging.gen.SuperRecord;
  * Each of them may be set independently of others.</p>
  *
  * <p>Reference implementation of each module used by default.</p>
+ * 
+ * <p>This interface is auto-generated.</p>
  *
  * @see LogStorage
  * @see LogStorageStatus
  * @see LogUploadStrategy
  * @see LogUploadConfiguration
  */
-public interface LogCollector {
+@Generated("LogCollector.java.template")
+public interface LogCollector extends GenericLogCollector{
 
     /**
      * Adds new log record to local storage.
      *
      * @param record New log record object
      */
-    void addLogRecord(SuperRecord record) throws IOException;
-
-    /**
-     * Set user implementation of a log storage.
-     *
-     * @param storage User-defined log storage object
-     */
-    void setStorage(LogStorage storage);
-
-    /**
-     * Set user implementation of a log storage status.
-     *
-     * @param status User-defined log storage status object
-     */
-    void setStorageStatus(LogStorageStatus status);
-
-    /**
-     * Set user implementation of a log upload strategy.
-     *
-     * @param strategy User-defined log upload strategy object.
-     */
-    void setUploadStrategy(LogUploadStrategy strategy);
-
-    /**
-     * Set user implementation of a upload failover strategy.
-     *
-     * @param strategy User-defined upload failover strategy object.
-     */
-    void setFailoverStrategy(LogUploadFailoverStrategy strategy);
-
-    /**
-     * Set user implementation of a log upload configuration.
-     *
-     * @param configuration User-defined log upload configuration object.
-     */
-    void setConfiguration(LogUploadConfiguration configuration);
+    void addLogRecord(Log record);
 }
