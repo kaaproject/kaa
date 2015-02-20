@@ -71,7 +71,7 @@ public class ChangePasswordDialog extends KaaDialog {
 
         setWidth("500px");
 
-        setTitle(Utils.constants.change_password());
+        setTitle(Utils.constants.changePassword());
 
         VerticalPanel dialogContents = new VerticalPanel();
         dialogContents.setSpacing(4);
@@ -123,7 +123,7 @@ public class ChangePasswordDialog extends KaaDialog {
 
         dialogContents.add(table);
 
-        changePasswordButton = new Button(Utils.constants.change_password(), handler);
+        changePasswordButton = new Button(Utils.constants.changePassword(), handler);
 
         Button cancelButton = new Button(Utils.constants.cancel(), new ClickHandler() {
             @Override

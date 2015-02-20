@@ -70,7 +70,7 @@ public class UserProfileActivity
     @Override
     protected void onEntityRetrieved() {
         detailsView.setTitle(entity.getUsername());
-        detailsView.getAuthority().setValue(Utils.constants.getString(entity.getAuthority().name().toLowerCase()));
+        detailsView.getAuthority().setValue(Utils.constants.getString(entity.getAuthority().getResourceKey()));
         detailsView.getFirstName().setValue(entity.getFirstName());
         detailsView.getLastName().setValue(entity.getLastName());
         detailsView.getEmail().setValue(entity.getMail());

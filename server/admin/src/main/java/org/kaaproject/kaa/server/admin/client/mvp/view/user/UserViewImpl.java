@@ -88,7 +88,7 @@ public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
             @Override
             public String render(KaaAuthorityDto object) {
                 if (object != null) {
-                    return Utils.constants.getString(object.name().toLowerCase());
+                    return Utils.constants.getString(object.getResourceKey());
                 }
                 else {
                     return "";

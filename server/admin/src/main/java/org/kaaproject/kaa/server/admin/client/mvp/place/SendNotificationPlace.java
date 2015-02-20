@@ -41,7 +41,7 @@ public class SendNotificationPlace extends TreePlace {
 
     @Override
     public String getName() {
-        return Utils.constants.send_notification();
+        return Utils.constants.sendNotification();
     }
 
     @Prefix(value = "sendNotif")

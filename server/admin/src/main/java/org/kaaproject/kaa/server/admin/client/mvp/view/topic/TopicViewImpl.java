@@ -91,7 +91,7 @@ public class TopicViewImpl extends BaseDetailsViewImpl implements TopicView, Val
 
         detailsTable.getCellFormatter().setVerticalAlignment(4, 0, HasVerticalAlignment.ALIGN_TOP);
 
-        sendNotification = new Button(Utils.constants.send_notification());
+        sendNotification = new Button(Utils.constants.sendNotification());
         detailsTable.setWidget(5, 0, sendNotification);
         sendNotification.setVisible(!create);
 

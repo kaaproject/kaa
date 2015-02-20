@@ -72,7 +72,7 @@ public class AddTopicDialog extends KaaDialog implements ValueChangeHandler<List
 
         setWidth("500px");
 
-        setTitle(Utils.constants.add_topic_to_ep());
+        setTitle(Utils.constants.addTopicToEp());
 
         VerticalPanel dialogContents = new VerticalPanel();
         dialogContents.setSpacing(4);

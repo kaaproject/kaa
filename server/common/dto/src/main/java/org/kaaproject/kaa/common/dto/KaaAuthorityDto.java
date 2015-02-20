@@ -20,10 +20,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum KaaAuthorityDto {
-    KAA_ADMIN,
-    TENANT_ADMIN,
-    TENANT_DEVELOPER,
-    TENANT_USER;
+    
+    KAA_ADMIN("kaaAdmin"),
+    TENANT_ADMIN("tenantAdmin"),
+    TENANT_DEVELOPER("tenantDeveloper"),
+    TENANT_USER("tenantUser");
+    
+    String key;
+
+    KaaAuthorityDto(String key) {
+        this.key = key;
+    }
+
+    public String getResourceKey() {
+        return key;
+    }
     
     public static KaaAuthorityDto parse(String value) {
         KaaAuthorityDto authority = null;

@@ -245,19 +245,31 @@
 				<version>${gwt.version}</version>
 				<executions>
 					<execution>
+                        <id>generateAsync</id>
 						<goals>
 							<goal>generateAsync</goal>
 						</goals>
+                        <configuration>
+                            <compileSourcesArtifacts>
+                                <artifact>org.kaaproject.kaa.server.common:dto</artifact>
+                                <artifact>org.kaaproject.kaa.sandbox:sandbox-demo</artifact>
+                            </compileSourcesArtifacts>
+                            <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
+                            <runTarget>Sandbox.html</runTarget>
+                        </configuration>
 					</execution>
+                    <execution>
+                        <id>i18n</id>
+                        <goals>
+                            <goal>i18n</goal>
+                        </goals>
+                        <configuration>
+                            <i18nConstantsWithLookupBundle>org.kaaproject.kaa.sandbox.web.client.i18n.SandboxConstants</i18nConstantsWithLookupBundle>
+                            <i18nMessagesBundle>org.kaaproject.kaa.sandbox.web.client.i18n.SandboxMessages</i18nMessagesBundle>
+                            <generateDirectory>${basedir}/src/main/java</generateDirectory>
+                        </configuration>                    
+                    </execution>
 				</executions>
-				<configuration>
-					<compileSourcesArtifacts>
-						<artifact>org.kaaproject.kaa.server.common:dto</artifact>
-                        <artifact>org.kaaproject.kaa.sandbox:sandbox-demo</artifact>
-					</compileSourcesArtifacts>
-					<gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
-					<runTarget>Sandbox.html</runTarget>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -282,6 +294,41 @@
 				</executions>
 			</plugin>
  	      </plugins>
+		<pluginManagement>
+		    <plugins>
+		        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+		        <plugin>
+		            <groupId>org.eclipse.m2e</groupId>
+		            <artifactId>lifecycle-mapping</artifactId>
+		            <version>1.0.0</version>
+		            <configuration>
+		                <lifecycleMappingMetadata>
+		                    <pluginExecutions>
+		                        <pluginExecution>
+		                            <pluginExecutionFilter>
+		                                <groupId>
+		                                    org.codehaus.mojo
+		                                </groupId>
+		                                <artifactId>
+		                                    gwt-maven-plugin
+		                                </artifactId>
+		                                <versionRange>
+		                                    [2.6.1,)
+		                                </versionRange>
+		                                <goals>
+		                                    <goal>i18n</goal>
+		                                </goals>
+		                            </pluginExecutionFilter>
+		                            <action>
+		                                <ignore></ignore>
+		                            </action>
+		                        </pluginExecution>
+		                    </pluginExecutions>
+		                </lifecycleMappingMetadata>
+		            </configuration>
+		        </plugin>
+		    </plugins>
+		</pluginManagement>
 	</build>
 	<profiles>
 		<profile>
