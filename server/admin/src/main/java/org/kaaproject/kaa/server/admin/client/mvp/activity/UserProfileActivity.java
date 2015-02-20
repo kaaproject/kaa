@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -93,14 +94,14 @@ public class UserProfileActivity
 
     private void checkEmail() {
         final Long userId = Long.valueOf(entity.getExternalUid());
-        KaaAdmin.getAuthService().checkEmailOccupied(entity.getMail(), userId,new AsyncCallback<ResultCode>() {
+        KaaAdmin.getAuthService().checkEmailOccupied(entity.getMail(), userId,new BusyAsyncCallback<ResultCode>() {
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailureImpl(Throwable caught) {
                 Utils.handleException(caught, detailsView);
             }
 
             @Override
-            public void onSuccess(ResultCode result) {
+            public void onSuccessImpl(ResultCode result) {
                 if (result != ResultCode.OK) {
                     detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
                 }
@@ -113,14 +114,14 @@ public class UserProfileActivity
 
     private void performSave() {
         editEntity(entity,
-                new AsyncCallback<UserDto>() {
-                    public void onSuccess(UserDto result) {
+                new BusyAsyncCallback<UserDto>() {
+                    public void onSuccessImpl(UserDto result) {
                         if (place.getPreviousPlace() != null) {
                             goTo(place.getPreviousPlace());
                         }
                     }
 
-                    public void onFailure(Throwable caught) {
+                    public void onFailureImpl(Throwable caught) {
                         Utils.handleException(caught, detailsView);
                     }
         });

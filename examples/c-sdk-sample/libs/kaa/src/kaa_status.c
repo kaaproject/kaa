@@ -25,7 +25,7 @@
 #include <string.h>
 
 
-#define KAA_STATUS_STATIC_SIZE      (sizeof(bool) + sizeof(bool) + sizeof(uint32_t) + sizeof(uint16_t) + SHA_1_DIGEST_LENGTH*sizeof(char) + SHA_1_DIGEST_LENGTH*sizeof(char))
+#define KAA_STATUS_STATIC_SIZE      (sizeof(bool) + sizeof(bool) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint16_t) + SHA_1_DIGEST_LENGTH * sizeof(char) * 2)
 
 #define READ_BUFFER(FROM, TO, SIZE) \
         memcpy(TO, FROM, SIZE); \
@@ -45,6 +45,7 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
     kaa_status->is_registered = false;
     kaa_status->is_attached = false;
     kaa_status->event_seq_n = 0;
+    kaa_status->config_seq_n = 0;
     kaa_status->log_bucket_id = 0;
     memset(kaa_status->endpoint_public_key_hash, 0, SHA_1_DIGEST_LENGTH);
     memset(kaa_status->profile_hash, 0, SHA_1_DIGEST_LENGTH);
@@ -60,6 +61,7 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
         READ_BUFFER(read_buf, &kaa_status->is_registered, sizeof(kaa_status->is_registered))
         READ_BUFFER(read_buf, &kaa_status->is_attached, sizeof(kaa_status->is_attached))
         READ_BUFFER(read_buf, &kaa_status->event_seq_n, sizeof(kaa_status->event_seq_n))
+        READ_BUFFER(read_buf, &kaa_status->config_seq_n, sizeof(kaa_status->config_seq_n))
         READ_BUFFER(read_buf, &kaa_status->log_bucket_id, sizeof(kaa_status->log_bucket_id))
         READ_BUFFER(read_buf, kaa_status->endpoint_public_key_hash, SHA_1_DIGEST_LENGTH)
         READ_BUFFER(read_buf, kaa_status->profile_hash, SHA_1_DIGEST_LENGTH)
@@ -123,6 +125,7 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
     WRITE_BUFFER(&self->is_registered, buffer, sizeof(self->is_registered));
     WRITE_BUFFER(&self->is_attached, buffer, sizeof(self->is_attached));
     WRITE_BUFFER(&self->event_seq_n, buffer, sizeof(self->event_seq_n));
+    WRITE_BUFFER(&self->config_seq_n, buffer, sizeof(self->config_seq_n));
     WRITE_BUFFER(&self->log_bucket_id, buffer, sizeof(self->log_bucket_id));
     WRITE_BUFFER(self->endpoint_public_key_hash, buffer, SHA_1_DIGEST_LENGTH);
     WRITE_BUFFER(self->profile_hash, buffer, SHA_1_DIGEST_LENGTH);

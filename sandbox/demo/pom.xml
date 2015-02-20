@@ -167,7 +167,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
-                    <execution>
+                    <!--execution>
                         <id>unpack-robotrun-resources</id>
                         <goals>
                             <goal>unpack-dependencies</goal>
@@ -180,7 +180,7 @@
                             <includeArtifactIds>robotrun-shared</includeArtifactIds>
                             <excludeTransitive>true</excludeTransitive>
                         </configuration>
-                    </execution>
+                    </execution-->
                     <execution>
                         <id>unpack-smarthouse-resources</id>
                         <goals>

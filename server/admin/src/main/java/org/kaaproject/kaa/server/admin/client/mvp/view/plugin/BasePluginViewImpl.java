@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.plugin;
 
 import static org.kaaproject.kaa.server.admin.client.util.Utils.isNotBlank;
 
+import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
@@ -113,8 +114,9 @@ public abstract class BasePluginViewImpl extends BaseDetailsViewImpl implements 
         detailsTable.setWidget(idx, 1, pluginInfo);
 
         getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
+        getFooter().setWidth("700px");
         
-        configuration = new RecordFieldWidget();
+        configuration = new RecordFieldWidget(new AvroWidgetsConfig.Builder().createConfig());
         configuration.addValueChangeHandler(this);
         getFooter().add(configuration);
         

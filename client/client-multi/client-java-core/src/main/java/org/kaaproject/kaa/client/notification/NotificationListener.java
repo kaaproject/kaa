@@ -16,24 +16,27 @@
 
 package org.kaaproject.kaa.client.notification;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
+import javax.annotation.Generated;
+
+import org.kaaproject.kaa.schema.base.Notification;
 
 /**
- * The listener of raw notifications' data.
+ * The listener to notifications.
  *
  * @author Yaroslav Zeygerman
+ * @author Andrew Shvayka
  *
  */
+@Generated("NotificationListener.java.template")
 public interface NotificationListener {
 
     /**
      * Called on each new notification.
      *
      * @param topicId the topic's id.
-     * @param notification the raw notification's data.
+     * @param notification the notification object.
      *
      */
-    void onNotificationRaw(String topicId, ByteBuffer notification) throws IOException;
+    void onNotification(String topicId, Notification notification);
 
 }

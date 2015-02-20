@@ -34,7 +34,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
 # Compiler specific flags.
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c1x")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -undefined dynamic_lookup")
 endif()
 
@@ -121,6 +121,7 @@ set (KAA_SOURCE_FILES
         src/kaa_event.c
         src/kaa_logging.c
         src/kaa_profile.c
+        src/kaa_configuration_manager.c
         src/kaa_status.c
         src/kaa_user.c
         src/kaa.c

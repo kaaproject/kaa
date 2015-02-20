@@ -34,8 +34,10 @@ import org.junit.Test;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.IPTransportInfoTest;
-import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
+import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
+import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
 import org.kaaproject.kaa.client.channel.KaaInvalidChannelException;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
@@ -47,7 +49,7 @@ import org.mockito.Mockito;
 
 public class DefaultBootstrapManagerTest {
 
-    public class ChanelManagerMock implements KaaChannelManager {
+    public class ChanelManagerMock implements KaaInternalChannelManager {
 
         private boolean serverUpdated = false;
         private String receivedUrl;
@@ -133,6 +135,30 @@ public class DefaultBootstrapManagerTest {
         @Override
         public void resume() {
 
+        }
+
+        @Override
+        public void setOperationMultiplexer(KaaDataMultiplexer multiplexer) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setOperationDemultiplexer(KaaDataDemultiplexer demultiplexer) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setBootstrapMultiplexer(KaaDataMultiplexer multiplexer) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setBootstrapDemultiplexer(KaaDataDemultiplexer demultiplexer) {
+            // TODO Auto-generated method stub
+            
         }
     }
 

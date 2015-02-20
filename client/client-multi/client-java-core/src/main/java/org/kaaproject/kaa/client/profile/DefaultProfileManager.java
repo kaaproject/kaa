@@ -16,32 +16,38 @@
 
 package org.kaaproject.kaa.client.profile;
 
+import java.io.IOException;
+
 import org.kaaproject.kaa.client.channel.ProfileTransport;
 
 /**
  * Default {@link ProfileManager} implementation
  *
  * @author Yaroslav Zeygerman
+ * @author Andrew Shvayka
  *
  */
 public class DefaultProfileManager implements ProfileManager {
     private final ProfileTransport transport;
-    private final DefaultSerializedProfileContainer serializedProfileContainer;
+    private final ProfileSerializer serializer = new ProfileSerializer();
+    private ProfileContainer container;
 
     public DefaultProfileManager(ProfileTransport transport) {
         this.transport = transport;
-        this.serializedProfileContainer = new DefaultSerializedProfileContainer();
+    }
+    
+    @Override
+    public void setProfileContainer(ProfileContainer container){
+        this.container = container;
     }
 
     @Override
-    public SerializedProfileContainer getSerializedProfileContainer() {
-        return serializedProfileContainer;
-    }
+    public byte[] getSerializedProfile() throws IOException {
+        return serializer.toByteArray(container);
+    };
 
     @Override
-    public void setProfileContainer(ProfileContainer container) {
-        serializedProfileContainer.setProfileContainer(container);
-        container.setProfileListener(new DefaultProfileListener(transport));
-    }
-
+    public void updateProfile(){
+        transport.sync();
+    };
 }

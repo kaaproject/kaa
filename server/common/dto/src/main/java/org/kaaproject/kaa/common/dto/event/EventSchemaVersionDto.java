@@ -18,14 +18,19 @@ package org.kaaproject.kaa.common.dto.event;
 
 import java.io.Serializable;
 
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.HasId;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({"schemaForm"})
 public class EventSchemaVersionDto implements HasId, Serializable {
 
     private static final long serialVersionUID = -6565622945148633465L;
 
     private String id;
     private String schema;
+    protected RecordField schemaForm;
     private int version;
     private String createdUsername;
     private long createdTime;
@@ -48,6 +53,14 @@ public class EventSchemaVersionDto implements HasId, Serializable {
         this.schema = schema;
     }
     
+    public RecordField getSchemaForm() {
+        return schemaForm;
+    }
+
+    public void setSchemaForm(RecordField schemaForm) {
+        this.schemaForm = schemaForm;
+    }
+
     public int getVersion() {
         return version;
     }
