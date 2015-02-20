@@ -1,0 +1,6 @@
+/home/sercv/prog/AndroidStudioProjects/KaaNotification/app/build/intermediates/classes/debug
+/home/sercv/prog/AndroidStudioProjects/KaaNotification/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.3-74679e31bd12279b2f6d3d4c66622a4c9965e000.jar
+/home/sercv/prog/AndroidStudioProjects/KaaNotification/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-1e08d6af92eaa84c22389ebb022e816cbc47dd63.jar
+/home/sercv/prog/AndroidStudioProjects/KaaNotification/app/build/intermediates/pre-dexed/debug/classes-427e26501305e7301998ae9bc271003b90dfa7f9.jar
+/home/sercv/prog/AndroidStudioProjects/KaaNotification/app/build/intermediates/pre-dexed/debug/classes-04f2e4dd22c99136a229379abb5b52a6d2dfb4f7.jar
+/home/sercv/prog/AndroidStudioProjects/KaaNotification/app/build/intermediates/pre-dexed/debug/kaa-client-sdk-android-p1-c1-n2-l1-c78cc809552bbb38fc11e5cbcd58a77b4e109b0b.jar
