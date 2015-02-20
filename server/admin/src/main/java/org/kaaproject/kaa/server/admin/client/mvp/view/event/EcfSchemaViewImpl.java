@@ -16,30 +16,30 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
-import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
+import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
-import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.event.EventClassDto;
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 
-public class EcfSchemaViewImpl extends BaseDetailsViewImpl implements EcfSchemaView {
+public class EcfSchemaViewImpl extends BaseDetailsViewImpl implements EcfSchemaView, ValueChangeHandler<RecordField> {
 
     private SizedTextBox version;
     private SizedTextBox createdUsername;
     private SizedTextBox createdDateTime;
-    private SizedTextArea schema;
-    private EventClassesGrid eventClassesGrid;
+    
+    private RecordPanel ecfSchemaForm;
 
-    public EcfSchemaViewImpl() {
-        super(false, false);
+    public EcfSchemaViewImpl(boolean create) {
+        super(create, create);
     }
 
     @Override
@@ -56,20 +56,15 @@ public class EcfSchemaViewImpl extends BaseDetailsViewImpl implements EcfSchemaV
     public HasValue<String> getCreatedDateTime() {
         return createdDateTime;
     }
-
+    
     @Override
-    public HasValue<String> getSchema() {
-        return schema;
-    }
-
-    @Override
-    public AbstractGrid<EventClassDto, String> getEventClassesGrid() {
-        return eventClassesGrid;
+    public RecordPanel getEcfSchemaForm() {
+        return ecfSchemaForm;
     }
 
     @Override
     protected String getCreateTitle() {
-        return "";
+        return Utils.constants.addEcfSchema();
     }
 
     @Override
@@ -106,23 +101,17 @@ public class EcfSchemaViewImpl extends BaseDetailsViewImpl implements EcfSchemaV
         Label schemaLabel = new Label(Utils.constants.schema());
         detailsTable.setWidget(3, 0, schemaLabel);
         
-        schema = new SizedTextArea(524288);
-        schema.setWidth("500px");
-        schema.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 150);
-        schema.getTextArea().setReadOnly(true);
-        detailsTable.setWidget(3, 1, schema);
-        detailsTable.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
-
-        eventClassesGrid = new EventClassesGrid(Unit.PX);
-        eventClassesGrid.setSize("700px", "300px");
-        Label eventClassesLabel = new Label(Utils.constants.eventClasses());
-        eventClassesLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
-
-        detailsTable.setWidget(4, 0, eventClassesLabel);
-        eventClassesLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);
-
-        detailsTable.setWidget(5, 0, eventClassesGrid);
-        detailsTable.getFlexCellFormatter().setColSpan(5, 0, 3);
+        getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
+        
+        ecfSchemaForm = new RecordPanel(new AvroWidgetsConfig.Builder().
+                recordPanelWidth(900).createConfig(),
+                Utils.constants.schema(), this, !create, !create);
+        
+        if (create) {
+            ecfSchemaForm.addValueChangeHandler(this);
+        }
+        getFooter().setWidth("1000px");
+        getFooter().add(ecfSchemaForm);
     }
 
     @Override
@@ -130,12 +119,22 @@ public class EcfSchemaViewImpl extends BaseDetailsViewImpl implements EcfSchemaV
         version.setValue("");
         createdUsername.setValue("");
         createdDateTime.setValue("");
-        schema.setValue("");
+        ecfSchemaForm.reset();
     }
 
     @Override
     protected boolean validate() {
-        return true;
+        if (create) {
+            return ecfSchemaForm.validate();
+        } else {
+            return true;
+        }
     }
+    
+    @Override
+    public void onValueChange(ValueChangeEvent<RecordField> event) {
+        fireChanged();
+    }
+
 
 }

@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
@@ -142,15 +143,15 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, F, 
             onRecordRetrieved();
         }
         else {
-            KaaAdmin.getDataSource().getEndpointGroup(endpointGroupId, new AsyncCallback<EndpointGroupDto>() {
+            KaaAdmin.getDataSource().getEndpointGroup(endpointGroupId, new BusyAsyncCallback<EndpointGroupDto>() {
 
                 @Override
-                public void onFailure(Throwable caught) {
+                public void onFailureImpl(Throwable caught) {
                     Utils.handleException(caught, recordView);
                 }
 
                 @Override
-                public void onSuccess(EndpointGroupDto result) {
+                public void onSuccessImpl(EndpointGroupDto result) {
                     endpointGroup = result;
                     getRecord(schemaId, endpointGroupId, new AsyncCallback<StructureRecordDto<T>>() {
                         @Override
@@ -179,14 +180,14 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, F, 
 
     protected void onRecordRetrieved() {
         if (create) {
-            getVacantSchemas(endpointGroupId, new AsyncCallback<List<SchemaDto>>() {
+            getVacantSchemas(endpointGroupId, new BusyAsyncCallback<List<SchemaDto>>() {
                 @Override
-                public void onFailure(Throwable caught) {
+                public void onFailureImpl(Throwable caught) {
                     Utils.handleException(caught, recordView);
                 }
 
                 @Override
-                public void onSuccess(List<SchemaDto> result) {
+                public void onSuccessImpl(List<SchemaDto> result) {
                     SchemaDto schema = Utils.getMaxSchemaVersions(result);
                     recordView.getSchema().setValue(schema);
                     recordView.getSchema().setAcceptableValues(result);
@@ -232,12 +233,12 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, F, 
         inactiveStruct.setDescription(recordView.getRecordPanel().getDescription().getValue());
         updateBody(inactiveStruct, recordView.getRecordPanel().getBody().getValue());
         editStruct(inactiveStruct,
-                new AsyncCallback<T>() {
-                    public void onSuccess(T result) {
+                new BusyAsyncCallback<T>() {
+                    public void onSuccessImpl(T result) {
                         goTo(getRecordPlace(applicationId, schemaId, endpointGroupId, false, false, Math.random()));
                     }
 
-                    public void onFailure(Throwable caught) {
+                    public void onFailureImpl(Throwable caught) {
                         Utils.handleException(caught, recordView, AbstractRecordActivity.this);
                     }
         });
@@ -250,12 +251,12 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, F, 
     protected void doActivate(final EventBus eventBus) {
         T inactiveStruct = record.getInactiveStructureDto();
         activateStruct(inactiveStruct.getId(),
-                new AsyncCallback<T>() {
-            public void onSuccess(T result) {
+                new BusyAsyncCallback<T>() {
+            public void onSuccessImpl(T result) {
                 goTo(getRecordPlace(applicationId, schemaId, endpointGroupId, false, true, Math.random()));
             }
 
-            public void onFailure(Throwable caught) {
+            public void onFailureImpl(Throwable caught) {
                 Utils.handleException(caught, recordView);
             }
         });
@@ -264,12 +265,12 @@ public abstract class AbstractRecordActivity<T extends AbstractStructureDto, F, 
     protected void doDeactivate(final EventBus eventBus) {
         T activeStruct = record.getActiveStructureDto();
         deactivateStruct(activeStruct.getId(),
-                new AsyncCallback<T>() {
-            public void onSuccess(T result) {
+                new BusyAsyncCallback<T>() {
+            public void onSuccessImpl(T result) {
                 goTo(getRecordPlace(applicationId, schemaId, endpointGroupId, false, true, Math.random()));
             }
 
-            public void onFailure(Throwable caught) {
+            public void onFailureImpl(Throwable caught) {
                 Utils.handleException(caught, recordView);
             }
         });

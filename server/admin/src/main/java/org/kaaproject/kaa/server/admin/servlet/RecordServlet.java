@@ -29,8 +29,8 @@ import net.iharder.Base64;
 
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
-import org.kaaproject.kaa.server.common.thrift.gen.control.FileData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,12 +68,13 @@ public class RecordServlet extends HttpServlet implements Servlet {
             }
 
             ServletUtils.prepareDisposition(request, response, recordLibrary.getFileName());
-            response.setContentLength(recordLibrary.getData().length);
+            response.setContentLength(recordLibrary.getFileData().length);
             response.setBufferSize(BUFFER);
-            response.getOutputStream().write(recordLibrary.getData());
+            response.getOutputStream().write(recordLibrary.getFileData());
             response.flushBuffer();
         } catch (Exception e) {
             logger.error("Unexpected error in RecordLibraryServlet.doGet: ", e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get file: " + e.getMessage());
         }
     }
 }

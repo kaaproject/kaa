@@ -16,27 +16,27 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AbstractSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel.FormDataLoader;
 import org.kaaproject.kaa.server.admin.client.util.ErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 
 public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V extends BaseSchemaView, P extends AbstractSchemaPlace> extends
-    AbstractDetailsActivity<T, V, P> implements ErrorMessageCustomizer {
+    AbstractDetailsActivity<T, V, P> implements ErrorMessageCustomizer, FormDataLoader {
 
     private static final String  LEFT_SQUARE_BRACKET = "[";
     private static final String  RIGHT_SQUARE_BRACKET = "]";
     private static final String  SEMICOLON = ";";
     
     protected String applicationId;
-    protected String fileItemName;
 
     public AbstractSchemaActivity(P place,
             ClientFactory clientFactory) {
@@ -45,6 +45,8 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
     }
 
     protected abstract T newSchema();
+    
+    protected abstract void createEmptySchemaForm(AsyncCallback<RecordField> callback);
 
     @Override
     protected String getEntityId(P place) {
@@ -60,26 +62,6 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
 
     @Override
     protected void bind(final EventBus eventBus) {
-        if (create) {
-            fileItemName = detailsView.getSchemaFileUpload().getFileItemName();
-            registrations.add(detailsView.getSchemaFileUpload().addSubmitCompleteHandler(new SubmitCompleteHandler() {
-                @Override
-                public void onSubmitComplete(SubmitCompleteEvent event) {
-                    editEntity(entity,
-                        new AsyncCallback<T>() {
-                            @Override
-                            public void onSuccess(T result) {
-                                goTo(place.getPreviousPlace());
-                            }
-
-                            @Override
-                            public void onFailure(Throwable caught) {
-                                Utils.handleException(caught, detailsView, AbstractSchemaActivity.this);
-                            }
-                    });
-                }
-            }));
-        }
         super.bind(eventBus);
     }
 
@@ -92,8 +74,21 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
         detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
         detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
         detailsView.getEndpointCount().setValue(entity.getEndpointCount()+"");
-        if (!create) {
-            detailsView.getSchema().setValue(entity.getSchema());
+        if (create) {
+            createEmptySchemaForm(new BusyAsyncCallback<RecordField>() {
+                @Override
+                public void onSuccessImpl(RecordField result) {
+                    detailsView.getSchemaForm().setValue(result);
+                }
+                
+                @Override
+                public void onFailureImpl(Throwable caught) {
+                    Utils.handleException(caught, detailsView);
+                }
+            });
+            detailsView.getSchemaForm().setFormDataLoader(this);
+        } else {
+            detailsView.getSchemaForm().setValue(entity.getSchemaForm());
         }
     }
 
@@ -101,31 +96,9 @@ public abstract class AbstractSchemaActivity<T extends AbstractSchemaDto, V exte
     protected void onSave() {
         entity.setName(detailsView.getName().getValue());
         entity.setDescription(detailsView.getDescription().getValue());
-
+        entity.setSchemaForm(detailsView.getSchemaForm().getValue());
     }
 
-    @Override
-    protected void doSave(final EventBus eventBus) {
-        onSave();
-        if (create) {
-            detailsView.getSchemaFileUpload().submit();
-        }
-        else {
-            editEntity(entity,
-                    new AsyncCallback<T>() {
-                        @Override
-                        public void onSuccess(T result) {
-                            goTo(place.getPreviousPlace());
-                        }
-
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            Utils.handleException(caught, detailsView);
-                        }
-            });
-        }
-    }
-    
     @Override
     public String customizeErrorMessage(Throwable caught) {
         String errorMessage = caught.getLocalizedMessage();        

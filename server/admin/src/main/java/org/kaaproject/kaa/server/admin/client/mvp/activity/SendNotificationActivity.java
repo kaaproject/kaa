@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import java.util.Collections;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -70,16 +71,16 @@ public class SendNotificationActivity extends AbstractDetailsActivity<Notificati
     @Override
     protected void onEntityRetrieved() {
         KaaAdmin.getDataSource().getUserNotificationSchemaInfosByApplicationId(applicationId, 
-                new AsyncCallback<List<SchemaInfoDto>>() {
+                new BusyAsyncCallback<List<SchemaInfoDto>>() {
             @Override
-            public void onSuccess(List<SchemaInfoDto> result) {
+            public void onSuccessImpl(List<SchemaInfoDto> result) {
                 Collections.sort(result);
-                SchemaInfoDto schemaInfo = result.get(0);
+                SchemaInfoDto schemaInfo = result.get(result.size()-1);
                 detailsView.getNotificationSchemaInfo().setValue(schemaInfo, true);
                 detailsView.getNotificationSchemaInfo().setAcceptableValues(result);
             }
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailureImpl(Throwable caught) {
                 Utils.handleException(caught, detailsView);
             }
         });

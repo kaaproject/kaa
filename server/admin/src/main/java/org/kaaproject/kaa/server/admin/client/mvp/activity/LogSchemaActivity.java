@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -50,13 +51,24 @@ public class LogSchemaActivity
     @Override
     protected void getEntity(String id,
             AsyncCallback<LogSchemaDto> callback) {
-        KaaAdmin.getDataSource().getLogSchema(id, callback);
+        KaaAdmin.getDataSource().getLogSchemaForm(id, callback);
     }
 
     @Override
     protected void editEntity(LogSchemaDto entity,
             AsyncCallback<LogSchemaDto> callback) {
-        KaaAdmin.getDataSource().editLogSchema(entity, fileItemName, callback);
+        KaaAdmin.getDataSource().editLogSchemaForm(entity, callback);
+    }
+
+    @Override
+    protected void createEmptySchemaForm(AsyncCallback<RecordField> callback) {
+        KaaAdmin.getDataSource().createSimpleEmptySchemaForm(callback);
+    }
+
+    @Override
+    public void loadFormData(String fileItemName,
+            AsyncCallback<RecordField> callback) {
+        KaaAdmin.getDataSource().generateSimpleSchemaForm(fileItemName, callback);
     }
 
 }
