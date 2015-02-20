@@ -16,8 +16,10 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "platform/stdio.h"
+#include <sys/types.h>
 #include <string.h>
+#include "platform/stdio.h"
+#include "platform/sock.h"
 #include "kaa_channel_manager.h"
 
 #include "kaa_context.h"

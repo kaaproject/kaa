@@ -18,7 +18,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include <sys/types.h>
 #include "platform/stdio.h"
+#include "platform/sock.h"
 #include "platform/ext_sha.h"
 #include "kaa_status.h"
 #include "kaa_platform_protocol.h"

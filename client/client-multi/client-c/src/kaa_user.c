@@ -16,7 +16,9 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <sys/types.h>
 #include "platform/stdio.h"
+#include "platform/sock.h"
 #include "kaa_user.h"
 #include "platform/ext_sha.h"
 #include "kaa_status.h"

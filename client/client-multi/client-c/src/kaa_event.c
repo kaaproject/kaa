@@ -20,7 +20,9 @@
 # include <stdint.h>
 # include <string.h>
 # include <stdarg.h>
+# include <sys/types.h>
 # include "platform/stdio.h"
+# include "platform/sock.h"
 # include "platform/ext_sha.h"
 # include "kaa_event.h"
 # include "kaa_status.h"

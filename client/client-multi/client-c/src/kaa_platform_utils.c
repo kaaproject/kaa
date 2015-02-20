@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "platform/platform.h"
+#include "platform/sock.h"
 #include <stdbool.h>
 #include "kaa_platform_utils.h"
 

@@ -16,6 +16,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
+#include <stdint.h>
 #include "platform/ext_sha.h"
 
 #include "kaa_logging.h"
@@ -31,7 +33,7 @@
 #include "kaa_status.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
-
+#include "platform/sock.h"
 
 
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);

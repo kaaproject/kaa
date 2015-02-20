@@ -33,6 +33,7 @@
 #include "kaa_platform_protocol.h"
 #include "kaa_platform_utils.h"
 #include "platform/ext_transport_channel.h"
+#include "platform/sock.h"
 
 
 

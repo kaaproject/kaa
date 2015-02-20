@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <inttypes.h>
 #include <string.h>
 #include "platform/stdio.h"
 #include "kaa_common_schema.h"

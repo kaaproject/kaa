@@ -19,6 +19,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <time.h>
+#include <stdarg.h>
 
 #include "../platform/stdio.h"
 
@@ -1116,10 +1117,12 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     }
 
 
+    uint16_t keepalive = self->keepalive.keepalive_interval;
+    keepalive += keepalive / 5;
 
     kaatcp_connect_t connect_message;
     kaatcp_error_t kaatcp_error_code =
-            kaatcp_fill_connect_message(1.2 * self->keepalive.keepalive_interval
+            kaatcp_fill_connect_message(keepalive
                                       , KAA_PLATFORM_PROTOCOL_ID
                                       , sync_buffer
                                       , sync_size
