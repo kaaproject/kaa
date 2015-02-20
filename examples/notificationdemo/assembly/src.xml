@@ -26,7 +26,7 @@
         <fileSet>
             <directory>${project.basedir}/source</directory>
             <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>androidnotification_demo/AndroidNotificationDemo</outputDirectory>
+            <outputDirectory>notification_demo/NotificationDemo</outputDirectory>
         </fileSet>
     </fileSets>
 </assembly>

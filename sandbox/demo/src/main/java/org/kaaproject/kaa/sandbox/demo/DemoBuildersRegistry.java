@@ -25,7 +25,7 @@ public class DemoBuildersRegistry {
     
     static {
         demoBuilders.add(new SmartHouseDemoBuilder());
-        demoBuilders.add(new AndroidNotificationDemoBuilder());
+        demoBuilders.add(new NotificationDemoBuilder());
 //        demoBuilders.add(new RobotRunDemoBuilder());
     }
     

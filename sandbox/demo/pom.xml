@@ -89,7 +89,7 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
-            <artifactId>androidnotificationdemo</artifactId>
+            <artifactId>notificationdemo</artifactId>
             <version>${project.version}</version>
             <classifier>notification-android-resources</classifier>
             <type>tar.gz</type>
@@ -97,7 +97,7 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
-            <artifactId>androidnotificationdemo</artifactId>
+            <artifactId>notificationdemo</artifactId>
             <version>${project.version}</version>
             <classifier>notification-android-src</classifier>
             <type>tar.gz</type>
@@ -197,16 +197,16 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>unpack-androidnotification-resources</id>
+                        <id>unpack-notification-resources</id>
                         <goals>
                             <goal>unpack-dependencies</goal>
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/generated-resources/demo/androidnotification
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/notification
                             </outputDirectory>
                             <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
-                            <includeArtifactIds>androidnotificationdemo</includeArtifactIds>
+                            <includeArtifactIds>notificationdemo</includeArtifactIds>
                             <includeClassifiers>notification-android-resources</includeClassifiers>
                             <excludeTransitive>true</excludeTransitive>
                         </configuration>
@@ -251,13 +251,13 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.examples</groupId>
-                                    <artifactId>androidnotificationdemo</artifactId>
+                                    <artifactId>notificationdemo</artifactId>
                                     <version>${project.version}</version>
                                     <classifier>notification-android-src</classifier>
                                     <type>tar.gz</type>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
-                                    <destFileName>android_notification_demo.tar.gz</destFileName>
+                                    <destFileName>notification_demo.tar.gz</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
