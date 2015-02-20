@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.client.notification;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.annotation.Generated;
 

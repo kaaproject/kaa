@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.client.configuration.storage;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -57,7 +58,7 @@ public interface ConfigurationStorage {
      * @param buffer buffer with configuration data
      *
      */
-    void saveConfiguration(ByteBuffer buffer);
+    void saveConfiguration(ByteBuffer buffer) throws IOException;
 
     /**
      * Loads configuration data
@@ -65,6 +66,6 @@ public interface ConfigurationStorage {
      * @return buffer with loaded configuration data, or null if configuration is empty
      *
      */
-    ByteBuffer loadConfiguration();
+    ByteBuffer loadConfiguration() throws IOException;
 
 }

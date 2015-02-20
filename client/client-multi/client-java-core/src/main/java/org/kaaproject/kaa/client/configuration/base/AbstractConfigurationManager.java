@@ -115,7 +115,11 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
     private byte[] loadConfigurationData() {
         if (storage != null) {
             LOG.debug("Loading configuration data from storage {}", storage);
-            configurationData = toByteArray(storage.loadConfiguration());
+            try {
+                configurationData = toByteArray(storage.loadConfiguration());
+            } catch (IOException e) {
+                LOG.error("Failed to load configuration from storage", e);
+            }
         }
         if (configurationData == null) {
             LOG.debug("Loading configuration data from defaults {}", storage);
