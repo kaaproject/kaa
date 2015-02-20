@@ -87,14 +87,14 @@ static bool find_channel_by_protocol_id(/* current channel */void *data, /* chan
     KAA_RETURN_IF_NIL2(data, context, false);
 
     kaa_transport_protocol_id_t channel_info;
-    kaa_error_t  error_code = ((kaa_transport_channel_wrapper_t *)data)->channel.
+    kaa_error_t error_code = ((kaa_transport_channel_wrapper_t *)data)->channel.
                     get_protocol_id(((kaa_transport_channel_wrapper_t *)data)->channel.context, &channel_info);
     if (error_code)
         return false;
 
     kaa_transport_protocol_id_t *matcher = (kaa_transport_protocol_id_t *) context;
 
-    return matcher->id == channel_info.id && matcher->version == channel_info.version;
+    return kaa_transport_protocol_id_equals(matcher, &channel_info);
 }
 
 kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
@@ -367,6 +367,8 @@ kaa_error_t kaa_channel_manager_bootstrap_request_get_size(kaa_channel_manager_t
             self->sync_info.channel_count = channel_count;
             self->sync_info.is_up_to_date = true;
         }
+    } else {
+        *expected_size = self->sync_info.payload_size + KAA_EXTENSION_HEADER_SIZE;
     }
 
     return KAA_ERR_NONE;

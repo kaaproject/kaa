@@ -18,7 +18,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <signal.h>
 #include <execinfo.h>
 #include <sys/select.h>
 
@@ -359,29 +358,9 @@ int kaa_demo_event_loop()
     return 0;
 }
 
-void signal_handler(int sig)
-{
-    void *stack[16];
-    size_t size;
-
-    size = backtrace(stack, 16);
-    char **backtrace_syms = backtrace_symbols(stack, 16);
-
-    printf("SIGSEGV (sig_code=%d0\n", sig);
-
-    for (size_t i = 1; i < size - 1; ++i)
-        printf("%s\n", backtrace_syms[i]);
-
-    while (size)
-        free(backtrace_syms[size]);
-
-    exit(1);
-}
 
 int main(/*int argc, char *argv[]*/)
 {
-    signal(SIGSEGV, signal_handler);
-
     kaa_error_t error_code = kaa_demo_init();
     if (error_code) {
         printf("Failed to initialize Kaa demo. Error code: %d\n", error_code);

@@ -71,6 +71,12 @@ typedef struct {
     uint16_t version;
 } kaa_transport_protocol_id_t;
 
+static inline int kaa_transport_protocol_id_equals(const kaa_transport_protocol_id_t *first, const kaa_transport_protocol_id_t *second)
+{
+    KAA_RETURN_IF_NIL2(first, second, 0);
+    return first->id == second->id && first->version == second->version;
+}
+
 /**
  * @brief Connection parameters used by transport channels to establish
  * connection both to Bootstrap and Operations servers.
