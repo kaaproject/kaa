@@ -35,8 +35,8 @@
 
     <modules>
         <module>robotrun</module>
-        <module>androidnotificationdemo</module>
         <module>smarthousedemo</module>
+        <module>androidnotificationdemo</module>
     </modules>
 
     <dependencyManagement>
