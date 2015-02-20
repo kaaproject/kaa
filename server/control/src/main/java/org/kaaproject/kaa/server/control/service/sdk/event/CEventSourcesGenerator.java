@@ -41,7 +41,7 @@ public class CEventSourcesGenerator {
             .getLogger(CppEventSourcesGenerator.class);
 
     private static final String SOURCE_OUTPUT = "src/";
-    private static final String EVENT_SOURCE_OUTPUT = "src/event/";
+    private static final String EVENT_SOURCE_OUTPUT = "src/gen/";
 
     private static final String NAME_PREFIX_TEMPLATE = "kaa_{name}";
     private static final String EVENT_FAMILY_DEFINITION_PATTERN = "kaa_{name}_definitions";
@@ -69,7 +69,6 @@ public class CEventSourcesGenerator {
 
     public static List<TarEntryData> generateEventSources(List<EventFamilyMetadata> eventFamilies) {
         List<TarEntryData> eventSources = new ArrayList<>();
-
 
         LOG.debug("[sdk generateEventSources] eventFamilies.size(): {}", eventFamilies.size());
 

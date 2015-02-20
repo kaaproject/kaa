@@ -120,6 +120,7 @@ public interface ClientFactory {
     EcfView getCreateEcfView();
 
     EcfSchemaView getEcfSchemaView();
+    EcfSchemaView getCreateEcfSchemaView();
 
     BaseListView<ApplicationEventFamilyMapDto> getAefMapsView();
     AefMapView getAefMapView();

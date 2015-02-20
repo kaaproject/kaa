@@ -56,7 +56,7 @@ public class UsersGrid extends AbstractKaaGrid<UserDto, String> {
                 new StringValueProvider<UserDto>() {
                     @Override
                     public String getValue(UserDto item) {
-                        return Utils.constants.getString(item.getAuthority().name().toLowerCase());
+                        return Utils.constants.getString(item.getAuthority().getResourceKey());
                     }
                 }, 160);
 

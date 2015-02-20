@@ -16,15 +16,15 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.event.EventClassDto;
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
-import org.kaaproject.kaa.server.admin.client.mvp.data.EventClassesDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel.FormDataLoader;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.shared.EventBus;
@@ -33,9 +33,7 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
 public class EcfSchemaActivity
         extends
-        AbstractDetailsActivity<EventClassFamilyDto, EcfSchemaView, EcfSchemaPlace> {
-
-    private EventClassesDataProvider eventClassesDataProvider;
+        AbstractDetailsActivity<EventClassFamilyDto, EcfSchemaView, EcfSchemaPlace> implements FormDataLoader {
 
     public EcfSchemaActivity(EcfSchemaPlace place,
             ClientFactory clientFactory) {
@@ -45,10 +43,6 @@ public class EcfSchemaActivity
     @Override
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
         super.start(containerWidget, eventBus);
-            AbstractGrid<EventClassDto, String> eventClassesGrid = detailsView.getEventClassesGrid();
-            eventClassesDataProvider = new EventClassesDataProvider(eventClassesGrid.getSelectionModel(),
-                    detailsView, entityId, place.getVersion());
-            eventClassesDataProvider.addDataDisplay(eventClassesGrid.getDisplay());
     }
 
     protected void bind(final EventBus eventBus) {
@@ -57,12 +51,20 @@ public class EcfSchemaActivity
 
     @Override
     protected String getEntityId(EcfSchemaPlace place) {
-        return place.getEcfId();
+        if (place.getVersion() > -1) {
+            return place.getEcfId();
+        } else {
+            return null;
+        }
     }
 
     @Override
     protected EcfSchemaView getView(boolean create) {
-        return clientFactory.getEcfSchemaView();
+        if (create) {
+            return clientFactory.getCreateEcfSchemaView();
+        } else {
+            return clientFactory.getEcfSchemaView();
+        }
     }
 
     @Override
@@ -72,17 +74,31 @@ public class EcfSchemaActivity
 
     @Override
     protected void onEntityRetrieved() {
-        EventSchemaVersionDto schema = null;
-        for (EventSchemaVersionDto schemaVersion : entity.getSchemas()) {
-            if (schemaVersion.getVersion()==place.getVersion()) {
-                schema = schemaVersion;
-                break;
+        if (create) {
+            KaaAdmin.getDataSource().createEcfEmptySchemaForm(new BusyAsyncCallback<RecordField>() {
+                @Override
+                public void onSuccessImpl(RecordField result) {
+                    detailsView.getEcfSchemaForm().setValue(result);
+                }
+                @Override
+                public void onFailureImpl(Throwable caught) {
+                    Utils.handleException(caught, detailsView);
+                }
+            });
+            detailsView.getEcfSchemaForm().setFormDataLoader(this);
+        } else {
+            EventSchemaVersionDto schema = null;
+            for (EventSchemaVersionDto schemaVersion : entity.getSchemas()) {
+                if (schemaVersion.getVersion()==place.getVersion()) {
+                    schema = schemaVersion;
+                    break;
+                }
             }
+            detailsView.getVersion().setValue(""+schema.getVersion());
+            detailsView.getCreatedUsername().setValue(schema.getCreatedUsername());
+            detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(schema.getCreatedTime()));
+            detailsView.getEcfSchemaForm().setValue(schema.getSchemaForm());
         }
-        detailsView.getVersion().setValue(""+schema.getVersion());
-        detailsView.getCreatedUsername().setValue(schema.getCreatedUsername());
-        detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(schema.getCreatedTime()));
-        detailsView.getSchema().setValue(schema.getSchema());
     }
 
     @Override
@@ -96,8 +112,25 @@ public class EcfSchemaActivity
 
     @Override
     protected void editEntity(EventClassFamilyDto entity,
-            AsyncCallback<EventClassFamilyDto> callback) {
-        callback.onSuccess(null);
+            final AsyncCallback<EventClassFamilyDto> callback) {
+        KaaAdmin.getDataSource().addEcfSchema(place.getEcfId(), detailsView.getEcfSchemaForm().getValue(), 
+                new AsyncCallback<Void>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        callback.onFailure(caught);
+                    }
+
+                    @Override
+                    public void onSuccess(Void result) {
+                        callback.onSuccess(null);
+                    }
+        });
+    }
+
+    @Override
+    public void loadFormData(String fileItemName,
+            AsyncCallback<RecordField> callback) {
+        KaaAdmin.getDataSource().generateEcfSchemaForm(fileItemName, callback);
     }
  
 }

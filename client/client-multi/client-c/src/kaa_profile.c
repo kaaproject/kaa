@@ -369,9 +369,8 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
     }
 
 
-    if (!self->status->is_registered) {
+    if (!self->status->is_registered)
         self->status->is_registered = true;
-    }
 
     return error_code;
 }
@@ -436,4 +435,10 @@ kaa_error_t kaa_profile_manager_set_endpoint_access_token(kaa_profile_manager_t 
 {
     KAA_RETURN_IF_NIL2(self, token, KAA_ERR_BADPARAM);
     return kaa_status_set_endpoint_access_token(self->status, token);
+}
+
+kaa_error_t kaa_profile_manager_get_endpoint_id(kaa_profile_manager_t *self, kaa_endpoint_id_p result_id)
+{
+    KAA_RETURN_IF_NIL2(self, result_id, KAA_ERR_BADPARAM);
+    return ext_copy_sha_hash((kaa_digest_p) result_id, self->status->endpoint_public_key_hash);
 }

@@ -35,7 +35,7 @@ public class GenerateSdkPlace extends TreePlace {
 
     @Override
     public String getName() {
-        return Utils.constants.generate_sdk();
+        return Utils.constants.generateSdk();
     }
 
     @Prefix(value = "genSdk")

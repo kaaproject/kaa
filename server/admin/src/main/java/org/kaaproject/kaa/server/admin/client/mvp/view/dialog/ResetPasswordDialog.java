@@ -63,7 +63,7 @@ public class ResetPasswordDialog extends KaaDialog implements HasErrorMessage {
 
         setWidth("500px");
 
-        setTitle(Utils.constants.reset_password());
+        setTitle(Utils.constants.resetPassword());
 
         VerticalPanel dialogContents = new VerticalPanel();
         dialogContents.setSpacing(4);

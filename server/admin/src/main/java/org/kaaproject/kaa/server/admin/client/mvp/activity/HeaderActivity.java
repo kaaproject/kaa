@@ -91,7 +91,7 @@ public class HeaderActivity extends AbstractActivity implements
                 goTo(new UserProfilePlace());
             }
         });
-        headerView.getSettingsLabel().addMenuItem(Utils.constants.change_password(), new ActionMenuItemListener() {
+        headerView.getSettingsLabel().addMenuItem(Utils.constants.changePassword(), new ActionMenuItemListener() {
             @Override
             public void onMenuItemSelected() {
                 showChangePasswordDialog();

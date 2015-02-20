@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
+import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -53,8 +55,13 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
     private String recordFileItemName;
     private boolean readOnly;
     private HasErrorMessage hasErrorMessage;
+    private FormDataLoader formDataLoader;
     
     public RecordPanel(String title, HasErrorMessage hasErrorMessage, boolean optional, boolean readOnly) {
+        this(null, title, hasErrorMessage, optional, readOnly);
+    }
+    
+    public RecordPanel(AvroWidgetsConfig config, String title, HasErrorMessage hasErrorMessage, boolean optional, boolean readOnly) {
         this.readOnly = readOnly;
         this.hasErrorMessage = hasErrorMessage;
         FlexTable table = new FlexTable();
@@ -69,7 +76,10 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
             span.addClassName(REQUIRED);
             recordCaption.setCaptionHTML(span.getString());
         }        
-        recordFieldWidget = new RecordFieldWidget(readOnly);
+        if (config == null) {
+            config = new AvroWidgetsConfig.Builder().createConfig();
+        }
+        recordFieldWidget = new RecordFieldWidget(config, readOnly);
         recordCaption.setContentWidget(recordFieldWidget);
         table.setWidget(0, 0, recordCaption);
         Label uploadLabel = new Label(Utils.constants.uploadFromFile());
@@ -99,10 +109,11 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
         table.setWidget(1, 0, uploadTable);
         setWidget(table);
         setUploadVisible(!readOnly);
+        formDataLoader = new DefaultFormDataLoader();
     }
     
-    public void setMinHeightPx(int height) {
-        recordCaption.getElement().getStyle().setPropertyPx("minHeight", height);
+    public void setPreferredHeightPx(int height) {
+        recordFieldWidget.setPreferredHeightPx(height);
     }
     
     public RecordFieldWidget getRecordWidget() {
@@ -154,22 +165,24 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
         return recordFieldWidget.validate();
     }
     
+    public void setFormDataLoader(FormDataLoader formDataLoader) {
+        this.formDataLoader = formDataLoader;
+    }
+    
     private void loadRecordFromFile() {
-        String schema = recordFieldWidget.getValue().getSchema();
-        KaaAdmin.getDataSource().getRecordDataFromFile(schema, recordFileItemName, 
-                new AsyncCallback<RecordField>() {
+        formDataLoader.loadFormData(recordFileItemName, new BusyAsyncCallback<RecordField>() {
                     @Override
-                    public void onSuccess(RecordField result) {
+                    public void onSuccessImpl(RecordField result) {
                         setValue(result, true);
                         recordFileUpload.reset();
                         uploadButton.setEnabled(false);
                     }
                     
                     @Override
-                    public void onFailure(Throwable caught) {
+                    public void onFailureImpl(Throwable caught) {
                         Utils.handleException(caught, hasErrorMessage);
                     }
-                });
+        });
     }
 
     @Override
@@ -177,6 +190,34 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
         boolean enabled = recordFileUpload.getFileName().length()>0 && 
                           recordFieldWidget.getValue() != null;
         uploadButton.setEnabled(enabled);
+    }
+    
+    private class DefaultFormDataLoader implements FormDataLoader {
+
+        @Override
+        public void loadFormData(String fileItemName,
+                final AsyncCallback<RecordField> callback) {
+            String schema = recordFieldWidget.getValue().getSchema();
+            KaaAdmin.getDataSource().getRecordDataFromFile(schema, fileItemName, 
+                    new AsyncCallback<RecordField>() {
+                        @Override
+                        public void onSuccess(RecordField result) {
+                            callback.onSuccess(result);
+                        }
+                        
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            callback.onFailure(caught);
+                        }
+                    });
+        }
+        
+    }
+    
+    public static interface FormDataLoader {
+        
+        void loadFormData(String fileItemName, AsyncCallback<RecordField> callback);
+        
     }
 
 }

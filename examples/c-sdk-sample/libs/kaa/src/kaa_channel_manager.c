@@ -87,11 +87,14 @@ static bool find_channel_by_protocol_id(/* current channel */void *data, /* chan
     KAA_RETURN_IF_NIL2(data, context, false);
 
     kaa_transport_protocol_id_t channel_info;
-    kaa_error_t  error_code = ((kaa_transport_channel_wrapper_t *)data)->channel.
+    kaa_error_t error_code = ((kaa_transport_channel_wrapper_t *)data)->channel.
                     get_protocol_id(((kaa_transport_channel_wrapper_t *)data)->channel.context, &channel_info);
-    KAA_RETURN_IF_ERR(error_code);
+    if (error_code)
+        return false;
 
-    return (0 == memcmp(&channel_info, (kaa_transport_protocol_id_t *)context, sizeof(kaa_transport_protocol_id_t)));
+    kaa_transport_protocol_id_t *matcher = (kaa_transport_protocol_id_t *) context;
+
+    return kaa_transport_protocol_id_equals(matcher, &channel_info);
 }
 
 kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
@@ -125,7 +128,20 @@ kaa_error_t kaa_transport_channel_id_calculate(kaa_transport_channel_interface_t
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->set_access_point;
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->sync_handler;
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->get_protocol_id;
+    kaa_transport_protocol_id_t protoco_id = { 0, 0 };
+    channel->get_protocol_id(channel->context, &protoco_id);
+    *channel_id = prime * (*channel_id) + protoco_id.id;
+    *channel_id = prime * (*channel_id) + protoco_id.version;
+
     *channel_id = prime * (*channel_id) + (ptrdiff_t)channel->get_supported_services;
+    size_t services_count = 0;
+    kaa_service_t *services = NULL;
+    channel->get_supported_services(channel->context, &services, &services_count);
+    if (services) {
+        size_t i = 0;
+        for (; i < services_count; ++i)
+            *channel_id = prime * (*channel_id) + (int) services[i];
+    }
 
     return KAA_ERR_NONE;
 }
@@ -149,7 +165,8 @@ static bool is_bootstrap_service_supported(kaa_transport_channel_interface_t *ch
                                                            , &service_count);
 
     if (!error_code) {
-        for (size_t i = 0; i < service_count; ++i) {
+        size_t i = 0;
+        for (; i < service_count; ++i) {
             if (services[i] == KAA_SERVICE_BOOTSTRAP) {
                 return true;
             }
@@ -363,6 +380,8 @@ kaa_error_t kaa_channel_manager_bootstrap_request_get_size(kaa_channel_manager_t
             self->sync_info.channel_count = channel_count;
             self->sync_info.is_up_to_date = true;
         }
+    } else {
+        *expected_size = self->sync_info.payload_size + KAA_EXTENSION_HEADER_SIZE;
     }
 
     return KAA_ERR_NONE;

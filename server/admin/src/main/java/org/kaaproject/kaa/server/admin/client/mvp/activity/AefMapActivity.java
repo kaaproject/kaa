@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
@@ -92,14 +93,14 @@ public class AefMapActivity
     @Override
     protected void onEntityRetrieved() {
         if (create) {
-            KaaAdmin.getDataSource().getVacantEventClassFamilies(place.getApplicationId(), new AsyncCallback<List<EcfInfoDto>> () {
+            KaaAdmin.getDataSource().getVacantEventClassFamilies(place.getApplicationId(), new BusyAsyncCallback<List<EcfInfoDto>> () {
                 @Override
-                public void onFailure(Throwable caught) {
+                public void onFailureImpl(Throwable caught) {
                     Utils.handleException(caught, detailsView);
                 }
 
                 @Override
-                public void onSuccess(List<EcfInfoDto> result) {
+                public void onSuccessImpl(List<EcfInfoDto> result) {
                     detailsView.updateEcfs(result);
                 }
             });

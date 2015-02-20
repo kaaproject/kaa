@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.client.configuration.base;
 
 import java.io.BufferedInputStream;
@@ -47,17 +63,23 @@ public class SimpleConfigurationStorage implements ConfigurationStorage {
         while(true){
             int result = is.read(tmp);
             LOG.trace("Reading {} bytes from input stream", result);
-            size += result;
             if(result > 0){
+                size += result;
                 chunks.add(Arrays.copyOf(tmp, result));
             }
             if(result < tmp.length){
                 break;
             }
         }
-        ByteBuffer data = ByteBuffer.wrap(new byte[size]);
-        for(byte[] chunk : chunks){
-            data.put(chunk);
+        ByteBuffer data;
+        if(size > 0){
+            data = ByteBuffer.wrap(new byte[size]);
+            for(byte[] chunk : chunks){
+                data.put(chunk);
+            }
+            data.rewind();
+        }else{
+            data = null;
         }
         is.close();
         return data;

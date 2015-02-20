@@ -21,6 +21,7 @@
 #include <time.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "kaa_test.h"
 
