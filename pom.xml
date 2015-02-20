@@ -451,6 +451,7 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/thirdparty/**</exclude>
                         <exclude>**/security.policy</exclude>
                         <exclude>**/*-transport.config</exclude>
+                        <exclude>**/akka.conf</exclude>
                         <exclude>**/*.cql</exclude>
                     </excludes>
                 </configuration>
