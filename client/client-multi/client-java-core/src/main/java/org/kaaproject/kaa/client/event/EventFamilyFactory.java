@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Set;
 import org.kaaproject.kaa.client.transact.TransactionId;
 
+import javax.annotation.Generated;
+
 /**
  * Factory for accessing supported event families.
  * DO NOT edit it, this class is auto-generated.
@@ -27,6 +29,7 @@ import org.kaaproject.kaa.client.transact.TransactionId;
  * @author Taras Lemkin
  *
  */
+@Generated("EventFamilyFactory.java.template")
 public class EventFamilyFactory {
     private EventManager eventManager;
     private final Set<EventFamily> eventFamilies = new HashSet<EventFamily>();

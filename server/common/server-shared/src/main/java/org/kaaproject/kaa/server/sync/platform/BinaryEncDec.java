@@ -375,24 +375,30 @@ public class BinaryEncDec implements PlatformEncDec {
 
     private void encode(GrowingByteBuffer buf, ConfigurationServerSync configurationSync) {
         int option = 0;
-        if (configurationSync.getConfSchemaBody() != null) {
+        boolean confSchemaPresent = configurationSync.getConfSchemaBody() != null;
+        boolean confBodyPresent = configurationSync.getConfDeltaBody() != null;
+        if (confSchemaPresent) {
             option &= 0x01;
         }
-        if (configurationSync.getConfDeltaBody() != null) {
+        if (confBodyPresent) {
             option &= 0x02;
         }
         buildExtensionHeader(buf, CONFIGURATION_EXTENSION_ID, NOTHING, NOTHING, (byte) option, 0);
         int extPosition = buf.position();
 
         buf.putInt(configurationSync.getAppStateSeqNumber());
-        if (configurationSync.getConfSchemaBody() != null) {
+        if (confSchemaPresent) {
             buf.putInt(configurationSync.getConfSchemaBody().array().length);
         }
-        if (configurationSync.getConfDeltaBody() != null) {
+        if (confBodyPresent) {
             buf.putInt(configurationSync.getConfDeltaBody().array().length);
         }
-        buf.put(configurationSync.getConfSchemaBody().array());
-        buf.put(configurationSync.getConfDeltaBody().array());
+        if (confSchemaPresent) {
+            buf.put(configurationSync.getConfSchemaBody().array());
+        }
+        if (confBodyPresent) {
+            buf.put(configurationSync.getConfDeltaBody().array());
+        }
 
         buf.putInt(extPosition - SIZE_OF_INT, buf.position() - extPosition);
     }

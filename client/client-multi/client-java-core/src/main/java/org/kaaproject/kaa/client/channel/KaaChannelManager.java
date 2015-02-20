@@ -18,7 +18,6 @@ package org.kaaproject.kaa.client.channel;
 
 import java.util.List;
 
-import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationHttpChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationsChannel;
@@ -177,43 +176,7 @@ public interface KaaChannelManager {
     void onServerFailed(TransportConnectionInfo server);
 
     /**
-     * Reports to Channel Manager about the new server.
-     *
-     * @param newServer the parameters of the new server.
-     * @see TransportConnectionInfo
-     *
-     */
-    void onTransportConnectionInfoUpdated(TransportConnectionInfo newServer);
-
-    /**
      * Clears the list of channels.
      */
     void clearChannelList();
-
-    /**
-     * Sets connectivity checker to the existing channels.
-     *
-     * @param checker platform-dependent connectivity checker.
-     * @see ConnectivityChecker
-     *
-     */
-    void setConnectivityChecker(ConnectivityChecker checker);
-
-    /**
-     * Shuts down the manager and all registered channels. The instance can no longer be used.
-     *
-     */
-    void shutdown();
-
-    /**
-     * Pauses all active channels.
-     *
-     */
-    void pause();
-
-    /**
-     * Restores channels' activity.
-     *
-     */
-    void resume();
 }

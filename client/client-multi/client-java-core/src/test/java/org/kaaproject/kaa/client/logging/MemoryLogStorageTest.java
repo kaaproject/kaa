@@ -19,7 +19,6 @@ package org.kaaproject.kaa.client.logging;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -216,30 +215,5 @@ public class MemoryLogStorageTest {
         LogBlock leftBlock = storage.getRecordBlock(50);
         Assert.assertTrue("Ac: " + leftBlock.getRecords().size() + ", ex: " + insertionCount
                 , leftBlock.getRecords().size() == insertionCount);
-    }
-
-    @Test
-    public void testOldestRecordRemoval() {
-        long bucketSize = 3;
-        MemoryLogStorage storage = new MemoryLogStorage(bucketSize);
-        LogRecord record = new LogRecord();
-
-        int insertionCount = 8;
-
-        /*
-         * Size of each record is 3B
-         */
-        int iter = insertionCount;
-        while (iter-- > 0) {
-            storage.addLogRecord(record);
-        }
-
-        long maxAllowedSize = insertionCount * record.getSize() - 4;
-        storage.removeOldestRecord(maxAllowedSize);
-
-        LogBlock block = storage.getRecordBlock(50);
-
-        Assert.assertTrue("Ac: " + block.getRecords().size() + ", ex: " + (maxAllowedSize / record.getSize())
-                , block.getRecords().size() == (maxAllowedSize / record.getSize()));
     }
 }

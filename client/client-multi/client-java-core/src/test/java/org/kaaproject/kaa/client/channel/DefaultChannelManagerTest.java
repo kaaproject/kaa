@@ -76,7 +76,7 @@ public class DefaultChannelManagerTest {
         Mockito.when(channel.getServerType()).thenReturn(ServerType.OPERATIONS);
         Mockito.when(channel.getId()).thenReturn("mock_channel");
 
-        KaaChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+        KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
         channelManager.addChannel(channel);
         channelManager.addChannel(channel);
 
@@ -138,7 +138,7 @@ public class DefaultChannelManagerTest {
         Mockito.when(channel.getTransportProtocolId()).thenReturn(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
         Mockito.when(channel.getId()).thenReturn("mock_channel");
 
-        KaaChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+        KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
         channelManager.addChannel(channel);
 
         TransportConnectionInfo opServer = IPTransportInfoTest.createTestServerInfo(
@@ -197,7 +197,7 @@ public class DefaultChannelManagerTest {
         Mockito.when(channel3.getServerType()).thenReturn(ServerType.OPERATIONS);
         Mockito.when(channel3.getId()).thenReturn("mock_tcp_channel3");
 
-        KaaChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+        KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
         channelManager.addChannel(channel1);
         channelManager.addChannel(channel2);
 

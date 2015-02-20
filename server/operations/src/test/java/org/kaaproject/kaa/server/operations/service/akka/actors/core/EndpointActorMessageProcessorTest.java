@@ -25,6 +25,7 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
@@ -49,8 +50,11 @@ public class EndpointActorMessageProcessorTest {
         ActorContext ctxMock = Mockito.mock(ActorContext.class);
         ActorRef appActorMock = Mockito.mock(ActorRef.class);
         Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
+        
+        AkkaContext context = Mockito.mock(AkkaContext.class);
+        Mockito.when(context.getOperationsService()).thenReturn(osMock);
 
-        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash
+        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
                 .fromSHA1("key"), "actorKey"));
         EndpointEventReceiveMessage msg = Mockito.mock(EndpointEventReceiveMessage.class);
 
@@ -66,7 +70,10 @@ public class EndpointActorMessageProcessorTest {
         ActorRef appActorMock = Mockito.mock(ActorRef.class);
         Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
 
-        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash
+        AkkaContext context = Mockito.mock(AkkaContext.class);
+        Mockito.when(context.getOperationsService()).thenReturn(osMock);
+        
+        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
                 .fromSHA1("key"), "actorKey"));
         ActorTimeoutMessage msg = new ActorTimeoutMessage(System.currentTimeMillis());
 
@@ -82,7 +89,10 @@ public class EndpointActorMessageProcessorTest {
         ActorRef appActorMock = Mockito.mock(ActorRef.class);
         Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
 
-        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash
+        AkkaContext context = Mockito.mock(AkkaContext.class);
+        Mockito.when(context.getOperationsService()).thenReturn(osMock);
+        
+        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
                 .fromSHA1("key"), "actorKey"));
         ActorTimeoutMessage msg = new ActorTimeoutMessage(-1);
 
@@ -98,7 +108,10 @@ public class EndpointActorMessageProcessorTest {
         ActorRef appActorMock = Mockito.mock(ActorRef.class);
         Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
 
-        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash
+        AkkaContext context = Mockito.mock(AkkaContext.class);
+        Mockito.when(context.getOperationsService()).thenReturn(osMock);
+        
+        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
                 .fromSHA1("key"), "actorKey"));
         ChannelAware msg = Mockito.mock(ChannelAware.class);
 
@@ -130,7 +143,10 @@ public class EndpointActorMessageProcessorTest {
         Mockito.when(message.getCommand()).thenReturn(Mockito.mock(Message.class));
         Mockito.when(message.getOriginator()).thenReturn(Mockito.mock(ActorRef.class));
 
-        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(osMock, "APP_TOKEN", EndpointObjectHash
+        AkkaContext context = Mockito.mock(AkkaContext.class);
+        Mockito.when(context.getOperationsService()).thenReturn(osMock);
+        
+        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
                 .fromSHA1("key"), "actorKey"));
 
         Mockito.doNothing().when(processor)

@@ -27,10 +27,5 @@ public enum LogUploadStrategyDecision {
     /**
      * Kaa SDK should initiate log upload on the Operation server.
      */
-    UPLOAD,
-    /**
-     * A memory size occupied by logs is exceeded a maximum allowed size for storage.
-     * Forced deletion of the elder logs should be initiated.
-     */
-    CLEANUP
+    UPLOAD
 }

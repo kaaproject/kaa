@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.EndpointEventTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
@@ -24,8 +25,6 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.Endp
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RemoteEndpointEventMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RouteInfoMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserRouteInfoMessage;
-import org.kaaproject.kaa.server.operations.service.cache.CacheService;
-import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +47,8 @@ public class UserActor extends UntypedActor {
      * @param operationsService
      *            the operations service
      */
-    private UserActor(CacheService cacheService, EventService eventService, String userId, String tenantId) {
-        this.messageProcessor = new UserActorMessageProcessor(cacheService, eventService, userId, tenantId);
+    private UserActor(AkkaContext context, String userId, String tenantId) {
+        this.messageProcessor = new UserActorMessageProcessor(context.getCacheService(), context.getEventService(), userId, tenantId);
         this.userId = userId;
     }
 
@@ -61,11 +60,8 @@ public class UserActor extends UntypedActor {
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
-        /** The cache service. */
-        private final CacheService cacheService;
-
-        /** The event service. */
-        private final EventService eventService;
+        /** The Akka service context */
+        private final AkkaContext context;
 
         private final String userId;
 
@@ -80,10 +76,9 @@ public class UserActor extends UntypedActor {
          * @param notificationDeltaService
          *            the notification delta service
          */
-        public ActorCreator(CacheService cacheService, EventService eventService, String userId, String tenantId) {
+        public ActorCreator(AkkaContext context, String userId, String tenantId) {
             super();
-            this.cacheService = cacheService;
-            this.eventService = eventService;
+            this.context = context;
             this.userId = userId;
             this.tenantId = tenantId;
         }
@@ -95,7 +90,7 @@ public class UserActor extends UntypedActor {
          */
         @Override
         public UserActor create() throws Exception {
-            return new UserActor(cacheService, eventService, userId, tenantId);
+            return new UserActor(context, userId, tenantId);
         }
     }
 

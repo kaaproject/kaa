@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MemoryLogStorage implements LogStorage, LogStorageStatus {
     private static final Logger LOG = LoggerFactory.getLogger(MemoryLogStorage.class);
+    private static final int MAX_STORAGE_SIZE = 1024 * 1024;
 
     private final static Random RANDOM = new Random();
     
@@ -87,6 +88,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
         }
     }
 
+    private long maxStorageSize = MAX_STORAGE_SIZE;
     private long maxBucketSize;
     private Bucket currentBucket;
     private final List<Bucket> buckets;
@@ -105,6 +107,10 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
     @Override
     public void addLogRecord(LogRecord record) {
         synchronized (buckets) {
+            if(this.getConsumedVolume() + record.getSize() > maxStorageSize){
+                removeOldestRecord(MAX_STORAGE_SIZE);
+            }
+            
             if (buckets.isEmpty()) {
                 initBucketList();
             }
@@ -187,8 +193,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
         }
     }
 
-    @Override
-    public void removeOldestRecord(long maximumAllowedVolume) {
+    private void removeOldestRecord(long maximumAllowedVolume) {
         synchronized (buckets) {
             if (!buckets.isEmpty()) {
                 long currentRecordCount = recordCount;
@@ -280,5 +285,14 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
     private void initBucketList() {
         currentBucket = new Bucket(maxBucketSize);
         buckets.add(currentBucket);
+    }
+
+    @Override
+    public LogStorageStatus getStatus() {
+        return this;
+    }
+
+    public void setMaxStorageSize(long maxStorageSize) {
+        this.maxStorageSize = maxStorageSize;
     }
 }

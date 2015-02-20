@@ -16,7 +16,6 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.io;
 
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
 import java.security.PublicKey;
 import java.text.MessageFormat;
 import java.util.Map;
@@ -26,6 +25,7 @@ import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.response.NettySessionResponseMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.io.response.SessionResponse;
@@ -75,14 +75,14 @@ public class EncDecActorMessageProcessor {
     private final MeterClient redirectMeter;
     private final MeterClient errorMeter;
 
-    protected EncDecActorMessageProcessor(ActorRef epsActor, MetricsService metricsService, CacheService cacheService, KeyPair serverKeys,
-            Set<String> platformProtocols, Boolean supportUnencryptedConnection) {
+    protected EncDecActorMessageProcessor(ActorRef epsActor, AkkaContext context, Set<String> platformProtocols) {
         super();
         this.opsActor = epsActor;
-        this.cacheService = cacheService;
-        this.supportUnencryptedConnection = supportUnencryptedConnection;
-        this.crypt = new MessageEncoderDecoder(serverKeys.getPrivate(), serverKeys.getPublic());
+        this.cacheService = context.getCacheService();
+        this.supportUnencryptedConnection = context.getSupportUnencryptedConnection();
+        this.crypt = new MessageEncoderDecoder(context.getKeyStoreService().getPrivateKey(), context.getKeyStoreService().getPublicKey());
         this.platformEncDecMap = PlatformLookup.initPlatformProtocolMap(platformProtocols);
+        MetricsService metricsService = context.getMetricsService();
         this.sessionInitMeter = metricsService.createMeter("sessionInitMeter", Thread.currentThread().getName());
         this.sessionRequestMeter = metricsService.createMeter("sessionRequestMeter", Thread.currentThread().getName());
         this.sessionResponseMeter = metricsService.createMeter("sessionResponseMeter", Thread.currentThread().getName());
@@ -130,9 +130,8 @@ public class EncDecActorMessageProcessor {
 
             EndpointObjectHash key = getEndpointObjectHash(request);
             String appToken = getAppToken(request);
-            SessionInfo sessionInfo = new SessionInfo(message.getChannelUuid(), message.getPlatformId(),
-                    message.getChannelContext(), message.getChannelType(), crypt.getSessionCipherPair(), key, appToken,
-                    message.getKeepAlive(), message.isEncrypted());
+            SessionInfo sessionInfo = new SessionInfo(message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
+                    message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, message.getKeepAlive(), message.isEncrypted());
             SessionResponse responseMessage = new NettySessionResponseMessage(sessionInfo, response, message.getMessageBuilder(),
                     message.getErrorBuilder());
             LOG.debug("Redirect Response: {}", response);

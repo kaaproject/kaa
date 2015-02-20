@@ -13,136 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kaaproject.kaa.client;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 
-import org.kaaproject.kaa.client.transport.TransportException;
+import org.kaaproject.kaa.client.exceptions.KaaInvalidConfigurationException;
+import org.kaaproject.kaa.client.exceptions.KaaRuntimeException;
+import org.kaaproject.kaa.client.exceptions.KaaUnsupportedPlatformException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * <p>Entry point to the Kaa library.</p>
+ * Creates new Kaa client based on {@link KaaClientPlatformContext platform
+ * context} and optional {@link KaaClientStateListener state listener}.
+ * 
+ * @author Andrew Shvayka
  *
- * <p>Responsible for the Kaa initialization and start/stop actions.
- * Contains abstract method {@link Kaa#createClient()} for {@link AbstractKaaClient}
- * concrete object creation. All manipulations using Kaa library should be
- * accessed through {@link KaaClient} interface.</p>
- *
- * <p><b>WARNING:</b> Calling {@link Kaa#getClient()} without previously
- * initialized Kaa library ({@link Kaa#init()}) will return null and will
- * cause NullPointerException when attempting to use Kaa client functionality.</p>
- *
- * <p>Available implementations can be found in Maven projects
- * <i>client-java-android</i> and <i>client-java-desktop</i></p>.
- *
- * <h5>Example</h5>
- * <pre>
- * {@code
- * // Start Kaa
- * Kaa kaa = new SomeKaaImpl();
- * kaa.start();}
- *
- * // Stop Kaa:
- * kaa.stop();
- *
- * // Accessing KaaClient:
- * KaaClient kaaClient = kaa.getClient();
- * ...
- * }
- * </pre>
- *
- * @author Yaroslav Zeygerman
- *
- * @see KaaClient
- * @see AbstractKaaClient
  */
-public abstract class Kaa {
+public class Kaa {
+    private static final Logger LOG = LoggerFactory.getLogger(Kaa.class);
 
-    private static AbstractKaaClient client;
-
-    public Kaa() {
+    public static KaaClient newClient(KaaClientPlatformContext context) throws KaaRuntimeException {
+        return newClient(context, null);
     }
 
-    /**
-     * <p>Initialize Kaa library.</p>
-     *
-     * <p>Each call forces {@link KaaClient} to be reinitialized. All current
-     * processes will be stopped and new client will be created using
-     * {@link Kaa#createClient()} and {@link Kaa#start()} should be called as
-     * client will not start automatically.</p>
-     *
-     * @throws Exception
-     *
-     */
-    protected void init() throws Exception { //NOSONAR
-        if (client != null) {
-            client.stop();
-        }
-        client = createClient();
-        client.init();
-    }
-
-    /**
-     * Creates platform-specific {@link AbstractKaaClient} object.
-     *
-     * @return Instance of {@link AbstractKaaClient}
-     * @throws Exception
-     */
-    protected abstract AbstractKaaClient createClient() throws Exception;
-
-    /**
-     * <p>Starts Kaa's workflow.</p>
-     *
-     * <p>Should be called after each call to {@link Kaa#init()}.</p>
-     *
-     * @see AbstractKaaClient#start()
-     */
-    public void start() throws IOException, TransportException {
-        if (client != null) {
-            client.start();
+    public static KaaClient newClient(KaaClientPlatformContext context, KaaClientStateListener listener) throws KaaRuntimeException {
+        try {
+            return new BaseKaaClient(context, listener);
+        } catch (GeneralSecurityException e) {
+            LOG.error("Failed to create Kaa client", e);
+            throw new KaaUnsupportedPlatformException(e);
+        } catch (IOException e) {
+            LOG.error("Failed to create Kaa client", e);
+            throw new KaaInvalidConfigurationException(e); 
         }
     }
-
-    /**
-     * Stops Kaa's workflow.
-     *
-     * @see AbstractKaaClient#stop()
-     */
-    public void stop() {
-        if (client != null) {
-            client.stop();
-        }
-    }
-
-    /**
-     * Pauses Kaa's workflow.
-     */
-    public void pause() {
-        if (client != null) {
-            client.pause();
-        }
-    }
-
-    /**
-     * Resumes Kaa's workflow.
-     */
-    public void resume() {
-        if (client != null) {
-            client.resume();
-        }
-    }
-
-    /**
-     * <p>Retrieves the Kaa client.</p>
-     *
-     * <p>Use this to access Kaa library functionality.</p>
-     *
-     * @return Kaa client.
-     * @see KaaClient
-     *
-     */
-    public KaaClient getClient() {
-        return client;
-    }
-
 }
