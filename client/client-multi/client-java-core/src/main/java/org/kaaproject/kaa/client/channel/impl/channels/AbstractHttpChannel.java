@@ -213,7 +213,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     protected void connectionFailed(boolean failed) {
         lastConnectionFailed = failed;
         if (failed) {
-            client.getChannelMananager().onServerFailed(currentServer);
+            client.getChannelManager().onServerFailed(currentServer);
         }
     }
 

@@ -38,7 +38,7 @@ public class SyncRequest extends Sync {
     /**
      * Constructor used to migrate from KaaSync after Variable Header decode.
      * @param old KaaSync object which used to create new
-     * @throws KaatcpProtocolException
+     * @throws KaaTcpProtocolException
      */
     public SyncRequest(KaaSync old) throws KaaTcpProtocolException {
         super(old);

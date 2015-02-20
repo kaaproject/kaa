@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.operations.service.OperationsService;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogDeliveryMessage;
@@ -56,8 +56,8 @@ public class EndpointActor extends UntypedActor {
      * @param operationsService
      *            the operations service
      */
-    public EndpointActor(OperationsService operationsService, String endpointActorKey, String appToken, EndpointObjectHash key) {
-        this.messageProcessor = new EndpointActorMessageProcessor(operationsService, appToken, key, endpointActorKey);
+    public EndpointActor(AkkaContext context, String endpointActorKey, String appToken, EndpointObjectHash key) {
+        this.messageProcessor = new EndpointActorMessageProcessor(context, appToken, key, endpointActorKey);
         this.actorKey = endpointActorKey;
     }
 
@@ -69,8 +69,8 @@ public class EndpointActor extends UntypedActor {
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
-        /** The operations service. */
-        private final OperationsService operationsService;
+        /** The Akka service context */
+        private final AkkaContext context;
 
         private final String actorKey;
 
@@ -86,9 +86,9 @@ public class EndpointActor extends UntypedActor {
          * @param operationsService
          *            the operations service
          */
-        public ActorCreator(OperationsService operationsService, String endpointActorKey, String appToken, EndpointObjectHash key) {
+        public ActorCreator(AkkaContext context, String endpointActorKey, String appToken, EndpointObjectHash key) {
             super();
-            this.operationsService = operationsService;
+            this.context = context;
             this.actorKey = endpointActorKey;
             this.appToken = appToken;
             this.key = key;
@@ -101,7 +101,7 @@ public class EndpointActor extends UntypedActor {
          */
         @Override
         public EndpointActor create() throws Exception {
-            return new EndpointActor(operationsService, actorKey, appToken, key);
+            return new EndpointActor(context, actorKey, appToken, key);
         }
     }
 

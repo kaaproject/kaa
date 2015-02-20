@@ -30,6 +30,8 @@ public class LogEventPack {
 
     private List<LogEvent> events;
 
+    private String userId;
+
     public LogEventPack() {
 
     }
@@ -79,6 +81,14 @@ public class LogEventPack {
 
     public void setEvents(List<LogEvent> events) {
         this.events = events;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     @Override

@@ -148,6 +148,7 @@ public class CppSdkGenerator extends SdkGenerator {
             String profileSchemaBody,
             String notificationSchemaBody,
             String configurationProtocolSchemaBody,
+            String configurationSchema,
             byte[] defaultConfigurationData,
             List<EventFamilyMetadata> eventFamilies,
             String logSchemaBody,

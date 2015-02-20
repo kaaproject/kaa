@@ -69,10 +69,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private static final String GROUP_ALL = "All";
 
-    private static final String DEFAULT_PROFILE_SCHEMA_FILE = "/default_profile_schema.json";
-    private static final String DEFAULT_CONFIGURATION_SCHEMA_FILE = "/default_configuration_schema.json";
-    private static final String DEFAULT_NOTIFICATION_SCHEMA_FILE = "/default_notification_schema.json";
-    private static final String DEFAULT_LOG_SCHEMA_FILE = "/default_log_schema.json";
+    private static final String DEFAULT_PROFILE_SCHEMA_FILE = "/default_profile_schema.avsc";
+    private static final String DEFAULT_CONFIGURATION_SCHEMA_FILE = "/default_configuration_schema.avsc";
+    private static final String DEFAULT_NOTIFICATION_SCHEMA_FILE = "/default_notification_schema.avsc";
+    private static final String DEFAULT_LOG_SCHEMA_FILE = "/default_log_schema.avsc";
     private static final String DEFAULT_SCHEMA_NAME = "Generated";
     
 

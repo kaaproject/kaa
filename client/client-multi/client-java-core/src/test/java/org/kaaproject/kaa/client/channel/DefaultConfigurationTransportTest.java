@@ -106,7 +106,7 @@ public class DefaultConfigurationTransportTest {
         response.setConfSchemaBody(ByteBuffer.wrap(new byte[] { 1, 2, 3 }));
         transport.onConfigurationResponse(response);
 
-        Mockito.verify(clientState, Mockito.times(3)).setConfigSeqNumber(Mockito.eq(new Integer(5)));
+        Mockito.verify(clientState, Mockito.times(4)).setConfigSeqNumber(Mockito.eq(new Integer(5)));
         Mockito.verify(schemaProcessor, Mockito.times(1)).loadSchema(Mockito.eq(ByteBuffer.wrap(new byte[] { 1, 2, 3 })));
         Mockito.verify(configProcessor, Mockito.times(2)).processConfigurationData(Mockito.eq(ByteBuffer.wrap(new byte[] { 1, 2, 3 })), Mockito.eq(false));
     }
