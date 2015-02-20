@@ -17,10 +17,14 @@ import org.kaaproject.kaa.server.verifiers.trustful.config.TrustfulVerifierConfi
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NotificationDemoBuilder extends AbstractDemoBuilder{
+public class NotificationDemoBuilder extends AbstractDemoBuilder {
 
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationDemoBuilder.class);
+
+    protected NotificationDemoBuilder() {
+        super();
+    }
 
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
@@ -60,7 +64,7 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder{
         trustfulUserVerifier.setPluginTypeName(trustfulVerifierConfig.getPluginTypeName());
         RawSchema rawSchema = new RawSchema(trustfulVerifierConfig.getPluginConfigSchema().toString());
         DefaultRecordGenerationAlgorithm<RawData> algotithm =
-                    new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
+                new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
         RawData rawData = algotithm.getRootData();
         trustfulUserVerifier.setJsonConfiguration(rawData.getRawData());
         trustfulUserVerifier = client.editUserVerifierDto(trustfulUserVerifier);

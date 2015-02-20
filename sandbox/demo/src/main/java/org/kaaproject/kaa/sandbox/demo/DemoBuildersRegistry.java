@@ -24,7 +24,7 @@ public class DemoBuildersRegistry {
     private static final List<DemoBuilder> demoBuilders = new ArrayList<>();
     
     static {
-//        demoBuilders.add(new SmartHouseDemoBuilder());
+        demoBuilders.add(new SmartHouseDemoBuilder());
         demoBuilders.add(new NotificationDemoBuilder());
 //        demoBuilders.add(new RobotRunDemoBuilder());
     }
