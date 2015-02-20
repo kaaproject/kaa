@@ -106,7 +106,7 @@ public class DefaultBootstrapChannelTest {
                 client.createHttpClient(Mockito.anyString(), Mockito.any(PrivateKey.class), Mockito.any(PublicKey.class),
                         Mockito.any(PublicKey.class))).thenReturn(httpClient);
 
-        Mockito.when(client.getChannelMananager()).thenReturn(manager);
+        Mockito.when(client.getChannelManager()).thenReturn(manager);
 
         KaaClientState state = Mockito.mock(KaaClientState.class);
         KaaDataMultiplexer multiplexer = Mockito.mock(KaaDataMultiplexer.class);
@@ -144,7 +144,7 @@ public class DefaultBootstrapChannelTest {
                 client.createHttpClient(Mockito.anyString(), Mockito.any(PrivateKey.class), Mockito.any(PublicKey.class),
                         Mockito.any(PublicKey.class))).thenReturn(httpClient);
 
-        Mockito.when(client.getChannelMananager()).thenReturn(manager);
+        Mockito.when(client.getChannelManager()).thenReturn(manager);
 
         KaaClientState state = Mockito.mock(KaaClientState.class);
         KaaDataMultiplexer multiplexer = Mockito.mock(KaaDataMultiplexer.class);
@@ -179,7 +179,7 @@ public class DefaultBootstrapChannelTest {
                 client.createHttpClient(Mockito.anyString(), Mockito.any(PrivateKey.class), Mockito.any(PublicKey.class),
                         Mockito.any(PublicKey.class))).thenReturn(httpClient);
 
-        Mockito.when(client.getChannelMananager()).thenReturn(manager);
+        Mockito.when(client.getChannelManager()).thenReturn(manager);
 
         KaaClientState state = Mockito.mock(KaaClientState.class);
         KaaDataMultiplexer multiplexer = Mockito.mock(KaaDataMultiplexer.class);

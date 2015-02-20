@@ -14,4 +14,4 @@
 # limitations under the License.
 
 # Extra options to pass to the JVM
-JAVA_OPTIONS="-Xms256M -Xmx512M -XX:+UseG1GC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled"
+JAVA_OPTIONS="-Xms256M -Xmx1G -XX:+UseG1GC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled -XX:MaxPermSize=256M"

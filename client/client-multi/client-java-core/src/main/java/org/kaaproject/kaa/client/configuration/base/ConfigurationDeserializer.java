@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.client.configuration.base;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.annotation.Generated;
 
@@ -36,8 +37,11 @@ class ConfigurationDeserializer {
 
     private final AvroByteArrayConverter<Configuration> converter = new AvroByteArrayConverter<Configuration>(Configuration.class);
 
-    void notify(ConfigurationListener listener, byte[] configurationData) throws IOException {
-        listener.onConfigurationUpdate(fromByteArray(configurationData));
+    void notify(Collection<ConfigurationListener> listeners, byte[] configurationData) throws IOException {
+        Configuration configuration = fromByteArray(configurationData);
+        for(ConfigurationListener listener : listeners){
+            listener.onConfigurationUpdate(configuration);
+        }
     }
 
     Configuration fromByteArray(byte[] data) throws IOException {

@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 @Generated("ResyncConfigurationManager.java.template")
 public class ResyncConfigurationManager extends AbstractConfigurationManager implements ConfigurationManager{
     
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractConfigurationManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ResyncConfigurationManager.class);
     
     public ResyncConfigurationManager(KaaClientProperties properties) {
         super(properties);

@@ -16,23 +16,25 @@
 
 package org.kaaproject.kaa.client.event.registration;
 
-import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
+import java.util.Map;
+
+import org.kaaproject.kaa.client.event.EndpointAccessToken;
+import org.kaaproject.kaa.client.event.EndpointKeyHash;
 
 /**
- * Retrieves result of user authentication<br>
- * <br>
- * Use this listener to retrieve result of attaching current endpoint to user.
+ * Callback interface for attached endpoint list change notifications
  *
  * @author Taras Lemkin
- * @see EndpointRegistrationManager
  *
  */
-public interface UserAuthResultListener {
+public interface ChangedAttachedEndpointListCallback {
     /**
-     * Called when auth result is retrieved from operations server.
+     * Callback on attached endpoints list changed
      *
-     * @param response Result of user attaching
-     * @see UserAttachResponse
+     * @param attachedEndpoints
+     *
+     * @see EndpointAccessToken
+     * @see EndpointKeyHash
      */
-    void onAuthResult(UserAttachResponse response);
+    void onAttachedEndpointListChanged(Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints);
 }

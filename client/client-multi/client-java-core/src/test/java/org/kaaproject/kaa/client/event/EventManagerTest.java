@@ -52,6 +52,7 @@ public class EventManagerTest {
 
         Set<String> supportedEventFQNs = new HashSet<String>();
         private Integer eventsCount;
+
         public ConcreteEventFamily(String supportedFQN) {
             eventsCount = 0;
             supportedEventFQNs.add(supportedFQN);
@@ -78,15 +79,11 @@ public class EventManagerTest {
         KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
 
         EventTransport transport = Mockito.mock(EventTransport.class);
-        EventFamily   eventFamily   = Mockito.mock(EventFamily.class);
+        EventFamily eventFamily = Mockito.mock(EventFamily.class);
 
-        EventManager  eventManager = new DefaultEventManager(state, transport);
+        EventManager eventManager = new DefaultEventManager(state, transport);
         eventManager.registerEventFamily(eventFamily);
-        try {
-            eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null);
-        } catch (IOException e) {
-            assertTrue("Unexpected exception", false);
-        }
+        eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null);
         Mockito.verify(transport, times(1)).sync();
         verify(eventFamily, times(0)).getSupportedEventFQNs();
         verify(eventFamily, times(0)).onGenericEvent(anyString(), any(byte[].class), anyString());
@@ -97,22 +94,14 @@ public class EventManagerTest {
         KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
 
         EventTransport transport = Mockito.mock(EventTransport.class);
-        EventFamily   eventFamily   = Mockito.mock(EventFamily.class);
+        EventFamily eventFamily = Mockito.mock(EventFamily.class);
 
-        EventManager  eventManager = new DefaultEventManager(state, transport);
+        EventManager eventManager = new DefaultEventManager(state, transport);
         eventManager.registerEventFamily(eventFamily);
-        try {
-            eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null);
-        } catch (IOException e) {
-            assertTrue("Unexpected exception", false);
-        }
+        eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null);
         Mockito.verify(transport, times(1)).sync();
         eventManager.engageDataChannel();
-        try {
-            eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null);
-        } catch (IOException e) {
-            assertTrue("Unexpected exception", false);
-        }
+        eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null);
         Mockito.verify(transport, times(1)).sync();
 
         assertTrue(eventManager.releaseDataChannel());
@@ -123,29 +112,21 @@ public class EventManagerTest {
         KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
 
         EventTransport transport = Mockito.mock(EventTransport.class);
-        EventFamily   eventFamily   = Mockito.mock(EventFamily.class);
+        EventFamily eventFamily = Mockito.mock(EventFamily.class);
 
         EventManager eventManager = new DefaultEventManager(state, transport);
         eventManager.registerEventFamily(eventFamily);
 
         TransactionId trxId = eventManager.beginTransaction();
         assertNotNull("Null transaction id", trxId);
-        try {
-            eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null, trxId);
-            eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null, trxId);
-        } catch (IOException e) {
-            assertTrue("Unexpected exception", false);
-        }
+        eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null, trxId);
+        eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null, trxId);
         Mockito.verify(transport, times(0)).sync();
 
         eventManager.rollback(trxId);
         Mockito.verify(transport, times(0)).sync();
         trxId = eventManager.beginTransaction();
-        try {
-            eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null, trxId);
-        } catch (IOException e) {
-            assertTrue("Unexpected exception", false);
-        }
+        eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null, trxId);
         Mockito.verify(transport, times(0)).sync();
 
         eventManager.commit(trxId);
@@ -192,11 +173,7 @@ public class EventManagerTest {
         EventManager eventManager = new DefaultEventManager(state, transport);
 
         EventSyncRequest request = new EventSyncRequest();
-        try {
-            eventManager.produceEvent("kaa.test.event.SomeEvent", new byte[0], "theTarget");
-        } catch (IOException e) {
-            assertTrue("Unexpected exception", false);
-        }
+        eventManager.produceEvent("kaa.test.event.SomeEvent", new byte[0], "theTarget");
         eventManager.fillEventListenersSyncRequest(request);
         request.setEvents(eventManager.getPendingEvents());
 
@@ -207,7 +184,7 @@ public class EventManagerTest {
         assertArrayEquals(new byte[0], request.getEvents().get(0).getEventData().array());
 
         request = new EventSyncRequest();
-        List<String> eventFQNs =  new ArrayList<String>();
+        List<String> eventFQNs = new ArrayList<String>();
         eventFQNs.add("eventFQN1");
         eventManager.findEventListeners(eventFQNs, new FetchEventListeners() {
 
@@ -243,7 +220,7 @@ public class EventManagerTest {
         EventTransport transport = Mockito.mock(EventTransport.class);
         EventManager eventManager = new DefaultEventManager(state, transport);
 
-        List<String> eventFQNs =  new ArrayList<String>();
+        List<String> eventFQNs = new ArrayList<String>();
         eventFQNs.add("eventFQN1");
 
         FetchEventListeners fetchListener = mock(FetchEventListeners.class);

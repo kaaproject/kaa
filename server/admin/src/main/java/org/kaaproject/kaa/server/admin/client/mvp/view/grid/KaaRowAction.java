@@ -13,13 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.client.exceptions;
 
-public class KaaRuntimeException extends RuntimeException {
+package org.kaaproject.kaa.server.admin.client.mvp.view.grid;
 
-    private static final long serialVersionUID = -691997490865841478L;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 
-    public KaaRuntimeException(Exception cause) {
-        super(cause);
-    }
+/**
+ * The Class KaaRowAction.
+ */
+public class KaaRowAction {
+
+    /** The Constant SEND_NOTIFICATION. */
+    public static final int SEND_NOTIFICATION = RowActionEvent.MAX_ACTION + 1;
+    
+    /** The Constant DOWNLOAD_LOG_SCHEMA_LIBRARY. */
+    public static final int DOWNLOAD_LOG_SCHEMA_LIBRARY = RowActionEvent.MAX_ACTION + 2;
+    
+    /** The Constant DOWNLOAD_LOG_SCHEMA. */
+    public static final int DOWNLOAD_LOG_SCHEMA = RowActionEvent.MAX_ACTION + 3;
+    
 }

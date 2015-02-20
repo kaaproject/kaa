@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.shared.file;
+package org.kaaproject.kaa.common.dto.file;
 
 import java.io.Serializable;
 
 public class FileData implements Serializable {
 
-    private static final long serialVersionUID = -7122381231177817149L;
-
+    private static final long serialVersionUID = 3882433108112980451L;
+    
     private String fileName;
     private byte[] fileData;
     private String contentType;

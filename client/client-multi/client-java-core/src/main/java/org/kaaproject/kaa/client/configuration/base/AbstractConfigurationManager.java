@@ -18,8 +18,9 @@ package org.kaaproject.kaa.client.configuration.base;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.configuration.ConfigurationHashContainer;
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractConfigurationManager implements ConfigurationManager {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractConfigurationManager.class);
 
-    private final Set<ConfigurationListener> listeners = new HashSet<ConfigurationListener>();
+    private final Set<ConfigurationListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<ConfigurationListener, Boolean>());
     private final KaaClientProperties properties;
     protected final ConfigurationDeserializer deserializer = new ConfigurationDeserializer();
 
@@ -45,7 +46,7 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
         this.properties = properties;
         container = new HashContainer();
     }
-    
+
     @Override
     public void init() {
         getConfigurationData();
@@ -55,9 +56,7 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
     public boolean addListener(ConfigurationListener listener) {
         if (listener != null) {
             LOG.trace("Adding listener {}", listener);
-            synchronized (listeners) {
-                return listeners.add(listener);
-            }
+            return listeners.add(listener);
         } else {
             throw new RuntimeException("Can't add null as a listener");
         }
@@ -65,8 +64,10 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
 
     @Override
     public boolean removeListener(ConfigurationListener listener) {
-        synchronized (listeners) {
+        if (listener != null) {
             return listeners.remove(listener);
+        } else {
+            throw new RuntimeException("Can't remove null listener");
         }
     }
 
@@ -86,9 +87,7 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
                         storage.saveConfiguration(ByteBuffer.wrap(configurationData));
                         LOG.debug("Persisted configuration data from storage {}", storage);
                     }
-                    for (ConfigurationListener listener : listeners) {
-                        deserializer.notify(listener, configurationData);
-                    }
+                    deserializer.notify(Collections.unmodifiableCollection(listeners), configurationData);
                 } else {
                     LOG.warn("Only full resync delta is supported!");
                 }
@@ -116,13 +115,14 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
     private byte[] loadConfigurationData() {
         if (storage != null) {
             LOG.debug("Loading configuration data from storage {}", storage);
-            configurationData = toByteArray(storage.loadConfiguration());
-            if (configurationData == null) {
-                LOG.debug("Loading configuration data from defaults {}", storage);
-                configurationData = getDefaultConfigurationData();
+            try {
+                configurationData = toByteArray(storage.loadConfiguration());
+            } catch (IOException e) {
+                LOG.error("Failed to load configuration from storage", e);
             }
-        } else {
-            LOG.debug("Loading configuration data from defaults");
+        }
+        if (configurationData == null) {
+            LOG.debug("Loading configuration data from defaults {}", storage);
             configurationData = getDefaultConfigurationData();
         }
         if (LOG.isTraceEnabled()) {

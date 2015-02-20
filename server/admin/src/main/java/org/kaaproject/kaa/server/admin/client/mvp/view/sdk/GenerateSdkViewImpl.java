@@ -224,7 +224,6 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         
         row++;
         label = new Label(Utils.constants.defaultUserVerifier());
-        label.addStyleName(REQUIRED);
         Renderer<UserVerifierDto> userVerifierRenderer = new Renderer<UserVerifierDto>() {
             @Override
             public String render(UserVerifierDto object) {
