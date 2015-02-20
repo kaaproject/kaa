@@ -121,6 +121,25 @@ $b #if($connectionDataLength > 0), #end
 #end
 };
 
+
+
+#if ($configurationData && $configurationData.size() != 0)
+#set($configurationDataLength = $configurationData.size())
+# define KAA_CONFIGURATION_DATA_LENGTH    $configurationDataLength
+
+static const char KAA_CONFIGURATION_DATA[KAA_CONFIGURATION_DATA_LENGTH] =
+{
+#foreach ($b in $configurationData)
+#set($configurationDataLength = $configurationDataLength - 1)
+$b #if($configurationDataLength > 0), #end
+#end
+};
+#else
+# define KAA_CONFIGURATION_DATA_LENGTH    0
+
+static const char KAA_CONFIGURATION_DATA[KAA_CONFIGURATION_DATA_LENGTH] = {}; 
+#end
+
 # ifdef __cplusplus
 } // extern "C"
 # endif

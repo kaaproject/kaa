@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <signal.h>
 #include <execinfo.h>
-
-#include <openssl/rsa.h>
-#include <openssl/pem.h>
+#include <sys/select.h>
 
 #include <kaa.h>
 #include <kaa_error.h>
@@ -30,6 +28,7 @@
 #include <kaa_profile.h>
 #include <kaa_logging.h>
 #include <kaa_channel_manager.h>
+#include <kaa_configuration_manager.h>
 
 #include <utilities/kaa_log.h>
 
@@ -75,7 +74,6 @@ static kaa_profile_t *kaa_default_profile = NULL;
 
 static char *kaa_public_key           = NULL;
 static uint32_t kaa_public_key_length = 0;
-static kaa_digest kaa_public_key_hash;
 
 static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
 static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
@@ -83,7 +81,8 @@ static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(ka
 static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
                                              , KAA_SERVICE_USER
                                              , KAA_SERVICE_EVENT
-                                             , KAA_SERVICE_LOGGING };
+                                             , KAA_SERVICE_LOGGING
+                                             , KAA_SERVICE_CONFIGURATION };
 static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
 
 static kaa_transport_channel_interface_t bootstrap_channel;
@@ -97,7 +96,6 @@ static bool is_shutdown = false;
 
 
 /* forward declarations */
-typedef struct kaa_logger_t kaa_logger_t;
 
 extern kaa_error_t ext_log_storage_create(void **log_storage_context_p
                                         , kaa_logger_t *logger);
@@ -106,126 +104,6 @@ extern kaa_error_t ext_log_upload_strategy_by_volume_create(void **strategy_p
                                                           , size_t max_log_bucket_size
                                                           , size_t max_cleanup_threshold);
 
-
-
-/*
- * External API to store/load the Kaa SDK status.
- */
-void ext_status_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
-{
-    *buffer = NULL;
-    *buffer_size = 0;
-    *needs_deallocation = true;
-
-    FILE* status_file = fopen(KAA_STATUS_STORAGE, "rb");
-
-    if (!status_file) {
-        return;
-    }
-
-    fseek(status_file, 0, SEEK_END);
-    *buffer_size = ftell(status_file);
-    *buffer = (char*)calloc(*buffer_size, sizeof(char));
-
-    if (*buffer == NULL) {
-        return;
-    }
-
-    *needs_deallocation = true;
-    fseek(status_file, 0, SEEK_SET);
-    if (fread(*buffer, *buffer_size, 1, status_file) == 0) {
-        free(*buffer);
-        return;
-    }
-
-    fclose(status_file);
-}
-
-void ext_status_store(const char *buffer, size_t buffer_size)
-{
-    if (!buffer || buffer_size == 0) {
-        return;
-    }
-
-    FILE* status_file = fopen(KAA_STATUS_STORAGE, "wb");
-
-    if (status_file) {
-        fwrite(buffer, buffer_size, 1, status_file);
-        fclose(status_file);
-    }
-}
-
-/*
- * External API to retrieve a cryptographic public key.
- */
-void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation)
-{
-    *buffer = kaa_public_key;
-    *buffer_size = kaa_public_key_length;
-    *needs_deallocation = false;
-}
-
-/*
- * Generates a cryptographic public key.
- */
-void kaa_demo_generate_pub_key()
-{
-    const int kBits = 2048;
-    const int kExp = 65537;
-
-    RSA *rsa = RSA_generate_key(kBits, kExp, 0, 0);
-
-    BIO *bio_pem = BIO_new(BIO_s_mem());
-    i2d_RSA_PUBKEY_bio(bio_pem, rsa);
-
-    kaa_public_key_length = BIO_pending(bio_pem);
-    kaa_public_key = (char *) malloc(kaa_public_key_length );
-    BIO_read(bio_pem, kaa_public_key, kaa_public_key_length);
-
-    printf("Generated public key (size %u)\n", kaa_public_key_length);
-
-    BIO_free_all(bio_pem);
-    RSA_free(rsa);
-}
-
-int kaa_init_security_stuff()
-{
-    FILE* key_file = fopen(KAA_KEY_STORAGE, "rb");
-
-    if (key_file) {
-        fseek(key_file, 0, SEEK_END);
-        kaa_public_key_length = ftell(key_file);
-        kaa_public_key = (char*)calloc(kaa_public_key_length, sizeof(char));
-
-        if (kaa_public_key == NULL) {
-            printf("Failed to allocate %u bytes for public key", kaa_public_key_length);
-            return 1;
-        }
-
-        fseek(key_file, 0, SEEK_SET);
-        if (fread(kaa_public_key, kaa_public_key_length, 1, key_file) == 0) {
-            free(kaa_public_key);
-            printf("Failed to read public key (size %u)", kaa_public_key_length);
-            return 1;
-        }
-
-        printf("Restored public key (size %u)", kaa_public_key_length);
-        fclose(key_file);
-    } else {
-        kaa_demo_generate_pub_key();
-        FILE* file = fopen(KAA_KEY_STORAGE, "wb");
-        if (file) {
-            fwrite(kaa_public_key, kaa_public_key_length, 1, file);
-            fclose(file);
-            printf("Public key (size %u) persisted", kaa_public_key_length);
-        } else {
-            printf("Failed to store public key: %s", strerror(errno));
-        }
-    }
-
-    ext_calculate_sha_hash(kaa_public_key, kaa_public_key_length, kaa_public_key_hash);
-    return 0;
-}
 
 /*
  * Initializes Kaa log collector.
@@ -254,12 +132,32 @@ kaa_error_t kaa_log_collector_init()
     return error_code;
 }
 
+
+void kaa_demo_print_configuration_message(const kaa_root_configuration_t *configuration)
+{
+    if (configuration->message->type == KAA_CONFIGURATION_UNION_NULL_OR_STRING_BRANCH_0) {
+        KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Current configuration: null");
+    } else {
+        kaa_string_t *message = (kaa_string_t *) configuration->message->data;
+        KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Current configuration: %s", message->data);
+    }
+}
+
+kaa_error_t kaa_demo_configuration_receiver(void *context, const kaa_root_configuration_t *configuration)
+{
+    (void) context;
+    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Received configuration data");
+    kaa_demo_print_configuration_message(configuration);
+    return KAA_ERR_NONE;
+}
+
 /*
  * Initializes Kaa SDK.
  */
 kaa_error_t kaa_sdk_init()
 {
-    printf("Initializing Kaa SDK...");
+    printf("Initializing Kaa SDK...\n");
+
     kaa_error_t error_code = kaa_init(&kaa_context_);
     if (error_code) {
         printf("Error during kaa context creation %d", error_code);
@@ -308,6 +206,12 @@ kaa_error_t kaa_sdk_init()
                                                          , NULL);
     KAA_RETURN_IF_ERR(error_code);
 
+    kaa_configuration_root_receiver_t receiver = { NULL, &kaa_demo_configuration_receiver };
+    error_code = kaa_configuration_manager_set_root_receiver(kaa_context_->configuration_manager, &receiver);
+    KAA_RETURN_IF_ERR(error_code);
+
+    kaa_demo_print_configuration_message(kaa_configuration_manager_get_configuration(kaa_context_->configuration_manager));
+
     KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa SDK started");
     return KAA_ERR_NONE;
 }
@@ -318,15 +222,10 @@ kaa_error_t kaa_sdk_init()
 kaa_error_t kaa_demo_init()
 {
     printf("%s", "Initializing Kaa driver...");
-    if (kaa_init_security_stuff() == 0) {
-        kaa_error_t error_code = kaa_sdk_init();
-        if (error_code) {
-            printf("Failed to init Kaa SDK. Error code : %d", error_code);
-            return error_code;
-        }
-    } else {
-        printf("%s", "Failed to init security stuff...");
-        return KAA_ERR_NOT_INITIALIZED;
+    kaa_error_t error_code = kaa_sdk_init();
+    if (error_code) {
+        printf("Failed to init Kaa SDK. Error code : %d", error_code);
+        return error_code;
     }
     return KAA_ERR_NONE;
 }
@@ -460,29 +359,9 @@ int kaa_demo_event_loop()
     return 0;
 }
 
-void signal_handler(int sig)
-{
-    void *stack[16];
-    size_t size;
-
-    size = backtrace(stack, 16);
-    char **backtrace_syms = backtrace_symbols(stack, 16);
-
-    printf("SIGSEGV (sig_code=%d0\n", sig);
-
-    for (size_t i = 1; i < size - 1; ++i)
-        printf("%s\n", backtrace_syms[i]);
-
-    while (size)
-        free(backtrace_syms[size]);
-
-    exit(1);
-}
 
 int main(/*int argc, char *argv[]*/)
 {
-    signal(SIGSEGV, signal_handler);
-
     kaa_error_t error_code = kaa_demo_init();
     if (error_code) {
         printf("Failed to initialize Kaa demo. Error code: %d\n", error_code);
