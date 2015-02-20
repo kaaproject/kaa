@@ -14,11 +14,19 @@ import org.kaaproject.kaa.server.common.core.configuration.RawData;
 import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 import org.kaaproject.kaa.server.verifiers.trustful.config.TrustfulVerifierConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NotificationDemoBuilder extends AbstractDemoBuilder{
 
+
+    private static final Logger logger = LoggerFactory.getLogger(NotificationDemoBuilder.class);
+
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
+
+
+        logger.info("Loading 'Android Notification Demo Application' data...");
 
         loginTenantAdmin(client);
 
@@ -58,6 +66,7 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder{
         trustfulUserVerifier = client.editUserVerifierDto(trustfulUserVerifier);
         sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
 
+        logger.info("Finished loading 'Android Notification Demo Application' data.");
     }
 
     @Override
