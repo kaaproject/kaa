@@ -326,6 +326,7 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
     kaa_list_destroy(self->operations_access_points, destroy_operations_access_points);
+    self->operations_access_points = NULL;
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
