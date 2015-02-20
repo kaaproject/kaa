@@ -16,12 +16,14 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.CORE_DISPATCHER_NAME;
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.USER_DISPATCHER_NAME;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.operations.service.OperationsService;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
@@ -31,11 +33,6 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.Endp
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RouteInfoMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserRouteInfoMessage;
-import org.kaaproject.kaa.server.operations.service.cache.CacheService;
-import org.kaaproject.kaa.server.operations.service.event.EventService;
-import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
-import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
-import org.kaaproject.kaa.server.operations.service.user.EndpointUserService;
 import org.kaaproject.kaa.server.transport.message.SessionControlMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,26 +49,8 @@ public class TenantActor extends UntypedActor {
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(TenantActor.class);
 
-    /** The cache service. */
-    private final CacheService cacheService;
-
-    /** The operations service. */
-    private final OperationsService operationsService;
-
-    /** The notification delta service. */
-    private final NotificationDeltaService notificationDeltaService;
-
-    /** The event service. */
-    private final EventService eventService;
-
-    /** The application service. */
-    private final ApplicationService applicationService;
-
-    /** The log appender service. */
-    private final LogAppenderService logAppenderService;
-    
-    /** The endpoint user service. */
-    private final EndpointUserService endpointUserService;
+    /** The Akka service context */
+    private final AkkaContext context;
 
     /** The applications. */
     private final Map<String, ActorRef> applications;
@@ -81,16 +60,9 @@ public class TenantActor extends UntypedActor {
 
     private final String tenantId;
 
-    private TenantActor(CacheService cacheService, OperationsService endpointService, NotificationDeltaService notificationDeltaService,
-            EventService eventService, ApplicationService applicationService, LogAppenderService logAppenderService, EndpointUserService endpointUserService, String tenantId) {
+    private TenantActor(AkkaContext context, String tenantId) {
         super();
-        this.cacheService = cacheService;
-        this.operationsService = endpointService;
-        this.notificationDeltaService = notificationDeltaService;
-        this.applicationService = applicationService;
-        this.logAppenderService = logAppenderService;
-        this.endpointUserService = endpointUserService;
-        this.eventService = eventService;
+        this.context = context;
         this.tenantId = tenantId;
         this.applications = new HashMap<>();
         this.users = new HashMap<>();
@@ -104,26 +76,8 @@ public class TenantActor extends UntypedActor {
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
-        /** The cache service. */
-        private final CacheService cacheService;
-
-        /** The operations service. */
-        private final OperationsService operationsService;
-
-        /** The notification delta service. */
-        private final NotificationDeltaService notificationDeltaService;
-
-        /** The event service. */
-        private final EventService eventService;
-
-        /** The application service. */
-        private final ApplicationService applicationService;
-
-        /** The log appender service. */
-        private final LogAppenderService logAppenderService;
-
-        /** The endpoint user service. */
-        private final EndpointUserService endpointUserService;
+        /** The Akka service context */
+        private final AkkaContext context;
 
         private final String tenantId;
 
@@ -136,18 +90,10 @@ public class TenantActor extends UntypedActor {
          *            the notification delta service
          * @param eventService
          */
-        public ActorCreator(CacheService cacheService, OperationsService operationsService,
-                NotificationDeltaService notificationDeltaService, EventService eventService, ApplicationService applicationService,
-                LogAppenderService logAppenderService, EndpointUserService endpointUserService, String tenantId) {
+        public ActorCreator(AkkaContext context, String tenantId) {
             super();
-            this.cacheService = cacheService;
-            this.operationsService = operationsService;
-            this.notificationDeltaService = notificationDeltaService;
-            this.eventService = eventService;
+            this.context = context;
             this.tenantId = tenantId;
-            this.applicationService = applicationService;
-            this.logAppenderService = logAppenderService;
-            this.endpointUserService = endpointUserService;
         }
 
         /*
@@ -157,8 +103,7 @@ public class TenantActor extends UntypedActor {
          */
         @Override
         public TenantActor create() throws Exception {
-            return new TenantActor(cacheService, operationsService, notificationDeltaService, eventService, applicationService,
-                    logAppenderService, endpointUserService, tenantId);
+            return new TenantActor(context, tenantId);
         }
     }
 
@@ -251,7 +196,8 @@ public class TenantActor extends UntypedActor {
     private ActorRef getOrCreateUserActor(String userId) {
         ActorRef userActor = users.get(userId);
         if (userActor == null && userId != null) {
-            userActor = context().actorOf(Props.create(new UserActor.ActorCreator(cacheService, eventService, userId, tenantId)), userId);
+            userActor = context().actorOf(
+                    Props.create(new UserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME), userId);
             LOG.debug("Create user actor with id {}", userId);
             users.put(userId, userActor);
         }
@@ -269,8 +215,7 @@ public class TenantActor extends UntypedActor {
         ActorRef applicationActor = applications.get(appToken);
         if (applicationActor == null) {
             applicationActor = context().actorOf(
-                    Props.create(new ApplicationActor.ActorCreator(operationsService, notificationDeltaService, applicationService,
-                            logAppenderService, endpointUserService, appToken)), appToken);
+                    Props.create(new ApplicationActor.ActorCreator(context, appToken)).withDispatcher(CORE_DISPATCHER_NAME), appToken);
             applications.put(appToken, applicationActor);
         }
         return applicationActor;

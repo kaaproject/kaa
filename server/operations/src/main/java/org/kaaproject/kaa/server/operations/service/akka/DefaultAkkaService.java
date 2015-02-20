@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.akka;
 
-import java.security.KeyPair;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -26,24 +25,16 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
-import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.OperationsServerActor;
 import org.kaaproject.kaa.server.operations.service.akka.actors.io.EncDecActor;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
-import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
-import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
-import org.kaaproject.kaa.server.operations.service.metrics.MetricsService;
-import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
-import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
-import org.kaaproject.kaa.server.operations.service.user.EndpointUserService;
 import org.kaaproject.kaa.server.sync.platform.PlatformLookup;
 import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.kaaproject.kaa.server.transport.session.SessionAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import akka.actor.ActorRef;
@@ -58,6 +49,14 @@ import akka.routing.RoundRobinPool;
 @Service
 public class DefaultAkkaService implements AkkaService {
 
+    public static final String IO_DISPATCHER_NAME = "io-dispatcher";
+    public static final String CORE_DISPATCHER_NAME = "core-dispatcher";
+    public static final String USER_DISPATCHER_NAME = "user-dispatcher";
+    public static final String ENDPOINT_DISPATCHER_NAME = "endpoint-dispatcher";
+    public static final String LOG_DISPATCHER_NAME = "log-dispatcher";
+    public static final String VERIFIER_DISPATCHER_NAME = "verifier-dispatcher";
+    public static final String TOPIC_DISPATCHER_NAME = "topic-dispatcher";
+
     private static final String IO_ROUTER_ACTOR_NAME = "ioRouter";
 
     /** The Constant LOG. */
@@ -65,9 +64,6 @@ public class DefaultAkkaService implements AkkaService {
 
     /** The Constant EPS. */
     public static final String EPS = "EPS";
-    // TODO: make configurable;
-    /** The Constant IO_WORKERS_COUNT. */
-    private static final int IO_WORKERS_COUNT = 4;
 
     /** The akka. */
     private ActorSystem akka;
@@ -78,43 +74,11 @@ public class DefaultAkkaService implements AkkaService {
     /** The io router. */
     private ActorRef ioRouter;
 
-    /** The cache service. */
+    /** The akka service context. */
     @Autowired
-    private CacheService cacheService;
-
-    /** The cache service. */
-    @Autowired
-    private KeyStoreService keyStoreService;
-
-    /** The operations service. */
-    @Autowired
-    private OperationsService operationsService;
-
-    /** The notification delta service. */
-    @Autowired
-    private NotificationDeltaService notificationDeltaService;
-
-    /** The application service. */
-    @Autowired
-    private ApplicationService applicationService;
-
-    /** The event service. */
-    @Autowired
-    private EventService eventService;
-
-    @Autowired
-    private MetricsService metricsService;
-
-    @Autowired
-    private LogAppenderService logAppenderService;
-    
-    @Autowired
-    private EndpointUserService endpointUserService;
+    private AkkaContext context;
 
     private AkkaEventServiceListener listener;
-
-    @Value("#{properties[support_unencrypted_connection]}")
-    private Boolean supportUnencryptedConnection;
 
     /**
      * Inits the actor system.
@@ -122,25 +86,25 @@ public class DefaultAkkaService implements AkkaService {
     @PostConstruct
     public void initActorSystem() {
         LOG.info("Initializing Akka system...");
-        akka = ActorSystem.create(EPS);
+        akka = ActorSystem.create(EPS, context.getConfig());
         LOG.info("Initializing Akka EPS actor...");
-        opsActor = akka.actorOf(Props.create(new OperationsServerActor.ActorCreator(cacheService, operationsService,
-                notificationDeltaService, eventService, applicationService, logAppenderService, endpointUserService)), EPS);
+        opsActor = akka.actorOf(Props.create(new OperationsServerActor.ActorCreator(context)).withDispatcher(CORE_DISPATCHER_NAME), EPS);
         LOG.info("Lookup platform protocols");
         Set<String> platformProtocols = PlatformLookup.lookupPlatformProtocols(PlatformLookup.DEFAULT_PROTOCOL_LOOKUP_PACKAGE_NAME);
         LOG.info("Initializing Akka io router...");
-        ioRouter = akka.actorOf(new RoundRobinPool(IO_WORKERS_COUNT).props(Props.create(new EncDecActor.ActorCreator(opsActor,
-                metricsService, cacheService, new KeyPair(keyStoreService.getPublicKey(), keyStoreService.getPrivateKey()),
-                platformProtocols, supportUnencryptedConnection))), IO_ROUTER_ACTOR_NAME);
+        ioRouter = akka.actorOf(
+                new RoundRobinPool(context.getIOWorkerCount()).props(Props.create(
+                        new EncDecActor.ActorCreator(opsActor, context, platformProtocols)).withDispatcher(IO_DISPATCHER_NAME)),
+                IO_ROUTER_ACTOR_NAME);
         LOG.info("Initializing Akka event service listener...");
         listener = new AkkaEventServiceListener(opsActor);
-        eventService.addListener(listener);
+        context.getEventService().addListener(listener);
         LOG.info("Initializing Akka system done");
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.operations.service.akka.AkkaService#getActorSystem
      * ()
@@ -156,7 +120,7 @@ public class DefaultAkkaService implements AkkaService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.akka.AkkaService#
      * onRedirectionRule
      * (org.kaaproject.kaa.server.common.thrift.gen.endpoint.RedirectionRule)
@@ -168,14 +132,14 @@ public class DefaultAkkaService implements AkkaService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.operations.service.akka.AkkaService#onNotification
      * (org.kaaproject.kaa.server.common.thrift.gen.endpoint.Notification)
      */
     @Override
     public void onNotification(Notification notification) {
-        ApplicationDto applicationDto = applicationService.findAppById(notification.getAppId());
+        ApplicationDto applicationDto = context.getApplicationService().findAppById(notification.getAppId());
         if (applicationDto != null) {
             LOG.debug("Sending message {} to EPS actor", notification);
             opsActor.tell(new ThriftNotificationMessage(applicationDto.getApplicationToken(), notification), ActorRef.noSender());
@@ -186,7 +150,7 @@ public class DefaultAkkaService implements AkkaService {
 
     @PreDestroy
     public void preDestroy() {
-        eventService.removeListener(listener);
+        context.getEventService().removeListener(listener);
     }
 
     @Override

@@ -68,8 +68,6 @@ import org.kaaproject.kaa.server.operations.service.event.EventClassFqnVersion;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableKey;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -84,8 +82,6 @@ public class ConcurrentCacheServiceTest {
     private static final int EVENT_CLASS_FAMILY_VERSION = 42;
 
     private static final String EVENT_CLASS_ID = "EVENT_CLASS_ID";
-
-    private static final Logger LOG = LoggerFactory.getLogger(ConcurrentCacheServiceTest.class);
 
     private static final String EVENT_CLASS_FAMILY_ID = "EVENT_CLASS_FAMILY_ID";
     private static final String ECF_NAME = "ECF_NAME";
