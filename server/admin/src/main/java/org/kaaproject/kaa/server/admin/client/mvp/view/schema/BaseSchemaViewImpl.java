@@ -16,19 +16,24 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.schema;
 
+import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.FileUploadForm;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 
-public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements BaseSchemaView {
+public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements BaseSchemaView, 
+                                                                                ValueChangeHandler<RecordField> {
 
     private static final String REQUIRED = Utils.avroUiStyle.requiredField();
     
@@ -39,8 +44,7 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
     private SizedTextBox createdDateTime;
     private SizedTextBox endpointCount;
 
-    private SizedTextArea schema;
-    private FileUploadForm schemaFileUpload;
+    private RecordPanel schemaForm;
 
     public BaseSchemaViewImpl(boolean create) {
         super(create);
@@ -94,37 +98,25 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
 
         description = new SizedTextArea(1024);
         description.setWidth("100%");
-        description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
+        description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 80);
         Label descriptionLabel = new Label(Utils.constants.description());
         detailsTable.setWidget(5, 0, descriptionLabel);
         detailsTable.setWidget(5, 1, description);
         description.addInputHandler(this);
 
         detailsTable.getCellFormatter().setVerticalAlignment(5, 0, HasVerticalAlignment.ALIGN_TOP);
-
-        Label schemaLabel = new Label(create ? Utils.constants.selectSchemaFile() : Utils.constants.schema());
+        
+        getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
+        
+        schemaForm = new RecordPanel(new AvroWidgetsConfig.Builder().
+                recordPanelWidth(900).createConfig(),
+                Utils.constants.schema(), this, !create, !create);
+        
         if (create) {
-            schemaLabel.addStyleName(REQUIRED);
+            schemaForm.addValueChangeHandler(this);
         }
-        detailsTable.setWidget(6, 0, schemaLabel);
-
-        if (create) {
-            schemaFileUpload = new FileUploadForm();
-            schemaFileUpload.setWidth("500px");
-            detailsTable.setWidget(6, 1, schemaFileUpload);
-        } else {
-            schema = new SizedTextArea(-1);
-            schema.setWidth("500px");
-            schema.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 300);
-            schema.getTextArea().setReadOnly(true);
-            detailsTable.setWidget(6, 1, schema);
-            detailsTable.getCellFormatter().setVerticalAlignment(6, 0, HasVerticalAlignment.ALIGN_TOP);
-        }
-
-
-        if (create) {
-            schemaFileUpload.addChangeHandler(this);
-        }
+        getFooter().setWidth("1000px");
+        getFooter().add(schemaForm);
 
         name.setFocus(true);
     }
@@ -138,12 +130,7 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
         createdUsername.setValue("");
         createdDateTime.setValue("");
         endpointCount.setValue("");
-        if (create) {
-            schemaFileUpload.reset();
-        }
-        else {
-            schema.setValue("");
-        }
+        schemaForm.reset();
     }
 
     @Override
@@ -155,21 +142,21 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
     protected boolean validate() {
         boolean result = name.getValue().length()>0;
         if (create) {
-            result &= schemaFileUpload.getFileName().length()>0;
+            result &= schemaForm.validate();
         }
         return result;
     }
-
+    
     @Override
-    public HasValue<String> getSchema() {
-        return schema;
+    public void onValueChange(ValueChangeEvent<RecordField> event) {
+        fireChanged();
     }
 
     @Override
-    public FileUploadForm getSchemaFileUpload() {
-        return schemaFileUpload;
+    public RecordPanel getSchemaForm() {
+        return schemaForm;
     }
-
+    
     @Override
     public HasValue<String> getName() {
         return name;

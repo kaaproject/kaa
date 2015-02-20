@@ -16,14 +16,18 @@
 
 package org.kaaproject.kaa.common.dto;
 
+import org.kaaproject.avro.ui.shared.RecordField;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties({"schemaForm"})
 public abstract class AbstractSchemaDto extends SchemaDto {
 
     private static final long serialVersionUID = 6821310997907855007L;
 
     protected String applicationId;
     protected String schema;
+    protected RecordField schemaForm;
     protected String name;
     protected String description;
     protected String createdUsername;
@@ -44,6 +48,14 @@ public abstract class AbstractSchemaDto extends SchemaDto {
 
     public void setSchema(String schema) {
         this.schema = schema;
+    }
+    
+    public RecordField getSchemaForm() {
+        return schemaForm;
+    }
+
+    public void setSchemaForm(RecordField schemaForm) {
+        this.schemaForm = schemaForm;
     }
 
     public String getName() {

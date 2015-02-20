@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowAction;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -27,6 +26,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.data.LogSchemasDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
@@ -72,7 +72,7 @@ public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSc
     @Override
     protected void onCustomRowAction(RowActionEvent<String> event) {
         Integer logSchemaVersion = Integer.valueOf(event.getClickedId());
-        final RowAction action = event.getAction();
+        final int action = event.getAction();
 
         AsyncCallback<String> callback = new AsyncCallback<String>() {
             @Override
@@ -86,10 +86,10 @@ public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSc
         };
 
         switch (action) {
-            case DOWNLOAD_LIBRARY:
+            case KaaRowAction.DOWNLOAD_LOG_SCHEMA_LIBRARY:
                 KaaAdmin.getDataSource().getRecordLibrary(applicationId, logSchemaVersion, RecordFiles.LIBRARY, callback);
                 break;
-            case DOWNLOAD_SCHEMA:
+            case KaaRowAction.DOWNLOAD_LOG_SCHEMA:
                 KaaAdmin.getDataSource().getRecordLibrary(applicationId, logSchemaVersion, RecordFiles.SCHEMA, callback);
                 break;
             default:

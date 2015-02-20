@@ -21,7 +21,7 @@
          xmlns="http://java.sun.com/xml/ns/javaee">
          
          <context-param>
-            <param-name>log4jExposeWebAppRoot</param-name>
+            <param-name>logbackExposeWebAppRoot</param-name>
             <param-value>false</param-value>
         </context-param>
         
@@ -31,12 +31,12 @@
         </context-param>         
          
          <context-param>
-            <param-name>log4jConfigLocation</param-name>
-            <param-value>classpath:sandbox-log4j.xml</param-value>
+            <param-name>logbackConfigLocation</param-name>
+            <param-value>classpath:sandbox-logback.xml</param-value>
         </context-param>
         
         <listener>
-            <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+            <listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>
         </listener>
 
         <listener>

@@ -21,6 +21,7 @@ import java.util.List;
 
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;
@@ -134,14 +135,14 @@ public abstract class AbstractDetailsActivity<T extends HasId, V extends BaseDet
     }
 
     protected void loadEntity() {
-        getEntity(entityId, new AsyncCallback<T>() {
+        getEntity(entityId, new BusyAsyncCallback<T>() {
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailureImpl(Throwable caught) {
                 Utils.handleException(caught, detailsView);
             }
 
             @Override
-            public void onSuccess(T result) {
+            public void onSuccessImpl(T result) {
                 entity = result;
                 onEntityRetrieved();
             }
@@ -152,14 +153,14 @@ public abstract class AbstractDetailsActivity<T extends HasId, V extends BaseDet
         onSave();
 
         editEntity(entity,
-                new AsyncCallback<T>() {
-                    public void onSuccess(T result) {
+                new BusyAsyncCallback<T>() {
+                    public void onSuccessImpl(T result) {
                         if (place.getPreviousPlace() != null) {
                             goTo(place.getPreviousPlace());
                         }
                     }
 
-                    public void onFailure(Throwable caught) {
+                    public void onFailureImpl(Throwable caught) {
                         Utils.handleException(caught, detailsView);
                     }
         });
