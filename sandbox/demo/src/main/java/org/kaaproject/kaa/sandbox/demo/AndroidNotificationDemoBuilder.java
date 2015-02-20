@@ -40,7 +40,7 @@ public class AndroidNotificationDemoBuilder extends AbstractDemoBuilder{
         notificationSchemaDto.setApplicationId(notificationApplication.getId());
         notificationSchemaDto.setName("Notification schema");
         notificationSchemaDto.setDescription("Notification schema describing incoming notifications");
-        notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, "demo/androidnotificationdemo/notificationSchema.json");
+        notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, "demo/androidnotification/notificationSchema.json");
         sdkKey.setNotificationSchemaVersion(notificationSchemaDto.getMajorVersion());
 
 
