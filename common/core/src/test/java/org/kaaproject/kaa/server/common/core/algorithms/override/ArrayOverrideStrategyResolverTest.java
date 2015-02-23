@@ -45,21 +45,6 @@ public class ArrayOverrideStrategyResolverTest {
     }
 
     @Test
-    public void testStrategyIsResolvedToOverrideWhenFieldsDefinitionIsMissed() throws Exception {
-        Path schemaUrl = Paths.get(Thread.currentThread().getContextClassLoader().getResource("override/schema_for_array_merge_strategy_resolver_with_missed_fields_definition.json").toURI());
-        DataSchema configurationSchema = new DataSchema(new String(Files.readAllBytes(schemaUrl)));
-
-        SchemaGenerationAlgorithmFactory factory = new SchemaGenerationAlgorithmFactoryImpl();
-        SchemaGenerationAlgorithm generator = factory.createSchemaGenerator(configurationSchema);
-
-        KaaSchema baseSchemaString = generator.getBaseSchema();
-
-        ArrayOverrideStrategyResolver arrayMergeStrategyResolver = new ArrayOverrideStrategyResolver(baseSchemaString);
-        ArrayOverrideStrategy actualArrayMergeStrategy = arrayMergeStrategyResolver.resolve("testT", "org.kaa.config", "child_name");
-        Assert.assertTrue(ArrayOverrideStrategy.REPLACE == actualArrayMergeStrategy);
-    }
-
-    @Test
     public void testStrategyIsResolvedToOverrideWhenFieldsDefinitionIsEmpty() throws Exception {
         Path schemaUrl = Paths.get(Thread.currentThread().getContextClassLoader().getResource("override/schema_for_array_merge_strategy_resolver_with_empty_fields_definition.json").toURI());
         DataSchema configurationSchema = new DataSchema(new String(Files.readAllBytes(schemaUrl)));

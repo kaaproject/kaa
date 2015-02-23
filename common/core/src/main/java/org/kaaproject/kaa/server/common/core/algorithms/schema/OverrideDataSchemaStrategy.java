@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.avro.Schema;
+import org.apache.avro.Schema.Type;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 
 /**
@@ -40,20 +42,20 @@ public class OverrideDataSchemaStrategy extends AbstractSchemaStrategy<OverrideS
     }
 
     @Override
-    public void onOptionalField(List<Object> union) {
-        if (!union.contains(NULL_FIELD_VALUE)) {
-            union.add(0, NULL_FIELD_VALUE);
+    public void onOptionalField(List<Schema> union) {
+        Schema nullSchema = Schema.create(Type.NULL);
+        if (!union.contains(nullSchema)) {
+            union.add(0, nullSchema);
         }
     }
 
     @Override
-    public void onMandatoryField(List<Object> union) {
+    public void onMandatoryField(List<Schema> union) {
         // Nothing to do
     }
 
     @Override
-    public Map<String, Object> onSchemaProcessed(
-            Map<String, Object> rootSchema, Set<String> addressableRecords) {
+    public Schema onSchemaProcessed(Schema rootSchema, Set<Schema> addressableRecords) {
         return rootSchema;
     }
 
@@ -63,8 +65,8 @@ public class OverrideDataSchemaStrategy extends AbstractSchemaStrategy<OverrideS
     }
 
     @Override
-    public OverrideSchema createSchema(String schema) {
-        return getSchemaFactory().createOverrideSchema(schema);
+    public OverrideSchema createSchema(Schema schema) {
+        return getSchemaFactory().createOverrideSchema(schema.toString());
     }
 
 }

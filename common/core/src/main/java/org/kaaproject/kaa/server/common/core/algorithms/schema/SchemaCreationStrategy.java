@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.avro.Schema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 
 /**
@@ -53,14 +54,14 @@ public interface SchemaCreationStrategy<T extends KaaSchema> {
      *
      * @param union the list of union type objects
      */
-    void onOptionalField(List<Object> union);
+    void onOptionalField(List<Schema> union);
 
     /**
      * On mandatory field listener.
      *
      * @param union the list of union type objects
      */
-    void onMandatoryField(List<Object> union);
+    void onMandatoryField(List<Schema> union);
 
     /**
      * On schema processed.
@@ -69,7 +70,7 @@ public interface SchemaCreationStrategy<T extends KaaSchema> {
      * @param addressableRecords the addressable records
      * @return the map
      */
-    Map<String, Object> onSchemaProcessed(Map<String, Object> rootSchema, Set<String> addressableRecords);
+    Schema onSchemaProcessed(Schema rootSchema, Set<Schema> addressableRecords);
 
     /**
      * Creates a schema object
@@ -77,5 +78,5 @@ public interface SchemaCreationStrategy<T extends KaaSchema> {
      * @param schema the raw schema data
      * @return the schema object
      */
-    T createSchema(String schema);
+    T createSchema(Schema schema);
 }

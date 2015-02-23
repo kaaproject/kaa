@@ -16,30 +16,17 @@
 
 package org.kaaproject.kaa.server.common.core.algorithms.schema;
 
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.ARRAY_FIELD_VALUE;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.DISPLAY_NAME_FIELD;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.ENUM_FIELD_VALUE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.FIELDS_FIELD;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.FIELD_ACCESS_FIELD;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.FIELD_ACCESS_READ_ONLY;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.FIXED_FIELD_VALUE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.ITEMS_FIELD;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.KAA_NAMESPACE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.MAP_FIELD_VALUE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.NAMESPACE_FIELD;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.NAME_FIELD;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.NULL_FIELD_VALUE;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.RESET;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.SIZE_FIELD;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.SYMBOLS_FIELD;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.TYPE_FIELD;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.UNCHANGED;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.UUID_FIELD;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.UUID_FIELD_DISPLAY_NAME;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.UUID_SIZE;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.UUID_TYPE;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,7 +34,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.avro.JsonProperties;
+import org.apache.avro.Schema;
+import org.apache.avro.Schema.Field;
+import org.apache.avro.Schema.Type;
+import org.codehaus.jackson.JsonNode;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 import org.slf4j.Logger;
@@ -67,10 +58,12 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
     private static final String ADDRESSABLE_NAME    = "addressable";
     private static final String OPTIONAL_NAME       = "optional";
 
-    private Set<String> addressableRecords;
-    private boolean isUuidDeclared;
-    private boolean isResetDeclared;
-    private boolean isUnchangedDeclared;
+    private final Set<Schema> addressableRecords = new HashSet<Schema>();
+    private final HashMap<String, Schema> processedRecords = new HashMap<String, Schema>();
+    private Schema uuidTSchema;
+    private Schema resetTSchema;
+    private Schema unchangedTSchema;
+    private Field uuidField;
     private final SchemaCreationStrategy<T> strategy;
 
     private String rootSchemaName;
@@ -79,171 +72,153 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
         this.strategy = strategy;
     }
 
-    private static String getFullName(Map<String, Object> node) {
-        return node.get(NAMESPACE_FIELD) + "." + node.get(NAME_FIELD);
-    }
-
-    private void resetTriggers() {
-        addressableRecords = new HashSet<String>();
-        isUuidDeclared = false;
-        isResetDeclared = false;
-        isUnchangedDeclared = false;
-    }
-
-    private Object getUuidType() {
-        if (isUuidDeclared) {
-            return KAA_NAMESPACE + "." + UUID_TYPE;
-        } else {
-            Map<String, Object> uuid = new HashMap<String, Object>();
-            uuid.put(NAME_FIELD, UUID_TYPE);
-            uuid.put(NAMESPACE_FIELD, KAA_NAMESPACE);
-            uuid.put(TYPE_FIELD, FIXED_FIELD_VALUE);
-            uuid.put(SIZE_FIELD, UUID_SIZE);
-            isUuidDeclared = true;
-            return uuid;
+    private static void copyProps(JsonProperties src, JsonProperties dst) {
+        for (Map.Entry<String, JsonNode> prop : src.getJsonProps().entrySet()) {
+            dst.addProp(prop.getKey(), prop.getValue());
         }
     }
 
-    private Map<String, Object> getUuidField() {
-        Map<String, Object> uuidField = new HashMap<String, Object>();
-        uuidField.put(NAME_FIELD, UUID_FIELD);
-        uuidField.put(DISPLAY_NAME_FIELD, UUID_FIELD_DISPLAY_NAME);
-        uuidField.put(FIELD_ACCESS_FIELD, FIELD_ACCESS_READ_ONLY);
-        if (strategy.isUuidOptional()) {
-            List<Object> union = new ArrayList<Object>(2);
-            union.add(getUuidType());
-            union.add(NULL_FIELD_VALUE);
-            uuidField.put(TYPE_FIELD, union);
-        } else {
-            uuidField.put(TYPE_FIELD, getUuidType());
+    private Schema getUuidType() {
+        if (uuidTSchema == null) {
+            uuidTSchema = Schema.createFixed(UUID_TYPE, null, KAA_NAMESPACE, UUID_SIZE);
         }
-        return uuidField;
+        return uuidTSchema;
     }
 
-    private Map<String, Object> getEnum(String name) {
-        Map<String, Object> reset = new HashMap<String, Object>();
-        List<Object> symbols = new ArrayList<Object>();
-        symbols.add(name);
-        reset.put(SYMBOLS_FIELD, symbols);
-        reset.put(NAMESPACE_FIELD, KAA_NAMESPACE);
-        reset.put(NAME_FIELD, name + "T");
-        reset.put(TYPE_FIELD, ENUM_FIELD_VALUE);
-        return reset;
-    }
-
-    private Object getResetType() {
-        if (isResetDeclared) {
-            return KAA_NAMESPACE + "." + RESET + "T";
-        } else {
-            isResetDeclared = true;
-            return getEnum(RESET);
-        }
-    }
-
-    private Object getUnchangedType() {
-        if (isUnchangedDeclared) {
-            return KAA_NAMESPACE + "." + UNCHANGED + "T";
-        } else {
-            isUnchangedDeclared = true;
-            return getEnum(UNCHANGED);
-        }
-    }
-
-    private Boolean isAddressableValue(Object value) {
-        if (value instanceof Map) {
-            Map<String, Object> record = (Map<String, Object>) value;
-            if (record.get(ADDRESSABLE_NAME) != null
-                    && !getFullName(record).equals(rootSchemaName)) {
-                return (Boolean) record.get(ADDRESSABLE_NAME);
+    private Field getUuidField() {
+        if (uuidField == null) {
+            Schema uuidFieldSchema = null;
+            if (strategy.isUuidOptional()) {
+                List<Schema> union = new ArrayList<Schema>(2);
+                union.add(getUuidType());
+                union.add(Schema.create(Type.NULL));
+                uuidFieldSchema = Schema.createUnion(union);
+            } else {
+                uuidFieldSchema = getUuidType();
             }
-            return Boolean.TRUE;
-        } else if (addressableRecords.contains(value)) {
-            return Boolean.TRUE;
+            uuidField = new Field(UUID_FIELD, uuidFieldSchema, null, null);;
+            uuidField.addProp(DISPLAY_NAME_FIELD, UUID_FIELD_DISPLAY_NAME);
+            uuidField.addProp(FIELD_ACCESS_FIELD, FIELD_ACCESS_READ_ONLY);
+            return uuidField;
         }
-        return Boolean.FALSE;
+        return new Field(uuidField.name(), uuidField.schema(), null, null);
     }
 
-    private void addResetTypeIfArray(Map<String, Object> fieldType, List<Object> union) {
-        if (fieldType.get(TYPE_FIELD).equals(ARRAY_FIELD_VALUE) && strategy.isArrayEditable()) {
+    private Schema getResetType() {
+        if (resetTSchema == null) {
+            List<String> resetStrings = new ArrayList<String>(1);
+            resetStrings.add(RESET);
+            resetTSchema = Schema.createEnum(RESET + "T", null, KAA_NAMESPACE, resetStrings);
+        }
+        return resetTSchema;
+    }
+
+    private Schema getUnchangedType() {
+        if (unchangedTSchema == null) {
+            List<String> unchangedStrings = new ArrayList<String>(1);
+            unchangedStrings.add(UNCHANGED);
+            unchangedTSchema = Schema.createEnum(UNCHANGED + "T", null, KAA_NAMESPACE, unchangedStrings);
+        }
+        return unchangedTSchema;
+    }
+
+    private boolean isAddressableValue(Schema value) {
+        if (value.getType().equals(Type.RECORD)) {
+            if (value.getJsonProp(ADDRESSABLE_NAME) != null
+                    && !value.getFullName().equals(rootSchemaName)) {
+                return value.getJsonProp(ADDRESSABLE_NAME).asBoolean();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private void addResetTypeIfArray(Schema fieldType, List<Schema> union) {
+        if (fieldType.getType().equals(Type.ARRAY) && strategy.isArrayEditable()) {
             union.add(0, getResetType());
         }
     }
 
-    private void processArray(Map<String, Object> root) throws SchemaCreationException {
+    private static boolean isComplexSchema(Schema schema) {
+        switch (schema.getType()) {
+        case RECORD:
+        case ARRAY:
+        case MAP:
+        case FIXED:
+        case ENUM:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    private Schema processArray(Schema root) throws SchemaCreationException {
         boolean hasAddressableItem = false;
-        List<Object> newItems = null;
-        if (root.get(ITEMS_FIELD) instanceof List) {
-            List<Object> items = (List<Object>) root.get(ITEMS_FIELD);
-            for (Object itemIter : items) {
-                if (itemIter instanceof Map) {
-                    Map<String, Object> item = (Map<String, Object>) itemIter;
-                    convert(item);
+        Schema copySchema = null;
+        List<Schema> newItems = null;
+        if (root.getElementType().getType().equals(Type.UNION)) {
+            List<Schema> items = root.getElementType().getTypes();
+            newItems = new ArrayList<Schema>(items.size() + 1);
+            for (Schema itemIter : items) {
+                Schema updatedItem = itemIter;
+                if (isComplexSchema(itemIter)) {
+                    updatedItem = convert(itemIter);
                 }
+                newItems.add(updatedItem);
                 if (isAddressableValue(itemIter) && strategy.isArrayEditable()) {
                     hasAddressableItem = true;
                 }
             }
-            newItems = items;
-        } else {
-            Object rawItems = root.get(ITEMS_FIELD);
-            if (rawItems instanceof Map) {
-                convert((Map<String, Object>) rawItems);
-            }
-
-            if (strategy.isArrayEditable()) {
-                hasAddressableItem = isAddressableValue(rawItems);
-                if (hasAddressableItem) {
-                    newItems = new ArrayList<Object>();
-                    newItems.add(root.get(ITEMS_FIELD));
-                    root.put(ITEMS_FIELD, newItems);
-                }
-            }
+        } else if (strategy.isArrayEditable()) {
+            hasAddressableItem = isAddressableValue(root.getElementType());
         }
         if (hasAddressableItem) {
+            if (newItems == null) {
+                newItems = new ArrayList<Schema>();
+                newItems.add(convert(root.getElementType()));
+            }
             newItems.add(getUuidType());
         }
+        if (newItems != null) {
+            copySchema = Schema.createArray(Schema.createUnion(newItems));
+        } else {
+            copySchema = Schema.createArray(convert(root.getElementType()));
+        }
+        copyProps(root, copySchema);
+        return copySchema;
     }
 
-    private void processRecord(Map<String, Object> root) throws SchemaCreationException {
-        if (root.get(NAMESPACE_FIELD) == null) {
-            throw new SchemaCreationException(new StringBuilder()
-                    .append("Namepsace not found for \"")
-                    .append((String) root.get(NAME_FIELD)).append("\"").toString());
+    private Schema processRecord(Schema root) throws SchemaCreationException {
+        if (processedRecords.containsKey(root.getFullName())) {
+            return processedRecords.get(root.getFullName());
         }
-        Boolean addressable = isAddressableValue(root);
+        boolean addressable = isAddressableValue(root);
+        List<Field> fields = root.getFields();
+        List<Field> newFields = new ArrayList<Field>(fields.size() + 1);
 
-        List<Object> fields = (List<Object>) root.get(FIELDS_FIELD);
-
-        for (Object fieldIter : fields) {
-            Map<String, Object> field = (Map<String, Object>) fieldIter;
-
-            Boolean optional = Boolean.FALSE;
-            if (field.get(OPTIONAL_NAME) != null) {
-                optional = (Boolean) field.get(OPTIONAL_NAME);
+        for (Field fieldIter : fields) {
+            boolean optional = false;
+            if (fieldIter.getJsonProp(OPTIONAL_NAME) != null) {
+                optional = fieldIter.getJsonProp(OPTIONAL_NAME).asBoolean();
             }
 
-            List<Object> newUnion = new ArrayList<Object>();
+            List<Schema> newUnion = new ArrayList<Schema>();
 
-            boolean isUnionField = false;
-            if (field.get(TYPE_FIELD) instanceof Map) {
-                newUnion.add(field.get(TYPE_FIELD));
-                Map<String, Object> fieldType = (Map<String, Object>) field.get(TYPE_FIELD);
-                addResetTypeIfArray(fieldType, newUnion);
-                convert(fieldType);
-            } else if (field.get(TYPE_FIELD) instanceof List) {
-                // Looks like the type of the field is union
-                List<Object> oldUnion = (List<Object>) field.get(TYPE_FIELD);
-                for (Object unionIter : oldUnion){
-                    if (unionIter instanceof Map) {
-                        Map<String, Object> fieldType = (Map<String, Object>) unionIter;
-                        addResetTypeIfArray(fieldType, newUnion);
-                        convert(fieldType);
+            if (isComplexSchema(fieldIter.schema())) {
+                addResetTypeIfArray(fieldIter.schema(), newUnion);
+                newUnion.add(convert(fieldIter.schema()));
+            } else if (fieldIter.schema().getType().equals(Type.UNION)) {
+                List<Schema> oldUnion = fieldIter.schema().getTypes();
+                for (Schema unionIter : oldUnion) {
+                    Schema newItem = unionIter;
+                    if (isComplexSchema(unionIter)) {
+                        addResetTypeIfArray(unionIter, newUnion);
+                        newItem = convert(unionIter);
                     }
+                    newUnion.add(newItem);
                 }
-                newUnion.addAll(oldUnion);
-                isUnionField = true;
             } else {
-                newUnion.add(field.get(TYPE_FIELD));
+                newUnion.add(fieldIter.schema());
             }
 
             if (strategy.isUnchangedSupported()) {
@@ -256,46 +231,53 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
                 strategy.onMandatoryField(newUnion);
             }
 
+            Field newField = null;
             if (newUnion.size() > 1) {
-                field.put(TYPE_FIELD, newUnion);
+                newField = new Field(fieldIter.name(), Schema.createUnion(newUnion), fieldIter.doc(), fieldIter.defaultValue());
+            } else {
+                newField = new Field(fieldIter.name(), newUnion.get(0), fieldIter.doc(), fieldIter.defaultValue());
             }
+            copyProps(fieldIter, newField);
+            newFields.add(newField);
         }
-
-        if (addressable)  {
+        if (addressable) {
             // This record supports partial updates, adding "uuid" field
-            fields.add(getUuidField());
+            newFields.add(getUuidField());
+        }
+        Schema copySchema = Schema.createRecord(root.getName(), root.getDoc(), root.getNamespace(), root.isError());
+        copyProps(root, copySchema);
+        copySchema.setFields(newFields);
+        if (addressable) {
             // Adding addressable record's name to the storage
-            String fullName = getFullName(root);
+            String fullName = root.getFullName();;
             if (!fullName.equals(rootSchemaName)) {
-                addressableRecords.add(fullName);
+                addressableRecords.add(copySchema);
             }
         }
+        processedRecords.put(copySchema.getFullName(), copySchema);
+        return copySchema;
     }
 
-    private void convert(Map<String, Object> root) throws SchemaCreationException {
-        if (root.get(TYPE_FIELD).equals(ARRAY_FIELD_VALUE)) {
-            processArray(root);
-        } else if (root.get(FIELDS_FIELD) != null) {
-            processRecord(root);
-        } else if (root.get(TYPE_FIELD).equals(MAP_FIELD_VALUE)) {
+    private Schema convert(Schema root) throws SchemaCreationException {
+        switch (root.getType()) {
+        case ARRAY:
+            return processArray(root);
+        case RECORD:
+            return processRecord(root);
+        case MAP:
             throw new SchemaCreationException("Map is not supported");
+        default:
+            return root;
         }
     }
 
     @Override
     public T createSchema(DataSchema configSchema) throws SchemaCreationException {
-        resetTriggers();
-        String schema;
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            Map<String, Object> rootSchema = mapper.readValue(configSchema.getRawSchema(), Map.class);
-            rootSchemaName = getFullName(rootSchema);
-            convert(rootSchema);
-            schema = mapper.writeValueAsString(strategy.onSchemaProcessed(rootSchema, addressableRecords));
-        } catch (IOException ex) {
-            LOG.error("Can't generate schema.", ex);
-            throw new SchemaCreationException("Can't generate schema based on config schema.", ex);
-        }
-        return strategy.createSchema(schema);
+        addressableRecords.clear();
+        processedRecords.clear();
+        Schema avroSchema = new Schema.Parser().parse(configSchema.getRawSchema());
+        rootSchemaName = avroSchema.getFullName();
+        Schema resultSchema = convert(avroSchema);
+        return strategy.createSchema(strategy.onSchemaProcessed(resultSchema, addressableRecords));
     }
 }
