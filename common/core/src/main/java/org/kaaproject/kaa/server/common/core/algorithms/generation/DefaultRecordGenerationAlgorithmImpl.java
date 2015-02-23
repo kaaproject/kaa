@@ -132,20 +132,20 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
             return null;
         }
 
-        Schema schemaType = schemaNode;
-        if (schemaType.getType().equals(Type.UNION)) {
-            schemaType = schemaType.getTypes().get(0);
+        Schema schemaToProcess = schemaNode;
+        if (schemaToProcess.getType().equals(Type.UNION)) {
+            schemaToProcess = schemaToProcess.getTypes().get(0);
         }
-        switch (schemaType.getType()) {
+        switch (schemaToProcess.getType()) {
         case ARRAY:
             // if this an array type then return empty array instance
-            return processArray(schemaType);
+            return processArray(schemaToProcess);
         case RECORD:
-            return processRecord(schemaType);
+            return processRecord(schemaToProcess);
         case FIXED:
-            return processFixed(schemaType);
+            return processFixed(schemaToProcess);
         case ENUM:
-            return processEnum(schemaType);
+            return processEnum(schemaToProcess);
         case BYTES:
             ByteBuffer byteBuffer = ByteBuffer.allocate(byDefault.size());
             byteBuffer.put((byte) 0);
