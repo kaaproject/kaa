@@ -467,6 +467,10 @@ public class TestDynamicLoadManagerIT {
     }
 
     private BootstrapNodeInfo getBootstrapNodeInfo(ConnectionInfo bsConnectionInfo) {
-        return new BootstrapNodeInfo(bsConnectionInfo, new ArrayList<TransportMetaData>());
+        BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
+        nodeInfo.setConnectionInfo(bsConnectionInfo);
+        nodeInfo.setTimeStarted(System.currentTimeMillis());
+        nodeInfo.setTransports(new ArrayList<TransportMetaData>());
+        return nodeInfo;
     }
 }

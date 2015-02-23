@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.zk;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import java.io.UnsupportedEncodingException;
@@ -90,6 +91,41 @@ public class BootstrapNodeIT {
         }
     }
 
+    @Test
+    public void outdatedRemovalTest() throws Exception {
+        Timing timing = new Timing();
+        TestingCluster cluster = new TestingCluster(3);
+        cluster.start();
+        try {
+            ControlNodeInfo controlNodeInfo = buildControlNodeInfo();
+            Long removeTime = System.currentTimeMillis();
+            BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
+
+            ControlNode controlNode = new ControlNode(controlNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
+            BootstrapNodeListener mockListener = mock(BootstrapNodeListener.class);
+            controlNode.addListener(mockListener);
+            controlNode.start();
+
+            BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
+            bootstrapNode.start();
+            timing.sleepABit();
+
+            verify(mockListener).onNodeAdded(bootstrapNodeInfo);
+
+            // pretend receiving delete before add
+            bootstrapNodeInfo.setTimeStarted(removeTime);
+
+            bootstrapNode.close();
+            timing.sleepABit();
+
+            verify(mockListener, never()).onNodeRemoved(bootstrapNodeInfo);
+            bootstrapNode.close();
+            controlNode.close();
+        } finally {
+            cluster.close();
+        }
+    }
+
     private RetryPolicy buildDefaultRetryPolicy() {
         return new ExponentialBackoffRetry(100, 1);
     }
@@ -98,7 +134,7 @@ public class BootstrapNodeIT {
         BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
         ByteBuffer testKeyData = ByteBuffer.wrap(new byte[] { 10, 11, 12, 45, 34, 23, 67, 89, 66, 12 });
         nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, testKeyData));
-
+        nodeInfo.setTimeStarted(System.currentTimeMillis());
         nodeInfo.setTransports(getHttpAndTcpTransportMD());
 
         return nodeInfo;
