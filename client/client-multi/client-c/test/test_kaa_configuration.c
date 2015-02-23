@@ -16,10 +16,12 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 #include "kaa_configuration_manager.h"
 
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
 
+#include "platform/sock.h"
 #include "platform/ext_sha.h"
 #include "platform/ext_configuration_persistence.h"
 #include "platform/ext_configuration_receiver.h"

@@ -16,11 +16,15 @@
 
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
 
-#include "kaa_configuration_manager.h"
 
 #include <stdbool.h>
-
+#include <inttypes.h>
+#include <stdint.h>
+#include <sys/types.h>
 #include "platform/stdio.h"
+#include "platform/sock.h"
+#include "kaa_configuration_manager.h"
+
 #include "platform/ext_sha.h"
 #include "platform/ext_configuration_persistence.h"
 #include "collections/kaa_list.h"
