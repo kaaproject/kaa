@@ -25,48 +25,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.avro.JsonProperties;
 import org.apache.avro.Schema;
+import org.apache.avro.Schema.Type;
 import org.apache.avro.generic.GenericData;
+import org.codehaus.jackson.JsonNode;
 
 public class CommonUtils {
 
-    /**
-     * Find raw schema by name.
-     *
-     * @param root the root record
-     * @param schemaName the schema name
-     * @param schemaNamespace the schema namespace
-     * @return the map
-     */
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public static Map<String, Object> findRawSchemaByName(Map<String, Object> root, String schemaName, String schemaNamespace) {
-        String name = (String) root.get(CommonConstants.NAME_FIELD);
-        String namespace = (String) root.get(CommonConstants.NAMESPACE_FIELD);
-        // looking for node that has child nodes 'name' and 'namespace' with corresponding values
-        if (schemaName.equals(name) && schemaNamespace.equals(namespace)) {
-            return root;
-        } else {
-            for (Map.Entry<String, Object> entry : root.entrySet()) {
-                if (entry.getValue() instanceof List) {
-                    List items = (List) entry.getValue();
-                    for (Object item : items) {
-                        if (item instanceof Map) {
-                            Map<String, Object> foundSchema = findRawSchemaByName((Map<String, Object>) item, schemaName, schemaNamespace);
-                            if (foundSchema != null) {
-                                return foundSchema;
-                            }
-                        }
-                    }
-                } else if (entry.getValue() instanceof Map) {
-                    Map<String, Object> foundSchema = findRawSchemaByName((Map<String, Object>) entry.getValue(), schemaName, schemaNamespace);
-                    if (foundSchema != null) {
-                        return foundSchema;
-                    }
-                }
-            }
-        }
-        return null;
-    }
 
     /**
      * Generates UUID bytes.
@@ -86,6 +52,42 @@ public class CommonUtils {
     public static GenericData.Fixed generateUuidObject() {
         Schema avroSchema = Schema.createFixed(UUID_TYPE, null, KAA_NAMESPACE, UUID_SIZE);
         return new GenericData.Fixed(avroSchema, generateUUIDBytes());
+    }
+
+    public static Schema getSchemaByType(Schema schema, Schema.Type type) {
+        if (schema.getType().equals(type)) {
+            return schema;
+        }
+        if (schema.getType().equals(Type.UNION)) {
+            List<Schema> types = schema.getTypes();
+            if (types != null) {
+                for (Schema typeIter : types) {
+                    if (typeIter.getType().equals(type)) {
+                        return typeIter;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static boolean isComplexSchema(Schema schema) {
+        switch (schema.getType()) {
+        case RECORD:
+        case ARRAY:
+        case MAP:
+        case FIXED:
+        case ENUM:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    public static void copyJsonProperties(JsonProperties src, JsonProperties dst) {
+        for (Map.Entry<String, JsonNode> prop : src.getJsonProps().entrySet()) {
+            dst.addProp(prop.getKey(), prop.getValue());
+        }
     }
 
 }

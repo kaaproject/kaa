@@ -31,14 +31,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.apache.avro.JsonProperties;
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
 import org.apache.avro.Schema.Type;
-import org.codehaus.jackson.JsonNode;
+import org.kaaproject.kaa.server.common.core.algorithms.CommonUtils;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 import org.slf4j.Logger;
@@ -70,12 +68,6 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
 
     public SchemaCreatorImpl(SchemaCreationStrategy<T> strategy) {
         this.strategy = strategy;
-    }
-
-    private static void copyProps(JsonProperties src, JsonProperties dst) {
-        for (Map.Entry<String, JsonNode> prop : src.getJsonProps().entrySet()) {
-            dst.addProp(prop.getKey(), prop.getValue());
-        }
     }
 
     private Schema getUuidType() {
@@ -139,19 +131,6 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
         }
     }
 
-    private static boolean isComplexSchema(Schema schema) {
-        switch (schema.getType()) {
-        case RECORD:
-        case ARRAY:
-        case MAP:
-        case FIXED:
-        case ENUM:
-            return true;
-        default:
-            return false;
-        }
-    }
-
     private Schema processArray(Schema root) throws SchemaCreationException {
         boolean hasAddressableItem = false;
         Schema copySchema = null;
@@ -161,7 +140,7 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
             newItems = new ArrayList<Schema>(items.size() + 1);
             for (Schema itemIter : items) {
                 Schema updatedItem = itemIter;
-                if (isComplexSchema(itemIter)) {
+                if (CommonUtils.isComplexSchema(itemIter)) {
                     updatedItem = convert(itemIter);
                 }
                 newItems.add(updatedItem);
@@ -184,7 +163,7 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
         } else {
             copySchema = Schema.createArray(convert(root.getElementType()));
         }
-        copyProps(root, copySchema);
+        CommonUtils.copyJsonProperties(root, copySchema);
         return copySchema;
     }
 
@@ -204,14 +183,14 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
 
             List<Schema> newUnion = new ArrayList<Schema>();
 
-            if (isComplexSchema(fieldIter.schema())) {
+            if (CommonUtils.isComplexSchema(fieldIter.schema())) {
                 addResetTypeIfArray(fieldIter.schema(), newUnion);
                 newUnion.add(convert(fieldIter.schema()));
             } else if (fieldIter.schema().getType().equals(Type.UNION)) {
                 List<Schema> oldUnion = fieldIter.schema().getTypes();
                 for (Schema unionIter : oldUnion) {
                     Schema newItem = unionIter;
-                    if (isComplexSchema(unionIter)) {
+                    if (CommonUtils.isComplexSchema(unionIter)) {
                         addResetTypeIfArray(unionIter, newUnion);
                         newItem = convert(unionIter);
                     }
@@ -237,7 +216,7 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
             } else {
                 newField = new Field(fieldIter.name(), newUnion.get(0), fieldIter.doc(), fieldIter.defaultValue());
             }
-            copyProps(fieldIter, newField);
+            CommonUtils.copyJsonProperties(fieldIter, newField);
             newFields.add(newField);
         }
         if (addressable) {
@@ -245,7 +224,7 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
             newFields.add(getUuidField());
         }
         Schema copySchema = Schema.createRecord(root.getName(), root.getDoc(), root.getNamespace(), root.isError());
-        copyProps(root, copySchema);
+        CommonUtils.copyJsonProperties(root, copySchema);
         copySchema.setFields(newFields);
         if (addressable) {
             // Adding addressable record's name to the storage
