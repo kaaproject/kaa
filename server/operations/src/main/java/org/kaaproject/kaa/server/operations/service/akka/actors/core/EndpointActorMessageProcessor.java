@@ -17,6 +17,7 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
@@ -47,7 +49,8 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.C
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.TimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicRegistrationRequestMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicUnsubscriptionMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicSubscriptionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage.EventDeliveryStatus;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
@@ -117,10 +120,6 @@ public class EndpointActorMessageProcessor {
     private final Map<UUID, UserVerificationResponseMessage> userAttachResponseMap;
 
     private final int inactivityTimeout;
-
-    private long lastActivityTime;
-
-    private int processedEventSeqNum = Integer.MIN_VALUE;
 
     protected EndpointActorMessageProcessor(AkkaContext context, String appToken, EndpointObjectHash key, String actorKey) {
         super();
@@ -200,12 +199,24 @@ public class EndpointActorMessageProcessor {
     }
 
     public void processNotification(ActorContext context, NotificationMessage message) {
-        LOG.debug("[{}][{}] Processing notification {}", endpointKey, actorKey, message);
-        for (ChannelMetaData channel : state.getChannelsByType(TransportType.NOTIFICATION)) {
+        LOG.debug("[{}][{}] Processing notification message {}", endpointKey, actorKey, message);
+
+        List<ChannelMetaData> channels = state.getChannelsByType(TransportType.NOTIFICATION);
+        if(channels.isEmpty()){
+            LOG.debug("[{}][{}] No channels to process notification message", endpointKey, actorKey);
+            return;
+        }
+        String unicastNotificationId = message.getUnicastNotificationId();
+        List<NotificationDto> validNfs = state.filter(message.getNotifications());
+        if(unicastNotificationId == null && validNfs.isEmpty()){
+            LOG.debug("[{}][{}] message is no longer valid for current endpoint", endpointKey, actorKey);
+            return;
+        }
+        for (ChannelMetaData channel : channels) {
             LOG.debug("[{}][{}] processing channel {} and response {}", endpointKey, actorKey, channel, channel.getResponseHolder()
                     .getResponse());
             ServerSync syncResponse = operationsService.updateSyncResponse(channel.getResponseHolder().getResponse(),
-                    message.getNotifications(), message.getUnicastNotificationId());
+                    validNfs, unicastNotificationId);
             if (syncResponse != null) {
                 LOG.debug("[{}][{}] processed channel {} and response {}", endpointKey, actorKey, channel, syncResponse);
                 sendReply(context, channel.getRequestMessage(), syncResponse);
@@ -230,7 +241,7 @@ public class EndpointActorMessageProcessor {
     }
 
     public void processActorTimeoutMessage(ActorContext context, ActorTimeoutMessage message) {
-        if (lastActivityTime <= message.getLastActivityTime()) {
+        if (state.getLastActivityTime() <= message.getLastActivityTime()) {
             LOG.debug("[{}][{}] Request stop of endpoint actor due to inactivity timeout", endpointKey, actorKey);
             tellParent(context, new EndpointStopMessage(key, actorKey, context.self()));
         }
@@ -238,22 +249,12 @@ public class EndpointActorMessageProcessor {
 
     private void sync(ActorContext context, SyncRequestMessage requestMessage) {
         try {
-            long start = lastActivityTime = System.currentTimeMillis();
+            state.setLastActivityTime(System.currentTimeMillis());
+            long start = state.getLastActivityTime();
 
             ChannelMetaData channel = initChannel(context, requestMessage);
 
-            ClientSync request;
-            if (channel.getType().isAsync()) {
-                if (channel.isFirstRequest()) {
-                    request = channel.getRequestMessage().getRequest();
-                } else {
-                    LOG.debug("[{}][{}] Updating request for async channel {}", endpointKey, actorKey, channel);
-                    request = channel.mergeRequest(requestMessage);
-                    LOG.trace("[{}][{}] Updated request for async channel {} : {}", endpointKey, actorKey, channel, request);
-                }
-            } else {
-                request = channel.getRequestMessage().getRequest();
-            }
+            ClientSync request = buildRequestForChannel(requestMessage, channel);
 
             ChannelType channelType = channel.getType();
             LOG.debug("[{}][{}] Processing sync request {} from {} channel [{}]", endpointKey, actorKey, request, channelType,
@@ -277,14 +278,14 @@ public class EndpointActorMessageProcessor {
             if (channelType.isAsync()) {
                 LOG.debug("[{}][{}] Adding async request from channel [{}] to map ", endpointKey, actorKey, requestMessage.getChannelUuid());
                 channel.update(responseHolder);
-                subscribeToTopics(context, responseHolder);
+                updateSubscriptionsToTopics(context, responseHolder);
                 sendReply(context, requestMessage, responseHolder.getResponse());
             } else {
                 if (channelType.isLongPoll() && !responseHolder.requireImmediateReply()) {
                     LOG.debug("[{}][{}] Adding long poll request from channel [{}] to map ", endpointKey, actorKey,
                             requestMessage.getChannelUuid());
                     channel.update(responseHolder);
-                    subscribeToTopics(context, responseHolder);
+                    updateSubscriptionsToTopics(context, responseHolder);
                     scheduleTimeoutMessage(context, requestMessage.getChannelUuid(), getDelay(requestMessage, start));
                 } else {
                     sendReply(context, requestMessage, responseHolder.getResponse());
@@ -295,6 +296,22 @@ public class EndpointActorMessageProcessor {
             LOG.error("[{}][{}] processEndpointRequest", endpointKey, actorKey, e);
             sendReply(context, requestMessage, e);
         }
+    }
+
+    private ClientSync buildRequestForChannel(SyncRequestMessage requestMessage, ChannelMetaData channel) {
+        ClientSync request;
+        if (channel.getType().isAsync()) {
+            if (channel.isFirstRequest()) {
+                request = channel.getRequestMessage().getRequest();
+            } else {
+                LOG.debug("[{}][{}] Updating request for async channel {}", endpointKey, actorKey, channel);
+                request = channel.mergeRequest(requestMessage);
+                LOG.trace("[{}][{}] Updated request for async channel {} : {}", endpointKey, actorKey, channel, request);
+            }
+        } else {
+            request = channel.getRequestMessage().getRequest();
+        }
+        return request;
     }
 
     private void processUserAttachRequest(ActorContext context, ClientSync syncRequest, SyncResponseHolder responseHolder) {
@@ -343,7 +360,7 @@ public class EndpointActorMessageProcessor {
                 response = new EventServerSync();
                 responseHolder.getResponse().setEventSync(response);
             }
-            response.setEventSequenceNumberResponse(new EventSequenceNumberResponse(Math.max(processedEventSeqNum, 0)));
+            response.setEventSequenceNumberResponse(new EventSequenceNumberResponse(Math.max(state.getEventSeqNumber(), 0)));
         }
     }
 
@@ -451,7 +468,7 @@ public class EndpointActorMessageProcessor {
         if (responseHolder.getResponse().getUserSync() != null) {
             List<EndpointAttachResponse> attachResponses = responseHolder.getResponse().getUserSync().getEndpointAttachResponses();
             if (attachResponses != null && !attachResponses.isEmpty()) {
-                resetEventSeqNumber();
+                state.resetEventSeqNumber();
                 for (EndpointAttachResponse response : attachResponses) {
                     if (response.getResult() != SyncStatus.SUCCESS) {
                         LOG.debug("[{}][{}] Skipped unsuccessful attach response [{}]", endpointKey, actorKey, response.getRequestId());
@@ -467,7 +484,7 @@ public class EndpointActorMessageProcessor {
             List<EndpointDetachRequest> detachRequests = request.getUserSync() == null ? null : request.getUserSync()
                     .getEndpointDetachRequests();
             if (detachRequests != null && !detachRequests.isEmpty()) {
-                resetEventSeqNumber();
+                state.resetEventSeqNumber();
                 for (EndpointDetachRequest detachRequest : detachRequests) {
                     for (EndpointDetachResponse detachResponse : responseHolder.getResponse().getUserSync().getEndpointDetachResponses()) {
                         if (detachRequest.getRequestId() == detachResponse.getRequestId()) {
@@ -488,13 +505,9 @@ public class EndpointActorMessageProcessor {
         }
     }
 
-    private void resetEventSeqNumber() {
-        processedEventSeqNum = Integer.MIN_VALUE;
-    }
-
     protected void scheduleActorTimeout(ActorContext context) {
         if (state.isNoChannels()) {
-            scheduleTimeoutMessage(context, new ActorTimeoutMessage(lastActivityTime), inactivityTimeout);
+            scheduleTimeoutMessage(context, new ActorTimeoutMessage(state.getLastActivityTime()), inactivityTimeout);
         }
     }
 
@@ -504,12 +517,32 @@ public class EndpointActorMessageProcessor {
      * @param response
      *            the response
      */
-    private void subscribeToTopics(ActorContext context, SyncResponseHolder response) {
-        for (Entry<String, Integer> entry : response.getSubscriptionStates().entrySet()) {
-            TopicRegistrationRequestMessage topicSubscriptionMessage = new TopicRegistrationRequestMessage(entry.getKey(),
-                    entry.getValue(), response.getSystemNfVersion(), response.getUserNfVersion(), appToken, key, context.self());
-            context.parent().tell(topicSubscriptionMessage, context.self());
+    private void updateSubscriptionsToTopics(ActorContext context, SyncResponseHolder response) {
+        Map<String, Integer> newStates = response.getSubscriptionStates();
+        if(newStates == null){
+            return;
         }
+        Map<String, Integer> currentStates = state.getSubscriptionStates();
+        // detect and remove unsubscribed topics;
+        Iterator<String> currentSubscriptionsIterator = currentStates.keySet().iterator();
+        while (currentSubscriptionsIterator.hasNext()) {
+            String subscribedTopic = currentSubscriptionsIterator.next();
+            if (!newStates.containsKey(subscribedTopic)) {
+                currentSubscriptionsIterator.remove();
+                TopicUnsubscriptionMessage topicSubscriptionMessage = new TopicUnsubscriptionMessage(subscribedTopic,
+                        appToken, key, context.self());
+                context.parent().tell(topicSubscriptionMessage, context.self());
+            }
+        }
+        // subscribe to new topics;
+        for (Entry<String, Integer> entry : newStates.entrySet()) {
+            if (!currentStates.containsKey(entry.getKey())) {
+                TopicSubscriptionMessage topicSubscriptionMessage = new TopicSubscriptionMessage(entry.getKey(),
+                        entry.getValue(), response.getSystemNfVersion(), response.getUserNfVersion(), appToken, key, context.self());
+                context.parent().tell(topicSubscriptionMessage, context.self());
+            }
+        }
+        state.setSubscriptionStates(newStates);
     }
 
     private void scheduleTimeoutMessage(ActorContext context, UUID requestId, long delay) {
@@ -565,20 +598,20 @@ public class EndpointActorMessageProcessor {
     protected void sendEventsIfPresent(ActorContext context, EventClientSync request) {
         List<Event> events = request.getEvents();
         if (state.getUserId() != null && events != null && !events.isEmpty()) {
-            LOG.debug("[{}][{}] Processing events {} with seq number > {}", endpointKey, actorKey, events, processedEventSeqNum);
+            LOG.debug("[{}][{}] Processing events {} with seq number > {}", endpointKey, actorKey, events, state.getEventSeqNumber());
             List<Event> eventsToSend = new ArrayList<>(events.size());
-            int maxSentEventSeqNum = processedEventSeqNum;
+            int maxSentEventSeqNum = state.getEventSeqNumber();
             for (Event event : events) {
-                if (event.getSeqNum() > processedEventSeqNum) {
+                if (event.getSeqNum() > state.getEventSeqNumber()) {
                     event.setSource(endpointKey);
                     eventsToSend.add(event);
                     maxSentEventSeqNum = Math.max(event.getSeqNum(), maxSentEventSeqNum);
                 } else {
                     LOG.debug("[{}][{}] Ignoring duplicate/old event {} due to seq number < {}", endpointKey, actorKey, events,
-                            processedEventSeqNum);
+                            state.getEventSeqNumber());
                 }
             }
-            processedEventSeqNum = maxSentEventSeqNum;
+            state.setEventSeqNumber(maxSentEventSeqNum);
             if (!eventsToSend.isEmpty()) {
                 EndpointEventSendMessage message = new EndpointEventSendMessage(state.getUserId(), eventsToSend, key, appToken,
                         context.self());

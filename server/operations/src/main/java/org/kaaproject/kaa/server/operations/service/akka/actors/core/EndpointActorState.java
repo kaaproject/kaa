@@ -15,25 +15,40 @@
  */
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.ChannelMap.ChannelMetaData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EndpointActorState {
+    private static final Logger LOG = LoggerFactory.getLogger(EndpointActorState.class);
 
     /** The map of active communication channels. */
     private final ChannelMap channelMap;
+    private final String endpointKey;
+    private final String actorKey;
     private EndpointProfileDto endpointProfile;
     private String userId;
     private boolean userRegistrationRequestSent;
+    private long lastActivityTime;
+    private int processedEventSeqNum = Integer.MIN_VALUE;
+    private Map<String, Integer> subscriptionStates;
 
     public EndpointActorState(String endpointKey, String actorKey) {
+        this.endpointKey = endpointKey;
+        this.actorKey = actorKey;
         this.channelMap = new ChannelMap(endpointKey, actorKey);
+        this.subscriptionStates = new HashMap<String, Integer>();
     }
 
     public void addChannel(ChannelMetaData channel) {
@@ -103,22 +118,59 @@ public class EndpointActorState {
     }
 
     boolean isValidForEvents() {
-        if (endpointProfile != null) {
-            return endpointProfile.isValidForEvents();
-        } else {
-            return false;
-        }
+        return endpointProfile != null && endpointProfile.getEndpointUserId() != null && !endpointProfile.getEndpointUserId().isEmpty()
+                && endpointProfile.getEcfVersionStates() != null && !endpointProfile.getEcfVersionStates().isEmpty();
     }
 
     boolean userIdMismatch() {
         return userId != null && !userId.equals(getProfileUserId());
     }
 
-    public boolean isUserRegistrationPending() {
+    boolean isUserRegistrationPending() {
         return userRegistrationRequestSent;
     }
 
-    public void setUserRegistrationPending(boolean userRegistrationRequestSent) {
+    void setUserRegistrationPending(boolean userRegistrationRequestSent) {
         this.userRegistrationRequestSent = userRegistrationRequestSent;
+    }
+
+    long getLastActivityTime() {
+        return lastActivityTime;
+    }
+
+    void setLastActivityTime(long time) {
+        this.lastActivityTime = time;
+    }
+
+    int getEventSeqNumber() {
+        return processedEventSeqNum;
+    }
+
+    void resetEventSeqNumber() {
+        processedEventSeqNum = Integer.MIN_VALUE;
+    }
+
+    void setEventSeqNumber(int maxSentEventSeqNum) {
+        processedEventSeqNum = maxSentEventSeqNum;
+    }
+
+    public void setSubscriptionStates(Map<String, Integer> subscriptionStates) {
+        this.subscriptionStates = new HashMap<String, Integer>(subscriptionStates);
+    }
+
+    public Map<String, Integer> getSubscriptionStates() {
+        return subscriptionStates;
+    }
+
+    public List<NotificationDto> filter(List<NotificationDto> notifications) {
+        List<NotificationDto> list = new ArrayList<NotificationDto>(notifications.size());
+        for(NotificationDto nf : notifications){
+            if(subscriptionStates.containsKey(nf.getTopicId())) {
+                list.add(nf);
+            }else{
+                LOG.trace("[{}][{}] Notification {} is no longer valid due to subscription state", endpointKey, actorKey, nf);
+            }
+        }
+        return list;
     }
 }

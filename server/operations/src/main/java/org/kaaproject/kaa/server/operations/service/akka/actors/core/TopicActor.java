@@ -33,7 +33,8 @@ import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicRegistrationRequestMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicUnsubscriptionMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicSubscriptionMessage;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,8 +117,10 @@ public class TopicActor extends UntypedActor {
     public void onReceive(Object message) throws Exception {
         LOG.debug("Received: {}", message);
         if (message instanceof EndpointAwareMessage) {
-            if (message instanceof TopicRegistrationRequestMessage) {
-                processEndpointRegistration((TopicRegistrationRequestMessage) message);
+            if (message instanceof TopicSubscriptionMessage) {
+                processEndpointRegistration((TopicSubscriptionMessage) message);
+            }else if (message instanceof TopicUnsubscriptionMessage) {
+                processEndpointDeregistration((TopicUnsubscriptionMessage) message);
             }
         } else if (message instanceof Terminated) {
             processTermination((Terminated) message);
@@ -132,14 +135,14 @@ public class TopicActor extends UntypedActor {
      * @param message
      *            the message
      */
-    private void processEndpointRegistration(TopicRegistrationRequestMessage message) {
+    private void processEndpointRegistration(TopicSubscriptionMessage message) {
         ActorRef endpointActor = message.getOriginator();
         Integer seqNum = message.getSeqNumber();
         SortedMap<Integer, NotificationDto> pendingNotificationMap = notificationCache.tailMap(seqNum, false);
         Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
         List<NotificationDto> pendingNotifications = filterMap(pendingNotificationMap, message.getSystemNfSchemaVersion(), message.getUserNfSchemaVersion(), calendar);
         if (!pendingNotifications.isEmpty()) {
-            LOG.debug("Detected new messages during endpoint registration!");
+            LOG.debug("Detected new messages during endpoint subscription!");
             NotificationMessage notificationMessage = NotificationMessage.fromNotifications(pendingNotifications);
             endpointActor.tell(notificationMessage, self());
         } else {
@@ -150,6 +153,16 @@ public class TopicActor extends UntypedActor {
                 LOG.warn("Detected duplication of registration message: {}", message);
             }
             context().watch(endpointActor);
+        }
+    }
+    
+
+    private void processEndpointDeregistration(TopicUnsubscriptionMessage message) {
+        String endpointKey = message.getOriginator().path().name();
+        if(endpointSessions.remove(endpointKey) != null){
+            LOG.debug("Removed subsctioption for endpoint {}", endpointKey);
+        }else{
+            LOG.warn("Failed to remove subscription for endpoint {} from topic", endpointKey);
         }
     }
 

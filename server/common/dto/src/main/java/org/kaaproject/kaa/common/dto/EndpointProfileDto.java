@@ -404,11 +404,4 @@ public class EndpointProfileDto implements HasId, Serializable {
         builder.append("]");
         return builder.toString();
     }
-
-    public boolean isValidForEvents() {
-        return getEndpointUserId() != null && !getEndpointUserId().isEmpty() && getEcfVersionStates() != null
-                && !getEcfVersionStates().isEmpty();
-    }
-
-
 }
