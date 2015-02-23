@@ -31,7 +31,7 @@ import org.apache.avro.Schema.Type;
 import org.apache.avro.generic.GenericData;
 import org.codehaus.jackson.JsonNode;
 
-public class CommonUtils {
+public class AvroUtils {
 
 
     /**

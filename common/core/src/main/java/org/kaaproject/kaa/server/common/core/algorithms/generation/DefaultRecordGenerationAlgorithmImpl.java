@@ -36,7 +36,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
-import org.kaaproject.kaa.server.common.core.algorithms.CommonUtils;
+import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 import org.kaaproject.kaa.server.common.core.configuration.KaaData;
 import org.kaaproject.kaa.server.common.core.configuration.KaaDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
@@ -95,7 +95,7 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
      */
     private Object processType(Schema schemaNode, JsonNode byDefault) throws ConfigurationGenerationException {
         if (byDefault != null && !byDefault.isNull()) {
-            if (byDefault.isArray() && CommonUtils.getSchemaByType(schemaNode, Type.BYTES) != null) {
+            if (byDefault.isArray() && AvroUtils.getSchemaByType(schemaNode, Type.BYTES) != null) {
                 // if this is a 'bytes' type then convert json bytes array to
                 // avro 'bytes' representation or
                 // if this is a named type - look for already processed types
@@ -107,28 +107,28 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
                 byteBuffer.flip();
                 return byteBuffer;
             }
-            if (byDefault.isBoolean() && CommonUtils.getSchemaByType(schemaNode, Type.BOOLEAN) != null) {
+            if (byDefault.isBoolean() && AvroUtils.getSchemaByType(schemaNode, Type.BOOLEAN) != null) {
                 return byDefault.asBoolean();
             }
             if (byDefault.isDouble()) {
-                if (CommonUtils.getSchemaByType(schemaNode, Type.DOUBLE) != null) {
+                if (AvroUtils.getSchemaByType(schemaNode, Type.DOUBLE) != null) {
                     return byDefault.asDouble();
-                } else if (CommonUtils.getSchemaByType(schemaNode, Type.FLOAT) != null) {
+                } else if (AvroUtils.getSchemaByType(schemaNode, Type.FLOAT) != null) {
                     return (float) byDefault.asDouble();
                 }
             }
-            if (byDefault.isInt() && CommonUtils.getSchemaByType(schemaNode, Type.INT) != null) {
+            if (byDefault.isInt() && AvroUtils.getSchemaByType(schemaNode, Type.INT) != null) {
                 return byDefault.asInt();
             }
-            if (byDefault.isLong() && CommonUtils.getSchemaByType(schemaNode, Type.LONG) != null) {
+            if (byDefault.isLong() && AvroUtils.getSchemaByType(schemaNode, Type.LONG) != null) {
                 return byDefault.asLong();
             }
-            if (byDefault.isTextual() && CommonUtils.getSchemaByType(schemaNode, Type.STRING) != null) {
+            if (byDefault.isTextual() && AvroUtils.getSchemaByType(schemaNode, Type.STRING) != null) {
                 return byDefault.asText();
             }
             throw new ConfigurationGenerationException("Default value " + byDefault.toString() + " is not applicable for the field");
         }
-        if (CommonUtils.getSchemaByType(schemaNode, Type.NULL) != null) {
+        if (AvroUtils.getSchemaByType(schemaNode, Type.NULL) != null) {
             return null;
         }
 
@@ -254,7 +254,7 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
     private Object processField(Field fieldDefinition) throws ConfigurationGenerationException {
         // if this a "uuid" type then generate it
         if (UUID_FIELD.equals(fieldDefinition.name())) {
-            return CommonUtils.generateUuidObject();
+            return AvroUtils.generateUuidObject();
         }
 
         return processType(fieldDefinition.schema(), fieldDefinition.getJsonProp(BY_DEFAULT_FIELD));

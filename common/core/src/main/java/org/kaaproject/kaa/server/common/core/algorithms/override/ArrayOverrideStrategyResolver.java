@@ -25,7 +25,7 @@ import java.util.Map;
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
 import org.apache.avro.Schema.Type;
-import org.kaaproject.kaa.server.common.core.algorithms.CommonUtils;
+import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 
 
 /**
@@ -88,7 +88,7 @@ public class ArrayOverrideStrategyResolver {
         List<Field> fields = root.getFields();
         for (Field field : fields) {
             if (arrayFieldName.equals(field.name())) {
-                Schema arraySchema = CommonUtils.getSchemaByType(field.schema(), Type.ARRAY);
+                Schema arraySchema = AvroUtils.getSchemaByType(field.schema(), Type.ARRAY);
                 if (arraySchema != null) {
                     return arraySchema.getProp(FIELD_OVERRIDE_STRATEGY);
                 }

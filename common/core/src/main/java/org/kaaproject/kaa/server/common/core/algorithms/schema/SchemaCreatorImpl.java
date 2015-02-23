@@ -36,7 +36,7 @@ import java.util.Set;
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
 import org.apache.avro.Schema.Type;
-import org.kaaproject.kaa.server.common.core.algorithms.CommonUtils;
+import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 import org.slf4j.Logger;
@@ -140,7 +140,7 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
             newItems = new ArrayList<Schema>(items.size() + 1);
             for (Schema itemIter : items) {
                 Schema updatedItem = itemIter;
-                if (CommonUtils.isComplexSchema(itemIter)) {
+                if (AvroUtils.isComplexSchema(itemIter)) {
                     updatedItem = convert(itemIter);
                 }
                 newItems.add(updatedItem);
@@ -163,7 +163,7 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
         } else {
             copySchema = Schema.createArray(convert(root.getElementType()));
         }
-        CommonUtils.copyJsonProperties(root, copySchema);
+        AvroUtils.copyJsonProperties(root, copySchema);
         return copySchema;
     }
 
@@ -183,14 +183,14 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
 
             List<Schema> newUnion = new ArrayList<Schema>();
 
-            if (CommonUtils.isComplexSchema(fieldIter.schema())) {
+            if (AvroUtils.isComplexSchema(fieldIter.schema())) {
                 addResetTypeIfArray(fieldIter.schema(), newUnion);
                 newUnion.add(convert(fieldIter.schema()));
             } else if (fieldIter.schema().getType().equals(Type.UNION)) {
                 List<Schema> oldUnion = fieldIter.schema().getTypes();
                 for (Schema unionIter : oldUnion) {
                     Schema newItem = unionIter;
-                    if (CommonUtils.isComplexSchema(unionIter)) {
+                    if (AvroUtils.isComplexSchema(unionIter)) {
                         addResetTypeIfArray(unionIter, newUnion);
                         newItem = convert(unionIter);
                     }
@@ -216,7 +216,7 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
             } else {
                 newField = new Field(fieldIter.name(), newUnion.get(0), fieldIter.doc(), fieldIter.defaultValue());
             }
-            CommonUtils.copyJsonProperties(fieldIter, newField);
+            AvroUtils.copyJsonProperties(fieldIter, newField);
             newFields.add(newField);
         }
         if (addressable) {
@@ -224,7 +224,7 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
             newFields.add(getUuidField());
         }
         Schema copySchema = Schema.createRecord(root.getName(), root.getDoc(), root.getNamespace(), root.isError());
-        CommonUtils.copyJsonProperties(root, copySchema);
+        AvroUtils.copyJsonProperties(root, copySchema);
         copySchema.setFields(newFields);
         if (addressable) {
             // Adding addressable record's name to the storage
