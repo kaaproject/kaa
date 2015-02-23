@@ -21,7 +21,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <string.h>
-
+#include "../utilities/kaa_mem.h"
 #include "avro_private.h"
 
 #define MAX_VARINT_BUF_SIZE 10
@@ -81,7 +81,7 @@ static int read_bytes(avro_reader_t reader, char **bytes, int64_t * len)
 	int rval;
 	check_prefix(rval, read_long(reader, len),
 		     "Cannot read bytes length: ");
-	*bytes = (char *) malloc(*len);
+	*bytes = (char *) KAA_MALLOC(*len);
 	if (!*bytes) {
 		return ENOMEM;
 	}
@@ -108,7 +108,7 @@ static int read_string(avro_reader_t reader, char **s, int64_t *len)
 	int rval;
 	check_prefix(rval, read_long(reader, &str_len),
 		     "Cannot read string length: ");
-	*s = (char *) malloc(str_len + 1);
+	*s = (char *) KAA_MALLOC(str_len + 1);
 	if (!*s) {
 		return ENOMEM;
 	}
