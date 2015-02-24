@@ -383,24 +383,30 @@ public class BinaryEncDec implements PlatformEncDec {
 
     private void encode(GrowingByteBuffer buf, ConfigurationServerSync configurationSync) {
         int option = 0;
-        if (configurationSync.getConfSchemaBody() != null) {
-            option &= 0x01;
+        boolean confSchemaPresent = configurationSync.getConfSchemaBody() != null;
+        boolean confBodyPresent = configurationSync.getConfDeltaBody() != null;
+        if (confSchemaPresent) {
+            option |= 0x01;
         }
-        if (configurationSync.getConfDeltaBody() != null) {
-            option &= 0x02;
+        if (confBodyPresent) {
+            option |= 0x02;
         }
         buildExtensionHeader(buf, CONFIGURATION_EXTENSION_ID, NOTHING, NOTHING, (byte) option, 0);
         int extPosition = buf.position();
 
         buf.putInt(configurationSync.getAppStateSeqNumber());
-        if (configurationSync.getConfSchemaBody() != null) {
+        if (confSchemaPresent) {
             buf.putInt(configurationSync.getConfSchemaBody().array().length);
         }
-        if (configurationSync.getConfDeltaBody() != null) {
+        if (confBodyPresent) {
             buf.putInt(configurationSync.getConfDeltaBody().array().length);
         }
-        buf.put(configurationSync.getConfSchemaBody().array());
-        buf.put(configurationSync.getConfDeltaBody().array());
+        if (confSchemaPresent) {
+            put(buf, configurationSync.getConfSchemaBody().array());
+        }
+        if (confBodyPresent) {
+            put(buf, configurationSync.getConfDeltaBody().array());
+        }
 
         buf.putInt(extPosition - SIZE_OF_INT, buf.position() - extPosition);
     }
@@ -463,8 +469,8 @@ public class BinaryEncDec implements PlatformEncDec {
                 buf.putShort(response.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
                 if (response.getListeners() != null) {
                     buf.putInt(response.getListeners().size());
-                    for (String listner : response.getListeners()) {
-                        buf.put(Base64Util.decode(listner));
+                    for (String listener : response.getListeners()) {
+                        put(buf, Base64Util.decode(listener));
                     }
                 } else {
                     buf.putInt(0);

@@ -49,6 +49,7 @@ import org.atmosphere.interceptor.AtmosphereResourceLifecycleInterceptor;
 import org.atmosphere.interceptor.IdleResourceInterceptor;
 import org.atmosphere.interceptor.SuspendTrackerInterceptor;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.sandbox.demo.projects.Platform;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.sandbox.demo.projects.ProjectsConfig;
@@ -59,7 +60,6 @@ import org.kaaproject.kaa.sandbox.web.shared.dto.ProjectDataKey;
 import org.kaaproject.kaa.sandbox.web.shared.dto.ProjectDataType;
 import org.kaaproject.kaa.sandbox.web.shared.services.SandboxService;
 import org.kaaproject.kaa.sandbox.web.shared.services.SandboxServiceException;
-import org.kaaproject.kaa.server.common.admin.FileData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -204,6 +204,7 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     public void buildProjectData(String uuid, BuildOutputData outputData, String projectId, ProjectDataType dataType) throws SandboxServiceException {
         AtmosphereResource res = null;
         PrintStream outPrint = null;
+        ClientMessageOutputStream outStream = null;
         ByteArrayOutputStream byteOutStream = null;
         if (uuid != null) {
             res = AtmosphereResourceFactory.getDefault().find(uuid);
@@ -212,7 +213,7 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
             outPrint = new PrintStream(byteOutStream);
         }
         try {
-            ClientMessageOutputStream outStream = new ClientMessageOutputStream(res, outPrint);
+            outStream = new ClientMessageOutputStream(res, outPrint);
             Project project = projectsMap.get(projectId);
             if (project != null) {
                 String sdkKeyBase64 = project.getSdkKeyBase64();
@@ -291,6 +292,9 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
             }
             
         } catch (Exception e) {
+            if (outStream != null) {
+                outStream.println("Unexpected error occurred: " + e.getMessage());
+            }
             throw Utils.handleException(e);
         } finally {
             if (res != null) {

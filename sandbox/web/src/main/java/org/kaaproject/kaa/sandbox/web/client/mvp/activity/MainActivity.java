@@ -37,28 +37,24 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
-public class MainActivity extends AbstractActivity implements MainView.Presenter {
+public class MainActivity extends AbstractActivity {
 
     private final ClientFactory clientFactory;
-    private MainPlace place;
     private MainView view;
     
     private List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
     
     public MainActivity(MainPlace place,
             ClientFactory clientFactory) {
-        this.place = place;
         this.clientFactory = clientFactory;
     }
     
     @Override
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
         view = clientFactory.getMainView();
-        view.setPresenter(this);
         bind(eventBus);
         containerWidget.setWidget(view.asWidget());
     }
@@ -69,11 +65,6 @@ public class MainActivity extends AbstractActivity implements MainView.Presenter
           registration.removeHandler();
         }
         registrations.clear();
-    }
-    
-    @Override
-    public void goTo(Place place) {
-        clientFactory.getPlaceController().goTo(place);
     }
 
     private void bind(final EventBus eventBus) {

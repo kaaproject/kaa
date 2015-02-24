@@ -259,6 +259,13 @@
             <classifier>facebook</classifier>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
+            <artifactId>verifier</artifactId>
+            <version>${project.version}</version>
+            <classifier>twitter</classifier>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -546,7 +553,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>../common/dao/src/main/resources/default_profile_schema.json</src>
+                                    <src>../../common/endpoint-shared/src/main/avro/default_profile_schema.avsc</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -555,7 +562,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>../common/dao/src/main/resources/default_configuration_schema.json</src>
+                                    <src>../../common/endpoint-shared/src/main/avro/default_configuration_schema.avsc</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -573,7 +580,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>../common/dao/src/main/resources/default_notification_schema.json</src>
+                                    <src>../../common/endpoint-shared/src/main/avro/default_notification_schema.avsc</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>

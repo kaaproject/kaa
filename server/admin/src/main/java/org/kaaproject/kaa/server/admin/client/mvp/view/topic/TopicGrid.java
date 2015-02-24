@@ -19,11 +19,11 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.topic;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell.ActionListener;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell.ActionValidator;
-import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowAction;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.dom.client.Style.Unit;
@@ -90,7 +90,7 @@ public class TopicGrid extends AbstractKaaGrid<TopicDto, String> {
             float result = 0;
             if (!embedded && (sendNotificationColumn == null || table.getColumnIndex(sendNotificationColumn) == -1)) {
                 Header<SafeHtml> sendNotificationHeader = new SafeHtmlHeader(
-                        SafeHtmlUtils.fromSafeConstant(Utils.constants.send_notification()));
+                        SafeHtmlUtils.fromSafeConstant(Utils.constants.sendNotification()));
 
                 sendNotificationColumn = constructSendNotificationColumn("");
                 table.addColumn(sendNotificationColumn, sendNotificationHeader);
@@ -160,7 +160,7 @@ public class TopicGrid extends AbstractKaaGrid<TopicDto, String> {
     }
 
     private void sendNotification(TopicDto value) {
-        RowActionEvent<String> rowSendNotificationEvent = new RowActionEvent<>(value.getId(), RowAction.SEND_NOTIFICATION);
+        RowActionEvent<String> rowSendNotificationEvent = new RowActionEvent<>(value.getId(), KaaRowAction.SEND_NOTIFICATION);
         fireEvent(rowSendNotificationEvent);
     }
 

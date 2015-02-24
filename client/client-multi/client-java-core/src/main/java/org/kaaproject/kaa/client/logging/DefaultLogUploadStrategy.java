@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.client.logging;
 
+import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,24 +26,77 @@ import org.slf4j.LoggerFactory;
 public class DefaultLogUploadStrategy implements LogUploadStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLogUploadStrategy.class);
 
-    public DefaultLogUploadStrategy() {
+    private static final int DEFAULT_UPLOAD_TIMEOUT = 2 * 60;
+    private static final int DEFAULT_RETRY_PERIOD = 5 * 60;
+    private static final int DEFAULT_UPLOAD_VOLUME_THRESHOLD = 8 * 1024;
+    private static final int DEFAULT_UPLOAD_COUNT_THRESHOLD = 64;
+    private static final int DEFAULT_BATCH_SIZE = 8 * 1024;
+
+    private int timeout = DEFAULT_UPLOAD_TIMEOUT;
+    private int retryPeriod = DEFAULT_RETRY_PERIOD;
+    private int volumeThreshold = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
+    private int countThreshold = DEFAULT_UPLOAD_COUNT_THRESHOLD;
+    private int batch = DEFAULT_BATCH_SIZE;
+
+    @Override
+    public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
+        LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
+        if (status.getConsumedVolume() >= volumeThreshold) {
+            LOG.info("Need to upload logs - current size: {}, max: {}", status.getConsumedVolume(), volumeThreshold);
+            decision = LogUploadStrategyDecision.UPLOAD;
+        }else if (status.getRecordCount() >= countThreshold) {
+            LOG.info("Need to upload logs - current size: {}, max: {}", status.getRecordCount(), countThreshold);
+            decision = LogUploadStrategyDecision.UPLOAD;
+        }
+        return decision;
+    }
+    
+    @Override
+    public long getBatchSize() {
+        return batch;
     }
 
     @Override
-    public LogUploadStrategyDecision isUploadNeeded(LogUploadConfiguration configuration, LogStorageStatus status) {
-        LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
-        long consumedVolume = status.getConsumedVolume();
+    public int getTimeout() {
+        return timeout;
+    }
 
-        if (consumedVolume >= configuration.getMaximumAllowedVolume()) {
-            LOG.info("Need to clean up log storage - current size: {}, max: {}"
-                    , consumedVolume, configuration.getMaximumAllowedVolume());
-            decision = LogUploadStrategyDecision.CLEANUP;
-        } else if (consumedVolume >= configuration.getVolumeThreshold()) {
-            LOG.info("Need to upload logs - current size: {}, max: {}"
-                    , consumedVolume, configuration.getMaximumAllowedVolume());
-            decision = LogUploadStrategyDecision.UPLOAD;
+    @Override
+    public void onTimeout(LogFailoverCommand controller) {
+        controller.switchAccessPoint();
+    }
+
+    @Override
+    public void onFailure(LogFailoverCommand controller, LogDeliveryErrorCode code) {
+        switch (code) {
+        case NO_APPENDERS_CONFIGURED:
+        case APPENDER_INTERNAL_ERROR:
+        case REMOTE_CONNECTION_ERROR:
+        case REMOTE_INTERNAL_ERROR:
+            controller.retryLogUpload(retryPeriod);
+            break;
+        default:
+            break;
         }
+    }
 
-        return decision;
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
+
+    public void setRetryPeriod(int retryPeriod) {
+        this.retryPeriod = retryPeriod;
+    }
+
+    public void setVolumeThreshold(int volumeThreshold) {
+        this.volumeThreshold = volumeThreshold;
+    }
+
+    public void setCountThreshold(int countThreshold) {
+        this.countThreshold = countThreshold;
+    }
+
+    public void setBatch(int batch) {
+        this.batch = batch;
     }
 }

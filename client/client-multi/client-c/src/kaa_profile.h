@@ -30,6 +30,7 @@ extern "C" {
 
 # include <stdbool.h>
 # include "kaa_error.h"
+# include "kaa_common.h"
 # include "gen/kaa_profile_gen.h"
 
 
@@ -44,10 +45,10 @@ typedef kaa_profile_basic_endpoint_profile_test_t kaa_profile_t;
 /**
  * Private profile manager data structure
  */
-#ifndef KAA_PROFILE_MANAGER_T
+# ifndef KAA_PROFILE_MANAGER_T
 # define KAA_PROFILE_MANAGER_T
     typedef struct kaa_profile_manager_t    kaa_profile_manager_t;
-#endif
+# endif
 
 
 
@@ -65,6 +66,7 @@ typedef kaa_profile_basic_endpoint_profile_test_t kaa_profile_t;
 kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_profile_t *profile);
 
 
+
 /**
  * @brief Updates user's access token.
  *
@@ -74,6 +76,20 @@ kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_
  * @return      Error code.
  */
 kaa_error_t kaa_profile_manager_set_endpoint_access_token(kaa_profile_manager_t *self, const char *token);
+
+
+
+/**
+ * @brief Retrieves the endpoint ID.
+ *
+ * @param[in]  self           Profile manager instance.
+ * @param[out] result_id      The buffer of size @link KAA_ENDPOINT_ID_LENGTH @endlink where the result will be stored.
+ *
+ * @return      Error code.
+ */
+kaa_error_t kaa_profile_manager_get_endpoint_id(kaa_profile_manager_t *self, kaa_endpoint_id_p result_id);
+
+
 
 # ifdef __cplusplus
 }      /* extern "C" */

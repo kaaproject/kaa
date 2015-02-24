@@ -265,6 +265,7 @@ public class DefaultBootstrapInitializationService implements BootstrapInitializ
                     thriftPort);
             nodeInfo.setConnectionInfo(new ConnectionInfo(thriftHost, thriftPort, keyData));
             nodeInfo.setTransports(new ArrayList<TransportMetaData>());
+            nodeInfo.setTimeStarted(System.currentTimeMillis());
             bootstrapNode = new BootstrapNode(nodeInfo, zkHostPortList, new RetryUntilElapsed(zkMaxRetryTime, zkSleepTime));
             if (bootstrapNode != null) {
                 bootstrapNode.start();

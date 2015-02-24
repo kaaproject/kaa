@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
@@ -61,13 +62,13 @@ public class LogAppenderActivity extends AbstractPluginActivity<LogAppenderDto, 
     @Override
     protected void onEntityRetrieved() {
         super.onEntityRetrieved();
-        KaaAdmin.getDataSource().loadLogSchemasVersion(applicationId, new AsyncCallback<List<SchemaDto>>() {
+        KaaAdmin.getDataSource().loadLogSchemasVersion(applicationId, new BusyAsyncCallback<List<SchemaDto>>() {
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailureImpl(Throwable caught) {
                 Utils.handleException(caught, detailsView);
             }
             @Override
-            public void onSuccess(List<SchemaDto> result) {
+            public void onSuccessImpl(List<SchemaDto> result) {
                 onSchemaVersionsRetrieved(result);
             }
         });

@@ -103,7 +103,7 @@
  * more reliable storage, simply set your own implementation for interested
  * component ({@link org.kaaproject.kaa.client.logging.LogCollector#setStorage(LogStorage)},
  * {@link org.kaaproject.kaa.client.logging.LogCollector#setStorageStatus(LogStorageStatus)},
- * {@link org.kaaproject.kaa.client.logging.LogCollector#setUploadStrategy(LogUploadStrategy)},
+ * {@link org.kaaproject.kaa.client.logging.LogCollector#setStrategy(LogUploadStrategy)},
  * {@link org.kaaproject.kaa.client.logging.LogCollector#setConfiguration(LogUploadConfiguration)}).</p>
  */
 package org.kaaproject.kaa.client.logging;

@@ -20,6 +20,10 @@ set(KAA_SOURCE_FILES
         ${KAA_SOURCE_FILES}
         src/platform-impl/posix/sha.c
         src/platform-impl/posix/logger.c
+        src/platform-impl/posix/posix_file_utils.c
+        src/platform-impl/posix/posix_key_utils.c
+        src/platform-impl/posix/posix_status.c
+        src/platform-impl/posix/posix_configuration_persistence.c
         src/platform-impl/ext_log_storage_memory.c
         src/platform-impl/ext_log_upload_strategy_by_volume.c
     )

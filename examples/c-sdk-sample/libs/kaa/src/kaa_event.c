@@ -1142,25 +1142,18 @@ typedef struct {
     char      **supported_incoming_fqns;
 } event_class_family_t;
 
-static const char *TestEventFamilyFQNS[8] = {
-        "org.kaaproject.kaa.example.audio.PlayCommand",
-        "org.kaaproject.kaa.example.audio.RewindCommand",
-        "org.kaaproject.kaa.example.audio.PauseCommand",
-        "org.kaaproject.kaa.example.audio.StopCommand",
-        "org.kaaproject.kaa.example.audio.PlaybackStatus",
-        "org.kaaproject.kaa.example.audio.BatteryChargingStatus",
-        "org.kaaproject.kaa.example.audio.BatteryStatus",
-        "org.kaaproject.kaa.example.audio.StatusEvent"
-};
+static const char * DeviceEventClassFamilyFQNS[2] = {
+                                                    "org.kaaproject.kaa.demo.smarthouse.device.DeviceInfoRequest",
+                                                    "org.kaaproject.kaa.demo.smarthouse.device.DeviceInfoResponse"};
 
 # define SUPPORTED_EVENT_CLASS_FAMILIES_SIZE 1
 
 static const event_class_family_t SUPPORTED_EVENT_CLASS_FAMILIES[SUPPORTED_EVENT_CLASS_FAMILIES_SIZE] =
 {
     {
-        /* .ecf_name = */                       "TestEventFamily",
-        /* .supported_incoming_fqns_count = */  8,
-        /* .supported_incoming_fqns = */        (char **)TestEventFamilyFQNS
+        /* .ecf_name = */                       "DeviceEventClassFamily",
+        /* .supported_incoming_fqns_count = */  2,
+        /* .supported_incoming_fqns = */        (char **)DeviceEventClassFamilyFQNS
     }
 };
 

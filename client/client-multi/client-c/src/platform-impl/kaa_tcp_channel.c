@@ -1067,6 +1067,10 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
+    if (self->channel_state != KAA_TCP_CHANNEL_UNDEFINED) {
+        return KAA_ERR_NONE;
+    }
+
     kaa_error_t error_code = KAA_ERR_NONE;
 
     char *buffer = NULL;

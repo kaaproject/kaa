@@ -56,6 +56,7 @@ public class DefaultConfigurationTransport extends AbstractKaaTransport implemen
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultConfigurationTransport.class);
 
+    private boolean resyncOnly;
     private ConfigurationHashContainer hashContainer;
     private ConfigurationProcessor configProcessor;
     private SchemaProcessor schemaProcessor;
@@ -85,6 +86,7 @@ public class DefaultConfigurationTransport extends AbstractKaaTransport implemen
                 request.setConfigurationHash(ByteBuffer.wrap(hash.getData()));
             }
             request.setAppStateSeqNumber(clientState.getConfigSeqNumber());
+            request.setResyncOnly(resyncOnly);
             return request;
         }
         return null;
@@ -92,10 +94,10 @@ public class DefaultConfigurationTransport extends AbstractKaaTransport implemen
 
     @Override
     public void onConfigurationResponse(ConfigurationSyncResponse response) throws IOException {
-        if (clientState != null && configProcessor != null && schemaProcessor != null) {
+        if (clientState != null && configProcessor != null) {
             clientState.setConfigSeqNumber(response.getAppStateSeqNumber());
             ByteBuffer schemaBody = response.getConfSchemaBody();
-            if (schemaBody != null) {
+            if (schemaBody != null && schemaProcessor != null) {
                 schemaProcessor.loadSchema(schemaBody);
             }
             ByteBuffer confBody = response.getConfDeltaBody();
@@ -112,4 +114,8 @@ public class DefaultConfigurationTransport extends AbstractKaaTransport implemen
         return TransportType.CONFIGURATION;
     }
 
+    @Override
+    public void setResyncOnly(boolean resyncOnly) {
+        this.resyncOnly = resyncOnly;
+    }
 }
