@@ -45,7 +45,6 @@ import akka.actor.Terminated;
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
 
-
 /**
  * The Class TopicActor.
  */
@@ -61,7 +60,7 @@ public class TopicActor extends UntypedActor {
     private final Map<String, ActorInfo> endpointSessions;
 
     /** The notification cache. */
-    private final TreeMap<Integer, NotificationDto> notificationCache; //NOSONAR
+    private final TreeMap<Integer, NotificationDto> notificationCache; // NOSONAR
 
     /**
      * Instantiates a new topic actor.
@@ -99,7 +98,7 @@ public class TopicActor extends UntypedActor {
 
         /*
          * (non-Javadoc)
-         *
+         * 
          * @see akka.japi.Creator#create()
          */
         @Override
@@ -110,7 +109,7 @@ public class TopicActor extends UntypedActor {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see akka.actor.UntypedActor#onReceive(java.lang.Object)
      */
     @Override
@@ -119,7 +118,7 @@ public class TopicActor extends UntypedActor {
         if (message instanceof EndpointAwareMessage) {
             if (message instanceof TopicSubscriptionMessage) {
                 processEndpointRegistration((TopicSubscriptionMessage) message);
-            }else if (message instanceof TopicUnsubscriptionMessage) {
+            } else if (message instanceof TopicUnsubscriptionMessage) {
                 processEndpointDeregistration((TopicUnsubscriptionMessage) message);
             }
         } else if (message instanceof Terminated) {
@@ -140,7 +139,8 @@ public class TopicActor extends UntypedActor {
         Integer seqNum = message.getSeqNumber();
         SortedMap<Integer, NotificationDto> pendingNotificationMap = notificationCache.tailMap(seqNum, false);
         Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-        List<NotificationDto> pendingNotifications = filterMap(pendingNotificationMap, message.getSystemNfSchemaVersion(), message.getUserNfSchemaVersion(), calendar);
+        List<NotificationDto> pendingNotifications = filterMap(pendingNotificationMap, message.getSystemNfSchemaVersion(),
+                message.getUserNfSchemaVersion(), calendar);
         if (!pendingNotifications.isEmpty()) {
             LOG.debug("Detected new messages during endpoint subscription!");
             NotificationMessage notificationMessage = NotificationMessage.fromNotifications(pendingNotifications);
@@ -155,13 +155,12 @@ public class TopicActor extends UntypedActor {
             context().watch(endpointActor);
         }
     }
-    
 
     private void processEndpointDeregistration(TopicUnsubscriptionMessage message) {
         String endpointKey = message.getOriginator().path().name();
-        if(endpointSessions.remove(endpointKey) != null){
+        if (endpointSessions.remove(endpointKey) != null) {
             LOG.debug("Removed subsctioption for endpoint {}", endpointKey);
-        }else{
+        } else {
             LOG.warn("Failed to remove subscription for endpoint {} from topic", endpointKey);
         }
     }
@@ -210,7 +209,7 @@ public class TopicActor extends UntypedActor {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see akka.actor.UntypedActor#preStart()
      */
     @Override
@@ -220,7 +219,7 @@ public class TopicActor extends UntypedActor {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see akka.actor.UntypedActor#postStop()
      */
     @Override
@@ -239,21 +238,23 @@ public class TopicActor extends UntypedActor {
      *            the user nf schema version
      * @return the list
      */
-    public static List<NotificationDto> filterMap(SortedMap<Integer, NotificationDto> pendingNotificationMap, int systemNfSchemaVersion, int userNfSchemaVersion, Calendar calendar) {
+    public static List<NotificationDto> filterMap(SortedMap<Integer, NotificationDto> pendingNotificationMap, int systemNfSchemaVersion,
+            int userNfSchemaVersion, Calendar calendar) {
         List<NotificationDto> pendingNotifications = new ArrayList<>(pendingNotificationMap.size());
 
         long now = calendar.getTimeInMillis();
 
         List<NotificationDto> expiredNotifications = null;
         for (NotificationDto dto : pendingNotificationMap.values()) {
-            LOG.trace("Filtering notification {} using system schema version {} and user schema version {}", dto, systemNfSchemaVersion, userNfSchemaVersion);
+            LOG.trace("Filtering notification {} using system schema version {} and user schema version {}", dto, systemNfSchemaVersion,
+                    userNfSchemaVersion);
             Date date = dto.getExpiredAt();
             if (date != null && date.getTime() > now) {
                 if (isSchemaVersionMatch(dto, systemNfSchemaVersion, userNfSchemaVersion)) {
                     pendingNotifications.add(dto);
                 }
-            }else{
-                if(expiredNotifications == null){
+            } else {
+                if (expiredNotifications == null) {
                     expiredNotifications = new ArrayList<>();
                 }
                 expiredNotifications.add(dto);
@@ -261,7 +262,7 @@ public class TopicActor extends UntypedActor {
             }
         }
 
-        if(expiredNotifications != null){
+        if (expiredNotifications != null) {
             LOG.trace("Removing {} notifications from pendingNotificationMap", expiredNotifications.size());
             pendingNotificationMap.values().removeAll(expiredNotifications);
         }
