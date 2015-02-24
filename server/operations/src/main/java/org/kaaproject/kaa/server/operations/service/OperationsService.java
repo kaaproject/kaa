@@ -20,45 +20,45 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
+import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.security.PublicKeyAware;
-import org.kaaproject.kaa.server.sync.ClientSync;
+import org.kaaproject.kaa.server.sync.ConfigurationClientSync;
+import org.kaaproject.kaa.server.sync.EventClientSync;
+import org.kaaproject.kaa.server.sync.NotificationClientSync;
+import org.kaaproject.kaa.server.sync.ProfileClientSync;
 import org.kaaproject.kaa.server.sync.ServerSync;
-
+import org.kaaproject.kaa.server.sync.UserClientSync;
 
 /**
- * The interface OperationsService is used to define key operations with Endpoint Node.
- * One can register, update and sync endpoint state.
+ * The interface OperationsService is used to define key operations with
+ * Endpoint Node. One can register, update and sync endpoint state.
  *
- * @author ashvayka
+ * @author Andrew Shvayka
  */
-public interface OperationsService extends PublicKeyAware{
+public interface OperationsService extends PublicKeyAware {
 
-    /**
-     * Sync endpoint state.
-     *
-     * @param request the request
-     * @return the sync response
-     * @throws GetDeltaException the get delta exception
-     */
-    SyncResponseHolder sync(ClientSync request) throws GetDeltaException;
+    SyncContext syncProfile(SyncContext context, ProfileClientSync request);
 
-    /**
-     * Sync endpoint state.
-     *
-     * @param request the request
-     * @return the sync response
-     * @throws GetDeltaException the get delta exception
-     */
-    SyncResponseHolder sync(ClientSync request, EndpointProfileDto profile) throws GetDeltaException;
+    SyncContext processEndpointAttachDetachRequests(SyncContext context, UserClientSync request);
+
+    SyncContext processEventListenerRequests(SyncContext context, EventClientSync request);
+
+    SyncContext syncConfiguration(SyncContext context, ConfigurationClientSync request) throws GetDeltaException;
+
+    SyncContext syncNotification(SyncContext context, NotificationClientSync request);
     
+    EndpointProfileDto updateProfile(SyncContext context);
+
     /**
      * Attaches endpoint to user.
      *
-     * @param profile the endpoint profile
-     * @param appToken the application token
-     * @param userExternalId the user external id
+     * @param profile
+     *            the endpoint profile
+     * @param appToken
+     *            the application token
+     * @param userExternalId
+     *            the user external id
      * @return the updated endpoint profile
      */
     EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId);
@@ -66,9 +66,12 @@ public interface OperationsService extends PublicKeyAware{
     /**
      * Update sync response.
      *
-     * @param response the response
-     * @param notifications the notifications
-     * @param unicastNotificationId the unicast notification id
+     * @param response
+     *            the response
+     * @param notifications
+     *            the notifications
+     * @param unicastNotificationId
+     *            the unicast notification id
      * @return the sync response
      */
     ServerSync updateSyncResponse(ServerSync response, List<NotificationDto> notifications, String unicastNotificationId);

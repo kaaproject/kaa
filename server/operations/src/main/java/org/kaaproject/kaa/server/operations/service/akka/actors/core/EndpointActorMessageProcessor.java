@@ -34,7 +34,7 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
-import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
+import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
@@ -154,10 +154,6 @@ public class EndpointActorMessageProcessor {
         tellParent(context, response);
     }
 
-    protected void tellParent(ActorContext context, Object response) {
-        context.parent().tell(response, context.self());
-    }
-
     public void processThriftNotification(ActorContext context, ThriftNotificationMessage message) {
         Set<ChannelMetaData> channels = state.getChannelsByTypes(TransportType.CONFIGURATION, TransportType.NOTIFICATION);
 
@@ -202,21 +198,21 @@ public class EndpointActorMessageProcessor {
         LOG.debug("[{}][{}] Processing notification message {}", endpointKey, actorKey, message);
 
         List<ChannelMetaData> channels = state.getChannelsByType(TransportType.NOTIFICATION);
-        if(channels.isEmpty()){
+        if (channels.isEmpty()) {
             LOG.debug("[{}][{}] No channels to process notification message", endpointKey, actorKey);
             return;
         }
         String unicastNotificationId = message.getUnicastNotificationId();
         List<NotificationDto> validNfs = state.filter(message.getNotifications());
-        if(unicastNotificationId == null && validNfs.isEmpty()){
+        if (unicastNotificationId == null && validNfs.isEmpty()) {
             LOG.debug("[{}][{}] message is no longer valid for current endpoint", endpointKey, actorKey);
             return;
         }
         for (ChannelMetaData channel : channels) {
             LOG.debug("[{}][{}] processing channel {} and response {}", endpointKey, actorKey, channel, channel.getResponseHolder()
                     .getResponse());
-            ServerSync syncResponse = operationsService.updateSyncResponse(channel.getResponseHolder().getResponse(),
-                    validNfs, unicastNotificationId);
+            ServerSync syncResponse = operationsService.updateSyncResponse(channel.getResponseHolder().getResponse(), validNfs,
+                    unicastNotificationId);
             if (syncResponse != null) {
                 LOG.debug("[{}][{}] processed channel {} and response {}", endpointKey, actorKey, channel, syncResponse);
                 sendReply(context, channel.getRequestMessage(), syncResponse);
@@ -230,7 +226,7 @@ public class EndpointActorMessageProcessor {
     public void processRequestTimeoutMessage(ActorContext context, RequestTimeoutMessage message) {
         ChannelMetaData channel = state.getChannelByRequestId(message.getRequestId());
         if (channel != null) {
-            SyncResponseHolder response = channel.getResponseHolder();
+            SyncContext response = channel.getResponseHolder();
             sendReply(context, channel.getRequestMessage(), response.getResponse());
             if (!channel.getType().isAsync()) {
                 state.removeChannel(channel);
@@ -260,7 +256,7 @@ public class EndpointActorMessageProcessor {
             LOG.debug("[{}][{}] Processing sync request {} from {} channel [{}]", endpointKey, actorKey, request, channelType,
                     requestMessage.getChannelUuid());
 
-            SyncResponseHolder responseHolder = operationsService.sync(request, state.getProfile());
+            SyncContext responseHolder = sync(request);
 
             state.setProfile(responseHolder.getEndpointProfile());
 
@@ -268,7 +264,7 @@ public class EndpointActorMessageProcessor {
                 processLogUpload(context, request, responseHolder);
                 processUserAttachRequest(context, request, responseHolder);
                 processEvents(context, request, responseHolder);
-                processUserAttachDetachResults(context, request, responseHolder);
+                notifyAffectedEndpoints(context, request, responseHolder);
             } else {
                 LOG.warn("[{}][{}] Endpoint profile is not set after request processing!", endpointKey, actorKey);
             }
@@ -298,6 +294,45 @@ public class EndpointActorMessageProcessor {
         }
     }
 
+    private SyncContext sync(ClientSync request) throws GetDeltaException {
+        if (!request.isValid()) {
+            LOG.warn("[{}] Request is not valid. It does not contain profile information!", endpointKey);
+            return SyncContext.failure(request.getRequestId());
+        }
+        SyncContext context = new SyncContext(new ServerSync());
+        context.setEndpointProfile(state.getProfile());
+        context.setRequestId(request.getRequestId());
+        context.setStatus(SyncStatus.SUCCESS);
+        context.setEndpointKey(endpointKey);
+        context.setRequestHash(request.hashCode());
+
+        LOG.trace("[{}][{}] processing sync. Request: {}", endpointKey, context.getRequestHash(), request);
+
+        context = operationsService.syncProfile(context, request.getProfileSync());
+        
+        state.setProfile(context.getEndpointProfile());
+
+        if (context.getStatus() != SyncStatus.SUCCESS) {
+            return context;
+        }
+
+        context = operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
+        context = operationsService.processEventListenerRequests(context, request.getEventSync());
+
+        // TODO: do this only if there were some updates missed from control
+        // server or this is a first request for this actor
+        context = operationsService.syncConfiguration(context, request.getConfigurationSync());
+        // TODO: do this only if there were some updates missed from control
+        // server or this is a first request for this actor
+        context = operationsService.syncNotification(context, request.getNotificationSync());
+
+        state.setProfile(operationsService.updateProfile(context));
+
+        LOG.debug("[{}][{}] processing sync. Response is {}", endpointKey, request.hashCode(), context.getResponse());
+
+        return context;
+    }
+
     private ClientSync buildRequestForChannel(SyncRequestMessage requestMessage, ChannelMetaData channel) {
         ClientSync request;
         if (channel.getType().isAsync()) {
@@ -314,7 +349,7 @@ public class EndpointActorMessageProcessor {
         return request;
     }
 
-    private void processUserAttachRequest(ActorContext context, ClientSync syncRequest, SyncResponseHolder responseHolder) {
+    private void processUserAttachRequest(ActorContext context, ClientSync syncRequest, SyncContext responseHolder) {
         UserClientSync request = syncRequest.getUserSync();
         if (request != null && request.getUserAttachRequest() != null) {
             UserAttachRequest aRequest = request.getUserAttachRequest();
@@ -338,7 +373,7 @@ public class EndpointActorMessageProcessor {
         response.getUserSync().setUserAttachResponse(EntityConvertUtils.convert(message));
     }
 
-    private void processEvents(ActorContext context, ClientSync request, SyncResponseHolder responseHolder) {
+    private void processEvents(ActorContext context, ClientSync request, SyncContext responseHolder) {
         if (state.isValidForEvents()) {
             updateUserConnection(context);
             if (request.getEventSync() != null) {
@@ -353,7 +388,7 @@ public class EndpointActorMessageProcessor {
         }
     }
 
-    private void processSeqNumber(EventClientSync request, SyncResponseHolder responseHolder) {
+    private void processSeqNumber(EventClientSync request, SyncContext responseHolder) {
         if (request.isSeqNumberRequest()) {
             EventServerSync response = responseHolder.getResponse().getEventSync();
             if (response == null) {
@@ -380,7 +415,7 @@ public class EndpointActorMessageProcessor {
         }
     }
 
-    private void processLogUpload(ActorContext context, ClientSync syncRequest, SyncResponseHolder responseHolder) {
+    private void processLogUpload(ActorContext context, ClientSync syncRequest, SyncContext responseHolder) {
         LogClientSync request = syncRequest.getLogSync();
         if (request != null) {
             if (request.getLogEntries() != null && request.getLogEntries().size() > 0) {
@@ -464,7 +499,7 @@ public class EndpointActorMessageProcessor {
         scheduleTimeoutMessage(context, message, channel.getKeepAlive() * 1000);
     }
 
-    private void processUserAttachDetachResults(ActorContext context, ClientSync request, SyncResponseHolder responseHolder) {
+    private void notifyAffectedEndpoints(ActorContext context, ClientSync request, SyncContext responseHolder) {
         if (responseHolder.getResponse().getUserSync() != null) {
             List<EndpointAttachResponse> attachResponses = responseHolder.getResponse().getUserSync().getEndpointAttachResponses();
             if (attachResponses != null && !attachResponses.isEmpty()) {
@@ -517,9 +552,9 @@ public class EndpointActorMessageProcessor {
      * @param response
      *            the response
      */
-    private void updateSubscriptionsToTopics(ActorContext context, SyncResponseHolder response) {
+    private void updateSubscriptionsToTopics(ActorContext context, SyncContext response) {
         Map<String, Integer> newStates = response.getSubscriptionStates();
-        if(newStates == null){
+        if (newStates == null) {
             return;
         }
         Map<String, Integer> currentStates = state.getSubscriptionStates();
@@ -529,16 +564,16 @@ public class EndpointActorMessageProcessor {
             String subscribedTopic = currentSubscriptionsIterator.next();
             if (!newStates.containsKey(subscribedTopic)) {
                 currentSubscriptionsIterator.remove();
-                TopicUnsubscriptionMessage topicSubscriptionMessage = new TopicUnsubscriptionMessage(subscribedTopic,
-                        appToken, key, context.self());
+                TopicUnsubscriptionMessage topicSubscriptionMessage = new TopicUnsubscriptionMessage(subscribedTopic, appToken, key,
+                        context.self());
                 context.parent().tell(topicSubscriptionMessage, context.self());
             }
         }
         // subscribe to new topics;
         for (Entry<String, Integer> entry : newStates.entrySet()) {
             if (!currentStates.containsKey(entry.getKey())) {
-                TopicSubscriptionMessage topicSubscriptionMessage = new TopicSubscriptionMessage(entry.getKey(),
-                        entry.getValue(), response.getSystemNfVersion(), response.getUserNfVersion(), appToken, key, context.self());
+                TopicSubscriptionMessage topicSubscriptionMessage = new TopicSubscriptionMessage(entry.getKey(), entry.getValue(),
+                        response.getSystemNfVersion(), response.getUserNfVersion(), appToken, key, context.self());
                 context.parent().tell(topicSubscriptionMessage, context.self());
             }
         }
@@ -556,7 +591,7 @@ public class EndpointActorMessageProcessor {
 
     private void addEventsAndReply(ActorContext context, ChannelMetaData channel, EndpointEventReceiveMessage message) {
         SyncRequestMessage pendingRequest = channel.getRequestMessage();
-        SyncResponseHolder pendingResponse = channel.getResponseHolder();
+        SyncContext pendingResponse = channel.getResponseHolder();
 
         EventServerSync eventResponse = pendingResponse.getResponse().getEventSync();
         if (eventResponse == null) {
@@ -764,5 +799,9 @@ public class EndpointActorMessageProcessor {
             operationsService.attachEndpointToUser(state.getProfile(), appToken, message.getUserId());
             updateUserConnection(context);
         }
+    }
+
+    protected void tellParent(ActorContext context, Object response) {
+        context.parent().tell(response, context.self());
     }
 }

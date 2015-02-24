@@ -164,7 +164,7 @@ public class DefaultEndpointUserService implements EndpointUserService {
     }
 
     @Override
-    public EventListenersResponse findListeners(EndpointProfileDto profile, AppSeqNumber appSeqNumber, EventListenersRequest request) {
+    public EventListenersResponse findListeners(EndpointProfileDto profile, String appToken, EventListenersRequest request) {
         if (profile.getEndpointUserId() == null || profile.getEndpointUserId().isEmpty()) {
             LOG.info("Can't find listeners for unassigned endpoint!");
             return new EventListenersResponse(request.getRequestId(), null, SyncStatus.FAILURE);
@@ -177,7 +177,7 @@ public class DefaultEndpointUserService implements EndpointUserService {
             return new EventListenersResponse(request.getRequestId(), emptyList, SyncStatus.SUCCESS);
         }
 
-        String tenantId = cacheService.getTenantIdByAppToken(appSeqNumber.getAppToken());
+        String tenantId = cacheService.getTenantIdByAppToken(appToken);
         Set<EndpointObjectHash> eventClassIntersectionSet = null;
         for (String eventClassFqn : request.getEventClassFQNs()) {
             Set<EndpointObjectHash> eventClassSet = new HashSet<>();

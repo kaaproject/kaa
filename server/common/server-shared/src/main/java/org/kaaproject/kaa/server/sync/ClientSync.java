@@ -237,14 +237,28 @@ public class ClientSync {
         this.logSync = value;
     }
 
-
-
     public BootstrapClientSync getBootstrapSync() {
         return bootstrapSync;
     }
 
     public void setBootstrapSync(BootstrapClientSync bootstrapSync) {
         this.bootstrapSync = bootstrapSync;
+    }
+    
+    public boolean isValid() {
+        ClientSyncMetaData md = this.getClientSyncMetaData();
+        // TODO: validate if public key hash matches hash of public key during
+        // profile registration command.
+        if (md.getProfileHash() == null) {
+            ProfileClientSync profileRequest = this.getProfileSync();
+            if (profileRequest != null && profileRequest.getEndpointPublicKey() != null) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
     }
 
     @Override
