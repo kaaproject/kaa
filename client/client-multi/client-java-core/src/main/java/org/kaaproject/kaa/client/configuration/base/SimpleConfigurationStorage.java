@@ -56,29 +56,33 @@ public class SimpleConfigurationStorage implements ConfigurationStorage {
     @Override
     public ByteBuffer loadConfiguration() throws IOException {
         PersistentStorage storage = context.createPersistentStorage();
+        if (!storage.exists(path)) {
+            LOG.trace("There is no configuration in storage yet");
+            return null;
+        }
         BufferedInputStream is = new BufferedInputStream(storage.openForRead(path));
         List<byte[]> chunks = new ArrayList<byte[]>();
         byte[] tmp = new byte[_8KB];
         int size = 0;
-        while(true){
+        while (true) {
             int result = is.read(tmp);
             LOG.trace("Reading {} bytes from input stream", result);
-            if(result > 0){
+            if (result > 0) {
                 size += result;
                 chunks.add(Arrays.copyOf(tmp, result));
             }
-            if(result < tmp.length){
+            if (result < tmp.length) {
                 break;
             }
         }
         ByteBuffer data;
-        if(size > 0){
+        if (size > 0) {
             data = ByteBuffer.wrap(new byte[size]);
-            for(byte[] chunk : chunks){
+            for (byte[] chunk : chunks) {
                 data.put(chunk);
             }
             data.rewind();
-        }else{
+        } else {
             data = null;
         }
         is.close();

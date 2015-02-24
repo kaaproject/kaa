@@ -25,19 +25,10 @@ import akka.actor.ActorRef;
 /**
  * The Class TopicRegistrationRequestMessage.
  */
-public class TopicRegistrationRequestMessage extends EndpointAwareMessage{
+public class TopicUnsubscriptionMessage extends EndpointAwareMessage{
 
     /** The topic id. */
     private final String topicId;
-
-    /** The seq number. */
-    private final int seqNumber;
-
-    /** The system nf schema version. */
-    private final int systemNfSchemaVersion;
-
-    /** The user nf schema version. */
-    private final int userNfSchemaVersion;
 
     /**
      * Instantiates a new topic registration request message.
@@ -50,12 +41,9 @@ public class TopicRegistrationRequestMessage extends EndpointAwareMessage{
      * @param key the key
      * @param originator the originator
      */
-    public TopicRegistrationRequestMessage(String topicId, int seqNumber, int systemNfSchemaVersion, int userNfSchemaVersion, String appToken, EndpointObjectHash key,  ActorRef originator) {
+    public TopicUnsubscriptionMessage(String topicId, String appToken, EndpointObjectHash key,  ActorRef originator) {
         super(appToken, key, originator);
         this.topicId = topicId;
-        this.seqNumber = seqNumber;
-        this.systemNfSchemaVersion = systemNfSchemaVersion;
-        this.userNfSchemaVersion = userNfSchemaVersion;
     }
 
     /**
@@ -67,44 +55,11 @@ public class TopicRegistrationRequestMessage extends EndpointAwareMessage{
         return topicId;
     }
 
-    /**
-     * Gets the seq number.
-     *
-     * @return the seq number
-     */
-    public int getSeqNumber() {
-        return seqNumber;
-    }
-
-    /**
-     * Gets the system nf schema version.
-     *
-     * @return the system nf schema version
-     */
-    public int getSystemNfSchemaVersion() {
-        return systemNfSchemaVersion;
-    }
-
-    /**
-     * Gets the user nf schema version.
-     *
-     * @return the user nf schema version
-     */
-    public int getUserNfSchemaVersion() {
-        return userNfSchemaVersion;
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("TopicRegistrationRequestMessage [topicId=");
+        builder.append("TopicUnsubscriptionMessage [topicId=");
         builder.append(topicId);
-        builder.append(", seqNumber=");
-        builder.append(seqNumber);
-        builder.append(", systemNfSchemaVersion=");
-        builder.append(systemNfSchemaVersion);
-        builder.append(", userNfSchemaVersion=");
-        builder.append(userNfSchemaVersion);
         builder.append("]");
         return builder.toString();
     }
