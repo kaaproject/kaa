@@ -57,6 +57,20 @@ kaa_error_t ext_log_storage_allocate_log_record_buffer(void *context, kaa_log_re
 
 
 /**
+ * @brief Deallocates the data buffer of a log record.
+ *
+ * Deallocates the @c data buffer in the @c record and sets @c size to 0.
+ *
+ * @param[in]       context     Log storage context.
+ * @param[in,out]   record      Log record to deallocate buffer of.
+ *
+ * @return Error code.
+ */
+kaa_error_t ext_log_storage_deallocate_log_record_buffer(void *context, kaa_log_record_t *record);
+
+
+
+/**
  * @brief Adds a log entry to the log storage.
  *
  * In case of success assumes ownership of the @c record @c data buffer.
@@ -68,20 +82,6 @@ kaa_error_t ext_log_storage_allocate_log_record_buffer(void *context, kaa_log_re
  * @return Error code.
  */
 kaa_error_t ext_log_storage_add_log_record(void *context, kaa_log_record_t *record);
-
-
-
-/**
- * @brief Deallocates the data buffer of a log record.
- *
- * Deallocates the @c data buffer in the @c record and sets @c size to 0.
- *
- * @param[in]       context     Log storage context.
- * @param[in,out]   record      Log record to deallocate buffer of.
- *
- * @return Error code.
- */
-kaa_error_t ext_log_storage_deallocate_log_record_buffer(void *context, kaa_log_record_t *record);
 
 
 
@@ -102,8 +102,7 @@ kaa_error_t ext_log_storage_deallocate_log_record_buffer(void *context, kaa_log_
  * @link KAA_ERR_INSUFFICIENT_BUFFER @endlink when the buffer size was not sufficient to fit in the next unmarked entry.
  * @c record_len is set to the size of the record that was not written.\br
  */
-kaa_error_t ext_log_storage_write_next_record(void *context, char *buffer, size_t buffer_len
-        , uint16_t bucket_id, size_t *record_len);
+kaa_error_t ext_log_storage_write_next_record(void *context, char *buffer, size_t buffer_len, uint16_t bucket_id, size_t *record_len);
 
 
 
@@ -132,18 +131,6 @@ kaa_error_t ext_log_storage_unmark_by_bucket_id(void *context, uint16_t bucket_i
 
 
 /**
- * @brief Shrinks log storage by the specified size by removing records starting from the oldest ones.
- *
- * @param[in]       context     Log storage context.
- * @param[in]       size        Records volume to remove.
- *
- * @return Error code
- */
-kaa_error_t ext_log_storage_shrink_by_size(void *context, size_t size);
-
-
-
-/**
  * @brief Returns total size occupied by logs in the log storage.
  *
  * @param[in]       context     Log storage context.
@@ -166,13 +153,13 @@ size_t ext_log_storage_get_records_count(const void *context);
 
 
 /**
- * @brief Releases the log storage (which may decide to self-destroy).
+ * @brief Destroys the log storage (which may decide to self-destroy).
  *
  * @param[in]       context     Log storage context.
  *
  * @return Error code
  */
-kaa_error_t ext_log_storage_release(void *context);
+kaa_error_t ext_log_storage_destroy(void *context);
 
 #ifdef __cplusplus
 }      /* extern "C" */
