@@ -32,9 +32,7 @@ import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericEnumSymbol;
 import org.apache.avro.generic.GenericFixed;
 import org.apache.avro.generic.GenericRecord;
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 import org.kaaproject.kaa.server.common.core.configuration.KaaData;
@@ -83,50 +81,71 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
         this.avroBaseSchema = this.avroSchemaParser.parse(kaaSchema.getRawSchema());
     }
 
+
+    /**
+     * Applies the default value.
+     *
+     * @param schemaNode the schema node.
+     * @param byDefault the default value.
+     * @return generated value.
+     * @throws ConfigurationGenerationException the configuration processing exception.
+     */
+    private Object applyDefaultValue(Schema schemaNode, JsonNode byDefault) throws ConfigurationGenerationException {
+        if (byDefault.isArray() && AvroUtils.getSchemaByType(schemaNode, Type.BYTES) != null) {
+            // if this is a 'bytes' type then convert json bytes array to
+            // avro 'bytes' representation or
+            // if this is a named type - look for already processed types
+            // or throw an exception because "by_default" is missed
+            ByteBuffer byteBuffer = ByteBuffer.allocate(byDefault.size());
+            for (JsonNode oneByte : byDefault) {
+                byteBuffer.put((byte) oneByte.asInt());
+            }
+            byteBuffer.flip();
+            return byteBuffer;
+        }
+        if (byDefault.isBoolean() && AvroUtils.getSchemaByType(schemaNode, Type.BOOLEAN) != null) {
+            return byDefault.asBoolean();
+        }
+        if (byDefault.isDouble()) {
+            if (AvroUtils.getSchemaByType(schemaNode, Type.DOUBLE) != null) {
+                return byDefault.asDouble();
+            } else if (AvroUtils.getSchemaByType(schemaNode, Type.FLOAT) != null) {
+                return (float) byDefault.asDouble();
+            }
+        }
+        if (byDefault.isInt() && AvroUtils.getSchemaByType(schemaNode, Type.INT) != null) {
+            return byDefault.asInt();
+        }
+        if (byDefault.isLong() && AvroUtils.getSchemaByType(schemaNode, Type.LONG) != null) {
+            return byDefault.asLong();
+        }
+        if (byDefault.isTextual()) {
+            Schema enumSchema = AvroUtils.getSchemaByType(schemaNode, Type.ENUM);
+            if (enumSchema != null) {
+                String textDefaultValue = byDefault.asText();
+                if (enumSchema.hasEnumSymbol(textDefaultValue)) {
+                    return new GenericData.EnumSymbol(enumSchema, textDefaultValue);
+                }
+            }
+            if (AvroUtils.getSchemaByType(schemaNode, Type.STRING) != null) {
+                return byDefault.asText();
+            }
+        }
+        throw new ConfigurationGenerationException("Default value " + byDefault.toString() + " is not applicable for the field");
+    }
+
     /**
      * Processes generic type.
      *
      * @param schemaNode schema for current type.
-     * @param byDefault the by default
+     * @param byDefault the by default.
      * @return generated value for input type.
      * @throws ConfigurationGenerationException configuration processing
      * exception
-     * @throws IOException Signals that an I/O exception has occurred.
      */
     private Object processType(Schema schemaNode, JsonNode byDefault) throws ConfigurationGenerationException {
         if (byDefault != null && !byDefault.isNull()) {
-            if (byDefault.isArray() && AvroUtils.getSchemaByType(schemaNode, Type.BYTES) != null) {
-                // if this is a 'bytes' type then convert json bytes array to
-                // avro 'bytes' representation or
-                // if this is a named type - look for already processed types
-                // or throw an exception because "by_default" is missed
-                ByteBuffer byteBuffer = ByteBuffer.allocate(byDefault.size());
-                for (JsonNode oneByte : byDefault) {
-                    byteBuffer.put((byte) oneByte.asInt());
-                }
-                byteBuffer.flip();
-                return byteBuffer;
-            }
-            if (byDefault.isBoolean() && AvroUtils.getSchemaByType(schemaNode, Type.BOOLEAN) != null) {
-                return byDefault.asBoolean();
-            }
-            if (byDefault.isDouble()) {
-                if (AvroUtils.getSchemaByType(schemaNode, Type.DOUBLE) != null) {
-                    return byDefault.asDouble();
-                } else if (AvroUtils.getSchemaByType(schemaNode, Type.FLOAT) != null) {
-                    return (float) byDefault.asDouble();
-                }
-            }
-            if (byDefault.isInt() && AvroUtils.getSchemaByType(schemaNode, Type.INT) != null) {
-                return byDefault.asInt();
-            }
-            if (byDefault.isLong() && AvroUtils.getSchemaByType(schemaNode, Type.LONG) != null) {
-                return byDefault.asLong();
-            }
-            if (byDefault.isTextual() && AvroUtils.getSchemaByType(schemaNode, Type.STRING) != null) {
-                return byDefault.asText();
-            }
-            throw new ConfigurationGenerationException("Default value " + byDefault.toString() + " is not applicable for the field");
+            return applyDefaultValue(schemaNode, byDefault);
         }
         if (AvroUtils.getSchemaByType(schemaNode, Type.NULL) != null) {
             return null;
@@ -175,7 +194,6 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
      *
      * @param schemaNode schema for current type.
      * @return generated value for input record type.
-     * @throws IOException Signals that an I/O exception has occurred.
      * @throws ConfigurationGenerationException configuration processing
      * exception
      */
@@ -211,9 +229,6 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
      *
      * @param schemaNode schema for current type.
      * @return generated value for input enum type.
-     * @throws JsonGenerationException the json generation exception
-     * @throws JsonMappingException the json mapping exception
-     * @throws IOException Signals that an I/O exception has occurred.
      */
     private Object processEnum(Schema schemaNode) {
         GenericEnumSymbol result = new GenericData.EnumSymbol(schemaNode, schemaNode.getEnumSymbols().get(0));
@@ -225,9 +240,6 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
      *
      * @param schemaNode schema for current type.
      * @return generated value for input record type.
-     * @throws JsonGenerationException the json generation exception
-     * @throws JsonMappingException the json mapping exception
-     * @throws IOException Signals that an I/O exception has occurred.
      */
     private Object processFixed(Schema schemaNode) {
         int size = schemaNode.getFixedSize();
@@ -247,7 +259,6 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
      *
      * @param fieldDefinition schema for field.
      * @return generated value for field based on its definition.
-     * @throws IOException Signals that an I/O exception has occurred.
      * @throws ConfigurationGenerationException configuration processing
      * exception
      */
