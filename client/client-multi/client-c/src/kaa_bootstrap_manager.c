@@ -442,7 +442,7 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
 
         kaa_operations_access_points_t *operations_access_points =
                 (kaa_operations_access_points_t *)kaa_list_get_data(operations_access_points_it);
-        KAA_RETURN_IF_NIL(operations_access_points, KAA_ERR_NOT_FOUND);
+        KAA_RETURN_IF_NIL(operations_access_points, KAA_ERR_BADDATA);
 
         operations_access_points->current_access_points =
                 kaa_list_next(operations_access_points->current_access_points);
@@ -455,6 +455,7 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
                                               , protocol_id
                                               , type
                                               , access_point);
+        return KAA_ERR_NONE;
     } else if (type == KAA_SERVER_OPERATIONS) {
         KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Could not find next Operations access point "
                 "(protocol: id=0x%08X, version=%u). Going to sync..."
@@ -466,6 +467,6 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
                 , protocol_id->id, protocol_id->version);
     }
 
-    return KAA_ERR_NONE;
+    return KAA_ERR_NOT_FOUND;
 }
 

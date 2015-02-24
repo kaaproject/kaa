@@ -1035,12 +1035,11 @@ kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t *self)
     }
 
     if (self->sync_state == KAA_TCP_CHANNEL_SYNC_OP_STARTED) {
-        error_code = kaa_bootstrap_manager_on_access_point_failed(
-                self->transport_context.bootstrap_manager,
-                &self->protocol_id,
-                self->channel_operation_type);
-        if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code, "Kaa TCP channel [0x%08X] closing socket, "
+        error_code = kaa_bootstrap_manager_on_access_point_failed(self->transport_context.bootstrap_manager
+                                                                , &self->protocol_id
+                                                                , self->channel_operation_type);
+        if (error_code != KAA_ERR_NOT_FOUND) {
+            KAA_LOG_ERROR(self->logger, error_code, "Kaa TCP channel [0x%08X] "
                     "error notifying bootstrap manager on access point failure"
                     , self->access_point.id);
             error_code = KAA_ERR_NONE;
