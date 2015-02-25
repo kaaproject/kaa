@@ -93,7 +93,9 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
             uuidField.addProp(FIELD_ACCESS_FIELD, FIELD_ACCESS_READ_ONLY);
             return uuidField;
         }
-        return new Field(uuidField.name(), uuidField.schema(), null, null);
+        Field newUuidField = new Field(uuidField.name(), uuidField.schema(), null, null);
+        AvroUtils.copyJsonProperties(uuidField, newUuidField);
+        return newUuidField;
     }
 
     private Schema getResetType() {
