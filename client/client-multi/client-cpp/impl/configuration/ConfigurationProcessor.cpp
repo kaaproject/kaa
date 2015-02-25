@@ -80,7 +80,7 @@ void ConfigurationProcessor::unsubscribeFromUpdates(IGenericDeltaReceiver &recei
 void ConfigurationProcessor::addOnProcessedObserver(IConfigurationProcessedObserver &observer)
 {
     if (!onProcessedObservers_.addCallback(&observer,
-            std::bind(&IConfigurationProcessedObserver::onConfigurationProcessed,&observer))) {
+            std::bind(&IConfigurationProcessedObserver::onConfigurationProcessed, &observer))) {
         throw KaaException(
                 "Failed to register new IConfigurationProcessedObserver. Already registered");
     }
