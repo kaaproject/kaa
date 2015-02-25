@@ -10,10 +10,10 @@
                 "int",
                 {
                     "type": "array",
-                    "items": "int",
-                    "overrideStrategy": "append"
+                    "items": "int"
                 }
-            ]
+            ],
+            "overrideStrategy": "append"
         }
     ]
 }

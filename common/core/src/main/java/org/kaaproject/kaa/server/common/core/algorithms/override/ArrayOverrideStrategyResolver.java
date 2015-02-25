@@ -88,11 +88,7 @@ public class ArrayOverrideStrategyResolver {
         List<Field> fields = root.getFields();
         for (Field field : fields) {
             if (arrayFieldName.equals(field.name())) {
-                Schema arraySchema = AvroUtils.getSchemaByType(field.schema(), Type.ARRAY);
-                if (arraySchema != null) {
-                    return arraySchema.getProp(FIELD_OVERRIDE_STRATEGY);
-                }
-                break;
+                return field.getProp(FIELD_OVERRIDE_STRATEGY);
             }
         }
         return null;
