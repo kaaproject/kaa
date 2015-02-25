@@ -306,6 +306,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             @Override
             public void run() {
                 try {
+                    logCollector.stop();
                     kaaClientState.persist();
                     channelManager.shutdown();
                     isInitialized = false;
@@ -320,6 +321,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 }
             }
         });
+        lifecycleTasksExecutor.shutdown();
     }
 
     @Override
