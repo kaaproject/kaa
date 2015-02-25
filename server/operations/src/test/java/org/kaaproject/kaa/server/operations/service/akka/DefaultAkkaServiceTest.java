@@ -573,17 +573,24 @@ public class DefaultAkkaServiceTest {
                 .thenReturn(response);
     }
 
+    private void whenSync(ClientSync request, SyncContext response) throws GetDeltaException {
+        SyncContext context = new SyncContext(new ServerSync());
+        context.setRequestHash(request.hashCode());
+
+        Mockito.when(operationsService.syncProfile(context, request.getProfileSync())).thenReturn(response);
+        Mockito.when(operationsService.processEndpointAttachDetachRequests(response, request.getUserSync())).thenReturn(response);
+        Mockito.when(operationsService.processEventListenerRequests(response, request.getEventSync())).thenReturn(response);
+        Mockito.when(operationsService.syncConfiguration(response, request.getConfigurationSync())).thenReturn(response);
+        Mockito.when(operationsService.syncNotification(response, request.getNotificationSync())).thenReturn(response);
+    }
+
     @Test
     public void testLongSyncNotification() throws Exception {
         ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
 
         SyncRequest request = new SyncRequest();
         request.setRequestId(REQUEST_ID);
-        SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setApplicationToken(APP_TOKEN);
-        md.setEndpointPublicKeyHash(clientPublicKeyHash);
-        md.setProfileHash(clientPublicKeyHash);
-        md.setTimeout(2l * TIMEOUT);
+        SyncRequestMetaData md = buildSyncRequestMetaData();
         request.setSyncRequestMetaData(md);
 
         ConfigurationSyncRequest csRequest = new ConfigurationSyncRequest();
@@ -621,12 +628,7 @@ public class DefaultAkkaServiceTest {
 
         SyncRequest request = new SyncRequest();
         request.setRequestId(REQUEST_ID);
-        SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setApplicationToken(APP_TOKEN);
-        md.setEndpointPublicKeyHash(clientPublicKeyHash);
-        md.setProfileHash(clientPublicKeyHash);
-        md.setTimeout(2l * TIMEOUT);
-        request.setSyncRequestMetaData(md);
+        request.setSyncRequestMetaData(buildSyncRequestMetaData());
 
         NotificationSyncRequest nfRequest = new NotificationSyncRequest();
         request.setNotificationSyncRequest(nfRequest);
@@ -661,1101 +663,884 @@ public class DefaultAkkaServiceTest {
                 .build(Mockito.any(byte[].class), Mockito.any(boolean.class));
 
     }
-    //
-    // @Test
-    // public void testLongSyncTopicNotificationOnStart() throws Exception {
-    // ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
-    //
-    // Mockito.when(applicationService.findAppById(APP_ID)).thenReturn(applicationDto);
-    // Notification thriftNotification = new Notification();
-    // thriftNotification.setAppId(APP_ID);
-    // thriftNotification.setTopicId(TOPIC_ID);
-    // thriftNotification.setNotificationId(UNICAST_NOTIFICATION_ID);
-    // thriftNotification.setKeyHash(clientPublicKeyHash);
-    // akkaService.onNotification(thriftNotification);
-    //
-    // Mockito.when(notificationDeltaService.findNotificationById(UNICAST_NOTIFICATION_ID)).thenReturn(topicNotification);
-    //
-    // SyncRequest request = new SyncRequest();
-    // request.setRequestId(REQUEST_ID);
-    // SyncRequestMetaData md = new SyncRequestMetaData();
-    // md.setApplicationToken(APP_TOKEN);
-    // md.setEndpointPublicKeyHash(clientPublicKeyHash);
-    // md.setTimeout(2l * TIMEOUT);
-    // request.setSyncRequestMetaData(md);
-    //
-    // NotificationSyncRequest nfRequest = new NotificationSyncRequest();
-    // request.setNotificationSyncRequest(nfRequest);
-    //
-    // MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
-    // ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
-    //
-    // Mockito.when(operationsService.sync(AvroEncDec.convert(request),
-    // null)).thenReturn(noDeltaResponseWithTopicState);
-    // Mockito.when(
-    // operationsService.updateSyncResponse(noDeltaResponseWithTopicState.getResponse(),
-    // Collections.singletonList(topicNotification),
-    // null)).thenReturn(noDeltaResponseWithTopicState.getResponse());
-    //
-    // SessionInitMessage message = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request,
-    // responseBuilder, errorBuilder);
-    // Assert.assertNotNull(akkaService.getActorSystem());
-    // akkaService.process(message);
-    //
-    // Mockito.verify(operationsService, Mockito.timeout(TIMEOUT /
-    // 2).atLeastOnce()).sync(AvroEncDec.convert(request), null);
-    // Mockito.verify(operationsService, Mockito.timeout(TIMEOUT /
-    // 2).atLeastOnce()).updateSyncResponse(
-    // noDeltaResponseWithTopicState.getResponse(),
-    // Collections.singletonList(topicNotification), null);
-    // Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce())
-    // .build(Mockito.any(byte[].class), Mockito.any(boolean.class));
-    // }
-    //
-    // @Test
-    // public void testLongSyncTopicNotification() throws Exception {
-    // ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
-    //
-    // SyncRequest request = new SyncRequest();
-    // request.setRequestId(REQUEST_ID);
-    // SyncRequestMetaData md = new SyncRequestMetaData();
-    // md.setApplicationToken(APP_TOKEN);
-    // md.setEndpointPublicKeyHash(clientPublicKeyHash);
-    // md.setTimeout(2l * TIMEOUT);
-    // request.setSyncRequestMetaData(md);
-    //
-    // NotificationSyncRequest nfRequest = new NotificationSyncRequest();
-    // request.setNotificationSyncRequest(nfRequest);
-    //
-    // Mockito.when(applicationService.findAppById(APP_ID)).thenReturn(applicationDto);
-    // Mockito.when(notificationDeltaService.findNotificationById(UNICAST_NOTIFICATION_ID)).thenReturn(topicNotification);
-    // Mockito.when(operationsService.sync(Mockito.any(ClientSync.class),
-    // Mockito.any(EndpointProfileDto.class))).thenReturn(
-    // noDeltaResponseWithTopicState);
-    // Mockito.when(
-    // operationsService.updateSyncResponse(noDeltaResponseWithTopicState.getResponse(),
-    // Collections.singletonList(topicNotification),
-    // null)).thenReturn(noDeltaResponseWithTopicState.getResponse());
-    //
-    // MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
-    // ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
-    //
-    // SessionInitMessage message = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request,
-    // responseBuilder, errorBuilder);
-    // Assert.assertNotNull(akkaService.getActorSystem());
-    // akkaService.process(message);
-    //
-    // Thread.sleep(3000);
-    //
-    // Notification thriftNotification = new Notification();
-    // thriftNotification.setAppId(APP_ID);
-    // thriftNotification.setTopicId(TOPIC_ID);
-    // thriftNotification.setNotificationId(UNICAST_NOTIFICATION_ID);
-    // thriftNotification.setKeyHash(clientPublicKeyHash);
-    // akkaService.onNotification(thriftNotification);
-    //
-    // Mockito.verify(operationsService, Mockito.timeout(TIMEOUT /
-    // 2).atLeastOnce()).sync(AvroEncDec.convert(request), null);
-    // Mockito.verify(operationsService, Mockito.timeout(TIMEOUT /
-    // 2).atLeastOnce()).updateSyncResponse(
-    // noDeltaResponseWithTopicState.getResponse(),
-    // Collections.singletonList(topicNotification), null);
-    // Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce())
-    // .build(Mockito.any(byte[].class), Mockito.any(boolean.class));
-    // }
-    //
-    // @Test
-    // public void testRedirect() throws Exception {
-    // ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
-    // MessageEncoderDecoder crypt = new
-    // MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(),
-    // serverPair.getPublic());
-    // akkaService.onRedirectionRule(new RedirectionRule("testDNS".hashCode(),
-    // 123, 1.0, 60000));
-    //
-    // Thread.sleep(1000);
-    //
-    // SyncRequest request = new SyncRequest();
-    // request.setRequestId(32);
-    // SyncRequestMetaData md = new SyncRequestMetaData();
-    // md.setApplicationToken(APP_TOKEN);
-    // md.setEndpointPublicKeyHash(clientPublicKeyHash);
-    // md.setTimeout(2l * TIMEOUT);
-    // request.setSyncRequestMetaData(md);
-    //
-    // MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
-    // ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
-    //
-    // SessionInitMessage message = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request,
-    // responseBuilder, errorBuilder, crypt);
-    // akkaService.process(message);
-    //
-    // SyncResponse response = new SyncResponse();
-    // response.setRequestId(request.getRequestId());
-    // response.setStatus(SyncResponseResultType.REDIRECT);
-    // response.setRedirectSyncResponse(new
-    // RedirectSyncResponse("testDNS".hashCode()));
-    //
-    // Mockito.verify(operationsService, Mockito.timeout(TIMEOUT /
-    // 2).never()).sync(AvroEncDec.convert(request));
-    //
-    // AvroByteArrayConverter<SyncResponse> responseConverter = new
-    // AvroByteArrayConverter<>(SyncResponse.class);
-    // byte[] encodedData =
-    // crypt.encodeData(responseConverter.toByteArray(response));
-    // Mockito.verify(responseBuilder,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
-    // }
-    //
-    // @Test
-    // public void testRedirectSessionRequest() throws Exception {
-    // ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
-    // MessageEncoderDecoder crypt = new
-    // MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(),
-    // serverPair.getPublic());
-    // akkaService.onRedirectionRule(new RedirectionRule("testDNS".hashCode(),
-    // 123, 1.0, 60000));
-    //
-    // Thread.sleep(1000);
-    //
-    // SyncRequest request = new SyncRequest();
-    // request.setRequestId(32);
-    // SyncRequestMetaData md = new SyncRequestMetaData();
-    // md.setApplicationToken(APP_TOKEN);
-    // md.setEndpointPublicKeyHash(clientPublicKeyHash);
-    // md.setTimeout(2l * TIMEOUT);
-    // request.setSyncRequestMetaData(md);
-    //
-    // final MessageBuilder responseBuilder =
-    // Mockito.mock(MessageBuilder.class);
-    // final ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
-    //
-    // AvroByteArrayConverter<SyncRequest> requestConverter = new
-    // AvroByteArrayConverter<>(SyncRequest.class);
-    // final
-    // org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest
-    // kaaSync = new
-    // org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest(
-    // crypt.encodeData(requestConverter.toByteArray(request)), false, true);
-    // final SessionInfo session = new SessionInfo(UUID.randomUUID(),
-    // Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, channelContextMock,
-    // ChannelType.ASYNC, crypt.getSessionCipherPair(),
-    // EndpointObjectHash.fromBytes(clientPublicKey.array()), APP_TOKEN, 100,
-    // true);
-    //
-    // SessionAwareMessage message = new SessionAwareMessage() {
-    //
-    // @Override
-    // public SessionInfo getSessionInfo() {
-    // return session;
-    // }
-    //
-    // @Override
-    // public int getPlatformId() {
-    // return session.getPlatformId();
-    // }
-    //
-    // @Override
-    // public UUID getChannelUuid() {
-    // return session.getUuid();
-    // }
-    //
-    // @Override
-    // public ChannelType getChannelType() {
-    // return session.getChannelType();
-    // }
-    //
-    // @Override
-    // public ChannelContext getChannelContext() {
-    // return session.getCtx();
-    // }
-    //
-    // @Override
-    // public boolean isEncrypted() {
-    // return session.isEncrypted();
-    // }
-    //
-    // @Override
-    // public MessageBuilder getMessageBuilder() {
-    // return responseBuilder;
-    // }
-    //
-    // @Override
-    // public ErrorBuilder getErrorBuilder() {
-    // return errorBuilder;
-    // }
-    //
-    // @Override
-    // public byte[] getEncodedMessageData() {
-    // return kaaSync.getAvroObject();
-    // }
-    // };
-    // akkaService.process(message);
-    //
-    // SyncResponse response = new SyncResponse();
-    // response.setRequestId(request.getRequestId());
-    // response.setStatus(SyncResponseResultType.REDIRECT);
-    // response.setRedirectSyncResponse(new
-    // RedirectSyncResponse("testDNS".hashCode()));
-    //
-    // Mockito.verify(operationsService, Mockito.timeout(TIMEOUT /
-    // 2).never()).sync(AvroEncDec.convert(request));
-    //
-    // AvroByteArrayConverter<SyncResponse> responseConverter = new
-    // AvroByteArrayConverter<>(SyncResponse.class);
-    // byte[] encodedData =
-    // crypt.encodeData(responseConverter.toByteArray(response));
-    // Mockito.verify(responseBuilder,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
-    // }
-    //
-    // @Test
-    // public void testRedirectExpire() throws Exception {
-    // ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
-    // MessageEncoderDecoder crypt = new
-    // MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(),
-    // serverPair.getPublic());
-    // akkaService.onRedirectionRule(new RedirectionRule("testDNS".hashCode(),
-    // 123, 1.0, 1000));
-    //
-    // Thread.sleep(2000);
-    //
-    // SyncRequest request = new SyncRequest();
-    // request.setRequestId(32);
-    // SyncRequestMetaData md = new SyncRequestMetaData();
-    // md.setApplicationToken(APP_TOKEN);
-    // md.setEndpointPublicKeyHash(clientPublicKeyHash);
-    // md.setTimeout(2l * TIMEOUT);
-    // request.setSyncRequestMetaData(md);
-    //
-    // MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
-    // ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
-    //
-    // SessionInitMessage message = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request,
-    // responseBuilder, errorBuilder, crypt);
-    //
-    // Mockito.when(operationsService.sync(Mockito.any(ClientSync.class),
-    // Mockito.any(EndpointProfileDto.class))).thenReturn(
-    // noDeltaResponseWithTopicState);
-    //
-    // akkaService.process(message);
-    //
-    // SyncResponse response = new SyncResponse();
-    // response.setRequestId(request.getRequestId());
-    // response.setStatus(SyncResponseResultType.REDIRECT);
-    // response.setRedirectSyncResponse(new
-    // RedirectSyncResponse("testDNS".hashCode()));
-    //
-    // Mockito.verify(operationsService, Mockito.timeout(TIMEOUT /
-    // 2).atLeastOnce()).sync(AvroEncDec.convert(request), null);
-    // }
-    //
-    // @Test
-    // public void testEndpointEventBasic() throws Exception {
-    // ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
-    //
-    // EndpointProfileDto sourceProfileMock =
-    // Mockito.mock(EndpointProfileDto.class);
-    // EndpointProfileDto targetProfileMock =
-    // Mockito.mock(EndpointProfileDto.class);
-    //
-    // EventClassFamilyVersionStateDto ecfVdto = new
-    // EventClassFamilyVersionStateDto();
-    // ecfVdto.setEcfId(ECF1_ID);
-    // ecfVdto.setVersion(ECF1_VERSION);
-    //
-    // Event event = new Event(0, FQN1, ByteBuffer.wrap(new byte[0]),
-    // Base64Util.encode(clientPublicKeyHash.array()), null);
-    //
-    // SyncRequest sourceRequest = new SyncRequest();
-    // sourceRequest.setRequestId(REQUEST_ID);
-    // SyncRequestMetaData md = new SyncRequestMetaData();
-    // md.setApplicationToken(APP_TOKEN);
-    // md.setEndpointPublicKeyHash(clientPublicKeyHash);
-    // md.setTimeout(TIMEOUT * 1L);
-    // sourceRequest.setSyncRequestMetaData(md);
-    //
-    // EventSyncRequest eventRequest = new EventSyncRequest();
-    // eventRequest.setEvents(Arrays.asList(event));
-    // sourceRequest.setEventSyncRequest(eventRequest);
-    //
-    // ServerSync sourceResponse = new ServerSync();
-    // sourceResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
-    // SyncContext sourceResponseHolder = new SyncContext(sourceResponse);
-    // sourceResponseHolder.setEndpointProfile(sourceProfileMock);
-    //
-    // SyncRequest targetRequest = new SyncRequest();
-    // targetRequest.setRequestId(REQUEST_ID);
-    // md = new SyncRequestMetaData();
-    // md.setApplicationToken(APP_TOKEN);
-    // md.setEndpointPublicKeyHash(targetPublicKeyHash);
-    // md.setTimeout(TIMEOUT * 1L);
-    // targetRequest.setSyncRequestMetaData(md);
-    //
-    // targetRequest.setEventSyncRequest(new EventSyncRequest());
-    //
-    // ServerSync targetResponse = new ServerSync();
-    // targetResponse.setRequestId(REQUEST_ID);
-    // targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
-    // SyncContext targetResponseHolder = new SyncContext(targetResponse);
-    // targetResponseHolder.setEndpointProfile(targetProfileMock);
-    //
-    // when(operationsService.sync(AvroEncDec.convert(sourceRequest),
-    // null)).thenReturn(sourceResponseHolder);
-    // when(operationsService.sync(AvroEncDec.convert(targetRequest),
-    // null)).thenReturn(targetResponseHolder);
-    //
-    // when(sourceProfileMock.getEndpointUserId()).thenReturn(USER_ID);
-    // when(sourceProfileMock.getEndpointKeyHash()).thenReturn(clientPublicKeyHash.array());
-    // when(sourceProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
-    //
-    // when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID);
-    // when(targetProfileMock.getEndpointKeyHash()).thenReturn(targetPublicKeyHash.array());
-    // when(targetProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
-    //
-    // when(cacheService.getEventClassFamilyIdByEventClassFqn(new
-    // EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
-    // RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new
-    // EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
-    // when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1,
-    // ECF1_VERSION)))
-    // .thenReturn(Collections.singleton(routeKey));
-    //
-    // Assert.assertNotNull(akkaService.getActorSystem());
-    //
-    // MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
-    // ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
-    //
-    // MessageEncoderDecoder sourceCrypt = new
-    // MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(),
-    // serverPair.getPublic());
-    // SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
-    // sourceRequest, responseBuilder, errorBuilder, sourceCrypt);
-    // akkaService.process(sourceMessage);
-    //
-    // // sourceRequest
-    // Mockito.verify(operationsService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sync(Mockito.any(ClientSync.class),
-    // Mockito.any(EndpointProfileDto.class));
-    //
-    // MessageEncoderDecoder targetCrypt = new
-    // MessageEncoderDecoder(targetPair.getPrivate(), targetPair.getPublic(),
-    // serverPair.getPublic());
-    // SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
-    // targetRequest, responseBuilder, errorBuilder, targetCrypt);
-    // akkaService.process(targetMessage);
-    //
-    // // targetRequest
-    // Mockito.verify(operationsService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sync(Mockito.any(ClientSync.class),
-    // Mockito.any(EndpointProfileDto.class));
-    //
-    // SyncResponse eventResponse = new SyncResponse();
-    // eventResponse.setRequestId(REQUEST_ID);
-    // eventResponse.setStatus(SyncResponseResultType.SUCCESS);
-    // eventResponse.setEventSyncResponse(new EventSyncResponse());
-    // eventResponse.getEventSyncResponse().setEvents(Arrays.asList(event));
-    //
-    // AvroByteArrayConverter<SyncResponse> responseConverter = new
-    // AvroByteArrayConverter<>(SyncResponse.class);
-    // byte[] response = responseConverter.toByteArray(eventResponse);
-    // byte[] encodedData = targetCrypt.encodeData(response);
-    //
-    // Mockito.verify(responseBuilder,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
-    // }
-    //
-    // @Test
-    // public void testEndpointEventSeqNumberBasic() throws Exception {
-    // ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
-    //
-    // EndpointProfileDto sourceProfileMock =
-    // Mockito.mock(EndpointProfileDto.class);
-    //
-    // EventClassFamilyVersionStateDto ecfVdto = new
-    // EventClassFamilyVersionStateDto();
-    // ecfVdto.setEcfId(ECF1_ID);
-    // ecfVdto.setVersion(ECF1_VERSION);
-    //
-    // SyncRequest sourceRequest = new SyncRequest();
-    // sourceRequest.setRequestId(REQUEST_ID);
-    // SyncRequestMetaData md = new SyncRequestMetaData();
-    // md.setApplicationToken(APP_TOKEN);
-    // md.setEndpointPublicKeyHash(clientPublicKeyHash);
-    // md.setTimeout(TIMEOUT * 1L);
-    // sourceRequest.setSyncRequestMetaData(md);
-    //
-    // EventSyncRequest eventRequest = new EventSyncRequest();
-    // eventRequest.setEventSequenceNumberRequest(new
-    // EventSequenceNumberRequest());
-    // sourceRequest.setEventSyncRequest(eventRequest);
-    //
-    // ServerSync sourceResponse = new ServerSync();
-    // sourceResponse.setRequestId(REQUEST_ID);
-    // sourceResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
-    // SyncContext sourceResponseHolder = new SyncContext(sourceResponse);
-    // sourceResponseHolder.setEndpointProfile(sourceProfileMock);
-    //
-    // when(operationsService.sync(AvroEncDec.convert(sourceRequest),
-    // null)).thenReturn(sourceResponseHolder);
-    //
-    // when(sourceProfileMock.getEndpointUserId()).thenReturn(USER_ID);
-    // when(sourceProfileMock.getEndpointKeyHash()).thenReturn(clientPublicKeyHash.array());
-    // when(sourceProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
-    //
-    // when(cacheService.getEventClassFamilyIdByEventClassFqn(new
-    // EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
-    // RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new
-    // EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
-    // when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1,
-    // ECF1_VERSION)))
-    // .thenReturn(Collections.singleton(routeKey));
-    //
-    // Assert.assertNotNull(akkaService.getActorSystem());
-    //
-    // MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
-    // ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
-    //
-    // MessageEncoderDecoder sourceCrypt = new
-    // MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(),
-    // serverPair.getPublic());
-    // SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
-    // sourceRequest, responseBuilder, errorBuilder, sourceCrypt);
-    // akkaService.process(sourceMessage);
-    //
-    // // sourceRequest
-    // Mockito.verify(operationsService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sync(Mockito.any(ClientSync.class),
-    // Mockito.any(EndpointProfileDto.class));
-    //
-    // SyncResponse eventResponse = new SyncResponse();
-    // eventResponse.setRequestId(REQUEST_ID);
-    // eventResponse.setStatus(SyncResponseResultType.SUCCESS);
-    // eventResponse.setEventSyncResponse(new EventSyncResponse());
-    // eventResponse.getEventSyncResponse().setEventSequenceNumberResponse(new
-    // EventSequenceNumberResponse(0));
-    //
-    // AvroByteArrayConverter<SyncResponse> responseConverter = new
-    // AvroByteArrayConverter<>(SyncResponse.class);
-    // byte[] response = responseConverter.toByteArray(eventResponse);
-    // LOG.trace("Response to compare {}", Arrays.toString(response));
-    // byte[] encodedData = sourceCrypt.encodeData(response);
-    //
-    // Mockito.verify(responseBuilder,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
-    // }
-    //
-    // @Test
-    // public void testRemoteIncomingEndpointEventBasic() throws Exception {
-    // ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
-    //
-    // EndpointProfileDto targetProfileMock =
-    // Mockito.mock(EndpointProfileDto.class);
-    //
-    // EventClassFamilyVersionStateDto ecfVdto = new
-    // EventClassFamilyVersionStateDto();
-    // ecfVdto.setEcfId(ECF1_ID);
-    // ecfVdto.setVersion(ECF1_VERSION);
-    //
-    // SyncRequest targetRequest = new SyncRequest();
-    // targetRequest.setRequestId(REQUEST_ID);
-    // SyncRequestMetaData md = new SyncRequestMetaData();
-    // md.setApplicationToken(APP_TOKEN);
-    // md.setEndpointPublicKeyHash(targetPublicKeyHash);
-    // md.setTimeout(TIMEOUT * 1L);
-    // targetRequest.setSyncRequestMetaData(md);
-    //
-    // targetRequest.setEventSyncRequest(new EventSyncRequest());
-    //
-    // ServerSync targetResponse = new ServerSync();
-    //
-    // targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
-    // SyncContext targetResponseHolder = new SyncContext(targetResponse);
-    // targetResponseHolder.setEndpointProfile(targetProfileMock);
-    //
-    // when(operationsService.sync(AvroEncDec.convert(targetRequest),
-    // null)).thenReturn(targetResponseHolder);
-    //
-    // when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID);
-    // when(targetProfileMock.getEndpointKeyHash()).thenReturn(targetPublicKeyHash.array());
-    // when(targetProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
-    //
-    // when(cacheService.getEventClassFamilyIdByEventClassFqn(new
-    // EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
-    // RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new
-    // EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
-    // when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1,
-    // ECF1_VERSION)))
-    // .thenReturn(Collections.singleton(routeKey));
-    //
-    // Assert.assertNotNull(akkaService.getActorSystem());
-    //
-    // MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
-    // ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
-    //
-    // MessageEncoderDecoder targetCrypt = new
-    // MessageEncoderDecoder(targetPair.getPrivate(), targetPair.getPublic(),
-    // serverPair.getPublic());
-    // SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
-    // targetRequest, responseBuilder, errorBuilder, targetCrypt);
-    // akkaService.process(targetMessage);
-    //
-    // Mockito.verify(operationsService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sync(AvroEncDec.convert(targetRequest),
-    // null);
-    //
-    // org.kaaproject.kaa.server.sync.Event event = new
-    // org.kaaproject.kaa.server.sync.Event(0, FQN1, ByteBuffer.wrap(new
-    // byte[0]), null,
-    // null);
-    // EndpointEvent endpointEvent = new
-    // EndpointEvent(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()),
-    // event,
-    // UUID.randomUUID(), System.currentTimeMillis(), ECF1_VERSION);
-    // RemoteEndpointEvent remoteEvent = new RemoteEndpointEvent(TENANT_ID,
-    // USER_ID, endpointEvent, new RouteTableAddress(
-    // EndpointObjectHash.fromBytes(targetPublicKeyHash.array()), APP_TOKEN,
-    // "SERVER1"));
-    // akkaService.getListener().onEvent(remoteEvent);
-    //
-    // event = new org.kaaproject.kaa.server.sync.Event(0, FQN1,
-    // ByteBuffer.wrap(new byte[0]), null, Base64Util.encode(targetPublicKeyHash
-    // .array()));
-    //
-    // ServerSync eventResponse = new ServerSync();
-    // eventResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
-    // eventResponse.setEventSync(new EventServerSync());
-    // eventResponse.getEventSync().setEvents(Arrays.asList(event));
-    //
-    // AvroByteArrayConverter<SyncResponse> responseConverter = new
-    // AvroByteArrayConverter<>(SyncResponse.class);
-    // byte[] response =
-    // responseConverter.toByteArray(AvroEncDec.convert(eventResponse));
-    // byte[] encodedData = targetCrypt.encodeData(response);
-    // Mockito.verify(responseBuilder,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
-    // }
-    //
-    // @Test
-    // public void testRemoteOutcomingEndpointEventBasic() throws Exception {
-    // ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
-    //
-    // EndpointProfileDto sourceProfileMock =
-    // Mockito.mock(EndpointProfileDto.class);
-    //
-    // EventClassFamilyVersionStateDto ecfVdto = new
-    // EventClassFamilyVersionStateDto();
-    // ecfVdto.setEcfId(ECF1_ID);
-    // ecfVdto.setVersion(ECF1_VERSION);
-    //
-    // Event event = new Event(0, FQN1, ByteBuffer.wrap(new byte[0]),
-    // Base64Util.encode(clientPublicKeyHash.array()), null);
-    //
-    // SyncRequest sourceRequest = new SyncRequest();
-    // sourceRequest.setRequestId(REQUEST_ID);
-    // SyncRequestMetaData md = new SyncRequestMetaData();
-    // md.setApplicationToken(APP_TOKEN);
-    // md.setEndpointPublicKeyHash(clientPublicKeyHash);
-    // md.setTimeout(TIMEOUT * 1L);
-    // sourceRequest.setSyncRequestMetaData(md);
-    //
-    // EventSyncRequest eventRequest = new EventSyncRequest();
-    // eventRequest.setEvents(Arrays.asList(event));
-    // sourceRequest.setEventSyncRequest(eventRequest);
-    //
-    // ServerSync sourceResponse = new ServerSync();
-    // sourceResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
-    // SyncContext sourceResponseHolder = new SyncContext(sourceResponse);
-    // sourceResponseHolder.setEndpointProfile(sourceProfileMock);
-    //
-    // when(operationsService.sync(AvroEncDec.convert(sourceRequest),
-    // null)).thenReturn(sourceResponseHolder);
-    //
-    // when(sourceProfileMock.getEndpointUserId()).thenReturn(USER_ID);
-    // when(sourceProfileMock.getEndpointKeyHash()).thenReturn(clientPublicKeyHash.array());
-    // when(sourceProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
-    //
-    // when(cacheService.getEventClassFamilyIdByEventClassFqn(new
-    // EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
-    // RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new
-    // EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
-    // when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1,
-    // ECF1_VERSION)))
-    // .thenReturn(Collections.singleton(routeKey));
-    //
-    // Assert.assertNotNull(akkaService.getActorSystem());
-    //
-    // MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
-    // ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
-    //
-    // MessageEncoderDecoder sourceCrypt = new
-    // MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(),
-    // serverPair.getPublic());
-    // SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
-    // sourceRequest, responseBuilder, errorBuilder, sourceCrypt);
-    //
-    // akkaService.process(sourceMessage);
-    //
-    // Mockito.verify(operationsService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sync(Mockito.any(ClientSync.class),
-    // Mockito.any(EndpointProfileDto.class));
-    //
-    // UserRouteInfo userRouteInfo = new UserRouteInfo(TENANT_ID, USER_ID,
-    // SERVER2, RouteOperation.ADD);
-    // akkaService.getListener().onUserRouteInfo(userRouteInfo);
-    //
-    // RouteTableAddress remoteAddress = new
-    // RouteTableAddress(EndpointObjectHash.fromBytes(targetPublicKeyHash.array()),
-    // APP_TOKEN,
-    // SERVER2);
-    // RouteInfo routeInfo = new RouteInfo(TENANT_ID, USER_ID, remoteAddress,
-    // Arrays.asList(new EventClassFamilyVersion(ECF1_ID,
-    // ECF1_VERSION)));
-    // TimeUnit.SECONDS.sleep(2);
-    // akkaService.getListener().onRouteInfo(routeInfo);
-    //
-    // Mockito.verify(eventService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sendEvent(Mockito.any(RemoteEndpointEvent.class));
-    // }
-    //
-    // @Test
-    // public void testLogSyncRequest() throws Exception {
-    // ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
-    //
-    // SyncRequest request = new SyncRequest();
-    // request.setRequestId(REQUEST_ID);
-    // SyncRequestMetaData md = new SyncRequestMetaData();
-    // md.setApplicationToken(APP_TOKEN);
-    // md.setEndpointPublicKeyHash(clientPublicKeyHash);
-    // md.setTimeout(1000l);
-    // request.setSyncRequestMetaData(md);
-    //
-    // LogSyncRequest logRequest = new LogSyncRequest(REQUEST_ID,
-    // Collections.singletonList(new LogEntry(ByteBuffer.wrap("String"
-    // .getBytes()))));
-    // request.setLogSyncRequest(logRequest);
-    //
-    // Mockito.when(operationsService.sync(Mockito.any(ClientSync.class),
-    // Mockito.any(EndpointProfileDto.class))).thenReturn(
-    // noDeltaResponseWithTopicState);
-    // LogAppender mockAppender = Mockito.mock(LogAppender.class);
-    // Mockito.when(logAppenderService.getApplicationAppenders(APP_ID)).thenReturn(Collections.singletonList(mockAppender));
-    // Mockito.when(logAppenderService.getLogSchema(Mockito.anyString(),
-    // Mockito.anyInt())).thenReturn(Mockito.mock(LogSchema.class));
-    // Mockito.when(mockAppender.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(true);
-    //
-    // MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
-    // ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
-    //
-    // SessionInitMessage message = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request,
-    // responseBuilder, errorBuilder);
-    //
-    // Assert.assertNotNull(akkaService.getActorSystem());
-    // akkaService.process(message);
-    //
-    // Mockito.verify(operationsService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sync(Mockito.any(ClientSync.class),
-    // Mockito.any(EndpointProfileDto.class));
-    // Mockito.verify(logAppenderService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).getLogSchema(APP_ID, 44);
-    //
-    // Mockito.verify(mockAppender,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(Mockito.any(LogEventPack.class),
-    // Mockito.any(LogDeliveryCallback.class));
-    //
-    // Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce())
-    // .build(Mockito.any(byte[].class), Mockito.any(boolean.class));
-    // }
-    //
-    // @Test
-    // public void testUserChange() throws Exception {
-    // ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
-    // MessageEncoderDecoder targetCrypt = new
-    // MessageEncoderDecoder(targetPair.getPrivate(), targetPair.getPublic(),
-    // serverPair.getPublic());
-    //
-    // EndpointProfileDto targetProfileMock =
-    // Mockito.mock(EndpointProfileDto.class);
-    //
-    // EventClassFamilyVersionStateDto ecfVdto = new
-    // EventClassFamilyVersionStateDto();
-    // ecfVdto.setEcfId(ECF1_ID);
-    // ecfVdto.setVersion(ECF1_VERSION);
-    //
-    // SyncRequest targetRequest = new SyncRequest();
-    // targetRequest.setRequestId(REQUEST_ID);
-    // SyncRequestMetaData md = new SyncRequestMetaData();
-    // md.setApplicationToken(APP_TOKEN);
-    // md.setEndpointPublicKeyHash(targetPublicKeyHash);
-    // md.setTimeout(TIMEOUT * 1L);
-    // targetRequest.setSyncRequestMetaData(md);
-    //
-    // targetRequest.setEventSyncRequest(new EventSyncRequest());
-    //
-    // ServerSync targetResponse = new ServerSync();
-    // targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
-    // SyncContext targetResponseHolder = new SyncContext(targetResponse);
-    // targetResponseHolder.setEndpointProfile(targetProfileMock);
-    //
-    // when(operationsService.sync(AvroEncDec.convert(targetRequest),
-    // null)).thenReturn(targetResponseHolder);
-    //
-    // when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID);
-    // when(targetProfileMock.getEndpointKeyHash()).thenReturn(targetPublicKeyHash.array());
-    // when(targetProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
-    //
-    // when(cacheService.getEventClassFamilyIdByEventClassFqn(new
-    // EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
-    // RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new
-    // EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
-    // when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1,
-    // ECF1_VERSION)))
-    // .thenReturn(Collections.singleton(routeKey));
-    //
-    // Assert.assertNotNull(akkaService.getActorSystem());
-    //
-    // MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
-    // ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
-    //
-    // SessionInitMessage message = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, targetRequest,
-    // responseBuilder, errorBuilder, targetCrypt);
-    //
-    // akkaService.process(message);
-    //
-    // Mockito.verify(operationsService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sync(AvroEncDec.convert(targetRequest),
-    // null);
-    // Mockito.verify(eventService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new
-    // UserRouteInfo(TENANT_ID, USER_ID));
-    //
-    // UserRouteInfo userRouteInfo = new UserRouteInfo(TENANT_ID, USER_ID,
-    // SERVER2, RouteOperation.ADD);
-    // akkaService.getListener().onUserRouteInfo(userRouteInfo);
-    // TimeUnit.SECONDS.sleep(2);
-    //
-    // RouteTableAddress remoteAddress = new
-    // RouteTableAddress(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()),
-    // APP_TOKEN,
-    // SERVER2);
-    // RouteInfo remoteRouteInfo = new RouteInfo(TENANT_ID, USER_ID,
-    // remoteAddress, Arrays.asList(new EventClassFamilyVersion(ECF1_ID,
-    // ECF1_VERSION)));
-    // TimeUnit.SECONDS.sleep(2);
-    // akkaService.getListener().onRouteInfo(remoteRouteInfo);
-    //
-    // RouteTableAddress localAddress = new
-    // RouteTableAddress(EndpointObjectHash.fromBytes(targetPublicKeyHash.array()),
-    // APP_TOKEN, null);
-    // RouteInfo localRouteInfo = new RouteInfo(TENANT_ID, USER_ID,
-    // localAddress, Arrays.asList(new EventClassFamilyVersion(ECF1_ID,
-    // ECF1_VERSION)));
-    // Mockito.verify(eventService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sendRouteInfo(Collections.singletonList(localRouteInfo),
-    // SERVER2);
-    //
-    // targetRequest = new SyncRequest();
-    // targetRequest.setRequestId(REQUEST_ID);
-    // md = new SyncRequestMetaData();
-    // md.setApplicationToken(APP_TOKEN);
-    // md.setEndpointPublicKeyHash(targetPublicKeyHash);
-    // md.setTimeout(TIMEOUT * 1L);
-    // targetRequest.setSyncRequestMetaData(md);
-    //
-    // targetResponse = new ServerSync();
-    // targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
-    // targetResponseHolder = new SyncContext(targetResponse);
-    // targetResponseHolder.setEndpointProfile(targetProfileMock);
-    //
-    // when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID + "2");
-    //
-    // when(operationsService.sync(AvroEncDec.convert(targetRequest),
-    // targetProfileMock)).thenReturn(targetResponseHolder);
-    //
-    // SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
-    // targetRequest, responseBuilder, errorBuilder, targetCrypt);
-    // akkaService.process(targetMessage);
-    // Mockito.verify(eventService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new
-    // UserRouteInfo(TENANT_ID, USER_ID + "2"));
-    // Mockito.verify(eventService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sendRouteInfo(
-    // RouteInfo.deleteRouteFromAddress(TENANT_ID, USER_ID, localAddress),
-    // SERVER2);
-    // }
-    //
-    // @Test
-    // public void testEndpointAttach() throws Exception {
-    // ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
-    // MessageEncoderDecoder targetCrypt = new
-    // MessageEncoderDecoder(targetPair.getPrivate(), targetPair.getPublic(),
-    // serverPair.getPublic());
-    //
-    // EndpointProfileDto targetProfileMock =
-    // Mockito.mock(EndpointProfileDto.class);
-    //
-    // EventClassFamilyVersionStateDto ecfVdto = new
-    // EventClassFamilyVersionStateDto();
-    // ecfVdto.setEcfId(ECF1_ID);
-    // ecfVdto.setVersion(ECF1_VERSION);
-    //
-    // SyncRequest targetRequest = new SyncRequest();
-    // targetRequest.setRequestId(REQUEST_ID);
-    // SyncRequestMetaData md = new SyncRequestMetaData();
-    // md.setApplicationToken(APP_TOKEN);
-    // md.setEndpointPublicKeyHash(targetPublicKeyHash);
-    // md.setTimeout(TIMEOUT * 1L);
-    // targetRequest.setSyncRequestMetaData(md);
-    //
-    // targetRequest.setEventSyncRequest(new EventSyncRequest());
-    //
-    // ServerSync targetResponse = new ServerSync();
-    // targetResponse.setRequestId(REQUEST_ID);
-    // targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
-    // targetResponse.setUserSync(new UserServerSync());
-    // SyncContext targetResponseHolder = new SyncContext(targetResponse);
-    // targetResponseHolder.setEndpointProfile(targetProfileMock);
-    //
-    // when(operationsService.sync(AvroEncDec.convert(targetRequest),
-    // null)).thenReturn(targetResponseHolder);
-    //
-    // when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID);
-    // when(targetProfileMock.getEndpointKeyHash()).thenReturn(targetPublicKeyHash.array());
-    // when(targetProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
-    //
-    // when(cacheService.getEventClassFamilyIdByEventClassFqn(new
-    // EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
-    // RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new
-    // EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
-    // when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1,
-    // ECF1_VERSION)))
-    // .thenReturn(Collections.singleton(routeKey));
-    //
-    // Assert.assertNotNull(akkaService.getActorSystem());
-    //
-    // MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
-    // ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
-    //
-    // SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
-    // targetRequest, responseBuilder, errorBuilder, targetCrypt);
-    //
-    // akkaService.process(targetMessage);
-    //
-    // Mockito.verify(operationsService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sync(AvroEncDec.convert(targetRequest),
-    // null);
-    // Mockito.verify(eventService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new
-    // UserRouteInfo(TENANT_ID, USER_ID));
-    //
-    // EndpointProfileDto sourceProfileMock =
-    // Mockito.mock(EndpointProfileDto.class);
-    //
-    // SyncRequest sourceRequest = new SyncRequest();
-    // sourceRequest.setRequestId(REQUEST_ID);
-    // SyncRequestMetaData sourceMd = new SyncRequestMetaData();
-    // sourceMd.setApplicationToken(APP_TOKEN);
-    // sourceMd.setEndpointPublicKeyHash(clientPublicKeyHash);
-    // sourceMd.setTimeout(TIMEOUT * 1L);
-    // sourceRequest.setSyncRequestMetaData(sourceMd);
-    //
-    // sourceRequest.setEventSyncRequest(new EventSyncRequest());
-    //
-    // UserSyncRequest userSyncRequest = new UserSyncRequest();
-    // EndpointAttachRequest eaRequest = new EndpointAttachRequest(REQUEST_ID,
-    // "token");
-    // userSyncRequest.setEndpointAttachRequests(Collections.singletonList(eaRequest));
-    // sourceRequest.setUserSyncRequest(userSyncRequest);
-    //
-    // ServerSync sourceResponse = new ServerSync();
-    // sourceResponse.setRequestId(REQUEST_ID);
-    // sourceResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
-    // UserServerSync userSyncResponse = new UserServerSync();
-    // userSyncResponse.setEndpointAttachResponses(Collections.singletonList(new
-    // org.kaaproject.kaa.server.sync.EndpointAttachResponse(
-    // REQUEST_ID, Base64Util.encode(targetPublicKeyHash.array()),
-    // org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS)));
-    // sourceResponse.setUserSync(userSyncResponse);
-    //
-    // SyncContext sourceResponseHolder = new SyncContext(sourceResponse);
-    // sourceResponseHolder.setEndpointProfile(sourceProfileMock);
-    //
-    // when(operationsService.sync(AvroEncDec.convert(sourceRequest),
-    // null)).thenReturn(sourceResponseHolder);
-    //
-    // when(sourceProfileMock.getEndpointUserId()).thenReturn(USER_ID);
-    // when(sourceProfileMock.getEndpointKeyHash()).thenReturn(clientPublicKeyHash.array());
-    // when(sourceProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
-    //
-    // MessageBuilder sourceResponseBuilder =
-    // Mockito.mock(MessageBuilder.class);
-    // ErrorBuilder sourceErrorBuilder = Mockito.mock(ErrorBuilder.class);
-    //
-    // SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
-    // sourceRequest, sourceResponseBuilder, sourceErrorBuilder);
-    // akkaService.process(sourceMessage);
-    //
-    // Mockito.verify(operationsService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sync(AvroEncDec.convert(sourceRequest),
-    // null);
-    // SyncResponse targetSyncResponse = new SyncResponse();
-    // targetSyncResponse.setRequestId(REQUEST_ID);
-    // targetSyncResponse.setStatus(SyncResponseResultType.SUCCESS);
-    // targetSyncResponse.setUserSyncResponse(new UserSyncResponse());
-    // targetSyncResponse.getUserSyncResponse().setUserAttachNotification(
-    // new UserAttachNotification(USER_ID,
-    // Base64Util.encode(clientPublicKeyHash.array())));
-    //
-    // AvroByteArrayConverter<SyncResponse> responseConverter = new
-    // AvroByteArrayConverter<>(SyncResponse.class);
-    // byte[] response = responseConverter.toByteArray(targetSyncResponse);
-    // LOG.trace("Expected response {}", Arrays.toString(response));
-    // byte[] encodedData = targetCrypt.encodeData(response);
-    // Mockito.verify(responseBuilder,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
-    // }
-    //
-    // @Test
-    // public void testEndpointDetach() throws Exception {
-    // ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
-    // MessageEncoderDecoder targetCrypt = new
-    // MessageEncoderDecoder(targetPair.getPrivate(), targetPair.getPublic(),
-    // serverPair.getPublic());
-    //
-    // EndpointProfileDto targetProfileMock =
-    // Mockito.mock(EndpointProfileDto.class);
-    //
-    // EventClassFamilyVersionStateDto ecfVdto = new
-    // EventClassFamilyVersionStateDto();
-    // ecfVdto.setEcfId(ECF1_ID);
-    // ecfVdto.setVersion(ECF1_VERSION);
-    //
-    // SyncRequest targetRequest = new SyncRequest();
-    // targetRequest.setRequestId(REQUEST_ID);
-    // SyncRequestMetaData md = new SyncRequestMetaData();
-    // md.setApplicationToken(APP_TOKEN);
-    // md.setEndpointPublicKeyHash(targetPublicKeyHash);
-    // md.setTimeout(TIMEOUT * 1L);
-    // targetRequest.setSyncRequestMetaData(md);
-    //
-    // targetRequest.setEventSyncRequest(new EventSyncRequest());
-    //
-    // ServerSync targetResponse = new ServerSync();
-    // targetResponse.setRequestId(REQUEST_ID);
-    // targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
-    // targetResponse.setUserSync(new UserServerSync());
-    // SyncContext targetResponseHolder = new SyncContext(targetResponse);
-    // targetResponseHolder.setEndpointProfile(targetProfileMock);
-    //
-    // when(operationsService.sync(AvroEncDec.convert(targetRequest),
-    // null)).thenReturn(targetResponseHolder);
-    //
-    // when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID);
-    // when(targetProfileMock.getEndpointKeyHash()).thenReturn(targetPublicKeyHash.array());
-    // when(targetProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
-    //
-    // when(cacheService.getEventClassFamilyIdByEventClassFqn(new
-    // EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
-    // RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new
-    // EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
-    // when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1,
-    // ECF1_VERSION)))
-    // .thenReturn(Collections.singleton(routeKey));
-    //
-    // Assert.assertNotNull(akkaService.getActorSystem());
-    //
-    // MessageBuilder targetResponseBuilder =
-    // Mockito.mock(MessageBuilder.class);
-    // ErrorBuilder targetErrorBuilder = Mockito.mock(ErrorBuilder.class);
-    //
-    // SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
-    // targetRequest, targetResponseBuilder, targetErrorBuilder, targetCrypt);
-    // akkaService.process(targetMessage);
-    //
-    // Mockito.verify(operationsService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sync(AvroEncDec.convert(targetRequest),
-    // null);
-    // Mockito.verify(eventService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new
-    // UserRouteInfo(TENANT_ID, USER_ID));
-    //
-    // EndpointProfileDto sourceProfileMock =
-    // Mockito.mock(EndpointProfileDto.class);
-    //
-    // SyncRequest sourceRequest = new SyncRequest();
-    // sourceRequest.setRequestId(REQUEST_ID);
-    // SyncRequestMetaData sourceMd = new SyncRequestMetaData();
-    // sourceMd.setApplicationToken(APP_TOKEN);
-    // sourceMd.setEndpointPublicKeyHash(clientPublicKeyHash);
-    // sourceMd.setTimeout(TIMEOUT * 1L);
-    // sourceRequest.setSyncRequestMetaData(sourceMd);
-    //
-    // sourceRequest.setEventSyncRequest(new EventSyncRequest());
-    //
-    // UserSyncRequest userSyncRequest = new UserSyncRequest();
-    // EndpointDetachRequest eaRequest = new EndpointDetachRequest(REQUEST_ID,
-    // Base64Util.encode(targetPublicKeyHash.array()));
-    // userSyncRequest.setEndpointDetachRequests(Collections.singletonList(eaRequest));
-    // sourceRequest.setUserSyncRequest(userSyncRequest);
-    //
-    // ServerSync sourceResponse = new ServerSync();
-    // sourceResponse.setRequestId(REQUEST_ID);
-    // sourceResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
-    // UserServerSync userSyncResponse = new UserServerSync();
-    // userSyncResponse.setEndpointDetachResponses(Collections.singletonList(new
-    // org.kaaproject.kaa.server.sync.EndpointDetachResponse(
-    // REQUEST_ID, org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS)));
-    // sourceResponse.setUserSync(userSyncResponse);
-    // SyncContext sourceResponseHolder = new SyncContext(sourceResponse);
-    // sourceResponseHolder.setEndpointProfile(sourceProfileMock);
-    //
-    // when(operationsService.sync(AvroEncDec.convert(sourceRequest),
-    // null)).thenReturn(sourceResponseHolder);
-    //
-    // when(sourceProfileMock.getEndpointUserId()).thenReturn(USER_ID);
-    // when(sourceProfileMock.getEndpointKeyHash()).thenReturn(clientPublicKeyHash.array());
-    // when(sourceProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
-    //
-    // MessageBuilder sourceResponseBuilder =
-    // Mockito.mock(MessageBuilder.class);
-    // ErrorBuilder sourceErrorBuilder = Mockito.mock(ErrorBuilder.class);
-    //
-    // SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(),
-    // ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
-    // sourceRequest, sourceResponseBuilder, sourceErrorBuilder);
-    // akkaService.process(sourceMessage);
-    //
-    // Mockito.verify(operationsService,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).sync(AvroEncDec.convert(sourceRequest),
-    // null);
-    // SyncResponse targetSyncResponse = new SyncResponse();
-    // targetSyncResponse.setRequestId(REQUEST_ID);
-    // targetSyncResponse.setStatus(SyncResponseResultType.SUCCESS);
-    // targetSyncResponse.setUserSyncResponse(new UserSyncResponse());
-    // targetSyncResponse.getUserSyncResponse().setUserDetachNotification(
-    // new
-    // UserDetachNotification(Base64Util.encode(clientPublicKeyHash.array())));
-    //
-    // AvroByteArrayConverter<SyncResponse> responseConverter = new
-    // AvroByteArrayConverter<>(SyncResponse.class);
-    // byte[] response = responseConverter.toByteArray(targetSyncResponse);
-    // byte[] encodedData = targetCrypt.encodeData(response);
-    // Mockito.verify(targetResponseBuilder,
-    // Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
-    // }
+
+    @Test
+    public void testLongSyncTopicNotificationOnStart() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+
+        Mockito.when(applicationService.findAppById(APP_ID)).thenReturn(applicationDto);
+        Notification thriftNotification = new Notification();
+        thriftNotification.setAppId(APP_ID);
+        thriftNotification.setTopicId(TOPIC_ID);
+        thriftNotification.setNotificationId(UNICAST_NOTIFICATION_ID);
+        thriftNotification.setKeyHash(clientPublicKeyHash);
+        akkaService.onNotification(thriftNotification);
+
+        Mockito.when(notificationDeltaService.findNotificationById(UNICAST_NOTIFICATION_ID)).thenReturn(topicNotification);
+
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(REQUEST_ID);
+        request.setSyncRequestMetaData(buildSyncRequestMetaData());
+
+        NotificationSyncRequest nfRequest = new NotificationSyncRequest();
+        request.setNotificationSyncRequest(nfRequest);
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        whenSync(noDeltaResponseWithTopicState);
+        Mockito.when(
+                operationsService.updateSyncResponse(noDeltaResponseWithTopicState.getResponse(),
+                        Collections.singletonList(topicNotification), null)).thenReturn(noDeltaResponseWithTopicState.getResponse());
+
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request,
+                responseBuilder, errorBuilder);
+        Assert.assertNotNull(akkaService.getActorSystem());
+        akkaService.process(message);
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).updateSyncResponse(
+                noDeltaResponseWithTopicState.getResponse(), Collections.singletonList(topicNotification), null);
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce())
+                .build(Mockito.any(byte[].class), Mockito.any(boolean.class));
+    }
+
+    @Test
+    public void testLongSyncTopicNotification() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(REQUEST_ID);
+        request.setSyncRequestMetaData(buildSyncRequestMetaData());
+
+        NotificationSyncRequest nfRequest = new NotificationSyncRequest();
+        request.setNotificationSyncRequest(nfRequest);
+
+        Mockito.when(applicationService.findAppById(APP_ID)).thenReturn(applicationDto);
+        Mockito.when(notificationDeltaService.findNotificationById(UNICAST_NOTIFICATION_ID)).thenReturn(topicNotification);
+        whenSync(noDeltaResponseWithTopicState);
+        Mockito.when(
+                operationsService.updateSyncResponse(noDeltaResponseWithTopicState.getResponse(),
+                        Collections.singletonList(topicNotification), null)).thenReturn(noDeltaResponseWithTopicState.getResponse());
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request,
+                responseBuilder, errorBuilder);
+        Assert.assertNotNull(akkaService.getActorSystem());
+        akkaService.process(message);
+
+        Thread.sleep(3000);
+
+        Notification thriftNotification = new Notification();
+        thriftNotification.setAppId(APP_ID);
+        thriftNotification.setTopicId(TOPIC_ID);
+        thriftNotification.setNotificationId(UNICAST_NOTIFICATION_ID);
+        thriftNotification.setKeyHash(clientPublicKeyHash);
+        akkaService.onNotification(thriftNotification);
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).updateSyncResponse(
+                noDeltaResponseWithTopicState.getResponse(), Collections.singletonList(topicNotification), null);
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce())
+                .build(Mockito.any(byte[].class), Mockito.any(boolean.class));
+    }
+
+    @Test
+    public void testRedirect() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+        MessageEncoderDecoder crypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(), serverPair.getPublic());
+        akkaService.onRedirectionRule(new RedirectionRule("testDNS".hashCode(), 123, 1.0, 60000));
+
+        Thread.sleep(1000);
+
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(32);
+        request.setSyncRequestMetaData(buildSyncRequestMetaData());
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request,
+                responseBuilder, errorBuilder, crypt);
+        akkaService.process(message);
+
+        SyncResponse response = new SyncResponse();
+        response.setRequestId(request.getRequestId());
+        response.setStatus(SyncResponseResultType.REDIRECT);
+        response.setRedirectSyncResponse(new RedirectSyncResponse("testDNS".hashCode()));
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).never()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+
+        AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
+        byte[] encodedData = crypt.encodeData(responseConverter.toByteArray(response));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
+    }
+
+    @Test
+    public void testRedirectSessionRequest() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+        MessageEncoderDecoder crypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(), serverPair.getPublic());
+        akkaService.onRedirectionRule(new RedirectionRule("testDNS".hashCode(), 123, 1.0, 60000));
+
+        Thread.sleep(1000);
+
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(32);
+        request.setSyncRequestMetaData(buildSyncRequestMetaData());
+
+        final MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        final ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        AvroByteArrayConverter<SyncRequest> requestConverter = new AvroByteArrayConverter<>(SyncRequest.class);
+        final org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest kaaSync = new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest(
+                crypt.encodeData(requestConverter.toByteArray(request)), false, true);
+        final SessionInfo session = new SessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, channelContextMock,
+                ChannelType.ASYNC, crypt.getSessionCipherPair(), EndpointObjectHash.fromBytes(clientPublicKey.array()), APP_TOKEN, 100,
+                true);
+
+        SessionAwareMessage message = new SessionAwareMessage() {
+
+            @Override
+            public SessionInfo getSessionInfo() {
+                return session;
+            }
+
+            @Override
+            public int getPlatformId() {
+                return session.getPlatformId();
+            }
+
+            @Override
+            public UUID getChannelUuid() {
+                return session.getUuid();
+            }
+
+            @Override
+            public ChannelType getChannelType() {
+                return session.getChannelType();
+            }
+
+            @Override
+            public ChannelContext getChannelContext() {
+                return session.getCtx();
+            }
+
+            @Override
+            public boolean isEncrypted() {
+                return session.isEncrypted();
+            }
+
+            @Override
+            public MessageBuilder getMessageBuilder() {
+                return responseBuilder;
+            }
+
+            @Override
+            public ErrorBuilder getErrorBuilder() {
+                return errorBuilder;
+            }
+
+            @Override
+            public byte[] getEncodedMessageData() {
+                return kaaSync.getAvroObject();
+            }
+        };
+        akkaService.process(message);
+
+        SyncResponse response = new SyncResponse();
+        response.setRequestId(request.getRequestId());
+        response.setStatus(SyncResponseResultType.REDIRECT);
+        response.setRedirectSyncResponse(new RedirectSyncResponse("testDNS".hashCode()));
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).never()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+
+        AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
+        byte[] encodedData = crypt.encodeData(responseConverter.toByteArray(response));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
+    }
+
+    @Test
+    public void testRedirectExpire() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+        MessageEncoderDecoder crypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(), serverPair.getPublic());
+        akkaService.onRedirectionRule(new RedirectionRule("testDNS".hashCode(), 123, 1.0, 1000));
+
+        Thread.sleep(2000);
+
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(32);
+        request.setSyncRequestMetaData(buildSyncRequestMetaData());
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request,
+                responseBuilder, errorBuilder, crypt);
+
+        whenSync(noDeltaResponseWithTopicState);
+
+        akkaService.process(message);
+
+        SyncResponse response = new SyncResponse();
+        response.setRequestId(request.getRequestId());
+        response.setStatus(SyncResponseResultType.REDIRECT);
+        response.setRedirectSyncResponse(new RedirectSyncResponse("testDNS".hashCode()));
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+    }
+
+    @Test
+    public void testEndpointEventBasic() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+
+        EndpointProfileDto sourceProfileMock = Mockito.mock(EndpointProfileDto.class);
+        EndpointProfileDto targetProfileMock = Mockito.mock(EndpointProfileDto.class);
+
+        EventClassFamilyVersionStateDto ecfVdto = new EventClassFamilyVersionStateDto();
+        ecfVdto.setEcfId(ECF1_ID);
+        ecfVdto.setVersion(ECF1_VERSION);
+
+        Event event = new Event(0, FQN1, ByteBuffer.wrap(new byte[0]), Base64Util.encode(clientPublicKeyHash.array()), null);
+
+        SyncRequest sourceRequest = new SyncRequest();
+        sourceRequest.setRequestId(REQUEST_ID);
+        SyncRequestMetaData md = new SyncRequestMetaData();
+        md.setApplicationToken(APP_TOKEN);
+        md.setEndpointPublicKeyHash(clientPublicKeyHash);
+        md.setProfileHash(clientPublicKeyHash);
+        md.setTimeout(TIMEOUT * 1L);
+        sourceRequest.setSyncRequestMetaData(md);
+
+        EventSyncRequest eventRequest = new EventSyncRequest();
+        eventRequest.setEvents(Arrays.asList(event));
+        sourceRequest.setEventSyncRequest(eventRequest);
+
+        ServerSync sourceResponse = new ServerSync();
+        sourceResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
+        SyncContext sourceResponseHolder = new SyncContext(sourceResponse);
+        sourceResponseHolder.setEndpointProfile(sourceProfileMock);
+
+        SyncRequest targetRequest = new SyncRequest();
+        targetRequest.setRequestId(REQUEST_ID);
+        md = new SyncRequestMetaData();
+        md.setApplicationToken(APP_TOKEN);
+        md.setEndpointPublicKeyHash(targetPublicKeyHash);
+        md.setProfileHash(targetPublicKeyHash);
+        md.setTimeout(TIMEOUT * 1L);
+        targetRequest.setSyncRequestMetaData(md);
+
+        targetRequest.setEventSyncRequest(new EventSyncRequest());
+
+        ServerSync targetResponse = new ServerSync();
+        targetResponse.setRequestId(REQUEST_ID);
+        targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
+        SyncContext targetResponseHolder = new SyncContext(targetResponse);
+        targetResponseHolder.setEndpointProfile(targetProfileMock);
+
+        whenSync(AvroEncDec.convert(sourceRequest), sourceResponseHolder);
+        whenSync(AvroEncDec.convert(targetRequest), targetResponseHolder);
+
+        when(sourceProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(sourceProfileMock.getEndpointKeyHash()).thenReturn(clientPublicKeyHash.array());
+        when(sourceProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(targetProfileMock.getEndpointKeyHash()).thenReturn(targetPublicKeyHash.array());
+        when(targetProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        when(cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
+        RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
+        when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1, ECF1_VERSION)))
+                .thenReturn(Collections.singleton(routeKey));
+
+        Assert.assertNotNull(akkaService.getActorSystem());
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        MessageEncoderDecoder sourceCrypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(),
+                serverPair.getPublic());
+        SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
+                sourceRequest, responseBuilder, errorBuilder, sourceCrypt);
+        akkaService.process(sourceMessage);
+
+        // sourceRequest
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+
+        MessageEncoderDecoder targetCrypt = new MessageEncoderDecoder(targetPair.getPrivate(), targetPair.getPublic(),
+                serverPair.getPublic());
+        SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
+                targetRequest, responseBuilder, errorBuilder, targetCrypt);
+        akkaService.process(targetMessage);
+
+        // targetRequest
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+
+        SyncResponse eventResponse = new SyncResponse();
+        eventResponse.setRequestId(REQUEST_ID);
+        eventResponse.setStatus(SyncResponseResultType.SUCCESS);
+        eventResponse.setEventSyncResponse(new EventSyncResponse());
+        eventResponse.getEventSyncResponse().setEvents(Arrays.asList(event));
+
+        AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
+        byte[] response = responseConverter.toByteArray(eventResponse);
+        byte[] encodedData = targetCrypt.encodeData(response);
+
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
+    }
+
+    @Test
+    public void testEndpointEventSeqNumberBasic() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+
+        EndpointProfileDto sourceProfileMock = Mockito.mock(EndpointProfileDto.class);
+
+        EventClassFamilyVersionStateDto ecfVdto = new EventClassFamilyVersionStateDto();
+        ecfVdto.setEcfId(ECF1_ID);
+        ecfVdto.setVersion(ECF1_VERSION);
+
+        SyncRequest sourceRequest = new SyncRequest();
+        sourceRequest.setRequestId(REQUEST_ID);
+        sourceRequest.setSyncRequestMetaData(buildSyncRequestMetaData());
+
+        EventSyncRequest eventRequest = new EventSyncRequest();
+        eventRequest.setEventSequenceNumberRequest(new EventSequenceNumberRequest());
+        sourceRequest.setEventSyncRequest(eventRequest);
+
+        ServerSync sourceResponse = new ServerSync();
+        sourceResponse.setRequestId(REQUEST_ID);
+        sourceResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
+        SyncContext sourceResponseHolder = new SyncContext(sourceResponse);
+        sourceResponseHolder.setEndpointProfile(sourceProfileMock);
+
+        whenSync(AvroEncDec.convert(sourceRequest), sourceResponseHolder);
+
+        when(sourceProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(sourceProfileMock.getEndpointKeyHash()).thenReturn(clientPublicKeyHash.array());
+        when(sourceProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        when(cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
+        RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
+        when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1, ECF1_VERSION)))
+                .thenReturn(Collections.singleton(routeKey));
+
+        Assert.assertNotNull(akkaService.getActorSystem());
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        MessageEncoderDecoder sourceCrypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(),
+                serverPair.getPublic());
+        SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
+                sourceRequest, responseBuilder, errorBuilder, sourceCrypt);
+        akkaService.process(sourceMessage);
+
+        // sourceRequest
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+
+        SyncResponse eventResponse = new SyncResponse();
+        eventResponse.setRequestId(REQUEST_ID);
+        eventResponse.setStatus(SyncResponseResultType.SUCCESS);
+        eventResponse.setEventSyncResponse(new EventSyncResponse());
+        eventResponse.getEventSyncResponse().setEventSequenceNumberResponse(new EventSequenceNumberResponse(0));
+
+        AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
+        byte[] response = responseConverter.toByteArray(eventResponse);
+        LOG.trace("Response to compare {}", Arrays.toString(response));
+        byte[] encodedData = sourceCrypt.encodeData(response);
+
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
+    }
+
+    @Test
+    public void testRemoteIncomingEndpointEventBasic() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+
+        EndpointProfileDto targetProfileMock = Mockito.mock(EndpointProfileDto.class);
+
+        EventClassFamilyVersionStateDto ecfVdto = new EventClassFamilyVersionStateDto();
+        ecfVdto.setEcfId(ECF1_ID);
+        ecfVdto.setVersion(ECF1_VERSION);
+
+        SyncRequest targetRequest = new SyncRequest();
+        targetRequest.setRequestId(REQUEST_ID);
+        targetRequest.setSyncRequestMetaData(buildSyncRequestMetaData(targetPublicKeyHash));
+
+        targetRequest.setEventSyncRequest(new EventSyncRequest());
+
+        ServerSync targetResponse = new ServerSync();
+
+        targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
+        SyncContext targetResponseHolder = new SyncContext(targetResponse);
+        targetResponseHolder.setEndpointProfile(targetProfileMock);
+
+        whenSync(AvroEncDec.convert(targetRequest), targetResponseHolder);
+
+        when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(targetProfileMock.getEndpointKeyHash()).thenReturn(targetPublicKeyHash.array());
+        when(targetProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        when(cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
+        RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
+        when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1, ECF1_VERSION)))
+                .thenReturn(Collections.singleton(routeKey));
+
+        Assert.assertNotNull(akkaService.getActorSystem());
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        MessageEncoderDecoder targetCrypt = new MessageEncoderDecoder(targetPair.getPrivate(), targetPair.getPublic(),
+                serverPair.getPublic());
+        SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
+                targetRequest, responseBuilder, errorBuilder, targetCrypt);
+        akkaService.process(targetMessage);
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+
+        org.kaaproject.kaa.server.sync.Event event = new org.kaaproject.kaa.server.sync.Event(0, FQN1, ByteBuffer.wrap(new byte[0]), null,
+                null);
+        EndpointEvent endpointEvent = new EndpointEvent(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()), event,
+                UUID.randomUUID(), System.currentTimeMillis(), ECF1_VERSION);
+        RemoteEndpointEvent remoteEvent = new RemoteEndpointEvent(TENANT_ID, USER_ID, endpointEvent, new RouteTableAddress(
+                EndpointObjectHash.fromBytes(targetPublicKeyHash.array()), APP_TOKEN, "SERVER1"));
+        akkaService.getListener().onEvent(remoteEvent);
+
+        event = new org.kaaproject.kaa.server.sync.Event(0, FQN1, ByteBuffer.wrap(new byte[0]), null, Base64Util.encode(targetPublicKeyHash
+                .array()));
+
+        ServerSync eventResponse = new ServerSync();
+        eventResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
+        eventResponse.setEventSync(new EventServerSync());
+        eventResponse.getEventSync().setEvents(Arrays.asList(event));
+
+        AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
+        byte[] response = responseConverter.toByteArray(AvroEncDec.convert(eventResponse));
+        byte[] encodedData = targetCrypt.encodeData(response);
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
+    }
+
+    @Test
+    public void testRemoteOutcomingEndpointEventBasic() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+
+        EndpointProfileDto sourceProfileMock = Mockito.mock(EndpointProfileDto.class);
+
+        EventClassFamilyVersionStateDto ecfVdto = new EventClassFamilyVersionStateDto();
+        ecfVdto.setEcfId(ECF1_ID);
+        ecfVdto.setVersion(ECF1_VERSION);
+
+        Event event = new Event(0, FQN1, ByteBuffer.wrap(new byte[0]), Base64Util.encode(clientPublicKeyHash.array()), null);
+
+        SyncRequest sourceRequest = new SyncRequest();
+        sourceRequest.setRequestId(REQUEST_ID);
+        sourceRequest.setSyncRequestMetaData(buildSyncRequestMetaData(clientPublicKeyHash));
+
+        EventSyncRequest eventRequest = new EventSyncRequest();
+        eventRequest.setEvents(Arrays.asList(event));
+        sourceRequest.setEventSyncRequest(eventRequest);
+
+        ServerSync sourceResponse = new ServerSync();
+        sourceResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
+        SyncContext sourceResponseHolder = new SyncContext(sourceResponse);
+        sourceResponseHolder.setEndpointProfile(sourceProfileMock);
+
+        whenSync(AvroEncDec.convert(sourceRequest), sourceResponseHolder);
+
+        when(sourceProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(sourceProfileMock.getEndpointKeyHash()).thenReturn(clientPublicKeyHash.array());
+        when(sourceProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        when(cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
+        RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
+        when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1, ECF1_VERSION)))
+                .thenReturn(Collections.singleton(routeKey));
+
+        Assert.assertNotNull(akkaService.getActorSystem());
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        MessageEncoderDecoder sourceCrypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(),
+                serverPair.getPublic());
+        SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
+                sourceRequest, responseBuilder, errorBuilder, sourceCrypt);
+
+        akkaService.process(sourceMessage);
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+
+        UserRouteInfo userRouteInfo = new UserRouteInfo(TENANT_ID, USER_ID, SERVER2, RouteOperation.ADD);
+        akkaService.getListener().onUserRouteInfo(userRouteInfo);
+
+        RouteTableAddress remoteAddress = new RouteTableAddress(EndpointObjectHash.fromBytes(targetPublicKeyHash.array()), APP_TOKEN,
+                SERVER2);
+        RouteInfo routeInfo = new RouteInfo(TENANT_ID, USER_ID, remoteAddress, Arrays.asList(new EventClassFamilyVersion(ECF1_ID,
+                ECF1_VERSION)));
+        TimeUnit.SECONDS.sleep(2);
+        akkaService.getListener().onRouteInfo(routeInfo);
+
+        Mockito.verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendEvent(Mockito.any(RemoteEndpointEvent.class));
+    }
+
+    @Test
+    public void testLogSyncRequest() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(REQUEST_ID);
+        SyncRequestMetaData md = new SyncRequestMetaData();
+        md.setApplicationToken(APP_TOKEN);
+        md.setEndpointPublicKeyHash(clientPublicKeyHash);
+        md.setProfileHash(clientPublicKeyHash);
+        md.setTimeout(1000l);
+        request.setSyncRequestMetaData(md);
+
+        LogSyncRequest logRequest = new LogSyncRequest(REQUEST_ID, Collections.singletonList(new LogEntry(ByteBuffer.wrap("String"
+                .getBytes()))));
+        request.setLogSyncRequest(logRequest);
+
+        whenSync(noDeltaResponseWithTopicState);
+
+        LogAppender mockAppender = Mockito.mock(LogAppender.class);
+        Mockito.when(logAppenderService.getApplicationAppenders(APP_ID)).thenReturn(Collections.singletonList(mockAppender));
+        Mockito.when(logAppenderService.getLogSchema(Mockito.anyString(), Mockito.anyInt())).thenReturn(Mockito.mock(LogSchema.class));
+        Mockito.when(mockAppender.isSchemaVersionSupported(Mockito.anyInt())).thenReturn(true);
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request,
+                responseBuilder, errorBuilder);
+
+        Assert.assertNotNull(akkaService.getActorSystem());
+        akkaService.process(message);
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(logAppenderService, Mockito.timeout(TIMEOUT).atLeastOnce()).getLogSchema(APP_ID, 44);
+
+        Mockito.verify(mockAppender, Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(Mockito.any(LogEventPack.class),
+                Mockito.any(LogDeliveryCallback.class));
+
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce())
+                .build(Mockito.any(byte[].class), Mockito.any(boolean.class));
+    }
+
+    @Test
+    public void testUserChange() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+        MessageEncoderDecoder targetCrypt = new MessageEncoderDecoder(targetPair.getPrivate(), targetPair.getPublic(),
+                serverPair.getPublic());
+
+        EndpointProfileDto targetProfileMock = Mockito.mock(EndpointProfileDto.class);
+
+        EventClassFamilyVersionStateDto ecfVdto = new EventClassFamilyVersionStateDto();
+        ecfVdto.setEcfId(ECF1_ID);
+        ecfVdto.setVersion(ECF1_VERSION);
+
+        SyncRequest targetRequest = new SyncRequest();
+        targetRequest.setRequestId(REQUEST_ID);
+        targetRequest.setSyncRequestMetaData(buildSyncRequestMetaData(targetPublicKeyHash));
+
+        targetRequest.setEventSyncRequest(new EventSyncRequest());
+
+        ServerSync targetResponse = new ServerSync();
+        targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
+        SyncContext targetResponseHolder = new SyncContext(targetResponse);
+        targetResponseHolder.setEndpointProfile(targetProfileMock);
+
+        whenSync(AvroEncDec.convert(targetRequest), targetResponseHolder);
+
+        when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(targetProfileMock.getEndpointKeyHash()).thenReturn(targetPublicKeyHash.array());
+        when(targetProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        when(cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
+        RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
+        when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1, ECF1_VERSION)))
+                .thenReturn(Collections.singleton(routeKey));
+
+        Assert.assertNotNull(akkaService.getActorSystem());
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, targetRequest,
+                responseBuilder, errorBuilder, targetCrypt);
+
+        akkaService.process(message);
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID));
+
+        UserRouteInfo userRouteInfo = new UserRouteInfo(TENANT_ID, USER_ID, SERVER2, RouteOperation.ADD);
+        akkaService.getListener().onUserRouteInfo(userRouteInfo);
+        TimeUnit.SECONDS.sleep(2);
+
+        RouteTableAddress remoteAddress = new RouteTableAddress(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()), APP_TOKEN,
+                SERVER2);
+        RouteInfo remoteRouteInfo = new RouteInfo(TENANT_ID, USER_ID, remoteAddress, Arrays.asList(new EventClassFamilyVersion(ECF1_ID,
+                ECF1_VERSION)));
+        TimeUnit.SECONDS.sleep(2);
+        akkaService.getListener().onRouteInfo(remoteRouteInfo);
+
+        RouteTableAddress localAddress = new RouteTableAddress(EndpointObjectHash.fromBytes(targetPublicKeyHash.array()), APP_TOKEN, null);
+        RouteInfo localRouteInfo = new RouteInfo(TENANT_ID, USER_ID, localAddress, Arrays.asList(new EventClassFamilyVersion(ECF1_ID,
+                ECF1_VERSION)));
+        Mockito.verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendRouteInfo(Collections.singletonList(localRouteInfo),
+                SERVER2);
+
+        targetRequest = new SyncRequest();
+        targetRequest.setRequestId(REQUEST_ID);
+        targetRequest.setSyncRequestMetaData(buildSyncRequestMetaData(targetPublicKeyHash));
+
+        targetResponse = new ServerSync();
+        targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
+        targetResponseHolder = new SyncContext(targetResponse);
+        targetResponseHolder.setEndpointProfile(targetProfileMock);
+
+        when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID + "2");
+
+        whenSync(AvroEncDec.convert(targetRequest), targetResponseHolder);
+
+        SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
+                targetRequest, responseBuilder, errorBuilder, targetCrypt);
+        akkaService.process(targetMessage);
+        Mockito.verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID + "2"));
+        Mockito.verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendRouteInfo(
+                RouteInfo.deleteRouteFromAddress(TENANT_ID, USER_ID, localAddress), SERVER2);
+    }
+
+    @Test
+    public void testEndpointAttach() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+        MessageEncoderDecoder targetCrypt = new MessageEncoderDecoder(targetPair.getPrivate(), targetPair.getPublic(),
+                serverPair.getPublic());
+
+        EndpointProfileDto targetProfileMock = Mockito.mock(EndpointProfileDto.class);
+
+        EventClassFamilyVersionStateDto ecfVdto = new EventClassFamilyVersionStateDto();
+        ecfVdto.setEcfId(ECF1_ID);
+        ecfVdto.setVersion(ECF1_VERSION);
+
+        SyncRequest targetRequest = new SyncRequest();
+        targetRequest.setRequestId(REQUEST_ID);
+        targetRequest.setSyncRequestMetaData(buildSyncRequestMetaData(targetPublicKeyHash));
+
+        targetRequest.setEventSyncRequest(new EventSyncRequest());
+
+        ServerSync targetResponse = new ServerSync();
+        targetResponse.setRequestId(REQUEST_ID);
+        targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
+        targetResponse.setUserSync(new UserServerSync());
+        SyncContext targetResponseHolder = new SyncContext(targetResponse);
+        targetResponseHolder.setEndpointProfile(targetProfileMock);
+
+        whenSync(AvroEncDec.convert(targetRequest), targetResponseHolder);
+
+        when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(targetProfileMock.getEndpointKeyHash()).thenReturn(targetPublicKeyHash.array());
+        when(targetProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        when(cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
+        RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
+        when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1, ECF1_VERSION)))
+                .thenReturn(Collections.singleton(routeKey));
+
+        Assert.assertNotNull(akkaService.getActorSystem());
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
+                targetRequest, responseBuilder, errorBuilder, targetCrypt);
+
+        akkaService.process(targetMessage);
+
+        
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID));
+
+        EndpointProfileDto sourceProfileMock = Mockito.mock(EndpointProfileDto.class);
+
+        SyncRequest sourceRequest = new SyncRequest();
+        sourceRequest.setRequestId(REQUEST_ID);
+        sourceRequest.setSyncRequestMetaData(buildSyncRequestMetaData(clientPublicKeyHash));
+
+        sourceRequest.setEventSyncRequest(new EventSyncRequest());
+
+        UserSyncRequest userSyncRequest = new UserSyncRequest();
+        EndpointAttachRequest eaRequest = new EndpointAttachRequest(REQUEST_ID, "token");
+        userSyncRequest.setEndpointAttachRequests(Collections.singletonList(eaRequest));
+        sourceRequest.setUserSyncRequest(userSyncRequest);
+
+        ServerSync sourceResponse = new ServerSync();
+        sourceResponse.setRequestId(REQUEST_ID);
+        sourceResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
+        UserServerSync userSyncResponse = new UserServerSync();
+        userSyncResponse.setEndpointAttachResponses(Collections.singletonList(new org.kaaproject.kaa.server.sync.EndpointAttachResponse(
+                REQUEST_ID, Base64Util.encode(targetPublicKeyHash.array()), org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS)));
+        sourceResponse.setUserSync(userSyncResponse);
+
+        SyncContext sourceResponseHolder = new SyncContext(sourceResponse);
+        sourceResponseHolder.setEndpointProfile(sourceProfileMock);
+
+        whenSync(AvroEncDec.convert(sourceRequest), sourceResponseHolder);
+
+        when(sourceProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(sourceProfileMock.getEndpointKeyHash()).thenReturn(clientPublicKeyHash.array());
+        when(sourceProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        MessageBuilder sourceResponseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder sourceErrorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
+                sourceRequest, sourceResponseBuilder, sourceErrorBuilder);
+        akkaService.process(sourceMessage);
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+
+        SyncResponse targetSyncResponse = new SyncResponse();
+        targetSyncResponse.setRequestId(REQUEST_ID);
+        targetSyncResponse.setStatus(SyncResponseResultType.SUCCESS);
+        targetSyncResponse.setUserSyncResponse(new UserSyncResponse());
+        targetSyncResponse.getUserSyncResponse().setUserAttachNotification(
+                new UserAttachNotification(USER_ID, Base64Util.encode(clientPublicKeyHash.array())));
+
+        AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
+        byte[] response = responseConverter.toByteArray(targetSyncResponse);
+        LOG.trace("Expected response {}", Arrays.toString(response));
+        byte[] encodedData = targetCrypt.encodeData(response);
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
+    }
+
+    @Test
+    public void testEndpointDetach() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+        MessageEncoderDecoder targetCrypt = new MessageEncoderDecoder(targetPair.getPrivate(), targetPair.getPublic(),
+                serverPair.getPublic());
+
+        EndpointProfileDto targetProfileMock = Mockito.mock(EndpointProfileDto.class);
+
+        EventClassFamilyVersionStateDto ecfVdto = new EventClassFamilyVersionStateDto();
+        ecfVdto.setEcfId(ECF1_ID);
+        ecfVdto.setVersion(ECF1_VERSION);
+
+        SyncRequest targetRequest = new SyncRequest();
+        targetRequest.setRequestId(REQUEST_ID);
+        targetRequest.setSyncRequestMetaData(buildSyncRequestMetaData(targetPublicKeyHash));
+
+        targetRequest.setEventSyncRequest(new EventSyncRequest());
+
+        ServerSync targetResponse = new ServerSync();
+        targetResponse.setRequestId(REQUEST_ID);
+        targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
+        targetResponse.setUserSync(new UserServerSync());
+        SyncContext targetResponseHolder = new SyncContext(targetResponse);
+        targetResponseHolder.setEndpointProfile(targetProfileMock);
+
+        whenSync(AvroEncDec.convert(targetRequest), targetResponseHolder);
+
+        when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(targetProfileMock.getEndpointKeyHash()).thenReturn(targetPublicKeyHash.array());
+        when(targetProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        when(cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TENANT_ID, FQN1))).thenReturn(ECF1_ID);
+        RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, new EventClassFamilyVersion(ECF1_ID, ECF1_VERSION));
+        when(cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, FQN1, ECF1_VERSION)))
+                .thenReturn(Collections.singleton(routeKey));
+
+        Assert.assertNotNull(akkaService.getActorSystem());
+
+        MessageBuilder targetResponseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder targetErrorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        SessionInitMessage targetMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
+                targetRequest, targetResponseBuilder, targetErrorBuilder, targetCrypt);
+        akkaService.process(targetMessage);
+
+        
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID));
+
+        EndpointProfileDto sourceProfileMock = Mockito.mock(EndpointProfileDto.class);
+
+        SyncRequest sourceRequest = new SyncRequest();
+        sourceRequest.setRequestId(REQUEST_ID);
+        sourceRequest.setSyncRequestMetaData(buildSyncRequestMetaData(clientPublicKeyHash));
+
+        sourceRequest.setEventSyncRequest(new EventSyncRequest());
+
+        UserSyncRequest userSyncRequest = new UserSyncRequest();
+        EndpointDetachRequest eaRequest = new EndpointDetachRequest(REQUEST_ID, Base64Util.encode(targetPublicKeyHash.array()));
+        userSyncRequest.setEndpointDetachRequests(Collections.singletonList(eaRequest));
+        sourceRequest.setUserSyncRequest(userSyncRequest);
+
+        ServerSync sourceResponse = new ServerSync();
+        sourceResponse.setRequestId(REQUEST_ID);
+        sourceResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
+        UserServerSync userSyncResponse = new UserServerSync();
+        userSyncResponse.setEndpointDetachResponses(Collections.singletonList(new org.kaaproject.kaa.server.sync.EndpointDetachResponse(
+                REQUEST_ID, org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS)));
+        sourceResponse.setUserSync(userSyncResponse);
+        SyncContext sourceResponseHolder = new SyncContext(sourceResponse);
+        sourceResponseHolder.setEndpointProfile(sourceProfileMock);
+
+        whenSync(AvroEncDec.convert(sourceRequest), sourceResponseHolder);
+
+        when(sourceProfileMock.getEndpointUserId()).thenReturn(USER_ID);
+        when(sourceProfileMock.getEndpointKeyHash()).thenReturn(clientPublicKeyHash.array());
+        when(sourceProfileMock.getEcfVersionStates()).thenReturn(Arrays.asList(ecfVdto));
+
+        MessageBuilder sourceResponseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder sourceErrorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        SessionInitMessage sourceMessage = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock,
+                sourceRequest, sourceResponseBuilder, sourceErrorBuilder);
+        akkaService.process(sourceMessage);
+
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
+                Mockito.any(ProfileClientSync.class));
+        SyncResponse targetSyncResponse = new SyncResponse();
+        targetSyncResponse.setRequestId(REQUEST_ID);
+        targetSyncResponse.setStatus(SyncResponseResultType.SUCCESS);
+        targetSyncResponse.setUserSyncResponse(new UserSyncResponse());
+        targetSyncResponse.getUserSyncResponse().setUserDetachNotification(
+                new UserDetachNotification(Base64Util.encode(clientPublicKeyHash.array())));
+
+        AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
+        byte[] response = responseConverter.toByteArray(targetSyncResponse);
+        byte[] encodedData = targetCrypt.encodeData(response);
+        Mockito.verify(targetResponseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
+    }
+
+    private SyncRequestMetaData buildSyncRequestMetaData() {
+        return buildSyncRequestMetaData(clientPublicKeyHash);
+    }
+
+    private SyncRequestMetaData buildSyncRequestMetaData(ByteBuffer keyHash) {
+        SyncRequestMetaData md = new SyncRequestMetaData();
+        md.setApplicationToken(APP_TOKEN);
+        md.setEndpointPublicKeyHash(keyHash);
+        md.setProfileHash(keyHash);
+        md.setTimeout(2l * TIMEOUT);
+        return md;
+    }
 }
