@@ -80,7 +80,6 @@ public class DefaultConfigurationTransport extends AbstractKaaTransport implemen
     public ConfigurationSyncRequest createConfigurationRequest() {
         if (clientState != null && hashContainer != null) {
             EndpointObjectHash hash = hashContainer.getConfigurationHash();
-            clientState.setConfigurationHash(hash);
             ConfigurationSyncRequest request = new ConfigurationSyncRequest();
             if (hash != null) {
                 request.setConfigurationHash(ByteBuffer.wrap(hash.getData()));
