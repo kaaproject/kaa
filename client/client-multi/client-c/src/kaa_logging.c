@@ -113,12 +113,11 @@ static bool is_timeout(kaa_log_collector_t *self)
     KAA_RETURN_IF_NIL2(self, self->timeouts, false);
 
     bool is_timeout = false;
-    timeout_info_t *info;
     kaa_list_t *it = self->timeouts;
     kaa_time_t now = KAA_TIME();
 
     while (it) {
-        info = (timeout_info_t *)kaa_list_get_data(it);
+        timeout_info_t *info = (timeout_info_t *)kaa_list_get_data(it);
         if (now >= info->timeout) {
             KAA_LOG_WARN(self->logger, KAA_ERR_TIMEOUT, "Log delivery timeout occurred (bucket_id %u)", info->log_bucket_id);
             is_timeout = true;
@@ -130,7 +129,7 @@ static bool is_timeout(kaa_log_collector_t *self)
     if (is_timeout) {
         kaa_list_t *it = self->timeouts;
         while (it) {
-            info = (timeout_info_t *)kaa_list_get_data(it);
+            timeout_info_t *info = (timeout_info_t *)kaa_list_get_data(it);
             ext_log_storage_unmark_by_bucket_id(self->log_storage_context, info->log_bucket_id);
             it = kaa_list_next(it);
         }
