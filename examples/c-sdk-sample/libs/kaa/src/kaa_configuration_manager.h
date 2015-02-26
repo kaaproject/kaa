@@ -42,6 +42,7 @@ extern "C" {
  * @param[in] self      The valid pointer to @link kaa_configuration_manager_t @endlink instance.
  *
  * @return  The current configuration data (NOTE: don't modify this instance), or NULL if something went wrong.
+ *          Don't cache this pointer, it could become invalid after the next configuration update.
  */
 const kaa_root_configuration_t *kaa_configuration_manager_get_configuration(kaa_configuration_manager_t *self);
 
