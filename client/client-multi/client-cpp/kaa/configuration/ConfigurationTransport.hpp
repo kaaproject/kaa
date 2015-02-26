@@ -29,19 +29,19 @@
 
 namespace kaa {
 
-class ConfigurationTransport : public AbstractKaaTransport<TransportType::CONFIGURATION>, public IConfigurationTransport {
+class ConfigurationTransport : public AbstractKaaTransport<TransportType::CONFIGURATION>, public IConfigurationTransport
+{
 public:
-    ConfigurationTransport(IKaaChannelManager& channelManager, IConfigurationProcessor *configProcessor, ISchemaProcessor *schemaProcessor, IConfigurationHashContainer *hashContainer, IKaaClientStateStoragePtr status);
+    ConfigurationTransport(IKaaChannelManager& channelManager, IConfigurationProcessor *configProcessor, IConfigurationHashContainer *hashContainer, IKaaClientStateStoragePtr status);
 
     void sync();
 
-    virtual std::shared_ptr<ConfigurationSyncRequest>    createConfigurationRequest();
-    virtual void                        onConfigurationResponse(const ConfigurationSyncResponse &response);
+    virtual std::shared_ptr<ConfigurationSyncRequest> createConfigurationRequest();
+    virtual void onConfigurationResponse(const ConfigurationSyncResponse &response);
 
 private:
-    IConfigurationProcessor *       configurationProcessor_;
-    ISchemaProcessor *              schemaProcessor_;
-    IConfigurationHashContainer *   hashContainer_;
+    IConfigurationProcessor     *configurationProcessor_;
+    IConfigurationHashContainer *hashContainer_;
 };
 
 }  // namespace kaa

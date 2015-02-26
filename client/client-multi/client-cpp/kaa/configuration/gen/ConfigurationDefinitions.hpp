@@ -1,4 +1,5 @@
 /*
+ /*
  * Copyright 2014 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,37 +15,23 @@
  * limitations under the License.
  */
 
-#ifndef I_SCHEMA_UPDATES_RECEIVER_HPP_
-#define I_SCHEMA_UPDATES_RECEIVER_HPP_
+#ifndef CONFIGURATIONDEFINITIONS_HPP_
+#define CONFIGURATIONDEFINITIONS_HPP_
 
 #include "kaa/KaaDefaults.hpp"
 
 #ifdef KAA_USE_CONFIGURATION
 
-#include <avro/ValidSchema.hh>
+#include <avro/Generic.hh>
 
 namespace kaa {
 
-/**
- * Interface for schema updates listeners.
- * Listeners can be subscribed/unsubscribed for updates via \v ISchemaProcessor.
- */
-class ISchemaUpdatesReceiver {
-public:
-    typedef avro::ValidSchema Schema;
+// TODO:
+typedef avro::GenericDatum  KaaRootConfiguration;
 
-    virtual ~ISchemaUpdatesReceiver() {}
+}
 
-    /**
-     * Called when schema update is received.
-     *
-     * @param schema Compiled Avro schema.
-     */
-    virtual void onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema) = 0;
-};
 
-}  // namespace kaa
+#endif /* KAA_USE_CONFIGURATION */
 
-#endif
-
-#endif /* I_SCHEMA_UPDATES_RECEIVER_HPP_ */
+#endif /* CONFIGURATIONDEFINITIONS_HPP_ */

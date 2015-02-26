@@ -53,20 +53,8 @@ if ( NOT KAA_WITHOUT_CONFIGURATION )
             impl/configuration/ConfigurationProcessor.cpp
             impl/configuration/ConfigurationTransport.cpp
             impl/configuration/manager/ConfigurationManager.cpp
-            impl/configuration/manager/Strategies.cpp
             impl/configuration/storage/ConfigurationPersistenceManager.cpp
-            impl/configuration/delta/DeltaHandlerId.cpp
-            impl/configuration/delta/DefaultDeltaManager.cpp
-            impl/configuration/delta/DefaultConfigurationDeltaFactory.cpp
-            impl/schema/SchemaProcessor.cpp
-            impl/schema/storage/SchemaPersistenceManager.cpp
-            impl/common/CommonTypesFactory.cpp
             impl/common/AvroGenericUtils.cpp
-            impl/common/types/CommonArray.cpp
-            impl/common/types/CommonEnum.cpp
-            impl/common/types/CommonFixed.cpp
-            impl/common/types/CommonRecord.cpp
-            impl/common/types/SetValueHelper.cpp
     )
 endif()
 

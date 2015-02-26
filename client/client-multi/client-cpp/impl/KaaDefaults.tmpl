@@ -63,28 +63,33 @@ ITransportConnectionInfoPtr createTransportInfo(const std::int32_t& accessPointI
     return connectionInfo;
 }
 
-const BootstrapServers& getBootstrapServers() {
+const BootstrapServers& getBootstrapServers() 
+{
     static BootstrapServers listOfServers = { %{bootstrap_servers_info} };
     std::random_shuffle(listOfServers.begin(), listOfServers.end());
     return listOfServers;
 }
 
-const Botan::SecureVector<std::uint8_t>& getDefaultConfigData() {
+const Botan::SecureVector<std::uint8_t>& getDefaultConfigData() 
+{
     static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("%{config.data.default}");
     return configData;
 }
 
-const std::string& getDefaultConfigSchema() {
+const std::string& getDefaultConfigSchema() 
+{
     static const std::string configSchema = "%{config.schema.default}";
     return configSchema;
 }
 
-const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo() {
+const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo() 
+{
     static const EventClassFamilyVersionInfos versions = %{event.family_version};/* = {{"familyName1",1}, {"familyName2",3}};*/
     return versions;
 }
 
-SharedDataBuffer getPropertiesHash() {
+SharedDataBuffer getPropertiesHash() 
+{
     std::ostringstream ss;
 
     ss << APPLICATION_TOKEN;

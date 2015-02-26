@@ -24,9 +24,6 @@
 #include <cstdint>
 #include <memory>
 
-#include "kaa/configuration/IConfigurationProcessedObservable.hpp"
-#include "kaa/configuration/IDecodedDeltaObservable.hpp"
-#include "kaa/schema/ISchemaUpdatesReceiver.hpp"
 
 namespace kaa {
 
@@ -36,9 +33,7 @@ namespace kaa {
  * Receives and decodes the raw configuration data
  *
  */
-class IConfigurationProcessor   : public IDecodedDeltaObservable
-                                , public IConfigurationProcessedObservable
-                                , public ISchemaUpdatesReceiver
+class IConfigurationProcessor
 {
 public:
     virtual ~IConfigurationProcessor() {}

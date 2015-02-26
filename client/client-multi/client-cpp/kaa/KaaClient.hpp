@@ -21,7 +21,6 @@
 
 #include "kaa/ClientStatus.hpp"
 #include "kaa/event/EventManager.hpp"
-#include "kaa/schema/ISchemaProcessor.hpp"
 #include "kaa/profile/IProfileManager.hpp"
 #include "kaa/bootstrap/IBootstrapManager.hpp"
 #include "kaa/event/gen/EventFamilyFactory.hpp"
@@ -29,10 +28,8 @@
 #include "kaa/channel/SyncDataProcessor.hpp"
 #include "kaa/configuration/IConfigurationProcessor.hpp"
 #include "kaa/notification/NotificationManager.hpp"
-#include "kaa/schema/storage/ISchemaPersistenceManager.hpp"
 #include "kaa/configuration/manager/IConfigurationManager.hpp"
 #include "kaa/event/registration/EndpointRegistrationManager.hpp"
-#include "kaa/configuration/delta/manager/DefaultDeltaManager.hpp"
 #include "kaa/ClientStatus.hpp"
 #include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
@@ -58,7 +55,8 @@ typedef enum KaaOption {
     USE_DEFAULT_CONNECTIVITY_CHECKER        = 0x10
 } KaaOption;
 
-class KaaClient : public IKaaClient {
+class KaaClient : public IKaaClient
+{
 public:
     KaaClient();
     virtual ~KaaClient() { }
@@ -71,9 +69,7 @@ public:
 
     virtual IProfileManager&                    getProfileManager() { return *profileManager_; }
 #ifdef KAA_USE_CONFIGURATION
-    virtual ISchemaPersistenceManager&          getSchemaPersistenceManager() { return *schemaPersistenceManager_; }
     virtual IConfigurationPersistenceManager&   getConfigurationPersistenceManager() { return *configurationPersistenceManager_; }
-    virtual IDeltaManager&                      getDeltaManager() { return *deltaManager_; }
     virtual IConfigurationManager&              getConfigurationManager() { return *configurationManager_; }
 #endif
 #ifdef KAA_USE_NOTIFICATIONS
@@ -117,11 +113,8 @@ private:
     std::string     publicKeyHash_;
 
 #ifdef KAA_USE_CONFIGURATION
-    ISchemaProcessorPtr                   schemaProcessor_;
-    DefaultDeltaManagerPtr                deltaManager_;
     IConfigurationManagerPtr              configurationManager_;
     IConfigurationProcessorPtr            configurationProcessor_;
-    ISchemaPersistenceManagerPtr          schemaPersistenceManager_;
     IConfigurationPersistenceManagerPtr   configurationPersistenceManager_;
 #endif
 #ifdef KAA_USE_EVENTS

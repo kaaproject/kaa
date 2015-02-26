@@ -77,6 +77,7 @@ typedef std::map<std::string, std::int32_t> EventClassFamilyVersionInfos;
 const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo();
 
 SharedDataBuffer getPropertiesHash();
+
 }
 
 #endif /* KAADEFAULTS_HPP_ */

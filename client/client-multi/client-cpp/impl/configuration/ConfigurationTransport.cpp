@@ -22,10 +22,9 @@
 
 namespace kaa {
 
-ConfigurationTransport::ConfigurationTransport(IKaaChannelManager& channelManager, IConfigurationProcessor *configProcessor, ISchemaProcessor *schemaProcessor, IConfigurationHashContainer *hashContainer, IKaaClientStateStoragePtr status)
+ConfigurationTransport::ConfigurationTransport(IKaaChannelManager& channelManager, IConfigurationProcessor *configProcessor, IConfigurationHashContainer *hashContainer, IKaaClientStateStoragePtr status)
     : AbstractKaaTransport(channelManager)
     , configurationProcessor_(configProcessor)
-    , schemaProcessor_(schemaProcessor)
     , hashContainer_(hashContainer)
 {
     setClientState(status);
@@ -56,10 +55,6 @@ void ConfigurationTransport::onConfigurationResponse(const ConfigurationSyncResp
             std::vector<std::uint8_t> data = response.confDeltaBody.get_bytes();
             configurationProcessor_->processConfigurationData(data.data(), data.size()
                     , response.responseStatus == SyncResponseStatus::RESYNC);
-        }
-        if (!response.confSchemaBody.is_null()) {
-            std::vector<std::uint8_t> schema = response.confSchemaBody.get_bytes();
-            schemaProcessor_->loadSchema(schema.data(), schema.size());
         }
         syncAck();
     }

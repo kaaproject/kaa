@@ -25,8 +25,6 @@
 #include "kaa/configuration/ConfigurationProcessor.hpp"
 #include "kaa/configuration/manager/ConfigurationManager.hpp"
 #include "kaa/configuration/storage/ConfigurationPersistenceManager.hpp"
-#include "kaa/schema/SchemaProcessor.hpp"
-#include "kaa/schema/storage/SchemaPersistenceManager.hpp"
 
 #include "kaa/bootstrap/BootstrapTransport.hpp"
 #include "kaa/channel/MetaDataTransport.hpp"
@@ -60,9 +58,7 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
     initClientKeys();
 
 #ifdef KAA_USE_CONFIGURATION
-    schemaProcessor_.reset(new SchemaProcessor);
     configurationProcessor_.reset(new ConfigurationProcessor);
-    deltaManager_.reset(new DefaultDeltaManager);
     configurationManager_.reset(new ConfigurationManager);
 #endif
 
@@ -91,7 +87,7 @@ void KaaClient::start()
 {
 #ifdef KAA_USE_CONFIGURATION
     auto configHash = configurationPersistenceManager_->getConfigurationHash().getHash();
-    if (!configHash.first || !configHash.second || !schemaProcessor_->getSchema()) {
+    if (!configHash.first || !configHash.second) {
         SequenceNumber sn = { 0, 0, 1 };
         status_->setAppSeqNumber(sn);
         setDefaultConfiguration();
@@ -123,12 +119,6 @@ void KaaClient::initKaaConfiguration()
     configurationPersistenceManager_.reset(cpm);
 
     SchemaPersistenceManager *spm = new SchemaPersistenceManager;
-    spm->setSchemaProcessor(schemaProcessor_.get());
-    schemaPersistenceManager_.reset(spm);
-
-    schemaProcessor_->subscribeForSchemaUpdates(*configurationProcessor_);
-    schemaProcessor_->subscribeForSchemaUpdates(*configurationPersistenceManager_);
-    schemaProcessor_->subscribeForSchemaUpdates(*schemaPersistenceManager_);
     configurationProcessor_->addOnProcessedObserver(*configurationManager_);
     configurationProcessor_->subscribeForUpdates(*configurationManager_);
     configurationProcessor_->subscribeForUpdates(*deltaManager_);
@@ -150,7 +140,6 @@ void KaaClient::initKaaTransport()
     IConfigurationTransportPtr configurationTransport(new ConfigurationTransport(
             *channelManager_
             , configurationProcessor_.get()
-            , schemaProcessor_.get()
             , configurationPersistenceManager_.get()
             , status_));
 #endif
@@ -279,13 +268,9 @@ void KaaClient::initClientKeys()
 void KaaClient::setDefaultConfiguration()
 {
 #ifdef KAA_USE_CONFIGURATION
-    const std::string& schema = getDefaultConfigSchema();
-    if (!schema.empty()) {
-        schemaProcessor_->loadSchema(reinterpret_cast<const std::uint8_t*>(schema.data()), schema.length());
-        const Botan::SecureVector<std::uint8_t>& config = getDefaultConfigData();
-        if (!config.empty()) {
-            configurationProcessor_->processConfigurationData(config.begin(), config.size(), true);
-        }
+    const Botan::SecureVector<std::uint8_t>& config = getDefaultConfigData();
+    if (!config.empty()) {
+        configurationProcessor_->processConfigurationData(config.begin(), config.size(), true);
     }
 #endif
 }

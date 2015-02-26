@@ -35,11 +35,7 @@ void ConfigurationPersistenceManager::setConfigurationStorage(IConfigurationStor
         KAA_MUTEX_LOCKED("confPersistenceGuard_");
 
         storage_ = storage;
-        if (schema_) {
-            readStoredConfiguration();
-        } else {
-            KAA_LOG_WARN("Can't load configuration right now. Schema is null");
-        }
+        readStoredConfiguration();
     }
 }
 
@@ -48,42 +44,17 @@ void ConfigurationPersistenceManager::setConfigurationProcessor(IConfigurationPr
     processor_ = processor;
 }
 
-void ConfigurationPersistenceManager::onConfigurationUpdated(const ICommonRecord &configuration)
+void ConfigurationPersistenceManager::onConfigurationUpdated(const KaaRootConfiguration &configuration)
 {
     if (ignoreConfigurationUpdate_) {
         ignoreConfigurationUpdate_ = false;
         return;
     }
 
-    KAA_MUTEX_LOCKING("schemaGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(schema_lock, schemaGuard_);
-    KAA_MUTEX_LOCKED("schemaGuard_");
-
-    if (!schema_.get()) {
-        throw KaaException("Can not process configuration without schema");
-    }
-
     KAA_LOG_INFO("Configuration updated.");
 
-    avro::GenericDatum datum(*schema_);
-    avro::GenericArray &arrayW = datum.value<avro::GenericArray>();
-
-    avro::GenericDatum arrayItemDatum(schema_->root()->leafAt(0));
-    avro::GenericRecord &arrayItem = arrayItemDatum.value<avro::GenericRecord>();
-
-    avro::GenericDatum &unionDatum = arrayItem.field("delta");
-    unionDatum.selectBranch(0);
-    avro::GenericRecord &unionItem = unionDatum.value<avro::GenericRecord>();
-    unionItem = configuration.toAvro().value<avro::GenericRecord>();
-
-    arrayW.value().push_back(arrayItemDatum);
-
     AvroByteArrayConverter<avro::GenericDatum> converter;
-    SharedDataBuffer buffer = converter.toByteArray(datum);
-
-    KAA_MUTEX_UNLOCKING("schemaGuard_");
-    KAA_UNLOCK(schema_lock);
-    KAA_MUTEX_UNLOCKED("schemaGuard_");
+    SharedDataBuffer buffer = converter.toByteArray(configuration);
 
     KAA_LOG_INFO(boost::format("Going to store configuration using configuration storage %1%") % storage_);
 
@@ -105,22 +76,6 @@ void ConfigurationPersistenceManager::onConfigurationUpdated(const ICommonRecord
     configurationHash_ = temp;
 
     KAA_LOG_INFO(boost::format("Calculated configuration hash: %1%") % LoggingUtils::ByteArrayToString(configurationHash_.getHash()));
-}
-
-void ConfigurationPersistenceManager::onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema)
-{
-    if (!schema.get()) {
-        throw KaaException("Empty schema was given");
-    }
-
-    KAA_MUTEX_LOCKING("schemaGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, schemaGuard_);
-    KAA_MUTEX_LOCKED("schemaGuard_");
-
-    schema_ = schema;
-    if (storage_) {
-        readStoredConfiguration();
-    }
 }
 
 EndpointObjectHash ConfigurationPersistenceManager::getConfigurationHash()

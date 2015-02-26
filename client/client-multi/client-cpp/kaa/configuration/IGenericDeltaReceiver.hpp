@@ -21,7 +21,7 @@
 
 #ifdef KAA_USE_CONFIGURATION
 
-#include <avro/Generic.hh>
+#include "kaa/configuration/gen/ConfigurationDefinitions.hpp"
 
 namespace kaa {
 
@@ -38,7 +38,7 @@ public:
      * @param full_resunc signals if delta contains full configuration resync or partial update
      *
      */
-    virtual void onDeltaRecevied(int index, const avro::GenericDatum &data, bool full_resync) = 0;
+    virtual void onDeltaRecevied(int index, const KaaRootConfiguration& data, bool full_resync) = 0;
 
     virtual ~IGenericDeltaReceiver() {}
 };
