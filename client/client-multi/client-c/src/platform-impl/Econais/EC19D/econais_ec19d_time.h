@@ -14,29 +14,14 @@
  * limitations under the License.
  */
 
-# ifndef KAA_LOGGING_GEN_H_
-# define KAA_LOGGING_GEN_H_
 
-# include "../kaa_common_schema.h"
-# include "../collections/kaa_list.h"
+#ifndef ECONAIS_EC19D_TIME_H_
+#define ECONAIS_EC19D_TIME_H_
 
-# ifdef __cplusplus
-extern "C" {
-# endif
+#include <sndc_sys_api.h>
 
+typedef uint32_t kaa_time_t;
 
-typedef struct {
-    kaa_string_t * data;
+#define KAA_TIME() (kaa_time_t)sndc_sys_getTimestamp_msec()
 
-    serialize_fn serialize;
-    get_size_fn  get_size;
-    destroy_fn   destroy;
-} kaa_test_log_record_t;
-
-kaa_test_log_record_t *kaa_test_log_record_create();
-kaa_test_log_record_t *kaa_test_log_record_deserialize(avro_reader_t reader);
-
-#ifdef __cplusplus
-}      /* extern "C" */
-#endif
-#endif
+#endif /* ECONAIS_EC19D_TIME_H_ */

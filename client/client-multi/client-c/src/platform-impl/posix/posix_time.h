@@ -14,29 +14,14 @@
  * limitations under the License.
  */
 
-# ifndef KAA_LOGGING_GEN_H_
-# define KAA_LOGGING_GEN_H_
 
-# include "../kaa_common_schema.h"
-# include "../collections/kaa_list.h"
+#ifndef POSIX_TIME_H_
+#define POSIX_TIME_H_
 
-# ifdef __cplusplus
-extern "C" {
-# endif
+#include <time.h>
 
+typedef time_t kaa_time_t;
 
-typedef struct {
-    kaa_string_t * data;
+#define KAA_TIME() (kaa_time_t)time(NULL)
 
-    serialize_fn serialize;
-    get_size_fn  get_size;
-    destroy_fn   destroy;
-} kaa_test_log_record_t;
-
-kaa_test_log_record_t *kaa_test_log_record_create();
-kaa_test_log_record_t *kaa_test_log_record_deserialize(avro_reader_t reader);
-
-#ifdef __cplusplus
-}      /* extern "C" */
-#endif
-#endif
+#endif /* POSIX_TIME_H_ */
