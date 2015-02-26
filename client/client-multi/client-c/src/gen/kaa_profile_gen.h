@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,15 +26,15 @@ extern "C" {
 
 
 typedef struct {
-    kaa_string_t* profile_body;
+    kaa_string_t * profile_body;
 
     serialize_fn serialize;
     get_size_fn  get_size;
     destroy_fn   destroy;
 } kaa_profile_basic_endpoint_profile_test_t;
 
-kaa_profile_basic_endpoint_profile_test_t* kaa_profile_basic_endpoint_profile_test_create();
-kaa_profile_basic_endpoint_profile_test_t* kaa_profile_basic_endpoint_profile_test_deserialize(avro_reader_t reader);
+kaa_profile_basic_endpoint_profile_test_t *kaa_profile_basic_endpoint_profile_test_create();
+kaa_profile_basic_endpoint_profile_test_t *kaa_profile_basic_endpoint_profile_test_deserialize(avro_reader_t reader);
 
 #ifdef __cplusplus
 }      /* extern "C" */
