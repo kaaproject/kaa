@@ -49,6 +49,7 @@ extern kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_pla
 
 #define USER_EXTERNAL_ID    "user@id"
 #define ACCESS_TOKEN        "token"
+#define USER_VERIFIER       "user_verifier"
 
 static kaa_context_t kaa_context;
 static kaa_user_manager_t *user_manager = NULL;
@@ -83,9 +84,21 @@ static kaa_error_t on_response(void *context, bool is_attached)
     return KAA_ERR_NONE;
 }
 
+void test_empty_default_user_verifier()
+{
+    KAA_TRACE_IN(logger);
+
+    kaa_error_t error_code = kaa_user_manager_default_attach_to_user(user_manager, USER_EXTERNAL_ID, ACCESS_TOKEN);
+    ASSERT_EQUAL(error_code, KAA_ERR_USER_VERIFIER_NOT_FOUND);
+
+    KAA_TRACE_OUT(logger);
+}
+
 void test_create_request()
 {
-    ASSERT_EQUAL(kaa_user_manager_attach_to_user(user_manager, USER_EXTERNAL_ID, ACCESS_TOKEN), KAA_ERR_NONE);
+    KAA_TRACE_IN(logger);
+
+    ASSERT_EQUAL(kaa_user_manager_attach_to_user(user_manager, USER_EXTERNAL_ID, ACCESS_TOKEN, USER_VERIFIER), KAA_ERR_NONE);
 
     size_t expected_size = 0;
     ASSERT_EQUAL(kaa_user_request_get_size(user_manager, &expected_size), KAA_ERR_NONE);
@@ -106,7 +119,7 @@ void test_create_request()
     buf_cursor += 3;
 
     ASSERT_EQUAL(*(uint32_t * ) buf_cursor,
-            KAA_HTONL(sizeof(uint32_t) + kaa_aligned_size_get(strlen(USER_EXTERNAL_ID)) + kaa_aligned_size_get(strlen(ACCESS_TOKEN))));
+            KAA_HTONL(2 * sizeof(uint32_t) + kaa_aligned_size_get(strlen(USER_EXTERNAL_ID)) + kaa_aligned_size_get(strlen(ACCESS_TOKEN)  + kaa_aligned_size_get(strlen(USER_VERIFIER)))));
     buf_cursor += sizeof(uint32_t);
 
     ASSERT_EQUAL(0, *buf_cursor);
@@ -118,14 +131,25 @@ void test_create_request()
     ASSERT_EQUAL(KAA_HTONS(strlen(ACCESS_TOKEN)), *(uint16_t *) buf_cursor);
     buf_cursor += sizeof(uint16_t);
 
+    ASSERT_EQUAL(KAA_HTONS(strlen(USER_VERIFIER)), *(uint16_t *) buf_cursor);
+    buf_cursor += sizeof(uint32_t); // + reserved 16B
+
     ASSERT_EQUAL(memcmp(buf_cursor, USER_EXTERNAL_ID, strlen(USER_EXTERNAL_ID)), 0);
     buf_cursor += kaa_aligned_size_get(strlen(USER_EXTERNAL_ID));
 
     ASSERT_EQUAL(memcmp(buf_cursor, ACCESS_TOKEN, strlen(ACCESS_TOKEN)), 0);
+    buf_cursor += kaa_aligned_size_get(strlen(ACCESS_TOKEN));
+
+    ASSERT_EQUAL(memcmp(buf_cursor, USER_VERIFIER, strlen(USER_VERIFIER)), 0);
+    buf_cursor += kaa_aligned_size_get(strlen(USER_VERIFIER));
+
+    KAA_TRACE_OUT(logger);
 }
 
 void test_response()
 {
+    KAA_TRACE_IN(logger);
+
     char response[] = {
             /*  bit 0   */   0x00, 0x00, 0x00, 0x00,    /* User attach response field. Result - success */
             /*  bit 32  */   0x01, 0x07, 0x00, 0x05,    /* User attach notification field */
@@ -147,6 +171,8 @@ void test_response()
     ASSERT_TRUE(is_on_detached_invoked);
     ASSERT_TRUE(is_on_response_invoked);
     ASSERT_TRUE(last_is_attached_result);
+
+    KAA_TRACE_OUT(logger);
 }
 
 int test_init(void)
@@ -194,6 +220,7 @@ int test_deinit(void)
 
 KAA_SUITE_MAIN(Log, test_init, test_deinit
        ,
+       KAA_TEST_CASE(empty_default_user_verifier, test_empty_default_user_verifier)
        KAA_TEST_CASE(create_request, test_create_request)
        KAA_TEST_CASE(process_response, test_response)
         )

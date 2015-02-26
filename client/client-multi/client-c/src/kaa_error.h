@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,9 @@ typedef enum {
     KAA_ERR_BAD_PROTOCOL_VERSION    = -13,
     KAA_ERR_INSUFFICIENT_BUFFER     = -14,
     KAA_ERR_ALREADY_EXISTS          = -15,
+    KAA_ERR_TIMEOUT                 = -16,
+
+    KAA_ERR_USER_VERIFIER_NOT_FOUND = -31,
 
     KAA_ERR_EVENT_NOT_ATTACHED      = -41,
     KAA_ERR_EVENT_BAD_FQN           = -42,

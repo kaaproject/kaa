@@ -289,7 +289,8 @@ public class CSdkGenerator extends SdkGenerator {
                                        int logSchemaVersion,
                                        String configurationProtocolSchemaBody,
                                        byte[] defaultConfigurationData,
-                                       List<EventFamilyMetadata> eventFamilies) throws IOException {
+                                       List<EventFamilyMetadata> eventFamilies,
+                                       String defaultVerifierToken) throws IOException {
 
         VelocityContext context = new VelocityContext();
 
@@ -303,6 +304,7 @@ public class CSdkGenerator extends SdkGenerator {
         context.put("user_nf_version", notificationSchemaVersion);
         context.put("log_version", logSchemaVersion);
         context.put("system_nf_version", 1);
+        context.put("user_verifier_token", (defaultVerifierToken != null ? defaultVerifierToken : ""));
 
         context.put("eventFamilies", eventFamilies);
         context.put("bootstrapNodes", bootstrapNodes);
