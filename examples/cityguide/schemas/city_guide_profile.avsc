@@ -1,0 +1,18 @@
+{
+  "type" : "record",
+  "name" : "CityGuideProfile",
+  "namespace" : "org.kaaproject.kaa.demo.cityguide.profile",
+  "fields" : [ {
+    "name" : "area",
+    "type" : [ {
+      "type" : "string",
+      "avro.java.string" : "String"
+    }, "null" ]
+  }, {
+    "name" : "city",
+    "type" : [ {
+      "type" : "string",
+      "avro.java.string" : "String"
+    }, "null" ]
+  } ]
+}
