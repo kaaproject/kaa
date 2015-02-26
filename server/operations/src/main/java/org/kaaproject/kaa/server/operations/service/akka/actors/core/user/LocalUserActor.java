@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.kaaproject.kaa.server.operations.service.akka.actors.core;
+package org.kaaproject.kaa.server.operations.service.akka.actors.core.user;
 
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.EndpointEventTimeoutMessage;
@@ -32,14 +31,14 @@ import akka.actor.Terminated;
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
 
-public class UserActor extends UntypedActor {
+public class LocalUserActor extends UntypedActor {
 
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(UserActor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LocalUserActor.class);
 
     private final String userId;
 
-    private final UserActorMessageProcessor messageProcessor;
+    private final LocalUserActorMessageProcessor messageProcessor;
 
     /**
      * Instantiates a new user actor.
@@ -47,15 +46,15 @@ public class UserActor extends UntypedActor {
      * @param operationsService
      *            the operations service
      */
-    private UserActor(AkkaContext context, String userId, String tenantId) {
-        this.messageProcessor = new UserActorMessageProcessor(context.getCacheService(), context.getEventService(), userId, tenantId);
+    private LocalUserActor(AkkaContext context, String userId, String tenantId) {
+        this.messageProcessor = new LocalUserActorMessageProcessor(context.getCacheService(), context.getEventService(), userId, tenantId);
         this.userId = userId;
     }
 
     /**
      * The Class ActorCreator.
      */
-    public static class ActorCreator implements Creator<UserActor> {
+    public static class ActorCreator implements Creator<LocalUserActor> {
 
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
@@ -89,8 +88,8 @@ public class UserActor extends UntypedActor {
          * @see akka.japi.Creator#create()
          */
         @Override
-        public UserActor create() throws Exception {
-            return new UserActor(context, userId, tenantId);
+        public LocalUserActor create() throws Exception {
+            return new LocalUserActor(context, userId, tenantId);
         }
     }
 
@@ -125,7 +124,6 @@ public class UserActor extends UntypedActor {
 
     private void processEndpointDisconnectMessage(EndpointUserDisconnectMessage message) {
         messageProcessor.processEndpointDisconnectMessage(context(), message);
-        context().watch(message.getOriginator());
     }
 
     private void processEndpointEventSendMessage(EndpointEventSendMessage message) {

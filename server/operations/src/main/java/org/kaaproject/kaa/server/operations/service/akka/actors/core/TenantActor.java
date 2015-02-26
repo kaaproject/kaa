@@ -24,12 +24,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.LocalUserActor;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionRouteMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserDisconnectMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.GlobalUserAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RouteInfoMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserRouteInfoMessage;
@@ -56,7 +58,11 @@ public class TenantActor extends UntypedActor {
     private final Map<String, ActorRef> applications;
 
     /** The applications. */
-    private final Map<String, ActorRef> users;
+    private final Map<String, ActorRef> localUsers;
+    
+    /** The applications. */
+    private final Map<String, ActorRef> globalUsers;
+
 
     private final String tenantId;
 
@@ -65,7 +71,8 @@ public class TenantActor extends UntypedActor {
         this.context = context;
         this.tenantId = tenantId;
         this.applications = new HashMap<>();
-        this.users = new HashMap<>();
+        this.localUsers = new HashMap<>();
+        this.globalUsers = new HashMap<>();
     }
 
     /**
@@ -119,7 +126,9 @@ public class TenantActor extends UntypedActor {
         } else {
             LOG.debug("[{}] Received: {}", tenantId, message.getClass().getName());
         }
-        if (message instanceof EndpointAwareMessage) {
+        if(message instanceof GlobalUserAwareMessage) {
+            processGlobalUserAwareMessage((GlobalUserAwareMessage) message);
+        } else if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
         } else if (message instanceof SessionControlMessage) {
             processSessionControlMessage((SessionControlMessage) message);
@@ -182,7 +191,7 @@ public class TenantActor extends UntypedActor {
         ActorRef userActor;
         if (message instanceof RouteInfoMessage || message instanceof UserRouteInfoMessage) {
             LOG.debug("Find user actor by id: {} for message {}", message.getUserId(), message);
-            userActor = users.get(message.getUserId());
+            userActor = localUsers.get(message.getUserId());
         } else {
             userActor = getOrCreateUserActor(message.getUserId());
         }
@@ -192,14 +201,31 @@ public class TenantActor extends UntypedActor {
             LOG.debug("[{}] user aware message ignored due to no such user actor: [{}]", tenantId, message.getUserId());
         }
     }
+    
+    private void processGlobalUserAwareMessage(GlobalUserAwareMessage message) {
+        getOrCreateGlobalUserActor(message.getUserId()).tell(message, self());
+    }
 
     private ActorRef getOrCreateUserActor(String userId) {
-        ActorRef userActor = users.get(userId);
+        userId = toLocal(userId);
+        ActorRef userActor = localUsers.get(userId);
         if (userActor == null && userId != null) {
             userActor = context().actorOf(
-                    Props.create(new UserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME), userId);
-            LOG.debug("Create user actor with id {}", userId);
-            users.put(userId, userActor);
+                    Props.create(new LocalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME), userId);
+            LOG.debug("Create local user actor with id {}", userId);
+            localUsers.put(userId, userActor);
+        }
+        return userActor;
+    }
+    
+    private ActorRef getOrCreateGlobalUserActor(String userId) {
+        userId = toGlobal(userId);
+        ActorRef userActor = globalUsers.get(userId);
+        if (userActor == null && userId != null) {
+            userActor = context().actorOf(
+                    Props.create(new LocalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME), userId);
+            LOG.debug("Create global user actor with id {}", userId);
+            globalUsers.put(userId, userActor);
         }
         return userActor;
     }
@@ -234,13 +260,24 @@ public class TenantActor extends UntypedActor {
             String name = localActor.path().name();
             if (applications.remove(name) != null) {
                 LOG.debug("[{}] removed application: {}", tenantId, localActor);
-            } else if (users.remove(name) != null) {
-                LOG.debug("[{}] removed user: {}", tenantId, localActor);
+            } else if (localUsers.remove(name) != null) {
+                LOG.debug("[{}] removed local user: {}", tenantId, localActor);
+            } else if (globalUsers.remove(name) != null) {
+                LOG.debug("[{}] removed global user: {}", tenantId, localActor);
             }
         } else {
             LOG.warn("remove commands for remote actors are not supported yet!");
         }
     }
+
+    private String toLocal(String name) {
+        return "LOCAL_" + name;
+    }
+    
+    private String toGlobal(String name) {
+        return "GLOBAL_" + name;
+    }
+
 
     /*
      * (non-Javadoc)

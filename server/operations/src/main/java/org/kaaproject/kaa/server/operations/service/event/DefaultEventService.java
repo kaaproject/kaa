@@ -543,4 +543,22 @@ public class DefaultEventService implements EventService {
     public void setMaxNumberNeighborConnections(int maxNumberNeighborConnections) {
         this.maxNumberNeighborConnections = maxNumberNeighborConnections;
     }
+
+    @Override
+    public boolean isMainUserNode(String userId) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void sendEndpointInfo(GlobalRouteInfo routeInfo) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public String getServerId() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

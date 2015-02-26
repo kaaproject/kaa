@@ -118,4 +118,11 @@ public interface EventService {
      */
     public OperationsNode getZkNode();
 
+    public boolean isMainUserNode(String userId);
+
+    public void sendEndpointInfo(GlobalRouteInfo routeInfo);
+
+    public String getServerId();
+
+
 }
