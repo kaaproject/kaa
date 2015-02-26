@@ -25,21 +25,16 @@ import org.kaaproject.kaa.sandbox.web.client.mvp.view.HeaderView;
 import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
-public class HeaderActivity extends AbstractActivity implements
-        HeaderView.Presenter {
+public class HeaderActivity extends AbstractActivity {
 
-    private final ClientFactory clientFactory;
     private final HeaderView headerView;
 
     protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
 
     public HeaderActivity(ClientFactory clientFactory) {
-        this.clientFactory = clientFactory;
         this.headerView = clientFactory.getHeaderView();
-        this.headerView.setPresenter(this);
     }
 
     @Override
@@ -54,11 +49,6 @@ public class HeaderActivity extends AbstractActivity implements
             registration.removeHandler();
         }
         registrations.clear();
-    }
-
-    @Override
-    public void goTo(Place place) {
-        clientFactory.getPlaceController().goTo(place);
     }
 
     private void bind(final HeaderView headerView, final EventBus eventBus) {

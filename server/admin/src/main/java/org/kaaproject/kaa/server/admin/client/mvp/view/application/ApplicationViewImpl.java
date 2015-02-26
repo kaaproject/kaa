@@ -88,7 +88,7 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
 //        applicationKey.addInputHandler(this);
 
         if (KaaAdmin.isDevMode()) {
-            generateSdkButton = new Button(Utils.constants.generate_sdk());
+            generateSdkButton = new Button(Utils.constants.generateSdk());
             detailsTable.setWidget(3, 0, generateSdkButton);
         }
     }

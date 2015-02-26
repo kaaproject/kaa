@@ -2176,7 +2176,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             try {
                 byte[] data = cacheService.uploadedFile(fileItemName, null);
                 if (data == null) {
-                    throw new KaaAdminServiceException("Unable to get file content!", ServiceErrorCode.GENERAL_ERROR);
+                    throw new KaaAdminServiceException("Unable to get file content!", ServiceErrorCode.FILE_NOT_FOUND);
                 }
                 return data;
             }
@@ -2185,7 +2185,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
         }
         else {
-            throw new KaaAdminServiceException("Unable to get file content, file item name is empty!", ServiceErrorCode.GENERAL_ERROR);
+            throw new KaaAdminServiceException("Unable to get file content, file item name is empty!", ServiceErrorCode.FILE_NOT_FOUND);
         }
     }
 

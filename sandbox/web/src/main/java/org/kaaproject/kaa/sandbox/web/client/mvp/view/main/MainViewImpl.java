@@ -24,13 +24,13 @@ import org.kaaproject.kaa.sandbox.web.client.mvp.view.MainView;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.AlertPanel.Type;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.DemoProjectsView;
+import org.kaaproject.kaa.sandbox.web.client.util.Utils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -55,8 +55,6 @@ public class MainViewImpl extends Composite implements MainView {
     @UiField (provided=true) public AlertPanel errorPanel;
     @UiField (provided=true) public AlertPanel infoPanel;
 
-    private Presenter presenter;
-    
     private Anchor goToKaaAdminWeb;
     private Anchor goToAvroUiSandboxWeb;
     private HTML changeKaaHostLabel;
@@ -69,7 +67,7 @@ public class MainViewImpl extends Composite implements MainView {
         infoPanel =  new AlertPanel(Type.INFO);
         initWidget(uiBinder.createAndBindUi(this));
 
-        titleLabel.setText("Main console");
+        titleLabel.setText(Utils.constants.mainConsole());
 
         detailsTable.getColumnFormatter().setWidth(0, "200px");
         detailsTable.getColumnFormatter().setWidth(1, "300px");
@@ -86,11 +84,6 @@ public class MainViewImpl extends Composite implements MainView {
     }
 
     @Override
-    public void setPresenter(Presenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
     public void setTitle(String title) {
         titleLabel.setText(title);
     }
@@ -98,21 +91,21 @@ public class MainViewImpl extends Composite implements MainView {
     @Override
     public void clearMessages() {
         errorPanel.setMessage("");
-        UIObject.setVisible(DOM.getParent(errorPanel.getElement()), false);
+        UIObject.setVisible(errorPanel.getElement().getParentElement(), false);
         infoPanel.setMessage("");
-        UIObject.setVisible(DOM.getParent(infoPanel.getElement()), false);
+        UIObject.setVisible(infoPanel.getElement().getParentElement(), false);
     }
 
     @Override
     public void setErrorMessage(String message) {
         errorPanel.setMessage(message);
-        UIObject.setVisible(DOM.getParent(errorPanel.getElement()), true);
+        UIObject.setVisible(errorPanel.getElement().getParentElement(), true);
     }
     
     @Override
     public void setInfoMessage(String message) {
         infoPanel.setMessage(message);
-        UIObject.setVisible(DOM.getParent(infoPanel.getElement()), true);
+        UIObject.setVisible(infoPanel.getElement().getParentElement(), true);
     }
 
     @Override
@@ -123,7 +116,7 @@ public class MainViewImpl extends Composite implements MainView {
     }
     
     private Widget constructGotoLink (Anchor anchor) {
-        HTML label = new HTML("Go to");
+        HTML label = new HTML(Utils.constants.goTo());
         HorizontalPanel panel = new HorizontalPanel();
         panel.add(label);
         label.getElement().getStyle().setPaddingRight(15, Unit.PX);
@@ -138,26 +131,26 @@ public class MainViewImpl extends Composite implements MainView {
         
         int row = -1;
         
-        goToKaaAdminWeb = new Anchor("Kaa Administrative Web Console");
+        goToKaaAdminWeb = new Anchor(Utils.constants.kaaAdminWeb());
         Widget gotoLink = constructGotoLink(goToKaaAdminWeb);
         detailsTable.setWidget(++row, 0,  gotoLink);
         detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
         
-        goToAvroUiSandboxWeb = new Anchor("Avro UI Sandbox Web Console");
+        goToAvroUiSandboxWeb = new Anchor(Utils.constants.avroUiSandboxWeb());
         gotoLink = constructGotoLink(goToAvroUiSandboxWeb);
         detailsTable.setWidget(++row, 0,  gotoLink);
         detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
         
-        changeKaaHostLabel = new HTML("To change kaa services host/ip enter new host<br>value in field below and click 'Change' button.");
+        changeKaaHostLabel = new HTML(Utils.constants.changeKaaHost());
         detailsTable.setWidget(++row, 0, changeKaaHostLabel);
         detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
         kaaHost = new TextBox();
         kaaHost.setWidth("200px");
         detailsTable.setWidget(++row, 0, kaaHost);
-        changeKaaHostButton = new Button("Change");
+        changeKaaHostButton = new Button(Utils.constants.change());
         detailsTable.setWidget(row, 1, changeKaaHostButton);
         
-        Label demoProjectsTitle = new Label("Demo projects");
+        Label demoProjectsTitle = new Label(Utils.constants.demoProjects());
         demoProjectsTitle.getElement().getStyle().setPaddingTop(40, Unit.PX);
         demoProjectsTitle.getElement().getStyle().setPaddingBottom(20, Unit.PX);
         demoProjectsTitle.addStyleName("b-app-content-title");

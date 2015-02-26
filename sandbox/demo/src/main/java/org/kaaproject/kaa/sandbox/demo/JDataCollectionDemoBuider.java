@@ -15,10 +15,10 @@
  */
 package org.kaaproject.kaa.sandbox.demo;
 
+
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.sandbox.demo.projects.Platform;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
@@ -29,46 +29,28 @@ import org.kaaproject.kaa.server.common.core.configuration.RawData;
 import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 import org.kaaproject.kaa.server.verifiers.trustful.config.TrustfulVerifierConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class NotificationDemoBuilder extends AbstractDemoBuilder {
-
-
-    private static final Logger logger = LoggerFactory.getLogger(NotificationDemoBuilder.class);
-
-    protected NotificationDemoBuilder() {
-        super();
-    }
-
+public class JDataCollectionDemoBuider extends AbstractDemoBuilder{
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
-
-
-        logger.info("Loading 'Android Notification Demo Application' data...");
-
-        loginTenantAdmin(client);
-
         ApplicationDto notificationApplication = new ApplicationDto();
-        notificationApplication.setName("Android notification");
+        notificationApplication.setName("Java data collection");
         notificationApplication = client.editApplication(notificationApplication);
 
         sdkKey.setApplicationId(notificationApplication.getId());
         sdkKey.setProfileSchemaVersion(1);
         sdkKey.setConfigurationSchemaVersion(1);
-        sdkKey.setLogSchemaVersion(1);
-        sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
+        sdkKey.setNotificationSchemaVersion(1);
+        sdkKey.setTargetPlatform(SdkPlatform.JAVA);
 
-/*
 
-        NotificationSchemaDto notificationSchemaDto = new NotificationSchemaDto();
-        notificationSchemaDto.setApplicationId(notificationApplication.getId());
-        notificationSchemaDto.setName("Notification schema");
-        notificationSchemaDto.setDescription("Notification schema describing incoming notifications");
-        notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, "demo/notification/notificationSchema.json");
-        sdkKey.setNotificationSchemaVersion(notificationSchemaDto.getMajorVersion());
+        LogSchemaDto logSchemaDto = new LogSchemaDto();
+        logSchemaDto.setApplicationId(notificationApplication.getId());
+        logSchemaDto.setName("Log schema");
+        logSchemaDto.setDescription("Log schema describing incoming logs");
+        logSchemaDto = client.createLogSchema(logSchemaDto, "demo/jdatacollection/logSchema.json");
+        sdkKey.setLogSchemaVersion(logSchemaDto.getMajorVersion());
 
-*/
 
         loginTenantDeveloper(client);
 
@@ -85,21 +67,19 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder {
         trustfulUserVerifier.setJsonConfiguration(rawData.getRawData());
         trustfulUserVerifier = client.editUserVerifierDto(trustfulUserVerifier);
         sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
-
-        logger.info("Finished loading 'Android Notification Demo Application' data.");
     }
 
     @Override
     protected void setupProjectConfigs() {
         Project projectConfig = new Project();
-        projectConfig.setId("notification_demo");
-        projectConfig.setName("Android Notification Demo");
-        projectConfig.setDescription("Application on android platform demonstrating notification subsystem (IoT)");
-        projectConfig.setPlatform(Platform.ANDROID);
-        projectConfig.setSourceArchive("android/notification_demo.tar.gz");
-        projectConfig.setProjectFolder("notification_demo/NotificationDemo");
-        projectConfig.setSdkLibDir("notification_demo/NotificationDemo/libs");
-        projectConfig.setDestBinaryFile("notification_demo/NotificationDemo/bin/Notification-debug.apk");
+        projectConfig.setId("jdatacollection_demo");
+        projectConfig.setName("Java Data Collection Demo");
+        projectConfig.setDescription("Application on java platform demonstrating data collection subsystem (IoT)");
+        projectConfig.setPlatform(Platform.JAVA);
+        projectConfig.setSourceArchive("java/jdatacollection_demo.tar.gz");
+        projectConfig.setProjectFolder("jdatacollection_demo/JDataCollectionDemo");
+        projectConfig.setSdkLibDir("jdatacollection_demo/JDataCollectionDemo/lib");
+        projectConfig.setDestBinaryFile("jdatacollection_demo/JDataCollectionDemo/bin/JDataCollectionDemo.jar");
         projectConfigs.add(projectConfig);
     }
 }

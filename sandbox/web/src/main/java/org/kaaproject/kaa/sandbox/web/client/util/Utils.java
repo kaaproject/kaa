@@ -18,8 +18,8 @@ package org.kaaproject.kaa.sandbox.web.client.util;
 
 import java.util.Date;
 
-import org.kaaproject.kaa.sandbox.web.client.SandboxConstants;
 import org.kaaproject.kaa.sandbox.web.client.SandboxResources;
+import org.kaaproject.kaa.sandbox.web.client.i18n.SandboxConstants;
 import org.kaaproject.kaa.sandbox.web.client.i18n.SandboxMessages;
 import org.kaaproject.kaa.sandbox.web.shared.services.SandboxServiceException;
 
@@ -44,7 +44,7 @@ public class Utils {
     public static String getErrorMessage(Throwable throwable) {
         if (throwable instanceof SandboxServiceException) {
             SandboxServiceException sandboxException = (SandboxServiceException)throwable;
-            String message = constants.general_error();
+            String message = constants.generalError();
             message += sandboxException.getMessage();
             return message;
         }

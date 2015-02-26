@@ -1,0 +1,111 @@
+[
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.music",
+ "type": "record",
+ "classType": "event",
+ "name": "PlayListRequest",
+ "fields": []
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.music",
+ "type": "record",
+ "classType": "object",
+ "name": "SongInfo",
+ "fields": [
+    {"name": "title", "type": ["string", "null"]},
+    {"name": "artist", "type": ["string", "null"]},
+    {"name": "url", "type": ["string", "null"]},
+    {"name": "displayName", "type": ["string", "null"]},
+    {"name": "duration", "type": ["int", "null"]},
+    {"name": "album", "type": ["string", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.music",
+ "type": "record",
+ "classType": "event",
+ "name": "PlayListResponse",
+ "fields": [
+    {"name": "playList", "type": [{"type": "array", "items": "org.kaaproject.kaa.demo.smarthouse.music.SongInfo"}, "null"]}
+  ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.music",
+ "type": "record",
+ "classType": "event",
+ "name": "PlayRequest",
+ "fields": [
+     {"name": "url", "type": ["string", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.music",
+ "type": "record",
+ "classType": "event",
+ "name": "PauseRequest",
+ "fields": []
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.music",
+ "type": "record",
+ "classType": "event",
+ "name": "StopRequest",
+ "fields": []
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.music",
+ "type": "record",
+ "classType": "event",
+ "name": "PlaybackInfoRequest",
+ "fields": []
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.music",
+ "type": "record",
+ "classType": "event",
+ "name": "ChangeVolumeRequest",
+ "fields": [
+     {"name": "volume", "type": ["int", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.music",
+ "type": "record",
+ "classType": "event",
+ "name": "SeekRequest",
+ "fields": [
+     {"name": "time", "type": ["int", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.music",
+ "type": "enum"  ,
+ "classType": "object",
+ "name": "PlaybackStatus",
+ "symbols" : ["PLAYING", "PAUSED", "STOPPED"]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.music",
+ "type": "record",
+ "classType": "object",
+ "name": "PlaybackInfo",
+ "fields": [
+    {"name": "song", "type": ["org.kaaproject.kaa.demo.smarthouse.music.SongInfo", "null"]},
+    {"name": "time", "type": ["int", "null"]},
+    {"name": "volume", "type": ["int", "null"]},
+    {"name": "maxVolume", "type": ["int", "null"]},
+    {"name": "timeSetOnDevice", "type": ["boolean", "null"]},
+    {"name": "volumeSetOnDevice", "type": ["boolean", "null"]},
+    {"name": "status", "type": ["org.kaaproject.kaa.demo.smarthouse.music.PlaybackStatus", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.music",
+ "type": "record",
+ "classType": "event",
+ "name": "PlaybackInfoResponse",
+ "fields": [
+    {"name": "playbackInfo", "type": ["org.kaaproject.kaa.demo.smarthouse.music.PlaybackInfo", "null"]}
+ ]
+}
+]
