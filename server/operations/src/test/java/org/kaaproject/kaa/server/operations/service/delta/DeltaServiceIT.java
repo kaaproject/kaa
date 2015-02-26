@@ -248,18 +248,6 @@ public class DeltaServiceIT {
     }
 
     @Test
-    public void testDeltaServiceSameSeqNumbers() throws Exception {
-        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration
-                .getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
-        GetDeltaResponse response = deltaService.getDelta(request, new HistoryDelta(), OLD_ENDPOINT_SEQ_NUMBER);
-        assertNotNull(response);
-        assertEquals(GetDeltaResponse.GetDeltaResponseType.NO_DELTA, response.getResponseType());
-        assertEquals(OLD_ENDPOINT_SEQ_NUMBER, response.getSequenceNumber());
-        assertNull(response.getDelta());
-        assertNull(response.getConfSchema());
-    }
-
-    @Test
     public void testDeltaServiceNoHistoryDelta() throws Exception {
         GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration
                 .getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
