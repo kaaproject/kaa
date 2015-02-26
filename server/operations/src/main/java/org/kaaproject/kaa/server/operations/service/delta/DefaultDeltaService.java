@@ -133,17 +133,14 @@ public class DefaultDeltaService implements DeltaService {
         if (LOG.isDebugEnabled() && profile != null && profile.getEndpointKeyHash() != null) {
             endpointId = Base64Util.encode(profile.getEndpointKeyHash());
         }
-
-        if (request.getSequenceNumber() == curAppSeqNumber) {
-            LOG.debug("[{}] No changes to current application was made -> no delta", endpointId);
-            return new GetDeltaResponse(GetDeltaResponseType.NO_DELTA, curAppSeqNumber);
-        }
+        
+        boolean hashMismatch = !request.isFirstRequest() && !request.getConfigurationHash().binaryEquals(profile.getConfigurationHash());
 
         AppVersionKey appConfigVersionKey = new AppVersionKey(request.getApplicationToken(), profile.getConfigurationVersion());
         List<EndpointGroupStateDto> endpointGroups = historyDelta.getEndpointGroupStates();
-        if (historyDelta.isConfigurationChanged()) {
+        if (historyDelta.isConfigurationChanged() || hashMismatch) {
             boolean resync = request.isFirstRequest() || request.isResyncOnly();
-            if (!resync && !request.getConfigurationHash().binaryEquals(profile.getConfigurationHash())) {
+            if (hashMismatch) {
                 resync = true;
                 if (profile.getConfigurationHash() != null && LOG.isWarnEnabled()) {
                     String serverHash = "";
