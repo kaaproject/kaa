@@ -17,9 +17,9 @@
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
 #include <string.h>
-#include <time.h>
 
 #include "platform/stdio.h"
+#include "platform/time.h"
 #include "platform/ext_sha.h"
 #include "kaa_logging.h"
 #include "collections/kaa_list.h"
@@ -50,8 +50,8 @@ typedef enum {
 } logging_sync_result_t;
 
 typedef struct {
-    uint16_t log_bucket_id;
-    time_t   timeout;
+    uint16_t     log_bucket_id;
+    kaa_time_t   timeout;
 } timeout_info_t;
 
 struct kaa_log_collector {
@@ -79,7 +79,7 @@ static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_i
     KAA_RETURN_IF_NIL(info, KAA_ERR_NOMEM);
 
     info->log_bucket_id = bucket_id;
-    info->timeout = time(NULL) + (time_t)ext_log_upload_strategy_get_timeout(self->log_upload_strategy_context);
+    info->timeout = KAA_TIME() + (kaa_time_t)ext_log_upload_strategy_get_timeout(self->log_upload_strategy_context);
 
     kaa_list_t *it = self->timeouts ? kaa_list_push_front(self->timeouts, info) : kaa_list_create(info);
     KAA_RETURN_IF_NIL(it, KAA_ERR_NOMEM);
@@ -115,7 +115,7 @@ static bool is_timeout(kaa_log_collector_t *self)
     bool is_timeout = false;
     timeout_info_t *info;
     kaa_list_t *it = self->timeouts;
-    time_t now = time(NULL);
+    kaa_time_t now = KAA_TIME();
 
     while (it) {
         info = (timeout_info_t *)kaa_list_get_data(it);
