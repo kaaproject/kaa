@@ -86,18 +86,17 @@ kaa_list_t *kaa_lists_merge(kaa_list_t *destination_head, kaa_list_t *tail)
     return tail;
 }
 
-ssize_t kaa_list_get_size(kaa_list_t *position)
+size_t kaa_list_get_size(kaa_list_t *head)
 {
-    if (position) {
-        ssize_t size = 0;
-        kaa_list_t *cursor = position;
-        while (cursor) {
-            ++size;
-            cursor = cursor->next;
-        }
-        return size;
+    KAA_RETURN_IF_NIL(head, 0);
+
+    size_t size = 0;
+    kaa_list_t *cursor = head;
+    while (cursor) {
+        ++size;
+        cursor = cursor->next;
     }
-    return -1;
+    return size;
 }
 
 kaa_list_t *kaa_list_create(void *data) {
@@ -155,7 +154,7 @@ kaa_list_t *kaa_list_remove_at(kaa_list_t **head, kaa_list_t *position, dealloca
 
 kaa_error_t kaa_list_remove_first(kaa_list_t **head, match_predicate pred, void *context, deallocate_list_data deallocator)
 {
-    KAA_RETURN_IF_NIL2(head, pred, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(head, *head, pred, KAA_ERR_BADPARAM);
 
     if (pred((*head)->data, context)) {
         kaa_list_t *item_to_delete = *head;

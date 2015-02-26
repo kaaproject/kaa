@@ -30,6 +30,18 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/sonar-project.properties.in"
                "${CMAKE_CURRENT_SOURCE_DIR}/sonar-project.properties"
               )
 
+add_executable  (test_ext_log_storage_memory
+                    test/platform-impl/test_ext_log_storage_memory.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_ext_log_storage_memory kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+
+add_executable  (test_ext_log_upload_strategy_by_volume
+                    test/platform-impl/test_ext_log_upload_strategy_by_volume.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_ext_log_upload_strategy_by_volume kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+
 add_executable  (test_user_extension
                     test/test_kaa_user.c
                     test/kaa_test_external.c
@@ -85,11 +97,22 @@ add_executable  (test_common
 target_link_libraries(test_common kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
 add_executable  (test_log
-                    src/gen/kaa_logging_gen.c
                     test/test_kaa_log.c
                     test/kaa_test_external.c
+                    src/gen/kaa_logging_gen.c
+                    src/avro_src/io.c
+                    src/avro_src/encoding_binary.c
+                    src/collections/kaa_list.c
+                    src/utilities/kaa_log.c
+                    src/platform-impl/posix/logger.c
+                    src/kaa_platform_utils.c
+                    src/kaa_bootstrap_manager.c
+                    src/kaa_channel_manager.c
+                    src/kaa_common_schema.c
+                    src/kaa_logging.c
+                    src/kaa_status.c
                 )
-target_link_libraries(test_log kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+target_link_libraries(test_log ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
 add_executable  (test_deque
                     test/test_kaa_deque.c
