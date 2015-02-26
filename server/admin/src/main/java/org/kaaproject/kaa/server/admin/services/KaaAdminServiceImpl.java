@@ -444,6 +444,16 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public ApplicationDto getApplicationByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            return checkApplicationToken(applicationToken);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public ApplicationDto editApplication(ApplicationDto application) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
@@ -2216,6 +2226,20 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 throw new KaaAdminServiceException(ServiceErrorCode.INVALID_ARGUMENTS);
             }
             ApplicationDto application = toDto(clientProvider.getClient().getApplication(applicationId));
+            Utils.checkNotNull(application);
+            checkTenantId(application.getTenantId());
+            return application;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    private ApplicationDto checkApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        try {
+            if (isEmpty(applicationToken)) {
+                throw new KaaAdminServiceException(ServiceErrorCode.INVALID_ARGUMENTS);
+            }
+            ApplicationDto application = toDto(clientProvider.getClient().getApplicationByApplicationToken(applicationToken));
             Utils.checkNotNull(application);
             checkTenantId(application.getTenantId());
             return application;
