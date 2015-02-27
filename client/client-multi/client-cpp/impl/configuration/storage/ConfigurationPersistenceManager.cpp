@@ -53,7 +53,7 @@ void ConfigurationPersistenceManager::onConfigurationUpdated(const KaaRootConfig
 
     KAA_LOG_INFO("Configuration updated.");
 
-    AvroByteArrayConverter<avro::GenericDatum> converter;
+    AvroByteArrayConverter<KaaRootConfiguration> converter;
     SharedDataBuffer buffer = converter.toByteArray(configuration);
 
     KAA_LOG_INFO(boost::format("Going to store configuration using configuration storage %1%") % storage_);

@@ -73,14 +73,8 @@ const BootstrapServers& getBootstrapServers()
 
 const Botan::SecureVector<std::uint8_t>& getDefaultConfigData()
 {
-    static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("AgAAAABAPTA49ltAWLGYSuIAmDFgAA==");
+    static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("JENPTkZJR1VSQVRJT04gREFUQQIAAQIDBAUGBwgJCgsMDQ4P");
     return configData;
-}
-
-const std::string& getDefaultConfigSchema()
-{
-    static const std::string configSchema = "{\"items\":{\"name\":\"deltaT\",\"type\":\"record\",\"fields\":[{\"name\":\"delta\",\"type\":[{\"name\":\"testT\",\"type\":\"record\",\"addressable\":true,\"fields\":[{\"name\":\"testField1\",\"type\":[\"string\",{\"symbols\":[\"unchanged\"],\"name\":\"unchangedT\",\"type\":\"enum\",\"namespace\":\"org.kaaproject.configuration\"}],\"by_default\":\"\"},{\"optional\":true,\"name\":\"testField2\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"testRecordT\",\"namespace\":\"org.kaa.config\",\"fields\":[{\"name\":\"testField3\",\"type\":[\"int\",\"org.kaaproject.configuration.unchangedT\"]},{\"name\":\"__uuid\",\"type\":{\"name\":\"uuidT\",\"type\":\"fixed\",\"size\":16,\"namespace\":\"org.kaaproject.configuration\"}}]},\"org.kaaproject.configuration.unchangedT\"]},{\"name\":\"__uuid\",\"type\":\"org.kaaproject.configuration.uuidT\"}],\"namespace\":\"org.kaa.config\"},\"org.kaa.config.testRecordT\"]}],\"namespace\":\"org.kaaproject.configuration\"},\"type\":\"array\"}";
-    return configSchema;
 }
 
 const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo()
@@ -111,7 +105,6 @@ SharedDataBuffer getPropertiesHash()
 
     ss.write(reinterpret_cast<const char*>(
             getDefaultConfigData().begin()), getDefaultConfigData().size());
-    ss << getDefaultConfigSchema();
 
     for (const auto& eventFamily : getEventClassFamilyVersionInfo()) {
         ss << eventFamily.first << eventFamily.second;

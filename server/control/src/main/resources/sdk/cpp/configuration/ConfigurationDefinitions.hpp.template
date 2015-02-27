@@ -23,7 +23,7 @@
 
 namespace kaa {
 
-typedef ConfigurationRootRecord    KaaRootConfiguration;
+typedef %{configuration_record_class_name}    KaaRootConfiguration;
 
 }
 

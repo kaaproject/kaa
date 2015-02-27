@@ -73,7 +73,7 @@ public:
 private:
     KAA_R_MUTEX_DECLARE(confProcessorMutex_);
 
-    KaaObservable<void (int, const avro::GenericDatum &, bool), IGenericDeltaReceiver *> deltaReceivers_;
+    KaaObservable<void (int, const ConfigurationRootRecord &, bool), IGenericDeltaReceiver *> deltaReceivers_;
     KaaObservable<void (), IConfigurationProcessedObserver *> onProcessedObservers_;
 
 };

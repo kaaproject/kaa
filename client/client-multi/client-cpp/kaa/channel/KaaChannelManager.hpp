@@ -52,7 +52,7 @@ public:
 
     virtual void clearChannelList();
 
-    virtual ITransportConnectionInfoPtr getPingServer() const { return (*lastBSServers_.begin()).second; }
+    virtual ITransportConnectionInfoPtr getPingServer() { return (*lastBSServers_.begin()).second; }
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker);
 

@@ -76,12 +76,6 @@ const Botan::SecureVector<std::uint8_t>& getDefaultConfigData()
     return configData;
 }
 
-const std::string& getDefaultConfigSchema() 
-{
-    static const std::string configSchema = "%{config.schema.default}";
-    return configSchema;
-}
-
 const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo() 
 {
     static const EventClassFamilyVersionInfos versions = %{event.family_version};/* = {{"familyName1",1}, {"familyName2",3}};*/
@@ -110,7 +104,6 @@ SharedDataBuffer getPropertiesHash()
 
     ss.write(reinterpret_cast<const char*>(
             getDefaultConfigData().begin()), getDefaultConfigData().size());
-    ss << getDefaultConfigSchema();
 
     for (const auto& eventFamily : getEventClassFamilyVersionInfo()) {
         ss << eventFamily.first << eventFamily.second;
