@@ -83,7 +83,7 @@ const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo()
     return versions;
 }
 
-SharedDataBuffer getPropertiesHash()
+HashDigest getPropertiesHash()
 {
     std::ostringstream ss;
 
@@ -110,7 +110,7 @@ SharedDataBuffer getPropertiesHash()
         ss << eventFamily.first << eventFamily.second;
     }
 
-    return EndpointObjectHash(ss.str()).getHash();
+    return EndpointObjectHash(ss.str()).getHashDigest();
 }
 
 }

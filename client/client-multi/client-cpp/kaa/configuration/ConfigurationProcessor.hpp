@@ -50,7 +50,6 @@ public:
     typedef avro::ValidSchema Schema;
 
     ConfigurationProcessor() {}
-    ConfigurationProcessor(std::shared_ptr<avro::ValidSchema> schema) {  }
     ~ConfigurationProcessor() {  }
 
     /**

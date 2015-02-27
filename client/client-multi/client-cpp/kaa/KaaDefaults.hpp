@@ -75,7 +75,7 @@ const Botan::SecureVector<std::uint8_t>& getDefaultConfigData();
 typedef std::map<std::string, std::int32_t> EventClassFamilyVersionInfos;
 const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo();
 
-SharedDataBuffer getPropertiesHash();
+HashDigest getPropertiesHash();
 
 }
 

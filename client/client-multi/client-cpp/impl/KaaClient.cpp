@@ -82,8 +82,8 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 void KaaClient::start()
 {
 #ifdef KAA_USE_CONFIGURATION
-    auto configHash = configurationPersistenceManager_->getConfigurationHash().getHash();
-    if (!configHash.first || !configHash.second) {
+    auto configHash = configurationPersistenceManager_->getConfigurationHash().getHashDigest();
+    if (configHash.empty()) {
         SequenceNumber sn = { 0, 0, 1 };
         status_->setAppSeqNumber(sn);
         setDefaultConfiguration();
@@ -252,7 +252,8 @@ void KaaClient::initClientKeys()
     }
 
     EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().begin(), clientKeys_->getPublicKey().size());
-    publicKeyHash_ = Botan::base64_encode(publicKeyHash.getHash().first.get(), publicKeyHash.getHash().second);
+    auto digest = publicKeyHash.getHashDigest();
+    publicKeyHash_ = Botan::base64_encode(digest.data(), digest.size());
 
     status_->setEndpointKeyHash(publicKeyHash_);
     status_->save();

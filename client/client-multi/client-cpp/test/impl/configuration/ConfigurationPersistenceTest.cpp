@@ -15,6 +15,12 @@
  */
 
 #include "kaa/configuration/storage/ConfigurationPersistenceManager.hpp"
+#include "kaa/configuration/IConfigurationProcessor.hpp"
+#include "kaa/configuration/IConfigurationProcessedObservable.hpp"
+#include "kaa/configuration/IDecodedDeltaObservable.hpp"
+#include "kaa/configuration/IGenericDeltaReceiver.hpp"
+#include "kaa/configuration/gen/ConfigurationDefinitions.hpp"
+#include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/common/types/CommonRecord.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 #include "kaa/common/CommonTypesFactory.hpp"
@@ -28,41 +34,42 @@
 
 namespace kaa {
 
-class ConfigurationProcessorStub : public IConfigurationProcessor
+class ConfigurationProcessorStub : public IConfigurationProcessor,
+                                   public IDecodedDeltaObservable,
+                                   public IConfigurationProcessedObservable
 {
 public:
-    ConfigurationProcessorStub() : processConfigurationCalled_(false), schemaUpdatedCalled_(false) {}
+    ConfigurationProcessorStub() : processConfigurationCalled_(false) {}
     void processConfigurationData(const std::uint8_t *data, std::size_t dataLength, bool fullResync)
     {
         processConfigurationCalled_ = true;
     }
-    void onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema)
-    {
-        schemaUpdatedCalled_ = true;
-    }
+
     void subscribeForUpdates(IGenericDeltaReceiver &receiver) {}
     void unsubscribeFromUpdates(IGenericDeltaReceiver &receiver) {}
     void addOnProcessedObserver(IConfigurationProcessedObserver &observer) {}
     void removeOnProcessedObserver(IConfigurationProcessedObserver &observer) {}
 
     bool isProcessConfigurationCalled() { return processConfigurationCalled_; }
-    bool isSchemaUpdateCalled() { return schemaUpdatedCalled_; }
 
 private:
     bool processConfigurationCalled_;
-    bool schemaUpdatedCalled_;
 };
 
-class CoonfigurationStorageStub : public IConfigurationStorage {
+class CoonfigurationStorageStub : public IConfigurationStorage
+{
 public:
-    CoonfigurationStorageStub() : configurationSaveCalled_(false), configurationLoadCalled_(false) {
-        configuration_.push_back('0');
+    CoonfigurationStorageStub() : configurationSaveCalled_(false), configurationLoadCalled_(false), configuration_(getDefaultConfigData().begin(), getDefaultConfigData().end())
+{
+
     }
-    void saveConfiguration(const std::vector<std::uint8_t> &bytes)
+
+    void saveConfiguration(std::vector<std::uint8_t> &&bytes)
     {
         configurationSaveCalled_ = true;
-        configuration_ = bytes;
+        configuration_ = std::move(bytes);
     }
+
     std::vector<std::uint8_t> loadConfiguration()
     {
         configurationLoadCalled_ = true;
@@ -78,96 +85,17 @@ private:
 };
 
 
-static const std::string  root_sch = "{ \"type\": \"array\",\"items\": {\"type\": \"record\",\"namespace\":"
-        "\"org.kaaproject.configuration\",\"name\": \"deltaT\",\"fields\": [{\"name\": \"delta\",\"type\": [{"
-                        "\"type\": \"record\","
-                        "\"namespace\": \"org.kaa.config\","
-                        "\"name\": \"testT\","
-                        "\"fields\": ["
-                        "{\"name\": \"testField1\",\"type\": \"string\"},"
-                        "{\"name\": \"__uuid\",\"type\": {"
-                        "\"type\": \"fixed\","
-                        "\"size\": 16,"
-                        "\"namespace\": \"org.kaaproject.configuration\","
-                        "\"name\": \"uuidT\"}}]} ]}]}}";
-
-
-static const std::string  sch = "{\"type\": \"record\","
-                        "\"namespace\": \"org.kaa.config\","
-                        "\"name\": \"testT\","
-                        "\"fields\": ["
-                        "{\"name\": \"testField1\",\"type\": \"string\"},"
-                        "{\"name\": \"__uuid\",\"type\": {"
-                        "\"type\": \"fixed\","
-                        "\"size\": 16,"
-                        "\"namespace\": \"org.kaaproject.configuration\","
-                        "\"name\": \"uuidT\"}}]}";
-
 BOOST_AUTO_TEST_SUITE(ConfigurationPersistenceSuite)
 
-BOOST_AUTO_TEST_CASE(checkSchemaSetup)
+
+BOOST_AUTO_TEST_CASE(checkConfigurationPersistence)
 {
+    AvroByteArrayConverter<KaaRootConfiguration> converter;
+    KaaRootConfiguration configuration = converter.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size());
+    EndpointObjectHash checkHash(getDefaultConfigData().begin(), getDefaultConfigData().size());
+
     ConfigurationPersistenceManager cpm(IKaaClientStateStoragePtr(new ClientStatus(CLIENT_STATUS_FILE_LOCATION)));
 
-    std::shared_ptr<avro::ValidSchema> schema;
-    BOOST_REQUIRE_THROW(cpm.onSchemaUpdated(schema), KaaException);
-
-    schema.reset(new avro::ValidSchema());
-    BOOST_REQUIRE_NO_THROW(cpm.onSchemaUpdated(schema));
-}
-
-class ConfigVersionUpdatedState : public MockKaaClientStateStorage
-{
-public:
-    virtual bool isConfigurationVersionUpdated() const {
-        return true;
-    }
-};
-
-BOOST_AUTO_TEST_CASE(checkConfigVersionUpdates)
-{
-    ConfigurationPersistenceManager cpm(IKaaClientStateStoragePtr(new ConfigVersionUpdatedState));
-
-    std::shared_ptr<avro::ValidSchema> root_schema(new avro::ValidSchema(
-            avro::compileJsonSchemaFromMemory(reinterpret_cast<const std::uint8_t *>(root_sch.c_str()), root_sch.length())));
-    cpm.onSchemaUpdated(root_schema);
-    try {
-        ConfigurationProcessorStub cpstub;
-
-        CoonfigurationStorageStub csstub;
-        cpm.setConfigurationProcessor(&cpstub);
-        cpm.setConfigurationStorage(&csstub);
-
-        BOOST_CHECK(!csstub.isLoadCalled());
-    } catch (...) {
-        BOOST_CHECK(false);
-    }
-}
-
-BOOST_AUTO_TEST_CASE(checkConfigurationLoad)
-{
-    std::shared_ptr<avro::ValidSchema> schema(new avro::ValidSchema(
-             avro::compileJsonSchemaFromMemory(reinterpret_cast<const std::uint8_t *>(sch.c_str()), sch.length())));
-    uuid_t uuid = {{0,1,2,3,4}};
-    std::vector<std::uint8_t> uuid_vec = {0,1,2,3,4};
-    CommonRecord rec(uuid, schema->root());
-    std::string testField1("string");
-    avro::GenericDatum sd(testField1);
-    rec.setField("testField1", CommonTypesFactory::createCommon<avro::AVRO_STRING>(sd));
-    size_t uuid_index;
-    schema->root()->nameIndex("__uuid", uuid_index);
-    avro::GenericDatum ud(schema->root()->leafAt(uuid_index));
-    avro::GenericFixed uuid_fixed_field(schema->root()->leafAt(uuid_index));
-    uuid_fixed_field.value() = uuid_vec;
-    ud.value<avro::GenericFixed>() = uuid_fixed_field;
-    rec.setField("__uuid", CommonTypesFactory::createCommon<avro::AVRO_FIXED>(ud));
-
-    ConfigurationPersistenceManager cpm(IKaaClientStateStoragePtr(new ClientStatus(CLIENT_STATUS_FILE_LOCATION)));
-    BOOST_REQUIRE_THROW(cpm.onConfigurationUpdated(rec), KaaException);
-
-    std::shared_ptr<avro::ValidSchema> root_schema(new avro::ValidSchema(
-            avro::compileJsonSchemaFromMemory(reinterpret_cast<const std::uint8_t *>(root_sch.c_str()), root_sch.length())));
-    cpm.onSchemaUpdated(root_schema);
     try {
         ConfigurationProcessorStub cpstub;
 
@@ -179,63 +107,17 @@ BOOST_AUTO_TEST_CASE(checkConfigurationLoad)
         BOOST_CHECK(!csstub.isSaveCalled());
         BOOST_CHECK(cpstub.isProcessConfigurationCalled());
 
-        cpm.onConfigurationUpdated(rec);
+        cpm.onConfigurationUpdated(configuration);
         BOOST_CHECK(!csstub.isSaveCalled());
 
-        cpm.onConfigurationUpdated(rec);
+        cpm.onConfigurationUpdated(configuration);
         BOOST_CHECK(csstub.isSaveCalled());
 
-        BOOST_CHECK(cpm.getConfigurationHash().getHash().first.get() != nullptr);
-        BOOST_CHECK(cpm.getConfigurationHash().getHash().second > 0);
+        BOOST_CHECK(cpm.getConfigurationHash() == checkHash);
 
     } catch (...) {
         BOOST_CHECK(false);
     }
-}
-
-BOOST_AUTO_TEST_CASE(checkConfigurationLoadWithoutSchema)
-{
-    std::shared_ptr<avro::ValidSchema> schema(new avro::ValidSchema(
-             avro::compileJsonSchemaFromMemory(reinterpret_cast<const std::uint8_t *>(sch.c_str()), sch.length())));
-    uuid_t uuid = {{0,1,2,3,4}};
-    std::vector<std::uint8_t> uuid_vec = {0,1,2,3,4};
-    CommonRecord rec(uuid, schema->root());
-    std::string testField1("string");
-    avro::GenericDatum sd(testField1);
-    rec.setField("testField1", CommonTypesFactory::createCommon<avro::AVRO_STRING>(sd));
-    size_t uuid_index;
-    schema->root()->nameIndex("__uuid", uuid_index);
-    avro::GenericDatum ud(schema->root()->leafAt(uuid_index));
-    avro::GenericFixed uuid_fixed_field(schema->root()->leafAt(uuid_index));
-    uuid_fixed_field.value() = uuid_vec;
-    ud.value<avro::GenericFixed>() = uuid_fixed_field;
-    rec.setField("__uuid", CommonTypesFactory::createCommon<avro::AVRO_FIXED>(ud));
-
-    ConfigurationPersistenceManager cpm(IKaaClientStateStoragePtr(new ClientStatus(CLIENT_STATUS_FILE_LOCATION)));
-    BOOST_REQUIRE_THROW(cpm.onConfigurationUpdated(rec), KaaException);
-
-    std::shared_ptr<avro::ValidSchema> root_schema(new avro::ValidSchema(
-            avro::compileJsonSchemaFromMemory(reinterpret_cast<const std::uint8_t *>(root_sch.c_str()), root_sch.length())));
-    ConfigurationProcessorStub cpstub;
-
-    CoonfigurationStorageStub csstub;
-    cpm.setConfigurationProcessor(&cpstub);
-    cpm.setConfigurationStorage(&csstub);
-    cpm.onSchemaUpdated(root_schema);
-
-    BOOST_CHECK(csstub.isLoadCalled());
-    BOOST_CHECK(!csstub.isSaveCalled());
-    BOOST_CHECK(cpstub.isProcessConfigurationCalled());
-
-    cpm.onConfigurationUpdated(rec);
-    BOOST_CHECK(!csstub.isSaveCalled());
-
-    cpm.onConfigurationUpdated(rec);
-    BOOST_CHECK(csstub.isSaveCalled());
-
-    BOOST_CHECK(cpm.getConfigurationHash().getHash().first.get() != nullptr);
-    BOOST_CHECK(cpm.getConfigurationHash().getHash().second > 0);
-
 }
 
 BOOST_AUTO_TEST_SUITE_END()

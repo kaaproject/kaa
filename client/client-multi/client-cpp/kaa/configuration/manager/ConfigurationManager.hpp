@@ -47,7 +47,7 @@ public:
     ConfigurationManager() {}
     ~ConfigurationManager() {}
 
-    void onDeltaReceived(int index, const KaaRootConfiguration& datum, bool full_resync);
+    void onDeltaReceived(int index, const KaaRootConfiguration& datum, bool fullResync);
 
     /**
      * @link IConfigurationManager @endlink implementation
