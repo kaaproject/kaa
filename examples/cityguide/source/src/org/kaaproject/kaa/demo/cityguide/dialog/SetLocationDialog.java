@@ -32,120 +32,122 @@ import android.widget.Button;
 import android.widget.Spinner;
 
 public class SetLocationDialog extends Dialog {
-	
-	private CityGuideApplication mApplication;
-	private ArrayAdapter<String> mAreasAdapter;
-	private ArrayAdapter<String> mCitiesAdapter;
-	private Spinner mSelectAreaSpinner;
-	private Spinner mSelectCitySpinner;
 
-	public SetLocationDialog(Context context, 
-						     CityGuideApplication application, 
-						     final SetLocationCallback callback) {
-		super(context);
-		mApplication = application;
-		setContentView(R.layout.dialog_set_location);
-		setTitle(R.string.action_set_location);
-		
-		mSelectAreaSpinner = (Spinner)findViewById(R.id.selectAreaSpinner);
-		mAreasAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item);
-		mSelectAreaSpinner.setAdapter(mAreasAdapter);
-		
-		mSelectCitySpinner = (Spinner)findViewById(R.id.selectCitySpinner);
-		mCitiesAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item);
-		mSelectCitySpinner.setAdapter(mCitiesAdapter);
-		
-		Button okButton = (Button) findViewById(R.id.okButton);
-		okButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				dismiss();
-				String area = (String)mSelectAreaSpinner.getSelectedItem();
-				if (area != null && area.length() == 0) {
-					area = null;
-				}
-				String city = (String)mSelectCitySpinner.getSelectedItem();
-				if (city != null && city.length() == 0) {
-					city = null;
-				}
-				callback.onLocationSelected(area, city);
-			}
-		});
-		
-		
-		Button cancelButton = (Button) findViewById(R.id.cancelButton);
-		cancelButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				dismiss();
-			}
-		});
-		
-		updateAreasSpinner();
-		
-		int position = 0;
-		String currentArea = mApplication.getCityGuideProfile().getArea();
-		if (currentArea != null) {
-			position = mAreasAdapter.getPosition(currentArea);
-		}
-		mSelectAreaSpinner.setSelection(position);
+    private CityGuideApplication mApplication;
+    private ArrayAdapter<String> mAreasAdapter;
+    private ArrayAdapter<String> mCitiesAdapter;
+    private Spinner mSelectAreaSpinner;
+    private Spinner mSelectCitySpinner;
 
-		updateCitiesSpinner();
-		
-		position = 0;
-		String currentCity = mApplication.getCityGuideProfile().getCity();
-		if (currentCity != null) {
-			position = mCitiesAdapter.getPosition(currentCity);
-		}
-		
-		mSelectCitySpinner.setSelection(position);
-		
-		mSelectAreaSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int position, long id) {
-				updateCitiesSpinner();
-			}
+    public SetLocationDialog(Context context, CityGuideApplication application,
+            final SetLocationCallback callback) {
+        super(context);
+        mApplication = application;
+        setContentView(R.layout.dialog_set_location);
+        setTitle(R.string.action_set_location);
 
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-				updateCitiesSpinner();
-			}
-		});
-		
-	}
-	
-	private void updateAreasSpinner() {
-		mAreasAdapter.clear();
-		mAreasAdapter.add("");
-		List<AvailableArea> availableAreas = mApplication.getCityGuideConfiguration().getAvailableAreas();
-		for (AvailableArea area : availableAreas) {
-			mAreasAdapter.add(area.getName());
-		}
-	}
-	
-	private void updateCitiesSpinner() {
-		mCitiesAdapter.clear();
-		mCitiesAdapter.add("");
-		String areaName = (String)mSelectAreaSpinner.getSelectedItem();
-		if (areaName != null && areaName.length() > 0) {
-			List<AvailableArea> availableAreas = mApplication.getCityGuideConfiguration().getAvailableAreas();
-			for (AvailableArea area : availableAreas) {
-				if (area.getName().equals(areaName)) {
-					for (String city : area.getAvailableCities()) {
-						mCitiesAdapter.add(city);
-					}
-					break;
-				}
-			}
-		}
-	}
-	
-	public static interface SetLocationCallback {
-		
-		void onLocationSelected (String area, String city);
-		
-	}
-	
+        mSelectAreaSpinner = (Spinner) findViewById(R.id.selectAreaSpinner);
+        mAreasAdapter = new ArrayAdapter<>(context,
+                android.R.layout.simple_spinner_item);
+        mSelectAreaSpinner.setAdapter(mAreasAdapter);
+
+        mSelectCitySpinner = (Spinner) findViewById(R.id.selectCitySpinner);
+        mCitiesAdapter = new ArrayAdapter<>(context,
+                android.R.layout.simple_spinner_item);
+        mSelectCitySpinner.setAdapter(mCitiesAdapter);
+
+        Button okButton = (Button) findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+                String area = (String) mSelectAreaSpinner.getSelectedItem();
+                if (area != null && area.length() == 0) {
+                    area = null;
+                }
+                String city = (String) mSelectCitySpinner.getSelectedItem();
+                if (city != null && city.length() == 0) {
+                    city = null;
+                }
+                callback.onLocationSelected(area, city);
+            }
+        });
+
+        Button cancelButton = (Button) findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+
+        updateAreasSpinner();
+
+        int position = 0;
+        String currentArea = mApplication.getCityGuideProfile().getArea();
+        if (currentArea != null) {
+            position = mAreasAdapter.getPosition(currentArea);
+        }
+        mSelectAreaSpinner.setSelection(position);
+
+        updateCitiesSpinner();
+
+        position = 0;
+        String currentCity = mApplication.getCityGuideProfile().getCity();
+        if (currentCity != null) {
+            position = mCitiesAdapter.getPosition(currentCity);
+        }
+
+        mSelectCitySpinner.setSelection(position);
+
+        mSelectAreaSpinner
+                .setOnItemSelectedListener(new OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent,
+                            View view, int position, long id) {
+                        updateCitiesSpinner();
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        updateCitiesSpinner();
+                    }
+                });
+
+    }
+
+    private void updateAreasSpinner() {
+        mAreasAdapter.clear();
+        mAreasAdapter.add("");
+        List<AvailableArea> availableAreas = mApplication
+                .getCityGuideConfiguration().getAvailableAreas();
+        for (AvailableArea area : availableAreas) {
+            mAreasAdapter.add(area.getName());
+        }
+    }
+
+    private void updateCitiesSpinner() {
+        mCitiesAdapter.clear();
+        mCitiesAdapter.add("");
+        String areaName = (String) mSelectAreaSpinner.getSelectedItem();
+        if (areaName != null && areaName.length() > 0) {
+            List<AvailableArea> availableAreas = mApplication
+                    .getCityGuideConfiguration().getAvailableAreas();
+            for (AvailableArea area : availableAreas) {
+                if (area.getName().equals(areaName)) {
+                    for (String city : area.getAvailableCities()) {
+                        mCitiesAdapter.add(city);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    public static interface SetLocationCallback {
+
+        void onLocationSelected(String area, String city);
+
+    }
 
 }

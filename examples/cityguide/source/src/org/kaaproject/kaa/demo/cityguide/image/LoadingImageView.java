@@ -28,54 +28,54 @@ import android.widget.RelativeLayout;
 
 public class LoadingImageView extends RelativeLayout {
 
-	private ProgressBar loadingView;
-	private ImageView imageView;
-	
-	public LoadingImageView(Context context) {
-		this(context, null);
-	}
-	
-	public LoadingImageView(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
-	}
+    private ProgressBar loadingView;
+    private ImageView imageView;
 
-	public LoadingImageView(Context context, AttributeSet attrs,
-			int defStyleAttr) {
-		super(context, attrs, defStyleAttr);
-		loadingView = new ProgressBar(context, null, android.R.attr.progressBarStyleLarge);
-		loadingView.setIndeterminate(true);
-		imageView = new ImageView(context, attrs, defStyleAttr);
-		final float scale = getContext().getResources().getDisplayMetrics().density;
-		
-		RelativeLayout.LayoutParams lp = 
-				new RelativeLayout.LayoutParams((int) (30 * scale + 0.5f), (int) (30 * scale + 0.5f));
-		lp.addRule(RelativeLayout.CENTER_IN_PARENT);
-		addView(loadingView, lp);
-		addView(imageView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		imageView.setVisibility(View.GONE);
-		loadingView.setVisibility(View.GONE);
-	}
-	
-	public void setLoading() {
-		imageView.setVisibility(View.GONE);
-		loadingView.setVisibility(View.VISIBLE);
-		bringChildToFront(loadingView);
-	}
-	
-	public void showBitmap(Bitmap bitmap) {
-		loadingView.setVisibility(View.GONE);
-		imageView.setVisibility(View.VISIBLE);
-		bringChildToFront(imageView);
-		imageView.setImageBitmap(bitmap);	
-	}
-	
-	public void showFailedBitmap() {
-		loadingView.setVisibility(View.GONE);
-		imageView.setVisibility(View.VISIBLE);
-		bringChildToFront(imageView);
-		imageView.setImageResource(R.drawable.ic_launcher);
-	}
+    public LoadingImageView(Context context) {
+        this(context, null);
+    }
 
+    public LoadingImageView(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
 
+    public LoadingImageView(Context context, AttributeSet attrs,
+            int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        loadingView = new ProgressBar(context, null,
+                android.R.attr.progressBarStyleLarge);
+        loadingView.setIndeterminate(true);
+        imageView = new ImageView(context, attrs, defStyleAttr);
+        final float scale = getContext().getResources().getDisplayMetrics().density;
+
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                (int) (30 * scale + 0.5f), (int) (30 * scale + 0.5f));
+        lp.addRule(RelativeLayout.CENTER_IN_PARENT);
+        addView(loadingView, lp);
+        addView(imageView, new LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT));
+        imageView.setVisibility(View.GONE);
+        loadingView.setVisibility(View.GONE);
+    }
+
+    public void setLoading() {
+        imageView.setVisibility(View.GONE);
+        loadingView.setVisibility(View.VISIBLE);
+        bringChildToFront(loadingView);
+    }
+
+    public void showBitmap(Bitmap bitmap) {
+        loadingView.setVisibility(View.GONE);
+        imageView.setVisibility(View.VISIBLE);
+        bringChildToFront(imageView);
+        imageView.setImageBitmap(bitmap);
+    }
+
+    public void showFailedBitmap() {
+        loadingView.setVisibility(View.GONE);
+        imageView.setVisibility(View.VISIBLE);
+        bringChildToFront(imageView);
+        imageView.setImageResource(R.drawable.ic_launcher);
+    }
 
 }

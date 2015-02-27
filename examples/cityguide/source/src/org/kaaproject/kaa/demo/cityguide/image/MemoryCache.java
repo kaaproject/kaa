@@ -29,77 +29,79 @@ import android.util.Log;
 
 public class MemoryCache {
 
-	private static final String TAG = MemoryCache.class.getSimpleName();
-	
-	private Map<ImageKey, Bitmap> cache = Collections
-			.synchronizedMap(new LinkedHashMap<ImageKey, Bitmap>(10, 1.5f, true));
-	
-	private long mSize = 0;
-	private long mLimit = 1000000;
+    private static final String TAG = MemoryCache.class.getSimpleName();
 
-	public MemoryCache() {
-		setLimit(Runtime.getRuntime().maxMemory() / 4);
-	}
+    private Map<ImageKey, Bitmap> cache = Collections
+            .synchronizedMap(new LinkedHashMap<ImageKey, Bitmap>(10, 1.5f, true));
 
-	public void setLimit(long newLimit) {
-		mLimit = newLimit;
-		Log.i(TAG, "MemoryCache will use up to " + mLimit / 1024. / 1024. + "MB");
-	}
+    private long mSize = 0;
+    private long mLimit = 1000000;
 
-	public Bitmap get(ImageKey id) {
-		try {
-			if (!cache.containsKey(id)) {
-				return null;
-			} else {
-				return cache.get(id);
-			}
-		} catch (NullPointerException ex) {
-			return null;
-		}
-	}
+    public MemoryCache() {
+        setLimit(Runtime.getRuntime().maxMemory() / 4);
+    }
 
-	public void put(ImageKey id, Bitmap bitmap) {
-		try {
-			if (cache.containsKey(id)) {
-				mSize -= getSizeInBytes(cache.get(id));
-			}
-			cache.put(id, bitmap);
-			mSize += getSizeInBytes(bitmap);
-			checkSize();
-		} catch (Throwable th) {
-			Log.e(TAG, "Unable to put bitmap to memory cache!", th);
-		}
-	}
+    public void setLimit(long newLimit) {
+        mLimit = newLimit;
+        Log.i(TAG, "MemoryCache will use up to " + mLimit / 1024. / 1024.
+                + "MB");
+    }
 
-	private void checkSize() {
-		Log.i(TAG, "cache size=" + mSize + " length=" + cache.size());
-		if (mSize > mLimit) {
-			Iterator<Entry<ImageKey, Bitmap>> iter = cache.entrySet()
-					.iterator();
-			while (iter.hasNext()) {
-				Entry<ImageKey, Bitmap> entry = iter.next();
-				mSize -= getSizeInBytes(entry.getValue());
-				iter.remove();
-				if (mSize <= mLimit) {
-					break;
-				}
-			}
-			Log.i(TAG, "Clean cache. New size " + cache.size());
-		}
-	}
+    public Bitmap get(ImageKey id) {
+        try {
+            if (!cache.containsKey(id)) {
+                return null;
+            } else {
+                return cache.get(id);
+            }
+        } catch (NullPointerException ex) {
+            return null;
+        }
+    }
 
-	public void clear() {
-		try {
-			cache.clear();
-			mSize = 0;
-		} catch (NullPointerException ex) {}
-	}
+    public void put(ImageKey id, Bitmap bitmap) {
+        try {
+            if (cache.containsKey(id)) {
+                mSize -= getSizeInBytes(cache.get(id));
+            }
+            cache.put(id, bitmap);
+            mSize += getSizeInBytes(bitmap);
+            checkSize();
+        } catch (Throwable th) {
+            Log.e(TAG, "Unable to put bitmap to memory cache!", th);
+        }
+    }
 
-	long getSizeInBytes(Bitmap bitmap) {
-		if (bitmap == null) {
-			return 0;
-		} else {
-			return bitmap.getRowBytes() * bitmap.getHeight();
-		}
-	}
+    private void checkSize() {
+        Log.i(TAG, "cache size=" + mSize + " length=" + cache.size());
+        if (mSize > mLimit) {
+            Iterator<Entry<ImageKey, Bitmap>> iter = cache.entrySet()
+                    .iterator();
+            while (iter.hasNext()) {
+                Entry<ImageKey, Bitmap> entry = iter.next();
+                mSize -= getSizeInBytes(entry.getValue());
+                iter.remove();
+                if (mSize <= mLimit) {
+                    break;
+                }
+            }
+            Log.i(TAG, "Clean cache. New size " + cache.size());
+        }
+    }
+
+    public void clear() {
+        try {
+            cache.clear();
+            mSize = 0;
+        } catch (NullPointerException ex) {
+        }
+    }
+
+    long getSizeInBytes(Bitmap bitmap) {
+        if (bitmap == null) {
+            return 0;
+        } else {
+            return bitmap.getRowBytes() * bitmap.getHeight();
+        }
+    }
 }

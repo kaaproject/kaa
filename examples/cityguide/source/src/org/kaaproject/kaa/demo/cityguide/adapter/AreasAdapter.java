@@ -30,20 +30,20 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 public class AreasAdapter extends BaseAdapter {
-	
-	private Context mContext;
-	private List<Area> mAreas;
 
-	public AreasAdapter(Context context, List<Area> areas) {
-		mContext = context;
-		mAreas = areas;
-	}
+    private Context mContext;
+    private List<Area> mAreas;
+
+    public AreasAdapter(Context context, List<Area> areas) {
+        mContext = context;
+        mAreas = areas;
+    }
 
     @Override
     public int getCount() {
-    	return mAreas.size();
+        return mAreas.size();
     }
-    
+
     @Override
     public Area getItem(int position) {
         if (position < getCount()) {
@@ -52,25 +52,24 @@ public class AreasAdapter extends BaseAdapter {
         return null;
     }
 
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
-	@SuppressLint("InflateParams")
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+    @SuppressLint("InflateParams")
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;
         if (v == null) {
-        	LayoutInflater inflater = (LayoutInflater) 
-    				mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        	v = inflater.inflate(R.layout.area_list_item, null);
-        }            
-        TextView areaNameView = (TextView)v.findViewById(R.id.areaName);
+            LayoutInflater inflater = (LayoutInflater) mContext
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            v = inflater.inflate(R.layout.area_list_item, null);
+        }
+        TextView areaNameView = (TextView) v.findViewById(R.id.areaName);
         Area area = mAreas.get(position);
         areaNameView.setText(area.getName());
-		return v;
-	}
+        return v;
+    }
 
-    	
 }

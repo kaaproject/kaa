@@ -24,27 +24,27 @@ import android.content.Context;
 
 public class FileCache {
 
-	private File cacheDir;
+    private File cacheDir;
 
-	public FileCache(Context context) {
-		cacheDir = context.getCacheDir();
-		if (!cacheDir.exists())
-			cacheDir.mkdirs();
-	}
+    public FileCache(Context context) {
+        cacheDir = context.getCacheDir();
+        if (!cacheDir.exists())
+            cacheDir.mkdirs();
+    }
 
-	public File getFile(ImageKey key) {
-		String filename = String.valueOf(key.hashCode());
-		File f = new File(cacheDir, filename);
-		return f;
+    public File getFile(ImageKey key) {
+        String filename = String.valueOf(key.hashCode());
+        File f = new File(cacheDir, filename);
+        return f;
 
-	}
+    }
 
-	public void clear() {
-		File[] files = cacheDir.listFiles();
-		if (files == null)
-			return;
-		for (File f : files)
-			f.delete();
-	}
+    public void clear() {
+        File[] files = cacheDir.listFiles();
+        if (files == null)
+            return;
+        for (File f : files)
+            f.delete();
+    }
 
 }

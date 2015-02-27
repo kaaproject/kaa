@@ -34,93 +34,103 @@ import android.widget.ListView;
 
 public class PlacesFragment extends CityGuideFragment {
 
-	private String mAreaName;
+    private String mAreaName;
     private String mCityName;
     private Category mPlaceCategory;
-	
+
     private ListView mPlacesListView;
     private PlacesAdapter mPlacesAdapter;
-    
+
     public PlacesFragment() {
-    	super();
+        super();
     }
-	
-	public PlacesFragment(String areaName, String cityName, Category placeCategory) {
-		super();
-		mAreaName = areaName;
-		mCityName = cityName;
-		mPlaceCategory = placeCategory;
-	}
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		if (mAreaName == null) {
-			mAreaName = savedInstanceState.getString(AREA_NAME);
-			mCityName = savedInstanceState.getString(CITY_NAME);
-			mPlaceCategory = Category.values()[savedInstanceState.getInt(PLACE_CATEGORY)];
-		}
-	}
 
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		if (mAreaName != null) {
-			outState.putString(AREA_NAME, mAreaName);
-			outState.putString(CITY_NAME, mCityName);
-			outState.putInt(PLACE_CATEGORY, mPlaceCategory.ordinal());
-		}
-	}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_places,
-				container, false);
-		
-		mPlacesListView = (ListView) rootView.findViewById(R.id.placesList);
-		mPlacesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                    int position, long id) {
-            	onPlaceClicked(position);
-            }
-        });
-		List<Place> places = Utils.getPlaces(mApplication.getCityGuideConfiguration(), mAreaName, mCityName, mPlaceCategory);
-		if (places != null) {
-			mPlacesAdapter = new PlacesAdapter(mActivity, mApplication.getImageLoader(), places);
-			mPlacesListView.setAdapter(mPlacesAdapter);
-		}
-		return rootView;
-	}
-	
-	private void onPlaceClicked(int position) {
-		Place place = mPlacesAdapter.getItem(position);
-		PlaceFragment placeFragment = new PlaceFragment(mAreaName, mCityName, mPlaceCategory, place.getTitle());
-		mActivity.openFragment(placeFragment);
-	}
-	
-	public void onEventMainThread(ConfigurationUpdated configurationUpdated) {
-		List<Place> places = Utils.getPlaces(mApplication.getCityGuideConfiguration(), mAreaName, mCityName, mPlaceCategory);
-		if (places != null) {
-			mPlacesAdapter = new PlacesAdapter(mActivity, mApplication.getImageLoader(), places);
-			mPlacesListView.setAdapter(mPlacesAdapter);
-		}
+    public PlacesFragment(String areaName, String cityName,
+            Category placeCategory) {
+        super();
+        mAreaName = areaName;
+        mCityName = cityName;
+        mPlaceCategory = placeCategory;
     }
-	
-	@Override
-	protected boolean updateActionBar() {
-		return false;
-	}
-	
-	@Override
-	protected boolean useEventBus() {
-		return true;
-	}
 
-	@Override
-	protected boolean displayHomeAsUp() {
-		return true;
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (mAreaName == null) {
+            mAreaName = savedInstanceState.getString(AREA_NAME);
+            mCityName = savedInstanceState.getString(CITY_NAME);
+            mPlaceCategory = Category.values()[savedInstanceState
+                    .getInt(PLACE_CATEGORY)];
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mAreaName != null) {
+            outState.putString(AREA_NAME, mAreaName);
+            outState.putString(CITY_NAME, mCityName);
+            outState.putInt(PLACE_CATEGORY, mPlaceCategory.ordinal());
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_places, container,
+                false);
+
+        mPlacesListView = (ListView) rootView.findViewById(R.id.placesList);
+        mPlacesListView
+                .setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                            int position, long id) {
+                        onPlaceClicked(position);
+                    }
+                });
+        List<Place> places = Utils.getPlaces(
+                mApplication.getCityGuideConfiguration(), mAreaName, mCityName,
+                mPlaceCategory);
+        if (places != null) {
+            mPlacesAdapter = new PlacesAdapter(mActivity,
+                    mApplication.getImageLoader(), places);
+            mPlacesListView.setAdapter(mPlacesAdapter);
+        }
+        return rootView;
+    }
+
+    private void onPlaceClicked(int position) {
+        Place place = mPlacesAdapter.getItem(position);
+        PlaceFragment placeFragment = new PlaceFragment(mAreaName, mCityName,
+                mPlaceCategory, place.getTitle());
+        mActivity.openFragment(placeFragment);
+    }
+
+    public void onEventMainThread(ConfigurationUpdated configurationUpdated) {
+        List<Place> places = Utils.getPlaces(
+                mApplication.getCityGuideConfiguration(), mAreaName, mCityName,
+                mPlaceCategory);
+        if (places != null) {
+            mPlacesAdapter = new PlacesAdapter(mActivity,
+                    mApplication.getImageLoader(), places);
+            mPlacesListView.setAdapter(mPlacesAdapter);
+        }
+    }
+
+    @Override
+    protected boolean updateActionBar() {
+        return false;
+    }
+
+    @Override
+    protected boolean useEventBus() {
+        return true;
+    }
+
+    @Override
+    protected boolean displayHomeAsUp() {
+        return true;
+    }
 
 }

@@ -33,92 +33,94 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 public class CitiesFragment extends CityGuideFragment {
-	
+
     private View mWaitView;
     private ListView mCitiesListView;
     private String mAreaName;
     private CitiesAdapter mCitiesAdapter;
-    
+
     public CitiesFragment() {
-    	super();
+        super();
     }
-	
-	public CitiesFragment(String areaName) {
-		super();
-		mAreaName = areaName;
-	}
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		if (mAreaName == null) {
-			mAreaName = savedInstanceState.getString(AREA_NAME);
-		}
-	}
 
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		if (mAreaName != null) {
-			outState.putString(AREA_NAME, mAreaName);
-		}
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_cities,
-				container, false);
-		
-		mWaitView = rootView.findViewById(R.id.waitProgress);
-		mCitiesListView = (ListView) rootView.findViewById(R.id.citiesList);
-		mCitiesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                    int position, long id) {
-            	onCityClicked(position);
-            }
-        });
-		if (mApplication.isKaaStarted()) {
-			showCities();
-		}
-		return rootView;
-	}
-	
-	private void showCities() {
-		mWaitView.setVisibility(View.GONE);
-		List<City> cities = Utils.getCities(mApplication.getCityGuideConfiguration(), mAreaName);
-		if (cities != null) {
-			mCitiesAdapter = new CitiesAdapter(mActivity, cities);
-			mCitiesListView.setVisibility(View.VISIBLE);
-			mCitiesListView.setAdapter(mCitiesAdapter);
-		} else {
-			mActivity.popBackStack();
-		}
-	}
-	
-	public void onEventMainThread(KaaStarted kaaStarted) {
-		showCities();
+    public CitiesFragment(String areaName) {
+        super();
+        mAreaName = areaName;
     }
-	
-	public void onEventMainThread(ConfigurationUpdated configurationUpdated) {
-		showCities();
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (mAreaName == null) {
+            mAreaName = savedInstanceState.getString(AREA_NAME);
+        }
     }
-	
-	private void onCityClicked(int position) {
-		City city = mCitiesAdapter.getItem(position);
-		CityFragment cityFragment = new CityFragment(mAreaName, city.getName());
-		mActivity.openFragment(cityFragment);
-	}
 
-	@Override
-	protected String getTitle() {
-		return mAreaName;
-	}
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mAreaName != null) {
+            outState.putString(AREA_NAME, mAreaName);
+        }
+    }
 
-	@Override
-	protected boolean displayHomeAsUp() {
-		return true;
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_cities, container,
+                false);
+
+        mWaitView = rootView.findViewById(R.id.waitProgress);
+        mCitiesListView = (ListView) rootView.findViewById(R.id.citiesList);
+        mCitiesListView
+                .setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                            int position, long id) {
+                        onCityClicked(position);
+                    }
+                });
+        if (mApplication.isKaaStarted()) {
+            showCities();
+        }
+        return rootView;
+    }
+
+    private void showCities() {
+        mWaitView.setVisibility(View.GONE);
+        List<City> cities = Utils.getCities(
+                mApplication.getCityGuideConfiguration(), mAreaName);
+        if (cities != null) {
+            mCitiesAdapter = new CitiesAdapter(mActivity, cities);
+            mCitiesListView.setVisibility(View.VISIBLE);
+            mCitiesListView.setAdapter(mCitiesAdapter);
+        } else {
+            mActivity.popBackStack();
+        }
+    }
+
+    public void onEventMainThread(KaaStarted kaaStarted) {
+        showCities();
+    }
+
+    public void onEventMainThread(ConfigurationUpdated configurationUpdated) {
+        showCities();
+    }
+
+    private void onCityClicked(int position) {
+        City city = mCitiesAdapter.getItem(position);
+        CityFragment cityFragment = new CityFragment(mAreaName, city.getName());
+        mActivity.openFragment(cityFragment);
+    }
+
+    @Override
+    protected String getTitle() {
+        return mAreaName;
+    }
+
+    @Override
+    protected boolean displayHomeAsUp() {
+        return true;
+    }
 
 }

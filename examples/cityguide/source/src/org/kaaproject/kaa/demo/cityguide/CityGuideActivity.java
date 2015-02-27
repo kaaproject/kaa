@@ -28,86 +28,88 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class CityGuideActivity extends ActionBarActivity implements SetLocationCallback {
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_city_guide);
-		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new AreasFragment()).commit();
-		}
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		
-		/*
-		 *  Notify application about background state.
-		 */
-		
-		getCityGuideApplication().pause();
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		/*
-		 *  Notify application about foreground state.
-		 */
-		
-		getCityGuideApplication().resume();
-	}
+public class CityGuideActivity extends ActionBarActivity implements
+        SetLocationCallback {
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.city_guide, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-    	if (id == android.R.id.home) {
-    		popBackStack();
-    		return true;
-    	} else if (id == R.id.action_set_location) {
-    		setLocation();
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-	
-	public void openFragment(Fragment fragment) {
-		FragmentManager fm = getSupportFragmentManager();
-		FragmentTransaction ft = fm.beginTransaction();
-		ft.replace(R.id.container, fragment);
-		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-		ft.addToBackStack(null);
-		ft.commit();
-	}
-	
-    public void popBackStack() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-        	getSupportFragmentManager().popBackStack();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_city_guide);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new AreasFragment()).commit();
         }
     }
-    
-	public CityGuideApplication getCityGuideApplication() {
-		return (CityGuideApplication)getApplication();
-	}
 
-	private void setLocation() {
-		SetLocationDialog dialog = new SetLocationDialog(this, getCityGuideApplication(), this);
-		dialog.show();
-	}
+    @Override
+    protected void onPause() {
+        super.onPause();
 
-	@Override
-	public void onLocationSelected(String area, String city) {
-		getCityGuideApplication().updateLocation(area, city);
-	}
+        /*
+         * Notify application about background state.
+         */
+
+        getCityGuideApplication().pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        /*
+         * Notify application about foreground state.
+         */
+
+        getCityGuideApplication().resume();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.city_guide, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            popBackStack();
+            return true;
+        } else if (id == R.id.action_set_location) {
+            setLocation();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void openFragment(Fragment fragment) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.container, fragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    public void popBackStack() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        }
+    }
+
+    public CityGuideApplication getCityGuideApplication() {
+        return (CityGuideApplication) getApplication();
+    }
+
+    private void setLocation() {
+        SetLocationDialog dialog = new SetLocationDialog(this,
+                getCityGuideApplication(), this);
+        dialog.show();
+    }
+
+    @Override
+    public void onLocationSelected(String area, String city) {
+        getCityGuideApplication().updateLocation(area, city);
+    }
 
 }

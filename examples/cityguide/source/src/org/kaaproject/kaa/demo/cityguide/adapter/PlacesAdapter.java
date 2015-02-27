@@ -33,22 +33,23 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 public class PlacesAdapter extends BaseAdapter {
-	
-	private Context mContext;
-	private ImageLoader mImageLoader;
-	private List<Place> mPlaces;
 
-	public PlacesAdapter(Context context, ImageLoader imageLoader, List<Place> places) {
-		mContext = context;
-		mImageLoader = imageLoader;
-		mPlaces = places;
-	}
+    private Context mContext;
+    private ImageLoader mImageLoader;
+    private List<Place> mPlaces;
+
+    public PlacesAdapter(Context context, ImageLoader imageLoader,
+            List<Place> places) {
+        mContext = context;
+        mImageLoader = imageLoader;
+        mPlaces = places;
+    }
 
     @Override
     public int getCount() {
-    	return mPlaces.size();
+        return mPlaces.size();
     }
-    
+
     @Override
     public Place getItem(int position) {
         if (position < getCount()) {
@@ -57,33 +58,34 @@ public class PlacesAdapter extends BaseAdapter {
         return null;
     }
 
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
-	@SuppressLint("InflateParams")
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+    @SuppressLint("InflateParams")
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;
         if (v == null) {
-        	LayoutInflater inflater = (LayoutInflater) 
-    				mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        	v = inflater.inflate(R.layout.place_list_item, null);
-        }            
+            LayoutInflater inflater = (LayoutInflater) mContext
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            v = inflater.inflate(R.layout.place_list_item, null);
+        }
         Place place = mPlaces.get(position);
-        
-        LoadingImageView placePhotoView = (LoadingImageView)v.findViewById(R.id.placePhoto);
-        mImageLoader.loadImage(place.getPhotoUrl(), placePhotoView, ImageType.THUMBNAIL);
 
-        TextView placeNameView = (TextView)v.findViewById(R.id.placeName);
+        LoadingImageView placePhotoView = (LoadingImageView) v
+                .findViewById(R.id.placePhoto);
+        mImageLoader.loadImage(place.getPhotoUrl(), placePhotoView,
+                ImageType.THUMBNAIL);
+
+        TextView placeNameView = (TextView) v.findViewById(R.id.placeName);
         placeNameView.setText(place.getTitle());
-        
-        TextView placeDescView = (TextView)v.findViewById(R.id.placeDesc);
-        placeDescView.setText(place.getDescription());
-        
-		return v;
-	}
 
-    	
+        TextView placeDescView = (TextView) v.findViewById(R.id.placeDesc);
+        placeDescView.setText(place.getDescription());
+
+        return v;
+    }
+
 }

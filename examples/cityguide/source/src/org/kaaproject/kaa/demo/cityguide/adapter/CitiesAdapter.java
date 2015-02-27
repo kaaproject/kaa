@@ -30,20 +30,20 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 public class CitiesAdapter extends BaseAdapter {
-	
-	private Context mContext;
-	private List<City> mCities;
 
-	public CitiesAdapter(Context context, List<City> cities) {
-		mContext = context;
-		mCities = cities;
-	}
+    private Context mContext;
+    private List<City> mCities;
+
+    public CitiesAdapter(Context context, List<City> cities) {
+        mContext = context;
+        mCities = cities;
+    }
 
     @Override
     public int getCount() {
-    	return mCities.size();
+        return mCities.size();
     }
-    
+
     @Override
     public City getItem(int position) {
         if (position < getCount()) {
@@ -52,25 +52,24 @@ public class CitiesAdapter extends BaseAdapter {
         return null;
     }
 
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
-	@SuppressLint("InflateParams")
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+    @SuppressLint("InflateParams")
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;
         if (v == null) {
-        	LayoutInflater inflater = (LayoutInflater) 
-    				mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        	v = inflater.inflate(R.layout.city_list_item, null);
-        }            
-        TextView cityNameView = (TextView)v.findViewById(R.id.cityName);
+            LayoutInflater inflater = (LayoutInflater) mContext
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            v = inflater.inflate(R.layout.city_list_item, null);
+        }
+        TextView cityNameView = (TextView) v.findViewById(R.id.cityName);
         City city = mCities.get(position);
         cityNameView.setText(city.getName());
-		return v;
-	}
+        return v;
+    }
 
-    	
 }

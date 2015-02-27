@@ -32,67 +32,67 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 public class AreasFragment extends CityGuideFragment {
-	
+
     private View mWaitView;
     private ListView mAreasListView;
     private AreasAdapter mAreasAdapter;
 
-	
-	public AreasFragment() {
-		super();
-	}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_areas,
-				container, false);
-		
-		mWaitView = rootView.findViewById(R.id.waitProgress);
-		mAreasListView = (ListView) rootView.findViewById(R.id.areasList);
-		mAreasListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                    int position, long id) {
-            	onAreaClicked(position);
-            }
-        });
-		if (mApplication.isKaaStarted()) {
-			showAreas();
-		}
-		return rootView;
-	}
-	
-	private void showAreas() {
-		mWaitView.setVisibility(View.GONE);
-		List<Area> areas = mApplication.getCityGuideConfiguration().getAreas();
-		mAreasAdapter = new AreasAdapter(mActivity, areas);
-		mAreasListView.setVisibility(View.VISIBLE);
-		mAreasListView.setAdapter(mAreasAdapter);
-	}
-	
-	public void onEventMainThread(KaaStarted kaaStarted) {
-		showAreas();
+    public AreasFragment() {
+        super();
     }
-	
-	public void onEventMainThread(ConfigurationUpdated configurationUpdated) {
-		showAreas();
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_areas, container,
+                false);
+
+        mWaitView = rootView.findViewById(R.id.waitProgress);
+        mAreasListView = (ListView) rootView.findViewById(R.id.areasList);
+        mAreasListView
+                .setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                            int position, long id) {
+                        onAreaClicked(position);
+                    }
+                });
+        if (mApplication.isKaaStarted()) {
+            showAreas();
+        }
+        return rootView;
     }
-	
-	private void onAreaClicked(int position) {
-		Area area = mAreasAdapter.getItem(position);
-		CitiesFragment citiesFragment = new CitiesFragment(area.getName());
-		mActivity.openFragment(citiesFragment);
-	}
 
-	@Override
-	protected String getTitle() {
-		return getString(R.string.areas_title);
-	}
+    private void showAreas() {
+        mWaitView.setVisibility(View.GONE);
+        List<Area> areas = mApplication.getCityGuideConfiguration().getAreas();
+        mAreasAdapter = new AreasAdapter(mActivity, areas);
+        mAreasListView.setVisibility(View.VISIBLE);
+        mAreasListView.setAdapter(mAreasAdapter);
+    }
 
-	@Override
-	protected boolean displayHomeAsUp() {
-		return false;
-	}
+    public void onEventMainThread(KaaStarted kaaStarted) {
+        showAreas();
+    }
+
+    public void onEventMainThread(ConfigurationUpdated configurationUpdated) {
+        showAreas();
+    }
+
+    private void onAreaClicked(int position) {
+        Area area = mAreasAdapter.getItem(position);
+        CitiesFragment citiesFragment = new CitiesFragment(area.getName());
+        mActivity.openFragment(citiesFragment);
+    }
+
+    @Override
+    protected String getTitle() {
+        return getString(R.string.areas_title);
+    }
+
+    @Override
+    protected boolean displayHomeAsUp() {
+        return false;
+    }
 
 }

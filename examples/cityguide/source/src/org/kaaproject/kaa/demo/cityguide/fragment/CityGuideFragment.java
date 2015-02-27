@@ -24,63 +24,64 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 
 public abstract class CityGuideFragment extends Fragment {
-	
-	public static final String AREA_NAME = "areaName";
-	public static final String CITY_NAME = "cityName";
-	public static final String PLACE_CATEGORY = "placeCategory";
-	public static final String PLACE_TITLE = "placeTitle";
 
-	protected CityGuideActivity mActivity;
-	protected CityGuideApplication mApplication;
-	protected ActionBar mActionBar;
+    public static final String AREA_NAME = "areaName";
+    public static final String CITY_NAME = "cityName";
+    public static final String PLACE_CATEGORY = "placeCategory";
+    public static final String PLACE_TITLE = "placeTitle";
 
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		if (mActivity == null) {
-			mActivity = (CityGuideActivity)activity;
-			mActionBar = mActivity.getSupportActionBar();
-			mApplication = mActivity.getCityGuideApplication();
-		}
-	}
+    protected CityGuideActivity mActivity;
+    protected CityGuideApplication mApplication;
+    protected ActionBar mActionBar;
 
     @Override
-	public void onResume() {
-		super.onResume();
-		if (updateActionBar() && mActionBar != null) {
-			int options = ActionBar.DISPLAY_SHOW_TITLE;
-			if (displayHomeAsUp()) options |= ActionBar.DISPLAY_HOME_AS_UP;
-			mActionBar.setDisplayOptions(options, 
-					ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
-			mActionBar.setTitle(getTitle());
-			mActionBar.setDisplayShowTitleEnabled(true);
-	        mActionBar.setHomeButtonEnabled(displayHomeAsUp());
-
-		}
-        if (useEventBus() && !mApplication.getEventBus().isRegistered(this)) {
-        	mApplication.getEventBus().register(this);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (mActivity == null) {
+            mActivity = (CityGuideActivity) activity;
+            mActionBar = mActivity.getSupportActionBar();
+            mApplication = mActivity.getCityGuideApplication();
         }
     }
-    
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (updateActionBar() && mActionBar != null) {
+            int options = ActionBar.DISPLAY_SHOW_TITLE;
+            if (displayHomeAsUp())
+                options |= ActionBar.DISPLAY_HOME_AS_UP;
+            mActionBar.setDisplayOptions(options, ActionBar.DISPLAY_HOME_AS_UP
+                    | ActionBar.DISPLAY_SHOW_TITLE);
+            mActionBar.setTitle(getTitle());
+            mActionBar.setDisplayShowTitleEnabled(true);
+            mActionBar.setHomeButtonEnabled(displayHomeAsUp());
+
+        }
+        if (useEventBus() && !mApplication.getEventBus().isRegistered(this)) {
+            mApplication.getEventBus().register(this);
+        }
+    }
+
     @Override
     public void onPause() {
-    	super.onPause();
-    	if (useEventBus() && mApplication.getEventBus().isRegistered(this)) {
-    		mApplication.getEventBus().unregister(this);
-    	}
+        super.onPause();
+        if (useEventBus() && mApplication.getEventBus().isRegistered(this)) {
+            mApplication.getEventBus().unregister(this);
+        }
     }
-    
+
     protected String getTitle() {
-    	return "";
+        return "";
     }
-    
+
     protected boolean updateActionBar() {
-    	return true;
+        return true;
     }
-    
+
     protected boolean useEventBus() {
-    	return true;
+        return true;
     }
-    
+
     protected abstract boolean displayHomeAsUp();
 }

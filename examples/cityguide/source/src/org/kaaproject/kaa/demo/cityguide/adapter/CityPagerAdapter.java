@@ -30,48 +30,47 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 public class CityPagerAdapter extends FragmentStatePagerAdapter {
-	
-	private static final int[] pageTitles = new int[]{  R.string.hotels,
-														R.string.shops,
-														R.string.museums,
-														R.string.restaurants  };
-	
-	private Context mContext;
+
+    private static final int[] pageTitles = new int[] { R.string.hotels,
+            R.string.shops, R.string.museums, R.string.restaurants };
+
+    private Context mContext;
     private String mAreaName;
     private String mCityName;
-    
+
     private List<Fragment> fragments;
-	
-    public CityPagerAdapter(Context context, String areaName, String cityName, FragmentManager fragmentManager) {
+
+    public CityPagerAdapter(Context context, String areaName, String cityName,
+            FragmentManager fragmentManager) {
         super(fragmentManager);
         mContext = context;
         mAreaName = areaName;
         mCityName = cityName;
         fragments = new ArrayList<>(Category.values().length);
-        for (int i=0;i<Category.values().length;i++) {
-        	fragments.add(new PlacesFragment(mAreaName, mCityName, Category.values()[i]));
+        for (int i = 0; i < Category.values().length; i++) {
+            fragments.add(new PlacesFragment(mAreaName, mCityName, Category
+                    .values()[i]));
         }
     }
- 
-	@Override
+
+    @Override
     public int getCount() {
         return Category.values().length;
     }
-    
+
     @Override
     public Fragment getItem(int position) {
-    	return fragments.get(position);
+        return fragments.get(position);
     }
-    
+
     @Override
     public CharSequence getPageTitle(int position) {
         return mContext.getString(pageTitles[position]);
     }
-	
+
     @Override
     public Parcelable saveState() {
         return null;
     }
-
 
 }

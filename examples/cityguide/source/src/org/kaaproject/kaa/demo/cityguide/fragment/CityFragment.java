@@ -32,7 +32,7 @@ import android.view.ViewGroup;
 import com.viewpagerindicator.TabPageIndicator;
 
 public class CityFragment extends CityGuideFragment {
-	
+
     private View mWaitView;
     private View mCityPages;
     private TabPageIndicator mCityPageIndicator;
@@ -40,87 +40,91 @@ public class CityFragment extends CityGuideFragment {
     private String mAreaName;
     private String mCityName;
     private CityPagerAdapter mCityPagerAdapter;
-    
+
     public CityFragment() {
-    	super();
+        super();
     }
-	
-	public CityFragment(String areaName, String cityName) {
-		super();
-		mAreaName = areaName;
-		mCityName = cityName;
-	}
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		if (mAreaName == null) {
-			mAreaName = savedInstanceState.getString(AREA_NAME);
-			mCityName = savedInstanceState.getString(CITY_NAME);
-		}
-	}
 
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		if (mAreaName != null) {
-			outState.putString(AREA_NAME, mAreaName);
-			outState.putString(CITY_NAME, mCityName);
-		}
-	}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_city,
-				container, false);
-		mWaitView = rootView.findViewById(R.id.waitProgress);
-		mCityPages = rootView.findViewById(R.id.cityPages);
-		mCityPageIndicator = (TabPageIndicator)rootView.findViewById(R.id.cityPageIndicator);
-		mCityPager = (ViewPager) rootView.findViewById(R.id.cityPager);
-		if (mApplication.isKaaStarted()) {
-			showCity();
-		}
-		return rootView;
-	}
-	
-	private void showCity() {
-		mWaitView.setVisibility(View.GONE);
-		City city = Utils.getCity(mApplication.getCityGuideConfiguration(), mAreaName, mCityName);
-		if (city != null) {
-			mCityPagerAdapter = new CityPagerAdapter(mActivity, mAreaName, mCityName, mActivity.getSupportFragmentManager());
-			mCityPages.setVisibility(View.VISIBLE);
-			mCityPager.setAdapter(mCityPagerAdapter);
-			mCityPageIndicator.setViewPager(mCityPager);
-		} else {
-			mActivity.popBackStack();
-		}
-	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();
-	}
-
-	public void onEventMainThread(KaaStarted kaaStarted) {
-		showCity();
+    public CityFragment(String areaName, String cityName) {
+        super();
+        mAreaName = areaName;
+        mCityName = cityName;
     }
-	
-	public void onEventMainThread(ConfigurationUpdated configurationUpdated) {
-		City city = Utils.getCity(mApplication.getCityGuideConfiguration(), mAreaName, mCityName);
-		if (city == null) {
-			mActivity.popBackStack();
-		} 
-    }
-	
-	@Override
-	protected String getTitle() {
-		return mCityName;
-	}
 
-	@Override
-	protected boolean displayHomeAsUp() {
-		return true;
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (mAreaName == null) {
+            mAreaName = savedInstanceState.getString(AREA_NAME);
+            mCityName = savedInstanceState.getString(CITY_NAME);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mAreaName != null) {
+            outState.putString(AREA_NAME, mAreaName);
+            outState.putString(CITY_NAME, mCityName);
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_city, container,
+                false);
+        mWaitView = rootView.findViewById(R.id.waitProgress);
+        mCityPages = rootView.findViewById(R.id.cityPages);
+        mCityPageIndicator = (TabPageIndicator) rootView
+                .findViewById(R.id.cityPageIndicator);
+        mCityPager = (ViewPager) rootView.findViewById(R.id.cityPager);
+        if (mApplication.isKaaStarted()) {
+            showCity();
+        }
+        return rootView;
+    }
+
+    private void showCity() {
+        mWaitView.setVisibility(View.GONE);
+        City city = Utils.getCity(mApplication.getCityGuideConfiguration(),
+                mAreaName, mCityName);
+        if (city != null) {
+            mCityPagerAdapter = new CityPagerAdapter(mActivity, mAreaName,
+                    mCityName, mActivity.getSupportFragmentManager());
+            mCityPages.setVisibility(View.VISIBLE);
+            mCityPager.setAdapter(mCityPagerAdapter);
+            mCityPageIndicator.setViewPager(mCityPager);
+        } else {
+            mActivity.popBackStack();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    public void onEventMainThread(KaaStarted kaaStarted) {
+        showCity();
+    }
+
+    public void onEventMainThread(ConfigurationUpdated configurationUpdated) {
+        City city = Utils.getCity(mApplication.getCityGuideConfiguration(),
+                mAreaName, mCityName);
+        if (city == null) {
+            mActivity.popBackStack();
+        }
+    }
+
+    @Override
+    protected String getTitle() {
+        return mCityName;
+    }
+
+    @Override
+    protected boolean displayHomeAsUp() {
+        return true;
+    }
 
 }
