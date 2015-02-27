@@ -15,13 +15,18 @@
  */
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
+import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
+import org.kaaproject.kaa.common.dto.EndpointUserDto;
+import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
-import org.kaaproject.kaa.server.common.dao.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointConfiguration;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointUserConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -33,6 +38,9 @@ public class AbstractMongoTest extends AbstractTest {
     protected EndpointConfigurationDao<MongoEndpointConfiguration> endpointConfigurationDao;
     @Autowired
     protected EndpointProfileDao<MongoEndpointProfile> endpointProfileDao;
+
+    @Autowired
+    protected EndpointUserConfigurationDao<MongoEndpointUserConfiguration> userConfigurationMongoDao;
 
     protected EndpointProfileDto generateEndpointProfile(String appId, List<String> topicIds) {
         EndpointProfileDto profileDto = new EndpointProfileDto();
@@ -47,5 +55,24 @@ public class AbstractMongoTest extends AbstractTest {
         configurationDto.setConfigurationHash(UUID.randomUUID().toString().getBytes());
         configurationDto.setConfiguration(UUID.randomUUID().toString().getBytes());
         return endpointConfigurationDao.save(new MongoEndpointConfiguration(configurationDto)).toDto();
+    }
+
+    protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto, Integer schemaVersion) {
+        EndpointUserConfigurationDto configurationDto = new EndpointUserConfigurationDto();
+        if (endpointUser == null) {
+            endpointUser = generateEndpointUser(null);
+        }
+        configurationDto.setUserId(endpointUser.getId());
+        if (schemaVersion == null) {
+            schemaVersion = 1;
+        }
+        configurationDto.setSchemaVersion(schemaVersion);
+        configurationDto.setBody(UUID.randomUUID().toString().getBytes());
+        if (applicationDto == null) {
+            applicationDto = generateApplication();
+        }
+        configurationDto.setAppToken(applicationDto.getApplicationToken());
+        userConfigurationMongoDao.save(new MongoEndpointUserConfiguration(configurationDto));
+        return configurationDto;
     }
 }

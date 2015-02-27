@@ -16,31 +16,38 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.io.Serializable;
+import java.util.List;
+
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_USER;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ACCESS_TOKEN;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ENDPOINT_IDS;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_EXTERNAL_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_TENANT_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_USERNAME;
+
+@Document(collection = ENDPOINT_USER)
 public final class MongoEndpointUser implements EndpointUser, Serializable {
 
     private static final long serialVersionUID = 3766947955702551264L;
 
-    public static final String COLLECTION_NAME = "endpoint_user";
-
     @Id
     private String id;
-    @Field("username")
+    @Field(EP_USER_USERNAME)
     private String username;
-    @Field("external_id")
+    @Field(EP_USER_EXTERNAL_ID)
     private String externalId;
-    @Field("tenant_id")
+    @Field(EP_USER_TENANT_ID)
     private String tenantId;
-    @Field("access_token")
+    @Field(EP_USER_ACCESS_TOKEN)
     private String accessToken;
-    @Field("endpoint_ids")
+    @Field(EP_USER_ENDPOINT_IDS)
     private List<String> endpointIds;
 
     public MongoEndpointUser() {

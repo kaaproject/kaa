@@ -16,12 +16,8 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-
+import com.mongodb.DBObject;
+import com.mongodb.util.JSON;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
@@ -32,66 +28,90 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
-@Document(collection = MongoEndpointProfile.COLLECTION_NAME)
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CF_GROUP_STATE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CF_SEQ_NUM;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CHANGED_FLAG;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CONFIGURATION_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CONFIGURATION_VERSION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ECF_VERSION_STATE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_LOG_SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_GROUP_STATE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_SEQ_NUM;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NOTIFICATION_VERSION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_SCHEMA_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_VERSION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SYSTEM_NF_VERSION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_NF_VERSION;
+
+@Document(collection = ENDPOINT_PROFILE)
 public final class MongoEndpointProfile implements EndpointProfile, Serializable {
 
     private static final long serialVersionUID = -3227246639864687299L;
 
-    public static final String COLLECTION_NAME = "endpoint_profile";
-
     @Id
     private String id;
-    @Field("application_id")
+    @Field(EP_APPLICATION_ID)
     private String applicationId;
-    @Field("endpoint_key")
+    @Field(EP_ENDPOINT_KEY)
     private byte[] endpointKey;
     @Indexed
-    @Field("endpoint_key_hash")
+    @Field(EP_ENDPOINT_KEY_HASH)
     private byte[] endpointKeyHash;
     @Indexed
-    @Field("endpoint_user_id")
+    @Field(EP_USER_ID)
     private String endpointUserId;
     @Indexed
-    @Field("access_token")
+    @Field(EP_ACCESS_TOKEN)
     private String accessToken;
-    @Field("profile_schema_id")
+    @Field(EP_PROFILE_SCHEMA_ID)
     private String profileSchemaId;
-    @Field("cf_group_state")
+    @Field(EP_CF_GROUP_STATE)
     private List<EndpointGroupState> cfGroupState;
-    @Field("nf_group_state")
+    @Field(EP_NF_GROUP_STATE)
     private List<EndpointGroupState> nfGroupState;
-    @Field("cf_seq_num")
+    @Field(EP_CF_SEQ_NUM)
     private int cfSequenceNumber;
-    @Field("nf_seq_num")
+    @Field(EP_NF_SEQ_NUM)
     private int nfSequenceNumber;
-    @Field("changed_flag")
+    @Field(EP_CHANGED_FLAG)
     private Boolean changedFlag;
     private DBObject profile;
-    @Field("profile_hash")
+    @Field(EP_PROFILE_HASH)
     private byte[] profileHash;
-    @Field("profile_version")
+    @Field(EP_PROFILE_VERSION)
     private int profileVersion;
-    @Field("configuration_hash")
+    @Field(EP_CONFIGURATION_HASH)
     private byte[] configurationHash;
-    @Field("configuration_version")
+    @Field(EP_CONFIGURATION_VERSION)
     private int configurationVersion;
-    @Field("notification_version")
+    @Field(EP_NOTIFICATION_VERSION)
     private int notificationVersion;
     private List<String> subscriptions;
-    @Field("nt_hash")
+    @Field(EP_NF_HASH)
     private byte[] ntHash;
-    @Field("system_nf_version")
+    @Field(EP_SYSTEM_NF_VERSION)
     private int systemNfVersion;
-    @Field("user_nf_version")
+    @Field(EP_USER_NF_VERSION)
     private int userNfVersion;
-    @Field("log_schema_version")
+    @Field(EP_LOG_SCHEMA_VERSION)
     private int logSchemaVersion;
-    @Field("ecf_version_state")
+    @Field(EP_ECF_VERSION_STATE)
     private List<EventClassFamilyVersionState> ecfVersionStates;
-    @Field("server_hash")
+    @Field(EP_SERVER_HASH)
     private String serverHash;
 
 
@@ -130,7 +150,7 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     public String getId() {
         return id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
