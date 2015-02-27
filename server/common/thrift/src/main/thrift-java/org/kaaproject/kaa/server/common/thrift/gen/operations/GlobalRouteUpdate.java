@@ -33,39 +33,42 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, UserRouteInfo._Fields>, java.io.Serializable, Cloneable, Comparable<UserRouteInfo> {
-  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("UserRouteInfo");
+public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpdate, GlobalRouteUpdate._Fields>, java.io.Serializable, Cloneable, Comparable<GlobalRouteUpdate> {
+  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("GlobalRouteUpdate");
 
-  private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.STRING, (short)1);
-  private static final org.apache.thrift.protocol.TField TENANT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("tenantId", org.apache.thrift.protocol.TType.STRING, (short)2);
-  private static final org.apache.thrift.protocol.TField OPERATIONS_SERVER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("operationsServerId", org.apache.thrift.protocol.TType.STRING, (short)3);
+  private static final org.apache.thrift.protocol.TField TENANT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("tenantId", org.apache.thrift.protocol.TType.STRING, (short)1);
+  private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.STRING, (short)2);
+  private static final org.apache.thrift.protocol.TField ROUTE_ADDRESS_FIELD_DESC = new org.apache.thrift.protocol.TField("routeAddress", org.apache.thrift.protocol.TType.STRUCT, (short)3);
   private static final org.apache.thrift.protocol.TField UPDATE_TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("updateType", org.apache.thrift.protocol.TType.I32, (short)4);
+  private static final org.apache.thrift.protocol.TField CF_SCHEMA_VERSION_FIELD_DESC = new org.apache.thrift.protocol.TField("cfSchemaVersion", org.apache.thrift.protocol.TType.I32, (short)5);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
-    schemes.put(StandardScheme.class, new UserRouteInfoStandardSchemeFactory());
-    schemes.put(TupleScheme.class, new UserRouteInfoTupleSchemeFactory());
+    schemes.put(StandardScheme.class, new GlobalRouteUpdateStandardSchemeFactory());
+    schemes.put(TupleScheme.class, new GlobalRouteUpdateTupleSchemeFactory());
   }
 
-  public String userId; // required
   public String tenantId; // required
-  public String operationsServerId; // required
+  public String userId; // required
+  public RouteAddress routeAddress; // required
   /**
    * 
    * @see EventRouteUpdateType
    */
   public EventRouteUpdateType updateType; // required
+  public int cfSchemaVersion; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-    USER_ID((short)1, "userId"),
-    TENANT_ID((short)2, "tenantId"),
-    OPERATIONS_SERVER_ID((short)3, "operationsServerId"),
+    TENANT_ID((short)1, "tenantId"),
+    USER_ID((short)2, "userId"),
+    ROUTE_ADDRESS((short)3, "routeAddress"),
     /**
      * 
      * @see EventRouteUpdateType
      */
-    UPDATE_TYPE((short)4, "updateType");
+    UPDATE_TYPE((short)4, "updateType"),
+    CF_SCHEMA_VERSION((short)5, "cfSchemaVersion");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -80,14 +83,16 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
      */
     public static _Fields findByThriftId(int fieldId) {
       switch(fieldId) {
-        case 1: // USER_ID
-          return USER_ID;
-        case 2: // TENANT_ID
+        case 1: // TENANT_ID
           return TENANT_ID;
-        case 3: // OPERATIONS_SERVER_ID
-          return OPERATIONS_SERVER_ID;
+        case 2: // USER_ID
+          return USER_ID;
+        case 3: // ROUTE_ADDRESS
+          return ROUTE_ADDRESS;
         case 4: // UPDATE_TYPE
           return UPDATE_TYPE;
+        case 5: // CF_SCHEMA_VERSION
+          return CF_SCHEMA_VERSION;
         default:
           return null;
       }
@@ -128,96 +133,83 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
   }
 
   // isset id assignments
+  private static final int __CFSCHEMAVERSION_ISSET_ID = 0;
+  private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , "user_id")));
     tmpMap.put(_Fields.TENANT_ID, new org.apache.thrift.meta_data.FieldMetaData("tenantId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , "tenant_id")));
-    tmpMap.put(_Fields.OPERATIONS_SERVER_ID, new org.apache.thrift.meta_data.FieldMetaData("operationsServerId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+    tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , "user_id")));
+    tmpMap.put(_Fields.ROUTE_ADDRESS, new org.apache.thrift.meta_data.FieldMetaData("routeAddress", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, RouteAddress.class)));
     tmpMap.put(_Fields.UPDATE_TYPE, new org.apache.thrift.meta_data.FieldMetaData("updateType", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, EventRouteUpdateType.class)));
+    tmpMap.put(_Fields.CF_SCHEMA_VERSION, new org.apache.thrift.meta_data.FieldMetaData("cfSchemaVersion", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32        , "int")));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
-    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(UserRouteInfo.class, metaDataMap);
+    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(GlobalRouteUpdate.class, metaDataMap);
   }
 
-  public UserRouteInfo() {
+  public GlobalRouteUpdate() {
   }
 
-  public UserRouteInfo(
-    String userId,
+  public GlobalRouteUpdate(
     String tenantId,
-    String operationsServerId,
-    EventRouteUpdateType updateType)
+    String userId,
+    RouteAddress routeAddress,
+    EventRouteUpdateType updateType,
+    int cfSchemaVersion)
   {
     this();
-    this.userId = userId;
     this.tenantId = tenantId;
-    this.operationsServerId = operationsServerId;
+    this.userId = userId;
+    this.routeAddress = routeAddress;
     this.updateType = updateType;
+    this.cfSchemaVersion = cfSchemaVersion;
+    setCfSchemaVersionIsSet(true);
   }
 
   /**
    * Performs a deep copy on <i>other</i>.
    */
-  public UserRouteInfo(UserRouteInfo other) {
-    if (other.isSetUserId()) {
-      this.userId = other.userId;
-    }
+  public GlobalRouteUpdate(GlobalRouteUpdate other) {
+    __isset_bitfield = other.__isset_bitfield;
     if (other.isSetTenantId()) {
       this.tenantId = other.tenantId;
     }
-    if (other.isSetOperationsServerId()) {
-      this.operationsServerId = other.operationsServerId;
+    if (other.isSetUserId()) {
+      this.userId = other.userId;
+    }
+    if (other.isSetRouteAddress()) {
+      this.routeAddress = new RouteAddress(other.routeAddress);
     }
     if (other.isSetUpdateType()) {
       this.updateType = other.updateType;
     }
+    this.cfSchemaVersion = other.cfSchemaVersion;
   }
 
-  public UserRouteInfo deepCopy() {
-    return new UserRouteInfo(this);
+  public GlobalRouteUpdate deepCopy() {
+    return new GlobalRouteUpdate(this);
   }
 
   @Override
   public void clear() {
-    this.userId = null;
     this.tenantId = null;
-    this.operationsServerId = null;
-    this.updateType = null;
-  }
-
-  public String getUserId() {
-    return this.userId;
-  }
-
-  public UserRouteInfo setUserId(String userId) {
-    this.userId = userId;
-    return this;
-  }
-
-  public void unsetUserId() {
     this.userId = null;
-  }
-
-  /** Returns true if field userId is set (has been assigned a value) and false otherwise */
-  public boolean isSetUserId() {
-    return this.userId != null;
-  }
-
-  public void setUserIdIsSet(boolean value) {
-    if (!value) {
-      this.userId = null;
-    }
+    this.routeAddress = null;
+    this.updateType = null;
+    setCfSchemaVersionIsSet(false);
+    this.cfSchemaVersion = 0;
   }
 
   public String getTenantId() {
     return this.tenantId;
   }
 
-  public UserRouteInfo setTenantId(String tenantId) {
+  public GlobalRouteUpdate setTenantId(String tenantId) {
     this.tenantId = tenantId;
     return this;
   }
@@ -237,27 +229,51 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
     }
   }
 
-  public String getOperationsServerId() {
-    return this.operationsServerId;
+  public String getUserId() {
+    return this.userId;
   }
 
-  public UserRouteInfo setOperationsServerId(String operationsServerId) {
-    this.operationsServerId = operationsServerId;
+  public GlobalRouteUpdate setUserId(String userId) {
+    this.userId = userId;
     return this;
   }
 
-  public void unsetOperationsServerId() {
-    this.operationsServerId = null;
+  public void unsetUserId() {
+    this.userId = null;
   }
 
-  /** Returns true if field operationsServerId is set (has been assigned a value) and false otherwise */
-  public boolean isSetOperationsServerId() {
-    return this.operationsServerId != null;
+  /** Returns true if field userId is set (has been assigned a value) and false otherwise */
+  public boolean isSetUserId() {
+    return this.userId != null;
   }
 
-  public void setOperationsServerIdIsSet(boolean value) {
+  public void setUserIdIsSet(boolean value) {
     if (!value) {
-      this.operationsServerId = null;
+      this.userId = null;
+    }
+  }
+
+  public RouteAddress getRouteAddress() {
+    return this.routeAddress;
+  }
+
+  public GlobalRouteUpdate setRouteAddress(RouteAddress routeAddress) {
+    this.routeAddress = routeAddress;
+    return this;
+  }
+
+  public void unsetRouteAddress() {
+    this.routeAddress = null;
+  }
+
+  /** Returns true if field routeAddress is set (has been assigned a value) and false otherwise */
+  public boolean isSetRouteAddress() {
+    return this.routeAddress != null;
+  }
+
+  public void setRouteAddressIsSet(boolean value) {
+    if (!value) {
+      this.routeAddress = null;
     }
   }
 
@@ -273,7 +289,7 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
    * 
    * @see EventRouteUpdateType
    */
-  public UserRouteInfo setUpdateType(EventRouteUpdateType updateType) {
+  public GlobalRouteUpdate setUpdateType(EventRouteUpdateType updateType) {
     this.updateType = updateType;
     return this;
   }
@@ -293,16 +309,31 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
     }
   }
 
+  public int getCfSchemaVersion() {
+    return this.cfSchemaVersion;
+  }
+
+  public GlobalRouteUpdate setCfSchemaVersion(int cfSchemaVersion) {
+    this.cfSchemaVersion = cfSchemaVersion;
+    setCfSchemaVersionIsSet(true);
+    return this;
+  }
+
+  public void unsetCfSchemaVersion() {
+    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __CFSCHEMAVERSION_ISSET_ID);
+  }
+
+  /** Returns true if field cfSchemaVersion is set (has been assigned a value) and false otherwise */
+  public boolean isSetCfSchemaVersion() {
+    return EncodingUtils.testBit(__isset_bitfield, __CFSCHEMAVERSION_ISSET_ID);
+  }
+
+  public void setCfSchemaVersionIsSet(boolean value) {
+    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __CFSCHEMAVERSION_ISSET_ID, value);
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
-    case USER_ID:
-      if (value == null) {
-        unsetUserId();
-      } else {
-        setUserId((String)value);
-      }
-      break;
-
     case TENANT_ID:
       if (value == null) {
         unsetTenantId();
@@ -311,11 +342,19 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
       }
       break;
 
-    case OPERATIONS_SERVER_ID:
+    case USER_ID:
       if (value == null) {
-        unsetOperationsServerId();
+        unsetUserId();
       } else {
-        setOperationsServerId((String)value);
+        setUserId((String)value);
+      }
+      break;
+
+    case ROUTE_ADDRESS:
+      if (value == null) {
+        unsetRouteAddress();
+      } else {
+        setRouteAddress((RouteAddress)value);
       }
       break;
 
@@ -327,22 +366,33 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
       }
       break;
 
+    case CF_SCHEMA_VERSION:
+      if (value == null) {
+        unsetCfSchemaVersion();
+      } else {
+        setCfSchemaVersion((Integer)value);
+      }
+      break;
+
     }
   }
 
   public Object getFieldValue(_Fields field) {
     switch (field) {
-    case USER_ID:
-      return getUserId();
-
     case TENANT_ID:
       return getTenantId();
 
-    case OPERATIONS_SERVER_ID:
-      return getOperationsServerId();
+    case USER_ID:
+      return getUserId();
+
+    case ROUTE_ADDRESS:
+      return getRouteAddress();
 
     case UPDATE_TYPE:
       return getUpdateType();
+
+    case CF_SCHEMA_VERSION:
+      return Integer.valueOf(getCfSchemaVersion());
 
     }
     throw new IllegalStateException();
@@ -355,14 +405,16 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
     }
 
     switch (field) {
-    case USER_ID:
-      return isSetUserId();
     case TENANT_ID:
       return isSetTenantId();
-    case OPERATIONS_SERVER_ID:
-      return isSetOperationsServerId();
+    case USER_ID:
+      return isSetUserId();
+    case ROUTE_ADDRESS:
+      return isSetRouteAddress();
     case UPDATE_TYPE:
       return isSetUpdateType();
+    case CF_SCHEMA_VERSION:
+      return isSetCfSchemaVersion();
     }
     throw new IllegalStateException();
   }
@@ -371,23 +423,14 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
   public boolean equals(Object that) {
     if (that == null)
       return false;
-    if (that instanceof UserRouteInfo)
-      return this.equals((UserRouteInfo)that);
+    if (that instanceof GlobalRouteUpdate)
+      return this.equals((GlobalRouteUpdate)that);
     return false;
   }
 
-  public boolean equals(UserRouteInfo that) {
+  public boolean equals(GlobalRouteUpdate that) {
     if (that == null)
       return false;
-
-    boolean this_present_userId = true && this.isSetUserId();
-    boolean that_present_userId = true && that.isSetUserId();
-    if (this_present_userId || that_present_userId) {
-      if (!(this_present_userId && that_present_userId))
-        return false;
-      if (!this.userId.equals(that.userId))
-        return false;
-    }
 
     boolean this_present_tenantId = true && this.isSetTenantId();
     boolean that_present_tenantId = true && that.isSetTenantId();
@@ -398,12 +441,21 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
         return false;
     }
 
-    boolean this_present_operationsServerId = true && this.isSetOperationsServerId();
-    boolean that_present_operationsServerId = true && that.isSetOperationsServerId();
-    if (this_present_operationsServerId || that_present_operationsServerId) {
-      if (!(this_present_operationsServerId && that_present_operationsServerId))
+    boolean this_present_userId = true && this.isSetUserId();
+    boolean that_present_userId = true && that.isSetUserId();
+    if (this_present_userId || that_present_userId) {
+      if (!(this_present_userId && that_present_userId))
         return false;
-      if (!this.operationsServerId.equals(that.operationsServerId))
+      if (!this.userId.equals(that.userId))
+        return false;
+    }
+
+    boolean this_present_routeAddress = true && this.isSetRouteAddress();
+    boolean that_present_routeAddress = true && that.isSetRouteAddress();
+    if (this_present_routeAddress || that_present_routeAddress) {
+      if (!(this_present_routeAddress && that_present_routeAddress))
+        return false;
+      if (!this.routeAddress.equals(that.routeAddress))
         return false;
     }
 
@@ -416,6 +468,15 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
         return false;
     }
 
+    boolean this_present_cfSchemaVersion = true;
+    boolean that_present_cfSchemaVersion = true;
+    if (this_present_cfSchemaVersion || that_present_cfSchemaVersion) {
+      if (!(this_present_cfSchemaVersion && that_present_cfSchemaVersion))
+        return false;
+      if (this.cfSchemaVersion != that.cfSchemaVersion)
+        return false;
+    }
+
     return true;
   }
 
@@ -423,47 +484,42 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
   public int hashCode() {
     HashCodeBuilder builder = new HashCodeBuilder();
 
-    boolean present_userId = true && (isSetUserId());
-    builder.append(present_userId);
-    if (present_userId)
-      builder.append(userId);
-
     boolean present_tenantId = true && (isSetTenantId());
     builder.append(present_tenantId);
     if (present_tenantId)
       builder.append(tenantId);
 
-    boolean present_operationsServerId = true && (isSetOperationsServerId());
-    builder.append(present_operationsServerId);
-    if (present_operationsServerId)
-      builder.append(operationsServerId);
+    boolean present_userId = true && (isSetUserId());
+    builder.append(present_userId);
+    if (present_userId)
+      builder.append(userId);
+
+    boolean present_routeAddress = true && (isSetRouteAddress());
+    builder.append(present_routeAddress);
+    if (present_routeAddress)
+      builder.append(routeAddress);
 
     boolean present_updateType = true && (isSetUpdateType());
     builder.append(present_updateType);
     if (present_updateType)
       builder.append(updateType.getValue());
 
+    boolean present_cfSchemaVersion = true;
+    builder.append(present_cfSchemaVersion);
+    if (present_cfSchemaVersion)
+      builder.append(cfSchemaVersion);
+
     return builder.toHashCode();
   }
 
   @Override
-  public int compareTo(UserRouteInfo other) {
+  public int compareTo(GlobalRouteUpdate other) {
     if (!getClass().equals(other.getClass())) {
       return getClass().getName().compareTo(other.getClass().getName());
     }
 
     int lastComparison = 0;
 
-    lastComparison = Boolean.valueOf(isSetUserId()).compareTo(other.isSetUserId());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetUserId()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userId, other.userId);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
     lastComparison = Boolean.valueOf(isSetTenantId()).compareTo(other.isSetTenantId());
     if (lastComparison != 0) {
       return lastComparison;
@@ -474,12 +530,22 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetOperationsServerId()).compareTo(other.isSetOperationsServerId());
+    lastComparison = Boolean.valueOf(isSetUserId()).compareTo(other.isSetUserId());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetOperationsServerId()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.operationsServerId, other.operationsServerId);
+    if (isSetUserId()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userId, other.userId);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetRouteAddress()).compareTo(other.isSetRouteAddress());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetRouteAddress()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.routeAddress, other.routeAddress);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -490,6 +556,16 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
     }
     if (isSetUpdateType()) {
       lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.updateType, other.updateType);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetCfSchemaVersion()).compareTo(other.isSetCfSchemaVersion());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetCfSchemaVersion()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.cfSchemaVersion, other.cfSchemaVersion);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -511,17 +587,9 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder("UserRouteInfo(");
+    StringBuilder sb = new StringBuilder("GlobalRouteUpdate(");
     boolean first = true;
 
-    sb.append("userId:");
-    if (this.userId == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.userId);
-    }
-    first = false;
-    if (!first) sb.append(", ");
     sb.append("tenantId:");
     if (this.tenantId == null) {
       sb.append("null");
@@ -530,11 +598,19 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("operationsServerId:");
-    if (this.operationsServerId == null) {
+    sb.append("userId:");
+    if (this.userId == null) {
       sb.append("null");
     } else {
-      sb.append(this.operationsServerId);
+      sb.append(this.userId);
+    }
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("routeAddress:");
+    if (this.routeAddress == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.routeAddress);
     }
     first = false;
     if (!first) sb.append(", ");
@@ -545,6 +621,10 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
       sb.append(this.updateType);
     }
     first = false;
+    if (!first) sb.append(", ");
+    sb.append("cfSchemaVersion:");
+    sb.append(this.cfSchemaVersion);
+    first = false;
     sb.append(")");
     return sb.toString();
   }
@@ -552,6 +632,9 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
   public void validate() throws org.apache.thrift.TException {
     // check for required fields
     // check for sub-struct validity
+    if (routeAddress != null) {
+      routeAddress.validate();
+    }
   }
 
   private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
@@ -564,21 +647,23 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
 
   private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
     try {
+      // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+      __isset_bitfield = 0;
       read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
     } catch (org.apache.thrift.TException te) {
       throw new java.io.IOException(te);
     }
   }
 
-  private static class UserRouteInfoStandardSchemeFactory implements SchemeFactory {
-    public UserRouteInfoStandardScheme getScheme() {
-      return new UserRouteInfoStandardScheme();
+  private static class GlobalRouteUpdateStandardSchemeFactory implements SchemeFactory {
+    public GlobalRouteUpdateStandardScheme getScheme() {
+      return new GlobalRouteUpdateStandardScheme();
     }
   }
 
-  private static class UserRouteInfoStandardScheme extends StandardScheme<UserRouteInfo> {
+  private static class GlobalRouteUpdateStandardScheme extends StandardScheme<GlobalRouteUpdate> {
 
-    public void read(org.apache.thrift.protocol.TProtocol iprot, UserRouteInfo struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol iprot, GlobalRouteUpdate struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TField schemeField;
       iprot.readStructBegin();
       while (true)
@@ -588,15 +673,7 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
           break;
         }
         switch (schemeField.id) {
-          case 1: // USER_ID
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-              struct.userId = iprot.readString();
-              struct.setUserIdIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 2: // TENANT_ID
+          case 1: // TENANT_ID
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
               struct.tenantId = iprot.readString();
               struct.setTenantIdIsSet(true);
@@ -604,10 +681,19 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 3: // OPERATIONS_SERVER_ID
+          case 2: // USER_ID
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-              struct.operationsServerId = iprot.readString();
-              struct.setOperationsServerIdIsSet(true);
+              struct.userId = iprot.readString();
+              struct.setUserIdIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 3: // ROUTE_ADDRESS
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+              struct.routeAddress = new RouteAddress();
+              struct.routeAddress.read(iprot);
+              struct.setRouteAddressIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -616,6 +702,14 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
               struct.updateType = EventRouteUpdateType.findByValue(iprot.readI32());
               struct.setUpdateTypeIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 5: // CF_SCHEMA_VERSION
+            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+              struct.cfSchemaVersion = iprot.readI32();
+              struct.setCfSchemaVersionIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -631,23 +725,23 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
       struct.validate();
     }
 
-    public void write(org.apache.thrift.protocol.TProtocol oprot, UserRouteInfo struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol oprot, GlobalRouteUpdate struct) throws org.apache.thrift.TException {
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
-      if (struct.userId != null) {
-        oprot.writeFieldBegin(USER_ID_FIELD_DESC);
-        oprot.writeString(struct.userId);
-        oprot.writeFieldEnd();
-      }
       if (struct.tenantId != null) {
         oprot.writeFieldBegin(TENANT_ID_FIELD_DESC);
         oprot.writeString(struct.tenantId);
         oprot.writeFieldEnd();
       }
-      if (struct.operationsServerId != null) {
-        oprot.writeFieldBegin(OPERATIONS_SERVER_ID_FIELD_DESC);
-        oprot.writeString(struct.operationsServerId);
+      if (struct.userId != null) {
+        oprot.writeFieldBegin(USER_ID_FIELD_DESC);
+        oprot.writeString(struct.userId);
+        oprot.writeFieldEnd();
+      }
+      if (struct.routeAddress != null) {
+        oprot.writeFieldBegin(ROUTE_ADDRESS_FIELD_DESC);
+        struct.routeAddress.write(oprot);
         oprot.writeFieldEnd();
       }
       if (struct.updateType != null) {
@@ -655,70 +749,84 @@ public class UserRouteInfo implements org.apache.thrift.TBase<UserRouteInfo, Use
         oprot.writeI32(struct.updateType.getValue());
         oprot.writeFieldEnd();
       }
+      oprot.writeFieldBegin(CF_SCHEMA_VERSION_FIELD_DESC);
+      oprot.writeI32(struct.cfSchemaVersion);
+      oprot.writeFieldEnd();
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
 
   }
 
-  private static class UserRouteInfoTupleSchemeFactory implements SchemeFactory {
-    public UserRouteInfoTupleScheme getScheme() {
-      return new UserRouteInfoTupleScheme();
+  private static class GlobalRouteUpdateTupleSchemeFactory implements SchemeFactory {
+    public GlobalRouteUpdateTupleScheme getScheme() {
+      return new GlobalRouteUpdateTupleScheme();
     }
   }
 
-  private static class UserRouteInfoTupleScheme extends TupleScheme<UserRouteInfo> {
+  private static class GlobalRouteUpdateTupleScheme extends TupleScheme<GlobalRouteUpdate> {
 
     @Override
-    public void write(org.apache.thrift.protocol.TProtocol prot, UserRouteInfo struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol prot, GlobalRouteUpdate struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
-      if (struct.isSetUserId()) {
+      if (struct.isSetTenantId()) {
         optionals.set(0);
       }
-      if (struct.isSetTenantId()) {
+      if (struct.isSetUserId()) {
         optionals.set(1);
       }
-      if (struct.isSetOperationsServerId()) {
+      if (struct.isSetRouteAddress()) {
         optionals.set(2);
       }
       if (struct.isSetUpdateType()) {
         optionals.set(3);
       }
-      oprot.writeBitSet(optionals, 4);
-      if (struct.isSetUserId()) {
-        oprot.writeString(struct.userId);
+      if (struct.isSetCfSchemaVersion()) {
+        optionals.set(4);
       }
+      oprot.writeBitSet(optionals, 5);
       if (struct.isSetTenantId()) {
         oprot.writeString(struct.tenantId);
       }
-      if (struct.isSetOperationsServerId()) {
-        oprot.writeString(struct.operationsServerId);
+      if (struct.isSetUserId()) {
+        oprot.writeString(struct.userId);
+      }
+      if (struct.isSetRouteAddress()) {
+        struct.routeAddress.write(oprot);
       }
       if (struct.isSetUpdateType()) {
         oprot.writeI32(struct.updateType.getValue());
       }
+      if (struct.isSetCfSchemaVersion()) {
+        oprot.writeI32(struct.cfSchemaVersion);
+      }
     }
 
     @Override
-    public void read(org.apache.thrift.protocol.TProtocol prot, UserRouteInfo struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol prot, GlobalRouteUpdate struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(4);
+      BitSet incoming = iprot.readBitSet(5);
       if (incoming.get(0)) {
-        struct.userId = iprot.readString();
-        struct.setUserIdIsSet(true);
-      }
-      if (incoming.get(1)) {
         struct.tenantId = iprot.readString();
         struct.setTenantIdIsSet(true);
       }
+      if (incoming.get(1)) {
+        struct.userId = iprot.readString();
+        struct.setUserIdIsSet(true);
+      }
       if (incoming.get(2)) {
-        struct.operationsServerId = iprot.readString();
-        struct.setOperationsServerIdIsSet(true);
+        struct.routeAddress = new RouteAddress();
+        struct.routeAddress.read(iprot);
+        struct.setRouteAddressIsSet(true);
       }
       if (incoming.get(3)) {
         struct.updateType = EventRouteUpdateType.findByValue(iprot.readI32());
         struct.setUpdateTypeIsSet(true);
+      }
+      if (incoming.get(4)) {
+        struct.cfSchemaVersion = iprot.readI32();
+        struct.setCfSchemaVersionIsSet(true);
       }
     }
   }
