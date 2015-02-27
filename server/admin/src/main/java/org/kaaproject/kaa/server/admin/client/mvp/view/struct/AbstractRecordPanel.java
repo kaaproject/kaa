@@ -22,10 +22,12 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.TabPanel;
 
-public abstract class AbstractRecordPanel<T extends AbstractStructureDto, V> extends TabPanel {
+public abstract class AbstractRecordPanel<T extends AbstractStructureDto, V> extends TabPanel implements SelectionHandler<Integer> {
 
     private BaseStructView<T,V> activePanel;
     private BaseStructView<T,V> inactivePanel;
@@ -37,6 +39,7 @@ public abstract class AbstractRecordPanel<T extends AbstractStructureDto, V> ext
         inactivePanel.setBodyLabelText(bodyLabelText());
         add(activePanel, Utils.constants.active());
         add(inactivePanel, Utils.constants.draft());
+        addSelectionHandler(this);
     }
     
     protected abstract BaseStructView<T,V> createStructView(HasErrorMessage hasErrorMessage);
@@ -101,6 +104,15 @@ public abstract class AbstractRecordPanel<T extends AbstractStructureDto, V> ext
 
     public void setInactiveReadOnly() {
         inactivePanel.setReadOnly();
+    }
+    
+    @Override
+    public void onSelection(SelectionEvent<Integer> event) {
+        if (event.getSelectedItem() == 0) {
+            activePanel.onShown();
+        } else {
+            inactivePanel.onShown();
+        }
     }
 
     protected abstract String bodyLabelText();
