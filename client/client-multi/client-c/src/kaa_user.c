@@ -26,7 +26,6 @@
 #include "kaa_platform_utils.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
-#include "kaa_common_schema.h"
 
 
 
@@ -39,6 +38,8 @@
 extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
                                                                                   , kaa_service_t service_type);
 
+
+
 typedef struct {
     char          *user_external_id;
     size_t        user_external_id_len;
@@ -46,7 +47,6 @@ typedef struct {
     size_t        user_access_token_len;
     char          *user_verifier_token;
     size_t        user_verifier_token_len;
-    destroy_fn    destroy;
 } user_info_t;
 
 struct kaa_user_manager_t {
@@ -98,29 +98,27 @@ static user_info_t *create_user_info(const char *external_id, const char *user_a
     user_info_t *user_info = (user_info_t *) KAA_CALLOC(1, sizeof(user_info_t));
     KAA_RETURN_IF_NIL(user_info, NULL);
 
-    user_info->destroy = (destroy_fn)destroy_user_info;
-
     user_info->user_external_id_len = strlen(external_id);
     user_info->user_access_token_len = strlen(user_access_token);
     user_info->user_verifier_token_len = strlen(user_verifier_token);
 
     user_info->user_external_id = (char *) KAA_MALLOC((user_info->user_external_id_len + 1) * sizeof(char));
     if (!user_info->user_external_id) {
-        user_info->destroy(user_info);
+        destroy_user_info(user_info);
         return NULL;
     }
     strcpy(user_info->user_external_id, external_id);
 
     user_info->user_access_token = (char *) KAA_MALLOC((user_info->user_access_token_len + 1) * sizeof(char));
     if (!user_info->user_access_token) {
-        user_info->destroy(user_info);
+        destroy_user_info(user_info);
         return NULL;
     }
     strcpy(user_info->user_access_token, user_access_token);
 
     user_info->user_verifier_token = (char *) KAA_MALLOC((user_info->user_verifier_token_len + 1) * sizeof(char));
     if (!user_info->user_verifier_token) {
-        user_info->destroy(user_info);
+        destroy_user_info(user_info);
         return NULL;
     }
     strcpy(user_info->user_verifier_token, user_verifier_token);
@@ -170,7 +168,7 @@ kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self
                                               , user_external_id, access_token, user_verifier_token);
 
     if (self->is_waiting_user_attach_response) {
-        self->user_info->destroy(self->user_info);
+        destroy_user_info(self->user_info);
         self->user_info = NULL;
         self->is_waiting_user_attach_response = false;
     }

@@ -163,7 +163,8 @@ public class CSdkGenerator extends SdkGenerator {
                                                                  notificationSchemaVersion, logSchemaVersion,
                                                                  configurationProtocolSchemaBody,
                                                                  defaultConfigurationData,
-                                                                 eventFamilies);
+                                                                 eventFamilies,
+                                                                 defaultVerifierToken);
 
                     TarArchiveEntry kaaDefaultsEntry = new TarArchiveEntry(KAA_DEFAULTS_HEADER);
                     kaaDefaultsEntry.setSize(kaaDefaultsData.length);
