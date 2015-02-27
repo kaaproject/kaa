@@ -37,8 +37,6 @@
         <module>robotrun</module>
         <module>smarthousedemo</module>
         <module>notificationdemo</module>
-        <module>jdatacollectiondemo</module>
-        <module>jeventdemo</module>
     </modules>
 
     <dependencyManagement>

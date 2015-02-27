@@ -79,7 +79,7 @@ public class JDataCollectionDemoBuider extends AbstractDemoBuilder{
         projectConfig.setSourceArchive("java/jdatacollection_demo.tar.gz");
         projectConfig.setProjectFolder("jdatacollection_demo/JDataCollectionDemo");
         projectConfig.setSdkLibDir("jdatacollection_demo/JDataCollectionDemo/lib");
-        projectConfig.setDestBinaryFile("jdatacollection_demo/JDataCollectionDemo/bin/JDataCollectionDemo.jar");
+        projectConfig.setDestBinaryFile("jdatacollection_demo/JDataCollectionDemo/bin/DataCollectionDemo.jar");
         projectConfigs.add(projectConfig);
     }
 }

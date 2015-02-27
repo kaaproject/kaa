@@ -57,9 +57,11 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder {
         sdkKey.setProfileSchemaVersion(1);
         sdkKey.setConfigurationSchemaVersion(1);
         sdkKey.setLogSchemaVersion(1);
+        sdkKey.setNotificationSchemaVersion(1);
         sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
 
-/*
+
+        loginTenantDeveloper(client);
 
         NotificationSchemaDto notificationSchemaDto = new NotificationSchemaDto();
         notificationSchemaDto.setApplicationId(notificationApplication.getId());
@@ -67,10 +69,7 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder {
         notificationSchemaDto.setDescription("Notification schema describing incoming notifications");
         notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, "demo/notification/notificationSchema.json");
         sdkKey.setNotificationSchemaVersion(notificationSchemaDto.getMajorVersion());
-
-*/
-
-        loginTenantDeveloper(client);
+        
 
         TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();
         UserVerifierDto trustfulUserVerifier = new UserVerifierDto();
@@ -99,7 +98,7 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder {
         projectConfig.setSourceArchive("android/notification_demo.tar.gz");
         projectConfig.setProjectFolder("notification_demo/NotificationDemo");
         projectConfig.setSdkLibDir("notification_demo/NotificationDemo/libs");
-        projectConfig.setDestBinaryFile("notification_demo/NotificationDemo/bin/Notification-debug.apk");
+        projectConfig.setDestBinaryFile("notification_demo/NotificationDemo/bin/KaaNotificationDemo-debug.apk");
         projectConfigs.add(projectConfig);
     }
 }
