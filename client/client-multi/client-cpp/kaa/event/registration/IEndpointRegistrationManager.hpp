@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License") = 0;
  * you may not use this file except in compliance with the License.
@@ -75,15 +75,34 @@ public:
     virtual void detachEndpoint(IEndpointAttachStatusListener* listener = nullptr) = 0;
 
     /**
-     * Creates user attach request
+     * Attaches the endpoint to a user entity. The user verification is carried out by the default verifier.
      *
-     * @param userExternalId
-     * @param userAccessToken
-     * @param listener Optional listener to notify about result of user attaching.
-     *        Set to null if there is no need in it.
+     * @b NOTE: If the default user verifier (@link DEFAULT_USER_VERIFIER_TOKEN @endlink) is not specified,
+     * the attach attempt fails with the @c KaaException exception.
+     *
+     * Use this function to request attachment of the endpoint to a user entity using the specified external authentication
+     * credentials. Only endpoints associated with the same user entity can exchange events.
+     *
+     * @param userExternalId    External user ID.
+     * @param userAccessToken   External access token.
      */
     virtual void attachUser(const std::string& userExternalId
                           , const std::string& userAccessToken
+                          , IEndpointAttachStatusListener* listener = nullptr) = 0;
+
+    /**
+     * Attaches the endpoint to a user entity. The user verification will be carried out by the specified verifier.
+     *
+     * Use this function to request attachment of the endpoint to a user entity using the specified external authentication
+     * credentials. Only endpoints associated with the same user entity can exchange events.
+     *
+     * @param userExternalId      External user ID.
+     * @param userAccessToken     External access token.
+     * @param userVerifierToken   User verifier token.
+     */
+    virtual void attachUser(const std::string& userExternalId
+                          , const std::string& userAccessToken
+                          , const std::string& userVerifierToken
                           , IEndpointAttachStatusListener* listener = nullptr) = 0;
 
     /**

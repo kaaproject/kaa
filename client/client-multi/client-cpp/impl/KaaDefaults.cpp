@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/**
+ * NOTE: This is a auto-generated file. Do not edit it.
+ */
+
 #include "kaa/KaaDefaults.hpp"
 
 #include <algorithm>
@@ -47,6 +51,8 @@ const char * const CLIENT_PUB_KEY_LOCATION = "key.public";
 const char * const CLIENT_PRIV_KEY_LOCATION = "key.private";
 
 const char * const CLIENT_STATUS_FILE_LOCATION = "kaa.status";
+
+const char * const DEFAULT_USER_VERIFIER_TOKEN = "";
 
 ITransportConnectionInfoPtr createTransportInfo(const std::int32_t& accessPointId
                                               , const std::int32_t& protocolId

@@ -71,14 +71,21 @@ BOOST_AUTO_TEST_CASE(UserAttachTest)
 
     TestEndpointAttachStatusListener* resultListener = new TestEndpointAttachStatusListener;
 
-    std::string userExternalId = "externalId";
-    std::string userAccessToken = "token";
+    std::string userExternalId = "userExternalId";
+    std::string userAccessToken = "userAccessToken";
+    std::string userVerifierToken = "userVerifierToken";
 
-    registrationManager.attachUser(userExternalId, userAccessToken, resultListener);
+    BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, userAccessToken), KaaException);
+    BOOST_CHECK_THROW(registrationManager.attachUser("", userAccessToken, userVerifierToken), KaaException);
+    BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, "", userVerifierToken), KaaException);
+    BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, userAccessToken, ""), KaaException);
+
+    registrationManager.attachUser(userExternalId, userAccessToken, userVerifierToken, resultListener);
 
     BOOST_CHECK(registrationManager.getUserAttachRequest().get() != nullptr);
     BOOST_CHECK(registrationManager.getUserAttachRequest()->userExternalId == userExternalId);
     BOOST_CHECK(registrationManager.getUserAttachRequest()->userAccessToken == userAccessToken);
+    BOOST_CHECK(registrationManager.getUserAttachRequest()->userVerifierId == userVerifierToken);
 
     UserSyncResponse userSyncResponse;
 
@@ -88,7 +95,7 @@ BOOST_AUTO_TEST_CASE(UserAttachTest)
 
     registrationManager.onUserAttach(userSyncResponse.userAttachResponse);
 
-    registrationManager.attachUser(userExternalId, userAccessToken, resultListener);
+    registrationManager.attachUser(userExternalId, userAccessToken, userVerifierToken, resultListener);
 
     attachResponse.result = FAILURE;
     userSyncResponse.userAttachResponse.set_UserAttachResponse(attachResponse);
@@ -108,8 +115,9 @@ BOOST_AUTO_TEST_CASE(FilledEPRequest)
 
     std::string userId("Big ID");
     std::string userToken("Big user's token");
+    std::string verifierToken("Big verifier's token");
 
-    registrationManager.attachUser(userId, userToken);
+    registrationManager.attachUser(userId, userToken, verifierToken);
 
     std::string epToken1("Token1");
     std::string epToken2("Token2");
@@ -124,12 +132,10 @@ BOOST_AUTO_TEST_CASE(FilledEPRequest)
     UserAttachRequestPtr userAttachRequest = registrationManager.getUserAttachRequest();
     auto endpointsToAttach = registrationManager.getEndpointsToAttach();
     auto endpointsToDetach = registrationManager.getEndpointsToDetach();
-    BOOST_CHECK_MESSAGE(userAttachRequest.get() != nullptr
-                        , "User attach request should be not empty");
-    BOOST_CHECK_MESSAGE(endpointsToAttach.size() == 2
-                        , "EP attach request should be not empty");
-    BOOST_CHECK_MESSAGE(endpointsToDetach.size() == 1
-                                    , "EP detach request is empty");
+
+    BOOST_CHECK_MESSAGE(userAttachRequest.get() != nullptr, "User attach request should be not empty");
+    BOOST_CHECK_MESSAGE(endpointsToAttach.size() == 2, "EP attach request should be not empty");
+    BOOST_CHECK_MESSAGE(endpointsToDetach.size() == 1, "EP detach request is empty");
 
     UserSyncResponse response;
 
@@ -186,7 +192,7 @@ BOOST_AUTO_TEST_CASE(AttachStatusUpdatedTest)
 
     BOOST_CHECK(!registrationManager.isCurrentEndpointAttached());
 
-    registrationManager.attachUser("id", "token");
+    registrationManager.attachUser("id", "accessToken", "verifierToken");
 
     UserAttachResponse attachResponse;
     attachResponse.result = SyncResponseResultType::SUCCESS;

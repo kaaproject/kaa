@@ -19,8 +19,6 @@ package org.kaaproject.kaa.server.control.service.sdk;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,12 +65,6 @@ public class CppSdkGenerator extends SdkGenerator {
 
     /** The Constant CPP_SDK_NAME_PATTERN. */
     private static final String CPP_SDK_NAME_PATTERN = CPP_SDK_PREFIX + "p{}-c{}-n{}-l{}.tar.gz";
-
-    /** The Constant KAA_DEFAULTS_CPP. */
-    private static final String KAA_DEFAULTS_CPP = "impl/KaaDefaults.cpp";
-
-    /** The Constant KAA_DEFAULTS_TMPL. */
-    private static final String KAA_DEFAULTS_TMPL = "impl/KaaDefaults.tmpl";
 
     /** The Constant PROFILE_SCHEMA_AVRO_SRC. */
     private static final String PROFILE_SCHEMA_AVRO_SRC = "avro/profile.avsc";
@@ -128,6 +120,12 @@ public class CppSdkGenerator extends SdkGenerator {
     /** The Constant BUILD_COMMIT_HASH. */
     private static final String BUILD_COMMIT_HASH = "%{build.commit_hash}";
 
+    /** The Constant DEFAULT_USER_VERIFIER_TOKEN. */
+    private static final String DEFAULT_USER_VERIFIER_TOKEN = "%{user_verifier_token}";
+
+    private static final String SDK_DEFAULTS_TEMPLATE = "sdk/cpp/KaaDefaults.cpp.template";
+    private static final String SDK_DEFAULTS_PATH = "impl/KaaDefaults.cpp";
+
     private static final String LOG_RECORD_SCHEMA_AVRO_SRC = "avro/log.avsc";
     private static final String LOG_RECORD_TEMPLATE = "sdk/cpp/log/LogRecord.hpp.template";
     private static final String LOG_RECORD_PATH = "kaa/log/LogRecord.hpp";
@@ -174,11 +172,24 @@ public class CppSdkGenerator extends SdkGenerator {
 
         List<TarEntryData> cppSources = new ArrayList<>();
 
-        // create profile schema entry
-        TarArchiveEntry entry = new TarArchiveEntry(PROFILE_SCHEMA_AVRO_SRC);
-        byte[] data = profileSchemaBody.getBytes();
+        // create entry for default properties
+        TarArchiveEntry entry = new TarArchiveEntry(SDK_DEFAULTS_PATH);
+        byte[] data = generateKaaDefaults(bootstrapNodes, appToken,
+                                          configurationSchemaVersion, profileSchemaVersion,
+                                          notificationSchemaVersion, logSchemaVersion,
+                                          configurationProtocolSchemaBody,
+                                          defaultConfigurationData,
+                                          eventFamilies,
+                                          defaultVerifierToken);
         entry.setSize(data.length);
         TarEntryData tarEntry = new TarEntryData(entry, data);
+        cppSources.add(tarEntry);
+
+        // create profile schema entry
+        entry = new TarArchiveEntry(PROFILE_SCHEMA_AVRO_SRC);
+        data = profileSchemaBody.getBytes();
+        entry.setSize(data.length);
+        tarEntry = new TarEntryData(entry, data);
         cppSources.add(tarEntry);
 
         // create notification schema entry
@@ -229,22 +240,7 @@ public class CppSdkGenerator extends SdkGenerator {
         ArchiveEntry e = null;
         while ((e = templateArchive.getNextEntry()) != null) {
             if (!e.isDirectory()) {
-                if (e.getName().equals(KAA_DEFAULTS_CPP)) {
-                    continue;
-                } else if (e.getName().equals(KAA_DEFAULTS_TMPL)) {
-                    TarArchiveEntry kaaDefaultsEntry = new TarArchiveEntry(
-                            KAA_DEFAULTS_CPP);
-                    byte[] kaaDefaultsData = generateKaaDefaults(
-                            templateArchive, bootstrapNodes, appToken,
-                            configurationSchemaVersion, profileSchemaVersion,
-                            notificationSchemaVersion, logSchemaVersion,
-                            configurationProtocolSchemaBody,
-                            defaultConfigurationData,
-                            eventFamilies);
-                    kaaDefaultsEntry.setSize(kaaDefaultsData.length);
-                    sdkFile.putArchiveEntry(kaaDefaultsEntry);
-                    sdkFile.write(kaaDefaultsData);
-                } else if (replacementData.containsKey(e.getName())) {
+                if (replacementData.containsKey(e.getName())) {
                     TarEntryData entryData = replacementData.remove(e.getName());
                     sdkFile.putArchiveEntry(entryData.getEntry());
                     sdkFile.write(entryData.getData());
@@ -299,20 +295,18 @@ public class CppSdkGenerator extends SdkGenerator {
      * @return the byte[]
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    private byte[] generateKaaDefaults(InputStream kaaDefaultsStream,
-            List<BootstrapNodeInfo> bootstrapNodes,
-            String appToken,
-            int configurationSchemaVersion,
-            int profileSchemaVersion,
-            int notificationSchemaVersion,
-            int logSchemaVersion,
-            String configurationProtocolSchemaBody,
-            byte[] defaultConfigurationData,
-            List<EventFamilyMetadata> eventFamilies) throws IOException {
-
-        StringWriter writer = new StringWriter();
-        IOUtils.copy(kaaDefaultsStream, writer);
-        String kaaDefaultsString = writer.toString();
+    private byte[] generateKaaDefaults(List<BootstrapNodeInfo> bootstrapNodes,
+                                       String appToken,
+                                       int configurationSchemaVersion,
+                                       int profileSchemaVersion,
+                                       int notificationSchemaVersion,
+                                       int logSchemaVersion,
+                                       String configurationProtocolSchemaBody,
+                                       byte[] defaultConfigurationData,
+                                       List<EventFamilyMetadata> eventFamilies,
+                                       String defaultVerifierToken) throws IOException
+    {
+        String kaaDefaultsString = SdkGenerator.readResource(SDK_DEFAULTS_TEMPLATE);
 
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
 
@@ -331,6 +325,10 @@ public class CppSdkGenerator extends SdkGenerator {
         kaaDefaultsString = replaceVar(kaaDefaultsString, CLIENT_PUB_KEY_LOCATION_VAR, "key.public");
         kaaDefaultsString = replaceVar(kaaDefaultsString, CLIENT_PRIV_KEY_LOCATION_VAR, "key.private");
         kaaDefaultsString = replaceVar(kaaDefaultsString, CLIENT_STATUS_FILE_LOCATION_VAR, "kaa.status");
+
+        kaaDefaultsString = replaceVar(kaaDefaultsString,
+                                       DEFAULT_USER_VERIFIER_TOKEN,
+                                       defaultVerifierToken != null ? defaultVerifierToken : "");
 
         String bootstrapServers = "";
 

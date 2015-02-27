@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -284,25 +284,43 @@ void EndpointRegistrationManager::attachUser(const std::string& userExternalId
                                            , const std::string& userAccessToken
                                            , IEndpointAttachStatusListener* listener)
 {
-    if (!userExternalId.empty() && !userAccessToken.empty()) {
-        KAA_LOG_INFO(boost::format("Going to attach to user %1% by access token: %2%")
-            % userExternalId % userAccessToken);
+    if (!strlen(DEFAULT_USER_VERIFIER_TOKEN)) {
+        KAA_LOG_ERROR("Failed to attach to user: default user verifier is not specified");
+        throw KaaException("Default user verifier is not specified");
+    }
 
-        UserAttachRequest *request = new UserAttachRequest;
-        request->userAccessToken = userAccessToken;
-        request->userExternalId = userExternalId;
+    attachUser(userExternalId, userAccessToken, DEFAULT_USER_VERIFIER_TOKEN, listener);
+}
 
-        if (listener != nullptr) {
-            attachStatusListener_ = listener;
-        }
+void EndpointRegistrationManager::attachUser(const std::string& userExternalId
+                                           , const std::string& userAccessToken
+                                           , const std::string& userVerifierToken
+                                           , IEndpointAttachStatusListener* listener)
+{
+    if (userExternalId.empty() || userAccessToken.empty() || userVerifierToken.empty()) {
+        KAA_LOG_ERROR(boost::format("Failed to attach to user: user '%1%', access token '%2%', user verifier '%3%'")
+                                                                % userExternalId % userAccessToken % userVerifierToken);
+        throw KaaException("Bad user credentials");
+    }
 
-        userAttachRequest_.reset(request);
+    KAA_LOG_INFO(boost::format("Going to attach to user '%1%' by access token: '%2%' (user verifier '%3%')")
+                                        % userExternalId % userAccessToken % DEFAULT_USER_VERIFIER_TOKEN);
 
-        if (userTransport_ != nullptr) {
-            userTransport_->sync();
-        } else {
-            KAA_LOG_WARN("Can not attach user now: transport was not set.");
-        }
+    UserAttachRequest *request = new UserAttachRequest;
+    request->userAccessToken = userAccessToken;
+    request->userExternalId = userExternalId;
+    request->userVerifierId = userVerifierToken;
+
+    if (listener != nullptr) {
+        attachStatusListener_ = listener;
+    }
+
+    userAttachRequest_.reset(request);
+
+    if (userTransport_ != nullptr) {
+        userTransport_->sync();
+    } else {
+        KAA_LOG_WARN("Can not attach user now: transport was not set.");
     }
 }
 
