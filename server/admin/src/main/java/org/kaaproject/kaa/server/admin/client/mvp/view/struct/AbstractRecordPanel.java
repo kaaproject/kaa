@@ -110,7 +110,7 @@ public abstract class AbstractRecordPanel<T extends AbstractStructureDto, V> ext
     public void onSelection(SelectionEvent<Integer> event) {
         if (event.getSelectedItem() == 0) {
             activePanel.onShown();
-        } else {
+        } else if (event.getSelectedItem() == 1) {
             inactivePanel.onShown();
         }
     }
