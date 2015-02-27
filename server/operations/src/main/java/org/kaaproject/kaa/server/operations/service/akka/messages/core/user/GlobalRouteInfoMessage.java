@@ -19,31 +19,31 @@ import org.kaaproject.kaa.server.operations.service.event.GlobalRouteInfo;
 
 public class GlobalRouteInfoMessage implements GlobalUserAwareMessage, TenantAwareMessage {
     
-    private final GlobalRouteInfo message;
+    private final GlobalRouteInfo route;
 
-    public GlobalRouteInfoMessage(GlobalRouteInfo message) {
-        this.message = message;
+    public GlobalRouteInfoMessage(GlobalRouteInfo route) {
+        this.route = route;
     }
     
     @Override
     public String getUserId() {
-        return message.getUserId();
+        return route.getUserId();
     }
 
     @Override
     public String getTenantId() {
-        return message.getTenantId();
+        return route.getTenantId();
     }
 
-    public GlobalRouteInfo getMessage() {
-        return message;
+    public GlobalRouteInfo getRoute() {
+        return route;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("GlobalRouteInfoMessage [message=");
-        builder.append(message);
+        builder.append(route);
         builder.append("]");
         return builder.toString();
     }

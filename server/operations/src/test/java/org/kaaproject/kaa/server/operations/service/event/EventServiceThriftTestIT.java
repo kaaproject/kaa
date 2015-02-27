@@ -51,6 +51,7 @@ import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.operations.service.thrift.OperationsThriftServiceImpl;
 import org.kaaproject.kaa.server.sync.Event;
@@ -412,6 +413,18 @@ public class EventServiceThriftTestIT {
                 // TODO Auto-generated method stub
 
             }
+
+            @Override
+            public void onConfigurationUpdate(UserConfigurationUpdate update) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void onRouteInfo(GlobalRouteInfo routeInfo) {
+                // TODO Auto-generated method stub
+                
+            }
         });
 
         long waitLimit = 60000;
@@ -496,6 +509,18 @@ public class EventServiceThriftTestIT {
             public void onServerError(String serverId) {
                 // TODO Auto-generated method stub
 
+            }
+
+            @Override
+            public void onConfigurationUpdate(UserConfigurationUpdate update) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void onRouteInfo(GlobalRouteInfo routeInfo) {
+                // TODO Auto-generated method stub
+                
             }
         });
 

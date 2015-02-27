@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
-public interface GlobalUserAwareMessage {
+public interface GlobalUserAwareMessage extends TenantAwareMessage {
 
     public String getUserId();
 

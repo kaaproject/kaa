@@ -53,7 +53,7 @@ public class GlobalUserActor extends UntypedActor {
     public void onReceive(Object message) throws Exception {
         LOG.debug("[{}] Received: {}", userId, message);
         if(message instanceof GlobalRouteInfoMessage){
-            messageProcessor.process((GlobalRouteInfoMessage) message);
+            messageProcessor.process(((GlobalRouteInfoMessage) message).getRoute());
         }
     }
 

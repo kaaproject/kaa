@@ -16,9 +16,15 @@
 
 package org.kaaproject.kaa.server.operations.service.event;
 
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
+
 public interface EventServiceListener {
 
     void onEvent(RemoteEndpointEvent event);
+    
+    void onConfigurationUpdate(UserConfigurationUpdate update);
+
+    void onRouteInfo(GlobalRouteInfo routeInfo);
 
     void onRouteInfo(RouteInfo routeInfo);
 

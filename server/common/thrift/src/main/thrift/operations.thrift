@@ -21,6 +21,7 @@ include "cli.thrift"
 namespace java org.kaaproject.kaa.server.common.thrift.gen.operations
 namespace cpp kaa
 
+typedef shared.Integer int
 typedef shared.ObjectId id
 
 typedef double probability
@@ -156,6 +157,20 @@ struct EventMessage {
   5: UserRouteInfo userRoute
 }
 
+struct GlobalRouteUpdate {
+  1: tenant_id tenantId
+  2: user_id userId
+  3: RouteAddress routeAddress
+  4: EventRouteUpdateType updateType
+  5: int cfSchemaVersion
+}
+
+struct UserConfigurationUpdate {
+  1: tenant_id tenantId
+  2: user_id userId
+  3: int cfSchemaVersion
+}
+
 service OperationsThriftService extends cli.CliThriftService{
 
 /**
@@ -163,16 +178,24 @@ service OperationsThriftService extends cli.CliThriftService{
 */
   void onNotification(1: Notification notification);
 
+/**
+*   User configuration update
+*/
+  void onUserConfigurationUpdate(1: UserConfigurationUpdate notification);
 
 /**
 *  Set redirection rule for Operations server
 */
   void setRedirectionRule(1: RedirectionRule redirectionRule);
 
-
 /**
 *  Interface to send unified event messages
 */
   void sendEventMessage(1: list<EventMessage> messages);
+
+/**
+*  Interface to send global route update
+*/
+  void sendGlobalRouteUpdate(1: GlobalRouteUpdate message);
 
 }
