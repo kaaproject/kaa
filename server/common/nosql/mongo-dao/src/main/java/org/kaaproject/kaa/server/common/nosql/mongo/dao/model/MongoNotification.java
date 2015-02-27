@@ -30,33 +30,42 @@ import java.util.Arrays;
 import java.util.Date;
 
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_EXPIRED_AT;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_LAST_MODIFY_TIME;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_BODY;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_SCHEMA_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_TYPE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_VERSION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_SEQ_NUM;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_TOPIC_ID;
 
-@Document(collection = MongoNotification.COLLECTION_NAME)
+@Document(collection = MongoModelConstants.NOTIFICATION)
 public final class MongoNotification implements Notification, Serializable {
 
     private static final long serialVersionUID = 348872010210481058L;
 
-    public static final String COLLECTION_NAME = "notification";
-
     @Id
     private String id;
-    @Field("application_id")
+    @Field(NF_APPLICATION_ID)
     private String applicationId;
-    @Field("notification_schema_id")
+    @Field(NF_SCHEMA_ID)
     private String schemaId;
-    @Field("topic_id")
+    @Field(NF_TOPIC_ID)
     private String topicId;
+    @Field(NF_VERSION)
     private int version;
     @LastModifiedDate
-    @Field("last_modify_time")
+    @Field(NF_LAST_MODIFY_TIME)
     private Date lastModifyTime;
-    @Field("notification_type")
+    @Field(NF_TYPE)
     private NotificationTypeDto type;
+    @Field(NF_BODY)
     private byte[] body;
     @Indexed(expireAfterSeconds = 0)
-    @Field("expired_at")
+    @Field(NF_EXPIRED_AT)
     private Date expiredAt;
-    @Field("seq_num")
+    @Field(NF_SEQ_NUM)
     private int secNum;
 
     public MongoNotification() {
