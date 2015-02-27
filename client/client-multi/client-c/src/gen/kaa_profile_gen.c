@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,30 +26,30 @@
  */
 
 
-static void kaa_profile_basic_endpoint_profile_test_destroy(void* data)
+static void kaa_profile_basic_endpoint_profile_test_destroy(void *data)
 {
     if (data) {
-        kaa_profile_basic_endpoint_profile_test_t* record = (kaa_profile_basic_endpoint_profile_test_t*)data;
+        kaa_profile_basic_endpoint_profile_test_t *record = (kaa_profile_basic_endpoint_profile_test_t *)data;
 
         kaa_string_destroy(record->profile_body);
         kaa_data_destroy(record);
     }
 }
 
-static void kaa_profile_basic_endpoint_profile_test_serialize(avro_writer_t writer, void* data)
+static void kaa_profile_basic_endpoint_profile_test_serialize(avro_writer_t writer, void *data)
 {
     if (data) {
-        kaa_profile_basic_endpoint_profile_test_t* record = (kaa_profile_basic_endpoint_profile_test_t*)data;
+        kaa_profile_basic_endpoint_profile_test_t *record = (kaa_profile_basic_endpoint_profile_test_t *)data;
 
         kaa_string_serialize(writer, record->profile_body);
     }
 }
 
-static size_t kaa_profile_basic_endpoint_profile_test_get_size(void* data)
+static size_t kaa_profile_basic_endpoint_profile_test_get_size(void *data)
 {
     if (data) {
         size_t record_size = 0;
-        kaa_profile_basic_endpoint_profile_test_t* record = (kaa_profile_basic_endpoint_profile_test_t*)data;
+        kaa_profile_basic_endpoint_profile_test_t *record = (kaa_profile_basic_endpoint_profile_test_t *)data;
 
         record_size += kaa_string_get_size(record->profile_body);
 
@@ -59,10 +59,10 @@ static size_t kaa_profile_basic_endpoint_profile_test_get_size(void* data)
     return 0;
 }
 
-kaa_profile_basic_endpoint_profile_test_t* kaa_profile_basic_endpoint_profile_test_create()
+kaa_profile_basic_endpoint_profile_test_t *kaa_profile_basic_endpoint_profile_test_create()
 {
-    kaa_profile_basic_endpoint_profile_test_t* record = 
-            (kaa_profile_basic_endpoint_profile_test_t*)KAA_CALLOC(1, sizeof(kaa_profile_basic_endpoint_profile_test_t));
+    kaa_profile_basic_endpoint_profile_test_t *record = 
+            (kaa_profile_basic_endpoint_profile_test_t *)KAA_CALLOC(1, sizeof(kaa_profile_basic_endpoint_profile_test_t));
 
     if (record) {
         record->serialize = kaa_profile_basic_endpoint_profile_test_serialize;
@@ -73,10 +73,10 @@ kaa_profile_basic_endpoint_profile_test_t* kaa_profile_basic_endpoint_profile_te
     return record;
 }
 
-kaa_profile_basic_endpoint_profile_test_t* kaa_profile_basic_endpoint_profile_test_deserialize(avro_reader_t reader)
+kaa_profile_basic_endpoint_profile_test_t *kaa_profile_basic_endpoint_profile_test_deserialize(avro_reader_t reader)
 {
-    kaa_profile_basic_endpoint_profile_test_t* record = 
-            (kaa_profile_basic_endpoint_profile_test_t*)KAA_MALLOC(sizeof(kaa_profile_basic_endpoint_profile_test_t));
+    kaa_profile_basic_endpoint_profile_test_t *record = 
+            (kaa_profile_basic_endpoint_profile_test_t *)KAA_MALLOC(sizeof(kaa_profile_basic_endpoint_profile_test_t));
 
     if (record) {
         record->serialize = kaa_profile_basic_endpoint_profile_test_serialize;

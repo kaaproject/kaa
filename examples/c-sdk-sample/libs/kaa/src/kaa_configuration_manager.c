@@ -145,7 +145,7 @@ kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manage
     *((uint32_t *) tmp_writer.current) = KAA_HTONL(self->status->config_seq_n);
     tmp_writer.current += sizeof(uint32_t);
 
-    error_code = kaa_platform_message_write(&tmp_writer, self->configuration_hash, SHA_1_DIGEST_LENGTH);
+    error_code = kaa_platform_message_write_aligned(&tmp_writer, self->configuration_hash, SHA_1_DIGEST_LENGTH);
     if (error_code) {
         KAA_LOG_ERROR(self->logger, error_code, "Failed to write configuration hash");
         return KAA_ERR_WRITE_FAILED;
@@ -200,7 +200,6 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
         }
     }
     return KAA_ERR_NONE;
-
 }
 
 

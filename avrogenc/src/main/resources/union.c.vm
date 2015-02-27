@@ -23,7 +23,7 @@
 static void ${union_name}_destroy(void *data)
 {
     if (data) {
-        kaa_union_t *kaa_union = (kaa_union_t*)data;
+        kaa_union_t *kaa_union = (kaa_union_t *)data;
 
         switch (kaa_union->type) {
 #set ($branch_number = 0)
@@ -34,11 +34,11 @@ static void ${union_name}_destroy(void *data)
             if (kaa_union->data) {
 #if ($TypeConverter.isAvroRecord($branch_schema))
 #set ($sub_record_name = $StyleUtils.toLowerUnderScore($branch_schema.getName()))
-                ${prefix}_${sub_record_name}_t* record = (${prefix}_${sub_record_name}_t*)kaa_union->data;
+                ${prefix}_${sub_record_name}_t *record = (${prefix}_${sub_record_name}_t *)kaa_union->data;
                 record->destroy(record);
 #elseif ($TypeConverter.isAvroUnion($branch_schema))
 #set ($sub_union_name = $TypeConverter.generateUnionName($branch_schema).toLowerCase())
-                ${prefix}_${sub_union_name}_t* kaa_sub_union = (${prefix}_${sub_union_name}_t*)kaa_union->data;
+                ${prefix}_${sub_union_name}_t *kaa_sub_union = (${prefix}_${sub_union_name}_t *)kaa_union->data;
                 kaa_sub_union->destroy(kaa_sub_union);
 #elseif ($TypeConverter.isAvroBytes($branch_schema) || $TypeConverter.isAvroFixed($branch_schema))
                 kaa_bytes_destroy(kaa_union->data);
@@ -84,8 +84,8 @@ static void ${union_name}_destroy(void *data)
 static size_t ${union_name}_get_size(void *data)
 {
     if (data) {
-        kaa_union_t *kaa_union = (kaa_union_t*)data;
-        size_t union_size = kaa_long_get_size(kaa_union->type);
+        kaa_union_t *kaa_union = (kaa_union_t *)data;
+        size_t union_size = avro_long_get_size(kaa_union->type);
 
         switch (kaa_union->type) {
 #set ($branch_number = 0)
@@ -99,19 +99,19 @@ static size_t ${union_name}_get_size(void *data)
                 $record_type record = (${record_type})kaa_union->data;
                 union_size += record->get_size(record);
 #elseif ($TypeConverter.isAvroUnion($branch_schema))
-                kaa_union_t* kaa_union = (kaa_union_t*)kaa_union->data;
+                kaa_union_t *kaa_union = (kaa_union_t *)kaa_union->data;
                 union_size += kaa_union->get_size(kaa_union);
 #elseif ($TypeConverter.isAvroBytes($branch_schema) || $TypeConverter.isAvroFixed($branch_schema))
                 union_size += kaa_bytes_get_size(kaa_union->data);
 #elseif ($TypeConverter.isAvroString($branch_schema))
                 union_size += kaa_string_get_size(kaa_union->data);
+#elseif ($TypeConverter.isAvroFloat($branch_schema))
+                union_size += AVRO_FLOAT_SIZE;
+#elseif ($TypeConverter.isAvroDouble($branch_schema))
+                union_size += AVRO_DOUBLE_SIZE;
 #elseif ($TypeConverter.isAvroPrimitive($branch_schema))
 #set ($primitive_type = $branch_schema.getType().toString().toLowerCase())
-    #if ($TypeConverter.isAvroEnum($branch_schema))
-    #set ($primitive_type = "long")
-    #end
-                int64_t primitive_value = *(($TypeConverter.convertToCType($prefix, $branch_schema) *)kaa_union->data);
-                union_size += kaa_long_get_size(primitive_value);
+                union_size += kaa_${primitive_type}_get_size(kaa_union->data);
 #elseif ($TypeConverter.isAvroArray($branch_schema))
 #set ($array_element_schema = $branch_schema.getElementType())
     #if ($TypeConverter.isAvroRecord($array_element_schema))
@@ -129,7 +129,8 @@ static size_t ${union_name}_get_size(void *data)
     #elseif ($TypeConverter.isAvroString($array_element_schema))
                 union_size += kaa_array_get_size(kaa_union->data, kaa_string_get_size);
     #elseif ($TypeConverter.isAvroPrimitive($array_element_schema))
-                //TODO: implement calculating size for array of primitives (bool, int, long, enum) 
+    #set ($primitive_type = $array_element_schema.getType().toString().toLowerCase())
+                union_size += kaa_array_get_size(kaa_union->data, kaa_${primitive_type}_get_size); 
     #end
 #end
             }
@@ -151,7 +152,7 @@ static size_t ${union_name}_get_size(void *data)
 static void ${union_name}_serialize(avro_writer_t writer, void *data)
 {
     if (data) {
-        kaa_union_t *kaa_union = (kaa_union_t*)data;
+        kaa_union_t *kaa_union = (kaa_union_t *)data;
         avro_binary_encoding.write_long(writer, kaa_union->type);
 
         switch (kaa_union->type) {
@@ -166,7 +167,7 @@ static void ${union_name}_serialize(avro_writer_t writer, void *data)
                 $record_type record = (${record_type})kaa_union->data;
                 record->serialize(writer, record);
 #elseif ($TypeConverter.isAvroUnion($branch_schema))
-                kaa_union_t* kaa_union = (kaa_union_t*)kaa_union->data;
+                kaa_union_t *kaa_union = (kaa_union_t *)kaa_union->data;
                 kaa_union->serialize(writer, kaa_union);
 #elseif ($TypeConverter.isAvroBytes($branch_schema) || $TypeConverter.isAvroFixed($branch_schema))
                 kaa_bytes_serialize(writer, kaa_union->data);
@@ -174,10 +175,7 @@ static void ${union_name}_serialize(avro_writer_t writer, void *data)
                 kaa_string_serialize(writer, kaa_union->data);
 #elseif ($TypeConverter.isAvroPrimitive($branch_schema))
 #set ($primitive_type = $branch_schema.getType().toString().toLowerCase())
-    #if ($TypeConverter.isAvroEnum($branch_schema))
-    #set ($primitive_type = "long")
-    #end
-                avro_binary_encoding.write_${primitive_type}(writer, *(($TypeConverter.convertToCType($prefix, $branch_schema) *)kaa_union->data));
+                kaa_${primitive_type}_serialize(writer, kaa_union->data);
 #elseif ($TypeConverter.isAvroArray($branch_schema))
 #set ($array_element_schema = $branch_schema.getElementType())
     #if ($TypeConverter.isAvroRecord($array_element_schema))
@@ -196,9 +194,6 @@ static void ${union_name}_serialize(avro_writer_t writer, void *data)
                 kaa_array_serialize(writer, kaa_union->data, kaa_string_serialize);
     #elseif ($TypeConverter.isAvroPrimitive($array_element_schema))
     #set ($primitive_type = $array_element_schema.getType().toString().toLowerCase())
-        #if ($TypeConverter.isAvroEnum($array_element_schema))
-        #set ($primitive_type = "long")
-        #end
                 kaa_array_serialize(writer, kaa_union->data, kaa_${primitive_type}_serialize);
     #end
 #end
@@ -214,9 +209,9 @@ static void ${union_name}_serialize(avro_writer_t writer, void *data)
     }
 }
 #end
-static kaa_union_t* ${union_name}_create()
+static kaa_union_t *${union_name}_create()
 {
-    kaa_union_t* kaa_union = KAA_CALLOC(1, sizeof(kaa_union_t));
+    kaa_union_t *kaa_union = KAA_CALLOC(1, sizeof(kaa_union_t));
 
     if (kaa_union) {
 #if ($generationContext.isTypeOut())
@@ -232,7 +227,7 @@ static kaa_union_t* ${union_name}_create()
 #set ($branch_number = 0)
 #foreach ($branch_schema in $schema.getTypes())
 
-kaa_union_t* ${union_name}_branch_${branch_number}_create()
+kaa_union_t *${union_name}_branch_${branch_number}_create()
 {
     kaa_union_t *kaa_union = ${union_name}_create();
     if (kaa_union) {
@@ -245,7 +240,7 @@ kaa_union_t* ${union_name}_branch_${branch_number}_create()
 #end
 #if ($generationContext.isTypeIn())
 
-kaa_union_t* ${union_name}_deserialize(avro_reader_t reader)
+kaa_union_t *${union_name}_deserialize(avro_reader_t reader)
 {
     kaa_union_t *kaa_union = ${union_name}_create();
 
@@ -272,9 +267,6 @@ kaa_union_t* ${union_name}_deserialize(avro_reader_t reader)
             kaa_union->data = kaa_string_deserialize(reader);
 #elseif ($TypeConverter.isAvroPrimitive($branch_schema))
 #set ($primitive_type = $branch_schema.getType().toString().toLowerCase())
-    #if ($TypeConverter.isAvroEnum($branch_schema))
-    #set ($primitive_type = "long")
-    #end
             kaa_union->data = kaa_${primitive_type}_deserialize(reader);
 #elseif ($TypeConverter.isAvroArray($branch_schema))
 #set ($array_element_schema = $branch_schema.getElementType())
@@ -290,9 +282,6 @@ kaa_union_t* ${union_name}_deserialize(avro_reader_t reader)
             kaa_union->data = kaa_array_deserialize(reader, (deserialize_fn)kaa_string_deserialize);
     #elseif ($TypeConverter.isAvroPrimitive($array_element_schema))
     #set ($primitive_type = $array_element_schema.getType().toString().toLowerCase())
-        #if ($TypeConverter.isAvroEnum($array_element_schema))
-        #set ($primitive_type = "long")
-        #end
             kaa_union->data = kaa_array_deserialize(reader, (deserialize_fn)kaa_${primitive_type}_deserialize);
     #end
 #end

@@ -24,8 +24,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/homeList"
         android:choiceMode="singleChoice"
-        android:listSelector="@drawable/abc_list_selector_holo_light"
-        android:divider="@drawable/abc_list_divider_holo_light"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"

@@ -36,6 +36,8 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
@@ -145,11 +147,22 @@ public class AdminClient {
         return restTemplate.getForObject(url + "configurationSchema/"+configurationSchemaId, ConfigurationSchemaDto.class);
     }
     
+    public ProfileSchemaDto createProfileSchema(ProfileSchemaDto profileSchema, String schemaResource) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("profileSchema", profileSchema);
+        params.add("file", getFileResource(schemaResource));
+        return restTemplate.postForObject(url + "profileSchema", params, ProfileSchemaDto.class);
+    }
+    
     public LogSchemaDto createLogSchema(LogSchemaDto logSchema, String schemaResource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("logSchema", logSchema);
         params.add("file", getFileResource(schemaResource));
         return restTemplate.postForObject(url + "logSchema", params, LogSchemaDto.class);
+    }
+    
+    public EndpointGroupDto editEndpointGroup(EndpointGroupDto endpointGroup) throws Exception {
+        return restTemplate.postForObject(url + "endpointGroup", endpointGroup, EndpointGroupDto.class);
     }
     
     public List<EndpointGroupDto> getEndpointGroups(String applicationId) throws Exception {
@@ -172,6 +185,14 @@ public class AdminClient {
     
     public void activateConfiguration(String configurationId) throws Exception {
         restTemplate.postForLocation(url + "activateConfiguration", configurationId);
+    }
+    
+    public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws Exception {
+        return restTemplate.postForObject(url + "profileFilter", profileFilter, ProfileFilterDto.class);
+    }
+    
+    public void activateProfileFilter(String profileFilterId) throws Exception {
+        restTemplate.postForLocation(url + "activateProfileFilter", profileFilterId);
     }
     
     public UserDto editUser(UserDto user) throws Exception {

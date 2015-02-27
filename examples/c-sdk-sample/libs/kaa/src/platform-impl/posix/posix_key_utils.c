@@ -44,6 +44,12 @@ static void kaa_generate_pub_key()
 
     kaa_public_key_length = BIO_pending(bio_pem);
     kaa_public_key = (char *) KAA_MALLOC(kaa_public_key_length);
+    if (!kaa_public_key) {
+        kaa_public_key_length = 0;
+        BIO_free_all(bio_pem);
+        RSA_free(rsa);
+        return;
+    }
     BIO_read(bio_pem, kaa_public_key, kaa_public_key_length);
 
     BIO_free_all(bio_pem);
@@ -68,6 +74,7 @@ static int kaa_init_key()
 
 void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
+    KAA_RETURN_IF_NIL3(buffer, buffer_size, needs_deallocation,);
     if (!kaa_public_key)
         kaa_init_key();
     *buffer = kaa_public_key;

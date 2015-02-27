@@ -133,6 +133,11 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
             processUploadDecision(strategy.isUploadNeeded(storage.getStatus()));
         }
     }
+    
+    @Override
+    public void stop() {
+        scheduler.shutdown();
+    }
 
     private void processUploadDecision(LogUploadStrategyDecision decision) {
         switch (decision) {

@@ -87,6 +87,22 @@
             <type>tar.gz</type>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>cityguide</artifactId>
+            <version>${project.version}</version>
+            <classifier>cityguide-android-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>cityguide</artifactId>
+            <version>${project.version}</version>
+            <classifier>cityguide-android-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -174,6 +190,20 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>unpack-cityguide-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/cityguide</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>cityguide</includeArtifactIds>
+                            <includeClassifiers>cityguide-android-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>copy</id>
                         <phase>prepare-package</phase>
                         <goals>
@@ -210,6 +240,16 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
                                     <destFileName>smarthouse_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>cityguide</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>cityguide-android-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
+                                    <destFileName>cityguide_demo.tar.gz</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>

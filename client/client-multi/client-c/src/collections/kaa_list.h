@@ -57,7 +57,7 @@ void *kaa_list_get_data(kaa_list_t *position);
 /**
  * Returns size of the list.
  */
-ssize_t kaa_list_get_size(kaa_list_t *position);
+size_t kaa_list_get_size(kaa_list_t *position);
 
 /**
  * Checks if there is an element after current position.

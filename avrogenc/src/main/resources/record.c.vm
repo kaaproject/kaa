@@ -19,10 +19,10 @@
 #set ($record_name = $StyleUtils.toLowerUnderScore($schema.getName()))
 #set ($is_destructor_needed = $TypeConverter.isRecordNeedDeallocator($schema))
 #if ($is_destructor_needed)
-static void ${prefix}_${record_name}_destroy(void* data)
+static void ${prefix}_${record_name}_destroy(void *data)
 {
     if (data) {
-        ${prefix}_${record_name}_t* record = (${prefix}_${record_name}_t*)data;
+        ${prefix}_${record_name}_t *record = (${prefix}_${record_name}_t *)data;
 
 #foreach ($field in $schema.getFields())
 #set ($field_name = $StyleUtils.toLowerUnderScore($field.name()))
@@ -40,10 +40,10 @@ static void ${prefix}_${record_name}_destroy(void* data)
     #if ($TypeConverter.isAvroRecord($array_element_schema))
         #if ($TypeConverter.isRecordNeedDeallocator($array_element_schema))
         #set ($array_record_name = $StyleUtils.toLowerUnderScore($array_element_schema.getName()))
-            kaa_list_destroy(record->${field_name}, ${prefix}_${array_record_name}_destroy);
+        kaa_list_destroy(record->${field_name}, ${prefix}_${array_record_name}_destroy);
         #else
-            kaa_list_destroy(record->${field_name}, kaa_data_destroy);
-        #end
+        kaa_list_destroy(record->${field_name}, kaa_data_destroy);
+    #end
     #elseif ($TypeConverter.isAvroUnion($array_element_schema))
     #set ($array_union_name = $TypeConverter.generateUnionName($PREFIX, $array_element_schema).toLowerCase())
         kaa_list_destroy(record->${field_name}, ${array_union_name}_destroy);
@@ -63,10 +63,10 @@ static void ${prefix}_${record_name}_destroy(void* data)
 
 #if ($TypeConverter.isTypeOut($schema))
 #if ($schema.getFields().size() > 0)
-static void ${prefix}_${record_name}_serialize(avro_writer_t writer, void* data)
+static void ${prefix}_${record_name}_serialize(avro_writer_t writer, void *data)
 {
     if (data) {
-        ${prefix}_${record_name}_t* record = (${prefix}_${record_name}_t*)data;
+        ${prefix}_${record_name}_t *record = (${prefix}_${record_name}_t *)data;
 
 #foreach ($field in $schema.getFields())
 #set ($field_name = $StyleUtils.toLowerUnderScore($field.name()))
@@ -81,10 +81,7 @@ static void ${prefix}_${record_name}_serialize(avro_writer_t writer, void* data)
         kaa_string_serialize(writer, record->${field_name});
 #elseif ($TypeConverter.isAvroPrimitive($field_schema))
 #set ($primitive_type = $field_schema.getType().toString().toLowerCase())
-    #if ($TypeConverter.isAvroEnum($field_schema))
-    #set ($primitive_type = "long")
-    #end
-        avro_binary_encoding.write_${primitive_type}(writer, record->${field_name});
+        kaa_${primitive_type}_serialize(writer, &record->${field_name});
 #elseif ($TypeConverter.isAvroArray($field_schema))
 #set ($array_element_schema = $field_schema.getElementType())
     #if ($TypeConverter.isAvroRecord($array_element_schema))
@@ -103,9 +100,6 @@ static void ${prefix}_${record_name}_serialize(avro_writer_t writer, void* data)
         kaa_array_serialize(writer, record->${field_name}, kaa_string_serialize);
     #elseif ($TypeConverter.isAvroPrimitive($array_element_schema))
     #set ($primitive_type = $array_element_schema.getType().toString().toLowerCase())
-        #if ($TypeConverter.isAvroEnum($array_element_schema))
-        #set ($primitive_type = "long")
-        #end
         kaa_array_serialize(writer, record->${field_name}, kaa_${primitive_type}_serialize);
     #end
 #end
@@ -113,11 +107,11 @@ static void ${prefix}_${record_name}_serialize(avro_writer_t writer, void* data)
     }
 }
 
-static size_t ${prefix}_${record_name}_get_size(void* data)
+static size_t ${prefix}_${record_name}_get_size(void *data)
 {
     if (data) {
         size_t record_size = 0;
-        ${prefix}_${record_name}_t* record = (${prefix}_${record_name}_t*)data;
+        ${prefix}_${record_name}_t *record = (${prefix}_${record_name}_t *)data;
 
 #foreach ($field in $schema.getFields())
 #set ($field_name = $StyleUtils.toLowerUnderScore($field.name()))
@@ -130,8 +124,13 @@ static size_t ${prefix}_${record_name}_get_size(void* data)
         record_size += kaa_bytes_get_size(record->${field_name});
 #elseif ($TypeConverter.isAvroString($field_schema))
         record_size += kaa_string_get_size(record->${field_name});
+#elseif ($TypeConverter.isAvroFloat($field_schema))
+        record_size += AVRO_FLOAT_SIZE;
+#elseif ($TypeConverter.isAvroDouble($field_schema))
+        record_size += AVRO_DOUBLE_SIZE;
 #elseif ($TypeConverter.isAvroPrimitive($field_schema))
-        record_size += kaa_long_get_size((int64_t)record->${field_name});
+#set ($primitive_type = $field_schema.getType().toString().toLowerCase())
+        record_size += kaa_${primitive_type}_get_size(&record->${field_name});
 #elseif ($TypeConverter.isAvroArray($field_schema))
 #set ($array_element_schema = $field_schema.getElementType())
     #if ($TypeConverter.isAvroRecord($array_element_schema))
@@ -149,7 +148,8 @@ static size_t ${prefix}_${record_name}_get_size(void* data)
     #elseif ($TypeConverter.isAvroString($array_element_schema))
         record_size += kaa_array_get_size(record->${field_name}, kaa_string_get_size);
     #elseif ($TypeConverter.isAvroPrimitive($field_schema))
-        //TODO: implement calculating size for array of primitives (bool, int, long, enum)
+    #set ($primitive_type = $field_schema.getType().toString().toLowerCase())
+        record_size += kaa_array_get_size(record->${field_name}, kaa_${primitive_type}_get_size);
     #end
 #end
 #end
@@ -161,10 +161,10 @@ static size_t ${prefix}_${record_name}_get_size(void* data)
 }
 #end
 
-${prefix}_${record_name}_t* ${prefix}_${record_name}_create()
+${prefix}_${record_name}_t *${prefix}_${record_name}_create()
 {
-    ${prefix}_${record_name}_t* record = 
-            (${prefix}_${record_name}_t*)KAA_CALLOC(1, sizeof(${prefix}_${record_name}_t));
+    ${prefix}_${record_name}_t *record = 
+            (${prefix}_${record_name}_t *)KAA_CALLOC(1, sizeof(${prefix}_${record_name}_t));
 
     if (record) {
 #if ($schema.getFields().size() > 0)
@@ -186,10 +186,10 @@ ${prefix}_${record_name}_t* ${prefix}_${record_name}_create()
 #end
 #if ($TypeConverter.isTypeIn($schema))
 
-${prefix}_${record_name}_t* ${prefix}_${record_name}_deserialize(avro_reader_t reader)
+${prefix}_${record_name}_t *${prefix}_${record_name}_deserialize(avro_reader_t reader)
 {
-    ${prefix}_${record_name}_t* record = 
-            (${prefix}_${record_name}_t*)KAA_MALLOC(sizeof(${prefix}_${record_name}_t));
+    ${prefix}_${record_name}_t *record = 
+            (${prefix}_${record_name}_t *)KAA_MALLOC(sizeof(${prefix}_${record_name}_t));
 
     if (record) {
 #if ($TypeConverter.isTypeOut($schema))
@@ -241,9 +241,6 @@ ${prefix}_${record_name}_t* ${prefix}_${record_name}_deserialize(avro_reader_t r
         record->${field_name} = kaa_array_deserialize(reader, (deserialize_fn)kaa_string_deserialize);
     #elseif ($TypeConverter.isAvroPrimitive($array_element_schema))
     #set ($primitive_type = $array_element_schema.getType().toString().toLowerCase())
-        #if ($TypeConverter.isAvroEnum($array_element_schema))
-        #set ($primitive_type = "long")
-        #end
         record->${field_name} = kaa_array_deserialize(reader, (deserialize_fn)kaa_${primitive_type}_deserialize);
     #end
 #end

@@ -25,30 +25,31 @@ extern "C" {
 # endif
 
 
-# ifndef KAA_CONFIGURATION_UNION_FIXED_OR_NULL_H_
-# define KAA_CONFIGURATION_UNION_FIXED_OR_NULL_H_
+# ifndef KAA_UNION_NULL_OR_FIXED_H_
+# define KAA_UNION_NULL_OR_FIXED_H_
 
-# define KAA_CONFIGURATION_UNION_FIXED_OR_NULL_BRANCH_0 0
-# define KAA_CONFIGURATION_UNION_FIXED_OR_NULL_BRANCH_1 1
+# define KAA_UNION_NULL_OR_FIXED_BRANCH_0    0
+# define KAA_UNION_NULL_OR_FIXED_BRANCH_1    1
 
-kaa_union_t* kaa_configuration_union_fixed_or_null_branch_0_create();
-kaa_union_t* kaa_configuration_union_fixed_or_null_branch_1_create();
+kaa_union_t *kaa_union_null_or_fixed_branch_0_create();
+kaa_union_t *kaa_union_null_or_fixed_branch_1_create();
 
-kaa_union_t* kaa_configuration_union_fixed_or_null_deserialize(avro_reader_t reader);
+kaa_union_t *kaa_union_null_or_fixed_deserialize(avro_reader_t reader);
 
-# endif // KAA_CONFIGURATION_UNION_FIXED_OR_NULL_H_
+# endif // KAA_UNION_NULL_OR_FIXED_H_
+
 
 typedef struct {
-    kaa_string_t* data;
-    kaa_union_t* __uuid;
+    kaa_string_t * data;
+    kaa_union_t * __uuid;
 
     serialize_fn serialize;
     get_size_fn  get_size;
     destroy_fn   destroy;
 } kaa_configuration_root_record_t;
 
-kaa_configuration_root_record_t* kaa_configuration_root_record_create();
-kaa_configuration_root_record_t* kaa_configuration_root_record_deserialize(avro_reader_t reader);
+kaa_configuration_root_record_t *kaa_configuration_root_record_create();
+kaa_configuration_root_record_t *kaa_configuration_root_record_deserialize(avro_reader_t reader);
 
 #ifdef __cplusplus
 }      /* extern "C" */

@@ -32,6 +32,10 @@ int posix_binary_file_read(const char *file_name, char **buffer, size_t *buffer_
 
     fseek(file, 0, SEEK_END);
     size_t result_size = ftell(file);
+    if (result_size <= 0) {
+        fclose(file);
+        return -1;
+    }
     char *result_buffer = (char *) KAA_MALLOC(result_size * sizeof(char));
     if (!result_buffer) {
         fclose(file);
