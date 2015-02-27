@@ -163,12 +163,23 @@ struct GlobalRouteUpdate {
   3: RouteAddress routeAddress
   4: EventRouteUpdateType updateType
   5: int cfSchemaVersion
+  6: binary ucfHash
 }
 
 struct UserConfigurationUpdate {
   1: tenant_id tenantId
   2: user_id userId
-  3: int cfSchemaVersion
+  3: application_token applicationToken
+  4: int cfSchemaVersion
+  5: binary ucfHash
+}
+
+struct EndpointUserConfigurationUpdate {
+  1: tenant_id tenantId
+  2: user_id userId
+  3: application_token applicationToken
+  4: endpoint_id endpointKey
+  5: binary ucfHash
 }
 
 service OperationsThriftService extends cli.CliThriftService{
@@ -179,9 +190,19 @@ service OperationsThriftService extends cli.CliThriftService{
   void onNotification(1: Notification notification);
 
 /**
-*   User configuration update
+*   Report user configuration update to global user actor
 */
   void onUserConfigurationUpdate(1: UserConfigurationUpdate notification);
+
+/**
+*   Report user configuration update to endpoint actor
+*/
+  void onUserConfigurationUpdate(1: EndpointUserConfigurationUpdate notification);
+  
+/**
+*  Report global route update to global user actor
+*/
+  void onGlobalRouteUpdate(1: GlobalRouteUpdate message);
 
 /**
 *  Set redirection rule for Operations server
@@ -192,10 +213,5 @@ service OperationsThriftService extends cli.CliThriftService{
 *  Interface to send unified event messages
 */
   void sendEventMessage(1: list<EventMessage> messages);
-
-/**
-*  Interface to send global route update
-*/
-  void sendGlobalRouteUpdate(1: GlobalRouteUpdate message);
 
 }
