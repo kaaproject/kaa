@@ -32,7 +32,7 @@ import org.kaaproject.kaa.schema.example.Notification;
 import java.util.List;
 
 
-public class NotificationArrayAdapter extends ArrayAdapter {
+public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
     private final List<Notification> list;
     private final Activity context;
 
