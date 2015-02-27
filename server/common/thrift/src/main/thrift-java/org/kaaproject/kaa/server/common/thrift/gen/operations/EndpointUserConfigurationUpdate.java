@@ -33,25 +33,25 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConfigurationUpdate, UserConfigurationUpdate._Fields>, java.io.Serializable, Cloneable, Comparable<UserConfigurationUpdate> {
-  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("UserConfigurationUpdate");
+public class EndpointUserConfigurationUpdate implements org.apache.thrift.TBase<EndpointUserConfigurationUpdate, EndpointUserConfigurationUpdate._Fields>, java.io.Serializable, Cloneable, Comparable<EndpointUserConfigurationUpdate> {
+  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("EndpointUserConfigurationUpdate");
 
   private static final org.apache.thrift.protocol.TField TENANT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("tenantId", org.apache.thrift.protocol.TType.STRING, (short)1);
   private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.STRING, (short)2);
   private static final org.apache.thrift.protocol.TField APPLICATION_TOKEN_FIELD_DESC = new org.apache.thrift.protocol.TField("applicationToken", org.apache.thrift.protocol.TType.STRING, (short)3);
-  private static final org.apache.thrift.protocol.TField CF_SCHEMA_VERSION_FIELD_DESC = new org.apache.thrift.protocol.TField("cfSchemaVersion", org.apache.thrift.protocol.TType.I32, (short)4);
+  private static final org.apache.thrift.protocol.TField ENDPOINT_KEY_FIELD_DESC = new org.apache.thrift.protocol.TField("endpointKey", org.apache.thrift.protocol.TType.STRING, (short)4);
   private static final org.apache.thrift.protocol.TField UCF_HASH_FIELD_DESC = new org.apache.thrift.protocol.TField("ucfHash", org.apache.thrift.protocol.TType.STRING, (short)5);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
-    schemes.put(StandardScheme.class, new UserConfigurationUpdateStandardSchemeFactory());
-    schemes.put(TupleScheme.class, new UserConfigurationUpdateTupleSchemeFactory());
+    schemes.put(StandardScheme.class, new EndpointUserConfigurationUpdateStandardSchemeFactory());
+    schemes.put(TupleScheme.class, new EndpointUserConfigurationUpdateTupleSchemeFactory());
   }
 
   public String tenantId; // required
   public String userId; // required
   public String applicationToken; // required
-  public int cfSchemaVersion; // required
+  public ByteBuffer endpointKey; // required
   public ByteBuffer ucfHash; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
@@ -59,7 +59,7 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     TENANT_ID((short)1, "tenantId"),
     USER_ID((short)2, "userId"),
     APPLICATION_TOKEN((short)3, "applicationToken"),
-    CF_SCHEMA_VERSION((short)4, "cfSchemaVersion"),
+    ENDPOINT_KEY((short)4, "endpointKey"),
     UCF_HASH((short)5, "ucfHash");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
@@ -81,8 +81,8 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
           return USER_ID;
         case 3: // APPLICATION_TOKEN
           return APPLICATION_TOKEN;
-        case 4: // CF_SCHEMA_VERSION
-          return CF_SCHEMA_VERSION;
+        case 4: // ENDPOINT_KEY
+          return ENDPOINT_KEY;
         case 5: // UCF_HASH
           return UCF_HASH;
         default:
@@ -125,8 +125,6 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
   }
 
   // isset id assignments
-  private static final int __CFSCHEMAVERSION_ISSET_ID = 0;
-  private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -136,38 +134,36 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , "user_id")));
     tmpMap.put(_Fields.APPLICATION_TOKEN, new org.apache.thrift.meta_data.FieldMetaData("applicationToken", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , "application_token")));
-    tmpMap.put(_Fields.CF_SCHEMA_VERSION, new org.apache.thrift.meta_data.FieldMetaData("cfSchemaVersion", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32        , "int")));
+    tmpMap.put(_Fields.ENDPOINT_KEY, new org.apache.thrift.meta_data.FieldMetaData("endpointKey", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , "endpoint_id")));
     tmpMap.put(_Fields.UCF_HASH, new org.apache.thrift.meta_data.FieldMetaData("ucfHash", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , true)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
-    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(UserConfigurationUpdate.class, metaDataMap);
+    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(EndpointUserConfigurationUpdate.class, metaDataMap);
   }
 
-  public UserConfigurationUpdate() {
+  public EndpointUserConfigurationUpdate() {
   }
 
-  public UserConfigurationUpdate(
+  public EndpointUserConfigurationUpdate(
     String tenantId,
     String userId,
     String applicationToken,
-    int cfSchemaVersion,
+    ByteBuffer endpointKey,
     ByteBuffer ucfHash)
   {
     this();
     this.tenantId = tenantId;
     this.userId = userId;
     this.applicationToken = applicationToken;
-    this.cfSchemaVersion = cfSchemaVersion;
-    setCfSchemaVersionIsSet(true);
+    this.endpointKey = endpointKey;
     this.ucfHash = ucfHash;
   }
 
   /**
    * Performs a deep copy on <i>other</i>.
    */
-  public UserConfigurationUpdate(UserConfigurationUpdate other) {
-    __isset_bitfield = other.__isset_bitfield;
+  public EndpointUserConfigurationUpdate(EndpointUserConfigurationUpdate other) {
     if (other.isSetTenantId()) {
       this.tenantId = other.tenantId;
     }
@@ -177,15 +173,17 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     if (other.isSetApplicationToken()) {
       this.applicationToken = other.applicationToken;
     }
-    this.cfSchemaVersion = other.cfSchemaVersion;
+    if (other.isSetEndpointKey()) {
+      this.endpointKey = other.endpointKey;
+    }
     if (other.isSetUcfHash()) {
       this.ucfHash = org.apache.thrift.TBaseHelper.copyBinary(other.ucfHash);
 ;
     }
   }
 
-  public UserConfigurationUpdate deepCopy() {
-    return new UserConfigurationUpdate(this);
+  public EndpointUserConfigurationUpdate deepCopy() {
+    return new EndpointUserConfigurationUpdate(this);
   }
 
   @Override
@@ -193,8 +191,7 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     this.tenantId = null;
     this.userId = null;
     this.applicationToken = null;
-    setCfSchemaVersionIsSet(false);
-    this.cfSchemaVersion = 0;
+    this.endpointKey = null;
     this.ucfHash = null;
   }
 
@@ -202,7 +199,7 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     return this.tenantId;
   }
 
-  public UserConfigurationUpdate setTenantId(String tenantId) {
+  public EndpointUserConfigurationUpdate setTenantId(String tenantId) {
     this.tenantId = tenantId;
     return this;
   }
@@ -226,7 +223,7 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     return this.userId;
   }
 
-  public UserConfigurationUpdate setUserId(String userId) {
+  public EndpointUserConfigurationUpdate setUserId(String userId) {
     this.userId = userId;
     return this;
   }
@@ -250,7 +247,7 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     return this.applicationToken;
   }
 
-  public UserConfigurationUpdate setApplicationToken(String applicationToken) {
+  public EndpointUserConfigurationUpdate setApplicationToken(String applicationToken) {
     this.applicationToken = applicationToken;
     return this;
   }
@@ -270,27 +267,38 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     }
   }
 
-  public int getCfSchemaVersion() {
-    return this.cfSchemaVersion;
+  public byte[] getEndpointKey() {
+    setEndpointKey(org.apache.thrift.TBaseHelper.rightSize(endpointKey));
+    return endpointKey == null ? null : endpointKey.array();
   }
 
-  public UserConfigurationUpdate setCfSchemaVersion(int cfSchemaVersion) {
-    this.cfSchemaVersion = cfSchemaVersion;
-    setCfSchemaVersionIsSet(true);
+  public ByteBuffer bufferForEndpointKey() {
+    return endpointKey;
+  }
+
+  public EndpointUserConfigurationUpdate setEndpointKey(byte[] endpointKey) {
+    setEndpointKey(endpointKey == null ? (ByteBuffer)null : ByteBuffer.wrap(endpointKey));
     return this;
   }
 
-  public void unsetCfSchemaVersion() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __CFSCHEMAVERSION_ISSET_ID);
+  public EndpointUserConfigurationUpdate setEndpointKey(ByteBuffer endpointKey) {
+    this.endpointKey = endpointKey;
+    return this;
   }
 
-  /** Returns true if field cfSchemaVersion is set (has been assigned a value) and false otherwise */
-  public boolean isSetCfSchemaVersion() {
-    return EncodingUtils.testBit(__isset_bitfield, __CFSCHEMAVERSION_ISSET_ID);
+  public void unsetEndpointKey() {
+    this.endpointKey = null;
   }
 
-  public void setCfSchemaVersionIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __CFSCHEMAVERSION_ISSET_ID, value);
+  /** Returns true if field endpointKey is set (has been assigned a value) and false otherwise */
+  public boolean isSetEndpointKey() {
+    return this.endpointKey != null;
+  }
+
+  public void setEndpointKeyIsSet(boolean value) {
+    if (!value) {
+      this.endpointKey = null;
+    }
   }
 
   public byte[] getUcfHash() {
@@ -302,12 +310,12 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     return ucfHash;
   }
 
-  public UserConfigurationUpdate setUcfHash(byte[] ucfHash) {
+  public EndpointUserConfigurationUpdate setUcfHash(byte[] ucfHash) {
     setUcfHash(ucfHash == null ? (ByteBuffer)null : ByteBuffer.wrap(ucfHash));
     return this;
   }
 
-  public UserConfigurationUpdate setUcfHash(ByteBuffer ucfHash) {
+  public EndpointUserConfigurationUpdate setUcfHash(ByteBuffer ucfHash) {
     this.ucfHash = ucfHash;
     return this;
   }
@@ -353,11 +361,11 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
       }
       break;
 
-    case CF_SCHEMA_VERSION:
+    case ENDPOINT_KEY:
       if (value == null) {
-        unsetCfSchemaVersion();
+        unsetEndpointKey();
       } else {
-        setCfSchemaVersion((Integer)value);
+        setEndpointKey((ByteBuffer)value);
       }
       break;
 
@@ -383,8 +391,8 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     case APPLICATION_TOKEN:
       return getApplicationToken();
 
-    case CF_SCHEMA_VERSION:
-      return Integer.valueOf(getCfSchemaVersion());
+    case ENDPOINT_KEY:
+      return getEndpointKey();
 
     case UCF_HASH:
       return getUcfHash();
@@ -406,8 +414,8 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
       return isSetUserId();
     case APPLICATION_TOKEN:
       return isSetApplicationToken();
-    case CF_SCHEMA_VERSION:
-      return isSetCfSchemaVersion();
+    case ENDPOINT_KEY:
+      return isSetEndpointKey();
     case UCF_HASH:
       return isSetUcfHash();
     }
@@ -418,12 +426,12 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
   public boolean equals(Object that) {
     if (that == null)
       return false;
-    if (that instanceof UserConfigurationUpdate)
-      return this.equals((UserConfigurationUpdate)that);
+    if (that instanceof EndpointUserConfigurationUpdate)
+      return this.equals((EndpointUserConfigurationUpdate)that);
     return false;
   }
 
-  public boolean equals(UserConfigurationUpdate that) {
+  public boolean equals(EndpointUserConfigurationUpdate that) {
     if (that == null)
       return false;
 
@@ -454,12 +462,12 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
         return false;
     }
 
-    boolean this_present_cfSchemaVersion = true;
-    boolean that_present_cfSchemaVersion = true;
-    if (this_present_cfSchemaVersion || that_present_cfSchemaVersion) {
-      if (!(this_present_cfSchemaVersion && that_present_cfSchemaVersion))
+    boolean this_present_endpointKey = true && this.isSetEndpointKey();
+    boolean that_present_endpointKey = true && that.isSetEndpointKey();
+    if (this_present_endpointKey || that_present_endpointKey) {
+      if (!(this_present_endpointKey && that_present_endpointKey))
         return false;
-      if (this.cfSchemaVersion != that.cfSchemaVersion)
+      if (!this.endpointKey.equals(that.endpointKey))
         return false;
     }
 
@@ -494,10 +502,10 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     if (present_applicationToken)
       builder.append(applicationToken);
 
-    boolean present_cfSchemaVersion = true;
-    builder.append(present_cfSchemaVersion);
-    if (present_cfSchemaVersion)
-      builder.append(cfSchemaVersion);
+    boolean present_endpointKey = true && (isSetEndpointKey());
+    builder.append(present_endpointKey);
+    if (present_endpointKey)
+      builder.append(endpointKey);
 
     boolean present_ucfHash = true && (isSetUcfHash());
     builder.append(present_ucfHash);
@@ -508,7 +516,7 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
   }
 
   @Override
-  public int compareTo(UserConfigurationUpdate other) {
+  public int compareTo(EndpointUserConfigurationUpdate other) {
     if (!getClass().equals(other.getClass())) {
       return getClass().getName().compareTo(other.getClass().getName());
     }
@@ -545,12 +553,12 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetCfSchemaVersion()).compareTo(other.isSetCfSchemaVersion());
+    lastComparison = Boolean.valueOf(isSetEndpointKey()).compareTo(other.isSetEndpointKey());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetCfSchemaVersion()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.cfSchemaVersion, other.cfSchemaVersion);
+    if (isSetEndpointKey()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.endpointKey, other.endpointKey);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -582,7 +590,7 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder("UserConfigurationUpdate(");
+    StringBuilder sb = new StringBuilder("EndpointUserConfigurationUpdate(");
     boolean first = true;
 
     sb.append("tenantId:");
@@ -609,8 +617,12 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("cfSchemaVersion:");
-    sb.append(this.cfSchemaVersion);
+    sb.append("endpointKey:");
+    if (this.endpointKey == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.endpointKey);
+    }
     first = false;
     if (!first) sb.append(", ");
     sb.append("ucfHash:");
@@ -639,23 +651,21 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
 
   private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
     try {
-      // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
-      __isset_bitfield = 0;
       read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
     } catch (org.apache.thrift.TException te) {
       throw new java.io.IOException(te);
     }
   }
 
-  private static class UserConfigurationUpdateStandardSchemeFactory implements SchemeFactory {
-    public UserConfigurationUpdateStandardScheme getScheme() {
-      return new UserConfigurationUpdateStandardScheme();
+  private static class EndpointUserConfigurationUpdateStandardSchemeFactory implements SchemeFactory {
+    public EndpointUserConfigurationUpdateStandardScheme getScheme() {
+      return new EndpointUserConfigurationUpdateStandardScheme();
     }
   }
 
-  private static class UserConfigurationUpdateStandardScheme extends StandardScheme<UserConfigurationUpdate> {
+  private static class EndpointUserConfigurationUpdateStandardScheme extends StandardScheme<EndpointUserConfigurationUpdate> {
 
-    public void read(org.apache.thrift.protocol.TProtocol iprot, UserConfigurationUpdate struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol iprot, EndpointUserConfigurationUpdate struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TField schemeField;
       iprot.readStructBegin();
       while (true)
@@ -689,10 +699,10 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 4: // CF_SCHEMA_VERSION
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.cfSchemaVersion = iprot.readI32();
-              struct.setCfSchemaVersionIsSet(true);
+          case 4: // ENDPOINT_KEY
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.endpointKey = iprot.readBinary();
+              struct.setEndpointKeyIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -716,7 +726,7 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
       struct.validate();
     }
 
-    public void write(org.apache.thrift.protocol.TProtocol oprot, UserConfigurationUpdate struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol oprot, EndpointUserConfigurationUpdate struct) throws org.apache.thrift.TException {
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
@@ -735,9 +745,11 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
         oprot.writeString(struct.applicationToken);
         oprot.writeFieldEnd();
       }
-      oprot.writeFieldBegin(CF_SCHEMA_VERSION_FIELD_DESC);
-      oprot.writeI32(struct.cfSchemaVersion);
-      oprot.writeFieldEnd();
+      if (struct.endpointKey != null) {
+        oprot.writeFieldBegin(ENDPOINT_KEY_FIELD_DESC);
+        oprot.writeBinary(struct.endpointKey);
+        oprot.writeFieldEnd();
+      }
       if (struct.ucfHash != null) {
         oprot.writeFieldBegin(UCF_HASH_FIELD_DESC);
         oprot.writeBinary(struct.ucfHash);
@@ -749,16 +761,16 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
 
   }
 
-  private static class UserConfigurationUpdateTupleSchemeFactory implements SchemeFactory {
-    public UserConfigurationUpdateTupleScheme getScheme() {
-      return new UserConfigurationUpdateTupleScheme();
+  private static class EndpointUserConfigurationUpdateTupleSchemeFactory implements SchemeFactory {
+    public EndpointUserConfigurationUpdateTupleScheme getScheme() {
+      return new EndpointUserConfigurationUpdateTupleScheme();
     }
   }
 
-  private static class UserConfigurationUpdateTupleScheme extends TupleScheme<UserConfigurationUpdate> {
+  private static class EndpointUserConfigurationUpdateTupleScheme extends TupleScheme<EndpointUserConfigurationUpdate> {
 
     @Override
-    public void write(org.apache.thrift.protocol.TProtocol prot, UserConfigurationUpdate struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol prot, EndpointUserConfigurationUpdate struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
       if (struct.isSetTenantId()) {
@@ -770,7 +782,7 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
       if (struct.isSetApplicationToken()) {
         optionals.set(2);
       }
-      if (struct.isSetCfSchemaVersion()) {
+      if (struct.isSetEndpointKey()) {
         optionals.set(3);
       }
       if (struct.isSetUcfHash()) {
@@ -786,8 +798,8 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
       if (struct.isSetApplicationToken()) {
         oprot.writeString(struct.applicationToken);
       }
-      if (struct.isSetCfSchemaVersion()) {
-        oprot.writeI32(struct.cfSchemaVersion);
+      if (struct.isSetEndpointKey()) {
+        oprot.writeBinary(struct.endpointKey);
       }
       if (struct.isSetUcfHash()) {
         oprot.writeBinary(struct.ucfHash);
@@ -795,7 +807,7 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
     }
 
     @Override
-    public void read(org.apache.thrift.protocol.TProtocol prot, UserConfigurationUpdate struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol prot, EndpointUserConfigurationUpdate struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
       BitSet incoming = iprot.readBitSet(5);
       if (incoming.get(0)) {
@@ -811,8 +823,8 @@ public class UserConfigurationUpdate implements org.apache.thrift.TBase<UserConf
         struct.setApplicationTokenIsSet(true);
       }
       if (incoming.get(3)) {
-        struct.cfSchemaVersion = iprot.readI32();
-        struct.setCfSchemaVersionIsSet(true);
+        struct.endpointKey = iprot.readBinary();
+        struct.setEndpointKeyIsSet(true);
       }
       if (incoming.get(4)) {
         struct.ucfHash = iprot.readBinary();

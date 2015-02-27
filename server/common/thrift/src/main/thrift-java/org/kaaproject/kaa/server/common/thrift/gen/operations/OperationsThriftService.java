@@ -45,11 +45,25 @@ public class OperationsThriftService {
     public void onNotification(Notification notification) throws org.apache.thrift.TException;
 
     /**
-     * User configuration update
+     * Report user configuration update to global user actor
      * 
      * @param notification
      */
     public void onUserConfigurationUpdate(UserConfigurationUpdate notification) throws org.apache.thrift.TException;
+
+    /**
+     * Report user configuration update to endpoint actor
+     * 
+     * @param notification
+     */
+    public void onEndpointUserConfigurationUpdate(EndpointUserConfigurationUpdate notification) throws org.apache.thrift.TException;
+
+    /**
+     * Report global route update to global user actor
+     * 
+     * @param message
+     */
+    public void onGlobalRouteUpdate(GlobalRouteUpdate message) throws org.apache.thrift.TException;
 
     /**
      * Set redirection rule for Operations server
@@ -65,13 +79,6 @@ public class OperationsThriftService {
      */
     public void sendEventMessage(List<EventMessage> messages) throws org.apache.thrift.TException;
 
-    /**
-     * Interface to send global route update
-     * 
-     * @param message
-     */
-    public void sendGlobalRouteUpdate(GlobalRouteUpdate message) throws org.apache.thrift.TException;
-
   }
 
   public interface AsyncIface extends org.kaaproject.kaa.server.common.thrift.gen.cli.CliThriftService .AsyncIface {
@@ -80,11 +87,13 @@ public class OperationsThriftService {
 
     public void onUserConfigurationUpdate(UserConfigurationUpdate notification, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
+    public void onEndpointUserConfigurationUpdate(EndpointUserConfigurationUpdate notification, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void onGlobalRouteUpdate(GlobalRouteUpdate message, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
     public void setRedirectionRule(RedirectionRule redirectionRule, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void sendEventMessage(List<EventMessage> messages, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
-
-    public void sendGlobalRouteUpdate(GlobalRouteUpdate message, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
   }
 
@@ -148,6 +157,46 @@ public class OperationsThriftService {
       return;
     }
 
+    public void onEndpointUserConfigurationUpdate(EndpointUserConfigurationUpdate notification) throws org.apache.thrift.TException
+    {
+      send_onEndpointUserConfigurationUpdate(notification);
+      recv_onEndpointUserConfigurationUpdate();
+    }
+
+    public void send_onEndpointUserConfigurationUpdate(EndpointUserConfigurationUpdate notification) throws org.apache.thrift.TException
+    {
+      onEndpointUserConfigurationUpdate_args args = new onEndpointUserConfigurationUpdate_args();
+      args.setNotification(notification);
+      sendBase("onEndpointUserConfigurationUpdate", args);
+    }
+
+    public void recv_onEndpointUserConfigurationUpdate() throws org.apache.thrift.TException
+    {
+      onEndpointUserConfigurationUpdate_result result = new onEndpointUserConfigurationUpdate_result();
+      receiveBase(result, "onEndpointUserConfigurationUpdate");
+      return;
+    }
+
+    public void onGlobalRouteUpdate(GlobalRouteUpdate message) throws org.apache.thrift.TException
+    {
+      send_onGlobalRouteUpdate(message);
+      recv_onGlobalRouteUpdate();
+    }
+
+    public void send_onGlobalRouteUpdate(GlobalRouteUpdate message) throws org.apache.thrift.TException
+    {
+      onGlobalRouteUpdate_args args = new onGlobalRouteUpdate_args();
+      args.setMessage(message);
+      sendBase("onGlobalRouteUpdate", args);
+    }
+
+    public void recv_onGlobalRouteUpdate() throws org.apache.thrift.TException
+    {
+      onGlobalRouteUpdate_result result = new onGlobalRouteUpdate_result();
+      receiveBase(result, "onGlobalRouteUpdate");
+      return;
+    }
+
     public void setRedirectionRule(RedirectionRule redirectionRule) throws org.apache.thrift.TException
     {
       send_setRedirectionRule(redirectionRule);
@@ -185,26 +234,6 @@ public class OperationsThriftService {
     {
       sendEventMessage_result result = new sendEventMessage_result();
       receiveBase(result, "sendEventMessage");
-      return;
-    }
-
-    public void sendGlobalRouteUpdate(GlobalRouteUpdate message) throws org.apache.thrift.TException
-    {
-      send_sendGlobalRouteUpdate(message);
-      recv_sendGlobalRouteUpdate();
-    }
-
-    public void send_sendGlobalRouteUpdate(GlobalRouteUpdate message) throws org.apache.thrift.TException
-    {
-      sendGlobalRouteUpdate_args args = new sendGlobalRouteUpdate_args();
-      args.setMessage(message);
-      sendBase("sendGlobalRouteUpdate", args);
-    }
-
-    public void recv_sendGlobalRouteUpdate() throws org.apache.thrift.TException
-    {
-      sendGlobalRouteUpdate_result result = new sendGlobalRouteUpdate_result();
-      receiveBase(result, "sendGlobalRouteUpdate");
       return;
     }
 
@@ -290,6 +319,70 @@ public class OperationsThriftService {
       }
     }
 
+    public void onEndpointUserConfigurationUpdate(EndpointUserConfigurationUpdate notification, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      onEndpointUserConfigurationUpdate_call method_call = new onEndpointUserConfigurationUpdate_call(notification, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class onEndpointUserConfigurationUpdate_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private EndpointUserConfigurationUpdate notification;
+      public onEndpointUserConfigurationUpdate_call(EndpointUserConfigurationUpdate notification, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.notification = notification;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("onEndpointUserConfigurationUpdate", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        onEndpointUserConfigurationUpdate_args args = new onEndpointUserConfigurationUpdate_args();
+        args.setNotification(notification);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_onEndpointUserConfigurationUpdate();
+      }
+    }
+
+    public void onGlobalRouteUpdate(GlobalRouteUpdate message, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      onGlobalRouteUpdate_call method_call = new onGlobalRouteUpdate_call(message, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class onGlobalRouteUpdate_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private GlobalRouteUpdate message;
+      public onGlobalRouteUpdate_call(GlobalRouteUpdate message, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.message = message;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("onGlobalRouteUpdate", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        onGlobalRouteUpdate_args args = new onGlobalRouteUpdate_args();
+        args.setMessage(message);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_onGlobalRouteUpdate();
+      }
+    }
+
     public void setRedirectionRule(RedirectionRule redirectionRule, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       setRedirectionRule_call method_call = new setRedirectionRule_call(redirectionRule, resultHandler, this, ___protocolFactory, ___transport);
@@ -354,38 +447,6 @@ public class OperationsThriftService {
       }
     }
 
-    public void sendGlobalRouteUpdate(GlobalRouteUpdate message, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
-      checkReady();
-      sendGlobalRouteUpdate_call method_call = new sendGlobalRouteUpdate_call(message, resultHandler, this, ___protocolFactory, ___transport);
-      this.___currentMethod = method_call;
-      ___manager.call(method_call);
-    }
-
-    public static class sendGlobalRouteUpdate_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private GlobalRouteUpdate message;
-      public sendGlobalRouteUpdate_call(GlobalRouteUpdate message, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
-        super(client, protocolFactory, transport, resultHandler, false);
-        this.message = message;
-      }
-
-      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("sendGlobalRouteUpdate", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        sendGlobalRouteUpdate_args args = new sendGlobalRouteUpdate_args();
-        args.setMessage(message);
-        args.write(prot);
-        prot.writeMessageEnd();
-      }
-
-      public void getResult() throws org.apache.thrift.TException {
-        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
-          throw new IllegalStateException("Method call not finished!");
-        }
-        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
-        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        (new Client(prot)).recv_sendGlobalRouteUpdate();
-      }
-    }
-
   }
 
   public static class Processor<I extends Iface> extends org.kaaproject.kaa.server.common.thrift.gen.cli.CliThriftService.Processor<I> implements org.apache.thrift.TProcessor {
@@ -401,9 +462,10 @@ public class OperationsThriftService {
     private static <I extends Iface> Map<String,  org.apache.thrift.ProcessFunction<I, ? extends  org.apache.thrift.TBase>> getProcessMap(Map<String,  org.apache.thrift.ProcessFunction<I, ? extends  org.apache.thrift.TBase>> processMap) {
       processMap.put("onNotification", new onNotification());
       processMap.put("onUserConfigurationUpdate", new onUserConfigurationUpdate());
+      processMap.put("onEndpointUserConfigurationUpdate", new onEndpointUserConfigurationUpdate());
+      processMap.put("onGlobalRouteUpdate", new onGlobalRouteUpdate());
       processMap.put("setRedirectionRule", new setRedirectionRule());
       processMap.put("sendEventMessage", new sendEventMessage());
-      processMap.put("sendGlobalRouteUpdate", new sendGlobalRouteUpdate());
       return processMap;
     }
 
@@ -443,6 +505,46 @@ public class OperationsThriftService {
       public onUserConfigurationUpdate_result getResult(I iface, onUserConfigurationUpdate_args args) throws org.apache.thrift.TException {
         onUserConfigurationUpdate_result result = new onUserConfigurationUpdate_result();
         iface.onUserConfigurationUpdate(args.notification);
+        return result;
+      }
+    }
+
+    public static class onEndpointUserConfigurationUpdate<I extends Iface> extends org.apache.thrift.ProcessFunction<I, onEndpointUserConfigurationUpdate_args> {
+      public onEndpointUserConfigurationUpdate() {
+        super("onEndpointUserConfigurationUpdate");
+      }
+
+      public onEndpointUserConfigurationUpdate_args getEmptyArgsInstance() {
+        return new onEndpointUserConfigurationUpdate_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public onEndpointUserConfigurationUpdate_result getResult(I iface, onEndpointUserConfigurationUpdate_args args) throws org.apache.thrift.TException {
+        onEndpointUserConfigurationUpdate_result result = new onEndpointUserConfigurationUpdate_result();
+        iface.onEndpointUserConfigurationUpdate(args.notification);
+        return result;
+      }
+    }
+
+    public static class onGlobalRouteUpdate<I extends Iface> extends org.apache.thrift.ProcessFunction<I, onGlobalRouteUpdate_args> {
+      public onGlobalRouteUpdate() {
+        super("onGlobalRouteUpdate");
+      }
+
+      public onGlobalRouteUpdate_args getEmptyArgsInstance() {
+        return new onGlobalRouteUpdate_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public onGlobalRouteUpdate_result getResult(I iface, onGlobalRouteUpdate_args args) throws org.apache.thrift.TException {
+        onGlobalRouteUpdate_result result = new onGlobalRouteUpdate_result();
+        iface.onGlobalRouteUpdate(args.message);
         return result;
       }
     }
@@ -487,26 +589,6 @@ public class OperationsThriftService {
       }
     }
 
-    public static class sendGlobalRouteUpdate<I extends Iface> extends org.apache.thrift.ProcessFunction<I, sendGlobalRouteUpdate_args> {
-      public sendGlobalRouteUpdate() {
-        super("sendGlobalRouteUpdate");
-      }
-
-      public sendGlobalRouteUpdate_args getEmptyArgsInstance() {
-        return new sendGlobalRouteUpdate_args();
-      }
-
-      protected boolean isOneway() {
-        return false;
-      }
-
-      public sendGlobalRouteUpdate_result getResult(I iface, sendGlobalRouteUpdate_args args) throws org.apache.thrift.TException {
-        sendGlobalRouteUpdate_result result = new sendGlobalRouteUpdate_result();
-        iface.sendGlobalRouteUpdate(args.message);
-        return result;
-      }
-    }
-
   }
 
   public static class AsyncProcessor<I extends AsyncIface> extends org.kaaproject.kaa.server.common.thrift.gen.cli.CliThriftService.AsyncProcessor<I> {
@@ -522,9 +604,10 @@ public class OperationsThriftService {
     private static <I extends AsyncIface> Map<String,  org.apache.thrift.AsyncProcessFunction<I, ? extends  org.apache.thrift.TBase,?>> getProcessMap(Map<String,  org.apache.thrift.AsyncProcessFunction<I, ? extends  org.apache.thrift.TBase, ?>> processMap) {
       processMap.put("onNotification", new onNotification());
       processMap.put("onUserConfigurationUpdate", new onUserConfigurationUpdate());
+      processMap.put("onEndpointUserConfigurationUpdate", new onEndpointUserConfigurationUpdate());
+      processMap.put("onGlobalRouteUpdate", new onGlobalRouteUpdate());
       processMap.put("setRedirectionRule", new setRedirectionRule());
       processMap.put("sendEventMessage", new sendEventMessage());
-      processMap.put("sendGlobalRouteUpdate", new sendGlobalRouteUpdate());
       return processMap;
     }
 
@@ -628,6 +711,106 @@ public class OperationsThriftService {
       }
     }
 
+    public static class onEndpointUserConfigurationUpdate<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, onEndpointUserConfigurationUpdate_args, Void> {
+      public onEndpointUserConfigurationUpdate() {
+        super("onEndpointUserConfigurationUpdate");
+      }
+
+      public onEndpointUserConfigurationUpdate_args getEmptyArgsInstance() {
+        return new onEndpointUserConfigurationUpdate_args();
+      }
+
+      public AsyncMethodCallback<Void> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<Void>() { 
+          public void onComplete(Void o) {
+            onEndpointUserConfigurationUpdate_result result = new onEndpointUserConfigurationUpdate_result();
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            onEndpointUserConfigurationUpdate_result result = new onEndpointUserConfigurationUpdate_result();
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, onEndpointUserConfigurationUpdate_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws TException {
+        iface.onEndpointUserConfigurationUpdate(args.notification,resultHandler);
+      }
+    }
+
+    public static class onGlobalRouteUpdate<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, onGlobalRouteUpdate_args, Void> {
+      public onGlobalRouteUpdate() {
+        super("onGlobalRouteUpdate");
+      }
+
+      public onGlobalRouteUpdate_args getEmptyArgsInstance() {
+        return new onGlobalRouteUpdate_args();
+      }
+
+      public AsyncMethodCallback<Void> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<Void>() { 
+          public void onComplete(Void o) {
+            onGlobalRouteUpdate_result result = new onGlobalRouteUpdate_result();
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            onGlobalRouteUpdate_result result = new onGlobalRouteUpdate_result();
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, onGlobalRouteUpdate_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws TException {
+        iface.onGlobalRouteUpdate(args.message,resultHandler);
+      }
+    }
+
     public static class setRedirectionRule<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, setRedirectionRule_args, Void> {
       public setRedirectionRule() {
         super("setRedirectionRule");
@@ -725,56 +908,6 @@ public class OperationsThriftService {
 
       public void start(I iface, sendEventMessage_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws TException {
         iface.sendEventMessage(args.messages,resultHandler);
-      }
-    }
-
-    public static class sendGlobalRouteUpdate<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, sendGlobalRouteUpdate_args, Void> {
-      public sendGlobalRouteUpdate() {
-        super("sendGlobalRouteUpdate");
-      }
-
-      public sendGlobalRouteUpdate_args getEmptyArgsInstance() {
-        return new sendGlobalRouteUpdate_args();
-      }
-
-      public AsyncMethodCallback<Void> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
-        final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<Void>() { 
-          public void onComplete(Void o) {
-            sendGlobalRouteUpdate_result result = new sendGlobalRouteUpdate_result();
-            try {
-              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
-              return;
-            } catch (Exception e) {
-              LOGGER.error("Exception writing to internal frame buffer", e);
-            }
-            fb.close();
-          }
-          public void onError(Exception e) {
-            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
-            org.apache.thrift.TBase msg;
-            sendGlobalRouteUpdate_result result = new sendGlobalRouteUpdate_result();
-            {
-              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
-            }
-            try {
-              fcall.sendResponse(fb,msg,msgType,seqid);
-              return;
-            } catch (Exception ex) {
-              LOGGER.error("Exception writing to internal frame buffer", ex);
-            }
-            fb.close();
-          }
-        };
-      }
-
-      protected boolean isOneway() {
-        return false;
-      }
-
-      public void start(I iface, sendGlobalRouteUpdate_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws TException {
-        iface.sendGlobalRouteUpdate(args.message,resultHandler);
       }
     }
 
@@ -2002,6 +2135,1234 @@ public class OperationsThriftService {
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, onUserConfigurationUpdate_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+      }
+    }
+
+  }
+
+  public static class onEndpointUserConfigurationUpdate_args implements org.apache.thrift.TBase<onEndpointUserConfigurationUpdate_args, onEndpointUserConfigurationUpdate_args._Fields>, java.io.Serializable, Cloneable, Comparable<onEndpointUserConfigurationUpdate_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("onEndpointUserConfigurationUpdate_args");
+
+    private static final org.apache.thrift.protocol.TField NOTIFICATION_FIELD_DESC = new org.apache.thrift.protocol.TField("notification", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new onEndpointUserConfigurationUpdate_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new onEndpointUserConfigurationUpdate_argsTupleSchemeFactory());
+    }
+
+    public EndpointUserConfigurationUpdate notification; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      NOTIFICATION((short)1, "notification");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // NOTIFICATION
+            return NOTIFICATION;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.NOTIFICATION, new org.apache.thrift.meta_data.FieldMetaData("notification", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, EndpointUserConfigurationUpdate.class)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(onEndpointUserConfigurationUpdate_args.class, metaDataMap);
+    }
+
+    public onEndpointUserConfigurationUpdate_args() {
+    }
+
+    public onEndpointUserConfigurationUpdate_args(
+      EndpointUserConfigurationUpdate notification)
+    {
+      this();
+      this.notification = notification;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public onEndpointUserConfigurationUpdate_args(onEndpointUserConfigurationUpdate_args other) {
+      if (other.isSetNotification()) {
+        this.notification = new EndpointUserConfigurationUpdate(other.notification);
+      }
+    }
+
+    public onEndpointUserConfigurationUpdate_args deepCopy() {
+      return new onEndpointUserConfigurationUpdate_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.notification = null;
+    }
+
+    public EndpointUserConfigurationUpdate getNotification() {
+      return this.notification;
+    }
+
+    public onEndpointUserConfigurationUpdate_args setNotification(EndpointUserConfigurationUpdate notification) {
+      this.notification = notification;
+      return this;
+    }
+
+    public void unsetNotification() {
+      this.notification = null;
+    }
+
+    /** Returns true if field notification is set (has been assigned a value) and false otherwise */
+    public boolean isSetNotification() {
+      return this.notification != null;
+    }
+
+    public void setNotificationIsSet(boolean value) {
+      if (!value) {
+        this.notification = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case NOTIFICATION:
+        if (value == null) {
+          unsetNotification();
+        } else {
+          setNotification((EndpointUserConfigurationUpdate)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case NOTIFICATION:
+        return getNotification();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case NOTIFICATION:
+        return isSetNotification();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof onEndpointUserConfigurationUpdate_args)
+        return this.equals((onEndpointUserConfigurationUpdate_args)that);
+      return false;
+    }
+
+    public boolean equals(onEndpointUserConfigurationUpdate_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_notification = true && this.isSetNotification();
+      boolean that_present_notification = true && that.isSetNotification();
+      if (this_present_notification || that_present_notification) {
+        if (!(this_present_notification && that_present_notification))
+          return false;
+        if (!this.notification.equals(that.notification))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_notification = true && (isSetNotification());
+      builder.append(present_notification);
+      if (present_notification)
+        builder.append(notification);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(onEndpointUserConfigurationUpdate_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetNotification()).compareTo(other.isSetNotification());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetNotification()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.notification, other.notification);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("onEndpointUserConfigurationUpdate_args(");
+      boolean first = true;
+
+      sb.append("notification:");
+      if (this.notification == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.notification);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+      if (notification != null) {
+        notification.validate();
+      }
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class onEndpointUserConfigurationUpdate_argsStandardSchemeFactory implements SchemeFactory {
+      public onEndpointUserConfigurationUpdate_argsStandardScheme getScheme() {
+        return new onEndpointUserConfigurationUpdate_argsStandardScheme();
+      }
+    }
+
+    private static class onEndpointUserConfigurationUpdate_argsStandardScheme extends StandardScheme<onEndpointUserConfigurationUpdate_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, onEndpointUserConfigurationUpdate_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // NOTIFICATION
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.notification = new EndpointUserConfigurationUpdate();
+                struct.notification.read(iprot);
+                struct.setNotificationIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, onEndpointUserConfigurationUpdate_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.notification != null) {
+          oprot.writeFieldBegin(NOTIFICATION_FIELD_DESC);
+          struct.notification.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class onEndpointUserConfigurationUpdate_argsTupleSchemeFactory implements SchemeFactory {
+      public onEndpointUserConfigurationUpdate_argsTupleScheme getScheme() {
+        return new onEndpointUserConfigurationUpdate_argsTupleScheme();
+      }
+    }
+
+    private static class onEndpointUserConfigurationUpdate_argsTupleScheme extends TupleScheme<onEndpointUserConfigurationUpdate_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, onEndpointUserConfigurationUpdate_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetNotification()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetNotification()) {
+          struct.notification.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, onEndpointUserConfigurationUpdate_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.notification = new EndpointUserConfigurationUpdate();
+          struct.notification.read(iprot);
+          struct.setNotificationIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class onEndpointUserConfigurationUpdate_result implements org.apache.thrift.TBase<onEndpointUserConfigurationUpdate_result, onEndpointUserConfigurationUpdate_result._Fields>, java.io.Serializable, Cloneable, Comparable<onEndpointUserConfigurationUpdate_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("onEndpointUserConfigurationUpdate_result");
+
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new onEndpointUserConfigurationUpdate_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new onEndpointUserConfigurationUpdate_resultTupleSchemeFactory());
+    }
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(onEndpointUserConfigurationUpdate_result.class, metaDataMap);
+    }
+
+    public onEndpointUserConfigurationUpdate_result() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public onEndpointUserConfigurationUpdate_result(onEndpointUserConfigurationUpdate_result other) {
+    }
+
+    public onEndpointUserConfigurationUpdate_result deepCopy() {
+      return new onEndpointUserConfigurationUpdate_result(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof onEndpointUserConfigurationUpdate_result)
+        return this.equals((onEndpointUserConfigurationUpdate_result)that);
+      return false;
+    }
+
+    public boolean equals(onEndpointUserConfigurationUpdate_result that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(onEndpointUserConfigurationUpdate_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("onEndpointUserConfigurationUpdate_result(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class onEndpointUserConfigurationUpdate_resultStandardSchemeFactory implements SchemeFactory {
+      public onEndpointUserConfigurationUpdate_resultStandardScheme getScheme() {
+        return new onEndpointUserConfigurationUpdate_resultStandardScheme();
+      }
+    }
+
+    private static class onEndpointUserConfigurationUpdate_resultStandardScheme extends StandardScheme<onEndpointUserConfigurationUpdate_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, onEndpointUserConfigurationUpdate_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, onEndpointUserConfigurationUpdate_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class onEndpointUserConfigurationUpdate_resultTupleSchemeFactory implements SchemeFactory {
+      public onEndpointUserConfigurationUpdate_resultTupleScheme getScheme() {
+        return new onEndpointUserConfigurationUpdate_resultTupleScheme();
+      }
+    }
+
+    private static class onEndpointUserConfigurationUpdate_resultTupleScheme extends TupleScheme<onEndpointUserConfigurationUpdate_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, onEndpointUserConfigurationUpdate_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, onEndpointUserConfigurationUpdate_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+      }
+    }
+
+  }
+
+  public static class onGlobalRouteUpdate_args implements org.apache.thrift.TBase<onGlobalRouteUpdate_args, onGlobalRouteUpdate_args._Fields>, java.io.Serializable, Cloneable, Comparable<onGlobalRouteUpdate_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("onGlobalRouteUpdate_args");
+
+    private static final org.apache.thrift.protocol.TField MESSAGE_FIELD_DESC = new org.apache.thrift.protocol.TField("message", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new onGlobalRouteUpdate_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new onGlobalRouteUpdate_argsTupleSchemeFactory());
+    }
+
+    public GlobalRouteUpdate message; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      MESSAGE((short)1, "message");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // MESSAGE
+            return MESSAGE;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.MESSAGE, new org.apache.thrift.meta_data.FieldMetaData("message", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, GlobalRouteUpdate.class)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(onGlobalRouteUpdate_args.class, metaDataMap);
+    }
+
+    public onGlobalRouteUpdate_args() {
+    }
+
+    public onGlobalRouteUpdate_args(
+      GlobalRouteUpdate message)
+    {
+      this();
+      this.message = message;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public onGlobalRouteUpdate_args(onGlobalRouteUpdate_args other) {
+      if (other.isSetMessage()) {
+        this.message = new GlobalRouteUpdate(other.message);
+      }
+    }
+
+    public onGlobalRouteUpdate_args deepCopy() {
+      return new onGlobalRouteUpdate_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.message = null;
+    }
+
+    public GlobalRouteUpdate getMessage() {
+      return this.message;
+    }
+
+    public onGlobalRouteUpdate_args setMessage(GlobalRouteUpdate message) {
+      this.message = message;
+      return this;
+    }
+
+    public void unsetMessage() {
+      this.message = null;
+    }
+
+    /** Returns true if field message is set (has been assigned a value) and false otherwise */
+    public boolean isSetMessage() {
+      return this.message != null;
+    }
+
+    public void setMessageIsSet(boolean value) {
+      if (!value) {
+        this.message = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case MESSAGE:
+        if (value == null) {
+          unsetMessage();
+        } else {
+          setMessage((GlobalRouteUpdate)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case MESSAGE:
+        return getMessage();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case MESSAGE:
+        return isSetMessage();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof onGlobalRouteUpdate_args)
+        return this.equals((onGlobalRouteUpdate_args)that);
+      return false;
+    }
+
+    public boolean equals(onGlobalRouteUpdate_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_message = true && this.isSetMessage();
+      boolean that_present_message = true && that.isSetMessage();
+      if (this_present_message || that_present_message) {
+        if (!(this_present_message && that_present_message))
+          return false;
+        if (!this.message.equals(that.message))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_message = true && (isSetMessage());
+      builder.append(present_message);
+      if (present_message)
+        builder.append(message);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(onGlobalRouteUpdate_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetMessage()).compareTo(other.isSetMessage());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetMessage()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.message, other.message);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("onGlobalRouteUpdate_args(");
+      boolean first = true;
+
+      sb.append("message:");
+      if (this.message == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.message);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+      if (message != null) {
+        message.validate();
+      }
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class onGlobalRouteUpdate_argsStandardSchemeFactory implements SchemeFactory {
+      public onGlobalRouteUpdate_argsStandardScheme getScheme() {
+        return new onGlobalRouteUpdate_argsStandardScheme();
+      }
+    }
+
+    private static class onGlobalRouteUpdate_argsStandardScheme extends StandardScheme<onGlobalRouteUpdate_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, onGlobalRouteUpdate_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // MESSAGE
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.message = new GlobalRouteUpdate();
+                struct.message.read(iprot);
+                struct.setMessageIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, onGlobalRouteUpdate_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.message != null) {
+          oprot.writeFieldBegin(MESSAGE_FIELD_DESC);
+          struct.message.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class onGlobalRouteUpdate_argsTupleSchemeFactory implements SchemeFactory {
+      public onGlobalRouteUpdate_argsTupleScheme getScheme() {
+        return new onGlobalRouteUpdate_argsTupleScheme();
+      }
+    }
+
+    private static class onGlobalRouteUpdate_argsTupleScheme extends TupleScheme<onGlobalRouteUpdate_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, onGlobalRouteUpdate_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetMessage()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetMessage()) {
+          struct.message.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, onGlobalRouteUpdate_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.message = new GlobalRouteUpdate();
+          struct.message.read(iprot);
+          struct.setMessageIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class onGlobalRouteUpdate_result implements org.apache.thrift.TBase<onGlobalRouteUpdate_result, onGlobalRouteUpdate_result._Fields>, java.io.Serializable, Cloneable, Comparable<onGlobalRouteUpdate_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("onGlobalRouteUpdate_result");
+
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new onGlobalRouteUpdate_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new onGlobalRouteUpdate_resultTupleSchemeFactory());
+    }
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(onGlobalRouteUpdate_result.class, metaDataMap);
+    }
+
+    public onGlobalRouteUpdate_result() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public onGlobalRouteUpdate_result(onGlobalRouteUpdate_result other) {
+    }
+
+    public onGlobalRouteUpdate_result deepCopy() {
+      return new onGlobalRouteUpdate_result(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof onGlobalRouteUpdate_result)
+        return this.equals((onGlobalRouteUpdate_result)that);
+      return false;
+    }
+
+    public boolean equals(onGlobalRouteUpdate_result that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(onGlobalRouteUpdate_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("onGlobalRouteUpdate_result(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class onGlobalRouteUpdate_resultStandardSchemeFactory implements SchemeFactory {
+      public onGlobalRouteUpdate_resultStandardScheme getScheme() {
+        return new onGlobalRouteUpdate_resultStandardScheme();
+      }
+    }
+
+    private static class onGlobalRouteUpdate_resultStandardScheme extends StandardScheme<onGlobalRouteUpdate_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, onGlobalRouteUpdate_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, onGlobalRouteUpdate_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class onGlobalRouteUpdate_resultTupleSchemeFactory implements SchemeFactory {
+      public onGlobalRouteUpdate_resultTupleScheme getScheme() {
+        return new onGlobalRouteUpdate_resultTupleScheme();
+      }
+    }
+
+    private static class onGlobalRouteUpdate_resultTupleScheme extends TupleScheme<onGlobalRouteUpdate_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, onGlobalRouteUpdate_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, onGlobalRouteUpdate_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
       }
     }
@@ -3279,620 +4640,6 @@ public class OperationsThriftService {
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, sendEventMessage_result struct) throws org.apache.thrift.TException {
-        TTupleProtocol iprot = (TTupleProtocol) prot;
-      }
-    }
-
-  }
-
-  public static class sendGlobalRouteUpdate_args implements org.apache.thrift.TBase<sendGlobalRouteUpdate_args, sendGlobalRouteUpdate_args._Fields>, java.io.Serializable, Cloneable, Comparable<sendGlobalRouteUpdate_args>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("sendGlobalRouteUpdate_args");
-
-    private static final org.apache.thrift.protocol.TField MESSAGE_FIELD_DESC = new org.apache.thrift.protocol.TField("message", org.apache.thrift.protocol.TType.STRUCT, (short)1);
-
-    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
-    static {
-      schemes.put(StandardScheme.class, new sendGlobalRouteUpdate_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new sendGlobalRouteUpdate_argsTupleSchemeFactory());
-    }
-
-    public GlobalRouteUpdate message; // required
-
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
-    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-      MESSAGE((short)1, "message");
-
-      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
-
-      static {
-        for (_Fields field : EnumSet.allOf(_Fields.class)) {
-          byName.put(field.getFieldName(), field);
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, or null if its not found.
-       */
-      public static _Fields findByThriftId(int fieldId) {
-        switch(fieldId) {
-          case 1: // MESSAGE
-            return MESSAGE;
-          default:
-            return null;
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, throwing an exception
-       * if it is not found.
-       */
-      public static _Fields findByThriftIdOrThrow(int fieldId) {
-        _Fields fields = findByThriftId(fieldId);
-        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
-        return fields;
-      }
-
-      /**
-       * Find the _Fields constant that matches name, or null if its not found.
-       */
-      public static _Fields findByName(String name) {
-        return byName.get(name);
-      }
-
-      private final short _thriftId;
-      private final String _fieldName;
-
-      _Fields(short thriftId, String fieldName) {
-        _thriftId = thriftId;
-        _fieldName = fieldName;
-      }
-
-      public short getThriftFieldId() {
-        return _thriftId;
-      }
-
-      public String getFieldName() {
-        return _fieldName;
-      }
-    }
-
-    // isset id assignments
-    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
-    static {
-      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      tmpMap.put(_Fields.MESSAGE, new org.apache.thrift.meta_data.FieldMetaData("message", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, GlobalRouteUpdate.class)));
-      metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(sendGlobalRouteUpdate_args.class, metaDataMap);
-    }
-
-    public sendGlobalRouteUpdate_args() {
-    }
-
-    public sendGlobalRouteUpdate_args(
-      GlobalRouteUpdate message)
-    {
-      this();
-      this.message = message;
-    }
-
-    /**
-     * Performs a deep copy on <i>other</i>.
-     */
-    public sendGlobalRouteUpdate_args(sendGlobalRouteUpdate_args other) {
-      if (other.isSetMessage()) {
-        this.message = new GlobalRouteUpdate(other.message);
-      }
-    }
-
-    public sendGlobalRouteUpdate_args deepCopy() {
-      return new sendGlobalRouteUpdate_args(this);
-    }
-
-    @Override
-    public void clear() {
-      this.message = null;
-    }
-
-    public GlobalRouteUpdate getMessage() {
-      return this.message;
-    }
-
-    public sendGlobalRouteUpdate_args setMessage(GlobalRouteUpdate message) {
-      this.message = message;
-      return this;
-    }
-
-    public void unsetMessage() {
-      this.message = null;
-    }
-
-    /** Returns true if field message is set (has been assigned a value) and false otherwise */
-    public boolean isSetMessage() {
-      return this.message != null;
-    }
-
-    public void setMessageIsSet(boolean value) {
-      if (!value) {
-        this.message = null;
-      }
-    }
-
-    public void setFieldValue(_Fields field, Object value) {
-      switch (field) {
-      case MESSAGE:
-        if (value == null) {
-          unsetMessage();
-        } else {
-          setMessage((GlobalRouteUpdate)value);
-        }
-        break;
-
-      }
-    }
-
-    public Object getFieldValue(_Fields field) {
-      switch (field) {
-      case MESSAGE:
-        return getMessage();
-
-      }
-      throw new IllegalStateException();
-    }
-
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
-    public boolean isSet(_Fields field) {
-      if (field == null) {
-        throw new IllegalArgumentException();
-      }
-
-      switch (field) {
-      case MESSAGE:
-        return isSetMessage();
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-      if (that == null)
-        return false;
-      if (that instanceof sendGlobalRouteUpdate_args)
-        return this.equals((sendGlobalRouteUpdate_args)that);
-      return false;
-    }
-
-    public boolean equals(sendGlobalRouteUpdate_args that) {
-      if (that == null)
-        return false;
-
-      boolean this_present_message = true && this.isSetMessage();
-      boolean that_present_message = true && that.isSetMessage();
-      if (this_present_message || that_present_message) {
-        if (!(this_present_message && that_present_message))
-          return false;
-        if (!this.message.equals(that.message))
-          return false;
-      }
-
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      HashCodeBuilder builder = new HashCodeBuilder();
-
-      boolean present_message = true && (isSetMessage());
-      builder.append(present_message);
-      if (present_message)
-        builder.append(message);
-
-      return builder.toHashCode();
-    }
-
-    @Override
-    public int compareTo(sendGlobalRouteUpdate_args other) {
-      if (!getClass().equals(other.getClass())) {
-        return getClass().getName().compareTo(other.getClass().getName());
-      }
-
-      int lastComparison = 0;
-
-      lastComparison = Boolean.valueOf(isSetMessage()).compareTo(other.isSetMessage());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetMessage()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.message, other.message);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      return 0;
-    }
-
-    public _Fields fieldForId(int fieldId) {
-      return _Fields.findByThriftId(fieldId);
-    }
-
-    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
-      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
-    }
-
-    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
-      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder("sendGlobalRouteUpdate_args(");
-      boolean first = true;
-
-      sb.append("message:");
-      if (this.message == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.message);
-      }
-      first = false;
-      sb.append(")");
-      return sb.toString();
-    }
-
-    public void validate() throws org.apache.thrift.TException {
-      // check for required fields
-      // check for sub-struct validity
-      if (message != null) {
-        message.validate();
-      }
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-      try {
-        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-      try {
-        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private static class sendGlobalRouteUpdate_argsStandardSchemeFactory implements SchemeFactory {
-      public sendGlobalRouteUpdate_argsStandardScheme getScheme() {
-        return new sendGlobalRouteUpdate_argsStandardScheme();
-      }
-    }
-
-    private static class sendGlobalRouteUpdate_argsStandardScheme extends StandardScheme<sendGlobalRouteUpdate_args> {
-
-      public void read(org.apache.thrift.protocol.TProtocol iprot, sendGlobalRouteUpdate_args struct) throws org.apache.thrift.TException {
-        org.apache.thrift.protocol.TField schemeField;
-        iprot.readStructBegin();
-        while (true)
-        {
-          schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
-            break;
-          }
-          switch (schemeField.id) {
-            case 1: // MESSAGE
-              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-                struct.message = new GlobalRouteUpdate();
-                struct.message.read(iprot);
-                struct.setMessageIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            default:
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-          }
-          iprot.readFieldEnd();
-        }
-        iprot.readStructEnd();
-
-        // check for required fields of primitive type, which can't be checked in the validate method
-        struct.validate();
-      }
-
-      public void write(org.apache.thrift.protocol.TProtocol oprot, sendGlobalRouteUpdate_args struct) throws org.apache.thrift.TException {
-        struct.validate();
-
-        oprot.writeStructBegin(STRUCT_DESC);
-        if (struct.message != null) {
-          oprot.writeFieldBegin(MESSAGE_FIELD_DESC);
-          struct.message.write(oprot);
-          oprot.writeFieldEnd();
-        }
-        oprot.writeFieldStop();
-        oprot.writeStructEnd();
-      }
-
-    }
-
-    private static class sendGlobalRouteUpdate_argsTupleSchemeFactory implements SchemeFactory {
-      public sendGlobalRouteUpdate_argsTupleScheme getScheme() {
-        return new sendGlobalRouteUpdate_argsTupleScheme();
-      }
-    }
-
-    private static class sendGlobalRouteUpdate_argsTupleScheme extends TupleScheme<sendGlobalRouteUpdate_args> {
-
-      @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, sendGlobalRouteUpdate_args struct) throws org.apache.thrift.TException {
-        TTupleProtocol oprot = (TTupleProtocol) prot;
-        BitSet optionals = new BitSet();
-        if (struct.isSetMessage()) {
-          optionals.set(0);
-        }
-        oprot.writeBitSet(optionals, 1);
-        if (struct.isSetMessage()) {
-          struct.message.write(oprot);
-        }
-      }
-
-      @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, sendGlobalRouteUpdate_args struct) throws org.apache.thrift.TException {
-        TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(1);
-        if (incoming.get(0)) {
-          struct.message = new GlobalRouteUpdate();
-          struct.message.read(iprot);
-          struct.setMessageIsSet(true);
-        }
-      }
-    }
-
-  }
-
-  public static class sendGlobalRouteUpdate_result implements org.apache.thrift.TBase<sendGlobalRouteUpdate_result, sendGlobalRouteUpdate_result._Fields>, java.io.Serializable, Cloneable, Comparable<sendGlobalRouteUpdate_result>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("sendGlobalRouteUpdate_result");
-
-
-    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
-    static {
-      schemes.put(StandardScheme.class, new sendGlobalRouteUpdate_resultStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new sendGlobalRouteUpdate_resultTupleSchemeFactory());
-    }
-
-
-    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
-    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-;
-
-      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
-
-      static {
-        for (_Fields field : EnumSet.allOf(_Fields.class)) {
-          byName.put(field.getFieldName(), field);
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, or null if its not found.
-       */
-      public static _Fields findByThriftId(int fieldId) {
-        switch(fieldId) {
-          default:
-            return null;
-        }
-      }
-
-      /**
-       * Find the _Fields constant that matches fieldId, throwing an exception
-       * if it is not found.
-       */
-      public static _Fields findByThriftIdOrThrow(int fieldId) {
-        _Fields fields = findByThriftId(fieldId);
-        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
-        return fields;
-      }
-
-      /**
-       * Find the _Fields constant that matches name, or null if its not found.
-       */
-      public static _Fields findByName(String name) {
-        return byName.get(name);
-      }
-
-      private final short _thriftId;
-      private final String _fieldName;
-
-      _Fields(short thriftId, String fieldName) {
-        _thriftId = thriftId;
-        _fieldName = fieldName;
-      }
-
-      public short getThriftFieldId() {
-        return _thriftId;
-      }
-
-      public String getFieldName() {
-        return _fieldName;
-      }
-    }
-    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
-    static {
-      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-      metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(sendGlobalRouteUpdate_result.class, metaDataMap);
-    }
-
-    public sendGlobalRouteUpdate_result() {
-    }
-
-    /**
-     * Performs a deep copy on <i>other</i>.
-     */
-    public sendGlobalRouteUpdate_result(sendGlobalRouteUpdate_result other) {
-    }
-
-    public sendGlobalRouteUpdate_result deepCopy() {
-      return new sendGlobalRouteUpdate_result(this);
-    }
-
-    @Override
-    public void clear() {
-    }
-
-    public void setFieldValue(_Fields field, Object value) {
-      switch (field) {
-      }
-    }
-
-    public Object getFieldValue(_Fields field) {
-      switch (field) {
-      }
-      throw new IllegalStateException();
-    }
-
-    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
-    public boolean isSet(_Fields field) {
-      if (field == null) {
-        throw new IllegalArgumentException();
-      }
-
-      switch (field) {
-      }
-      throw new IllegalStateException();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-      if (that == null)
-        return false;
-      if (that instanceof sendGlobalRouteUpdate_result)
-        return this.equals((sendGlobalRouteUpdate_result)that);
-      return false;
-    }
-
-    public boolean equals(sendGlobalRouteUpdate_result that) {
-      if (that == null)
-        return false;
-
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      HashCodeBuilder builder = new HashCodeBuilder();
-
-      return builder.toHashCode();
-    }
-
-    @Override
-    public int compareTo(sendGlobalRouteUpdate_result other) {
-      if (!getClass().equals(other.getClass())) {
-        return getClass().getName().compareTo(other.getClass().getName());
-      }
-
-      int lastComparison = 0;
-
-      return 0;
-    }
-
-    public _Fields fieldForId(int fieldId) {
-      return _Fields.findByThriftId(fieldId);
-    }
-
-    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
-      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
-    }
-
-    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
-      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
-      }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder("sendGlobalRouteUpdate_result(");
-      boolean first = true;
-
-      sb.append(")");
-      return sb.toString();
-    }
-
-    public void validate() throws org.apache.thrift.TException {
-      // check for required fields
-      // check for sub-struct validity
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-      try {
-        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-      try {
-        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-      } catch (org.apache.thrift.TException te) {
-        throw new java.io.IOException(te);
-      }
-    }
-
-    private static class sendGlobalRouteUpdate_resultStandardSchemeFactory implements SchemeFactory {
-      public sendGlobalRouteUpdate_resultStandardScheme getScheme() {
-        return new sendGlobalRouteUpdate_resultStandardScheme();
-      }
-    }
-
-    private static class sendGlobalRouteUpdate_resultStandardScheme extends StandardScheme<sendGlobalRouteUpdate_result> {
-
-      public void read(org.apache.thrift.protocol.TProtocol iprot, sendGlobalRouteUpdate_result struct) throws org.apache.thrift.TException {
-        org.apache.thrift.protocol.TField schemeField;
-        iprot.readStructBegin();
-        while (true)
-        {
-          schemeField = iprot.readFieldBegin();
-          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
-            break;
-          }
-          switch (schemeField.id) {
-            default:
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-          }
-          iprot.readFieldEnd();
-        }
-        iprot.readStructEnd();
-
-        // check for required fields of primitive type, which can't be checked in the validate method
-        struct.validate();
-      }
-
-      public void write(org.apache.thrift.protocol.TProtocol oprot, sendGlobalRouteUpdate_result struct) throws org.apache.thrift.TException {
-        struct.validate();
-
-        oprot.writeStructBegin(STRUCT_DESC);
-        oprot.writeFieldStop();
-        oprot.writeStructEnd();
-      }
-
-    }
-
-    private static class sendGlobalRouteUpdate_resultTupleSchemeFactory implements SchemeFactory {
-      public sendGlobalRouteUpdate_resultTupleScheme getScheme() {
-        return new sendGlobalRouteUpdate_resultTupleScheme();
-      }
-    }
-
-    private static class sendGlobalRouteUpdate_resultTupleScheme extends TupleScheme<sendGlobalRouteUpdate_result> {
-
-      @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, sendGlobalRouteUpdate_result struct) throws org.apache.thrift.TException {
-        TTupleProtocol oprot = (TTupleProtocol) prot;
-      }
-
-      @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, sendGlobalRouteUpdate_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
       }
     }

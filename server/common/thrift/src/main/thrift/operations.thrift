@@ -197,7 +197,7 @@ service OperationsThriftService extends cli.CliThriftService{
 /**
 *   Report user configuration update to endpoint actor
 */
-  void onUserConfigurationUpdate(1: EndpointUserConfigurationUpdate notification);
+  void onEndpointUserConfigurationUpdate(1: EndpointUserConfigurationUpdate notification);
   
 /**
 *  Report global route update to global user actor
