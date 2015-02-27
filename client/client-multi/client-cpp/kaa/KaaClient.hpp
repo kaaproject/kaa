@@ -26,28 +26,25 @@
 #include "kaa/event/gen/EventFamilyFactory.hpp"
 #include "kaa/profile/ProfileManager.hpp"
 #include "kaa/channel/SyncDataProcessor.hpp"
-#include "kaa/configuration/IConfigurationProcessor.hpp"
 #include "kaa/notification/NotificationManager.hpp"
-#include "kaa/configuration/manager/IConfigurationManager.hpp"
 #include "kaa/event/registration/EndpointRegistrationManager.hpp"
 #include "kaa/ClientStatus.hpp"
-#include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
 #include "kaa/channel/impl/DefaultBootstrapChannel.hpp"
 #include "kaa/channel/impl/DefaultOperationTcpChannel.hpp"
 #include "kaa/channel/impl/DefaultOperationHttpChannel.hpp"
 #include "kaa/channel/impl/DefaultOperationLongPollChannel.hpp"
+#include "kaa/configuration/ConfigurationProcessor.hpp"
+#include "kaa/configuration/manager/ConfigurationManager.hpp"
+#include "kaa/configuration/storage/ConfigurationPersistenceManager.hpp"
 #include "kaa/log/LogCollector.hpp"
 
 namespace kaa {
 
 typedef std::shared_ptr<IBootstrapManager> IBootstrapManagerPtr;
 
-#ifdef KAA_USE_CONFIGURATION
-typedef std::shared_ptr<DefaultDeltaManager> DefaultDeltaManagerPtr;
-#endif
-
-typedef enum KaaOption {
+typedef enum KaaOption
+{
     USE_DEFAULT_BOOTSTRAP_HTTP_CHANNEL      = 0x01,
     USE_DEFAULT_OPERATION_KAATCP_CHANNEL    = 0x02,
     USE_DEFAULT_OPERATION_HTTP_CHANNEL      = 0x04,
@@ -113,9 +110,9 @@ private:
     std::string     publicKeyHash_;
 
 #ifdef KAA_USE_CONFIGURATION
-    IConfigurationManagerPtr              configurationManager_;
-    IConfigurationProcessorPtr            configurationProcessor_;
-    IConfigurationPersistenceManagerPtr   configurationPersistenceManager_;
+    std::unique_ptr<ConfigurationManager>            configurationManager_;
+    std::unique_ptr<ConfigurationProcessor>          configurationProcessor_;
+    std::unique_ptr<ConfigurationPersistenceManager> configurationPersistenceManager_;
 #endif
 #ifdef KAA_USE_EVENTS
     std::unique_ptr<EventManager>         eventManager_;

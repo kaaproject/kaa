@@ -34,12 +34,9 @@ namespace kaa {
  * \class ConfigurationManager
  *
  * This class is responsible for correct configuration delta merging
- * and contains root configuration tree. This class receives separate
- * deltas form the @link ConfigurationProcessor @endlink and merges the
- * tree performing full or partial update. After getting notification about
- * configuration processing is finished from @link ConfigurationProcessor @endlink
+ * and contains root configuration tree.
  * notifies registered observers (derived from @link IConfigurationReceiver @endlink)
- * with root configuration object presented as @link ICommonRecord @endlink.
+ * with root configuration object presented as @link KaaRootConfiguration @endlink.
  */
 class ConfigurationManager : public IConfigurationManager,
                              public IConfigurationProcessedObserver,
@@ -50,7 +47,7 @@ public:
     ConfigurationManager() {}
     ~ConfigurationManager() {}
 
-    void onDeltaRecevied(int index, const KaaRootConfiguration& datum, bool full_resync);
+    void onDeltaReceived(int index, const KaaRootConfiguration& datum, bool full_resync);
 
     /**
      * @link IConfigurationManager @endlink implementation

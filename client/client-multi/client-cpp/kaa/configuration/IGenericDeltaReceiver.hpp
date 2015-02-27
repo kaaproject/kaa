@@ -38,7 +38,7 @@ public:
      * @param full_resunc signals if delta contains full configuration resync or partial update
      *
      */
-    virtual void onDeltaRecevied(int index, const KaaRootConfiguration& data, bool full_resync) = 0;
+    virtual void onDeltaReceived(int index, const KaaRootConfiguration& data, bool full_resync) = 0;
 
     virtual ~IGenericDeltaReceiver() {}
 };

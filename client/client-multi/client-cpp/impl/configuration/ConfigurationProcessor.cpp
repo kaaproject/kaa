@@ -47,7 +47,7 @@ void ConfigurationProcessor::processConfigurationData(const std::uint8_t *data, 
 void ConfigurationProcessor::subscribeForUpdates(IGenericDeltaReceiver &receiver)
 {
     if (!deltaReceivers_.addCallback(&receiver,
-            std::bind(&IGenericDeltaReceiver::onDeltaRecevied, &receiver,
+            std::bind(&IGenericDeltaReceiver::onDeltaReceived, &receiver,
                     std::placeholders::_1,
                     std::placeholders::_2,
                     std::placeholders::_3))) {

@@ -22,10 +22,6 @@
 #include "kaa/bootstrap/BootstrapManager.hpp"
 #include "kaa/KaaDefaults.hpp"
 
-#include "kaa/configuration/ConfigurationProcessor.hpp"
-#include "kaa/configuration/manager/ConfigurationManager.hpp"
-#include "kaa/configuration/storage/ConfigurationPersistenceManager.hpp"
-
 #include "kaa/bootstrap/BootstrapTransport.hpp"
 #include "kaa/channel/MetaDataTransport.hpp"
 #include "kaa/configuration/ConfigurationTransport.hpp"
@@ -118,10 +114,8 @@ void KaaClient::initKaaConfiguration()
     cpm->setConfigurationProcessor(configurationProcessor_.get());
     configurationPersistenceManager_.reset(cpm);
 
-    SchemaPersistenceManager *spm = new SchemaPersistenceManager;
     configurationProcessor_->addOnProcessedObserver(*configurationManager_);
     configurationProcessor_->subscribeForUpdates(*configurationManager_);
-    configurationProcessor_->subscribeForUpdates(*deltaManager_);
     configurationManager_->subscribeForConfigurationChanges(*configurationPersistenceManager_);
 #endif
 }

@@ -54,7 +54,7 @@ const KaaRootConfiguration& ConfigurationManager::getConfiguration()
     return root_;
 }
 
-void ConfigurationManager::onDeltaRecevied(int index, const KaaRootConfiguration& datum, bool full_resync)
+void ConfigurationManager::onDeltaReceived(int index, const KaaRootConfiguration& datum, bool full_resync)
 {
     KAA_MUTEX_LOCKING("configurationGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(lock, configurationGuard_);

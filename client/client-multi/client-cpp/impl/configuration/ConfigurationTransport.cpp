@@ -15,6 +15,9 @@
  */
 
 #include "kaa/configuration/ConfigurationTransport.hpp"
+#include "kaa/configuration/IConfigurationProcessor.hpp"
+#include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
+#include "kaa/configuration/IConfigurationHashContainer.hpp"
 
 #ifdef KAA_USE_CONFIGURATION
 

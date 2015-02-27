@@ -23,11 +23,13 @@
 
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/channel/transport/IConfigurationTransport.hpp"
-#include "kaa/configuration/IConfigurationProcessor.hpp"
-#include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
-#include "kaa/schema/ISchemaProcessor.hpp"
+#include "kaa/IKaaClientStateStorage.hpp"
 
 namespace kaa {
+
+class IKaaChannelManager;
+class IConfigurationProcessor;
+class IConfigurationHashContainer;
 
 class ConfigurationTransport : public AbstractKaaTransport<TransportType::CONFIGURATION>, public IConfigurationTransport
 {

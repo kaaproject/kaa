@@ -38,9 +38,6 @@ class IKaaClientStateStorage;
  * This class is responsible for persistence of configuration invoking
  * user-defined @link IConfigurationStorage @endlink routines.
  *
- * Receives configuration and data schema updates from
- * @link ConfigurationManager @endlink and @link SchemaProcessor @endlink
- * respectively.
  */
 class ConfigurationPersistenceManager : public IConfigurationPersistenceManager,
                                         public IConfigurationReceiver,
