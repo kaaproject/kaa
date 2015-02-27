@@ -40,13 +40,14 @@ void ConfigurationTransport::sync()
 
 std::shared_ptr<ConfigurationSyncRequest> ConfigurationTransport::createConfigurationRequest()
 {
-    if (clientStatus_.get() == nullptr) {
+    if (!clientStatus_) {
         throw KaaException("Can not generate ConfigurationSyncRequest: Status was not provided");
     }
 
     std::shared_ptr<ConfigurationSyncRequest> request(new ConfigurationSyncRequest);
     request->appStateSeqNumber = clientStatus_->getConfigurationSequenceNumber();
     request->configurationHash.set_bytes(hashContainer_->getConfigurationHash());
+    request->resyncOnly.set_bool(true); // Only full resyncs are currently supported
     return request;
 }
 
