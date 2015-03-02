@@ -14,24 +14,8 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.sandbox.demo;
+package org.kaaproject.kaa.demo.cellmonitor.event;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class DemoBuildersRegistry {
-
-    private static final List<DemoBuilder> demoBuilders = new ArrayList<>();
-    
-    static {
-        demoBuilders.add(new CellMonitorDemoBuilder());
-        demoBuilders.add(new CityGuideDemoBuilder());
-        demoBuilders.add(new SmartHouseDemoBuilder());
-//        demoBuilders.add(new RobotRunDemoBuilder());
-    }
-    
-    public static List<DemoBuilder> getRegisteredDemoBuilders() {
-        return demoBuilders;
-    }
+public class CellLocationChanged {
     
 }

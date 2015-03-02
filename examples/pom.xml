@@ -37,6 +37,7 @@
         <module>robotrun</module>
         <module>smarthousedemo</module>
         <module>cityguide</module>
+        <module>cellmonitor</module>
     </modules>
 
     <dependencyManagement>
