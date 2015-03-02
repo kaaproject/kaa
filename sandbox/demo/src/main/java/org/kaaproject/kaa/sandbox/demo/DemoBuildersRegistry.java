@@ -26,6 +26,8 @@ public class DemoBuildersRegistry {
     static {
 //        demoBuilders.add(new SmartHouseDemoBuilder());
         demoBuilders.add(new NotificationDemoBuilder());
+        demoBuilders.add(new JDataCollectionDemoBuider());
+        demoBuilders.add(new JEventDemoBuilder());
 //        demoBuilders.add(new RobotRunDemoBuilder());
     }
     

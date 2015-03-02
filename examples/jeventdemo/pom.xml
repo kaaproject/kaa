@@ -23,7 +23,7 @@
         <artifactId>examples</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.examples</groupId>
-    <artifactId>jdatacollectiondemo</artifactId>
+    <artifactId>jeventdemo</artifactId>
     <packaging>pom</packaging>
 
     <name>Kaa Demo examples</name>

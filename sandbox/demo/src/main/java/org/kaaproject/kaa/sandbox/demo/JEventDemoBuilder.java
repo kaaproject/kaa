@@ -46,26 +46,12 @@ public class JEventDemoBuilder extends  AbstractDemoBuilder{
 
         loginTenantAdmin(client);
 
-        EventClassFamilyDto deviceEventClassFamily = new EventClassFamilyDto();
-        deviceEventClassFamily.setName("Device Event Class Family");
-        deviceEventClassFamily.setNamespace("org.kaaproject.kaa.demo.jevent.device");
-        deviceEventClassFamily.setClassName("DeviceEventClassFamily");
-        deviceEventClassFamily = client.editEventClassFamily(deviceEventClassFamily);
-        client.addEventClassFamilySchema(deviceEventClassFamily.getId(), "demo/jevent/deviceEventClassFamily.json");
-
         EventClassFamilyDto thermoEventClassFamily = new EventClassFamilyDto();
         thermoEventClassFamily.setName("Thermo Event Class Family");
         thermoEventClassFamily.setNamespace("org.kaaproject.kaa.demo.jevent.thermo");
         thermoEventClassFamily.setClassName("ThermoEventClassFamily");
         thermoEventClassFamily = client.editEventClassFamily(thermoEventClassFamily);
         client.addEventClassFamilySchema(thermoEventClassFamily.getId(), "demo/jevent/thermoEventClassFamily.json");
-
-        EventClassFamilyDto musicEventClassFamily = new EventClassFamilyDto();
-        musicEventClassFamily.setName("Music Event Class Family");
-        musicEventClassFamily.setNamespace("org.kaaproject.kaa.demo.jevent.music");
-        musicEventClassFamily.setClassName("MusicEventClassFamily");
-        musicEventClassFamily = client.editEventClassFamily(musicEventClassFamily);
-        client.addEventClassFamilySchema(musicEventClassFamily.getId(), "demo/jevent/musicEventClassFamily.json");
 
         ApplicationDto jeventApplication = new ApplicationDto();
         jeventApplication.setName("Java Event Demo");
@@ -80,14 +66,10 @@ public class JEventDemoBuilder extends  AbstractDemoBuilder{
 
         loginTenantDeveloper(client);
 
-        ApplicationEventFamilyMapDto deviceAefMap = mapEventClassFamily(client, jeventApplication, deviceEventClassFamily);
         ApplicationEventFamilyMapDto thermoAefMap = mapEventClassFamily(client, jeventApplication, thermoEventClassFamily);
-        ApplicationEventFamilyMapDto musicAefMap = mapEventClassFamily(client, jeventApplication, musicEventClassFamily);
 
         List<String> aefMapIds = new ArrayList<>();
-        aefMapIds.add(deviceAefMap.getId());
         aefMapIds.add(thermoAefMap.getId());
-        aefMapIds.add(musicAefMap.getId());
         sdkKey.setAefMapIds(aefMapIds);
 
         TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();
