@@ -5,17 +5,17 @@
  "fields": [
     {
     "name":"max_parallel_connections",
-    "displayName": "Maximum parallel connections opened",
+    "displayName": "Max connections",
     "type":"int", "by_default" : "20"
     },
     {
     "name":"min_parallel_connections",
-    "displayName": "Minimum parallel connections opened",
+    "displayName": "Min connections",
     "type":"int", "by_default" : "2"
     },
     {
     "name":"keep_alive_time_milliseconds",
-    "displayName": "Milliseconds to keep connection alive",
+    "displayName": "Connection lifetime (ms)",
     "type":"long", "by_default" : "60000"
     }
  ]
