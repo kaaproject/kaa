@@ -48,6 +48,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.utils.FileUtils;
@@ -235,6 +236,10 @@ public class AdminClient {
     
     public ApplicationEventFamilyMapDto editApplicationEventFamilyMap(ApplicationEventFamilyMapDto applicationEventFamilyMap) throws Exception {
         return restTemplate.postForObject(url + "applicationEventMap", applicationEventFamilyMap, ApplicationEventFamilyMapDto.class);
+    }
+    
+    public LogAppenderDto editLogAppenderDto(LogAppenderDto logAppenderDto) throws Exception {
+        return restTemplate.postForObject(url + "logAppender", logAppenderDto, LogAppenderDto.class);
     }
     
     public UserVerifierDto editUserVerifierDto(UserVerifierDto userVerifierDto) throws Exception {
