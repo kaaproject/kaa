@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.USER_CONFIGURATION;
@@ -33,25 +34,43 @@ public class EndpointUserConfigurationMongoDao extends AbstractMongoDao<MongoEnd
 
     @Override
     public MongoEndpointUserConfiguration save(EndpointUserConfigurationDto dto) {
-        LOG.debug("Save user specific configuration {}", dto);
-        return save(new MongoEndpointUserConfiguration(dto));
+        LOG.debug("Saving user specific configuration {}", dto);
+        MongoEndpointUserConfiguration userConfiguration = save(new MongoEndpointUserConfiguration(dto));
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Saving result: {}", userConfiguration);
+        } else {
+            LOG.debug("Saving result: {}", userConfiguration != null);
+        }
+        return userConfiguration;
     }
 
     @Override
     public MongoEndpointUserConfiguration findByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion) {
-        LOG.debug("Find user specific configuration by user id {}, application toke {} schema version {}", userId, appToken, schemaVersion);
-        return findOne(query(where(USER_CONF_USER_ID).is(userId).and(USER_CONF_APP_TOKEN).is(appToken).and(USER_CONF_SCHEMA_VERSION).is(schemaVersion)));
+        LOG.debug("Searching for user specific configuration by user id {}, application token {} and schema version {}", userId, appToken, schemaVersion);
+        MongoEndpointUserConfiguration userConfiguration = findOne(query(where(USER_CONF_USER_ID).is(userId).and(USER_CONF_APP_TOKEN).is(appToken).and(USER_CONF_SCHEMA_VERSION).is(schemaVersion)));
+        if (LOG.isTraceEnabled()) {
+            LOG.debug("[{},{},{}] Search result: {}.", userId, appToken, schemaVersion, userConfiguration);
+        } else {
+            LOG.debug("[{},{},{}] Search result: {}.", userId, appToken, schemaVersion, userConfiguration != null);
+        }
+        return userConfiguration;
     }
 
     @Override
     public List<MongoEndpointUserConfiguration> findByUserId(String userId) {
-        LOG.debug("Find user specific configurations by user id {}", userId);
-        return find(query(where(USER_CONF_USER_ID).is(userId)));
+        LOG.debug("Searching for user specific configurations by user id {}", userId);
+        List<MongoEndpointUserConfiguration> configurationList = find(query(where(USER_CONF_USER_ID).is(userId)));
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", userId, Arrays.toString(configurationList.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", userId, configurationList.size());
+        }
+        return configurationList;
     }
 
     @Override
     public void removeByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion) {
-        LOG.debug("Remove user specific configuration by user id {}, application toke {} schema version {}", userId, appToken, schemaVersion);
         remove(query(where(USER_CONF_USER_ID).is(userId).and(USER_CONF_APP_TOKEN).is(appToken).and(USER_CONF_SCHEMA_VERSION).is(schemaVersion)));
+        LOG.debug("Removed user specific configuration by user id {}, application token {} and schema version {}", userId, appToken, schemaVersion);
     }
 }
