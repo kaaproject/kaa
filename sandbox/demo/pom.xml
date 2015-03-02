@@ -212,6 +212,36 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>unpack-jdatacollection-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/jdatacollection
+                            </outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>jdatacollectiondemo</includeArtifactIds>
+                            <includeClassifiers>jdatacollection-java-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-jevent-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/jevent
+                            </outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>jeventdemo</includeArtifactIds>
+                            <includeClassifiers>jevent-java-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>copy</id>
                         <phase>prepare-package</phase>
                         <goals>
@@ -258,6 +288,26 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
                                     <destFileName>notification_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>jdatacollectiondemo</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>jdatacollection-java-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/java</outputDirectory>
+                                    <destFileName>jdatacollection_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>jeventdemo</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>jevent-java-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/java</outputDirectory>
+                                    <destFileName>jevent_demo.tar.gz</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>

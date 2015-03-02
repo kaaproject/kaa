@@ -142,7 +142,7 @@ public class JEventDemoBuilder extends  AbstractDemoBuilder{
         projectConfig.setSourceArchive("java/jevent_demo.tar.gz");
         projectConfig.setProjectFolder("jevent_demo/JEventDemo");
         projectConfig.setSdkLibDir("jevent_demo/JEventDemo/lib");
-        projectConfig.setDestBinaryFile("jevent_demo/JEventDemo/bin/EventDemo.jar");
+        projectConfig.setDestBinaryFile("jevent_demo/JEventDemo/build/jar/EventDemo.jar");
         projectConfigs.add(projectConfig);
     }
 }

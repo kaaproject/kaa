@@ -43,6 +43,7 @@ public class JDataCollectionDemoBuider extends AbstractDemoBuilder{
         sdkKey.setNotificationSchemaVersion(1);
         sdkKey.setTargetPlatform(SdkPlatform.JAVA);
 
+        loginTenantDeveloper(client);
 
         LogSchemaDto logSchemaDto = new LogSchemaDto();
         logSchemaDto.setApplicationId(notificationApplication.getId());
@@ -50,9 +51,6 @@ public class JDataCollectionDemoBuider extends AbstractDemoBuilder{
         logSchemaDto.setDescription("Log schema describing incoming logs");
         logSchemaDto = client.createLogSchema(logSchemaDto, "demo/jdatacollection/logSchema.json");
         sdkKey.setLogSchemaVersion(logSchemaDto.getMajorVersion());
-
-
-        loginTenantDeveloper(client);
 
         TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();
         UserVerifierDto trustfulUserVerifier = new UserVerifierDto();
@@ -79,7 +77,7 @@ public class JDataCollectionDemoBuider extends AbstractDemoBuilder{
         projectConfig.setSourceArchive("java/jdatacollection_demo.tar.gz");
         projectConfig.setProjectFolder("jdatacollection_demo/JDataCollectionDemo");
         projectConfig.setSdkLibDir("jdatacollection_demo/JDataCollectionDemo/lib");
-        projectConfig.setDestBinaryFile("jdatacollection_demo/JDataCollectionDemo/bin/DataCollectionDemo.jar");
+        projectConfig.setDestBinaryFile("jdatacollection_demo/JDataCollectionDemo/build/jar/DataCollectionDemo.jar");
         projectConfigs.add(projectConfig);
     }
 }
