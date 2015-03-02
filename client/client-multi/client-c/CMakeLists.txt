@@ -89,18 +89,25 @@ endif()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL}")
 
 # Disables Kaa library modules.
+message( "==================================")
 if(KAA_WITHOUT_EVENTS)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_EVENTS")
+else()
+    message( "EVENTS ENABLED")
 endif()
 
 if(KAA_WITHOUT_LOGGING)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_LOGGING")
+else()
+     message( "LOGGING ENABLED")
 endif()
 
 if(KAA_WITHOUT_CONFIGURATION)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_CONFIGURATION")
+else()
+     message("CONFIGURATION ENABLED")
 endif()
-
+message( "==================================")
 # Sets path(s) to header files.
 include_directories(KAA_INCLUDE_PATHS
                         ${KAA_INCLUDE_PATHS}
@@ -147,16 +154,12 @@ add_library(kaac SHARED ./src $<TARGET_OBJECTS:kaac_o>)
 target_link_libraries(kaac ${KAA_THIRDPARTY_LIBRARIES})
 
 # Sets paths Kaa libraries will be installed in.
-install(TARGETS kaac kaac_s
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION lib
-)
+message(STATUS "KAA WILL BE INSTALLED TO  ${KAA_INSTALL_PATH} ")
+set(CMAKE_INSTALL_PREFIX ${KAA_INSTALL_PATH} ) 
+install (DIRECTORY src/ DESTINATION ${KAA_INSTALL_PATH}/include
+    FILES_MATCHING PATTERN *.h)
+install (TARGETS kaac kaac_s DESTINATION ${KAA_INSTALL_PATH}/lib)
 
-install(DIRECTORY src/ 
-        DESTINATION include/kaac
-        FILES_MATCHING PATTERN *.h
-)
 
 # Builds unit tests.
 if(KAA_UNITTESTS_COMPILE)

@@ -159,14 +159,15 @@ OS
 BUILD EXAMPLE
 ************************************
 
-The following example illustrates the build procedure for 
-the debug x86-64 build with the INFO log level and the LOGGING module:
+The following example illustrates the build procedure for the debug x86-64 build with the INFO log level disabled,
+EVENTS feature and specified path to the folder Kaa will be installed in:
 
     mkdir build
     cd build
-    cmake -DKAA_DEBUG_ENABLED=1 -DKAA_MAX_LOG_LEVEL=4 -DKAA_WITHOUT_EVENTS=1 ..
+    cmake -DKAA_INSTALL_PATH='/home/username/kaa' -DKAA_DEBUG_ENABLED=1 -DKAA_MAX_LOG_LEVEL=4 -DKAA_WITHOUT_EVENTS=1 ..
     make
     make install
+
 
 To build the C SDK for the iOS simulator with maximum log level:
    mkdir build
