@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.demo.cellmonitor;
 
+import static org.kaaproject.kaa.demo.cellmonitor.CellMonitorApplication.UNDEFINED;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -111,34 +113,34 @@ public class CellMonitorFragment extends Fragment {
     }
     
     private void updateGsmCellLocation() {
-        int cid = -1;
-        int lac = -1;
+        int cid = UNDEFINED;
+        int lac = UNDEFINED;
         CellLocation cellLocation = mApplication.getCellLocation();
         if (cellLocation != null && cellLocation instanceof GsmCellLocation) {
             GsmCellLocation gsmCellLocation = (GsmCellLocation)cellLocation;
             cid = gsmCellLocation.getCid();
             lac = gsmCellLocation.getLac();
         }
-        if (cid != -1) {
-            mGsmCellIdValue.setText(""+cid);
+        if (cid != UNDEFINED) {
+            mGsmCellIdValue.setText(String.valueOf(cid));
         } else {
             mGsmCellIdValue.setText(R.string.unavailable);
         }
-        if (lac != -1) {
-            mGsmLacValue.setText(""+lac);
+        if (lac != UNDEFINED) {
+            mGsmLacValue.setText(String.valueOf(lac));
         } else {
             mGsmLacValue.setText(R.string.unavailable);
         }
     }
     
     private void updateGsmSignalStrength() {
-        int gsmSignalStrength = -1;
+        int gsmSignalStrength = UNDEFINED;
         SignalStrength signalStrength = mApplication.getSignalStrength();
         if (signalStrength != null) {
             gsmSignalStrength = signalStrength.getGsmSignalStrength();
         }
-        if (gsmSignalStrength != -1) {
-            mGsmSignalStrengthValue.setText(""+gsmSignalStrength);
+        if (gsmSignalStrength != UNDEFINED) {
+            mGsmSignalStrengthValue.setText(String.valueOf(gsmSignalStrength));
         } else {
             mGsmSignalStrengthValue.setText(R.string.unavailable);
         }
@@ -149,7 +151,9 @@ public class CellMonitorFragment extends Fragment {
         if (gpsLocation != null) {
             double latitude = gpsLocation.getLatitude();
             double longitude = gpsLocation.getLongitude();
-            mGpsLocationValue.setText(latitude + ", " + longitude);
+            StringBuilder sb = new StringBuilder();
+            sb.append(latitude).append(", ").append(longitude);
+            mGpsLocationValue.setText(sb.toString());
         } else {
             mGpsLocationValue.setText(R.string.unavailable);
         }
@@ -163,7 +167,7 @@ public class CellMonitorFragment extends Fragment {
         } else {
             mLastLogTimeValue.setText(R.string.unavailable);
         }
-        mSentLogCountValue.setText(""+mApplication.getSentLogCount());
+        mSentLogCountValue.setText(String.valueOf(mApplication.getSentLogCount()));
     }
     
     public void onEventMainThread(CellLocationChanged cellLocationChanged) {

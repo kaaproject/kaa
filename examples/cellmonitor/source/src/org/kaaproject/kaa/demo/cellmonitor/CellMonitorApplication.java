@@ -52,6 +52,8 @@ public class CellMonitorApplication extends Application {
     private static final Logger LOG = LoggerFactory
             .getLogger(CellMonitorApplication.class);
 
+    public static final int UNDEFINED = -1;
+
     private EventBus mEventBus;
     private TelephonyManager mTelephonyManager;
     private CellMonitorPhoneStateListener mCellMonitorPhoneStateListener;
@@ -193,8 +195,8 @@ public class CellMonitorApplication extends Application {
             cellMonitorLog.setNetworkOperatorCode(Integer.valueOf(mTelephonyManager.getNetworkOperator()));
             cellMonitorLog.setNetworkOperatorName(mTelephonyManager.getNetworkOperatorName());
             
-            int cid = -1;
-            int lac = -1;
+            int cid = UNDEFINED;
+            int lac = UNDEFINED;
             
             if (mCellLocation != null && mCellLocation instanceof GsmCellLocation) {
                 GsmCellLocation gsmCellLocation = (GsmCellLocation)mCellLocation;
@@ -205,7 +207,7 @@ public class CellMonitorApplication extends Application {
             cellMonitorLog.setGsmCellId(cid);
             cellMonitorLog.setGsmLac(lac);
             
-            int gsmSignalStrength = -1;
+            int gsmSignalStrength = UNDEFINED;
             
             if (mSignalStrength != null) {
                 gsmSignalStrength = mSignalStrength.getGsmSignalStrength();
