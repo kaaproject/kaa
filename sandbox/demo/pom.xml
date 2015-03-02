@@ -104,6 +104,38 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jdatacollectiondemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jdatacollection-java-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jdatacollectiondemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jdatacollection-java-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jeventdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jevent-java-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jeventdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jevent-java-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
     </dependency>

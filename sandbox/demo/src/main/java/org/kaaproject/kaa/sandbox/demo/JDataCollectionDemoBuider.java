@@ -29,10 +29,21 @@ import org.kaaproject.kaa.server.common.core.configuration.RawData;
 import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 import org.kaaproject.kaa.server.verifiers.trustful.config.TrustfulVerifierConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JDataCollectionDemoBuider extends AbstractDemoBuilder{
+
+
+    private static final Logger logger = LoggerFactory.getLogger(JDataCollectionDemoBuider.class);
+
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
+
+        logger.info("Loading 'Java Data Collection Demo Application' data...");
+
+        loginTenantAdmin(client);
+
         ApplicationDto notificationApplication = new ApplicationDto();
         notificationApplication.setName("Java data collection");
         notificationApplication = client.editApplication(notificationApplication);
@@ -65,6 +76,9 @@ public class JDataCollectionDemoBuider extends AbstractDemoBuilder{
         trustfulUserVerifier.setJsonConfiguration(rawData.getRawData());
         trustfulUserVerifier = client.editUserVerifierDto(trustfulUserVerifier);
         sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
+
+
+        logger.info("Finished loading 'Java Data Collection Demo Application' data.");
     }
 
     @Override

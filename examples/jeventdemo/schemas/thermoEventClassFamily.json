@@ -1,13 +1,13 @@
 [
 {
- "namespace": "org.kaaproject.kaa.demo.smarthouse.thermo",
+ "namespace": "org.kaaproject.kaa.schema.sample.event.thermo",
  "type": "record",
  "classType": "event",
  "name": "ThermostatInfoRequest",
  "fields": []
 },
 {
- "namespace": "org.kaaproject.kaa.demo.smarthouse.thermo",
+ "namespace": "org.kaaproject.kaa.schema.sample.event.thermo",
  "type": "record",
  "classType": "object",
  "name": "ThermostatInfo",
@@ -18,16 +18,16 @@
  ]
 },
 {
- "namespace": "org.kaaproject.kaa.demo.smarthouse.thermo",
+ "namespace": "org.kaaproject.kaa.schema.sample.event.thermo",
  "type": "record",
  "classType": "event",
  "name": "ThermostatInfoResponse",
  "fields": [
-    {"name": "thermostatInfo", "type": ["org.kaaproject.kaa.demo.smarthouse.thermo.ThermostatInfo", "null"]}
+    {"name": "thermostatInfo", "type": ["org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfo", "null"]}
   ]
 },
 {
- "namespace": "org.kaaproject.kaa.demo.smarthouse.thermo",
+ "namespace": "org.kaaproject.kaa.schema.sample.event.thermo",
  "type": "record",
  "classType": "event",
  "name": "ChangeDegreeRequest",
