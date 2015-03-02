@@ -65,7 +65,7 @@ typedef enum {
 
 typedef enum {
     USER_ATTACH_RESPONSE_FIELD      = 0,
-    USER_ATTACH_NOTIFICAITON_FIELD  = 1,
+    USER_ATTACH_NOTIFICATION_FIELD  = 1,
     USER_DETACH_NOTIFICATION_FIELD  = 2,
     ENDPOINT_ATTACH_RESPONSES_FIELD = 3,
     ENDPOINT_DETACH_RESPONSES_FIELD = 4
@@ -136,9 +136,10 @@ kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p
     *user_manager_p = (kaa_user_manager_t *) KAA_MALLOC(sizeof(kaa_user_manager_t));
     KAA_RETURN_IF_NIL((*user_manager_p), KAA_ERR_NOMEM);
 
-    (*user_manager_p)->attachment_listeners.on_attached_callback = NULL;
-    (*user_manager_p)->attachment_listeners.on_detached_callback = NULL;
-    (*user_manager_p)->attachment_listeners.on_response_callback = NULL;
+    (*user_manager_p)->attachment_listeners.on_attached = NULL;
+    (*user_manager_p)->attachment_listeners.on_detached = NULL;
+    (*user_manager_p)->attachment_listeners.on_attach_success = NULL;
+    (*user_manager_p)->attachment_listeners.on_attach_failed  = NULL;
     (*user_manager_p)->user_info = NULL;
     (*user_manager_p)->is_waiting_user_attach_response = false;
     (*user_manager_p)->status = status;
@@ -154,6 +155,12 @@ void kaa_user_manager_destroy(kaa_user_manager_t *self)
         destroy_user_info(self->user_info);
         KAA_FREE(self);
     }
+}
+
+bool kaa_user_manager_is_attached_to_user(kaa_user_manager_t *self)
+{
+    KAA_RETURN_IF_NIL2(self, self->status, false);
+    return self->status->is_attached;
 }
 
 kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self
@@ -204,11 +211,7 @@ kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self
                                                     , const kaa_attachment_status_listeners_t *listeners)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
-
     self->attachment_listeners = *listeners;
-
-    if (listeners->on_response_callback)
-        (listeners->on_response_callback)(listeners->context, self->status->is_attached);
     return KAA_ERR_NONE;
 }
 
@@ -314,17 +317,59 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                 destroy_user_info(self->user_info);
                 self->user_info = NULL;
                 self->is_waiting_user_attach_response = false;
+
                 if (result == USER_RESULT_SUCCESS) {
                     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Endpoint was successfully attached to user");
                     self->status->is_attached = true;
-                    if (self->attachment_listeners.on_response_callback)
-                        (self->attachment_listeners.on_response_callback)(self->attachment_listeners.context, true);
+                    if (self->attachment_listeners.on_attach_success)
+                        (self->attachment_listeners.on_attach_success)(self->attachment_listeners.context);
                 } else {
                     KAA_LOG_ERROR(self->logger, KAA_ERR_BAD_STATE, "Failed to attach endpoint to user");
+
+                    uint16_t user_verifier_error_code;
+                    if (kaa_platform_message_read(reader, &user_verifier_error_code, sizeof(uint16_t))) {
+                        KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Failed to read user verifier error code");
+                        return KAA_ERR_READ_FAILED;
+                    }
+
+                    user_verifier_error_code = KAA_NTOHS(user_verifier_error_code);
+                    remaining_length -= sizeof(uint16_t);
+
+                    uint16_t reason_length;
+                    if (kaa_platform_message_read(reader, &reason_length, sizeof(uint16_t))) {
+                        KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Failed to read reason length");
+                        return KAA_ERR_READ_FAILED;
+                    }
+
+                    reason_length = KAA_NTOHS(reason_length);
+                    remaining_length -= sizeof(uint16_t);
+
+                    if (reason_length) {
+                        char reason[reason_length + 1];
+                        if (kaa_platform_message_read_aligned(reader, reason, reason_length)) {
+                            KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Failed to read error reason");
+                            return KAA_ERR_READ_FAILED;
+                        }
+
+                        reason[reason_length] = '\0';
+                        remaining_length -= kaa_aligned_size_get(reason_length);
+
+                        if (self->attachment_listeners.on_attach_failed) {
+                            (self->attachment_listeners.on_attach_failed)(self->attachment_listeners.context
+                                                                        , (user_verifier_error_code_t)user_verifier_error_code
+                                                                        , reason);
+                        }
+                    } else {
+                        if (self->attachment_listeners.on_attach_failed) {
+                            (self->attachment_listeners.on_attach_failed)(self->attachment_listeners.context
+                                                                        , (user_verifier_error_code_t)user_verifier_error_code
+                                                                        , NULL);
+                        }
+                    }
                 }
                 break;
             }
-            case USER_ATTACH_NOTIFICAITON_FIELD: {
+            case USER_ATTACH_NOTIFICATION_FIELD: {
                 uint8_t external_id_length = (field_header >> 16) & 0xFF;
                 uint16_t access_token_length = (field_header) & 0xFFFF;
                 if (external_id_length + access_token_length > remaining_length)
@@ -351,8 +396,8 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
 
                 self->status->is_attached = true;
 
-                if (self->attachment_listeners.on_attached_callback)
-                    (self->attachment_listeners.on_attached_callback)(self->attachment_listeners.context
+                if (self->attachment_listeners.on_attached)
+                    (self->attachment_listeners.on_attached)(self->attachment_listeners.context
                                                                                 , external_id, access_token);
                 break;
             }
@@ -372,8 +417,8 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
 
                 self->status->is_attached = false;
 
-                if (self->attachment_listeners.on_detached_callback)
-                    (self->attachment_listeners.on_detached_callback)(self->attachment_listeners.context, access_token);
+                if (self->attachment_listeners.on_detached)
+                    (self->attachment_listeners.on_detached)(self->attachment_listeners.context, access_token);
                 break;
             }
             default:

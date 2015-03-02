@@ -32,6 +32,16 @@
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 
+
+
+#define USER_EXTERNAL_ID    "user@id"
+#define ACCESS_TOKEN        "token"
+#define USER_VERIFIER       "user_verifier"
+
+#define ATTACH_ERROR_REASON "Bad user credentials"
+
+
+
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
 extern void        kaa_status_destroy(kaa_status_t *self);
 
@@ -39,7 +49,7 @@ extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_ma
 extern void        kaa_channel_manager_destroy(kaa_channel_manager_t *self);
 
 extern kaa_error_t kaa_user_manager_create(kaa_user_manager_t **user_manager_p, kaa_status_t *status
-        , kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
+                                         , kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
 extern void kaa_user_manager_destroy(kaa_user_manager_t *self);
 
 extern kaa_error_t kaa_user_request_get_size(kaa_user_manager_t *self, size_t *expected_size);
@@ -47,9 +57,6 @@ extern kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_plat
 extern kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
 
 
-#define USER_EXTERNAL_ID    "user@id"
-#define ACCESS_TOKEN        "token"
-#define USER_VERIFIER       "user_verifier"
 
 static kaa_context_t kaa_context;
 static kaa_user_manager_t *user_manager = NULL;
@@ -59,8 +66,11 @@ static kaa_channel_manager_t *channel_manager = NULL;
 
 static bool is_on_attached_invoked = false;
 static bool is_on_detached_invoked = false;
-static bool is_on_response_invoked = false;
+static bool is_attach_success_invoked = false;
+static bool is_attach_failed_invoked = false;
 static bool last_is_attached_result = false;
+
+
 
 static kaa_error_t on_attached(void *context, const char *user_external_id, const char *endpoint_access_token)
 {
@@ -77,10 +87,18 @@ static kaa_error_t on_detached(void *context, const char *endpoint_access_token)
     return KAA_ERR_NONE;
 }
 
-static kaa_error_t on_response(void *context, bool is_attached)
+static kaa_error_t on_attach_success(void *context)
 {
-    last_is_attached_result = is_attached;
-    is_on_response_invoked = true;
+    last_is_attached_result = true;
+    is_attach_success_invoked = true;
+    return KAA_ERR_NONE;
+}
+
+static kaa_error_t on_attach_failed(void *context, user_verifier_error_code_t error_code, const char *reason)
+{
+    is_attach_failed_invoked = true;
+    ASSERT_EQUAL(error_code, CONNECTION_ERROR);
+    ASSERT_EQUAL(memcmp(reason, ATTACH_ERROR_REASON, strlen(ATTACH_ERROR_REASON)), 0);
     return KAA_ERR_NONE;
 }
 
@@ -146,11 +164,11 @@ void test_create_request()
     KAA_TRACE_OUT(logger);
 }
 
-void test_response()
+void test_success_response()
 {
     KAA_TRACE_IN(logger);
 
-    char response[] = {
+    char success_response[] = {
             /*  bit 0   */   0x00, 0x00, 0x00, 0x00,    /* User attach response field. Result - success */
             /*  bit 32  */   0x01, 0x07, 0x00, 0x05,    /* User attach notification field */
             /*  bit 64  */   'u', 's', 'e', 'r',
@@ -162,18 +180,45 @@ void test_response()
             /*  bit 256 */   'n', 0x00, 0x00, 0x00
 
     };
+
     kaa_platform_message_reader_t *reader = NULL;
-    ASSERT_EQUAL(kaa_platform_message_reader_create(&reader, response, 36), KAA_ERR_NONE);
+    ASSERT_EQUAL(kaa_platform_message_reader_create(&reader, success_response, 36), KAA_ERR_NONE);
     ASSERT_NOT_NULL(reader);
 
     ASSERT_EQUAL(kaa_user_handle_server_sync(user_manager, reader, 0, 36), KAA_ERR_NONE);
     ASSERT_TRUE(is_on_attached_invoked);
     ASSERT_TRUE(is_on_detached_invoked);
-    ASSERT_TRUE(is_on_response_invoked);
+    ASSERT_TRUE(is_attach_success_invoked);
     ASSERT_TRUE(last_is_attached_result);
 
     KAA_TRACE_OUT(logger);
 }
+
+void test_failed_response()
+{
+    KAA_TRACE_IN(logger);
+
+    char failed_response[] = {
+            /*  bit 0   */   0x00, 0x00, 0x01, 0x00,    /* User attach response field. Result - success */
+            /*  bit 32  */   0x00, 0x04, 0x00, 0x14,    /* User attach notification field */
+            /*  bit 64  */   'B', 'a', 'd', ' ',
+            /*  bit 96  */   'u', 's', 'e', 'r',
+            /*  bit 128 */   ' ', 'c', 'r', 'e',
+            /*  bit 160 */   'd', 'e', 'n', 't',
+            /*  bit 192 */   'i', 'a', 'l', 's'
+    };
+
+    kaa_platform_message_reader_t *reader = NULL;
+    ASSERT_EQUAL(kaa_platform_message_reader_create(&reader, failed_response, 28), KAA_ERR_NONE);
+    ASSERT_NOT_NULL(reader);
+
+    ASSERT_EQUAL(kaa_user_handle_server_sync(user_manager, reader, 0, 28), KAA_ERR_NONE);
+    ASSERT_TRUE(is_attach_failed_invoked);
+
+    KAA_TRACE_OUT(logger);
+}
+
+
 
 int test_init(void)
 {
@@ -199,7 +244,7 @@ int test_init(void)
         return error;
     }
 
-    kaa_attachment_status_listeners_t listeners = { NULL, &on_attached, &on_detached, &on_response };
+    kaa_attachment_status_listeners_t listeners = { NULL, &on_attached, &on_detached, &on_attach_success, &on_attach_failed };
     error = kaa_user_manager_set_attachment_listeners(user_manager, &listeners);
     if (error) {
         return error;
@@ -222,5 +267,6 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit
        ,
        KAA_TEST_CASE(empty_default_user_verifier, test_empty_default_user_verifier)
        KAA_TEST_CASE(create_request, test_create_request)
-       KAA_TEST_CASE(process_response, test_response)
+       KAA_TEST_CASE(process_success_response, test_success_response)
+       KAA_TEST_CASE(process_failed_response, test_failed_response)
         )
