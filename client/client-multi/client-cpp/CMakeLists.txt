@@ -35,7 +35,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 if(KAA_DEBUG_ENABLED)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb")
 else()
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -os -s")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Os -s")
 endif()
 
 #Compiler specific flags
@@ -47,9 +47,6 @@ endif()
 if (CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++0x") 
 endif ()
-
-
-
 
 
 # Release version is built by default.
@@ -256,6 +253,3 @@ set(CMAKE_INSTALL_PREFIX ${KAA_INSTALL_PATH} )
 install (DIRECTORY kaa/ DESTINATION ${KAA_INSTALL_PATH}/include/kaa
     FILES_MATCHING PATTERN *.hpp)
 install (TARGETS kaacpp kaacpp_s DESTINATION ${KAA_INSTALL_PATH}/lib)
-
-
-

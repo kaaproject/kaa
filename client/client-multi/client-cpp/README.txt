@@ -34,7 +34,7 @@ To build the C++ endpoint SDK, do the following:
 
 1. Download and untar the Kaa C++ SDK archive.
 2. Run the following commands:
-    avrogen.sh
+    ./avrogen.sh
     mkdir build
     cd build
     cmake ..
@@ -102,18 +102,14 @@ PLATFORM DEPEDENCIES
 ************************************
 There are no dependencies on platforms.
 
-
 ************************************
 BUILD EXAMPLE
 ************************************
-The following example illustrates the build procedure with the INFO log level and the LOGGING module:
-    avrogen.sh
+The following example illustrates the build procedure for the debug build
+with the INFO log level and disabled EVENTS feature and specified path to the folder Kaa will be installed in:
+    ./avrogen.sh
     mkdir build
     cd build
     cmake -DKAA_INSTALL_PATH='/home/username/kaa' -DKAA_DEBUG_ENABLED=1 -DKAA_MAX_LOG_LEVEL=4 -DKAA_WITHOUT_EVENTS=1 ..
     make
     make install
-
-
-
-
