@@ -33,45 +33,34 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpdate, GlobalRouteUpdate._Fields>, java.io.Serializable, Cloneable, Comparable<GlobalRouteUpdate> {
-  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("GlobalRouteUpdate");
+public class EndpointStateUpdate implements org.apache.thrift.TBase<EndpointStateUpdate, EndpointStateUpdate._Fields>, java.io.Serializable, Cloneable, Comparable<EndpointStateUpdate> {
+  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("EndpointStateUpdate");
 
   private static final org.apache.thrift.protocol.TField TENANT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("tenantId", org.apache.thrift.protocol.TType.STRING, (short)1);
   private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.STRING, (short)2);
-  private static final org.apache.thrift.protocol.TField ROUTE_ADDRESS_FIELD_DESC = new org.apache.thrift.protocol.TField("routeAddress", org.apache.thrift.protocol.TType.STRUCT, (short)3);
-  private static final org.apache.thrift.protocol.TField UPDATE_TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("updateType", org.apache.thrift.protocol.TType.I32, (short)4);
-  private static final org.apache.thrift.protocol.TField CF_SCHEMA_VERSION_FIELD_DESC = new org.apache.thrift.protocol.TField("cfSchemaVersion", org.apache.thrift.protocol.TType.I32, (short)5);
-  private static final org.apache.thrift.protocol.TField UCF_HASH_FIELD_DESC = new org.apache.thrift.protocol.TField("ucfHash", org.apache.thrift.protocol.TType.STRING, (short)6);
+  private static final org.apache.thrift.protocol.TField APPLICATION_TOKEN_FIELD_DESC = new org.apache.thrift.protocol.TField("applicationToken", org.apache.thrift.protocol.TType.STRING, (short)3);
+  private static final org.apache.thrift.protocol.TField ENDPOINT_KEY_FIELD_DESC = new org.apache.thrift.protocol.TField("endpointKey", org.apache.thrift.protocol.TType.STRING, (short)4);
+  private static final org.apache.thrift.protocol.TField UCF_HASH_FIELD_DESC = new org.apache.thrift.protocol.TField("ucfHash", org.apache.thrift.protocol.TType.STRING, (short)5);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
-    schemes.put(StandardScheme.class, new GlobalRouteUpdateStandardSchemeFactory());
-    schemes.put(TupleScheme.class, new GlobalRouteUpdateTupleSchemeFactory());
+    schemes.put(StandardScheme.class, new EndpointStateUpdateStandardSchemeFactory());
+    schemes.put(TupleScheme.class, new EndpointStateUpdateTupleSchemeFactory());
   }
 
   public String tenantId; // required
   public String userId; // required
-  public RouteAddress routeAddress; // required
-  /**
-   * 
-   * @see EventRouteUpdateType
-   */
-  public EventRouteUpdateType updateType; // required
-  public int cfSchemaVersion; // required
+  public String applicationToken; // required
+  public ByteBuffer endpointKey; // required
   public ByteBuffer ucfHash; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     TENANT_ID((short)1, "tenantId"),
     USER_ID((short)2, "userId"),
-    ROUTE_ADDRESS((short)3, "routeAddress"),
-    /**
-     * 
-     * @see EventRouteUpdateType
-     */
-    UPDATE_TYPE((short)4, "updateType"),
-    CF_SCHEMA_VERSION((short)5, "cfSchemaVersion"),
-    UCF_HASH((short)6, "ucfHash");
+    APPLICATION_TOKEN((short)3, "applicationToken"),
+    ENDPOINT_KEY((short)4, "endpointKey"),
+    UCF_HASH((short)5, "ucfHash");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -90,13 +79,11 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
           return TENANT_ID;
         case 2: // USER_ID
           return USER_ID;
-        case 3: // ROUTE_ADDRESS
-          return ROUTE_ADDRESS;
-        case 4: // UPDATE_TYPE
-          return UPDATE_TYPE;
-        case 5: // CF_SCHEMA_VERSION
-          return CF_SCHEMA_VERSION;
-        case 6: // UCF_HASH
+        case 3: // APPLICATION_TOKEN
+          return APPLICATION_TOKEN;
+        case 4: // ENDPOINT_KEY
+          return ENDPOINT_KEY;
+        case 5: // UCF_HASH
           return UCF_HASH;
         default:
           return null;
@@ -138,8 +125,6 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
   }
 
   // isset id assignments
-  private static final int __CFSCHEMAVERSION_ISSET_ID = 0;
-  private byte __isset_bitfield = 0;
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -147,75 +132,66 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , "tenant_id")));
     tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , "user_id")));
-    tmpMap.put(_Fields.ROUTE_ADDRESS, new org.apache.thrift.meta_data.FieldMetaData("routeAddress", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, RouteAddress.class)));
-    tmpMap.put(_Fields.UPDATE_TYPE, new org.apache.thrift.meta_data.FieldMetaData("updateType", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.EnumMetaData(org.apache.thrift.protocol.TType.ENUM, EventRouteUpdateType.class)));
-    tmpMap.put(_Fields.CF_SCHEMA_VERSION, new org.apache.thrift.meta_data.FieldMetaData("cfSchemaVersion", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32        , "int")));
+    tmpMap.put(_Fields.APPLICATION_TOKEN, new org.apache.thrift.meta_data.FieldMetaData("applicationToken", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , "application_token")));
+    tmpMap.put(_Fields.ENDPOINT_KEY, new org.apache.thrift.meta_data.FieldMetaData("endpointKey", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , "endpoint_id")));
     tmpMap.put(_Fields.UCF_HASH, new org.apache.thrift.meta_data.FieldMetaData("ucfHash", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , true)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
-    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(GlobalRouteUpdate.class, metaDataMap);
+    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(EndpointStateUpdate.class, metaDataMap);
   }
 
-  public GlobalRouteUpdate() {
+  public EndpointStateUpdate() {
   }
 
-  public GlobalRouteUpdate(
+  public EndpointStateUpdate(
     String tenantId,
     String userId,
-    RouteAddress routeAddress,
-    EventRouteUpdateType updateType,
-    int cfSchemaVersion,
+    String applicationToken,
+    ByteBuffer endpointKey,
     ByteBuffer ucfHash)
   {
     this();
     this.tenantId = tenantId;
     this.userId = userId;
-    this.routeAddress = routeAddress;
-    this.updateType = updateType;
-    this.cfSchemaVersion = cfSchemaVersion;
-    setCfSchemaVersionIsSet(true);
+    this.applicationToken = applicationToken;
+    this.endpointKey = endpointKey;
     this.ucfHash = ucfHash;
   }
 
   /**
    * Performs a deep copy on <i>other</i>.
    */
-  public GlobalRouteUpdate(GlobalRouteUpdate other) {
-    __isset_bitfield = other.__isset_bitfield;
+  public EndpointStateUpdate(EndpointStateUpdate other) {
     if (other.isSetTenantId()) {
       this.tenantId = other.tenantId;
     }
     if (other.isSetUserId()) {
       this.userId = other.userId;
     }
-    if (other.isSetRouteAddress()) {
-      this.routeAddress = new RouteAddress(other.routeAddress);
+    if (other.isSetApplicationToken()) {
+      this.applicationToken = other.applicationToken;
     }
-    if (other.isSetUpdateType()) {
-      this.updateType = other.updateType;
+    if (other.isSetEndpointKey()) {
+      this.endpointKey = other.endpointKey;
     }
-    this.cfSchemaVersion = other.cfSchemaVersion;
     if (other.isSetUcfHash()) {
       this.ucfHash = org.apache.thrift.TBaseHelper.copyBinary(other.ucfHash);
 ;
     }
   }
 
-  public GlobalRouteUpdate deepCopy() {
-    return new GlobalRouteUpdate(this);
+  public EndpointStateUpdate deepCopy() {
+    return new EndpointStateUpdate(this);
   }
 
   @Override
   public void clear() {
     this.tenantId = null;
     this.userId = null;
-    this.routeAddress = null;
-    this.updateType = null;
-    setCfSchemaVersionIsSet(false);
-    this.cfSchemaVersion = 0;
+    this.applicationToken = null;
+    this.endpointKey = null;
     this.ucfHash = null;
   }
 
@@ -223,7 +199,7 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
     return this.tenantId;
   }
 
-  public GlobalRouteUpdate setTenantId(String tenantId) {
+  public EndpointStateUpdate setTenantId(String tenantId) {
     this.tenantId = tenantId;
     return this;
   }
@@ -247,7 +223,7 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
     return this.userId;
   }
 
-  public GlobalRouteUpdate setUserId(String userId) {
+  public EndpointStateUpdate setUserId(String userId) {
     this.userId = userId;
     return this;
   }
@@ -267,83 +243,62 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
     }
   }
 
-  public RouteAddress getRouteAddress() {
-    return this.routeAddress;
+  public String getApplicationToken() {
+    return this.applicationToken;
   }
 
-  public GlobalRouteUpdate setRouteAddress(RouteAddress routeAddress) {
-    this.routeAddress = routeAddress;
+  public EndpointStateUpdate setApplicationToken(String applicationToken) {
+    this.applicationToken = applicationToken;
     return this;
   }
 
-  public void unsetRouteAddress() {
-    this.routeAddress = null;
+  public void unsetApplicationToken() {
+    this.applicationToken = null;
   }
 
-  /** Returns true if field routeAddress is set (has been assigned a value) and false otherwise */
-  public boolean isSetRouteAddress() {
-    return this.routeAddress != null;
+  /** Returns true if field applicationToken is set (has been assigned a value) and false otherwise */
+  public boolean isSetApplicationToken() {
+    return this.applicationToken != null;
   }
 
-  public void setRouteAddressIsSet(boolean value) {
+  public void setApplicationTokenIsSet(boolean value) {
     if (!value) {
-      this.routeAddress = null;
+      this.applicationToken = null;
     }
   }
 
-  /**
-   * 
-   * @see EventRouteUpdateType
-   */
-  public EventRouteUpdateType getUpdateType() {
-    return this.updateType;
+  public byte[] getEndpointKey() {
+    setEndpointKey(org.apache.thrift.TBaseHelper.rightSize(endpointKey));
+    return endpointKey == null ? null : endpointKey.array();
   }
 
-  /**
-   * 
-   * @see EventRouteUpdateType
-   */
-  public GlobalRouteUpdate setUpdateType(EventRouteUpdateType updateType) {
-    this.updateType = updateType;
+  public ByteBuffer bufferForEndpointKey() {
+    return endpointKey;
+  }
+
+  public EndpointStateUpdate setEndpointKey(byte[] endpointKey) {
+    setEndpointKey(endpointKey == null ? (ByteBuffer)null : ByteBuffer.wrap(endpointKey));
     return this;
   }
 
-  public void unsetUpdateType() {
-    this.updateType = null;
+  public EndpointStateUpdate setEndpointKey(ByteBuffer endpointKey) {
+    this.endpointKey = endpointKey;
+    return this;
   }
 
-  /** Returns true if field updateType is set (has been assigned a value) and false otherwise */
-  public boolean isSetUpdateType() {
-    return this.updateType != null;
+  public void unsetEndpointKey() {
+    this.endpointKey = null;
   }
 
-  public void setUpdateTypeIsSet(boolean value) {
+  /** Returns true if field endpointKey is set (has been assigned a value) and false otherwise */
+  public boolean isSetEndpointKey() {
+    return this.endpointKey != null;
+  }
+
+  public void setEndpointKeyIsSet(boolean value) {
     if (!value) {
-      this.updateType = null;
+      this.endpointKey = null;
     }
-  }
-
-  public int getCfSchemaVersion() {
-    return this.cfSchemaVersion;
-  }
-
-  public GlobalRouteUpdate setCfSchemaVersion(int cfSchemaVersion) {
-    this.cfSchemaVersion = cfSchemaVersion;
-    setCfSchemaVersionIsSet(true);
-    return this;
-  }
-
-  public void unsetCfSchemaVersion() {
-    __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __CFSCHEMAVERSION_ISSET_ID);
-  }
-
-  /** Returns true if field cfSchemaVersion is set (has been assigned a value) and false otherwise */
-  public boolean isSetCfSchemaVersion() {
-    return EncodingUtils.testBit(__isset_bitfield, __CFSCHEMAVERSION_ISSET_ID);
-  }
-
-  public void setCfSchemaVersionIsSet(boolean value) {
-    __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __CFSCHEMAVERSION_ISSET_ID, value);
   }
 
   public byte[] getUcfHash() {
@@ -355,12 +310,12 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
     return ucfHash;
   }
 
-  public GlobalRouteUpdate setUcfHash(byte[] ucfHash) {
+  public EndpointStateUpdate setUcfHash(byte[] ucfHash) {
     setUcfHash(ucfHash == null ? (ByteBuffer)null : ByteBuffer.wrap(ucfHash));
     return this;
   }
 
-  public GlobalRouteUpdate setUcfHash(ByteBuffer ucfHash) {
+  public EndpointStateUpdate setUcfHash(ByteBuffer ucfHash) {
     this.ucfHash = ucfHash;
     return this;
   }
@@ -398,27 +353,19 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
       }
       break;
 
-    case ROUTE_ADDRESS:
+    case APPLICATION_TOKEN:
       if (value == null) {
-        unsetRouteAddress();
+        unsetApplicationToken();
       } else {
-        setRouteAddress((RouteAddress)value);
+        setApplicationToken((String)value);
       }
       break;
 
-    case UPDATE_TYPE:
+    case ENDPOINT_KEY:
       if (value == null) {
-        unsetUpdateType();
+        unsetEndpointKey();
       } else {
-        setUpdateType((EventRouteUpdateType)value);
-      }
-      break;
-
-    case CF_SCHEMA_VERSION:
-      if (value == null) {
-        unsetCfSchemaVersion();
-      } else {
-        setCfSchemaVersion((Integer)value);
+        setEndpointKey((ByteBuffer)value);
       }
       break;
 
@@ -441,14 +388,11 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
     case USER_ID:
       return getUserId();
 
-    case ROUTE_ADDRESS:
-      return getRouteAddress();
+    case APPLICATION_TOKEN:
+      return getApplicationToken();
 
-    case UPDATE_TYPE:
-      return getUpdateType();
-
-    case CF_SCHEMA_VERSION:
-      return Integer.valueOf(getCfSchemaVersion());
+    case ENDPOINT_KEY:
+      return getEndpointKey();
 
     case UCF_HASH:
       return getUcfHash();
@@ -468,12 +412,10 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
       return isSetTenantId();
     case USER_ID:
       return isSetUserId();
-    case ROUTE_ADDRESS:
-      return isSetRouteAddress();
-    case UPDATE_TYPE:
-      return isSetUpdateType();
-    case CF_SCHEMA_VERSION:
-      return isSetCfSchemaVersion();
+    case APPLICATION_TOKEN:
+      return isSetApplicationToken();
+    case ENDPOINT_KEY:
+      return isSetEndpointKey();
     case UCF_HASH:
       return isSetUcfHash();
     }
@@ -484,12 +426,12 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
   public boolean equals(Object that) {
     if (that == null)
       return false;
-    if (that instanceof GlobalRouteUpdate)
-      return this.equals((GlobalRouteUpdate)that);
+    if (that instanceof EndpointStateUpdate)
+      return this.equals((EndpointStateUpdate)that);
     return false;
   }
 
-  public boolean equals(GlobalRouteUpdate that) {
+  public boolean equals(EndpointStateUpdate that) {
     if (that == null)
       return false;
 
@@ -511,30 +453,21 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
         return false;
     }
 
-    boolean this_present_routeAddress = true && this.isSetRouteAddress();
-    boolean that_present_routeAddress = true && that.isSetRouteAddress();
-    if (this_present_routeAddress || that_present_routeAddress) {
-      if (!(this_present_routeAddress && that_present_routeAddress))
+    boolean this_present_applicationToken = true && this.isSetApplicationToken();
+    boolean that_present_applicationToken = true && that.isSetApplicationToken();
+    if (this_present_applicationToken || that_present_applicationToken) {
+      if (!(this_present_applicationToken && that_present_applicationToken))
         return false;
-      if (!this.routeAddress.equals(that.routeAddress))
-        return false;
-    }
-
-    boolean this_present_updateType = true && this.isSetUpdateType();
-    boolean that_present_updateType = true && that.isSetUpdateType();
-    if (this_present_updateType || that_present_updateType) {
-      if (!(this_present_updateType && that_present_updateType))
-        return false;
-      if (!this.updateType.equals(that.updateType))
+      if (!this.applicationToken.equals(that.applicationToken))
         return false;
     }
 
-    boolean this_present_cfSchemaVersion = true;
-    boolean that_present_cfSchemaVersion = true;
-    if (this_present_cfSchemaVersion || that_present_cfSchemaVersion) {
-      if (!(this_present_cfSchemaVersion && that_present_cfSchemaVersion))
+    boolean this_present_endpointKey = true && this.isSetEndpointKey();
+    boolean that_present_endpointKey = true && that.isSetEndpointKey();
+    if (this_present_endpointKey || that_present_endpointKey) {
+      if (!(this_present_endpointKey && that_present_endpointKey))
         return false;
-      if (this.cfSchemaVersion != that.cfSchemaVersion)
+      if (!this.endpointKey.equals(that.endpointKey))
         return false;
     }
 
@@ -564,20 +497,15 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
     if (present_userId)
       builder.append(userId);
 
-    boolean present_routeAddress = true && (isSetRouteAddress());
-    builder.append(present_routeAddress);
-    if (present_routeAddress)
-      builder.append(routeAddress);
+    boolean present_applicationToken = true && (isSetApplicationToken());
+    builder.append(present_applicationToken);
+    if (present_applicationToken)
+      builder.append(applicationToken);
 
-    boolean present_updateType = true && (isSetUpdateType());
-    builder.append(present_updateType);
-    if (present_updateType)
-      builder.append(updateType.getValue());
-
-    boolean present_cfSchemaVersion = true;
-    builder.append(present_cfSchemaVersion);
-    if (present_cfSchemaVersion)
-      builder.append(cfSchemaVersion);
+    boolean present_endpointKey = true && (isSetEndpointKey());
+    builder.append(present_endpointKey);
+    if (present_endpointKey)
+      builder.append(endpointKey);
 
     boolean present_ucfHash = true && (isSetUcfHash());
     builder.append(present_ucfHash);
@@ -588,7 +516,7 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
   }
 
   @Override
-  public int compareTo(GlobalRouteUpdate other) {
+  public int compareTo(EndpointStateUpdate other) {
     if (!getClass().equals(other.getClass())) {
       return getClass().getName().compareTo(other.getClass().getName());
     }
@@ -615,32 +543,22 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetRouteAddress()).compareTo(other.isSetRouteAddress());
+    lastComparison = Boolean.valueOf(isSetApplicationToken()).compareTo(other.isSetApplicationToken());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetRouteAddress()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.routeAddress, other.routeAddress);
+    if (isSetApplicationToken()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.applicationToken, other.applicationToken);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetUpdateType()).compareTo(other.isSetUpdateType());
+    lastComparison = Boolean.valueOf(isSetEndpointKey()).compareTo(other.isSetEndpointKey());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetUpdateType()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.updateType, other.updateType);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(isSetCfSchemaVersion()).compareTo(other.isSetCfSchemaVersion());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetCfSchemaVersion()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.cfSchemaVersion, other.cfSchemaVersion);
+    if (isSetEndpointKey()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.endpointKey, other.endpointKey);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -672,7 +590,7 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder("GlobalRouteUpdate(");
+    StringBuilder sb = new StringBuilder("EndpointStateUpdate(");
     boolean first = true;
 
     sb.append("tenantId:");
@@ -691,24 +609,20 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("routeAddress:");
-    if (this.routeAddress == null) {
+    sb.append("applicationToken:");
+    if (this.applicationToken == null) {
       sb.append("null");
     } else {
-      sb.append(this.routeAddress);
+      sb.append(this.applicationToken);
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("updateType:");
-    if (this.updateType == null) {
+    sb.append("endpointKey:");
+    if (this.endpointKey == null) {
       sb.append("null");
     } else {
-      sb.append(this.updateType);
+      sb.append(this.endpointKey);
     }
-    first = false;
-    if (!first) sb.append(", ");
-    sb.append("cfSchemaVersion:");
-    sb.append(this.cfSchemaVersion);
     first = false;
     if (!first) sb.append(", ");
     sb.append("ucfHash:");
@@ -725,9 +639,6 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
   public void validate() throws org.apache.thrift.TException {
     // check for required fields
     // check for sub-struct validity
-    if (routeAddress != null) {
-      routeAddress.validate();
-    }
   }
 
   private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
@@ -740,23 +651,21 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
 
   private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
     try {
-      // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
-      __isset_bitfield = 0;
       read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
     } catch (org.apache.thrift.TException te) {
       throw new java.io.IOException(te);
     }
   }
 
-  private static class GlobalRouteUpdateStandardSchemeFactory implements SchemeFactory {
-    public GlobalRouteUpdateStandardScheme getScheme() {
-      return new GlobalRouteUpdateStandardScheme();
+  private static class EndpointStateUpdateStandardSchemeFactory implements SchemeFactory {
+    public EndpointStateUpdateStandardScheme getScheme() {
+      return new EndpointStateUpdateStandardScheme();
     }
   }
 
-  private static class GlobalRouteUpdateStandardScheme extends StandardScheme<GlobalRouteUpdate> {
+  private static class EndpointStateUpdateStandardScheme extends StandardScheme<EndpointStateUpdate> {
 
-    public void read(org.apache.thrift.protocol.TProtocol iprot, GlobalRouteUpdate struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol iprot, EndpointStateUpdate struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TField schemeField;
       iprot.readStructBegin();
       while (true)
@@ -782,32 +691,23 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 3: // ROUTE_ADDRESS
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.routeAddress = new RouteAddress();
-              struct.routeAddress.read(iprot);
-              struct.setRouteAddressIsSet(true);
+          case 3: // APPLICATION_TOKEN
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.applicationToken = iprot.readString();
+              struct.setApplicationTokenIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 4: // UPDATE_TYPE
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.updateType = EventRouteUpdateType.findByValue(iprot.readI32());
-              struct.setUpdateTypeIsSet(true);
+          case 4: // ENDPOINT_KEY
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.endpointKey = iprot.readBinary();
+              struct.setEndpointKeyIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 5: // CF_SCHEMA_VERSION
-            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.cfSchemaVersion = iprot.readI32();
-              struct.setCfSchemaVersionIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 6: // UCF_HASH
+          case 5: // UCF_HASH
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
               struct.ucfHash = iprot.readBinary();
               struct.setUcfHashIsSet(true);
@@ -826,7 +726,7 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
       struct.validate();
     }
 
-    public void write(org.apache.thrift.protocol.TProtocol oprot, GlobalRouteUpdate struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol oprot, EndpointStateUpdate struct) throws org.apache.thrift.TException {
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
@@ -840,19 +740,16 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
         oprot.writeString(struct.userId);
         oprot.writeFieldEnd();
       }
-      if (struct.routeAddress != null) {
-        oprot.writeFieldBegin(ROUTE_ADDRESS_FIELD_DESC);
-        struct.routeAddress.write(oprot);
+      if (struct.applicationToken != null) {
+        oprot.writeFieldBegin(APPLICATION_TOKEN_FIELD_DESC);
+        oprot.writeString(struct.applicationToken);
         oprot.writeFieldEnd();
       }
-      if (struct.updateType != null) {
-        oprot.writeFieldBegin(UPDATE_TYPE_FIELD_DESC);
-        oprot.writeI32(struct.updateType.getValue());
+      if (struct.endpointKey != null) {
+        oprot.writeFieldBegin(ENDPOINT_KEY_FIELD_DESC);
+        oprot.writeBinary(struct.endpointKey);
         oprot.writeFieldEnd();
       }
-      oprot.writeFieldBegin(CF_SCHEMA_VERSION_FIELD_DESC);
-      oprot.writeI32(struct.cfSchemaVersion);
-      oprot.writeFieldEnd();
       if (struct.ucfHash != null) {
         oprot.writeFieldBegin(UCF_HASH_FIELD_DESC);
         oprot.writeBinary(struct.ucfHash);
@@ -864,16 +761,16 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
 
   }
 
-  private static class GlobalRouteUpdateTupleSchemeFactory implements SchemeFactory {
-    public GlobalRouteUpdateTupleScheme getScheme() {
-      return new GlobalRouteUpdateTupleScheme();
+  private static class EndpointStateUpdateTupleSchemeFactory implements SchemeFactory {
+    public EndpointStateUpdateTupleScheme getScheme() {
+      return new EndpointStateUpdateTupleScheme();
     }
   }
 
-  private static class GlobalRouteUpdateTupleScheme extends TupleScheme<GlobalRouteUpdate> {
+  private static class EndpointStateUpdateTupleScheme extends TupleScheme<EndpointStateUpdate> {
 
     @Override
-    public void write(org.apache.thrift.protocol.TProtocol prot, GlobalRouteUpdate struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol prot, EndpointStateUpdate struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
       if (struct.isSetTenantId()) {
@@ -882,33 +779,27 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
       if (struct.isSetUserId()) {
         optionals.set(1);
       }
-      if (struct.isSetRouteAddress()) {
+      if (struct.isSetApplicationToken()) {
         optionals.set(2);
       }
-      if (struct.isSetUpdateType()) {
+      if (struct.isSetEndpointKey()) {
         optionals.set(3);
       }
-      if (struct.isSetCfSchemaVersion()) {
+      if (struct.isSetUcfHash()) {
         optionals.set(4);
       }
-      if (struct.isSetUcfHash()) {
-        optionals.set(5);
-      }
-      oprot.writeBitSet(optionals, 6);
+      oprot.writeBitSet(optionals, 5);
       if (struct.isSetTenantId()) {
         oprot.writeString(struct.tenantId);
       }
       if (struct.isSetUserId()) {
         oprot.writeString(struct.userId);
       }
-      if (struct.isSetRouteAddress()) {
-        struct.routeAddress.write(oprot);
+      if (struct.isSetApplicationToken()) {
+        oprot.writeString(struct.applicationToken);
       }
-      if (struct.isSetUpdateType()) {
-        oprot.writeI32(struct.updateType.getValue());
-      }
-      if (struct.isSetCfSchemaVersion()) {
-        oprot.writeI32(struct.cfSchemaVersion);
+      if (struct.isSetEndpointKey()) {
+        oprot.writeBinary(struct.endpointKey);
       }
       if (struct.isSetUcfHash()) {
         oprot.writeBinary(struct.ucfHash);
@@ -916,9 +807,9 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
     }
 
     @Override
-    public void read(org.apache.thrift.protocol.TProtocol prot, GlobalRouteUpdate struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol prot, EndpointStateUpdate struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(6);
+      BitSet incoming = iprot.readBitSet(5);
       if (incoming.get(0)) {
         struct.tenantId = iprot.readString();
         struct.setTenantIdIsSet(true);
@@ -928,19 +819,14 @@ public class GlobalRouteUpdate implements org.apache.thrift.TBase<GlobalRouteUpd
         struct.setUserIdIsSet(true);
       }
       if (incoming.get(2)) {
-        struct.routeAddress = new RouteAddress();
-        struct.routeAddress.read(iprot);
-        struct.setRouteAddressIsSet(true);
+        struct.applicationToken = iprot.readString();
+        struct.setApplicationTokenIsSet(true);
       }
       if (incoming.get(3)) {
-        struct.updateType = EventRouteUpdateType.findByValue(iprot.readI32());
-        struct.setUpdateTypeIsSet(true);
+        struct.endpointKey = iprot.readBinary();
+        struct.setEndpointKeyIsSet(true);
       }
       if (incoming.get(4)) {
-        struct.cfSchemaVersion = iprot.readI32();
-        struct.setCfSchemaVersionIsSet(true);
-      }
-      if (incoming.get(5)) {
         struct.ucfHash = iprot.readBinary();
         struct.setUcfHashIsSet(true);
       }

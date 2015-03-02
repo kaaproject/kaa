@@ -41,8 +41,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   private static final org.apache.thrift.protocol.TField EVENT_FIELD_DESC = new org.apache.thrift.protocol.TField("event", org.apache.thrift.protocol.TType.STRUCT, (short)3);
   private static final org.apache.thrift.protocol.TField ROUTE_FIELD_DESC = new org.apache.thrift.protocol.TField("route", org.apache.thrift.protocol.TType.STRUCT, (short)4);
   private static final org.apache.thrift.protocol.TField USER_ROUTE_FIELD_DESC = new org.apache.thrift.protocol.TField("userRoute", org.apache.thrift.protocol.TType.STRUCT, (short)5);
-  private static final org.apache.thrift.protocol.TField GLOBAL_UPDATE_FIELD_DESC = new org.apache.thrift.protocol.TField("globalUpdate", org.apache.thrift.protocol.TType.STRUCT, (short)6);
-  private static final org.apache.thrift.protocol.TField USER_UPDATE_FIELD_DESC = new org.apache.thrift.protocol.TField("userUpdate", org.apache.thrift.protocol.TType.STRUCT, (short)7);
+  private static final org.apache.thrift.protocol.TField ENDPOINT_ROUTE_UPDATE_FIELD_DESC = new org.apache.thrift.protocol.TField("endpointRouteUpdate", org.apache.thrift.protocol.TType.STRUCT, (short)6);
+  private static final org.apache.thrift.protocol.TField ENDPOINT_STATE_UPDATE_FIELD_DESC = new org.apache.thrift.protocol.TField("endpointStateUpdate", org.apache.thrift.protocol.TType.STRUCT, (short)7);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -59,8 +59,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   public Event event; // required
   public EventRoute route; // required
   public UserRouteInfo userRoute; // required
-  public GlobalRouteUpdate globalUpdate; // required
-  public EndpointUserConfigurationUpdate userUpdate; // required
+  public EndpointRouteUpdate endpointRouteUpdate; // required
+  public EndpointStateUpdate endpointStateUpdate; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -73,8 +73,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     EVENT((short)3, "event"),
     ROUTE((short)4, "route"),
     USER_ROUTE((short)5, "userRoute"),
-    GLOBAL_UPDATE((short)6, "globalUpdate"),
-    USER_UPDATE((short)7, "userUpdate");
+    ENDPOINT_ROUTE_UPDATE((short)6, "endpointRouteUpdate"),
+    ENDPOINT_STATE_UPDATE((short)7, "endpointStateUpdate");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -99,10 +99,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
           return ROUTE;
         case 5: // USER_ROUTE
           return USER_ROUTE;
-        case 6: // GLOBAL_UPDATE
-          return GLOBAL_UPDATE;
-        case 7: // USER_UPDATE
-          return USER_UPDATE;
+        case 6: // ENDPOINT_ROUTE_UPDATE
+          return ENDPOINT_ROUTE_UPDATE;
+        case 7: // ENDPOINT_STATE_UPDATE
+          return ENDPOINT_STATE_UPDATE;
         default:
           return null;
       }
@@ -158,10 +158,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, EventRoute.class)));
     tmpMap.put(_Fields.USER_ROUTE, new org.apache.thrift.meta_data.FieldMetaData("userRoute", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, UserRouteInfo.class)));
-    tmpMap.put(_Fields.GLOBAL_UPDATE, new org.apache.thrift.meta_data.FieldMetaData("globalUpdate", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, GlobalRouteUpdate.class)));
-    tmpMap.put(_Fields.USER_UPDATE, new org.apache.thrift.meta_data.FieldMetaData("userUpdate", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, EndpointUserConfigurationUpdate.class)));
+    tmpMap.put(_Fields.ENDPOINT_ROUTE_UPDATE, new org.apache.thrift.meta_data.FieldMetaData("endpointRouteUpdate", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, EndpointRouteUpdate.class)));
+    tmpMap.put(_Fields.ENDPOINT_STATE_UPDATE, new org.apache.thrift.meta_data.FieldMetaData("endpointStateUpdate", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, EndpointStateUpdate.class)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Message.class, metaDataMap);
   }
@@ -175,8 +175,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     Event event,
     EventRoute route,
     UserRouteInfo userRoute,
-    GlobalRouteUpdate globalUpdate,
-    EndpointUserConfigurationUpdate userUpdate)
+    EndpointRouteUpdate endpointRouteUpdate,
+    EndpointStateUpdate endpointStateUpdate)
   {
     this();
     this.type = type;
@@ -185,8 +185,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.event = event;
     this.route = route;
     this.userRoute = userRoute;
-    this.globalUpdate = globalUpdate;
-    this.userUpdate = userUpdate;
+    this.endpointRouteUpdate = endpointRouteUpdate;
+    this.endpointStateUpdate = endpointStateUpdate;
   }
 
   /**
@@ -207,11 +207,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     if (other.isSetUserRoute()) {
       this.userRoute = new UserRouteInfo(other.userRoute);
     }
-    if (other.isSetGlobalUpdate()) {
-      this.globalUpdate = new GlobalRouteUpdate(other.globalUpdate);
+    if (other.isSetEndpointRouteUpdate()) {
+      this.endpointRouteUpdate = new EndpointRouteUpdate(other.endpointRouteUpdate);
     }
-    if (other.isSetUserUpdate()) {
-      this.userUpdate = new EndpointUserConfigurationUpdate(other.userUpdate);
+    if (other.isSetEndpointStateUpdate()) {
+      this.endpointStateUpdate = new EndpointStateUpdate(other.endpointStateUpdate);
     }
   }
 
@@ -227,8 +227,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.event = null;
     this.route = null;
     this.userRoute = null;
-    this.globalUpdate = null;
-    this.userUpdate = null;
+    this.endpointRouteUpdate = null;
+    this.endpointStateUpdate = null;
   }
 
   /**
@@ -358,51 +358,51 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     }
   }
 
-  public GlobalRouteUpdate getGlobalUpdate() {
-    return this.globalUpdate;
+  public EndpointRouteUpdate getEndpointRouteUpdate() {
+    return this.endpointRouteUpdate;
   }
 
-  public Message setGlobalUpdate(GlobalRouteUpdate globalUpdate) {
-    this.globalUpdate = globalUpdate;
+  public Message setEndpointRouteUpdate(EndpointRouteUpdate endpointRouteUpdate) {
+    this.endpointRouteUpdate = endpointRouteUpdate;
     return this;
   }
 
-  public void unsetGlobalUpdate() {
-    this.globalUpdate = null;
+  public void unsetEndpointRouteUpdate() {
+    this.endpointRouteUpdate = null;
   }
 
-  /** Returns true if field globalUpdate is set (has been assigned a value) and false otherwise */
-  public boolean isSetGlobalUpdate() {
-    return this.globalUpdate != null;
+  /** Returns true if field endpointRouteUpdate is set (has been assigned a value) and false otherwise */
+  public boolean isSetEndpointRouteUpdate() {
+    return this.endpointRouteUpdate != null;
   }
 
-  public void setGlobalUpdateIsSet(boolean value) {
+  public void setEndpointRouteUpdateIsSet(boolean value) {
     if (!value) {
-      this.globalUpdate = null;
+      this.endpointRouteUpdate = null;
     }
   }
 
-  public EndpointUserConfigurationUpdate getUserUpdate() {
-    return this.userUpdate;
+  public EndpointStateUpdate getEndpointStateUpdate() {
+    return this.endpointStateUpdate;
   }
 
-  public Message setUserUpdate(EndpointUserConfigurationUpdate userUpdate) {
-    this.userUpdate = userUpdate;
+  public Message setEndpointStateUpdate(EndpointStateUpdate endpointStateUpdate) {
+    this.endpointStateUpdate = endpointStateUpdate;
     return this;
   }
 
-  public void unsetUserUpdate() {
-    this.userUpdate = null;
+  public void unsetEndpointStateUpdate() {
+    this.endpointStateUpdate = null;
   }
 
-  /** Returns true if field userUpdate is set (has been assigned a value) and false otherwise */
-  public boolean isSetUserUpdate() {
-    return this.userUpdate != null;
+  /** Returns true if field endpointStateUpdate is set (has been assigned a value) and false otherwise */
+  public boolean isSetEndpointStateUpdate() {
+    return this.endpointStateUpdate != null;
   }
 
-  public void setUserUpdateIsSet(boolean value) {
+  public void setEndpointStateUpdateIsSet(boolean value) {
     if (!value) {
-      this.userUpdate = null;
+      this.endpointStateUpdate = null;
     }
   }
 
@@ -448,19 +448,19 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       }
       break;
 
-    case GLOBAL_UPDATE:
+    case ENDPOINT_ROUTE_UPDATE:
       if (value == null) {
-        unsetGlobalUpdate();
+        unsetEndpointRouteUpdate();
       } else {
-        setGlobalUpdate((GlobalRouteUpdate)value);
+        setEndpointRouteUpdate((EndpointRouteUpdate)value);
       }
       break;
 
-    case USER_UPDATE:
+    case ENDPOINT_STATE_UPDATE:
       if (value == null) {
-        unsetUserUpdate();
+        unsetEndpointStateUpdate();
       } else {
-        setUserUpdate((EndpointUserConfigurationUpdate)value);
+        setEndpointStateUpdate((EndpointStateUpdate)value);
       }
       break;
 
@@ -484,11 +484,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     case USER_ROUTE:
       return getUserRoute();
 
-    case GLOBAL_UPDATE:
-      return getGlobalUpdate();
+    case ENDPOINT_ROUTE_UPDATE:
+      return getEndpointRouteUpdate();
 
-    case USER_UPDATE:
-      return getUserUpdate();
+    case ENDPOINT_STATE_UPDATE:
+      return getEndpointStateUpdate();
 
     }
     throw new IllegalStateException();
@@ -511,10 +511,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       return isSetRoute();
     case USER_ROUTE:
       return isSetUserRoute();
-    case GLOBAL_UPDATE:
-      return isSetGlobalUpdate();
-    case USER_UPDATE:
-      return isSetUserUpdate();
+    case ENDPOINT_ROUTE_UPDATE:
+      return isSetEndpointRouteUpdate();
+    case ENDPOINT_STATE_UPDATE:
+      return isSetEndpointStateUpdate();
     }
     throw new IllegalStateException();
   }
@@ -577,21 +577,21 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return false;
     }
 
-    boolean this_present_globalUpdate = true && this.isSetGlobalUpdate();
-    boolean that_present_globalUpdate = true && that.isSetGlobalUpdate();
-    if (this_present_globalUpdate || that_present_globalUpdate) {
-      if (!(this_present_globalUpdate && that_present_globalUpdate))
+    boolean this_present_endpointRouteUpdate = true && this.isSetEndpointRouteUpdate();
+    boolean that_present_endpointRouteUpdate = true && that.isSetEndpointRouteUpdate();
+    if (this_present_endpointRouteUpdate || that_present_endpointRouteUpdate) {
+      if (!(this_present_endpointRouteUpdate && that_present_endpointRouteUpdate))
         return false;
-      if (!this.globalUpdate.equals(that.globalUpdate))
+      if (!this.endpointRouteUpdate.equals(that.endpointRouteUpdate))
         return false;
     }
 
-    boolean this_present_userUpdate = true && this.isSetUserUpdate();
-    boolean that_present_userUpdate = true && that.isSetUserUpdate();
-    if (this_present_userUpdate || that_present_userUpdate) {
-      if (!(this_present_userUpdate && that_present_userUpdate))
+    boolean this_present_endpointStateUpdate = true && this.isSetEndpointStateUpdate();
+    boolean that_present_endpointStateUpdate = true && that.isSetEndpointStateUpdate();
+    if (this_present_endpointStateUpdate || that_present_endpointStateUpdate) {
+      if (!(this_present_endpointStateUpdate && that_present_endpointStateUpdate))
         return false;
-      if (!this.userUpdate.equals(that.userUpdate))
+      if (!this.endpointStateUpdate.equals(that.endpointStateUpdate))
         return false;
     }
 
@@ -627,15 +627,15 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     if (present_userRoute)
       builder.append(userRoute);
 
-    boolean present_globalUpdate = true && (isSetGlobalUpdate());
-    builder.append(present_globalUpdate);
-    if (present_globalUpdate)
-      builder.append(globalUpdate);
+    boolean present_endpointRouteUpdate = true && (isSetEndpointRouteUpdate());
+    builder.append(present_endpointRouteUpdate);
+    if (present_endpointRouteUpdate)
+      builder.append(endpointRouteUpdate);
 
-    boolean present_userUpdate = true && (isSetUserUpdate());
-    builder.append(present_userUpdate);
-    if (present_userUpdate)
-      builder.append(userUpdate);
+    boolean present_endpointStateUpdate = true && (isSetEndpointStateUpdate());
+    builder.append(present_endpointStateUpdate);
+    if (present_endpointStateUpdate)
+      builder.append(endpointStateUpdate);
 
     return builder.toHashCode();
   }
@@ -698,22 +698,22 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetGlobalUpdate()).compareTo(other.isSetGlobalUpdate());
+    lastComparison = Boolean.valueOf(isSetEndpointRouteUpdate()).compareTo(other.isSetEndpointRouteUpdate());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetGlobalUpdate()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.globalUpdate, other.globalUpdate);
+    if (isSetEndpointRouteUpdate()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.endpointRouteUpdate, other.endpointRouteUpdate);
       if (lastComparison != 0) {
         return lastComparison;
       }
     }
-    lastComparison = Boolean.valueOf(isSetUserUpdate()).compareTo(other.isSetUserUpdate());
+    lastComparison = Boolean.valueOf(isSetEndpointStateUpdate()).compareTo(other.isSetEndpointStateUpdate());
     if (lastComparison != 0) {
       return lastComparison;
     }
-    if (isSetUserUpdate()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userUpdate, other.userUpdate);
+    if (isSetEndpointStateUpdate()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.endpointStateUpdate, other.endpointStateUpdate);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -774,19 +774,19 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("globalUpdate:");
-    if (this.globalUpdate == null) {
+    sb.append("endpointRouteUpdate:");
+    if (this.endpointRouteUpdate == null) {
       sb.append("null");
     } else {
-      sb.append(this.globalUpdate);
+      sb.append(this.endpointRouteUpdate);
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("userUpdate:");
-    if (this.userUpdate == null) {
+    sb.append("endpointStateUpdate:");
+    if (this.endpointStateUpdate == null) {
       sb.append("null");
     } else {
-      sb.append(this.userUpdate);
+      sb.append(this.endpointStateUpdate);
     }
     first = false;
     sb.append(")");
@@ -805,11 +805,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     if (userRoute != null) {
       userRoute.validate();
     }
-    if (globalUpdate != null) {
-      globalUpdate.validate();
+    if (endpointRouteUpdate != null) {
+      endpointRouteUpdate.validate();
     }
-    if (userUpdate != null) {
-      userUpdate.validate();
+    if (endpointStateUpdate != null) {
+      endpointStateUpdate.validate();
     }
   }
 
@@ -892,20 +892,20 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 6: // GLOBAL_UPDATE
+          case 6: // ENDPOINT_ROUTE_UPDATE
             if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.globalUpdate = new GlobalRouteUpdate();
-              struct.globalUpdate.read(iprot);
-              struct.setGlobalUpdateIsSet(true);
+              struct.endpointRouteUpdate = new EndpointRouteUpdate();
+              struct.endpointRouteUpdate.read(iprot);
+              struct.setEndpointRouteUpdateIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 7: // USER_UPDATE
+          case 7: // ENDPOINT_STATE_UPDATE
             if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-              struct.userUpdate = new EndpointUserConfigurationUpdate();
-              struct.userUpdate.read(iprot);
-              struct.setUserUpdateIsSet(true);
+              struct.endpointStateUpdate = new EndpointStateUpdate();
+              struct.endpointStateUpdate.read(iprot);
+              struct.setEndpointStateUpdateIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -948,14 +948,14 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         struct.userRoute.write(oprot);
         oprot.writeFieldEnd();
       }
-      if (struct.globalUpdate != null) {
-        oprot.writeFieldBegin(GLOBAL_UPDATE_FIELD_DESC);
-        struct.globalUpdate.write(oprot);
+      if (struct.endpointRouteUpdate != null) {
+        oprot.writeFieldBegin(ENDPOINT_ROUTE_UPDATE_FIELD_DESC);
+        struct.endpointRouteUpdate.write(oprot);
         oprot.writeFieldEnd();
       }
-      if (struct.userUpdate != null) {
-        oprot.writeFieldBegin(USER_UPDATE_FIELD_DESC);
-        struct.userUpdate.write(oprot);
+      if (struct.endpointStateUpdate != null) {
+        oprot.writeFieldBegin(ENDPOINT_STATE_UPDATE_FIELD_DESC);
+        struct.endpointStateUpdate.write(oprot);
         oprot.writeFieldEnd();
       }
       oprot.writeFieldStop();
@@ -991,10 +991,10 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (struct.isSetUserRoute()) {
         optionals.set(4);
       }
-      if (struct.isSetGlobalUpdate()) {
+      if (struct.isSetEndpointRouteUpdate()) {
         optionals.set(5);
       }
-      if (struct.isSetUserUpdate()) {
+      if (struct.isSetEndpointStateUpdate()) {
         optionals.set(6);
       }
       oprot.writeBitSet(optionals, 7);
@@ -1013,11 +1013,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (struct.isSetUserRoute()) {
         struct.userRoute.write(oprot);
       }
-      if (struct.isSetGlobalUpdate()) {
-        struct.globalUpdate.write(oprot);
+      if (struct.isSetEndpointRouteUpdate()) {
+        struct.endpointRouteUpdate.write(oprot);
       }
-      if (struct.isSetUserUpdate()) {
-        struct.userUpdate.write(oprot);
+      if (struct.isSetEndpointStateUpdate()) {
+        struct.endpointStateUpdate.write(oprot);
       }
     }
 
@@ -1049,14 +1049,14 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         struct.setUserRouteIsSet(true);
       }
       if (incoming.get(5)) {
-        struct.globalUpdate = new GlobalRouteUpdate();
-        struct.globalUpdate.read(iprot);
-        struct.setGlobalUpdateIsSet(true);
+        struct.endpointRouteUpdate = new EndpointRouteUpdate();
+        struct.endpointRouteUpdate.read(iprot);
+        struct.setEndpointRouteUpdateIsSet(true);
       }
       if (incoming.get(6)) {
-        struct.userUpdate = new EndpointUserConfigurationUpdate();
-        struct.userUpdate.read(iprot);
-        struct.setUserUpdateIsSet(true);
+        struct.endpointStateUpdate = new EndpointStateUpdate();
+        struct.endpointStateUpdate.read(iprot);
+        struct.setEndpointStateUpdateIsSet(true);
       }
     }
   }

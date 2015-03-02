@@ -17,7 +17,9 @@ import org.apache.thrift.TEnum;
 public enum EventMessageType implements org.apache.thrift.TEnum {
   ROUTE_UPDATE(1),
   USER_ROUTE_INFO(2),
-  EVENT(3);
+  EVENT(3),
+  ENDPOINT_ROUTE_UPDATE(4),
+  ENDPOINT_STATE_UPDATE(5);
 
   private final int value;
 
@@ -44,6 +46,10 @@ public enum EventMessageType implements org.apache.thrift.TEnum {
         return USER_ROUTE_INFO;
       case 3:
         return EVENT;
+      case 4:
+        return ENDPOINT_ROUTE_UPDATE;
+      case 5:
+        return ENDPOINT_STATE_UPDATE;
       default:
         return null;
     }
