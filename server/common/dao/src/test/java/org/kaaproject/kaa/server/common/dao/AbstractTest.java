@@ -554,8 +554,8 @@ public class AbstractTest {
 
     protected EndpointUserDto generateEndpointUser(String tenantId) {
         EndpointUserDto endpointUser = new EndpointUserDto();
-        endpointUser.setExternalId(ENDPOINT_USER_EXTERNAL_ID);
-        endpointUser.setUsername(ENDPOINT_USER_NAME);
+        endpointUser.setExternalId(ENDPOINT_USER_EXTERNAL_ID + UUID.randomUUID().toString());
+        endpointUser.setUsername(ENDPOINT_USER_NAME + UUID.randomUUID().toString());
         endpointUser.setTenantId(tenantId);
         endpointUser = endpointService.saveEndpointUser(endpointUser);
         return endpointUser;

@@ -3,6 +3,8 @@ package org.kaaproject.kaa.server.common.dao.impl;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
 
+import java.util.List;
+
 public interface EndpointUserConfigurationDao<T extends EndpointUserConfiguration> extends Dao<T, String> {
 
     /**
@@ -21,6 +23,13 @@ public interface EndpointUserConfigurationDao<T extends EndpointUserConfiguratio
      */
     T findByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion);
 
+
+    /**
+     *
+     * @param userId
+     * @return
+     */
+    List<T> findByUserId(String userId);
 
     /**
      *

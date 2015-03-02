@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.USER_CONFIGURATION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.USER_CONF_APP_TOKEN;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.USER_CONF_SCHEMA_VERSION;
@@ -39,6 +41,12 @@ public class EndpointUserConfigurationMongoDao extends AbstractMongoDao<MongoEnd
     public MongoEndpointUserConfiguration findByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion) {
         LOG.debug("Find user specific configuration by user id {}, application toke {} schema version {}", userId, appToken, schemaVersion);
         return findOne(query(where(USER_CONF_USER_ID).is(userId).and(USER_CONF_APP_TOKEN).is(appToken).and(USER_CONF_SCHEMA_VERSION).is(schemaVersion)));
+    }
+
+    @Override
+    public List<MongoEndpointUserConfiguration> findByUserId(String userId) {
+        LOG.debug("Find user specific configurations by user id {}", userId);
+        return find(query(where(USER_CONF_USER_ID).is(userId)));
     }
 
     @Override

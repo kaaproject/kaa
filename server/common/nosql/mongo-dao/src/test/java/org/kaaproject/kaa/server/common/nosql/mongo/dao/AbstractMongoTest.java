@@ -38,9 +38,8 @@ public class AbstractMongoTest extends AbstractTest {
     protected EndpointConfigurationDao<MongoEndpointConfiguration> endpointConfigurationDao;
     @Autowired
     protected EndpointProfileDao<MongoEndpointProfile> endpointProfileDao;
-
     @Autowired
-    protected EndpointUserConfigurationDao<MongoEndpointUserConfiguration> userConfigurationMongoDao;
+    protected EndpointUserConfigurationDao<MongoEndpointUserConfiguration> endpointUserConfigurationDao;
 
     protected EndpointProfileDto generateEndpointProfile(String appId, List<String> topicIds) {
         EndpointProfileDto profileDto = new EndpointProfileDto();
@@ -72,7 +71,7 @@ public class AbstractMongoTest extends AbstractTest {
             applicationDto = generateApplication();
         }
         configurationDto.setAppToken(applicationDto.getApplicationToken());
-        userConfigurationMongoDao.save(new MongoEndpointUserConfiguration(configurationDto));
+        endpointUserConfigurationDao.save(new MongoEndpointUserConfiguration(configurationDto));
         return configurationDto;
     }
 }
