@@ -66,7 +66,7 @@ void ConfigurationManager::onDeltaReceived(int index, const KaaRootConfiguration
 
     root_ = datum;
 
-    KAA_LOG_DEBUG(boost::format("Full configuration received"));
+    KAA_LOG_DEBUG("Full configuration received");
 }
 
 void ConfigurationManager::onConfigurationProcessed()
