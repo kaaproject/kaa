@@ -52,7 +52,7 @@ public:
 
 private:
     void populateEventFamilyVersions(EndpointVersionInfo::eventFamilyVersions_t& versions);
-    bool isProfileOutDated(SharedDataBuffer profileHash);
+    bool isProfileOutDated(const HashDigest& profileHash);
 
 private:
     IProfileManager*               profileManager_;

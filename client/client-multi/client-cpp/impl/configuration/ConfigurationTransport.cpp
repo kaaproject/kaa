@@ -15,6 +15,9 @@
  */
 
 #include "kaa/configuration/ConfigurationTransport.hpp"
+#include "kaa/configuration/IConfigurationProcessor.hpp"
+#include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
+#include "kaa/configuration/IConfigurationHashContainer.hpp"
 
 #ifdef KAA_USE_CONFIGURATION
 
@@ -22,10 +25,9 @@
 
 namespace kaa {
 
-ConfigurationTransport::ConfigurationTransport(IKaaChannelManager& channelManager, IConfigurationProcessor *configProcessor, ISchemaProcessor *schemaProcessor, IConfigurationHashContainer *hashContainer, IKaaClientStateStoragePtr status)
+ConfigurationTransport::ConfigurationTransport(IKaaChannelManager& channelManager, IConfigurationProcessor *configProcessor, IConfigurationHashContainer *hashContainer, IKaaClientStateStoragePtr status)
     : AbstractKaaTransport(channelManager)
     , configurationProcessor_(configProcessor)
-    , schemaProcessor_(schemaProcessor)
     , hashContainer_(hashContainer)
 {
     setClientState(status);
@@ -38,13 +40,14 @@ void ConfigurationTransport::sync()
 
 std::shared_ptr<ConfigurationSyncRequest> ConfigurationTransport::createConfigurationRequest()
 {
-    if (clientStatus_.get() == nullptr) {
+    if (!clientStatus_) {
         throw KaaException("Can not generate ConfigurationSyncRequest: Status was not provided");
     }
 
     std::shared_ptr<ConfigurationSyncRequest> request(new ConfigurationSyncRequest);
     request->appStateSeqNumber = clientStatus_->getConfigurationSequenceNumber();
     request->configurationHash.set_bytes(hashContainer_->getConfigurationHash());
+    request->resyncOnly.set_bool(true); // Only full resyncs are currently supported
     return request;
 }
 
@@ -56,10 +59,6 @@ void ConfigurationTransport::onConfigurationResponse(const ConfigurationSyncResp
             std::vector<std::uint8_t> data = response.confDeltaBody.get_bytes();
             configurationProcessor_->processConfigurationData(data.data(), data.size()
                     , response.responseStatus == SyncResponseStatus::RESYNC);
-        }
-        if (!response.confSchemaBody.is_null()) {
-            std::vector<std::uint8_t> schema = response.confSchemaBody.get_bytes();
-            schemaProcessor_->loadSchema(schema.data(), schema.size());
         }
         syncAck();
     }

@@ -24,8 +24,8 @@ namespace kaa {
 
 class IBootstrapManager;
 class IKaaChannelManager;
-class BootstrapSyncRequest;
-class BootstrapSyncResponse;
+struct BootstrapSyncRequest;
+struct BootstrapSyncResponse;
 
 class BootstrapTransport : public AbstractKaaTransport<TransportType::BOOTSTRAP>
                          , public IBootstrapTransport
