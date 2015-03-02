@@ -61,7 +61,7 @@ public class DefaultEventService implements EventService {
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultEventService.class);
-
+  
     /** The Constant RND. */
     private static final Random RND = new Random();
 

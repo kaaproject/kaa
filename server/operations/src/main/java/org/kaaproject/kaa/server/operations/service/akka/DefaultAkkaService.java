@@ -27,6 +27,12 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.OperationsServerActor;
 import org.kaaproject.kaa.server.operations.service.akka.actors.io.EncDecActor;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdateMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.GlobalRouteInfoMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdateMessage;
+import org.kaaproject.kaa.server.operations.service.event.GlobalRouteInfo;
 import org.kaaproject.kaa.server.sync.platform.PlatformLookup;
 import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.kaaproject.kaa.server.transport.session.SessionAware;
@@ -159,5 +165,20 @@ public class DefaultAkkaService implements AkkaService {
     @Override
     public void process(SessionInitMessage message) {
         ioRouter.tell(message, ActorRef.noSender());
+    }
+
+    @Override
+    public void onUserConfigurationUpdate(UserConfigurationUpdate update) {
+        opsActor.tell(new UserConfigurationUpdateMessage(update), ActorRef.noSender());
+    }
+
+    @Override
+    public void onEndpointUserConfigurationUpdate(EndpointUserConfigurationUpdate update) {
+        opsActor.tell(new EndpointUserConfigurationUpdateMessage(update), ActorRef.noSender());
+    }
+
+    @Override
+    public void onGlobalRouteUpdate(GlobalRouteInfo update) {
+        opsActor.tell(new GlobalRouteInfoMessage(update), ActorRef.noSender());
     }
 }

@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core.user;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
@@ -56,8 +57,11 @@ public class GlobalUserActorMessageProcessor {
     public void process(UserConfigurationUpdate update) {
         ConfigurationKey key = ConfigurationKey.fromUpdateMessage(update);
         Map<String, Set<GlobalRouteInfo>> routes = map.getRoutesByServer(key);
-        for (String serverId : routes.keySet()) {
-            LOG.debug("Sending notification to {} about configuration update", serverId);
+        for (Entry<String,Set<GlobalRouteInfo>> entry : routes.entrySet()) {
+            LOG.debug("Sending notification to {} about configuration update", entry.getKey());
+            for(GlobalRouteInfo route : entry.getValue()){
+                LOG.debug("Sending notification to route {}", route);
+            }
         }
     }
 

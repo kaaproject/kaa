@@ -126,10 +126,10 @@ public class TenantActor extends UntypedActor {
         } else {
             LOG.debug("[{}] Received: {}", tenantId, message.getClass().getName());
         }
-        if(message instanceof GlobalUserAwareMessage) {
-            processGlobalUserAwareMessage((GlobalUserAwareMessage) message);
-        } else if (message instanceof EndpointAwareMessage) {
+        if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
+        } else if(message instanceof GlobalUserAwareMessage) {
+            processGlobalUserAwareMessage((GlobalUserAwareMessage) message);
         } else if (message instanceof SessionControlMessage) {
             processSessionControlMessage((SessionControlMessage) message);
         } else if (message instanceof UserAwareMessage) {

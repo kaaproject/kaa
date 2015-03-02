@@ -17,6 +17,7 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core.user;
 
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.GlobalRouteInfoMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdateMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,8 @@ import akka.actor.UntypedActor;
 import akka.japi.Creator;
 
 /**
- * This actor is responsible for handling and efficient routing of different updates to endpoints.
+ * This actor is responsible for handling and efficient routing of different
+ * updates to endpoints.
  * 
  * @author Andrew Shvayka
  *
@@ -35,9 +37,9 @@ public class GlobalUserActor extends UntypedActor {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalUserActor.class);
 
     private final String userId;
-    
+
     private final GlobalUserActorMessageProcessor messageProcessor;
-    
+
     /**
      * Instantiates a new user actor.
      *
@@ -48,12 +50,14 @@ public class GlobalUserActor extends UntypedActor {
         this.messageProcessor = new GlobalUserActorMessageProcessor(context, userId, tenantId);
         this.userId = userId;
     }
-    
+
     @Override
     public void onReceive(Object message) throws Exception {
         LOG.debug("[{}] Received: {}", userId, message);
         if(message instanceof GlobalRouteInfoMessage){
             messageProcessor.process(((GlobalRouteInfoMessage) message).getRoute());
+        } else if (message instanceof UserConfigurationUpdateMessage){
+            messageProcessor.process(((UserConfigurationUpdateMessage) message).getUpdate());
         }
     }
 
@@ -90,7 +94,7 @@ public class GlobalUserActor extends UntypedActor {
 
         /*
          * (non-Javadoc)
-         *
+         * 
          * @see akka.japi.Creator#create()
          */
         @Override

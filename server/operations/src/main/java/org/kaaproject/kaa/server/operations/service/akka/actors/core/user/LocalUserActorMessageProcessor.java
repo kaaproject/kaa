@@ -129,7 +129,8 @@ public class LocalUserActorMessageProcessor {
             }
         }
 
-        GlobalRouteInfo route = new GlobalRouteInfo(tenantId, userId, address, message.getCfVersion(), RouteOperation.ADD);
+        //TODO: get hash from connect message
+        GlobalRouteInfo route = GlobalRouteInfo.add(tenantId, userId, address, message.getCfVersion(), new byte[0]);
         if (eventService.isMainUserNode(userId)) {
             context.parent().tell(new GlobalRouteInfoMessage(route), context.self());
         } else {
@@ -373,7 +374,7 @@ public class LocalUserActorMessageProcessor {
             eventService.sendRouteInfo(RouteInfo.deleteRouteFromAddress(tenantId, userId, address), serverId);
         }
         
-        GlobalRouteInfo route = new GlobalRouteInfo(tenantId, userId, address, 0, RouteOperation.DELETE);
+        GlobalRouteInfo route = GlobalRouteInfo.delete(tenantId, userId, address);
         if (eventService.isMainUserNode(userId)) {
             context.parent().tell(new GlobalRouteInfoMessage(route), context.self());
         } else {

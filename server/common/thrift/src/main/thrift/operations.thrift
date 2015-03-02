@@ -149,14 +149,6 @@ struct UserRouteInfo {
   4: EventRouteUpdateType updateType
 }
 
-struct EventMessage {
-  1: EventMessageType type
-  2: shared.Long eventId
-  3: Event event
-  4: EventRoute route
-  5: UserRouteInfo userRoute
-}
-
 struct GlobalRouteUpdate {
   1: tenant_id tenantId
   2: user_id userId
@@ -166,19 +158,29 @@ struct GlobalRouteUpdate {
   6: binary ucfHash
 }
 
-struct UserConfigurationUpdate {
-  1: tenant_id tenantId
-  2: user_id userId
-  3: application_token applicationToken
-  4: int cfSchemaVersion
-  5: binary ucfHash
-}
-
 struct EndpointUserConfigurationUpdate {
   1: tenant_id tenantId
   2: user_id userId
   3: application_token applicationToken
   4: endpoint_id endpointKey
+  5: binary ucfHash
+}
+
+struct Message {
+  1: EventMessageType type
+  2: shared.Long eventId
+  3: Event event
+  4: EventRoute route
+  5: UserRouteInfo userRoute
+  6: GlobalRouteUpdate globalUpdate
+  7: EndpointUserConfigurationUpdate userUpdate
+}
+
+struct UserConfigurationUpdate {
+  1: tenant_id tenantId
+  2: user_id userId
+  3: application_token applicationToken
+  4: int cfSchemaVersion
   5: binary ucfHash
 }
 
@@ -190,21 +192,6 @@ service OperationsThriftService extends cli.CliThriftService{
   void onNotification(1: Notification notification);
 
 /**
-*   Report user configuration update to global user actor
-*/
-  void onUserConfigurationUpdate(1: UserConfigurationUpdate notification);
-
-/**
-*   Report user configuration update to endpoint actor
-*/
-  void onEndpointUserConfigurationUpdate(1: EndpointUserConfigurationUpdate notification);
-  
-/**
-*  Report global route update to global user actor
-*/
-  void onGlobalRouteUpdate(1: GlobalRouteUpdate message);
-
-/**
 *  Set redirection rule for Operations server
 */
   void setRedirectionRule(1: RedirectionRule redirectionRule);
@@ -212,6 +199,11 @@ service OperationsThriftService extends cli.CliThriftService{
 /**
 *  Interface to send unified event messages
 */
-  void sendEventMessage(1: list<EventMessage> messages);
+  void sendMessages(1: list<Message> messages);
+
+/**
+*   Report user configuration update from control to operation servers
+*/
+  void onUserConfigurationUpdates(1: list<UserConfigurationUpdate> updates);
 
 }

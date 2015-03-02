@@ -154,8 +154,6 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
     public void start() {
         operationsService.setPublicKey(keyStoreService.getPublicKey());
 
-        operationsThriftService.setEventService(eventService);
-
         transportService.lookupAndInit();
         
         final CountDownLatch thriftStartupLatch = new CountDownLatch(1);

@@ -229,7 +229,7 @@ public class EventServiceThriftTestIT {
 
             eventService = eventServiceInst;
             operationsThriftService = new OperationsThriftServiceImpl();
-            operationsThriftService.setEventService(eventService);
+//            operationsThriftService.setEventService(eventService);
         }
         /* (non-Javadoc)
          * @see java.lang.Runnable#run()
