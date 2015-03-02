@@ -74,7 +74,9 @@ enum EventRouteUpdateType {
 enum EventMessageType {
       ROUTE_UPDATE = 1;
       USER_ROUTE_INFO = 2;
-      EVENT = 3
+      EVENT = 3;
+      ENDPOINT_ROUTE_UPDATE = 4;
+      ENDPOINT_STATE_UPDATE = 5;
 }
 
 struct Notification {
@@ -149,7 +151,7 @@ struct UserRouteInfo {
   4: EventRouteUpdateType updateType
 }
 
-struct GlobalRouteUpdate {
+struct EndpointRouteUpdate {
   1: tenant_id tenantId
   2: user_id userId
   3: RouteAddress routeAddress
@@ -158,7 +160,7 @@ struct GlobalRouteUpdate {
   6: binary ucfHash
 }
 
-struct EndpointUserConfigurationUpdate {
+struct EndpointStateUpdate {
   1: tenant_id tenantId
   2: user_id userId
   3: application_token applicationToken
@@ -172,8 +174,8 @@ struct Message {
   3: Event event
   4: EventRoute route
   5: UserRouteInfo userRoute
-  6: GlobalRouteUpdate globalUpdate
-  7: EndpointUserConfigurationUpdate userUpdate
+  6: EndpointRouteUpdate endpointRouteUpdate
+  7: EndpointStateUpdate endpointStateUpdate
 }
 
 struct UserConfigurationUpdate {
