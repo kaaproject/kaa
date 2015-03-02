@@ -33,19 +33,21 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EventMessage implements org.apache.thrift.TBase<EventMessage, EventMessage._Fields>, java.io.Serializable, Cloneable, Comparable<EventMessage> {
-  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("EventMessage");
+public class Message implements org.apache.thrift.TBase<Message, Message._Fields>, java.io.Serializable, Cloneable, Comparable<Message> {
+  private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("Message");
 
   private static final org.apache.thrift.protocol.TField TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("type", org.apache.thrift.protocol.TType.I32, (short)1);
   private static final org.apache.thrift.protocol.TField EVENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("eventId", org.apache.thrift.protocol.TType.I64, (short)2);
   private static final org.apache.thrift.protocol.TField EVENT_FIELD_DESC = new org.apache.thrift.protocol.TField("event", org.apache.thrift.protocol.TType.STRUCT, (short)3);
   private static final org.apache.thrift.protocol.TField ROUTE_FIELD_DESC = new org.apache.thrift.protocol.TField("route", org.apache.thrift.protocol.TType.STRUCT, (short)4);
   private static final org.apache.thrift.protocol.TField USER_ROUTE_FIELD_DESC = new org.apache.thrift.protocol.TField("userRoute", org.apache.thrift.protocol.TType.STRUCT, (short)5);
+  private static final org.apache.thrift.protocol.TField GLOBAL_UPDATE_FIELD_DESC = new org.apache.thrift.protocol.TField("globalUpdate", org.apache.thrift.protocol.TType.STRUCT, (short)6);
+  private static final org.apache.thrift.protocol.TField USER_UPDATE_FIELD_DESC = new org.apache.thrift.protocol.TField("userUpdate", org.apache.thrift.protocol.TType.STRUCT, (short)7);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
-    schemes.put(StandardScheme.class, new EventMessageStandardSchemeFactory());
-    schemes.put(TupleScheme.class, new EventMessageTupleSchemeFactory());
+    schemes.put(StandardScheme.class, new MessageStandardSchemeFactory());
+    schemes.put(TupleScheme.class, new MessageTupleSchemeFactory());
   }
 
   /**
@@ -57,6 +59,8 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
   public Event event; // required
   public EventRoute route; // required
   public UserRouteInfo userRoute; // required
+  public GlobalRouteUpdate globalUpdate; // required
+  public EndpointUserConfigurationUpdate userUpdate; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -68,7 +72,9 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
     EVENT_ID((short)2, "eventId"),
     EVENT((short)3, "event"),
     ROUTE((short)4, "route"),
-    USER_ROUTE((short)5, "userRoute");
+    USER_ROUTE((short)5, "userRoute"),
+    GLOBAL_UPDATE((short)6, "globalUpdate"),
+    USER_UPDATE((short)7, "userUpdate");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -93,6 +99,10 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
           return ROUTE;
         case 5: // USER_ROUTE
           return USER_ROUTE;
+        case 6: // GLOBAL_UPDATE
+          return GLOBAL_UPDATE;
+        case 7: // USER_UPDATE
+          return USER_UPDATE;
         default:
           return null;
       }
@@ -148,19 +158,25 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, EventRoute.class)));
     tmpMap.put(_Fields.USER_ROUTE, new org.apache.thrift.meta_data.FieldMetaData("userRoute", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, UserRouteInfo.class)));
+    tmpMap.put(_Fields.GLOBAL_UPDATE, new org.apache.thrift.meta_data.FieldMetaData("globalUpdate", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, GlobalRouteUpdate.class)));
+    tmpMap.put(_Fields.USER_UPDATE, new org.apache.thrift.meta_data.FieldMetaData("userUpdate", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, EndpointUserConfigurationUpdate.class)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
-    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(EventMessage.class, metaDataMap);
+    org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Message.class, metaDataMap);
   }
 
-  public EventMessage() {
+  public Message() {
   }
 
-  public EventMessage(
+  public Message(
     EventMessageType type,
     long eventId,
     Event event,
     EventRoute route,
-    UserRouteInfo userRoute)
+    UserRouteInfo userRoute,
+    GlobalRouteUpdate globalUpdate,
+    EndpointUserConfigurationUpdate userUpdate)
   {
     this();
     this.type = type;
@@ -169,12 +185,14 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
     this.event = event;
     this.route = route;
     this.userRoute = userRoute;
+    this.globalUpdate = globalUpdate;
+    this.userUpdate = userUpdate;
   }
 
   /**
    * Performs a deep copy on <i>other</i>.
    */
-  public EventMessage(EventMessage other) {
+  public Message(Message other) {
     __isset_bitfield = other.__isset_bitfield;
     if (other.isSetType()) {
       this.type = other.type;
@@ -189,10 +207,16 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
     if (other.isSetUserRoute()) {
       this.userRoute = new UserRouteInfo(other.userRoute);
     }
+    if (other.isSetGlobalUpdate()) {
+      this.globalUpdate = new GlobalRouteUpdate(other.globalUpdate);
+    }
+    if (other.isSetUserUpdate()) {
+      this.userUpdate = new EndpointUserConfigurationUpdate(other.userUpdate);
+    }
   }
 
-  public EventMessage deepCopy() {
-    return new EventMessage(this);
+  public Message deepCopy() {
+    return new Message(this);
   }
 
   @Override
@@ -203,6 +227,8 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
     this.event = null;
     this.route = null;
     this.userRoute = null;
+    this.globalUpdate = null;
+    this.userUpdate = null;
   }
 
   /**
@@ -217,7 +243,7 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
    * 
    * @see EventMessageType
    */
-  public EventMessage setType(EventMessageType type) {
+  public Message setType(EventMessageType type) {
     this.type = type;
     return this;
   }
@@ -241,7 +267,7 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
     return this.eventId;
   }
 
-  public EventMessage setEventId(long eventId) {
+  public Message setEventId(long eventId) {
     this.eventId = eventId;
     setEventIdIsSet(true);
     return this;
@@ -264,7 +290,7 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
     return this.event;
   }
 
-  public EventMessage setEvent(Event event) {
+  public Message setEvent(Event event) {
     this.event = event;
     return this;
   }
@@ -288,7 +314,7 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
     return this.route;
   }
 
-  public EventMessage setRoute(EventRoute route) {
+  public Message setRoute(EventRoute route) {
     this.route = route;
     return this;
   }
@@ -312,7 +338,7 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
     return this.userRoute;
   }
 
-  public EventMessage setUserRoute(UserRouteInfo userRoute) {
+  public Message setUserRoute(UserRouteInfo userRoute) {
     this.userRoute = userRoute;
     return this;
   }
@@ -329,6 +355,54 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
   public void setUserRouteIsSet(boolean value) {
     if (!value) {
       this.userRoute = null;
+    }
+  }
+
+  public GlobalRouteUpdate getGlobalUpdate() {
+    return this.globalUpdate;
+  }
+
+  public Message setGlobalUpdate(GlobalRouteUpdate globalUpdate) {
+    this.globalUpdate = globalUpdate;
+    return this;
+  }
+
+  public void unsetGlobalUpdate() {
+    this.globalUpdate = null;
+  }
+
+  /** Returns true if field globalUpdate is set (has been assigned a value) and false otherwise */
+  public boolean isSetGlobalUpdate() {
+    return this.globalUpdate != null;
+  }
+
+  public void setGlobalUpdateIsSet(boolean value) {
+    if (!value) {
+      this.globalUpdate = null;
+    }
+  }
+
+  public EndpointUserConfigurationUpdate getUserUpdate() {
+    return this.userUpdate;
+  }
+
+  public Message setUserUpdate(EndpointUserConfigurationUpdate userUpdate) {
+    this.userUpdate = userUpdate;
+    return this;
+  }
+
+  public void unsetUserUpdate() {
+    this.userUpdate = null;
+  }
+
+  /** Returns true if field userUpdate is set (has been assigned a value) and false otherwise */
+  public boolean isSetUserUpdate() {
+    return this.userUpdate != null;
+  }
+
+  public void setUserUpdateIsSet(boolean value) {
+    if (!value) {
+      this.userUpdate = null;
     }
   }
 
@@ -374,6 +448,22 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
       }
       break;
 
+    case GLOBAL_UPDATE:
+      if (value == null) {
+        unsetGlobalUpdate();
+      } else {
+        setGlobalUpdate((GlobalRouteUpdate)value);
+      }
+      break;
+
+    case USER_UPDATE:
+      if (value == null) {
+        unsetUserUpdate();
+      } else {
+        setUserUpdate((EndpointUserConfigurationUpdate)value);
+      }
+      break;
+
     }
   }
 
@@ -393,6 +483,12 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
 
     case USER_ROUTE:
       return getUserRoute();
+
+    case GLOBAL_UPDATE:
+      return getGlobalUpdate();
+
+    case USER_UPDATE:
+      return getUserUpdate();
 
     }
     throw new IllegalStateException();
@@ -415,6 +511,10 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
       return isSetRoute();
     case USER_ROUTE:
       return isSetUserRoute();
+    case GLOBAL_UPDATE:
+      return isSetGlobalUpdate();
+    case USER_UPDATE:
+      return isSetUserUpdate();
     }
     throw new IllegalStateException();
   }
@@ -423,12 +523,12 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
   public boolean equals(Object that) {
     if (that == null)
       return false;
-    if (that instanceof EventMessage)
-      return this.equals((EventMessage)that);
+    if (that instanceof Message)
+      return this.equals((Message)that);
     return false;
   }
 
-  public boolean equals(EventMessage that) {
+  public boolean equals(Message that) {
     if (that == null)
       return false;
 
@@ -477,6 +577,24 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
         return false;
     }
 
+    boolean this_present_globalUpdate = true && this.isSetGlobalUpdate();
+    boolean that_present_globalUpdate = true && that.isSetGlobalUpdate();
+    if (this_present_globalUpdate || that_present_globalUpdate) {
+      if (!(this_present_globalUpdate && that_present_globalUpdate))
+        return false;
+      if (!this.globalUpdate.equals(that.globalUpdate))
+        return false;
+    }
+
+    boolean this_present_userUpdate = true && this.isSetUserUpdate();
+    boolean that_present_userUpdate = true && that.isSetUserUpdate();
+    if (this_present_userUpdate || that_present_userUpdate) {
+      if (!(this_present_userUpdate && that_present_userUpdate))
+        return false;
+      if (!this.userUpdate.equals(that.userUpdate))
+        return false;
+    }
+
     return true;
   }
 
@@ -509,11 +627,21 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
     if (present_userRoute)
       builder.append(userRoute);
 
+    boolean present_globalUpdate = true && (isSetGlobalUpdate());
+    builder.append(present_globalUpdate);
+    if (present_globalUpdate)
+      builder.append(globalUpdate);
+
+    boolean present_userUpdate = true && (isSetUserUpdate());
+    builder.append(present_userUpdate);
+    if (present_userUpdate)
+      builder.append(userUpdate);
+
     return builder.toHashCode();
   }
 
   @Override
-  public int compareTo(EventMessage other) {
+  public int compareTo(Message other) {
     if (!getClass().equals(other.getClass())) {
       return getClass().getName().compareTo(other.getClass().getName());
     }
@@ -570,6 +698,26 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
         return lastComparison;
       }
     }
+    lastComparison = Boolean.valueOf(isSetGlobalUpdate()).compareTo(other.isSetGlobalUpdate());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetGlobalUpdate()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.globalUpdate, other.globalUpdate);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetUserUpdate()).compareTo(other.isSetUserUpdate());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetUserUpdate()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userUpdate, other.userUpdate);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
     return 0;
   }
 
@@ -587,7 +735,7 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder("EventMessage(");
+    StringBuilder sb = new StringBuilder("Message(");
     boolean first = true;
 
     sb.append("type:");
@@ -625,6 +773,22 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
       sb.append(this.userRoute);
     }
     first = false;
+    if (!first) sb.append(", ");
+    sb.append("globalUpdate:");
+    if (this.globalUpdate == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.globalUpdate);
+    }
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("userUpdate:");
+    if (this.userUpdate == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.userUpdate);
+    }
+    first = false;
     sb.append(")");
     return sb.toString();
   }
@@ -640,6 +804,12 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
     }
     if (userRoute != null) {
       userRoute.validate();
+    }
+    if (globalUpdate != null) {
+      globalUpdate.validate();
+    }
+    if (userUpdate != null) {
+      userUpdate.validate();
     }
   }
 
@@ -661,15 +831,15 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
     }
   }
 
-  private static class EventMessageStandardSchemeFactory implements SchemeFactory {
-    public EventMessageStandardScheme getScheme() {
-      return new EventMessageStandardScheme();
+  private static class MessageStandardSchemeFactory implements SchemeFactory {
+    public MessageStandardScheme getScheme() {
+      return new MessageStandardScheme();
     }
   }
 
-  private static class EventMessageStandardScheme extends StandardScheme<EventMessage> {
+  private static class MessageStandardScheme extends StandardScheme<Message> {
 
-    public void read(org.apache.thrift.protocol.TProtocol iprot, EventMessage struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol iprot, Message struct) throws org.apache.thrift.TException {
       org.apache.thrift.protocol.TField schemeField;
       iprot.readStructBegin();
       while (true)
@@ -722,6 +892,24 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
+          case 6: // GLOBAL_UPDATE
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+              struct.globalUpdate = new GlobalRouteUpdate();
+              struct.globalUpdate.read(iprot);
+              struct.setGlobalUpdateIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 7: // USER_UPDATE
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+              struct.userUpdate = new EndpointUserConfigurationUpdate();
+              struct.userUpdate.read(iprot);
+              struct.setUserUpdateIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
           default:
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
         }
@@ -733,7 +921,7 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
       struct.validate();
     }
 
-    public void write(org.apache.thrift.protocol.TProtocol oprot, EventMessage struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol oprot, Message struct) throws org.apache.thrift.TException {
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
@@ -760,22 +948,32 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
         struct.userRoute.write(oprot);
         oprot.writeFieldEnd();
       }
+      if (struct.globalUpdate != null) {
+        oprot.writeFieldBegin(GLOBAL_UPDATE_FIELD_DESC);
+        struct.globalUpdate.write(oprot);
+        oprot.writeFieldEnd();
+      }
+      if (struct.userUpdate != null) {
+        oprot.writeFieldBegin(USER_UPDATE_FIELD_DESC);
+        struct.userUpdate.write(oprot);
+        oprot.writeFieldEnd();
+      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
 
   }
 
-  private static class EventMessageTupleSchemeFactory implements SchemeFactory {
-    public EventMessageTupleScheme getScheme() {
-      return new EventMessageTupleScheme();
+  private static class MessageTupleSchemeFactory implements SchemeFactory {
+    public MessageTupleScheme getScheme() {
+      return new MessageTupleScheme();
     }
   }
 
-  private static class EventMessageTupleScheme extends TupleScheme<EventMessage> {
+  private static class MessageTupleScheme extends TupleScheme<Message> {
 
     @Override
-    public void write(org.apache.thrift.protocol.TProtocol prot, EventMessage struct) throws org.apache.thrift.TException {
+    public void write(org.apache.thrift.protocol.TProtocol prot, Message struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
       if (struct.isSetType()) {
@@ -793,7 +991,13 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
       if (struct.isSetUserRoute()) {
         optionals.set(4);
       }
-      oprot.writeBitSet(optionals, 5);
+      if (struct.isSetGlobalUpdate()) {
+        optionals.set(5);
+      }
+      if (struct.isSetUserUpdate()) {
+        optionals.set(6);
+      }
+      oprot.writeBitSet(optionals, 7);
       if (struct.isSetType()) {
         oprot.writeI32(struct.type.getValue());
       }
@@ -809,12 +1013,18 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
       if (struct.isSetUserRoute()) {
         struct.userRoute.write(oprot);
       }
+      if (struct.isSetGlobalUpdate()) {
+        struct.globalUpdate.write(oprot);
+      }
+      if (struct.isSetUserUpdate()) {
+        struct.userUpdate.write(oprot);
+      }
     }
 
     @Override
-    public void read(org.apache.thrift.protocol.TProtocol prot, EventMessage struct) throws org.apache.thrift.TException {
+    public void read(org.apache.thrift.protocol.TProtocol prot, Message struct) throws org.apache.thrift.TException {
       TTupleProtocol iprot = (TTupleProtocol) prot;
-      BitSet incoming = iprot.readBitSet(5);
+      BitSet incoming = iprot.readBitSet(7);
       if (incoming.get(0)) {
         struct.type = EventMessageType.findByValue(iprot.readI32());
         struct.setTypeIsSet(true);
@@ -837,6 +1047,16 @@ public class EventMessage implements org.apache.thrift.TBase<EventMessage, Event
         struct.userRoute = new UserRouteInfo();
         struct.userRoute.read(iprot);
         struct.setUserRouteIsSet(true);
+      }
+      if (incoming.get(5)) {
+        struct.globalUpdate = new GlobalRouteUpdate();
+        struct.globalUpdate.read(iprot);
+        struct.setGlobalUpdateIsSet(true);
+      }
+      if (incoming.get(6)) {
+        struct.userUpdate = new EndpointUserConfigurationUpdate();
+        struct.userUpdate.read(iprot);
+        struct.setUserUpdateIsSet(true);
       }
     }
   }

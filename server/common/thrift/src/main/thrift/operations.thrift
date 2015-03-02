@@ -204,6 +204,6 @@ service OperationsThriftService extends cli.CliThriftService{
 /**
 *   Report user configuration update from control to operation servers
 */
-  void onUserConfigurationUpdates(1: list<UserConfigurationUpdate> updates);
+  void sendUserConfigurationUpdates(1: list<UserConfigurationUpdate> updates);
 
 }
