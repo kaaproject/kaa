@@ -30,107 +30,110 @@ import org.kaaproject.kaa.client.event.FetchEventListeners;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.client.transact.TransactionId;
-import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse; 
+import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
 import org.kaaproject.kaa.schema.sample.event.thermo.ChangeDegreeRequest;
 import org.kaaproject.kaa.schema.sample.event.thermo.CustomThermoEventClassFamily;
 import org.kaaproject.kaa.schema.sample.event.thermo.CustomThermoEventClassFamily.DefaultEventFamilyListener;
 import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoRequest;
 import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EventDemo {
 
-	public static void main(String[] args) {
-		System.out.println("Event demo has been started");
-		doWork();
-		System.out.println("Event demo has been stopped");
-	}
 
-	
-	public static void doWork() {
-		KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(),
-				new SimpleKaaClientStateListener());
-		kaaClient.start();
+    private static final Logger logger = LoggerFactory.getLogger(EventDemo.class);
+    public static void main(String[] args) {
+        logger.info("Event demo has been started");
+        doWork();
+        logger.info("Event demo has been stopped");
+    }
 
-		EndpointRegistrationManager registrationManager = kaaClient
-				.getEndpointRegistrationManager();
 
-		registrationManager.attachUser("userExternalId", "userAccessToken",
-				new UserAttachCallback() {
-					@Override
-					public void onAttachResult(UserAttachResponse response) {
-						System.out.println("Attach response"
-								+ response.getResult());
-					}
-				});
+    public static void doWork() {
+        KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(),
+                new SimpleKaaClientStateListener());
+        kaaClient.start();
 
-		EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
-		CustomThermoEventClassFamily tecf = eventFamilyFactory
-				.getCustomThermoEventClassFamily();
+        EndpointRegistrationManager registrationManager = kaaClient
+                .getEndpointRegistrationManager();
 
-		List<String> FQNs = new LinkedList<>();
-		FQNs.add("org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoRequest");
-		FQNs.add("org.kaaproject.kaa.schema.sample.event.thermo.ChangeDegreeRequest");
+        registrationManager.attachUser("userExternalId", "userAccessToken",
+                new UserAttachCallback() {
+                    @Override
+                    public void onAttachResult(UserAttachResponse response) {
+                        logger.info("Attach response"
+                                + response.getResult());
+                    }
+                });
 
-		EventListenersResolver eventListenersResolver = kaaClient
-				.getEventListenerResolver();
+        EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
+        CustomThermoEventClassFamily tecf = eventFamilyFactory
+                .getCustomThermoEventClassFamily();
 
-		eventListenersResolver.findEventListeners(FQNs,
-				new FetchEventListeners() {
-					@Override
-					public void onRequestFailed() {
-						// Some code
-					}
+        List<String> FQNs = new LinkedList<>();
+        FQNs.add("org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoRequest");
+        FQNs.add("org.kaaproject.kaa.schema.sample.event.thermo.ChangeDegreeRequest");
 
-					@Override
-					public void onEventListenersReceived(
-							List<String> eventListeners) {
-						// Some code
-					}
-				});
-		
-		TransactionId trxId = eventFamilyFactory.startEventsBlock();
-		 
-		
-		
-		// Add events to the block
-		// Adding a broadcasted event to the block
-		tecf.addEventToBlock(trxId, new ThermostatInfoRequest());
-		// Adding a targeted event to the block
-		tecf.addEventToBlock(trxId, new ChangeDegreeRequest(-30), "home_thermostat"); 
-		 
-		// Send added events in a batch
-		eventFamilyFactory.submitEventsBlock(trxId);
-		// Dismiss the event batch (if the batch was not submitted as shown in the previous line)
-		eventFamilyFactory.removeEventsBlock(trxId);
-		
-		
-		
-		tecf.addListener(new DefaultEventFamilyListener() {
-	
-			@Override
-			public void onEvent(ChangeDegreeRequest arg0, String arg1) {
-				System.out.println("\n ChangeDegreeRequest event fired!\n");
-			}
-			
-			@Override
-			public void onEvent(ThermostatInfoResponse arg0, String arg1) {
-				System.out.println("\n ThermostatInfoResponse event fired!\n");
-			}
-			
-			@Override
-			public void onEvent(ThermostatInfoRequest arg0, String arg1) {
-				System.out.println("\n ThermostatInfoRequest event fired!\n");
-			}
-		});
-		
-		
-		try {
-			System.in.read();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        EventListenersResolver eventListenersResolver = kaaClient
+                .getEventListenerResolver();
 
-		kaaClient.stop();
-	}
+        eventListenersResolver.findEventListeners(FQNs,
+                new FetchEventListeners() {
+                    @Override
+                    public void onRequestFailed() {
+                        // Some code
+                    }
+
+                    @Override
+                    public void onEventListenersReceived(
+                            List<String> eventListeners) {
+                        // Some code
+                    }
+                });
+
+        TransactionId trxId = eventFamilyFactory.startEventsBlock();
+
+
+        // Add events to the block
+        // Adding a broadcasted event to the block
+        tecf.addEventToBlock(trxId, new ThermostatInfoRequest());
+        // Adding a targeted event to the block
+        tecf.addEventToBlock(trxId, new ChangeDegreeRequest(-30), "home_thermostat");
+
+        // Send added events in a batch
+        eventFamilyFactory.submitEventsBlock(trxId);
+        // Dismiss the event batch (if the batch was not submitted as shown in the previous line)
+        eventFamilyFactory.removeEventsBlock(trxId);
+
+
+
+        tecf.addListener(new DefaultEventFamilyListener() {
+
+            @Override
+            public void onEvent(ChangeDegreeRequest arg0, String arg1) {
+                logger.info("ChangeDegreeRequest event fired!");
+            }
+
+            @Override
+            public void onEvent(ThermostatInfoResponse arg0, String arg1) {
+                logger.info("ThermostatInfoResponse event fired!");
+            }
+
+            @Override
+            public void onEvent(ThermostatInfoRequest arg0, String arg1) {
+                logger.info("ThermostatInfoRequest event fired!");
+            }
+        });
+
+
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        kaaClient.stop();
+    }
 
 }

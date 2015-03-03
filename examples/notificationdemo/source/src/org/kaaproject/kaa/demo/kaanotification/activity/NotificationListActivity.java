@@ -26,84 +26,85 @@ import org.kaaproject.kaa.demo.kaanotification.TopicInfoHolder;
 import org.kaaproject.kaa.demo.kaanotification.TopicModel;
 import org.kaaproject.kaa.demo.kaanotification.adapter.NotificationArrayAdapter;
 import org.kaaproject.kaa.schema.example.Notification;
- 
+
 import java.util.LinkedList;
 import java.util.List;
 
 public class NotificationListActivity extends ListActivity {
 
-	private NotificationListener notificationListener;
-	private KaaNotificationApp app;
+    private NotificationListener notificationListener;
+    private KaaNotificationApp app;
 
-	@Override
-	public void onCreate(Bundle icicle) {
-		super.onCreate(icicle);
-		app = (KaaNotificationApp) getApplicationContext();
-		this.setListAdapter(new NotificationArrayAdapter(this,
-				getNotificationList()));
-		createNotificationListener();
-		app.getKaaClient().addNotificationListener(notificationListener);
-	}
+    @Override
+    public void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+        app = (KaaNotificationApp) getApplicationContext();
+        this.setListAdapter(new NotificationArrayAdapter(this,
+                getNotificationList()));
+        createNotificationListener();
+        app.getKaaClient().addNotificationListener(notificationListener);
+    }
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		app.getKaaClient().removeNotificationListener(notificationListener);
-	}
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        app.getKaaClient().removeNotificationListener(notificationListener);
+    }
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		app.getKaaClient().removeNotificationListener(notificationListener);
-	}
+    @Override
+    protected void onPause() {
+        super.onPause();
+        app.getKaaClient().removeNotificationListener(notificationListener);
+    }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		this.setListAdapter(new NotificationArrayAdapter(this,
-				getNotificationList()));
-		app.getKaaClient().addNotificationListener(notificationListener);
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.setListAdapter(new NotificationArrayAdapter(this,
+                getNotificationList()));
+        app.getKaaClient().addNotificationListener(notificationListener);
+    }
 
-	public void createNotificationListener() {
-		notificationListener = new NotificationListener() {
-			public void onNotification(final String topicId,
-					final Notification notification) {
-				Log.i("KAA",
-						"NOTIFICATION RECEIVED: " + notification.toString());
-				TopicInfoHolder.holder.addNotification(topicId, notification);
+    public void createNotificationListener() {
+        notificationListener = new NotificationListener() {
+            public void onNotification(final String topicId,
+                                       final Notification notification) {
+                Log.i("KAA",
+                        "NOTIFICATION RECEIVED: " + notification.toString());
+                TopicInfoHolder.holder.addNotification(topicId, notification);
 
-				NotificationListActivity.this.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						NotificationListActivity activity = NotificationListActivity.this;
-						int pos = activity.getIntent().getExtras()
-								.getInt("position");
-						List<Notification> list = TopicInfoHolder.holder
-								.getTopicModelList().get(pos)
-								.getNotifications();
-						activity.setListAdapter(new NotificationArrayAdapter(
-								activity, list));
-						app.showPopup(NotificationListActivity.this, topicId,
-								notification);
-					}
-				});
+                NotificationListActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        NotificationListActivity activity = NotificationListActivity.this;
+                        int pos = activity.getIntent().getExtras()
+                                .getInt("position");
+                        List<Notification> list = TopicInfoHolder.holder
+                                .getTopicModelList().get(pos)
+                                .getNotifications();
+                        activity.setListAdapter(new NotificationArrayAdapter(
+                                activity, list));
+                        app.showPopup(NotificationListActivity.this, topicId,
+                                notification);
+                    }
+                });
 
-			}
-		};
-	}
+            }
+        };
+    }
 
-	private List<Notification> getNotificationList() {
-		int position = getIntent().getExtras().getInt("position");
-		List<TopicModel> list = TopicInfoHolder.holder.getTopicModelList();
-		if (null != list) {
-			TopicModel model = list.get(position);
-			if (null != model)
-				return model.getNotifications();
-			else
-				return new LinkedList<Notification>();
-		}
-		return new LinkedList<Notification>();
-	}
+    private List<Notification> getNotificationList() {
+        int position = getIntent().getExtras().getInt("position");
+        List<TopicModel> list = TopicInfoHolder.holder.getTopicModelList();
+        if (list != null) {
+            TopicModel model = list.get(position);
+            if (model != null) {
+                return model.getNotifications();
+            } else {
+                return new LinkedList<Notification>();
+            }
+        }
+        return new LinkedList<Notification>();
+    }
 
 }

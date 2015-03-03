@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.demo.kaanotification.adapter;
 
+import java.lang.String;
 import java.util.List;
 
 import android.app.Activity;
@@ -41,7 +42,7 @@ public class TopicArrayAdapter extends ArrayAdapter<TopicModel> {
         super(context, R.layout.topics, list);
         this.context = context;
         this.list = list;
-        this.app = (KaaNotificationApp)context.getApplicationContext();
+        this.app = (KaaNotificationApp) context.getApplicationContext();
     }
 
     static class ViewHolder {
@@ -69,12 +70,13 @@ public class TopicArrayAdapter extends ArrayAdapter<TopicModel> {
                             element.setSelected(buttonView.isChecked());
 
                             if (element.isSelected()) {
-                                viewHolder.notificationCount.setText("" + element.getNotificationsCount());
-                                if (!element.isMandatoryTopic())
+                                viewHolder.notificationCount.setText(String.valueOf(element.getNotificationsCount()));
+                                if (!element.isMandatoryTopic()) {
                                     if (!element.isSubscribedTo()) {
                                         element.setSubscribedTo(true);
                                         app.subscribeToTopic(element.getTopicId());
                                     }
+                                }
                             } else {
                                 if (!element.isMandatoryTopic())
                                     if (element.isSubscribedTo()) {

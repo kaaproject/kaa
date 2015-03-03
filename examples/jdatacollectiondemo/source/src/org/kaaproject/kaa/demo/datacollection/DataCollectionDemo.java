@@ -28,14 +28,17 @@ import org.kaaproject.kaa.client.logging.LogUploadStrategyDecision;
 import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode;
 import org.kaaproject.kaa.schema.sample.logging.Level;
 import org.kaaproject.kaa.schema.sample.logging.LogData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DataCollectionDemo {
 
-	public static void main(String[] args) {
-		System.out.println("Data collection demo has been started");
-		doWork();
-		System.out.println("Data collection demo has been stopped");
-	}
+    private static final Logger logger = LoggerFactory.getLogger(DataCollectionDemo.class);
+    public static void main(String[] args) {
+        logger.info("Data collection demo has been started");
+        doWork();
+        logger.info("Data collection demo has been stopped");
+    }
 
 	public static void doWork() {
 
