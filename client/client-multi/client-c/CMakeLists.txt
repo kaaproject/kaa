@@ -154,6 +154,10 @@ add_library(kaac SHARED ./src $<TARGET_OBJECTS:kaac_o>)
 target_link_libraries(kaac ${KAA_THIRDPARTY_LIBRARIES})
 
 # Sets paths Kaa libraries will be installed in.
+if(NOT KAA_INSTALL_PATH)
+	set(KAA_INSTALL_PATH "/usr/local")
+endif()
+
 message("KAA WILL BE INSTALLED TO  ${KAA_INSTALL_PATH} ")
 set(CMAKE_INSTALL_PREFIX ${KAA_INSTALL_PATH} ) 
 install (DIRECTORY src/ DESTINATION ${KAA_INSTALL_PATH}/include
