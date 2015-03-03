@@ -42,11 +42,11 @@ import org.slf4j.LoggerFactory;
 public class EventDemo {
 
 
-    private static final Logger logger = LoggerFactory.getLogger(EventDemo.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EventDemo.class);
     public static void main(String[] args) {
-        logger.info("Event demo has been started");
+        LOG.info("Event demo has been started");
         doWork();
-        logger.info("Event demo has been stopped");
+        LOG.info("Event demo has been stopped");
     }
 
 
@@ -62,7 +62,7 @@ public class EventDemo {
                 new UserAttachCallback() {
                     @Override
                     public void onAttachResult(UserAttachResponse response) {
-                        logger.info("Attach response"
+                        LOG.info("Attach response"
                                 + response.getResult());
                     }
                 });
@@ -112,17 +112,17 @@ public class EventDemo {
 
             @Override
             public void onEvent(ChangeDegreeRequest arg0, String arg1) {
-                logger.info("ChangeDegreeRequest event fired!");
+                LOG.info("ChangeDegreeRequest event fired!");
             }
 
             @Override
             public void onEvent(ThermostatInfoResponse arg0, String arg1) {
-                logger.info("ThermostatInfoResponse event fired!");
+                LOG.info("ThermostatInfoResponse event fired!");
             }
 
             @Override
             public void onEvent(ThermostatInfoRequest arg0, String arg1) {
-                logger.info("ThermostatInfoRequest event fired!");
+                LOG.info("ThermostatInfoRequest event fired!");
             }
         });
 

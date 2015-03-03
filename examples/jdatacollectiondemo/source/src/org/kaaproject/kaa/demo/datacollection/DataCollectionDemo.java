@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.kaaproject.kaa.client.DesktopKaaPlatformContext;
 import org.kaaproject.kaa.client.Kaa;
 import org.kaaproject.kaa.client.KaaClient;
+import org.kaaproject.kaa.client.logging.DefaultLogUploadStrategy;
 import org.kaaproject.kaa.client.logging.LogFailoverCommand;
 import org.kaaproject.kaa.client.logging.LogStorageStatus;
 import org.kaaproject.kaa.client.logging.LogUploadStrategy;
@@ -33,11 +34,11 @@ import org.slf4j.LoggerFactory;
 
 public class DataCollectionDemo {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataCollectionDemo.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DataCollectionDemo.class);
     public static void main(String[] args) {
-        logger.info("Data collection demo has been started");
+        LOG.info("Data collection demo has been started");
         doWork();
-        logger.info("Data collection demo has been stopped");
+        LOG.info("Data collection demo has been stopped");
     }
 
 	public static void doWork() {
@@ -65,49 +66,14 @@ public class DataCollectionDemo {
 		kaaClient.stop();
 	}
 
-	private static LogUploadStrategy oneLogUploadStrategy = new LogUploadStrategy() {
-
-	    private int batch = 8 * 1024;
-	    private int timeout = 2;
-	    private int retryPeriod =  5;
-	    		
-	    @Override
-	    public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
-	        LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
-	        if (status.getRecordCount() >= 1) {
-	            decision = LogUploadStrategyDecision.UPLOAD;
-	        }
-	        return decision;
-	    }
-
-	    @Override
-	    public long getBatchSize() {
-	        return batch;
-	    }
-
-	    @Override
-	    public int getTimeout() {
-	        return timeout;
-	    }
-
-	    @Override
-	    public void onTimeout(LogFailoverCommand controller) {
-	        controller.switchAccessPoint();
-	    }
-
-	    @Override
-	    public void onFailure(LogFailoverCommand controller, LogDeliveryErrorCode code) {
-	        switch (code) {
-	        case NO_APPENDERS_CONFIGURED:
-	        case APPENDER_INTERNAL_ERROR:
-	        case REMOTE_CONNECTION_ERROR:
-	        case REMOTE_INTERNAL_ERROR:
-	            controller.retryLogUpload(retryPeriod);
-	            break;
-	        default:
-	            break;
-	        }
-	    }
-	    
-	};
+	private static LogUploadStrategy oneLogUploadStrategy = new DefaultLogUploadStrategy(){
+        @Override
+        public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
+            LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
+            if (status.getRecordCount() >= 1) {
+                decision = LogUploadStrategyDecision.UPLOAD;
+            }
+            return decision;
+        }
+    };
 }
