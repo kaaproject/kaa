@@ -26,9 +26,9 @@
             "name": "test_array",
             "type": {
                 "type": "array",
-                "items": "int",
-                "overrideStrategy": "append"
-            }
+                "items": "int"
+            },
+            "overrideStrategy": "append"
         },
         {
             "name": "test_array2",
@@ -56,9 +56,9 @@
                 "fields": [
                     {
                         "name": "testField3",
+                        "overrideStrategy": "append",
                         "type": {
                             "type": "array",
-                            "overrideStrategy": "append",
                             "items": "org.kaa.config.testRecordItemT"
                         }
                     }
@@ -79,9 +79,9 @@
             "name": "test_array_union",
             "type": {
                 "type": "array",
-                "items": ["int", "string"],
-                "overrideStrategy": "append"
-            }
+                "items": ["int", "string"]
+            },
+            "overrideStrategy": "append"
         }
     ]
 }

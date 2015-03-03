@@ -37,7 +37,7 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
     private final KaaClientProperties properties;
     protected final ConfigurationDeserializer deserializer = new ConfigurationDeserializer();
 
-    private byte[] configurationData;
+    private volatile byte[] configurationData;
     private ConfigurationStorage storage;
     private ConfigurationHashContainer container;
 

@@ -56,7 +56,6 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String APP_STATE_SEQ_NUMBER = "APP_STATE_SEQ_NUMBER";
     private static final String CONFIG_SEQ_NUMBER = "CONFIG_SEQ_NUMBER";
     private static final String NOTIFICATION_SEQ_NUMBER = "NOTIFICATION_SEQ_NUMBER";
-    private static final String CONFIGURATION_HASH = "CONFIGURATION_HASH";
     private static final String PROFILE_HASH = "PROFILE_HASH";
     private static final String ENDPOINT_ACCESS_TOKEN = "ENDPOINT_TOKEN";
 
@@ -360,11 +359,6 @@ public class KaaClientPropertiesState implements KaaClientState {
     }
 
     @Override
-    public EndpointObjectHash getConfigurationHash() {
-        return EndpointObjectHash.fromBytes(base64.decodeBase64(state.getProperty(CONFIGURATION_HASH, new String(base64.encodeBase64(new byte[0]), Charsets.UTF_8)).getBytes(Charsets.UTF_8)));
-    }
-
-    @Override
     public EndpointObjectHash getProfileHash() {
         return EndpointObjectHash.fromBytes(base64.decodeBase64(state.getProperty(PROFILE_HASH, new String(base64.encodeBase64(new byte[0]), Charsets.UTF_8)).getBytes(Charsets.UTF_8)));
     }
@@ -372,11 +366,6 @@ public class KaaClientPropertiesState implements KaaClientState {
     @Override
     public void setAppStateSeqNumber(int appStateSeqNumber) {
         state.setProperty(APP_STATE_SEQ_NUMBER, Integer.toString(appStateSeqNumber));
-    }
-
-    @Override
-    public void setConfigurationHash(EndpointObjectHash hash) {
-        state.setProperty(CONFIGURATION_HASH, new String(base64.encodeBase64(hash.getData()), Charsets.UTF_8));
     }
 
     @Override

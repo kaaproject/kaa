@@ -86,14 +86,6 @@ public class KaaClientPropertiesStateTest {
     }
 
     @Test
-    public void testConfigHash() throws IOException  {
-        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
-        EndpointObjectHash hash = EndpointObjectHash.fromSHA1(new byte[]{1, 2, 3});
-        state.setConfigurationHash(hash);
-        assertEquals(hash, state.getConfigurationHash());
-    }
-
-    @Test
     public void testNfSubscription() throws IOException  {
         KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
 

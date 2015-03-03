@@ -443,7 +443,7 @@ public class EndpointActorMessageProcessor {
 
     private void sendConnectToNewUser(ActorContext context, EndpointProfileDto endpointProfile) {
         List<EventClassFamilyVersion> ecfVersions = EntityConvertUtils.convertToECFVersions(endpointProfile.getEcfVersionStates());
-        EndpointUserConnectMessage userRegistrationMessage = new EndpointUserConnectMessage(state.getUserId(), key, ecfVersions, appToken,
+        EndpointUserConnectMessage userRegistrationMessage = new EndpointUserConnectMessage(state.getUserId(), key, ecfVersions, endpointProfile.getConfigurationVersion(), appToken,
                 context.self());
         LOG.debug("[{}][{}] Sending user registration request {}", endpointKey, actorKey, userRegistrationMessage);
         context.parent().tell(userRegistrationMessage, context.self());

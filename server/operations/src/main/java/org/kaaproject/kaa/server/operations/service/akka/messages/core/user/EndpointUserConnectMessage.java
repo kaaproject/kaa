@@ -24,15 +24,24 @@ import org.kaaproject.kaa.server.operations.service.event.EventClassFamilyVersio
 
 import akka.actor.ActorRef;
 
-public class EndpointUserConnectMessage extends EndpointAwareMessage implements UserAwareMessage{
+/**
+ * Represents intent of endpoint to connect to local user actor
+ * 
+ * @author Andrew Shvayka
+ *
+ */
+public class EndpointUserConnectMessage extends EndpointAwareMessage implements UserAwareMessage {
 
     private final String userId;
     private final List<EventClassFamilyVersion> ecfVersions;
+    private final int cfVersion;
 
-    public EndpointUserConnectMessage(String userId, EndpointObjectHash endpointKey, List<EventClassFamilyVersion> ecfVersions, String applicationToken, ActorRef originator) {
+    public EndpointUserConnectMessage(String userId, EndpointObjectHash endpointKey, List<EventClassFamilyVersion> ecfVersions,
+            int cfVersion, String applicationToken, ActorRef originator) {
         super(applicationToken, endpointKey, originator);
         this.userId = userId;
         this.ecfVersions = ecfVersions;
+        this.cfVersion = cfVersion;
     }
 
     public List<EventClassFamilyVersion> getEcfVersions() {
@@ -44,19 +53,20 @@ public class EndpointUserConnectMessage extends EndpointAwareMessage implements 
         return userId;
     }
 
+    public int getCfVersion() {
+        return cfVersion;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("UserRegistrationRequest [userId=");
+        builder.append("EndpointUserConnectMessage [userId=");
         builder.append(userId);
         builder.append(", ecfVersions=");
         builder.append(ecfVersions);
-        builder.append(", getAppToken()=");
-        builder.append(getAppToken());
-        builder.append(", getKey()=");
-        builder.append(getKey());
+        builder.append(", cfVersion=");
+        builder.append(cfVersion);
         builder.append("]");
         return builder.toString();
     }
-
 }

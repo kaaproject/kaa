@@ -16,224 +16,88 @@
 
 package org.kaaproject.kaa.server.operations.service.event;
 
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import org.kaaproject.kaa.server.common.zk.WorkerNodeTracker;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
-import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Neighbors Class.
- * Collect all Operations Servers neighbors through listening ZooKeeper OperationsNode changes.
- * Use thriftHost:thriftPort as server Key and hold Hashtable of NeighborConnection.
+ * Neighbors Class. Collect all Operations Servers neighbors through listening
+ * ZooKeeper OperationsNode changes. Use thriftHost:thriftPort as server Key and
+ * hold Map of NeighborConnection.
+ * 
  * @author Andrey Panasenko
+ * @author Andrew Shvayka
  *
  */
-public class Neighbors implements OperationsNodeListener {
+public class Neighbors<T extends NeighborTemplate<V>, V> {
 
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(Neighbors.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Neighbors.class);
 
-    /** Event service */
-    private final DefaultEventService eventService;
+    private final ConcurrentMap<String, NeighborConnection<T, V>> neigbors;
 
-    /** Self ID in thriftHost:thriftPort */
-    private String selfId;
+    private final int maxNumberNeighborConnections;
 
-    /** Unique integer, used in logging mostly in tests */
-    private final int uniqId;
+    private final T template;
 
-    private final Random rnd = new Random();
-
-    /** Hashtable of NeighborConnection, Key - thriftHost:thriftPort */
-    private final Hashtable<String, NeighborConnection> neigbors; //NOSONAR
-
-    /** Synchronize object, used during neighbors list updates */
-    private final Object neighborsUpdateSync = new Object();
-
-    /** timer and task, used to postpone correct ZK node listener registration */
-    private Timer timerUpdate;
-    private TimerTask taskUpdate;
-
-    /** ZooKeeper Operations Node */
-    private OperationsNode zkNode;
-    /** Synchronize object, initZK() waite until zkNode is set using this object */
-    private final Object zkNodeSetSync = new Object();
-
+    private volatile String zkId;
 
     /**
-     * Default constructor.
-     * If zkNode is not set, postpone timer task to wait until node is set.
+     * Default constructor. If zkNode is not set, postpone timer task to wait
+     * until node is set.
+     * 
      * @param eventService
      */
-    public Neighbors(DefaultEventService eventService) {
-        uniqId = rnd.nextInt(1000);
-        LOG.info("Neighbors instance {} created", uniqId);
-        this.eventService = eventService;
-        neigbors  = new Hashtable<>();
-        synchronized (zkNodeSetSync) {
-            if (zkNode != null) {
-                LOG.debug("Neighbors instance {} ZK node set(without timer), init() startig....", uniqId);
-                initZK();
-            } else {
-                timerUpdate = new Timer();
-                taskUpdate = new TimerTask() {
-                    @Override
-                    public void run() {
-                        synchronized (zkNodeSetSync) {
-                            if(zkNode == null) {
-                                try {
-                                    zkNodeSetSync.wait();
-                                    LOG.debug("Neighbors instance {} ZK node set, init() startig....", uniqId);
-                                    initZK();
-                                } catch (InterruptedException e) {
-                                    LOG.error("Wait to set ZK node, was interrupted. Error initializing EventService",e);
-                                }
-                            } else {
-                                LOG.debug("Neighbors instance {} ZK node set(without wait), init() startig....", uniqId);
-                                initZK();
-                            }
-                        }
-                    }
-                };
-                //100 msec delay in reading nodes list
-                timerUpdate.schedule(taskUpdate, 0);
-            }
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener#onNodeAdded(org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo)
-     */
-    @Override
-    public void onNodeAdded(OperationsNodeInfo nodeInfo) {
-        String opId = getOperationsServerID(nodeInfo.getConnectionInfo());
-        if (!selfId.equals(opId)) {
-            synchronized (neighborsUpdateSync) {
-                if (!neigbors.contains(opId)) {
-                    neigbors.put(opId, new NeighborConnection(eventService, nodeInfo.getConnectionInfo()));
-                    LOG.info("New Operations server {} added to {} Neighbors list ({}). Now {} neighbors",opId, selfId, uniqId, neigbors.size());
-                }
-            }
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener#onNodeUpdated(org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo)
-     */
-    @Override
-    public void onNodeUpdated(OperationsNodeInfo nodeInfo) {
-        String opId = getOperationsServerID(nodeInfo.getConnectionInfo());
-        if (!selfId.equals(opId)) {
-            synchronized (neighborsUpdateSync) {
-                if (!neigbors.contains(opId)) {
-                    neigbors.put(opId, new NeighborConnection(eventService, nodeInfo.getConnectionInfo()));
-                    LOG.info("Operations server {} updated in Neighbors list. Now {} neighbors",opId, neigbors.size());
-                }
-            }
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener#onNodeRemoved(org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo)
-     */
-    @Override
-    public void onNodeRemoved(OperationsNodeInfo nodeInfo) {
-        String opId = getOperationsServerID(nodeInfo.getConnectionInfo());
-        if (!selfId.equals(opId)) {
-            NeighborConnection server = null;
-            synchronized (neighborsUpdateSync) {
-                server = neigbors.remove(opId);
-            }
-            if (server != null) {
-                server.shutdown();
-            }
-            LOG.info("Operations server {} removed from {} Neighbors list({}). Now {} neighbors",opId, selfId, uniqId, neigbors.size());
-        }
-    }
-
-    /**
-     * Initialize ZooKeeper registration.
-     */
-    private void initZK() {
-        selfId = getOperationsServerID(zkNode.getNodeInfo().getConnectionInfo());
-        zkNode.addListener(this);
-        updateOperationsServersList();
-        LOG.debug("OperationsServer {} Nighbors({}) ZooKeeper initialization comlete. Now {} neighbors.",selfId, uniqId, neigbors.size());
-        return;
-    }
-
-    /**
-     * Load initial Operations Servers list from ZK node.
-     */
-    private void updateOperationsServersList() {
-        LOG.debug("OperationsServer {} Nighbors({}) Update server list. Now {} neighbors.",selfId, uniqId, neigbors.size());
-        OperationsNode node = eventService.getZkNode();
-        List<OperationsNodeInfo> nodes = node.getCurrentOperationServerNodes();
-        for(OperationsNodeInfo opServer : nodes) {
-            String opId = getOperationsServerID(opServer.getConnectionInfo());
-            if (!selfId.equals(opId)) {
-                synchronized (neighborsUpdateSync) {
-                    if (!neigbors.containsKey(opId)) {
-                        neigbors.put(opId, new NeighborConnection(eventService, opServer.getConnectionInfo()));
-                        LOG.info("New Operations server {} added to {} Neighbors list({}).",opId, selfId, uniqId);
-                    }
-                }
-            }
-        }
+    public Neighbors(T template, int maxNumberNeighborConnections) {
+        this.template = template;
+        this.maxNumberNeighborConnections = maxNumberNeighborConnections;
+        this.neigbors = new ConcurrentHashMap<String, NeighborConnection<T, V>>();
     }
 
     /**
      * Shutdown all neighbors connections and cancel timer task if exist.
      */
     public void shutdown() {
-        LOG.info("Operations server {}  Neighbors list({}) shutdown all Neighbor connections....", selfId, uniqId);
-        synchronized (neighborsUpdateSync) {
-            for(NeighborConnection neigbor : neigbors.values()) {
-                LOG.info("Operations server {}  Neighbors list({}) shutdown connection to {}", selfId, uniqId, neigbor.getId());
-                neigbor.shutdown();
-            }
-            neigbors.clear();
+        for (NeighborConnection<T, V> neigbor : neigbors.values()) {
+            LOG.info("Shuting down neighbor connection {}", neigbor.getId());
+            neigbor.shutdown();
         }
-        if (timerUpdate != null) {
-            timerUpdate.cancel();
-            timerUpdate = null;
-        }
-
+        neigbors.clear();
     }
 
     /**
      * Return current list of Neighbors.
+     * 
      * @return List<NeighborConnection> neighbors.
      */
-    public List<NeighborConnection> getNeighbors() {
-        synchronized (neighborsUpdateSync) {
-            return new LinkedList<NeighborConnection>(neigbors.values()); //NOSONAR
-        }
+    public List<NeighborConnection<T, V>> getNeighbors() {
+        return new LinkedList<NeighborConnection<T, V>>(neigbors.values());
     }
 
     /**
      * Return specific Neighbor connection by Id
-     * @param serverId String in format thriftHost:thriftPort
+     * 
+     * @param serverId
+     *            String in format thriftHost:thriftPort
      * @return NeighborConnection or null if such server not exist
      */
-    public NeighborConnection getNeghborConnection(String serverId) {
-        synchronized (neighborsUpdateSync) {
-            return neigbors.get(serverId);
-        }
+    public NeighborConnection<T, V> getNeghborConnection(String serverId) {
+        return neigbors.get(serverId);
     }
 
     /**
      * Build server ID from ConnectionInfo object.
-     * @param info ConnectionInfo
+     * 
+     * @param info
+     *            ConnectionInfo
      * @return server ID in format thriftHost:thriftPort
      */
     public static String getOperationsServerID(ConnectionInfo info) {
@@ -245,39 +109,57 @@ public class Neighbors implements OperationsNodeListener {
     }
 
     /**
-     * Self ID getter.
-     * @return String
-     */
-    public String getSelfId() {
-        return selfId;
-    }
-
-    /**
-     * ZK node getter.
-     * @return the zkNode
-     */
-    public OperationsNode getZkNode() {
-        return zkNode;
-    }
-
-    /**
      * Zk Node setter. Notify ZK initialization.
-     * @param zkNode the zkNode to set
+     * 
+     * @param zkNode
+     *            the zkNode to set
      */
-    public void setZkNode(OperationsNode zkNode) {
-        synchronized (zkNodeSetSync) {
-            this.zkNode = zkNode;
-            zkNodeSetSync.notify();
+    public void setZkNode(String id, WorkerNodeTracker zkNode) {
+        this.zkId = id;
+        zkNode.addListener(new OperationsNodeListener() {
+
+            @Override
+            public void onNodeUpdated(OperationsNodeInfo nodeInfo) {
+                String opId = getOperationsServerID(nodeInfo.getConnectionInfo());
+                if (!zkId.equals(opId)) {
+                    neigbors.putIfAbsent(opId,
+                            new NeighborConnection<T, V>(nodeInfo.getConnectionInfo(), maxNumberNeighborConnections, template)).start();
+                    LOG.info("Operations server {} added to {} Neighbors list ({}). Now {} neighbors", opId, neigbors.size());
+                }
+            }
+
+            @Override
+            public void onNodeRemoved(OperationsNodeInfo nodeInfo) {
+                String opId = getOperationsServerID(nodeInfo.getConnectionInfo());
+                if (!zkId.equals(opId)) {
+                    NeighborConnection<T, V> connection = neigbors.remove(opId);
+                    if (connection != null) {
+                        connection.shutdown();
+                    }
+                    LOG.info("Operations server {} removed to {} Neighbors list ({}). Now {} neighbors", opId, neigbors.size());
+                }
+            }
+
+            @Override
+            public void onNodeAdded(OperationsNodeInfo nodeInfo) {
+                String opId = getOperationsServerID(nodeInfo.getConnectionInfo());
+                if (!zkId.equals(opId)) {
+                    neigbors.putIfAbsent(opId,
+                            new NeighborConnection<T, V>(nodeInfo.getConnectionInfo(), maxNumberNeighborConnections, template)).start();
+                    LOG.info("Operations server {} added to {} Neighbors list ({}). Now {} neighbors", opId, neigbors.size());
+                }
+            }
+        });
+
+        List<OperationsNodeInfo> nodes = zkNode.getCurrentOperationServerNodes();
+        for (OperationsNodeInfo opServer : nodes) {
+            String opId = getOperationsServerID(opServer.getConnectionInfo());
+            if (!zkId.equals(opId)) {
+                neigbors.putIfAbsent(opId,
+                        new NeighborConnection<T, V>(opServer.getConnectionInfo(), maxNumberNeighborConnections, template)).start();
+                LOG.info("Operations server {} added to Neighbors list.", opId, zkId);
+            }
         }
+        LOG.debug("Neighbor zk init complete: {} neighbors registered.", neigbors.size());
     }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "Neighbors [uniqId=" + uniqId + "]";
-    }
-
-
 }

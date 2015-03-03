@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.QueryParam;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
