@@ -33,7 +33,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicRegistrationRequestMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicSubscriptionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage.EventDeliveryStatus;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
@@ -298,8 +298,8 @@ public class ApplicationActor extends UntypedActor {
      *            the message
      */
     private void processEndpointAwareMessage(EndpointAwareMessage message) {
-        if (message instanceof TopicRegistrationRequestMessage) {
-            processEndpointTopicRegistration((TopicRegistrationRequestMessage) message);
+        if (message instanceof TopicSubscriptionMessage) {
+            processEndpointTopicRegistration((TopicSubscriptionMessage) message);
         } else if (message instanceof EndpointUserConnectMessage) {
             processEndpointUserRegistration((EndpointUserConnectMessage) message);
         } else if (message instanceof EndpointUserDisconnectMessage) {
@@ -354,7 +354,7 @@ public class ApplicationActor extends UntypedActor {
      * @param message
      *            the message
      */
-    private void processEndpointTopicRegistration(TopicRegistrationRequestMessage message) {
+    private void processEndpointTopicRegistration(TopicSubscriptionMessage message) {
         ActorRef topicActor = getOrCreateTopic(message.getTopicId());
         topicActor.tell(message, self());
     }

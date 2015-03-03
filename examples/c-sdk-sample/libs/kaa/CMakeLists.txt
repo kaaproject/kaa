@@ -97,6 +97,10 @@ if(KAA_WITHOUT_LOGGING)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_LOGGING")
 endif()
 
+if(KAA_WITHOUT_CONFIGURATION)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_CONFIGURATION")
+endif()
+
 # Sets path(s) to header files.
 include_directories(KAA_INCLUDE_PATHS
                         ${KAA_INCLUDE_PATHS}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <stddef.h>
 
 # include <string.h>
 # include "../platform/stdio.h"
@@ -27,30 +26,30 @@
  */
 
 
-static void kaa_test_log_record_destroy(void* data)
+static void kaa_test_log_record_destroy(void *data)
 {
     if (data) {
-        kaa_test_log_record_t* record = (kaa_test_log_record_t*)data;
+        kaa_test_log_record_t *record = (kaa_test_log_record_t *)data;
 
         kaa_string_destroy(record->data);
         kaa_data_destroy(record);
     }
 }
 
-static void kaa_test_log_record_serialize(avro_writer_t writer, void* data)
+static void kaa_test_log_record_serialize(avro_writer_t writer, void *data)
 {
     if (data) {
-        kaa_test_log_record_t* record = (kaa_test_log_record_t*)data;
+        kaa_test_log_record_t *record = (kaa_test_log_record_t *)data;
 
         kaa_string_serialize(writer, record->data);
     }
 }
 
-static size_t kaa_test_log_record_get_size(void* data)
+static size_t kaa_test_log_record_get_size(void *data)
 {
     if (data) {
         size_t record_size = 0;
-        kaa_test_log_record_t* record = (kaa_test_log_record_t*)data;
+        kaa_test_log_record_t *record = (kaa_test_log_record_t *)data;
 
         record_size += kaa_string_get_size(record->data);
 
@@ -60,10 +59,10 @@ static size_t kaa_test_log_record_get_size(void* data)
     return 0;
 }
 
-kaa_test_log_record_t* kaa_test_log_record_create()
+kaa_test_log_record_t *kaa_test_log_record_create()
 {
-    kaa_test_log_record_t* record = 
-            (kaa_test_log_record_t*)KAA_CALLOC(1, sizeof(kaa_test_log_record_t));
+    kaa_test_log_record_t *record = 
+            (kaa_test_log_record_t *)KAA_CALLOC(1, sizeof(kaa_test_log_record_t));
 
     if (record) {
         record->serialize = kaa_test_log_record_serialize;
@@ -74,10 +73,10 @@ kaa_test_log_record_t* kaa_test_log_record_create()
     return record;
 }
 
-kaa_test_log_record_t* kaa_test_log_record_deserialize(avro_reader_t reader)
+kaa_test_log_record_t *kaa_test_log_record_deserialize(avro_reader_t reader)
 {
-    kaa_test_log_record_t* record = 
-            (kaa_test_log_record_t*)KAA_MALLOC(sizeof(kaa_test_log_record_t));
+    kaa_test_log_record_t *record = 
+            (kaa_test_log_record_t *)KAA_MALLOC(sizeof(kaa_test_log_record_t));
 
     if (record) {
         record->serialize = kaa_test_log_record_serialize;

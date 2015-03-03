@@ -1136,7 +1136,9 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     /* CLI method */
     @Override
     public void deleteTopicById(String topicId) throws TException {
-        topicService.removeTopicById(topicId);
+        for(UpdateNotificationDto dto : topicService.removeTopicById(topicId)){
+            notifyAndGetPayload(dto);
+        }
     }
 
     /* (non-Javadoc)

@@ -25,18 +25,18 @@ extern "C" {
 # endif
 
 
-# ifndef KAA_CONFIGURATION_UNION_NULL_OR_STRING_H_
-# define KAA_CONFIGURATION_UNION_NULL_OR_STRING_H_
+# ifndef KAA_CONFIGURATION_UNION_STRING_OR_NULL_H_
+# define KAA_CONFIGURATION_UNION_STRING_OR_NULL_H_
 
-# define KAA_CONFIGURATION_UNION_NULL_OR_STRING_BRANCH_0 0
-# define KAA_CONFIGURATION_UNION_NULL_OR_STRING_BRANCH_1 1
+# define KAA_CONFIGURATION_UNION_STRING_OR_NULL_BRANCH_0 0
+# define KAA_CONFIGURATION_UNION_STRING_OR_NULL_BRANCH_1 1
 
-kaa_union_t* kaa_configuration_union_null_or_string_branch_0_create();
-kaa_union_t* kaa_configuration_union_null_or_string_branch_1_create();
+kaa_union_t* kaa_configuration_union_string_or_null_branch_0_create();
+kaa_union_t* kaa_configuration_union_string_or_null_branch_1_create();
 
-kaa_union_t* kaa_configuration_union_null_or_string_deserialize(avro_reader_t reader);
+kaa_union_t* kaa_configuration_union_string_or_null_deserialize(avro_reader_t reader);
 
-# endif // KAA_CONFIGURATION_UNION_NULL_OR_STRING_H_
+# endif // KAA_CONFIGURATION_UNION_STRING_OR_NULL_H_
 
 
 # ifndef KAA_CONFIGURATION_UNION_FIXED_OR_NULL_H_

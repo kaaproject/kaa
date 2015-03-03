@@ -71,6 +71,9 @@ public class ConfigFormStructView extends BaseStructView<ConfigurationRecordForm
         return ((RecordPanel)body).validate();
     }
 
- 
+    @Override
+    protected void onShown() {
+        ((RecordPanel)body).getRecordWidget().onShown();
+    }
 
 }

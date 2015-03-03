@@ -39,6 +39,8 @@
         <module>notificationdemo</module>
         <module>jdatacollectiondemo</module>
         <module>jeventdemo</module>
+        <module>cityguide</module>
+        <module>cellmonitor</module>
     </modules>
 
     <dependencyManagement>

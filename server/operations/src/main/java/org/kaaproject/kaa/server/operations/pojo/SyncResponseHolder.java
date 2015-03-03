@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.pojo;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
@@ -64,7 +63,6 @@ public class SyncResponseHolder {
     public SyncResponseHolder(ServerSync response) {
         super();
         this.response = response;
-        this.subscriptionStates = new HashMap<>();
     }
 
     public void setEndpointProfile(EndpointProfileDto profile) {

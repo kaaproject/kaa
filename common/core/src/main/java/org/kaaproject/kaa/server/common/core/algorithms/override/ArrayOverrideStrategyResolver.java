@@ -16,19 +16,16 @@
 
 package org.kaaproject.kaa.server.common.core.algorithms.override;
 
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.ARRAY_FIELD_VALUE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.FIELDS_FIELD;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.NAME_FIELD;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.TYPE_FIELD;
 
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.kaaproject.kaa.server.common.core.algorithms.CommonUtils;
-import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
+import org.apache.avro.Schema;
+import org.apache.avro.Schema.Field;
+import org.apache.avro.Schema.Type;
+import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 
 
 /**
@@ -39,7 +36,7 @@ public class ArrayOverrideStrategyResolver {
     public static final String FIELD_OVERRIDE_STRATEGY = "overrideStrategy";
 
     /** The schema root. */
-    private final Map<String, Object> schemaRoot;
+    private final Map<String, Schema> schemaTypes;
 
     /**
      * Instantiates a new array merge strategy resolver.
@@ -47,9 +44,8 @@ public class ArrayOverrideStrategyResolver {
      * @param configurationSchema the configuration schema
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public ArrayOverrideStrategyResolver(KaaSchema configurationSchema) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        schemaRoot = mapper.readValue(configurationSchema.getRawSchema(), Map.class);
+    public ArrayOverrideStrategyResolver(Map<String, Schema> types) throws IOException {
+        this.schemaTypes = types;
     }
 
     /**
@@ -61,7 +57,7 @@ public class ArrayOverrideStrategyResolver {
      * @throws OverrideException the merge exception
      */
     public ArrayOverrideStrategy resolve(String name, String namespace, String childName) throws OverrideException {
-        Map<String, Object> schemaForParent = CommonUtils.findRawSchemaByName(schemaRoot, name, namespace);
+        Schema schemaForParent = schemaTypes.get(namespace + "." + name);
         if (schemaForParent == null) {
             throw new OverrideException(MessageFormat.format("Failed to find Schema with Name ''{0}'' and namespace ''{1}''", name, namespace));
         }
@@ -85,42 +81,14 @@ public class ArrayOverrideStrategyResolver {
      * @param arrayFieldName the array field name
      * @return the string
      */
-    private String findMergeStrategy(Map<String, Object> root, String arrayFieldName) {
-        List<Object> fields = (List<Object>) root.get(FIELDS_FIELD);
-        if (fields == null) {
+    private String findMergeStrategy(Schema root, String arrayFieldName) {
+        if (root.getType() != Type.RECORD) {
             return null;
         }
-        for (Object field : fields) {
-            Map<String, Object> fieldDefinition = (Map<String, Object>) field;
-            String fieldName = (String) fieldDefinition.get(NAME_FIELD);
-            if (arrayFieldName.equals(fieldName)) {
-                Object fieldType = fieldDefinition.get(TYPE_FIELD);
-
-                // if this is a union type
-                if (fieldType instanceof List) {
-                    List<Object> union = (List<Object>) fieldType;
-                    for (Object unionItem : union) {
-                        if (unionItem instanceof Map) {
-                            Map<String, Object> unionItemDefinition = (Map<String, Object>) unionItem;
-                            Object unionItemDefinitionType = unionItemDefinition.get(TYPE_FIELD);
-                            if (unionItemDefinitionType instanceof String) {
-                                if (unionItemDefinitionType.toString().equals(ARRAY_FIELD_VALUE)) { //NOSONAR
-                                    return (String) unionItemDefinition.get(FIELD_OVERRIDE_STRATEGY);
-                                }
-                            }
-                        }
-                    }
-                } else if (fieldType instanceof Map) {
-                    Map<String, Object> typeDefinition = (Map<String, Object>) fieldType;
-                    Object typeDefinitionType = typeDefinition.get(TYPE_FIELD);
-                    if (typeDefinitionType instanceof String) {
-                        if (typeDefinitionType.toString().equals(ARRAY_FIELD_VALUE)) { //NOSONAR
-                            return (String) typeDefinition.get(FIELD_OVERRIDE_STRATEGY);
-                        }
-                    }
-                }
-
-                break;
+        List<Field> fields = root.getFields();
+        for (Field field : fields) {
+            if (arrayFieldName.equals(field.name())) {
+                return field.getProp(FIELD_OVERRIDE_STRATEGY);
             }
         }
         return null;

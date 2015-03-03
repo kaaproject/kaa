@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,25 @@ extern "C" {
 #endif
 
 #include "avro_src/avro/io.h"
-
 #include "collections/kaa_list.h"
 
+
+
+/*
+ * Do not change neither name or value of these constants.
+ */
+#define AVRO_NULL_SIZE      0
+#define AVRO_FLOAT_SIZE     4
+#define AVRO_DOUBLE_SIZE    8
+
+
+
 typedef void (*serialize_fn)(avro_writer_t writer, void *data);
-typedef void* (*deserialize_fn)(avro_reader_t reader);
+typedef void *(*deserialize_fn)(avro_reader_t reader);
 typedef size_t (*get_size_fn)(void *data);
 typedef void (*destroy_fn)(void *data);
+
+
 
 typedef struct {
     uint8_t* buffer;
@@ -52,40 +64,78 @@ typedef struct {
     destroy_fn   destroy;
 } kaa_union_t;
 
-kaa_string_t* kaa_string_move_create(const char* data, destroy_fn destroy);
-kaa_string_t* kaa_string_copy_create(const char* data);
+
+
+kaa_string_t *kaa_string_move_create(const char *data, destroy_fn destroy);
+kaa_string_t *kaa_string_copy_create(const char *data);
+
 void kaa_string_destroy(void *data);
-void kaa_string_serialize(avro_writer_t writer, void* data);
-kaa_string_t* kaa_string_deserialize(avro_reader_t reader);
+void kaa_string_serialize(avro_writer_t writer, void *data);
+kaa_string_t *kaa_string_deserialize(avro_reader_t reader);
 size_t kaa_string_get_size(void *data);
 
-kaa_bytes_t* kaa_bytes_move_create(const uint8_t* data, size_t data_len, destroy_fn destroy);
-kaa_bytes_t* kaa_bytes_copy_create(const uint8_t* data, size_t data_len);
+
+
+kaa_bytes_t *kaa_bytes_move_create(const uint8_t *data, size_t data_len, destroy_fn destroy);
+kaa_bytes_t *kaa_bytes_copy_create(const uint8_t *data, size_t data_len);
+
 void kaa_bytes_destroy(void *data);
-void kaa_bytes_serialize(avro_writer_t writer, void* data);
-kaa_bytes_t* kaa_bytes_deserialize(avro_reader_t reader);
+void kaa_bytes_serialize(avro_writer_t writer, void *data);
+kaa_bytes_t *kaa_bytes_deserialize(avro_reader_t reader);
 size_t kaa_bytes_get_size(void *data);
 
-void kaa_boolean_serialize(avro_writer_t writer, void* data);
-int8_t* kaa_boolean_deserialize(avro_reader_t reader);
 
-void kaa_int_serialize(avro_writer_t writer, void* data);
-int32_t* kaa_int_deserialize(avro_reader_t reader);
 
-void kaa_long_serialize(avro_writer_t writer, void* data);
-int64_t* kaa_long_deserialize(avro_reader_t reader);
-size_t kaa_long_get_size(int64_t l);
+void kaa_boolean_serialize(avro_writer_t writer, void *data);
+int8_t *kaa_boolean_deserialize(avro_reader_t reader);
+size_t kaa_boolean_get_size(void *data);
 
-void kaa_array_serialize(avro_writer_t writer, kaa_list_t* array, serialize_fn serialize);
+
+
+void kaa_int_serialize(avro_writer_t writer, void *data);
+int32_t *kaa_int_deserialize(avro_reader_t reader);
+size_t kaa_int_get_size(void *data);
+
+
+
+void kaa_long_serialize(avro_writer_t writer, void *data);
+int64_t *kaa_long_deserialize(avro_reader_t reader);
+size_t kaa_long_get_size(void *data);
+
+
+
+void kaa_enum_serialize(avro_writer_t writer, void *data);
+int *kaa_enum_deserialize(avro_reader_t reader);
+size_t kaa_enum_get_size(void *data);
+
+
+
+void kaa_float_serialize(avro_writer_t writer, void *data);
+float *kaa_float_deserialize(avro_reader_t reader);
+size_t kaa_float_get_size(void *data);
+
+
+
+void kaa_double_serialize(avro_writer_t writer, void *data);
+double *kaa_double_deserialize(avro_reader_t reader);
+size_t kaa_double_get_size(void *data);
+
+
+
+void kaa_array_serialize(avro_writer_t writer, kaa_list_t *array, serialize_fn serialize);
 kaa_list_t *kaa_array_deserialize(avro_reader_t reader, deserialize_fn deserialize);
-size_t kaa_array_get_size(kaa_list_t* array, get_size_fn get_size);
+size_t kaa_array_get_size(kaa_list_t *array, get_size_fn get_size);
 
-void kaa_null_serialize(avro_writer_t writer, void*);
-void* kaa_null_deserialize(avro_reader_t reader);
+
+
+void kaa_null_serialize(avro_writer_t writer, void *data);
+void *kaa_null_deserialize(avro_reader_t reader);
 void kaa_null_destroy(void *data);
 size_t kaa_null_get_size();
 
 void kaa_data_destroy(void *data);
+
+size_t avro_long_get_size(int64_t l);
 
 #ifdef __cplusplus
 } // extern "C"

@@ -89,18 +89,25 @@ endif()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL}")
 
 # Disables Kaa library modules.
+message("==================================")
 if(KAA_WITHOUT_EVENTS)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_EVENTS")
+else()
+    message( "EVENTS ENABLED")
 endif()
 
 if(KAA_WITHOUT_LOGGING)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_LOGGING")
+else()
+     message( "LOGGING ENABLED")
 endif()
 
 if(KAA_WITHOUT_CONFIGURATION)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_CONFIGURATION")
+else()
+     message("CONFIGURATION ENABLED")
 endif()
-
+message("==================================")
 # Sets path(s) to header files.
 include_directories(KAA_INCLUDE_PATHS
                         ${KAA_INCLUDE_PATHS}
@@ -136,9 +143,9 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/CMakeGen.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/platform/${KAA_PLATFORM}/CMakeLists.txt)
 
 # Prints build parameters.
-message(STATUS "BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
-message(STATUS "KAA_PLATFORM = ${KAA_PLATFORM}")
-message(STATUS "KAA_MAX_LOG_LEVEL = ${KAA_MAX_LOG_LEVEL}")
+message( "BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+message( "KAA_PLATFORM = ${KAA_PLATFORM}")
+message( "KAA_MAX_LOG_LEVEL = ${KAA_MAX_LOG_LEVEL}")
 
 # Builds Kaa libraries.
 add_library(kaac_o OBJECT ${KAA_SOURCE_FILES})
@@ -147,16 +154,16 @@ add_library(kaac SHARED ./src $<TARGET_OBJECTS:kaac_o>)
 target_link_libraries(kaac ${KAA_THIRDPARTY_LIBRARIES})
 
 # Sets paths Kaa libraries will be installed in.
-install(TARGETS kaac kaac_s
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION lib
-)
+if(NOT KAA_INSTALL_PATH)
+	set(KAA_INSTALL_PATH "/usr/local")
+endif()
 
-install(DIRECTORY src/ 
-        DESTINATION include/kaac
-        FILES_MATCHING PATTERN *.h
-)
+message("KAA WILL BE INSTALLED TO  ${KAA_INSTALL_PATH} ")
+set(CMAKE_INSTALL_PREFIX ${KAA_INSTALL_PATH} ) 
+install (DIRECTORY src/ DESTINATION ${KAA_INSTALL_PATH}/include
+    FILES_MATCHING PATTERN *.h)
+install (TARGETS kaac kaac_s DESTINATION ${KAA_INSTALL_PATH}/lib)
+
 
 # Builds unit tests.
 if(KAA_UNITTESTS_COMPILE)
