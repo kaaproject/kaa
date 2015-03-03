@@ -16,21 +16,25 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
-import java.io.Serializable;
-
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.server.common.dao.model.ToDto;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.io.Serializable;
+
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.CONFIGURATION_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_GROUP_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.PROFILE_FILTER_ID;
 
 public final class EndpointGroupState implements ToDto<EndpointGroupStateDto>, Serializable {
 
     private static final long serialVersionUID = -1658174097110691624L;
 
-    @Field("endpoint_group_id")
+    @Field(ENDPOINT_GROUP_ID)
     private String endpointGroupId;
-    @Field("profile_filter_id")
+    @Field(PROFILE_FILTER_ID)
     private String profileFilterId;
-    @Field("configuration_id")
+    @Field(CONFIGURATION_ID)
     private String configurationId;
 
     public EndpointGroupState() {

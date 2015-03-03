@@ -16,19 +16,22 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
-import java.io.Serializable;
-
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.server.common.dao.model.ToDto;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.io.Serializable;
+
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ECF_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EVENT_CLASS_FAMILY_VERSION;
 
 public final class EventClassFamilyVersionState implements ToDto<EventClassFamilyVersionStateDto>, Serializable {
 
     private static final long serialVersionUID = 3766947955702551264L;
 
-    @Field("ecf_id")
+    @Field(ECF_ID)
     private String ecfId;
-    @Field("version")
+    @Field(EVENT_CLASS_FAMILY_VERSION)
     private int version;
 
     public EventClassFamilyVersionState() {
