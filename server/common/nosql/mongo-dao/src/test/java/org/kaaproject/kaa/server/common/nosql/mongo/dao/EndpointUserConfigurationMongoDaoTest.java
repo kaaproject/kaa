@@ -62,10 +62,7 @@ public class EndpointUserConfigurationMongoDaoTest extends AbstractMongoTest {
         ApplicationDto appDto = generateApplication();
         int foundVersion = random.nextInt();
         EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, foundVersion);
-        EndpointUserConfigurationDto secondUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, random.nextInt());
-        List<MongoEndpointUserConfiguration> expectedList = new ArrayList<>();
-        expectedList.add(new MongoEndpointUserConfiguration(firstUserConfigurationDto));
-        expectedList.add(new MongoEndpointUserConfiguration(secondUserConfigurationDto));
+        generateEndpointUserConfiguration(userDto, appDto, random.nextInt());
         generateEndpointUserConfiguration(null, null, null);
         MongoEndpointUserConfiguration found = endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), foundVersion);
         Assert.assertEquals(firstUserConfigurationDto, found.toDto());
