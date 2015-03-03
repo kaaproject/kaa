@@ -17,10 +17,15 @@
 package org.kaaproject.kaa.server.operations.service.config;
 
 
+
+
 /**
  * The Class OperationsServerConfig.
  */
 public class OperationsServerConfig {
+    
+    private static final int DEFAULT_USER_HASH_PARTITIONS_SIZE = 10;
+    private static final int DEFAULT_MAX_NEIGHBOR_CONNECTIONS = 10;
 
     /** The thrift host. */
     private String thriftHost;
@@ -42,6 +47,10 @@ public class OperationsServerConfig {
 
     /** The zk ignore errors. */
     private boolean zkIgnoreErrors;
+    
+    private int userHashPartitions = DEFAULT_USER_HASH_PARTITIONS_SIZE;
+    
+    private int maxNumberNeighborConnections = DEFAULT_MAX_NEIGHBOR_CONNECTIONS;
 
     /**
      * @return the thriftHost
@@ -148,4 +157,19 @@ public class OperationsServerConfig {
         this.zkIgnoreErrors = zkIgnoreErrors;
     }
 
+    public int getUserHashPartitions() {
+        return userHashPartitions;
+    }
+
+    public void setUserHashPartitions(int userHashPartitions) {
+        this.userHashPartitions = userHashPartitions;
+    }
+
+    public int getMaxNumberNeighborConnections() {
+        return maxNumberNeighborConnections;
+    }
+
+    public void setMaxNumberNeighborConnections(int maxNumberNeighborConnections) {
+        this.maxNumberNeighborConnections = maxNumberNeighborConnections;
+    }
 }

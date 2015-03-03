@@ -56,10 +56,22 @@ public class GlobalUserActorMessageProcessor {
 
     public void process(UserConfigurationUpdate update) {
         ConfigurationKey key = ConfigurationKey.fromUpdateMessage(update);
-        Map<String, Set<GlobalRouteInfo>> routes = map.getRoutesByServer(key);
-        for (Entry<String,Set<GlobalRouteInfo>> entry : routes.entrySet()) {
+        LOG.debug("Processing notification {}", update);
+        sendStateUpdatesToLocalServers(key, update);
+        sendStateUpdatesToRemoteServers(key, update);
+    }
+    
+    private void sendStateUpdatesToLocalServers(ConfigurationKey key, UserConfigurationUpdate update) {
+        for (GlobalRouteInfo route : map.getLocalRoutes(key)) {
+            LOG.debug("Sending notification to route {}", update, route);
+        }
+    }
+
+    private void sendStateUpdatesToRemoteServers(ConfigurationKey key, UserConfigurationUpdate update) {
+        Map<String, Set<GlobalRouteInfo>> routes = map.getRemoteRoutes(key);
+        for (Entry<String, Set<GlobalRouteInfo>> entry : routes.entrySet()) {
             LOG.debug("Sending notification to {} about configuration update", entry.getKey());
-            for(GlobalRouteInfo route : entry.getValue()){
+            for (GlobalRouteInfo route : entry.getValue()) {
                 LOG.debug("Sending notification to route {}", route);
             }
         }
@@ -159,11 +171,25 @@ public class GlobalUserActorMessageProcessor {
             return routes.get(key);
         }
 
-        public Map<String, Set<GlobalRouteInfo>> getRoutesByServer(T key) {
-            Set<GlobalRouteInfo> keyRoutes = getRoutes(key);
-            Map<String, Set<GlobalRouteInfo>> result = new HashMap<String, Set<GlobalRouteInfo>>();
-            for (GlobalRouteInfo route : keyRoutes) {
+        public Set<GlobalRouteInfo> getLocalRoutes(T key) {
+            Set<GlobalRouteInfo> result = new HashSet<GlobalRouteInfo>();
+            for(GlobalRouteInfo route : getRoutes(key)){
                 String serverId = route.getAddress().getServerId();
+                if (serverId != null) {
+                    continue;
+                }
+                result.add(route);
+            }
+            return result;
+        }
+
+        public Map<String, Set<GlobalRouteInfo>> getRemoteRoutes(T key) {
+            Map<String, Set<GlobalRouteInfo>> result = new HashMap<String, Set<GlobalRouteInfo>>();
+            for (GlobalRouteInfo route : getRoutes(key)) {
+                String serverId = route.getAddress().getServerId();
+                if (serverId == null) {
+                    continue;
+                }
                 Set<GlobalRouteInfo> set = result.get(serverId);
                 if (set == null) {
                     set = new HashSet<GlobalRouteInfo>();

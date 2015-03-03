@@ -77,16 +77,4 @@ public class ESTestAkkaService implements AkkaService {
         // TODO Auto-generated method stub
         
     }
-
-    @Override
-    public void onEndpointUserConfigurationUpdate(EndpointUserConfigurationUpdate update) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void onGlobalRouteUpdate(GlobalRouteInfo update) {
-        // TODO Auto-generated method stub
-        
-    }
 }

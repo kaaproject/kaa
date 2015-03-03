@@ -3,8 +3,8 @@ package org.kaaproject.kaa.server.operations.service.event;
 import java.util.Arrays;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointRouteUpdate;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.EventRouteUpdateType;
-import org.kaaproject.kaa.server.common.thrift.gen.operations.GlobalRouteUpdate;
 
 public final class GlobalRouteInfo extends ClusterRouteInfo {
 
@@ -45,7 +45,7 @@ public final class GlobalRouteInfo extends ClusterRouteInfo {
         return builder.toString();
     }
 
-    public static GlobalRouteInfo fromThrift(GlobalRouteUpdate message) {
+    public static GlobalRouteInfo fromThrift(EndpointRouteUpdate message) {
         RouteTableAddress address = new RouteTableAddress(EndpointObjectHash.fromBytes(message.getRouteAddress().getEndpointKey()), message
                 .getRouteAddress().getApplicationToken());
         RouteOperation operation = message.getUpdateType() == EventRouteUpdateType.ADD ? RouteOperation.ADD : RouteOperation.DELETE;

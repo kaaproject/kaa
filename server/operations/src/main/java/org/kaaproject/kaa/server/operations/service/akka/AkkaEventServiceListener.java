@@ -16,7 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.akka;
 
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.GlobalRouteInfoMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointStateUpdateMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointRouteUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RemoteEndpointEventMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RouteInfoMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
@@ -42,14 +44,7 @@ final class AkkaEventServiceListener implements EventServiceListener {
         super();
         this.opsActor = opsActor;
     }
-    
-    @Override
-    public void onRouteInfo(GlobalRouteInfo routeInfo) {
-        GlobalRouteInfoMessage message = new GlobalRouteInfoMessage(routeInfo);
-        LOG.debug("Sending message {} to EPS actor", message);
-        opsActor.tell(message, ActorRef.noSender());
-    }
-    
+
     @Override
     public void onConfigurationUpdate(UserConfigurationUpdate update) {
         UserConfigurationUpdateMessage message = new UserConfigurationUpdateMessage(update);
@@ -79,7 +74,17 @@ final class AkkaEventServiceListener implements EventServiceListener {
     }
 
     @Override
+    public void onEndpointStateUpdate(EndpointUserConfigurationUpdate notification) {
+        opsActor.tell(new EndpointStateUpdateMessage(notification), ActorRef.noSender());
+    }
+
+    @Override
+    public void onEndpointRouteUpdate(GlobalRouteInfo message) {
+        opsActor.tell(new EndpointRouteUpdateMessage(message), ActorRef.noSender());
+    }
+
+    @Override
     public void onServerError(String serverId) {
-        //TODO: handle
+        // TODO: handle
     }
 }

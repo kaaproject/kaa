@@ -57,10 +57,10 @@ public class TenantActor extends UntypedActor {
     /** The applications. */
     private final Map<String, ActorRef> applications;
 
-    /** The applications. */
+    /** The local users. */
     private final Map<String, ActorRef> localUsers;
     
-    /** The applications. */
+    /** The global users. */
     private final Map<String, ActorRef> globalUsers;
 
 

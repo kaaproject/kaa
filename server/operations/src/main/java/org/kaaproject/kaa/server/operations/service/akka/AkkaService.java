@@ -18,9 +18,7 @@ package org.kaaproject.kaa.server.operations.service.akka;
 
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
-import org.kaaproject.kaa.server.operations.service.event.GlobalRouteInfo;
 import org.kaaproject.kaa.server.transport.message.MessageHandler;
 
 import akka.actor.ActorSystem;
@@ -56,17 +54,4 @@ public interface AkkaService extends MessageHandler{
      * @param update - user configuration update
      */
     void onUserConfigurationUpdate(UserConfigurationUpdate update);
-
-    /**
-     * Reports update of user configuration to the endpoint user actor
-     * @param update - endpoint user configuration update
-     */
-    void onEndpointUserConfigurationUpdate(EndpointUserConfigurationUpdate update);
-
-    /**
-     * Reports information about endpoint to global user actor  
-     * @param update - information about endpoint activity
-     */
-    void onGlobalRouteUpdate(GlobalRouteInfo update);
-
 }

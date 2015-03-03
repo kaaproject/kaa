@@ -2,7 +2,7 @@ package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
-public class EndpointUserConfigurationUpdate implements TenantAwareMessage {
+public class EndpointUserConfigurationUpdate {
 
     private final String tenantId;
     private final String userId;
@@ -19,7 +19,6 @@ public class EndpointUserConfigurationUpdate implements TenantAwareMessage {
         this.hash = hash;
     }
 
-    @Override
     public String getTenantId() {
         return tenantId;
     }
@@ -41,7 +40,7 @@ public class EndpointUserConfigurationUpdate implements TenantAwareMessage {
     }
 
     public static EndpointUserConfigurationUpdate fromThrift(
-            org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointUserConfigurationUpdate notification) {
+            org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointStateUpdate notification) {
         return new EndpointUserConfigurationUpdate(notification.getTenantId(), notification.getUserId(),
                 notification.getApplicationToken(), EndpointObjectHash.fromBytes(notification.getEndpointKey()), notification.getUcfHash());
     }

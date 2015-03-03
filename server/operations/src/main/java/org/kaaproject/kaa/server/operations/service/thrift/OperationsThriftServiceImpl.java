@@ -23,9 +23,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService;
-import org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointUserConfigurationUpdate;
-import org.kaaproject.kaa.server.common.thrift.gen.operations.EventMessage;
-import org.kaaproject.kaa.server.common.thrift.gen.operations.GlobalRouteUpdate;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.Message;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
@@ -37,7 +35,6 @@ import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
-import org.kaaproject.kaa.server.operations.service.event.GlobalRouteInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,23 +131,15 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
      * OperationsThriftService.Iface#sendEventMessage(java.util.List)
      */
     @Override
-    public void sendEventMessage(List<EventMessage> messages) throws TException {
+    public void sendMessages(List<Message> messages) throws TException {
         eventService.sendEventMessage(messages);
     }
 
     @Override
-    public void onUserConfigurationUpdate(UserConfigurationUpdate notification) throws TException {
-        akkaService.onUserConfigurationUpdate(org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate.fromThrift(notification));
-    }
-
-    @Override
-    public void onEndpointUserConfigurationUpdate(EndpointUserConfigurationUpdate notification) throws TException {
-        akkaService.onEndpointUserConfigurationUpdate(org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate.fromThrift(notification));
-    }
-
-    @Override
-    public void onGlobalRouteUpdate(GlobalRouteUpdate message) throws TException {
-        akkaService.onGlobalRouteUpdate(GlobalRouteInfo.fromThrift(message));
+    public void sendUserConfigurationUpdates(List<UserConfigurationUpdate> updates) throws TException {
+        for(UserConfigurationUpdate update: updates){
+            akkaService.onUserConfigurationUpdate(org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate.fromThrift(update));
+        }
     }
 
     @Override

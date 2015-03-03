@@ -37,7 +37,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.Endp
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserDisconnectMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.GlobalRouteInfoMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointRouteUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RemoteEndpointEventMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RouteInfoMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserRouteInfoMessage;
@@ -132,10 +132,10 @@ public class LocalUserActorMessageProcessor {
         //TODO: get hash from connect message
         GlobalRouteInfo route = GlobalRouteInfo.add(tenantId, userId, address, message.getCfVersion(), new byte[0]);
         if (eventService.isMainUserNode(userId)) {
-            context.parent().tell(new GlobalRouteInfoMessage(route), context.self());
+            context.parent().tell(new EndpointRouteUpdateMessage(route), context.self());
         } else {
             LOG.debug("[{}] Sending connect message to global actor", userId);
-            eventService.sendEndpointInfo(route);
+            eventService.sendEndpointRouteInfo(route);
         }
 
         versionMap.put(endpointKey, message.getEcfVersions());
@@ -376,10 +376,10 @@ public class LocalUserActorMessageProcessor {
         
         GlobalRouteInfo route = GlobalRouteInfo.delete(tenantId, userId, address);
         if (eventService.isMainUserNode(userId)) {
-            context.parent().tell(new GlobalRouteInfoMessage(route), context.self());
+            context.parent().tell(new EndpointRouteUpdateMessage(route), context.self());
         } else {
             LOG.debug("[{}] Sending connect message to global actor", userId);
-            eventService.sendEndpointInfo(route);
+            eventService.sendEndpointRouteInfo(route);
         }
     }
 
