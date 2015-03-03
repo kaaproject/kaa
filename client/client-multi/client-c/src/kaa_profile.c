@@ -153,7 +153,10 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
 
     *expected_size = KAA_EXTENSION_HEADER_SIZE;
     *expected_size += sizeof(uint32_t); // profile body size
-    *expected_size += kaa_aligned_size_get(self->profile_body.size); // profile data
+#if PROFILE_SCHEMA_VERSION > 1
+    if (self->need_resync)
+        *expected_size += kaa_aligned_size_get(self->profile_body.size); // profile data
+#endif
 
     *expected_size += kaa_versions_info_get_size();
 
@@ -278,15 +281,28 @@ kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platf
                                                                        , self->extension_data->payload_size);
     KAA_RETURN_IF_ERR(error_code);
 
-    uint32_t network_order_32 = KAA_HTONL(self->profile_body.size);
+    uint32_t network_order_32 = KAA_HTONL(0);
+#if PROFILE_SCHEMA_VERSION > 1
+    if (self->need_resync) {
+        network_order_32 = KAA_HTONL(self->profile_body.size);
+        error_code = kaa_platform_message_write(writer, &network_order_32, sizeof(uint32_t));
+        KAA_RETURN_IF_ERR(error_code);
+        if (self->profile_body.size) {
+            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Writing profile body (size %u)...", self->profile_body.size);
+            error_code = kaa_platform_message_write_aligned(writer, self->profile_body.buffer, self->profile_body.size);
+            if (error_code) {
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to write profile body");
+                return error_code;
+            }
+        }
+    } else {
+        error_code = kaa_platform_message_write(writer, &network_order_32, sizeof(uint32_t));
+        KAA_RETURN_IF_ERR(error_code);
+    }
+#else
     error_code = kaa_platform_message_write(writer, &network_order_32, sizeof(uint32_t));
     KAA_RETURN_IF_ERR(error_code);
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Writing profile body (size %u)...", self->profile_body.size);
-    error_code = kaa_platform_message_write_aligned(writer, self->profile_body.buffer, self->profile_body.size);
-    if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Failed to write profile body");
-        return error_code;
-    }
+#endif
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Writing version info...");
     error_code = kaa_version_info_serialize(writer);
@@ -374,6 +390,7 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
 
 kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_profile_t * profile_body)
 {
+#if PROFILE_SCHEMA_VERSION > 1
     KAA_RETURN_IF_NIL2(self, profile_body, KAA_ERR_BADPARAM);
 
     size_t serialized_profile_size = profile_body->get_size(profile_body);
@@ -425,6 +442,7 @@ kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_
     if (channel)
         channel->sync_handler(channel->context, profile_sync_services, 1);
 
+#endif
     return KAA_ERR_NONE;
 }
 
