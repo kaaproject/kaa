@@ -219,8 +219,8 @@ static size_t kaa_user_request_get_size_no_header(kaa_user_manager_t *self)
 {
     size_t expected_size = 0;
     if (self->user_info && !self->is_waiting_user_attach_response) {
-       expected_size += sizeof(uint32_t)
-                      + sizeof(uint32_t); // External system authentication field header
+       expected_size += sizeof(uint32_t) //  field id + user external ID length + user access token length
+                      + sizeof(uint32_t); // verifier id length + reserved
        expected_size += kaa_aligned_size_get(self->user_info->user_external_id_len);
        expected_size += kaa_aligned_size_get(self->user_info->user_access_token_len);
        expected_size += kaa_aligned_size_get(self->user_info->user_verifier_token_len);
