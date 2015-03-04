@@ -145,6 +145,15 @@ public class CassandraModelConstants {
     public static final String TOPIC_IDS_VER_TYPE_PROPERTY = "schema_ver";
 
     /**
+     * CassandraEndpointUserConfiguration constants
+     */
+    public static final String EP_USER_CONF_COLUMN_FAMILY_NAME = "user_conf";
+    public static final String EP_USER_CONF_USER_ID_PROPERTY = "user_id";
+    public static final String EP_USER_CONF_APP_TOKEN_PROPERTY = "app_token";
+    public static final String EP_USER_CONF_VERSION_PROPERTY = VERSION_PROPERTY;
+    public static final String EP_USER_CONF_BODY_PROPERTY = BODY_PROPERTY;
+
+    /**
      * Cassandra EndpointGroupStateUserType constants.
      */
     public static final String ENDPOINT_GROUP_STATE_USER_TYPE_NAME = "ep_group_state";

@@ -551,6 +551,9 @@ public class AbstractTest {
         EndpointUserDto endpointUser = new EndpointUserDto();
         endpointUser.setExternalId(ENDPOINT_USER_EXTERNAL_ID + UUID.randomUUID().toString());
         endpointUser.setUsername(ENDPOINT_USER_NAME + UUID.randomUUID().toString());
+        if(tenantId == null) {
+            tenantId = UUID.randomUUID().toString();
+        }
         endpointUser.setTenantId(tenantId);
         endpointUser = endpointService.saveEndpointUser(endpointUser);
         return endpointUser;

@@ -15,8 +15,4 @@ public interface EndpointUserConfiguration extends ToDto<EndpointUserConfigurati
     Integer getSchemaVersion();
 
     void setSchemaVersion(Integer schemaVersion);
-
-    byte[] getBody();
-
-    void setBody(byte[] body);
 }
