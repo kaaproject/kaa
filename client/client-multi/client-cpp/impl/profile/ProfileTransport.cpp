@@ -27,10 +27,10 @@ ProfileTransport::ProfileTransport(IKaaChannelManager& channelManager
     : AbstractKaaTransport(channelManager), profileManager_(nullptr),
       publicKey_(publicKey.begin(), publicKey.end()) {}
 
-bool ProfileTransport::isProfileOutDated(SharedDataBuffer profileHash)
+bool ProfileTransport::isProfileOutDated(const HashDigest& profileHash)
 {
-    SharedDataBuffer currentHash = clientStatus_->getProfileHash();
-    return !EndpointObjectHash::isEqual(profileHash, currentHash);
+    auto currentHash = clientStatus_->getProfileHash();
+    return profileHash != currentHash;
 }
 
 ProfileSyncRequestPtr ProfileTransport::createProfileRequest()
@@ -39,7 +39,7 @@ ProfileSyncRequestPtr ProfileTransport::createProfileRequest()
 
     if (clientStatus_ != nullptr && profileManager_ != nullptr) {
         auto encodedProfile = profileManager_->getSerializedProfileContainer()->getSerializedProfile();
-        SharedDataBuffer newHash = EndpointObjectHash(encodedProfile).getHash();
+        auto newHash = EndpointObjectHash(encodedProfile).getHashDigest();
         if (isProfileOutDated(newHash) || !clientStatus_->isRegistered()) {
             clientStatus_->setProfileHash(newHash);
             request.reset(new ProfileSyncRequest());

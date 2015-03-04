@@ -39,8 +39,8 @@
 namespace kaa {
 
 class ClientStatus;
-class SyncResponse;
-class UserAttachRequest;
+struct SyncResponse;
+struct UserAttachRequest;
 class IAttachedEndpointListListener;
 
 class EndpointRegistrationManager : public IEndpointRegistrationManager

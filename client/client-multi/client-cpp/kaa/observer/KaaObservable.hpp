@@ -21,6 +21,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <memory>
+#include <utility>
 
 #include "kaa/KaaThread.hpp"
 
@@ -68,12 +69,12 @@ public:
     }
 
     template <typename... Args>
-    void operator()(Args&... args)
+    void operator()(Args&&... args)
     {
         isNotifying_ = true;
         KAA_MUTEX_UNIQUE_DECLARE(lock, mainGuard_);
         for (auto& pair : slots_) {
-            pair.second(args...);
+            pair.second(std::forward<Args>(args)...);
         }
         isNotifying_ = false;
         KAA_MUTEX_UNIQUE_DECLARE(modLock, modificationGuard_);
@@ -99,10 +100,10 @@ private:
         CallbackWrapper& operator=(const CallbackWrapper& o)  { callback_ = o.callback_; isRemoved_ = (bool) o.isRemoved_; return *this; }
 
         template <typename... Args>
-        void operator()(Args&... args)
+        void operator()(Args&&... args)
         {
             if (!isRemoved_) {
-                callback_(args...);
+                callback_(std::forward<Args>(args)...);
             }
         }
 

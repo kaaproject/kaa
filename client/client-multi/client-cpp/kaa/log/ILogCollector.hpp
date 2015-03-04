@@ -29,7 +29,7 @@ class ILogUploadConfiguration;
 class ILogUploadStrategy;
 class ILogUploadFailoverStrategy;
 class ILogStorageStatus;
-class LogSyncResponse;
+struct LogSyncResponse;
 
 /**
  * Public interface for accessing Kaa Log Subsystem.

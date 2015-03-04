@@ -61,6 +61,8 @@ public class TextAreaStructView<T extends AbstractStructureDto> extends BaseStru
         return body.getValue().length()>0;
     }
 
- 
+    @Override
+    protected void onShown() { 
+    }
 
 }

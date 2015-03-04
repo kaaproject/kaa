@@ -40,7 +40,8 @@ typedef boost::bimaps::bimap<
         , boost::bimaps::left_based
 > bimap;
 
-class ClientStatus : public IKaaClientStateStorage {
+class ClientStatus : public IKaaClientStateStorage
+{
 public:
     ClientStatus(const std::string& filename);
     ~ClientStatus() { }
@@ -63,8 +64,8 @@ public:
     DetailedTopicStates getTopicStates() const;
     void setTopicStates(const DetailedTopicStates& stateContainer);
 
-    SharedDataBuffer getProfileHash() const;
-    void setProfileHash(SharedDataBuffer hash);
+    HashDigest getProfileHash() const;
+    void setProfileHash(HashDigest hash);
 
     AttachedEndpoints getAttachedEndpoints() const;
     void setAttachedEndpoints(const AttachedEndpoints& endpoints);
@@ -101,7 +102,7 @@ private:
     static const bimap                      parameterToToken_;
     static const SequenceNumber             appSeqNumberDefault_;
     static const bool                       isRegisteredDefault_;
-    static const SharedDataBuffer           endpointHashDefault_;
+    static const HashDigest                 endpointHashDefault_;
     static const DetailedTopicStates        topicStatesDefault_;
     static const AttachedEndpoints          attachedEndpoints_;
     static const bool                       endpointDefaultAttachStatus_;

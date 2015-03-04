@@ -41,7 +41,8 @@ typedef std::map<std::string, DetailedTopicState> DetailedTopicStates;
 
 typedef std::map<std::string, std::string> AttachedEndpoints;
 
-class IKaaClientStateStorage {
+class IKaaClientStateStorage
+{
 public:
     virtual ~IKaaClientStateStorage() {}
 
@@ -63,8 +64,8 @@ public:
     virtual DetailedTopicStates getTopicStates() const = 0;
     virtual void setTopicStates(const DetailedTopicStates& stateContainer) = 0;
 
-    virtual SharedDataBuffer getProfileHash() const = 0;
-    virtual void setProfileHash(SharedDataBuffer hash) = 0;
+    virtual HashDigest getProfileHash() const = 0;
+    virtual void setProfileHash(HashDigest hash) = 0;
 
     virtual AttachedEndpoints getAttachedEndpoints() const = 0;
     virtual void setAttachedEndpoints(const AttachedEndpoints& endpoints) = 0;

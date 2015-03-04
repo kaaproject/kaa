@@ -68,12 +68,11 @@ typedef std::vector<ITransportConnectionInfoPtr> BootstrapServers;
 const BootstrapServers& getBootstrapServers();
 
 const Botan::SecureVector<std::uint8_t>& getDefaultConfigData();
-const std::string& getDefaultConfigSchema();
 
 typedef std::map<std::string, std::int32_t> EventClassFamilyVersionInfos;
 const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo();
 
-SharedDataBuffer getPropertiesHash();
+HashDigest getPropertiesHash();
 
 }
 

@@ -35,6 +35,7 @@ import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorOutputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
@@ -135,6 +136,11 @@ public class CppSdkGenerator extends SdkGenerator {
     private static final String LOG_COLLECTOR_PATH = "kaa/log/LogCollector.hpp";
     private static final String LOG_RECORD_CLASS_NAME_VAR = "%{log_record_class_name}";
 
+    private static final String CONFIGURATION_SCHEMA_AVRO_SRC = "avro/configuration.avsc";
+    private static final String CONFIGURATION_DEFINITIONS_TEMPLATE = "sdk/cpp/configuration/ConfigurationDefinitions.hpp.template";
+    private static final String CONFIGURATION_DEFINITIONS_PATH = "kaa/configuration/gen/ConfigurationDefinitions.hpp";
+    private static final String CONFIGURATION_RECORD_CLASS_NAME_VAR = "%{configuration_record_class_name}";
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.control.service.sdk.SdkGenerator#generateSdk(java.lang.String, java.util.List, java.lang.String, int, int, int, java.lang.String, java.lang.String, java.lang.String, byte[], java.util.List)
      */
@@ -146,7 +152,7 @@ public class CppSdkGenerator extends SdkGenerator {
             String profileSchemaBody,
             String notificationSchemaBody,
             String configurationProtocolSchemaBody,
-            String configurationSchema,
+            String configurationBaseSchema,
             byte[] defaultConfigurationData,
             List<EventFamilyMetadata> eventFamilies,
             String logSchemaBody,
@@ -199,7 +205,7 @@ public class CppSdkGenerator extends SdkGenerator {
         tarEntry = new TarEntryData(entry, data);
         cppSources.add(tarEntry);
 
-        if (logSchemaBody != null) {
+        if (!StringUtils.isBlank(logSchemaBody)) {
             entry = new TarArchiveEntry(LOG_RECORD_SCHEMA_AVRO_SRC);
             data = logSchemaBody.getBytes();
             entry.setSize(data.length);
@@ -226,6 +232,24 @@ public class CppSdkGenerator extends SdkGenerator {
             byte [] logCollectorData = replaceVar(logCollectorHpp, LOG_RECORD_CLASS_NAME_VAR, logSchema.getName()).getBytes();
             entry.setSize(logCollectorData.length);
             tarEntry = new TarEntryData(entry, logCollectorData);
+            cppSources.add(tarEntry);
+        }
+
+        if (!StringUtils.isBlank(configurationBaseSchema)) {
+            entry = new TarArchiveEntry(CONFIGURATION_SCHEMA_AVRO_SRC);
+            data = configurationBaseSchema.getBytes();
+            entry.setSize(data.length);
+            tarEntry = new TarEntryData(entry, data);
+            cppSources.add(tarEntry);
+
+            Schema configurationSchema = new Schema.Parser().parse(configurationBaseSchema);
+            String configuratioDefinitionsHpp = SdkGenerator.readResource(CONFIGURATION_DEFINITIONS_TEMPLATE);
+            entry = new TarArchiveEntry(CONFIGURATION_DEFINITIONS_PATH);
+            byte [] configuratioDefinitionsData = replaceVar(configuratioDefinitionsHpp,
+                                                             CONFIGURATION_RECORD_CLASS_NAME_VAR,
+                                                             configurationSchema.getName()).getBytes();
+            entry.setSize(configuratioDefinitionsData.length);
+            tarEntry = new TarEntryData(entry, configuratioDefinitionsData);
             cppSources.add(tarEntry);
         }
 

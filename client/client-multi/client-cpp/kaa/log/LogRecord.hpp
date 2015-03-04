@@ -31,7 +31,8 @@ namespace kaa {
 class LogRecord {
 public:
     LogRecord() {}
-    LogRecord(const SuperRecord & logRecord) {
+    LogRecord(const SuperRecord& logRecord)
+    {
         SharedDataBuffer buffer = converter_.toByteArray(logRecord);
 
         for (size_t i = 0; i < buffer.second; i++) {

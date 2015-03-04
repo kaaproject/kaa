@@ -42,7 +42,7 @@ public:
      *
      * @param bytes Configuration binary data.
      */
-    virtual void        saveConfiguration(const byte_buffer &bytes) = 0;
+    virtual void saveConfiguration(byte_buffer &&bytes) = 0;
 
     /**
      * Specifies routine to load configuration data.
