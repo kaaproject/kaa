@@ -15,6 +15,7 @@
  */
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.user;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -22,21 +23,29 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointStateUpdateMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
+import org.kaaproject.kaa.server.operations.service.event.EventService;
 import org.kaaproject.kaa.server.operations.service.event.GlobalRouteInfo;
 import org.kaaproject.kaa.server.operations.service.event.RouteOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import akka.actor.ActorContext;
+
 public class GlobalUserActorMessageProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(GlobalUserActor.class);
 
+    /** The event service. */
+    private final EventService eventService;
     private final String userId;
     private final String tenantId;
     private final GlobalRouteTable<ConfigurationKey> map;
 
-    public GlobalUserActorMessageProcessor(AkkaContext context, String userId, String tenantId) {
+    public GlobalUserActorMessageProcessor(AkkaContext context, EventService eventService, String userId, String tenantId) {
+        this.eventService = eventService;
         this.userId = userId;
         this.tenantId = tenantId;
         this.map = new GlobalRouteTable<>();
@@ -54,16 +63,21 @@ public class GlobalUserActorMessageProcessor {
         }
     }
 
-    public void process(UserConfigurationUpdate update) {
+    public void process(ActorContext context, UserConfigurationUpdate update) {
         ConfigurationKey key = ConfigurationKey.fromUpdateMessage(update);
         LOG.debug("Processing notification {}", update);
-        sendStateUpdatesToLocalServers(key, update);
+        sendStateUpdatesToLocalServers(context, key, update);
         sendStateUpdatesToRemoteServers(key, update);
     }
-    
-    private void sendStateUpdatesToLocalServers(ConfigurationKey key, UserConfigurationUpdate update) {
+
+    private void sendStateUpdatesToLocalServers(ActorContext context, ConfigurationKey key, UserConfigurationUpdate update) {
         for (GlobalRouteInfo route : map.getLocalRoutes(key)) {
-            LOG.debug("Sending notification to route {}", update, route);
+            if (!Arrays.equals(update.getHash(), route.getUcfHash())) {
+                LOG.debug("Sending notification to route {}", update, route);
+                context.parent().tell(new EndpointStateUpdateMessage(toUpdate(update, route)), context.self());
+            } else {
+                LOG.debug("Ignoring notification to route {} due to matching hashes", update, route);
+            }
         }
     }
 
@@ -73,8 +87,14 @@ public class GlobalUserActorMessageProcessor {
             LOG.debug("Sending notification to {} about configuration update", entry.getKey());
             for (GlobalRouteInfo route : entry.getValue()) {
                 LOG.debug("Sending notification to route {}", route);
+                eventService.sendEndpointStateInfo(route.getAddress().getServerId(), toUpdate(update, route));
             }
         }
+    }
+
+    private EndpointUserConfigurationUpdate toUpdate(UserConfigurationUpdate update, GlobalRouteInfo route) {
+        return new EndpointUserConfigurationUpdate(tenantId, userId, update.getApplicationToken(),
+                route.getAddress().getEndpointKey(), update.getHash());
     }
 
     private static class ConfigurationKey {
@@ -173,7 +193,7 @@ public class GlobalUserActorMessageProcessor {
 
         public Set<GlobalRouteInfo> getLocalRoutes(T key) {
             Set<GlobalRouteInfo> result = new HashSet<GlobalRouteInfo>();
-            for(GlobalRouteInfo route : getRoutes(key)){
+            for (GlobalRouteInfo route : getRoutes(key)) {
                 String serverId = route.getAddress().getServerId();
                 if (serverId != null) {
                     continue;

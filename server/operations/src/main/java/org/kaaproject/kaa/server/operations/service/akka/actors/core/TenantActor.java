@@ -191,7 +191,7 @@ public class TenantActor extends UntypedActor {
         ActorRef userActor;
         if (message instanceof RouteInfoMessage || message instanceof UserRouteInfoMessage) {
             LOG.debug("Find user actor by id: {} for message {}", message.getUserId(), message);
-            userActor = localUsers.get(message.getUserId());
+            userActor = localUsers.get(toLocal(message.getUserId()));
         } else {
             userActor = getOrCreateUserActor(message.getUserId());
         }
@@ -207,25 +207,25 @@ public class TenantActor extends UntypedActor {
     }
 
     private ActorRef getOrCreateUserActor(String userId) {
-        userId = toLocal(userId);
-        ActorRef userActor = localUsers.get(userId);
+        String localUserId = toLocal(userId);
+        ActorRef userActor = localUsers.get(localUserId);
         if (userActor == null && userId != null) {
             userActor = context().actorOf(
-                    Props.create(new LocalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME), userId);
+                    Props.create(new LocalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME), localUserId);
             LOG.debug("Create local user actor with id {}", userId);
-            localUsers.put(userId, userActor);
+            localUsers.put(localUserId, userActor);
         }
         return userActor;
     }
     
     private ActorRef getOrCreateGlobalUserActor(String userId) {
-        userId = toGlobal(userId);
-        ActorRef userActor = globalUsers.get(userId);
+        String globalUserId = toGlobal(userId);
+        ActorRef userActor = globalUsers.get(globalUserId);
         if (userActor == null && userId != null) {
             userActor = context().actorOf(
-                    Props.create(new LocalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME), userId);
+                    Props.create(new LocalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME), globalUserId);
             LOG.debug("Create global user actor with id {}", userId);
-            globalUsers.put(userId, userActor);
+            globalUsers.put(globalUserId, userActor);
         }
         return userActor;
     }

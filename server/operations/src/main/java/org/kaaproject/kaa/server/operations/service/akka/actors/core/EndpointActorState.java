@@ -43,6 +43,7 @@ public class EndpointActorState {
     private long lastActivityTime;
     private int processedEventSeqNum = Integer.MIN_VALUE;
     private Map<String, Integer> subscriptionStates;
+    private boolean userConfigurationUpdatePending;
 
     public EndpointActorState(String endpointKey, String actorKey) {
         this.endpointKey = endpointKey;
@@ -117,6 +118,10 @@ public class EndpointActorState {
         endpointProfile.setEndpointUserId(userId);
     }
 
+    boolean isValidForUser() {
+        return endpointProfile != null && endpointProfile.getEndpointUserId() != null && !endpointProfile.getEndpointUserId().isEmpty();
+    }
+
     boolean isValidForEvents() {
         return endpointProfile != null && endpointProfile.getEndpointUserId() != null && !endpointProfile.getEndpointUserId().isEmpty()
                 && endpointProfile.getEcfVersionStates() != null && !endpointProfile.getEcfVersionStates().isEmpty();
@@ -162,12 +167,20 @@ public class EndpointActorState {
         return subscriptionStates;
     }
 
+    public boolean isUserConfigurationUpdatePending() {
+        return userConfigurationUpdatePending;
+    }
+
+    public void setUserConfigurationUpdatePending(boolean userConfigurationUpdatePending) {
+        this.userConfigurationUpdatePending = userConfigurationUpdatePending;
+    }
+
     public List<NotificationDto> filter(List<NotificationDto> notifications) {
         List<NotificationDto> list = new ArrayList<NotificationDto>(notifications.size());
-        for(NotificationDto nf : notifications){
-            if(subscriptionStates.containsKey(nf.getTopicId())) {
+        for (NotificationDto nf : notifications) {
+            if (subscriptionStates.containsKey(nf.getTopicId())) {
                 list.add(nf);
-            }else{
+            } else {
                 LOG.trace("[{}][{}] Notification {} is no longer valid due to subscription state", endpointKey, actorKey, nf);
             }
         }

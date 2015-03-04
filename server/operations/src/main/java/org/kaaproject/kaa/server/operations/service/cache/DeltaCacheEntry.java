@@ -41,6 +41,9 @@ public class DeltaCacheEntry implements Serializable {
     /** The hash. */
     private final EndpointObjectHash hash;
 
+    /** The hash. */
+    private final EndpointObjectHash userConfigurationHash;
+
     /**
      * Instantiates a new delta cache entry.
      *
@@ -48,11 +51,12 @@ public class DeltaCacheEntry implements Serializable {
      * @param delta the delta
      * @param hash the hash
      */
-    public DeltaCacheEntry(byte[] configuration, RawBinaryDelta delta, EndpointObjectHash hash) {
+    public DeltaCacheEntry(byte[] configuration, RawBinaryDelta delta, EndpointObjectHash hash, EndpointObjectHash userConfigurationHash) {
         super();
         this.configuration = configuration;
         this.delta = delta;
         this.hash = hash;
+        this.userConfigurationHash = userConfigurationHash;
     }
 
     /**
@@ -80,5 +84,14 @@ public class DeltaCacheEntry implements Serializable {
      */
     public EndpointObjectHash getHash() {
         return hash;
+    }
+
+    /**
+     * Gets the hash.
+     *
+     * @return the hash
+     */
+    public EndpointObjectHash getUserConfigurationHash() {
+        return userConfigurationHash;
     }
 }

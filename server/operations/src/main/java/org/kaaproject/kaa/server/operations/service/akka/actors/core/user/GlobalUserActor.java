@@ -57,7 +57,7 @@ public class GlobalUserActor extends UntypedActor {
         if(message instanceof EndpointRouteUpdateMessage){
             messageProcessor.process(((EndpointRouteUpdateMessage) message).getRoute());
         } else if (message instanceof UserConfigurationUpdateMessage){
-            messageProcessor.process(((UserConfigurationUpdateMessage) message).getUpdate());
+            messageProcessor.process(context(), ((UserConfigurationUpdateMessage) message).getUpdate());
         }
     }
 

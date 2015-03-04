@@ -109,41 +109,16 @@ public class LocalUserActorMessageProcessor {
     }
 
     void processEndpointConnectMessage(ActorContext context, EndpointUserConnectMessage message) {
-        if (firstConnectRequestToActor) {
-            firstConnectRequestToActor = false;
-            eventService.sendUserRouteInfo(new UserRouteInfo(tenantId, userId));
-        }
-        EndpointObjectHash endpointKey = message.getKey();
-        String appToken = message.getAppToken();
-        RouteTableAddress address = new RouteTableAddress(endpointKey, appToken);
-        List<EventClassFamilyVersion> ecfVersions = message.getEcfVersions();
-        for (EventClassFamilyVersion ecfVersion : ecfVersions) {
-            RouteTableKey key = new RouteTableKey(appToken, ecfVersion);
-            updateRouteTable(context, key, address);
-        }
+        RouteTableAddress address = new RouteTableAddress(message.getKey(), message.getAppToken());
 
-        for (String serverId : routeTable.getRemoteServers()) {
-            if (routeTable.isDeliveryRequired(serverId, address)) {
-                LOG.debug("[{}] Sending route info about address {} to server {}", userId, address, serverId);
-                eventService.sendRouteInfo(new RouteInfo(tenantId, userId, address, ecfVersions), serverId);
-            }
-        }
+        // register endpoint for send/receive events
+        registerEndpointForEvents(context, message, address);
 
-        //TODO: get hash from connect message
-        GlobalRouteInfo route = GlobalRouteInfo.add(tenantId, userId, address, message.getCfVersion(), new byte[0]);
-        if (eventService.isMainUserNode(userId)) {
-            context.parent().tell(new EndpointRouteUpdateMessage(route), context.self());
-        } else {
-            LOG.debug("[{}] Sending connect message to global actor", userId);
-            eventService.sendEndpointRouteInfo(route);
-        }
-
-        versionMap.put(endpointKey, message.getEcfVersions());
-
-        endpoints.put(getActorPathName(message.getOriginator()), endpointKey);
+        // report existence of this endpoint to global user actor
+        sendGlobalRouteUpdate(context, message, address);
     }
 
-    public void processEndpointDisconnectMessage(ActorContext context, EndpointUserDisconnectMessage message) {
+    void processEndpointDisconnectMessage(ActorContext context, EndpointUserDisconnectMessage message) {
         List<String> actorsToRemove = new LinkedList<>();
         for (Entry<String, EndpointObjectHash> entry : endpoints.entrySet()) {
             if (entry.getValue().equals(message.getKey())) {
@@ -155,10 +130,6 @@ public class LocalUserActorMessageProcessor {
             endpoints.remove(actor);
         }
         removeEndpoint(context, message.getKey());
-    }
-
-    protected String getActorPathName(ActorRef actorRef) {
-        return actorRef.path().name();
     }
 
     void processEndpointEventSendMessage(ActorContext context, EndpointEventSendMessage message) {
@@ -249,6 +220,43 @@ public class LocalUserActorMessageProcessor {
             }
         } else {
             LOG.warn("remove commands for remote actors are not supported yet!");
+        }
+    }
+
+    private void registerEndpointForEvents(ActorContext context, EndpointUserConnectMessage message, RouteTableAddress address) {
+        List<EventClassFamilyVersion> ecfVersions = message.getEcfVersions();
+        if (!ecfVersions.isEmpty()) {
+            for (EventClassFamilyVersion ecfVersion : ecfVersions) {
+                RouteTableKey key = new RouteTableKey(address.getApplicationToken(), ecfVersion);
+                updateRouteTable(context, key, address);
+            }
+            if (firstConnectRequestToActor) {
+                firstConnectRequestToActor = false;
+                // report existence of this actor to other operation servers
+                eventService.sendUserRouteInfo(new UserRouteInfo(tenantId, userId));
+            }
+            for (String serverId : routeTable.getRemoteServers()) {
+                if (routeTable.isDeliveryRequired(serverId, address)) {
+                    LOG.debug("[{}] Sending route info about address {} to server {}", userId, address, serverId);
+                    eventService.sendRouteInfo(new RouteInfo(tenantId, userId, address, ecfVersions), serverId);
+                }
+            }
+            versionMap.put(address.getEndpointKey(), message.getEcfVersions());
+            endpoints.put(getActorPathName(message.getOriginator()), address.getEndpointKey());
+        }
+    }
+
+    protected String getActorPathName(ActorRef actorRef) {
+        return actorRef.path().name();
+    }
+
+    private void sendGlobalRouteUpdate(ActorContext context, EndpointUserConnectMessage message, RouteTableAddress address) {
+        GlobalRouteInfo route = GlobalRouteInfo.add(tenantId, userId, address, message.getCfVersion(), message.getUcfHash());
+        if (eventService.isMainUserNode(userId)) {
+            context.parent().tell(new EndpointRouteUpdateMessage(route), context.self());
+        } else {
+            LOG.debug("[{}] Sending connect message to global actor", userId);
+            eventService.sendEndpointRouteInfo(route);
         }
     }
 
@@ -373,7 +381,7 @@ public class LocalUserActorMessageProcessor {
             LOG.debug("[{}] removing endpoint [{}] from remote route table on server {}", userId, endpoint, serverId);
             eventService.sendRouteInfo(RouteInfo.deleteRouteFromAddress(tenantId, userId, address), serverId);
         }
-        
+
         GlobalRouteInfo route = GlobalRouteInfo.delete(tenantId, userId, address);
         if (eventService.isMainUserNode(userId)) {
             context.parent().tell(new EndpointRouteUpdateMessage(route), context.self());

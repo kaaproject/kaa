@@ -189,11 +189,11 @@ public class DefaultOperationsService implements OperationsService {
             request.setAppStateSeqNumber(startSeqNumber);
             HistoryDelta historyDelta = fetchHistory(context.getEndpointKey(), context.getRequestHash(), md.getApplicationToken(), profile,
                     HistorySubject.CONFIGURATION, startSeqNumber, curAppSeqNumber);
-            GetDeltaResponse confResponse = calculateConfigurationDelta(md, request, profile, historyDelta, curAppSeqNumber);
+            GetDeltaResponse confResponse = calculateConfigurationDelta(md, request, profile, historyDelta, curAppSeqNumber, context.isUserConfigurationChanged());
             ConfigurationServerSync confSyncResponse = buildConfSyncResponse(confResponse, curAppSeqNumber);
             context.setConfigurationSyncResponse(confSyncResponse);
-    
-            if (historyDelta.isSmthChanged()) {
+
+            if (historyDelta.isSmthChanged() || SyncResponseStatus.NO_DELTA != confSyncResponse.getResponseStatus()) {
                 List<EndpointGroupStateDto> endpointGroups = historyDelta.getEndpointGroupStates();
                 LOG.debug("[{}][{}] Updating profile with endpoint groups.size {}, groups: {}", context.getEndpointKey(),
                         context.getRequestHash(), endpointGroups.size(), endpointGroups);
@@ -229,7 +229,7 @@ public class DefaultOperationsService implements OperationsService {
             context.setNotificationSyncResponse(nfSyncResponse);
     
             context.setUpdateProfileRequired(context.isUpdateProfileRequired() || notificationResponse.isSubscriptionListChanged());
-            if (historyDelta.isSmthChanged()) {
+            if (historyDelta.isSmthChanged() || SyncResponseStatus.NO_DELTA != nfSyncResponse.getResponseStatus()) {
                 List<EndpointGroupStateDto> endpointGroups = historyDelta.getEndpointGroupStates();
                 LOG.debug("[{}][{}] Updating profile with endpoint groups.size {}, groups: {}", context.getEndpointKey(),
                         context.getRequestHash(), endpointGroups.size(), endpointGroups);
@@ -507,7 +507,7 @@ public class DefaultOperationsService implements OperationsService {
      *             the get delta exception
      */
     private GetDeltaResponse calculateConfigurationDelta(ClientSyncMetaData metaData, ConfigurationClientSync request,
-            EndpointProfileDto profile, HistoryDelta historyDelta, int curAppSeqNumber) throws GetDeltaException {
+            EndpointProfileDto profile, HistoryDelta historyDelta, int curAppSeqNumber, boolean userConfigurationChanged) throws GetDeltaException {
         GetDeltaRequest deltaRequest;
         if (request.getConfigurationHash() != null) {
             deltaRequest = new GetDeltaRequest(metaData.getApplicationToken(), EndpointObjectHash.fromBytes(request.getConfigurationHash()
@@ -516,6 +516,7 @@ public class DefaultOperationsService implements OperationsService {
             deltaRequest = new GetDeltaRequest(metaData.getApplicationToken(), request.getAppStateSeqNumber());
         }
         deltaRequest.setEndpointProfile(profile);
+        deltaRequest.setUserConfigurationChanged(userConfigurationChanged);
         return deltaService.getDelta(deltaRequest, historyDelta, curAppSeqNumber);
     }
 

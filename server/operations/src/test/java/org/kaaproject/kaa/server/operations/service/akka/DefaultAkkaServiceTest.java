@@ -269,6 +269,8 @@ public class DefaultAkkaServiceTest {
         when(applicationService.findAppById(APP_ID)).thenReturn(applicationDto);
 
         when(endpointUserService.findUserVerifiers(APP_ID)).thenReturn(new ArrayList<UserVerifierDto>());
+        
+        when(eventService.isMainUserNode(Mockito.anyString())).thenReturn(true);
     }
 
     @After

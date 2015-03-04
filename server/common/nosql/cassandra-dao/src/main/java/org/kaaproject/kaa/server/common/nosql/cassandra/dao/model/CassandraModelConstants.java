@@ -23,6 +23,7 @@ public class CassandraModelConstants {
      */
     public static final String APPLICATION_ID_PROPERTY = "app_id";
     public static final String CONFIGURATION_HASH_PROPERTY = "cf_hash";
+    public static final String USER_CONFIGURATION_HASH_PROPERTY = "ucf_hash";
     public static final String ACCESS_TOKEN_PROPERTY  = "access_token";
     public static final String NOTIFICATION_ID_PROPERTY = "nf_id";
     public static final String ENDPOINT_KEY_HASH_PROPERTY = "ep_key_hash";
@@ -82,6 +83,7 @@ public class CassandraModelConstants {
     public static final String EP_COLUMN_FAMILY_NAME = "ep_profile";
     public static final String EP_APP_ID_PROPERTY = APPLICATION_ID_PROPERTY;
     public static final String EP_CONFIG_HASH_PROPERTY = CONFIGURATION_HASH_PROPERTY;
+    public static final String EP_USER_CONFIG_HASH_PROPERTY = USER_CONFIGURATION_HASH_PROPERTY;
     public static final String EP_ACCESS_TOKEN_PROPERTY = ACCESS_TOKEN_PROPERTY;
     public static final String EP_ENDPOINT_ID_PROPERTY = "ep_id";
     public static final String EP_EP_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;

@@ -78,6 +78,7 @@ public class MongoModelConstants {
     public static final String EP_PROFILE_HASH = "profile_hash";
     public static final String EP_PROFILE_VERSION = "profile_version";
     public static final String EP_CONFIGURATION_HASH = "configuration_hash";
+    public static final String EP_USER_CONFIGURATION_HASH = "user_configuration_hash";
     public static final String EP_CONFIGURATION_VERSION = "configuration_version";
     public static final String EP_NOTIFICATION_VERSION = VERSION;
     public static final String EP_NF_HASH = "nf_hash";

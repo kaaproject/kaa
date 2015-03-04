@@ -36,7 +36,7 @@ public class GetDeltaRequest {
 
     /** The configuration hash. */
     private final EndpointObjectHash configurationHash;
-    // in case we already have profile this will help to save extra calls to DB
+
     /** The endpoint profile. */
     private EndpointProfileDto endpointProfile;
 
@@ -45,6 +45,8 @@ public class GetDeltaRequest {
 
     /** The fetch schema. */
     private boolean fetchSchema;
+    
+    private boolean userConfigurationChanged;
 
     /**
      * Instantiates a new delta request.
@@ -207,5 +209,13 @@ public class GetDeltaRequest {
      */
     public boolean isFirstRequest() {
         return getConfigurationHash() == null || getConfigurationHash().getData() == null || getConfigurationHash().getData().length == 0;
+    }
+
+    public void setUserConfigurationChanged(boolean userConfigurationChanged) {
+        this.userConfigurationChanged = userConfigurationChanged;
+    }
+
+    public boolean isUserConfigurationChanged() {
+        return userConfigurationChanged;
     }
 }

@@ -35,13 +35,15 @@ public class EndpointUserConnectMessage extends EndpointAwareMessage implements 
     private final String userId;
     private final List<EventClassFamilyVersion> ecfVersions;
     private final int cfVersion;
+    private final byte[] ucfHash;
 
     public EndpointUserConnectMessage(String userId, EndpointObjectHash endpointKey, List<EventClassFamilyVersion> ecfVersions,
-            int cfVersion, String applicationToken, ActorRef originator) {
+            int cfVersion, byte[] ucfHash, String applicationToken, ActorRef originator) {
         super(applicationToken, endpointKey, originator);
         this.userId = userId;
         this.ecfVersions = ecfVersions;
         this.cfVersion = cfVersion;
+        this.ucfHash = ucfHash;
     }
 
     public List<EventClassFamilyVersion> getEcfVersions() {
@@ -55,6 +57,10 @@ public class EndpointUserConnectMessage extends EndpointAwareMessage implements 
 
     public int getCfVersion() {
         return cfVersion;
+    }
+
+    public byte[] getUcfHash() {
+        return ucfHash;
     }
 
     @Override
