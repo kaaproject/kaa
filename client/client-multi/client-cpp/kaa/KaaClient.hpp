@@ -21,36 +21,30 @@
 
 #include "kaa/ClientStatus.hpp"
 #include "kaa/event/EventManager.hpp"
-#include "kaa/schema/ISchemaProcessor.hpp"
 #include "kaa/profile/IProfileManager.hpp"
 #include "kaa/bootstrap/IBootstrapManager.hpp"
 #include "kaa/event/gen/EventFamilyFactory.hpp"
 #include "kaa/profile/ProfileManager.hpp"
 #include "kaa/channel/SyncDataProcessor.hpp"
-#include "kaa/configuration/IConfigurationProcessor.hpp"
 #include "kaa/notification/NotificationManager.hpp"
-#include "kaa/schema/storage/ISchemaPersistenceManager.hpp"
-#include "kaa/configuration/manager/IConfigurationManager.hpp"
 #include "kaa/event/registration/EndpointRegistrationManager.hpp"
-#include "kaa/configuration/delta/manager/DefaultDeltaManager.hpp"
 #include "kaa/ClientStatus.hpp"
-#include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
 #include "kaa/channel/impl/DefaultBootstrapChannel.hpp"
 #include "kaa/channel/impl/DefaultOperationTcpChannel.hpp"
 #include "kaa/channel/impl/DefaultOperationHttpChannel.hpp"
 #include "kaa/channel/impl/DefaultOperationLongPollChannel.hpp"
+#include "kaa/configuration/ConfigurationProcessor.hpp"
+#include "kaa/configuration/manager/ConfigurationManager.hpp"
+#include "kaa/configuration/storage/ConfigurationPersistenceManager.hpp"
 #include "kaa/log/LogCollector.hpp"
 
 namespace kaa {
 
 typedef std::shared_ptr<IBootstrapManager> IBootstrapManagerPtr;
 
-#ifdef KAA_USE_CONFIGURATION
-typedef std::shared_ptr<DefaultDeltaManager> DefaultDeltaManagerPtr;
-#endif
-
-typedef enum KaaOption {
+typedef enum KaaOption
+{
     USE_DEFAULT_BOOTSTRAP_HTTP_CHANNEL      = 0x01,
     USE_DEFAULT_OPERATION_KAATCP_CHANNEL    = 0x02,
     USE_DEFAULT_OPERATION_HTTP_CHANNEL      = 0x04,
@@ -58,7 +52,8 @@ typedef enum KaaOption {
     USE_DEFAULT_CONNECTIVITY_CHECKER        = 0x10
 } KaaOption;
 
-class KaaClient : public IKaaClient {
+class KaaClient : public IKaaClient
+{
 public:
     KaaClient();
     virtual ~KaaClient() { }
@@ -71,9 +66,7 @@ public:
 
     virtual IProfileManager&                    getProfileManager() { return *profileManager_; }
 #ifdef KAA_USE_CONFIGURATION
-    virtual ISchemaPersistenceManager&          getSchemaPersistenceManager() { return *schemaPersistenceManager_; }
     virtual IConfigurationPersistenceManager&   getConfigurationPersistenceManager() { return *configurationPersistenceManager_; }
-    virtual IDeltaManager&                      getDeltaManager() { return *deltaManager_; }
     virtual IConfigurationManager&              getConfigurationManager() { return *configurationManager_; }
 #endif
 #ifdef KAA_USE_NOTIFICATIONS
@@ -117,12 +110,9 @@ private:
     std::string     publicKeyHash_;
 
 #ifdef KAA_USE_CONFIGURATION
-    ISchemaProcessorPtr                   schemaProcessor_;
-    DefaultDeltaManagerPtr                deltaManager_;
-    IConfigurationManagerPtr              configurationManager_;
-    IConfigurationProcessorPtr            configurationProcessor_;
-    ISchemaPersistenceManagerPtr          schemaPersistenceManager_;
-    IConfigurationPersistenceManagerPtr   configurationPersistenceManager_;
+    std::unique_ptr<ConfigurationManager>            configurationManager_;
+    std::unique_ptr<ConfigurationProcessor>          configurationProcessor_;
+    std::unique_ptr<ConfigurationPersistenceManager> configurationPersistenceManager_;
 #endif
 #ifdef KAA_USE_EVENTS
     std::unique_ptr<EventManager>         eventManager_;

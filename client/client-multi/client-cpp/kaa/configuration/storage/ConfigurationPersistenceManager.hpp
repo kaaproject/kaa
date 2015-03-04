@@ -25,6 +25,8 @@
 #include "kaa/IKaaClientStateStorage.hpp"
 #include "kaa/configuration/IConfigurationProcessor.hpp"
 #include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
+#include "kaa/configuration/manager/IConfigurationReceiver.hpp"
+#include "kaa/configuration/IConfigurationHashContainer.hpp"
 
 namespace kaa {
 
@@ -36,11 +38,11 @@ class IKaaClientStateStorage;
  * This class is responsible for persistence of configuration invoking
  * user-defined @link IConfigurationStorage @endlink routines.
  *
- * Receives configuration and data schema updates from
- * @link ConfigurationManager @endlink and @link SchemaProcessor @endlink
- * respectively.
  */
-class ConfigurationPersistenceManager : public IConfigurationPersistenceManager {
+class ConfigurationPersistenceManager : public IConfigurationPersistenceManager,
+                                        public IConfigurationReceiver,
+                                        public IConfigurationHashContainer
+{
 public:
     ConfigurationPersistenceManager(IKaaClientStateStoragePtr state)
         : storage_(nullptr)
@@ -58,12 +60,7 @@ public:
     /**
      * @link IConfigurationReceiver @endlink implementation
      */
-    void onConfigurationUpdated(const ICommonRecord &configuration);
-
-    /**
-     * @link ISchemaUpdatesReceiver @endlink implementation
-     */
-    void onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema);
+    void onConfigurationUpdated(const KaaRootConfiguration &configuration);
 
     /**
      * @link IConfigurationHashContainer @endlink implementation
@@ -80,13 +77,11 @@ public:
 private:
     void readStoredConfiguration();
 
-    KAA_MUTEX_DECLARE(schemaGuard_);
     KAA_MUTEX_DECLARE(confPersistenceGuard_);
 
     IConfigurationStorage *                 storage_;
     IConfigurationProcessor *               processor_;
 
-    std::shared_ptr<avro::ValidSchema>      schema_;
     EndpointObjectHash                      configurationHash_;
     bool                                    ignoreConfigurationUpdate_;
 

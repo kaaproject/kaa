@@ -91,7 +91,7 @@ public class KaaClientProperties extends Properties {
             propertiesLocation = System.getProperty(KAA_CLIENT_PROPERTIES_FILE);
         }
         properties = new Properties();
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader classLoader = Kaa.class.getClassLoader();
         properties.load(classLoader.getResourceAsStream(propertiesLocation));
         return properties;
     }

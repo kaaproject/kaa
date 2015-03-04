@@ -37,8 +37,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:choiceMode="singleChoice"
-            android:listSelector="@drawable/abc_list_selector_holo_light"
-            android:divider="@drawable/abc_list_divider_holo_light"
             android:visibility="gone"/>
         <TextView
             android:id="@+id/errorTextView"
@@ -80,7 +78,7 @@
 	                android:freezesText="true"
 	                android:singleLine="true"
 	                android:textAppearance="?android:attr/textAppearanceSmall"
-	                android:textColor="?android:attr/textColorPrimary"/>
+	                android:textColor="@color/abc_primary_text_material_light"/>
 	            <TextView
 	                android:id="@+id/currentSongDetails"
 	                android:layout_width="match_parent"
@@ -94,7 +92,7 @@
 	                android:freezesText="true"
 	                android:singleLine="true"
 	                android:textAppearance="?android:attr/textAppearanceSmall"
-	                android:textColor="?android:attr/textColorSecondary"/>
+	                android:textColor="@color/abc_secondary_text_material_light"/>
 	        </RelativeLayout>
 	        <RelativeLayout 
 	                android:id="@id/currentSongActionLayout"
@@ -130,7 +128,7 @@
                  android:layout_centerVertical="true"
                  android:singleLine="true"
                  android:textAppearance="?android:attr/textAppearanceSmall"
-                 android:textColor="?android:attr/textColorSecondary"/>
+                 android:textColor="@color/abc_secondary_text_material_light"/>
          </RelativeLayout>
         
     </RelativeLayout>
