@@ -29,7 +29,7 @@ namespace kaa {
 
 class UserTransport : public AbstractKaaTransport<TransportType::USER>, public IUserTransport {
 public:
-    UserTransport(IRegistrationProcessor & manager, IKaaChannelManager& channelManager);
+    UserTransport(IRegistrationProcessor& manager, IKaaChannelManager& channelManager);
     std::shared_ptr<UserSyncRequest>     createUserRequest();
     void                onUserResponse(const UserSyncResponse& response);
     void                sync();

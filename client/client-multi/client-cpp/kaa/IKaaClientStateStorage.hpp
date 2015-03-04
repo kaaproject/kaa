@@ -69,8 +69,9 @@ public:
     virtual AttachedEndpoints getAttachedEndpoints() const = 0;
     virtual void setAttachedEndpoints(const AttachedEndpoints& endpoints) = 0;
 
-    virtual std::string getEndpointAccessToken() const = 0;
+    virtual std::string getEndpointAccessToken() = 0;
     virtual void setEndpointAccessToken(const std::string& token) = 0;
+    virtual std::string refreshEndpointAccessToken() = 0;
 
     virtual bool getEndpointAttachStatus() const = 0;
     virtual void setEndpointAttachStatus(bool isAttached) = 0;

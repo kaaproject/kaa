@@ -19,245 +19,375 @@
 #include <string>
 #include <vector>
 
-#include "kaa/ClientStatus.hpp"
 #include "kaa/event/registration/EndpointRegistrationManager.hpp"
-#include "kaa/event/registration/IEndpointAttachStatusListener.hpp"
+#include "kaa/event/registration/IAttachStatusListener.hpp"
 
+#include "headers/MockKaaClientStateStorage.hpp"
 #include "headers/channel/MockChannelManager.hpp"
+#include "headers/event/registration/MockUserAttachCallback.hpp"
+#include "headers/event/registration/MockAttachStatusListener.hpp"
+#include "headers/event/registration/MockAttachEndpointCallback.hpp"
+#include "headers/event/registration/MockDetachEndpointCallback.hpp"
 
 namespace kaa {
 
-class TestEndpointAttachStatusListener : public IEndpointAttachStatusListener {
-public:
-    TestEndpointAttachStatusListener()
-        : isAttached_(false), isDetached_(false) {}
-
-    virtual void onAttachSuccess(const std::string& userExternalId, const std::string& endpointAccessToken) {
-        isAttached_ = true;
-    }
-
-    virtual void onAttachFailure() {}
-
-    virtual void onDetachSuccess(const std::string& endpointAccessToken) {
-        isDetached_ = true;
-    }
-
-    virtual void onDetachFailure() {}
-
-public:
-    bool isAttached_;
-    bool isDetached_;
-};
-
 BOOST_AUTO_TEST_SUITE(EndpointRegistrationSuite)
 
-BOOST_AUTO_TEST_CASE(NullEPRequest)
+BOOST_AUTO_TEST_CASE(EmptyUserSyncRequestTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fake.txt"));
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     EndpointRegistrationManager registrationManager(status);
 
-    BOOST_CHECK_MESSAGE(registrationManager.getUserAttachRequest().get() == nullptr
-            , "User attach request should be empty");
-    BOOST_CHECK_MESSAGE(registrationManager.getEndpointsToAttach().size() == 0
-            , "EP attach request should be empty");
-    BOOST_CHECK_MESSAGE(registrationManager.getEndpointsToDetach().size() == 0
-            , "EP detach request should be empty");
+    BOOST_CHECK_MESSAGE(!registrationManager.getUserAttachRequest(), "User attach request should be empty");
+    BOOST_CHECK_MESSAGE(registrationManager.getEndpointsToAttach().empty(), "EP attach request should be empty");
+    BOOST_CHECK_MESSAGE(registrationManager.getEndpointsToDetach().empty(), "EP detach request should be empty");
 }
 
-BOOST_AUTO_TEST_CASE(UserAttachTest)
+BOOST_AUTO_TEST_CASE(BadUserCredentialsTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fake.txt"));
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     EndpointRegistrationManager registrationManager(status);
-
-    TestEndpointAttachStatusListener* resultListener = new TestEndpointAttachStatusListener;
 
     std::string userExternalId = "userExternalId";
     std::string userAccessToken = "userAccessToken";
     std::string userVerifierToken = "userVerifierToken";
 
-    BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, userAccessToken), KaaException);
+    if (!strlen(DEFAULT_USER_VERIFIER_TOKEN)) {
+        BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, userAccessToken), KaaException);
+    } else {
+        BOOST_CHECK_THROW(registrationManager.attachUser("", userAccessToken), KaaException);
+        BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, ""), KaaException);
+    }
+
     BOOST_CHECK_THROW(registrationManager.attachUser("", userAccessToken, userVerifierToken), KaaException);
     BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, "", userVerifierToken), KaaException);
     BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, userAccessToken, ""), KaaException);
-
-    registrationManager.attachUser(userExternalId, userAccessToken, userVerifierToken, resultListener);
-
-    BOOST_CHECK(registrationManager.getUserAttachRequest().get() != nullptr);
-    BOOST_CHECK(registrationManager.getUserAttachRequest()->userExternalId == userExternalId);
-    BOOST_CHECK(registrationManager.getUserAttachRequest()->userAccessToken == userAccessToken);
-    BOOST_CHECK(registrationManager.getUserAttachRequest()->userVerifierId == userVerifierToken);
-
-    UserSyncResponse userSyncResponse;
-
-    UserAttachResponse attachResponse;
-    attachResponse.result = SUCCESS;
-    userSyncResponse.userAttachResponse.set_UserAttachResponse(attachResponse);
-
-    registrationManager.onUserAttach(userSyncResponse.userAttachResponse);
-
-    registrationManager.attachUser(userExternalId, userAccessToken, userVerifierToken, resultListener);
-
-    attachResponse.result = FAILURE;
-    userSyncResponse.userAttachResponse.set_UserAttachResponse(attachResponse);
-
-    registrationManager.onUserAttach(userSyncResponse.userAttachResponse);
-
-    BOOST_CHECK(resultListener->isAttached_);
-    BOOST_CHECK(resultListener->isDetached_);
-
-    delete resultListener;
 }
 
-BOOST_AUTO_TEST_CASE(FilledEPRequest)
+BOOST_AUTO_TEST_CASE(UserAttachRequestTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fake.txt"));
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     EndpointRegistrationManager registrationManager(status);
 
-    std::string userId("Big ID");
-    std::string userToken("Big user's token");
-    std::string verifierToken("Big verifier's token");
+    MockChannelManager channelManager;
+    UserTransport userTransport(registrationManager, channelManager);
+    registrationManager.setTransport(&userTransport);
 
-    registrationManager.attachUser(userId, userToken, verifierToken);
+    std::unique_ptr<MockUserAttachCallback> resultListener(new MockUserAttachCallback);
 
-    std::string epToken1("Token1");
-    std::string epToken2("Token2");
+    std::string userExternalId    = "userExternalId";
+    std::string userAccessToken   = "userAccessToken";
+    std::string userVerifierToken = "userVerifierToken";
 
-    registrationManager.attachEndpoint(epToken1);
-    registrationManager.attachEndpoint(epToken2);
+    registrationManager.attachUser(userExternalId, userAccessToken, userVerifierToken, resultListener.get());
 
-    std::string detachHash("hash");
-
-    registrationManager.detachEndpoint(detachHash);
-
-    UserAttachRequestPtr userAttachRequest = registrationManager.getUserAttachRequest();
-    auto endpointsToAttach = registrationManager.getEndpointsToAttach();
-    auto endpointsToDetach = registrationManager.getEndpointsToDetach();
-
-    BOOST_CHECK_MESSAGE(userAttachRequest.get() != nullptr, "User attach request should be not empty");
-    BOOST_CHECK_MESSAGE(endpointsToAttach.size() == 2, "EP attach request should be not empty");
-    BOOST_CHECK_MESSAGE(endpointsToDetach.size() == 1, "EP detach request is empty");
-
-    UserSyncResponse response;
-
-    EndpointAttachResponse eap1;
-    std::string ep1Hash("Token1Hash");
-    eap1.requestId = endpointsToAttach.begin()->first;
-    eap1.result = SyncResponseResultType::SUCCESS;
-    eap1.endpointKeyHash.set_string(ep1Hash);
-
-    EndpointAttachResponse eap2;
-    std::string ep2Hash("Token2Hash");
-    eap2.requestId = (++endpointsToAttach.begin())->first;
-    eap2.result = SyncResponseResultType::FAILURE;
-    eap2.endpointKeyHash.set_null();
-
-    std::vector<EndpointAttachResponse> epAtResp = { eap1, eap2 };
-
-    EndpointDetachResponse edr1;
-    edr1.requestId = endpointsToDetach.begin()->first;
-    edr1.result = SyncResponseResultType::SUCCESS;
-
-    std::vector<EndpointDetachResponse> epDetResp = { edr1 };
-
-    response.endpointAttachResponses.set_array(epAtResp);
-    response.endpointDetachResponses.set_array(epDetResp);
-
-    registrationManager.onUserAttach(response.userAttachResponse);
-    registrationManager.onEndpointsAttach(response.endpointAttachResponses.get_array());
-    registrationManager.onEndpointsDetach(response.endpointDetachResponses.get_array());
-
-    auto attachedEPs = registrationManager.getAttachedEndpoints();
-
-    BOOST_CHECK_MESSAGE(attachedEPs.size() == 1, "Unexpected attached EP response");
-    BOOST_CHECK_MESSAGE(attachedEPs.begin()->second == ep1Hash, "Unexpected attached EP");
-
-    registrationManager.detachEndpoint(ep1Hash);
-    auto detachMap = registrationManager.getEndpointsToDetach();
-
-    BOOST_CHECK_MESSAGE(detachMap.begin()->second == ep1Hash
-            , "EP detach request is empty");
+    BOOST_CHECK(registrationManager.getUserAttachRequest());
+    BOOST_CHECK_EQUAL(registrationManager.getUserAttachRequest()->userExternalId, userExternalId);
+    BOOST_CHECK_EQUAL(registrationManager.getUserAttachRequest()->userAccessToken, userAccessToken);
+    BOOST_CHECK_EQUAL(registrationManager.getUserAttachRequest()->userVerifierId, userVerifierToken);
 }
+
+
+class PersistUserAttachCallback : public MockUserAttachCallback {
+public:
+    virtual void onAttachSuccess()
+    {
+        MockUserAttachCallback::onAttachSuccess();
+    }
+
+    virtual void onAttachFailed(UserAttachErrorCode errorCode, const std::string& reason)
+    {
+        MockUserAttachCallback::onAttachFailed(errorCode, reason);
+        errorCode_ = errorCode;
+        reason_ = reason;
+    }
+
+public:
+    UserAttachErrorCode errorCode_;
+    std::string reason_;
+};
+
+BOOST_AUTO_TEST_CASE(UserAttachResponseTest)
+{
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    EndpointRegistrationManager registrationManager(status);
+
+    MockChannelManager channelManager;
+    UserTransport userTransport(registrationManager, channelManager);
+    registrationManager.setTransport(&userTransport);
+
+    PersistUserAttachCallback userAttachCallback;
+
+    std::string userExternalId    = "userExternalId";
+    std::string userAccessToken   = "userAccessToken";
+    std::string userVerifierToken = "userVerifierToken";
+
+    UserAttachResponse attachResponse1;
+    attachResponse1.result = SUCCESS;
+
+    /*
+     * Firstly user attach request should be created, otherwise a response will be ignored.
+     */
+    registrationManager.attachUser(userExternalId, userAccessToken, userVerifierToken, &userAttachCallback);
+    registrationManager.onUserAttach(attachResponse1);
+
+    UserAttachErrorCode errorCode = UserAttachErrorCode::TOKEN_EXPIRED;
+    std::string reason("some reason");
+
+    UserAttachResponse attachResponse2;
+    attachResponse2.result = FAILURE;
+    attachResponse2.errorCode.set_UserAttachErrorCode(errorCode);
+    attachResponse2.errorReason.set_string(reason);
+
+    /*
+     * Firstly user attach request should be created, otherwise a response will be ignored.
+     */
+    registrationManager.attachUser(userExternalId, userAccessToken, userVerifierToken, &userAttachCallback);
+    registrationManager.onUserAttach(attachResponse2);
+
+    BOOST_CHECK_EQUAL(userAttachCallback.on_attach_success_count, 1);
+    BOOST_CHECK_EQUAL(userAttachCallback.on_attach_failed_count, 1);
+
+    BOOST_CHECK_EQUAL(userAttachCallback.errorCode_, errorCode);
+    BOOST_CHECK_EQUAL(userAttachCallback.reason_, reason);
+}
+
+
+
+class PersistAttachStatusStorage : public MockKaaClientStateStorage {
+public:
+    virtual bool getEndpointAttachStatus() const { return attachedStatus_; }
+    virtual void setEndpointAttachStatus(bool status) { attachedStatus_ = status; }
+
+public:
+    bool attachedStatus_ = false;
+};
+
+class PersistAttachStatusListener : public MockAttachStatusListener {
+public:
+    virtual void onAttach(const std::string& userExternalId, const std::string& endpointAccessToken)
+    {
+        MockAttachStatusListener::onAttach(userExternalId, endpointAccessToken);
+        userExternalId_ = userExternalId;
+        attachEndpointAccessToken_ = endpointAccessToken;
+    }
+
+    virtual void onDetach(const std::string& endpointAccessToken)
+    {
+        MockAttachStatusListener::onDetach(endpointAccessToken);
+        detachEndpointAccessToken_ = endpointAccessToken;
+    }
+
+public:
+    std::string userExternalId_;
+    std::string attachEndpointAccessToken_;
+    std::string detachEndpointAccessToken_;
+};
 
 BOOST_AUTO_TEST_CASE(AttachStatusUpdatedTest)
 {
-    MockChannelManager channelManager;
-    IKaaClientStateStoragePtr status(new ClientStatus("fake.txt"));
-    status->setEndpointKeyHash("myKeyHash");
+    IKaaClientStateStoragePtr status(new PersistAttachStatusStorage);
     EndpointRegistrationManager registrationManager(status);
-    UserTransport transport(registrationManager, channelManager);
-    TestEndpointAttachStatusListener statusListener;
 
-    registrationManager.setTransport(&transport);
-    registrationManager.setAttachStatusListener(&statusListener);
+    MockChannelManager channelManager;
+    UserTransport userTransport(registrationManager, channelManager);
+    registrationManager.setTransport(&userTransport);
 
-    BOOST_CHECK(!registrationManager.isCurrentEndpointAttached());
+    PersistAttachStatusListener attachStatusListener;
+    registrationManager.setAttachStatusListener(&attachStatusListener);
 
-    registrationManager.attachUser("id", "accessToken", "verifierToken");
+    BOOST_CHECK(!registrationManager.isAttachedToUser());
 
-    UserAttachResponse attachResponse;
-    attachResponse.result = SyncResponseResultType::SUCCESS;
+    UserAttachNotification attachNotification;
+    attachNotification.userExternalId = "id";
+    attachNotification.endpointAccessToken = "attach token";
 
-    UserSyncResponse syncResp1;
-    syncResp1.userAttachResponse.set_UserAttachResponse(attachResponse);
-    syncResp1.endpointAttachResponses.set_null();
-    syncResp1.endpointDetachResponses.set_null();
-    syncResp1.userAttachNotification.set_null();
-    syncResp1.userDetachNotification.set_null();
+    registrationManager.onCurrentEndpointAttach(attachNotification);
 
-    transport.onUserResponse(syncResp1);
+    BOOST_CHECK(registrationManager.isAttachedToUser());
 
-    BOOST_CHECK(registrationManager.isCurrentEndpointAttached());
-    BOOST_CHECK(statusListener.isAttached_);
+    UserDetachNotification detachNotification;
+    detachNotification.endpointAccessToken = "detach token";
 
-    UserDetachNotification detachNf;
-    detachNf.endpointAccessToken = "token";
+    registrationManager.onCurrentEndpointDetach(detachNotification);
 
-    UserSyncResponse syncResp2;
-    syncResp2.userAttachResponse.set_null();
-    syncResp2.endpointAttachResponses.set_null();
-    syncResp2.endpointDetachResponses.set_null();
-    syncResp2.userAttachNotification.set_null();
-    syncResp2.userDetachNotification.set_UserDetachNotification(detachNf);
+    BOOST_CHECK(!registrationManager.isAttachedToUser());
 
-    transport.onUserResponse(syncResp2);
+    BOOST_CHECK_EQUAL(attachStatusListener.on_attach_count, 1);
+    BOOST_CHECK_EQUAL(attachStatusListener.on_detach_count, 1);
 
-    BOOST_CHECK(!registrationManager.isCurrentEndpointAttached());
-    BOOST_CHECK(statusListener.isDetached_);
+    BOOST_CHECK_EQUAL(attachStatusListener.userExternalId_, attachNotification.userExternalId);
+    BOOST_CHECK_EQUAL(attachStatusListener.attachEndpointAccessToken_, attachNotification.endpointAccessToken);
+    BOOST_CHECK_EQUAL(attachStatusListener.detachEndpointAccessToken_, detachNotification.endpointAccessToken);
+}
 
-    UserAttachNotification attachNf;
-    attachNf.userExternalId = "id";
-    attachNf.endpointAccessToken = "token";
+BOOST_AUTO_TEST_CASE(BadCredentialsOfAttachEndpointTest)
+{
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    EndpointRegistrationManager registrationManager(status);
 
-    UserSyncResponse syncResp3;
-    syncResp3.userAttachNotification.set_UserAttachNotification(attachNf);
-    syncResp3.userAttachResponse.set_null();
-    syncResp3.endpointAttachResponses.set_null();
-    syncResp3.endpointDetachResponses.set_null();
-    syncResp3.userDetachNotification.set_null();
+    MockChannelManager channelManager;
+    UserTransport userTransport(registrationManager, channelManager);
+    registrationManager.setTransport(&userTransport);
 
-    transport.onUserResponse(syncResp3);
+    BOOST_CHECK_THROW(registrationManager.attachEndpoint(""), KaaException);
+}
 
-    BOOST_CHECK(registrationManager.isCurrentEndpointAttached());
 
-    registrationManager.detachEndpoint(status->getEndpointKeyHash(), &statusListener);
 
-    std::int32_t req_id = registrationManager.getEndpointsToDetach().begin()->first;
+class PersistAttachEndpointCallback : public MockAttachEndpointCallback {
+public:
+    virtual void onAttachSuccess(const std::string& endpointKeyHash)
+    {
+        MockAttachEndpointCallback::onAttachSuccess(endpointKeyHash);
+        endpointKeyHash_ = endpointKeyHash;
+    }
 
-    EndpointDetachResponse detachResponse;
-    detachResponse.requestId = req_id;
-    detachResponse.result = SyncResponseResultType::SUCCESS;
-    std::vector<EndpointDetachResponse> detachResponses = {detachResponse};
-    UserSyncResponse syncResp4;
-    syncResp4.userAttachNotification.set_null();
-    syncResp4.userAttachResponse.set_null();
-    syncResp4.endpointAttachResponses.set_null();
-    syncResp4.endpointDetachResponses.set_array(detachResponses);
-    syncResp4.userDetachNotification.set_null();
+public:
+    std::string endpointKeyHash_;
+};
 
-    transport.onUserResponse(syncResp4);
+static EndpointAttachResponse constructEndpointAttachResponse(SyncResponseResultType type
+                                                            , std::int32_t requstId
+                                                            , const std::string& hash = "")
+{
+    EndpointAttachResponse response;
+    response.requestId = requstId;
+    response.result = type;
 
-    BOOST_CHECK_EQUAL(status->getEndpointAttachStatus(), false);
-    BOOST_CHECK_EQUAL(registrationManager.isCurrentEndpointAttached(), false);
+    if (hash.empty()) {
+        response.endpointKeyHash.set_null();
+    } else {
+        response.endpointKeyHash.set_string(hash);
+    }
+
+    return response;
+}
+
+static std::int32_t getRequestId(const std::string& accessToken, const std::unordered_map<std::int32_t, std::string>& requests)
+{
+    for (const auto& request : requests) {
+        if (accessToken == request.second) {
+            return request.first;
+        }
+    }
+
+    return -1;
+}
+
+BOOST_AUTO_TEST_CASE(AttachAnotherEndpointTest)
+{
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    EndpointRegistrationManager registrationManager(status);
+
+    MockChannelManager channelManager;
+    UserTransport userTransport(registrationManager, channelManager);
+    registrationManager.setTransport(&userTransport);
+
+    BOOST_CHECK(registrationManager.getEndpointsToAttach().empty());
+
+    PersistAttachEndpointCallback attachEndpointCallback1;
+    PersistAttachEndpointCallback attachEndpointCallback2;
+
+    size_t requestCount = 0;
+
+    std::string targetEndpointAccessToken1 = "some id 1";
+    std::string targetEndpointKeyHash1 = "some key hash 1";
+
+    std::string targetEndpointAccessToken2 = "some id 2";
+    std::string targetEndpointKeyHash2 = "some key hash 2";
+
+    registrationManager.attachEndpoint(targetEndpointAccessToken1, &attachEndpointCallback1);
+    ++requestCount;
+    registrationManager.attachEndpoint(targetEndpointAccessToken2, &attachEndpointCallback2);
+    ++requestCount;
+
+    auto attachRequests = registrationManager.getEndpointsToAttach();
+
+    BOOST_CHECK_EQUAL(attachRequests.size(), requestCount);
+
+    std::vector<EndpointAttachResponse> responses{
+            constructEndpointAttachResponse(SyncResponseResultType::SUCCESS
+                                          , getRequestId(targetEndpointAccessToken1, attachRequests)
+                                          , targetEndpointKeyHash1),
+            constructEndpointAttachResponse(SyncResponseResultType::FAILURE
+                                          , getRequestId(targetEndpointAccessToken2, attachRequests)
+                                          , targetEndpointKeyHash2)};
+
+    registrationManager.onEndpointsAttach(responses);
+
+    BOOST_CHECK_EQUAL(attachEndpointCallback1.on_attach_success_count, 1);
+    BOOST_CHECK_EQUAL(attachEndpointCallback1.on_attach_failed_count, 0);
+    BOOST_CHECK_EQUAL(attachEndpointCallback1.endpointKeyHash_, targetEndpointKeyHash1);
+
+    BOOST_CHECK_EQUAL(attachEndpointCallback2.on_attach_success_count, 0);
+    BOOST_CHECK_EQUAL(attachEndpointCallback2.on_attach_failed_count, 1);
+    BOOST_CHECK_EQUAL(attachEndpointCallback2.endpointKeyHash_, "");
+}
+
+BOOST_AUTO_TEST_CASE(BadCredentialsOfDetachEndpointTest)
+{
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    EndpointRegistrationManager registrationManager(status);
+
+    MockChannelManager channelManager;
+    UserTransport userTransport(registrationManager, channelManager);
+    registrationManager.setTransport(&userTransport);
+
+    BOOST_CHECK_THROW(registrationManager.detachEndpoint(""), KaaException);
+}
+
+static EndpointDetachResponse constructEndpointDetachResponse(SyncResponseResultType type
+                                                            , std::int32_t requstId)
+{
+    EndpointDetachResponse response;
+    response.requestId = requstId;
+    response.result = type;
+
+    return response;
+}
+
+BOOST_AUTO_TEST_CASE(DetachAnotherEndpointTest)
+{
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    EndpointRegistrationManager registrationManager(status);
+
+    MockChannelManager channelManager;
+    UserTransport userTransport(registrationManager, channelManager);
+    registrationManager.setTransport(&userTransport);
+
+    BOOST_CHECK(registrationManager.getEndpointsToAttach().empty());
+
+    MockDetachEndpointCallback detachEndpointCallback1;
+    MockDetachEndpointCallback detachEndpointCallback2;
+
+    size_t requestCount = 0;
+
+    std::string targetEndpointKeyHash1 = "some key hash 1";
+    std::string targetEndpointKeyHash2 = "some key hash 2";
+
+    registrationManager.detachEndpoint(targetEndpointKeyHash1, &detachEndpointCallback1);
+    ++requestCount;
+    registrationManager.detachEndpoint(targetEndpointKeyHash2, &detachEndpointCallback2);
+    ++requestCount;
+
+    auto detachRequests = registrationManager.getEndpointsToDetach();
+
+    BOOST_CHECK_EQUAL(detachRequests.size(), requestCount);
+
+    std::vector<EndpointDetachResponse> responses{
+            constructEndpointDetachResponse(SyncResponseResultType::SUCCESS
+                                          , getRequestId(targetEndpointKeyHash1, detachRequests)),
+            constructEndpointDetachResponse(SyncResponseResultType::FAILURE
+                                          , getRequestId(targetEndpointKeyHash2, detachRequests))};
+
+    registrationManager.onEndpointsDetach(responses);
+
+    BOOST_CHECK_EQUAL(detachEndpointCallback1.on_detach_success_count, 1);
+    BOOST_CHECK_EQUAL(detachEndpointCallback1.on_detach_failed_count, 0);
+
+    BOOST_CHECK_EQUAL(detachEndpointCallback2.on_detach_success_count, 0);
+    BOOST_CHECK_EQUAL(detachEndpointCallback2.on_detach_failed_count, 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

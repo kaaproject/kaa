@@ -18,271 +18,212 @@
 
 #ifdef KAA_USE_EVENTS
 
-#include <ctime>
 #include <cstdlib>
 
 #include "kaa/logging/Log.hpp"
-
 #include "kaa/gen/EndpointGen.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
-#include "kaa/event/registration/IEndpointAttachStatusListener.hpp"
-#include "kaa/event/registration/IAttachedEndpointListListener.hpp"
+#include "kaa/event/registration/IUserAttachCallback.hpp"
+#include "kaa/event/registration/IAttachStatusListener.hpp"
+#include "kaa/event/registration/IAttachEndpointCallback.hpp"
+#include "kaa/event/registration/IDetachEndpointCallback.hpp"
+#include "kaa/common/exception/TransportNotFoundException.hpp"
 
 namespace kaa {
 
 EndpointRegistrationManager::EndpointRegistrationManager(IKaaClientStateStoragePtr status)
-    : status_(status), userTransport_(nullptr), attachStatusListener_(nullptr)
+    : userTransport_(nullptr), status_(status)
+    , userAttachResponseListener_(nullptr), attachStatusListener_(nullptr)
+    , attachRequestId_(0), detachRequestId_(0)
 {
-    attachedEndpoints_ = status_->getAttachedEndpoints();
-    endpointAccessToken_ = status_->getEndpointAccessToken();
-    endpointKeyHash_ = status_->getEndpointKeyHash();
-
-    if (endpointAccessToken_.empty()) {
-        regenerateEndpointAccessToken();
-    }
 }
 
-void EndpointRegistrationManager::regenerateEndpointAccessToken()
+void EndpointRegistrationManager::onUserAttach(const UserAttachResponse& response)
 {
-    bool isRegenerated = !endpointAccessToken_.empty();
-    std::string oldToken = endpointAccessToken_;
+    if (response.result == SyncResponseResultType::SUCCESS) {
+        if (!userAttachRequest_) {
+            KAA_LOG_ERROR(boost::format("Got UserAttachResponse without leading UserAttachRequest. "
+                                        "Probably duplicated message from server."));
+            return;
+        }
 
-    endpointAccessToken_.assign(UuidGenerator::generateUuid());
+        status_->setEndpointAttachStatus(true);
 
-    status_->setEndpointAccessToken(endpointAccessToken_);
+        KAA_LOG_INFO(boost::format("Current endpoint was attached to '%1%'") % userAttachRequest_->userExternalId);
 
-    KAA_LOG_INFO(boost::format("New endpoint acccess token is generated: %1%") % endpointAccessToken_);
+        if (userAttachResponseListener_) {
+            userAttachResponseListener_->onAttachSuccess();
+        }
 
-    /*
-     * First time access token is sent with Endpoint Registration request
-     */
-    if (isRegenerated) {
-        onEndpointAccessTokenChanged(oldToken);
-    }
-}
+        userAttachRequest_.reset();
+    } else {
+        KAA_LOG_ERROR("Failed to attach to user");
 
-void EndpointRegistrationManager::onUserAttach(const UserSyncResponse::userAttachResponse_t& response)
-{
-    KAA_R_MUTEX_UNIQUE_DECLARE(endpointLock, endpointsGuard_);
-
-    if (!response.is_null()) {
-        if (response.get_UserAttachResponse().result == SyncResponseResultType::SUCCESS) {
-            if (userAttachRequest_.get() == nullptr) {
-                KAA_LOG_ERROR(boost::format("Got UserAttachResponse without leading UserAttachRequest. Probably duplicated message from server."));
-                return;
-            }
-
-            status_->setEndpointAttachStatus(true);
-
-            KAA_LOG_INFO(boost::format("Current endpoint was attached to '%1%'") % userAttachRequest_->userExternalId);
-
-            if (attachStatusListener_ != nullptr) {
-                attachStatusListener_->onAttachSuccess(userAttachRequest_->userExternalId, endpointAccessToken_);
-            }
-
-            userAttachRequest_.reset();
-        } else {
-            KAA_LOG_ERROR("Failed to attach to user");
-
-            if (attachStatusListener_ != nullptr) {
-                attachStatusListener_->onDetachSuccess(endpointAccessToken_);
-            }
+        if (userAttachResponseListener_) {
+            userAttachResponseListener_->onAttachFailed(
+                    response.errorCode.is_null() ? UserAttachErrorCode::OTHER : response.errorCode.get_UserAttachErrorCode(),
+                    response.errorReason.is_null() ? "" : response.errorReason.get_string());
         }
     }
 }
 
-void EndpointRegistrationManager::onEndpointsAttach(const std::vector<EndpointAttachResponse>& endpoints)
+void EndpointRegistrationManager::onEndpointsAttach(const std::vector<EndpointAttachResponse>& attachResponses)
 {
-    KAA_R_MUTEX_UNIQUE_DECLARE(endpointLock, endpointsGuard_);
+    KAA_MUTEX_LOCKING(attachEndpointGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(attachEndpointLock, attachEndpointGuard_);
+    KAA_MUTEX_LOCKED(attachEndpointGuard_);
 
-    bool hasChanged = false;
-
-    std::string externalUserId;
-    if (userAttachRequest_) {
-        externalUserId = userAttachRequest_->userExternalId;
-    }
-
-    for (const auto& endpoint : endpoints) {
-        auto requestIt = attachingEndpoints_.find(endpoint.requestId);
-        if (requestIt != attachingEndpoints_.end()) {
-            if (endpoint.result == SyncResponseResultType::SUCCESS) {
-                if (!endpoint.endpointKeyHash.is_null()) {
-                    attachedEndpoints_.insert(std::make_pair(
-                            requestIt->second.endpointData_, endpoint.endpointKeyHash.get_string()));
-                    hasChanged = true;
-                }
-                if (requestIt->second.listener_) {
-                    requestIt->second.listener_->onAttachSuccess(externalUserId, endpointAccessToken_);
-                }
-            } else {
-                KAA_LOG_ERROR(boost::format("Failed to attach endpoint. Attach endpoint request id: %1%")
-                    % endpoint.requestId);
-                if (requestIt->second.listener_) {
-                    requestIt->second.listener_->onAttachFailure();
+    for (const auto& attachResponse : attachResponses) {
+        auto requestIt = attachEndpointRequests_.find(attachResponse.requestId);
+        if (requestIt != attachEndpointRequests_.end()) {
+            auto listenerIt = attachEndpointListeners.find(attachResponse.requestId);
+            if (listenerIt != attachEndpointListeners.end() && listenerIt->second) {
+                if (attachResponse.result == SyncResponseResultType::SUCCESS) {
+                    KAA_LOG_TRACE(boost::format("Endpoint '%1%' (request id: %2%) was successfully attached")
+                                                                        % requestIt->second % requestIt->first);
+                    listenerIt->second->onAttachSuccess(attachResponse.endpointKeyHash.is_null() ?
+                                                            "" : attachResponse.endpointKeyHash.get_string());
+                } else {
+                    KAA_LOG_ERROR(boost::format("Failed to attach endpoint '%1%' (request id: %2%)")
+                                                                % requestIt->second % requestIt->first);
+                    listenerIt->second->onAttachFailed();
                 }
             }
-            attachingEndpoints_.erase(requestIt);
-        } else {
-                KAA_LOG_ERROR(boost::format("Failed to find endpoint attach request by id: %1%")
-                    % endpoint.requestId);
-        }
-    }
 
-    if (hasChanged) {
-        status_->setAttachedEndpoints(attachedEndpoints_);
-        attachedEPListListeners_(attachedEndpoints_);
+            attachEndpointRequests_.erase(requestIt);
+        }
     }
 }
 
-void EndpointRegistrationManager::onEndpointsDetach(const std::vector<EndpointDetachResponse>& endpoints)
+void EndpointRegistrationManager::onEndpointsDetach(const std::vector<EndpointDetachResponse>& detachResponses)
 {
-    KAA_R_MUTEX_UNIQUE_DECLARE(endpointLock, endpointsGuard_);
-    bool hasChanges = false;
-    for (EndpointDetachResponse endpoint : endpoints) {
-        auto requestIt = detachingEndpoints_.find(endpoint.requestId);
-        if (requestIt != detachingEndpoints_.end()) {
-            if (endpoint.result == SyncResponseResultType::SUCCESS) {
-                std::string epHash = requestIt->second.endpointData_;
-                for (auto attachedEpIt = attachedEndpoints_.begin(); attachedEpIt != attachedEndpoints_.end(); ++attachedEpIt) {
-                    if (attachedEpIt->second.compare(epHash) == 0) {
-                        attachedEndpoints_.erase(attachedEpIt);
-                        hasChanges = true;
-                        break;
-                    }
-                }
-                if (epHash.compare(endpointKeyHash_) == 0) {
-                    status_->setEndpointAttachStatus(false);
-                }
-                if (requestIt->second.listener_) {
-                    requestIt->second.listener_->onDetachSuccess(endpointAccessToken_);
-                }
-            } else {
-                KAA_LOG_ERROR(boost::format("Failed to detach endpoint. Detach endpoint request id: %1%")
-                    % endpoint.requestId);
-                if (requestIt->second.listener_) {
-                    requestIt->second.listener_->onDetachFailure();
+    KAA_MUTEX_LOCKING(detachEndpointGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(detachEndpointLock, detachEndpointGuard_);
+    KAA_MUTEX_LOCKED(detachEndpointGuard_);
+
+    for (const auto& detachResponse : detachResponses) {
+        auto requestIt = detachEndpointRequests_.find(detachResponse.requestId);
+        if (requestIt != detachEndpointRequests_.end()) {
+            auto listenerIt = detachEndpointListeners.find(detachResponse.requestId);
+            if (listenerIt != detachEndpointListeners.end() && listenerIt->second) {
+                if (detachResponse.result == SyncResponseResultType::SUCCESS) {
+                    KAA_LOG_TRACE(boost::format("Endpoint '%1%' (request id: %2%) was successfully detached")
+                                                                        % requestIt->second % requestIt->first);
+                    listenerIt->second->onDetachSuccess();
+                } else {
+                    KAA_LOG_ERROR(boost::format("Failed to detach endpoint '%1%' (request id: %2%)")
+                                                                % requestIt->second % requestIt->first);
+                    listenerIt->second->onDetachFailed();
                 }
             }
-            detachingEndpoints_.erase(endpoint.requestId);
-        } else {
-                KAA_LOG_ERROR(boost::format("Failed to find endpoint detach request by id: %1%")
-                    % endpoint.requestId);
-        }
-    }
 
-    if (hasChanges) {
-        status_->setAttachedEndpoints(attachedEndpoints_);
-        attachedEPListListeners_(attachedEndpoints_);
+            detachEndpointRequests_.erase(requestIt);
+        }
     }
 }
 
 void EndpointRegistrationManager::onCurrentEndpointAttach(const UserAttachNotification& response)
 {
-    if (attachStatusListener_ != nullptr) {
-        KAA_LOG_INFO(boost::format("Current endpoint was attached to '%1%' by '%2%'")
-                        % response.userExternalId % response.endpointAccessToken);
+    KAA_LOG_INFO(boost::format("Current endpoint was attached to '%1%' by '%2%'")
+                                    % response.userExternalId % response.endpointAccessToken);
 
+    if (attachStatusListener_) {
         status_->setEndpointAttachStatus(true);
-        attachStatusListener_->onAttachSuccess(response.userExternalId, response.endpointAccessToken);
+        attachStatusListener_->onAttach(response.userExternalId, response.endpointAccessToken);
     }
 }
 
 void EndpointRegistrationManager::onCurrentEndpointDetach(const UserDetachNotification& response)
 {
-    if (attachStatusListener_ != nullptr) {
-        KAA_LOG_INFO(boost::format("Current endpoint was detached by '%1%'") % response.endpointAccessToken);
+    KAA_LOG_INFO(boost::format("Current endpoint was detached by '%1%'") % response.endpointAccessToken);
 
+    if (attachStatusListener_) {
         status_->setEndpointAttachStatus(false);
-        attachStatusListener_->onDetachSuccess(response.endpointAccessToken);
+        attachStatusListener_->onDetach(response.endpointAccessToken);
     }
 }
 
-const AttachedEndpoints& EndpointRegistrationManager::getAttachedEndpoints() {
-    return attachedEndpoints_;
-}
-
-void EndpointRegistrationManager::addAttachedEndpointListListener(IAttachedEndpointListListener *listener)
-{
-    if (listener) {
-        KAA_R_MUTEX_UNIQUE_DECLARE(lock, listenerGuard_);
-        /* Disconnecting for case whether listener was already subscribed, no effect otherwise */
-        attachedEPListListeners_.removeCallback(listener);
-        attachedEPListListeners_.addCallback(listener,
-                std::bind(&IAttachedEndpointListListener::onListUpdated, listener, std::placeholders::_1));
-    }
-}
-
-void EndpointRegistrationManager::removeAttachedEndpointListListener(IAttachedEndpointListListener *listener)
-{
-    if (listener) {
-        KAA_R_MUTEX_UNIQUE_DECLARE(lock, listenerGuard_);
-        attachedEPListListeners_.removeCallback(listener);
-    }
-}
-
-void EndpointRegistrationManager::attachEndpoint(const std::string& endpointAccessToken, IEndpointAttachStatusListener* listener)
+void EndpointRegistrationManager::attachEndpoint(const std::string& endpointAccessToken, IAttachEndpointCallback* listener)
 {
     if (endpointAccessToken.empty()) {
-        KAA_LOG_WARN("Failed to add endpoint attach request: bad input data")
-        return;
+        KAA_LOG_WARN("Failed to attach endpoint: bad endpoint access token");
+        throw KaaException("Bad endpoint access token");
     }
 
-    KAA_R_MUTEX_UNIQUE_DECLARE(lock, endpointsGuard_);
-    std::int32_t requestId = UuidGenerator::generateRandomInt();
+    std::int32_t requestId = attachRequestId_++;
 
-    EndpointOperationInfo info;
-    info.endpointData_ = endpointAccessToken;
-    info.listener_ = listener;
+    KAA_MUTEX_LOCKING(attachEndpointGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(attachEndpointLock, attachEndpointGuard_);
+    KAA_MUTEX_LOCKED(attachEndpointGuard_);
 
-    auto result = attachingEndpoints_.insert(std::make_pair(requestId, info));
-
-    if (result.second) {
-        KAA_LOG_INFO(boost::format("Going to attach Endpoint by access token: %1% (requestId: %2%)")
-            % endpointAccessToken % requestId);
-        if (userTransport_ != nullptr) {
-            userTransport_->sync();
-        } else {
-            KAA_LOG_WARN("Can not attach endpoint now: transport was not set.");
+    auto requestResult = attachEndpointRequests_.insert(std::make_pair(requestId, endpointAccessToken));
+    if (requestResult.second) {
+        KAA_LOG_INFO(boost::format("Going to attach endpoint by access token '%1%' (requestId: %2%)")
+                                                                    % endpointAccessToken % requestId);
+        if (listener) {
+            auto listenerResult = attachEndpointListeners.insert(std::make_pair(requestId, listener));
+            if (!listenerResult.second) {
+                KAA_LOG_WARN("Failed to add listener to notify of endpoint attach result");
+            }
         }
+
+        KAA_MUTEX_UNLOCKING(attachEndpointGuard_);
+        KAA_UNLOCK(attachEndpointLock);
+        KAA_MUTEX_UNLOCKED(attachEndpointGuard_);
+
+        doSync();
+    } else {
+        KAA_MUTEX_UNLOCKING(attachEndpointGuard_);
+        KAA_UNLOCK(attachEndpointLock);
+        KAA_MUTEX_UNLOCKED(attachEndpointGuard_);
+
+        KAA_LOG_WARN(boost::format("Ignore attach endpoint request (access token: '%1%'): already exists")
+                                                                                        % endpointAccessToken);
     }
 }
 
-void EndpointRegistrationManager::detachEndpoint(IEndpointAttachStatusListener* listener)
-{
-    this->detachEndpoint(endpointKeyHash_, listener);
-}
-
-void EndpointRegistrationManager::detachEndpoint(const std::string& endpointKeyHash, IEndpointAttachStatusListener* listener)
+void EndpointRegistrationManager::detachEndpoint(const std::string& endpointKeyHash, IDetachEndpointCallback* listener)
 {
     if (endpointKeyHash.empty()) {
-        KAA_LOG_WARN("Failed to add endpoint detach request: bad input data")
-        return;
+        KAA_LOG_WARN("Failed to add endpoint detach request: bad endpoint key hash")
+        throw KaaException("Bad endpoint key hash");
     }
 
-    KAA_R_MUTEX_UNIQUE_DECLARE(lock, endpointsGuard_);
+    std::int32_t requestId = detachRequestId_++;
 
-    std::int32_t requestId = UuidGenerator::generateRandomInt();
+    KAA_MUTEX_LOCKING(detachEndpointGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(detachEndpointLock, detachEndpointGuard_);
+    KAA_MUTEX_LOCKED(detachEndpointGuard_);
 
-    EndpointOperationInfo info;
-    info.endpointData_ = endpointKeyHash;
-    info.listener_ = listener;
-
-    auto result = detachingEndpoints_.insert(std::make_pair(requestId, info));
-
+    auto result = detachEndpointRequests_.insert(std::make_pair(requestId, endpointKeyHash));
     if (result.second) {
-        KAA_LOG_INFO(boost::format("Going to detach Endpoint by keyHash: %1% (requestId: %2%)")
-            % endpointKeyHash % requestId);
-        if (userTransport_ != nullptr) {
-            userTransport_->sync();
-        } else {
-            KAA_LOG_WARN("Can not detach endpoint now: transport was not set.");
+        KAA_LOG_INFO(boost::format("Going to detach Endpoint by key hash '%1%' (requestId: %2%)")
+                                                                    % endpointKeyHash % requestId);
+        if (listener) {
+            auto listenerResult = detachEndpointListeners.insert(std::make_pair(requestId, listener));
+            if (!listenerResult.second) {
+                KAA_LOG_WARN("Failed to add listener to notify of endpoint detach result");
+            }
         }
+
+        KAA_MUTEX_UNLOCKING(detachEndpointGuard_);
+        KAA_UNLOCK(detachEndpointLock);
+        KAA_MUTEX_UNLOCKED(detachEndpointGuard_);
+
+        doSync();
+    } else {
+        KAA_MUTEX_UNLOCKING(detachEndpointGuard_);
+        KAA_UNLOCK(detachEndpointLock);
+        KAA_MUTEX_UNLOCKED(detachEndpointGuard_);
+
+        KAA_LOG_WARN(boost::format("Ignore detach endpoint request (key hash: '%1%'): already exists")
+                                                                                        % endpointKeyHash);
     }
 }
 
 void EndpointRegistrationManager::attachUser(const std::string& userExternalId
                                            , const std::string& userAccessToken
-                                           , IEndpointAttachStatusListener* listener)
+                                           , IUserAttachCallback* listener)
 {
     if (!strlen(DEFAULT_USER_VERIFIER_TOKEN)) {
         KAA_LOG_ERROR("Failed to attach to user: default user verifier is not specified");
@@ -295,7 +236,7 @@ void EndpointRegistrationManager::attachUser(const std::string& userExternalId
 void EndpointRegistrationManager::attachUser(const std::string& userExternalId
                                            , const std::string& userAccessToken
                                            , const std::string& userVerifierToken
-                                           , IEndpointAttachStatusListener* listener)
+                                           , IUserAttachCallback* listener)
 {
     if (userExternalId.empty() || userAccessToken.empty() || userVerifierToken.empty()) {
         KAA_LOG_ERROR(boost::format("Failed to attach to user: user '%1%', access token '%2%', user verifier '%3%'")
@@ -306,61 +247,47 @@ void EndpointRegistrationManager::attachUser(const std::string& userExternalId
     KAA_LOG_INFO(boost::format("Going to attach to user '%1%' by access token: '%2%' (user verifier '%3%')")
                                         % userExternalId % userAccessToken % DEFAULT_USER_VERIFIER_TOKEN);
 
-    UserAttachRequest *request = new UserAttachRequest;
-    request->userAccessToken = userAccessToken;
-    request->userExternalId = userExternalId;
-    request->userVerifierId = userVerifierToken;
+    userAttachRequest_.reset(new UserAttachRequest);
+    userAttachRequest_->userAccessToken = userAccessToken;
+    userAttachRequest_->userExternalId  = userExternalId;
+    userAttachRequest_->userVerifierId  = userVerifierToken;
 
-    if (listener != nullptr) {
-        attachStatusListener_ = listener;
+    userAttachResponseListener_ = listener;
+
+    doSync();
+}
+
+std::unordered_map<std::int32_t, std::string> EndpointRegistrationManager::getEndpointsToAttach()
+{
+    KAA_MUTEX_LOCKING(attachEndpointGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(attachEndpointLock, attachEndpointGuard_);
+    KAA_MUTEX_LOCKED(attachEndpointGuard_);
+    return attachEndpointRequests_;
+}
+
+std::unordered_map<std::int32_t, std::string> EndpointRegistrationManager::getEndpointsToDetach()
+{
+    KAA_MUTEX_LOCKING(detachEndpointGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(detachEndpointLock, detachEndpointGuard_);
+    KAA_MUTEX_LOCKED(detachEndpointGuard_);
+    return detachEndpointRequests_;
+}
+
+void EndpointRegistrationManager::setTransport(UserTransport * transport) {
+    userTransport_ = transport;
+    if (userAttachRequest_ || !attachEndpointRequests_.empty() || !detachEndpointRequests_.empty()) {
+        doSync();
     }
+}
 
-    userAttachRequest_.reset(request);
-
-    if (userTransport_ != nullptr) {
+void EndpointRegistrationManager::doSync()
+{
+    if (userTransport_) {
         userTransport_->sync();
     } else {
-        KAA_LOG_WARN("Can not attach user now: transport was not set.");
+        KAA_LOG_ERROR("Failed to sync: user transport not found");
+        throw TransportNotFoundException("User transport not found");
     }
-}
-
-void EndpointRegistrationManager::onEndpointAccessTokenChanged(const std::string& old)
-{
-    if (userTransport_ != nullptr) {
-        userTransport_->syncProfile();
-    } else {
-        KAA_LOG_WARN("Not synchronizing profile: transport was not set.");
-    }
-
-    auto it = attachedEndpoints_.find(old);
-    if (it != attachedEndpoints_.end()) {
-        detachEndpoint(it->second, nullptr);
-    }
-}
-
-std::map<std::int32_t, std::string>  EndpointRegistrationManager::getEndpointsToAttach()
-{
-    KAA_R_MUTEX_UNIQUE_DECLARE(lock, endpointsGuard_);
-    std::map<std::int32_t, std::string> resultingMap;
-    for (const auto& idToTokenPair : attachingEndpoints_) {
-        resultingMap.insert(std::make_pair(idToTokenPair.first, idToTokenPair.second.endpointData_));
-    }
-    return resultingMap;
-}
-
-std::map<std::int32_t, std::string>  EndpointRegistrationManager::getEndpointsToDetach()
-{
-    KAA_R_MUTEX_UNIQUE_DECLARE(lock, endpointsGuard_);
-    std::map<std::int32_t, std::string> resultingMap;
-    for (const auto& idToHashPair : detachingEndpoints_) {
-        resultingMap.insert(std::make_pair(idToHashPair.first, idToHashPair.second.endpointData_));
-    }
-    return resultingMap;
-}
-
-UserAttachRequestPtr EndpointRegistrationManager::getUserAttachRequest()
-{
-    return userAttachRequest_;
 }
 
 }

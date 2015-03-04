@@ -17,127 +17,100 @@
 #ifndef IENDPOINTREGISTRATIONMANAGER_HPP_
 #define IENDPOINTREGISTRATIONMANAGER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
 #ifdef KAA_USE_EVENTS
 
-#include <list>
 #include <string>
 
 namespace kaa {
 
-typedef std::map<std::string/*epToken*/, std::string/*epHash*/> AttachedEndpoints;
-
-class IAttachedEndpointListListener;
-class IEndpointAttachStatusListener;
+class IUserAttachCallback;
+class IAttachStatusListener;
+class IAttachEndpointCallback;
+class IDetachEndpointCallback;
 
 /**
- * Manager which is responsible for Endpoints attach/detach.
+ * @brief The interface to a module which associates endpoints with users.
+ *
+ * @b NOTE: According to the Kaa architecture, endpoints must be associated with the same user in order to be able
+ * to communicate with each other.
  */
 class IEndpointRegistrationManager
 {
 public:
-    /**
-     * Generate new access token for a current endpoint
-     */
-    virtual void regenerateEndpointAccessToken() = 0;
 
     /**
-     * Retrieve an access token for a current endpoint
-     */
-    virtual const std::string& getEndpointAccessToken() = 0;
-
-    /**
-     * Adds new endpoint attach request
+     * @brief Attaches the specified endpoint to the user to which the current endpoint is attached.
      *
-     * @param endpointAccessToken Access token of the attaching endpoint
-     * @param listener Optional listener to notify about result of endpoint attaching.
-     *        Set to null if is no need in it.
+     * @param[in]   endpointAccessToken    The access token of the endpoint to be attached to the user.
+     * @param[in]   listener               The optional listener to notify of the result.
+     *
+     * @throw KaaException
+     * @throw TransportNotFoundException
      */
     virtual void attachEndpoint(const std::string&  endpointAccessToken
-                              , IEndpointAttachStatusListener* listener = nullptr) = 0;
+                              , IAttachEndpointCallback* listener = nullptr) = 0;
 
     /**
-     * Adds new endpoint detach request
+     * @brief Detaches the specified endpoint from the user to which the current endpoint is attached.
      *
-     * @param endpointKeyHash Key hash of the attached endpoint
-     * @param listener Optional listener to notify about result of endpoint detaching.
-     *        Set to null if is no need in it.
+     * @param[in]   endpointKeyHash    The key hash of the endpoint to be detached from the user.
+     * @param[in]   listener           The optional listener to notify of the result.
+     *
+     * @throw KaaException
+     * @throw TransportNotFoundException
      */
     virtual void detachEndpoint(const std::string&  endpointKeyHash
-                              , IEndpointAttachStatusListener* listener = nullptr) = 0;
+                              , IDetachEndpointCallback* listener = nullptr) = 0;
 
     /**
-     * Adds current endpoint detach request
-     * @param listener Optional listener to notify about result of endpoint detaching.
-     *        Set to null if is no need in it.
-     */
-    virtual void detachEndpoint(IEndpointAttachStatusListener* listener = nullptr) = 0;
-
-    /**
-     * Attaches the endpoint to a user entity. The user verification is carried out by the default verifier.
+     * @brief Attaches the current endpoint to the specifier user. The user verification is carried out by the default verifier.
      *
      * @b NOTE: If the default user verifier (@link DEFAULT_USER_VERIFIER_TOKEN @endlink) is not specified,
      * the attach attempt fails with the @c KaaException exception.
      *
-     * Use this function to request attachment of the endpoint to a user entity using the specified external authentication
-     * credentials. Only endpoints associated with the same user entity can exchange events.
+     * <b>Only endpoints associated with the same user can exchange events.</b>
      *
-     * @param userExternalId    External user ID.
-     * @param userAccessToken   External access token.
+     * @param userExternalId    The external user ID.
+     * @param userAccessToken   The user access token.
+     *
+     * @throw KaaException
+     * @throw TransportNotFoundException
      */
     virtual void attachUser(const std::string& userExternalId
                           , const std::string& userAccessToken
-                          , IEndpointAttachStatusListener* listener = nullptr) = 0;
+                          , IUserAttachCallback* listener = nullptr) = 0;
 
     /**
-     * Attaches the endpoint to a user entity. The user verification will be carried out by the specified verifier.
+     * @brief Attaches the endpoint to a user entity. The user verification will be carried out by the specified verifier.
      *
-     * Use this function to request attachment of the endpoint to a user entity using the specified external authentication
-     * credentials. Only endpoints associated with the same user entity can exchange events.
+     * <b>Only endpoints associated with the same user can exchange events.</b>
      *
-     * @param userExternalId      External user ID.
-     * @param userAccessToken     External access token.
-     * @param userVerifierToken   User verifier token.
+     * @param userExternalId             The external user ID.
+     * @param userAccessToken            The user access token.
+     * @param[in]   userVerifierToken    The user verifier token.
+     * @param[in]   listener             The optional listener to notify of the result.
+     *
+     * @throw KaaException
+     * @throw TransportNotFoundException
      */
     virtual void attachUser(const std::string& userExternalId
                           , const std::string& userAccessToken
                           , const std::string& userVerifierToken
-                          , IEndpointAttachStatusListener* listener = nullptr) = 0;
+                          , IUserAttachCallback* listener = nullptr) = 0;
 
     /**
-     * Retrieves list of attached endpoints
+     * @brief Sets listener to notify of the current endpoint is attached/detached by another one.
      *
-     * @return set of attached endpoint's "access token/key hash" pair
+     * @param[in]   listener    Listener to notify of the attach status is changed.
      */
-    virtual const AttachedEndpoints& getAttachedEndpoints() = 0;
+    virtual void setAttachStatusListener(IAttachStatusListener* listener) = 0;
 
     /**
-     * Adds listener of attached endpoint list changes
+     * @brief Checks if the current endpoint is already attached to some user.
      *
-     * @param listener Attached endpoints list change listener
+     * @return TRUE if the current endpoint is attached, FALSE otherwise.
      */
-    virtual void addAttachedEndpointListListener(IAttachedEndpointListListener *listener) = 0;
-
-    /**
-     * Removes listener of attached endpoint list changes
-     *
-     * @param listener Attached endpoints list change listener
-     */
-    virtual void removeAttachedEndpointListListener(IAttachedEndpointListListener *listener) = 0;
-
-    /**
-     * Checks if current endpoint is already attached to some user
-     */
-    virtual bool isCurrentEndpointAttached() = 0;
-
-    /**
-     * Set lister to notify about attaching/detaching the current endpoint
-     * either by itself or another endpoint
-     *
-     * @param listener Attach status listener
-     */
-    virtual void setAttachStatusListener(IEndpointAttachStatusListener* listener) = 0;
+    virtual bool isAttachedToUser() = 0;
 
     virtual ~IEndpointRegistrationManager() {}
 };

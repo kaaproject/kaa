@@ -22,6 +22,7 @@
 #include <sstream>
 
 #include "kaa/logging/Log.hpp"
+#include "kaa/common/UuidGenerator.hpp"
 
 namespace kaa {
 
@@ -69,7 +70,6 @@ const bool                  ClientStatus::isRegisteredDefault_ = false;
 const SharedDataBuffer      ClientStatus::endpointHashDefault_;
 const DetailedTopicStates   ClientStatus::topicStatesDefault_;
 const AttachedEndpoints     ClientStatus::attachedEndpoints_;
-const std::string           ClientStatus::endpointAccessToken_;
 const bool                  ClientStatus::endpointDefaultAttachStatus_ = false;
 const std::string           ClientStatus::endpointKeyHashDefault_;
 
@@ -361,8 +361,8 @@ ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), i
     }
     auto endpointaccesstoken = parameterToToken_.left.find(ClientParameterT::EP_ACCESS_TOKEN);
     if (endpointaccesstoken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> endpointAccessToken(new ClientParameter<std::string>(
-                endpointaccesstoken->second, endpointAccessToken_));
+        std::shared_ptr<IPersistentParameter> endpointAccessToken(
+                new ClientParameter<std::string>(endpointaccesstoken->second, ""));
         parameters_.insert(std::make_pair(ClientParameterT::EP_ACCESS_TOKEN, endpointAccessToken));
     }
     auto endpointattachstatus = parameterToToken_.left.find(ClientParameterT::EP_ATTACH_STATUS);
@@ -467,13 +467,13 @@ void ClientStatus::setRegistered(bool isRegisteredP)
     }
 }
 
-std::string ClientStatus::getEndpointAccessToken() const
+std::string ClientStatus::getEndpointAccessToken()
 {
     auto parameter_it = parameters_.find(ClientParameterT::EP_ACCESS_TOKEN);
     if (parameter_it != parameters_.end()) {
         return boost::any_cast<std::string>(parameter_it->second->getValue());
     }
-    return endpointAccessToken_;
+    return refreshEndpointAccessToken();
 }
 
 void ClientStatus::setEndpointAccessToken(const std::string& token)
@@ -482,6 +482,13 @@ void ClientStatus::setEndpointAccessToken(const std::string& token)
     if (parameter_it != parameters_.end()) {
         parameter_it->second->setValue(token);
     }
+}
+
+std::string ClientStatus::refreshEndpointAccessToken()
+{
+    std::string token(UuidGenerator::generateUuid());
+    setEndpointAccessToken(token);
+    return token;
 }
 
 DetailedTopicStates ClientStatus::getTopicStates() const
