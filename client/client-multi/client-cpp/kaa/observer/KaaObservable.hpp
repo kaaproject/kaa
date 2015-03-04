@@ -28,11 +28,15 @@
 namespace kaa {
 
 template<class Signature, class Key, class Function = std::function<Signature>>
-class KaaObservable
-{
+class KaaObservable {
 public:
-    KaaObservable() : isNotifying_(false) { }
-    ~KaaObservable() { }
+    KaaObservable()
+            : isNotifying_(false)
+    {
+    }
+    ~KaaObservable()
+    {
+    }
 
     bool addCallback(const Key& key, const Function& f)
     {
@@ -68,7 +72,7 @@ public:
         }
     }
 
-    template <typename... Args>
+    template<typename ... Args>
     void operator()(Args&&... args)
     {
         isNotifying_ = true;
@@ -91,15 +95,28 @@ public:
     }
 
 private:
-    class CallbackWrapper
-    {
+    class CallbackWrapper {
     public:
-        CallbackWrapper() : isRemoved_(false) { }
-        CallbackWrapper(const Function& f) : callback_(f), isRemoved_(false) { }
-        CallbackWrapper(const CallbackWrapper& o) : callback_(o.callback_), isRemoved_((bool) o.isRemoved_) { }
-        CallbackWrapper& operator=(const CallbackWrapper& o)  { callback_ = o.callback_; isRemoved_ = (bool) o.isRemoved_; return *this; }
+        CallbackWrapper()
+                : isRemoved_(false)
+        {
+        }
+        CallbackWrapper(const Function& f)
+                : callback_(f), isRemoved_(false)
+        {
+        }
+        CallbackWrapper(const CallbackWrapper& o)
+                : callback_(o.callback_), isRemoved_((bool) o.isRemoved_)
+        {
+        }
+        CallbackWrapper& operator=(const CallbackWrapper& o)
+        {
+            callback_ = o.callback_;
+            isRemoved_ = (bool) o.isRemoved_;
+            return *this;
+        }
 
-        template <typename... Args>
+        template<typename ... Args>
         void operator()(Args&&... args)
         {
             if (!isRemoved_) {
@@ -107,8 +124,14 @@ private:
             }
         }
 
-        bool isRemoved() const { return isRemoved_; }
-        void remove() { isRemoved_ = true; }
+        bool isRemoved() const
+        {
+            return isRemoved_;
+        }
+        void remove()
+        {
+            isRemoved_ = true;
+        }
 
     private:
         Function callback_;
@@ -126,6 +149,5 @@ private:
 };
 
 }
-
 
 #endif /* KAA_OBSERVER_KAAOBSERVABLE_HPP_ */

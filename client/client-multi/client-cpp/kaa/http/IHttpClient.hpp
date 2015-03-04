@@ -29,13 +29,14 @@
 
 namespace kaa {
 
-class IHttpClient
-{
+class IHttpClient {
 public:
     virtual std::shared_ptr<IHttpResponse> sendRequest(const IHttpRequest& request) = 0;
     virtual void closeConnection() = 0;
 
-    virtual ~IHttpClient() { }
+    virtual ~IHttpClient()
+    {
+    }
 };
 
 }

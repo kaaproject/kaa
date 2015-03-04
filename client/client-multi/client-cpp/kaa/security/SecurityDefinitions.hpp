@@ -23,23 +23,41 @@
 namespace kaa {
 
 typedef Botan::MemoryVector<std::uint8_t> PublicKey;
-typedef std::string                       PrivateKey;
+typedef std::string PrivateKey;
 
-typedef Botan::SymmetricKey               SessionKey;
+typedef Botan::SymmetricKey SessionKey;
 typedef Botan::SecureVector<std::uint8_t> EncodedSessionKey;
 
 typedef Botan::SecureVector<std::uint8_t> Signature;
 
-class KeyPair
-{
+class KeyPair {
 public:
-    KeyPair(const PublicKey& pubKey, const PrivateKey& privKey) : pubKey_(pubKey), privKey_(privKey) { }
-    KeyPair(const KeyPair& other) : pubKey_(other.pubKey_), privKey_(other.privKey_) { }
-    KeyPair& operator=(const KeyPair& other) { pubKey_ = other.pubKey_; privKey_ = other.privKey_; return *this; }
-    ~KeyPair() { }
+    KeyPair(const PublicKey& pubKey, const PrivateKey& privKey)
+            : pubKey_(pubKey), privKey_(privKey)
+    {
+    }
+    KeyPair(const KeyPair& other)
+            : pubKey_(other.pubKey_), privKey_(other.privKey_)
+    {
+    }
+    KeyPair& operator=(const KeyPair& other)
+    {
+        pubKey_ = other.pubKey_;
+        privKey_ = other.privKey_;
+        return *this;
+    }
+    ~KeyPair()
+    {
+    }
 
-    const PublicKey& getPublicKey() const { return pubKey_; }
-    const PrivateKey& getPrivateKey() const { return privKey_; }
+    const PublicKey& getPublicKey() const
+    {
+        return pubKey_;
+    }
+    const PrivateKey& getPrivateKey() const
+    {
+        return privKey_;
+    }
 
 private:
     PublicKey pubKey_;

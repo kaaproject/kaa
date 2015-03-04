@@ -52,9 +52,12 @@ public:
      *
      * \return  \see LogUploadStrategyDecision.
      */
-    virtual LogUploadStrategyDecision isUploadNeeded(const ILogUploadConfiguration* configuration, const ILogStorageStatus* status) = 0;
+    virtual LogUploadStrategyDecision isUploadNeeded(const ILogUploadConfiguration* configuration,
+                                                     const ILogStorageStatus* status) = 0;
 
-    virtual ~ILogUploadStrategy() {}
+    virtual ~ILogUploadStrategy()
+    {
+    }
 };
 
 }  // namespace kaa

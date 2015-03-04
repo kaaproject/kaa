@@ -59,7 +59,9 @@ public:
      */
     virtual void onDetachFailure() = 0;
 
-    virtual ~IEndpointAttachStatusListener() {}
+    virtual ~IEndpointAttachStatusListener()
+    {
+    }
 };
 
 } /* namespace kaa */

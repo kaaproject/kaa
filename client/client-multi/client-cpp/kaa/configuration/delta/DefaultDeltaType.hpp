@@ -34,7 +34,8 @@ public:
      * Tells if the field was set to default value
      * @return true if the field set to default, false otherwise
      */
-    virtual bool isDefault() {
+    virtual bool isDefault()
+    {
         return true;
     }
 
@@ -42,7 +43,8 @@ public:
      * Retrieves string representation of delta default type
      * @return String representation
      */
-    virtual std::string toString() const {
+    virtual std::string toString() const
+    {
         return std::string("default");
     }
 };

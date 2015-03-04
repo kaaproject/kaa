@@ -22,20 +22,33 @@
 
 namespace kaa {
 
-class TransportException : public KaaException {
+class TransportException: public KaaException {
 public:
 
-    TransportException() { }
+    TransportException()
+    {
+    }
 
-    TransportException(const boost::system::error_code& errorCode) :
-            KaaException(boost::format("Transport exception occurred: %1%") % errorCode.message())
-            , errorCode_(errorCode) {}
+    TransportException(const boost::system::error_code& errorCode)
+            : KaaException(boost::format("Transport exception occurred: %1%") % errorCode.message()),
+              errorCode_(errorCode)
+    {
+    }
 
-    TransportException(boost::format f) : KaaException(f) { }
+    TransportException(boost::format f)
+            : KaaException(f)
+    {
+    }
 
-    TransportException(const std::string &message) : KaaException(message) { }
+    TransportException(const std::string &message)
+            : KaaException(message)
+    {
+    }
 
-    boost::system::error_code getErrorCode() const { return errorCode_; }
+    boost::system::error_code getErrorCode() const
+    {
+        return errorCode_;
+    }
 
 private:
     boost::system::error_code errorCode_;
@@ -43,6 +56,5 @@ private:
 };
 
 }
-
 
 #endif /* TRANSPORTEXCEPTION_HPP_ */

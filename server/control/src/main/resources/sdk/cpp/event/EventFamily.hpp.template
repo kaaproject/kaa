@@ -38,11 +38,9 @@
 
 namespace kaa {
 
-class ${event_family_class_name} : public IEventFamily
-{
+class ${event_family_class_name} : public IEventFamily {
 public:
-    class ${event_family_class_name}Listener
-    {
+    class ${event_family_class_name}Listener {
     public:
 
         ${event_family_listener_methods}
@@ -100,9 +98,9 @@ private:
     }
 
 private:
-    IEventManager&                           eventManager_;
-    std::list<std::string>                   eventFQNs_;
-    std::set<${event_family_class_name}Listener*>   listeners_;
+    IEventManager& eventManager_;
+    std::list<std::string> eventFQNs_;
+    std::set<${event_family_class_name}Listener*> listeners_;
 };
 
 }

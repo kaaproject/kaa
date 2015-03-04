@@ -1,4 +1,5 @@
-    void sendEventToAll(const ns${event_family_class_name} :: ${event_class_name}& event) {
+    void sendEventToAll(const ns${event_family_class_name} :: ${event_class_name}& event)
+    {
         sendEvent(event);
     }
 

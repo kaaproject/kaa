@@ -28,26 +28,37 @@ namespace kaa {
 typedef std::pair<KaaTcpMessageType, std::pair<boost::shared_array<char>, std::uint32_t>> MessageRecord;
 typedef std::list<MessageRecord> MessageRecordList;
 
-enum class KaaTcpParserState : std::uint8_t
-{
-    NONE = 0x00,
-    PROCESSING_LENGTH = 0x01,
-    PROCESSING_PAYLOAD = 0x02,
+enum class KaaTcpParserState
+    : std::uint8_t
+    {
+        NONE = 0x00, PROCESSING_LENGTH = 0x01, PROCESSING_PAYLOAD = 0x02,
 };
 
-class KaaTcpParser : boost::noncopyable
-{
+class KaaTcpParser: boost::noncopyable {
 public:
-    KaaTcpParser() :
-            state_(KaaTcpParserState::NONE), messageLength_(0), processedPayloadLength_(0)
-          , lenghtMultiplier_(1), messageType_(KaaTcpMessageType::MESSAGE_UNKNOWN) { }
-    ~KaaTcpParser() { }
+    KaaTcpParser()
+            : state_(KaaTcpParserState::NONE), messageLength_(0), processedPayloadLength_(0), lenghtMultiplier_(1),
+              messageType_(KaaTcpMessageType::MESSAGE_UNKNOWN)
+    {
+    }
+    ~KaaTcpParser()
+    {
+    }
 
     void parseBuffer(const char *buffer, std::uint32_t size);
 
-    boost::shared_array<char> getCurrentPayload() const { return messagePayload_; }
-    std::uint32_t getCurrentPayloadLength() const { return messageLength_; }
-    KaaTcpMessageType getCurrentMessageType() const { return messageType_; }
+    boost::shared_array<char> getCurrentPayload() const
+    {
+        return messagePayload_;
+    }
+    std::uint32_t getCurrentPayloadLength() const
+    {
+        return messageLength_;
+    }
+    KaaTcpMessageType getCurrentMessageType() const
+    {
+        return messageType_;
+    }
 
     MessageRecordList releaseMessages();
 
@@ -70,6 +81,5 @@ private:
 };
 
 }
-
 
 #endif /* KAATCPPARSER_HPP_ */

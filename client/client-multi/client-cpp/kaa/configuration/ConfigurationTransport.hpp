@@ -31,10 +31,10 @@ class IKaaChannelManager;
 class IConfigurationProcessor;
 class IConfigurationHashContainer;
 
-class ConfigurationTransport : public AbstractKaaTransport<TransportType::CONFIGURATION>, public IConfigurationTransport
-{
+class ConfigurationTransport: public AbstractKaaTransport<TransportType::CONFIGURATION>, public IConfigurationTransport {
 public:
-    ConfigurationTransport(IKaaChannelManager& channelManager, IConfigurationProcessor *configProcessor, IConfigurationHashContainer *hashContainer, IKaaClientStateStoragePtr status);
+    ConfigurationTransport(IKaaChannelManager& channelManager, IConfigurationProcessor *configProcessor,
+                           IConfigurationHashContainer *hashContainer, IKaaClientStateStoragePtr status);
 
     void sync();
 
@@ -42,7 +42,7 @@ public:
     virtual void onConfigurationResponse(const ConfigurationSyncResponse &response);
 
 private:
-    IConfigurationProcessor     *configurationProcessor_;
+    IConfigurationProcessor *configurationProcessor_;
     IConfigurationHashContainer *hashContainer_;
 };
 

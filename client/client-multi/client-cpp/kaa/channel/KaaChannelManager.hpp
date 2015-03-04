@@ -31,11 +31,13 @@ namespace kaa {
 
 class IBootstrapManager;
 
-class KaaChannelManager: public IKaaChannelManager, public IPingServerStorage
-{
+class KaaChannelManager: public IKaaChannelManager, public IPingServerStorage {
 public:
     KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers);
-    ~KaaChannelManager() { doShutdown(); }
+    ~KaaChannelManager()
+    {
+        doShutdown();
+    }
 
     virtual void setChannel(TransportType type, IDataChannelPtr channel);
     virtual void addChannel(IDataChannelPtr channel);
@@ -52,7 +54,10 @@ public:
 
     virtual void clearChannelList();
 
-    virtual ITransportConnectionInfoPtr getPingServer() { return (*lastBSServers_.begin()).second; }
+    virtual ITransportConnectionInfoPtr getPingServer()
+    {
+        return (*lastBSServers_.begin()).second;
+    }
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker);
 
@@ -74,7 +79,7 @@ private:
     ITransportConnectionInfoPtr getNextBootstrapServer(ITransportConnectionInfoPtr usedConnectionInfo);
 
 private:
-    IBootstrapManager&   bootstrapManager_;
+    IBootstrapManager& bootstrapManager_;
 
     bool_type isShutdown_;
     bool_type isPaused_;
@@ -82,19 +87,20 @@ private:
     std::map<TransportProtocolId, std::list<ITransportConnectionInfoPtr>> bootstrapServers_;
 
     KAA_MUTEX_DECLARE(lastOpsServersGuard_);
-    std::map<TransportProtocolId, ITransportConnectionInfoPtr>    lastOpsServers_;
+    std::map<TransportProtocolId, ITransportConnectionInfoPtr> lastOpsServers_;
 
-    std::map<TransportProtocolId, ITransportConnectionInfoPtr>    lastBSServers_;
+    std::map<TransportProtocolId, ITransportConnectionInfoPtr> lastBSServers_;
 
     KAA_MUTEX_DECLARE(channelGuard_);
-    std::set<IDataChannelPtr>                   channels_;
+    std::set<IDataChannelPtr> channels_;
 
     KAA_R_MUTEX_DECLARE(mappedChannelGuard_);
-    std::map<TransportType, IDataChannelPtr>    mappedChannels_;
+    std::map<TransportType, IDataChannelPtr> mappedChannels_;
 
     ConnectivityCheckerPtr connectivityChecker_;
 };
 
-} /* namespace kaa */
+}
+/* namespace kaa */
 
 #endif /* KAACHANNELMANAGER_HPP_ */

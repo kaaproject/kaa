@@ -31,8 +31,7 @@ void ConfigurationPersistenceManager::setConfigurationStorage(IConfigurationStor
 {
     if (storage) {
         KAA_MUTEX_LOCKING("confPersistenceGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(lock, confPersistenceGuard_);
-        KAA_MUTEX_LOCKED("confPersistenceGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(lock, confPersistenceGuard_); KAA_MUTEX_LOCKED("confPersistenceGuard_");
 
         storage_ = storage;
         readStoredConfiguration();
@@ -59,20 +58,20 @@ void ConfigurationPersistenceManager::onConfigurationUpdated(const KaaRootConfig
     KAA_LOG_INFO(boost::format("Going to store configuration using configuration storage %1%") % storage_);
 
     KAA_MUTEX_LOCKING("confPersistenceGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(storage_lock, confPersistenceGuard_);
-    KAA_MUTEX_LOCKED("confPersistenceGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(storage_lock, confPersistenceGuard_); KAA_MUTEX_LOCKED("confPersistenceGuard_");
 
     if (storage_) {
         storage_->saveConfiguration(std::vector<std::uint8_t>(buffer.first.get(), buffer.first.get() + buffer.second));
     }
 
     KAA_MUTEX_UNLOCKING("confPersistenceGuard_");
-    KAA_UNLOCK(storage_lock);
-    KAA_MUTEX_UNLOCKED("confPersistenceGuard_");
+    KAA_UNLOCK(storage_lock); KAA_MUTEX_UNLOCKED("confPersistenceGuard_");
 
     configurationHash_ = EndpointObjectHash(buffer);
 
-    KAA_LOG_INFO(boost::format("Calculated configuration hash: %1%") % LoggingUtils::ByteArrayToString(configurationHash_.getHashDigest()));
+    KAA_LOG_INFO(
+            boost::format("Calculated configuration hash: %1%") % LoggingUtils::ByteArrayToString(
+                    configurationHash_.getHashDigest()));
 }
 
 EndpointObjectHash ConfigurationPersistenceManager::getConfigurationHash()
@@ -100,7 +99,9 @@ void ConfigurationPersistenceManager::readStoredConfiguration()
             }
 
             configurationHash_ = EndpointObjectHash(bytes.data(), bytes.size());
-            KAA_LOG_INFO(boost::format("Calculated configuration hash: %1%") % LoggingUtils::ByteArrayToString(configurationHash_.getHashDigest()));
+            KAA_LOG_INFO(
+                    boost::format("Calculated configuration hash: %1%") % LoggingUtils::ByteArrayToString(
+                            configurationHash_.getHashDigest()));
         }
     }
 }

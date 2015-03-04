@@ -80,11 +80,11 @@ public:
      */
     virtual void onServerListUpdated(const std::vector<ProtocolMetaData>& operationsServers) = 0;
 
-    virtual ~IBootstrapManager() { }
+    virtual ~IBootstrapManager()
+    {
+    }
 };
 
 }
-
-
 
 #endif /* IBOOTSTRAPMANAGER_HPP_ */

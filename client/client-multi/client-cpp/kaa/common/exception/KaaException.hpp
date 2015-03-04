@@ -24,16 +24,20 @@
 
 namespace kaa {
 
-class KaaException : public std::exception {
+class KaaException: public std::exception {
 public:
-    KaaException() : message_("") {}
+    KaaException()
+            : message_("")
+    {
+    }
 
-    KaaException(boost::format f) {
+    KaaException(boost::format f)
+    {
         std::stringstream ss;
-        ss << "[Kaa OpenSource Project] Instruction failed! Details: \"" << f
-           << "\" Original message: " << std::exception::what();
+        ss << "[Kaa OpenSource Project] Instruction failed! Details: \"" << f << "\" Original message: "
+           << std::exception::what();
         void *trace[16];
-        char **messages = (char **)nullptr;
+        char **messages = (char **) nullptr;
         int i, trace_size = 0;
         trace_size = backtrace(trace, 16);
         messages = backtrace_symbols(trace, trace_size);
@@ -44,12 +48,13 @@ public:
         message_ = ss.str();
     }
 
-    KaaException(const std::string &message) {
+    KaaException(const std::string &message)
+    {
         std::stringstream ss;
-        ss << "[Kaa OpenSource Project] Instruction failed! Details: \"" << message
-           << "\" Original message: " << std::exception::what();
+        ss << "[Kaa OpenSource Project] Instruction failed! Details: \"" << message << "\" Original message: "
+           << std::exception::what();
         void *trace[16];
-        char **messages = (char **)nullptr;
+        char **messages = (char **) nullptr;
         int i, trace_size = 0;
         trace_size = backtrace(trace, 16);
         messages = backtrace_symbols(trace, trace_size);
@@ -60,17 +65,19 @@ public:
         message_ = ss.str();
     }
 
-    virtual const char * what() const throw () {
+    virtual const char * what() const throw ()
+    {
         return message_.c_str();
     }
 
-    virtual ~KaaException() throw () {}
+    virtual ~KaaException() throw ()
+    {
+    }
 
 private:
     std::string message_;
 };
 
 }  // namespace kaa
-
 
 #endif /* KAAEXCEPTION_HPP_ */

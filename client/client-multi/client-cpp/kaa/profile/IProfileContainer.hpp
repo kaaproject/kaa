@@ -50,7 +50,9 @@ public:
      */
     virtual void setProfileListener(ProfileListenerPtr listener) = 0;
 
-    virtual ~IProfileContainer() {}
+    virtual ~IProfileContainer()
+    {
+    }
 };
 
 } /* namespace kaa */

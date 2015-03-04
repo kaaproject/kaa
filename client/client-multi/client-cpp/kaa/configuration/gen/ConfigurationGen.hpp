@@ -16,10 +16,8 @@
  * limitations under the License.
  */
 
-
 #ifndef CONFIGURATIONGEN_HPP_437739726__H_
 #define CONFIGURATIONGEN_HPP_437739726__H_
-
 
 #include <sstream>
 #include "boost/any.hpp"
@@ -33,11 +31,16 @@ private:
     size_t idx_;
     boost::any value_;
 public:
-    size_t idx() const { return idx_; }
-    bool is_null() const {
+    size_t idx() const
+    {
+        return idx_;
+    }
+    bool is_null() const
+    {
         return (idx_ == 0);
     }
-    void set_null() {
+    void set_null()
+    {
         idx_ = 0;
         value_ = boost::any();
     }
@@ -49,15 +52,15 @@ public:
 struct ConfigurationRootRecord {
     typedef _configuration_avsc_Union__0__ __uuid_t;
     std::string data;
-    __uuid_t __uuid;
-    ConfigurationRootRecord() :
-        data(std::string()),
-        __uuid(__uuid_t())
-        { }
+    __uuid_t  __uuid;
+    ConfigurationRootRecord()
+            : data(std::string()), __uuid(__uuid_t())
+    {
+    }
 };
 
-inline
-boost::array<uint8_t, 16> _configuration_avsc_Union__0__::get_uuidT() const {
+inline boost::array<uint8_t, 16> _configuration_avsc_Union__0__::get_uuidT() const
+{
     if (idx_ != 1) {
         throw avro::Exception("Invalid type for union");
     }
@@ -65,16 +68,21 @@ boost::array<uint8_t, 16> _configuration_avsc_Union__0__::get_uuidT() const {
 }
 
 inline
-void _configuration_avsc_Union__0__::set_uuidT(const boost::array<uint8_t, 16>& v) {
+void _configuration_avsc_Union__0__::set_uuidT(const boost::array<uint8_t, 16>& v)
+{
     idx_ = 1;
     value_ = v;
 }
 
-inline _configuration_avsc_Union__0__::_configuration_avsc_Union__0__() : idx_(0) { }
+inline _configuration_avsc_Union__0__::_configuration_avsc_Union__0__()
+        : idx_(0)
+{
+}
 }
 namespace avro {
 template<> struct codec_traits<kaa::_configuration_avsc_Union__0__> {
-    static void encode(Encoder& e, kaa::_configuration_avsc_Union__0__ v) {
+    static void encode(Encoder& e, kaa::_configuration_avsc_Union__0__ v)
+    {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -85,31 +93,35 @@ template<> struct codec_traits<kaa::_configuration_avsc_Union__0__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_configuration_avsc_Union__0__& v) {
+    static void decode(Decoder& d, kaa::_configuration_avsc_Union__0__& v)
+    {
         size_t n = d.decodeUnionIndex();
-        if (n >= 2) { throw avro::Exception("Union index too big"); }
+        if (n >= 2) {
+            throw avro::Exception("Union index too big");
+        }
         switch (n) {
         case 0:
             d.decodeNull();
             v.set_null();
             break;
-        case 1:
-            {
-                boost::array<uint8_t, 16> vv;
-                avro::decode(d, vv);
-                v.set_uuidT(vv);
-            }
+        case 1: {
+            boost::array<uint8_t, 16> vv;
+            avro::decode(d, vv);
+            v.set_uuidT(vv);
+        }
             break;
         }
     }
 };
 
 template<> struct codec_traits<kaa::ConfigurationRootRecord> {
-    static void encode(Encoder& e, const kaa::ConfigurationRootRecord& v) {
+    static void encode(Encoder& e, const kaa::ConfigurationRootRecord& v)
+    {
         avro::encode(e, v.data);
         avro::encode(e, v.__uuid);
     }
-    static void decode(Decoder& d, kaa::ConfigurationRootRecord& v) {
+    static void decode(Decoder& d, kaa::ConfigurationRootRecord& v)
+    {
         avro::decode(d, v.data);
         avro::decode(d, v.__uuid);
     }

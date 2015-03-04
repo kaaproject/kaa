@@ -28,7 +28,9 @@ public:
     virtual void onTimeout() = 0;
     virtual void onFailure(LogDeliveryErrorCode code) = 0;
 
-    virtual ~ILogUploadFailoverStrategy() {}
+    virtual ~ILogUploadFailoverStrategy()
+    {
+    }
 };
 
 } /* namespace kaa */

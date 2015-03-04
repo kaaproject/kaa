@@ -27,12 +27,18 @@
 
 namespace kaa {
 
-class CommonNull : public ICommonValue {
+class CommonNull: public ICommonValue {
 public:
-    CommonNull() : ICommonValue(CommonValueType::COMMON_NULL) {}
+    CommonNull()
+            : ICommonValue(CommonValueType::COMMON_NULL)
+    {
+    }
 
-    const boost::any    getValue()  const   { throw KaaException("Null does not have any value"); }
-    avro::GenericDatum  toAvro() const
+    const boost::any getValue() const
+    {
+        throw KaaException("Null does not have any value");
+    }
+    avro::GenericDatum toAvro() const
     {
         avro::GenericDatum datum;
         return datum;

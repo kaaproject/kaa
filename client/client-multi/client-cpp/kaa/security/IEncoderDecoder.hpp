@@ -24,16 +24,18 @@ namespace kaa {
 
 class IEncoderDecoder {
 public:
-    virtual ~IEncoderDecoder() {}
+    virtual ~IEncoderDecoder()
+    {
+    }
 
-    virtual EncodedSessionKey                   getEncodedSessionKey() = 0;
-    virtual std::string                         encodeData(const std::uint8_t *data, std::size_t size) = 0;
-    virtual std::string                         decodeData(const std::uint8_t *data, std::size_t size) = 0;
-    virtual Signature                           signData(const std::uint8_t *data, std::size_t size) = 0;
-    virtual bool                                verifySignature(const std::uint8_t *data, std::size_t len, const std::uint8_t *sig, std::size_t sigLen) = 0;
+    virtual EncodedSessionKey getEncodedSessionKey() = 0;
+    virtual std::string encodeData(const std::uint8_t *data, std::size_t size) = 0;
+    virtual std::string decodeData(const std::uint8_t *data, std::size_t size) = 0;
+    virtual Signature signData(const std::uint8_t *data, std::size_t size) = 0;
+    virtual bool verifySignature(const std::uint8_t *data, std::size_t len, const std::uint8_t *sig,
+                                 std::size_t sigLen) = 0;
 };
 
 }  // namespace kaa
-
 
 #endif /* IENCODERDECODER_HPP_ */

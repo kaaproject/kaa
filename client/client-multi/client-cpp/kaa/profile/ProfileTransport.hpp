@@ -29,14 +29,12 @@ namespace kaa {
 
 class IKaaChannelManager;
 
-class ProfileTransport: public AbstractKaaTransport<TransportType::PROFILE>,
-                        public IProfileTransport
-{
+class ProfileTransport: public AbstractKaaTransport<TransportType::PROFILE>, public IProfileTransport {
 public:
-    ProfileTransport(IKaaChannelManager& channelManager,
-                     const PublicKey& publicKey);
+    ProfileTransport(IKaaChannelManager& channelManager, const PublicKey& publicKey);
 
-    virtual void sync() {
+    virtual void sync()
+    {
         syncAll();
     }
 
@@ -44,7 +42,8 @@ public:
 
     virtual void onProfileResponse(const ProfileSyncResponse& response);
 
-    virtual void setProfileManager(IProfileManager* manager) {
+    virtual void setProfileManager(IProfileManager* manager)
+    {
         if (manager != nullptr) {
             profileManager_ = manager;
         }
@@ -55,8 +54,8 @@ private:
     bool isProfileOutDated(const HashDigest& profileHash);
 
 private:
-    IProfileManager*               profileManager_;
-    std::vector<std::uint8_t>      publicKey_;
+    IProfileManager* profileManager_;
+    std::vector<std::uint8_t> publicKey_;
 };
 
 } /* namespace kaa */

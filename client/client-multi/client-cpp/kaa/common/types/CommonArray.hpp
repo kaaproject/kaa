@@ -30,16 +30,22 @@ class CommonArray: public ICommonArray {
 public:
     CommonArray(const avro::NodePtr &schema);
 
-    const boost::any        getValue()  const   { return boost::cref(theList_).get(); }
-    const avro::NodePtr &   getSchema() const   { return schema_; }
+    const boost::any getValue() const
+    {
+        return boost::cref(theList_).get();
+    }
+    const avro::NodePtr & getSchema() const
+    {
+        return schema_;
+    }
 
-    avro::GenericDatum      toAvro()    const;
-    std::string             toString()  const;
+    avro::GenericDatum toAvro() const;
+    std::string toString() const;
 
-    container_type &        getList()   const;
+    container_type & getList() const;
 private:
-    avro::NodePtr           schema_;
-    mutable container_type  theList_;
+    avro::NodePtr schema_;
+    mutable container_type theList_;
 };
 
 } // namespace kaa

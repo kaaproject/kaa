@@ -40,10 +40,12 @@ public:
      *
      * @return Request ID of submitted request
      */
-    virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs
-            , IFetchEventListeners* listener) = 0;
+    virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs,
+                                            IFetchEventListeners* listener) = 0;
 
-    virtual ~IEventListenersResolver() {}
+    virtual ~IEventListenersResolver()
+    {
+    }
 };
 
 } /* namespace kaa */

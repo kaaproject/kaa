@@ -32,31 +32,38 @@ namespace kaa {
 /**
  * Field with this delta type adds new items (@link IDeltaType @endlink implementation)
  */
-class AddedItemsDeltaType : public EmptyDeltaType {
+class AddedItemsDeltaType: public EmptyDeltaType {
 public:
     /**
      * Default constructor
      */
-    AddedItemsDeltaType() {}
+    AddedItemsDeltaType()
+    {
+    }
 
     /**
      * Copy constructor
      */
     AddedItemsDeltaType(const AddedItemsDeltaType& type)
-        : addedItemsStorage_(type.addedItemsStorage_) {}
+            : addedItemsStorage_(type.addedItemsStorage_)
+    {
+    }
 
     /**
      * Specific constructor
      * @param items list of removed editable items
      */
     AddedItemsDeltaType(const AddedItems& items)
-        : addedItemsStorage_(items) {}
+            : addedItemsStorage_(items)
+    {
+    }
 
     /**
      * Retrieves list of added items
      * @return list of added items {\ref IConfigurationDelta} for complex items, \ref IDeltaType for others), empty list if there is no added items (or field is not array)
      */
-    virtual const AddedItems& getAddedItems() {
+    virtual const AddedItems& getAddedItems()
+    {
         return addedItemsStorage_;
     }
 
@@ -69,10 +76,10 @@ public:
     /**
      * Add new item (\ref DeltaValue) to array
      */
-    void addItem(const IDeltaType::DeltaValue& item) {
+    void addItem(const IDeltaType::DeltaValue& item)
+    {
         addedItemsStorage_.push_back(item);
     }
-
 
 private:
     std::list<IDeltaType::DeltaValue> addedItemsStorage_;
@@ -101,8 +108,7 @@ inline std::string AddedItemsDeltaType::toString() const
         if (isKnownType) {
             for (auto it = addedItemsStorage_.begin(); it != addedItemsStorage_.end();) {
                 if (toRecord) {
-                    ConfigurationDeltaPtr configurationDelta =
-                            boost::any_cast<ConfigurationDeltaPtr>(*it);
+                    ConfigurationDeltaPtr configurationDelta = boost::any_cast<ConfigurationDeltaPtr>(*it);
                     ss << configurationDelta->toString();
                 } else {
                     DeltaTypePtr deltaType = boost::any_cast<DeltaTypePtr>(*it);

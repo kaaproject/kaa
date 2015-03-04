@@ -34,8 +34,7 @@ class IEndpointAttachStatusListener;
 /**
  * Manager which is responsible for Endpoints attach/detach.
  */
-class IEndpointRegistrationManager
-{
+class IEndpointRegistrationManager {
 public:
     /**
      * Generate new access token for a current endpoint
@@ -54,8 +53,8 @@ public:
      * @param listener Optional listener to notify about result of endpoint attaching.
      *        Set to null if is no need in it.
      */
-    virtual void attachEndpoint(const std::string&  endpointAccessToken
-                              , IEndpointAttachStatusListener* listener = nullptr) = 0;
+    virtual void attachEndpoint(const std::string& endpointAccessToken, IEndpointAttachStatusListener* listener =
+            nullptr) = 0;
 
     /**
      * Adds new endpoint detach request
@@ -64,8 +63,8 @@ public:
      * @param listener Optional listener to notify about result of endpoint detaching.
      *        Set to null if is no need in it.
      */
-    virtual void detachEndpoint(const std::string&  endpointKeyHash
-                              , IEndpointAttachStatusListener* listener = nullptr) = 0;
+    virtual void detachEndpoint(const std::string& endpointKeyHash,
+                                IEndpointAttachStatusListener* listener = nullptr) = 0;
 
     /**
      * Adds current endpoint detach request
@@ -82,9 +81,8 @@ public:
      * @param listener Optional listener to notify about result of user attaching.
      *        Set to null if there is no need in it.
      */
-    virtual void attachUser(const std::string& userExternalId
-                          , const std::string& userAccessToken
-                          , IEndpointAttachStatusListener* listener = nullptr) = 0;
+    virtual void attachUser(const std::string& userExternalId, const std::string& userAccessToken,
+                            IEndpointAttachStatusListener* listener = nullptr) = 0;
 
     /**
      * Retrieves list of attached endpoints
@@ -120,7 +118,9 @@ public:
      */
     virtual void setAttachStatusListener(IEndpointAttachStatusListener* listener) = 0;
 
-    virtual ~IEndpointRegistrationManager() {}
+    virtual ~IEndpointRegistrationManager()
+    {
+    }
 };
 
 }

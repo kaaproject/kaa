@@ -69,8 +69,9 @@ NotificationSyncRequestPtr NotificationTransport::createNotificationRequest()
     request->topicListHash.set_null();
 
     if (!acceptedUnicastNotificationIds_.empty()) {
-        request->acceptedUnicastNotifications.set_array(std::vector<std::string>(
-                acceptedUnicastNotificationIds_.begin(), acceptedUnicastNotificationIds_.end()));
+        request->acceptedUnicastNotifications.set_array(
+                std::vector<std::string>(acceptedUnicastNotificationIds_.begin(),
+                                         acceptedUnicastNotificationIds_.end()));
     } else {
         request->acceptedUnicastNotifications.set_null();
     }
@@ -92,8 +93,8 @@ NotificationSyncRequestPtr NotificationTransport::createNotificationRequest()
     }
 
     if (!subscriptions_.empty()) {
-        request->subscriptionCommands.set_array(std::vector<SubscriptionCommand>(
-                                    subscriptions_.begin(), subscriptions_.end()));
+        request->subscriptionCommands.set_array(
+                std::vector<SubscriptionCommand>(subscriptions_.begin(), subscriptions_.end()));
     } else {
         request->subscriptionCommands.set_null();
     }
@@ -139,7 +140,9 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
 
     if (!response.notifications.is_null()) {
 
-        KAA_LOG_INFO(boost::format("Received notifications array: %1%") % LoggingUtils::NotificationToString(response.notifications));
+        KAA_LOG_INFO(
+                boost::format("Received notifications array: %1%") % LoggingUtils::NotificationToString(
+                        response.notifications));
 
         const auto& notifications = response.notifications.get_array();
 
@@ -160,12 +163,12 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
         }
 
         for (const auto& n : multicast) {
-            KAA_LOG_DEBUG(boost::format("Notification: %1%, Stored sequence number: %2%")
-                    % LoggingUtils::SingleNotificationToString(n)
+            KAA_LOG_DEBUG(
+                    boost::format("Notification: %1%, Stored sequence number: %2%") % LoggingUtils::SingleNotificationToString(
+                            n)
                     % notificationSubscriptions_[n.topicId]);
             auto& sequenceNumber = notificationSubscriptions_[n.topicId];
-            std::int32_t notificationSequenceNumber =
-                        (n.seqNumber.is_null()) ? 0 : n.seqNumber.get_int();
+            std::int32_t notificationSequenceNumber = (n.seqNumber.is_null()) ? 0 : n.seqNumber.get_int();
             if (notificationSequenceNumber > sequenceNumber) {
                 newNotifications.push_back(n);
                 detailedStatesContainer[n.topicId].sequenceNumber = sequenceNumber = notificationSequenceNumber;
@@ -206,7 +209,10 @@ Notifications NotificationTransport::getMulticastNotifications(const Notificatio
         }
     }
 
-    std::sort(result.begin(), result.end(), [&](const Notification& l, const Notification& r) -> bool { return l.seqNumber.get_int() < r.seqNumber.get_int(); });
+    std::sort(
+            result.begin(),
+            result.end(),
+            [&](const Notification& l, const Notification& r) -> bool {return l.seqNumber.get_int() < r.seqNumber.get_int();});
 
     return result;
 }

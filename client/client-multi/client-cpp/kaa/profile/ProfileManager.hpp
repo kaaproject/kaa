@@ -32,9 +32,10 @@ namespace kaa {
  * Default profile manager
  * Responsible for the profile container management and ProfileListener creation
  */
-class ProfileManager : public IProfileManager {
+class ProfileManager: public IProfileManager {
 public:
-    ProfileManager() {
+    ProfileManager()
+    {
         serializedProfileContainer_.reset(new SerializedProfileContainer);
     }
 
@@ -48,7 +49,8 @@ public:
      * Retrieves serialized profile container
      * @return serialized profile container
      */
-    ISerializedProfileContainerPtr getSerializedProfileContainer() {
+    ISerializedProfileContainerPtr getSerializedProfileContainer()
+    {
         return ISerializedProfileContainerPtr(serializedProfileContainer_);
     }
 
@@ -56,15 +58,16 @@ public:
      * Sets profile transport
      * @param Profile transport
      */
-    virtual void setTransport(IProfileTransportPtr transport) {
+    virtual void setTransport(IProfileTransportPtr transport)
+    {
         if (transport) {
             transport_ = transport;
         }
     }
 
 private:
-    IProfileTransportPtr            transport_;
-    SerializedProfileContainerPtr   serializedProfileContainer_;
+    IProfileTransportPtr transport_;
+    SerializedProfileContainerPtr serializedProfileContainer_;
 };
 
 inline void ProfileManager::setProfileContainer(ProfileContainerPtr container)

@@ -42,5 +42,3 @@ std::uint8_t KaaTcpCommon::createBasicHeader(std::uint8_t messageType, std::uint
 
 }
 
-
-

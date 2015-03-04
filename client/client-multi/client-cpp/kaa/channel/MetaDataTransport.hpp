@@ -28,11 +28,12 @@
 
 namespace kaa {
 
-class MetaDataTransport : public IMetaDataTransport
-{
+class MetaDataTransport: public IMetaDataTransport {
 public:
     MetaDataTransport(IKaaClientStateStoragePtr status, EndpointObjectHash &keyHash, long timeout)
-        : clientStatus_(status), publicKeyHash_(keyHash), timeout_(timeout) {}
+            : clientStatus_(status), publicKeyHash_(keyHash), timeout_(timeout)
+    {
+    }
 
     std::shared_ptr<SyncRequestMetaData> createSyncRequestMetaData()
     {
@@ -47,12 +48,11 @@ public:
     }
 
 private:
-    IKaaClientStateStoragePtr   clientStatus_;
-    EndpointObjectHash          publicKeyHash_;
-    long                        timeout_;
+    IKaaClientStateStoragePtr clientStatus_;
+    EndpointObjectHash publicKeyHash_;
+    long timeout_;
 };
 
 }  // namespace kaa
-
 
 #endif /* METADATATRANSPORT_HPP_ */

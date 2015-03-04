@@ -60,9 +60,9 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
     if (lastServerIt != lastOperationsServers_.end() && serverIt != operationServers_.end()) {
         if (++(lastServerIt->second) != serverIt->second.end()) {
 
-            KAA_LOG_INFO(boost::format("New server [0x%X] will be user for %2%")
-                                            % (*lastServerIt->second)->getAccessPointId()
-                                            % LoggingUtils::TransportProtocolIdToString(protocolId));
+            KAA_LOG_INFO(
+                    boost::format("New server [0x%X] will be user for %2%") % (*lastServerIt->second)->getAccessPointId()
+                    % LoggingUtils::TransportProtocolIdToString(protocolId));
 
             if (channelManager_ != nullptr) {
                 channelManager_->onTransportConnectionInfoUpdated(*(lastServerIt->second));
@@ -70,8 +70,9 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
                 KAA_LOG_ERROR("Can not process server change. Channel manager was not specified");
             }
         } else {
-            KAA_LOG_WARN(boost::format("Failed to find server for channel %2%. Going to sync...")
-                                            % LoggingUtils::TransportProtocolIdToString(protocolId));
+            KAA_LOG_WARN(
+                    boost::format("Failed to find server for channel %2%. Going to sync...") % LoggingUtils::TransportProtocolIdToString(
+                            protocolId));
             bootstrapTransport_->sync();
         }
     } else {
@@ -127,8 +128,7 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
     std::srand(std::time(nullptr));
 
     for (const auto& serverMetaData : operationsServers) {
-        ITransportConnectionInfoPtr connectionInfo(
-                new GenericTransportInfo(ServerType::OPERATIONS, serverMetaData));
+        ITransportConnectionInfoPtr connectionInfo(new GenericTransportInfo(ServerType::OPERATIONS, serverMetaData));
 
         auto& servers = operationServers_[serverMetaData.protocolVersionInfo];
 
@@ -140,15 +140,14 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
     }
 
     for (auto& transportSpecificServers : operationServers_) {
-        lastOperationsServers_[transportSpecificServers.first] =
-                                    transportSpecificServers.second.begin();
+        lastOperationsServers_[transportSpecificServers.first] = transportSpecificServers.second.begin();
     }
 
     if (serverToApply) {
         auto servers = getOPSByAccessPointId(*serverToApply.get());
         if (!servers.empty()) {
-            KAA_LOG_DEBUG(boost::format("Found %1% servers by access point id %1%")
-                                            % servers.size() % *serverToApply.get());
+            KAA_LOG_DEBUG(
+                    boost::format("Found %1% servers by access point id %1%") % servers.size() % *serverToApply.get());
             serverToApply.reset();
             notifyChannelManangerAboutServer(servers);
         }

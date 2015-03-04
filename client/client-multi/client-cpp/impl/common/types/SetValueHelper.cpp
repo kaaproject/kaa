@@ -24,95 +24,94 @@
 namespace kaa {
 
 template<avro::Type T>
-struct avro_traits
-{
+struct avro_traits {
     static bool copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field);
 };
 
-template <avro::Type T>
+template<avro::Type T>
 bool avro_traits<T>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
     return false;
 }
 
-template <>
+template<>
 bool avro_traits<avro::AVRO_RECORD>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
     indatum.value<avro::GenericRecord>() = field.value<avro::GenericRecord>();
     return true;
 }
 
-template <>
+template<>
 bool avro_traits<avro::AVRO_ARRAY>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
     indatum.value<avro::GenericArray>() = field.value<avro::GenericArray>();
     return true;
 }
 
-template <>
+template<>
 bool avro_traits<avro::AVRO_ENUM>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
     indatum.value<avro::GenericEnum>() = field.value<avro::GenericEnum>();
     return true;
 }
 
-template <>
+template<>
 bool avro_traits<avro::AVRO_FIXED>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
     indatum.value<avro::GenericFixed>() = field.value<avro::GenericFixed>();
     return true;
 }
 
-template <>
+template<>
 bool avro_traits<avro::AVRO_BOOL>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
     indatum.value<bool>() = field.value<bool>();
     return true;
 }
 
-template <>
+template<>
 bool avro_traits<avro::AVRO_INT>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
     indatum.value<std::int32_t>() = field.value<std::int32_t>();
     return true;
 }
 
-template <>
+template<>
 bool avro_traits<avro::AVRO_LONG>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
     indatum.value<std::int64_t>() = field.value<std::int64_t>();
     return true;
 }
 
-template <>
+template<>
 bool avro_traits<avro::AVRO_FLOAT>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
     indatum.value<float>() = field.value<float>();
     return true;
 }
 
-template <>
+template<>
 bool avro_traits<avro::AVRO_DOUBLE>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
     indatum.value<double>() = field.value<double>();
     return true;
 }
 
-template <>
+template<>
 bool avro_traits<avro::AVRO_STRING>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
     indatum.value<std::string>() = field.value<std::string>();
     return true;
 }
 
-template <>
+template<>
 bool avro_traits<avro::AVRO_BYTES>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
     indatum.value<std::vector<std::uint8_t> >() = field.value<std::vector<std::uint8_t> >();
     return true;
 }
 
-template <>
+template<>
 bool avro_traits<avro::AVRO_NULL>::copyValueToDatum(avro::GenericDatum &indatum, const avro::GenericDatum &field)
 {
     return true;
@@ -167,5 +166,4 @@ bool SetAvroValueHelper::setValue(avro::Type t, avro::GenericDatum &indatum, con
 }  // namespace kaa
 
 #endif
-
 

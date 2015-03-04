@@ -16,21 +16,22 @@
 
 #include "kaa/http/HttpUrl.hpp"
 
-
 #include <cstring>
 #include <cctype>
 #include <cstdlib>
 
 namespace kaa {
 
-HttpUrl::HttpUrl(const std::string& url) : url_(url)
+HttpUrl::HttpUrl(const std::string& url)
+        : url_(url)
 {
     if (!url.empty()) {
         parseUrl();
     }
 }
 
-HttpUrl::HttpUrl(const char *url) {
+HttpUrl::HttpUrl(const char *url)
+{
     if (url) {
         url_.assign(url);
         parseUrl();
@@ -53,10 +54,10 @@ void HttpUrl::parseUrl()
         }
     }
     const char *host_begin = cursor;
-    const char *host_end   = nullptr;
+    const char *host_end = nullptr;
     const char *port_begin = nullptr;
-    const char *port_end   = nullptr;
-    const char *uri_begin  = nullptr;
+    const char *port_end = nullptr;
+    const char *uri_begin = nullptr;
     auto c = cursor;
     for (; *c != '\0'; ++c) {
         if (*c == ':') {

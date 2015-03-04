@@ -51,11 +51,12 @@ public:
      * @param data      Event data
      * @param source    Event source
      */
-    virtual void onGenericEvent(const std::string& fqn
-                              , const std::vector<std::uint8_t>& data
-                              , const std::string& source) = 0;
+    virtual void onGenericEvent(const std::string& fqn, const std::vector<std::uint8_t>& data,
+                                const std::string& source) = 0;
 
-    virtual ~IEventFamily() {}
+    virtual ~IEventFamily()
+    {
+    }
 };
 
 } /* namespace kaa */

@@ -64,7 +64,7 @@ public:
      * @return the channel's id.
      *
      */
-    virtual const std::string& getId() const  = 0;
+    virtual const std::string& getId() const = 0;
 
     /**
      * Retrieves the @link TransportProtocolId @endlink.
@@ -73,7 +73,7 @@ public:
      * @see TransportProtocolId
      *
      */
-    virtual TransportProtocolId getTransportProtocolId() const  = 0;
+    virtual TransportProtocolId getTransportProtocolId() const = 0;
 
     /**
      * Retrieves the channel's server type (i.e. BOOTSTRAP or OPERATIONS).
@@ -82,7 +82,7 @@ public:
      * @see ServerType
      *
      */
-    virtual ServerType getServerType() const  = 0;
+    virtual ServerType getServerType() const = 0;
 
     /**
      * Sets the response demultiplexer for this channel.
@@ -157,13 +157,14 @@ public:
      */
     virtual void resume() = 0;
 
-    virtual ~IDataChannel() {}
+    virtual ~IDataChannel()
+    {
+    }
 
 };
 
 typedef IDataChannel* IDataChannelPtr;
 
 }  // namespace kaa
-
 
 #endif /* IDATACHANNEL_HPP_ */

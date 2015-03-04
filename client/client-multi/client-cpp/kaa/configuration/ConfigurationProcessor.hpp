@@ -42,15 +42,18 @@ namespace kaa {
  * This class receives data schema updates from \c ISchemaProcessor.
  *
  */
-class ConfigurationProcessor : public IConfigurationProcessor,
-                               public IDecodedDeltaObservable,
-                               public IConfigurationProcessedObservable
-{
+class ConfigurationProcessor: public IConfigurationProcessor,
+                              public IDecodedDeltaObservable,
+                              public IConfigurationProcessedObservable {
 public:
     typedef avro::ValidSchema Schema;
 
-    ConfigurationProcessor() {}
-    ~ConfigurationProcessor() {  }
+    ConfigurationProcessor()
+    {
+    }
+    ~ConfigurationProcessor()
+    {
+    }
 
     /**
      * \c IConfigurationProcessor implementation
@@ -77,7 +80,8 @@ private:
 
 };
 
-} // namespace kaa
+}
+ // namespace kaa
 
 #endif
 

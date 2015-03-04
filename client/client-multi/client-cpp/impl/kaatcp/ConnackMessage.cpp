@@ -19,7 +19,8 @@
 
 namespace kaa {
 
-ConnackMessage::ConnackMessage(const char *payload, std::uint16_t size) : returnCode_(ConnackReturnCode::UNKNOWN)
+ConnackMessage::ConnackMessage(const char *payload, std::uint16_t size)
+        : returnCode_(ConnackReturnCode::UNKNOWN)
 {
     parseMessage(payload, size);
 }
@@ -27,22 +28,22 @@ ConnackMessage::ConnackMessage(const char *payload, std::uint16_t size) : return
 std::string ConnackMessage::returnCodeToString(ConnackReturnCode code)
 {
     switch (code) {
-        case ConnackReturnCode::UNKNOWN:
-            return "Connack Unknown";
-        case ConnackReturnCode::SUCCESS:
-            return "Connection Accepted";
-        case ConnackReturnCode::UNACCEPTABLE_VERSION:
-            return "Connection Refused: unacceptable protocol version";
-        case ConnackReturnCode::IDENTIFIER_REJECTED:
-            return "Connection Refused: identifier rejected";
-        case ConnackReturnCode::SERVER_UNAVAILABLE:
-            return "Connection Refused: server unavailable";
-        case ConnackReturnCode::BAD_USER_PASSWORD:
-            return "Connection Refused: bad user name or password";
-        case ConnackReturnCode::NOT_AUTHORIZED:
-            return "Connection Refused: not authorized";
-        default:
-            return (boost::format("Invalid response code %1%") % (std::uint8_t) code).str();
+    case ConnackReturnCode::UNKNOWN:
+        return "Connack Unknown";
+    case ConnackReturnCode::SUCCESS:
+        return "Connection Accepted";
+    case ConnackReturnCode::UNACCEPTABLE_VERSION:
+        return "Connection Refused: unacceptable protocol version";
+    case ConnackReturnCode::IDENTIFIER_REJECTED:
+        return "Connection Refused: identifier rejected";
+    case ConnackReturnCode::SERVER_UNAVAILABLE:
+        return "Connection Refused: server unavailable";
+    case ConnackReturnCode::BAD_USER_PASSWORD:
+        return "Connection Refused: bad user name or password";
+    case ConnackReturnCode::NOT_AUTHORIZED:
+        return "Connection Refused: not authorized";
+    default:
+        return (boost::format("Invalid response code %1%") % (std::uint8_t) code).str();
     }
 }
 
@@ -57,5 +58,4 @@ void ConnackMessage::parseMessage(const char *payload, std::uint16_t size)
 }
 
 }
-
 

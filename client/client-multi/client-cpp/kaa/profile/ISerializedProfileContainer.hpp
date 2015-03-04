@@ -37,7 +37,9 @@ public:
      */
     virtual SharedDataBuffer getSerializedProfile() = 0;
 
-    virtual ~ISerializedProfileContainer() {}
+    virtual ~ISerializedProfileContainer()
+    {
+    }
 };
 
 } /* namespace kaa */

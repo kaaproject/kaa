@@ -33,7 +33,8 @@
 
 namespace kaa {
 
-void UuidProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
+void UuidProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field,
+                              const avro::GenericDatum &datum)
 {
     avro::GenericFixed uuid_field = datum.value<avro::GenericFixed>();
     uuid_t uuid;
@@ -67,7 +68,8 @@ void UuidProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::
     }
 }
 
-void RecordProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
+void RecordProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field,
+                                const avro::GenericDatum &datum)
 {
     const avro::GenericRecord &rec = datum.value<avro::GenericRecord>();
     std::size_t field_count = rec.fieldCount();
@@ -78,9 +80,10 @@ void RecordProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std
         value = parent;
     } else {
         if (parent->hasField(field)) {
-            if(CommonValueTools::isRecord(parent->getField(field))) {
-                if(CommonValueTools::getRecord(parent->getField(field)).getSchema()->name().fullname()
-                        .compare(rec.schema()->name().fullname()) == 0) {
+            if (CommonValueTools::isRecord(parent->getField(field))) {
+                if (CommonValueTools::getRecord(parent->getField(field)).getSchema()->name().fullname().compare(
+                        rec.schema()->name().fullname())
+                    == 0) {
                     value = std::dynamic_pointer_cast<ICommonRecord, ICommonValue>(parent->getField(field));
                 } else {
                     value = CommonTypesFactory::createCommonRecord(empty_uuid, rec.schema());
@@ -104,47 +107,47 @@ void RecordProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std
         std::unique_ptr<FieldProcessor> fp(new FieldProcessor(value, field_name));
         AbstractStrategy *strategy = nullptr;
         switch (innerDatum.type()) {
-            case avro::AVRO_RECORD: {
-                strategy = new RecordProcessStrategy(isSubscribedFn_, subscribeFn_, unsubscribeFn_);
-                break;
+        case avro::AVRO_RECORD: {
+            strategy = new RecordProcessStrategy(isSubscribedFn_, subscribeFn_, unsubscribeFn_);
+            break;
+        }
+        case avro::AVRO_ARRAY: {
+            if (parent->hasField(field_name)) {
+                value->setField(field_name, parent->getField(field_name));
             }
-            case avro::AVRO_ARRAY: {
-                if (parent->hasField(field_name)) {
-                    value->setField(field_name, parent->getField(field_name));
-                }
 
-                strategy = new ArrayProcessStrategy(isSubscribedFn_, subscribeFn_, unsubscribeFn_);
-                break;
-            }
-            case avro::AVRO_NULL: {
-                strategy = new NullProcessStrategy();
-                break;
-            }
-            case avro::AVRO_FIXED: {
-                if (AvroGenericUtils::isUuid(innerDatum)) {
-                    strategy = new UuidProcessStrategy(isSubscribedFn_, subscribeFn_, unsubscribeFn_);
-                } else {
-                    strategy = new CommonProcessStrategy();
-                }
-                break;
-            }
-            case avro::AVRO_ENUM: {
-                if (AvroGenericUtils::isReset(innerDatum)) {
-                    fp.reset(new FieldProcessor(parent, field_name));
-                    strategy = new ArrayResetStrategy(isSubscribedFn_, unsubscribeFn_);
-                } else {
-                    strategy = new CommonProcessStrategy();
-                }
-                break;
-            }
-            case avro::AVRO_MAP:
-            case avro::AVRO_UNKNOWN: {
-                throw KaaException(boost::format("Unsupported field type %1%") % datum.type());
-            }
-            default: {
+            strategy = new ArrayProcessStrategy(isSubscribedFn_, subscribeFn_, unsubscribeFn_);
+            break;
+        }
+        case avro::AVRO_NULL: {
+            strategy = new NullProcessStrategy();
+            break;
+        }
+        case avro::AVRO_FIXED: {
+            if (AvroGenericUtils::isUuid(innerDatum)) {
+                strategy = new UuidProcessStrategy(isSubscribedFn_, subscribeFn_, unsubscribeFn_);
+            } else {
                 strategy = new CommonProcessStrategy();
-                break;
             }
+            break;
+        }
+        case avro::AVRO_ENUM: {
+            if (AvroGenericUtils::isReset(innerDatum)) {
+                fp.reset(new FieldProcessor(parent, field_name));
+                strategy = new ArrayResetStrategy(isSubscribedFn_, unsubscribeFn_);
+            } else {
+                strategy = new CommonProcessStrategy();
+            }
+            break;
+        }
+        case avro::AVRO_MAP:
+        case avro::AVRO_UNKNOWN: {
+            throw KaaException(boost::format("Unsupported field type %1%") % datum.type());
+        }
+        default: {
+            strategy = new CommonProcessStrategy();
+            break;
+        }
         }
         fp->setStrategy(strategy);
         fp->process(innerDatum);
@@ -159,7 +162,8 @@ void RecordProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std
     }
 }
 
-void ArrayResetStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
+void ArrayResetStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field,
+                             const avro::GenericDatum &datum)
 {
     ICommonRecord::fields_type array = parent->getField(field);
     ICommonArray * array_ptr = dynamic_cast<ICommonArray *>(array.get());
@@ -175,7 +179,7 @@ void ArrayResetStrategy::unregisterRecord(ICommonRecord &record)
     if (record.hasField("__uuid")) {
         uuid_t uuid;
         auto uuid_field = record.getField("__uuid");
-        std::vector<std::uint8_t> uuid_raw =  boost::any_cast<std::vector<std::uint8_t> >(uuid_field->getValue());
+        std::vector<std::uint8_t> uuid_raw = boost::any_cast<std::vector<std::uint8_t> >(uuid_field->getValue());
         std::copy(uuid_raw.begin(), uuid_raw.end(), uuid.begin());
         if (isSubscribedFn_(uuid)) {
             unsubscribeFn_(uuid);
@@ -184,17 +188,17 @@ void ArrayResetStrategy::unregisterRecord(ICommonRecord &record)
 
     for (auto it = map.begin(); it != map.end(); ++it) {
         switch (it->second->getCommonType()) {
-            case CommonValueType::COMMON_RECORD: {
-                unregisterRecord(dynamic_cast<ICommonRecord &>(*(*it).second));
-                break;
-            }
-            case CommonValueType::COMMON_ARRAY: {
-                unregisterArray(dynamic_cast<ICommonArray &>(*(*it).second));
-                break;
-            }
-            default:
-                break;
-            }
+        case CommonValueType::COMMON_RECORD: {
+            unregisterRecord(dynamic_cast<ICommonRecord &>(*(*it).second));
+            break;
+        }
+        case CommonValueType::COMMON_ARRAY: {
+            unregisterArray(dynamic_cast<ICommonArray &>(*(*it).second));
+            break;
+        }
+        default:
+            break;
+        }
     }
 }
 
@@ -203,23 +207,24 @@ void ArrayResetStrategy::unregisterArray(ICommonArray &array)
     auto list = array.getList();
     for (auto it = list.begin(); it != list.end(); ++it) {
         switch ((*it)->getCommonType()) {
-            case CommonValueType::COMMON_RECORD: {
-                unregisterRecord(dynamic_cast<ICommonRecord &>(*(*it)));
-                break;
-            }
-            case CommonValueType::COMMON_ARRAY: {
-                unregisterArray(dynamic_cast<ICommonArray &>(*(*it)));
-                break;
-            }
-            default:
-                break;
+        case CommonValueType::COMMON_RECORD: {
+            unregisterRecord(dynamic_cast<ICommonRecord &>(*(*it)));
+            break;
+        }
+        case CommonValueType::COMMON_ARRAY: {
+            unregisterArray(dynamic_cast<ICommonArray &>(*(*it)));
+            break;
+        }
+        default:
+            break;
         }
     }
 }
 
 const std::string ArrayProcessStrategy::array_holder_field = "___array__value___";
 
-void ArrayProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
+void ArrayProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field,
+                               const avro::GenericDatum &datum)
 {
     std::shared_ptr<ICommonValue> commonValue;
     std::shared_ptr<ICommonArray> commonArray;
@@ -258,30 +263,31 @@ void ArrayProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std:
             for (auto it = first_element; it != vec.end(); ++it) {
                 const avro::GenericDatum & innerDatum = *it;
                 uuid_t empty_uuid;
-                std::shared_ptr<ICommonRecord> record = CommonTypesFactory::createCommonRecord(empty_uuid, datum.value<avro::GenericArray>().schema());
+                std::shared_ptr<ICommonRecord> record = CommonTypesFactory::createCommonRecord(
+                        empty_uuid, datum.value<avro::GenericArray>().schema());
                 std::unique_ptr<FieldProcessor> fp(new FieldProcessor(record, array_holder_field));
                 AbstractStrategy *strategy = nullptr;
                 switch (innerDatum.type()) {
-                    case avro::AVRO_RECORD: {
-                        strategy = new RecordProcessStrategy(isSubscribedFn_, subscribeFn_, unsubscribeFn_);
-                        break;
-                    }
-                    case avro::AVRO_ARRAY: {
-                        strategy = new ArrayProcessStrategy(isSubscribedFn_, subscribeFn_, unsubscribeFn_);
-                        break;
-                    }
-                    case avro::AVRO_NULL: {
-                        strategy = new NullProcessStrategy();
-                        break;
-                    }
-                    case avro::AVRO_MAP:
-                    case avro::AVRO_UNKNOWN: {
-                        throw KaaException(boost::format("Unsupported field type %1%") % datum.type());
-                    }
-                    default: {
-                        strategy = new CommonProcessStrategy();
-                        break;
-                    }
+                case avro::AVRO_RECORD: {
+                    strategy = new RecordProcessStrategy(isSubscribedFn_, subscribeFn_, unsubscribeFn_);
+                    break;
+                }
+                case avro::AVRO_ARRAY: {
+                    strategy = new ArrayProcessStrategy(isSubscribedFn_, subscribeFn_, unsubscribeFn_);
+                    break;
+                }
+                case avro::AVRO_NULL: {
+                    strategy = new NullProcessStrategy();
+                    break;
+                }
+                case avro::AVRO_MAP:
+                case avro::AVRO_UNKNOWN: {
+                    throw KaaException(boost::format("Unsupported field type %1%") % datum.type());
+                }
+                default: {
+                    strategy = new CommonProcessStrategy();
+                    break;
+                }
                 }
                 fp->setStrategy(strategy);
                 fp->process(innerDatum);
@@ -293,52 +299,55 @@ void ArrayProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std:
     }
 }
 
-void NullProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
+void NullProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field,
+                              const avro::GenericDatum &datum)
 {
     parent->setField(field, CommonTypesFactory::createCommon<avro::AVRO_NULL>(datum));
 }
 
-void CommonProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum)
+void CommonProcessStrategy::run(std::shared_ptr<ICommonRecord> parent, const std::string &field,
+                                const avro::GenericDatum &datum)
 {
     CommonTypesFactory::return_type result;
     switch (datum.type()) {
-        case avro::AVRO_INT: {
-            result = CommonTypesFactory::createCommon<avro::AVRO_INT>(datum);
-            break;
-        }
-        case avro::AVRO_LONG: {
-            result = CommonTypesFactory::createCommon<avro::AVRO_LONG>(datum);
-            break;
-        }
-        case avro::AVRO_FLOAT: {
-            result = CommonTypesFactory::createCommon<avro::AVRO_FLOAT>(datum);
-            break;
-        }
-        case avro::AVRO_DOUBLE: {
-            result = CommonTypesFactory::createCommon<avro::AVRO_DOUBLE>(datum);
-            break;
-        }
-        case avro::AVRO_BOOL: {
-            result = CommonTypesFactory::createCommon<avro::AVRO_BOOL>(datum);
-            break;
-        }
-        case avro::AVRO_ENUM: {
-            result = CommonTypesFactory::createCommon<avro::AVRO_ENUM>(datum);
-            break;
-        }
-        case avro::AVRO_STRING: {
-            result = CommonTypesFactory::createCommon<avro::AVRO_STRING>(datum);
-            break;
-        }
-        case avro::AVRO_FIXED: {
-            result = CommonTypesFactory::createCommon<avro::AVRO_FIXED>(datum);
-            break;
-        }
-        case avro::AVRO_BYTES: {
-            result = CommonTypesFactory::createCommon<avro::AVRO_BYTES>(datum);
-            break;
-        }
-        default: throw KaaException("Not a common type");
+    case avro::AVRO_INT: {
+        result = CommonTypesFactory::createCommon<avro::AVRO_INT>(datum);
+        break;
+    }
+    case avro::AVRO_LONG: {
+        result = CommonTypesFactory::createCommon<avro::AVRO_LONG>(datum);
+        break;
+    }
+    case avro::AVRO_FLOAT: {
+        result = CommonTypesFactory::createCommon<avro::AVRO_FLOAT>(datum);
+        break;
+    }
+    case avro::AVRO_DOUBLE: {
+        result = CommonTypesFactory::createCommon<avro::AVRO_DOUBLE>(datum);
+        break;
+    }
+    case avro::AVRO_BOOL: {
+        result = CommonTypesFactory::createCommon<avro::AVRO_BOOL>(datum);
+        break;
+    }
+    case avro::AVRO_ENUM: {
+        result = CommonTypesFactory::createCommon<avro::AVRO_ENUM>(datum);
+        break;
+    }
+    case avro::AVRO_STRING: {
+        result = CommonTypesFactory::createCommon<avro::AVRO_STRING>(datum);
+        break;
+    }
+    case avro::AVRO_FIXED: {
+        result = CommonTypesFactory::createCommon<avro::AVRO_FIXED>(datum);
+        break;
+    }
+    case avro::AVRO_BYTES: {
+        result = CommonTypesFactory::createCommon<avro::AVRO_BYTES>(datum);
+        break;
+    }
+    default:
+        throw KaaException("Not a common type");
     }
     parent->setField(field, result);
 }

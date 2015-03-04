@@ -37,22 +37,27 @@ typedef boost::uuids::uuid uuid_t;
 template<class Container>
 class ICommonRecordBase: public ISchemaDependent, public ICommonValue {
 public:
-    typedef Container                       container_type;
+    typedef Container container_type;
     typedef typename Container::mapped_type fields_type;
-    typedef typename Container::key_type    keys_type;
+    typedef typename Container::key_type keys_type;
 
-    ICommonRecordBase() : ICommonValue(CommonValueType::COMMON_RECORD) {}
-    virtual ~ICommonRecordBase() {}
+    ICommonRecordBase()
+            : ICommonValue(CommonValueType::COMMON_RECORD)
+    {
+    }
+    virtual ~ICommonRecordBase()
+    {
+    }
 
     /**
      * Set uuid object to the record
      */
-    virtual void                    setUuid(uuid_t uuid) = 0;
+    virtual void setUuid(uuid_t uuid) = 0;
 
     /**
      * Retrieves uuid object to the record
      */
-    virtual uuid_t                  getUuid() = 0;
+    virtual uuid_t getUuid() = 0;
 
     /**
      * Check if the field is present in the record
@@ -60,7 +65,7 @@ public:
      * @param field_name Name of the field to be checked
      * @return True if it is present, false otherwise
      */
-    virtual bool                    hasField    (const keys_type &field_name) const = 0;
+    virtual bool hasField(const keys_type &field_name) const = 0;
 
     /**
      * Retrieves value of the field.
@@ -68,26 +73,26 @@ public:
      * @param field_name Name of the field which value being returned
      * @return Value of the field
      */
-    virtual fields_type             getField    (const keys_type &field_name) const = 0;
+    virtual fields_type getField(const keys_type &field_name) const = 0;
 
     /**
      * Set new value to the field.
      *
      * @param field_name Name of the field which value is being changed
      */
-    virtual void                    setField    (const keys_type &field_name, fields_type value) = 0;
+    virtual void setField(const keys_type &field_name, fields_type value) = 0;
 
     /**
      * Remove field from the record.
      *
      * @param field_name Name of the field which value is being removed
      */
-    virtual void                    removeField (const keys_type &field_name) = 0;
+    virtual void removeField(const keys_type &field_name) = 0;
 
     /**
      * Retrieves container with set of field pairs (name/value).
      */
-    virtual const container_type &  getFields   () const = 0;
+    virtual const container_type & getFields() const = 0;
 };
 
 typedef ICommonRecordBase<std::map<std::string, std::shared_ptr<ICommonValue> > > ICommonRecord;

@@ -25,13 +25,8 @@
 namespace kaa {
 
 LogCollector::LogCollector(IKaaChannelManagerPtr manager)
-    : storage_(nullptr)
-    , status_(nullptr)
-    , configuration_(nullptr)
-    , uploadStrategy_(nullptr)
-    , failoverStrategy_(nullptr)
-    , transport_(nullptr)
-    , isUploading_(false)
+        : storage_(nullptr), status_(nullptr), configuration_(nullptr), uploadStrategy_(nullptr),
+          failoverStrategy_(nullptr), transport_(nullptr), isUploading_(false)
 {
     defaultConfiguration_.reset(new DefaultLogUploadConfiguration);
     defaultLogStorage_.reset(new MemoryLogStorage(defaultConfiguration_->getBlockSize()));
@@ -45,18 +40,10 @@ LogCollector::LogCollector(IKaaChannelManagerPtr manager)
     failoverStrategy_ = defaultFailoverStrategy_.get();
 }
 
-LogCollector::LogCollector(ILogStorage* storage
-                         , ILogStorageStatus* status
-                         , ILogUploadConfiguration* configuration
-                         , ILogUploadStrategy* uploadStrategy
-                         , ILogUploadFailoverStrategy* failoverStrategy)
-    : storage_(storage)
-    , status_(status)
-    , configuration_(configuration)
-    , uploadStrategy_(uploadStrategy)
-    , failoverStrategy_(failoverStrategy)
-    , transport_(nullptr)
-    , isUploading_(false)
+LogCollector::LogCollector(ILogStorage* storage, ILogStorageStatus* status, ILogUploadConfiguration* configuration,
+                           ILogUploadStrategy* uploadStrategy, ILogUploadFailoverStrategy* failoverStrategy)
+        : storage_(storage), status_(status), configuration_(configuration), uploadStrategy_(uploadStrategy),
+          failoverStrategy_(failoverStrategy), transport_(nullptr), isUploading_(false)
 {
 
 }
@@ -64,8 +51,7 @@ LogCollector::LogCollector(ILogStorage* storage
 void LogCollector::makeLogRecord(const LogRecord& record)
 {
     KAA_MUTEX_LOCKING("storageGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-    KAA_MUTEX_LOCKED("storageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_); KAA_MUTEX_LOCKED("storageGuard_");
 
     if (storage_ != nullptr) {
         storage_->addLogRecord(record);
@@ -77,29 +63,32 @@ void LogCollector::makeLogRecord(const LogRecord& record)
         if (uploadStrategy_ != nullptr) {
             LogUploadStrategyDecision decision = uploadStrategy_->isUploadNeeded(configuration_, status_);
             switch (decision) {
-                case LogUploadStrategyDecision::CLEANUP: {
-                    KAA_LOG_INFO(boost::format("Need to cleanup log storage."));
-                    doCleanup();
-                    break;
-                }
-                case LogUploadStrategyDecision::UPLOAD: {
-                    if (failoverStrategy_ == nullptr || failoverStrategy_->isUploadApproved()) {
-                        if (!isUploading_) {
-                            KAA_LOG_INFO(boost::format("Going to start logs upload."));
-                            isUploading_ = true;
-                            doUpload();
-                        }
+            case LogUploadStrategyDecision::CLEANUP: {
+                KAA_LOG_INFO(boost::format("Need to cleanup log storage."));
+                doCleanup();
+                break;
+            }
+            case LogUploadStrategyDecision::UPLOAD: {
+                if (failoverStrategy_ == nullptr || failoverStrategy_->isUploadApproved()) {
+                    if (!isUploading_) {
+                        KAA_LOG_INFO(boost::format("Going to start logs upload."));
+                        isUploading_ = true;
+                        doUpload();
                     }
-                    break;
                 }
-                case LogUploadStrategyDecision::NOOP:
-                default:
-                    KAA_LOG_DEBUG(boost::format("Nothing to do now."));
-                    break;
+                break;
+            }
+            case LogUploadStrategyDecision::NOOP:
+            default:
+                KAA_LOG_DEBUG(boost::format("Nothing to do now."))
+                ;
+                break;
             }
         } else {
-            KAA_LOG_ERROR(boost::format("Can not decide if log upload is needed. Strategy: %1%, Configuration: %2%, Status: %3%)")
-                % uploadStrategy_ % configuration_ % status_);
+            KAA_LOG_ERROR(
+                    boost::format(
+                            "Can not decide if log upload is needed. Strategy: %1%, Configuration: %2%, Status: %3%)")
+                    % uploadStrategy_ % configuration_ % status_);
         }
     } else {
         KAA_LOG_ERROR("Can not add log to an empty storage");
@@ -109,8 +98,7 @@ void LogCollector::makeLogRecord(const LogRecord& record)
 void LogCollector::setStorage(ILogStorage * storage)
 {
     KAA_MUTEX_LOCKING("storageGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-    KAA_MUTEX_LOCKED("storageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_); KAA_MUTEX_LOCKED("storageGuard_");
 
     KAA_LOG_DEBUG(boost::format("Replacing log storage from %1% to %2%") % storage_ % storage);
     storage_ = storage;
@@ -119,8 +107,7 @@ void LogCollector::setStorage(ILogStorage * storage)
 void LogCollector::setStorageStatus(ILogStorageStatus * status)
 {
     KAA_MUTEX_LOCKING("storageGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-    KAA_MUTEX_LOCKED("storageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_); KAA_MUTEX_LOCKED("storageGuard_");
 
     KAA_LOG_DEBUG(boost::format("Replacing log storage status from %1% to %2%") % status_ % status);
     status_ = status;
@@ -129,8 +116,7 @@ void LogCollector::setStorageStatus(ILogStorageStatus * status)
 void LogCollector::setConfiguration(ILogUploadConfiguration * configuration)
 {
     KAA_MUTEX_LOCKING("storageGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-    KAA_MUTEX_LOCKED("storageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_); KAA_MUTEX_LOCKED("storageGuard_");
 
     KAA_LOG_DEBUG(boost::format("Replacing log upload configurations from %1% to %2%") % configuration_ % configuration);
     configuration_ = configuration;
@@ -140,8 +126,7 @@ void LogCollector::setUploadStrategy(ILogUploadStrategy * strategy)
 {
     if (strategy != nullptr) {
         KAA_MUTEX_LOCKING("storageGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-        KAA_MUTEX_LOCKED("storageGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_); KAA_MUTEX_LOCKED("storageGuard_");
 
         KAA_LOG_DEBUG(boost::format("Replacing log upload strategy from %1% to %2%") % uploadStrategy_ % strategy);
         uploadStrategy_ = strategy;
@@ -152,8 +137,7 @@ void LogCollector::setFailoverStrategy(ILogUploadFailoverStrategy * strategy)
 {
     if (strategy != nullptr) {
         KAA_MUTEX_LOCKING("storageGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-        KAA_MUTEX_LOCKED("storageGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_); KAA_MUTEX_LOCKED("storageGuard_");
 
         KAA_LOG_DEBUG(boost::format("Replacing log failover strategy from %1% to %2%") % failoverStrategy_ % strategy);
         failoverStrategy_ = strategy;
@@ -232,8 +216,9 @@ LogSyncRequest LogCollector::getLogUploadRequest()
         request = it->second;
 
         KAA_LOG_INFO(boost::format("Added log upload request id %1%") % request.requestId);
-        timeoutsMap_.insert(std::make_pair(request.requestId,
-                clock_t::now() + std::chrono::seconds(configuration_->getLogUploadTimeout())));
+        timeoutsMap_.insert(
+                std::make_pair(request.requestId,
+                               clock_t::now() + std::chrono::seconds(configuration_->getLogUploadTimeout())));
         requests_.erase(it);
     }
     return request;
@@ -246,7 +231,8 @@ void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
         for (const auto& status : deliveryStatuses) {
             if (status.result == SyncResponseResultType::SUCCESS) {
                 storage_->removeRecordBlock(status.requestId);
-                if (!requests_.empty() || uploadStrategy_->isUploadNeeded(configuration_, status_) == LogUploadStrategyDecision::UPLOAD) {
+                if (!requests_.empty() || uploadStrategy_->isUploadNeeded(configuration_, status_)
+                        == LogUploadStrategyDecision::UPLOAD) {
                     doUpload();
                 } else {
                     isUploading_ = false;

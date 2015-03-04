@@ -28,7 +28,6 @@ ProfileListener::ProfileListener(IProfileTransportPtr transport)
     transport_ = std::dynamic_pointer_cast<ProfileTransport, IProfileTransport>(transport);
 }
 
-
 void ProfileListener::onProfileUpdated(SharedDataBuffer serializedProfile)
 {
     if (serializedProfile.first.get() && serializedProfile.second > 0) {

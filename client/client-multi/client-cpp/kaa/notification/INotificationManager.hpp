@@ -209,7 +209,9 @@ public:
      */
     virtual void sync() = 0;
 
-    virtual ~INotificationManager() {}
+    virtual ~INotificationManager()
+    {
+    }
 };
 
 } /* namespace kaa */

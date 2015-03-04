@@ -49,7 +49,9 @@ public:
      */
     virtual void onRequestFailed() = 0;
 
-    virtual ~IFetchEventListeners() {}
+    virtual ~IFetchEventListeners()
+    {
+    }
 };
 
 } /* namespace kaa */

@@ -27,7 +27,8 @@
 
 namespace kaa {
 
-HttpResponse::HttpResponse(const char *data, std::size_t len) : statusCode_(0)
+HttpResponse::HttpResponse(const char *data, std::size_t len)
+        : statusCode_(0)
 {
     if (data == nullptr || len < HTTP_VERSION_OFFSET + 5) {
         throw KaaException("Empty response was given");
@@ -35,7 +36,8 @@ HttpResponse::HttpResponse(const char *data, std::size_t len) : statusCode_(0)
     parseResponse(data, len);
 }
 
-HttpResponse::HttpResponse(const std::string& data) : statusCode_(0)
+HttpResponse::HttpResponse(const std::string& data)
+        : statusCode_(0)
 {
     if (data.length() < HTTP_VERSION_OFFSET + 5) {
         throw KaaException("Empty response was given");

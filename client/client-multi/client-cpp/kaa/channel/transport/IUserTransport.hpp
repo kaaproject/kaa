@@ -47,11 +47,11 @@ public:
      */
     virtual void onUserResponse(const UserSyncResponse& response) = 0;
 
-    virtual ~IUserTransport() {}
+    virtual ~IUserTransport()
+    {
+    }
 };
 
 }  // namespace kaa
-
-
 
 #endif /* IUSERTRANSPORT_HPP_ */

@@ -29,25 +29,31 @@
 
 namespace kaa {
 
-class RemovedItemsDeltaType : public EmptyDeltaType {
+class RemovedItemsDeltaType: public EmptyDeltaType {
 public:
     /**
      * Default constructor
      */
-    RemovedItemsDeltaType() {}
+    RemovedItemsDeltaType()
+    {
+    }
 
     /**
      * Copy constructor
      */
     RemovedItemsDeltaType(const RemovedItemsDeltaType& type)
-        : removedItemsStorage_(type.removedItemsStorage_) {}
+            : removedItemsStorage_(type.removedItemsStorage_)
+    {
+    }
 
     /**
      * Specific constructor
      * @param removedItemsList list of removed editable items
      */
     RemovedItemsDeltaType(const RemovedItems& items)
-        : removedItemsStorage_(items) {}
+            : removedItemsStorage_(items)
+    {
+    }
 
     /**
      * Retrieves list of removed editable items
@@ -55,7 +61,8 @@ public:
      *         removed items, list is empty if there is no removed items
      *         (or field is not array)
      */
-    virtual const RemovedItems& getRemovedItems() {
+    virtual const RemovedItems& getRemovedItems()
+    {
         return removedItemsStorage_;
     }
 
@@ -68,7 +75,8 @@ public:
     /**
      * Add new handler (@link DeltaHandlerId @endlink) to array
      */
-    void addHandlerId(const DeltaHandlerId& item) {
+    void addHandlerId(const DeltaHandlerId& item)
+    {
         removedItemsStorage_.push_back(item);
     }
 
@@ -76,7 +84,8 @@ private:
     RemovedItems removedItemsStorage_;
 };
 
-inline std::string RemovedItemsDeltaType::toString() const {
+inline std::string RemovedItemsDeltaType::toString() const
+{
     std::stringstream ss;
     ss << "[ ";
 

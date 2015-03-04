@@ -28,8 +28,8 @@
 
 namespace kaa {
 
-typedef std::vector<Topic>          Topics;
-typedef std::vector<Notification>   Notifications;
+typedef std::vector<Topic> Topics;
+typedef std::vector<Notification> Notifications;
 
 /**
  *  Interface for listeners of both topic and notification list updates
@@ -48,7 +48,9 @@ public:
      */
     virtual void notificationReceived(const Notifications& notifications) = 0;
 
-    virtual ~INotificationProcessor() {}
+    virtual ~INotificationProcessor()
+    {
+    }
 };
 
 } /* namespace kaa */

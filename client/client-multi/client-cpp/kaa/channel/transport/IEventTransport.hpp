@@ -49,10 +49,11 @@ public:
 
     virtual void onSyncResponseId(std::int32_t requestId) = 0;
 
-    virtual ~IEventTransport() {}
+    virtual ~IEventTransport()
+    {
+    }
 };
 
 }  // namespace kaa
-
 
 #endif /* IEVENTTRANSPORT_HPP_ */

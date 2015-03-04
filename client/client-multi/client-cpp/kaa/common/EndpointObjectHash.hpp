@@ -34,10 +34,11 @@ typedef std::vector<std::uint8_t> HashDigest;
 /**
  * Used to calculate SHA-1 hash
  */
-class EndpointObjectHash
-{
+class EndpointObjectHash {
 public:
-    EndpointObjectHash() { }
+    EndpointObjectHash()
+    {
+    }
 
     /*
      * Specific constructors
@@ -71,13 +72,19 @@ public:
      * Checks if two hashes are equal
      * @return the result of comparison
      */
-    bool operator==(const EndpointObjectHash& endpointHash) { return hashDigest_ == endpointHash.hashDigest_; }
+    bool operator==(const EndpointObjectHash& endpointHash)
+    {
+        return hashDigest_ == endpointHash.hashDigest_;
+    }
 
     /**
      * Checks if two hashes are not equal
      * @return the result of comparison
      */
-    bool operator!=(const EndpointObjectHash& endpointHash) { return hashDigest_ != endpointHash.hashDigest_; }
+    bool operator!=(const EndpointObjectHash& endpointHash)
+    {
+        return hashDigest_ != endpointHash.hashDigest_;
+    }
 
     operator std::vector<std::uint8_t>();
 

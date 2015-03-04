@@ -30,32 +30,33 @@ void KaaTcpParser::onMessageDone()
 void KaaTcpParser::processByte(char byte)
 {
     switch (state_) {
-        case KaaTcpParserState::NONE:
-            retrieveMessageType(byte);
-            KAA_LOG_DEBUG(boost::format("KaaTcp: retrieved message's type %1%") % (int) messageType_);
-            state_ = KaaTcpParserState::PROCESSING_LENGTH;
-            break;
-        case KaaTcpParserState::PROCESSING_LENGTH:
-            messageLength_ += ((std::uint8_t)byte & ~KaaTcpCommon::FIRST_BIT) * lenghtMultiplier_;
-            lenghtMultiplier_ *= KaaTcpCommon::FIRST_BIT;
-            if (!((std::uint8_t)byte & KaaTcpCommon::FIRST_BIT)) {
-                KAA_LOG_DEBUG(boost::format("KaaTcp: retrieved message's size %1%") % (std::uint32_t) messageLength_);
-                if (messageLength_) {
-                    messagePayload_.reset(new char[messageLength_]);
-                    state_ = KaaTcpParserState::PROCESSING_PAYLOAD;
-                } else {
-                    onMessageDone();
-                }
+    case KaaTcpParserState::NONE:
+        retrieveMessageType(byte);
+        KAA_LOG_DEBUG(boost::format("KaaTcp: retrieved message's type %1%") % (int ) messageType_)
+        ;
+        state_ = KaaTcpParserState::PROCESSING_LENGTH;
+        break;
+    case KaaTcpParserState::PROCESSING_LENGTH:
+        messageLength_ += ((std::uint8_t) byte & ~KaaTcpCommon::FIRST_BIT) * lenghtMultiplier_;
+        lenghtMultiplier_ *= KaaTcpCommon::FIRST_BIT;
+        if (!((std::uint8_t) byte & KaaTcpCommon::FIRST_BIT)) {
+            KAA_LOG_DEBUG(boost::format("KaaTcp: retrieved message's size %1%") % (std::uint32_t ) messageLength_);
+            if (messageLength_) {
+                messagePayload_.reset(new char[messageLength_]);
+                state_ = KaaTcpParserState::PROCESSING_PAYLOAD;
+            } else {
+                onMessageDone();
             }
-            break;
-        default:
-            break;
+        }
+        break;
+    default:
+        break;
     }
 }
 
 void KaaTcpParser::retrieveMessageType(char byte)
 {
-    messageType_ = (KaaTcpMessageType) ((std::uint8_t)(byte) >> 4);
+    messageType_ = (KaaTcpMessageType) ((std::uint8_t) (byte) >> 4);
 }
 
 void KaaTcpParser::parseBuffer(const char *buffer, std::uint32_t size)
@@ -69,7 +70,8 @@ void KaaTcpParser::parseBuffer(const char *buffer, std::uint32_t size)
             std::copy(cursor, cursor + bytesToRead, messagePayload_.get() + processedPayloadLength_);
             cursor += bytesToRead;
             processedPayloadLength_ += bytesToRead;
-            KAA_LOG_DEBUG(boost::format("KaaTcp: processed payload. Remaining buffer size is %1%") % ((buffer + size) - cursor));
+            KAA_LOG_DEBUG(
+                    boost::format("KaaTcp: processed payload. Remaining buffer size is %1%") % ((buffer + size) - cursor));
             if (messageLength_ == processedPayloadLength_) {
                 onMessageDone();
             }
@@ -97,5 +99,4 @@ void KaaTcpParser::resetParser()
 }
 
 }
-
 

@@ -48,9 +48,11 @@ public:
      *
      * \return Amount of stored records
      */
-    virtual std::size_t getRecordsCount() const   = 0;
+    virtual std::size_t getRecordsCount() const = 0;
 
-    virtual ~ILogStorageStatus() {}
+    virtual ~ILogStorageStatus()
+    {
+    }
 };
 
 }  // namespace kaa

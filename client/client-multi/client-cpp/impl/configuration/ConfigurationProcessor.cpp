@@ -31,8 +31,7 @@ namespace kaa {
 void ConfigurationProcessor::processConfigurationData(const std::uint8_t *data, std::size_t dataLength, bool fullResync)
 {
     KAA_MUTEX_LOCKING("confProcessorMutex_");
-    KAA_R_MUTEX_UNIQUE_DECLARE(lock, confProcessorMutex_);
-    KAA_MUTEX_LOCKED("confProcessorMutex_");
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, confProcessorMutex_); KAA_MUTEX_LOCKED("confProcessorMutex_");
 
     KAA_LOG_INFO("Received configuration data.");
 
@@ -46,11 +45,10 @@ void ConfigurationProcessor::processConfigurationData(const std::uint8_t *data, 
 
 void ConfigurationProcessor::subscribeForUpdates(IGenericDeltaReceiver &receiver)
 {
-    if (!deltaReceivers_.addCallback(&receiver,
-            std::bind(&IGenericDeltaReceiver::onDeltaReceived, &receiver,
-                    std::placeholders::_1,
-                    std::placeholders::_2,
-                    std::placeholders::_3))) {
+    if (!deltaReceivers_.addCallback(
+            &receiver,
+            std::bind(&IGenericDeltaReceiver::onDeltaReceived, &receiver, std::placeholders::_1, std::placeholders::_2,
+                      std::placeholders::_3))) {
         throw KaaException("Failed to register new delta receiver. Receiver is already registered");
     }
 }
@@ -62,10 +60,9 @@ void ConfigurationProcessor::unsubscribeFromUpdates(IGenericDeltaReceiver &recei
 
 void ConfigurationProcessor::addOnProcessedObserver(IConfigurationProcessedObserver &observer)
 {
-    if (!onProcessedObservers_.addCallback(&observer,
-            std::bind(&IConfigurationProcessedObserver::onConfigurationProcessed, &observer))) {
-        throw KaaException(
-                "Failed to register new IConfigurationProcessedObserver. Already registered");
+    if (!onProcessedObservers_.addCallback(
+            &observer, std::bind(&IConfigurationProcessedObserver::onConfigurationProcessed, &observer))) {
+        throw KaaException("Failed to register new IConfigurationProcessedObserver. Already registered");
     }
 }
 
@@ -73,7 +70,6 @@ void ConfigurationProcessor::removeOnProcessedObserver(IConfigurationProcessedOb
 {
     onProcessedObservers_.removeCallback(&observer);
 }
-
 
 }  // namespace kaa
 

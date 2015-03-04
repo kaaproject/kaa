@@ -28,26 +28,29 @@
 
 namespace kaa {
 
-class LogUploadFailoverStrategy : public ILogUploadFailoverStrategy {
+class LogUploadFailoverStrategy: public ILogUploadFailoverStrategy {
 public:
     LogUploadFailoverStrategy(IKaaChannelManagerPtr manager)
-        : channelManager_(manager), isUploadApproved_(true), RETRY_PERIOD_SEC_(300) {}
+            : channelManager_(manager), isUploadApproved_(true), RETRY_PERIOD_SEC_(300)
+    {
+    }
 
     virtual bool isUploadApproved();
 
     virtual void onTimeout();
     virtual void onFailure(LogDeliveryErrorCode code);
 
-    void setRetryPeriod(std::uint32_t period) {
+    void setRetryPeriod(std::uint32_t period)
+    {
         RETRY_PERIOD_SEC_ = period;
     }
 
 private:
-    IKaaChannelManagerPtr                                channelManager_;
+    IKaaChannelManagerPtr channelManager_;
 
-    bool                                                 isUploadApproved_;
-    std::uint32_t                                        RETRY_PERIOD_SEC_;
-    std::chrono::time_point<std::chrono::system_clock>   nextUploadAttemptTS_;
+    bool isUploadApproved_;
+    std::uint32_t RETRY_PERIOD_SEC_;
+    std::chrono::time_point<std::chrono::system_clock> nextUploadAttemptTS_;
 };
 
 } /* namespace kaa */

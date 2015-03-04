@@ -30,8 +30,7 @@ typedef std::shared_ptr<ProfileSyncRequest> ProfileSyncRequestPtr;
 /**
  * Updates the Profile manager state.
  */
-class IProfileTransport
-{
+class IProfileTransport {
 public:
 
     /**
@@ -61,7 +60,9 @@ public:
      */
     virtual void setProfileManager(IProfileManager* manager) = 0;
 
-    virtual ~IProfileTransport() {}
+    virtual ~IProfileTransport()
+    {
+    }
 };
 
 typedef std::shared_ptr<IProfileTransport> IProfileTransportPtr;

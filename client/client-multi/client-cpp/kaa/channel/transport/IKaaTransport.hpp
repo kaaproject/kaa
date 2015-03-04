@@ -48,12 +48,13 @@ public:
      */
     virtual void setClientState(IKaaClientStateStoragePtr status) = 0;
 
-    virtual ~IKaaTransport() {}
+    virtual ~IKaaTransport()
+    {
+    }
 };
 
 typedef std::shared_ptr<IKaaTransport> IKaaTransportPtr;
 
 }  // namespace kaa
-
 
 #endif /* IKAATRANSPORT_HPP_ */

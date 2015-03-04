@@ -32,7 +32,8 @@ namespace kaa {
 
 class UuidGenerator {
 public:
-    static std::string generateUuid() {
+    static std::string generateUuid()
+    {
         boost::uuids::basic_random_generator<boost::mt19937> gen;
         boost::uuids::uuid uuid = gen();
         std::stringstream ss;
@@ -40,15 +41,16 @@ public:
         return ss.str();
     }
 
-    static std::int32_t generateRandomInt() {
+    static std::int32_t generateRandomInt()
+    {
         boost::uuids::basic_random_generator<boost::mt19937> gen;
         boost::uuids::uuid uuid = gen();
-		std::int32_t rand = (uuid.data[12] << 24) | (uuid.data[13] << 16)
-				| (uuid.data[14] << 8) | (uuid.data[15]);
-		return rand;
+        std::int32_t rand = (uuid.data[12] << 24) | (uuid.data[13] << 16) | (uuid.data[14] << 8) | (uuid.data[15]);
+        return rand;
     }
 
-    static void generateUuid(std::string& uuid_s) {
+    static void generateUuid(std::string& uuid_s)
+    {
         boost::uuids::basic_random_generator<boost::mt19937> gen;
         boost::uuids::uuid uuid = gen();
         std::stringstream ss;
@@ -56,7 +58,8 @@ public:
         uuid_s.assign(ss.str());
     }
 
-    static void generateUuid(std::string& uuid_s, std::string data) {
+    static void generateUuid(std::string& uuid_s, std::string data)
+    {
         namespace buuids = boost::uuids;
         buuids::uuid seed;
         buuids::name_generator generator(seed);

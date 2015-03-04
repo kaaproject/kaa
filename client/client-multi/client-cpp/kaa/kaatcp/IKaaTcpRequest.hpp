@@ -22,15 +22,14 @@
 
 namespace kaa {
 
-class IKaaTcpRequest
-{
+class IKaaTcpRequest {
 public:
     virtual const std::vector<std::uint8_t>& getRawMessage() const = 0;
-    virtual ~IKaaTcpRequest() { }
+    virtual ~IKaaTcpRequest()
+    {
+    }
 };
 
 }
-
-
 
 #endif /* IKAATCPREQUEST_HPP_ */

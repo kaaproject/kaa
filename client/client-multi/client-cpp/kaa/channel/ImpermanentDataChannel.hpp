@@ -21,17 +21,23 @@
 
 namespace kaa {
 
-class ImpermanentDataChannel : public IDataChannel {
+class ImpermanentDataChannel: public IDataChannel {
 public:
-    virtual ~ImpermanentDataChannel() { }
+    virtual ~ImpermanentDataChannel()
+    {
+    }
 
-    virtual void resume() { }
-    virtual void pause() { }
-    virtual void shutdown() { }
+    virtual void resume()
+    {
+    }
+    virtual void pause()
+    {
+    }
+    virtual void shutdown()
+    {
+    }
 };
 
 }
-
-
 
 #endif /* KAA_CHANNEL_IMPERMANENTDATACHANNEL_HPP_ */

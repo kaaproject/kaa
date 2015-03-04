@@ -35,7 +35,9 @@ class IPingServerStorage;
 class IPConnectivityChecker: public IConnectivityChecker {
 public:
     IPConnectivityChecker(IPingServerStorage& storage)
-        : serverStorage_(storage) {}
+            : serverStorage_(storage)
+    {
+    }
 
     virtual bool checkConnectivity();
 private:

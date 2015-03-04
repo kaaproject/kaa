@@ -25,7 +25,7 @@ namespace kaa {
 /**
  * Default profile listener
  */
-class ProfileListener : public IProfileListener {
+class ProfileListener: public IProfileListener {
 public:
     ProfileListener(IProfileTransportPtr transport);
 

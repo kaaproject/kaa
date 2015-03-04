@@ -21,40 +21,37 @@
 #include "kaa/kaatcp/IKaaTcpRequest.hpp"
 #include <boost/format.hpp>
 
-namespace kaa
-{
+namespace kaa {
 
-enum class DisconnectReason : std::uint8_t
-{
-    NONE = 0x00,
-    BAD_REQUEST = 0x01,
-    INTERNAL_ERROR = 0x02,
+enum class DisconnectReason
+    : std::uint8_t
+    {
+        NONE = 0x00, BAD_REQUEST = 0x01, INTERNAL_ERROR = 0x02,
 };
 
-class DisconnectMessage : public IKaaTcpRequest
-{
+class DisconnectMessage: public IKaaTcpRequest {
 public:
     static std::string reasonToString(DisconnectReason reason)
     {
         switch (reason) {
-            case DisconnectReason::NONE:
-                return "No error";
-            case DisconnectReason::BAD_REQUEST:
-                return "Bad request";
-            case DisconnectReason::INTERNAL_ERROR:
-                return "Internal error has been occurred";
-            default:
-                return (boost::format("Invalid Disconnect reason %1%") % (std::uint8_t) reason).str();
+        case DisconnectReason::NONE:
+            return "No error";
+        case DisconnectReason::BAD_REQUEST:
+            return "Bad request";
+        case DisconnectReason::INTERNAL_ERROR:
+            return "Internal error has been occurred";
+        default:
+            return (boost::format("Invalid Disconnect reason %1%") % (std::uint8_t) reason).str();
         }
     }
 
-    DisconnectMessage(DisconnectReason reason) : message_(4), reason_(reason)
+    DisconnectMessage(DisconnectReason reason)
+            : message_(4), reason_(reason)
     {
         char header[2];
         KaaTcpCommon::createBasicHeader((std::uint8_t) KaaTcpMessageType::MESSAGE_DISCONNECT, 2, header);
-        std::copy(reinterpret_cast<const std::uint8_t *>(header),
-                reinterpret_cast<const std::uint8_t *>(header + 2),
-                message_.begin());
+        std::copy(reinterpret_cast<const std::uint8_t *>(header), reinterpret_cast<const std::uint8_t *>(header + 2),
+                  message_.begin());
         message_[2] = 0;
         message_[3] = (std::uint8_t) reason_;
     }
@@ -64,12 +61,23 @@ public:
         parseMessage(payload, size);
     }
 
-    ~DisconnectMessage() { }
+    ~DisconnectMessage()
+    {
+    }
 
-    DisconnectReason getReason() const { return reason_; }
-    std::string getMessage() const { return reasonToString(reason_); }
+    DisconnectReason getReason() const
+    {
+        return reason_;
+    }
+    std::string getMessage() const
+    {
+        return reasonToString(reason_);
+    }
 
-    const std::vector<std::uint8_t>& getRawMessage() const { return message_; }
+    const std::vector<std::uint8_t>& getRawMessage() const
+    {
+        return message_;
+    }
 
 private:
     void parseMessage(const char *payload, std::uint16_t size)
@@ -84,7 +92,5 @@ private:
 };
 
 }
-
-
 
 #endif /* DISCONNECTREQUEST_HPP_ */

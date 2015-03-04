@@ -27,13 +27,13 @@
 
 namespace kaa {
 
-class UserTransport : public AbstractKaaTransport<TransportType::USER>, public IUserTransport {
+class UserTransport: public AbstractKaaTransport<TransportType::USER>, public IUserTransport {
 public:
     UserTransport(IRegistrationProcessor & manager, IKaaChannelManager& channelManager);
-    std::shared_ptr<UserSyncRequest>     createUserRequest();
-    void                onUserResponse(const UserSyncResponse& response);
-    void                sync();
-    void                syncProfile();
+    std::shared_ptr<UserSyncRequest> createUserRequest();
+    void onUserResponse(const UserSyncResponse& response);
+    void sync();
+    void syncProfile();
 private:
     IRegistrationProcessor & manager_;
 

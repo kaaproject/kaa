@@ -18,8 +18,7 @@
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
 
-namespace kaa
-{
+namespace kaa {
 
 void KaaTcpResponseProcessor::processResponseBuffer(const char *buf, std::uint32_t size)
 {
@@ -27,37 +26,41 @@ void KaaTcpResponseProcessor::processResponseBuffer(const char *buf, std::uint32
     const auto& messages_ = parser_.releaseMessages();
     for (auto it = messages_.begin(); it != messages_.end(); ++it) {
         switch (it->first) {
-            case KaaTcpMessageType::MESSAGE_CONNACK:
-                KAA_LOG_DEBUG("KaaTcp: CONNACK message received");
-                if (onConnack_) {
-                    onConnack_(ConnackMessage(it->second.first.get(), it->second.second));
-                }
-                break;
-            case KaaTcpMessageType::MESSAGE_KAASYNC:
-                KAA_LOG_DEBUG("KaaTcp: KAASYNC message received");
-                if (onKaaSyncResponse_) {
-                    onKaaSyncResponse_(KaaSyncResponse(it->second.first.get(), it->second.second));
-                }
-                break;
-            case KaaTcpMessageType::MESSAGE_PINGRESP:
-                KAA_LOG_DEBUG("KaaTcp: PINGRESP message received");
-                if (onPingResp_) {
-                    onPingResp_();
-                }
-                break;
-            case KaaTcpMessageType::MESSAGE_DISCONNECT:
-                KAA_LOG_DEBUG("KaaTcp: DISCONNECT message received");
-                if (onDisconnect_) {
-                    onDisconnect_(DisconnectMessage(it->second.first.get(), it->second.second));
-                }
-                break;
-            default:
-                KAA_LOG_ERROR(boost::format("KaaTcp: unexpected message type %1%") % (int) it->first);
-                break;
+        case KaaTcpMessageType::MESSAGE_CONNACK:
+            KAA_LOG_DEBUG("KaaTcp: CONNACK message received")
+            ;
+            if (onConnack_) {
+                onConnack_(ConnackMessage(it->second.first.get(), it->second.second));
+            }
+            break;
+        case KaaTcpMessageType::MESSAGE_KAASYNC:
+            KAA_LOG_DEBUG("KaaTcp: KAASYNC message received")
+            ;
+            if (onKaaSyncResponse_) {
+                onKaaSyncResponse_(KaaSyncResponse(it->second.first.get(), it->second.second));
+            }
+            break;
+        case KaaTcpMessageType::MESSAGE_PINGRESP:
+            KAA_LOG_DEBUG("KaaTcp: PINGRESP message received")
+            ;
+            if (onPingResp_) {
+                onPingResp_();
+            }
+            break;
+        case KaaTcpMessageType::MESSAGE_DISCONNECT:
+            KAA_LOG_DEBUG("KaaTcp: DISCONNECT message received")
+            ;
+            if (onDisconnect_) {
+                onDisconnect_(DisconnectMessage(it->second.first.get(), it->second.second));
+            }
+            break;
+        default:
+            KAA_LOG_ERROR(boost::format("KaaTcp: unexpected message type %1%") % (int ) it->first)
+            ;
+            break;
         }
     }
 }
 
 }
-
 

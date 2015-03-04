@@ -25,32 +25,32 @@
 
 namespace kaa {
 
-class RsaEncoderDecoder : public IEncoderDecoder {
+class RsaEncoderDecoder: public IEncoderDecoder {
 public:
-    RsaEncoderDecoder(const PublicKey& pubKey,
-                      const PrivateKey& privKey,
-                      const PublicKey& remoteKey);
-    ~RsaEncoderDecoder() { }
+    RsaEncoderDecoder(const PublicKey& pubKey, const PrivateKey& privKey, const PublicKey& remoteKey);
+    ~RsaEncoderDecoder()
+    {
+    }
 
     virtual EncodedSessionKey getEncodedSessionKey();
     virtual std::string encodeData(const std::uint8_t *data, std::size_t size);
     virtual std::string decodeData(const std::uint8_t *data, std::size_t size);
     virtual Signature signData(const std::uint8_t *data, std::size_t size);
-    virtual bool verifySignature(const std::uint8_t *data, std::size_t len, const std::uint8_t *sig, std::size_t sigLen);
+    virtual bool verifySignature(const std::uint8_t *data, std::size_t len, const std::uint8_t *sig,
+                                 std::size_t sigLen);
 
 private:
     std::string cipherPipe(const std::uint8_t *data, std::size_t size, Botan::Cipher_Dir dir);
 
 private:
     Botan::AutoSeeded_RNG rng_;
-    std::unique_ptr<Botan::X509_PublicKey>   pubKey_;
+    std::unique_ptr<Botan::X509_PublicKey> pubKey_;
     std::unique_ptr<Botan::PKCS8_PrivateKey> privKey_;
-    std::unique_ptr<Botan::X509_PublicKey>   remoteKey_;
+    std::unique_ptr<Botan::X509_PublicKey> remoteKey_;
 
     SessionKey sessionKey_;
 };
 
 }
-
 
 #endif /* RSAENCODERDECODER_HPP_ */

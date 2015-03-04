@@ -39,17 +39,22 @@ namespace kaa {
 class EventFamilyFactory {
 public:
     EventFamilyFactory(IEventManager& manager, ITransactable &transactionManager)
-        : eventManager_(manager), transactionManager_(transactionManager) {}
+            : eventManager_(manager), transactionManager_(transactionManager)
+    {
+    }
 
-    TransactionIdPtr startEventsBlock() {
+    TransactionIdPtr startEventsBlock()
+    {
         return transactionManager_.beginTransaction();
     }
 
-    void submitEventsBlock(TransactionIdPtr trxId) {
+    void submitEventsBlock(TransactionIdPtr trxId)
+    {
         transactionManager_.commit(trxId);
     }
 
-    void removeEventsBlock(TransactionIdPtr trxId) {
+    void removeEventsBlock(TransactionIdPtr trxId)
+    {
         transactionManager_.rollback(trxId);
     }
 
@@ -58,9 +63,10 @@ private:
     ITransactable& transactionManager_;
     std::set<std::string> efcNames_;
     std::map<std::string, std::shared_ptr<IEventFamily> > eventFamilies_;
-    std::map<std::string, FQNList > supportedFQNLists_;
+    std::map<std::string, FQNList> supportedFQNLists_;
 
-    std::shared_ptr<IEventFamily> getEventFamilyByName(const std::string& efcName) {
+    std::shared_ptr<IEventFamily> getEventFamilyByName(const std::string& efcName)
+    {
         auto it = eventFamilies_.find(efcName);
         if (it != eventFamilies_.end()) {
             return it->second;
@@ -68,12 +74,14 @@ private:
         return std::shared_ptr<IEventFamily>();
     }
 
-    void addEventFamilyByName(const std::string& efcName, std::shared_ptr<IEventFamily> eventFamily) {
+    void addEventFamilyByName(const std::string& efcName, std::shared_ptr<IEventFamily> eventFamily)
+    {
         eventManager_.registerEventFamily(eventFamily.get());
         eventFamilies_[efcName] = eventFamily;
     }
 
-    const FQNList& getSupportedFQNsByFamilyName(const std::string& efcName) {
+    const FQNList& getSupportedFQNsByFamilyName(const std::string& efcName)
+    {
         auto it = supportedFQNLists_.find(efcName);
         if (it != supportedFQNLists_.end()) {
             return it->second;
@@ -82,7 +90,8 @@ private:
         return empty;
     }
 
-    const std::set<std::string> &getEventFamilyClassNames() {
+    const std::set<std::string>& getEventFamilyClassNames()
+    {
         return efcNames_;
     }
 };

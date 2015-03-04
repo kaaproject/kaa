@@ -41,29 +41,26 @@ struct SyncResponse;
 struct UserAttachRequest;
 class IAttachedEndpointListListener;
 
-class EndpointRegistrationManager : public IEndpointRegistrationManager
-                                  , public IRegistrationProcessor
-{
+class EndpointRegistrationManager: public IEndpointRegistrationManager, public IRegistrationProcessor {
 public:
     EndpointRegistrationManager(IKaaClientStateStoragePtr status);
 
     virtual void regenerateEndpointAccessToken();
 
-    virtual const std::string& getEndpointAccessToken() {
+    virtual const std::string& getEndpointAccessToken()
+    {
         return endpointAccessToken_;
     }
 
-    virtual void attachEndpoint(const std::string&  endpointAccessToken
-                              , IEndpointAttachStatusListener* listener = nullptr);
+    virtual void attachEndpoint(const std::string& endpointAccessToken, IEndpointAttachStatusListener* listener =
+            nullptr);
 
-    virtual void detachEndpoint(const std::string&  endpointKeyHash
-                              , IEndpointAttachStatusListener* listener = nullptr);
+    virtual void detachEndpoint(const std::string& endpointKeyHash, IEndpointAttachStatusListener* listener = nullptr);
 
     virtual void detachEndpoint(IEndpointAttachStatusListener* listener = nullptr);
 
-    virtual void attachUser(const std::string& userExternalId
-                          , const std::string& userAccessToken
-                          , IEndpointAttachStatusListener* listener = nullptr);
+    virtual void attachUser(const std::string& userExternalId, const std::string& userAccessToken,
+                            IEndpointAttachStatusListener* listener = nullptr);
 
     virtual const AttachedEndpoints& getAttachedEndpoints();
 
@@ -71,9 +68,9 @@ public:
 
     virtual void removeAttachedEndpointListListener(IAttachedEndpointListListener *listener);
 
-    virtual std::map<std::int32_t, std::string>  getEndpointsToAttach();
-    virtual std::map<std::int32_t, std::string>  getEndpointsToDetach();
-    virtual UserAttachRequestPtr                getUserAttachRequest();
+    virtual std::map<std::int32_t, std::string> getEndpointsToAttach();
+    virtual std::map<std::int32_t, std::string> getEndpointsToDetach();
+    virtual UserAttachRequestPtr getUserAttachRequest();
 
     virtual void onUserAttach(const UserSyncResponse::userAttachResponse_t& response);
 
@@ -83,18 +80,22 @@ public:
     virtual void onCurrentEndpointAttach(const UserAttachNotification& response);
     virtual void onCurrentEndpointDetach(const UserDetachNotification& response);
 
-    virtual bool isCurrentEndpointAttached() {
+    virtual bool isCurrentEndpointAttached()
+    {
         return status_->getEndpointAttachStatus();
     }
 
-    virtual void setTransport(UserTransport * transport) {
+    virtual void setTransport(UserTransport * transport)
+    {
         userTransport_ = transport;
-        if (userTransport_ != nullptr && (userAttachRequest_.get() != nullptr || !attachingEndpoints_.empty() || !detachingEndpoints_.empty())) {
+        if (userTransport_ != nullptr && (userAttachRequest_.get() != nullptr || !attachingEndpoints_.empty()
+                                          || !detachingEndpoints_.empty())) {
             userTransport_->sync();
         }
     }
 
-    virtual void setAttachStatusListener(IEndpointAttachStatusListener* listener) {
+    virtual void setAttachStatusListener(IEndpointAttachStatusListener* listener)
+    {
         if (listener != nullptr) {
             attachStatusListener_ = listener;
         }
@@ -109,26 +110,24 @@ private:
         IEndpointAttachStatusListener* listener_;
     };
 
-
 private:
-    IKaaClientStateStoragePtr     status_;
+    IKaaClientStateStoragePtr status_;
 
     std::string endpointAccessToken_;
     std::string endpointKeyHash_;
 
     UserAttachRequestPtr userAttachRequest_;
 
-    std::map<std::int32_t/*requestId*/, EndpointOperationInfo>  attachingEndpoints_;
-    std::map<std::int32_t/*requestId*/, EndpointOperationInfo>  detachingEndpoints_;
-    std::map<std::string/*epToken*/, std::string/*epHash*/>    attachedEndpoints_;
-    KAA_R_MUTEX_DECLARE(endpointsGuard_);
+    std::map<std::int32_t/*requestId*/, EndpointOperationInfo> attachingEndpoints_;
+    std::map<std::int32_t/*requestId*/, EndpointOperationInfo> detachingEndpoints_;
+    std::map<std::string/*epToken*/, std::string/*epHash*/> attachedEndpoints_;KAA_R_MUTEX_DECLARE(endpointsGuard_);
 
-    UserTransport *                                            userTransport_;
+    UserTransport * userTransport_;
 
     KaaObservable<void (const AttachedEndpoints&), IAttachedEndpointListListener *> attachedEPListListeners_;
     KAA_R_MUTEX_DECLARE(listenerGuard_);
 
-    IEndpointAttachStatusListener*                             attachStatusListener_;
+    IEndpointAttachStatusListener* attachStatusListener_;
 };
 
 }

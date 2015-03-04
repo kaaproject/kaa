@@ -37,7 +37,10 @@ public:
     virtual std::string getHeaderField(const std::string& name) const = 0;
     virtual SharedBody getBody() const = 0;
     virtual int getStatusCode() const = 0;
-    virtual ~IHttpResponse() { };
+    virtual ~IHttpResponse()
+    {
+    }
+    ;
 };
 
 }

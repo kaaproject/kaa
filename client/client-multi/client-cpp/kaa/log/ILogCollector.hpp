@@ -86,7 +86,9 @@ public:
      */
     virtual void onLogUploadResponse(const LogSyncResponse& response) = 0;
 
-    virtual ~ILogCollector() {}
+    virtual ~ILogCollector()
+    {
+    }
 };
 
 }  // namespace kaa

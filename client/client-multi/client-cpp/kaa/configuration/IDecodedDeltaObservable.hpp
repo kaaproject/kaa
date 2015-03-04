@@ -47,7 +47,10 @@ public:
      */
     virtual void unsubscribeFromUpdates(IGenericDeltaReceiver &receiver) = 0;
 
-    virtual ~IDecodedDeltaObservable() {};
+    virtual ~IDecodedDeltaObservable()
+    {
+    }
+    ;
 };
 
 }  // namespace kaa

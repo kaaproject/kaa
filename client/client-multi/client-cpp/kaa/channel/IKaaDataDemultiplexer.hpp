@@ -40,10 +40,11 @@ public:
      */
     virtual void processResponse(const std::vector<std::uint8_t> &response) = 0;
 
-    virtual ~IKaaDataDemultiplexer() {}
+    virtual ~IKaaDataDemultiplexer()
+    {
+    }
 };
 
 }  // namespace kaa
-
 
 #endif /* IKAADATADEMULTIPLEXER_HPP_ */

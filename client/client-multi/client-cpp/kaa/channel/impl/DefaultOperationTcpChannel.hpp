@@ -37,13 +37,12 @@
 #include "kaa/channel/ITransportConnectionInfo.hpp"
 #include "kaa/channel/TransportProtocolIdConstants.hpp"
 
-
 namespace kaa {
 
 class IKaaTcpRequest;
 class KeyPair;
 
-class DefaultOperationTcpChannel : public IDataChannel {
+class DefaultOperationTcpChannel: public IDataChannel {
 public:
     DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys);
     virtual ~DefaultOperationTcpChannel();
@@ -52,9 +51,13 @@ public:
     virtual void syncAll();
     virtual void syncAck(TransportType type);
 
-    virtual const std::string& getId() const { return CHANNEL_ID; }
+    virtual const std::string& getId() const
+    {
+        return CHANNEL_ID;
+    }
 
-    virtual TransportProtocolId getTransportProtocolId() const {
+    virtual TransportProtocolId getTransportProtocolId() const
+    {
         return TransportProtocolIdConstants::TCP_TRANSPORT_ID;
     }
 
@@ -62,7 +65,8 @@ public:
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
     virtual void setServer(ITransportConnectionInfoPtr server);
 
-    virtual ITransportConnectionInfoPtr getServer() {
+    virtual ITransportConnectionInfoPtr getServer()
+    {
         return std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_);
     }
 
@@ -70,16 +74,19 @@ public:
     virtual void pause();
     virtual void resume();
 
-    virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const {
+    virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const
+    {
         return SUPPORTED_TYPES;
     }
 
-    virtual ServerType getServerType() const {
+    virtual ServerType getServerType() const
+    {
         return ServerType::OPERATIONS;
     }
-    
-    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {
-        connectivityChecker_= checker;
+
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker)
+    {
+        connectivityChecker_ = checker;
     }
 
     void onReadEvent(const boost::system::error_code& err);
@@ -128,12 +135,7 @@ private:
     boost::asio::streambuf responseBuffer_;
     std::array<std::thread, THREADPOOL_SIZE> channelThreads_;
 
-    bool firstStart_;
-    bool isConnected_;
-    bool isFirstResponseReceived_;
-    bool isPendingSyncRequest_;
-    bool isShutdown_;
-    bool isPaused_;
+    bool firstStart_;bool isConnected_;bool isFirstResponseReceived_;bool isPendingSyncRequest_;bool isShutdown_;bool isPaused_;
 
     IKaaDataMultiplexer *multiplexer_;
     IKaaDataDemultiplexer *demultiplexer_;

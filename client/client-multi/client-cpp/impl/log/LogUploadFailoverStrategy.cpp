@@ -46,16 +46,15 @@ void LogUploadFailoverStrategy::onTimeout()
 void LogUploadFailoverStrategy::onFailure(LogDeliveryErrorCode code)
 {
     switch (code) {
-        case LogDeliveryErrorCode::NO_APPENDERS_CONFIGURED:
-        case LogDeliveryErrorCode::APPENDER_INTERNAL_ERROR:
-        case LogDeliveryErrorCode::REMOTE_CONNECTION_ERROR:
-        case LogDeliveryErrorCode::REMOTE_INTERNAL_ERROR:
-            isUploadApproved_ = false;
-            nextUploadAttemptTS_ = std::chrono::system_clock::now() +
-                                       std::chrono::seconds(RETRY_PERIOD_SEC_);
-            break;
-        default:
-            break;
+    case LogDeliveryErrorCode::NO_APPENDERS_CONFIGURED:
+    case LogDeliveryErrorCode::APPENDER_INTERNAL_ERROR:
+    case LogDeliveryErrorCode::REMOTE_CONNECTION_ERROR:
+    case LogDeliveryErrorCode::REMOTE_INTERNAL_ERROR:
+        isUploadApproved_ = false;
+        nextUploadAttemptTS_ = std::chrono::system_clock::now() + std::chrono::seconds(RETRY_PERIOD_SEC_);
+        break;
+    default:
+        break;
     }
 }
 

@@ -27,7 +27,7 @@
 namespace kaa {
 
 NotificationManager::NotificationManager(IKaaClientStateStoragePtr status)
-    : clientStatus_(status)
+        : clientStatus_(status)
 {
     const DetailedTopicStates& topicStates = clientStatus_->getTopicStates();
 
@@ -38,8 +38,9 @@ NotificationManager::NotificationManager(IKaaClientStateStoragePtr status)
         topic.subscriptionType = topicState.second.subscriptionType;
 
         if (topics_.insert(std::make_pair(topicState.first, topic)).second) {
-            KAA_LOG_INFO(boost::format("Loaded topic: id='%s', name='%s', type=%s")
-                % topic.id % topic.name % LoggingUtils::TopicSubscriptionTypeToString(topic.subscriptionType));
+            KAA_LOG_INFO(
+                    boost::format("Loaded topic: id='%s', name='%s', type=%s") % topic.id % topic.name
+                    % LoggingUtils::TopicSubscriptionTypeToString(topic.subscriptionType));
         }
     }
 }
@@ -47,8 +48,7 @@ NotificationManager::NotificationManager(IKaaClientStateStoragePtr status)
 void NotificationManager::topicsListUpdated(const Topics& topicList)
 {
     KAA_MUTEX_LOCKING("topicsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_)
-    KAA_MUTEX_LOCKED("topicsGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_)KAA_MUTEX_LOCKED("topicsGuard_");
 
     std::unordered_map<std::string/*Topic ID*/, Topic> newTopics;
 
@@ -59,8 +59,7 @@ void NotificationManager::topicsListUpdated(const Topics& topicList)
 
     {
         KAA_MUTEX_LOCKING("optionalListenersGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(optionalListenersLock, optionalListenersGuard_);
-        KAA_MUTEX_LOCKED("optionalListenersGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(optionalListenersLock, optionalListenersGuard_); KAA_MUTEX_LOCKED("optionalListenersGuard_");
 
         for (const auto& pair : topics_) {
             optionalListeners_.erase(pair.second.id);
@@ -69,8 +68,7 @@ void NotificationManager::topicsListUpdated(const Topics& topicList)
 
     topics_ = newTopics;
     KAA_MUTEX_UNLOCKING("topicsGuard_");
-    KAA_UNLOCK(topicsLock);
-    KAA_MUTEX_UNLOCKED("topicsGuard_");
+    KAA_UNLOCK(topicsLock); KAA_MUTEX_UNLOCKED("topicsGuard_");
 
     notifyTopicUpdateSubscribers(topicList);
 }
@@ -97,8 +95,8 @@ void NotificationManager::addTopicListListener(INotificationTopicListListenerPtr
         throw KaaException("Bad topic update listener");
     }
 
-    topicListeners_.addCallback(listener,
-            std::bind(&INotificationTopicListListener::onListUpdated, listener, std::placeholders::_1));
+    topicListeners_.addCallback(
+            listener, std::bind(&INotificationTopicListListener::onListUpdated, listener, std::placeholders::_1));
 }
 
 void NotificationManager::removeTopicListListener(INotificationTopicListListenerPtr listener)
@@ -114,8 +112,7 @@ void NotificationManager::removeTopicListListener(INotificationTopicListListener
 Topics NotificationManager::getTopics()
 {
     KAA_MUTEX_LOCKING("topicsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_);
-    KAA_MUTEX_LOCKED("topicsGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_); KAA_MUTEX_LOCKED("topicsGuard_");
 
     std::vector<Topic> topicList;
     topicList.resize(topics_.size());
@@ -135,9 +132,10 @@ void NotificationManager::addNotificationListener(INotificationListenerPtr liste
         throw KaaException("Bad notification listener");
     }
 
-    mandatoryListeners_.addCallback(listener,
-            std::bind(&INotificationListener::onNotificationRaw, listener,
-                    std::placeholders::_1, std::placeholders::_2));
+    mandatoryListeners_.addCallback(
+            listener,
+            std::bind(&INotificationListener::onNotificationRaw, listener, std::placeholders::_1,
+                      std::placeholders::_2));
 }
 
 void NotificationManager::addNotificationListener(const std::string& topidId, INotificationListenerPtr listener)
@@ -154,14 +152,16 @@ void NotificationManager::addNotificationListener(const std::string& topidId, IN
 
     auto it = optionalListeners_.find(topidId);
     if (it != optionalListeners_.end()) {
-        it->second->addCallback(listener,
-                std::bind(&INotificationListener::onNotificationRaw, listener,
-                        std::placeholders::_1, std::placeholders::_2));
+        it->second->addCallback(
+                listener,
+                std::bind(&INotificationListener::onNotificationRaw, listener, std::placeholders::_1,
+                          std::placeholders::_2));
     } else {
         NotificationObservablePtr listeners(new NotificationObservable);
-        listeners->addCallback(listener,
-                std::bind(&INotificationListener::onNotificationRaw, listener,
-                        std::placeholders::_1, std::placeholders::_2));
+        listeners->addCallback(
+                listener,
+                std::bind(&INotificationListener::onNotificationRaw, listener, std::placeholders::_1,
+                          std::placeholders::_2));
         optionalListeners_.insert(std::make_pair(topidId, listeners));
     }
 }
@@ -189,8 +189,7 @@ void NotificationManager::removeNotificationListener(const std::string& topidId,
     }
 
     KAA_MUTEX_LOCKING("optionalListenersGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(notificationListenersLock, optionalListenersGuard_);
-    KAA_MUTEX_LOCKED("optionalListenersGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(notificationListenersLock, optionalListenersGuard_); KAA_MUTEX_LOCKED("optionalListenersGuard_");
 
     auto it = optionalListeners_.find(topidId);
     if (it != optionalListeners_.end()) {
@@ -274,8 +273,7 @@ void NotificationManager::unsubscribeFromTopics(const std::list<std::string>& id
 void NotificationManager::sync()
 {
     KAA_MUTEX_LOCKING("subscriptionsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_);
-    KAA_MUTEX_LOCKED("subscriptionsGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_); KAA_MUTEX_LOCKED("subscriptionsGuard_");
 
     if (!subscriptions_.empty()) {
         KAA_LOG_INFO("Sending info about new optional topic subscription...");
@@ -288,8 +286,7 @@ void NotificationManager::sync()
 void NotificationManager::updateSubscriptionInfo(const std::string& id, SubscriptionCommandType type)
 {
     KAA_MUTEX_LOCKING("subscriptionsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_);
-    KAA_MUTEX_LOCKED("subscriptionsGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_); KAA_MUTEX_LOCKED("subscriptionsGuard_");
 
     SubscriptionCommand cmd;
     cmd.command = type;
@@ -300,8 +297,7 @@ void NotificationManager::updateSubscriptionInfo(const std::string& id, Subscrip
 void NotificationManager::updateSubscriptionInfo(const SubscriptionCommands& newSubscriptions)
 {
     KAA_MUTEX_LOCKING("subscriptionsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_);
-    KAA_MUTEX_LOCKED("subscriptionsGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_); KAA_MUTEX_LOCKED("subscriptionsGuard_");
 
     subscriptions_.insert(subscriptions_.end(), newSubscriptions.begin(), newSubscriptions.end());
 }
@@ -310,8 +306,7 @@ const Topic& NotificationManager::findTopic(const std::string& id)
 {
     try {
         KAA_MUTEX_LOCKING("topicsGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_);
-        KAA_MUTEX_LOCKED("topicsGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_); KAA_MUTEX_LOCKED("topicsGuard_");
 
         return topics_.at(id);
     } catch (const std::out_of_range&) {
@@ -334,8 +329,7 @@ bool NotificationManager::notifyOptionalNotificationSubscribers(const Notificati
 {
     bool notified = false;
     KAA_MUTEX_LOCKING("optionalListenersGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(optionalListenersLock, optionalListenersGuard_);
-    KAA_MUTEX_LOCKED("optionalListenersGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(optionalListenersLock, optionalListenersGuard_); KAA_MUTEX_LOCKED("optionalListenersGuard_");
 
     auto it = optionalListeners_.find(notification.topicId);
     if (it != optionalListeners_.end()) {
@@ -346,12 +340,13 @@ bool NotificationManager::notifyOptionalNotificationSubscribers(const Notificati
     return notified;
 }
 
-void NotificationManager::setTransport(std::shared_ptr<NotificationTransport> transport) {
-       if (transport) {
-           transport_ = transport;
-           transport_->setNotificationProcessor(this);
-       }
-   }
+void NotificationManager::setTransport(std::shared_ptr<NotificationTransport> transport)
+{
+    if (transport) {
+        transport_ = transport;
+        transport_->setNotificationProcessor(this);
+    }
+}
 
 } /* namespace kaa */
 

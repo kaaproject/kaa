@@ -38,14 +38,18 @@ namespace kaa {
  * notifies registered observers (derived from @link IConfigurationReceiver @endlink)
  * with root configuration object presented as @link KaaRootConfiguration @endlink.
  */
-class ConfigurationManager : public IConfigurationManager,
-                             public IConfigurationProcessedObserver,
-                             public IGenericDeltaReceiver
+class ConfigurationManager: public IConfigurationManager,
+                            public IConfigurationProcessedObserver,
+                            public IGenericDeltaReceiver
 
 {
 public:
-    ConfigurationManager() {}
-    ~ConfigurationManager() {}
+    ConfigurationManager()
+    {
+    }
+    ~ConfigurationManager()
+    {
+    }
 
     void onDeltaReceived(int index, const KaaRootConfiguration& datum, bool fullResync);
 
@@ -68,7 +72,8 @@ private:
     KaaObservable<void (const KaaRootConfiguration &), IConfigurationReceiver *> configurationReceivers_;
 };
 
-}  // namespace kaa
+}
+  // namespace kaa
 
 #endif
 

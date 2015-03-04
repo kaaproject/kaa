@@ -19,7 +19,7 @@
 namespace kaa {
 
 RedirectionTransport::RedirectionTransport(IBootstrapManager &manager)
-    : manager_(manager)
+        : manager_(manager)
 {
 
 }
@@ -30,5 +30,4 @@ void RedirectionTransport::onRedirectionResponse(const RedirectSyncResponse& res
 }
 
 }  // namespace kaa
-
 

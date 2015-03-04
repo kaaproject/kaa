@@ -35,35 +35,48 @@ namespace kaa {
 
 class LoggingUtils {
 public:
-    static std::string NotificationSyncRequestToString(const SyncRequest::notificationSyncRequest_t& request) {
+    static std::string NotificationSyncRequestToString(const SyncRequest::notificationSyncRequest_t& request)
+    {
         std::ostringstream ss;
         if (!request.is_null()) {
             ss << KVSTRING(appStateSeqNumber, request.get_NotificationSyncRequest().appStateSeqNumber) << ", ";
-            ss << KVSTRING(acceptedUnicastNotifications,
-                    AcceptedUnicastNotificationsToString(request.get_NotificationSyncRequest().acceptedUnicastNotifications)) << ", ";
-            ss << KVSTRING(subscriptionCommands, SubscriptionCommandsToString(request.get_NotificationSyncRequest().subscriptionCommands)) << ", ";
+            ss << KVSTRING(
+                    acceptedUnicastNotifications,
+                    AcceptedUnicastNotificationsToString(
+                            request.get_NotificationSyncRequest().acceptedUnicastNotifications))
+               << ", ";
+            ss << KVSTRING(subscriptionCommands,
+                           SubscriptionCommandsToString(request.get_NotificationSyncRequest().subscriptionCommands))
+               << ", ";
             ss << KVSTRING(topicStates, TopicStatesToString(request.get_NotificationSyncRequest().topicStates)) << ", ";
-            ss << KVSTRING(topicListHash, (request.get_NotificationSyncRequest().topicListHash.is_null() ? "null" :
-                    ByteArrayToString(request.get_NotificationSyncRequest().topicListHash.get_bytes())));
+            ss << KVSTRING(
+                    topicListHash,
+                    (request.get_NotificationSyncRequest().topicListHash.is_null() ?
+                            "null" : ByteArrayToString(request.get_NotificationSyncRequest().topicListHash.get_bytes())));
         } else {
             ss << "null";
         }
         return ss.str();
     }
 
-    static std::string ConfigurationSyncRequestToString(const SyncRequest::configurationSyncRequest_t& request) {
+    static std::string ConfigurationSyncRequestToString(const SyncRequest::configurationSyncRequest_t& request)
+    {
         std::ostringstream ss;
         if (!request.is_null()) {
             ss << KVSTRING(appStateSeqNumber, request.get_ConfigurationSyncRequest().appStateSeqNumber);
-            ss << KVSTRING(configurationHash,
-                    (request.get_ConfigurationSyncRequest().configurationHash.is_null() ? "null" : ByteArrayToString(request.get_ConfigurationSyncRequest().configurationHash.get_bytes())));
+            ss << KVSTRING(
+                    configurationHash,
+                    (request.get_ConfigurationSyncRequest().configurationHash.is_null() ?
+                            "null" :
+                            ByteArrayToString(request.get_ConfigurationSyncRequest().configurationHash.get_bytes())));
         } else {
             ss << "null";
         }
         return ss.str();
     }
 
-    static std::string ProtocolVersionToString(const ProtocolVersionPair& protocolVersion) {
+    static std::string ProtocolVersionToString(const ProtocolVersionPair& protocolVersion)
+    {
         std::ostringstream ss;
 
         ss << "[" << std::hex << "id=0x" << protocolVersion.id << std::dec << ",";
@@ -72,7 +85,8 @@ public:
         return ss.str();
     }
 
-    static std::string BootstrapSyncRequestToString(const SyncRequest::bootstrapSyncRequest_t& request) {
+    static std::string BootstrapSyncRequestToString(const SyncRequest::bootstrapSyncRequest_t& request)
+    {
         std::ostringstream ss;
         if (!request.is_null()) {
             const auto& syncRequest = request.get_BootstrapSyncRequest();
@@ -98,7 +112,8 @@ public:
         return ss.str();
     }
 
-    static std::string ProfileSyncRequestToString(const SyncRequest::profileSyncRequest_t& request) {
+    static std::string ProfileSyncRequestToString(const SyncRequest::profileSyncRequest_t& request)
+    {
         std::ostringstream ss;
         if (!request.is_null()) {
             if (!request.get_ProfileSyncRequest().endpointAccessToken.is_null()) {
@@ -107,7 +122,8 @@ public:
                 ss << KVSTRING(endpointAccessToken, "null");
             }
             if (!request.get_ProfileSyncRequest().endpointPublicKey.is_null()) {
-                ss << KVSTRING(endpointPublicKey, ByteArrayToString(request.get_ProfileSyncRequest().endpointPublicKey.get_bytes()));
+                ss << KVSTRING(endpointPublicKey,
+                               ByteArrayToString(request.get_ProfileSyncRequest().endpointPublicKey.get_bytes()));
             } else {
                 ss << KVSTRING(endpointPublicKey, "null");
             }
@@ -120,14 +136,17 @@ public:
             ss << KVSTRING(userNfVersion, request.get_ProfileSyncRequest().versionInfo.userNfVersion);
             ss << KVSTRING(logSchemaVersion, request.get_ProfileSyncRequest().versionInfo.logSchemaVersion);
 
-            ss << KVSTRING(eventFamilyVersions, EventFamilyVersionsToString(request.get_ProfileSyncRequest().versionInfo.eventFamilyVersions));
+            ss << KVSTRING(
+                    eventFamilyVersions,
+                    EventFamilyVersionsToString(request.get_ProfileSyncRequest().versionInfo.eventFamilyVersions));
         } else {
             ss << "null";
         }
         return ss.str();
     }
 
-    static std::string MetaDataSyncRequestToString(const SyncRequest::syncRequestMetaData_t& request) {
+    static std::string MetaDataSyncRequestToString(const SyncRequest::syncRequestMetaData_t& request)
+    {
         std::ostringstream ss;
         if (!request.is_null()) {
             const auto& syncRequest = request.get_SyncRequestMetaData();
@@ -137,7 +156,8 @@ public:
             if (syncRequest.endpointPublicKeyHash.is_null()) {
                 ss << KVSTRING(endpointPublicKeyHash, "null") << ",";
             } else {
-                ss << KVSTRING(endpointPublicKeyHash, ByteArrayToString(syncRequest.endpointPublicKeyHash.get_bytes())) << ",";
+                ss <<KVSTRING(endpointPublicKeyHash, ByteArrayToString(syncRequest.endpointPublicKeyHash.get_bytes()))
+                   << ",";
             }
 
             if (syncRequest.profileHash.is_null()) {
@@ -157,18 +177,21 @@ public:
         return ss.str();
     }
 
-    static std::string EventSyncRequestToString(const SyncRequest::eventSyncRequest_t& request) {
+    static std::string EventSyncRequestToString(const SyncRequest::eventSyncRequest_t& request)
+    {
         std::ostringstream ss;
         if (!request.is_null()) {
             ss << KVSTRING(events, OutcomingEventsToString(request.get_EventSyncRequest().events));
-            ss << KVSTRING(eventListenersRequest, EventListenersRequestToString(request.get_EventSyncRequest().eventListenersRequests));
+            ss << KVSTRING(eventListenersRequest,
+                           EventListenersRequestToString(request.get_EventSyncRequest().eventListenersRequests));
         } else {
             ss << "null";
         }
         return ss.str();
     }
 
-    static std::string AttachUserRequestToString(const UserSyncRequest::userAttachRequest_t& request) {
+    static std::string AttachUserRequestToString(const UserSyncRequest::userAttachRequest_t& request)
+    {
         std::ostringstream ss;
         if (!request.is_null()) {
             ss << KVSTRING(userAccessToken, request.get_UserAttachRequest().userAccessToken);
@@ -179,40 +202,47 @@ public:
         return ss.str();
     }
 
-    static std::string UserSyncRequestToString(const SyncRequest::userSyncRequest_t& request) {
+    static std::string UserSyncRequestToString(const SyncRequest::userSyncRequest_t& request)
+    {
         std::ostringstream ss;
         if (!request.is_null()) {
-            ss << KVSTRING(endpointAttachRequests, AttachEPRequestsToString(request.get_UserSyncRequest().endpointAttachRequests));
-            ss << KVSTRING(endpointDetachRequests, DetachEPRequestsToString(request.get_UserSyncRequest().endpointDetachRequests));
-            ss << KVSTRING(userAttachRequest, AttachUserRequestToString(request.get_UserSyncRequest().userAttachRequest));
+            ss << KVSTRING(endpointAttachRequests,
+                           AttachEPRequestsToString(request.get_UserSyncRequest().endpointAttachRequests));
+            ss << KVSTRING(endpointDetachRequests,
+                           DetachEPRequestsToString(request.get_UserSyncRequest().endpointDetachRequests));
+            ss << KVSTRING(userAttachRequest,
+                           AttachUserRequestToString(request.get_UserSyncRequest().userAttachRequest));
         } else {
             ss << "null";
         }
         return ss.str();
     }
 
-    static std::string ConfigurationSyncResponseToString(const SyncResponse::configurationSyncResponse_t& response) {
+    static std::string ConfigurationSyncResponseToString(const SyncResponse::configurationSyncResponse_t& response)
+    {
         std::ostringstream ss;
         if (!response.is_null()) {
             ss << KVSTRING(appStateSeqNumber, response.get_ConfigurationSyncResponse().appStateSeqNumber);
-            ss << KVSTRING(confDeltaBody,
-                    (response.get_ConfigurationSyncResponse().confDeltaBody.is_null()
-                            ? "null"
-                            : ByteArrayToString(response.get_ConfigurationSyncResponse().confDeltaBody.get_bytes()))
-                              );
-            ss << KVSTRING(confSchemaBody,
-                    (response.get_ConfigurationSyncResponse().confSchemaBody.is_null()
-                            ? "null"
-                            : ByteArrayToString(response.get_ConfigurationSyncResponse().confSchemaBody.get_bytes()))
-                              );
-            ss <<  KVSTRING(responseStatus, SyncResponseStatusToString(response.get_ConfigurationSyncResponse().responseStatus));
+            ss << KVSTRING(
+                    confDeltaBody,
+                    (response.get_ConfigurationSyncResponse().confDeltaBody.is_null() ?
+                            "null" :
+                            ByteArrayToString(response.get_ConfigurationSyncResponse().confDeltaBody.get_bytes())));
+            ss << KVSTRING(
+                    confSchemaBody,
+                    (response.get_ConfigurationSyncResponse().confSchemaBody.is_null() ?
+                            "null" :
+                            ByteArrayToString(response.get_ConfigurationSyncResponse().confSchemaBody.get_bytes())));
+            ss << KVSTRING(responseStatus,
+                           SyncResponseStatusToString(response.get_ConfigurationSyncResponse().responseStatus));
         } else {
             ss << "null";
         }
         return ss.str();
     }
 
-    static std::string ProfileSyncResponseToString(const SyncResponse::profileSyncResponse_t& response) {
+    static std::string ProfileSyncResponseToString(const SyncResponse::profileSyncResponse_t& response)
+    {
         std::ostringstream ss;
         if (!response.is_null()) {
             ss << KVSTRING(profileBody, SyncResponseStatusToString(response.get_ProfileSyncResponse().responseStatus));
@@ -222,7 +252,8 @@ public:
         return ss.str();
     }
 
-    static std::string BootstrapSyncResponseToString(const SyncResponse::bootstrapSyncResponse_t& response) {
+    static std::string BootstrapSyncResponseToString(const SyncResponse::bootstrapSyncResponse_t& response)
+    {
         std::ostringstream ss;
         if (!response.is_null()) {
             const auto& bootstrapSync = response.get_BootstrapSyncResponse();
@@ -251,24 +282,32 @@ public:
         return ss.str();
     }
 
-    static std::string EventSyncResponseToString(const SyncResponse::eventSyncResponse_t& response) {
+    static std::string EventSyncResponseToString(const SyncResponse::eventSyncResponse_t& response)
+    {
         std::ostringstream ss;
         if (!response.is_null()) {
             ss << KVSTRING(events, IncomingEventsToString(response.get_EventSyncResponse().events));
-            ss << KVSTRING(eventListenersResponse, EventListenersResponseToString(response.get_EventSyncResponse().eventListenersResponses));
-            ss << KVSTRING(eventSequenceNumberResponse, EventSequenceNumberResponseToString(response.get_EventSyncResponse().eventSequenceNumberResponse));
+            ss << KVSTRING(eventListenersResponse,
+                           EventListenersResponseToString(response.get_EventSyncResponse().eventListenersResponses));
+            ss << KVSTRING(
+                    eventSequenceNumberResponse,
+                    EventSequenceNumberResponseToString(response.get_EventSyncResponse().eventSequenceNumberResponse));
         } else {
             ss << "null";
         }
         return ss.str();
     }
 
-    static std::string NotificationSyncResponseToString(const SyncResponse::notificationSyncResponse_t& response) {
+    static std::string NotificationSyncResponseToString(const SyncResponse::notificationSyncResponse_t& response)
+    {
         std::ostringstream ss;
         if (!response.is_null()) {
-            ss << KVSTRING(responseStatus, SyncResponseStatusToString(response.get_NotificationSyncResponse().responseStatus)) << ", ";
+            ss << KVSTRING(responseStatus,
+                           SyncResponseStatusToString(response.get_NotificationSyncResponse().responseStatus))
+               << ", ";
             ss << KVSTRING(appStateSeqNumber, response.get_NotificationSyncResponse().appStateSeqNumber) << ", ";
-            ss << KVSTRING(availableTopics, TopicsToString(response.get_NotificationSyncResponse().availableTopics)) << ", ";
+            ss << KVSTRING(availableTopics, TopicsToString(response.get_NotificationSyncResponse().availableTopics))
+               << ", ";
             ss << KVSTRING(notifications, NotificationToString(response.get_NotificationSyncResponse().notifications));
         } else {
             ss << "null";
@@ -276,7 +315,8 @@ public:
         return ss.str();
     }
 
-    static std::string AttachUserResponseToString(const UserSyncResponse::userAttachResponse_t& response) {
+    static std::string AttachUserResponseToString(const UserSyncResponse::userAttachResponse_t& response)
+    {
         std::ostringstream ss;
         if (!response.is_null()) {
             ss << KVSTRING(result, RequestResultTypeToString(response.get_UserAttachResponse().result));
@@ -286,7 +326,8 @@ public:
         return ss.str();
     }
 
-    static std::string DetachUserNotificationToString(const UserSyncResponse::userDetachNotification_t& response) {
+    static std::string DetachUserNotificationToString(const UserSyncResponse::userDetachNotification_t& response)
+    {
         std::ostringstream ss;
         if (!response.is_null()) {
             ss << KVSTRING(accessToken, response.get_UserDetachNotification().endpointAccessToken);
@@ -296,20 +337,26 @@ public:
         return ss.str();
     }
 
-    static std::string UserSyncResponseToString(const SyncResponse::userSyncResponse_t& response) {
+    static std::string UserSyncResponseToString(const SyncResponse::userSyncResponse_t& response)
+    {
         std::ostringstream ss;
         if (!response.is_null()) {
-            ss << KVSTRING(endpointAttachResponses, AttachEPResponsesToString(response.get_UserSyncResponse().endpointAttachResponses));
-            ss << KVSTRING(endpointDetachResponses, DetachEPResponsesToString(response.get_UserSyncResponse().endpointDetachResponses));
-            ss << KVSTRING(userAttachResponse, AttachUserResponseToString(response.get_UserSyncResponse().userAttachResponse));
-            ss << KVSTRING(userDetachNotification, DetachUserNotificationToString(response.get_UserSyncResponse().userDetachNotification));
+            ss << KVSTRING(endpointAttachResponses,
+                           AttachEPResponsesToString(response.get_UserSyncResponse().endpointAttachResponses));
+            ss << KVSTRING(endpointDetachResponses,
+                           DetachEPResponsesToString(response.get_UserSyncResponse().endpointDetachResponses));
+            ss << KVSTRING(userAttachResponse,
+                           AttachUserResponseToString(response.get_UserSyncResponse().userAttachResponse));
+            ss << KVSTRING(userDetachNotification,
+                           DetachUserNotificationToString(response.get_UserSyncResponse().userDetachNotification));
         } else {
             ss << "null";
         }
         return ss.str();
     }
 
-    static std::string RedirectSyncResponseToString(const SyncResponse::redirectSyncResponse_t& response) {
+    static std::string RedirectSyncResponseToString(const SyncResponse::redirectSyncResponse_t& response)
+    {
         std::ostringstream ss;
         if (!response.is_null()) {
             ss << std::hex << "accessPointId: 0x" << response.get_RedirectSyncResponse().accessPointId;
@@ -319,13 +366,16 @@ public:
         return ss.str();
     }
 
-    static std::string TransportProtocolIdToString(const TransportProtocolId& protocolId) {
+    static std::string TransportProtocolIdToString(const TransportProtocolId& protocolId)
+    {
         std::ostringstream ss;
-        ss << "(protocol: id=0x" << std::hex << protocolId.getId() << ", version=" << std::dec << protocolId.getVersion() << ")";
+        ss << "(protocol: id=0x" << std::hex << protocolId.getId() << ", version=" << std::dec
+           << protocolId.getVersion() << ")";
         return ss.str();
     }
 
-    static std::string ByteArrayToString(const std::uint8_t* vec, const size_t& length) {
+    static std::string ByteArrayToString(const std::uint8_t* vec, const size_t& length)
+    {
         std::ostringstream ss;
         ss << "[ ";
         if (vec != nullptr && length > 0) {
@@ -337,36 +387,51 @@ public:
         return ss.str();
     }
 
-    static std::string ByteArrayToString(const std::vector<std::uint8_t>& vec) {
+    static std::string ByteArrayToString(const std::vector<std::uint8_t>& vec)
+    {
         return ByteArrayToString(vec.data(), vec.size());
     }
 
-    static std::string ByteArrayToString(const boost::shared_array<std::uint8_t>& vec, const size_t&length) {
+    static std::string ByteArrayToString(const boost::shared_array<std::uint8_t>& vec, const size_t&length)
+    {
         return ByteArrayToString(vec.get(), length);
     }
 
-    static std::string ByteArrayToString(const SharedDataBuffer& buffer) {
+    static std::string ByteArrayToString(const SharedDataBuffer& buffer)
+    {
         return ByteArrayToString(buffer.first, buffer.second);
     }
 
-    static std::string ByteArrayToString(const std::string& data) {
+    static std::string ByteArrayToString(const std::string& data)
+    {
         return ByteArrayToString(reinterpret_cast<const std::uint8_t*>(data.data()), data.length());
     }
 
-    static std::string SyncResponseStatusToString(SyncResponseStatus status) {
+    static std::string SyncResponseStatusToString(SyncResponseStatus status)
+    {
         std::string description;
 
         switch (status) {
-            case NO_DELTA: description = "NO_DELTA"; break;
-            case DELTA: description = "DELTA"; break;
-            case RESYNC: description = "RESYNC"; break;
-            default: description = "UNKNOWN"; break;
+        case NO_DELTA:
+            description = "NO_DELTA";
+            break;
+        case DELTA:
+            description = "DELTA";
+            break;
+        case RESYNC:
+            description = "RESYNC";
+            break;
+        default:
+            description = "UNKNOWN";
+            break;
         }
 
         return description;
     }
 
-    static std::string AcceptedUnicastNotificationsToString(const NotificationSyncRequest::acceptedUnicastNotifications_t& notifications) {
+    static std::string AcceptedUnicastNotificationsToString(
+            const NotificationSyncRequest::acceptedUnicastNotifications_t& notifications)
+    {
         std::ostringstream stream;
 
         if (!notifications.is_null()) {
@@ -374,7 +439,9 @@ public:
             stream << "[";
             for (auto it = container.begin(); it != container.end(); ++it) {
                 stream << *it;
-                if ((it + 1) != container.end()) { stream << ", "; }
+                if ((it + 1) != container.end()) {
+                    stream << ", ";
+                }
             }
             stream << "]";
         } else {
@@ -384,7 +451,8 @@ public:
         return stream.str();
     }
 
-    static std::string TopicStatesToString(const NotificationSyncRequest::topicStates_t& states) {
+    static std::string TopicStatesToString(const NotificationSyncRequest::topicStates_t& states)
+    {
         std::ostringstream stream;
 
         if (!states.is_null()) {
@@ -392,7 +460,9 @@ public:
             stream << "[";
             for (auto it = container.begin(); it != container.end(); ++it) {
                 stream << "{id: " << it->topicId << ", sn: " << it->seqNumber << "}";
-                if ((it + 1) != container.end()) { stream << ", "; }
+                if ((it + 1) != container.end()) {
+                    stream << ", ";
+                }
             }
             stream << "]";
         } else {
@@ -402,7 +472,8 @@ public:
         return stream.str();
     }
 
-    static std::string SubscriptionCommandsToString(const NotificationSyncRequest::subscriptionCommands_t& commands) {
+    static std::string SubscriptionCommandsToString(const NotificationSyncRequest::subscriptionCommands_t& commands)
+    {
         std::ostringstream stream;
 
         if (!commands.is_null()) {
@@ -410,7 +481,9 @@ public:
             stream << "[";
             for (auto it = container.begin(); it != container.end(); ++it) {
                 stream << "{id: " << it->topicId << ", cmd: " << SubscriptionCommandToString(it->command) << "}";
-                if ((it + 1) != container.end()) { stream << ", "; }
+                if ((it + 1) != container.end()) {
+                    stream << ", ";
+                }
             }
             stream << "]";
         } else {
@@ -420,19 +493,27 @@ public:
         return stream.str();
     }
 
-    static std::string SubscriptionCommandToString(SubscriptionCommandType type) {
+    static std::string SubscriptionCommandToString(SubscriptionCommandType type)
+    {
         std::string description;
 
         switch (type) {
-            case ADD: description = "ADD"; break;
-            case REMOVE: description = "REMOVE"; break;
-            default: description = "UNKNOWN"; break;
+        case ADD:
+            description = "ADD";
+            break;
+        case REMOVE:
+            description = "REMOVE";
+            break;
+        default:
+            description = "UNKNOWN";
+            break;
         }
 
         return description;
     }
 
-    static std::string SingleNotificationToString(const Notification& notification) {
+    static std::string SingleNotificationToString(const Notification& notification)
+    {
         std::ostringstream stream;
         stream << "{";
         stream << KVSTRING(id, notification.topicId) << ", ";
@@ -443,7 +524,8 @@ public:
         return stream.str();
     }
 
-    static std::string NotificationToString(const NotificationSyncResponse::notifications_t& notifications) {
+    static std::string NotificationToString(const NotificationSyncResponse::notifications_t& notifications)
+    {
         std::ostringstream stream;
 
         if (!notifications.is_null()) {
@@ -456,7 +538,9 @@ public:
                 stream << KVSTRING(sn, (it->seqNumber.is_null() ? 0 : it->seqNumber.get_int())) << ", ";
                 stream << KVSTRING(uid, (it->uid.is_null() ? "null" : it->uid.get_string()));
                 stream << "}";
-                if ((it + 1) != container.end()) { stream << ", "; }
+                if ((it + 1) != container.end()) {
+                    stream << ", ";
+                }
             }
             stream << "]";
         } else {
@@ -466,19 +550,27 @@ public:
         return stream.str();
     }
 
-    static std::string NotificationTypeToString(NotificationType type) {
+    static std::string NotificationTypeToString(NotificationType type)
+    {
         std::string description;
 
         switch (type) {
-            case SYSTEM: description = "SYSTEM"; break;
-            case CUSTOM: description = "CUSTOM"; break;
-            default: description = "UNKNOWN"; break;
+        case SYSTEM:
+            description = "SYSTEM";
+            break;
+        case CUSTOM:
+            description = "CUSTOM";
+            break;
+        default:
+            description = "UNKNOWN";
+            break;
         }
 
         return description;
     }
 
-    static std::string TopicsToString(const NotificationSyncResponse::availableTopics_t& topics) {
+    static std::string TopicsToString(const NotificationSyncResponse::availableTopics_t& topics)
+    {
         std::ostringstream stream;
 
         if (!topics.is_null()) {
@@ -486,7 +578,9 @@ public:
             stream << "[";
             for (auto it = container.begin(); it != container.end(); ++it) {
                 stream << "{id: " << it->id << ", type: " << TopicSubscriptionTypeToString(it->subscriptionType) << "}";
-                if ((it + 1) != container.end()) { stream << ", "; }
+                if ((it + 1) != container.end()) {
+                    stream << ", ";
+                }
             }
             stream << "]";
         } else {
@@ -496,19 +590,27 @@ public:
         return stream.str();
     }
 
-    static std::string TopicSubscriptionTypeToString(SubscriptionType type) {
+    static std::string TopicSubscriptionTypeToString(SubscriptionType type)
+    {
         std::string description;
 
         switch (type) {
-            case MANDATORY: description = "MANDATORY"; break;
-            case OPTIONAL: description = "OPTIONAL"; break;
-            default: description = "UNKNOWN"; break;
+        case MANDATORY:
+            description = "MANDATORY";
+            break;
+        case OPTIONAL:
+            description = "OPTIONAL";
+            break;
+        default:
+            description = "UNKNOWN";
+            break;
         }
 
         return description;
     }
 
-    static std::string AttachEPRequestsToString(const UserSyncRequest::endpointAttachRequests_t& attachRequests) {
+    static std::string AttachEPRequestsToString(const UserSyncRequest::endpointAttachRequests_t& attachRequests)
+    {
         std::ostringstream stream;
 
         if (!attachRequests.is_null()) {
@@ -516,7 +618,9 @@ public:
             stream << "[";
             for (auto it = container.begin(); it != container.end(); ++it) {
                 stream << "{id: " << it->requestId << ", token: " << it->endpointAccessToken << "}";
-                if ((it + 1) != container.end()) { stream << ", "; }
+                if ((it + 1) != container.end()) {
+                    stream << ", ";
+                }
             }
             stream << "]";
         } else {
@@ -526,7 +630,8 @@ public:
         return stream.str();
     }
 
-    static std::string DetachEPRequestsToString(const UserSyncRequest::endpointDetachRequests_t& detachRequests) {
+    static std::string DetachEPRequestsToString(const UserSyncRequest::endpointDetachRequests_t& detachRequests)
+    {
         std::ostringstream stream;
 
         if (!detachRequests.is_null()) {
@@ -534,7 +639,9 @@ public:
             stream << "[";
             for (auto it = container.begin(); it != container.end(); ++it) {
                 stream << "{id: " << it->requestId << ", epHash: " << it->endpointKeyHash << "}";
-                if ((it + 1) != container.end()) { stream << ", "; }
+                if ((it + 1) != container.end()) {
+                    stream << ", ";
+                }
             }
             stream << "]";
         } else {
@@ -544,7 +651,8 @@ public:
         return stream.str();
     }
 
-    static std::string AttachEPResponsesToString(const UserSyncResponse::endpointAttachResponses_t& attachResponses) {
+    static std::string AttachEPResponsesToString(const UserSyncResponse::endpointAttachResponses_t& attachResponses)
+    {
         std::ostringstream stream;
 
         if (!attachResponses.is_null()) {
@@ -552,9 +660,12 @@ public:
             stream << "[";
             for (auto it = container.begin(); it != container.end(); ++it) {
                 stream << "{id: " << it->requestId << ", ";
-                stream << "token: " << (it->endpointKeyHash.is_null() ? "null" : it->endpointKeyHash.get_string()) << ", ";
+                stream << "token: " << (it->endpointKeyHash.is_null() ? "null" : it->endpointKeyHash.get_string())
+                       << ", ";
                 stream << "type: " << RequestResultTypeToString(it->result) << "}";
-                if ((it + 1) != container.end()) { stream << ", "; }
+                if ((it + 1) != container.end()) {
+                    stream << ", ";
+                }
             }
             stream << "]";
         } else {
@@ -564,7 +675,8 @@ public:
         return stream.str();
     }
 
-    static std::string DetachEPResponsesToString(const UserSyncResponse::endpointDetachResponses_t& detachResponse) {
+    static std::string DetachEPResponsesToString(const UserSyncResponse::endpointDetachResponses_t& detachResponse)
+    {
         std::ostringstream stream;
 
         if (!detachResponse.is_null()) {
@@ -573,7 +685,9 @@ public:
             for (auto it = container.begin(); it != container.end(); ++it) {
                 stream << "{id: " << it->requestId << ", ";
                 stream << "epHash: " << RequestResultTypeToString(it->result) << "}";
-                if ((it + 1) != container.end()) { stream << ", "; }
+                if ((it + 1) != container.end()) {
+                    stream << ", ";
+                }
             }
             stream << "]";
         } else {
@@ -583,21 +697,33 @@ public:
         return stream.str();
     }
 
-    static std::string RequestResultTypeToString(SyncResponseResultType type) {
+    static std::string RequestResultTypeToString(SyncResponseResultType type)
+    {
         std::string description;
 
         switch (type) {
-            case SyncResponseResultType::SUCCESS: description = "SUCCESS"; break;
-            case SyncResponseResultType::FAILURE: description = "FAILURE"; break;
-            case SyncResponseResultType::REDIRECT: description = "REDIRECT"; break;
-            case SyncResponseResultType::PROFILE_RESYNC: description = "PROFILE_RESYNC"; break;
-            default: description = "UNKNOWN"; break;
+        case SyncResponseResultType::SUCCESS:
+            description = "SUCCESS";
+            break;
+        case SyncResponseResultType::FAILURE:
+            description = "FAILURE";
+            break;
+        case SyncResponseResultType::REDIRECT:
+            description = "REDIRECT";
+            break;
+        case SyncResponseResultType::PROFILE_RESYNC:
+            description = "PROFILE_RESYNC";
+            break;
+        default:
+            description = "UNKNOWN";
+            break;
         }
 
         return description;
     }
 
-    static std::string EventFamilyVersionsToString(const EndpointVersionInfo::eventFamilyVersions_t& versions) {
+    static std::string EventFamilyVersionsToString(const EndpointVersionInfo::eventFamilyVersions_t& versions)
+    {
         std::ostringstream stream;
 
         if (!versions.is_null()) {
@@ -606,7 +732,9 @@ public:
             for (auto it = container.begin(); it != container.end(); ++it) {
                 stream << "{name: " << it->name << ", ";
                 stream << "version: " << it->version << "}";
-                if ((it + 1) != container.end()) { stream << ", "; }
+                if ((it + 1) != container.end()) {
+                    stream << ", ";
+                }
             }
             stream << "]";
         } else {
@@ -616,7 +744,8 @@ public:
         return stream.str();
     }
 
-    static std::string OutcomingEventsToString(const EventSyncRequest::events_t& events) {
+    static std::string OutcomingEventsToString(const EventSyncRequest::events_t& events)
+    {
         if (!events.is_null()) {
             return EventsToString(events.get_array());
         }
@@ -624,7 +753,8 @@ public:
         return null;
     }
 
-    static std::string IncomingEventsToString(const EventSyncResponse::events_t& events) {
+    static std::string IncomingEventsToString(const EventSyncResponse::events_t& events)
+    {
         if (!events.is_null()) {
             return EventsToString(events.get_array());
         }
@@ -632,7 +762,8 @@ public:
         return null;
     }
 
-    static std::string EventListenersRequestToString(const EventSyncRequest::eventListenersRequests_t& request) {
+    static std::string EventListenersRequestToString(const EventSyncRequest::eventListenersRequests_t& request)
+    {
         std::ostringstream stream;
 
         if (!request.is_null()) {
@@ -642,10 +773,14 @@ public:
                 stream << "{requestId: " << it->requestId << ", fqn's: [";
                 for (auto fqnIt = it->eventClassFQNs.begin(); fqnIt != it->eventClassFQNs.end(); ++fqnIt) {
                     stream << *fqnIt;
-                    if ((fqnIt + 1) != it->eventClassFQNs.end()) { stream << ", "; }
+                    if ((fqnIt + 1) != it->eventClassFQNs.end()) {
+                        stream << ", ";
+                    }
                 }
                 stream << "]";
-                if ((it + 1) != container.end()) { stream << ", "; }
+                if ((it + 1) != container.end()) {
+                    stream << ", ";
+                }
             }
             stream << "]";
         } else {
@@ -655,7 +790,8 @@ public:
         return stream.str();
     }
 
-    static std::string EventListenersResponseToString(const EventSyncResponse::eventListenersResponses_t& response) {
+    static std::string EventListenersResponseToString(const EventSyncResponse::eventListenersResponses_t& response)
+    {
         std::ostringstream stream;
 
         if (!response.is_null()) {
@@ -671,11 +807,15 @@ public:
 
                     for (auto listenerIt = listeners.begin(); listenerIt != listeners.end(); ++listenerIt) {
                         stream << *listenerIt;
-                        if ((listenerIt + 1) != listeners.end()) { stream << ", "; }
+                        if ((listenerIt + 1) != listeners.end()) {
+                            stream << ", ";
+                        }
                     }
                 }
                 stream << "]";
-                if ((it + 1) != container.end()) { stream << ", "; }
+                if ((it + 1) != container.end()) {
+                    stream << ", ";
+                }
             }
             stream << "]";
         } else {
@@ -685,7 +825,9 @@ public:
         return stream.str();
     }
 
-    static std::string EventSequenceNumberResponseToString(const EventSyncResponse::eventSequenceNumberResponse_t& response) {
+    static std::string EventSequenceNumberResponseToString(
+            const EventSyncResponse::eventSequenceNumberResponse_t& response)
+    {
         std::ostringstream ss;
         if (!response.is_null()) {
             ss << KVSTRING(sequenceNumber, response.get_EventSequenceNumberResponse().seqNum);
@@ -695,24 +837,42 @@ public:
         return ss.str();
     }
 
-    static std::string TransportTypeToString(TransportType type) {
+    static std::string TransportTypeToString(TransportType type)
+    {
         std::string description;
 
         switch (type) {
-            case TransportType::BOOTSTRAP:     description = "BOOTSTRAP"; break;
-            case TransportType::CONFIGURATION: description = "CONFIGURATION"; break;
-            case TransportType::EVENT:         description = "EVENT"; break;
-            case TransportType::LOGGING:       description = "LOGGING"; break;
-            case TransportType::NOTIFICATION:  description = "NOTIFICATION"; break;
-            case TransportType::PROFILE:       description = "PROFILE"; break;
-            case TransportType::USER:          description = "USER"; break;
-            default: description = "UNKNOWN"; break;
+        case TransportType::BOOTSTRAP:
+            description = "BOOTSTRAP";
+            break;
+        case TransportType::CONFIGURATION:
+            description = "CONFIGURATION";
+            break;
+        case TransportType::EVENT:
+            description = "EVENT";
+            break;
+        case TransportType::LOGGING:
+            description = "LOGGING";
+            break;
+        case TransportType::NOTIFICATION:
+            description = "NOTIFICATION";
+            break;
+        case TransportType::PROFILE:
+            description = "PROFILE";
+            break;
+        case TransportType::USER:
+            description = "USER";
+            break;
+        default:
+            description = "UNKNOWN";
+            break;
         }
 
         return description;
     }
 
-    static std::string LogSyncRequestToString(const SyncRequest::logSyncRequest_t& logSyncRequest) {
+    static std::string LogSyncRequestToString(const SyncRequest::logSyncRequest_t& logSyncRequest)
+    {
         if (!logSyncRequest.is_null()) {
             const auto& request = logSyncRequest.get_LogSyncRequest();
             std::ostringstream stream;
@@ -724,7 +884,8 @@ public:
         return null;
     }
 
-    static std::string LogSyncResponseToString(const SyncResponse::logSyncResponse_t& logSyncResponse) {
+    static std::string LogSyncResponseToString(const SyncResponse::logSyncResponse_t& logSyncResponse)
+    {
         if (!logSyncResponse.is_null()) {
             const auto& syncResponse = logSyncResponse.get_LogSyncResponse();
             if (!syncResponse.deliveryStatuses.is_null()) {
@@ -735,10 +896,16 @@ public:
                         stream << ",";
                     }
 
-                    stream << "{ requestId: " << deliveryStatuses[i].requestId
-                           << ", result: " << RequestResultTypeToString(deliveryStatuses[i].result)
-                           << ", code: " << (deliveryStatuses[i].errorCode.is_null() ? "" :
-                           LogDeliveryErrorCodeToString(deliveryStatuses[i].errorCode.get_LogDeliveryErrorCode())) << "}";
+                    stream << "{ requestId: "
+                           << deliveryStatuses[i].requestId
+                           << ", result: "
+                           << RequestResultTypeToString(deliveryStatuses[i].result)
+                           << ", code: "
+                           << (deliveryStatuses[i].errorCode.is_null() ?
+                                   "" :
+                                   LogDeliveryErrorCodeToString(
+                                           deliveryStatuses[i].errorCode.get_LogDeliveryErrorCode()))
+                           << "}";
                 }
                 return stream.str();
             }
@@ -747,30 +914,32 @@ public:
         return null;
     }
 
-    static std::string LogDeliveryErrorCodeToString(LogDeliveryErrorCode code) {
+    static std::string LogDeliveryErrorCodeToString(LogDeliveryErrorCode code)
+    {
         std::string result;
         switch (code) {
-            case LogDeliveryErrorCode::NO_APPENDERS_CONFIGURED:
-                result = "NO_APPENDERS_CONFIGURED";
-                break;
-            case LogDeliveryErrorCode::APPENDER_INTERNAL_ERROR:
-                result = "APPENDER_INTERNAL_ERROR";
-                break;
-            case LogDeliveryErrorCode::REMOTE_CONNECTION_ERROR:
-                result = "REMOTE_CONNECTION_ERROR";
-                break;
-            case LogDeliveryErrorCode::REMOTE_INTERNAL_ERROR:
-                result = "REMOTE_INTERNAL_ERROR";
-                break;
-            default:
-                result = "UNKNOWN";
-                break;
+        case LogDeliveryErrorCode::NO_APPENDERS_CONFIGURED:
+            result = "NO_APPENDERS_CONFIGURED";
+            break;
+        case LogDeliveryErrorCode::APPENDER_INTERNAL_ERROR:
+            result = "APPENDER_INTERNAL_ERROR";
+            break;
+        case LogDeliveryErrorCode::REMOTE_CONNECTION_ERROR:
+            result = "REMOTE_CONNECTION_ERROR";
+            break;
+        case LogDeliveryErrorCode::REMOTE_INTERNAL_ERROR:
+            result = "REMOTE_INTERNAL_ERROR";
+            break;
+        default:
+            result = "UNKNOWN";
+            break;
         }
         return result;
     }
 
 private:
-    static std::string EventsToString(const std::vector<Event>& events) {
+    static std::string EventsToString(const std::vector<Event>& events)
+    {
         std::ostringstream stream;
         stream << "[";
         for (auto it = events.begin(); it != events.end(); ++it) {
@@ -779,7 +948,9 @@ private:
             stream << "data_size: " << it->eventData.size() << ", ";
             stream << "source: " << (it->source.is_null() ? "null" : it->source.get_string()) << ", ";
             stream << "target: " << (it->target.is_null() ? "null" : it->target.get_string()) << "}";
-            if ((it + 1) != events.end()) { stream << ", "; }
+            if ((it + 1) != events.end()) {
+                stream << ", ";
+            }
         }
         stream << "]";
         return stream.str();
@@ -787,6 +958,5 @@ private:
 };
 
 }  // namespace kaa
-
 
 #endif /* LOGGINGUTILS_HPP_ */

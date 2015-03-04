@@ -30,11 +30,15 @@
 
 namespace kaa {
 
-class HttpClient : public IHttpClient
-{
+class HttpClient: public IHttpClient {
 public:
-    HttpClient() : io_(), sock_(io_) { }
-    ~HttpClient() { }
+    HttpClient()
+            : io_(), sock_(io_)
+    {
+    }
+    ~HttpClient()
+    {
+    }
 
     virtual std::shared_ptr<IHttpResponse> sendRequest(const IHttpRequest& request);
     virtual void closeConnection();
@@ -47,8 +51,7 @@ private:
     boost::asio::io_service io_;
     boost::asio::ip::tcp::socket sock_;
 
-    KAA_MUTEX_DECLARE(guard_);
-};
+    KAA_MUTEX_DECLARE(guard_);};
 
 }
 

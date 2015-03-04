@@ -45,10 +45,11 @@ public:
      */
     virtual void onLogSyncResponse(const LogSyncResponse& response) = 0;
 
-    virtual ~ILoggingTransport() {}
+    virtual ~ILoggingTransport()
+    {
+    }
 };
 
 }  // namespace kaa
-
 
 #endif /* ILOGGINGTRANSPORT_HPP_ */

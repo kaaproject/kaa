@@ -19,7 +19,6 @@
 
 #ifdef KAA_USE_EVENTS
 
-
 #include <set>
 #include <list>
 
@@ -38,25 +37,21 @@
 
 namespace kaa {
 
-class EventManager : public IEventManager
-                   , public IEventListenersResolver
-                   , public IEventDataProcessor
-                   , public AbstractTransactable<std::list<Event> >
-{
+class EventManager: public IEventManager,
+                    public IEventListenersResolver,
+                    public IEventDataProcessor,
+                    public AbstractTransactable<std::list<Event> > {
 public:
     EventManager(IKaaClientStateStoragePtr status)
-        : eventTransport_(nullptr)
-        , status_(status)
+            : eventTransport_(nullptr), status_(status)
     {
         eventSequenceNumber_ = status_->getEventSequenceNumber();
     }
 
     virtual void registerEventFamily(IEventFamily* eventFamily);
 
-    virtual void produceEvent(const std::string& fqn
-                            , const std::vector<std::uint8_t>& data
-                            , const std::string& target
-                            , TransactionIdPtr trxId);
+    virtual void produceEvent(const std::string& fqn, const std::vector<std::uint8_t>& data, const std::string& target,
+                              TransactionIdPtr trxId);
 
     virtual void onEventsReceived(const EventSyncResponse::events_t& events);
     virtual void onEventListenersReceived(const EventSyncResponse::eventListenersResponses_t& listeners);
@@ -88,27 +83,26 @@ private:
         IFetchEventListeners* listener_;
     };
 
-    void onEventFromServer(const std::string& eventClassFQN
-                         , const std::vector<std::uint8_t>& data
-                         , const std::string& source);
+    void onEventFromServer(const std::string& eventClassFQN, const std::vector<std::uint8_t>& data,
+                           const std::string& source);
 
     void generateUniqueRequestId(std::string& requstId);
 private:
-    std::set<IEventFamily*>   eventFamilies_;
-    std::list<Event>          pendingEvents_;
-    KAA_MUTEX_MUTABLE_DECLARE(pendingEventsGuard_);
+    std::set<IEventFamily*> eventFamilies_;
+    std::list<Event> pendingEvents_;KAA_MUTEX_MUTABLE_DECLARE(pendingEventsGuard_);
 
-    std::int32_t            eventSequenceNumber_;
+    std::int32_t eventSequenceNumber_;
     KAA_MUTEX_DECLARE(sequenceGuard_);
 
-    EventTransport *          eventTransport_;
+    EventTransport * eventTransport_;
     IKaaClientStateStoragePtr status_;
 
     std::map<std::int32_t/*request id*/, std::shared_ptr<EventListenersInfo> > eventListenersRequests_;
     KAA_MUTEX_MUTABLE_DECLARE(eventListenersGuard_);
 };
 
-} /* namespace kaa */
+}
+/* namespace kaa */
 
 #endif
 

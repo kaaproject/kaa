@@ -24,10 +24,15 @@
 
 namespace kaa {
 
-class BootstrapManager : public IBootstrapManager, public boost::noncopyable {
+class BootstrapManager: public IBootstrapManager, public boost::noncopyable {
 public:
-    BootstrapManager() : bootstrapTransport_(nullptr), channelManager_(nullptr) { }
-    ~BootstrapManager() { }
+    BootstrapManager()
+            : bootstrapTransport_(nullptr), channelManager_(nullptr)
+    {
+    }
+    ~BootstrapManager()
+    {
+    }
 
     virtual void receiveOperationsServerList();
     virtual void useNextOperationsServer(const TransportProtocolId& protocolId);
@@ -40,22 +45,19 @@ private:
     typedef std::list<ITransportConnectionInfoPtr> OperationsServers;
 
     OperationsServers getOPSByAccessPointId(std::int32_t id);
-    void              notifyChannelManangerAboutServer(const OperationsServers& servers);
+    void notifyChannelManangerAboutServer(const OperationsServers& servers);
 
 private:
-    std::map<TransportProtocolId, OperationsServers > operationServers_;
-    std::map<TransportProtocolId, OperationsServers::iterator > lastOperationsServers_;
+    std::map<TransportProtocolId, OperationsServers> operationServers_;
+    std::map<TransportProtocolId, OperationsServers::iterator> lastOperationsServers_;
 
     BootstrapTransport *bootstrapTransport_;
     IKaaChannelManager *channelManager_;
 
     std::unique_ptr<std::int32_t> serverToApply;
 
-    KAA_R_MUTEX_MUTABLE_DECLARE(guard_);
-};
+    KAA_R_MUTEX_MUTABLE_DECLARE(guard_);};
 
 }
-
-
 
 #endif /* BOOTSTRAPMANAGER_HPP_ */

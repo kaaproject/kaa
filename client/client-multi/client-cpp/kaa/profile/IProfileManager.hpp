@@ -48,7 +48,9 @@ public:
      */
     virtual ISerializedProfileContainerPtr getSerializedProfileContainer() = 0;
 
-    virtual ~IProfileManager() {}
+    virtual ~IProfileManager()
+    {
+    }
 };
 
 } /* namespace kaa */

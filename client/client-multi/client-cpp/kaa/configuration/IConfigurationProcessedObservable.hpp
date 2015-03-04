@@ -37,7 +37,7 @@ public:
      * @see IConfigurationProcessedObserver
      *
      */
-    virtual void    addOnProcessedObserver(IConfigurationProcessedObserver &observer) = 0;
+    virtual void addOnProcessedObserver(IConfigurationProcessedObserver &observer) = 0;
 
     /**
      * Unsubscribes observer of configuration processing finished.
@@ -46,9 +46,11 @@ public:
      * @see IConfigurationProcessedObserver
      *
      */
-    virtual void    removeOnProcessedObserver(IConfigurationProcessedObserver &observer) = 0;
+    virtual void removeOnProcessedObserver(IConfigurationProcessedObserver &observer) = 0;
 
-    virtual ~IConfigurationProcessedObservable() { }
+    virtual ~IConfigurationProcessedObservable()
+    {
+    }
 };
 
 } /* namespace kaa */

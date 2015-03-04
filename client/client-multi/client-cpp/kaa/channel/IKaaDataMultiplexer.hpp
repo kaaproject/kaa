@@ -45,12 +45,14 @@ public:
      * @see ChannelDirection
      *
      */
-    virtual std::vector<std::uint8_t> compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes) = 0;
+    virtual std::vector<std::uint8_t> compileRequest(
+            const std::map<TransportType, ChannelDirection>& transportTypes) = 0;
 
-    virtual ~IKaaDataMultiplexer() {}
+    virtual ~IKaaDataMultiplexer()
+    {
+    }
 };
 
 }  // namespace kaa
-
 
 #endif /* IKAADATAMULTIPLEXER_HPP_ */

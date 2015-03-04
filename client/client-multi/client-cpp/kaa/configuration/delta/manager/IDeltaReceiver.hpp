@@ -38,7 +38,9 @@ public:
      */
     virtual void loadDelta(ConfigurationDeltaPtr delta) = 0;
 
-    virtual ~IDeltaReceiver() {}
+    virtual ~IDeltaReceiver()
+    {
+    }
 };
 
 } /* namespace kaa */

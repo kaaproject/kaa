@@ -30,7 +30,9 @@ namespace kaa {
 
 class LogRecord {
 public:
-    LogRecord() {}
+    LogRecord()
+    {
+    }
     LogRecord(const SuperRecord& logRecord)
     {
         SharedDataBuffer buffer = converter_.toByteArray(logRecord);
@@ -39,10 +41,12 @@ public:
             logData_.push_back(buffer.first[i]);
         }
     }
-    ~LogRecord() {}
+    ~LogRecord()
+    {
+    }
 
-    const std::vector<std::uint8_t>&  getData();
-    size_t                              getSize() const;
+    const std::vector<std::uint8_t>& getData();
+    size_t getSize() const;
 
 private:
     AvroByteArrayConverter<SuperRecord> converter_;

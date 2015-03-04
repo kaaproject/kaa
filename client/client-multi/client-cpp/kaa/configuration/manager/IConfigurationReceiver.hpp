@@ -33,7 +33,10 @@ namespace kaa {
  */
 class IConfigurationReceiver {
 public:
-    virtual ~IConfigurationReceiver() {};
+    virtual ~IConfigurationReceiver()
+    {
+    }
+    ;
 
     /**
      * Specific routine to process updated configuration.

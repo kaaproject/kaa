@@ -31,8 +31,7 @@
 namespace kaa {
 
 template<avro::Type T>
-struct AvroToCommon
-{
+struct AvroToCommon {
     static constexpr CommonValueType toCommonType();
 };
 
@@ -114,7 +113,7 @@ constexpr CommonValueType AvroToCommon<avro::AVRO_NULL>::toCommonType()
     return CommonValueType::COMMON_NULL;
 }
 
-std::shared_ptr<ICommonRecord>CommonTypesFactory::createCommonRecord(uuid_t uuid, const avro::NodePtr schema)
+std::shared_ptr<ICommonRecord> CommonTypesFactory::createCommonRecord(uuid_t uuid, const avro::NodePtr schema)
 {
     std::shared_ptr<ICommonRecord> record_ptr(new (std::nothrow) CommonRecord(uuid, schema));
     if (!record_ptr.get()) {
@@ -135,42 +134,49 @@ std::shared_ptr<ICommonArray> CommonTypesFactory::createCommonArray(const avro::
 template<>
 CommonTypesFactory::return_type CommonTypesFactory::createCommon<avro::AVRO_INT>(const avro::GenericDatum & d)
 {
-    return_type result = return_type(new CommonValue<int32_t, AvroToCommon<avro::AVRO_INT>::toCommonType() >(d.value<int32_t>()));
+    return_type result = return_type(
+            new CommonValue<int32_t, AvroToCommon<avro::AVRO_INT>::toCommonType()>(d.value<int32_t>()));
     return result;
 }
 
 template<>
 CommonTypesFactory::return_type CommonTypesFactory::createCommon<avro::AVRO_LONG>(const avro::GenericDatum & d)
 {
-    return_type result = return_type(new CommonValue<int64_t, AvroToCommon<avro::AVRO_LONG>::toCommonType() >(d.value<int64_t>()));
+    return_type result = return_type(
+            new CommonValue<int64_t, AvroToCommon<avro::AVRO_LONG>::toCommonType()>(d.value<int64_t>()));
     return result;
 }
 
 template<>
 CommonTypesFactory::return_type CommonTypesFactory::createCommon<avro::AVRO_FLOAT>(const avro::GenericDatum & d)
 {
-    return_type result = return_type(new CommonValue<float, AvroToCommon<avro::AVRO_FLOAT>::toCommonType() >(d.value<float>()));
+    return_type result = return_type(
+            new CommonValue<float, AvroToCommon<avro::AVRO_FLOAT>::toCommonType()>(d.value<float>()));
     return result;
 }
 
 template<>
 CommonTypesFactory::return_type CommonTypesFactory::createCommon<avro::AVRO_DOUBLE>(const avro::GenericDatum & d)
 {
-    return_type result = return_type(new CommonValue<double, AvroToCommon<avro::AVRO_DOUBLE>::toCommonType() >(d.value<double>()));
+    return_type result = return_type(
+            new CommonValue<double, AvroToCommon<avro::AVRO_DOUBLE>::toCommonType()>(d.value<double>()));
     return result;
 }
 
 template<>
 CommonTypesFactory::return_type CommonTypesFactory::createCommon<avro::AVRO_BYTES>(const avro::GenericDatum & d)
 {
-    return_type result = return_type(new CommonValue<std::vector<std::uint8_t>, AvroToCommon<avro::AVRO_BYTES>::toCommonType() >(d.value<std::vector<std::uint8_t> >()));
+    return_type result = return_type(
+            new CommonValue<std::vector<std::uint8_t>, AvroToCommon<avro::AVRO_BYTES>::toCommonType()>(
+                    d.value<std::vector<std::uint8_t> >()));
     return result;
 }
 
 template<>
 CommonTypesFactory::return_type CommonTypesFactory::createCommon<avro::AVRO_BOOL>(const avro::GenericDatum & d)
 {
-    return_type result = return_type(new CommonValue<bool, AvroToCommon<avro::AVRO_BOOL>::toCommonType() >(d.value<bool>()));
+    return_type result = return_type(
+            new CommonValue<bool, AvroToCommon<avro::AVRO_BOOL>::toCommonType()>(d.value<bool>()));
     return result;
 }
 
@@ -187,7 +193,8 @@ CommonTypesFactory::return_type CommonTypesFactory::createCommon<avro::AVRO_ENUM
 template<>
 CommonTypesFactory::return_type CommonTypesFactory::createCommon<avro::AVRO_STRING>(const avro::GenericDatum & d)
 {
-    return_type result = return_type(new CommonValue<std::string, AvroToCommon<avro::AVRO_STRING>::toCommonType() >(d.value<std::string>()));
+    return_type result = return_type(
+            new CommonValue<std::string, AvroToCommon<avro::AVRO_STRING>::toCommonType()>(d.value<std::string>()));
     return result;
 }
 

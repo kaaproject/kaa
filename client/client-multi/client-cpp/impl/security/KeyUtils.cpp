@@ -98,4 +98,3 @@ void KeyUtils::saveKeyPair(const KeyPair& pair, const std::string& pubFileName, 
 
 }
 
-

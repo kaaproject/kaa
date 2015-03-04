@@ -42,10 +42,11 @@ public:
      * @param notification The raw notification's data.
      *
      */
-    virtual void onNotificationRaw(const std::string& topicId
-                                 , const std::vector<std::uint8_t>& notification) = 0;
+    virtual void onNotificationRaw(const std::string& topicId, const std::vector<std::uint8_t>& notification) = 0;
 
-    virtual ~INotificationListener() {}
+    virtual ~INotificationListener()
+    {
+    }
 };
 
 typedef std::shared_ptr<INotificationListener> INotificationListenerPtr;

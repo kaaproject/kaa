@@ -22,7 +22,7 @@
 
 namespace kaa {
 
-class RedirectionTransport : public IRedirectionTransport {
+class RedirectionTransport: public IRedirectionTransport {
 public:
     RedirectionTransport(IBootstrapManager &manager);
     void onRedirectionResponse(const RedirectSyncResponse& response);
@@ -32,6 +32,5 @@ private:
 };
 
 }  // namespace kaa
-
 
 #endif /* REDIRECTIONTRANSPORT_HPP_ */

@@ -50,7 +50,9 @@ public:
      */
     virtual void rollback(TransactionIdPtr trxId) = 0;
 
-    virtual ~ITransactable() {}
+    virtual ~ITransactable()
+    {
+    }
 };
 
 }

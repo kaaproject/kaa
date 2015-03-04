@@ -40,8 +40,7 @@ void HttpClient::checkError(const boost::system::error_code& code)
 std::shared_ptr<IHttpResponse> HttpClient::sendRequest(const IHttpRequest& request)
 {
     KAA_MUTEX_LOCKING("guard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, guard_);
-    KAA_MUTEX_LOCKED("guard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, guard_); KAA_MUTEX_LOCKED("guard_");
     if (sock_.is_open()) {
         doSocketClose();
     }
@@ -62,7 +61,8 @@ std::shared_ptr<IHttpResponse> HttpClient::sendRequest(const IHttpRequest& reque
     }
     checkError(errorCode);
     const std::string& responseStr = responseStream.str();
-    KAA_LOG_INFO(boost::format("Response from server %1%:%2% successfully received") % request.getHost() % request.getPort());
+    KAA_LOG_INFO(
+            boost::format("Response from server %1%:%2% successfully received") % request.getHost() % request.getPort());
     doSocketClose();
     return std::shared_ptr<IHttpResponse>(new HttpResponse(responseStr));
 }

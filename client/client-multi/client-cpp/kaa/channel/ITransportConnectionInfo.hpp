@@ -32,8 +32,7 @@ namespace kaa {
  *
  * Used by @link IKaaDataChannel @endlink and @link IKaaChannelManager @endlink.
  */
-class ITransportConnectionInfo
-{
+class ITransportConnectionInfo {
 public:
 
     /**
@@ -70,7 +69,9 @@ public:
      */
     virtual const std::vector<std::uint8_t>& getConnectionInfo() = 0;
 
-    virtual ~ITransportConnectionInfo() {}
+    virtual ~ITransportConnectionInfo()
+    {
+    }
 };
 
 typedef std::shared_ptr<ITransportConnectionInfo> ITransportConnectionInfoPtr;

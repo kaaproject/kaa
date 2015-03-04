@@ -23,40 +23,45 @@
 
 namespace kaa {
 
-
-class GenericTransportInfo: public ITransportConnectionInfo
-{
+class GenericTransportInfo: public ITransportConnectionInfo {
 public:
-    GenericTransportInfo(ServerType type, const ProtocolMetaData& metaData) :
-        serverType_(type), accessPointId_(metaData.accessPointId)
-      , protocolId_(metaData.protocolVersionInfo), connectionData_(metaData.connectionInfo) {}
+    GenericTransportInfo(ServerType type, const ProtocolMetaData& metaData)
+            : serverType_(type), accessPointId_(metaData.accessPointId), protocolId_(metaData.protocolVersionInfo),
+              connectionData_(metaData.connectionInfo)
+    {
+    }
 
-    GenericTransportInfo(ServerType type, const std::int32_t& accessPointId
-        , const TransportProtocolId& protocolId, const std::vector<std::uint8_t>& connectionData)
-        : serverType_(type), accessPointId_(accessPointId)
-        , protocolId_(protocolId), connectionData_(connectionData) {}
+    GenericTransportInfo(ServerType type, const std::int32_t& accessPointId, const TransportProtocolId& protocolId,
+                         const std::vector<std::uint8_t>& connectionData)
+            : serverType_(type), accessPointId_(accessPointId), protocolId_(protocolId), connectionData_(connectionData)
+    {
+    }
 
-    virtual ServerType getServerType() {
+    virtual ServerType getServerType()
+    {
         return serverType_;
     }
 
-    virtual std::int32_t getAccessPointId() {
+    virtual std::int32_t getAccessPointId()
+    {
         return accessPointId_;
     }
 
-    virtual TransportProtocolId getTransportId() {
+    virtual TransportProtocolId getTransportId()
+    {
         return protocolId_;
     }
 
-    virtual const std::vector<std::uint8_t>& getConnectionInfo() {
+    virtual const std::vector<std::uint8_t>& getConnectionInfo()
+    {
         return connectionData_;
     }
 
 protected:
-    ServerType                   serverType_;
-    std::int32_t                 accessPointId_;
-    TransportProtocolId          protocolId_;
-    std::vector<std::uint8_t>    connectionData_;
+    ServerType serverType_;
+    std::int32_t accessPointId_;
+    TransportProtocolId protocolId_;
+    std::vector<std::uint8_t> connectionData_;
 };
 
 } /* namespace kaa */

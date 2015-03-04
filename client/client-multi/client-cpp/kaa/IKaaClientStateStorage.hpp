@@ -25,26 +25,27 @@
 namespace kaa {
 
 typedef struct {
-    std::string         topicId;
-    std::string         topicName;
-    SubscriptionType    subscriptionType;
-    std::uint32_t     sequenceNumber;
+    std::string topicId;
+    std::string topicName;
+    SubscriptionType subscriptionType;
+    std::uint32_t sequenceNumber;
 } DetailedTopicState;
 
 typedef struct {
-    std::int32_t  configurationSequenceNumber;
-    std::int32_t  notificationSequenceNumber;
-    std::int32_t  eventSequenceNumber;
+    std::int32_t configurationSequenceNumber;
+    std::int32_t notificationSequenceNumber;
+    std::int32_t eventSequenceNumber;
 } SequenceNumber;
 
 typedef std::map<std::string, DetailedTopicState> DetailedTopicStates;
 
 typedef std::map<std::string, std::string> AttachedEndpoints;
 
-class IKaaClientStateStorage
-{
+class IKaaClientStateStorage {
 public:
-    virtual ~IKaaClientStateStorage() {}
+    virtual ~IKaaClientStateStorage()
+    {
+    }
 
     virtual std::int32_t getEventSequenceNumber() const = 0;
     virtual void setEventSequenceNumber(std::int32_t sequenceNumber) = 0;
@@ -88,6 +89,5 @@ public:
 typedef std::shared_ptr<IKaaClientStateStorage> IKaaClientStateStoragePtr;
 
 }  // namespace kaa
-
 
 #endif /* ICLIENTSTATESTORAGE_HPP_ */

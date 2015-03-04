@@ -36,12 +36,14 @@ EndpointObjectHash::EndpointObjectHash(const SharedDataBuffer& endpointHash)
     calculateHash(endpointHash.first.get(), endpointHash.second);
 }
 
-EndpointObjectHash::EndpointObjectHash(const EndpointObjectHash& endpointHash) : hashDigest_(endpointHash.hashDigest_)
+EndpointObjectHash::EndpointObjectHash(const EndpointObjectHash& endpointHash)
+        : hashDigest_(endpointHash.hashDigest_)
 {
 
 }
 
-EndpointObjectHash::EndpointObjectHash(EndpointObjectHash&& endpointHash) : hashDigest_(std::move(endpointHash.hashDigest_))
+EndpointObjectHash::EndpointObjectHash(EndpointObjectHash&& endpointHash)
+        : hashDigest_(std::move(endpointHash.hashDigest_))
 {
 
 }

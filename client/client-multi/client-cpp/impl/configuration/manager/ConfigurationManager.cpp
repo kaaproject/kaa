@@ -33,9 +33,8 @@ namespace kaa {
 
 void ConfigurationManager::subscribeForConfigurationChanges(IConfigurationReceiver &receiver)
 {
-    if (!configurationReceivers_.addCallback(&receiver,
-            std::bind(&IConfigurationReceiver::onConfigurationUpdated,
-                    &receiver, std::placeholders::_1))) {
+    if (!configurationReceivers_.addCallback(
+            &receiver, std::bind(&IConfigurationReceiver::onConfigurationUpdated, &receiver, std::placeholders::_1))) {
         throw KaaException("Failed to add a configuration changes subscriber. Already subscribed");
     }
 }
@@ -48,8 +47,7 @@ void ConfigurationManager::unsubscribeFromConfigurationChanges(IConfigurationRec
 const KaaRootConfiguration& ConfigurationManager::getConfiguration()
 {
     KAA_MUTEX_LOCKING("configurationGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, configurationGuard_);
-    KAA_MUTEX_LOCKED("configurationGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, configurationGuard_); KAA_MUTEX_LOCKED("configurationGuard_");
 
     return root_;
 }
@@ -61,8 +59,7 @@ void ConfigurationManager::onDeltaReceived(int index, const KaaRootConfiguration
     }
 
     KAA_MUTEX_LOCKING("configurationGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, configurationGuard_);
-    KAA_MUTEX_LOCKED("configurationGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, configurationGuard_); KAA_MUTEX_LOCKED("configurationGuard_");
 
     root_ = datum;
 

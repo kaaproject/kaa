@@ -39,7 +39,9 @@ public:
      */
     virtual ConfigurationDeltaPtr createDelta(const avro::GenericDatum& genericDelta) = 0;
 
-    virtual ~IConfigurationDeltaFactory() {}
+    virtual ~IConfigurationDeltaFactory()
+    {
+    }
 };
 
 } /* namespace kaa */

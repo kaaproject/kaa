@@ -26,15 +26,17 @@
 
 namespace kaa {
 
-class DefaultLogger : public ILogger {
+class DefaultLogger: public ILogger {
 public:
-    void log(LogLevel level, const char *message) const {
+    void log(LogLevel level, const char *message) const
+    {
         BOOST_LOG_STREAM_WITH_PARAMS(boost::log::trivial::logger::get(),
-                (boost::log::keywords::severity = (boost::log::trivial::severity_level)level)) << message;
+                (boost::log::keywords::severity = (boost::log::trivial::severity_level)level))<<message;
     }
 };
 
-}  // namespace kaa
+}
+  // namespace kaa
 
 #endif
 

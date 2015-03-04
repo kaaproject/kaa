@@ -39,7 +39,7 @@
 
 namespace kaa {
 
-class DefaultOperationLongPollChannel : public IDataChannel {
+class DefaultOperationLongPollChannel: public IDataChannel {
 public:
     DefaultOperationLongPollChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys);
     virtual ~DefaultOperationLongPollChannel();
@@ -47,13 +47,18 @@ public:
     virtual void sync(TransportType type);
     virtual void syncAll();
     virtual void syncAck(TransportType type);
-    virtual const std::string& getId() const { return CHANNEL_ID; }
+    virtual const std::string& getId() const
+    {
+        return CHANNEL_ID;
+    }
 
-    virtual TransportProtocolId getTransportProtocolId() const {
+    virtual TransportProtocolId getTransportProtocolId() const
+    {
         return TransportProtocolIdConstants::HTTP_TRANSPORT_ID;
     }
 
-    virtual ServerType getServerType() const {
+    virtual ServerType getServerType() const
+    {
         return ServerType::OPERATIONS;
     }
 
@@ -61,7 +66,8 @@ public:
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
     virtual void setServer(ITransportConnectionInfoPtr server);
 
-    virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const {
+    virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const
+    {
         return SUPPORTED_TYPES;
     }
 
@@ -69,14 +75,18 @@ public:
     virtual void pause();
     virtual void resume();
 
-    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker)
+    {
+    }
 
-    virtual ITransportConnectionInfoPtr getServer() {
+    virtual ITransportConnectionInfoPtr getServer()
+    {
         return std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_);
     }
 
 protected:
-    std::string getURLSuffix() {
+    std::string getURLSuffix()
+    {
         return "/EP/LongSync";
     }
 
@@ -95,20 +105,13 @@ private:
 
     boost::asio::io_service io_;
     boost::asio::io_service::work work_;
-    std::thread pollThread_;
-    bool stopped_;
-    bool isShutdown_;
-    bool isPaused_;
-    bool connectionInProgress_;
-    bool taskPosted_;
-    bool firstStart_;
+    std::thread pollThread_;bool stopped_;bool isShutdown_;bool isPaused_;bool connectionInProgress_;bool taskPosted_;bool firstStart_;
     IKaaDataMultiplexer *multiplexer_;
     IKaaDataDemultiplexer *demultiplexer_;
     IKaaChannelManager *channelManager_;
     std::shared_ptr<IPTransportInfo> currentServer_;
     HttpDataProcessor httpDataProcessor_;
-    HttpClient httpClient_;
-    KAA_CONDITION_VARIABLE_DECLARE(waitCondition_);
+    HttpClient httpClient_;KAA_CONDITION_VARIABLE_DECLARE(waitCondition_);
     KAA_MUTEX_DECLARE(conditionMutex_);
     KAA_MUTEX_DECLARE(channelGuard_);
 };

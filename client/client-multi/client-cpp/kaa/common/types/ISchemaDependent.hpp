@@ -36,7 +36,9 @@ public:
      */
     virtual const avro::NodePtr &getSchema() const = 0;
 
-    virtual ~ISchemaDependent() {}
+    virtual ~ISchemaDependent()
+    {
+    }
 };
 
 }  // namespace kaa

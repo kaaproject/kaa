@@ -24,7 +24,9 @@ namespace kaa {
 class IPingServerStorage {
 public:
     virtual ITransportConnectionInfoPtr getPingServer() = 0;
-    virtual ~IPingServerStorage() {}
+    virtual ~IPingServerStorage()
+    {
+    }
 };
 
 } /* namespace kaa */

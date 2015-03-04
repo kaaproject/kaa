@@ -28,16 +28,16 @@ namespace kaa {
 
 class LogCollector;
 
-class LoggingTransport : public AbstractKaaTransport<TransportType::LOGGING>, public ILoggingTransport {
+class LoggingTransport: public AbstractKaaTransport<TransportType::LOGGING>, public ILoggingTransport {
 public:
     LoggingTransport(IKaaChannelManager &manager, LogCollector& collector);
 
     void sync();
 
-    std::shared_ptr<LogSyncRequest>     createLogSyncRequest();
-    void                                onLogSyncResponse(const LogSyncResponse& response);
+    std::shared_ptr<LogSyncRequest> createLogSyncRequest();
+    void onLogSyncResponse(const LogSyncResponse& response);
 private:
-    LogCollector&   collector_;
+    LogCollector& collector_;
 };
 
 }  // namespace kaa
