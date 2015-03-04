@@ -5,7 +5,7 @@ public class MongoModelConstants {
     /**
      * Generic constants.
      */
-    public static final String ID = "id";
+    public static final String ID = "_id";
     public static final String VERSION = "version";
     public static final String BODY = "body";
     public static final String ACCESS_TOKEN = "access_token";

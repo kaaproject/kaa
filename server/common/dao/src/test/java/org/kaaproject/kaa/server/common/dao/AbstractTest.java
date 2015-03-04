@@ -24,6 +24,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -50,12 +51,14 @@ import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
 import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
@@ -102,22 +105,12 @@ public class AbstractTest {
 
     protected static final Random random = new Random(0);
 
-    protected static final String UNIQUE_ID = "uid";
-    protected static final String APPLICATION = "Application";
-    protected static final String TENANT = "Tenant";
-    protected static final String UPDATED_OBJECT = "Updated Object";
     protected static final String TENANT_NAME = "Generated Test Tenant";
     protected static final String USER_NAME = "Generated Test Username";
     protected static final String TOPIC_NAME = "Generated Topic Name";
     protected static final String NOTIFICATION_SCHEMA_NAME = "Generated Notification Schema Name";
     protected static final String ENDPOINT_USER_EXTERNAL_ID = "Generated Test Endpoint User External Id";
     protected static final String ENDPOINT_USER_NAME = "Generated Test Endpoint User Name";
-    protected static final String SCHEMA = "Generated Test Schema";
-    protected static final String COLLECTION_NAME = "collection name";
-
-    protected static final String DEFAULT_FLUME_HOST = "localhost";
-    protected static final int DEFAULT_FLUME_PORT = 9764;
-    protected static final int DEFAULT_FLUME_PRIORITY = 0;
 
     @Autowired
     private DataSource dataSource;
@@ -131,6 +124,8 @@ public class AbstractTest {
     protected TopicService topicService;
     @Autowired
     protected UserService userService;
+    @Autowired
+    protected UserConfigurationService userConfigurationService;
     @Autowired
     protected ConfigurationDao<Configuration> configurationDao;
     @Autowired
@@ -155,6 +150,8 @@ public class AbstractTest {
     protected NotificationService notificationService;
     @Autowired
     protected LogAppendersService logAppendersService;
+    @Autowired
+    protected EndpointUserConfigurationDao<EndpointUserConfiguration> endpointUserConfigurationDao;
 
     protected Application application;
 
@@ -186,11 +183,9 @@ public class AbstractTest {
     /**
      * Gets the resource as string.
      *
-     * @param path
-     *            the path
+     * @param path the path
      * @return the resource as string
-     * @throws java.io.IOException
-     *             Signals that an I/O exception has occurred.
+     * @throws java.io.IOException Signals that an I/O exception has occurred.
      */
     protected static String getResourceAsString(String path) throws IOException {
         URL url = Thread.currentThread().getContextClassLoader().getResource(path);
@@ -218,16 +213,16 @@ public class AbstractTest {
             URI uri = this.getClass().getClassLoader().getResource(filePath).toURI();
             String[] array = uri.toString().split("!");
             Path path;
-            if(array.length > 1){
+            if (array.length > 1) {
                 LOG.info("Creating fs for {}", array[0]);
-                FileSystem fs; 
-                try{
+                FileSystem fs;
+                try {
                     fs = FileSystems.newFileSystem(URI.create(array[0]), new HashMap<String, String>());
-                }catch(FileSystemAlreadyExistsException e){
+                } catch (FileSystemAlreadyExistsException e) {
                     fs = FileSystems.getFileSystem(URI.create(array[0]));
                 }
                 path = fs.getPath(array[1]);
-            }else{
+            } else {
                 path = Paths.get(uri);
             }
             return new String(Files.readAllBytes(path));
@@ -303,7 +298,7 @@ public class AbstractTest {
             KaaSchema kaaSchema = useBaseSchema ? new BaseSchema(schemaDto.getBaseSchema()) : new OverrideSchema(schemaDto.getOverrideSchema());
             DefaultRecordGenerationAlgorithmImpl configurationProcessor = new DefaultRecordGenerationAlgorithmImpl(
                     kaaSchema, useBaseSchema ? new BaseDataFactory()
-                            : new OverrideDataFactory());
+                    : new OverrideDataFactory());
             ids = new ArrayList<>();
             for (int i = 0; i < count; i++) {
                 ConfigurationDto dto = new ConfigurationDto();
@@ -478,7 +473,7 @@ public class AbstractTest {
         }
         schema.setApplicationId(appId);
         schema.setName(NOTIFICATION_SCHEMA_NAME);
-        String schemaBody= null;
+        String schemaBody = null;
         try {
             schemaBody = readSchemaFileAsString("dao/schema/testBaseSchema.json");
         } catch (IOException e) {
@@ -565,13 +560,13 @@ public class AbstractTest {
         LogAppenderDto logAppender = null;
         ApplicationDto app = null;
         LogSchemaDto schema = null;
-        if(isBlank(appId)){
+        if (isBlank(appId)) {
             app = generateApplication();
             appId = app.getId();
         } else {
             app = applicationService.findAppById(appId);
         }
-        if(isBlank(schemaId)){
+        if (isBlank(schemaId)) {
             schema = generateLogSchema(appId, 1).get(0);
             schemaId = schema.getId();
         }
@@ -584,5 +579,24 @@ public class AbstractTest {
         logAppender.setTenantId(app.getTenantId());
         logAppender.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.values()));
         return logAppendersService.saveLogAppender(logAppender);
+    }
+
+    protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto, Integer schemaVersion) {
+        EndpointUserConfigurationDto configurationDto = new EndpointUserConfigurationDto();
+        if (endpointUser == null) {
+            endpointUser = generateEndpointUser(null);
+        }
+        configurationDto.setUserId(endpointUser.getId());
+        if (schemaVersion == null) {
+            schemaVersion = 1;
+        }
+        configurationDto.setSchemaVersion(schemaVersion);
+        configurationDto.setBody(UUID.randomUUID().toString().getBytes());
+        if (applicationDto == null) {
+            applicationDto = generateApplication();
+        }
+        configurationDto.setAppToken(applicationDto.getApplicationToken());
+        endpointUserConfigurationDao.save(configurationDto);
+        return configurationDto;
     }
 }

@@ -15,11 +15,8 @@
  */
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
-import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
@@ -56,22 +53,5 @@ public class AbstractMongoTest extends AbstractTest {
         return endpointConfigurationDao.save(new MongoEndpointConfiguration(configurationDto)).toDto();
     }
 
-    protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto, Integer schemaVersion) {
-        EndpointUserConfigurationDto configurationDto = new EndpointUserConfigurationDto();
-        if (endpointUser == null) {
-            endpointUser = generateEndpointUser(null);
-        }
-        configurationDto.setUserId(endpointUser.getId());
-        if (schemaVersion == null) {
-            schemaVersion = 1;
-        }
-        configurationDto.setSchemaVersion(schemaVersion);
-        configurationDto.setBody(UUID.randomUUID().toString().getBytes());
-        if (applicationDto == null) {
-            applicationDto = generateApplication();
-        }
-        configurationDto.setAppToken(applicationDto.getApplicationToken());
-        endpointUserConfigurationDao.save(new MongoEndpointUserConfiguration(configurationDto));
-        return configurationDto;
-    }
+
 }
