@@ -122,7 +122,7 @@ public class UserActorMessageProcessorTest {
 
     @Test
     public void testEndpointConnectFlow(){
-        EndpointUserConnectMessage message1 = new EndpointUserConnectMessage(USER_ID, endpoint1Key, ecfVersions, 1, APP_TOKEN, originatorRefMock);
+        EndpointUserConnectMessage message1 = new EndpointUserConnectMessage(USER_ID, endpoint1Key, ecfVersions, 1, null, APP_TOKEN, originatorRefMock);
         messageProcessor.processEndpointConnectMessage(actorContextMock, message1);
 
         verify(eventServiceMock).sendUserRouteInfo( new UserRouteInfo(TENANT_ID, USER_ID));
@@ -135,7 +135,7 @@ public class UserActorMessageProcessorTest {
         RouteInfo localRouteInfo =new RouteInfo(TENANT_ID, USER_ID, address1, ecfVersions);
         verify(eventServiceMock).sendRouteInfo(Collections.singletonList(localRouteInfo), SERVER2);
 
-        EndpointUserConnectMessage message3 = new EndpointUserConnectMessage(USER_ID, endpoint3Key, ecfVersions, 1, APP_TOKEN, originatorRefMock);
+        EndpointUserConnectMessage message3 = new EndpointUserConnectMessage(USER_ID, endpoint3Key, ecfVersions, 1, null, APP_TOKEN, originatorRefMock);
         messageProcessor.processEndpointConnectMessage(actorContextMock, message3);
 
         verify(eventServiceMock).sendRouteInfo(new RouteInfo(TENANT_ID, USER_ID, address3, ecfVersions), SERVER2);
@@ -144,10 +144,10 @@ public class UserActorMessageProcessorTest {
 
     @Test
     public void testEndpointLocalEvent(){
-        EndpointUserConnectMessage message1 = new EndpointUserConnectMessage(USER_ID, endpoint1Key, ecfVersions, 1, APP_TOKEN, originatorRefMock);
+        EndpointUserConnectMessage message1 = new EndpointUserConnectMessage(USER_ID, endpoint1Key, ecfVersions, 1, null, APP_TOKEN, originatorRefMock);
         messageProcessor.processEndpointConnectMessage(actorContextMock, message1);
 
-        EndpointUserConnectMessage message2 = new EndpointUserConnectMessage(USER_ID, endpoint2Key, ecfVersions, 1, APP_TOKEN, originatorRefMock);
+        EndpointUserConnectMessage message2 = new EndpointUserConnectMessage(USER_ID, endpoint2Key, ecfVersions, 1, null, APP_TOKEN, originatorRefMock);
         messageProcessor.processEndpointConnectMessage(actorContextMock, message2);
 
         verify(eventServiceMock).sendUserRouteInfo( new UserRouteInfo(TENANT_ID, USER_ID));
@@ -166,7 +166,7 @@ public class UserActorMessageProcessorTest {
 
     @Test
     public void testEndpointRemoteReceiveEvent(){
-        EndpointUserConnectMessage message1 = new EndpointUserConnectMessage(USER_ID, endpoint1Key, ecfVersions, 1, APP_TOKEN, originatorRefMock);
+        EndpointUserConnectMessage message1 = new EndpointUserConnectMessage(USER_ID, endpoint1Key, ecfVersions, 1, null, APP_TOKEN, originatorRefMock);
         messageProcessor.processEndpointConnectMessage(actorContextMock, message1);
 
         RouteTableKey routeKey = new RouteTableKey(APP_TOKEN, ecfVersion1);
@@ -185,7 +185,7 @@ public class UserActorMessageProcessorTest {
 
     @Test
     public void testEndpointRemoteSendEvent(){
-        EndpointUserConnectMessage message1 = new EndpointUserConnectMessage(USER_ID, endpoint1Key, ecfVersions, 1, APP_TOKEN, originatorRefMock);
+        EndpointUserConnectMessage message1 = new EndpointUserConnectMessage(USER_ID, endpoint1Key, ecfVersions, 1, null, APP_TOKEN, originatorRefMock);
         messageProcessor.processEndpointConnectMessage(actorContextMock, message1);
 
         verify(eventServiceMock).sendUserRouteInfo( new UserRouteInfo(TENANT_ID, USER_ID));
@@ -209,7 +209,7 @@ public class UserActorMessageProcessorTest {
 
     @Test
     public void testEndpointTimeoutMessage() throws NoSuchFieldException, SecurityException{
-        EndpointUserConnectMessage message1 = new EndpointUserConnectMessage(USER_ID, endpoint1Key, ecfVersions, 1, APP_TOKEN, originatorRefMock);
+        EndpointUserConnectMessage message1 = new EndpointUserConnectMessage(USER_ID, endpoint1Key, ecfVersions, 1, null, APP_TOKEN, originatorRefMock);
         messageProcessor.processEndpointConnectMessage(actorContextMock, message1);
 
         when(cacheServiceMock.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TENANT_ID, "testClassFqn"))).thenReturn(ECF_ID1);
@@ -220,7 +220,7 @@ public class UserActorMessageProcessorTest {
         EndpointEventSendMessage eventMessage = new EndpointEventSendMessage(USER_ID, Collections.singletonList(event), endpoint1Key, APP_TOKEN, originatorRefMock);
         messageProcessor.processEndpointEventSendMessage(actorContextMock, eventMessage);
 
-        EndpointUserConnectMessage message2 = new EndpointUserConnectMessage(USER_ID, endpoint2Key, ecfVersions, 1, APP_TOKEN, originatorRefMock);
+        EndpointUserConnectMessage message2 = new EndpointUserConnectMessage(USER_ID, endpoint2Key, ecfVersions, 1, null, APP_TOKEN, originatorRefMock);
         messageProcessor.processEndpointConnectMessage(actorContextMock, message2);
 
         //1 - means it is called once
@@ -232,7 +232,7 @@ public class UserActorMessageProcessorTest {
         EndpointEventTimeoutMessage message = new EndpointEventTimeoutMessage(storage.getEvents(routeKey).iterator().next());
         messageProcessor.processEndpointEventTimeoutMessage(actorContextMock, message);
 
-        EndpointUserConnectMessage message3 = new EndpointUserConnectMessage(USER_ID, endpoint3Key, ecfVersions, 1, APP_TOKEN, originatorRefMock);
+        EndpointUserConnectMessage message3 = new EndpointUserConnectMessage(USER_ID, endpoint3Key, ecfVersions, 1, null, APP_TOKEN, originatorRefMock);
         messageProcessor.processEndpointConnectMessage(actorContextMock, message3);
 
         //still 1 - means it was not called after first call
@@ -241,7 +241,7 @@ public class UserActorMessageProcessorTest {
 
     @Test
     public void testUserRouteInfoAddFlow(){
-        EndpointUserConnectMessage message1 = new EndpointUserConnectMessage(USER_ID, endpoint1Key, ecfVersions, 1, APP_TOKEN, originatorRefMock);
+        EndpointUserConnectMessage message1 = new EndpointUserConnectMessage(USER_ID, endpoint1Key, ecfVersions, 1, null, APP_TOKEN, originatorRefMock);
         messageProcessor.processEndpointConnectMessage(actorContextMock, message1);
 
         verify(eventServiceMock).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID));
@@ -260,7 +260,7 @@ public class UserActorMessageProcessorTest {
 
     @Test
     public void testUserRouteInfoRemoveFlow(){
-        EndpointUserConnectMessage message1 = new EndpointUserConnectMessage(USER_ID, endpoint1Key, ecfVersions, 1, APP_TOKEN, originatorRefMock);
+        EndpointUserConnectMessage message1 = new EndpointUserConnectMessage(USER_ID, endpoint1Key, ecfVersions, 1, null, APP_TOKEN, originatorRefMock);
         messageProcessor.processEndpointConnectMessage(actorContextMock, message1);
 
         verify(eventServiceMock).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID));

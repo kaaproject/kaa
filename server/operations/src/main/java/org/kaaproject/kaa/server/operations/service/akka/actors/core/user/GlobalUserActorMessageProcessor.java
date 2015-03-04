@@ -44,8 +44,8 @@ public class GlobalUserActorMessageProcessor {
     private final String tenantId;
     private final GlobalRouteTable<ConfigurationKey> map;
 
-    public GlobalUserActorMessageProcessor(AkkaContext context, EventService eventService, String userId, String tenantId) {
-        this.eventService = eventService;
+    public GlobalUserActorMessageProcessor(AkkaContext context, String userId, String tenantId) {
+        this.eventService = context.getEventService();
         this.userId = userId;
         this.tenantId = tenantId;
         this.map = new GlobalRouteTable<>();
