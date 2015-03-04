@@ -49,12 +49,13 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.C
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.TimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicUnsubscriptionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicSubscriptionMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicUnsubscriptionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage.EventDeliveryStatus;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointStateUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserAttachMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
@@ -159,38 +160,13 @@ public class EndpointActorMessageProcessor {
 
         LOG.debug("[{}][{}] Processing thrift norification for {} channels", endpointKey, actorKey, channels.size());
 
-        for (ChannelMetaData channel : channels) {
-            ClientSync originalRequest = channel.getRequestMessage().getRequest();
-            ServerSync syncResponse = channel.getResponseHolder().getResponse();
+        syncChannels(context, channels, true, true);
+    }
 
-            ClientSync newRequest = new ClientSync();
-            newRequest.setRequestId(originalRequest.getRequestId());
-            newRequest.setClientSyncMetaData(originalRequest.getClientSyncMetaData());
-            if (originalRequest.getConfigurationSync() != null) {
-                ConfigurationClientSync configurationSyncRequest = originalRequest.getConfigurationSync();
-                if (syncResponse.getConfigurationSync() != null) {
-                    int newSeqNumber = syncResponse.getConfigurationSync().getAppStateSeqNumber();
-                    LOG.debug("[{}][{}] Change original configuration request {} appSeqNumber from {} to {}", endpointKey, actorKey,
-                            originalRequest, configurationSyncRequest.getAppStateSeqNumber(), newSeqNumber);
-                    configurationSyncRequest.setAppStateSeqNumber(newSeqNumber);
-                }
-                newRequest.setConfigurationSync(configurationSyncRequest);
-                originalRequest.setConfigurationSync(null);
-            }
-            if (originalRequest.getNotificationSync() != null) {
-                NotificationClientSync notificationSyncRequest = originalRequest.getNotificationSync();
-                if (syncResponse.getNotificationSync() != null) {
-                    int newSeqNumber = syncResponse.getNotificationSync().getAppStateSeqNumber();
-                    LOG.debug("[{}][{}] Change original notification request {} appSeqNumber from {} to {}", endpointKey, actorKey,
-                            originalRequest, notificationSyncRequest.getAppStateSeqNumber(), newSeqNumber);
-                    notificationSyncRequest.setAppStateSeqNumber(newSeqNumber);
-                }
-                newRequest.setNotificationSync(notificationSyncRequest);
-                originalRequest.setNotificationSync(null);
-            }
-            LOG.debug("[{}][{}] Processing request {}", endpointKey, actorKey, originalRequest);
-            sync(context, new SyncRequestMessage(channel.getRequestMessage().getSession(), newRequest, channel.getRequestMessage()
-                    .getCommand(), channel.getRequestMessage().getOriginator()));
+    public void processStateUpdate(ActorContext context, EndpointStateUpdateMessage message) {
+        if (message.getUpdate() != null) {
+            state.setUserConfigurationUpdatePending(true);
+            syncChannels(context, state.getChannelsByTypes(TransportType.CONFIGURATION), true, false);
         }
     }
 
@@ -263,6 +239,7 @@ public class EndpointActorMessageProcessor {
             if (state.getProfile() != null) {
                 processLogUpload(context, request, responseHolder);
                 processUserAttachRequest(context, request, responseHolder);
+                updateUserConnection(context);
                 processEvents(context, request, responseHolder);
                 notifyAffectedEndpoints(context, request, responseHolder);
             } else {
@@ -309,7 +286,7 @@ public class EndpointActorMessageProcessor {
         LOG.trace("[{}][{}] processing sync. Request: {}", endpointKey, context.getRequestHash(), request);
 
         context = operationsService.syncProfile(context, request.getProfileSync());
-        
+
         state.setProfile(context.getEndpointProfile());
 
         if (context.getStatus() != SyncStatus.SUCCESS) {
@@ -319,18 +296,60 @@ public class EndpointActorMessageProcessor {
         context = operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
         context = operationsService.processEventListenerRequests(context, request.getEventSync());
 
+        context.setUserConfigurationChanged(state.isUserConfigurationUpdatePending());
         // TODO: do this only if there were some updates missed from control
         // server or this is a first request for this actor
         context = operationsService.syncConfiguration(context, request.getConfigurationSync());
+
         // TODO: do this only if there were some updates missed from control
         // server or this is a first request for this actor
         context = operationsService.syncNotification(context, request.getNotificationSync());
 
         state.setProfile(operationsService.updateProfile(context));
 
+        if (context.getStatus() == SyncStatus.SUCCESS) {
+            context.setUserConfigurationChanged(false);
+        }
+
         LOG.debug("[{}][{}] processing sync. Response is {}", endpointKey, request.hashCode(), context.getResponse());
 
         return context;
+    }
+
+    private void syncChannels(ActorContext context, Set<ChannelMetaData> channels, boolean configuration, boolean notification) {
+        for (ChannelMetaData channel : channels) {
+            ClientSync originalRequest = channel.getRequestMessage().getRequest();
+            ServerSync syncResponse = channel.getResponseHolder().getResponse();
+
+            ClientSync newRequest = new ClientSync();
+            newRequest.setRequestId(originalRequest.getRequestId());
+            newRequest.setClientSyncMetaData(originalRequest.getClientSyncMetaData());
+            if (configuration && originalRequest.getConfigurationSync() != null) {
+                ConfigurationClientSync configurationSyncRequest = originalRequest.getConfigurationSync();
+                if (syncResponse.getConfigurationSync() != null) {
+                    int newSeqNumber = syncResponse.getConfigurationSync().getAppStateSeqNumber();
+                    LOG.debug("[{}][{}] Change original configuration request {} appSeqNumber from {} to {}", endpointKey, actorKey,
+                            originalRequest, configurationSyncRequest.getAppStateSeqNumber(), newSeqNumber);
+                    configurationSyncRequest.setAppStateSeqNumber(newSeqNumber);
+                }
+                newRequest.setConfigurationSync(configurationSyncRequest);
+                originalRequest.setConfigurationSync(null);
+            }
+            if (notification && originalRequest.getNotificationSync() != null) {
+                NotificationClientSync notificationSyncRequest = originalRequest.getNotificationSync();
+                if (syncResponse.getNotificationSync() != null) {
+                    int newSeqNumber = syncResponse.getNotificationSync().getAppStateSeqNumber();
+                    LOG.debug("[{}][{}] Change original notification request {} appSeqNumber from {} to {}", endpointKey, actorKey,
+                            originalRequest, notificationSyncRequest.getAppStateSeqNumber(), newSeqNumber);
+                    notificationSyncRequest.setAppStateSeqNumber(newSeqNumber);
+                }
+                newRequest.setNotificationSync(notificationSyncRequest);
+                originalRequest.setNotificationSync(null);
+            }
+            LOG.debug("[{}][{}] Processing request {}", endpointKey, actorKey, originalRequest);
+            sync(context, new SyncRequestMessage(channel.getRequestMessage().getSession(), newRequest, channel.getRequestMessage()
+                    .getCommand(), channel.getRequestMessage().getOriginator()));
+        }
     }
 
     private ClientSync buildRequestForChannel(SyncRequestMessage requestMessage, ChannelMetaData channel) {
@@ -375,7 +394,6 @@ public class EndpointActorMessageProcessor {
 
     private void processEvents(ActorContext context, ClientSync request, SyncContext responseHolder) {
         if (state.isValidForEvents()) {
-            updateUserConnection(context);
             if (request.getEventSync() != null) {
                 EventClientSync eventRequest = request.getEventSync();
                 processSeqNumber(eventRequest, responseHolder);
@@ -400,6 +418,9 @@ public class EndpointActorMessageProcessor {
     }
 
     private void updateUserConnection(ActorContext context) {
+        if(!state.isValidForUser()){
+            return;
+        }
         if (state.userIdMismatch()) {
             sendDisconnectFromOldUser(context, state.getProfile());
             state.setUserRegistrationPending(false);
@@ -443,8 +464,8 @@ public class EndpointActorMessageProcessor {
 
     private void sendConnectToNewUser(ActorContext context, EndpointProfileDto endpointProfile) {
         List<EventClassFamilyVersion> ecfVersions = EntityConvertUtils.convertToECFVersions(endpointProfile.getEcfVersionStates());
-        EndpointUserConnectMessage userRegistrationMessage = new EndpointUserConnectMessage(state.getUserId(), key, ecfVersions, appToken,
-                context.self());
+        EndpointUserConnectMessage userRegistrationMessage = new EndpointUserConnectMessage(state.getUserId(), key, ecfVersions,
+                endpointProfile.getConfigurationVersion(), endpointProfile.getUserConfigurationHash(), appToken, context.self());
         LOG.debug("[{}][{}] Sending user registration request {}", endpointKey, actorKey, userRegistrationMessage);
         context.parent().tell(userRegistrationMessage, context.self());
     }

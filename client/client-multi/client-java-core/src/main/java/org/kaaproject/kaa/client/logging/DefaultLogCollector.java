@@ -50,5 +50,5 @@ public class DefaultLogCollector extends AbstractLogCollector{
             uploadIfNeeded();
         }
     }
-    
+
 }

@@ -42,9 +42,12 @@ public final class DeltaCacheKey implements Serializable {
 
     /** The endpoint conf hash. */
     private final EndpointObjectHash endpointConfHash;
-    
+
     /** Supports only resync delta encoded using base schema */
     private final boolean resyncOnly;
+
+    /** The user conf hash. */
+    private final EndpointObjectHash userConfHash;
 
     /**
      * Instantiates a new delta cache key.
@@ -56,11 +59,11 @@ public final class DeltaCacheKey implements Serializable {
      * @param endpointConfHash
      *            the endpoint conf hash
      */
-    public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups, EndpointObjectHash endpointConfHash) {
-        this(appConfigVersionKey, endpointGroups, endpointConfHash, false);
+    public DeltaCacheKey(AppVersionKey appConfigVersionKey, EndpointObjectHash userConfHash, List<EndpointGroupStateDto> endpointGroups,
+            EndpointObjectHash endpointConfHash) {
+        this(appConfigVersionKey, userConfHash, endpointGroups, endpointConfHash, false);
     }
 
-    
     /**
      * Instantiates a new delta cache key.
      *
@@ -71,10 +74,13 @@ public final class DeltaCacheKey implements Serializable {
      * @param endpointConfHash
      *            the endpoint conf hash
      * @param resyncOnly
-     *            indicates that client want to receive resync based on base schema
+     *            indicates that client want to receive resync based on base
+     *            schema
      */
-    public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups, EndpointObjectHash endpointConfHash, boolean resyncOnly) {
+    public DeltaCacheKey(AppVersionKey appConfigVersionKey, EndpointObjectHash userConfHash, List<EndpointGroupStateDto> endpointGroups,
+            EndpointObjectHash endpointConfHash, boolean resyncOnly) {
         this.appConfigVersionKey = appConfigVersionKey;
+        this.userConfHash = userConfHash;
         this.endpointGroups = endpointGroups;
         this.endpointConfHash = endpointConfHash;
         this.resyncOnly = resyncOnly;
@@ -108,7 +114,8 @@ public final class DeltaCacheKey implements Serializable {
     }
 
     /**
-     * Indicate that client supports only resync delta encoded using base schema.
+     * Indicate that client supports only resync delta encoded using base
+     * schema.
      *
      * @return the resync only flag
      */
@@ -116,6 +123,14 @@ public final class DeltaCacheKey implements Serializable {
         return resyncOnly;
     }
 
+    /**
+     * Gets the user id.
+     *
+     * @return the user id
+     */
+    public EndpointObjectHash getUserConfHash() {
+        return userConfHash;
+    }
 
     @Override
     public int hashCode() {
@@ -125,9 +140,9 @@ public final class DeltaCacheKey implements Serializable {
         result = prime * result + ((endpointConfHash == null) ? 0 : endpointConfHash.hashCode());
         result = prime * result + ((endpointGroups == null) ? 0 : endpointGroups.hashCode());
         result = prime * result + (resyncOnly ? 1231 : 1237);
+        result = prime * result + ((userConfHash == null) ? 0 : userConfHash.hashCode());
         return result;
     }
-
 
     @Override
     public boolean equals(Object obj) {
@@ -165,9 +180,15 @@ public final class DeltaCacheKey implements Serializable {
         if (resyncOnly != other.resyncOnly) {
             return false;
         }
+        if (userConfHash == null) {
+            if (other.userConfHash != null) {
+                return false;
+            }
+        } else if (!userConfHash.equals(other.userConfHash)) {
+            return false;
+        }
         return true;
     }
-
 
     @Override
     public String toString() {
@@ -180,6 +201,8 @@ public final class DeltaCacheKey implements Serializable {
         builder.append(endpointConfHash);
         builder.append(", resyncOnly=");
         builder.append(resyncOnly);
+        builder.append(", userConfHash=");
+        builder.append(userConfHash);
         builder.append("]");
         return builder.toString();
     }

@@ -37,18 +37,20 @@ public class SyncContext {
 
     /** The response. */
     private final ServerSync response;
-    
+
     private String endpointKey;
-    
+
     private int requestHash;
-    
+
     private ClientSyncMetaData metaData;
 
     private EndpointProfileDto endpointProfile;
-    
+
     private AppSeqNumber appSeqNumber;
-    
+
     private boolean updateProfileRequired;
+
+    private boolean userConfigurationChanged;
 
     /** The subscription states. */
     private Map<String, Integer> subscriptionStates;
@@ -79,7 +81,7 @@ public class SyncContext {
 
     public void setEndpointProfile(EndpointProfileDto profile) {
         this.endpointProfile = profile;
-        if(profile != null){
+        if (profile != null) {
             this.systemNfVersion = profile.getSystemNfVersion();
             this.userNfVersion = profile.getUserNfVersion();
         }
@@ -184,7 +186,7 @@ public class SyncContext {
     public void setAppSeqNumber(AppSeqNumber appSeqNumber) {
         this.appSeqNumber = appSeqNumber;
     }
-    
+
     public boolean isUpdateProfileRequired() {
         return updateProfileRequired;
     }
@@ -295,5 +297,13 @@ public class SyncContext {
             return true;
         }
         return false;
+    }
+
+    public void setUserConfigurationChanged(boolean userConfigurationChanged) {
+        this.userConfigurationChanged = userConfigurationChanged;
+    }
+
+    public boolean isUserConfigurationChanged() {
+        return userConfigurationChanged;
     }
 }

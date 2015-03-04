@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.operations.service.akka;
 
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.transport.message.MessageHandler;
 
 import akka.actor.ActorSystem;
@@ -48,4 +49,9 @@ public interface AkkaService extends MessageHandler{
      */
     void onNotification(Notification notification);
 
+    /**
+     * Reports update of user configuration to the global user actor
+     * @param update - user configuration update
+     */
+    void onUserConfigurationUpdate(UserConfigurationUpdate update);
 }

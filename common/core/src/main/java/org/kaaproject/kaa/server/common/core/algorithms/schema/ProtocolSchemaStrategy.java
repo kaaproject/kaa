@@ -33,6 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.avro.Schema;
+import org.apache.avro.Schema.Field;
+import org.apache.avro.Schema.Type;
 import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
 
 /**
@@ -52,44 +55,34 @@ public class ProtocolSchemaStrategy extends AbstractSchemaStrategy<ProtocolSchem
     }
 
     @Override
-    public void onOptionalField(List<Object> union) {
-        if (!union.contains(NULL_FIELD_VALUE)) {
-            union.add(0, NULL_FIELD_VALUE);
+    public void onOptionalField(List<Schema> union) {
+        Schema nullSchema = Schema.create(Type.NULL);
+        if (!union.contains(nullSchema)) {
+            union.add(0, nullSchema);
         }
     }
 
     @Override
-    public void onMandatoryField(List<Object> union) {
+    public void onMandatoryField(List<Schema> union) {
         // Nothing to do
     }
 
     @Override
-    public Map<String, Object> onSchemaProcessed(Map<String, Object> rootSchema,
-            Set<String> addressableRecords) {
-        List<Object> deltaTypes = new ArrayList<Object>();
+    public Schema onSchemaProcessed(Schema rootSchema, Set<Schema> addressableRecords) {
+        List<Schema> deltaTypes = new ArrayList<Schema>(addressableRecords.size() + 1);
         deltaTypes.add(rootSchema);
-        for (String type : addressableRecords) {
-            deltaTypes.add(type);
-        }
+        deltaTypes.addAll(addressableRecords);
 
-        Map<String, Object> deltaTypesField = new HashMap<String, Object>();
-        deltaTypesField.put(NAME_FIELD, DELTA);
-        deltaTypesField.put(TYPE_FIELD, deltaTypes);
 
-        List<Object> deltaFields = new ArrayList<Object>();
+        Field deltaTypesField = new Field(DELTA, Schema.createUnion(deltaTypes), null, null);
+
+        List<Field> deltaFields = new ArrayList<Field>();
         deltaFields.add(deltaTypesField);
 
-        Map<String, Object> delta = new HashMap<String, Object>();
-        delta.put(NAME_FIELD, DELTA + "T");
-        delta.put(NAMESPACE_FIELD, KAA_NAMESPACE);
-        delta.put(TYPE_FIELD, RECORD_FIELD_VALUE);
-        delta.put(FIELDS_FIELD, deltaFields);
+        Schema delta = Schema.createRecord(DELTA + "T", null, KAA_NAMESPACE, false);
+        delta.setFields(deltaFields);
 
-        Map<String, Object> result = new HashMap<String, Object>();
-        result.put(TYPE_FIELD, ARRAY_FIELD_VALUE);
-        result.put(ITEMS_FIELD, delta);
-
-        return result;
+        return Schema.createArray(delta);
     }
 
     @Override
@@ -98,7 +91,7 @@ public class ProtocolSchemaStrategy extends AbstractSchemaStrategy<ProtocolSchem
     }
 
     @Override
-    public ProtocolSchema createSchema(String schema) {
-        return getSchemaFactory().createProtocolSchema(schema);
+    public ProtocolSchema createSchema(Schema schema) {
+        return getSchemaFactory().createProtocolSchema(schema.toString());
     }
 }

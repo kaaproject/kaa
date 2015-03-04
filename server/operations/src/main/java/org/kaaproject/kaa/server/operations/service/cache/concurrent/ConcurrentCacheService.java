@@ -410,7 +410,7 @@ public class ConcurrentCacheService implements CacheService {
 
             @Override
             public EndpointConfigurationDto compute(EndpointObjectHash key) {
-                LOG.debug("Fetching result for getConfByHash");
+                LOG.debug("Fetching result for getConfByHash {}", key);
                 EndpointConfigurationDto value = endpointService.findEndpointConfigurationByHash(key.getData());
                 putConfiguration(key, value);
                 return value;
