@@ -51,7 +51,8 @@ LogCollector::LogCollector(ILogStorage* storage, ILogStorageStatus* status, ILog
 void LogCollector::makeLogRecord(const LogRecord& record)
 {
     KAA_MUTEX_LOCKING("storageGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_); KAA_MUTEX_LOCKED("storageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
+    KAA_MUTEX_LOCKED("storageGuard_");
 
     if (storage_ != nullptr) {
         storage_->addLogRecord(record);
@@ -98,7 +99,8 @@ void LogCollector::makeLogRecord(const LogRecord& record)
 void LogCollector::setStorage(ILogStorage * storage)
 {
     KAA_MUTEX_LOCKING("storageGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_); KAA_MUTEX_LOCKED("storageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
+    KAA_MUTEX_LOCKED("storageGuard_");
 
     KAA_LOG_DEBUG(boost::format("Replacing log storage from %1% to %2%") % storage_ % storage);
     storage_ = storage;
@@ -107,7 +109,8 @@ void LogCollector::setStorage(ILogStorage * storage)
 void LogCollector::setStorageStatus(ILogStorageStatus * status)
 {
     KAA_MUTEX_LOCKING("storageGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_); KAA_MUTEX_LOCKED("storageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
+    KAA_MUTEX_LOCKED("storageGuard_");
 
     KAA_LOG_DEBUG(boost::format("Replacing log storage status from %1% to %2%") % status_ % status);
     status_ = status;
@@ -116,7 +119,8 @@ void LogCollector::setStorageStatus(ILogStorageStatus * status)
 void LogCollector::setConfiguration(ILogUploadConfiguration * configuration)
 {
     KAA_MUTEX_LOCKING("storageGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_); KAA_MUTEX_LOCKED("storageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
+    KAA_MUTEX_LOCKED("storageGuard_");
 
     KAA_LOG_DEBUG(boost::format("Replacing log upload configurations from %1% to %2%") % configuration_ % configuration);
     configuration_ = configuration;
@@ -126,7 +130,8 @@ void LogCollector::setUploadStrategy(ILogUploadStrategy * strategy)
 {
     if (strategy != nullptr) {
         KAA_MUTEX_LOCKING("storageGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_); KAA_MUTEX_LOCKED("storageGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
+        KAA_MUTEX_LOCKED("storageGuard_");
 
         KAA_LOG_DEBUG(boost::format("Replacing log upload strategy from %1% to %2%") % uploadStrategy_ % strategy);
         uploadStrategy_ = strategy;
@@ -137,7 +142,8 @@ void LogCollector::setFailoverStrategy(ILogUploadFailoverStrategy * strategy)
 {
     if (strategy != nullptr) {
         KAA_MUTEX_LOCKING("storageGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_); KAA_MUTEX_LOCKED("storageGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
+        KAA_MUTEX_LOCKED("storageGuard_");
 
         KAA_LOG_DEBUG(boost::format("Replacing log failover strategy from %1% to %2%") % failoverStrategy_ % strategy);
         failoverStrategy_ = strategy;

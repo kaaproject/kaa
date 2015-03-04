@@ -40,7 +40,8 @@ void HttpClient::checkError(const boost::system::error_code& code)
 std::shared_ptr<IHttpResponse> HttpClient::sendRequest(const IHttpRequest& request)
 {
     KAA_MUTEX_LOCKING("guard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, guard_); KAA_MUTEX_LOCKED("guard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, guard_);
+    KAA_MUTEX_LOCKED("guard_");
     if (sock_.is_open()) {
         doSocketClose();
     }

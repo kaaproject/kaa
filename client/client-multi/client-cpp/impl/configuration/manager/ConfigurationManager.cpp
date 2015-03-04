@@ -47,7 +47,8 @@ void ConfigurationManager::unsubscribeFromConfigurationChanges(IConfigurationRec
 const KaaRootConfiguration& ConfigurationManager::getConfiguration()
 {
     KAA_MUTEX_LOCKING("configurationGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, configurationGuard_); KAA_MUTEX_LOCKED("configurationGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, configurationGuard_);
+    KAA_MUTEX_LOCKED("configurationGuard_");
 
     return root_;
 }
@@ -59,7 +60,8 @@ void ConfigurationManager::onDeltaReceived(int index, const KaaRootConfiguration
     }
 
     KAA_MUTEX_LOCKING("configurationGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, configurationGuard_); KAA_MUTEX_LOCKED("configurationGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, configurationGuard_);
+    KAA_MUTEX_LOCKED("configurationGuard_");
 
     root_ = datum;
 

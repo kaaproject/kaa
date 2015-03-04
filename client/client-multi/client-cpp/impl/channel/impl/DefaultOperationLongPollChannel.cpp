@@ -75,7 +75,8 @@ void DefaultOperationLongPollChannel::stopPoll()
         if (connectionInProgress_) {
             httpClient_.closeConnection();
             KAA_MUTEX_LOCKING("conditionMutex_");
-            KAA_MUTEX_UNIQUE_DECLARE(conditionLock, conditionMutex_); KAA_MUTEX_LOCKED("conditionMutex_");
+            KAA_MUTEX_UNIQUE_DECLARE(conditionLock, conditionMutex_);
+            KAA_MUTEX_LOCKED("conditionMutex_");
             KAA_CONDITION_WAIT_PRED(waitCondition_, conditionLock, [this]() {return !this->connectionInProgress_;});
         }
     }
@@ -90,7 +91,8 @@ void DefaultOperationLongPollChannel::postTask()
 void DefaultOperationLongPollChannel::executeTask()
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
     taskPosted_ = false;
     if (stopped_) {
         return;
@@ -108,7 +110,8 @@ void DefaultOperationLongPollChannel::executeTask()
         // Sending http request
         auto response = httpClient_.sendRequest(*postRequest);
         KAA_MUTEX_LOCKING("channelGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(lockInternal, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(lockInternal, channelGuard_);
+        KAA_MUTEX_LOCKED("channelGuard_");
         // Retrieving the avro data from the HTTP response
         connectionInProgress_ = false;
         const std::string& processedResponse = httpDataProcessor_.retrieveOperationResponse(*response);
@@ -120,11 +123,13 @@ void DefaultOperationLongPollChannel::executeTask()
                         reinterpret_cast<const std::uint8_t *>(processedResponse.data() + processedResponse.size())));
 
         KAA_MUTEX_LOCKING("conditionMutex_");
-        KAA_MUTEX_UNIQUE_DECLARE(conditionLock, conditionMutex_); KAA_MUTEX_LOCKED("conditionMutex_");
+        KAA_MUTEX_UNIQUE_DECLARE(conditionLock, conditionMutex_);
+        KAA_MUTEX_LOCKED("conditionMutex_");
         KAA_CONDITION_NOTIFY_ALL(waitCondition_);
     } catch (std::exception& e) {
         KAA_MUTEX_LOCKING("channelGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(lockException, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(lockException, channelGuard_);
+        KAA_MUTEX_LOCKED("channelGuard_");
 
         bool isServerFailed = false;
         connectionInProgress_ = false;
@@ -140,7 +145,8 @@ void DefaultOperationLongPollChannel::executeTask()
         KAA_UNLOCK(lockException); KAA_MUTEX_UNLOCKED("channelGuard_");
 
         KAA_MUTEX_LOCKING("conditionMutex_");
-        KAA_MUTEX_UNIQUE_DECLARE(conditionLock, conditionMutex_); KAA_MUTEX_LOCKED("conditionMutex_");
+        KAA_MUTEX_UNIQUE_DECLARE(conditionLock, conditionMutex_);
+        KAA_MUTEX_LOCKED("conditionMutex_");
         KAA_CONDITION_NOTIFY_ALL(waitCondition_);
         if (isServerFailed) {
             channelManager_->onServerFailed(
@@ -150,7 +156,8 @@ void DefaultOperationLongPollChannel::executeTask()
     }
 
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_LOCK(lock); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_LOCK(lock);
+    KAA_MUTEX_LOCKED("channelGuard_");
     if (!stopped_ && !taskPosted_) {
         postTask();
     }
@@ -159,7 +166,8 @@ void DefaultOperationLongPollChannel::executeTask()
 void DefaultOperationLongPollChannel::sync(TransportType type)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
     if (isShutdown_) {
         KAA_LOG_WARN(boost::format("Can't sync channel %1%. Channel is down") % getId());
         return;
@@ -185,7 +193,8 @@ void DefaultOperationLongPollChannel::sync(TransportType type)
 void DefaultOperationLongPollChannel::syncAll()
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
     if (isShutdown_) {
         KAA_LOG_WARN(boost::format("Can't sync channel %1%. Channel is down") % getId());
         return;
@@ -205,21 +214,24 @@ void DefaultOperationLongPollChannel::syncAll()
 void DefaultOperationLongPollChannel::setMultiplexer(IKaaDataMultiplexer *multiplexer)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
     multiplexer_ = multiplexer;
 }
 
 void DefaultOperationLongPollChannel::setDemultiplexer(IKaaDataDemultiplexer *demultiplexer)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
     demultiplexer_ = demultiplexer;
 }
 
 void DefaultOperationLongPollChannel::setServer(ITransportConnectionInfoPtr server)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
     if (isShutdown_) {
         KAA_LOG_WARN(boost::format("Can't set server for channel %1%. Channel is down") % getId());
         return;
@@ -251,7 +263,8 @@ void DefaultOperationLongPollChannel::syncAck(TransportType type)
 void DefaultOperationLongPollChannel::doShutdown()
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
     if (!isShutdown_) {
         isShutdown_ = true;
         stopPoll();
@@ -268,7 +281,8 @@ void DefaultOperationLongPollChannel::shutdown()
 void DefaultOperationLongPollChannel::pause()
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
     if (isShutdown_) {
         KAA_LOG_WARN(boost::format("Can't pause channel %1%. Channel is down") % getId());
         return;
@@ -282,7 +296,8 @@ void DefaultOperationLongPollChannel::pause()
 void DefaultOperationLongPollChannel::resume()
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
     if (isShutdown_) {
         KAA_LOG_WARN(boost::format("Can't resume channel %1%. Channel is down") % getId());
         return;

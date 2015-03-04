@@ -30,9 +30,9 @@ public:
     virtual TransactionIdPtr beginTransaction()
     {
         TransactionIdPtr trxId(new TransactionId);
-KAA_MUTEX_LOCKING("transactionsGuard_")
-                KAA_MUTEX_UNIQUE_DECLARE(transactionsLock, transactionsGuard_);
-        KAA_MUTEX_LOCKED("transactionsGuard_")
+        KAA_MUTEX_LOCKING("transactionsGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(transactionsLock, transactionsGuard_);
+        KAA_MUTEX_LOCKED("transactionsGuard_");
 
         transactions_.insert(std::make_pair(trxId, Container()));
 
@@ -41,9 +41,9 @@ KAA_MUTEX_LOCKING("transactionsGuard_")
 
     virtual void rollback(TransactionIdPtr trxId)
     {
-KAA_MUTEX_LOCKING("transactionsGuard_")
-                KAA_MUTEX_UNIQUE_DECLARE(transactionsLock, transactionsGuard_);
-        KAA_MUTEX_LOCKED("transactionsGuard_")
+        KAA_MUTEX_LOCKING("transactionsGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(transactionsLock, transactionsGuard_);
+        KAA_MUTEX_LOCKED("transactionsGuard_");
 
         auto it = transactions_.find(trxId);
         if (it != transactions_.end()) {
@@ -53,9 +53,9 @@ KAA_MUTEX_LOCKING("transactionsGuard_")
 
     Container & getContainerByTrxId(TransactionIdPtr trxId)
     {
-KAA_MUTEX_LOCKING("transactionsGuard_")
-                KAA_MUTEX_UNIQUE_DECLARE(transactionsLock, transactionsGuard_);
-        KAA_MUTEX_LOCKED("transactionsGuard_")
+        KAA_MUTEX_LOCKING("transactionsGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(transactionsLock, transactionsGuard_);
+        KAA_MUTEX_LOCKED("transactionsGuard_");
 
         auto it = transactions_.find(trxId);
 

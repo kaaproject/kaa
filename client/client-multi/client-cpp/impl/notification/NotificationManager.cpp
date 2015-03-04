@@ -48,7 +48,8 @@ NotificationManager::NotificationManager(IKaaClientStateStoragePtr status)
 void NotificationManager::topicsListUpdated(const Topics& topicList)
 {
     KAA_MUTEX_LOCKING("topicsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_)KAA_MUTEX_LOCKED("topicsGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_);
+    KAA_MUTEX_LOCKED("topicsGuard_");
 
     std::unordered_map<std::string/*Topic ID*/, Topic> newTopics;
 
@@ -59,7 +60,8 @@ void NotificationManager::topicsListUpdated(const Topics& topicList)
 
     {
         KAA_MUTEX_LOCKING("optionalListenersGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(optionalListenersLock, optionalListenersGuard_); KAA_MUTEX_LOCKED("optionalListenersGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(optionalListenersLock, optionalListenersGuard_);
+        KAA_MUTEX_LOCKED("optionalListenersGuard_");
 
         for (const auto& pair : topics_) {
             optionalListeners_.erase(pair.second.id);
@@ -112,7 +114,8 @@ void NotificationManager::removeTopicListListener(INotificationTopicListListener
 Topics NotificationManager::getTopics()
 {
     KAA_MUTEX_LOCKING("topicsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_); KAA_MUTEX_LOCKED("topicsGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_);
+    KAA_MUTEX_LOCKED("topicsGuard_");
 
     std::vector<Topic> topicList;
     topicList.resize(topics_.size());
@@ -189,7 +192,8 @@ void NotificationManager::removeNotificationListener(const std::string& topidId,
     }
 
     KAA_MUTEX_LOCKING("optionalListenersGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(notificationListenersLock, optionalListenersGuard_); KAA_MUTEX_LOCKED("optionalListenersGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(notificationListenersLock, optionalListenersGuard_);
+    KAA_MUTEX_LOCKED("optionalListenersGuard_");
 
     auto it = optionalListeners_.find(topidId);
     if (it != optionalListeners_.end()) {
@@ -273,7 +277,8 @@ void NotificationManager::unsubscribeFromTopics(const std::list<std::string>& id
 void NotificationManager::sync()
 {
     KAA_MUTEX_LOCKING("subscriptionsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_); KAA_MUTEX_LOCKED("subscriptionsGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_);
+    KAA_MUTEX_LOCKED("subscriptionsGuard_");
 
     if (!subscriptions_.empty()) {
         KAA_LOG_INFO("Sending info about new optional topic subscription...");
@@ -286,7 +291,8 @@ void NotificationManager::sync()
 void NotificationManager::updateSubscriptionInfo(const std::string& id, SubscriptionCommandType type)
 {
     KAA_MUTEX_LOCKING("subscriptionsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_); KAA_MUTEX_LOCKED("subscriptionsGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_);
+    KAA_MUTEX_LOCKED("subscriptionsGuard_");
 
     SubscriptionCommand cmd;
     cmd.command = type;
@@ -297,7 +303,8 @@ void NotificationManager::updateSubscriptionInfo(const std::string& id, Subscrip
 void NotificationManager::updateSubscriptionInfo(const SubscriptionCommands& newSubscriptions)
 {
     KAA_MUTEX_LOCKING("subscriptionsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_); KAA_MUTEX_LOCKED("subscriptionsGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(subscriptionLock, subscriptionsGuard_);
+    KAA_MUTEX_LOCKED("subscriptionsGuard_");
 
     subscriptions_.insert(subscriptions_.end(), newSubscriptions.begin(), newSubscriptions.end());
 }
@@ -306,7 +313,8 @@ const Topic& NotificationManager::findTopic(const std::string& id)
 {
     try {
         KAA_MUTEX_LOCKING("topicsGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_); KAA_MUTEX_LOCKED("topicsGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_);
+        KAA_MUTEX_LOCKED("topicsGuard_");
 
         return topics_.at(id);
     } catch (const std::out_of_range&) {
@@ -329,7 +337,8 @@ bool NotificationManager::notifyOptionalNotificationSubscribers(const Notificati
 {
     bool notified = false;
     KAA_MUTEX_LOCKING("optionalListenersGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(optionalListenersLock, optionalListenersGuard_); KAA_MUTEX_LOCKED("optionalListenersGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(optionalListenersLock, optionalListenersGuard_);
+    KAA_MUTEX_LOCKED("optionalListenersGuard_");
 
     auto it = optionalListeners_.find(notification.topicId);
     if (it != optionalListeners_.end()) {

@@ -66,13 +66,15 @@ void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInf
     TransportProtocolId protocolId = connectionInfo->getTransportId();
     if (connectionInfo->getServerType() == ServerType::OPERATIONS) {
         KAA_MUTEX_LOCKING("lastOpsServersGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(lastOpsServers_Lock, lastOpsServersGuard_); KAA_MUTEX_LOCKED("lastOpsServersGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(lastOpsServers_Lock, lastOpsServersGuard_);
+        KAA_MUTEX_LOCKED("lastOpsServersGuard_");
 
         lastOpsServers_[protocolId] = connectionInfo;
     }
 
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
 
     for (auto& channel : channels_) {
         if (channel->getServerType() == connectionInfo->getServerType() && channel->getTransportProtocolId()
@@ -88,7 +90,8 @@ void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInf
 bool KaaChannelManager::addChannelToList(IDataChannelPtr channel)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
 
     auto res = channels_.insert(channel);
 
@@ -102,7 +105,8 @@ bool KaaChannelManager::addChannelToList(IDataChannelPtr channel)
             connectionInfo = getCurrentBootstrapServer(protocolId);
         } else {
             KAA_MUTEX_LOCKING("lastOpsServersGuard_");
-            KAA_MUTEX_UNIQUE_DECLARE(lastOpsServers_Lock, lastOpsServersGuard_); KAA_MUTEX_LOCKED("lastOpsServersGuard_");
+            KAA_MUTEX_UNIQUE_DECLARE(lastOpsServers_Lock, lastOpsServersGuard_);
+            KAA_MUTEX_LOCKED("lastOpsServersGuard_");
 
             auto it = lastOpsServers_.find(channel->getTransportProtocolId());
             if (it != lastOpsServers_.end()) {
@@ -177,7 +181,8 @@ bool KaaChannelManager::useChannelForType(const std::pair<TransportType, Channel
                 % LoggingUtils::TransportTypeToString(type.first));
 
         KAA_MUTEX_LOCKING("mappedChannelGuard_");
-        KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_); KAA_MUTEX_LOCKED("mappedChannelGuard_");
+        KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_);
+        KAA_MUTEX_LOCKED("mappedChannelGuard_");
 
         mappedChannels_[type.first] = channel;
         return true;
@@ -196,7 +201,8 @@ void KaaChannelManager::useNewChannel(IDataChannelPtr channel)
 void KaaChannelManager::replaceChannel(IDataChannelPtr channel)
 {
     KAA_MUTEX_LOCKING("mappedChannelGuard_");
-    KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_); KAA_MUTEX_LOCKED("mappedChannelGuard_");
+    KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_);
+    KAA_MUTEX_LOCKED("mappedChannelGuard_");
 
     for (const auto& channelInfo : mappedChannels_) {
         if (channelInfo.second == channel) {
@@ -218,7 +224,8 @@ void KaaChannelManager::removeChannel(IDataChannelPtr channel)
     }
 
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
 
     if (channels_.erase(channel)) {
         replaceChannel(channel);
@@ -228,7 +235,8 @@ void KaaChannelManager::removeChannel(IDataChannelPtr channel)
 void KaaChannelManager::removeChannel(const std::string& id)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
 
     for (auto it = channels_.begin(); it != channels_.end(); ++it) {
         if ((*it)->getId() == id) {
@@ -257,7 +265,8 @@ void KaaChannelManager::useNewChannelForType(TransportType type)
 std::list<IDataChannelPtr> KaaChannelManager::getChannels()
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
 
     std::list<IDataChannelPtr> channels(channels_.begin(), channels_.end());
     return channels;
@@ -266,7 +275,8 @@ std::list<IDataChannelPtr> KaaChannelManager::getChannels()
 IDataChannelPtr KaaChannelManager::getChannelByTransportType(TransportType type)
 {
     KAA_MUTEX_LOCKING("mappedChannelGuard_");
-    KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_); KAA_MUTEX_LOCKED("mappedChannelGuard_");
+    KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_);
+    KAA_MUTEX_LOCKED("mappedChannelGuard_");
 
     IDataChannelPtr channel = nullptr;
     auto it = mappedChannels_.find(type);
@@ -281,7 +291,8 @@ IDataChannelPtr KaaChannelManager::getChannelByTransportType(TransportType type)
 IDataChannelPtr KaaChannelManager::getChannel(const std::string& channelId)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
 
     IDataChannelPtr channel = nullptr;
 
@@ -297,10 +308,12 @@ IDataChannelPtr KaaChannelManager::getChannel(const std::string& channelId)
 void KaaChannelManager::clearChannelList()
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
 
     KAA_MUTEX_LOCKING("mappedChannelGuard_");
-    KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_); KAA_MUTEX_LOCKED("mappedChannelGuard_");
+    KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_);
+    KAA_MUTEX_LOCKED("mappedChannelGuard_");
 
     channels_.clear();
     mappedChannels_.clear();
@@ -359,7 +372,8 @@ void KaaChannelManager::setConnectivityChecker(ConnectivityCheckerPtr checker)
     connectivityChecker_ = checker;
 
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
 
     for (auto& channel : channels_) {
         channel->setConnectivityChecker(connectivityChecker_);
@@ -372,7 +386,8 @@ void KaaChannelManager::doShutdown()
         isShutdown_ = true;
 
         KAA_MUTEX_LOCKING("mappedChannelGuard_");
-        KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_); KAA_MUTEX_LOCKED("mappedChannelGuard_");
+        KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_);
+        KAA_MUTEX_LOCKED("mappedChannelGuard_");
 
         for (auto& channel : mappedChannels_) {
             channel.second->shutdown();
@@ -395,7 +410,8 @@ void KaaChannelManager::pause()
         isPaused_ = true;
 
         KAA_MUTEX_LOCKING("mappedChannelGuard_");
-        KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_); KAA_MUTEX_LOCKED("mappedChannelGuard_");
+        KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_);
+        KAA_MUTEX_LOCKED("mappedChannelGuard_");
 
         for (auto& channel : mappedChannels_) {
             channel.second->pause();
@@ -413,7 +429,8 @@ void KaaChannelManager::resume()
         isPaused_ = false;
 
         KAA_MUTEX_LOCKING("mappedChannelGuard_");
-        KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_); KAA_MUTEX_LOCKED("mappedChannelGuard_");
+        KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_);
+        KAA_MUTEX_LOCKED("mappedChannelGuard_");
 
         for (auto& channel : mappedChannels_) {
             channel.second->resume();

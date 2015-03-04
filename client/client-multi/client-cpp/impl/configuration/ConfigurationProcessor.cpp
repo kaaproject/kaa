@@ -31,7 +31,8 @@ namespace kaa {
 void ConfigurationProcessor::processConfigurationData(const std::uint8_t *data, std::size_t dataLength, bool fullResync)
 {
     KAA_MUTEX_LOCKING("confProcessorMutex_");
-    KAA_R_MUTEX_UNIQUE_DECLARE(lock, confProcessorMutex_); KAA_MUTEX_LOCKED("confProcessorMutex_");
+    KAA_R_MUTEX_UNIQUE_DECLARE(lock, confProcessorMutex_);
+    KAA_MUTEX_LOCKED("confProcessorMutex_");
 
     KAA_LOG_INFO("Received configuration data.");
 

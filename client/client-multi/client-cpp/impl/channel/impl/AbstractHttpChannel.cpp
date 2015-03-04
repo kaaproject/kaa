@@ -28,8 +28,7 @@ AbstractHttpChannel::AbstractHttpChannel(IKaaChannelManager *channelManager, con
 
 void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDirection>& types
 #ifdef KAA_THREADSAFE
-                                       ,
-                                       KAA_MUTEX_UNIQUE& lock
+                                       , KAA_MUTEX_UNIQUE& lock
 #endif
 )
 {
@@ -86,12 +85,12 @@ void AbstractHttpChannel::sync(TransportType type)
     if (it != supportedTypes.end() && (it->second == ChannelDirection::UP
             || it->second == ChannelDirection::BIDIRECTIONAL)) {
         KAA_MUTEX_LOCKING("channelGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+        KAA_MUTEX_LOCKED("channelGuard_");
         if (currentServer_) {
             processTypes(std::map<TransportType, ChannelDirection>( { { type, it->second } })
 #ifdef KAA_THREADSAFE
-                                                                   ,
-                         lock
+                                                                   , lock
 #endif
                          );
         } else {
@@ -106,12 +105,12 @@ void AbstractHttpChannel::sync(TransportType type)
 void AbstractHttpChannel::syncAll()
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
     if (currentServer_) {
         processTypes(getSupportedTransportTypes()
 #ifdef KAA_THREADSAFE
-                     ,
-                     lock
+                     , lock
 #endif
                      );
     } else {
@@ -128,14 +127,16 @@ void AbstractHttpChannel::syncAck(TransportType type)
 void AbstractHttpChannel::setMultiplexer(IKaaDataMultiplexer *multiplexer)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
     multiplexer_ = multiplexer;
 }
 
 void AbstractHttpChannel::setDemultiplexer(IKaaDataDemultiplexer *demultiplexer)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
     demultiplexer_ = demultiplexer;
 }
 
@@ -143,7 +144,8 @@ void AbstractHttpChannel::setServer(ITransportConnectionInfoPtr server)
 {
     if (server->getTransportId() == getTransportProtocolId()) {
         KAA_MUTEX_LOCKING("channelGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_); KAA_MUTEX_LOCKED("channelGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+        KAA_MUTEX_LOCKED("channelGuard_");
         currentServer_.reset(new IPTransportInfo(server));
         std::shared_ptr<IEncoderDecoder> encDec(
                 new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(),
@@ -153,8 +155,7 @@ void AbstractHttpChannel::setServer(ITransportConnectionInfoPtr server)
             lastConnectionFailed_ = false;
             processTypes(getSupportedTransportTypes()
 #ifdef KAA_THREADSAFE
-                         ,
-                         lock
+                         , lock
 #endif
                          );
         }
