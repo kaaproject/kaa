@@ -66,7 +66,7 @@ struct kaa_profile_manager_t {
 /**
  * PUBLIC FUNCTIONS
  */
-kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t ** profile_manager_p, kaa_status_t *status
+kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_manager_p, kaa_status_t *status
         , kaa_channel_manager_t *channel_manager, kaa_logger_t *logger)
 {
     KAA_RETURN_IF_NIL3(profile_manager_p, channel_manager, status, KAA_ERR_BADPARAM);
@@ -199,7 +199,7 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
 #endif
 
 
-static kaa_error_t kaa_version_info_serialize(kaa_platform_message_writer_t* writer)
+static kaa_error_t kaa_version_info_serialize(kaa_platform_message_writer_t *writer)
 {
     KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
 
@@ -269,7 +269,7 @@ static kaa_error_t kaa_version_info_serialize(kaa_platform_message_writer_t* wri
     return error_code;
 }
 
-kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platform_message_writer_t* writer)
+kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platform_message_writer_t *writer)
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
 
@@ -388,7 +388,7 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
     return error_code;
 }
 
-kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_profile_t * profile_body)
+kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_profile_t *profile_body)
 {
 #if PROFILE_SCHEMA_VERSION > 1
     KAA_RETURN_IF_NIL2(self, profile_body, KAA_ERR_BADPARAM);
