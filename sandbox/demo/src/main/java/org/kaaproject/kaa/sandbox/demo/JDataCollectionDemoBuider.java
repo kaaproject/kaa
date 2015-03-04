@@ -85,7 +85,7 @@ public class JDataCollectionDemoBuider extends AbstractDemoBuilder{
     protected void setupProjectConfigs() {
         Project projectConfig = new Project();
         projectConfig.setId("jdatacollection_demo");
-        projectConfig.setName("Java Data Collection Demo");
+        projectConfig.setName("Java data collection demo");
         projectConfig.setDescription("Application on java platform demonstrating data collection subsystem (IoT)");
         projectConfig.setPlatform(Platform.JAVA);
         projectConfig.setSourceArchive("java/jdatacollection_demo.tar.gz");

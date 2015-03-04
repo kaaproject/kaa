@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.demo.event;
 
 import java.io.IOException;
+import java.lang.String;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -82,13 +83,16 @@ public class EventDemo {
                 new FetchEventListeners() {
                     @Override
                     public void onRequestFailed() {
-                        // Some code
+                        LOG.info("Request failed");
                     }
 
                     @Override
                     public void onEventListenersReceived(
                             List<String> eventListeners) {
-                        // Some code
+                        String output="Listeners received: ";
+                        for(String listener : eventListeners)
+                            output+=listener+", ";
+                        LOG.info(output);
                     }
                 });
 

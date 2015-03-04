@@ -16,7 +16,6 @@
 package org.kaaproject.kaa.sandbox.demo;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -92,7 +91,7 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder {
     protected void setupProjectConfigs() {
         Project projectConfig = new Project();
         projectConfig.setId("notification_demo");
-        projectConfig.setName("Android Notification Demo");
+        projectConfig.setName("Android notification demo");
         projectConfig.setDescription("Application on android platform demonstrating notification subsystem (IoT)");
         projectConfig.setPlatform(Platform.ANDROID);
         projectConfig.setSourceArchive("android/notification_demo.tar.gz");

@@ -28,25 +28,13 @@
         <mkdir dir="build/classes"/>
         <mkdir dir="build/jar"/>
         <javac srcdir="src" destdir="build/classes" classpathref="classpath"/>
-        <jar destfile="build/jar/tmp.jar" includes="**/*.class" excludes="**/logback.xml"
-             basedir="build/classes">
+        <jar destfile="build/jar/DataCollectionDemo.jar" includes="**/*.class" basedir="build/classes">
             <manifest>
                 <attribute name="Main-Class"
                            value="org.kaaproject.kaa.demo.datacollection.DataCollectionDemo"/>
             </manifest>
             <zipgroupfileset includes="*.jar" dir="lib"/>
         </jar>
-
-
-        <unzip src="build/jar/tmp.jar" dest="tmp/"/>
-        <jar destfile="build/jar/DataCollectionDemo.jar"
-             basedir="tmp/"
-             includes="**/*"
-             excludes="**/logback.xml"/>
-
-        <delete dir="tmp"/>
-        <delete file="build/jar/tmp.jar"/>
-
     </target>
 
 

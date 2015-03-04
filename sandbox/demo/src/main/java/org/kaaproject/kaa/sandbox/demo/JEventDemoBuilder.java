@@ -118,7 +118,7 @@ public class JEventDemoBuilder extends  AbstractDemoBuilder{
     protected void setupProjectConfigs() {
         Project projectConfig = new Project();
         projectConfig.setId("jevent_demo");
-        projectConfig.setName("Java Event Demo");
+        projectConfig.setName("Java event demo");
         projectConfig.setDescription("Application on java platform demonstrating event subsystem (IoT)");
         projectConfig.setPlatform(Platform.JAVA);
         projectConfig.setSourceArchive("java/jevent_demo.tar.gz");
