@@ -1,0 +1,9 @@
+{
+  "messageConf" : {
+    "string" : "SampleMessage"
+  },
+  "numberConf" : {
+    "int" : 123456789
+  },
+  "__uuid": null
+}

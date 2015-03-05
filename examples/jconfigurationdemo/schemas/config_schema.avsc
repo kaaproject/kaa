@@ -1,0 +1,16 @@
+{
+  "type" : "record",
+  "name" : "SampleConfiguration",
+  "namespace" : "org.kaaproject.kaa.demo.configuration",
+  "fields" : [ {
+    "name" : "messageConf",
+    "type" : [ {
+      "type" : "string",
+      "avro.java.string" : "String"
+    }, "null" ]
+  }, {
+    "name" : "numberConf",
+    "type" : [ "int", "null" ]
+  } ],
+  "displayName" : "Sample configuration"
+}
