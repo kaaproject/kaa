@@ -228,7 +228,7 @@ public class DefaultDeltaService implements DeltaService {
 
         final DeltaCacheKey newKey;
         if (userConfiguration != null) {
-            newKey = new DeltaCacheKey(deltaKey.getAppConfigVersionKey(), EndpointObjectHash.fromBytes(userConfiguration.getBody()),
+            newKey = new DeltaCacheKey(deltaKey.getAppConfigVersionKey(), EndpointObjectHash.fromString(userConfiguration.getBody()),
                     deltaKey.getEndpointGroups(), deltaKey.getEndpointConfHash());
         } else {
             newKey = deltaKey;
@@ -247,7 +247,7 @@ public class DefaultDeltaService implements DeltaService {
 
                             EndpointObjectHash userConfigurationHash = null;
                             if (userConfiguration != null) {
-                                userConfigurationHash = EndpointObjectHash.fromBytes(userConfiguration.getBody());
+                                userConfigurationHash = EndpointObjectHash.fromString(userConfiguration.getBody());
                             }
 
                             BaseData mergedConfiguration = getMergedConfiguration(endpointId, userConfiguration, deltaKey);
@@ -335,7 +335,7 @@ public class DefaultDeltaService implements DeltaService {
         }
 
         if (userConfiguration != null) {
-            overrideConfigs.add(new OverrideData(overrideSchema, new String(userConfiguration.getBody(), UTF_8)));
+            overrideConfigs.add(new OverrideData(overrideSchema, userConfiguration.getBody()));
         }
 
         OverrideAlgorithm configurationMerger = configurationOverrideFactory.createConfigurationOverrideAlgorithm();
@@ -343,13 +343,13 @@ public class DefaultDeltaService implements DeltaService {
     }
 
     /**
-     * Gets the latest conf from cache.
+     * Gets the latest conf from cache
      *
-     * @param egsList
-     *            the egs list
+     * @param endpointId
+     * @param userConfiguration
+     * @param cacheKey
      * @return the latest conf from cache
      * @throws GetDeltaException
-     *             the get delta exception
      */
     private BaseData getMergedConfiguration(final String endpointId, final EndpointUserConfigurationDto userConfiguration,
             final DeltaCacheKey cacheKey) throws GetDeltaException {

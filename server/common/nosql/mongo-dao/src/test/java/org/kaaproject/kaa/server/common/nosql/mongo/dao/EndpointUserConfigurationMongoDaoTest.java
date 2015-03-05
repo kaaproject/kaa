@@ -8,6 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointUserConfiguration;
@@ -60,11 +61,11 @@ public class EndpointUserConfigurationMongoDaoTest extends AbstractMongoTest {
     public void findByUserIdAndAppTokenAndSchemaVersionTest() {
         EndpointUserDto userDto = generateEndpointUser(null);
         ApplicationDto appDto = generateApplication();
-        int foundVersion = random.nextInt();
-        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, foundVersion);
-        generateEndpointUserConfiguration(userDto, appDto, random.nextInt());
+        ConfigurationSchemaDto schema = generateConfSchema(appDto.getId(),1).get(0);
+        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, schema);
+        generateEndpointUserConfiguration(userDto, appDto, null);
         generateEndpointUserConfiguration(null, null, null);
-        MongoEndpointUserConfiguration found = endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), foundVersion);
+        MongoEndpointUserConfiguration found = endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getMajorVersion());
         Assert.assertEquals(firstUserConfigurationDto, found.toDto());
     }
 
@@ -72,12 +73,12 @@ public class EndpointUserConfigurationMongoDaoTest extends AbstractMongoTest {
     public void removeByUserIdAndAppTokenAndSchemaVersionTest() {
         EndpointUserDto userDto = generateEndpointUser(null);
         ApplicationDto appDto = generateApplication();
-        int removedVersion = random.nextInt();
-        generateEndpointUserConfiguration(userDto, appDto, removedVersion);
-        generateEndpointUserConfiguration(userDto, appDto, random.nextInt());
-        generateEndpointUserConfiguration(userDto, appDto, random.nextInt());
-        endpointUserConfigurationDao.removeByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), removedVersion);
-        MongoEndpointUserConfiguration removed = endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), removedVersion);
+        ConfigurationSchemaDto configurationSchemaDto = generateConfSchema(appDto.getId(),1).get(0);
+        generateEndpointUserConfiguration(userDto, appDto, configurationSchemaDto);
+        generateEndpointUserConfiguration(userDto, appDto, null);
+        generateEndpointUserConfiguration(userDto, appDto, null);
+        endpointUserConfigurationDao.removeByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), configurationSchemaDto.getMajorVersion());
+        MongoEndpointUserConfiguration removed = endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), configurationSchemaDto.getMajorVersion());
         Assert.assertNull(removed);
         List<MongoEndpointUserConfiguration> foundList = endpointUserConfigurationDao.findByUserId(userDto.getId());
         Assert.assertEquals(2, foundList.size());
@@ -87,8 +88,8 @@ public class EndpointUserConfigurationMongoDaoTest extends AbstractMongoTest {
     public void findByUserIdTest() {
         EndpointUserDto userDto = generateEndpointUser(null);
         ApplicationDto appDto = generateApplication();
-        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, random.nextInt());
-        EndpointUserConfigurationDto secondUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, random.nextInt());
+        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, null);
+        EndpointUserConfigurationDto secondUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, null);
         List<MongoEndpointUserConfiguration> expectedList = new ArrayList<>();
         expectedList.add(new MongoEndpointUserConfiguration(firstUserConfigurationDto));
         expectedList.add(new MongoEndpointUserConfiguration(secondUserConfigurationDto));
