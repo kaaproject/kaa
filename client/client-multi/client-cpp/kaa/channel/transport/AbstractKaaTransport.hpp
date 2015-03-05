@@ -24,14 +24,17 @@
 
 namespace kaa {
 
-template <TransportType Type>
-class AbstractKaaTransport : public IKaaTransport
-{
+template<TransportType Type>
+class AbstractKaaTransport: public IKaaTransport {
 public:
-    virtual ~AbstractKaaTransport() {}
+    virtual ~AbstractKaaTransport()
+    {
+    }
 
     AbstractKaaTransport(IKaaChannelManager& channelManager)
-        : type_(Type), channelManager_(channelManager), clientStatus_(nullptr) {}
+            : type_(Type), channelManager_(channelManager), clientStatus_(nullptr)
+    {
+    }
 
     virtual void setClientState(IKaaClientStateStoragePtr status)
     {
@@ -67,12 +70,11 @@ protected:
     }
 
 protected:
-    const TransportType         type_;
-    IKaaChannelManager &        channelManager_;
-    IKaaClientStateStoragePtr   clientStatus_;
+    const TransportType type_;
+    IKaaChannelManager & channelManager_;
+    IKaaClientStateStoragePtr clientStatus_;
 };
 
 }  // namespace kaa
-
 
 #endif /* ABSTRACTKAATRANSPORT_HPP_ */

@@ -29,10 +29,14 @@ namespace kaa {
  * @param <T> user-defined profile object.
  */
 template<typename T>
-class AbstractProfileContainer : public IProfileContainer {
+class AbstractProfileContainer: public IProfileContainer {
 public:
-    AbstractProfileContainer() {}
-    virtual ~AbstractProfileContainer() {}
+    AbstractProfileContainer()
+    {
+    }
+    virtual ~AbstractProfileContainer()
+    {
+    }
 
     /**
      * Retrieves serialized profile.
@@ -40,10 +44,10 @@ public:
      * @return byte array with avro serialized profile.
      *
      */
-    virtual SharedDataBuffer getSerializedProfile() {
+    virtual SharedDataBuffer getSerializedProfile()
+    {
         return avroConverter_.toByteArray(getProfile());
     }
-
 
     /**
      * Sets new profile listener.
@@ -52,7 +56,8 @@ public:
      *
      * @param listener New profile listener.
      */
-    virtual void setProfileListener(ProfileListenerPtr listener) {
+    virtual void setProfileListener(ProfileListenerPtr listener)
+    {
         profileListener_ = listener;
     }
 
@@ -69,15 +74,16 @@ protected:
     /**
      * Updates profile. Call this method when you finish to update your profile.
      */
-    void updateProfile() {
+    void updateProfile()
+    {
         if (profileListener_) {
             profileListener_->onProfileUpdated(getSerializedProfile());
         }
     }
 
 private:
-    AvroByteArrayConverter<T>   avroConverter_;
-    ProfileListenerPtr          profileListener_;
+    AvroByteArrayConverter<T> avroConverter_;
+    ProfileListenerPtr profileListener_;
 };
 
 } /* namespace kaa */

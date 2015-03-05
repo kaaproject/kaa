@@ -29,7 +29,7 @@ class ILogUploadConfiguration;
 class ILogUploadStrategy;
 class ILogUploadFailoverStrategy;
 class ILogStorageStatus;
-class LogSyncResponse;
+struct LogSyncResponse;
 
 /**
  * Public interface for accessing Kaa Log Subsystem.
@@ -86,7 +86,9 @@ public:
      */
     virtual void onLogUploadResponse(const LogSyncResponse& response) = 0;
 
-    virtual ~ILogCollector() {}
+    virtual ~ILogCollector()
+    {
+    }
 };
 
 }  // namespace kaa
@@ -94,3 +96,4 @@ public:
 #endif
 
 #endif /* ILOGCOLLECTOR_HPP_ */
+

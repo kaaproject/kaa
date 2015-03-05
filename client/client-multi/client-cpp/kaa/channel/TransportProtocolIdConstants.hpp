@@ -28,15 +28,15 @@ namespace kaa {
  */
 class TransportProtocolIdConstants {
 public:
-   static const TransportProtocolId HTTP_TRANSPORT_ID;
-   static const TransportProtocolId TCP_TRANSPORT_ID;
+    static const TransportProtocolId HTTP_TRANSPORT_ID;
+    static const TransportProtocolId TCP_TRANSPORT_ID;
 
 private:
-   static const std::int32_t HTTP_TRANSPORT_PROTOCOL_ID;
-   static const std::int32_t HTTP_TRANSPORT_PROTOCOL_VERSION;
+    static const std::int32_t HTTP_TRANSPORT_PROTOCOL_ID;
+    static const std::int32_t HTTP_TRANSPORT_PROTOCOL_VERSION;
 
-   static const std::int32_t TCP_TRANSPORT_PROTOCOL_ID;
-   static const std::int32_t TCP_TRANSPORT_PROTOCOL_VERSION;
+    static const std::int32_t TCP_TRANSPORT_PROTOCOL_ID;
+    static const std::int32_t TCP_TRANSPORT_PROTOCOL_VERSION;
 };
 
 } /* namespace kaa */

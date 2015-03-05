@@ -30,10 +30,11 @@ namespace kaa {
 /**
  * Interface for configuration persistence manager.
  */
-class IConfigurationPersistenceManager
-{
+class IConfigurationPersistenceManager {
 public:
-    virtual ~IConfigurationPersistenceManager() {}
+    virtual ~IConfigurationPersistenceManager()
+    {
+    }
 
     /**
      * Registers new configuration persistence routines. Replaces previously set value.

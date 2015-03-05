@@ -28,8 +28,7 @@ namespace kaa {
 /**
  * Interface for subscriber to receive deltas in avro generic objects
  */
-class IGenericDeltaReceiver
-{
+class IGenericDeltaReceiver {
 public:
     /**
      * Will be called on each deserialized configuration data
@@ -41,7 +40,9 @@ public:
      */
     virtual void onDeltaReceived(int index, const KaaRootConfiguration& data, bool fullResync) = 0;
 
-    virtual ~IGenericDeltaReceiver() {}
+    virtual ~IGenericDeltaReceiver()
+    {
+    }
 };
 
 }  // namespace kaa

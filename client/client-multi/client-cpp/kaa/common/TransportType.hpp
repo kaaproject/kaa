@@ -25,16 +25,9 @@ namespace kaa {
  *
  */
 enum class TransportType {
-    BOOTSTRAP = 0,
-    PROFILE,
-    CONFIGURATION,
-    NOTIFICATION,
-    USER,
-    EVENT,
-    LOGGING
+    BOOTSTRAP = 0, PROFILE, CONFIGURATION, NOTIFICATION, USER, EVENT, LOGGING
 };
 
 }  // namespace kaa
-
 
 #endif /* TRANSPORTTYPE_HPP_ */

@@ -20,11 +20,13 @@
 
 namespace kaa {
 
-    const std::vector<std::uint8_t>& LogRecord::getData() {
+const std::vector<std::uint8_t>& LogRecord::getData()
+{
     return logData_;
 }
 
-size_t LogRecord::getSize() const {
+size_t LogRecord::getSize() const
+{
     return logData_.size();
 }
 

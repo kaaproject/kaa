@@ -35,7 +35,9 @@ namespace kaa {
 class IConfigurationStorage {
 public:
     typedef std::vector<std::uint8_t> byte_buffer;
-    virtual ~IConfigurationStorage() {}
+    virtual ~IConfigurationStorage()
+    {
+    }
 
     /**
      * Specifies routine to persist configuration data.

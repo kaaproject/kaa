@@ -43,9 +43,12 @@ public:
      * Copy constructor
      */
     DeltaHandlerId(const DeltaHandlerId& id)
-        : handlerId_(id.handlerId_) {}
+            : handlerId_(id.handlerId_)
+    {
+    }
 
-    DeltaHandlerId& operator=(const DeltaHandlerId& id) {
+    DeltaHandlerId& operator=(const DeltaHandlerId& id)
+    {
         handlerId_ = id.handlerId_;
         return *this;
     }
@@ -55,14 +58,17 @@ public:
      * @param handlerId inner representation of \ref DeltaHandlerId
      */
     DeltaHandlerId(const std::uint64_t& handlerId)
-        : handlerId_(handlerId) {}
+            : handlerId_(handlerId)
+    {
+    }
 
     /**
      * Equal operator
      * @param id instance of \ref DeltaHandlerId to be compared
      * @return true if this is equal than id, false otherwise
      */
-    inline bool operator==(const DeltaHandlerId& id) const {
+    inline bool operator==(const DeltaHandlerId& id) const
+    {
         return (handlerId_ == id.handlerId_);
     }
 
@@ -71,7 +77,8 @@ public:
      * @param id instance of \ref DeltaHandlerId to be compared
      * @return true if this is not equal than id, false otherwise
      */
-    inline bool operator!=(const DeltaHandlerId& id) const {
+    inline bool operator!=(const DeltaHandlerId& id) const
+    {
         return (handlerId_ != id.handlerId_);
     }
 
@@ -80,7 +87,8 @@ public:
      * @param id instance of \ref DeltaHandlerId to be compared
      * @return true if this is less than id, false otherwise
      */
-    inline bool operator<(const DeltaHandlerId& id) const {
+    inline bool operator<(const DeltaHandlerId& id) const
+    {
         return (handlerId_ < id.handlerId_);
     }
 
@@ -89,7 +97,8 @@ public:
      * @param id instance of \ref DeltaHandlerId to be compared
      * @return true if this is greater than id, false otherwise
      */
-    inline bool operator>(const DeltaHandlerId& id) const {
+    inline bool operator>(const DeltaHandlerId& id) const
+    {
         return (handlerId_ > id.handlerId_);
     }
 
@@ -98,7 +107,8 @@ public:
      * @param id instance of \ref DeltaHandlerId to be compared
      * @return true if this is not less than id, false otherwise
      */
-    inline bool operator<=(const DeltaHandlerId& id) const {
+    inline bool operator<=(const DeltaHandlerId& id) const
+    {
         return (handlerId_ <= id.handlerId_);
     }
 
@@ -107,15 +117,17 @@ public:
      * @param id instance of \ref DeltaHandlerId to be compared
      * @return true if this is not greater than id, false otherwise
      */
-    inline bool operator>=(const DeltaHandlerId& id) const {
+    inline bool operator>=(const DeltaHandlerId& id) const
+    {
         return (handlerId_ >= id.handlerId_);
     }
 
     /**
      * Retrieves inner representation value of \ref DeltaHandlerId
      */
-    inline std::uint64_t getHandlerId() const {
-        return handlerId_ ;
+    inline std::uint64_t getHandlerId() const
+    {
+        return handlerId_;
     }
 
 private:

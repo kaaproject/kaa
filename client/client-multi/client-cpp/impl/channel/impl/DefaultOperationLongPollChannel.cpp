@@ -28,19 +28,20 @@
 namespace kaa {
 
 const std::string DefaultOperationLongPollChannel::CHANNEL_ID = "default_operations_long_poll_channel";
-const std::map<TransportType, ChannelDirection> DefaultOperationLongPollChannel::SUPPORTED_TYPES =
-        {
-                { TransportType::PROFILE, ChannelDirection::BIDIRECTIONAL },
-                { TransportType::CONFIGURATION, ChannelDirection::BIDIRECTIONAL },
-                { TransportType::NOTIFICATION, ChannelDirection::BIDIRECTIONAL },
-                { TransportType::USER, ChannelDirection::BIDIRECTIONAL },
-                { TransportType::EVENT, ChannelDirection::DOWN }
-        };
+const std::map<TransportType, ChannelDirection> DefaultOperationLongPollChannel::SUPPORTED_TYPES = {
+        { TransportType::PROFILE, ChannelDirection::BIDIRECTIONAL }, { TransportType::CONFIGURATION,
+                                                                       ChannelDirection::BIDIRECTIONAL },
+        { TransportType::NOTIFICATION, ChannelDirection::BIDIRECTIONAL }, { TransportType::USER,
+                                                                            ChannelDirection::BIDIRECTIONAL },
+        { TransportType::EVENT, ChannelDirection::DOWN } };
 
-DefaultOperationLongPollChannel::DefaultOperationLongPollChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys)
-    : clientKeys_(clientKeys), work_(io_), pollThread_()
-    , stopped_(true), isShutdown_(false), isPaused_(false), connectionInProgress_(false), taskPosted_(false), firstStart_(true)
-    , multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager) {}
+DefaultOperationLongPollChannel::DefaultOperationLongPollChannel(IKaaChannelManager *channelManager,
+                                                                 const KeyPair& clientKeys)
+        : clientKeys_(clientKeys), work_(io_), pollThread_(), stopped_(true), isShutdown_(false), isPaused_(false),
+          connectionInProgress_(false), taskPosted_(false), firstStart_(true), multiplexer_(nullptr),
+          demultiplexer_(nullptr), channelManager_(channelManager)
+{
+}
 
 DefaultOperationLongPollChannel::~DefaultOperationLongPollChannel()
 {
@@ -54,7 +55,7 @@ void DefaultOperationLongPollChannel::startPoll()
     KAA_LOG_INFO("Starting poll scheduler..");
     if (firstStart_) {
         KAA_LOG_INFO(boost::format("First start for channel %1%. Creating a thread...") % getId());
-        pollThread_ = std::thread([this](){ this->io_.run(); });
+        pollThread_ = std::thread([this]() {this->io_.run();});
         firstStart_ = false;
     }
     if (stopped_) {
@@ -76,14 +77,14 @@ void DefaultOperationLongPollChannel::stopPoll()
             KAA_MUTEX_LOCKING("conditionMutex_");
             KAA_MUTEX_UNIQUE_DECLARE(conditionLock, conditionMutex_);
             KAA_MUTEX_LOCKED("conditionMutex_");
-            KAA_CONDITION_WAIT_PRED(waitCondition_, conditionLock, [this](){ return !this->connectionInProgress_; });
+            KAA_CONDITION_WAIT_PRED(waitCondition_, conditionLock, [this]() {return !this->connectionInProgress_;});
         }
     }
 }
 
 void DefaultOperationLongPollChannel::postTask()
 {
-    io_.post([this](){ this->executeTask(); });
+    io_.post([this]() {this->executeTask();});
     taskPosted_ = true;
 }
 
@@ -101,11 +102,10 @@ void DefaultOperationLongPollChannel::executeTask()
     const auto& bodyRaw = multiplexer_->compileRequest(getSupportedTransportTypes());
     // Creating HTTP request using the given data
     std::shared_ptr<IHttpRequest> postRequest = httpDataProcessor_.createOperationRequest(
-                                        currentServer_->getURL() + getURLSuffix(), bodyRaw);
+            currentServer_->getURL() + getURLSuffix(), bodyRaw);
 
     KAA_MUTEX_UNLOCKING("channelGuard_");
-    KAA_UNLOCK(lock);
-    KAA_MUTEX_UNLOCKED("channelGuard_");
+    KAA_UNLOCK(lock); KAA_MUTEX_UNLOCKED("channelGuard_");
     try {
         // Sending http request
         auto response = httpClient_.sendRequest(*postRequest);
@@ -116,11 +116,11 @@ void DefaultOperationLongPollChannel::executeTask()
         connectionInProgress_ = false;
         const std::string& processedResponse = httpDataProcessor_.retrieveOperationResponse(*response);
         KAA_MUTEX_UNLOCKING("channelGuard_");
-        KAA_UNLOCK(lockInternal);
-        KAA_MUTEX_UNLOCKED("channelGuard_");
+        KAA_UNLOCK(lockInternal); KAA_MUTEX_UNLOCKED("channelGuard_");
         demultiplexer_->processResponse(
-                std::vector<std::uint8_t>(reinterpret_cast<const std::uint8_t *>(processedResponse.data()),
-                                            reinterpret_cast<const std::uint8_t *>(processedResponse.data() + processedResponse.size())));
+                std::vector<std::uint8_t>(
+                        reinterpret_cast<const std::uint8_t *>(processedResponse.data()),
+                        reinterpret_cast<const std::uint8_t *>(processedResponse.data() + processedResponse.size())));
 
         KAA_MUTEX_LOCKING("conditionMutex_");
         KAA_MUTEX_UNIQUE_DECLARE(conditionLock, conditionMutex_);
@@ -136,21 +136,21 @@ void DefaultOperationLongPollChannel::executeTask()
         if (stopped_) {
             KAA_LOG_INFO(boost::format("Connection for channel %1% was aborted") % getId());
         } else {
-            KAA_LOG_ERROR(boost::format("Connection failed, server %1%:%2%: %3%")
-                    % currentServer_->getHost() % currentServer_->getPort() % e.what());
+            KAA_LOG_ERROR(
+                    boost::format("Connection failed, server %1%:%2%: %3%") % currentServer_->getHost()
+                    % currentServer_->getPort() % e.what());
             isServerFailed = true;
             stopped_ = true;
-        }
-        KAA_MUTEX_UNLOCKING("channelGuard_");
-        KAA_UNLOCK(lockException);
-        KAA_MUTEX_UNLOCKED("channelGuard_");
+        } KAA_MUTEX_UNLOCKING("channelGuard_");
+        KAA_UNLOCK(lockException); KAA_MUTEX_UNLOCKED("channelGuard_");
 
         KAA_MUTEX_LOCKING("conditionMutex_");
         KAA_MUTEX_UNIQUE_DECLARE(conditionLock, conditionMutex_);
         KAA_MUTEX_LOCKED("conditionMutex_");
         KAA_CONDITION_NOTIFY_ALL(waitCondition_);
         if (isServerFailed) {
-            channelManager_->onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_));
+            channelManager_->onServerFailed(
+                    std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_));
         }
         return;
     }
@@ -243,9 +243,8 @@ void DefaultOperationLongPollChannel::setServer(ITransportConnectionInfoPtr serv
 
         currentServer_.reset(new IPTransportInfo(server));
         std::shared_ptr<IEncoderDecoder> encDec(
-                new RsaEncoderDecoder(clientKeys_.getPublicKey()
-                                    , clientKeys_.getPrivateKey()
-                                    , currentServer_->getPublicKey()));
+                new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(),
+                                      currentServer_->getPublicKey()));
         httpDataProcessor_.setEncoderDecoder(encDec);
 
         if (!isPaused_) {

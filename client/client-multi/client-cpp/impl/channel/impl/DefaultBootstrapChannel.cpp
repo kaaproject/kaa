@@ -37,10 +37,8 @@
 namespace kaa {
 
 const std::string DefaultBootstrapChannel::CHANNEL_ID = "default_bootstrap_channel";
-const std::map<TransportType, ChannelDirection> DefaultBootstrapChannel::SUPPORTED_TYPES =
-        {
-                { TransportType:: BOOTSTRAP, ChannelDirection::BIDIRECTIONAL }
-        };
+const std::map<TransportType, ChannelDirection> DefaultBootstrapChannel::SUPPORTED_TYPES = { {
+        TransportType::BOOTSTRAP, ChannelDirection::BIDIRECTIONAL } };
 
 }
 

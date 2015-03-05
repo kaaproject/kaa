@@ -47,8 +47,8 @@ bool IPConnectivityChecker::checkConnectivity()
             std::ostringstream ss;
             ss << transportInfo.getPort();
 
-            boost::asio::ip::tcp::resolver::query query(transportInfo.getHost(), ss.str()
-                    , boost::asio::ip::resolver_query_base::numeric_service);
+            boost::asio::ip::tcp::resolver::query query(transportInfo.getHost(), ss.str(),
+                                                        boost::asio::ip::resolver_query_base::numeric_service);
             const auto& ep = resolver.resolve(query);
 
             boost::asio::ip::tcp::socket sock_(io_service);
@@ -69,8 +69,9 @@ bool IPConnectivityChecker::checkConnectivity()
 
 bool IPConnectivityChecker::isIPServer(ITransportConnectionInfoPtr serverConnectionInfo)
 {
-    return (serverConnectionInfo && (serverConnectionInfo->getTransportId() == TransportProtocolIdConstants::HTTP_TRANSPORT_ID ||
-                                     serverConnectionInfo->getTransportId() == TransportProtocolIdConstants::TCP_TRANSPORT_ID));
+    return (serverConnectionInfo && (serverConnectionInfo->getTransportId()
+            == TransportProtocolIdConstants::HTTP_TRANSPORT_ID
+                                     || serverConnectionInfo->getTransportId() == TransportProtocolIdConstants::TCP_TRANSPORT_ID));
 }
 
 } /* namespace kaa */

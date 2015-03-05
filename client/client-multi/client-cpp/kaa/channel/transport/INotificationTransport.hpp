@@ -24,8 +24,8 @@
 
 namespace kaa {
 
-typedef std::list<SubscriptionCommand>             SubscriptionCommands;
-typedef std::shared_ptr<NotificationSyncRequest>   NotificationSyncRequestPtr;
+typedef std::list<SubscriptionCommand> SubscriptionCommands;
+typedef std::shared_ptr<NotificationSyncRequest> NotificationSyncRequestPtr;
 
 class INotificationManager;
 class INotificationProcessor;
@@ -81,7 +81,9 @@ public:
      */
     virtual void setNotificationProcessor(INotificationProcessor* processor) = 0;
 
-    virtual ~INotificationTransport() {}
+    virtual ~INotificationTransport()
+    {
+    }
 };
 
 } /* namespace kaa */

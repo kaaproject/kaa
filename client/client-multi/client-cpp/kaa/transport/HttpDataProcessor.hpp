@@ -37,16 +37,17 @@
 #include "kaa/http/MultipartPostHttpRequest.hpp"
 #include "kaa/transport/TransportException.hpp"
 
-
 namespace kaa {
 
-class HttpDataProcessor : boost::noncopyable {
+class HttpDataProcessor: boost::noncopyable {
 public:
-    HttpDataProcessor(const PublicKey& pubKey,
-            const PrivateKey& privKey,
-            const PublicKey& remoteKey) :
-            encDec_(new RsaEncoderDecoder(pubKey, privKey, remoteKey)) { }
-    HttpDataProcessor() { }
+    HttpDataProcessor(const PublicKey& pubKey, const PrivateKey& privKey, const PublicKey& remoteKey)
+            : encDec_(new RsaEncoderDecoder(pubKey, privKey, remoteKey))
+    {
+    }
+    HttpDataProcessor()
+    {
+    }
 
     std::shared_ptr<IHttpRequest> createOperationRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data);
     std::string retrieveOperationResponse(const IHttpResponse& response);
@@ -54,10 +55,14 @@ public:
     std::shared_ptr<IHttpRequest> createBootstrapRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data);
     std::string retrieveBootstrapResponse(const IHttpResponse& response);
 
-    void setEncoderDecoder(std::shared_ptr<IEncoderDecoder> encoderDecoder) { encDec_ = encoderDecoder; }
+    void setEncoderDecoder(std::shared_ptr<IEncoderDecoder> encoderDecoder)
+    {
+        encDec_ = encoderDecoder;
+    }
 
 private:
-    std::shared_ptr<IHttpRequest> createHttpRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data, bool sign);
+    std::shared_ptr<IHttpRequest> createHttpRequest(const HttpUrl& url, const std::vector<std::uint8_t>& data,
+                                                    bool sign);
 
     void verifyResponse(const IHttpResponse& response);
 

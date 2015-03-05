@@ -92,7 +92,7 @@ private:
     std::unique_ptr<DefaultLogUploadConfiguration>    defaultConfiguration_;
 
     typedef std::chrono::system_clock clock_t;
-    std::unordered_map<std::string, std::chrono::time_point<clock_t>> timeoutsMap_;
+    std::unordered_map<std::int32_t, std::chrono::time_point<clock_t>> timeoutsMap_;
 };
 
 }  // namespace kaa

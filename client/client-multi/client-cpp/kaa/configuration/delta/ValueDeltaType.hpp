@@ -43,13 +43,16 @@ public:
      * @param type avro type of data
      */
     ValueDeltaType(const IDeltaType::DeltaValue& data, const avro::Type& type)
-        : value_(data), type_(type) {}
+            : value_(data), type_(type)
+    {
+    }
 
     /**
      * Retrieves new field value
      * @return DeltaValue consist of new value
      */
-    inline virtual const DeltaValue& getNewValue() {
+    inline virtual const DeltaValue& getNewValue()
+    {
         return value_;
     }
 
@@ -61,7 +64,7 @@ public:
 
 private:
     IDeltaType::DeltaValue value_;
-    avro::Type             type_;
+    avro::Type type_;
 };
 
 inline std::string ValueDeltaType::toString() const
@@ -105,18 +108,18 @@ inline std::string ValueDeltaType::toString() const
         }
         case avro::AVRO_BYTES:
         case avro::AVRO_FIXED: {
-            const std::vector<std::uint8_t> buffer =
-                    boost::any_cast<std::vector<std::uint8_t> >(value_);
+            const std::vector<std::uint8_t> buffer = boost::any_cast<std::vector<std::uint8_t> >(value_);
 
             for (auto it = buffer.begin(); it != buffer.end();) {
-                ss << std::setw(2) << std::setfill('0') << std::hex << (int)*it << std::dec;
+                ss << std::setw(2) << std::setfill('0') << std::hex << (int) *it << std::dec;
                 if (++it != buffer.end()) {
                     ss << "-";
                 }
             }
             break;
         }
-        default: throw KaaException("Unknown avro type");
+        default:
+            throw KaaException("Unknown avro type");
         }
     } catch (...) {
         ss << "unknown";

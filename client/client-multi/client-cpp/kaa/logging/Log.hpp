@@ -25,7 +25,6 @@
 #include <string.h>
 #include <boost/format.hpp>
 
-
 #ifdef _WIN32
 #define PATH_SEPARATOR '\\'
 #else
@@ -46,39 +45,39 @@ void kaa_log(const ILogger & logger, LogLevel level, const boost::format& messag
 #endif
 
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_FINE_TRACE
-    #define KAA_LOG_FTRACE(message) kaa_log(LoggerFactory::getLogger(), LogLevel::TRACE,      (message), __LOGFILE, __LINE__);
+#define KAA_LOG_FTRACE(message) kaa_log(LoggerFactory::getLogger(), LogLevel::TRACE,      (message), __LOGFILE, __LINE__);
 #else
-    #define KAA_LOG_FTRACE(message)
+#define KAA_LOG_FTRACE(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_TRACE
-    #define KAA_LOG_TRACE(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::TRACE,      (message), __LOGFILE, __LINE__);
+#define KAA_LOG_TRACE(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::TRACE,      (message), __LOGFILE, __LINE__);
 #else
-    #define KAA_LOG_TRACE(message)
+#define KAA_LOG_TRACE(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_DEBUG
-    #define KAA_LOG_DEBUG(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::DEBUG,      (message), __LOGFILE, __LINE__);
+#define KAA_LOG_DEBUG(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::DEBUG,      (message), __LOGFILE, __LINE__);
 #else
-    #define KAA_LOG_DEBUG(message)
+#define KAA_LOG_DEBUG(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_INFO
-    #define KAA_LOG_INFO(message)   kaa_log(LoggerFactory::getLogger(), LogLevel::INFO,       (message), __LOGFILE, __LINE__);
+#define KAA_LOG_INFO(message)   kaa_log(LoggerFactory::getLogger(), LogLevel::INFO,       (message), __LOGFILE, __LINE__);
 #else
-    #define KAA_LOG_INFO(message)
+#define KAA_LOG_INFO(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_WARNING
-    #define KAA_LOG_WARN(message)   kaa_log(LoggerFactory::getLogger(), LogLevel::WARNING,    (message), __LOGFILE, __LINE__);
+#define KAA_LOG_WARN(message)   kaa_log(LoggerFactory::getLogger(), LogLevel::WARNING,    (message), __LOGFILE, __LINE__);
 #else
-    #define KAA_LOG_WARN(message)
+#define KAA_LOG_WARN(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_ERROR
-    #define KAA_LOG_ERROR(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::ERROR,      (message), __LOGFILE, __LINE__);
+#define KAA_LOG_ERROR(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::ERROR,      (message), __LOGFILE, __LINE__);
 #else
-    #define KAA_LOG_ERROR(message)
+#define KAA_LOG_ERROR(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_FATAL
-    #define KAA_LOG_FATAL(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::FATAL,      (message), __LOGFILE, __LINE__);
+#define KAA_LOG_FATAL(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::FATAL,      (message), __LOGFILE, __LINE__);
 #else
-    #define KAA_LOG_FATAL(message)
+#define KAA_LOG_FATAL(message)
 #endif
 
 #if defined(KAA_THREADSAFE) && defined(KAA_MUTEX_LOGGING_ENABLED) && KAA_LOG_LEVEL > 4
@@ -86,10 +85,10 @@ template <typename LockType, typename MutableObject>
 class MutexScopedLockLogger {
 public:
     MutexScopedLockLogger(const char *name, MutableObject& m, const char *file, size_t line)
-        : name_(name)
-        , file_(file)
-        , line_(line)
-        , lock_(m, boost::defer_lock_t()) {
+    : name_(name)
+    , file_(file)
+    , line_(line)
+    , lock_(m, boost::defer_lock_t()) {
         kaa_log(LoggerFactory::getLogger(), LogLevel::DEBUG, (boost::format("Locking %1% mutex") % name_).str(), file_, line_);
         lock_.lock();
         kaa_log(LoggerFactory::getLogger(), LogLevel::DEBUG, (boost::format("Locked %1% mutex") % name_).str(), file_, line_);
@@ -100,23 +99,24 @@ public:
 private:
     const char *name_;
     const char *file_;
-    size_t      line_;
-    LockType   lock_;
+    size_t line_;
+    LockType lock_;
 };
 
-    #define KAA_MUTEX_LOCKING(mutex_name)   KAA_LOG_DEBUG("Locking " mutex_name " mutex");
-    #define KAA_MUTEX_LOCKED(mutex_name)    KAA_LOG_DEBUG("Locked " mutex_name " mutex");
-    #define KAA_MUTEX_UNLOCKING(mutex_name) KAA_LOG_DEBUG("Unlocking " mutex_name " mutex");
-    #define KAA_MUTEX_UNLOCKED(mutex_name)  KAA_LOG_DEBUG("Unlocked " mutex_name " mutex");
-    #define KAA_MUTEX_LOG_AND_LOCK(LockType, MutableType, MutableObject) MutexScopedLockLogger<LockType, MutableType> MutableObject##Lock(#MutableObject, MutableObject, __LOGFILE, __LINE__)
+#define KAA_MUTEX_LOCKING(mutex_name)   KAA_LOG_DEBUG("Locking " mutex_name " mutex");
+#define KAA_MUTEX_LOCKED(mutex_name)    KAA_LOG_DEBUG("Locked " mutex_name " mutex");
+#define KAA_MUTEX_UNLOCKING(mutex_name) KAA_LOG_DEBUG("Unlocking " mutex_name " mutex");
+#define KAA_MUTEX_UNLOCKED(mutex_name)  KAA_LOG_DEBUG("Unlocked " mutex_name " mutex");
+#define KAA_MUTEX_LOG_AND_LOCK(LockType, MutableType, MutableObject) MutexScopedLockLogger<LockType, MutableType> MutableObject##Lock(#MutableObject, MutableObject, __LOGFILE, __LINE__)
 #else
-    #define KAA_MUTEX_LOCKING(mutex_name)
-    #define KAA_MUTEX_LOCKED(mutex_name)
-    #define KAA_MUTEX_UNLOCKING(mutex_name)
-    #define KAA_MUTEX_UNLOCKED(mutex_name)
-    #define KAA_MUTEX_LOG_AND_LOCK(LockType, MutableType, MutableObject) LockType MutableObject##Lock(MutableObject)
+#define KAA_MUTEX_LOCKING(mutex_name)
+#define KAA_MUTEX_LOCKED(mutex_name)
+#define KAA_MUTEX_UNLOCKING(mutex_name)
+#define KAA_MUTEX_UNLOCKED(mutex_name)
+#define KAA_MUTEX_LOG_AND_LOCK(LockType, MutableType, MutableObject) LockType MutableObject##Lock(MutableObject)
 #endif
 
-}  // namespace kaa
+}
+  // namespace kaa
 
 #endif /* LOG_HPP_ */

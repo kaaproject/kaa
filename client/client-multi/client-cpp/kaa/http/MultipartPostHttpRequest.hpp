@@ -31,7 +31,7 @@
 
 namespace kaa {
 
-class MultipartPostHttpRequest : public IHttpRequest {
+class MultipartPostHttpRequest: public IHttpRequest {
 public:
     MultipartPostHttpRequest(const HttpUrl& url);
     virtual ~MultipartPostHttpRequest();

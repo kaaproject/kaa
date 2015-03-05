@@ -22,9 +22,10 @@
 
 namespace kaa {
 
-enum class ConnackReturnCode : std::uint8_t
-{
-    UNKNOWN = 0x00,
+enum class ConnackReturnCode
+    : std::uint8_t
+    {
+        UNKNOWN = 0x00,
     SUCCESS = 0x01,
     UNACCEPTABLE_VERSION = 0x02,
     IDENTIFIER_REJECTED = 0x03,
@@ -33,16 +34,20 @@ enum class ConnackReturnCode : std::uint8_t
     NOT_AUTHORIZED = 0x06
 };
 
-class ConnackMessage
-{
+class ConnackMessage {
 public:
     ConnackMessage(const char *payload, std::uint16_t size);
-    ~ConnackMessage() { }
+    ~ConnackMessage()
+    {
+    }
 
     static std::string returnCodeToString(ConnackReturnCode code);
 
     std::string getMessage() const;
-    ConnackReturnCode getReturnCode() const { return returnCode_; }
+    ConnackReturnCode getReturnCode() const
+    {
+        return returnCode_;
+    }
 
 private:
     void parseMessage(const char *payload, std::uint16_t size);
@@ -52,7 +57,5 @@ private:
 };
 
 }
-
-
 
 #endif /* CONNACKMESSAGE_HPP_ */

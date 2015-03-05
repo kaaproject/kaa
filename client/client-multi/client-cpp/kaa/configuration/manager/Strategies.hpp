@@ -33,24 +33,21 @@ namespace kaa {
  * Strategy to process UUID field.
  * Subscribes and unsubscribes record by UUID using passed in the ctor routines.
  */
-class UuidProcessStrategy : public AbstractStrategy {
+class UuidProcessStrategy: public AbstractStrategy {
 public:
-    UuidProcessStrategy(
-                  std::function<bool (uuid_t)> isSubscribed
-                , std::function<void (uuid_t, std::shared_ptr<ICommonRecord>)> subscribe
-                , std::function<void (uuid_t)> unsubscribe)
-            : isSubscribedFn_(isSubscribed)
-            , subscribeFn_(subscribe)
-            , unsubscribeFn_(unsubscribe)
-        {
-        }
+    UuidProcessStrategy(std::function<bool(uuid_t)> isSubscribed,
+                        std::function<void(uuid_t, std::shared_ptr<ICommonRecord>)> subscribe,
+                        std::function<void(uuid_t)> unsubscribe)
+            : isSubscribedFn_(isSubscribed), subscribeFn_(subscribe), unsubscribeFn_(unsubscribe)
+    {
+    }
 
     void run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
 
 private:
-    std::function<bool (uuid_t)> isSubscribedFn_;
-    std::function<void (uuid_t, std::shared_ptr<ICommonRecord>)> subscribeFn_;
-    std::function<void (uuid_t)> unsubscribeFn_;
+    std::function<bool(uuid_t)> isSubscribedFn_;
+    std::function<void(uuid_t, std::shared_ptr<ICommonRecord>)> subscribeFn_;
+    std::function<void(uuid_t)> unsubscribeFn_;
 };
 
 /**
@@ -58,23 +55,20 @@ private:
  * Can be used for processing both a "root" record (data should not be held in
  * the record as the field, but overwritten as separate object) and a simple record as the field.
  */
-class RecordProcessStrategy : public AbstractStrategy {
+class RecordProcessStrategy: public AbstractStrategy {
 public:
-    RecordProcessStrategy(
-              std::function<bool (uuid_t)> isSubscribed
-            , std::function<void (uuid_t, std::shared_ptr<ICommonRecord>)> subscribe
-            , std::function<void (uuid_t)> unsubscribe, bool isRootRecord = false)
-        : isSubscribedFn_(isSubscribed)
-        , subscribeFn_(subscribe)
-        , unsubscribeFn_(unsubscribe)
-        , isRootRecord_(isRootRecord)
+    RecordProcessStrategy(std::function<bool(uuid_t)> isSubscribed,
+                          std::function<void(uuid_t, std::shared_ptr<ICommonRecord>)> subscribe,
+                          std::function<void(uuid_t)> unsubscribe, bool isRootRecord = false)
+            : isSubscribedFn_(isSubscribed), subscribeFn_(subscribe), unsubscribeFn_(unsubscribe),
+              isRootRecord_(isRootRecord)
     {
     }
     void run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
 private:
-    std::function<bool (uuid_t)> isSubscribedFn_;
-    std::function<void (uuid_t, std::shared_ptr<ICommonRecord>)> subscribeFn_;
-    std::function<void (uuid_t)> unsubscribeFn_;
+    std::function<bool(uuid_t)> isSubscribedFn_;
+    std::function<void(uuid_t, std::shared_ptr<ICommonRecord>)> subscribeFn_;
+    std::function<void(uuid_t)> unsubscribeFn_;
     std::list<std::pair<uuid_t, std::shared_ptr<ICommonRecord> > > recordToSubscribe;
     std::list<uuid_t> recordToUnSubscribe;
 
@@ -84,47 +78,43 @@ private:
 /**
  * Strategy to process an array.
  */
-class ArrayProcessStrategy : public AbstractStrategy {
+class ArrayProcessStrategy: public AbstractStrategy {
 public:
-    ArrayProcessStrategy(std::function<bool (uuid_t)> isSubscribed
-            , std::function<void (uuid_t, std::shared_ptr<ICommonRecord>)> subscribe
-            , std::function<void (uuid_t)> unsubscribe)
-        : isSubscribedFn_(isSubscribed)
-        , subscribeFn_(subscribe)
-        , unsubscribeFn_(unsubscribe)
+    ArrayProcessStrategy(std::function<bool(uuid_t)> isSubscribed,
+                         std::function<void(uuid_t, std::shared_ptr<ICommonRecord>)> subscribe,
+                         std::function<void(uuid_t)> unsubscribe)
+            : isSubscribedFn_(isSubscribed), subscribeFn_(subscribe), unsubscribeFn_(unsubscribe)
     {
     }
     void run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
 private:
     static const std::string array_holder_field;
-    std::function<bool (uuid_t)> isSubscribedFn_;
-    std::function<void (uuid_t, std::shared_ptr<ICommonRecord>)> subscribeFn_;
-    std::function<void (uuid_t)> unsubscribeFn_;
+    std::function<bool(uuid_t)> isSubscribedFn_;
+    std::function<void(uuid_t, std::shared_ptr<ICommonRecord>)> subscribeFn_;
+    std::function<void(uuid_t)> unsubscribeFn_;
 };
 
 /**
  * Strategy to reset an array.
  */
-class ArrayResetStrategy : public AbstractStrategy {
+class ArrayResetStrategy: public AbstractStrategy {
 public:
-    ArrayResetStrategy(std::function<bool (uuid_t)> isSubscribed
-            , std::function<void (uuid_t)> unsubscribe)
-        : isSubscribedFn_(isSubscribed)
-        , unsubscribeFn_(unsubscribe)
+    ArrayResetStrategy(std::function<bool(uuid_t)> isSubscribed, std::function<void(uuid_t)> unsubscribe)
+            : isSubscribedFn_(isSubscribed), unsubscribeFn_(unsubscribe)
     {
     }
     void run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
     void unregisterRecord(ICommonRecord &record);
     void unregisterArray(ICommonArray &record);
 private:
-    std::function<bool (uuid_t)> isSubscribedFn_;
-    std::function<void (uuid_t)> unsubscribeFn_;
+    std::function<bool(uuid_t)> isSubscribedFn_;
+    std::function<void(uuid_t)> unsubscribeFn_;
 };
 
 /**
  * Strategy to process NULL.
  */
-class NullProcessStrategy : public AbstractStrategy {
+class NullProcessStrategy: public AbstractStrategy {
 public:
     void run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
 };
@@ -132,7 +122,7 @@ public:
 /**
  * Strategy to process simple types (string, numbers, enums, fixed fields, byteArray fields)
  */
-class CommonProcessStrategy : public AbstractStrategy {
+class CommonProcessStrategy: public AbstractStrategy {
 public:
     void run(std::shared_ptr<ICommonRecord> parent, const std::string &field, const avro::GenericDatum &datum);
 };

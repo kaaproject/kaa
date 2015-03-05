@@ -25,16 +25,28 @@
 
 namespace kaa {
 
-class DefaultOperationHttpChannel : public AbstractHttpChannel {
+class DefaultOperationHttpChannel: public AbstractHttpChannel {
 public:
-    DefaultOperationHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys) : AbstractHttpChannel(channelManager, clientKeys) { }
-    virtual ~DefaultOperationHttpChannel() { }
+    DefaultOperationHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys)
+            : AbstractHttpChannel(channelManager, clientKeys)
+    {
+    }
+    virtual ~DefaultOperationHttpChannel()
+    {
+    }
 
-    virtual const std::string& getId() const { return CHANNEL_ID; }
-    virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const { return SUPPORTED_TYPES; }
+    virtual const std::string& getId() const
+    {
+        return CHANNEL_ID;
+    }
+    virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const
+    {
+        return SUPPORTED_TYPES;
+    }
 
 private:
-    virtual std::shared_ptr<IHttpRequest> createRequest(IPTransportInfoPtr server, const std::vector<std::uint8_t>& body)
+    virtual std::shared_ptr<IHttpRequest> createRequest(IPTransportInfoPtr server,
+                                                        const std::vector<std::uint8_t>& body)
     {
         return getHttpDataProcessor()->createOperationRequest(server->getURL() + getURLSuffix(), body);
     }
@@ -47,11 +59,13 @@ private:
         return getHttpDataProcessor()->retrieveOperationResponse(response);
     }
 
-    virtual ServerType getServerType() const {
+    virtual ServerType getServerType() const
+    {
         return ServerType::OPERATIONS;
     }
 
-    virtual std::string getURLSuffix() {
+    virtual std::string getURLSuffix()
+    {
         return "/EP/Sync";
     }
 

@@ -16,10 +16,8 @@
  * limitations under the License.
  */
 
-
 #ifndef KAA_GEN_LOGGEN_HPP_392481303__H_
 #define KAA_GEN_LOGGEN_HPP_392481303__H_
-
 
 #include <sstream>
 #include "boost/any.hpp"
@@ -30,18 +28,21 @@
 namespace kaa {
 struct SuperRecord {
     std::string logdata;
-    SuperRecord() :
-        logdata(std::string())
-        { }
+    SuperRecord()
+            : logdata(std::string())
+    {
+    }
 };
 
 }
 namespace avro {
 template<> struct codec_traits<kaa::SuperRecord> {
-    static void encode(Encoder& e, const kaa::SuperRecord& v) {
+    static void encode(Encoder& e, const kaa::SuperRecord& v)
+    {
         avro::encode(e, v.logdata);
     }
-    static void decode(Decoder& d, kaa::SuperRecord& v) {
+    static void decode(Decoder& d, kaa::SuperRecord& v)
+    {
         avro::decode(d, v.logdata);
     }
 };

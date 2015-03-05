@@ -20,17 +20,14 @@
 namespace kaa {
 
 enum class LogLevel {
-    TRACE = 0,
-    DEBUG,
-    INFO,
-    WARNING,
-    ERROR,
-    FATAL
+    TRACE = 0, DEBUG, INFO, WARNING, ERROR, FATAL
 };
 
 class ILogger {
 public:
-    virtual ~ILogger() {}
+    virtual ~ILogger()
+    {
+    }
 
     virtual void log(LogLevel level, const char *message) const = 0;
 };
@@ -38,6 +35,5 @@ public:
 typedef std::shared_ptr<ILogger> LoggerPtr;
 
 }  // namespace kaa
-
 
 #endif /* ILOGGER_HPP_ */

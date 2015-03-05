@@ -44,10 +44,11 @@ public:
      */
     virtual void onConfigurationResponse(const ConfigurationSyncResponse &response) = 0;
 
-    virtual ~IConfigurationTransport() {}
+    virtual ~IConfigurationTransport()
+    {
+    }
 };
 
 }  // namespace kaa
-
 
 #endif /* ICONFIGURATIONTRANSPORT_HPP_ */

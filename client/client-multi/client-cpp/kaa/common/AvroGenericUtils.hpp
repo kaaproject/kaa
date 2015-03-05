@@ -44,7 +44,8 @@ public:
      * @return true if the value is UUID, false otherwise.
      *
      */
-    static bool isUuid(const avro::GenericDatum &d) {
+    static bool isUuid(const avro::GenericDatum &d)
+    {
         if (d.type() == avro::AVRO_FIXED) {
             auto f = d.value<avro::GenericFixed>();
             return f.schema()->name().fullname().compare(AvroGenericUtils::UUIDT) == 0;
@@ -59,7 +60,8 @@ public:
      * @return true if the value is GenericFixed, false otherwise.
      *
      */
-    static bool isFixed(const avro::GenericDatum &d) {
+    static bool isFixed(const avro::GenericDatum &d)
+    {
         return (d.type() == avro::AVRO_FIXED);
     }
 
@@ -70,7 +72,8 @@ public:
      * @return true if the value is GenericEnum, false otherwise.
      *
      */
-    static bool isEnum(const avro::GenericDatum &d) {
+    static bool isEnum(const avro::GenericDatum &d)
+    {
         return (d.type() == avro::AVRO_ENUM);
     }
 
@@ -81,7 +84,8 @@ public:
      * @return true if the value is GenericRecord, false otherwise.
      *
      */
-    static bool isRecord(const avro::GenericDatum &d) {
+    static bool isRecord(const avro::GenericDatum &d)
+    {
         return (d.type() == avro::AVRO_RECORD);
     }
 
@@ -92,7 +96,8 @@ public:
      * @return true if the value is GenericArray, false otherwise.
      *
      */
-    static bool isArray(const avro::GenericDatum &d) {
+    static bool isArray(const avro::GenericDatum &d)
+    {
         return (d.type() == avro::AVRO_ARRAY);
     }
 
@@ -103,7 +108,8 @@ public:
      * @return true if the value is GenericEnum, false otherwise.
      *
      */
-    static bool isNull(const avro::GenericDatum &d) {
+    static bool isNull(const avro::GenericDatum &d)
+    {
         return d.type() == avro::AVRO_NULL;
     }
 
@@ -114,7 +120,8 @@ public:
      * @return true if the value is reset type, false otherwise.
      *
      */
-    static bool isReset(const avro::GenericDatum &d) {
+    static bool isReset(const avro::GenericDatum &d)
+    {
         if (d.type() != avro::AVRO_ENUM) {
             return false;
         }
@@ -129,7 +136,8 @@ public:
      * @return true if the value is unchanged, false otherwise.
      *
      */
-    static bool isUnchanged(const avro::GenericDatum &d) {
+    static bool isUnchanged(const avro::GenericDatum &d)
+    {
         if (d.type() != avro::AVRO_ENUM) {
             return false;
         }
@@ -143,10 +151,11 @@ public:
      * @return uuid object.
      * @throw KaaException Avro fixed object is not full to create uuid
      */
-    static uuid_t getUuidFromDatum(const avro::GenericDatum& datum) {
+    static uuid_t getUuidFromDatum(const avro::GenericDatum& datum)
+    {
         uuid_t uuid;
-        const avro::GenericFixed& uuidFixed = datum.value<avro::GenericRecord>().
-                field("__uuid").value<avro::GenericFixed>();
+        const avro::GenericFixed& uuidFixed = datum.value<avro::GenericRecord>().field("__uuid")
+                .value<avro::GenericFixed>();
 
         if (uuidFixed.value().size() != uuid.size()) {
             throw KaaException("invalid uuid data");
@@ -162,7 +171,8 @@ public:
      * @return uuid object.
      * @throw KaaException Avro fixed object is not full to create uuid
      */
-    static DeltaHandlerId getDeltaIDFromDatum(const avro::GenericDatum& datum) {
+    static DeltaHandlerId getDeltaIDFromDatum(const avro::GenericDatum& datum)
+    {
         uuid_t uuid;
         const avro::GenericFixed& uuidFixed = datum.value<avro::GenericFixed>();
 

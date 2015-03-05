@@ -23,10 +23,14 @@
 
 namespace kaa {
 
-class SerializedProfileContainer : public ISerializedProfileContainer {
+class SerializedProfileContainer: public ISerializedProfileContainer {
 public:
-    SerializedProfileContainer() {}
-    virtual ~SerializedProfileContainer() {}
+    SerializedProfileContainer()
+    {
+    }
+    virtual ~SerializedProfileContainer()
+    {
+    }
 
     /**
      * Retrieves serialized profile
@@ -38,12 +42,13 @@ public:
      * Set user-defined profile container
      * @param container user-defined profile container
      */
-    void setProfileContainer(ProfileContainerPtr container) {
+    void setProfileContainer(ProfileContainerPtr container)
+    {
         profileContainer_ = container;
     }
 
 private:
-    ProfileContainerPtr   profileContainer_;
+    ProfileContainerPtr profileContainer_;
 };
 
 inline SharedDataBuffer SerializedProfileContainer::getSerializedProfile()
@@ -57,7 +62,7 @@ inline SharedDataBuffer SerializedProfileContainer::getSerializedProfile()
     return buffer;
 }
 
-typedef std::shared_ptr<SerializedProfileContainer>   SerializedProfileContainerPtr;
+typedef std::shared_ptr<SerializedProfileContainer> SerializedProfileContainerPtr;
 
 } /* namespace kaa */
 

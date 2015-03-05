@@ -33,7 +33,10 @@ namespace kaa {
 
 class CommonTypesFactory {
 public:
-    CommonTypesFactory() {};
+    CommonTypesFactory()
+    {
+    }
+    ;
     typedef std::shared_ptr<ICommonValue> return_type;
 
     static std::shared_ptr<ICommonRecord> createCommonRecord(uuid_t uuid, const avro::NodePtr schema);

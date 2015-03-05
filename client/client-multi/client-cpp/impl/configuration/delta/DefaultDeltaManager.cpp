@@ -23,9 +23,12 @@
 namespace kaa {
 
 DefaultDeltaManager::DefaultDeltaManager()
-    : rootReceiver_(nullptr) {}
+        : rootReceiver_(nullptr)
+{
+}
 
-void DefaultDeltaManager::onDeltaRecevied(int index, const avro::GenericDatum &data, bool full_resync) {
+void DefaultDeltaManager::onDeltaRecevied(int index, const avro::GenericDatum &data, bool full_resync)
+{
     DefaultConfigurationDeltaFactory deltaFactory;
     ConfigurationDeltaPtr deltaResult = deltaFactory.createDelta(data);
 
@@ -45,7 +48,8 @@ void DefaultDeltaManager::onDeltaRecevied(int index, const avro::GenericDatum &d
     }
 }
 
-void DefaultDeltaManager::registerRootReceiver(IDeltaReceiver* rootReceiver) {
+void DefaultDeltaManager::registerRootReceiver(IDeltaReceiver* rootReceiver)
+{
     KAA_MUTEX_LOCKING("subscriptionMutex_");
     KAA_MUTEX_UNIQUE_DECLARE(lock, subscriptionMutex_);
     KAA_MUTEX_LOCKED("subscriptionMutex_");
@@ -53,7 +57,8 @@ void DefaultDeltaManager::registerRootReceiver(IDeltaReceiver* rootReceiver) {
     rootReceiver_ = rootReceiver;
 }
 
-void DefaultDeltaManager::subscribeForDeltaUpdates(const DeltaHandlerId& handlerId, IDeltaReceiver* receiver) {
+void DefaultDeltaManager::subscribeForDeltaUpdates(const DeltaHandlerId& handlerId, IDeltaReceiver* receiver)
+{
     if (receiver) {
         KAA_MUTEX_LOCKING("subscriptionMutex_");
         KAA_MUTEX_UNIQUE_DECLARE(lock, subscriptionMutex_);
@@ -63,7 +68,8 @@ void DefaultDeltaManager::subscribeForDeltaUpdates(const DeltaHandlerId& handler
     }
 }
 
-void DefaultDeltaManager::unsubscribeFromDeltaUpdates(const DeltaHandlerId& handlerId) {
+void DefaultDeltaManager::unsubscribeFromDeltaUpdates(const DeltaHandlerId& handlerId)
+{
     KAA_MUTEX_LOCKING("subscriptionMutex_");
     KAA_MUTEX_UNIQUE_DECLARE(lock, subscriptionMutex_);
     KAA_MUTEX_LOCKED("subscriptionMutex_");

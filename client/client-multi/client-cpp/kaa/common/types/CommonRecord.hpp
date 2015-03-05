@@ -29,24 +29,30 @@
 
 namespace kaa {
 
-class CommonRecord : public ICommonRecord {
+class CommonRecord: public ICommonRecord {
 public:
     CommonRecord(uuid_t uuid, const avro::NodePtr & schema);
 
-    const boost::any        getValue()  const   { return boost::cref(*this).get(); }
-    const avro::NodePtr &   getSchema() const;
+    const boost::any getValue() const
+    {
+        return boost::cref(*this).get();
+    }
+    const avro::NodePtr & getSchema() const;
 
-    avro::GenericDatum      toAvro()    const;
-    std::string             toString()  const;
+    avro::GenericDatum toAvro() const;
+    std::string toString() const;
 
-    void                    setUuid(uuid_t uuid);
-    uuid_t                  getUuid();
+    void setUuid(uuid_t uuid);
+    uuid_t getUuid();
 
-    bool                    hasField    (const keys_type &field_name) const;
-    fields_type             getField    (const keys_type &field_name) const;
-    void                    setField    (const keys_type &field_name, fields_type value);
-    void                    removeField (const keys_type &field_name);
-    const container_type &  getFields   () const { return fields_; }
+    bool hasField(const keys_type &field_name) const;
+    fields_type getField(const keys_type &field_name) const;
+    void setField(const keys_type &field_name, fields_type value);
+    void removeField(const keys_type &field_name);
+    const container_type & getFields() const
+    {
+        return fields_;
+    }
 private:
     uuid_t uuid_;
     container_type fields_;

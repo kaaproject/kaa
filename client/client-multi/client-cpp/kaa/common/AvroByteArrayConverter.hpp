@@ -39,14 +39,12 @@ namespace kaa {
  * @param <T> predefined avro object.
  */
 template<typename T>
-class AvroByteArrayConverter
-{
+class AvroByteArrayConverter {
 public:
     /**
      * Instantiates a new avro byte array converter based on <T>.
      */
     AvroByteArrayConverter();
-
 
     /*
      * Copy operator
@@ -96,19 +94,21 @@ public:
     /**
      * Used for debug purpose
      */
-    void switchToJson(const avro::ValidSchema &schema) {
+    void switchToJson(const avro::ValidSchema &schema)
+    {
         encoder_ = avro::jsonEncoder(schema);
         decoder_ = avro::jsonDecoder(schema);
     }
 
-    void switchToBinary() {
+    void switchToBinary()
+    {
         encoder_ = avro::binaryEncoder();
         decoder_ = avro::binaryDecoder();
     }
 
 private:
-    avro::EncoderPtr   encoder_;
-    avro::DecoderPtr   decoder_;
+    avro::EncoderPtr encoder_;
+    avro::DecoderPtr decoder_;
 };
 
 template<typename T>

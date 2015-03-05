@@ -30,8 +30,7 @@ class IIServerInfo;
 /**
  * Channel manager establishes/removes channels' links between client and server.
  */
-class IKaaChannelManager
-{
+class IKaaChannelManager {
 public:
 
     /**
@@ -153,12 +152,13 @@ public:
      */
     virtual void resume() = 0;
 
-    virtual ~IKaaChannelManager() {}
+    virtual ~IKaaChannelManager()
+    {
+    }
 };
 
 typedef IKaaChannelManager* IKaaChannelManagerPtr;
 
 }  // namespace kaa
-
 
 #endif /* IKAACHANNELMANAGER_HPP_ */

@@ -29,8 +29,7 @@ namespace kaa {
 /**
  * Callback interface for attached endpoint list change notifications
  */
-class IAttachedEndpointListListener
-{
+class IAttachedEndpointListListener {
 public:
     /**
      * Callback on attached endpoints list changed
@@ -38,7 +37,9 @@ public:
      * @param list Info about each attached endpoint as "token/key hash" pair
      */
     virtual void onListUpdated(const std::map<std::string/*epToken*/, std::string/*epHash*/>& list) = 0;
-    virtual ~IAttachedEndpointListListener() {}
+    virtual ~IAttachedEndpointListListener()
+    {
+    }
 };
 
 }

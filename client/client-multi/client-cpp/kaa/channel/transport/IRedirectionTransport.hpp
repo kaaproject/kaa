@@ -37,7 +37,9 @@ public:
      */
     virtual void onRedirectionResponse(const RedirectSyncResponse& response) = 0;
 
-    virtual ~IRedirectionTransport() {}
+    virtual ~IRedirectionTransport()
+    {
+    }
 };
 
 }  // namespace kaa

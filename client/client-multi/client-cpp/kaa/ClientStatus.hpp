@@ -31,20 +31,20 @@
 namespace kaa {
 
 /* Fwd declarations */
-enum class ClientParameterT;
+enum class ClientParameterT
+;
 class IPersistentParameter;
 
-typedef boost::bimaps::bimap<
-          boost::bimaps::set_of<ClientParameterT>   /* Client parameter type */
-        , boost::bimaps::set_of<std::string>        /* String token for mapping in status file */
-        , boost::bimaps::left_based
-> bimap;
+typedef boost::bimaps::bimap<boost::bimaps::set_of<ClientParameterT> /* Client parameter type */
+, boost::bimaps::set_of<std::string> /* String token for mapping in status file */
+, boost::bimaps::left_based> bimap;
 
-class ClientStatus : public IKaaClientStateStorage
-{
+class ClientStatus: public IKaaClientStateStorage {
 public:
     ClientStatus(const std::string& filename);
-    ~ClientStatus() { }
+    ~ClientStatus()
+    {
+    }
 
     std::int32_t getEventSequenceNumber() const;
     void setEventSequenceNumber(std::int32_t sequenceNumber);
@@ -79,7 +79,8 @@ public:
     std::string getEndpointKeyHash() const;
     void setEndpointKeyHash(const std::string& keyHash);
 
-    virtual bool isConfigurationVersionUpdated() const {
+    virtual bool isConfigurationVersionUpdated() const
+    {
         return isConfigVersionUpdated;
     }
 
@@ -98,18 +99,17 @@ private:
 
     KAA_MUTEX_MUTABLE_DECLARE(sequenceNumberGuard_);
 
-    static const bimap                      parameterToToken_;
-    static const SequenceNumber             appSeqNumberDefault_;
-    static const bool                       isRegisteredDefault_;
-    static const HashDigest                 endpointHashDefault_;
-    static const DetailedTopicStates        topicStatesDefault_;
-    static const AttachedEndpoints          attachedEndpoints_;
-    static const std::string                endpointAccessToken_;
-    static const bool                       endpointDefaultAttachStatus_;
-    static const std::string                endpointKeyHashDefault_;
+    static const bimap parameterToToken_;
+    static const SequenceNumber appSeqNumberDefault_;
+    static const bool isRegisteredDefault_;
+    static const HashDigest endpointHashDefault_;
+    static const DetailedTopicStates topicStatesDefault_;
+    static const AttachedEndpoints attachedEndpoints_;
+    static const std::string endpointAccessToken_;
+    static const bool endpointDefaultAttachStatus_;
+    static const std::string endpointKeyHashDefault_;
 };
 
 }
-
 
 #endif /* CLIENTSTATUS_HPP_ */

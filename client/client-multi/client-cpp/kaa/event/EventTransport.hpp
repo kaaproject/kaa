@@ -30,9 +30,10 @@ namespace kaa {
 class IEventDataProcessor;
 class IKaaChannelManager;
 
-class EventTransport : public AbstractKaaTransport<TransportType::EVENT>, public IEventTransport {
+class EventTransport: public AbstractKaaTransport<TransportType::EVENT>, public IEventTransport {
 public:
-    EventTransport(IEventDataProcessor& eventManager, IKaaChannelManager& channelManager, IKaaClientStateStoragePtr state);
+    EventTransport(IEventDataProcessor& eventManager, IKaaChannelManager& channelManager,
+                   IKaaClientStateStoragePtr state);
 
     std::shared_ptr<EventSyncRequest> createEventRequest(std::int32_t requestId);
 
@@ -45,13 +46,14 @@ private:
     KAA_MUTEX_DECLARE(eventsGuard_);
 
     IEventDataProcessor& eventDataProcessor_;
-    std::map<std::uint32_t, std::list<Event> >    events_;
+    std::map<std::uint32_t, std::list<Event> > events_;
 
     std::int32_t startEventSN_;
     bool isEventSNSynchronized_;;
 };
 
-}  // namespace kaa
+}
+  // namespace kaa
 
 #endif
 

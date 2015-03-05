@@ -36,10 +36,11 @@ public:
      */
     virtual std::shared_ptr<SyncRequestMetaData> createSyncRequestMetaData() = 0;
 
-    virtual ~IMetaDataTransport() {}
+    virtual ~IMetaDataTransport()
+    {
+    }
 };
 
 }  // namespace kaa
-
 
 #endif /* IMETADATATRANSPORT_HPP_ */

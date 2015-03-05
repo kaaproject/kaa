@@ -30,8 +30,7 @@
 namespace kaa {
 
 CommonRecord::CommonRecord(uuid_t uuid, const avro::NodePtr & schema)
-    : uuid_(uuid)
-    , schema_(schema)
+        : uuid_(uuid), schema_(schema)
 {
 
 }
@@ -117,8 +116,9 @@ avro::GenericDatum CommonRecord::toAvro() const
                     bool found = false;
                     if (is_compound) {
                         ISchemaDependent * dependent = dynamic_cast<ISchemaDependent *>(it->second.get());
-                        if (innode->leafAt(currentFieldBranch)->hasName() && dependent->getSchema()->hasName() &&
-                                dependent->getSchema()->name().fullname() == innode->leafAt(currentFieldBranch)->name().fullname()) {
+                        if (innode->leafAt(currentFieldBranch)->hasName() && dependent->getSchema()->hasName()
+                            && dependent->getSchema()->name().fullname() == innode->leafAt(currentFieldBranch)->name()
+                                       .fullname()) {
                             found = SetAvroValueHelper::setValue(avro_type, indatum, fieldDatum);
                         } else if (innode->leafAt(currentFieldBranch)->type() == avro::Type::AVRO_ARRAY
                                 && dependent->getSchema()->type() == avro::Type::AVRO_ARRAY) {
@@ -146,7 +146,7 @@ std::string CommonRecord::toString() const
     std::stringstream ss;
     ss << "[ ";
     for (auto it = getFields().begin(); it != getFields().end();) {
-        ss << "{ \"" << it->first << "\": " << it->second->toString() <<" }";
+        ss << "{ \"" << it->first << "\": " << it->second->toString() << " }";
         if (++it != getFields().end()) {
             ss << ", ";
         }

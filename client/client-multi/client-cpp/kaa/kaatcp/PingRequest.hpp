@@ -20,23 +20,26 @@
 #include "kaa/kaatcp/KaaTcpCommon.hpp"
 #include "kaa/kaatcp/IKaaTcpRequest.hpp"
 
-namespace kaa
-{
+namespace kaa {
 
-class PingRequest : public IKaaTcpRequest
-{
+class PingRequest: public IKaaTcpRequest {
 public:
-    PingRequest() : message_(2)
+    PingRequest()
+            : message_(2)
     {
         char header[2];
         KaaTcpCommon::createBasicHeader((std::uint8_t) KaaTcpMessageType::MESSAGE_PINGREQ, 0, header);
-        std::copy(reinterpret_cast<const std::uint8_t *>(header),
-                reinterpret_cast<const std::uint8_t *>(header + 2),
-                message_.begin());
+        std::copy(reinterpret_cast<const std::uint8_t *>(header), reinterpret_cast<const std::uint8_t *>(header + 2),
+                  message_.begin());
     }
-    ~PingRequest() { }
+    ~PingRequest()
+    {
+    }
 
-    const std::vector<std::uint8_t>& getRawMessage() const { return message_; }
+    const std::vector<std::uint8_t>& getRawMessage() const
+    {
+        return message_;
+    }
 
 private:
     std::vector<std::uint8_t> message_;
@@ -44,6 +47,5 @@ private:
 };
 
 }
-
 
 #endif /* PINGREQUEST_HPP_ */

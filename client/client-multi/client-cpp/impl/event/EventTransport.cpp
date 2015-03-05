@@ -25,10 +25,10 @@
 
 namespace kaa {
 
-EventTransport::EventTransport(IEventDataProcessor& processor
-        , IKaaChannelManager& channelManager, IKaaClientStateStoragePtr state)
-    : AbstractKaaTransport(channelManager), eventDataProcessor_(processor)
-    , startEventSN_(0), isEventSNSynchronized_(false)
+EventTransport::EventTransport(IEventDataProcessor& processor, IKaaChannelManager& channelManager,
+                               IKaaClientStateStoragePtr state)
+        : AbstractKaaTransport(channelManager), eventDataProcessor_(processor), startEventSN_(0),
+          isEventSNSynchronized_(false)
 {
     clientStatus_ = state;
     if (clientStatus_) {
@@ -70,7 +70,7 @@ std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_
                 eventsCopy.push_back(e);
             }
             std::sort(eventsCopy.begin(), eventsCopy.end(),
-                    [&](const Event& l, const Event& r) -> bool { return l.seqNum < r.seqNum; });
+                      [&](const Event& l, const Event& r) -> bool {return l.seqNum < r.seqNum;});
 
             if (eventsCopy.begin()->seqNum != startEventSN_) {
                 if (clientStatus_) {
@@ -78,7 +78,8 @@ std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_
                 }
 
                 KAA_LOG_INFO(boost::format("Put in order event sequence numbers "
-                        "(expected: %li, actual: %li)") % startEventSN_ % eventsCopy.begin()->seqNum);
+                                           "(expected: %li, actual: %li)")
+                             % startEventSN_ % eventsCopy.begin()->seqNum);
 
                 for (auto& e : eventsCopy) {
                     e.seqNum = startEventSN_++;
@@ -96,7 +97,8 @@ std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_
         request->events.set_null();
         request->eventSequenceNumberRequest.set_EventSequenceNumberRequest(EventSequenceNumberRequest());
         KAA_LOG_TRACE(boost::format("Sending event sequence number request: "
-                                        "restored_sn = %li") % startEventSN_);
+                                    "restored_sn = %li")
+                      % startEventSN_);
     }
 
     return request;
@@ -106,8 +108,7 @@ void EventTransport::onEventResponse(const EventSyncResponse& response)
 {
     bool needResync = false;
     if (!isEventSNSynchronized_ && !response.eventSequenceNumberResponse.is_null()) {
-        std::int32_t lastEventSN = response.eventSequenceNumberResponse
-                                    .get_EventSequenceNumberResponse().seqNum;
+        std::int32_t lastEventSN = response.eventSequenceNumberResponse.get_EventSequenceNumberResponse().seqNum;
         std::int32_t expectedEventSN = (lastEventSN > 0 ? lastEventSN + 1 : lastEventSN);
 
         if (startEventSN_ != expectedEventSN) {
@@ -156,6 +157,4 @@ void EventTransport::sync()
 }  // namespace kaa
 
 #endif
-
-
 

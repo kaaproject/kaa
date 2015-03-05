@@ -27,9 +27,7 @@ class IKaaChannelManager;
 struct BootstrapSyncRequest;
 struct BootstrapSyncResponse;
 
-class BootstrapTransport : public AbstractKaaTransport<TransportType::BOOTSTRAP>
-                         , public IBootstrapTransport
-{
+class BootstrapTransport: public AbstractKaaTransport<TransportType::BOOTSTRAP>, public IBootstrapTransport {
 public:
     BootstrapTransport(IKaaChannelManager& channelManager, IBootstrapManager &bootstrapManager);
 
@@ -40,10 +38,9 @@ public:
 private:
     std::uint32_t requestId_;
 
-    IBootstrapManager &  bootstrapManager_;
+    IBootstrapManager & bootstrapManager_;
 };
 
 }  // namespace kaa
-
 
 #endif /* BOOTSTRAPTRANSPORT_HPP_ */

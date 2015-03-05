@@ -30,7 +30,7 @@
 
 namespace kaa {
 
-class HttpUtils : public boost::noncopyable {
+class HttpUtils: public boost::noncopyable {
 public:
     static boost::asio::ip::tcp::endpoint getEndpoint(std::string host, std::uint16_t port)
     {
@@ -38,7 +38,8 @@ public:
         snprintf(portStr, 6, "%u", port);
         boost::asio::io_service io_service;
         boost::asio::ip::tcp::resolver resolver(io_service);
-        boost::asio::ip::tcp::resolver::query query(host, portStr, boost::asio::ip::resolver_query_base::numeric_service);
+        boost::asio::ip::tcp::resolver::query query(host, portStr,
+                                                    boost::asio::ip::resolver_query_base::numeric_service);
         return *resolver.resolve(query);
     }
 

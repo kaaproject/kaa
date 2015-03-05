@@ -62,7 +62,8 @@ std::shared_ptr<IHttpResponse> HttpClient::sendRequest(const IHttpRequest& reque
     }
     checkError(errorCode);
     const std::string& responseStr = responseStream.str();
-    KAA_LOG_INFO(boost::format("Response from server %1%:%2% successfully received") % request.getHost() % request.getPort());
+    KAA_LOG_INFO(
+            boost::format("Response from server %1%:%2% successfully received") % request.getHost() % request.getPort());
     doSocketClose();
     return std::shared_ptr<IHttpResponse>(new HttpResponse(responseStr));
 }

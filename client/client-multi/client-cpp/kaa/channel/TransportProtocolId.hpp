@@ -26,41 +26,51 @@ namespace kaa {
 /*
  * An identifier used to uniquely represent a transport protocol.
  */
-class TransportProtocolId
-{
+class TransportProtocolId {
 public:
     TransportProtocolId(const std::int32_t& id, const std::int32_t& version)
-        : id_(id), version_(version) {}
+            : id_(id), version_(version)
+    {
+    }
 
     TransportProtocolId(const ProtocolVersionPair& protocolId)
-        : id_(protocolId.id), version_(protocolId.version) {}
+            : id_(protocolId.id), version_(protocolId.version)
+    {
+    }
 
-    std::int32_t getId() const {
+    std::int32_t getId() const
+    {
         return id_;
     }
 
-    std::int32_t getVersion() const {
+    std::int32_t getVersion() const
+    {
         return version_;
     }
 
-    bool operator==(const TransportProtocolId& protocolId) const {
+    bool operator==(const TransportProtocolId& protocolId) const
+    {
         return (id_ == protocolId.id_ && version_ == protocolId.version_);
     }
 
-    bool operator!=(const TransportProtocolId& protocolId) const {
+    bool operator!=(const TransportProtocolId& protocolId) const
+    {
         return !(*this == protocolId);
     }
 
-    bool operator<(const TransportProtocolId& protocolId) const {
+    bool operator<(const TransportProtocolId& protocolId) const
+    {
         return (hashCode() < protocolId.hashCode());
     }
 
-    bool operator>(const TransportProtocolId& protocolId) const {
+    bool operator>(const TransportProtocolId& protocolId) const
+    {
         return (hashCode() > protocolId.hashCode());
     }
 
 private:
-    std::uint32_t hashCode() const {
+    std::uint32_t hashCode() const
+    {
         const std::uint32_t prime = 31;
 
         std::uint32_t hashCode = 1;

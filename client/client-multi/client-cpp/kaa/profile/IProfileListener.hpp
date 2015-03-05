@@ -44,7 +44,9 @@ public:
      */
     virtual void onProfileUpdated(SharedDataBuffer profile) = 0;
 
-    virtual ~IProfileListener() {}
+    virtual ~IProfileListener()
+    {
+    }
 };
 
 } /* namespace kaa */

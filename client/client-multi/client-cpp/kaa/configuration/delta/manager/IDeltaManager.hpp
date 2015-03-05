@@ -61,7 +61,9 @@ public:
      */
     virtual void unsubscribeFromDeltaUpdates(const DeltaHandlerId& handlerId) = 0;
 
-    virtual ~IDeltaManager() {}
+    virtual ~IDeltaManager()
+    {
+    }
 };
 
 } /* namespace kaa */

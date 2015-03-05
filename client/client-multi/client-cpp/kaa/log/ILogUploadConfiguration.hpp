@@ -40,7 +40,7 @@ public:
      *
      * \return Amount of bytes for sending at single message.
      */
-    virtual std::size_t  getBlockSize() const = 0;
+    virtual std::size_t getBlockSize() const = 0;
 
     /**
      * Returns maximal size which can be used by \c ILogStorage.
@@ -48,14 +48,14 @@ public:
      *
      * \return Size (in bytes) of the storage.
      */
-    virtual std::size_t  getMaxStorageVolume() const = 0;
+    virtual std::size_t getMaxStorageVolume() const = 0;
 
     /**
      * Amount of collected log messages to start log upload.
      *
      * \return Size (in bytes) of stored log records to start upload.
      */
-    virtual std::size_t  getVolumeThreshold() const = 0;
+    virtual std::size_t getVolumeThreshold() const = 0;
 
     /**
      * Maximum time to wait log delivery response.
@@ -64,7 +64,9 @@ public:
      */
     virtual std::size_t getLogUploadTimeout() const = 0;
 
-    virtual ~ILogUploadConfiguration() {}
+    virtual ~ILogUploadConfiguration()
+    {
+    }
 };
 
 }  // namespace kaa

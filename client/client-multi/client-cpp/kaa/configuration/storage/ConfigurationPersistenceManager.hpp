@@ -39,18 +39,17 @@ class IKaaClientStateStorage;
  * user-defined @link IConfigurationStorage @endlink routines.
  *
  */
-class ConfigurationPersistenceManager : public IConfigurationPersistenceManager,
-                                        public IConfigurationReceiver,
-                                        public IConfigurationHashContainer
-{
+class ConfigurationPersistenceManager: public IConfigurationPersistenceManager,
+                                       public IConfigurationReceiver,
+                                       public IConfigurationHashContainer {
 public:
     ConfigurationPersistenceManager(IKaaClientStateStoragePtr state)
-        : storage_(nullptr)
-        , processor_(nullptr)
-        , ignoreConfigurationUpdate_(false)
-        , state_(state)
-    {}
-    ~ConfigurationPersistenceManager() {}
+            : storage_(nullptr), processor_(nullptr), ignoreConfigurationUpdate_(false), state_(state)
+    {
+    }
+    ~ConfigurationPersistenceManager()
+    {
+    }
 
     /**
      * @link IConfigurationPersistenceManager @endlink implementation
@@ -79,16 +78,17 @@ private:
 
     KAA_MUTEX_DECLARE(confPersistenceGuard_);
 
-    IConfigurationStorage *                 storage_;
-    IConfigurationProcessor *               processor_;
+    IConfigurationStorage * storage_;
+    IConfigurationProcessor * processor_;
 
-    EndpointObjectHash                      configurationHash_;
-    bool                                    ignoreConfigurationUpdate_;
+    EndpointObjectHash configurationHash_;
+    bool ignoreConfigurationUpdate_;
 
-    IKaaClientStateStoragePtr               state_;
+    IKaaClientStateStoragePtr state_;
 };
 
-}  // namespace kaa
+}
+  // namespace kaa
 
 #endif
 

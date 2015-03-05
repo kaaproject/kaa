@@ -33,18 +33,24 @@ namespace kaa {
  */
 class ICommonValue {
 public:
-    ICommonValue(CommonValueType type) : type_(type) {}
-    virtual ~ICommonValue() {};
+    ICommonValue(CommonValueType type)
+            : type_(type)
+    {
+    }
+    virtual ~ICommonValue()
+    {
+    }
+    ;
 
     /**
      * Retrieves nested object
      */
-    virtual const boost::any    getValue()  const   = 0;
+    virtual const boost::any getValue() const = 0;
 
     /**
      * Retrieves Avro representation of the nested object
      */
-    virtual avro::GenericDatum  toAvro() const = 0;
+    virtual avro::GenericDatum toAvro() const = 0;
 
     /**
      * Retrieves string representation of the nested object
@@ -56,9 +62,12 @@ public:
      *
      * @see CommonValueType
      */
-    CommonValueType getCommonType() { return type_; }
+    CommonValueType getCommonType()
+    {
+        return type_;
+    }
 protected:
-    CommonValueType     type_;
+    CommonValueType type_;
 };
 
 }  // namespace kaa

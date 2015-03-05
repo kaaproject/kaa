@@ -26,7 +26,7 @@
 namespace kaa {
 
 KaaChannelManager::KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers)
-    : bootstrapManager_(manager), isShutdown_(false), isPaused_(false)
+        : bootstrapManager_(manager), isShutdown_(false), isPaused_(false)
 {
     for (const auto& connectionInfo : servers) {
         auto& list = bootstrapServers_[connectionInfo->getTransportId()];
@@ -34,7 +34,8 @@ KaaChannelManager::KaaChannelManager(IBootstrapManager& manager, const Bootstrap
     }
 }
 
-void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInfo) {
+void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInfo)
+{
     if (isShutdown_) {
         KAA_LOG_WARN("Can't update server. Channel manager is down");
         return;
@@ -51,7 +52,8 @@ void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInf
     }
 }
 
-void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInfoPtr connectionInfo) {
+void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInfoPtr connectionInfo)
+{
     if (isShutdown_) {
         KAA_LOG_WARN("Can't update server. Channel manager is down");
         return;
@@ -75,9 +77,11 @@ void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInf
     KAA_MUTEX_LOCKED("channelGuard_");
 
     for (auto& channel : channels_) {
-        if (channel->getServerType() == connectionInfo->getServerType() && channel->getTransportProtocolId() == protocolId) {
-            KAA_LOG_DEBUG(boost::format("Setting a new connection data for channel \"%1%\" %2%")
-                        % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+        if (channel->getServerType() == connectionInfo->getServerType() && channel->getTransportProtocolId()
+                == protocolId) {
+            KAA_LOG_DEBUG(
+                    boost::format("Setting a new connection data for channel \"%1%\" %2%") % channel->getId()
+                    % LoggingUtils::TransportProtocolIdToString(protocolId));
             channel->setServer(connectionInfo);
         }
     }
@@ -111,12 +115,14 @@ bool KaaChannelManager::addChannelToList(IDataChannelPtr channel)
         }
 
         if (connectionInfo) {
-            KAA_LOG_DEBUG(boost::format("Setting a new server for channel \"%1%\" %2%")
-                        % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+            KAA_LOG_DEBUG(
+                    boost::format("Setting a new server for channel \"%1%\" %2%") % channel->getId()
+                    % LoggingUtils::TransportProtocolIdToString(protocolId));
             channel->setServer(connectionInfo);
         } else {
-            KAA_LOG_WARN(boost::format("Failed to find server for channel \"%1%\" %2%")
-                        % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+            KAA_LOG_WARN(
+                    boost::format("Failed to find server for channel \"%1%\" %2%") % channel->getId()
+                    % LoggingUtils::TransportProtocolIdToString(protocolId));
         }
     }
 
@@ -136,9 +142,9 @@ void KaaChannelManager::setChannel(TransportType type, IDataChannelPtr channel)
     const auto &types = channel->getSupportedTransportTypes();
     auto res = types.find(type);
     if (res == types.end() || !useChannelForType(*res, channel)) {
-        KAA_LOG_WARN(boost::format("Can't apply Channel (id='%1%') for transport %2%")
-                        % channel->getId()
-                        % LoggingUtils::TransportTypeToString(type));
+        KAA_LOG_WARN(
+                boost::format("Can't apply Channel (id='%1%') for transport %2%") % channel->getId()
+                % LoggingUtils::TransportTypeToString(type));
         throw KaaException("invalid channel or transport type");
     }
     if (isPaused_) {
@@ -166,11 +172,13 @@ void KaaChannelManager::addChannel(IDataChannelPtr channel)
     }
 }
 
-bool KaaChannelManager::useChannelForType(const std::pair<TransportType, ChannelDirection>& type, IDataChannelPtr channel)
+bool KaaChannelManager::useChannelForType(const std::pair<TransportType, ChannelDirection>& type,
+                                          IDataChannelPtr channel)
 {
     if (type.second == ChannelDirection::UP || type.second == ChannelDirection::BIDIRECTIONAL) {
-        KAA_LOG_INFO(boost::format("Channel (id='%1%') will be used for %2% transport type")
-                            % channel->getId() % LoggingUtils::TransportTypeToString(type.first));
+        KAA_LOG_INFO(
+                boost::format("Channel (id='%1%') will be used for %2% transport type") % channel->getId()
+                % LoggingUtils::TransportTypeToString(type.first));
 
         KAA_MUTEX_LOCKING("mappedChannelGuard_");
         KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_);
@@ -240,7 +248,8 @@ void KaaChannelManager::removeChannel(const std::string& id)
     }
 }
 
-void KaaChannelManager::useNewChannelForType(TransportType type) {
+void KaaChannelManager::useNewChannelForType(TransportType type)
+{
     for (const auto& channel : channels_) {
         const auto& types = channel->getSupportedTransportTypes();
         auto it = types.find(type);
@@ -348,7 +357,8 @@ ITransportConnectionInfoPtr KaaChannelManager::getNextBootstrapServer(ITransport
     return nextConnectionInfo;
 }
 
-void KaaChannelManager::setConnectivityChecker(ConnectivityCheckerPtr checker) {
+void KaaChannelManager::setConnectivityChecker(ConnectivityCheckerPtr checker)
+{
     if (isShutdown_) {
         KAA_LOG_WARN("Can't set connectivity checker. Channel manager is down");
         return;

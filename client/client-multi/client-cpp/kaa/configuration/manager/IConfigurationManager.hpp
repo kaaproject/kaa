@@ -30,10 +30,11 @@ namespace kaa {
  * Manages subscriptions for configuration processed.
  * Subscribers must derive @link IConfigurationReceiver @endlink.
  */
-class IConfigurationManager
-{
+class IConfigurationManager {
 public:
-    virtual ~IConfigurationManager() {}
+    virtual ~IConfigurationManager()
+    {
+    }
 
     /**
      * Subscribes listener of configuration updates.

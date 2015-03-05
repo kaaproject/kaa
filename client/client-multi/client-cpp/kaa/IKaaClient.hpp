@@ -53,7 +53,7 @@ public:
      * @return @link IProfileManager @endlink object.
      *
      */
-    virtual IProfileManager&                  getProfileManager() = 0;
+    virtual IProfileManager& getProfileManager() = 0;
 
 #ifdef KAA_USE_EVENTS
     /**
@@ -62,7 +62,7 @@ public:
      * @return @link IEventFamilyFactory @endlink object.
      *
      */
-    virtual EventFamilyFactory&               getEventFamilyFactory() = 0;
+    virtual EventFamilyFactory& getEventFamilyFactory() = 0;
 #endif
 
 #ifdef KAA_USE_NOTIFICATIONS
@@ -72,7 +72,7 @@ public:
      * @return @link INotificationManager @endlink object.
      *
      */
-    virtual INotificationManager&             getNotificationManager() = 0;
+    virtual INotificationManager& getNotificationManager() = 0;
 #endif
 
 #ifdef KAA_USE_CONFIGURATION
@@ -82,7 +82,7 @@ public:
      * @return @link IConfigurationManager @endlink object.
      *
      */
-    virtual IConfigurationManager&            getConfigurationManager() = 0;
+    virtual IConfigurationManager& getConfigurationManager() = 0;
 
     /**
      * Retrieves Kaa configuration persistence manager.
@@ -99,14 +99,14 @@ public:
      *
      * @return @link IEndpointRegistrationManager @endlink object
      */
-    virtual IEndpointRegistrationManager&     getEndpointRegistrationManager() = 0;
+    virtual IEndpointRegistrationManager& getEndpointRegistrationManager() = 0;
 
     /**
      * Retrieves Kaa event listeners resolver
      *
      * @return @link IEventListenersResolver @endlink object
      */
-    virtual IEventListenersResolver&          getEventListenersResolver() = 0;
+    virtual IEventListenersResolver& getEventListenersResolver() = 0;
 #endif
 
     /**
@@ -114,7 +114,7 @@ public:
      *
      * @return @link IKaaChannelManager @endlink object
      */
-    virtual IKaaChannelManager&               getChannelManager() = 0;
+    virtual IKaaChannelManager& getChannelManager() = 0;
 
     /**
      * Retrieves the client's public and private key.
@@ -127,7 +127,7 @@ public:
      *
      * @return client's public/private key pair
      */
-    virtual const KeyPair&                    getClientKeyPair() = 0;
+    virtual const KeyPair& getClientKeyPair() = 0;
 
 #ifdef KAA_USE_LOGGING
     /**
@@ -135,7 +135,7 @@ public:
      *
      * @return @link LogCollector @endlink object
      */
-    virtual ILogCollector&                    getLogCollector() = 0;
+    virtual ILogCollector& getLogCollector() = 0;
 #endif
 
     /**
@@ -143,33 +143,34 @@ public:
      *
      * @return @link IKaaDataMultiplexer @endlink object
      */
-    virtual IKaaDataMultiplexer&              getOperationMultiplexer() = 0;
+    virtual IKaaDataMultiplexer& getOperationMultiplexer() = 0;
 
     /**
      * Retrieves Kaa operations data demultiplexer
      *
      * @return @link IKaaDataDemultiplexer @endlink object
      */
-    virtual IKaaDataDemultiplexer&            getOperationDemultiplexer() = 0;
+    virtual IKaaDataDemultiplexer& getOperationDemultiplexer() = 0;
 
     /**
      * Retrieves Kaa bootstrap data multiplexer
      *
      * @return @link IKaaDataMultiplexer @endlink object
      */
-    virtual IKaaDataMultiplexer&              getBootstrapMultiplexer() = 0;
+    virtual IKaaDataMultiplexer& getBootstrapMultiplexer() = 0;
 
     /**
      * Retrieves Kaa bootstrap data demultiplexer
      *
      * @return @link IKaaDataDemultiplexer @endlink object
      */
-    virtual IKaaDataDemultiplexer&            getBootstrapDemultiplexer() = 0;
+    virtual IKaaDataDemultiplexer& getBootstrapDemultiplexer() = 0;
 
-    virtual ~IKaaClient() { }
+    virtual ~IKaaClient()
+    {
+    }
 };
 
 }
-
 
 #endif /* IKAACLIENT_HPP_ */

@@ -35,7 +35,9 @@ public:
     virtual std::string getRequestData() const = 0;
     virtual void setHeaderField(const std::string& name, const std::string& value) = 0;
     virtual void removeHeaderField(const std::string& name) = 0;
-    virtual ~IHttpRequest() { }
+    virtual ~IHttpRequest()
+    {
+    }
 };
 
 }

@@ -20,8 +20,7 @@
 namespace kaa {
 
 enum class ServerType {
-    BOOTSTRAP,
-    OPERATIONS
+    BOOTSTRAP, OPERATIONS
 };
 
 }

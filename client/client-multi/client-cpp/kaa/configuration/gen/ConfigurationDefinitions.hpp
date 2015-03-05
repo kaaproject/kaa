@@ -23,10 +23,9 @@
 
 namespace kaa {
 
-typedef ConfigurationRootRecord    KaaRootConfiguration;
+typedef ConfigurationRootRecord KaaRootConfiguration;
 
 }
-
 
 #endif /* KAA_USE_CONFIGURATION */
 

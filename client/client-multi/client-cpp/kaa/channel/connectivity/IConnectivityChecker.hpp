@@ -33,7 +33,9 @@ public:
      */
     virtual bool checkConnectivity() = 0;
 
-    virtual ~IConnectivityChecker() {}
+    virtual ~IConnectivityChecker()
+    {
+    }
 };
 
 typedef std::shared_ptr<IConnectivityChecker> ConnectivityCheckerPtr;

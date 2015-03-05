@@ -27,8 +27,7 @@ namespace kaa {
  *
  * Responsible for the Kaa initialization and start/stop actions.
  */
-class Kaa
-{
+class Kaa {
 public:
     /**
      * Initialize Kaa library

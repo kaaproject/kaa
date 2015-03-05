@@ -23,14 +23,7 @@ namespace kaa {
  * Describes types which @link CommonValue @endlink may contain.
  */
 enum class CommonValueType {
-    COMMON_NULL,
-    COMMON_BOOL,
-    COMMON_INT32,
-    COMMON_INT64,
-    COMMON_FLOAT,
-    COMMON_DOUBLE,
-    COMMON_STRING,
-    COMMON_BYTES,
+    COMMON_NULL, COMMON_BOOL, COMMON_INT32, COMMON_INT64, COMMON_FLOAT, COMMON_DOUBLE, COMMON_STRING, COMMON_BYTES,
 
     COMMON_SCHEMA_INDEPENDENT, // schema dependency marker
 

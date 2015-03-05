@@ -32,18 +32,24 @@
 
 namespace kaa {
 
-class CommonFixed : public ICommonValue, public ISchemaDependent {
+class CommonFixed: public ICommonValue, public ISchemaDependent {
 public:
     CommonFixed(const avro::NodePtr & schema);
 
-    const boost::any        getValue()  const   { return boost::cref(value_).get(); }
+    const boost::any getValue() const
+    {
+        return boost::cref(value_).get();
+    }
 
-    const avro::NodePtr &   getSchema() const   { return schema_; }
+    const avro::NodePtr & getSchema() const
+    {
+        return schema_;
+    }
 
-    avro::GenericDatum      toAvro()    const;
-    std::string             toString()  const;
+    avro::GenericDatum toAvro() const;
+    std::string toString() const;
 
-    void                    setValue(const std::vector<std::uint8_t> &value);
+    void setValue(const std::vector<std::uint8_t> &value);
 private:
     avro::NodePtr schema_;
     std::vector<std::uint8_t> value_;

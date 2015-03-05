@@ -38,26 +38,34 @@ public:
      * <br>
      * Generates random id object.
      */
-    TransactionId() : id_(UuidGenerator::generateUuid()) {}
+    TransactionId()
+            : id_(UuidGenerator::generateUuid())
+    {
+    }
 
     /**
      * Copy constructor<br>
      * <br>
      * Copies TransactionId object.
      */
-    TransactionId(const TransactionId & trxId) : id_(trxId.id_) {}
+    TransactionId(const TransactionId & trxId)
+            : id_(trxId.id_)
+    {
+    }
 
     /**
      * Constructs object from string value.
      */
-    TransactionId(const std::string & id) {
+    TransactionId(const std::string & id)
+    {
         this->id_ = id;
     }
 
     /**
      * Get string id representation.
      */
-    const std::string & getId() {
+    const std::string & getId()
+    {
         return this->id_;
     }
 

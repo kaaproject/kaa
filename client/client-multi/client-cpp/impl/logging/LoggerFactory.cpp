@@ -26,13 +26,15 @@
 
 namespace kaa {
 
-static LoggerPtr getDefaultLogger() {
+static LoggerPtr getDefaultLogger()
+{
     return LoggerPtr(new DefaultLogger());
 }
 
 LoggerPtr LoggerFactory::logger_ = getDefaultLogger();
 
-const ILogger & LoggerFactory::getLogger() {
+const ILogger & LoggerFactory::getLogger()
+{
     if (logger_.get() == nullptr) {
         logger_ = getDefaultLogger();
     }
@@ -40,7 +42,8 @@ const ILogger & LoggerFactory::getLogger() {
 
 }
 
-void LoggerFactory::initLogger(LoggerPtr logger) {
+void LoggerFactory::initLogger(LoggerPtr logger)
+{
     logger_ = logger;
 }
 

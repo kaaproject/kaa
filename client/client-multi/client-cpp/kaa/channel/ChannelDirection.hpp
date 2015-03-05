@@ -39,5 +39,4 @@ enum ChannelDirection {
 
 }  // namespace kaa
 
-
 #endif /* CHANNELDIRECTION_HPP_ */

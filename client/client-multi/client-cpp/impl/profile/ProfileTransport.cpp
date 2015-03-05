@@ -22,10 +22,10 @@
 
 namespace kaa {
 
-ProfileTransport::ProfileTransport(IKaaChannelManager& channelManager
-        , const PublicKey& publicKey)
-    : AbstractKaaTransport(channelManager), profileManager_(nullptr),
-      publicKey_(publicKey.begin(), publicKey.end()) {}
+ProfileTransport::ProfileTransport(IKaaChannelManager& channelManager, const PublicKey& publicKey)
+        : AbstractKaaTransport(channelManager), profileManager_(nullptr), publicKey_(publicKey.begin(), publicKey.end())
+{
+}
 
 bool ProfileTransport::isProfileOutDated(const HashDigest& profileHash)
 {

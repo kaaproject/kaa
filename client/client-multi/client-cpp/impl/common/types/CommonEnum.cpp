@@ -23,8 +23,7 @@
 namespace kaa {
 
 CommonEnum::CommonEnum(const avro::NodePtr &schema)
-    : ICommonValue(CommonValueType::COMMON_ENUM)
-    , schema_(schema)
+        : ICommonValue(CommonValueType::COMMON_ENUM), schema_(schema)
 {
 
 }

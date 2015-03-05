@@ -28,20 +28,26 @@
 
 namespace kaa {
 
-class CommonEnum : public ICommonValue, public ISchemaDependent {
+class CommonEnum: public ICommonValue, public ISchemaDependent {
 public:
     CommonEnum(const avro::NodePtr &schema);
 
-    const boost::any        getValue()  const   { return boost::cref(symbol_).get(); }
-    const avro::NodePtr &   getSchema() const   { return schema_; }
+    const boost::any getValue() const
+    {
+        return boost::cref(symbol_).get();
+    }
+    const avro::NodePtr & getSchema() const
+    {
+        return schema_;
+    }
 
-    avro::GenericDatum      toAvro()    const;
-    std::string             toString()  const;
+    avro::GenericDatum toAvro() const;
+    std::string toString() const;
 
-    void                    setValue(const std::string &value);
+    void setValue(const std::string &value);
 private:
-    std::string     symbol_;
-    avro::NodePtr   schema_;
+    std::string symbol_;
+    avro::NodePtr schema_;
 };
 
 }  // namespace kaa

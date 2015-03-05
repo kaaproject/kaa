@@ -21,15 +21,16 @@
 namespace kaa {
 
 AbstractHttpChannel::AbstractHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys)
-    : clientKeys_(clientKeys), lastConnectionFailed_(false)
-    , multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager) {}
-
+        : clientKeys_(clientKeys), lastConnectionFailed_(false), multiplexer_(nullptr), demultiplexer_(nullptr),
+          channelManager_(channelManager)
+{
+}
 
 void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDirection>& types
 #ifdef KAA_THREADSAFE
-                                     , KAA_MUTEX_UNIQUE& lock
+                                       , KAA_MUTEX_UNIQUE& lock
 #endif
-                                       )
+)
 {
     const auto& bodyRaw = multiplexer_->compileRequest(types);
 
@@ -57,8 +58,8 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
 
         if (!processedResponse.empty()) {
             demultiplexer_->processResponse(
-                    std::vector<std::uint8_t>(reinterpret_cast<const std::uint8_t *>(processedResponse.data()),
-                                              reinterpret_cast<const std::uint8_t *>(processedResponse.data() + processedResponse.size())));
+            std::vector<std::uint8_t>(reinterpret_cast<const std::uint8_t *>(processedResponse.data()),
+                    reinterpret_cast<const std::uint8_t *>(processedResponse.data() + processedResponse.size())));
         }
     } catch (std::exception& e) {
         KAA_LOG_ERROR(boost::format("Connection failed, server %1%:%2%: %3%") % currentServer_->getHost() % currentServer_->getPort() % e.what());
@@ -77,21 +78,21 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
     }
 }
 
-
 void AbstractHttpChannel::sync(TransportType type)
 {
     const auto& supportedTypes = getSupportedTransportTypes();
     auto it = supportedTypes.find(type);
-    if (it != supportedTypes.end() && (it->second == ChannelDirection::UP || it->second == ChannelDirection::BIDIRECTIONAL)) {
+    if (it != supportedTypes.end() && (it->second == ChannelDirection::UP
+            || it->second == ChannelDirection::BIDIRECTIONAL)) {
         KAA_MUTEX_LOCKING("channelGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
         KAA_MUTEX_LOCKED("channelGuard_");
         if (currentServer_) {
-            processTypes(std::map<TransportType, ChannelDirection>({ { type, it->second } })
+            processTypes(std::map<TransportType, ChannelDirection>( { { type, it->second } })
 #ifdef KAA_THREADSAFE
-                       , lock
+                                                                   , lock
 #endif
-                        );
+                         );
         } else {
             lastConnectionFailed_ = true;
             KAA_LOG_WARN(boost::format("Can't sync channel %1%. Server is null") % getId());
@@ -101,7 +102,6 @@ void AbstractHttpChannel::sync(TransportType type)
     }
 }
 
-
 void AbstractHttpChannel::syncAll()
 {
     KAA_MUTEX_LOCKING("channelGuard_");
@@ -110,21 +110,19 @@ void AbstractHttpChannel::syncAll()
     if (currentServer_) {
         processTypes(getSupportedTransportTypes()
 #ifdef KAA_THREADSAFE
-                   , lock
+                     , lock
 #endif
-                    );
+                     );
     } else {
         lastConnectionFailed_ = true;
         KAA_LOG_WARN(boost::format("Can't sync channel %1%. Server is null") % getId());
     }
 }
 
-
 void AbstractHttpChannel::syncAck(TransportType type)
 {
     KAA_LOG_DEBUG(boost::format("Sync ack operation is not supported by channel %1%.") % getId());
 }
-
 
 void AbstractHttpChannel::setMultiplexer(IKaaDataMultiplexer *multiplexer)
 {
@@ -134,7 +132,6 @@ void AbstractHttpChannel::setMultiplexer(IKaaDataMultiplexer *multiplexer)
     multiplexer_ = multiplexer;
 }
 
-
 void AbstractHttpChannel::setDemultiplexer(IKaaDataDemultiplexer *demultiplexer)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
@@ -143,7 +140,6 @@ void AbstractHttpChannel::setDemultiplexer(IKaaDataDemultiplexer *demultiplexer)
     demultiplexer_ = demultiplexer;
 }
 
-
 void AbstractHttpChannel::setServer(ITransportConnectionInfoPtr server)
 {
     if (server->getTransportId() == getTransportProtocolId()) {
@@ -151,15 +147,17 @@ void AbstractHttpChannel::setServer(ITransportConnectionInfoPtr server)
         KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
         KAA_MUTEX_LOCKED("channelGuard_");
         currentServer_.reset(new IPTransportInfo(server));
-        std::shared_ptr<IEncoderDecoder> encDec(new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(), currentServer_->getPublicKey()));
+        std::shared_ptr<IEncoderDecoder> encDec(
+                new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(),
+                                      currentServer_->getPublicKey()));
         httpDataProcessor_.setEncoderDecoder(encDec);
         if (lastConnectionFailed_) {
             lastConnectionFailed_ = false;
             processTypes(getSupportedTransportTypes()
 #ifdef KAA_THREADSAFE
-                        , lock
+                         , lock
 #endif
-                        );
+                         );
         }
     } else {
         KAA_LOG_ERROR(boost::format("Invalid server info for channel %1%") % getId());

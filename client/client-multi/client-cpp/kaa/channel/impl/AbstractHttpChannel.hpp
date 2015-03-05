@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-
-
 #ifndef ABSTRACTHTTPCHANNEL_HPP_
 #define ABSTRACTHTTPCHANNEL_HPP_
 
@@ -45,10 +43,12 @@
 
 namespace kaa {
 
-class AbstractHttpChannel : public ImpermanentDataChannel {
+class AbstractHttpChannel: public ImpermanentDataChannel {
 public:
     AbstractHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys);
-    virtual ~AbstractHttpChannel() { }
+    virtual ~AbstractHttpChannel()
+    {
+    }
 
     virtual void sync(TransportType type);
     virtual void syncAll();
@@ -58,30 +58,38 @@ public:
 
     virtual void setServer(ITransportConnectionInfoPtr server);
 
-    virtual ITransportConnectionInfoPtr getServer() {
+    virtual ITransportConnectionInfoPtr getServer()
+    {
         return std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_);
     }
 
-    virtual TransportProtocolId getTransportProtocolId() const {
+    virtual TransportProtocolId getTransportProtocolId() const
+    {
         return TransportProtocolIdConstants::HTTP_TRANSPORT_ID;
     }
 
-    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker)
+    {
+    }
 
 protected:
     typedef std::shared_ptr<IPTransportInfo> IPTransportInfoPtr;
 
-    HttpDataProcessor* getHttpDataProcessor() { return &httpDataProcessor_; }
+    HttpDataProcessor* getHttpDataProcessor()
+    {
+        return &httpDataProcessor_;
+    }
     virtual void processTypes(const std::map<TransportType, ChannelDirection>& types
 #ifdef KAA_THREADSAFE
-                            , KAA_MUTEX_UNIQUE& lock
+                              ,
+                              KAA_MUTEX_UNIQUE&lock
 #endif
-                            );
+                              );
 
-    virtual std::string getURLSuffix() = 0;
+                              virtual std::string getURLSuffix() = 0;
 
-private:
-    virtual std::shared_ptr<IHttpRequest> createRequest(IPTransportInfoPtr server, const std::vector<std::uint8_t>& body) = 0;
+                          private:
+                              virtual std::shared_ptr<IHttpRequest> createRequest(IPTransportInfoPtr server, const std::vector<std::uint8_t>& body) = 0;
     virtual std::string retrieveResponse(const IHttpResponse& response) = 0;
 
 private:

@@ -29,7 +29,9 @@ class IConfigurationManagerFactory {
 public:
     virtual IConfigurationManager & getConfigurationManager() = 0;
 
-    virtual ~IConfigurationManagerFactory() {}
+    virtual ~IConfigurationManagerFactory()
+    {
+    }
 };
 
 }  // namespace kaa

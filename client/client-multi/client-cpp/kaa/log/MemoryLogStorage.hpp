@@ -35,55 +35,56 @@ namespace kaa {
  *
  * Log records are stored in memory. After application restarts logs will be purged.
  */
-class MemoryLogStorage : public ILogStorage, public ILogStorageStatus {
+class MemoryLogStorage: public ILogStorage, public ILogStorageStatus {
 private:
     typedef struct __MemoryLogStorage__LogBlock__ {
         __MemoryLogStorage__LogBlock__(size_t blockSize)
-                : blockId(0)
-        		, actualSize_(0)
-                , blockSize_(blockSize)
-                , finalized_(false)
+                : blockId(0), actualSize_(0), blockSize_(blockSize), finalized_(false)
         {
         }
 
-        std::int32_t                blockId;
+        std::int32_t blockId;
         ILogStorage::container_type logs_;
-        std::size_t                 actualSize_;
-        std::size_t                 blockSize_;
-        bool                        finalized_;
+        std::size_t actualSize_;
+        std::size_t blockSize_;
+        bool finalized_;
     } LogBlock;
 
 public:
-    MemoryLogStorage(std::size_t blockSize) : blockSize_(blockSize), occupiedSize_(0) {
+    MemoryLogStorage(std::size_t blockSize)
+            : blockSize_(blockSize), occupiedSize_(0)
+    {
         LogBlock initialBlock(blockSize);
         initialBlock.actualSize_ = 0;
         initialBlock.finalized_ = false;
         logBlocks_.push_back(initialBlock);
     }
-    ~MemoryLogStorage() {}
+    ~MemoryLogStorage()
+    {
+    }
 
     /**
      * \c ILogStorage public interface implementation
      */
-    void            addLogRecord(const LogRecord & record);
-    container_type  getRecordBlock(std::size_t blockSize, std::int32_t blockId);
-    void            removeRecordBlock(std::int32_t blockId);
-    void            notifyUploadFailed(std::int32_t blockId);
-    void            removeOldestRecords(std::size_t allowedVolume);
+    void addLogRecord(const LogRecord & record);
+    container_type getRecordBlock(std::size_t blockSize, std::int32_t blockId);
+    void removeRecordBlock(std::int32_t blockId);
+    void notifyUploadFailed(std::int32_t blockId);
+    void removeOldestRecords(std::size_t allowedVolume);
 
     /**
      * \c ILogStorageStatus public interface implementation
      */
-    std::size_t          getConsumedVolume() const;
-    std::size_t          getRecordsCount() const;
+    std::size_t getConsumedVolume() const;
+    std::size_t getRecordsCount() const;
 
 private:
-    void            resize(std::size_t blockSize);
+    void resize(std::size_t blockSize);
 
 private:
-    std::size_t          blockSize_;
-    std::size_t          occupiedSize_;
-    std::list<LogBlock>  logBlocks_;
+    std::size_t blockSize_;
+    std::size_t occupiedSize_;
+    std::list<LogBlock> logBlocks_;
 };
 
 }  // namespace kaa

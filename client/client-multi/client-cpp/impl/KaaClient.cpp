@@ -39,8 +39,7 @@
 namespace kaa {
 
 KaaClient::KaaClient()
-    : status_(new ClientStatus(CLIENT_STATUS_FILE_LOCATION))
-    , options_(0)
+        : status_(new ClientStatus(CLIENT_STATUS_FILE_LOCATION)), options_(0)
 {
 
 }
@@ -48,8 +47,9 @@ KaaClient::KaaClient()
 void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 {
     options_ = options;
-    KAA_LOG_INFO(boost::format("Starting Kaa C++ sdk version %1%, commit hash %2%. Options: %3%")
-        % BUILD_VERSION % BUILD_COMMIT_HASH % options);
+    KAA_LOG_INFO(
+            boost::format("Starting Kaa C++ sdk version %1%, commit hash %2%. Options: %3%") % BUILD_VERSION
+            % BUILD_COMMIT_HASH % options);
 
     initClientKeys();
 
@@ -131,11 +131,9 @@ void KaaClient::initKaaTransport()
     IMetaDataTransportPtr metaDataTransport(new MetaDataTransport(status_, publicKeyHash, 60000L));
     IProfileTransportPtr profileTransport(new ProfileTransport(*channelManager_, clientKeys_->getPublicKey()));
 #ifdef KAA_USE_CONFIGURATION
-    IConfigurationTransportPtr configurationTransport(new ConfigurationTransport(
-            *channelManager_
-            , configurationProcessor_.get()
-            , configurationPersistenceManager_.get()
-            , status_));
+    IConfigurationTransportPtr configurationTransport(
+            new ConfigurationTransport(*channelManager_, configurationProcessor_.get(),
+                                       configurationPersistenceManager_.get(), status_));
 #endif
 #ifdef KAA_USE_NOTIFICATIONS
     INotificationTransportPtr notificationTransport(new NotificationTransport(status_, *channelManager_));
@@ -154,35 +152,28 @@ void KaaClient::initKaaTransport()
     dynamic_cast<ProfileTransport*>(profileTransport.get())->setClientState(status_);
     profileManager_->setTransport(profileTransport);
 
-    syncProcessor_.reset(
-            new SyncDataProcessor(
-              metaDataTransport
-            , bootstrapTransport
-            , profileTransport
+    syncProcessor_.reset(new SyncDataProcessor(metaDataTransport, bootstrapTransport, profileTransport
 #ifdef KAA_USE_CONFIGURATION
-            , configurationTransport
+                                               , configurationTransport
 #else
-            , nullptr
+                                               , nullptr
 #endif
 #ifdef KAA_USE_NOTIFICATIONS
-            , notificationTransport
+                                               , notificationTransport
 #else
-            , nullptr
+                                               , nullptr
 #endif
 #ifdef KAA_USE_EVENTS
-            , userTransport
-            , eventTransport
+                                               , userTransport, eventTransport
 #else
-            , nullptr
-            , nullptr
+                                               , nullptr, nullptr
 #endif
 #ifdef KAA_USE_LOGGING
-            , loggingTransport
+                                               , loggingTransport
 #else
-            , nullptr
+                                               , nullptr
 #endif
-            , redirectionTransport
-            , status_));
+                                               , redirectionTransport, status_));
 
 #ifdef KAA_USE_EVENTS
     eventManager_->setTransport(std::dynamic_pointer_cast<EventTransport, IEventTransport>(eventTransport).get());
@@ -192,7 +183,8 @@ void KaaClient::initKaaTransport()
     logCollector_->setTransport(std::dynamic_pointer_cast<LoggingTransport, ILoggingTransport>(loggingTransport).get());
 #endif
 #ifdef KAA_USE_NOTIFICATIONS
-    notificationManager_->setTransport(std::dynamic_pointer_cast<NotificationTransport, INotificationTransport>(notificationTransport));
+    notificationManager_->setTransport(
+            std::dynamic_pointer_cast<NotificationTransport, INotificationTransport>(notificationTransport));
 #endif
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     if (options_ & KaaOption::USE_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) {
@@ -217,7 +209,9 @@ void KaaClient::initKaaTransport()
         opsLongPollChannel_.reset(new DefaultOperationLongPollChannel(channelManager_.get(), *clientKeys_));
         opsLongPollChannel_->setMultiplexer(syncProcessor_.get());
         opsLongPollChannel_->setDemultiplexer(syncProcessor_.get());
-        KAA_LOG_INFO(boost::format("Going to set default operations Kaa HTTP Long Poll channel: %1%") % opsLongPollChannel_.get());
+        KAA_LOG_INFO(
+                boost::format("Going to set default operations Kaa HTTP Long Poll channel: %1%") % opsLongPollChannel_
+                        .get());
         channelManager_->addChannel(opsLongPollChannel_.get());
     }
 #endif
@@ -232,8 +226,8 @@ void KaaClient::initKaaTransport()
 #endif
 #ifdef KAA_DEFAULT_CONNECTIVITY_CHECKER
     if (options_ & KaaOption::USE_DEFAULT_CONNECTIVITY_CHECKER) {
-        ConnectivityCheckerPtr connectivityChecker(new IPConnectivityChecker(
-                *static_cast<KaaChannelManager*>(channelManager_.get())));
+        ConnectivityCheckerPtr connectivityChecker(
+                new IPConnectivityChecker(*static_cast<KaaChannelManager*>(channelManager_.get())));
         channelManager_->setConnectivityChecker(connectivityChecker);
     }
 #endif

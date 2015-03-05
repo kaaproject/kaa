@@ -38,14 +38,11 @@ namespace kaa {
 /**
  * Default \c ILogCollector implementation.
  */
-class LogCollector : public ILogCollector {
+class LogCollector: public ILogCollector {
 public:
     LogCollector(IKaaChannelManagerPtr manager);
-    LogCollector(ILogStorage* storage
-               , ILogStorageStatus* status
-               , ILogUploadConfiguration* configuration
-               , ILogUploadStrategy* strategy
-               , ILogUploadFailoverStrategy* failoverStrategy);
+    LogCollector(ILogStorage* storage, ILogStorageStatus* status, ILogUploadConfiguration* configuration,
+                 ILogUploadStrategy* strategy, ILogUploadFailoverStrategy* failoverStrategy);
 
     virtual void addLogRecord(const SuperRecord& record)
     {
@@ -63,7 +60,9 @@ public:
 
     void setTransport(LoggingTransport *transport);
 
-    ~LogCollector() {}
+    ~LogCollector()
+    {
+    }
 
 private:
     void makeLogRecord(const LogRecord& record);
@@ -73,30 +72,31 @@ private:
     bool isDeliveryTimeout();
 
 private:
-    ILogStorage *                  storage_;
-    ILogStorageStatus *            status_;
-    ILogUploadConfiguration *      configuration_;
-    ILogUploadStrategy *           uploadStrategy_;
-    ILogUploadFailoverStrategy *   failoverStrategy_;
+    ILogStorage * storage_;
+    ILogStorageStatus * status_;
+    ILogUploadConfiguration * configuration_;
+    ILogUploadStrategy * uploadStrategy_;
+    ILogUploadFailoverStrategy * failoverStrategy_;
 
-    LoggingTransport*              transport_;
+    LoggingTransport* transport_;
 
     std::map<std::int32_t, LogSyncRequest> requests_;
 
     KAA_MUTEX_DECLARE(storageGuard_);
     KAA_MUTEX_DECLARE(requestsGuard_);
-    bool                        isUploading_;
+    bool isUploading_;
 
-    std::unique_ptr<MemoryLogStorage>                 defaultLogStorage_;
-    std::unique_ptr<SizeUploadStrategy>               defaultUploadStrategy_;
-    std::unique_ptr<LogUploadFailoverStrategy>        defaultFailoverStrategy_;
-    std::unique_ptr<DefaultLogUploadConfiguration>    defaultConfiguration_;
+    std::unique_ptr<MemoryLogStorage> defaultLogStorage_;
+    std::unique_ptr<SizeUploadStrategy> defaultUploadStrategy_;
+    std::unique_ptr<LogUploadFailoverStrategy> defaultFailoverStrategy_;
+    std::unique_ptr<DefaultLogUploadConfiguration> defaultConfiguration_;
 
     typedef std::chrono::system_clock clock_t;
     std::unordered_map<std::int32_t, std::chrono::time_point<clock_t>> timeoutsMap_;
 };
 
-}  // namespace kaa
+}
+  // namespace kaa
 
 #endif
 

@@ -24,7 +24,6 @@
 #include <cstdint>
 #include <memory>
 
-
 namespace kaa {
 
 /**
@@ -33,10 +32,11 @@ namespace kaa {
  * Receives and decodes the raw configuration data
  *
  */
-class IConfigurationProcessor
-{
+class IConfigurationProcessor {
 public:
-    virtual ~IConfigurationProcessor() {}
+    virtual ~IConfigurationProcessor()
+    {
+    }
 
     /**
      * Routine for processing received configuration data.

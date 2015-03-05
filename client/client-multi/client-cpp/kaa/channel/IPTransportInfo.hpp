@@ -26,31 +26,35 @@
 
 namespace kaa {
 
-class IPTransportInfo : public GenericTransportInfo {
+class IPTransportInfo: public GenericTransportInfo {
 public:
     IPTransportInfo(ITransportConnectionInfoPtr connectionInfo);
 
-    const std::string& getHost() const {
+    const std::string& getHost() const
+    {
         return host_;
     }
 
-    std::uint16_t getPort() const {
+    std::uint16_t getPort() const
+    {
         return port_;
     }
 
-    const std::string& getURL() const {
+    const std::string& getURL() const
+    {
         return url_;
     }
 
-    const PublicKey& getPublicKey() const {
+    const PublicKey& getPublicKey() const
+    {
         return publicKey_;
     }
 
 private:
-    std::string      host_;
-    std::uint16_t    port_;
-    std::string      url_;
-    PublicKey        publicKey_;
+    std::string host_;
+    std::uint16_t port_;
+    std::string url_;
+    PublicKey publicKey_;
 
 };
 

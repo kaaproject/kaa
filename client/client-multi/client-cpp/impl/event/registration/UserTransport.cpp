@@ -23,8 +23,7 @@
 namespace kaa {
 
 UserTransport::UserTransport(IRegistrationProcessor & manager, IKaaChannelManager& channelManager)
-    : AbstractKaaTransport(channelManager)
-    , manager_(manager)
+        : AbstractKaaTransport(channelManager), manager_(manager)
 {
 
 }
@@ -107,5 +106,4 @@ void UserTransport::syncProfile()
 }  // namespace kaa
 
 #endif
-
 

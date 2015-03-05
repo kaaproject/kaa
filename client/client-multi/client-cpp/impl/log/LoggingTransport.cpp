@@ -25,8 +25,7 @@
 namespace kaa {
 
 LoggingTransport::LoggingTransport(IKaaChannelManager& manager, LogCollector& collector)
-    : AbstractKaaTransport(manager)
-    , collector_(collector)
+        : AbstractKaaTransport(manager), collector_(collector)
 {
 }
 

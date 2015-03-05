@@ -29,13 +29,14 @@
 
 namespace kaa {
 
-class EmptyDeltaType : public IDeltaType {
+class EmptyDeltaType: public IDeltaType {
 public:
     /**
      * Tells if the field was set to default value
      * @return true if the field set to default, false otherwise
      */
-    virtual bool isDefault() {
+    virtual bool isDefault()
+    {
         return false;
     }
 
@@ -43,7 +44,8 @@ public:
      * Tells if the container field was cleared
      * @return true if the container field is cleared, false if not (or field is not array)
      */
-    virtual bool isReset() {
+    virtual bool isReset()
+    {
         return false;
     }
 
@@ -51,7 +53,8 @@ public:
      * Retrieves new field value
      * @return DeltaValue with specific type or empty one if there is no new value (or field is array)
      */
-    virtual const DeltaValue& getNewValue() {
+    virtual const DeltaValue& getNewValue()
+    {
         static DeltaValue empty;
         return empty;
     }
@@ -60,7 +63,8 @@ public:
      * Retrieves list of removed editable items
      * @return list which contains handlers (\ref DeltaHandlerId) of removed items, list is empty if there is no removed items (or field is not array)
      */
-    virtual const RemovedItems& getRemovedItems() {
+    virtual const RemovedItems& getRemovedItems()
+    {
         static RemovedItems emptyHandlerIdList;
         return emptyHandlerIdList;
     }
@@ -69,7 +73,8 @@ public:
      * Retrieves list of added items
      * @return list of added items {\ref IConfigurationDelta} for complex items, \ref IDeltaType for others), empty list if there is no added items (or field is not array)
      */
-    virtual const AddedItems& getAddedItems() {
+    virtual const AddedItems& getAddedItems()
+    {
         static AddedItems emptyAddedItemsList;
         return emptyAddedItemsList;
     }
@@ -78,7 +83,8 @@ public:
      * Retrieves string representation of empty delta type
      * @return String representation
      */
-    virtual std::string toString() const {
+    virtual std::string toString() const
+    {
         return std::string("null");
     }
 };

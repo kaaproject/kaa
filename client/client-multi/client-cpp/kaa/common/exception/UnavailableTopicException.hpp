@@ -23,8 +23,14 @@ namespace kaa {
 
 class UnavailableTopicException: public KaaException {
 public:
-    UnavailableTopicException(boost::format f) : KaaException(f) {}
-    UnavailableTopicException(const std::string& message) : KaaException(message) {}
+    UnavailableTopicException(boost::format f)
+            : KaaException(f)
+    {
+    }
+    UnavailableTopicException(const std::string& message)
+            : KaaException(message)
+    {
+    }
 };
 
 } /* namespace kaa */

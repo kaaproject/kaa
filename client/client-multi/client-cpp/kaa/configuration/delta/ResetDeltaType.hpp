@@ -31,7 +31,8 @@ public:
      * Tells if the container field was cleared
      * @return true if the container field is cleared, false if not (or field is not array)
      */
-    virtual bool isReset() {
+    virtual bool isReset()
+    {
         return true;
     }
 
@@ -39,7 +40,8 @@ public:
      * Retrieves string representation of delta reset type
      * @return String representation
      */
-    virtual std::string toString() const {
+    virtual std::string toString() const
+    {
         return std::string("reset");
     }
 };

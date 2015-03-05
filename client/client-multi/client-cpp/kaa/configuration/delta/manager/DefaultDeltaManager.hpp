@@ -32,7 +32,7 @@
 
 namespace kaa {
 
-class DefaultDeltaManager : public IDeltaManager, public IGenericDeltaReceiver {
+class DefaultDeltaManager: public IDeltaManager, public IGenericDeltaReceiver {
 public:
     /**
      * Default constructor
@@ -67,13 +67,14 @@ public:
     virtual void unsubscribeFromDeltaUpdates(const DeltaHandlerId& handlerId);
 
 private:
-    IDeltaReceiver                              *rootReceiver_;
+    IDeltaReceiver *rootReceiver_;
 
     KAA_MUTEX_DECLARE(subscriptionMutex_);
-    std::map<DeltaHandlerId, IDeltaReceiver*>   subscriptionStorage_;
+    std::map<DeltaHandlerId, IDeltaReceiver*> subscriptionStorage_;
 };
 
-} /* namespace kaa */
+}
+/* namespace kaa */
 
 #endif
 

@@ -79,5 +79,4 @@ typedef bool bool_type;
 
 #endif
 
-
 #endif /* KAA_KAATHREAD_HPP_ */

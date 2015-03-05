@@ -35,12 +35,10 @@ namespace kaa {
 
 class IKaaChannelManager;
 
-class NotificationTransport: public AbstractKaaTransport<TransportType::NOTIFICATION>,
-                             public INotificationTransport
-{
+class NotificationTransport: public AbstractKaaTransport<TransportType::NOTIFICATION>, public INotificationTransport {
 public:
     NotificationTransport(IKaaClientStateStoragePtr status, IKaaChannelManager& manager)
-        : AbstractKaaTransport(manager), notificationProcessor_(nullptr)
+            : AbstractKaaTransport(manager), notificationProcessor_(nullptr)
     {
         setClientState(status);
     }
@@ -53,13 +51,15 @@ public:
 
     virtual void onSubscriptionChanged(const SubscriptionCommands& commands);
 
-    virtual void setNotificationProcessor(INotificationProcessor* processor) {
+    virtual void setNotificationProcessor(INotificationProcessor* processor)
+    {
         if (processor != nullptr) {
             notificationProcessor_ = processor;
         }
     }
 
-    virtual void sync() {
+    virtual void sync()
+    {
         syncByType(type_);
     }
 private:
@@ -67,11 +67,11 @@ private:
     Notifications getMulticastNotifications(const Notifications & notifications);
 
 private:
-    INotificationProcessor*   notificationProcessor_;
+    INotificationProcessor* notificationProcessor_;
 
-    std::set<std::string>                    acceptedUnicastNotificationIds_;
-    std::map<std::string, std::int32_t>    notificationSubscriptions_;
-    SubscriptionCommands                     subscriptions_;
+    std::set<std::string> acceptedUnicastNotificationIds_;
+    std::map<std::string, std::int32_t> notificationSubscriptions_;
+    SubscriptionCommands subscriptions_;
 };
 
 } /* namespace kaa */

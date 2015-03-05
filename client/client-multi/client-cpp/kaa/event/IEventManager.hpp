@@ -51,12 +51,12 @@ public:
      * @param data      Event data
      * @param target    Event target, null for event broadcasting.
      */
-    virtual void produceEvent(const std::string& fqn
-                            , const std::vector<std::uint8_t>& data
-                            , const std::string& target
-                            , TransactionIdPtr trxId) = 0;
+    virtual void produceEvent(const std::string& fqn, const std::vector<std::uint8_t>& data, const std::string& target,
+                              TransactionIdPtr trxId) = 0;
 
-    virtual ~IEventManager() {}
+    virtual ~IEventManager()
+    {
+    }
 };
 
 } /* namespace kaa */

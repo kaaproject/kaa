@@ -37,9 +37,9 @@ typedef std::shared_ptr<IDeltaType> DeltaTypePtr;
  */
 class IDeltaType {
 public:
-    typedef boost::any                  DeltaValue;
-    typedef std::list<DeltaValue>       AddedItems;
-    typedef std::list<DeltaHandlerId>   RemovedItems;
+    typedef boost::any DeltaValue;
+    typedef std::list<DeltaValue> AddedItems;
+    typedef std::list<DeltaHandlerId> RemovedItems;
 
     /**
      * Checks if the field was set to default value
@@ -89,7 +89,9 @@ public:
      */
     virtual std::string toString() const = 0;
 
-    virtual ~IDeltaType() {}
+    virtual ~IDeltaType()
+    {
+    }
 };
 
 } /* namespace kaa */

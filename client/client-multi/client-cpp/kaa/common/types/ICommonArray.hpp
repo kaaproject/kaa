@@ -33,12 +33,15 @@ namespace kaa {
  * Common array interface
  */
 template<class Container>
-class ICommonArrayBase : public ICommonValue, public ISchemaDependent {
+class ICommonArrayBase: public ICommonValue, public ISchemaDependent {
 public:
-    typedef Container                       container_type;
-    typedef typename Container::value_type  elements_type;
+    typedef Container container_type;
+    typedef typename Container::value_type elements_type;
 
-    ICommonArrayBase() : ICommonValue(CommonValueType::COMMON_ARRAY) {}
+    ICommonArrayBase()
+            : ICommonValue(CommonValueType::COMMON_ARRAY)
+    {
+    }
 
     /**
      * Retrieves list of common values
@@ -46,7 +49,9 @@ public:
      */
     virtual container_type & getList() const = 0;
 
-    virtual ~ICommonArrayBase() {}
+    virtual ~ICommonArrayBase()
+    {
+    }
 };
 
 typedef ICommonArrayBase<std::list<std::shared_ptr<ICommonValue> > > ICommonArray;

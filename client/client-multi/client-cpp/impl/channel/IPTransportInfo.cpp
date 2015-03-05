@@ -27,7 +27,7 @@
 namespace kaa {
 
 IPTransportInfo::IPTransportInfo(ITransportConnectionInfoPtr connectionInfo)
-    : GenericTransportInfo(connectionInfo->getServerType(), ProtocolMetaData())
+        : GenericTransportInfo(connectionInfo->getServerType(), ProtocolMetaData())
 {
     if (!connectionInfo || connectionInfo->getConnectionInfo().empty()) {
         KAA_LOG_ERROR("Failed to create IP transport data: bad input data");
@@ -40,18 +40,18 @@ IPTransportInfo::IPTransportInfo(ITransportConnectionInfoPtr connectionInfo)
     protocolId_ = connectionInfo->getTransportId();
 
     std::uint8_t *data = connectionData_.data();
-    std::int32_t publicKeyLength = boost::asio::detail::socket_ops::network_to_host_long(*((int32_t *)data));
+    std::int32_t publicKeyLength = boost::asio::detail::socket_ops::network_to_host_long(*((int32_t *) data));
     data += sizeof(std::int32_t);
 
     publicKey_ = PublicKey(data, publicKeyLength);
     data += publicKeyLength;
 
-    std::int32_t hostLength = boost::asio::detail::socket_ops::network_to_host_long(*((int32_t *)data));
+    std::int32_t hostLength = boost::asio::detail::socket_ops::network_to_host_long(*((int32_t *) data));
     data += sizeof(std::int32_t);
     host_.assign(data, data + hostLength);
     data += hostLength;
 
-    port_ = boost::asio::detail::socket_ops::network_to_host_long(*((int32_t *)data));
+    port_ = boost::asio::detail::socket_ops::network_to_host_long(*((int32_t *) data));
 
     std::ostringstream ss;
     ss << "http://" << host_ << ":" << port_;
@@ -62,7 +62,9 @@ IPTransportInfo::IPTransportInfo(ITransportConnectionInfoPtr connectionInfo)
         throw KaaException("Bad connection data");
     }
 
-    KAA_LOG_TRACE(boost::format("Create IP transport data: host=%1%, port=%2%, publicKeyLength=%3%") % host_% port_ % publicKey_.size());
+    KAA_LOG_TRACE(
+            boost::format("Create IP transport data: host=%1%, port=%2%, publicKeyLength=%3%") % host_ % port_
+            % publicKey_.size());
 }
 
 } /* namespace kaa */

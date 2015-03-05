@@ -37,20 +37,26 @@ public:
      * Default constructor
      * Set delta handler id to default value, i.e. 0
      */
-    DefaultConfigurationDelta() : handlerId_(0) {}
+    DefaultConfigurationDelta()
+            : handlerId_(0)
+    {
+    }
 
     /**
      * Constructor
      * @param handlerId delta handler id
      */
     DefaultConfigurationDelta(const DeltaHandlerId& handlerId)
-        : handlerId_(handlerId) {}
+            : handlerId_(handlerId)
+    {
+    }
 
     /**
      * Retrieves handler id of the current delta
      * @return handler id of this delta, id would be set to 0 if delta hasn't delta id
      */
-    virtual DeltaHandlerId getHandlerId() {
+    virtual DeltaHandlerId getHandlerId()
+    {
         return handlerId_;
     }
 
@@ -59,7 +65,8 @@ public:
      * @param field the name of the field
      * @return true if the field was changed, false otherwise
      */
-    virtual bool hasChanged(const std::string& field) {
+    virtual bool hasChanged(const std::string& field)
+    {
         return (deltaTypesStorage_.find(field) != deltaTypesStorage_.end());
     }
 
@@ -79,13 +86,14 @@ public:
     /**
      * Add new delta pair (field name-delta type) to an inner storage
      */
-    void updateFieldDeltaType(const std::string& field, DeltaTypePtr type) {
+    void updateFieldDeltaType(const std::string& field, DeltaTypePtr type)
+    {
         deltaTypesStorage_[field] = type;
     }
 
 private:
-    DeltaHandlerId                        handlerId_;
-    std::map<std::string, DeltaTypePtr>   deltaTypesStorage_;
+    DeltaHandlerId handlerId_;
+    std::map<std::string, DeltaTypePtr> deltaTypesStorage_;
 };
 
 inline DeltaTypePtr DefaultConfigurationDelta::getDeltaType(const std::string& field)
@@ -104,7 +112,7 @@ inline std::string DefaultConfigurationDelta::toString() const
     std::stringstream ss;
     ss << "[ ";
     for (auto it = deltaTypesStorage_.begin(); it != deltaTypesStorage_.end();) {
-        ss << "{ \"" << it->first << "\": " << it->second->toString() <<" }";
+        ss << "{ \"" << it->first << "\": " << it->second->toString() << " }";
         if (++it != deltaTypesStorage_.end()) {
             ss << ", ";
         }

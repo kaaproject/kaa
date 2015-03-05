@@ -21,9 +21,10 @@
 
 namespace kaa {
 
-enum class KaaTcpMessageType: std::uint8_t
-{
-    MESSAGE_UNKNOWN = 0x00,
+enum class KaaTcpMessageType
+    : std::uint8_t
+    {
+        MESSAGE_UNKNOWN = 0x00,
     MESSAGE_CONNECT = 0x01,
     MESSAGE_CONNACK = 0x02,
     MESSAGE_PINGREQ = 0x0C,
@@ -32,8 +33,7 @@ enum class KaaTcpMessageType: std::uint8_t
     MESSAGE_KAASYNC = 0x0F
 };
 
-class KaaTcpCommon
-{
+class KaaTcpCommon {
 public:
     static const std::uint8_t FIRST_BIT = 0x80;
     static const std::uint8_t MAX_MESSAGE_TYPE_LENGTH = 0x0F;
@@ -57,7 +57,5 @@ public:
 };
 
 }
-
-
 
 #endif /* KAATCPCOMMON_HPP_ */

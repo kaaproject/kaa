@@ -61,7 +61,7 @@ private:
     static void readFile(const std::string& fileName, boost::scoped_array<char>& buf, std::size_t& len);
 
 private:
-    Botan::AutoSeeded_RNG     rng_;
+    Botan::AutoSeeded_RNG rng_;
 };
 
 }

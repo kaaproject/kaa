@@ -67,12 +67,13 @@ void ConfigurationPersistenceManager::onConfigurationUpdated(const KaaRootConfig
     }
 
     KAA_MUTEX_UNLOCKING("confPersistenceGuard_");
-    KAA_UNLOCK(storage_lock);
-    KAA_MUTEX_UNLOCKED("confPersistenceGuard_");
+    KAA_UNLOCK(storage_lock); KAA_MUTEX_UNLOCKED("confPersistenceGuard_");
 
     configurationHash_ = EndpointObjectHash(buffer);
 
-    KAA_LOG_INFO(boost::format("Calculated configuration hash: %1%") % LoggingUtils::ByteArrayToString(configurationHash_.getHashDigest()));
+    KAA_LOG_INFO(
+            boost::format("Calculated configuration hash: %1%") % LoggingUtils::ByteArrayToString(
+                    configurationHash_.getHashDigest()));
 }
 
 EndpointObjectHash ConfigurationPersistenceManager::getConfigurationHash()
@@ -100,7 +101,9 @@ void ConfigurationPersistenceManager::readStoredConfiguration()
             }
 
             configurationHash_ = EndpointObjectHash(bytes.data(), bytes.size());
-            KAA_LOG_INFO(boost::format("Calculated configuration hash: %1%") % LoggingUtils::ByteArrayToString(configurationHash_.getHashDigest()));
+            KAA_LOG_INFO(
+                    boost::format("Calculated configuration hash: %1%") % LoggingUtils::ByteArrayToString(
+                            configurationHash_.getHashDigest()));
         }
     }
 }

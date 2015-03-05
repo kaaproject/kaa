@@ -24,36 +24,50 @@
 #include "kaa/kaatcp/KaaTcpParser.hpp"
 #include <functional>
 
-namespace kaa
-{
+namespace kaa {
 
-class KaaTcpResponseProcessor
-{
+class KaaTcpResponseProcessor {
 public:
-    KaaTcpResponseProcessor() { }
-    ~KaaTcpResponseProcessor() { }
+    KaaTcpResponseProcessor()
+    {
+    }
+    ~KaaTcpResponseProcessor()
+    {
+    }
 
     void processResponseBuffer(const char *buf, std::uint32_t size);
 
-    void registerConnackReceiver(std::function<void (const ConnackMessage&)> onConnack) { onConnack_ = onConnack; }
-    void registerKaaSyncReceiver(std::function<void (const KaaSyncResponse&)> onKaaSync) { onKaaSyncResponse_ = onKaaSync; }
-    void registerDisconnectReceiver(std::function<void (const DisconnectMessage&)> onDisconnect) { onDisconnect_ = onDisconnect; }
-    void registerPingResponseReceiver(std::function<void ()> onPing) { onPingResp_ = onPing; }
+    void registerConnackReceiver(std::function<void(const ConnackMessage&)> onConnack)
+    {
+        onConnack_ = onConnack;
+    }
+    void registerKaaSyncReceiver(std::function<void(const KaaSyncResponse&)> onKaaSync)
+    {
+        onKaaSyncResponse_ = onKaaSync;
+    }
+    void registerDisconnectReceiver(std::function<void(const DisconnectMessage&)> onDisconnect)
+    {
+        onDisconnect_ = onDisconnect;
+    }
+    void registerPingResponseReceiver(std::function<void()> onPing)
+    {
+        onPingResp_ = onPing;
+    }
 
-    void flush() { parser_.resetParser(); }
+    void flush()
+    {
+        parser_.resetParser();
+    }
 
 private:
-    std::function<void (const ConnackMessage&)> onConnack_;
-    std::function<void (const KaaSyncResponse&)> onKaaSyncResponse_;
-    std::function<void (const DisconnectMessage&)> onDisconnect_;
-    std::function<void ()> onPingResp_;
+    std::function<void(const ConnackMessage&)> onConnack_;
+    std::function<void(const KaaSyncResponse&)> onKaaSyncResponse_;
+    std::function<void(const DisconnectMessage&)> onDisconnect_;
+    std::function<void()> onPingResp_;
 
     KaaTcpParser parser_;
 };
 
 }
-
-
-
 
 #endif /* KAATCPRESPONSEPROCESSOR_HPP_ */

@@ -25,8 +25,7 @@ namespace kaa {
  * Interface to implement module responsible for creation the Bootstrap sync request
  * and processing the response from the Bootstrap server.
  */
-class IBootstrapTransport
-{
+class IBootstrapTransport {
 public:
 
     /**
@@ -46,10 +45,11 @@ public:
      */
     virtual void onBootstrapResponse(const BootstrapSyncResponse& response) = 0;
 
-    virtual ~IBootstrapTransport() {}
+    virtual ~IBootstrapTransport()
+    {
+    }
 };
 
 }  // namespace kaa
-
 
 #endif /* IBOOTSTRAPTRANSPORT_HPP_ */

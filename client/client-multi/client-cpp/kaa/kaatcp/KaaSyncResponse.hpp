@@ -22,16 +22,26 @@
 
 namespace kaa {
 
-
-class KaaSyncResponse
-{
+class KaaSyncResponse {
 public:
     KaaSyncResponse(const char * payload, std::uint32_t size);
 
-    const std::vector<std::uint8_t>& getPayload() const { return payload_; }
-    bool isZipped() const { return isZipped_; }
-    bool isEncrypted() const { return isEncrypted_; }
-    std::uint16_t getMessageId() const { return messageId_; }
+    const std::vector<std::uint8_t>& getPayload() const
+    {
+        return payload_;
+    }
+    bool isZipped() const
+    {
+        return isZipped_;
+    }
+    bool isEncrypted() const
+    {
+        return isEncrypted_;
+    }
+    std::uint16_t getMessageId() const
+    {
+        return messageId_;
+    }
 
 private:
     void parseMessage(const char * payload, std::uint32_t size);
@@ -45,7 +55,5 @@ private:
 };
 
 }
-
-
 
 #endif /* KAASYNCRESPONSE_HPP_ */

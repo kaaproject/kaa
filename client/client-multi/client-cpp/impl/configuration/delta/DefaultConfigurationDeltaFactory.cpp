@@ -115,50 +115,52 @@ DeltaTypePtr DefaultConfigurationDeltaFactory::createArrayDeltaType(const avro::
     return delta;
 }
 
-IDeltaType::DeltaValue DefaultConfigurationDeltaFactory::createDeltaValue(const avro::GenericDatum& datum, avro::Type& type)
+IDeltaType::DeltaValue DefaultConfigurationDeltaFactory::createDeltaValue(const avro::GenericDatum& datum,
+                                                                          avro::Type& type)
 {
     IDeltaType::DeltaValue value;
 
     type = datum.type();
 
     switch (type) {
-        case avro::AVRO_BOOL: {
-            value = datum.value<bool>();
-            break;
-        }
-        case avro::AVRO_INT: {
-            value = datum.value<int32_t>();
-            break;
-        }
-        case avro::AVRO_LONG: {
-            value = datum.value<int64_t>();
-            break;
-        }
-        case avro::AVRO_FLOAT: {
-            value = datum.value<float>();
-            break;
-        }
-        case avro::AVRO_DOUBLE: {
-            value = datum.value<double>();
-            break;
-        }
-        case avro::AVRO_STRING: {
-            value = datum.value<std::string>();
-            break;
-        }
-        case avro::AVRO_ENUM: {
-            value = datum.value<avro::GenericEnum>().symbol();
-            break;
-        }
-        case avro::AVRO_FIXED: {
-            value = datum.value<avro::GenericFixed>().value();
-            break;
-        }
-        case avro::AVRO_BYTES: {
-            value = datum.value<std::vector<std::uint8_t> >();
-            break;
-        }
-        default: throw KaaException("Not a common type");
+    case avro::AVRO_BOOL: {
+        value = datum.value<bool>();
+        break;
+    }
+    case avro::AVRO_INT: {
+        value = datum.value<int32_t>();
+        break;
+    }
+    case avro::AVRO_LONG: {
+        value = datum.value<int64_t>();
+        break;
+    }
+    case avro::AVRO_FLOAT: {
+        value = datum.value<float>();
+        break;
+    }
+    case avro::AVRO_DOUBLE: {
+        value = datum.value<double>();
+        break;
+    }
+    case avro::AVRO_STRING: {
+        value = datum.value<std::string>();
+        break;
+    }
+    case avro::AVRO_ENUM: {
+        value = datum.value<avro::GenericEnum>().symbol();
+        break;
+    }
+    case avro::AVRO_FIXED: {
+        value = datum.value<avro::GenericFixed>().value();
+        break;
+    }
+    case avro::AVRO_BYTES: {
+        value = datum.value<std::vector<std::uint8_t> >();
+        break;
+    }
+    default:
+        throw KaaException("Not a common type");
     }
 
     return value;

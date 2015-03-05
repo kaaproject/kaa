@@ -21,8 +21,7 @@
 namespace kaa {
 
 CommonFixed::CommonFixed(const avro::NodePtr &schema)
-    : ICommonValue(CommonValueType::COMMON_FIXED)
-    , schema_(schema)
+        : ICommonValue(CommonValueType::COMMON_FIXED), schema_(schema)
 {
 
 }
@@ -44,7 +43,7 @@ std::string CommonFixed::toString() const
 {
     std::stringstream ss;
     for (auto it = value_.begin(); it != value_.end();) {
-        ss << std::setw(2) << std::setfill('0') << std::hex << (int)*it << std::dec;
+        ss << std::setw(2) << std::setfill('0') << std::hex << (int) *it << std::dec;
         if (++it != value_.end()) {
             ss << "-";
         }

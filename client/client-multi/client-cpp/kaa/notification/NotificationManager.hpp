@@ -40,7 +40,7 @@
 
 namespace kaa {
 
-class NotificationManager : public INotificationManager, public INotificationProcessor {
+class NotificationManager: public INotificationManager, public INotificationProcessor {
 public:
     NotificationManager(IKaaClientStateStoragePtr status);
 
@@ -87,30 +87,31 @@ private:
     bool notifyOptionalNotificationSubscribers(const Notification& notification);
 
 private:
-    std::shared_ptr<NotificationTransport>                           transport_;
-    IKaaClientStateStoragePtr                                        clientStatus_;
+    std::shared_ptr<NotificationTransport> transport_;
+    IKaaClientStateStoragePtr clientStatus_;
 
-    std::unordered_map<std::string/*Topic ID*/, Topic>               topics_;
+    std::unordered_map<std::string/*Topic ID*/, Topic> topics_;
 
     KAA_MUTEX_DECLARE(topicsGuard_);
     KAA_MUTEX_DECLARE(optionalListenersGuard_);
 
     typedef KaaObservable<
-            void(const std::string& topicId,
-                    const std::vector<std::uint8_t>& notification),
-            INotificationListenerPtr> NotificationObservable;
+    void(const std::string& topicId,
+            const std::vector<std::uint8_t>& notification),
+    INotificationListenerPtr> NotificationObservable;
 
     typedef std::shared_ptr<NotificationObservable> NotificationObservablePtr;
 
     KaaObservable<void (const Topics& list), INotificationTopicListListenerPtr> topicListeners_;
-    NotificationObservable                                                     mandatoryListeners_;
-    std::unordered_map<std::string/*Topic ID*/, NotificationObservablePtr>     optionalListeners_;
+    NotificationObservable mandatoryListeners_;
+    std::unordered_map<std::string/*Topic ID*/, NotificationObservablePtr> optionalListeners_;
 
-    SubscriptionCommands                                             subscriptions_;
+    SubscriptionCommands subscriptions_;
     KAA_MUTEX_DECLARE(subscriptionsGuard_);
 };
 
-} /* namespace kaa */
+}
+/* namespace kaa */
 
 #endif
 

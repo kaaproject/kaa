@@ -25,23 +25,25 @@
 namespace kaa {
 
 template<class Container>
-class AbstractTransactable : public ITransactable {
+class AbstractTransactable: public ITransactable {
 public:
-    virtual TransactionIdPtr beginTransaction() {
+    virtual TransactionIdPtr beginTransaction()
+    {
         TransactionIdPtr trxId(new TransactionId);
-        KAA_MUTEX_LOCKING("transactionsGuard_")
+        KAA_MUTEX_LOCKING("transactionsGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(transactionsLock, transactionsGuard_);
-        KAA_MUTEX_LOCKED("transactionsGuard_")
+        KAA_MUTEX_LOCKED("transactionsGuard_");
 
         transactions_.insert(std::make_pair(trxId, Container()));
 
         return trxId;
     }
 
-    virtual void rollback(TransactionIdPtr trxId) {
-        KAA_MUTEX_LOCKING("transactionsGuard_")
+    virtual void rollback(TransactionIdPtr trxId)
+    {
+        KAA_MUTEX_LOCKING("transactionsGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(transactionsLock, transactionsGuard_);
-        KAA_MUTEX_LOCKED("transactionsGuard_")
+        KAA_MUTEX_LOCKED("transactionsGuard_");
 
         auto it = transactions_.find(trxId);
         if (it != transactions_.end()) {
@@ -49,26 +51,28 @@ public:
         }
     }
 
-    Container & getContainerByTrxId(TransactionIdPtr trxId) {
-        KAA_MUTEX_LOCKING("transactionsGuard_")
+    Container & getContainerByTrxId(TransactionIdPtr trxId)
+    {
+        KAA_MUTEX_LOCKING("transactionsGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(transactionsLock, transactionsGuard_);
-        KAA_MUTEX_LOCKED("transactionsGuard_")
+        KAA_MUTEX_LOCKED("transactionsGuard_");
 
         auto it = transactions_.find(trxId);
 
         if (it != transactions_.end()) {
             return it->second;
         } else {
-            KAA_LOG_DEBUG(boost::format("Transaction with id %1% was not found. Creating new instance") % trxId->getId());
+            KAA_LOG_DEBUG(
+                    boost::format("Transaction with id %1% was not found. Creating new instance") % trxId->getId());
             return transactions_[trxId];
         }
     }
 
-    virtual ~AbstractTransactable() {}
+    virtual ~AbstractTransactable()
+    {
+    }
 protected:
-    std::map<TransactionIdPtr, Container> transactions_;
-    KAA_MUTEX_DECLARE(transactionsGuard_);
-};
+    std::map<TransactionIdPtr, Container> transactions_;KAA_MUTEX_DECLARE(transactionsGuard_);};
 
 }
 

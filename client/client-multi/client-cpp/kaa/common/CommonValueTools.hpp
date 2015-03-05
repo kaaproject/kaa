@@ -34,64 +34,83 @@ namespace kaa {
 
 class CommonValueTools {
 public:
-    static bool isRecord(std::shared_ptr<ICommonValue> v) {
+    static bool isRecord(std::shared_ptr<ICommonValue> v)
+    {
         return (v.get() ? v->getCommonType() == CommonValueType::COMMON_RECORD : false);
     }
 
-    static bool isArray(std::shared_ptr<ICommonValue> v) {
+    static bool isArray(std::shared_ptr<ICommonValue> v)
+    {
         return (v.get() ? v->getCommonType() == CommonValueType::COMMON_ARRAY : false);
     }
 
-    static bool isFixed(std::shared_ptr<ICommonValue> v) {
+    static bool isFixed(std::shared_ptr<ICommonValue> v)
+    {
         return (v.get() ? v->getCommonType() == CommonValueType::COMMON_FIXED : false);
     }
 
-    static bool isEnum(std::shared_ptr<ICommonValue> v) {
+    static bool isEnum(std::shared_ptr<ICommonValue> v)
+    {
         return (v.get() ? v->getCommonType() == CommonValueType::COMMON_ENUM : false);
     }
 
-    static bool isString(std::shared_ptr<ICommonValue> v) {
+    static bool isString(std::shared_ptr<ICommonValue> v)
+    {
         return (v.get() ? v->getCommonType() == CommonValueType::COMMON_STRING : false);
     }
 
-    static bool isNumeric(std::shared_ptr<ICommonValue> v) {
-        return (v.get() ? (v->getCommonType() >= CommonValueType::COMMON_INT32 && v->getCommonType() <= CommonValueType::COMMON_DOUBLE) : false);
+    static bool isNumeric(std::shared_ptr<ICommonValue> v)
+    {
+        return (v.get() ?
+                (v->getCommonType() >= CommonValueType::COMMON_INT32 && v->getCommonType()
+                        <= CommonValueType::COMMON_DOUBLE) :
+                false);
     }
 
-    static bool isBool(std::shared_ptr<ICommonValue> v) {
+    static bool isBool(std::shared_ptr<ICommonValue> v)
+    {
         return (v.get() ? (v->getCommonType() == CommonValueType::COMMON_BOOL) : false);
     }
 
-    static bool isByteArray(std::shared_ptr<ICommonValue> v) {
-        return (v.get() ? (v->getCommonType() == CommonValueType::COMMON_BYTES || v->getCommonType() == CommonValueType::COMMON_FIXED) : false);
+    static bool isByteArray(std::shared_ptr<ICommonValue> v)
+    {
+        return (v.get() ?
+                (v->getCommonType() == CommonValueType::COMMON_BYTES || v->getCommonType()
+                        == CommonValueType::COMMON_FIXED) :
+                false);
     }
 
-    static bool isNull(std::shared_ptr<ICommonValue> v) {
+    static bool isNull(std::shared_ptr<ICommonValue> v)
+    {
         return (v.get() ? (v->getCommonType() == CommonValueType::COMMON_NULL) : false);
     }
 
-    static const CommonRecord getRecord(std::shared_ptr<ICommonValue> v) {
+    static const CommonRecord getRecord(std::shared_ptr<ICommonValue> v)
+    {
         if (isRecord(v)) {
             return boost::any_cast<const CommonRecord &>(v->getValue());
         }
         throw KaaException("Can not cast to record");
     }
 
-    static ICommonArray::container_type getList(std::shared_ptr<ICommonValue> v) {
+    static ICommonArray::container_type getList(std::shared_ptr<ICommonValue> v)
+    {
         if (isArray(v)) {
             return boost::any_cast<const ICommonArray::container_type &>(v->getValue());
         }
         throw KaaException("Can not cast to array");
     }
 
-    static const std::string &getEnumValue(std::shared_ptr<ICommonValue> v) {
+    static const std::string &getEnumValue(std::shared_ptr<ICommonValue> v)
+    {
         if (isEnum(v)) {
             return boost::any_cast<const std::string &>(v->getValue());
         }
         throw KaaException("Can not cast to enum");
     }
 
-    static std::vector<std::uint8_t> getByteArray(std::shared_ptr<ICommonValue> v) {
+    static std::vector<std::uint8_t> getByteArray(std::shared_ptr<ICommonValue> v)
+    {
         if (isByteArray(v)) {
             return boost::any_cast<const std::vector<std::uint8_t> &>(v->getValue());
         }

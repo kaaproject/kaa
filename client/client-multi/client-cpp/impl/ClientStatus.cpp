@@ -40,7 +40,9 @@ enum class ClientParameterT {
 
 class IPersistentParameter {
 public:
-    virtual ~IPersistentParameter() {}
+    virtual ~IPersistentParameter()
+    {
+    }
     virtual void save(std::ostream &os) = 0;
     virtual void read(const std::string &strValue) = 0;
     virtual boost::any getValue() const = 0;
@@ -50,28 +52,28 @@ public:
 static bimap create_bimap()
 {
     bimap bi;
-    bi.left.insert(bimap::left_value_type(ClientParameterT::APPSEQUENCENUMBER,     "app_seq_number"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::ISREGISTERED,          "is_registered"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::TOPICLIST,             "topic_list"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::PROFILEHASH,           "profile_hash"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::ATTACHED_ENDPOINTS,    "attached_endpoints"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::EP_ACCESS_TOKEN,       "access_token"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::EP_ATTACH_STATUS,      "ep_attach_status"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::EP_KEY_HASH,           "ep_key_hash"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::PROPERTIES_HASH,       "properties_hash"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::APPSEQUENCENUMBER, "app_seq_number"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::ISREGISTERED, "is_registered"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::TOPICLIST, "topic_list"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::PROFILEHASH, "profile_hash"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::ATTACHED_ENDPOINTS, "attached_endpoints"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::EP_ACCESS_TOKEN, "access_token"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::EP_ATTACH_STATUS, "ep_attach_status"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::EP_KEY_HASH, "ep_key_hash"));
+    bi.left.insert(bimap::left_value_type(ClientParameterT::PROPERTIES_HASH, "properties_hash"));
     bi.left.insert(bimap::left_value_type(ClientParameterT::CONFIGURATION_VERSION, "configuration_version"));
     return bi;
 }
 
-const bimap                 ClientStatus::parameterToToken_ = create_bimap();
-const SequenceNumber        ClientStatus::appSeqNumberDefault_ = {0, 0, 0};
-const bool                  ClientStatus::isRegisteredDefault_ = false;
-const HashDigest            ClientStatus::endpointHashDefault_;
-const DetailedTopicStates   ClientStatus::topicStatesDefault_;
-const AttachedEndpoints     ClientStatus::attachedEndpoints_;
-const std::string           ClientStatus::endpointAccessToken_;
-const bool                  ClientStatus::endpointDefaultAttachStatus_ = false;
-const std::string           ClientStatus::endpointKeyHashDefault_;
+const bimap ClientStatus::parameterToToken_ = create_bimap();
+const SequenceNumber ClientStatus::appSeqNumberDefault_ = { 0, 0, 0 };
+const bool ClientStatus::isRegisteredDefault_ = false;
+const HashDigest ClientStatus::endpointHashDefault_;
+const DetailedTopicStates ClientStatus::topicStatesDefault_;
+const AttachedEndpoints ClientStatus::attachedEndpoints_;
+const std::string ClientStatus::endpointAccessToken_;
+const bool ClientStatus::endpointDefaultAttachStatus_ = false;
+const std::string ClientStatus::endpointKeyHashDefault_;
 
 static std::string convertToByteArrayString(const std::string & str)
 {
@@ -83,7 +85,7 @@ static std::string convertToByteArrayString(const std::string & str)
         if (i != 0) {
             ss << " ";
         }
-        ss << std::setw(2) << std::setfill('0') << std::hex << (int)bytes[i];
+        ss << std::setw(2) << std::setfill('0') << std::hex << (int) bytes[i];
     }
     return ss.str();
 }
@@ -96,21 +98,29 @@ static std::string convertFromByteArrayString(const std::string & str)
     std::size_t bytes_count = input.length() / 3;
     for (std::size_t i = 0; i < bytes_count; ++i) {
         std::string bytestr = input.substr(i * 3, 2);
-        output << (char)std::stoi(bytestr, nullptr, 16);
+        output << (char) std::stoi(bytestr, nullptr, 16);
     }
     return output.str();
 }
 
-template <typename T>
-class ClientParameter : public IPersistentParameter {
+template<typename T>
+class ClientParameter: public IPersistentParameter {
 public:
-    ClientParameter(const std::string& name, const T& v) : attributeName_(name) {
+    ClientParameter(const std::string& name, const T& v)
+            : attributeName_(name)
+    {
         value_ = v;
     }
     void save(std::ostream &os);
     void read(const std::string &strValue);
-    boost::any getValue() const { return value_; }
-    void setValue(boost::any v) { value_ = boost::any_cast<const T&>(v); }
+    boost::any getValue() const
+    {
+        return value_;
+    }
+    void setValue(boost::any v)
+    {
+        value_ = boost::any_cast<const T&>(v);
+    }
 private:
     std::string attributeName_;
     T value_;
@@ -120,7 +130,8 @@ template<>
 void ClientParameter<SequenceNumber>::save(std::ostream &os)
 {
     std::stringstream ss;
-    ss << value_.configurationSequenceNumber << ";" << value_.notificationSequenceNumber << ";" << value_.eventSequenceNumber << ";";
+    ss << value_.configurationSequenceNumber << ";" << value_.notificationSequenceNumber << ";"
+       << value_.eventSequenceNumber << ";";
     os << attributeName_ << "=" << ss.str() << std::endl;
 }
 
@@ -131,12 +142,14 @@ void ClientParameter<std::int32_t>::save(std::ostream &os)
 }
 
 template<>
-void ClientParameter<bool>::save(std::ostream &os) {
+void ClientParameter<bool>::save(std::ostream &os)
+{
     os << attributeName_ << "=" << value_ << std::endl;
 }
 
 template<>
-void ClientParameter<std::string>::save(std::ostream &os) {
+void ClientParameter<std::string>::save(std::ostream &os)
+{
     if (!value_.empty()) {
         os << attributeName_ << "=" << value_ << std::endl;
     }
@@ -153,9 +166,9 @@ void ClientParameter<DetailedTopicStates>::save(std::ostream &os)
             }
 
             os << "[" << convertToByteArrayString(it->second.topicId) << ","
-                        << convertToByteArrayString(it->second.topicName) << ","
-                        << (it->second.subscriptionType == SubscriptionType::MANDATORY ? "m," : "v,")
-                        << it->second.sequenceNumber << "]";
+            << convertToByteArrayString(it->second.topicName) << ","
+            << (it->second.subscriptionType == SubscriptionType::MANDATORY ? "m," : "v,") << it->second.sequenceNumber
+            << "]";
         }
         os << std::endl;
     }
@@ -171,8 +184,7 @@ void ClientParameter<AttachedEndpoints>::save(std::ostream &os)
                 os << ",";
             }
 
-            os << "[" << convertToByteArrayString(it->second) << ","
-                      << convertToByteArrayString(it->second) << "]";
+            os << "[" << convertToByteArrayString(it->second) << "," << convertToByteArrayString(it->second) << "]";
         }
         os << std::endl;
     }
@@ -184,7 +196,7 @@ void ClientParameter<HashDigest>::save(std::ostream &os)
     if (!value_.empty()) {
         os << attributeName_ << "=";
         for (auto it = value_.begin(); it != value_.end(); ++it) {
-            os << std::setw(2) << std::setfill('0')  << std::hex << (int)*it;
+            os << std::setw(2) << std::setfill('0') << std::hex << (int) *it;
         }
         os << std::dec << std::setw(1) << std::endl;
     }
@@ -201,7 +213,8 @@ void ClientParameter<SequenceNumber>::read(const std::string &strValue)
         std::size_t second_semicolon = strValue.find_first_of(';', first_semicolon + 1);
         std::size_t third_semicolon = strValue.find_first_of(';', second_semicolon + 1);
 
-        if (first_semicolon == std::string::npos || second_semicolon == std::string::npos || third_semicolon == std::string::npos) {
+        if (first_semicolon == std::string::npos || second_semicolon == std::string::npos
+            || third_semicolon == std::string::npos) {
             return;
         }
 
@@ -263,10 +276,10 @@ void ClientParameter<DetailedTopicStates>::read(const std::string &strValue)
                 break;
             }
 
-            std::string topicId = strValue.substr(open_brace_pos+1, comma1pos - open_brace_pos - 1 );
-            std::string topicName = strValue.substr(comma1pos+1, comma2pos - comma1pos - 1) ;
-            std::string sType = strValue.substr(comma2pos+1, comma3pos - comma2pos - 1);
-            std::string topicSeqN = strValue.substr(comma3pos+1, close_brace_pos - comma3pos - 1);
+            std::string topicId = strValue.substr(open_brace_pos + 1, comma1pos - open_brace_pos - 1);
+            std::string topicName = strValue.substr(comma1pos + 1, comma2pos - comma1pos - 1);
+            std::string sType = strValue.substr(comma2pos + 1, comma3pos - comma2pos - 1);
+            std::string topicSeqN = strValue.substr(comma3pos + 1, close_brace_pos - comma3pos - 1);
 
             std::size_t commapos = strValue.find_first_of(",", close_brace_pos);
             parse_more = commapos != std::string::npos;
@@ -304,8 +317,8 @@ void ClientParameter<AttachedEndpoints>::read(const std::string &strValue)
                 break;
             }
 
-            std::string token = strValue.substr(open_brace_pos+1, comma1pos - open_brace_pos - 1 );
-            std::string hash = strValue.substr(comma1pos+1, close_brace_pos - comma1pos - 1);
+            std::string token = strValue.substr(open_brace_pos + 1, comma1pos - open_brace_pos - 1);
+            std::string hash = strValue.substr(comma1pos + 1, close_brace_pos - comma1pos - 1);
 
             std::size_t commapos = strValue.find_first_of(",", close_brace_pos);
             parse_more = commapos != std::string::npos;
@@ -322,11 +335,12 @@ void ClientParameter<HashDigest>::read(const std::string &strValue)
     size_t size = strValue.length() / 2;
     value_ = HashDigest(size);
     for (size_t i = 0; i < size; ++i) {
-        value_[i] = std::stoi(strValue.substr(2*i, 2), nullptr, 16);
+        value_[i] = std::stoi(strValue.substr(2 * i, 2), nullptr, 16);
     }
 }
 
-ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), isConfigVersionUpdated(false)
+ClientStatus::ClientStatus(const std::string& filename)
+        : filename_(filename), isConfigVersionUpdated(false)
 {
     auto appseqntoken = parameterToToken_.left.find(ClientParameterT::APPSEQUENCENUMBER);
     if (appseqntoken != parameterToToken_.left.end()) {
@@ -336,58 +350,58 @@ ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), i
     }
     auto isregisteredtoken = parameterToToken_.left.find(ClientParameterT::ISREGISTERED);
     if (isregisteredtoken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> isRegistered(new ClientParameter<bool>(
-                isregisteredtoken->second, isRegisteredDefault_));
+        std::shared_ptr<IPersistentParameter> isRegistered(
+                new ClientParameter<bool>(isregisteredtoken->second, isRegisteredDefault_));
         parameters_.insert(std::make_pair(ClientParameterT::ISREGISTERED, isRegistered));
     }
     auto topicstatestoken = parameterToToken_.left.find(ClientParameterT::TOPICLIST);
     if (topicstatestoken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> topicStates(new ClientParameter<DetailedTopicStates>(
-                topicstatestoken->second, topicStatesDefault_));
+        std::shared_ptr<IPersistentParameter> topicStates(
+                new ClientParameter<DetailedTopicStates>(topicstatestoken->second, topicStatesDefault_));
         parameters_.insert(std::make_pair(ClientParameterT::TOPICLIST, topicStates));
     }
     auto endpointhashtoken = parameterToToken_.left.find(ClientParameterT::PROFILEHASH);
     if (endpointhashtoken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> endpointHash(new ClientParameter<HashDigest>(
-                endpointhashtoken->second, endpointHashDefault_));
+        std::shared_ptr<IPersistentParameter> endpointHash(
+                new ClientParameter<HashDigest>(endpointhashtoken->second, endpointHashDefault_));
         parameters_.insert(std::make_pair(ClientParameterT::PROFILEHASH, endpointHash));
     }
     auto attachedendpoints = parameterToToken_.left.find(ClientParameterT::ATTACHED_ENDPOINTS);
     if (attachedendpoints != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> attachedEndpoints(new ClientParameter<AttachedEndpoints>(
-                attachedendpoints->second, attachedEndpoints_));
+        std::shared_ptr<IPersistentParameter> attachedEndpoints(
+                new ClientParameter<AttachedEndpoints>(attachedendpoints->second, attachedEndpoints_));
         parameters_.insert(std::make_pair(ClientParameterT::ATTACHED_ENDPOINTS, attachedEndpoints));
     }
     auto endpointaccesstoken = parameterToToken_.left.find(ClientParameterT::EP_ACCESS_TOKEN);
     if (endpointaccesstoken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> endpointAccessToken(new ClientParameter<std::string>(
-                endpointaccesstoken->second, endpointAccessToken_));
+        std::shared_ptr<IPersistentParameter> endpointAccessToken(
+                new ClientParameter<std::string>(endpointaccesstoken->second, endpointAccessToken_));
         parameters_.insert(std::make_pair(ClientParameterT::EP_ACCESS_TOKEN, endpointAccessToken));
     }
     auto endpointattachstatus = parameterToToken_.left.find(ClientParameterT::EP_ATTACH_STATUS);
     if (endpointattachstatus != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> isEndpointAttached(new ClientParameter<bool>(
-                endpointattachstatus->second, endpointDefaultAttachStatus_));
+        std::shared_ptr<IPersistentParameter> isEndpointAttached(
+                new ClientParameter<bool>(endpointattachstatus->second, endpointDefaultAttachStatus_));
         parameters_.insert(std::make_pair(ClientParameterT::EP_ATTACH_STATUS, isEndpointAttached));
     }
     auto endpointkeyhash = parameterToToken_.left.find(ClientParameterT::EP_KEY_HASH);
     if (endpointkeyhash != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> endpointKeyHash(new ClientParameter<std::string>(
-                endpointkeyhash->second, endpointKeyHashDefault_));
+        std::shared_ptr<IPersistentParameter> endpointKeyHash(
+                new ClientParameter<std::string>(endpointkeyhash->second, endpointKeyHashDefault_));
         parameters_.insert(std::make_pair(ClientParameterT::EP_KEY_HASH, endpointKeyHash));
     }
 
     auto propertieshash = parameterToToken_.left.find(ClientParameterT::PROPERTIES_HASH);
     if (propertieshash != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> propertiesHash(new ClientParameter<HashDigest>(
-                propertieshash->second, endpointHashDefault_/*It's OK*/));
+        std::shared_ptr<IPersistentParameter> propertiesHash(
+                new ClientParameter<HashDigest>(propertieshash->second, endpointHashDefault_/*It's OK*/));
         parameters_.insert(std::make_pair(ClientParameterT::PROPERTIES_HASH, propertiesHash));
     }
 
     auto configversion = parameterToToken_.left.find(ClientParameterT::CONFIGURATION_VERSION);
     if (configversion != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> configVersion(new ClientParameter<std::int32_t>(
-                configversion->second, (std::int32_t)CONFIG_VERSION));
+        std::shared_ptr<IPersistentParameter> configVersion(
+                new ClientParameter<std::int32_t>(configversion->second, (std::int32_t) CONFIG_VERSION));
         parameters_.insert(std::make_pair(ClientParameterT::CONFIGURATION_VERSION, configVersion));
     }
 
@@ -423,10 +437,10 @@ void ClientStatus::checkConfigVersionForUpdates()
 {
     auto parameter_it = parameters_.find(ClientParameterT::CONFIGURATION_VERSION);
     if (parameter_it != parameters_.end()) {
-        isConfigVersionUpdated = ((std::int32_t)CONFIG_VERSION != boost::any_cast<std::int32_t>(
-                                    parameter_it->second->getValue()));
+        isConfigVersionUpdated = ((std::int32_t) CONFIG_VERSION
+                != boost::any_cast<std::int32_t>(parameter_it->second->getValue()));
         if (isConfigVersionUpdated) {
-            parameter_it->second->setValue((std::int32_t)CONFIG_VERSION);
+            parameter_it->second->setValue((std::int32_t) CONFIG_VERSION);
         }
     }
 }
@@ -459,7 +473,7 @@ bool ClientStatus::isRegistered() const
 
 void ClientStatus::setRegistered(bool isRegisteredP)
 {
-    if (isRegistered() !=  isRegisteredP) {
+    if (isRegistered() != isRegisteredP) {
         auto parameter_it = parameters_.find(ClientParameterT::ISREGISTERED);
         if (parameter_it != parameters_.end()) {
             parameter_it->second->setValue(isRegisteredP);

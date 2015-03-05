@@ -45,7 +45,7 @@ namespace kaa {
  *
  */
 template<typename T>
-class AbstractNotificationListener : public INotificationListener {
+class AbstractNotificationListener: public INotificationListener {
 public:
     /**
      * <p>Convert raw Avro-encoded data to a specific notification class according
@@ -55,7 +55,8 @@ public:
      * @param notification Raw Avro-encoded notification data.
      *
      */
-    virtual void onNotificationRaw(const std::string& id, const std::vector<std::uint8_t>& notification) {
+    virtual void onNotificationRaw(const std::string& id, const std::vector<std::uint8_t>& notification)
+    {
         onNotification(id, converter_.fromByteArray(notification.data(), notification.size()));
     }
 
@@ -69,7 +70,7 @@ public:
     virtual void onNotification(const std::string& id, const T& notification) = 0;
 
 private:
-    AvroByteArrayConverter<T>   converter_;
+    AvroByteArrayConverter<T> converter_;
 };
 
 } /* namespace kaa */

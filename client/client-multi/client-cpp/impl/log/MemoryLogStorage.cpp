@@ -26,7 +26,10 @@ void MemoryLogStorage::addLogRecord(const LogRecord & record)
 {
     LogBlock & block = logBlocks_.back();
     if (block.finalized_ || block.actualSize_ + record.getSize() > blockSize_) {
-        KAA_LOG_FTRACE(boost::format("Generating new Block: is finalized: %1% size is: %2% records count: %3%") % block.finalized_ % block.actualSize_ % block.logs_.size());
+        KAA_LOG_FTRACE(
+                boost::format("Generating new Block: is finalized: %1% size is: %2% records count: %3%") % block
+                        .finalized_
+                % block.actualSize_ % block.logs_.size());
         LogBlock newBlock(blockSize_);
         newBlock.logs_.push_back(record);
         newBlock.actualSize_ = record.getSize();
@@ -34,12 +37,15 @@ void MemoryLogStorage::addLogRecord(const LogRecord & record)
     } else {
         block.logs_.push_back(record);
         block.actualSize_ += record.getSize();
-        KAA_LOG_FTRACE(boost::format("Appending data to old block: records count: %1% size: %2%") % block.logs_.size() % block.actualSize_);
+        KAA_LOG_FTRACE(
+                boost::format("Appending data to old block: records count: %1% size: %2%") % block.logs_.size()
+                % block.actualSize_);
     }
     occupiedSize_ += record.getSize();
 
-    KAA_LOG_DEBUG(boost::format("Added log record (size: %1% bytes). Occupied size: %2% bytes")
-                     % record.getSize() % occupiedSize_);
+    KAA_LOG_DEBUG(
+            boost::format("Added log record (size: %1% bytes). Occupied size: %2% bytes") % record.getSize()
+            % occupiedSize_);
 }
 
 ILogStorage::container_type MemoryLogStorage::getRecordBlock(std::size_t blockSize, const std::int32_t blockId)
@@ -95,7 +101,9 @@ void MemoryLogStorage::notifyUploadFailed(const std::int32_t blockId)
 
 void MemoryLogStorage::removeOldestRecords(std::size_t allowedVolume)
 {
-    KAA_LOG_INFO(boost::format("Going to perform clean-up. Occupied %1% bytes, allowed %2% bytes") % occupiedSize_ % allowedVolume);
+    KAA_LOG_INFO(
+            boost::format("Going to perform clean-up. Occupied %1% bytes, allowed %2% bytes") % occupiedSize_
+            % allowedVolume);
     std::size_t releasedSpace = 0;
     for (auto block = logBlocks_.begin(); block != logBlocks_.end(); ++block) {
         if (!block->finalized_) {
@@ -107,8 +115,9 @@ void MemoryLogStorage::removeOldestRecords(std::size_t allowedVolume)
                 releasedSpace += frontLogSize;
                 block->logs_.pop_front();
                 if (occupiedSize_ <= allowedVolume) {
-                    KAA_LOG_INFO(boost::format("Released %1% bytes. Occupied %2% bytes, allowed %3% bytes")
-                            % releasedSpace % occupiedSize_ % allowedVolume);
+                    KAA_LOG_INFO(
+                            boost::format("Released %1% bytes. Occupied %2% bytes, allowed %3% bytes") % releasedSpace
+                            % occupiedSize_ % allowedVolume);
                     return;
                 }
             }
@@ -117,7 +126,7 @@ void MemoryLogStorage::removeOldestRecords(std::size_t allowedVolume)
     KAA_LOG_ERROR(boost::format("Can not release enough space. "
                                 "Released %1% bytes. Occupied %2% bytes"
                                 ", allowed %3% bytes")
-                        % releasedSpace % occupiedSize_ % allowedVolume);
+                  % releasedSpace % occupiedSize_ % allowedVolume);
 }
 
 std::size_t MemoryLogStorage::getConsumedVolume() const
@@ -164,5 +173,4 @@ void MemoryLogStorage::resize(std::size_t blockSize)
 }  // namespace kaa
 
 #endif
-
 

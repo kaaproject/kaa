@@ -24,9 +24,7 @@
 namespace kaa {
 
 BootstrapTransport::BootstrapTransport(IKaaChannelManager& channelManager, IBootstrapManager &bootstrapManager)
-    : AbstractKaaTransport(channelManager)
-    , requestId_(0)
-    , bootstrapManager_(bootstrapManager)
+        : AbstractKaaTransport(channelManager), requestId_(0), bootstrapManager_(bootstrapManager)
 {
 
 }
@@ -74,5 +72,4 @@ void BootstrapTransport::onBootstrapResponse(const BootstrapSyncResponse& respon
 }
 
 }  // namespace kaa
-
 

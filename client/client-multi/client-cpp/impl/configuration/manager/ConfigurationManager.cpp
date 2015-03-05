@@ -33,9 +33,8 @@ namespace kaa {
 
 void ConfigurationManager::subscribeForConfigurationChanges(IConfigurationReceiver &receiver)
 {
-    if (!configurationReceivers_.addCallback(&receiver,
-            std::bind(&IConfigurationReceiver::onConfigurationUpdated,
-                    &receiver, std::placeholders::_1))) {
+    if (!configurationReceivers_.addCallback(
+            &receiver, std::bind(&IConfigurationReceiver::onConfigurationUpdated, &receiver, std::placeholders::_1))) {
         throw KaaException("Failed to add a configuration changes subscriber. Already subscribed");
     }
 }

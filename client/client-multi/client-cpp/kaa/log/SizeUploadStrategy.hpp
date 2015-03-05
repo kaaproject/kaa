@@ -25,11 +25,14 @@
 
 namespace kaa {
 
-class SizeUploadStrategy : public ILogUploadStrategy {
+class SizeUploadStrategy: public ILogUploadStrategy {
 public:
-    SizeUploadStrategy() {}
+    SizeUploadStrategy()
+    {
+    }
 
-    LogUploadStrategyDecision isUploadNeeded(const ILogUploadConfiguration* configuration, const ILogStorageStatus* status)
+    LogUploadStrategyDecision isUploadNeeded(const ILogUploadConfiguration* configuration,
+                                             const ILogStorageStatus* status)
     {
         if (configuration != nullptr && status != nullptr) {
             if (status->getConsumedVolume() >= configuration->getMaxStorageVolume()) {

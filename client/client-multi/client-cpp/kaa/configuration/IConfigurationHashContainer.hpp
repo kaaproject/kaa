@@ -44,7 +44,9 @@ public:
      */
     virtual EndpointObjectHash getConfigurationHash() = 0;
 
-    virtual ~IConfigurationHashContainer() {}
+    virtual ~IConfigurationHashContainer()
+    {
+    }
 };
 
 }  // namespace kaa

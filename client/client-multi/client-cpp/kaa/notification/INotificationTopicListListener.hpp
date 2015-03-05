@@ -44,7 +44,9 @@ public:
      */
     virtual void onListUpdated(const Topics& list) = 0;
 
-    virtual ~INotificationTopicListListener() {}
+    virtual ~INotificationTopicListListener()
+    {
+    }
 };
 
 typedef std::shared_ptr<INotificationTopicListListener> INotificationTopicListListenerPtr;

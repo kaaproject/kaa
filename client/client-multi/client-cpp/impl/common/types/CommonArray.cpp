@@ -26,7 +26,7 @@
 namespace kaa {
 
 CommonArray::CommonArray(const avro::NodePtr & schema)
-    : schema_(schema)
+        : schema_(schema)
 {
 
 }
@@ -62,9 +62,8 @@ avro::GenericDatum CommonArray::toAvro() const
                 bool found = false;
                 if (is_compound) {
                     ISchemaDependent * dependent = dynamic_cast<ISchemaDependent *>((*it).get());
-                    if (innode->leafAt(currentFieldBranch)->hasName() &&
-                            dependent->getSchema()->name().fullname() == innode->leafAt(currentFieldBranch)->name().fullname())
-                    {
+                    if (innode->leafAt(currentFieldBranch)->hasName() && dependent->getSchema()->name().fullname()
+                            == innode->leafAt(currentFieldBranch)->name().fullname()) {
                         found = SetAvroValueHelper::setValue(avro_type, indatum, fieldDatum);
                     } else if (innode->leafAt(currentFieldBranch)->type() == avro::Type::AVRO_ARRAY
                             && dependent->getSchema()->type() == avro::Type::AVRO_ARRAY) {
