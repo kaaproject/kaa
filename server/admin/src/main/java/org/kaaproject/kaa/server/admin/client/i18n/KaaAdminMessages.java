@@ -2,7 +2,7 @@ package org.kaaproject.kaa.server.admin.client.i18n;
 
 /**
  * Interface to represent the messages contained in resource bundle:
- * 	/home/vii/Projects/Kaa/server/admin/src/main/java/org/kaaproject/kaa/server/admin/client/i18n/KaaAdminMessages.properties'.
+ * 	D:/git/kaa_github/server/admin/src/main/java/org/kaaproject/kaa/server/admin/client/i18n/KaaAdminMessages.properties'.
  */
 public interface KaaAdminMessages extends com.google.gwt.i18n.client.Messages {
   
