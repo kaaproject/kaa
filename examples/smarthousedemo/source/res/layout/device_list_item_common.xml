@@ -29,7 +29,7 @@
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
 	            android:textAppearance="?android:attr/textAppearanceMedium"
-	            android:textColor="@color/abc_primary_text_material_light"
+	            android:textColor="?android:attr/textColorPrimary"
 	            android:singleLine="true"/>
         </LinearLayout>
         <View

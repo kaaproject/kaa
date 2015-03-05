@@ -21,6 +21,7 @@
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
+        <item name="actionBarWidgetTheme">@style/Theme.AppCompat.Light.DarkActionBar</item>
         <item name="vpiTabPageIndicatorStyle">@style/CustomTabPageIndicator</item>
     </style>
     
