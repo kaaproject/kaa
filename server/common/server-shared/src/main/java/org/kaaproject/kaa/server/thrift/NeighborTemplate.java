@@ -1,4 +1,4 @@
-package org.kaaproject.kaa.server.operations.service.event;
+package org.kaaproject.kaa.server.thrift;
 
 import java.util.List;
 

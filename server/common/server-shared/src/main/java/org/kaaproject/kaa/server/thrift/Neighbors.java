@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.operations.service.event;
+package org.kaaproject.kaa.server.thrift;
 
 import java.util.LinkedList;
 import java.util.List;

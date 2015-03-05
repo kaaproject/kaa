@@ -113,7 +113,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
                         eventsSet.addAll(events);
                     }
                     
-                    eventsSet.addAll(eventManager.getPendingEvents(false));
+                    eventsSet.addAll(eventManager.getPendingEvents());
 
                     List<Event> events = new ArrayList<Event>(eventsSet);
                     Collections.sort(events, eventSeqNumberComparator);

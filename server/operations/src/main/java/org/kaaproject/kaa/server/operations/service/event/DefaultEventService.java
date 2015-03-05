@@ -51,6 +51,9 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.Endp
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.resolve.OperationServerResolver;
 import org.kaaproject.kaa.server.sync.platform.AvroEncDec;
+import org.kaaproject.kaa.server.thrift.NeighborConnection;
+import org.kaaproject.kaa.server.thrift.NeighborTemplate;
+import org.kaaproject.kaa.server.thrift.Neighbors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
