@@ -70,7 +70,7 @@ public class DataCollectionDemo {
         kaaClient.stop();
     }
 
-    private class OneLogUploadStrategy extends DefaultLogUploadStrategy {
+    private static class OneLogUploadStrategy extends DefaultLogUploadStrategy {
         @Override
         public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
             return status.getRecordCount() >= 1 ? UPLOAD : NOOP;

@@ -52,10 +52,10 @@ public class ImageCache {
                 imageMap.put(imageUrl, bmp);
             } catch (MalformedURLException e) {
                 bmp = imageMap.get(DEFAULT_IMAGE);
-                Log.e("KAA-ERR", e.getMessage());
+                Log.e("Invalid URL", e.getMessage());
             } catch (IOException e) {
                 bmp = imageMap.get(DEFAULT_IMAGE);
-                Log.e("KAA-ERR", e.getMessage());
+                Log.e("Internal error", e.getMessage());
             }
         } else return imageMap.get(imageUrl);
         return bmp;

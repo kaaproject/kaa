@@ -75,29 +75,24 @@ public class EventDemo {
         FQNs.add(ThermostatInfoRequest.class.getName());
         FQNs.add(ChangeDegreeRequest.class.getName());
 
-        EventListenersResolver eventListenersResolver = kaaClient
-                .getEventListenerResolver();
+        EventListenersResolver eventListenersResolver = kaaClient.getEventListenerResolver();
 
-        eventListenersResolver.findEventListeners(FQNs,
-                new FetchEventListeners() {
-                    @Override
-                    public void onRequestFailed() {
-                        LOG.info("Request failed");
-                    }
+        eventListenersResolver.findEventListeners(FQNs, new FetchEventListeners() {
+            @Override
+            public void onEventListenersReceived(List<String> eventListeners) {
+                LOG.info("{} event listeners received", eventListeners.size());
+                for (String listener : eventListeners) {
+                    LOG.info("listener: {}", listener);
+                }
+            }
 
-                    @Override
-                    public void onEventListenersReceived(
-                            List<String> eventListeners) {
-                        String output = "Listeners received: ";
-                        for (String listener : eventListeners) {
-                            output += listener + ", ";
-                        }
-                        LOG.info(output);
-                    }
-                });
+            @Override
+            public void onRequestFailed() {
+                LOG.info("Request failed");
+            }
+        });
 
         TransactionId trxId = eventFamilyFactory.startEventsBlock();
-
 
         // Add events to the block
         // Adding a broadcasted event to the block
@@ -128,7 +123,6 @@ public class EventDemo {
                 LOG.info("ThermostatInfoRequest event fired!");
             }
         });
-
 
         try {
             System.in.read();

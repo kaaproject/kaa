@@ -56,7 +56,7 @@ public class KaaNotificationApp extends Application {
     public KaaClient getKaaClient() {
         return mClient;
     }
- 
+
     @Override
     public void onTerminate() {
         super.onTerminate();
@@ -87,12 +87,12 @@ public class KaaNotificationApp extends Application {
     private View popup;
 
 
-    public void showPopup(Activity context, String topicId, Notification notification){
+    public void showPopup(Activity context, String topicId, Notification notification) {
         ((TextView) popup.findViewById(R.id.popup_notification)).setText(notification.getMessage());
         ((TextView) popup.findViewById(R.id.popup_topic)).setText(TopicInfoHolder.holder.getTopicName(topicId));
         ((ImageView) popup.findViewById(R.id.popup_image)).setImageBitmap(ImageCache.cache.getImage(notification.getImage()));
         View view = context.getCurrentFocus();
-        if (null != view){
+        if (null != view) {
             popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
         }
     }

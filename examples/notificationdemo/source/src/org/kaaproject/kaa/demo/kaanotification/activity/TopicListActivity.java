@@ -124,5 +124,4 @@ public class TopicListActivity extends ListActivity {
     }
 
 
-
 }
