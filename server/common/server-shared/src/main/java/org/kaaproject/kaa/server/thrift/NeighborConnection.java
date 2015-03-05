@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.thrift;
 
 import java.net.InetSocketAddress;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -144,7 +145,7 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
         this.maxNumberConnection = maxNumberConnection;
         this.socketTimeout = socketTimeout;
         this.template = template;
-        this.id = Neighbors.getOperationsServerID(connectionInfo);
+        this.id = Neighbors.getServerID(connectionInfo);
     }
 
     public NeighborConnection(ConnectionInfo connectionInfo, int maxNumberNeighborConnections, T template) {
@@ -214,7 +215,7 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
      * @throws InterruptedException
      *             in case of queuing error occurred.
      */
-    public void sendMessages(List<V> messages) throws InterruptedException {
+    public void sendMessages(Collection<V> messages) throws InterruptedException {
         for (V e : messages) {
             if (!messageQueue.offer(e, 1, TimeUnit.MINUTES)) {
                 LOG.error("NeighborConnection [{}] event messages queue is full more than 1 minute. Operation impossible.", getId());

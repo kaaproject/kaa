@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.thrift;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -62,6 +64,21 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
         this.neigbors = new ConcurrentHashMap<String, NeighborConnection<T, V>>();
     }
 
+    public void sendMessage(V msg) {
+        sendMessages(Collections.singleton(msg));
+    }
+
+    public void sendMessages(Collection<V> msg) {
+        for (NeighborConnection<T, V> neighbor : neigbors.values()) {
+            try {
+                neighbor.sendMessages(msg);
+            } catch (InterruptedException e) {
+                LOG.error("Failed to send message to {}", neighbor.getId());
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     /**
      * Shutdown all neighbors connections and cancel timer task if exist.
      */
@@ -100,12 +117,16 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
      *            ConnectionInfo
      * @return server ID in format thriftHost:thriftPort
      */
-    public static String getOperationsServerID(ConnectionInfo info) {
+    public static String getServerID(ConnectionInfo info) {
         StringBuffer sb = new StringBuffer();
         sb.append(info.getThriftHost());
         sb.append(":");
         sb.append(info.getThriftPort());
         return sb.toString();
+    }
+
+    public void setZkNode(ConnectionInfo connectionInfo, WorkerNodeTracker zkNode) {
+        setZkNode(getServerID(connectionInfo), zkNode);
     }
 
     /**
@@ -120,7 +141,7 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
 
             @Override
             public void onNodeUpdated(OperationsNodeInfo nodeInfo) {
-                String opId = getOperationsServerID(nodeInfo.getConnectionInfo());
+                String opId = getServerID(nodeInfo.getConnectionInfo());
                 if (!zkId.equals(opId)) {
                     neigbors.putIfAbsent(opId,
                             new NeighborConnection<T, V>(nodeInfo.getConnectionInfo(), maxNumberNeighborConnections, template)).start();
@@ -130,7 +151,7 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
 
             @Override
             public void onNodeRemoved(OperationsNodeInfo nodeInfo) {
-                String opId = getOperationsServerID(nodeInfo.getConnectionInfo());
+                String opId = getServerID(nodeInfo.getConnectionInfo());
                 if (!zkId.equals(opId)) {
                     NeighborConnection<T, V> connection = neigbors.remove(opId);
                     if (connection != null) {
@@ -142,7 +163,7 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
 
             @Override
             public void onNodeAdded(OperationsNodeInfo nodeInfo) {
-                String opId = getOperationsServerID(nodeInfo.getConnectionInfo());
+                String opId = getServerID(nodeInfo.getConnectionInfo());
                 if (!zkId.equals(opId)) {
                     neigbors.putIfAbsent(opId,
                             new NeighborConnection<T, V>(nodeInfo.getConnectionInfo(), maxNumberNeighborConnections, template)).start();
@@ -153,7 +174,7 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
 
         List<OperationsNodeInfo> nodes = zkNode.getCurrentOperationServerNodes();
         for (OperationsNodeInfo opServer : nodes) {
-            String opId = getOperationsServerID(opServer.getConnectionInfo());
+            String opId = getServerID(opServer.getConnectionInfo());
             if (!zkId.equals(opId)) {
                 neigbors.putIfAbsent(opId,
                         new NeighborConnection<T, V>(opServer.getConnectionInfo(), maxNumberNeighborConnections, template)).start();

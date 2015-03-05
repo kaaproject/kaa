@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.common.hash;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 
@@ -86,6 +87,15 @@ public final class EndpointObjectHash implements Serializable {
      */
     public byte[] getData() {
         return Arrays.copyOf(data, data.length);
+    }
+    
+    /**
+     * Gets the byte buffer with a hash.
+     *
+     * @return the data
+     */
+    public ByteBuffer getDataBuf() {
+        return ByteBuffer.wrap(getData());
     }
 
     /**

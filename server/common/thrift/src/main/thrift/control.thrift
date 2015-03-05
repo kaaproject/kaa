@@ -158,7 +158,7 @@ service ControlThriftService extends cli.CliThriftService{
   data deactivateConfiguration(1: id configurationId, 2: string deactivatedUsername) throws(1: ControlThriftException ControlException)
   void deleteConfigurationRecord(1: id schemaId, 2: id endpointGroupId, 3: string deactivatedUsername) throws(1: ControlThriftException ControlException)
 
-  void editUserConfiguration(1: data configuration) throws(1: ControlThriftException ControlException)   
+  void editUserConfiguration(1: id tenantId, 2: data configuration) throws(1: ControlThriftException ControlException)   
 
 /**
 *   NotificationSchemas

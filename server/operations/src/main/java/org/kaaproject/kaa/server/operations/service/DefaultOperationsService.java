@@ -40,6 +40,7 @@ import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
+import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.HistorySubject;
 import org.kaaproject.kaa.server.operations.service.delta.DeltaService;
@@ -175,10 +176,11 @@ public class DefaultOperationsService implements OperationsService {
         if (request != null) {
             EndpointProfileDto profile = context.getEndpointProfile();
             ClientSyncMetaData md = context.getMetaData();
+            AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(md.getApplicationToken());
             if (context.getAppSeqNumber() == null) {
-                context.setAppSeqNumber(cacheService.getAppSeqNumber(md.getApplicationToken()));
+                context.setAppSeqNumber(appSeqNumber);
             }
-            int curAppSeqNumber = context.getAppSeqNumber().getSeqNumber();
+            int curAppSeqNumber = appSeqNumber.getSeqNumber();
             LOG.debug("[{}][{}] fetched app seq number {}", context.getEndpointKey(), context.getRequestHash(), curAppSeqNumber);
             LOG.trace("[{}][{}] procesing configuration sync request {}.", context.getEndpointKey(), context.getRequestHash(), request);
             LOG.debug("[{}][{}] fetching history for seq numbers {}-{}", context.getEndpointKey(), context.getRequestHash(),
@@ -210,10 +212,11 @@ public class DefaultOperationsService implements OperationsService {
         if (request!= null) {
             EndpointProfileDto profile = context.getEndpointProfile();
             ClientSyncMetaData md = context.getMetaData();
+            AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(md.getApplicationToken());
             if (context.getAppSeqNumber() == null) {
-                context.setAppSeqNumber(cacheService.getAppSeqNumber(md.getApplicationToken()));
+                context.setAppSeqNumber(appSeqNumber);
             }
-            int curAppSeqNumber = context.getAppSeqNumber().getSeqNumber();
+            int curAppSeqNumber = appSeqNumber.getSeqNumber();
     
             LOG.trace("[{}][{}] procesing notification sync request {}.", context.getEndpointKey(), context.getRequestHash(), request);
             LOG.debug("[{}][{}] fetching history for seq numbers {}-{}", context.getEndpointKey(), context.getRequestHash(),

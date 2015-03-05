@@ -356,6 +356,15 @@ public class EndpointServiceImpl implements EndpointService {
         }
         return endpointUserDto;
     }
+    
+    @Override
+    public EndpointUserDto findEndpointUserByExternalIdAndTenantId(String externalId, String tenantId){
+        EndpointUserDto endpointUserDto = null;
+        if (isValidId(externalId) && isValidId(tenantId)) {
+            endpointUserDto = getDto(endpointUserDao.findByExternalIdAndTenantId(externalId, tenantId));
+        }
+        return endpointUserDto;
+    };
 
     @Override
     public EndpointUserDto saveEndpointUser(EndpointUserDto endpointUserDto) {

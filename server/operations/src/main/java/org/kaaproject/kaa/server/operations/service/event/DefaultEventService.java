@@ -278,7 +278,7 @@ public class DefaultEventService implements EventService {
     @Override
     public void sendEndpointRouteInfo(GlobalRouteInfo routeInfo) {
         LOG.trace("calculating server for user {}", routeInfo.getUserId());
-        String serverId = Neighbors.getOperationsServerID(resolver.getNode(routeInfo.getUserId()).getConnectionInfo());
+        String serverId = Neighbors.getServerID(resolver.getNode(routeInfo.getUserId()).getConnectionInfo());
         sendMessagesToServer(packMessage(routeInfo), serverId);
     }
 
@@ -294,7 +294,7 @@ public class DefaultEventService implements EventService {
             return false;
         }
         LOG.trace("comparing {} to {} for user {}", id, info.getConnectionInfo(), userId);
-        return id.equals(Neighbors.getOperationsServerID(info.getConnectionInfo()));
+        return id.equals(Neighbors.getServerID(info.getConnectionInfo()));
     }
 
     /*
@@ -307,7 +307,7 @@ public class DefaultEventService implements EventService {
     @Override
     public void setZkNode(OperationsNode operationsNode) {
         this.operationsNode = operationsNode;
-        this.id = Neighbors.getOperationsServerID(this.operationsNode.getNodeInfo().getConnectionInfo());
+        this.id = Neighbors.getServerID(this.operationsNode.getNodeInfo().getConnectionInfo());
         neighbors.setZkNode(id, operationsNode);
         if (resolver != null) {
             updateResolver(this.resolver);

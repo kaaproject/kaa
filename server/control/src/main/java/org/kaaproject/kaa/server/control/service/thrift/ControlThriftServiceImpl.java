@@ -24,6 +24,7 @@ import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.to
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -59,6 +61,7 @@ import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
+import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
@@ -72,6 +75,7 @@ import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
+import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
 import org.kaaproject.kaa.server.common.dao.UserService;
 import org.kaaproject.kaa.server.common.dao.UserVerifierService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
@@ -84,19 +88,25 @@ import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftExecutor;
+import org.kaaproject.kaa.server.common.zk.control.ControlNode;
 import org.kaaproject.kaa.server.control.service.ControlService;
 import org.kaaproject.kaa.server.control.service.log.RecordLibraryGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.SdkGenerator;
 import org.kaaproject.kaa.server.control.service.sdk.SdkGeneratorFactory;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
+import org.kaaproject.kaa.server.thrift.NeighborTemplate;
+import org.kaaproject.kaa.server.thrift.Neighbors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -106,6 +116,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ControlThriftServiceImpl extends BaseCliThriftService implements
         ControlThriftService.Iface {
+
+    private static final int DEFAULT_NEIGHBOR_CONNECTIONS_SIZE = 10;
 
     /** The Constant logger. */
     private static final Logger LOG = LoggerFactory
@@ -128,6 +140,10 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     /** The configuration service. */
     @Autowired
     private ConfigurationService configurationService;
+
+    /** The user configuration service. */
+    @Autowired
+    private UserConfigurationService userConfigurationService;
 
     /** The profile service. */
     @Autowired
@@ -165,6 +181,11 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     @Autowired
     private UserVerifierService userVerifierService;
+    
+    @Value("#{properties[max_number_neighbor_connections]}")
+    private int neighborConnectionsSize = DEFAULT_NEIGHBOR_CONNECTIONS_SIZE;
+
+    private volatile Neighbors<NeighborTemplate<UserConfigurationUpdate>, UserConfigurationUpdate> neighbors;
 
     /*
      * (non-Javadoc)
@@ -726,6 +747,48 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         ConfigurationDto cfg = configurationService.saveConfiguration(ThriftDtoConverter
                     .<ConfigurationDto> toDto(configuration));
         return toDataStruct(cfg);
+    }
+    
+    private Object neighborsLock = new Object();
+    
+    @Override
+    public void editUserConfiguration(DataStruct configuration) throws ControlThriftException, TException {
+        EndpointUserConfigurationDto ucfDto = ThriftDtoConverter.<EndpointUserConfigurationDto> toGenericDto(configuration);
+        
+        ApplicationDto appDto = applicationService.findAppByApplicationToken(ucfDto.getAppToken());
+        
+        EndpointUserDto userDto = endpointService.findEndpointUserByExternalIdAndTenantId(ucfDto.getUserId(), appDto.getTenantId());
+        
+        ucfDto.setUserId(userDto.getId());
+        ucfDto = userConfigurationService.saveUserConfiguration(ucfDto);
+        
+        EndpointObjectHash hash = EndpointObjectHash.fromBytes(ucfDto.getBody());
+        
+        checkNeighbors();
+        
+        neighbors.sendMessage(new UserConfigurationUpdate(appDto.getTenantId(), ucfDto.getUserId(), ucfDto.getAppToken(), ucfDto.getSchemaVersion(), hash.getDataBuf()));
+    }
+
+    private void checkNeighbors() {
+        if(neighbors == null){
+            synchronized (neighborsLock) {
+                if(neighbors == null){
+                    neighbors = new Neighbors<NeighborTemplate<UserConfigurationUpdate>, UserConfigurationUpdate>(new NeighborTemplate<UserConfigurationUpdate>() {
+                        @Override
+                        public void process(Iface client, List<UserConfigurationUpdate> messages) throws TException {
+                            client.sendUserConfigurationUpdates(messages);
+                        }
+
+                        @Override
+                        public void onServerError(String serverId, Exception e) {
+                            LOG.error(MessageFormat.format("Can't send configuration update to {0}", serverId), e);
+                        }
+                    }, neighborConnectionsSize);
+                    ControlNode zkNode = controlZKService.getControlZKNode();
+                    neighbors.setZkNode(zkNode.getControlServerInfo().getConnectionInfo(), zkNode);
+                }
+            }
+        }
     }
 
     /*

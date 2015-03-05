@@ -100,7 +100,6 @@ public interface ConfigurationService {
      */
     ConfigurationDto saveConfiguration(ConfigurationDto configurationDto);
 
-
     /**
      * Activate configuration. Activate existing inactive configuration.
      * After that last active configuration will be deactivated.
@@ -207,6 +206,5 @@ public interface ConfigurationService {
      * @param appId the application id
      */
     void removeConfSchemasByAppId(String appId);
-
 
 }
