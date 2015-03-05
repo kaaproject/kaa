@@ -112,9 +112,8 @@ private:
     std::unordered_map<std::int32_t, std::string/* endpoint access token */> attachEndpointRequests_;
     std::unordered_map<std::int32_t, std::string/* endpoint key hash */>     detachEndpointRequests_;
 
-    std::unordered_map<std::int32_t, IAttachEndpointCallback*> attachEndpointListeners;
-    std::unordered_map<std::int32_t, IDetachEndpointCallback*> detachEndpointListeners;
-
+    std::unordered_map<std::int32_t, IAttachEndpointCallback*> attachEndpointListeners_;
+    std::unordered_map<std::int32_t, IDetachEndpointCallback*> detachEndpointListeners_;
 };
 
 }

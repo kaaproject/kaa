@@ -69,55 +69,81 @@ void EndpointRegistrationManager::onUserAttach(const UserAttachResponse& respons
 
 void EndpointRegistrationManager::onEndpointsAttach(const std::vector<EndpointAttachResponse>& attachResponses)
 {
-    KAA_MUTEX_LOCKING(attachEndpointGuard_);
-    KAA_MUTEX_UNIQUE_DECLARE(attachEndpointLock, attachEndpointGuard_);
-    KAA_MUTEX_LOCKED(attachEndpointGuard_);
-
     for (const auto& attachResponse : attachResponses) {
+        KAA_MUTEX_LOCKING(attachEndpointGuard_);
+        KAA_MUTEX_UNIQUE_DECLARE(attachEndpointLock, attachEndpointGuard_);
+        KAA_MUTEX_LOCKED(attachEndpointGuard_);
+
         auto requestIt = attachEndpointRequests_.find(attachResponse.requestId);
         if (requestIt != attachEndpointRequests_.end()) {
-            auto listenerIt = attachEndpointListeners.find(attachResponse.requestId);
-            if (listenerIt != attachEndpointListeners.end() && listenerIt->second) {
-                if (attachResponse.result == SyncResponseResultType::SUCCESS) {
-                    KAA_LOG_TRACE(boost::format("Endpoint '%1%' (request id: %2%) was successfully attached")
-                                                                        % requestIt->second % requestIt->first);
-                    listenerIt->second->onAttachSuccess(attachResponse.endpointKeyHash.is_null() ?
-                                                            "" : attachResponse.endpointKeyHash.get_string());
-                } else {
-                    KAA_LOG_ERROR(boost::format("Failed to attach endpoint '%1%' (request id: %2%)")
-                                                                % requestIt->second % requestIt->first);
-                    listenerIt->second->onAttachFailed();
-                }
+            bool isAttachSuccess = (attachResponse.result == SyncResponseResultType::SUCCESS);
+
+            if (isAttachSuccess) {
+                KAA_LOG_INFO(boost::format("Endpoint '%1%' (request id: %2%) was successfully attached")
+                                                                    % requestIt->second % requestIt->first);
+            } else {
+                KAA_LOG_ERROR(boost::format("Failed to attach endpoint '%1%' (request id: %2%)")
+                                                            % requestIt->second % requestIt->first);
             }
 
             attachEndpointRequests_.erase(requestIt);
+
+            auto listenerIt = attachEndpointListeners_.find(attachResponse.requestId);
+            if (listenerIt != attachEndpointListeners_.end() && listenerIt->second) {
+                auto *callback = listenerIt->second;
+                attachEndpointListeners_.erase(listenerIt);
+
+                KAA_MUTEX_UNLOCKING(attachEndpointGuard_);
+                KAA_UNLOCK(attachEndpointLock);
+                KAA_MUTEX_UNLOCKED(attachEndpointGuard_);
+
+                if (isAttachSuccess) {
+                    callback->onAttachSuccess(attachResponse.endpointKeyHash.is_null() ?
+                                                "" : attachResponse.endpointKeyHash.get_string());
+                } else {
+                    callback->onAttachFailed();
+                }
+            }
         }
     }
 }
 
 void EndpointRegistrationManager::onEndpointsDetach(const std::vector<EndpointDetachResponse>& detachResponses)
 {
-    KAA_MUTEX_LOCKING(detachEndpointGuard_);
-    KAA_MUTEX_UNIQUE_DECLARE(detachEndpointLock, detachEndpointGuard_);
-    KAA_MUTEX_LOCKED(detachEndpointGuard_);
-
     for (const auto& detachResponse : detachResponses) {
+        KAA_MUTEX_LOCKING(detachEndpointGuard_);
+        KAA_MUTEX_UNIQUE_DECLARE(detachEndpointLock, detachEndpointGuard_);
+        KAA_MUTEX_LOCKED(detachEndpointGuard_);
+
         auto requestIt = detachEndpointRequests_.find(detachResponse.requestId);
         if (requestIt != detachEndpointRequests_.end()) {
-            auto listenerIt = detachEndpointListeners.find(detachResponse.requestId);
-            if (listenerIt != detachEndpointListeners.end() && listenerIt->second) {
-                if (detachResponse.result == SyncResponseResultType::SUCCESS) {
-                    KAA_LOG_TRACE(boost::format("Endpoint '%1%' (request id: %2%) was successfully detached")
-                                                                        % requestIt->second % requestIt->first);
-                    listenerIt->second->onDetachSuccess();
-                } else {
-                    KAA_LOG_ERROR(boost::format("Failed to detach endpoint '%1%' (request id: %2%)")
-                                                                % requestIt->second % requestIt->first);
-                    listenerIt->second->onDetachFailed();
-                }
+            bool isDetachSuccess = (detachResponse.result == SyncResponseResultType::SUCCESS);
+
+            if (isDetachSuccess) {
+                KAA_LOG_INFO(boost::format("Endpoint '%1%' (request id: %2%) was successfully detached")
+                                                                    % requestIt->second % requestIt->first);
+            } else {
+                KAA_LOG_ERROR(boost::format("Failed to detach endpoint '%1%' (request id: %2%)")
+                                                            % requestIt->second % requestIt->first);
             }
 
             detachEndpointRequests_.erase(requestIt);
+
+            auto listenerIt = detachEndpointListeners_.find(detachResponse.requestId);
+            if (listenerIt != detachEndpointListeners_.end() && listenerIt->second) {
+                auto *callback = listenerIt->second;
+                detachEndpointListeners_.erase(listenerIt);
+
+                KAA_MUTEX_UNLOCKING(detachEndpointGuard_);
+                KAA_UNLOCK(detachEndpointLock);
+                KAA_MUTEX_UNLOCKED(detachEndpointGuard_);
+
+                if (isDetachSuccess) {
+                    callback->onDetachSuccess();
+                } else {
+                    callback->onDetachFailed();
+                }
+            }
         }
     }
 }
@@ -161,7 +187,7 @@ void EndpointRegistrationManager::attachEndpoint(const std::string& endpointAcce
         KAA_LOG_INFO(boost::format("Going to attach endpoint by access token '%1%' (requestId: %2%)")
                                                                     % endpointAccessToken % requestId);
         if (listener) {
-            auto listenerResult = attachEndpointListeners.insert(std::make_pair(requestId, listener));
+            auto listenerResult = attachEndpointListeners_.insert(std::make_pair(requestId, listener));
             if (!listenerResult.second) {
                 KAA_LOG_WARN("Failed to add listener to notify of endpoint attach result");
             }
@@ -200,7 +226,7 @@ void EndpointRegistrationManager::detachEndpoint(const std::string& endpointKeyH
         KAA_LOG_INFO(boost::format("Going to detach Endpoint by key hash '%1%' (requestId: %2%)")
                                                                     % endpointKeyHash % requestId);
         if (listener) {
-            auto listenerResult = detachEndpointListeners.insert(std::make_pair(requestId, listener));
+            auto listenerResult = detachEndpointListeners_.insert(std::make_pair(requestId, listener));
             if (!listenerResult.second) {
                 KAA_LOG_WARN("Failed to add listener to notify of endpoint detach result");
             }
