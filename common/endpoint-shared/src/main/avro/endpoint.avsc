@@ -67,6 +67,7 @@
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "enum",
  "name": "LogDeliveryErrorCode",
+ "direction": "in",
  "symbols" : ["NO_APPENDERS_CONFIGURED", "APPENDER_INTERNAL_ERROR", "REMOTE_CONNECTION_ERROR", "REMOTE_INTERNAL_ERROR"]
 },
 {

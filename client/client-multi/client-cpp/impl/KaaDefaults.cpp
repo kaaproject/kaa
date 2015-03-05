@@ -63,29 +63,28 @@ ITransportConnectionInfoPtr createTransportInfo(const std::int32_t& accessPointI
     return connectionInfo;
 }
 
-const BootstrapServers& getBootstrapServers() {
+const BootstrapServers& getBootstrapServers()
+{
     static BootstrapServers listOfServers = { createTransportInfo(0x4c22e496, 0xfb9a3cf0, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJvTnE/W607EBl/4dA81Lo1HJcEbJRa24zIYqFxKRFCD5rhI35siAb9ZS5i8G0u3Kffz2YdB71WFut1q7c4xhvHf1LaMlu/hDz8G1vfqcHvV6VAsaJz7vcQ5oHqQhlIgv+1iI6A9z/4qNRe5sZ3h0kN3zdJk2rA/L/FVrfM36fNfK6cNDkXeD75mhGhgyXhrW0zkt8mHF9m1k9fBA5sarkwKNT0WP+TUY8oB6Rkr1dcdOYW4tuuR0dWxngtn1j2Oghm2DCHxx4FGse3IdQHIsIeMmcR5/JXPOCE1arqe0Pk6HYJ/jtSBqTvKqb8k+54RrvauyfD+V04/nWZulHpuNZMCAwEAAQAAAAwxOTIuMTY4Ljc3LjIAACah")
                                           , createTransportInfo(0x4c22e496, 0x56c8ff92, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJvTnE/W607EBl/4dA81Lo1HJcEbJRa24zIYqFxKRFCD5rhI35siAb9ZS5i8G0u3Kffz2YdB71WFut1q7c4xhvHf1LaMlu/hDz8G1vfqcHvV6VAsaJz7vcQ5oHqQhlIgv+1iI6A9z/4qNRe5sZ3h0kN3zdJk2rA/L/FVrfM36fNfK6cNDkXeD75mhGhgyXhrW0zkt8mHF9m1k9fBA5sarkwKNT0WP+TUY8oB6Rkr1dcdOYW4tuuR0dWxngtn1j2Oghm2DCHxx4FGse3IdQHIsIeMmcR5/JXPOCE1arqe0Pk6HYJ/jtSBqTvKqb8k+54RrvauyfD+V04/nWZulHpuNZMCAwEAAQAAAAwxOTIuMTY4Ljc3LjIAACag") };
     std::random_shuffle(listOfServers.begin(), listOfServers.end());
     return listOfServers;
 }
 
-const Botan::SecureVector<std::uint8_t>& getDefaultConfigData() {
-    static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("AgAAAABAPTA49ltAWLGYSuIAmDFgAA==");
+const Botan::SecureVector<std::uint8_t>& getDefaultConfigData()
+{
+    static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("JENPTkZJR1VSQVRJT04gREFUQQIAAQIDBAUGBwgJCgsMDQ4P");
     return configData;
 }
 
-const std::string& getDefaultConfigSchema() {
-    static const std::string configSchema = "{\"items\":{\"name\":\"deltaT\",\"type\":\"record\",\"fields\":[{\"name\":\"delta\",\"type\":[{\"name\":\"testT\",\"type\":\"record\",\"addressable\":true,\"fields\":[{\"name\":\"testField1\",\"type\":[\"string\",{\"symbols\":[\"unchanged\"],\"name\":\"unchangedT\",\"type\":\"enum\",\"namespace\":\"org.kaaproject.configuration\"}],\"by_default\":\"\"},{\"optional\":true,\"name\":\"testField2\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"testRecordT\",\"namespace\":\"org.kaa.config\",\"fields\":[{\"name\":\"testField3\",\"type\":[\"int\",\"org.kaaproject.configuration.unchangedT\"]},{\"name\":\"__uuid\",\"type\":{\"name\":\"uuidT\",\"type\":\"fixed\",\"size\":16,\"namespace\":\"org.kaaproject.configuration\"}}]},\"org.kaaproject.configuration.unchangedT\"]},{\"name\":\"__uuid\",\"type\":\"org.kaaproject.configuration.uuidT\"}],\"namespace\":\"org.kaa.config\"},\"org.kaa.config.testRecordT\"]}],\"namespace\":\"org.kaaproject.configuration\"},\"type\":\"array\"}";
-    return configSchema;
-}
-
-const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo() {
+const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo()
+{
     static const EventClassFamilyVersionInfos versions = { {"test_event_family",1} };/* = {{"familyName1",1}, {"familyName2",3}};*/
     return versions;
 }
 
-SharedDataBuffer getPropertiesHash() {
+HashDigest getPropertiesHash()
+{
     std::ostringstream ss;
 
     ss << APPLICATION_TOKEN;
@@ -106,13 +105,12 @@ SharedDataBuffer getPropertiesHash() {
 
     ss.write(reinterpret_cast<const char*>(
             getDefaultConfigData().begin()), getDefaultConfigData().size());
-    ss << getDefaultConfigSchema();
 
     for (const auto& eventFamily : getEventClassFamilyVersionInfo()) {
         ss << eventFamily.first << eventFamily.second;
     }
 
-    return EndpointObjectHash(ss.str()).getHash();
+    return EndpointObjectHash(ss.str()).getHashDigest();
 }
 
 }

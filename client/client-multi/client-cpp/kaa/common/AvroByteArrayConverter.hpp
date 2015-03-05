@@ -39,7 +39,8 @@ namespace kaa {
  * @param <T> predefined avro object.
  */
 template<typename T>
-class AvroByteArrayConverter {
+class AvroByteArrayConverter
+{
 public:
     /**
      * Instantiates a new avro byte array converter based on <T>.

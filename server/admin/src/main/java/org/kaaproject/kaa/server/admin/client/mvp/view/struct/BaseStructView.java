@@ -225,6 +225,8 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
     protected abstract HandlerRegistration addBodyChangeHandler();
     
     protected abstract boolean validateBody();
+    
+    protected abstract void onShown();
 
     public void reset() {
         dateTimeCreatedLabel.setVisible(false);

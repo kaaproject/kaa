@@ -30,7 +30,8 @@ class IIServerInfo;
 /**
  * Channel manager establishes/removes channels' links between client and server.
  */
-class IKaaChannelManager {
+class IKaaChannelManager
+{
 public:
 
     /**

@@ -30,7 +30,8 @@
           android:layout_marginTop="30dp"
           android:layout_marginBottom="20dp"
           android:text="@string/msg_temperature_na"
-          android:textAppearance="?android:attr/textAppearanceMedium"/>
+          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:textColor="@color/abc_primary_text_material_light"/>
     <org.kaaproject.kaa.demo.smarthousedemo.widget.Thermostat
         android:id="@+id/thermostat"
         android:layout_width="match_parent"

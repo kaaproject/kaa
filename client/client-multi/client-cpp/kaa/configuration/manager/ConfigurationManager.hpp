@@ -21,6 +21,8 @@
 
 #ifdef KAA_USE_CONFIGURATION
 
+#include "kaa/configuration/IGenericDeltaReceiver.hpp"
+#include "kaa/configuration/IConfigurationProcessedObserver.hpp"
 #include "kaa/configuration/manager/IConfigurationManager.hpp"
 #include "kaa/observer/KaaObservable.hpp"
 
@@ -32,29 +34,27 @@ namespace kaa {
  * \class ConfigurationManager
  *
  * This class is responsible for correct configuration delta merging
- * and contains root configuration tree. This class receives separate
- * deltas form the @link ConfigurationProcessor @endlink and merges the
- * tree performing full or partial update. After getting notification about
- * configuration processing is finished from @link ConfigurationProcessor @endlink
+ * and contains root configuration tree.
  * notifies registered observers (derived from @link IConfigurationReceiver @endlink)
- * with root configuration object presented as @link ICommonRecord @endlink.
+ * with root configuration object presented as @link KaaRootConfiguration @endlink.
  */
-class ConfigurationManager : public IConfigurationManager {
+class ConfigurationManager : public IConfigurationManager,
+                             public IConfigurationProcessedObserver,
+                             public IGenericDeltaReceiver
+
+{
 public:
     ConfigurationManager() {}
     ~ConfigurationManager() {}
+
+    void onDeltaReceived(int index, const KaaRootConfiguration& datum, bool fullResync);
 
     /**
      * @link IConfigurationManager @endlink implementation
      */
     void subscribeForConfigurationChanges(IConfigurationReceiver &receiver);
     void unsubscribeFromConfigurationChanges(IConfigurationReceiver &receiver);
-    ICommonRecord &getConfiguration();
-
-    /**
-     * @link IGenericDeltaReceiver @endlink implementation
-     */
-    void onDeltaRecevied(int index, const avro::GenericDatum & data, bool full_resync);
+    const KaaRootConfiguration& getConfiguration();
 
     /**
      * @link IConfigurationProcessedObserver @endlink implementation
@@ -62,41 +62,10 @@ public:
     void onConfigurationProcessed();
 
 private:
-    /**
-     * Loads data from Avro datum to a record.
-     *
-     * @param rec   Record where avro data will be loaded to.
-     * @param data  Avro object containing deserialized data.
-     */
-    void updateRecord(std::shared_ptr<ICommonRecord> rec, const avro::GenericDatum &data);
-
-    /**
-     * Checks if object with given uuid was already registered.
-     *
-     * @param uuid UUID to search
-     */
-    bool isSubscribed(uuid_t uuid);
-
-    /**
-     * Adds a record with uuid to a map for partial configuration update
-     *
-     * @param uuid      UUID of a new object
-     * @param record    Record which must be referenced by given UUID
-     */
-    void subscribe(uuid_t uuid, std::shared_ptr<ICommonRecord> record);
-
-    /**
-     * Unsubscribes an object by given UUID
-     *
-     * @param uuid UUID to search
-     */
-    void unsubscribe(uuid_t uuid);
-
-    std::map<uuid_t, std::shared_ptr<ICommonRecord> >   records_;
-    std::shared_ptr<ICommonRecord>                      root_;
+    KaaRootConfiguration root_;
 
     KAA_MUTEX_DECLARE(configurationGuard_);
-    KaaObservable<void (ICommonRecord &), IConfigurationReceiver *> configurationReceivers_;
+    KaaObservable<void (const KaaRootConfiguration &), IConfigurationReceiver *> configurationReceivers_;
 };
 
 }  // namespace kaa
