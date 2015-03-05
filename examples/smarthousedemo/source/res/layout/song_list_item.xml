@@ -27,15 +27,15 @@
             android:id="@+id/songName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/abc_primary_text_material_light"/>
+            android:textAppearance="?android:attr/textAppearanceMedium"                        
+            android:textColor="?android:attr/textColorPrimary"/>
         <TextView
             android:id="@+id/songDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/songName"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/abc_secondary_text_material_light"/>
+            android:textAppearance="?android:attr/textAppearanceSmall"            
+            android:textColor="?android:attr/textColorSecondary"/>
         </RelativeLayout>
     <View
         android:id="@+id/songActions"

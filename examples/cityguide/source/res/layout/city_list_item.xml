@@ -20,8 +20,8 @@
     android:id="@+id/cityName"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" 
-    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-	android:textColor="@color/abc_primary_text_material_light"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:textColor="?android:attr/textColorPrimary"
 	android:paddingTop="10dp"
 	android:paddingBottom="10dp"
 	android:singleLine="true"/>

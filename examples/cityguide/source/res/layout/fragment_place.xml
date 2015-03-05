@@ -48,8 +48,8 @@
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content" 
 		    android:layout_below="@+id/showOnMap"
-		    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-			android:textColor="@color/abc_primary_text_material_light"
+		    android:textAppearance="?android:attr/textAppearanceMedium"
+		    android:textColor="?android:attr/textColorPrimary"
 			android:singleLine="true"/>
 		<TextView 
 		    android:id="@+id/placeDesc"
@@ -57,8 +57,7 @@
 		    android:layout_height="wrap_content" 
 		    android:layout_below="@id/placeName"
 		    android:layout_marginTop="1dip"
-		    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-			android:textColor="@color/abc_secondary_text_material_light"
+		    android:textAppearance="?android:attr/textAppearanceSmall"
 			android:singleLine="false"/>		
 	</RelativeLayout>
 </ScrollView>

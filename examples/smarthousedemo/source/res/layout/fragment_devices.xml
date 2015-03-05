@@ -23,8 +23,8 @@
             android:id="@+id/noDevicesTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@android:style/TextAppearance.Large"
-            android:textColor="@color/abc_primary_text_material_light"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="?android:attr/textColorPrimary"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:visibility="visible"/>
