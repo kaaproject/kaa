@@ -364,6 +364,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
      * .Iface#getApplicationByApplicationToken(java.lang.String)
      */
     /* GUI method */
+    /* CLI method */
     @Override
     public DataStruct getApplicationByApplicationToken(String applicationToken) throws TException {
         return toDataStruct(applicationService
