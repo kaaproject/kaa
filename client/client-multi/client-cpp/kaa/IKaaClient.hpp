@@ -47,16 +47,6 @@ class IKaaDataDemultiplexer;
 class IKaaClient {
 public:
 
-#ifdef KAA_USE_CONFIGURATION
-    /**
-     * Retrieves Kaa delta manager.
-     *
-     * @return @link IDeltaManager @endlink object.
-     *
-     */
-    virtual IDeltaManager&                    getDeltaManager() = 0;
-#endif
-
     /**
      * Retrieves Kaa profile manager.
      *
@@ -93,14 +83,6 @@ public:
      *
      */
     virtual IConfigurationManager&            getConfigurationManager() = 0;
-
-    /**
-     * Retrieves Kaa schema persistence manager.
-     *
-     * @return @link ISchemaPersistenceManager @endlink object.
-     *
-     */
-    virtual ISchemaPersistenceManager&        getSchemaPersistenceManager() = 0;
 
     /**
      * Retrieves Kaa configuration persistence manager.

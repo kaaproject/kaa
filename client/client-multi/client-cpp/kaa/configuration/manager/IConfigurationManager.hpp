@@ -21,10 +21,7 @@
 
 #ifdef KAA_USE_CONFIGURATION
 
-#include "kaa/configuration/IGenericDeltaReceiver.hpp"
-#include "kaa/configuration/IConfigurationProcessedObserver.hpp"
 #include "kaa/configuration/manager/IConfigurationReceiver.hpp"
-#include "kaa/common/types/ICommonRecord.hpp"
 
 namespace kaa {
 
@@ -33,8 +30,7 @@ namespace kaa {
  * Manages subscriptions for configuration processed.
  * Subscribers must derive @link IConfigurationReceiver @endlink.
  */
-class IConfigurationManager     : public IGenericDeltaReceiver
-                                , public IConfigurationProcessedObserver
+class IConfigurationManager
 {
 public:
     virtual ~IConfigurationManager() {}
@@ -58,7 +54,7 @@ public:
      *
      * @return @link ICommonRecord @endlink containing current configuration tree.
      */
-    virtual ICommonRecord &getConfiguration() = 0;
+    virtual const KaaRootConfiguration& getConfiguration() = 0;
 };
 
 typedef std::shared_ptr<IConfigurationManager> IConfigurationManagerPtr;

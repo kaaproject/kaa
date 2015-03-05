@@ -24,18 +24,13 @@
 #include <memory>
 
 #include "kaa/configuration/storage/IConfigurationStorage.hpp"
-#include "kaa/configuration/manager/IConfigurationReceiver.hpp"
-#include "kaa/schema/ISchemaUpdatesReceiver.hpp"
-#include "kaa/configuration/IConfigurationHashContainer.hpp"
 
 namespace kaa {
 
 /**
  * Interface for configuration persistence manager.
  */
-class IConfigurationPersistenceManager  : public IConfigurationReceiver
-                                        , public ISchemaUpdatesReceiver
-                                        , public IConfigurationHashContainer
+class IConfigurationPersistenceManager
 {
 public:
     virtual ~IConfigurationPersistenceManager() {}

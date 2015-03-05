@@ -60,11 +60,11 @@ public:
     }
     virtual void setTopicStates(const DetailedTopicStates&) {}
 
-    virtual SharedDataBuffer getProfileHash() const {
-        static SharedDataBuffer profileHash;
+    virtual HashDigest getProfileHash() const {
+        static HashDigest profileHash;
         return profileHash;
     }
-    virtual void setProfileHash(SharedDataBuffer) {}
+    virtual void setProfileHash(HashDigest) {}
 
     virtual AttachedEndpoints getAttachedEndpoints() const {
         static AttachedEndpoints endpoints;

@@ -15,7 +15,7 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="Theme.AppCompat.AppBaseTheme" parent="Theme.AppCompat.Light">
+    <style name="Theme.AppCompat.AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
  
     </style>
 
@@ -112,6 +112,7 @@
     <style name="medium_text" >
         <item name="android:gravity" >center</item>
         <item name="android:textSize" >20sp</item>
+        <item name="android:textColor">@color/abc_primary_text_material_light</item>
         <item name="android:layout_centerInParent">true</item>
     </style>
     

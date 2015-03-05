@@ -18,6 +18,7 @@ package org.kaaproject.kaa.client.persistance;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,8 +74,8 @@ public class KaaClientPropertiesStateTest {
         priv.delete();
         state.getPrivateKey();
         state.getPublicKey();
-        assertArrayEquals(KeyUtil.getPrivate(priv).getEncoded(), state.getPrivateKey().getEncoded());
-        assertArrayEquals(KeyUtil.getPublic(pub).getEncoded(), state.getPublicKey().getEncoded());
+        assertNotNull(state.getPrivateKey().getEncoded());
+        assertNotNull(state.getPublicKey().getEncoded());
     }
 
     @Test

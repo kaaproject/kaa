@@ -22,6 +22,7 @@
 #ifdef KAA_USE_CONFIGURATION
 
 #include "kaa/common/types/ICommonRecord.hpp"
+#include "kaa/configuration/gen/ConfigurationDefinitions.hpp"
 
 namespace kaa {
 
@@ -41,7 +42,7 @@ public:
      *
      * @param configuration Root record containing merged configuration.
      */
-    virtual void onConfigurationUpdated(const ICommonRecord &configuration) = 0;
+    virtual void onConfigurationUpdated(const KaaRootConfiguration &configuration) = 0;
 };
 
 }  // namespace kaa

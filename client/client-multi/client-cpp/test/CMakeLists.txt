@@ -87,8 +87,6 @@ set ( KAA_TEST_SOURCES
         ../impl/configuration/delta/DeltaHandlerId.cpp
         ../impl/configuration/delta/DefaultDeltaManager.cpp
         ../impl/configuration/delta/DefaultConfigurationDeltaFactory.cpp
-        ../impl/schema/SchemaProcessor.cpp
-        ../impl/schema/storage/SchemaPersistenceManager.cpp
         ../impl/event/registration/EndpointRegistrationManager.cpp
         ../impl/event/registration/UserTransport.cpp
         ../impl/event/EventManager.cpp
@@ -121,14 +119,10 @@ set ( KAA_TEST_SOURCES
         impl/common/AvroByteArrayConverterTest.cpp
         impl/common/AvroDatumsComparatorTest.cpp
         impl/common/CommonTypesFactoryTest.cpp
-        impl/schema/SchemaProcessorTest.cpp
-        impl/schema/SchemaPersistenceTest.cpp
-        impl/configuration/ConfigurationTests.cpp
         impl/configuration/ConfigurationPersistenceTest.cpp
         impl/configuration/ConfigurationProcessorTest.cpp
-        impl/configuration/ProcessConfigurationTest.cpp
+        impl/configuration/ConfigurationManagerTest.cpp
         impl/configuration/delta/DeltaHandlerIdTest.cpp
-        impl/configuration/delta/DeltaTest.cpp
         impl/http/HttpUrlTest.cpp
         impl/http/HttpResponseTest.cpp
         impl/http/HttpRequestTest.cpp
