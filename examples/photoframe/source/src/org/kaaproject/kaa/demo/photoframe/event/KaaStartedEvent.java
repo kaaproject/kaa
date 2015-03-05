@@ -16,6 +16,10 @@
 
 package org.kaaproject.kaa.demo.photoframe.event;
 
+/**
+ * The Class KaaStartedEvent.
+ * Event class is used to notify UI components that Kaa client has started.
+ */
 public class KaaStartedEvent extends BasicEvent {
 
     public KaaStartedEvent() {

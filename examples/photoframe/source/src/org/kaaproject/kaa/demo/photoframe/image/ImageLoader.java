@@ -32,9 +32,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
-import android.util.FloatMath;
 import android.util.Log;
 
+/**
+ * The Class ImageLoader.
+ * Used to asynchronously decode {@link Bitmap} from files and show 
+ * resulting {@link Bitmap} via {@link LoadingImageView}.
+ * Handles {@link Bitmap} caching in {@link MemoryCache} and {@link FileCache}.
+ */
 public class ImageLoader {
 
     private static final String TAG = ImageLoader.class.getSimpleName();
@@ -142,7 +147,7 @@ public class ImageLoader {
     }
     
     private static int computeSampleSizeLarger(float scale) {
-        int initialSize = (int) FloatMath.floor(1f / scale);
+        int initialSize = (int) Math.floor(1f / scale);
         if (initialSize <= 1) return 1;
 
         return initialSize <= 8
@@ -151,7 +156,7 @@ public class ImageLoader {
     }
 
     private static int computeSampleSize(float scale) {
-        int initialSize = Math.max(1, (int) FloatMath.ceil(1 / scale));
+        int initialSize = Math.max(1, (int) Math.ceil(1 / scale));
         return initialSize <= 8
                 ? nextPowerOf2(initialSize)
                 : (initialSize + 7) / 8 * 8;

@@ -21,6 +21,11 @@ import java.io.OutputStream;
 
 import android.util.Log;
 
+/**
+ * The Class Utils.
+ * A simple utility class which provides static function {@link Utils#copyStream(InputStream, OutputStream)}
+ * used to copy streams.
+ */
 public class Utils {
     
     private static final String TAG = Utils.class.getSimpleName();

@@ -16,6 +16,12 @@
 
 package org.kaaproject.kaa.demo.photoframe.event;
 
+import de.greenrobot.event.EventBus;
+
+/**
+ * The Class BasicEvent.
+ * Superclass for all application events dispatched via {@link EventBus}.
+ */
 public class BasicEvent {
 
     private String mErrorMessage;

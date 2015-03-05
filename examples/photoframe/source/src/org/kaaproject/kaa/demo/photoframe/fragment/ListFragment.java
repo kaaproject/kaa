@@ -30,6 +30,12 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * The Class ListFragment.
+ * Implementation of {@link PhotoFrameFragment} class. Used as superclass for application fragments 
+ * representing list views. Provides functions to switch between empty data view and list view.
+ * Implements 'refresh' and 'logOut' menu commands available in all list fragments.    
+ */
 public abstract class ListFragment extends PhotoFrameFragment {
     
     protected TextView mNoDataText;

@@ -29,6 +29,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+/**
+ * The Class DevicesAdapter.
+ * Implementation of {@link BaseAdapter} class. Used as adapter class for devices list view.
+ * Provides necessary information about remote devices.
+ */
 public class DevicesAdapter extends BaseAdapter {
     
     private final Context mContext;

@@ -28,6 +28,12 @@ import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.widget.TextView;
 
+/**
+ * The Class PhotoFrameFragment.
+ * Implementation of {@link Fragment} class. Used as superclass for most application fragments.
+ * Implements common fragment lifecycle functions. Stores references to common application resources.
+ * Provides functions to switch between views representing busy progress, error message and content.   
+ */
 public abstract class PhotoFrameFragment extends Fragment {
 
     protected PhotoFrameActivity mActivity;

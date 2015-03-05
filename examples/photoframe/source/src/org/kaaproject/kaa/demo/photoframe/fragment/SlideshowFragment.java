@@ -34,6 +34,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+/**
+ * The Class SlideshowFragment.
+ * Implementation of {@link Fragment} class. 
+ * Represents view pager displaying views with images from album identified by bucketId.
+ * Handles image view switching with constant {@link #SLIDESHOW_INTERVAL_MS} interval.
+ */
 public class SlideshowFragment extends Fragment {
 
     private static final String BUCKET_ID = "bucketId";
