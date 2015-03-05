@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.kaaproject.kaa.demo.kaanotification;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.schema.example.Notification;
- 
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,15 +27,15 @@ public class TopicModel {
 
     private boolean selected;
 
-    private Topic topic;
-    private LinkedList<Notification> notifications;
+    private final Topic topic;
+    private final LinkedList<Notification> notifications;
     private boolean subscribedTo;
 
     public TopicModel(Topic topic) {
         this.topic = topic;
         if (topic.getSubscriptionType() == SubscriptionType.MANDATORY)
             selected = true;
-        notifications = new LinkedList<>(); 
+        notifications = new LinkedList<>();
     }
 
     public String getTopicName() {

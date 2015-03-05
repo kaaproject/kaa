@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,10 @@ import org.kaaproject.kaa.client.logging.DefaultLogUploadStrategy;
 import org.kaaproject.kaa.client.logging.LogFailoverCommand;
 import org.kaaproject.kaa.client.logging.LogStorageStatus;
 import org.kaaproject.kaa.client.logging.LogUploadStrategy;
-import org.kaaproject.kaa.client.logging.LogUploadStrategyDecision;
+
+import static org.kaaproject.kaa.client.logging.LogUploadStrategyDecision.UPLOAD;
+import static org.kaaproject.kaa.client.logging.LogUploadStrategyDecision.NOOP;
+
 import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode;
 import org.kaaproject.kaa.schema.sample.logging.Level;
 import org.kaaproject.kaa.schema.sample.logging.LogData;
@@ -35,45 +38,42 @@ import org.slf4j.LoggerFactory;
 public class DataCollectionDemo {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataCollectionDemo.class);
+
     public static void main(String[] args) {
-        LOG.info("Data collection demo has been started");
+        LOG.info("Data collection demo started");
         doWork();
-        LOG.info("Data collection demo has been stopped");
+        LOG.info("Data collection demo stopped");
     }
 
-	public static void doWork() {
+    public static void doWork() {
 
-		KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext());
+        KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext());
 
-		kaaClient.setLogUploadStrategy(oneLogUploadStrategy);
+        kaaClient.setLogUploadStrategy(new OneLogUploadStrategy());
 
-		kaaClient.start();
+        kaaClient.start();
 
-		LogData logData1 = new LogData(Level.INFO, "TAG", "MESSAGE_1");
-		LogData logData2 = new LogData(Level.INFO, "TAG", "MESSAGE_2");
-		LogData logData3 = new LogData(Level.INFO, "TAG", "MESSAGE_3");
+        LogData logData1 = new LogData(Level.INFO, "TAG", "MESSAGE_1");
+        LogData logData2 = new LogData(Level.INFO, "TAG", "MESSAGE_2");
+        LogData logData3 = new LogData(Level.INFO, "TAG", "MESSAGE_3");
 
-		kaaClient.addLogRecord(logData1);
-		kaaClient.addLogRecord(logData2);
-		kaaClient.addLogRecord(logData3);
+        kaaClient.addLogRecord(logData1);
+        kaaClient.addLogRecord(logData2);
+        kaaClient.addLogRecord(logData3);
 
-		try {
-			System.in.read();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-		kaaClient.stop();
-	}
+        kaaClient.stop();
+    }
 
-	private static LogUploadStrategy oneLogUploadStrategy = new DefaultLogUploadStrategy(){
+    private class OneLogUploadStrategy extends DefaultLogUploadStrategy {
         @Override
         public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
-            LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
-            if (status.getRecordCount() >= 1) {
-                decision = LogUploadStrategyDecision.UPLOAD;
-            }
-            return decision;
+            return status.getRecordCount() >= 1 ? UPLOAD : NOOP;
         }
-    };
+    }
 }

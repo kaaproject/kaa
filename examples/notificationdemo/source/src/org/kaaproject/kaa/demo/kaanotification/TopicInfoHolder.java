@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,11 +39,11 @@ public class TopicInfoHolder {
         topicModelMap = new LinkedHashMap<>();
     }
 
-
     public String getTopicName(String topicId) {
         TopicModel model = topicModelMap.get(topicId);
-        if (null != model)
+        if (null != model){
             return model.getTopicName();
+        }
         else return "";
     }
 
@@ -55,25 +55,27 @@ public class TopicInfoHolder {
 
     public void addNotification(String topicId, Notification notification) {
         TopicModel model = topicModelMap.get(topicId);
-        if (null != model)
+        if (null != model){
             model.addNotification(notification);
+        }
     }
-
 
     public synchronized void updateTopics(List<Topic> updatedTopics) {
         Set<String> newIds = new HashSet<>();
 
         for (Topic topic : updatedTopics) {
             String topicId = topic.getId();
-            if (!topicModelMap.containsKey(topicId))
+            if (!topicModelMap.containsKey(topicId)){
                 topicModelMap.put(topicId, new TopicModel(topic));
+            }
             newIds.add(topicId);
         }
         Iterator<Map.Entry<String, TopicModel>> iter = topicModelMap.entrySet().iterator();
         while (iter.hasNext()) {
             String id = iter.next().getKey();
-            if (!newIds.contains(id))
+            if (!newIds.contains(id)){
                 iter.remove();
+            }
         }
     }
 

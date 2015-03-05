@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,23 +69,18 @@ public class NotificationListActivity extends ListActivity {
         notificationListener = new NotificationListener() {
             public void onNotification(final String topicId,
                                        final Notification notification) {
-                Log.i("KAA",
-                        "NOTIFICATION RECEIVED: " + notification.toString());
+                Log.i("KAA", "NOTIFICATION RECEIVED: " + notification.toString());
                 TopicInfoHolder.holder.addNotification(topicId, notification);
 
                 NotificationListActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         NotificationListActivity activity = NotificationListActivity.this;
-                        int pos = activity.getIntent().getExtras()
-                                .getInt("position");
+                        int pos = activity.getIntent().getExtras().getInt("position");
                         List<Notification> list = TopicInfoHolder.holder
-                                .getTopicModelList().get(pos)
-                                .getNotifications();
-                        activity.setListAdapter(new NotificationArrayAdapter(
-                                activity, list));
-                        app.showPopup(NotificationListActivity.this, topicId,
-                                notification);
+                                .getTopicModelList().get(pos).getNotifications();
+                        activity.setListAdapter(new NotificationArrayAdapter(activity, list));
+                        app.showPopup(NotificationListActivity.this, topicId, notification);
                     }
                 });
 

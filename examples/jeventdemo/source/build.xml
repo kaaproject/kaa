@@ -8,13 +8,13 @@
 	the specific language governing permissions and limitations under the License. -->
 <project name="EventDemo" default="debug">
 
-	<property name="java.target" value="1.7" />
-	<property name="java.source" value="1.7" />
+    <property name="java.target" value="1.7"/>
+    <property name="java.source" value="1.7"/>
 
-	<fileset dir="lib" />
+    <fileset dir="lib"/>
 
 
-    <property name="lib.dir"     value="lib"/>
+    <property name="lib.dir" value="lib"/>
     <path id="classpath">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
     </path>
@@ -27,15 +27,15 @@
         <antcall target="clean"></antcall>
         <mkdir dir="build/classes"/>
         <mkdir dir="build/jar"/>
-        <javac srcdir="src" destdir="build/classes"  classpathref="classpath"/>
-		<jar destfile="build/jar/EventDemo.jar" includes="**/*.class" basedir="build/classes">
-			<manifest>
-				<attribute name="Main-Class"
-					value="org.kaaproject.kaa.demo.event.EventDemo" />
-			</manifest>
-			<zipgroupfileset includes="*.jar" dir="lib" />
-		</jar>
-	</target>
+        <javac srcdir="src" destdir="build/classes" classpathref="classpath"/>
+        <jar destfile="build/jar/EventDemo.jar" includes="**/*.class" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class"
+                           value="org.kaaproject.kaa.demo.event.EventDemo"/>
+            </manifest>
+            <zipgroupfileset includes="*.jar" dir="lib"/>
+        </jar>
+    </target>
 
 
 </project>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,12 +44,12 @@ public class EventDemo {
 
 
     private static final Logger LOG = LoggerFactory.getLogger(EventDemo.class);
+
     public static void main(String[] args) {
         LOG.info("Event demo has been started");
         doWork();
         LOG.info("Event demo has been stopped");
     }
-
 
     public static void doWork() {
         KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(),
@@ -63,8 +63,7 @@ public class EventDemo {
                 new UserAttachCallback() {
                     @Override
                     public void onAttachResult(UserAttachResponse response) {
-                        LOG.info("Attach response"
-                                + response.getResult());
+                        LOG.info("Attach response {}", response.getResult());
                     }
                 });
 
@@ -73,8 +72,8 @@ public class EventDemo {
                 .getCustomThermoEventClassFamily();
 
         List<String> FQNs = new LinkedList<>();
-        FQNs.add("org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoRequest");
-        FQNs.add("org.kaaproject.kaa.schema.sample.event.thermo.ChangeDegreeRequest");
+        FQNs.add(ThermostatInfoRequest.class.getName());
+        FQNs.add(ChangeDegreeRequest.class.getName());
 
         EventListenersResolver eventListenersResolver = kaaClient
                 .getEventListenerResolver();
@@ -89,9 +88,10 @@ public class EventDemo {
                     @Override
                     public void onEventListenersReceived(
                             List<String> eventListeners) {
-                        String output="Listeners received: ";
-                        for(String listener : eventListeners)
-                            output+=listener+", ";
+                        String output = "Listeners received: ";
+                        for (String listener : eventListeners) {
+                            output += listener + ", ";
+                        }
                         LOG.info(output);
                     }
                 });
@@ -109,7 +109,6 @@ public class EventDemo {
         eventFamilyFactory.submitEventsBlock(trxId);
         // Dismiss the event batch (if the batch was not submitted as shown in the previous line)
         eventFamilyFactory.removeEventsBlock(trxId);
-
 
 
         tecf.addListener(new DefaultEventFamilyListener() {

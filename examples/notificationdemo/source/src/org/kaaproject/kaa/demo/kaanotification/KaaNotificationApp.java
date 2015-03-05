@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,10 +43,10 @@ public class KaaNotificationApp extends Application {
 
     public void onCreate() {
         super.onCreate();
-        mContext = this;
         mClient = Kaa.newClient(new AndroidKaaPlatformContext(this));
-        initPopup();
         mClient.start();
+        mContext = this;
+        initPopup();
     }
 
     public static Context getContext() {
@@ -92,8 +92,9 @@ public class KaaNotificationApp extends Application {
         ((TextView) popup.findViewById(R.id.popup_topic)).setText(TopicInfoHolder.holder.getTopicName(topicId));
         ((ImageView) popup.findViewById(R.id.popup_image)).setImageBitmap(ImageCache.cache.getImage(notification.getImage()));
         View view = context.getCurrentFocus();
-        if (null != view)
+        if (null != view){
             popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+        }
     }
 
 
