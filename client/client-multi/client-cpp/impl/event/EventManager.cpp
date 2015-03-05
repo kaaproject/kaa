@@ -71,16 +71,16 @@ void EventManager::produceEvent(const std::string& fqn
     }
 
     KAA_MUTEX_UNIQUE_DECLARE(lock, sequenceGuard_);
-    event.seqNum = eventSequenceNumber_++;
-    status_->setEventSequenceNumber(eventSequenceNumber_);
 
     KAA_UNLOCK(lock);
 
     KAA_LOG_TRACE(boost::format("New event %1% is produced for %2%") % fqn % target);
+
     {
         KAA_MUTEX_UNIQUE_DECLARE(internal_lock, pendingEventsGuard_);
-        pendingEvents_.push_back(event);
+        pendingEvents_.insert(std::make_pair(_id++,event));
     }
+
     if (eventTransport_) {
         eventTransport_->sync();
     } else {
@@ -88,12 +88,13 @@ void EventManager::produceEvent(const std::string& fqn
     }
 }
 
-std::list<Event> EventManager::releasePendingEvents()
+std::map<unsigned int,Event> EventManager::releasePendingEvents()
 {
     KAA_MUTEX_UNIQUE_DECLARE(lock, pendingEventsGuard_);
-    std::list<Event> result(std::move(pendingEvents_));
-    pendingEvents_ = std::list<Event>();
-    return result;
+    std::map<unsigned int,Event> result(std::move(pendingEvents_));
+    pendingEvents_ = std::map<unsigned int,Event>();
+    _id=0;
+    return std::move(result);
 }
 
 bool EventManager::hasPendingEvents() const
@@ -247,9 +248,7 @@ void EventManager::commit(TransactionIdPtr trxId)
         KAA_MUTEX_UNIQUE_DECLARE(lock, pendingEventsGuard_);
         std::list<Event> & events = it->second;
         for (Event &e : events) {
-            e.seqNum = eventSequenceNumber_++;
-            pendingEvents_.push_back(e);
-            status_->setEventSequenceNumber(e.seqNum);
+            pendingEvents_.insert(std::make_pair(_id++,e));
         }
         transactions_.erase(it);
         KAA_UNLOCK(lock);

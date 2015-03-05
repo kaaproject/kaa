@@ -48,7 +48,8 @@ private:
     std::map<std::uint32_t, std::list<Event> >    events_;
 
     std::int32_t startEventSN_;
-    bool isEventSNSynchronized_;;
+    bool isEventSNSynchronized_;
+
 };
 
 }  // namespace kaa

@@ -48,7 +48,7 @@ public:
         : eventTransport_(nullptr)
         , status_(status)
     {
-        eventSequenceNumber_ = status_->getEventSequenceNumber();
+        _id = 0;
     }
 
     virtual void registerEventFamily(IEventFamily* eventFamily);
@@ -61,7 +61,7 @@ public:
     virtual void onEventsReceived(const EventSyncResponse::events_t& events);
     virtual void onEventListenersReceived(const EventSyncResponse::eventListenersResponses_t& listeners);
 
-    virtual std::list<Event> releasePendingEvents();
+    virtual std::map<unsigned int,Event> releasePendingEvents();
     virtual bool hasPendingEvents() const;
 
     virtual std::map<std::int32_t, std::list<std::string> > getPendingListenerRequests();
@@ -95,10 +95,10 @@ private:
     void generateUniqueRequestId(std::string& requstId);
 private:
     std::set<IEventFamily*>   eventFamilies_;
-    std::list<Event>          pendingEvents_;
+    std::map<unsigned int,Event>          pendingEvents_;
     KAA_MUTEX_MUTABLE_DECLARE(pendingEventsGuard_);
 
-    std::int32_t            eventSequenceNumber_;
+    unsigned int _id;
     KAA_MUTEX_DECLARE(sequenceGuard_);
 
     EventTransport *          eventTransport_;

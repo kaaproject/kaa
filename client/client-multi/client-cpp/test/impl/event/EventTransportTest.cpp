@@ -41,15 +41,17 @@ private:
 class TestEventDataProcessor : public IEventDataProcessor
 {
 public:
-    virtual std::list<Event> releasePendingEvents() {
-        return events_;
+    virtual std::map<unsigned int, Event> releasePendingEvents() {
+        auto pevents = std::move(events_);
+        events_ = std::map<unsigned int,Event>();
+        return pevents;
     }
 
     virtual bool hasPendingEvents() const {
         return !events_.empty();
     }
 
-    void setPendingEvents(const std::list<Event>& newEvents) {
+    void setPendingEvents(const std::map<unsigned int,Event> & newEvents) {
         events_ = newEvents;
     }
 
@@ -67,7 +69,7 @@ public:
     virtual void onEventListenersReceived(const EventSyncResponse::eventListenersResponses_t& listeners) {}
 
 private:
-    std::list<Event> events_;
+    std::map<unsigned int,Event> events_;
 };
 
 BOOST_AUTO_TEST_SUITE(EventTransportTestSuite)
@@ -79,8 +81,11 @@ BOOST_AUTO_TEST_CASE(EventTransportSequenceNumberRequestTest)
     TestEventDataProcessor processor;
     EventTransport transport(processor, channelManager, clientState);
 
-    std::list<Event> events = { Event(), Event() };
-    processor.setPendingEvents(events);
+   std::map<unsigned int, Event> pevents;
+   pevents[1]=Event();
+   pevents[2]=Event();
+
+    processor.setPendingEvents(pevents);
 
     std::int32_t requestId = 1;
     std::shared_ptr<EventSyncRequest> eventSyncRequest1 =
@@ -114,16 +119,16 @@ BOOST_AUTO_TEST_CASE(SychronizedEventSequenceNumberTest)
     TestEventDataProcessor processor;
     EventTransport transport(processor, channelManager, clientState);
 
-    std::list<Event> events = { createEvent(sn + 1)
-                              , createEvent(sn)};
-    processor.setPendingEvents(events);
+    std::map<unsigned int, Event> pevents;
+    pevents[1]=createEvent(sn+1);
+    pevents[2]=createEvent(sn);
 
     std::int32_t requestId = 1;
     transport.createEventRequest(requestId++);
 
     EventSyncResponse eventResponse1;
     EventSequenceNumberResponse esnr;
-    esnr.seqNum = sn - 1;
+    esnr.seqNum = sn - 5;
 
     eventResponse1.eventSequenceNumberResponse.set_EventSequenceNumberResponse(esnr);
     eventResponse1.eventListenersResponses.set_null();
@@ -137,7 +142,6 @@ BOOST_AUTO_TEST_CASE(SychronizedEventSequenceNumberTest)
     BOOST_CHECK(eventSyncRequest);
     BOOST_CHECK(eventSyncRequest->eventSequenceNumberRequest.is_null());
     BOOST_CHECK(!eventSyncRequest->events.is_null());
-
     const auto& sendingEvents = eventSyncRequest->events.get_array();
     for (const auto& e : sendingEvents) {
         if (e.seqNum != sn++) {
@@ -157,17 +161,18 @@ BOOST_AUTO_TEST_CASE(UnsychronizedEventSequenceNumberTest)
     TestEventDataProcessor processor;
     EventTransport transport(processor, channelManager, clientState);
 
-    std::list<Event> events = { createEvent(restored_sn + 1)
-                              , createEvent(restored_sn + 2)
-                              , createEvent(restored_sn)};
-    processor.setPendingEvents(events);
+    std::map<unsigned int, Event> pevents;
+    pevents[1]=createEvent(restored_sn+12);
+    pevents[2]=createEvent(restored_sn);
+    processor.setPendingEvents(pevents);
+
 
     std::int32_t requestId = 1;
     transport.createEventRequest(requestId++);
 
     EventSyncResponse eventResponse1;
     EventSequenceNumberResponse esnr;
-    esnr.seqNum = expected_sn - 1;
+    esnr.seqNum = expected_sn;
 
     eventResponse1.eventSequenceNumberResponse.set_EventSequenceNumberResponse(esnr);
     eventResponse1.eventListenersResponses.set_null();
@@ -178,18 +183,17 @@ BOOST_AUTO_TEST_CASE(UnsychronizedEventSequenceNumberTest)
     std::shared_ptr<EventSyncRequest> eventSyncRequest =
                         transport.createEventRequest(requestId++);
 
-    BOOST_CHECK(eventSyncRequest);
-    BOOST_CHECK(eventSyncRequest->eventSequenceNumberRequest.is_null());
-    BOOST_CHECK(!eventSyncRequest->events.is_null());
+        BOOST_CHECK(eventSyncRequest);
+        BOOST_CHECK(eventSyncRequest->eventSequenceNumberRequest.is_null());
+        BOOST_CHECK(!eventSyncRequest->events.is_null());
 
     const auto& sendingEvents = eventSyncRequest->events.get_array();
     for (const auto& e : sendingEvents) {
-        if (e.seqNum != expected_sn++) {
+        if (e.seqNum != ++expected_sn) {
             BOOST_CHECK(false);
         }
     }
 }
-
 BOOST_AUTO_TEST_SUITE_END()
 
 }
