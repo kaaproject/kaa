@@ -322,12 +322,9 @@ public class CSdkGenerator extends SdkGenerator {
         Schema schema = new Schema.Parser().parse(profileSchemaBody);
         List<TarEntryData> tarEntries = new LinkedList<>();
 
-        tarEntries.add(createTarEntry(PROFILE_HEADER,
-                                      processHeaderTemplate("kaa_profile.vm", schema)));
+        tarEntries.add(createTarEntry(PROFILE_HEADER, processHeaderTemplate("kaa_profile.vm", schema)));
 
-        tarEntries.addAll(generateSourcesFromSchema(schema,
-                                                    KAA_PROFILE_SOURCE_NAME_PATTERN,
-                                                    "profile"));
+        tarEntries.addAll(generateSourcesFromSchema(schema, KAA_PROFILE_SOURCE_NAME_PATTERN, "profile"));
 
         return tarEntries;
     }
@@ -336,12 +333,9 @@ public class CSdkGenerator extends SdkGenerator {
         Schema schema = new Schema.Parser().parse(logSchemaBody);
         List<TarEntryData> tarEntries = new LinkedList<>();
 
-        tarEntries.add(createTarEntry(LOG_HEADER,
-                                      processHeaderTemplate("kaa_logging.vm", schema)));
+        tarEntries.add(createTarEntry(LOG_HEADER, processHeaderTemplate("kaa_logging.vm", schema)));
 
-        tarEntries.addAll(generateSourcesFromSchema(schema,
-                                                    KAA_LOG_SOURCE_NAME_PATTERN,
-                                                    "logging"));
+        tarEntries.addAll(generateSourcesFromSchema(schema, KAA_LOG_SOURCE_NAME_PATTERN, "logging"));
 
         return tarEntries;
     }
@@ -353,9 +347,7 @@ public class CSdkGenerator extends SdkGenerator {
         tarEntries.add(createTarEntry(CONFIGURATION_HEADER,
                                       processHeaderTemplate("kaa_configuration_definitions.vm", schema)));
 
-        tarEntries.addAll(generateSourcesFromSchema(schema,
-                                                    KAA_CONFIGURATION_SOURCE_NAME_PATTERN,
-                                                    "configuration"));
+        tarEntries.addAll(generateSourcesFromSchema(schema, KAA_CONFIGURATION_SOURCE_NAME_PATTERN, "configuration"));
 
         return tarEntries;
     }

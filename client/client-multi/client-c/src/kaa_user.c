@@ -198,13 +198,13 @@ kaa_error_t kaa_user_manager_default_attach_to_user(kaa_user_manager_t *self
 {
     KAA_RETURN_IF_NIL3(self, user_external_id, access_token, KAA_ERR_BADPARAM);
 
-    if (!strlen(DEFAULT_USER_VERIFIER_TOKEN)) {
-        KAA_LOG_WARN(self->logger, KAA_ERR_USER_VERIFIER_NOT_FOUND,
-                    "Failed to attach to user: default verifier is not specified");
-        return KAA_ERR_USER_VERIFIER_NOT_FOUND;
-    }
-
+#ifdef DEFAULT_USER_VERIFIER_TOKEN
     return kaa_user_manager_attach_to_user(self, user_external_id, access_token, DEFAULT_USER_VERIFIER_TOKEN);
+#else
+    KAA_LOG_WARN(self->logger, KAA_ERR_USER_VERIFIER_NOT_FOUND,
+                    "Failed to attach to user: default verifier is not specified");
+    return KAA_ERR_USER_VERIFIER_NOT_FOUND;
+#endif
 }
 
 kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self

@@ -41,8 +41,6 @@ extern "C" {
 # define USER_NF_SCHEMA_VERSION         5
 # define LOG_SCHEMA_VERSION             4
 
-# define DEFAULT_USER_VERIFIER_TOKEN    ""
-
 # define KAA_SYNC_TIMEOUT               60000L
 
 

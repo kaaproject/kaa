@@ -41,7 +41,9 @@ extern "C" {
 # define USER_NF_SCHEMA_VERSION         ${user_nf_version}
 # define LOG_SCHEMA_VERSION             ${log_version}
 
+#if (! $user_verifier_token.isEmpty())
 # define DEFAULT_USER_VERIFIER_TOKEN    "${user_verifier_token}"
+#end
 
 # define KAA_SYNC_TIMEOUT               60000L
 
