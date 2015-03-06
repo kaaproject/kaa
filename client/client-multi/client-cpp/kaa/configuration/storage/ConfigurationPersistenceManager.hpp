@@ -41,12 +41,10 @@ class IKaaClientStateStorage;
  */
 class ConfigurationPersistenceManager : public IConfigurationPersistenceManager,
                                         public IConfigurationReceiver,
-                                        public IConfigurationHashContainer
-{
+                                        public IConfigurationHashContainer {
 public:
     ConfigurationPersistenceManager(IKaaClientStateStoragePtr state)
-        : storage_(nullptr)
-        , processor_(nullptr)
+        : processor_(nullptr)
         , ignoreConfigurationUpdate_(false)
         , state_(state)
     {}
@@ -55,7 +53,7 @@ public:
     /**
      * @link IConfigurationPersistenceManager @endlink implementation
      */
-    void setConfigurationStorage(IConfigurationStorage *storage);
+    void setConfigurationStorage(IConfigurationStoragePtr storage);
 
     /**
      * @link IConfigurationReceiver @endlink implementation
@@ -79,13 +77,13 @@ private:
 
     KAA_MUTEX_DECLARE(confPersistenceGuard_);
 
-    IConfigurationStorage *                 storage_;
-    IConfigurationProcessor *               processor_;
+    IConfigurationStoragePtr storage_;
+    IConfigurationProcessor* processor_;
 
-    EndpointObjectHash                      configurationHash_;
-    bool                                    ignoreConfigurationUpdate_;
+    EndpointObjectHash configurationHash_;
+    bool ignoreConfigurationUpdate_;
 
-    IKaaClientStateStoragePtr               state_;
+    IKaaClientStateStoragePtr state_;
 };
 
 }  // namespace kaa

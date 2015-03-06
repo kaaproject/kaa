@@ -28,8 +28,7 @@ namespace kaa {
  *
  * Receiver can be subscribed/unsubscribed via @link IConfigurationProcessedObservable @endlink
  */
-class IConfigurationProcessedObserver
-{
+class IConfigurationProcessedObserver {
 public:
     /**
      * Notify about configuration processing is finished.

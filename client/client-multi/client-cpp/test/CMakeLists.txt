@@ -84,6 +84,7 @@ set ( KAA_TEST_SOURCES
         ../impl/configuration/manager/ConfigurationManager.cpp
         ../impl/configuration/manager/Strategies.cpp
         ../impl/configuration/storage/ConfigurationPersistenceManager.cpp
+        ../impl/configuration/storage/FileConfigurationStorage.cpp
         ../impl/configuration/delta/DeltaHandlerId.cpp
         ../impl/configuration/delta/DefaultDeltaManager.cpp
         ../impl/configuration/delta/DefaultConfigurationDeltaFactory.cpp
@@ -122,6 +123,7 @@ set ( KAA_TEST_SOURCES
         impl/configuration/ConfigurationPersistenceTest.cpp
         impl/configuration/ConfigurationProcessorTest.cpp
         impl/configuration/ConfigurationManagerTest.cpp
+        impl/configuration/FileConfigurationStorageTest.cpp
         impl/configuration/delta/DeltaHandlerIdTest.cpp
         impl/http/HttpUrlTest.cpp
         impl/http/HttpResponseTest.cpp

@@ -33,8 +33,7 @@ namespace kaa {
  * Receives and decodes the raw configuration data
  *
  */
-class IConfigurationProcessor
-{
+class IConfigurationProcessor {
 public:
     virtual ~IConfigurationProcessor() {}
 

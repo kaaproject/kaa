@@ -40,9 +40,7 @@ namespace kaa {
  */
 class ConfigurationManager : public IConfigurationManager,
                              public IConfigurationProcessedObserver,
-                             public IGenericDeltaReceiver
-
-{
+                             public IGenericDeltaReceiver {
 public:
     ConfigurationManager() {}
     ~ConfigurationManager() {}

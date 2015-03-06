@@ -41,8 +41,7 @@ typedef std::map<std::string, DetailedTopicState> DetailedTopicStates;
 
 typedef std::map<std::string, std::string> AttachedEndpoints;
 
-class IKaaClientStateStorage
-{
+class IKaaClientStateStorage {
 public:
     virtual ~IKaaClientStateStorage() {}
 

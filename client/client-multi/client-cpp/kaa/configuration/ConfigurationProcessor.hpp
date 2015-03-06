@@ -44,8 +44,7 @@ namespace kaa {
  */
 class ConfigurationProcessor : public IConfigurationProcessor,
                                public IDecodedDeltaObservable,
-                               public IConfigurationProcessedObservable
-{
+                               public IConfigurationProcessedObservable {
 public:
     typedef avro::ValidSchema Schema;
 

@@ -28,8 +28,7 @@ namespace kaa {
 /**
  * Interface for subscriber to receive deltas in avro generic objects
  */
-class IGenericDeltaReceiver
-{
+class IGenericDeltaReceiver {
 public:
     /**
      * Will be called on each deserialized configuration data

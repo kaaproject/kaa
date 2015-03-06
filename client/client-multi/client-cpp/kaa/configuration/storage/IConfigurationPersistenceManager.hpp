@@ -27,11 +27,12 @@
 
 namespace kaa {
 
+typedef std::shared_ptr<IConfigurationStorage> IConfigurationStoragePtr;
+
 /**
  * Interface for configuration persistence manager.
  */
-class IConfigurationPersistenceManager
-{
+class IConfigurationPersistenceManager {
 public:
     virtual ~IConfigurationPersistenceManager() {}
 
@@ -42,7 +43,7 @@ public:
      * @param storage User-defined persistence routines.
      * @see IConfigurationStorage
      */
-    virtual void setConfigurationStorage(IConfigurationStorage *storage) = 0;
+    virtual void setConfigurationStorage(IConfigurationStoragePtr storage) = 0;
 };
 
 typedef std::shared_ptr<IConfigurationPersistenceManager> IConfigurationPersistenceManagerPtr;

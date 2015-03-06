@@ -34,7 +34,6 @@ namespace kaa {
  */
 class IConfigurationStorage {
 public:
-    typedef std::vector<std::uint8_t> byte_buffer;
     virtual ~IConfigurationStorage() {}
 
     /**
@@ -42,14 +41,14 @@ public:
      *
      * @param bytes Configuration binary data.
      */
-    virtual void saveConfiguration(byte_buffer &&bytes) = 0;
+    virtual void saveConfiguration(std::vector<std::uint8_t>&& bytes) = 0;
 
     /**
      * Specifies routine to load configuration data.
      *
      * @return Configuration binary data.
      */
-    virtual byte_buffer loadConfiguration() = 0;
+    virtual std::vector<std::uint8_t> loadConfiguration() = 0;
 };
 
 }  // namespace kaa

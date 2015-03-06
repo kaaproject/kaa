@@ -32,10 +32,13 @@ set(CMAKE_MODULE_PATH
 # in the corresponding platform CMake script(s).
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
-if(KAA_DEBUG_ENABLED)
+if (KAA_DEBUG_ENABLED)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb")
 else()
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Os -s")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Os")
+    if (CMAKE_COMPILER_IS_GNUCXX)
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
+    endif()
 endif()
 
 #Compiler specific flags
@@ -109,6 +112,7 @@ if ( NOT KAA_WITHOUT_CONFIGURATION )
             impl/configuration/ConfigurationTransport.cpp
             impl/configuration/manager/ConfigurationManager.cpp
             impl/configuration/storage/ConfigurationPersistenceManager.cpp
+            impl/configuration/storage/FileConfigurationStorage.cpp
             impl/common/AvroGenericUtils.cpp
     )
 endif()
