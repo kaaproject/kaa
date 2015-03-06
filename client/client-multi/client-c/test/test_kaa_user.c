@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "platform/ext_sha.h"
+
 #include "kaa_user.h"
 
 #include "kaa_test.h"
@@ -102,17 +103,7 @@ static kaa_error_t on_attach_failed(void *context, user_verifier_error_code_t er
     return KAA_ERR_NONE;
 }
 
-void test_empty_default_user_verifier()
-{
-    KAA_TRACE_IN(logger);
-
-    kaa_error_t error_code = kaa_user_manager_default_attach_to_user(user_manager, USER_EXTERNAL_ID, ACCESS_TOKEN);
-    ASSERT_EQUAL(error_code, KAA_ERR_USER_VERIFIER_NOT_FOUND);
-
-    KAA_TRACE_OUT(logger);
-}
-
-void test_create_request()
+void test_specified_user_verifier()
 {
     KAA_TRACE_IN(logger);
 
@@ -136,8 +127,10 @@ void test_create_request()
     ASSERT_EQUAL(memcmp(buf_cursor, options, 3), 0);
     buf_cursor += 3;
 
-    ASSERT_EQUAL(*(uint32_t * ) buf_cursor,
-            KAA_HTONL(2 * sizeof(uint32_t) + kaa_aligned_size_get(strlen(USER_EXTERNAL_ID)) + kaa_aligned_size_get(strlen(ACCESS_TOKEN)  + kaa_aligned_size_get(strlen(USER_VERIFIER)))));
+    ASSERT_EQUAL(*(uint32_t * ) buf_cursor, KAA_HTONL(2 * sizeof(uint32_t)
+                                                    + kaa_aligned_size_get(strlen(USER_EXTERNAL_ID))
+                                                    + kaa_aligned_size_get(strlen(ACCESS_TOKEN)
+                                                    + kaa_aligned_size_get(strlen(USER_VERIFIER)))));
     buf_cursor += sizeof(uint32_t);
 
     ASSERT_EQUAL(0, *buf_cursor);
@@ -265,8 +258,7 @@ int test_deinit(void)
 
 KAA_SUITE_MAIN(Log, test_init, test_deinit
        ,
-       KAA_TEST_CASE(empty_default_user_verifier, test_empty_default_user_verifier)
-       KAA_TEST_CASE(create_request, test_create_request)
+       KAA_TEST_CASE(specified_user_verifier, test_specified_user_verifier)
        KAA_TEST_CASE(process_success_response, test_success_response)
        KAA_TEST_CASE(process_failed_response, test_failed_response)
         )

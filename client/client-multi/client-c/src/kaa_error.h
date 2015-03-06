@@ -49,8 +49,6 @@ typedef enum {
     KAA_ERR_ALREADY_EXISTS          = -15,
     KAA_ERR_TIMEOUT                 = -16,
 
-    KAA_ERR_USER_VERIFIER_NOT_FOUND = -31,
-
     KAA_ERR_EVENT_NOT_ATTACHED      = -41,
     KAA_ERR_EVENT_BAD_FQN           = -42,
     KAA_ERR_EVENT_TRX_NOT_FOUND     = -43,

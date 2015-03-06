@@ -25,7 +25,9 @@
 #define KAA_USER_H_
 
 #include <stdbool.h>
+
 #include "kaa_error.h"
+#include "kaa_defaults.h"
 #include "platform/ext_user_callback.h"
 
 #ifdef __cplusplus
@@ -47,9 +49,6 @@ extern "C" {
 /**
  * @brief Attaches the endpoint to a user entity. The user verification is carried out by the default verifier.
  *
- * @b NOTE: If the default user verifier (@link DEFAULT_USER_VERIFIER_TOKEN @endlink) is not specified,
- * the attach attempt fails with the @link KAA_ERR_USER_VERIFIER_NOT_FOUND @endlink return code.
- *
  * Use this function to request attachment of the endpoint to a user entity using the specified external authentication
  * credentials. Only endpoints associated with the same user entity can exchange events.
  *
@@ -59,9 +58,11 @@ extern "C" {
  *
  * @return      Error code.
  */
+#ifdef DEFAULT_USER_VERIFIER_TOKEN
 kaa_error_t kaa_user_manager_default_attach_to_user(kaa_user_manager_t *self
                                                   , const char *user_external_id
                                                   , const char *access_token);
+#endif
 
 
 
