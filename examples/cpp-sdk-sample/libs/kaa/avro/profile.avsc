@@ -1,0 +1,31 @@
+{
+  "type" : "record",
+  "name" : "Profile",
+  "namespace" : "org.kaaproject.kaa.schema.sample.profile",
+  "fields" : [ {
+    "name" : "id",
+    "type" : {
+      "type" : "string",
+      "avro.java.string" : "String"
+    }
+  }, {
+    "name" : "os",
+    "type" : {
+      "type" : "enum",
+      "name" : "OS",
+      "symbols" : [ "Android", "iOS", "Linux" ]
+    }
+  }, {
+    "name" : "os_version",
+    "type" : {
+      "type" : "string",
+      "avro.java.string" : "String"
+    }
+  }, {
+    "name" : "build",
+    "type" : {
+      "type" : "string",
+      "avro.java.string" : "String"
+    }
+  } ]
+}

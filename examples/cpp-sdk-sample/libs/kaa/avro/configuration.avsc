@@ -1,0 +1,1 @@
+{"type":"record","name":"ConfigurationData","namespace":"org.kaaproject.kaa.schema.sample.configuration","fields":[{"name":"message","type":[{"type":"string","avro.java.string":"String"},"null"]},{"name":"__uuid","type":[{"type":"fixed","name":"uuidT","namespace":"org.kaaproject.configuration","size":16},"null"],"displayName":"Record Id","fieldAccess":"read_only"}]}

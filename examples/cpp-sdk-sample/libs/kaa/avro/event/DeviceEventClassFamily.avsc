@@ -1,0 +1,36 @@
+[
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.device",
+ "type": "record",
+ "classType": "event",
+ "name": "DeviceInfoRequest",
+ "fields": []
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.device",
+ "type": "enum"  ,
+ "classType": "object",
+ "name": "DeviceType",
+ "symbols" : ["THERMOSTAT", "TV", "SOUND_SYSTEM", "LAMP"]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.device",
+ "type": "record",
+ "classType": "object",
+ "name": "DeviceInfo",
+ "fields": [
+    {"name": "deviceType", "type": ["org.kaaproject.kaa.demo.smarthouse.device.DeviceType", "null"]},
+    {"name": "model", "type": ["string", "null"]},
+    {"name": "manufacturer", "type": ["string", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.smarthouse.device",
+ "type": "record",
+ "classType": "event",
+ "name": "DeviceInfoResponse",
+ "fields": [
+	{"name": "deviceInfo", "type": ["org.kaaproject.kaa.demo.smarthouse.device.DeviceInfo", "null"]}
+  ]
+}
+]
