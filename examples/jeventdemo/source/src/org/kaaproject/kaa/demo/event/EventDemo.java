@@ -103,7 +103,7 @@ public class EventDemo {
         // Send added events in a batch
         eventFamilyFactory.submitEventsBlock(trxId);
         // Dismiss the event batch (if the batch was not submitted as shown in the previous line)
-        eventFamilyFactory.removeEventsBlock(trxId);
+        // eventFamilyFactory.removeEventsBlock(trxId);
 
 
         tecf.addListener(new DefaultEventFamilyListener() {
