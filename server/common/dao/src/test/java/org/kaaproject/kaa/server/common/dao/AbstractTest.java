@@ -263,6 +263,10 @@ public class AbstractTest {
     }
 
     protected List<ConfigurationSchemaDto> generateConfSchema(String appId, int count) {
+        return generateConfSchema(appId, count, "dao/schema/testDataSchema.json");
+    }
+
+    protected List<ConfigurationSchemaDto> generateConfSchema(String appId, int count, String path) {
         List<ConfigurationSchemaDto> schemas = Collections.emptyList();
         try {
             if (isBlank(appId)) {
@@ -273,7 +277,7 @@ public class AbstractTest {
             for (int i = 0; i < count; i++) {
                 schemaDto = new ConfigurationSchemaDto();
                 schemaDto.setApplicationId(appId);
-                schemaDto.setSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"));
+                schemaDto.setSchema(readSchemaFileAsString(path));
                 schemaDto = configurationService.saveConfSchema(schemaDto);
                 Assert.assertNotNull(schemaDto);
                 schemas.add(schemaDto);
@@ -584,6 +588,10 @@ public class AbstractTest {
     }
 
     protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto, ConfigurationSchemaDto configurationSchema) {
+        return generateEndpointUserConfiguration(endpointUser, applicationDto, configurationSchema, UUID.randomUUID().toString());
+    }
+
+    protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto, ConfigurationSchemaDto configurationSchema, String body) {
         EndpointUserConfigurationDto configurationDto = new EndpointUserConfigurationDto();
         if (endpointUser == null) {
             endpointUser = generateEndpointUser(null);
@@ -596,9 +604,8 @@ public class AbstractTest {
             configurationSchema = generateConfSchema(applicationDto.getId(), 1).get(0);
         }
         configurationDto.setSchemaVersion(configurationSchema.getMajorVersion());
-        configurationDto.setBody(UUID.randomUUID().toString());
+        configurationDto.setBody(body);
         configurationDto.setAppToken(applicationDto.getApplicationToken());
-        endpointUserConfigurationDao.save(configurationDto);
-        return configurationDto;
+        return userConfigurationService.saveUserConfiguration(configurationDto);
     }
 }
