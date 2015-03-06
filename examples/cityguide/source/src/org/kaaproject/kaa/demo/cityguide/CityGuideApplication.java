@@ -34,6 +34,13 @@ import org.slf4j.LoggerFactory;
 import android.app.Application;
 import de.greenrobot.event.EventBus;
 
+/**
+ * The Class CityGuideApplication.
+ * Implementation of base {@link Application} class. Performs initialization of 
+ * application resources including initialization of Kaa client. Handles Kaa client lifecycle.
+ * Stores reference to actual endpoint configuration. Receives configuration updates from Kaa cluster.
+ * Manages endpoint profile object, notifies Kaa cluster about profile updates.
+ */
 public class CityGuideApplication extends Application {
 
     private static final Logger LOG = LoggerFactory

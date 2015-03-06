@@ -27,6 +27,10 @@ import org.kaaproject.kaa.demo.photoframe.image.ImageLoader.ImageKey;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+/**
+ * The Class MemoryCache.
+ * Used to store image {@link Bitmap} in memory.
+ */
 public class MemoryCache {
 
     private static final String TAG = MemoryCache.class.getSimpleName();

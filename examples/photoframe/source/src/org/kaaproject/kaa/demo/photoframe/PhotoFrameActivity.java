@@ -39,6 +39,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+/**
+ * The Class PhotoFrameActivity.
+ * Implementation of {@link ActionBarActivity} class. Manages fragments transition depending on 
+ * current application state.
+ */
 public class PhotoFrameActivity extends ActionBarActivity {
 
     @Override
