@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(SychronizedEventSequenceNumberTest)
     TestEventDataProcessor processor;
     EventTransport transport(processor, channelManager, clientState);
 
-    std::map<unsigned int, Event> pevents;
+    std::map<std::int32_t, Event> pevents;
     pevents[1] = createEvent(sn + 1);
     pevents[2] = createEvent(sn);
 
