@@ -70,7 +70,7 @@ void EventManager::produceEvent(const std::string& fqn, const std::vector<std::u
     KAA_LOG_TRACE(boost::format("New event %1% is produced for %2%") % fqn % target);
 
     {
-        KAA_MUTEX_UNIQUE_DECLARE(internal_lock, pendingEventsGuard_);
+        KAA_MUTEX_UNIQUE_DECLARE(internalLock, pendingEventsGuard_);
         pendingEvents_.insert(std::make_pair(currentEventIndex_++, event));
     }
 
@@ -87,7 +87,7 @@ std::map<std::int32_t, Event> EventManager::releasePendingEvents()
     std::map<std::int32_t, Event> result(std::move(pendingEvents_));
     pendingEvents_ = std::map<std::int32_t, Event>();
     currentEventIndex_ = 0;
-    return std::move(result);
+    return result;
 }
 
 bool EventManager::hasPendingEvents() const
@@ -133,7 +133,7 @@ void EventManager::onEventFromServer(const std::string& eventClassFQN, const std
     }
 
     if (!isProcessed) {
-        KAA_LOG_WARN(boost::format("Event '%1%' wasn't processed: could ""not find appropriate family")
+        KAA_LOG_WARN(boost::format("Event '%1%' wasn't processed: could not find appropriate family")
                      % eventClassFQN);
     }
 }
@@ -241,7 +241,7 @@ void EventManager::commit(TransactionIdPtr trxId)
         KAA_MUTEX_UNIQUE_DECLARE(lock, pendingEventsGuard_);
         std::list<Event> & events = it->second;
         for (Event &e : events) {
-            pendingEvents_.insert(std::make_pair(currentEventIndex_++, e));
+            pendingEvents_.insert(std::make_pair(currentEventIndex_++, std::move(e)));
         }
         transactions_.erase(it);
         KAA_UNLOCK(lock);

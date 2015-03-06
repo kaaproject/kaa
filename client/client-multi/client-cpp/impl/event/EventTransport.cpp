@@ -56,15 +56,15 @@ std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_
         KAA_MUTEX_UNIQUE_DECLARE(lock, eventsGuard_);
         if (releasedEvents.size() != 0) {
             auto sNum = clientStatus_->getEventSequenceNumber();
-            for (auto& Pair : releasedEvents) {
-                Pair.second.seqNum = sNum++;
-                events_[requestId].push_back(std::move(Pair.second));
+            for (auto& pair : releasedEvents) {
+                pair.second.seqNum = sNum++;
+                events_[requestId].push_back(std::move(pair.second));
             }
             clientStatus_->setEventSequenceNumber(sNum);
         }
         std::vector<Event> eventsForSending;
-        for (auto& Pair : events_) {
-            for (auto& curEvent : Pair.second) {
+        for (auto& pair : events_) {
+            for (auto& curEvent : pair.second) {
                 eventsForSending.push_back(curEvent);
             }
         }
@@ -73,9 +73,7 @@ std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_
     } else {
         request->events.set_null();
         request->eventSequenceNumberRequest.set_EventSequenceNumberRequest(EventSequenceNumberRequest());
-        KAA_LOG_TRACE(boost::format("Sending event sequence number request: "
-                                    "restored_sn = %li")
-                      % startEventSN_);
+        KAA_LOG_TRACE(boost::format("Sending event sequence number request: restored_sn = %li")% startEventSN_);
     }
     return request;
 }

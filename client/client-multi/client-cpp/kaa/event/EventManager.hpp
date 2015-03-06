@@ -45,10 +45,9 @@ class EventManager : public IEventManager
 {
 public:
     EventManager(IKaaClientStateStoragePtr status)
-        : eventTransport_(nullptr)
+        : currentEventIndex_(0),eventTransport_(nullptr)
         , status_(status)
     {
-        currentEventIndex_ = 0;
     }
 
     virtual void registerEventFamily(IEventFamily* eventFamily);
