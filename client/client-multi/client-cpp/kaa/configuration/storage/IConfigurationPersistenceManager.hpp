@@ -27,8 +27,6 @@
 
 namespace kaa {
 
-typedef std::shared_ptr<IConfigurationStorage> IConfigurationStoragePtr;
-
 /**
  * Interface for configuration persistence manager.
  */

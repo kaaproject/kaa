@@ -109,7 +109,7 @@ HashDigest getPropertiesHash()
         ss << eventFamily.first << eventFamily.second;
     }
 
-    return EndpointObjectHash(ss.str()).getHash();
+    return EndpointObjectHash(ss.str()).getHashDigest();
 }
 
 }
