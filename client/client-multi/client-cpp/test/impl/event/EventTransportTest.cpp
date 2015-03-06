@@ -42,10 +42,10 @@ private:
 
 class TestEventDataProcessor: public IEventDataProcessor {
 public:
-    virtual std::map<unsigned int, Event> releasePendingEvents()
+    virtual std::map<std::int32_t, Event> releasePendingEvents()
     {
         auto pevents = std::move(events_);
-        events_ = std::map<unsigned int, Event>();
+        events_ = std::map<std::int32_t, Event>();
         return pevents;
     }
 
@@ -54,7 +54,7 @@ public:
         return !events_.empty();
     }
 
-    void setPendingEvents(const std::map<unsigned int, Event> & newEvents)
+    void setPendingEvents(const std::map<std::int32_t, Event> & newEvents)
     {
         events_ = newEvents;
     }
@@ -78,7 +78,7 @@ public:
     }
 
 private:
-    std::map<unsigned int, Event> events_;
+    std::map<std::int32_t, Event> events_;
 };
 
 BOOST_AUTO_TEST_SUITE(EventTransportTestSuite)
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(EventTransportSequenceNumberRequestTest)
     TestEventDataProcessor processor;
     EventTransport transport(processor, channelManager, clientState);
 
-    std::map<unsigned int, Event> pevents;
+    std::map<std::int32_t, Event> pevents;
     pevents[1] = Event();
     pevents[2] = Event();
 
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(UnsychronizedEventSequenceNumberTest)
     TestEventDataProcessor processor;
     EventTransport transport(processor, channelManager, clientState);
 
-    std::map<unsigned int, Event> pevents;
+    std::map<std::int32_t, Event> pevents;
     pevents[1] = createEvent(restored_sn + 12);
     pevents[2] = createEvent(restored_sn);
     processor.setPendingEvents(pevents);
