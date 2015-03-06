@@ -50,9 +50,8 @@ void EventManager::produceEvent(const std::string& fqn, const std::vector<std::u
         return;
     }
 
-    KAA_LOG_DEBUG(
-            boost::format("Going to produce Event [FQN: %1%, target: %2%, data_size = %3%]") % fqn
-            % (target.empty() ? "broadcast" : target) % data.size());
+    KAA_LOG_DEBUG(boost::format("Going to produce Event [FQN: %1%, target: %2%, data_size = %3%]") % fqn
+                  % (target.empty() ? "broadcast" : target) % data.size());
 
     Event event;
     event.eventClassFQN = fqn;
@@ -134,8 +133,7 @@ void EventManager::onEventFromServer(const std::string& eventClassFQN, const std
     }
 
     if (!isProcessed) {
-        KAA_LOG_WARN(boost::format("Event '%1%' wasn't processed: could "
-                                   "not find appropriate family")
+        KAA_LOG_WARN(boost::format("Event '%1%' wasn't processed: could ""not find appropriate family")
                      % eventClassFQN);
     }
 }
@@ -183,9 +181,8 @@ void EventManager::onEventListenersReceived(const EventSyncResponse::eventListen
                 // after the user's callback processing.
                 eventListenersRequests_.erase(response.requestId);
             } else {
-                KAA_LOG_WARN(
-                        boost::format("Failed to find requester for event listeners (request id = %1%)") % response
-                                .requestId);
+                KAA_LOG_WARN(boost::format("Failed to find requester for event listeners (request id = %1%)")
+                             % response.requestId);
             }
         }
     }

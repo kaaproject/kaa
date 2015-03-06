@@ -95,7 +95,7 @@ private:
     void generateUniqueRequestId(std::string& requstId);
 private:
     std::set<IEventFamily*>   eventFamilies_;
-    std::map<std::int32_t,Event>          pendingEvents_;
+    std::map<std::int32_t, Event>          pendingEvents_;
     KAA_MUTEX_MUTABLE_DECLARE(pendingEventsGuard_);
 
     std::int32_t currentEventIndex_;

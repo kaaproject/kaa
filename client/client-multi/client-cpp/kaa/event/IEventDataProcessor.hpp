@@ -29,7 +29,7 @@ namespace kaa {
 
 class IEventDataProcessor {
 public:
-    virtual std::map<std::int32_t,Event> releasePendingEvents() = 0;
+    virtual std::map<std::int32_t, Event> releasePendingEvents() = 0;
     virtual bool hasPendingEvents() const  = 0;
     virtual std::map<std::int32_t, std::list<std::string> > getPendingListenerRequests() = 0;
     virtual bool hasPendingListenerRequests() const = 0;
