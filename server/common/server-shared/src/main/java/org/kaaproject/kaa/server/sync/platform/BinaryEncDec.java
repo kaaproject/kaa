@@ -311,13 +311,16 @@ public class BinaryEncDec implements PlatformEncDec {
             buf.put(NOTHING);
             buf.put(uaResponse.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
             buf.put(NOTHING);
-            buf.putShort((short) (uaResponse.getErrorCode() != null ? uaResponse.getErrorCode().ordinal() : 0));
-            if (uaResponse.getErrorReason() != null) {
-                byte[] data = uaResponse.getErrorReason().getBytes(UTF8);
-                buf.putShort((short) data.length);
-                put(buf, data);
-            } else {
-                buf.putShort((short) 0);
+
+            if (uaResponse.getResult() != SyncStatus.SUCCESS) {
+                buf.putShort((short) (uaResponse.getErrorCode() != null ? uaResponse.getErrorCode().ordinal() : 0));
+                if (uaResponse.getErrorReason() != null) {
+                    byte[] data = uaResponse.getErrorReason().getBytes(UTF8);
+                    buf.putShort((short) data.length);
+                    put(buf, data);
+                } else {
+                    buf.putShort((short) 0);
+                }
             }
         }
         if (userSync.getUserAttachNotification() != null) {
