@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<projectsConfig>
+    <project id="photoframe_demo">
+        <name>Photo frame</name>
+        <description>Photo frame application on android platform demonstrating event API</description>
+        <platform>ANDROID</platform>
+        <sourceArchive>android/photoframe_demo.tar.gz</sourceArchive>
+        <projectFolder>photoframe_demo/PhotoFrame</projectFolder>
+        <sdkLibDir>photoframe_demo/PhotoFrame/libs</sdkLibDir>
+        <destBinaryFile>photoframe_demo/PhotoFrame/bin/PhotoFrame-debug.apk</destBinaryFile>
+    </project>
+</projectsConfig>

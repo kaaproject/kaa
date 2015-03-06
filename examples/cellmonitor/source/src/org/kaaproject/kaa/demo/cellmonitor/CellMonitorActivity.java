@@ -19,6 +19,10 @@ package org.kaaproject.kaa.demo.cellmonitor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
+/**
+ * The Class CellMonitorActivity.
+ * Implementation of {@link ActionBarActivity} class. Notifies application about activity lifecycle changes.
+ */
 public class CellMonitorActivity extends ActionBarActivity {
 
     @Override

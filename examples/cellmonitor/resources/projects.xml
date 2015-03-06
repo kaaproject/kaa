@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<projectsConfig>
+    <project id="cellmonitor_demo">
+        <name>Cell monitor</name>
+        <description>Cell monitor application on android platform demonstrating data collection feature</description>
+        <platform>ANDROID</platform>
+        <sourceArchive>android/cellmonitor_demo.tar.gz</sourceArchive>
+        <projectFolder>cellmonitor_demo/CellMonitor</projectFolder>
+        <sdkLibDir>cellmonitor_demo/CellMonitor/libs</sdkLibDir>
+        <destBinaryFile>cellmonitor_demo/CellMonitor/bin/CellMonitor-debug.apk</destBinaryFile>
+    </project>
+</projectsConfig>

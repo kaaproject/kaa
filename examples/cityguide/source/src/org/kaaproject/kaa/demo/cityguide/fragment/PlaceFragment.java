@@ -32,6 +32,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+/**
+ * The Class PlaceFragment.
+ * Implementation of {@link CityGuideFragment} class. 
+ * Represents view with information about place including photo, name and description.
+ * Provides 'Shown on map' button to show place location on map via external activity. 
+ */
 public class PlaceFragment extends CityGuideFragment {
 
     private String mAreaName;

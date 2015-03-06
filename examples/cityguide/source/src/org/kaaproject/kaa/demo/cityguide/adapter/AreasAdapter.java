@@ -29,6 +29,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+/**
+ * The Class AreasAdapter.
+ * Implementation of {@link BaseAdapter} class. Used as adapter class for areas list view.
+ * Provides list item views containing name of each area.
+ */
 public class AreasAdapter extends BaseAdapter {
 
     private Context mContext;

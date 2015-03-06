@@ -28,6 +28,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+/**
+ * The Class CityGuideActivity.
+ * Implementation of {@link ActionBarActivity} class. Notifies application about activity lifecycle changes.
+ * Implements 'Set location' menu command to display {@link SetLocationDialog} and notify application 
+ * with new location.    
+ */
 public class CityGuideActivity extends ActionBarActivity implements
         SetLocationCallback {
 

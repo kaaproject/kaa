@@ -19,8 +19,6 @@
            xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
 	   jxb:extensionBindingPrefixes="xjc"
            jxb:version="2.0"
- targetNamespace="http://kaaproject.org"
- xmlns:tns= "http://kaaproject.org"
  elementFormDefault="qualified">
 
 <xs:annotation>
@@ -42,7 +40,7 @@
   <xs:sequence>
     <xs:element name="name" type="xs:string"/>
     <xs:element name="description" type="xs:string"/>
-    <xs:element name="platform" type="tns:platform"/>
+    <xs:element name="platform" type="platform"/>
     <xs:element name="sourceArchive" type="xs:string"/>
     <xs:element name="projectFolder" type="xs:string"/>
     <xs:element name="sdkLibDir" type="xs:string"/>
@@ -55,7 +53,7 @@
 <xs:element name="projectsConfig">
    <xs:complexType>
      <xs:sequence>
-       <xs:element name="project" type="tns:project" minOccurs="1" maxOccurs="unbounded">
+       <xs:element name="project" type="project" minOccurs="1" maxOccurs="unbounded">
 	 <xs:annotation>
            <xs:appinfo>
               <jxb:property name="projects"/>
@@ -65,5 +63,7 @@
      </xs:sequence>
    </xs:complexType>
 </xs:element>
+
+<xs:element name="project" type="project"/>
  
 </xs:schema>

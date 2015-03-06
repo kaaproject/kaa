@@ -38,6 +38,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+/**
+ * The Class ImageLoader.
+ * Used to asynchronously decode {@link Bitmap} from remote url address and show 
+ * resulting {@link Bitmap} via {@link LoadingImageView}.
+ * Handles {@link Bitmap} caching in {@link MemoryCache} and {@link FileCache}.
+ */
 public class ImageLoader {
 
     private static final String TAG = ImageLoader.class.getSimpleName();

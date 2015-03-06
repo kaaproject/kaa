@@ -35,6 +35,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+/**
+ * The Class Utils.
+ * An utility class which provides static functions to handle show on map requests,
+ * copy streams and query data from city guide configuration object.
+ */
 public class Utils {
     
     private static final String TAG = Utils.class.getSimpleName();

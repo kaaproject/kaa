@@ -20,7 +20,7 @@ import org.kaaproject.kaa.demo.photoframe.AlbumInfo;
 import org.kaaproject.kaa.demo.photoframe.PhotoFrameController;
 import org.kaaproject.kaa.demo.photoframe.PlayInfo;
 import org.kaaproject.kaa.demo.photoframe.R;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -32,7 +32,7 @@ import android.widget.TextView;
 /**
  * The Class AlbumsAdapter.
  * Implementation of {@link BaseAdapter} class. Used as adapter class for albums list view.
- * Provides necessary information about remote device albums.
+ * Provides list item views with information about remote device albums.
  */
 public class AlbumsAdapter extends BaseAdapter {
 
@@ -61,12 +61,13 @@ public class AlbumsAdapter extends BaseAdapter {
         return position;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;
         if (v == null) {
             LayoutInflater inflater = (LayoutInflater) mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);            
             v = inflater.inflate(R.layout.album_list_item, null);
         }
         TextView albumTitleView = (TextView) v.findViewById(R.id.albumTitle);

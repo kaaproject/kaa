@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<projectsConfig>
+    <project id="robotrun_demo_desktop">
+        <name>Robot Run Demo Desktop</name>
+        <description>Robot Run java application to control and visualize labirynth</description>
+        <platform>JAVA</platform>
+        <sourceArchive>java/robotrun_demo.tar.gz</sourceArchive>
+        <projectFolder></projectFolder>
+        <sdkLibDir>lib</sdkLibDir>
+        <destBinaryFile>target/visualization.tar.gz</destBinaryFile>
+    </project>
+    <project id="robotrun_demo_android">
+        <name>Robot Run Demo Android</name>
+        <description>Robot Run android application to control robot</description>
+        <platform>ANDROID</platform>
+        <sourceArchive>android/robotrun_demo.tar.gz</sourceArchive>
+        <projectFolder>robotrun_demo/RobotRun</projectFolder>
+        <sdkLibDir>robotrun_demo/RobotRun/libs</sdkLibDir>
+        <destBinaryFile>robotrun_demo/RobotRun/bin/RobotRun-debug.apk</destBinaryFile>
+    </project>
+</projectsConfig>

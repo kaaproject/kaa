@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.demo.cityguide.fragment;
 
+import org.kaaproject.kaa.demo.cityguide.Category;
 import org.kaaproject.kaa.demo.cityguide.City;
 import org.kaaproject.kaa.demo.cityguide.R;
 import org.kaaproject.kaa.demo.cityguide.adapter.CityPagerAdapter;
@@ -31,6 +32,11 @@ import android.view.ViewGroup;
 
 import com.viewpagerindicator.TabPageIndicator;
 
+/**
+ * The Class CityFragment.
+ * Implementation of {@link CityGuideFragment} class. 
+ * Represents tabs with list views of city places separated by place {@link Category}.
+ */
 public class CityFragment extends CityGuideFragment {
 
     private View mWaitView;
