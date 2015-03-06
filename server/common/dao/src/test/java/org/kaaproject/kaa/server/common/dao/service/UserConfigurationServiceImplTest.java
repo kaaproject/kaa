@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
@@ -24,11 +25,11 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
     public void findUserConfigurationByUserIdAndAppTokenAndSchemaVersionTest() {
         EndpointUserDto userDto = generateEndpointUser(null);
         ApplicationDto appDto = generateApplication();
-        int foundVersion = random.nextInt(Integer.MAX_VALUE);
-        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, foundVersion);
-        generateEndpointUserConfiguration(userDto, appDto, random.nextInt(Integer.MAX_VALUE));
+        ConfigurationSchemaDto schema = generateConfSchema(appDto.getId(), 1).get(0);
+        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, schema);
+        generateEndpointUserConfiguration(userDto, appDto, null);
         generateEndpointUserConfiguration(null, null, null);
-        EndpointUserConfigurationDto found = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), foundVersion);
+        EndpointUserConfigurationDto found = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getMajorVersion());
         Assert.assertEquals(firstUserConfigurationDto, found);
     }
 
@@ -36,8 +37,8 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
     public void findUserConfigurationByUserIdTest() {
         EndpointUserDto userDto = generateEndpointUser(null);
         ApplicationDto appDto = generateApplication();
-        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, random.nextInt(Integer.MAX_VALUE));
-        EndpointUserConfigurationDto secondUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, random.nextInt(Integer.MAX_VALUE));
+        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, null);
+        EndpointUserConfigurationDto secondUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, null);
         List<EndpointUserConfigurationDto> expectedList = new ArrayList<>();
         expectedList.add(firstUserConfigurationDto);
         expectedList.add(secondUserConfigurationDto);
@@ -50,14 +51,18 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
     public void removeByUserIdAndAppTokenAndSchemaVersionTest() {
         EndpointUserDto userDto = generateEndpointUser(null);
         ApplicationDto appDto = generateApplication();
-        int removedVersion = random.nextInt(Integer.MAX_VALUE);
-        generateEndpointUserConfiguration(userDto, appDto, removedVersion);
-        generateEndpointUserConfiguration(userDto, appDto, random.nextInt(Integer.MAX_VALUE));
-        generateEndpointUserConfiguration(userDto, appDto, random.nextInt(Integer.MAX_VALUE));
-        userConfigurationService.removeByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), removedVersion);
-        EndpointUserConfigurationDto removed = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), removedVersion);
+        ConfigurationSchemaDto schema = generateConfSchema(appDto.getId(), 1).get(0);
+        generateEndpointUserConfiguration(userDto, appDto, schema);
+        generateEndpointUserConfiguration(userDto, appDto, null);
+        generateEndpointUserConfiguration(userDto, appDto, null);
+        userConfigurationService.removeByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getMajorVersion());
+        EndpointUserConfigurationDto removed = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getMajorVersion());
         Assert.assertNull(removed);
         List<EndpointUserConfigurationDto> foundList = userConfigurationService.findUserConfigurationByUserId(userDto.getId());
         Assert.assertEquals(2, foundList.size());
+    }
+
+    @Test
+    public void saveUserConfigurationTest() {
     }
 }

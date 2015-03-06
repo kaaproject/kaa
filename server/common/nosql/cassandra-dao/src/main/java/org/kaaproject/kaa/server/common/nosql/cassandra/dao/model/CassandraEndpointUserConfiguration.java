@@ -9,10 +9,7 @@ import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
 
 import java.io.Serializable;
-import java.nio.ByteBuffer;
 
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONF_APP_TOKEN_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONF_BODY_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONF_COLUMN_FAMILY_NAME;
@@ -35,7 +32,7 @@ public class CassandraEndpointUserConfiguration implements EndpointUserConfigura
     @Column(name = EP_USER_CONF_VERSION_PROPERTY)
     private Integer schemaVersion;
     @Column(name = EP_USER_CONF_BODY_PROPERTY)
-    private ByteBuffer body;
+    private String body;
 
     public CassandraEndpointUserConfiguration() {
     }
@@ -44,7 +41,7 @@ public class CassandraEndpointUserConfiguration implements EndpointUserConfigura
         this.userId = dto.getUserId();
         this.appToken = dto.getAppToken();
         this.schemaVersion = dto.getSchemaVersion();
-        this.body = getByteBuffer(dto.getBody());
+        this.body = dto.getBody();
     }
 
     @Override
@@ -77,11 +74,11 @@ public class CassandraEndpointUserConfiguration implements EndpointUserConfigura
         this.schemaVersion = schemaVersion;
     }
 
-    public ByteBuffer getBody() {
+    public String getBody() {
         return body;
     }
 
-    public void setBody(ByteBuffer body) {
+    public void setBody(String body) {
         this.body = body;
     }
 
@@ -89,7 +86,7 @@ public class CassandraEndpointUserConfiguration implements EndpointUserConfigura
     public EndpointUserConfigurationDto toDto() {
         EndpointUserConfigurationDto dto = new EndpointUserConfigurationDto();
         dto.setAppToken(appToken);
-        dto.setBody(getBytes(body));
+        dto.setBody(body);
         dto.setSchemaVersion(schemaVersion);
         dto.setUserId(userId);
         return dto;

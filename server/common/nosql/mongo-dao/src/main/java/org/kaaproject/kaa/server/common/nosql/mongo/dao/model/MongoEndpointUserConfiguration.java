@@ -35,7 +35,7 @@ public class MongoEndpointUserConfiguration implements EndpointUserConfiguration
     @Field(USER_CONF_SCHEMA_VERSION)
     private Integer schemaVersion;
     @Field(USER_CONF_BODY)
-    private byte[] body;
+    private String body;
 
     public MongoEndpointUserConfiguration() {
     }
@@ -44,10 +44,9 @@ public class MongoEndpointUserConfiguration implements EndpointUserConfiguration
         this.userId = dto.getUserId();
         this.appToken = dto.getAppToken();
         this.schemaVersion = dto.getSchemaVersion();
-        this.body = getArrayCopy(dto.getBody());
+        this.body = dto.getBody();
         this.id = userId + ID_DELIMITER + appToken + ID_DELIMITER + schemaVersion;
     }
-
 
     public String getUserId() {
         return userId;
@@ -73,11 +72,11 @@ public class MongoEndpointUserConfiguration implements EndpointUserConfiguration
         this.schemaVersion = schemaVersion;
     }
 
-    public byte[] getBody() {
+    public String getBody() {
         return body;
     }
 
-    public void setBody(byte[] body) {
+    public void setBody(String body) {
         this.body = body;
     }
 
@@ -89,7 +88,7 @@ public class MongoEndpointUserConfiguration implements EndpointUserConfiguration
         MongoEndpointUserConfiguration that = (MongoEndpointUserConfiguration) o;
 
         if (appToken != null ? !appToken.equals(that.appToken) : that.appToken != null) return false;
-        if (!Arrays.equals(body, that.body)) return false;
+        if (body != null ? !body.equals(that.body) : that.body != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (schemaVersion != null ? !schemaVersion.equals(that.schemaVersion) : that.schemaVersion != null)
             return false;
@@ -104,7 +103,7 @@ public class MongoEndpointUserConfiguration implements EndpointUserConfiguration
         result = 31 * result + (userId != null ? userId.hashCode() : 0);
         result = 31 * result + (appToken != null ? appToken.hashCode() : 0);
         result = 31 * result + (schemaVersion != null ? schemaVersion.hashCode() : 0);
-        result = 31 * result + (body != null ? Arrays.hashCode(body) : 0);
+        result = 31 * result + (body != null ? body.hashCode() : 0);
         return result;
     }
 
@@ -115,7 +114,7 @@ public class MongoEndpointUserConfiguration implements EndpointUserConfiguration
                 ", userId='" + userId + '\'' +
                 ", appToken='" + appToken + '\'' +
                 ", schemaVersion=" + schemaVersion +
-                ", body=" + Arrays.toString(body) +
+                ", body='" + body + '\'' +
                 '}';
     }
 
@@ -123,7 +122,7 @@ public class MongoEndpointUserConfiguration implements EndpointUserConfiguration
     public EndpointUserConfigurationDto toDto() {
         EndpointUserConfigurationDto dto = new EndpointUserConfigurationDto();
         dto.setAppToken(appToken);
-        dto.setBody(getArrayCopy(body));
+        dto.setBody(body);
         dto.setSchemaVersion(schemaVersion);
         dto.setUserId(userId);
         return dto;

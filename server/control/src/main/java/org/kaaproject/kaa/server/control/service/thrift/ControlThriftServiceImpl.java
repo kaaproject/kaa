@@ -762,7 +762,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         ucfDto.setUserId(userDto.getId());
         ucfDto = userConfigurationService.saveUserConfiguration(ucfDto);
         
-        EndpointObjectHash hash = EndpointObjectHash.fromBytes(ucfDto.getBody());
+        EndpointObjectHash hash = EndpointObjectHash.fromString(ucfDto.getBody());
         
         checkNeighbors();
         

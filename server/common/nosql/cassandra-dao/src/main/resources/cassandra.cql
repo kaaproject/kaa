@@ -99,6 +99,6 @@ CREATE TABLE IF NOT EXISTS kaa.user_conf (
     user_id text,
     app_token text,
     version int,
-    body blob,
+    body text,
     PRIMARY KEY (user_id, app_token, version)
 );

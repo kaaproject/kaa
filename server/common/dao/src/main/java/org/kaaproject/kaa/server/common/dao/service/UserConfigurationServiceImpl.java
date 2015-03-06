@@ -1,15 +1,29 @@
 package org.kaaproject.kaa.server.common.dao.service;
 
+import org.apache.avro.generic.GenericRecord;
+import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
+import org.kaaproject.kaa.server.common.core.algorithms.validator.DefaultUuidValidator;
+import org.kaaproject.kaa.server.common.core.algorithms.validator.UuidValidator;
+import org.kaaproject.kaa.server.common.core.configuration.KaaData;
+import org.kaaproject.kaa.server.common.core.configuration.OverrideDataFactory;
+import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
+import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 
@@ -17,16 +31,51 @@ import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 public class UserConfigurationServiceImpl implements UserConfigurationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserConfigurationServiceImpl.class);
-
     private EndpointUserConfigurationDao<EndpointUserConfiguration> endpointUserConfigurationDao;
 
+    @Autowired
+    private ApplicationService applicationService;
+    @Autowired
+    private ConfigurationService configurationService;
+
     @Override
-    public EndpointUserConfigurationDto saveUserConfiguration(EndpointUserConfigurationDto dto) {
+    public EndpointUserConfigurationDto saveUserConfiguration(EndpointUserConfigurationDto userConfig) {
         EndpointUserConfigurationDto userConfigurationDto = null;
-        if (dto != null) {
-            userConfigurationDto = getDto(endpointUserConfigurationDao.save(dto));
-        } else {
-            LOG.warn("Invalid user configuration object. Object is empty");
+        if (userConfig != null) {
+            String userConfigBody = userConfig.getBody();
+            if (isNotBlank(userConfigBody)) {
+                String appToken = userConfig.getAppToken();
+                ApplicationDto applicationDto = applicationService.findAppByApplicationToken(appToken);
+                if (applicationDto != null) {
+                    int schemaVersion = userConfig.getSchemaVersion();
+                    ConfigurationSchemaDto schemaDto = configurationService.findConfSchemaByAppIdAndVersion(applicationDto.getId(), schemaVersion);
+                    if (schemaDto != null) {
+                        OverrideSchema overrideSchema = new OverrideSchema(schemaDto.getOverrideSchema());
+                        LOG.debug("Create default UUID validator with override schema: {}", overrideSchema.getRawSchema());
+                        UuidValidator uuidValidator = new DefaultUuidValidator(overrideSchema, new OverrideDataFactory());
+                        GenericAvroConverter<GenericRecord> avroConverter = new GenericAvroConverter<>(overrideSchema.getRawSchema());
+                        try {
+                            GenericRecord configRecord = avroConverter.decodeJson(userConfigBody);
+                            // TODO: Need to use last active configuration instead of null. Will be changed after supporting delta configuration
+                            KaaData body = uuidValidator.validateUuidFields(configRecord, null);
+                            if (body != null) {
+                                userConfig.setBody(body.getRawData());
+                                userConfigurationDto = getDto(endpointUserConfigurationDao.save(userConfig));
+                            } else {
+                                LOG.warn("Validated endpoint user configuration body is empty");
+                            }
+                        } catch (IOException e) {
+                            LOG.error("Invalid endpoint user configuration for override schema.", e);
+                        }
+                    } else {
+                        LOG.warn("Can't find configuration schema with version {} for endpoint user configuration.", schemaVersion);
+                    }
+                } else {
+                    LOG.warn("Can't find application with token {} for endpoint user configuration.", appToken);
+                }
+            } else {
+                LOG.warn("Invalid endpoint user configuration. Configuration body is empty");
+            }
         }
         return userConfigurationDto;
     }

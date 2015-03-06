@@ -571,7 +571,6 @@ public class AbstractTest {
         }
         if (isBlank(schemaId)) {
             schema = generateLogSchema(appId, 1).get(0);
-            schemaId = schema.getId();
         }
         logAppender = new LogAppenderDto();
         logAppender.setApplicationId(appId);
@@ -584,20 +583,20 @@ public class AbstractTest {
         return logAppendersService.saveLogAppender(logAppender);
     }
 
-    protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto, Integer schemaVersion) {
+    protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto, ConfigurationSchemaDto configurationSchema) {
         EndpointUserConfigurationDto configurationDto = new EndpointUserConfigurationDto();
         if (endpointUser == null) {
             endpointUser = generateEndpointUser(null);
         }
-        configurationDto.setUserId(endpointUser.getId());
-        if (schemaVersion == null) {
-            schemaVersion = 1;
-        }
-        configurationDto.setSchemaVersion(schemaVersion);
-        configurationDto.setBody(UUID.randomUUID().toString().getBytes());
         if (applicationDto == null) {
             applicationDto = generateApplication();
         }
+        configurationDto.setUserId(endpointUser.getId());
+        if (configurationSchema == null) {
+            configurationSchema = generateConfSchema(applicationDto.getId(), 1).get(0);
+        }
+        configurationDto.setSchemaVersion(configurationSchema.getMajorVersion());
+        configurationDto.setBody(UUID.randomUUID().toString());
         configurationDto.setAppToken(applicationDto.getApplicationToken());
         endpointUserConfigurationDao.save(configurationDto);
         return configurationDto;
