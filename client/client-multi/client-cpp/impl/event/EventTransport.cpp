@@ -25,10 +25,10 @@
 
 namespace kaa {
 
-EventTransport::EventTransport(IEventDataProcessor& processor
-        , IKaaChannelManager& channelManager, IKaaClientStateStoragePtr state)
-    : AbstractKaaTransport(channelManager), eventDataProcessor_(processor)
-    , startEventSN_(0), isEventSNSynchronized_(false)
+EventTransport::EventTransport(IEventDataProcessor& processor, IKaaChannelManager& channelManager,
+                               IKaaClientStateStoragePtr state)
+        : AbstractKaaTransport(channelManager), eventDataProcessor_(processor), startEventSN_(0),
+          isEventSNSynchronized_(false)
 {
     clientStatus_ = state;
     if (clientStatus_) {
@@ -53,27 +53,29 @@ std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_
     }
     if (isEventSNSynchronized_) {
         auto releasedEvents(eventDataProcessor_.releasePendingEvents());
-        if(releasedEvents.size()!=0) {
-            auto SN =clientStatus_->getEventSequenceNumber();
-            for(auto& Pair_ : releasedEvents) {
-                Pair_.second.seqNum = SN++;
-                clientStatus_->setEventSequenceNumber(SN);
-                events_[requestId].push_back(std::move(Pair_.second));
-               }
+        KAA_MUTEX_UNIQUE_DECLARE(lock, eventsGuard_);
+        if (releasedEvents.size() != 0) {
+            auto sNum = clientStatus_->getEventSequenceNumber();
+            for (auto& Pair : releasedEvents) {
+                Pair.second.seqNum = sNum++;
+                events_[requestId].push_back(std::move(Pair.second));
             }
-           std::vector<Event> events_for_sending;
-           for(auto& Pair_ : events_) {
-               for(auto& Event_ : Pair_.second ) {
-                   events_for_sending.push_back(Event_);
-               }
-           }
-           request->events.set_array(std::move(events_for_sending));
+            clientStatus_->setEventSequenceNumber(sNum);
+        }
+        std::vector<Event> eventsForSending;
+        for (auto& Pair : events_) {
+            for (auto& curEvent : Pair.second) {
+                eventsForSending.push_back(curEvent);
+            }
+        }
+        request->events.set_array(std::move(eventsForSending));
         request->eventSequenceNumberRequest.set_null();
     } else {
         request->events.set_null();
         request->eventSequenceNumberRequest.set_EventSequenceNumberRequest(EventSequenceNumberRequest());
         KAA_LOG_TRACE(boost::format("Sending event sequence number request: "
-                                        "restored_sn = %li") % startEventSN_);
+                                    "restored_sn = %li")
+                      % startEventSN_);
     }
     return request;
 }
@@ -82,23 +84,22 @@ void EventTransport::onEventResponse(const EventSyncResponse& response)
 {
     bool needResync = false;
     if (!isEventSNSynchronized_ && !response.eventSequenceNumberResponse.is_null()) {
-        std::int32_t lastEventSN = response.eventSequenceNumberResponse
-                                    .get_EventSequenceNumberResponse().seqNum;
+        std::int32_t lastEventSN = response.eventSequenceNumberResponse.get_EventSequenceNumberResponse().seqNum;
         std::int32_t expectedEventSN = (lastEventSN > 0 ? lastEventSN + 1 : lastEventSN);
 
         if (startEventSN_ != expectedEventSN) {
             startEventSN_ = expectedEventSN;
-                if (clientStatus_) {
-                    clientStatus_->setEventSequenceNumber(startEventSN_);
-           }
+            if (clientStatus_) {
+                clientStatus_->setEventSequenceNumber(startEventSN_);
+            }
             KAA_LOG_INFO(boost::format("Event sequence number is unsynchronized. Set to %li") % startEventSN_);
         } else {
             KAA_LOG_INFO(boost::format("Event sequence number is up to date: %li") % startEventSN_);
         }
 
         isEventSNSynchronized_ = true;
+        needResync = eventDataProcessor_.hasPendingEvents() || eventDataProcessor_.hasPendingListenerRequests();
     }
-    needResync = eventDataProcessor_.hasPendingEvents() || eventDataProcessor_.hasPendingListenerRequests();
     if (!response.events.is_null()) {
         eventDataProcessor_.onEventsReceived(response.events);
     }
@@ -115,7 +116,7 @@ void EventTransport::onEventResponse(const EventSyncResponse& response)
 void EventTransport::onSyncResponseId(std::int32_t requestId)
 {
     KAA_MUTEX_UNIQUE_DECLARE(lock, eventsGuard_);
-    events_.erase(events_.find(requestId));
+    events_.erase(requestId);
 }
 
 void EventTransport::sync()
@@ -126,6 +127,4 @@ void EventTransport::sync()
 }  // namespace kaa
 
 #endif
-
-
 
