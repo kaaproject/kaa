@@ -59,7 +59,7 @@ public:
 
     virtual void onConfigurationUpdated(const KaaRootConfiguration &configuration)
     {
-        KAA_LOG_TRACE(boost::format("Configuration received: %1%") % configuration.message.get_string());
+        KAA_LOG_TRACE(boost::format("Configuration received: %1%") % (configuration.message.is_null() ? "null" : configuration.message.get_string()));
     }
 
 };
