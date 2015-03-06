@@ -30,9 +30,9 @@ namespace kaa {
 void ConfigurationPersistenceManager::setConfigurationStorage(IConfigurationStoragePtr storage)
 {
     if (storage) {
-//        KAA_MUTEX_LOCKING("confPersistenceGuard_");
-//        KAA_MUTEX_UNIQUE_DECLARE(lock, confPersistenceGuard_);
-//        KAA_MUTEX_LOCKED("confPersistenceGuard_");
+        KAA_MUTEX_LOCKING("confPersistenceGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(lock, confPersistenceGuard_);
+        KAA_MUTEX_LOCKED("confPersistenceGuard_");
 
         storage_ = storage;
         readStoredConfiguration();

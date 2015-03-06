@@ -80,16 +80,17 @@ int main()
 
     // Setupping configuration subunit
 
-    printf("%p\n", &kaaClient.getConfigurationPersistenceManager());
-    kaaClient.getConfigurationPersistenceManager().setConfigurationStorage(std::make_shared<FileConfigurationStorage>("configuration.bin"));
-//    UserConfigurationReceiver receiver;
-//    kaaClient.getConfigurationManager().subscribeForConfigurationChanges(receiver);
+    IConfigurationStoragePtr storage(std::make_shared<FileConfigurationStorage>("configuration.bin"));
+    kaaClient.getConfigurationPersistenceManager().setConfigurationStorage(storage);
+    UserConfigurationReceiver receiver;
+    kaaClient.getConfigurationManager().subscribeForConfigurationChanges(receiver);
 
-//    Kaa::start();
-//
-    sleep(100);
-//
-//    Kaa::stop();
+    Kaa::start();
+
+    for (int i = 0; i < 100; ++i)
+        sleep(1);
+
+    Kaa::stop();
 
     return 0;
 }
