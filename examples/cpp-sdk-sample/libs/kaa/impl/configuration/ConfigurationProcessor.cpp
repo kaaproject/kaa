@@ -34,7 +34,7 @@ void ConfigurationProcessor::processConfigurationData(const std::uint8_t *data, 
     KAA_R_MUTEX_UNIQUE_DECLARE(lock, confProcessorMutex_);
     KAA_MUTEX_LOCKED("confProcessorMutex_");
 
-    KAA_LOG_INFO("Received configuration data.");
+    KAA_LOG_TRACE(boost::format("Received configuration data: %1%") % LoggingUtils::ByteArrayToString(data, dataLength));
 
     AvroByteArrayConverter<KaaRootConfiguration> converter;
     KaaRootConfiguration rootConfiguration;

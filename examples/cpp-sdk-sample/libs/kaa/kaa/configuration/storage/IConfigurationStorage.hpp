@@ -22,6 +22,7 @@
 #ifdef KAA_USE_CONFIGURATION
 
 #include <vector>
+#include <memory>
 #include <cstdint>
 
 namespace kaa {
@@ -50,6 +51,8 @@ public:
      */
     virtual std::vector<std::uint8_t> loadConfiguration() = 0;
 };
+
+typedef std::shared_ptr<IConfigurationStorage> IConfigurationStoragePtr;
 
 }  // namespace kaa
 

@@ -24,7 +24,7 @@ namespace kaa {
 
 void FileConfigurationStorage::saveConfiguration(std::vector<std::uint8_t>&& bytes)
 {
-    std::ofstream outFile(filename_, std::ifstream::binary);
+    std::ofstream outFile(filename_, std::ofstream::binary);
     if (outFile.good()) {
         outFile.write(reinterpret_cast<char *>(bytes.data()), bytes.size());
         outFile.close();
@@ -39,8 +39,8 @@ std::vector<std::uint8_t> FileConfigurationStorage::loadConfiguration()
         result.reserve(inFile.tellg());
         inFile.seekg(0, std::ifstream::beg);
 
-        result.assign(std::istream_iterator<std::uint8_t>(inFile),
-                      std::istream_iterator<std::uint8_t>());
+        result.assign(std::istreambuf_iterator<char>(inFile),
+                      std::istreambuf_iterator<char>());
 
         return result;
     }

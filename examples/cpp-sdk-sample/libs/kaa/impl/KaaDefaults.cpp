@@ -73,7 +73,7 @@ const BootstrapServers& getBootstrapServers()
 
 const Botan::SecureVector<std::uint8_t>& getDefaultConfigData() 
 {
-    static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("AgDHQtTqx6NDjaMsdeDV8oSs");
+    static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("AApIZWxsbwDHQtTqx6NDjaMsdeDV8oSs");
     return configData;
 }
 

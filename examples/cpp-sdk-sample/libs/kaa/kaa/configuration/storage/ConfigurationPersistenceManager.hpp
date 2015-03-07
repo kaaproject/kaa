@@ -81,7 +81,7 @@ private:
     IConfigurationProcessor* processor_;
 
     EndpointObjectHash configurationHash_;
-    bool ignoreConfigurationUpdate_;
+    bool_type ignoreConfigurationUpdate_;
 
     IKaaClientStateStoragePtr state_;
 };
