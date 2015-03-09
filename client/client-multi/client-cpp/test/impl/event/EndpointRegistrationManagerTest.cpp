@@ -19,8 +19,8 @@
 #include <string>
 #include <vector>
 
+#include "kaa/common/exception/BadCredentials.hpp"
 #include "kaa/event/registration/EndpointRegistrationManager.hpp"
-#include "kaa/event/registration/IAttachStatusListener.hpp"
 
 #include "headers/MockKaaClientStateStorage.hpp"
 #include "headers/channel/MockChannelManager.hpp"
@@ -38,6 +38,8 @@ BOOST_AUTO_TEST_CASE(EmptyUserSyncRequestTest)
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     EndpointRegistrationManager registrationManager(status);
 
+    registrationManager.getUserAttachRequest();
+
     BOOST_CHECK_MESSAGE(!registrationManager.getUserAttachRequest(), "User attach request should be empty");
     BOOST_CHECK_MESSAGE(registrationManager.getEndpointsToAttach().empty(), "EP attach request should be empty");
     BOOST_CHECK_MESSAGE(registrationManager.getEndpointsToDetach().empty(), "EP detach request should be empty");
@@ -53,15 +55,15 @@ BOOST_AUTO_TEST_CASE(BadUserCredentialsTest)
     std::string userVerifierToken = "userVerifierToken";
 
     if (!strlen(DEFAULT_USER_VERIFIER_TOKEN)) {
-        BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, userAccessToken), KaaException);
+        BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, userAccessToken), BadCredentials);
     } else {
-        BOOST_CHECK_THROW(registrationManager.attachUser("", userAccessToken), KaaException);
-        BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, ""), KaaException);
+        BOOST_CHECK_THROW(registrationManager.attachUser("", userAccessToken), BadCredentials);
+        BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, ""), BadCredentials);
     }
 
-    BOOST_CHECK_THROW(registrationManager.attachUser("", userAccessToken, userVerifierToken), KaaException);
-    BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, "", userVerifierToken), KaaException);
-    BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, userAccessToken, ""), KaaException);
+    BOOST_CHECK_THROW(registrationManager.attachUser("", userAccessToken, userVerifierToken), BadCredentials);
+    BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, "", userVerifierToken), BadCredentials);
+    BOOST_CHECK_THROW(registrationManager.attachUser(userExternalId, userAccessToken, ""), BadCredentials);
 }
 
 BOOST_AUTO_TEST_CASE(UserAttachRequestTest)
@@ -73,13 +75,13 @@ BOOST_AUTO_TEST_CASE(UserAttachRequestTest)
     UserTransport userTransport(registrationManager, channelManager);
     registrationManager.setTransport(&userTransport);
 
-    std::unique_ptr<MockUserAttachCallback> resultListener(new MockUserAttachCallback);
+    std::shared_ptr<MockUserAttachCallback> resultListener(new MockUserAttachCallback);
 
     std::string userExternalId    = "userExternalId";
     std::string userAccessToken   = "userAccessToken";
     std::string userVerifierToken = "userVerifierToken";
 
-    registrationManager.attachUser(userExternalId, userAccessToken, userVerifierToken, resultListener.get());
+    registrationManager.attachUser(userExternalId, userAccessToken, userVerifierToken, resultListener);
 
     BOOST_CHECK(registrationManager.getUserAttachRequest());
     BOOST_CHECK_EQUAL(registrationManager.getUserAttachRequest()->userExternalId, userExternalId);
@@ -116,7 +118,7 @@ BOOST_AUTO_TEST_CASE(UserAttachResponseTest)
     UserTransport userTransport(registrationManager, channelManager);
     registrationManager.setTransport(&userTransport);
 
-    PersistUserAttachCallback userAttachCallback;
+    std::shared_ptr<PersistUserAttachCallback> userAttachCallback(new PersistUserAttachCallback);
 
     std::string userExternalId    = "userExternalId";
     std::string userAccessToken   = "userAccessToken";
@@ -128,7 +130,7 @@ BOOST_AUTO_TEST_CASE(UserAttachResponseTest)
     /*
      * Firstly user attach request should be created, otherwise a response will be ignored.
      */
-    registrationManager.attachUser(userExternalId, userAccessToken, userVerifierToken, &userAttachCallback);
+    registrationManager.attachUser(userExternalId, userAccessToken, userVerifierToken, userAttachCallback);
     registrationManager.onUserAttach(attachResponse1);
 
     UserAttachErrorCode errorCode = UserAttachErrorCode::TOKEN_EXPIRED;
@@ -142,14 +144,14 @@ BOOST_AUTO_TEST_CASE(UserAttachResponseTest)
     /*
      * Firstly user attach request should be created, otherwise a response will be ignored.
      */
-    registrationManager.attachUser(userExternalId, userAccessToken, userVerifierToken, &userAttachCallback);
+    registrationManager.attachUser(userExternalId, userAccessToken, userVerifierToken, userAttachCallback);
     registrationManager.onUserAttach(attachResponse2);
 
-    BOOST_CHECK_EQUAL(userAttachCallback.on_attach_success_count, 1);
-    BOOST_CHECK_EQUAL(userAttachCallback.on_attach_failed_count, 1);
+    BOOST_CHECK_EQUAL(userAttachCallback->on_attach_success_count, 1);
+    BOOST_CHECK_EQUAL(userAttachCallback->on_attach_failed_count, 1);
 
-    BOOST_CHECK_EQUAL(userAttachCallback.errorCode_, errorCode);
-    BOOST_CHECK_EQUAL(userAttachCallback.reason_, reason);
+    BOOST_CHECK_EQUAL(userAttachCallback->errorCode_, errorCode);
+    BOOST_CHECK_EQUAL(userAttachCallback->reason_, reason);
 }
 
 
@@ -193,8 +195,8 @@ BOOST_AUTO_TEST_CASE(AttachStatusUpdatedTest)
     UserTransport userTransport(registrationManager, channelManager);
     registrationManager.setTransport(&userTransport);
 
-    PersistAttachStatusListener attachStatusListener;
-    registrationManager.setAttachStatusListener(&attachStatusListener);
+    std::shared_ptr<PersistAttachStatusListener> attachStatusListener(new PersistAttachStatusListener);
+    registrationManager.setAttachStatusListener(attachStatusListener);
 
     BOOST_CHECK(!registrationManager.isAttachedToUser());
 
@@ -213,12 +215,12 @@ BOOST_AUTO_TEST_CASE(AttachStatusUpdatedTest)
 
     BOOST_CHECK(!registrationManager.isAttachedToUser());
 
-    BOOST_CHECK_EQUAL(attachStatusListener.on_attach_count, 1);
-    BOOST_CHECK_EQUAL(attachStatusListener.on_detach_count, 1);
+    BOOST_CHECK_EQUAL(attachStatusListener->on_attach_count, 1);
+    BOOST_CHECK_EQUAL(attachStatusListener->on_detach_count, 1);
 
-    BOOST_CHECK_EQUAL(attachStatusListener.userExternalId_, attachNotification.userExternalId);
-    BOOST_CHECK_EQUAL(attachStatusListener.attachEndpointAccessToken_, attachNotification.endpointAccessToken);
-    BOOST_CHECK_EQUAL(attachStatusListener.detachEndpointAccessToken_, detachNotification.endpointAccessToken);
+    BOOST_CHECK_EQUAL(attachStatusListener->userExternalId_, attachNotification.userExternalId);
+    BOOST_CHECK_EQUAL(attachStatusListener->attachEndpointAccessToken_, attachNotification.endpointAccessToken);
+    BOOST_CHECK_EQUAL(attachStatusListener->detachEndpointAccessToken_, detachNotification.endpointAccessToken);
 }
 
 BOOST_AUTO_TEST_CASE(BadCredentialsOfAttachEndpointTest)
@@ -230,7 +232,7 @@ BOOST_AUTO_TEST_CASE(BadCredentialsOfAttachEndpointTest)
     UserTransport userTransport(registrationManager, channelManager);
     registrationManager.setTransport(&userTransport);
 
-    BOOST_CHECK_THROW(registrationManager.attachEndpoint(""), KaaException);
+    BOOST_CHECK_THROW(registrationManager.attachEndpoint(""), BadCredentials);
 }
 
 
@@ -286,8 +288,8 @@ BOOST_AUTO_TEST_CASE(AttachAnotherEndpointTest)
 
     BOOST_CHECK(registrationManager.getEndpointsToAttach().empty());
 
-    PersistAttachEndpointCallback attachEndpointCallback1;
-    PersistAttachEndpointCallback attachEndpointCallback2;
+    std::shared_ptr<PersistAttachEndpointCallback> attachEndpointCallback1(new PersistAttachEndpointCallback);
+    std::shared_ptr<PersistAttachEndpointCallback> attachEndpointCallback2(new PersistAttachEndpointCallback);
 
     size_t requestCount = 0;
 
@@ -297,9 +299,9 @@ BOOST_AUTO_TEST_CASE(AttachAnotherEndpointTest)
     std::string targetEndpointAccessToken2 = "some id 2";
     std::string targetEndpointKeyHash2 = "some key hash 2";
 
-    registrationManager.attachEndpoint(targetEndpointAccessToken1, &attachEndpointCallback1);
+    registrationManager.attachEndpoint(targetEndpointAccessToken1, attachEndpointCallback1);
     ++requestCount;
-    registrationManager.attachEndpoint(targetEndpointAccessToken2, &attachEndpointCallback2);
+    registrationManager.attachEndpoint(targetEndpointAccessToken2, attachEndpointCallback2);
     ++requestCount;
 
     auto attachRequests = registrationManager.getEndpointsToAttach();
@@ -316,13 +318,13 @@ BOOST_AUTO_TEST_CASE(AttachAnotherEndpointTest)
 
     registrationManager.onEndpointsAttach(responses);
 
-    BOOST_CHECK_EQUAL(attachEndpointCallback1.on_attach_success_count, 1);
-    BOOST_CHECK_EQUAL(attachEndpointCallback1.on_attach_failed_count, 0);
-    BOOST_CHECK_EQUAL(attachEndpointCallback1.endpointKeyHash_, targetEndpointKeyHash1);
+    BOOST_CHECK_EQUAL(attachEndpointCallback1->on_attach_success_count, 1);
+    BOOST_CHECK_EQUAL(attachEndpointCallback1->on_attach_failed_count, 0);
+    BOOST_CHECK_EQUAL(attachEndpointCallback1->endpointKeyHash_, targetEndpointKeyHash1);
 
-    BOOST_CHECK_EQUAL(attachEndpointCallback2.on_attach_success_count, 0);
-    BOOST_CHECK_EQUAL(attachEndpointCallback2.on_attach_failed_count, 1);
-    BOOST_CHECK_EQUAL(attachEndpointCallback2.endpointKeyHash_, "");
+    BOOST_CHECK_EQUAL(attachEndpointCallback2->on_attach_success_count, 0);
+    BOOST_CHECK_EQUAL(attachEndpointCallback2->on_attach_failed_count, 1);
+    BOOST_CHECK_EQUAL(attachEndpointCallback2->endpointKeyHash_, "");
 }
 
 BOOST_AUTO_TEST_CASE(BadCredentialsOfDetachEndpointTest)
@@ -334,7 +336,7 @@ BOOST_AUTO_TEST_CASE(BadCredentialsOfDetachEndpointTest)
     UserTransport userTransport(registrationManager, channelManager);
     registrationManager.setTransport(&userTransport);
 
-    BOOST_CHECK_THROW(registrationManager.detachEndpoint(""), KaaException);
+    BOOST_CHECK_THROW(registrationManager.detachEndpoint(""), BadCredentials);
 }
 
 static EndpointDetachResponse constructEndpointDetachResponse(SyncResponseResultType type
@@ -358,17 +360,17 @@ BOOST_AUTO_TEST_CASE(DetachAnotherEndpointTest)
 
     BOOST_CHECK(registrationManager.getEndpointsToAttach().empty());
 
-    MockDetachEndpointCallback detachEndpointCallback1;
-    MockDetachEndpointCallback detachEndpointCallback2;
+    std::shared_ptr<MockDetachEndpointCallback> detachEndpointCallback1(new MockDetachEndpointCallback);
+    std::shared_ptr<MockDetachEndpointCallback> detachEndpointCallback2(new MockDetachEndpointCallback);
 
     size_t requestCount = 0;
 
     std::string targetEndpointKeyHash1 = "some key hash 1";
     std::string targetEndpointKeyHash2 = "some key hash 2";
 
-    registrationManager.detachEndpoint(targetEndpointKeyHash1, &detachEndpointCallback1);
+    registrationManager.detachEndpoint(targetEndpointKeyHash1, detachEndpointCallback1);
     ++requestCount;
-    registrationManager.detachEndpoint(targetEndpointKeyHash2, &detachEndpointCallback2);
+    registrationManager.detachEndpoint(targetEndpointKeyHash2, detachEndpointCallback2);
     ++requestCount;
 
     auto detachRequests = registrationManager.getEndpointsToDetach();
@@ -383,11 +385,11 @@ BOOST_AUTO_TEST_CASE(DetachAnotherEndpointTest)
 
     registrationManager.onEndpointsDetach(responses);
 
-    BOOST_CHECK_EQUAL(detachEndpointCallback1.on_detach_success_count, 1);
-    BOOST_CHECK_EQUAL(detachEndpointCallback1.on_detach_failed_count, 0);
+    BOOST_CHECK_EQUAL(detachEndpointCallback1->on_detach_success_count, 1);
+    BOOST_CHECK_EQUAL(detachEndpointCallback1->on_detach_failed_count, 0);
 
-    BOOST_CHECK_EQUAL(detachEndpointCallback2.on_detach_success_count, 0);
-    BOOST_CHECK_EQUAL(detachEndpointCallback2.on_detach_failed_count, 1);
+    BOOST_CHECK_EQUAL(detachEndpointCallback2->on_detach_success_count, 0);
+    BOOST_CHECK_EQUAL(detachEndpointCallback2->on_detach_failed_count, 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

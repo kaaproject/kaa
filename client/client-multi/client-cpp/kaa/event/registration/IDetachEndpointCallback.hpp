@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-#ifndef KAA_EVENT_REGISTRATION_IDETACHENDPOINTCALLBACK_HPP_
-#define KAA_EVENT_REGISTRATION_IDETACHENDPOINTCALLBACK_HPP_
+#ifndef IDETACHENDPOINTCALLBACK_HPP_
+#define IDETACHENDPOINTCALLBACK_HPP_
+
+#ifdef KAA_USE_EVENTS
+
+#include <memory>
 
 namespace kaa {
 
@@ -40,6 +44,10 @@ public:
     virtual ~IDetachEndpointCallback() {}
 };
 
+typedef std::shared_ptr<IDetachEndpointCallback> IDetachEndpointCallbackPtr;
+
 } /* namespace kaa */
 
-#endif /* KAA_EVENT_REGISTRATION_IDETACHENDPOINTCALLBACK_HPP_ */
+#endif /* KAA_USE_EVENTS */
+
+#endif /* IDETACHENDPOINTCALLBACK_HPP_ */

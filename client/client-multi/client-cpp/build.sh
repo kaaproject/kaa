@@ -77,7 +77,6 @@ case "$cmd" in
     run_tests
     if [[ $TEST_BUILD_FAILED -eq 0 ]]
     then
-        echo "Kaa C++ SDK unittests have successfully passed!"
         measure_coverage  
     fi
     test_cleanup

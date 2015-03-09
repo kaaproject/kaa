@@ -17,6 +17,11 @@
 #ifndef IATTACHENDPOINTCALLBACK_HPP_
 #define IATTACHENDPOINTCALLBACK_HPP_
 
+#ifdef KAA_USE_EVENTS
+
+#include <string>
+#include <memory>
+
 namespace kaa {
 
 /**
@@ -42,6 +47,10 @@ public:
     virtual ~IAttachEndpointCallback() {}
 };
 
+typedef std::shared_ptr<IAttachEndpointCallback> IAttachEndpointCallbackPtr;
+
 } /* namespace kaa */
+
+#endif /* KAA_USE_EVENTS */
 
 #endif /* IATTACHENDPOINTCALLBACK_HPP_ */
