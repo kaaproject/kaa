@@ -2271,7 +2271,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public void edittUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException {
+    public void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             checkApplicationToken(endpointUserConfiguration.getAppToken());

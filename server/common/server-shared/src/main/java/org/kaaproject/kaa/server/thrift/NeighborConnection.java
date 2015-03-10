@@ -92,7 +92,7 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
 
     /** Future list of event workers */
     private List<Future<?>> workers;
-    
+
     private boolean started;
 
     /**
@@ -172,7 +172,7 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
     }
 
     public synchronized void start() {
-        if(!started){
+        if (!started) {
             executor = Executors.newFixedThreadPool(getMaxNumberConnection());
             messageQueue = new LinkedBlockingQueue<>(messageQueueLingth);
             workers = new LinkedList<>();
@@ -187,6 +187,8 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
                 workers.add(executor.submit(worker));
             }
             started = true;
+        } else {
+            LOG.debug("Neighbor Connection {} is already started", getId());
         }
     }
 
@@ -194,7 +196,7 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
      * Stops neighbor Operations server connections.
      */
     public synchronized void shutdown() {
-        if(started){
+        if (started) {
             cancelWorkers();
             executor.shutdown();
             try {
@@ -204,6 +206,8 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
             }
             thrift.close();
             started = false;
+        } else {
+            LOG.debug("Neighbor Connection {} is already stopped or was not started yet", getId());
         }
     }
 

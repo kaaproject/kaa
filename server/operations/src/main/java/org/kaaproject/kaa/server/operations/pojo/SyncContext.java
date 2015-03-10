@@ -52,6 +52,8 @@ public class SyncContext {
 
     private boolean userConfigurationChanged;
 
+    private byte[] userConfigurationHash;
+
     /** The subscription states. */
     private Map<String, Integer> subscriptionStates;
 
@@ -305,5 +307,17 @@ public class SyncContext {
 
     public boolean isUserConfigurationChanged() {
         return userConfigurationChanged;
+    }
+
+    public byte[] getUserConfigurationHash() {
+        if (userConfigurationChanged) {
+            return userConfigurationHash;
+        } else {
+            return endpointProfile.getUserConfigurationHash();
+        }
+    }
+
+    public void setUserConfigurationHash(byte[] userConfigurationHash) {
+        this.userConfigurationHash = userConfigurationHash;
     }
 }

@@ -1080,7 +1080,7 @@ public class KaaAdminController {
     @RequestMapping(value="userConfiguration", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     public void editEndpointGroup(@RequestBody EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException {
-        kaaAdminService.edittUserConfiguration(endpointUserConfiguration);
+        kaaAdminService.editUserConfiguration(endpointUserConfiguration);
     }
 
     /**

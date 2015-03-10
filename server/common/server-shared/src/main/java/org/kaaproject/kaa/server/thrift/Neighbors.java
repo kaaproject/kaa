@@ -141,12 +141,12 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
 
             @Override
             public void onNodeUpdated(OperationsNodeInfo nodeInfo) {
-                String opId = getServerID(nodeInfo.getConnectionInfo());
-                if (!zkId.equals(opId)) {
-                    neigbors.putIfAbsent(opId,
-                            new NeighborConnection<T, V>(nodeInfo.getConnectionInfo(), maxNumberNeighborConnections, template)).start();
-                    LOG.info("Operations server {} added to {} Neighbors list ({}). Now {} neighbors", opId, neigbors.size());
-                }
+                addOpsServer(nodeInfo);
+            }
+
+            @Override
+            public void onNodeAdded(OperationsNodeInfo nodeInfo) {
+                addOpsServer(nodeInfo);
             }
 
             @Override
@@ -160,27 +160,23 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
                     LOG.info("Operations server {} removed to {} Neighbors list ({}). Now {} neighbors", opId, neigbors.size());
                 }
             }
-
-            @Override
-            public void onNodeAdded(OperationsNodeInfo nodeInfo) {
-                String opId = getServerID(nodeInfo.getConnectionInfo());
-                if (!zkId.equals(opId)) {
-                    neigbors.putIfAbsent(opId,
-                            new NeighborConnection<T, V>(nodeInfo.getConnectionInfo(), maxNumberNeighborConnections, template)).start();
-                    LOG.info("Operations server {} added to {} Neighbors list ({}). Now {} neighbors", opId, neigbors.size());
-                }
-            }
         });
 
         List<OperationsNodeInfo> nodes = zkNode.getCurrentOperationServerNodes();
         for (OperationsNodeInfo opServer : nodes) {
-            String opId = getServerID(opServer.getConnectionInfo());
-            if (!zkId.equals(opId)) {
-                neigbors.putIfAbsent(opId,
-                        new NeighborConnection<T, V>(opServer.getConnectionInfo(), maxNumberNeighborConnections, template)).start();
-                LOG.info("Operations server {} added to Neighbors list.", opId, zkId);
-            }
+            addOpsServer(opServer);
         }
         LOG.debug("Neighbor zk init complete: {} neighbors registered.", neigbors.size());
+    }
+
+    private void addOpsServer(OperationsNodeInfo opServer) {
+        LOG.trace("[{}] Building id for {}", zkId, opServer.getConnectionInfo());
+        String opId = getServerID(opServer.getConnectionInfo());
+        if (!zkId.equals(opId)) {
+            LOG.trace("Adding {} to {}", opId, neigbors);
+            neigbors.putIfAbsent(opId, new NeighborConnection<T, V>(opServer.getConnectionInfo(), maxNumberNeighborConnections, template));
+            neigbors.get(opId).start();
+            LOG.info("Operations server {} added to {} Neighbors list. Now {} neighbors", opId, zkId, neigbors.size());
+        }
     }
 }

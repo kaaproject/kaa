@@ -91,6 +91,9 @@ public class ESTestOperationsService implements OperationsService {
         return null;
     }
 
-
-
+    @Override
+    public byte[] fetchUcfHash(String appToken, EndpointProfileDto profile) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

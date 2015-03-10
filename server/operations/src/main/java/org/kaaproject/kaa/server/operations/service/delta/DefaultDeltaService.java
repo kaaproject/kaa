@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.operations.service.delta;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -76,8 +75,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class DefaultDeltaService implements DeltaService {
-
-    private static final Charset UTF_8 = Charset.forName("UTF-8");
 
     /** The Constant logger. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultDeltaService.class);
@@ -153,12 +150,12 @@ public class DefaultDeltaService implements DeltaService {
             }
             DeltaCacheKey deltaKey;
             if (resync) {
-                deltaKey = new DeltaCacheKey(appConfigVersionKey, EndpointObjectHash.fromBytes(profile.getUserConfigurationHash()),
-                        endpointGroups, null, request.isResyncOnly());
+                deltaKey = new DeltaCacheKey(appConfigVersionKey, endpointGroups, 
+                        EndpointObjectHash.fromBytes(request.getUserConfigurationHash()), null, request.isResyncOnly());
                 LOG.debug("[{}] Building resync delta key {}", endpointId, deltaKey);
             } else {
-                deltaKey = new DeltaCacheKey(appConfigVersionKey, EndpointObjectHash.fromBytes(profile.getUserConfigurationHash()),
-                        endpointGroups, request.getConfigurationHash());
+                deltaKey = new DeltaCacheKey(appConfigVersionKey, endpointGroups, 
+                        EndpointObjectHash.fromBytes(request.getUserConfigurationHash()), request.getConfigurationHash());
                 LOG.debug("[{}] Building regular delta key {}", endpointId, deltaKey);
             }
 
@@ -183,6 +180,8 @@ public class DefaultDeltaService implements DeltaService {
             profile.setConfigurationHash(configurationHash);
             if (deltaCacheEntry.getUserConfigurationHash() != null) {
                 profile.setUserConfigurationHash(deltaCacheEntry.getUserConfigurationHash().getData());
+            } else {
+                profile.setUserConfigurationHash(null);
             }
         } else {
             LOG.debug("[{}] No changes to current application group configurations was maid -> no delta", endpointId);
@@ -228,8 +227,7 @@ public class DefaultDeltaService implements DeltaService {
 
         final DeltaCacheKey newKey;
         if (userConfiguration != null) {
-            newKey = new DeltaCacheKey(deltaKey.getAppConfigVersionKey(), EndpointObjectHash.fromString(userConfiguration.getBody()),
-                    deltaKey.getEndpointGroups(), deltaKey.getEndpointConfHash());
+            newKey = new DeltaCacheKey(deltaKey.getAppConfigVersionKey(), deltaKey.getEndpointGroups(), EndpointObjectHash.fromString(userConfiguration.getBody()), deltaKey.getEndpointConfHash(), deltaKey.isResyncOnly());
         } else {
             newKey = deltaKey;
         }
@@ -250,7 +248,8 @@ public class DefaultDeltaService implements DeltaService {
                                 userConfigurationHash = EndpointObjectHash.fromString(userConfiguration.getBody());
                             }
 
-                            BaseData mergedConfiguration = getMergedConfiguration(endpointId, userConfiguration, deltaKey);
+                            BaseData mergedConfiguration = getMergedConfiguration(endpointId, userConfiguration, deltaKey,
+                                    latestConfigurationSchema);
 
                             LOG.trace("[{}] Merged configuration {}", endpointId, mergedConfiguration.getRawData());
 
@@ -296,17 +295,16 @@ public class DefaultDeltaService implements DeltaService {
             userConfiguration = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userId, deltaKey
                     .getAppConfigVersionKey().getApplicationToken(), deltaKey.getAppConfigVersionKey().getVersion());
             if (userConfiguration != null) {
-                LOG.debug("User specific configuration found for user {}", userConfiguration.getUserId());
+                LOG.debug("[{}] User specific configuration found", userId);
             } else {
-                LOG.debug("No user configuration found for user");
+                LOG.debug("[{}] No user configuration found ", userId);
             }
         }
         return userConfiguration;
     }
 
     private BaseData processEndpointGroups(List<EndpointGroupDto> endpointGroups, List<ConfigurationDto> configurations,
-            ConfigurationSchemaDto configurationSchema, EndpointUserConfigurationDto userConfiguration) throws OverrideException,
-            IOException {
+            ConfigurationSchemaDto configurationSchema) throws OverrideException, IOException {
         // create sorted map to store configurations sorted by endpoint group
         // weight
         // put all endpoint groups as keys into the map
@@ -334,10 +332,6 @@ public class DefaultDeltaService implements DeltaService {
             }
         }
 
-        if (userConfiguration != null) {
-            overrideConfigs.add(new OverrideData(overrideSchema, userConfiguration.getBody()));
-        }
-
         OverrideAlgorithm configurationMerger = configurationOverrideFactory.createConfigurationOverrideAlgorithm();
         return configurationMerger.override(baseConfig, overrideConfigs);
     }
@@ -352,47 +346,64 @@ public class DefaultDeltaService implements DeltaService {
      * @throws GetDeltaException
      */
     private BaseData getMergedConfiguration(final String endpointId, final EndpointUserConfigurationDto userConfiguration,
-            final DeltaCacheKey cacheKey) throws GetDeltaException {
+            final DeltaCacheKey cacheKey, ConfigurationSchemaDto latestConfigurationSchema) throws GetDeltaException {
         final List<EndpointGroupStateDto> egsList = cacheKey.getEndpointGroups();
-        return cacheService.getMergedConfiguration(egsList, new Computable<List<EndpointGroupStateDto>, BaseData>() {
+        BaseData mergedConfiguration = cacheService.getMergedConfiguration(egsList,
+                new Computable<List<EndpointGroupStateDto>, BaseData>() {
 
-            @Override
-            public BaseData compute(List<EndpointGroupStateDto> key) {
-                LOG.trace("[{}] getMergedConfiguration.compute begin", endpointId);
-                try {
-                    List<EndpointGroupDto> endpointGroups = new ArrayList<>();
-                    List<ConfigurationDto> configurations = new ArrayList<>();
-                    ConfigurationSchemaDto configurationSchema = null;
-                    for (EndpointGroupStateDto egs : egsList) {
-                        EndpointGroupDto endpointGroup = null;
-                        if (!StringUtils.isBlank(egs.getEndpointGroupId())) {
-                            endpointGroup = endpointService.findEndpointGroupById(egs.getEndpointGroupId());
-                        }
-                        if (endpointGroup != null) {
-                            endpointGroups.add(endpointGroup);
-                        }
+                    @Override
+                    public BaseData compute(List<EndpointGroupStateDto> key) {
+                        LOG.trace("[{}] getMergedConfiguration.compute begin", endpointId);
+                        try {
+                            List<EndpointGroupDto> endpointGroups = new ArrayList<>();
+                            List<ConfigurationDto> configurations = new ArrayList<>();
+                            ConfigurationSchemaDto configurationSchema = null;
+                            for (EndpointGroupStateDto egs : egsList) {
+                                EndpointGroupDto endpointGroup = null;
+                                if (!StringUtils.isBlank(egs.getEndpointGroupId())) {
+                                    endpointGroup = endpointService.findEndpointGroupById(egs.getEndpointGroupId());
+                                }
+                                if (endpointGroup != null) {
+                                    endpointGroups.add(endpointGroup);
+                                }
 
-                        ConfigurationDto configuration = null;
-                        if (!StringUtils.isBlank(egs.getConfigurationId())) {
-                            configuration = configurationService.findConfigurationById(egs.getConfigurationId());
-                        }
-                        if (configuration != null) {
-                            configurations.add(configuration);
-                        }
+                                ConfigurationDto configuration = null;
+                                if (!StringUtils.isBlank(egs.getConfigurationId())) {
+                                    configuration = configurationService.findConfigurationById(egs.getConfigurationId());
+                                }
+                                if (configuration != null) {
+                                    configurations.add(configuration);
+                                }
 
-                        if (configurationSchema == null && configuration != null) {
-                            configurationSchema = configurationService.findConfSchemaById(configuration.getSchemaId());
+                                if (configurationSchema == null && configuration != null) {
+                                    configurationSchema = configurationService.findConfSchemaById(configuration.getSchemaId());
+                                }
+                            }
+                            return processEndpointGroups(endpointGroups, configurations, configurationSchema);
+                        } catch (OverrideException | IOException oe) {
+                            LOG.error("[{}] Unexpected exception occurred while merging configuration: ", endpointId, oe);
+                            throw new RuntimeException(oe); // NOSONAR
+                        } finally {
+                            LOG.trace("[{}] getMergedGroupConfiguration.compute end", endpointId);
                         }
                     }
-                    return processEndpointGroups(endpointGroups, configurations, configurationSchema, userConfiguration);
-                } catch (OverrideException | IOException oe) {
-                    LOG.error("[{}] Unexpected exception occurred while merging configuration: ", endpointId, oe);
-                    throw new RuntimeException(oe); // NOSONAR
-                } finally {
-                    LOG.trace("[{}] getMergedConfiguration.compute end", endpointId);
-                }
+                });
+
+        if (userConfiguration != null) {
+            OverrideAlgorithm configurationMerger = configurationOverrideFactory.createConfigurationOverrideAlgorithm();
+            OverrideSchema overrideSchema = new OverrideSchema(latestConfigurationSchema.getOverrideSchema());
+            try {
+                LOG.trace("Merging group configuration with user configuration: {}", userConfiguration.getBody());
+                mergedConfiguration = configurationMerger.override(mergedConfiguration,
+                        Collections.singletonList(new OverrideData(overrideSchema, userConfiguration.getBody())));
+            } catch (OverrideException | IOException oe) {
+                LOG.error("[{}] Unexpected exception occurred while merging configuration: ", endpointId, oe);
+                throw new GetDeltaException(oe);
+            } finally {
+                LOG.trace("[{}] getMergedConfiguration.compute end", endpointId);
             }
-        });
+        }
+        return mergedConfiguration;
     }
 
     /**

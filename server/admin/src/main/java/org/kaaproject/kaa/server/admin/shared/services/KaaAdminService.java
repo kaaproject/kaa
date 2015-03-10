@@ -297,6 +297,6 @@ public interface KaaAdminService extends RemoteService {
     
     public List<PluginInfoDto> getUserVerifierPluginInfos() throws KaaAdminServiceException;
 
-    public void edittUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException;
+    public void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException;
 
 }

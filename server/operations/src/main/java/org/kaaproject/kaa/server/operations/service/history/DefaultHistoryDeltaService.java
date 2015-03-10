@@ -100,7 +100,18 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
         HistoryDelta historyDelta = new HistoryDelta();
 
         if (oldAppSeqNumber == curAppSeqNumber) {
-            historyDelta.setEndpointGroupStates(new ArrayList<EndpointGroupStateDto>());
+            if(subject == HistorySubject.CONFIGURATION){
+                if(profile.getCfGroupStates() != null){
+                    historyDelta.setEndpointGroupStates(profile.getCfGroupStates());
+                }
+            }else{
+                if(profile.getNfGroupStates() != null){
+                    historyDelta.setEndpointGroupStates(profile.getCfGroupStates());
+                }
+            }
+            if(historyDelta.getEndpointGroupStates() == null){
+                historyDelta.setEndpointGroupStates(new ArrayList<EndpointGroupStateDto>());
+            }
             return historyDelta;
         }
 

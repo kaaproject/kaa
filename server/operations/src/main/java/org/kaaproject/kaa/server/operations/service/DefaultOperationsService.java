@@ -27,11 +27,13 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
+import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaRequest;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaResponse;
 import org.kaaproject.kaa.server.operations.pojo.GetNotificationRequest;
@@ -109,6 +111,9 @@ public class DefaultOperationsService implements OperationsService {
 
     @Autowired
     EndpointUserService endpointUserService;
+
+    @Autowired
+    UserConfigurationService userConfigurationService;
 
     private String operationServerHash;
 
@@ -191,7 +196,7 @@ public class DefaultOperationsService implements OperationsService {
             request.setAppStateSeqNumber(startSeqNumber);
             HistoryDelta historyDelta = fetchHistory(context.getEndpointKey(), context.getRequestHash(), md.getApplicationToken(), profile,
                     HistorySubject.CONFIGURATION, startSeqNumber, curAppSeqNumber);
-            GetDeltaResponse confResponse = calculateConfigurationDelta(md, request, profile, historyDelta, curAppSeqNumber, context.isUserConfigurationChanged());
+            GetDeltaResponse confResponse = calculateConfigurationDelta(md, request, context, historyDelta, curAppSeqNumber);
             ConfigurationServerSync confSyncResponse = buildConfSyncResponse(confResponse, curAppSeqNumber);
             context.setConfigurationSyncResponse(confSyncResponse);
 
@@ -209,7 +214,7 @@ public class DefaultOperationsService implements OperationsService {
 
     @Override
     public SyncContext syncNotification(SyncContext context, NotificationClientSync request) {
-        if (request!= null) {
+        if (request != null) {
             EndpointProfileDto profile = context.getEndpointProfile();
             ClientSyncMetaData md = context.getMetaData();
             AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(md.getApplicationToken());
@@ -217,7 +222,7 @@ public class DefaultOperationsService implements OperationsService {
                 context.setAppSeqNumber(appSeqNumber);
             }
             int curAppSeqNumber = appSeqNumber.getSeqNumber();
-    
+
             LOG.trace("[{}][{}] procesing notification sync request {}.", context.getEndpointKey(), context.getRequestHash(), request);
             LOG.debug("[{}][{}] fetching history for seq numbers {}-{}", context.getEndpointKey(), context.getRequestHash(),
                     request.getAppStateSeqNumber(), curAppSeqNumber);
@@ -230,7 +235,7 @@ public class DefaultOperationsService implements OperationsService {
             context.setSubscriptionStates(notificationResponse.getSubscriptionStates());
             NotificationServerSync nfSyncResponse = buildNotificationSyncResponse(notificationResponse, curAppSeqNumber);
             context.setNotificationSyncResponse(nfSyncResponse);
-    
+
             context.setUpdateProfileRequired(context.isUpdateProfileRequired() || notificationResponse.isSubscriptionListChanged());
             if (historyDelta.isSmthChanged() || SyncResponseStatus.NO_DELTA != nfSyncResponse.getResponseStatus()) {
                 List<EndpointGroupStateDto> endpointGroups = historyDelta.getEndpointGroupStates();
@@ -261,6 +266,20 @@ public class DefaultOperationsService implements OperationsService {
             context.setEndpointProfile(profileService.updateProfile(profile));
         }
         return context.getEndpointProfile();
+    }
+
+    @Override
+    public byte[] fetchUcfHash(String appToken, EndpointProfileDto profile) {
+        if (profile.getEndpointUserId() == null || profile.getEndpointUserId().isEmpty()) {
+            return null;
+        }
+        EndpointUserConfigurationDto ucfDto = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(
+                profile.getEndpointUserId(), appToken, profile.getConfigurationVersion());
+        if (ucfDto == null) {
+            return null;
+        } else {
+            return EndpointObjectHash.fromString(ucfDto.getBody()).getData();
+        }
     }
 
     private EndpointProfileDto registerEndpoint(String endpointId, int requestHash, ClientSyncMetaData metaData, ProfileClientSync request) {
@@ -509,8 +528,8 @@ public class DefaultOperationsService implements OperationsService {
      * @throws GetDeltaException
      *             the get delta exception
      */
-    private GetDeltaResponse calculateConfigurationDelta(ClientSyncMetaData metaData, ConfigurationClientSync request,
-            EndpointProfileDto profile, HistoryDelta historyDelta, int curAppSeqNumber, boolean userConfigurationChanged) throws GetDeltaException {
+    private GetDeltaResponse calculateConfigurationDelta(ClientSyncMetaData metaData, ConfigurationClientSync request, SyncContext context,
+            HistoryDelta historyDelta, int curAppSeqNumber) throws GetDeltaException {
         GetDeltaRequest deltaRequest;
         if (request.getConfigurationHash() != null) {
             deltaRequest = new GetDeltaRequest(metaData.getApplicationToken(), EndpointObjectHash.fromBytes(request.getConfigurationHash()
@@ -518,8 +537,9 @@ public class DefaultOperationsService implements OperationsService {
         } else {
             deltaRequest = new GetDeltaRequest(metaData.getApplicationToken(), request.getAppStateSeqNumber());
         }
-        deltaRequest.setEndpointProfile(profile);
-        deltaRequest.setUserConfigurationChanged(userConfigurationChanged);
+        deltaRequest.setEndpointProfile(context.getEndpointProfile());
+        deltaRequest.setUserConfigurationChanged(context.isUserConfigurationChanged());
+        deltaRequest.setUserConfigurationHash(context.getUserConfigurationHash());
         return deltaService.getDelta(deltaRequest, historyDelta, curAppSeqNumber);
     }
 

@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.control.service.thrift;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.text.MessageFormat;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -52,7 +53,7 @@ public class ControlThriftServiceAspect {
         try {
             retVal = pjp.proceed();
         } catch (Exception t) {
-            LOG.error("Unhandled exception: " + t.getMessage());
+            LOG.error(MessageFormat.format("Unhandled exception: {0}", t.getMessage()), t);
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             PrintWriter writer = new PrintWriter(outStream);
             t.printStackTrace(writer); //NOSONAR

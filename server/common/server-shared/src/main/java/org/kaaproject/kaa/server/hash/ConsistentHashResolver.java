@@ -19,6 +19,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -30,7 +31,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 
- * Implementation of {@link OperationServerResolver} based on consistent hash function and MD5 digest.
+ * Implementation of {@link OperationServerResolver} based on consistent hash
+ * function and MD5 digest.
  * 
  * @author Andrew Shvayka
  *
@@ -42,10 +44,10 @@ public class ConsistentHashResolver implements OperationServerResolver {
     private static final int SIZE_OF_INT = 4;
     private static final String MD5 = "MD5";
     private static final Charset UTF8 = Charset.forName("UTF-8");
-    private static final ThreadLocal<MessageDigest> md5 = new ThreadLocal<MessageDigest>(){
+    private static final ThreadLocal<MessageDigest> md5 = new ThreadLocal<MessageDigest>() {
         @Override
         protected MessageDigest initialValue() {
-            try{
+            try {
                 return MessageDigest.getInstance(MD5);
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
@@ -57,7 +59,7 @@ public class ConsistentHashResolver implements OperationServerResolver {
 
     public ConsistentHashResolver(List<OperationsNodeInfo> nodes, int replicas) {
         this.replicas = replicas;
-        this.circle = new ConcurrentSkipListMap<byte[], OperationsNodeInfo>();
+        this.circle = new ConcurrentSkipListMap<byte[], OperationsNodeInfo>(new ByteArrayComparator());
     }
 
     @Override
@@ -68,7 +70,7 @@ public class ConsistentHashResolver implements OperationServerResolver {
     @Override
     public void addNode(OperationsNodeInfo node) {
         for (int i = 0; i < replicas; i++) {
-            LOG.trace("Adding node {} replica {} to the circle", node, i);
+            LOG.trace("Adding node {} replica {} to the circle", node.getConnectionInfo(), i);
             circle.put(hash(node, i), node);
         }
     }
@@ -76,7 +78,7 @@ public class ConsistentHashResolver implements OperationServerResolver {
     @Override
     public void removeNode(OperationsNodeInfo node) {
         for (int i = 0; i < replicas; i++) {
-            LOG.trace("Adding node {} replica {} to the circle", node, i);
+            LOG.trace("Removing node {} replica {} from the circle", node.getConnectionInfo(), i);
             circle.remove(hash(node, i));
         }
     }
@@ -109,5 +111,31 @@ public class ConsistentHashResolver implements OperationServerResolver {
 
     private byte[] hash(String data) {
         return md5.get().digest(data.getBytes(UTF8));
+    }
+    
+    private final class ByteArrayComparator implements Comparator<byte[]> {
+        @Override
+        public int compare(byte[] a1, byte[] a2) {
+            if (a1 == a2) {
+                return 0;
+            } else {
+                if (a1 == null){
+                    return -1;
+                }
+                if (a2 == null){
+                    return 1;
+                }
+                if (a1.length == a2.length){
+                    for(int i = 0; i < a1.length; i++){
+                        if(a1[i] != a2[i]){
+                            return a1[i] - a2[i];
+                        }
+                    }
+                    return 0;
+                }else{
+                    return a1.length - a2.length;
+                }
+            }
+        }
     }
 }

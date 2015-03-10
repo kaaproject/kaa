@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -165,7 +166,8 @@ public class EndpointActorMessageProcessor {
 
     public void processStateUpdate(ActorContext context, EndpointStateUpdateMessage message) {
         if (message.getUpdate() != null) {
-            state.setUserConfigurationUpdatePending(true);
+            byte[] ucfHash = message.getUpdate().getHash();
+            state.setUcfHash(ucfHash);
             syncChannels(context, state.getChannelsByTypes(TransportType.CONFIGURATION), true, false);
         }
     }
@@ -282,6 +284,7 @@ public class EndpointActorMessageProcessor {
         context.setStatus(SyncStatus.SUCCESS);
         context.setEndpointKey(endpointKey);
         context.setRequestHash(request.hashCode());
+        context.setMetaData(request.getClientSyncMetaData());
 
         LOG.trace("[{}][{}] processing sync. Request: {}", endpointKey, context.getRequestHash(), request);
 
@@ -292,11 +295,20 @@ public class EndpointActorMessageProcessor {
         if (context.getStatus() != SyncStatus.SUCCESS) {
             return context;
         }
+        if (state.isUcfHashRequiresIntialization()) {
+            byte[] hash = operationsService.fetchUcfHash(appToken, state.getProfile());
+            LOG.debug("[{}][{}] Initialized endpoint object hash {}", endpointKey, context.getRequestHash(), Arrays.toString(hash));
+            state.setUcfHash(hash);
+        }
 
         context = operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
         context = operationsService.processEventListenerRequests(context, request.getEventSync());
 
-        context.setUserConfigurationChanged(state.isUserConfigurationUpdatePending());
+        if (state.isUserConfigurationUpdatePending()) {
+            context.setUserConfigurationChanged(true);
+            context.setUserConfigurationHash(state.getUcfHash());
+        }
+
         // TODO: do this only if there were some updates missed from control
         // server or this is a first request for this actor
         context = operationsService.syncConfiguration(context, request.getConfigurationSync());
@@ -307,11 +319,7 @@ public class EndpointActorMessageProcessor {
 
         state.setProfile(operationsService.updateProfile(context));
 
-        if (context.getStatus() == SyncStatus.SUCCESS) {
-            context.setUserConfigurationChanged(false);
-        }
-
-        LOG.debug("[{}][{}] processing sync. Response is {}", endpointKey, request.hashCode(), context.getResponse());
+        LOG.trace("[{}][{}] processed sync. Response is {}", endpointKey, request.hashCode(), context.getResponse());
 
         return context;
     }
@@ -418,7 +426,7 @@ public class EndpointActorMessageProcessor {
     }
 
     private void updateUserConnection(ActorContext context) {
-        if(!state.isValidForUser()){
+        if (!state.isValidForUser()) {
             return;
         }
         if (state.userIdMismatch()) {

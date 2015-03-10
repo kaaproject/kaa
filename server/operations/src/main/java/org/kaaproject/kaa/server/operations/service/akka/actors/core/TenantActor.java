@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.GlobalUserActor;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.LocalUserActor;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
@@ -223,7 +224,7 @@ public class TenantActor extends UntypedActor {
         ActorRef userActor = globalUsers.get(globalUserId);
         if (userActor == null && userId != null) {
             userActor = context().actorOf(
-                    Props.create(new LocalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME), globalUserId);
+                    Props.create(new GlobalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME), globalUserId);
             LOG.debug("Create global user actor with id {}", userId);
             globalUsers.put(globalUserId, userActor);
         }

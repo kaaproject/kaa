@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -43,7 +44,9 @@ public class EndpointActorState {
     private long lastActivityTime;
     private int processedEventSeqNum = Integer.MIN_VALUE;
     private Map<String, Integer> subscriptionStates;
-    private boolean userConfigurationUpdatePending;
+    
+    private boolean ucfHashIntialized;
+    private byte[] ucfHash;
 
     public EndpointActorState(String endpointKey, String actorKey) {
         this.endpointKey = endpointKey;
@@ -167,12 +170,27 @@ public class EndpointActorState {
         return subscriptionStates;
     }
 
-    public boolean isUserConfigurationUpdatePending() {
-        return userConfigurationUpdatePending;
+    public boolean isUcfHashRequiresIntialization() {
+        if(!isValidForUser()){
+            return false;
+        }
+        return !ucfHashIntialized;
     }
 
-    public void setUserConfigurationUpdatePending(boolean userConfigurationUpdatePending) {
-        this.userConfigurationUpdatePending = userConfigurationUpdatePending;
+    public boolean isUserConfigurationUpdatePending() {
+        if(!isValidForUser() || isUcfHashRequiresIntialization()){
+            return false;
+        };
+        return !Arrays.equals(ucfHash, endpointProfile.getUserConfigurationHash());
+    }
+
+    public void setUcfHash(byte[] ucfHash) {
+        this.ucfHashIntialized = true;
+        this.ucfHash = ucfHash;
+    }
+
+    public byte[] getUcfHash() {
+        return ucfHash;
     }
 
     public List<NotificationDto> filter(List<NotificationDto> notifications) {

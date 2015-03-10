@@ -59,9 +59,9 @@ public final class DeltaCacheKey implements Serializable {
      * @param endpointConfHash
      *            the endpoint conf hash
      */
-    public DeltaCacheKey(AppVersionKey appConfigVersionKey, EndpointObjectHash userConfHash, List<EndpointGroupStateDto> endpointGroups,
+    public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups, EndpointObjectHash userConfHash,
             EndpointObjectHash endpointConfHash) {
-        this(appConfigVersionKey, userConfHash, endpointGroups, endpointConfHash, false);
+        this(appConfigVersionKey, endpointGroups, userConfHash, endpointConfHash, false);
     }
 
     /**
@@ -77,8 +77,8 @@ public final class DeltaCacheKey implements Serializable {
      *            indicates that client want to receive resync based on base
      *            schema
      */
-    public DeltaCacheKey(AppVersionKey appConfigVersionKey, EndpointObjectHash userConfHash, List<EndpointGroupStateDto> endpointGroups,
-            EndpointObjectHash endpointConfHash, boolean resyncOnly) {
+    public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups,
+            EndpointObjectHash userConfHash, EndpointObjectHash endpointConfHash, boolean resyncOnly) {
         this.appConfigVersionKey = appConfigVersionKey;
         this.userConfHash = userConfHash;
         this.endpointGroups = endpointGroups;

@@ -75,4 +75,12 @@ public interface OperationsService extends PublicKeyAware {
      * @return the sync response
      */
     ServerSync updateSyncResponse(ServerSync response, List<NotificationDto> notifications, String unicastNotificationId);
+
+    /**
+     * Lookup user configuration and return it's hash
+     * @param appToken application token
+     * @param profile endpoint profile
+     * @return user configuration hash, or null if not found;
+     */
+    byte[] fetchUcfHash(String appToken, EndpointProfileDto profile);
 }

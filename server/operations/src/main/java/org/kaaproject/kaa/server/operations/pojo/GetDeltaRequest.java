@@ -47,6 +47,8 @@ public class GetDeltaRequest {
     private boolean fetchSchema;
     
     private boolean userConfigurationChanged;
+    
+    private byte[] userConfigurationHash;
 
     /**
      * Instantiates a new delta request.
@@ -217,5 +219,13 @@ public class GetDeltaRequest {
 
     public boolean isUserConfigurationChanged() {
         return userConfigurationChanged;
+    }
+
+    public byte[] getUserConfigurationHash() {
+        return userConfigurationHash;
+    }
+
+    public void setUserConfigurationHash(byte[] userConfigurationHash) {
+        this.userConfigurationHash = userConfigurationHash;
     }
 }
