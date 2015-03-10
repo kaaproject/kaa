@@ -37,6 +37,10 @@ public class JDataCollectionDemoBuider extends AbstractDemoBuilder{
 
     private static final Logger logger = LoggerFactory.getLogger(JDataCollectionDemoBuider.class);
 
+    protected JDataCollectionDemoBuider() {
+        super("demo/photoframe");
+    }
+
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
 
@@ -81,17 +85,4 @@ public class JDataCollectionDemoBuider extends AbstractDemoBuilder{
         logger.info("Finished loading 'Java Data Collection Demo Application' data.");
     }
 
-    @Override
-    protected void setupProjectConfigs() {
-        Project projectConfig = new Project();
-        projectConfig.setId("jdatacollection_demo");
-        projectConfig.setName("Java data collection demo");
-        projectConfig.setDescription("Application on java platform demonstrating data collection subsystem (IoT)");
-        projectConfig.setPlatform(Platform.JAVA);
-        projectConfig.setSourceArchive("java/jdatacollection_demo.tar.gz");
-        projectConfig.setProjectFolder("jdatacollection_demo/JDataCollectionDemo");
-        projectConfig.setSdkLibDir("jdatacollection_demo/JDataCollectionDemo/lib");
-        projectConfig.setDestBinaryFile("jdatacollection_demo/JDataCollectionDemo/build/jar/DataCollectionDemo.jar");
-        projectConfigs.add(projectConfig);
-    }
 }

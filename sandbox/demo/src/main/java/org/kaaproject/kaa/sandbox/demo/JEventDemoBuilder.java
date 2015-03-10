@@ -35,9 +35,13 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JEventDemoBuilder extends  AbstractDemoBuilder{
+public class JEventDemoBuilder extends AbstractDemoBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(JEventDemoBuilder.class);
+
+    protected JEventDemoBuilder() {
+        super("demo/photoframe");
+    }
 
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
@@ -89,42 +93,5 @@ public class JEventDemoBuilder extends  AbstractDemoBuilder{
         logger.info("Finished loading 'Java Event Demo Application' data.");
     }
 
-    private ApplicationEventFamilyMapDto mapEventClassFamily(AdminClient client, ApplicationDto application, EventClassFamilyDto eventClassFamily) throws Exception {
-        List<EventClassDto> eventClasses =
-                client.getEventClassesByFamilyIdVersionAndType(eventClassFamily.getId(), 1, EventClassType.EVENT);
 
-        ApplicationEventFamilyMapDto aefMap = new ApplicationEventFamilyMapDto();
-        aefMap.setApplicationId(application.getId());
-        aefMap.setEcfId(eventClassFamily.getId());
-        aefMap.setEcfName(eventClassFamily.getName());
-        aefMap.setVersion(1);
-
-        List<ApplicationEventMapDto> eventMaps = new ArrayList<>(eventClasses.size());
-        for (EventClassDto eventClass : eventClasses) {
-            ApplicationEventMapDto eventMap = new ApplicationEventMapDto();
-            eventMap.setEventClassId(eventClass.getId());
-            eventMap.setFqn(eventClass.getFqn());
-            eventMap.setAction(ApplicationEventAction.BOTH);
-            eventMaps.add(eventMap);
-        }
-
-        aefMap.setEventMaps(eventMaps);
-        aefMap = client.editApplicationEventFamilyMap(aefMap);
-        return aefMap;
-    }
-
-
-    @Override
-    protected void setupProjectConfigs() {
-        Project projectConfig = new Project();
-        projectConfig.setId("jevent_demo");
-        projectConfig.setName("Java event demo");
-        projectConfig.setDescription("Application on java platform demonstrating event subsystem (IoT)");
-        projectConfig.setPlatform(Platform.JAVA);
-        projectConfig.setSourceArchive("java/jevent_demo.tar.gz");
-        projectConfig.setProjectFolder("jevent_demo/JEventDemo");
-        projectConfig.setSdkLibDir("jevent_demo/JEventDemo/lib");
-        projectConfig.setDestBinaryFile("jevent_demo/JEventDemo/build/jar/EventDemo.jar");
-        projectConfigs.add(projectConfig);
-    }
 }

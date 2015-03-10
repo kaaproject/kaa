@@ -35,6 +35,9 @@ import org.kaaproject.kaa.schema.sample.logging.LogData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ This class demonstrates Kaa log upload system. */
 public class DataCollector {
 
     private static final int LOGS_TO_SEND_COUNT = 5;
@@ -44,10 +47,14 @@ public class DataCollector {
 
     public static void main(String[] args) {
         LOGGER.info("Data collection demo started");
+        //Creating Kaa desktop client instance
         KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext());
+        //setting custom upload strategy
         kaaClient.setLogUploadStrategy(new OneLogUploadStrategy());
+        //starting Kaa client
         kaaClient.start();
 
+        //sending logs in loop
         for (LogData log : getLogs(LOGS_TO_SEND_COUNT)) {
             kaaClient.addLogRecord(log);
         }
@@ -58,6 +65,7 @@ public class DataCollector {
             e.printStackTrace();
         }
 
+        //stoping client
         kaaClient.stop();
         LOGGER.info("Data collection demo stopped");
     }
@@ -70,6 +78,8 @@ public class DataCollector {
         return logs;
     }
 
+    //default upload strategy sends logs after some count or some logs size reached
+    //this one sends every log record
     private static class OneLogUploadStrategy extends DefaultLogUploadStrategy {
         @Override
         public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {

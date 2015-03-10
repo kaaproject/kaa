@@ -19,8 +19,6 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
-import org.kaaproject.kaa.sandbox.demo.projects.Platform;
-import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
@@ -37,7 +35,7 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder {
     private static final Logger logger = LoggerFactory.getLogger(NotificationDemoBuilder.class);
 
     protected NotificationDemoBuilder() {
-        super();
+        super("demo/photoframe");
     }
 
     @Override
@@ -68,7 +66,7 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder {
         notificationSchemaDto.setDescription("Notification schema describing incoming notifications");
         notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, "demo/notification/notificationSchema.json");
         sdkKey.setNotificationSchemaVersion(notificationSchemaDto.getMajorVersion());
-        
+
 
         TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();
         UserVerifierDto trustfulUserVerifier = new UserVerifierDto();
@@ -87,17 +85,4 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder {
         logger.info("Finished loading 'Android Notification Demo Application' data.");
     }
 
-    @Override
-    protected void setupProjectConfigs() {
-        Project projectConfig = new Project();
-        projectConfig.setId("notification_demo");
-        projectConfig.setName("Android notification demo");
-        projectConfig.setDescription("Application on android platform demonstrating notification subsystem (IoT)");
-        projectConfig.setPlatform(Platform.ANDROID);
-        projectConfig.setSourceArchive("android/notification_demo.tar.gz");
-        projectConfig.setProjectFolder("notification_demo/NotificationDemo");
-        projectConfig.setSdkLibDir("notification_demo/NotificationDemo/libs");
-        projectConfig.setDestBinaryFile("notification_demo/NotificationDemo/bin/KaaNotificationDemo-debug.apk");
-        projectConfigs.add(projectConfig);
-    }
 }

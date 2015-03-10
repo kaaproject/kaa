@@ -40,6 +40,10 @@ import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * This class receives Kaa events and user attach/detach callbacks and dispatch them to other application components via event bus.
+ */
 public class EventDemo {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventDemo.class);

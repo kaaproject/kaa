@@ -22,7 +22,7 @@ import java.util.List;
 public class DemoBuildersRegistry {
 
     private static final List<DemoBuilder> demoBuilders = new ArrayList<>();
-    
+
     static {
         //ANDROID DEMOS
         demoBuilders.add(new NotificationDemoBuilder());
@@ -37,9 +37,9 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new JEventDemoBuilder());
         demoBuilders.add(new JDataCollectionDemoBuider());
     }
-    
+
     public static List<DemoBuilder> getRegisteredDemoBuilders() {
         return demoBuilders;
     }
-    
+
 }
