@@ -18,7 +18,6 @@
 
 #ifdef KAA_USE_CONFIGURATION
 
-#include "kaa/common/types/ICommonRecord.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 

@@ -23,9 +23,6 @@
 #include <vector>
 
 #include "kaa/common/exception/KaaException.hpp"
-#include "kaa/common/types/ICommonValue.hpp"
-#include "kaa/common/types/ICommonRecord.hpp"
-
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
 

@@ -21,9 +21,7 @@
 #include "kaa/configuration/IGenericDeltaReceiver.hpp"
 #include "kaa/configuration/gen/ConfigurationDefinitions.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
-#include "kaa/common/types/CommonRecord.hpp"
 #include "kaa/common/exception/KaaException.hpp"
-#include "kaa/common/CommonTypesFactory.hpp"
 #include "kaa/ClientStatus.hpp"
 
 #include <avro/Compiler.hh>

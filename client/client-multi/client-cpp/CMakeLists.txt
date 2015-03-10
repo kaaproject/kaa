@@ -113,7 +113,6 @@ if ( NOT KAA_WITHOUT_CONFIGURATION )
             impl/configuration/manager/ConfigurationManager.cpp
             impl/configuration/storage/ConfigurationPersistenceManager.cpp
             impl/configuration/storage/FileConfigurationStorage.cpp
-            impl/common/AvroGenericUtils.cpp
     )
 endif()
 

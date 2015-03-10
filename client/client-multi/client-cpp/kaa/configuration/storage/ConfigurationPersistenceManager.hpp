@@ -17,10 +17,6 @@
 #ifndef CONFIGURATIONPERSISTENCEMANAGER_HPP_
 #define CONFIGURATIONPERSISTENCEMANAGER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_CONFIGURATION
-
 #include "kaa/KaaThread.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
 #include "kaa/configuration/IConfigurationProcessor.hpp"
@@ -87,7 +83,5 @@ private:
 };
 
 }  // namespace kaa
-
-#endif
 
 #endif /* CONFIGURATIONPERSISTENCEMANAGER_HPP_ */

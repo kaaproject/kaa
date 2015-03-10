@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_CONFIGURATION
-
 #include <cstdint>
 #include <memory>
 
@@ -50,7 +48,5 @@ public:
 typedef std::shared_ptr<IConfigurationProcessor> IConfigurationProcessorPtr;
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* I_CONFIGURATION_PROCESSOR_HPP_ */

@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_CONFIGURATION
-
 #include <vector>
 #include <memory>
 #include <cstdint>
@@ -55,7 +53,5 @@ public:
 typedef std::shared_ptr<IConfigurationStorage> IConfigurationStoragePtr;
 
 }  // namespace kaa
-
-#endif
 
 #endif /* ICONFIGURATIONSTORAGE_HPP_ */
