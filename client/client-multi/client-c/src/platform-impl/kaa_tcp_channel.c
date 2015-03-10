@@ -28,6 +28,7 @@
 #include "../utilities/kaa_log.h"
 #include "../kaa_protocols/kaa_tcp/kaatcp.h"
 #include "../platform/ext_system_logger.h"
+#include "../platform/time.h"
 #include "../kaa_platform_common.h"
 #include "kaa_tcp_channel.h"
 
@@ -42,8 +43,6 @@
 #define KAA_TCP_CHANNEL_KEEPALIVE 300
 
 
-
-typedef time_t kaa_time_t;
 
 typedef enum {
     AP_UNDEFINED = 0,
@@ -242,7 +241,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
      * Initializes keepalive configuration.
      */
     kaa_tcp_channel->keepalive.keepalive_interval = KAA_TCP_CHANNEL_KEEPALIVE;
-    kaa_tcp_channel->keepalive.last_sent_keepalive = (kaa_time_t) ext_get_systime();
+    kaa_tcp_channel->keepalive.last_sent_keepalive = KAA_TIME();
     kaa_tcp_channel->keepalive.last_receive_keepalive = kaa_tcp_channel->keepalive.last_sent_keepalive;
 
     KAA_LOG_TRACE(logger, KAA_ERR_NONE, "Kaa TCP channel keepalive is %u",
@@ -869,7 +868,6 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
                 break;
         }
     } else {
-
         KAA_LOG_INFO(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] checking keepalive"
                                                                         , tcp_channel->access_point.id);
 
@@ -878,7 +876,7 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
             return error_code;
         }
 
-        kaa_time_t interval = (kaa_time_t) ext_get_systime() - (kaa_time_t) tcp_channel->keepalive.last_sent_keepalive;
+        kaa_time_t interval = KAA_TIME() - tcp_channel->keepalive.last_sent_keepalive;
 
         if (interval >= (tcp_channel->keepalive.keepalive_interval / 2)) {
             //Send ping request
@@ -950,7 +948,7 @@ void kaa_tcp_channel_connack_message_callback(void *context, kaatcp_connack_t me
                                                                                 , channel->access_point.id);
 
             if (channel->keepalive.keepalive_interval > 0) {
-                channel->keepalive.last_receive_keepalive = (kaa_time_t)ext_get_systime();
+                channel->keepalive.last_receive_keepalive = KAA_TIME();
                 channel->keepalive.last_sent_keepalive = channel->keepalive.last_receive_keepalive;
             }
 
@@ -1023,7 +1021,7 @@ void kaa_tcp_channel_pingresp_message_callback(void *context)
     KAA_RETURN_IF_NIL(context,);
     kaa_tcp_channel_t *channel = (kaa_tcp_channel_t *)context;
 
-    channel->keepalive.last_receive_keepalive = (kaa_time_t)ext_get_systime();
+    channel->keepalive.last_receive_keepalive = KAA_TIME();
 
     KAA_LOG_INFO(channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] PING message received"
                                                                     , channel->access_point.id);
@@ -1612,7 +1610,7 @@ kaa_error_t kaa_tcp_channel_ping(kaa_tcp_channel_t * self)
 
     error_code = kaa_buffer_lock_space(self->out_buffer, buffer_size);
 
-    self->keepalive.last_sent_keepalive = (kaa_time_t) ext_get_systime();
+    self->keepalive.last_sent_keepalive = KAA_TIME();
 
     KAA_LOG_INFO(self->logger,KAA_ERR_NONE,"Kaa TCP channel [0x%08X] going to send PING message (%zu bytes)"
                                                                         , self->access_point.id, buffer_size);
