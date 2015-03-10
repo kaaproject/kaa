@@ -29,6 +29,7 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new PhotoFrameDemoBuilder());
         demoBuilders.add(new SmartHouseDemoBuilder());
 //        demoBuilders.add(new RobotRunDemoBuilder());
+        demoBuilders.add(new VerifiersDemoBuilder());
     }
     
     public static List<DemoBuilder> getRegisteredDemoBuilders() {

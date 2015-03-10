@@ -573,6 +573,24 @@ Copyright 2014 CyberVision, Inc.
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
+                <artifactId>config</artifactId>
+                <classifier>facebook</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
+                <artifactId>config</artifactId>
+                <classifier>twitter</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
+                <artifactId>config</artifactId>
+                <classifier>gplus</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.kaaproject.kaa.server.common</groupId>
                 <artifactId>zk</artifactId>
                 <version>${project.version}</version>
