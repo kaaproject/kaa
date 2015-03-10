@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_NOTIFICATIONS
-
 #include <list>
 #include <string>
 
@@ -213,7 +211,5 @@ public:
 };
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* INOTIFICATIONMANAGER_HPP_ */

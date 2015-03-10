@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_NOTIFICATIONS
-
 #include <map>
 #include <set>
 #include <string>
@@ -75,7 +73,5 @@ private:
 };
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* DEFAULTNOTIFICATIONTRANSPORT_HPP_ */

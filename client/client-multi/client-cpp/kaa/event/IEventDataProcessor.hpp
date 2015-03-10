@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_EVENTS
-
 #include "kaa/gen/EndpointGen.hpp"
 #include <map>
 #include <list>
@@ -41,7 +39,5 @@ public:
 };
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* IEVENTDATAPROCESSOR_HPP_ */
