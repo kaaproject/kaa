@@ -49,6 +49,7 @@ typedef enum {
     AP_UNDEFINED = 0,
     AP_NOT_SET,
     AP_SET,
+    AP_IN_PROGRESS,
     AP_RESOLVED,
     AP_CONNECTING,
     AP_CONNECTED,
@@ -75,6 +76,7 @@ typedef struct {
     uint32_t                  public_key_length;
     char                      *hostname;
     uint32_t                  hostname_length;
+    uint16_t                  port;
     kaa_sockaddr_storage_t    sockaddr;
     kaa_socklen_t             sockaddr_length;
     kaa_fd_t                  socket_descriptor;
@@ -298,6 +300,21 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
 
 
 
+static kaa_error_t kaa_tcp_channel_on_access_point_failed(kaa_tcp_channel_t *self)
+{
+    kaa_error_t error_code = kaa_bootstrap_manager_on_access_point_failed(self->transport_context.bootstrap_manager
+                                                            , &self->protocol_id
+                                                            , self->channel_operation_type);
+    if (error_code != KAA_ERR_NOT_FOUND) {
+        KAA_LOG_ERROR(self->logger, error_code, "Kaa TCP channel [0x%08X] "
+                "error notifying bootstrap manager on access point failure"
+                , self->access_point.id);
+    }
+    return error_code;
+}
+
+
+
 /*
  * Return transport protocol id constant
  */
@@ -356,6 +373,8 @@ kaa_error_t kaa_tcp_channel_sync_handler(void *context, const kaa_service_t serv
                 ((kaa_tcp_channel_t *) context)->event_callback(((kaa_tcp_channel_t *) context)->event_context
                                       , SOCKET_CONNECTION_ERROR
                                       , ((kaa_tcp_channel_t *) context)->access_point.socket_descriptor);
+
+            error_code = kaa_tcp_channel_on_access_point_failed((kaa_tcp_channel_t *) context);
         }
     }
 
@@ -531,6 +550,7 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
 
         return KAA_ERR_INSUFFICIENT_BUFFER;
     }
+    channel->access_point.port = (uint16_t) access_point_socket_port;
 
 #ifdef KAA_LOG_LEVEL_TRACE_ENABLED
     char ap_hostname[channel->access_point.hostname_length + 1];
@@ -542,56 +562,6 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
             ap_hostname,
             access_point_socket_port);
 #endif
-
-    kaa_dns_resolve_listener_t resolve_listener;
-    resolve_listener.context = (void *) channel;
-    resolve_listener.on_host_resolved = kaa_tcp_channel_set_access_point_hostname_resolved;
-    resolve_listener.on_resolve_failed = kaa_tcp_channel_set_access_point_hostname_resolve_failed;
-
-    kaa_dns_resolve_info_t resolve_props;
-    resolve_props.hostname = channel->access_point.hostname;
-    resolve_props.hostname_length = channel->access_point.hostname_length;
-    resolve_props.port = access_point_socket_port;
-
-    channel->access_point.sockaddr_length = sizeof(kaa_sockaddr_storage_t);
-    ext_tcp_utils_function_return_state_t resolve_state =
-                    ext_tcp_utils_gethostbyaddr(&resolve_listener
-                                              , &resolve_props
-                                              , (kaa_sockaddr_t *) &channel->access_point.sockaddr
-                                              , &channel->access_point.sockaddr_length);
-
-    switch (resolve_state) {
-        case RET_STATE_VALUE_IN_PROGRESS:
-            KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel new access point [0x%08X] destination name resolve pending..."
-                                                                                                                , channel->access_point.id);
-            break;
-        case RET_STATE_VALUE_READY:
-            channel->access_point.state = AP_RESOLVED;
-            KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa TCP channel new access point [0x%08X] destination resolved"
-                                                                                                , channel->access_point.id);
-            error_code = kaa_tcp_channel_connect_access_point(channel);
-            if (error_code) {
-                KAA_LOG_ERROR(channel->logger, error_code, "Kaa TCP channel new access point [0x%08X] failed to connect"
-                                                                                                        , channel->access_point.id);
-                if (channel->event_callback)
-                    channel->event_callback(channel->event_context
-                                          , SOCKET_CONNECTION_ERROR
-                                          , channel->access_point.socket_descriptor);
-            }
-            break;
-        case RET_STATE_VALUE_ERROR:
-            channel->access_point.state = AP_NOT_SET;
-            error_code = KAA_ERR_TCPCHANNEL_AP_RESOLVE_FAILED;
-            KAA_LOG_ERROR(channel->logger, error_code, "Kaa TCP channel new access point [0x%08X] hostname resolve failed"
-                                                                                                , channel->access_point.id);
-            break;
-        case RET_STATE_BUFFER_NOT_ENOUGH:
-            channel->access_point.state = AP_NOT_SET;
-            error_code = KAA_ERR_TCPCHANNEL_AP_RESOLVE_FAILED;
-            KAA_LOG_ERROR(channel->logger, error_code, "Kaa TCP channel new access point [0x%08X] hostname resolve failed. "
-                                                                    "Address buffer is not enough", channel->access_point.id);
-            break;
-    }
 
     return error_code;
 }
@@ -844,19 +814,77 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
     kaa_error_t error_code = KAA_ERR_NONE;
     kaa_tcp_channel_t *tcp_channel = (kaa_tcp_channel_t *) self->context;
 
-    KAA_LOG_INFO(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] checking keepalive"
-                                                                    , tcp_channel->access_point.id);
+    if (tcp_channel->access_point.state == AP_SET) {
+        kaa_dns_resolve_listener_t resolve_listener;
+        resolve_listener.context = (void *) tcp_channel;
+        resolve_listener.on_host_resolved = kaa_tcp_channel_set_access_point_hostname_resolved;
+        resolve_listener.on_resolve_failed = kaa_tcp_channel_set_access_point_hostname_resolve_failed;
 
-    if (tcp_channel->keepalive.keepalive_interval == 0
-            || tcp_channel->channel_state != KAA_TCP_CHANNEL_AUTHORIZED) {
-        return error_code;
-    }
+        kaa_dns_resolve_info_t resolve_props;
+        resolve_props.hostname = tcp_channel->access_point.hostname;
+        resolve_props.hostname_length = tcp_channel->access_point.hostname_length;
+        resolve_props.port = tcp_channel->access_point.port;
 
-    kaa_time_t interval = (kaa_time_t) ext_get_systime() - (kaa_time_t) tcp_channel->keepalive.last_sent_keepalive;
+        tcp_channel->access_point.sockaddr_length = sizeof(kaa_sockaddr_storage_t);
+        ext_tcp_utils_function_return_state_t resolve_state =
+                        ext_tcp_utils_gethostbyaddr(&resolve_listener
+                                                  , &resolve_props
+                                                  , (kaa_sockaddr_t *) &tcp_channel->access_point.sockaddr
+                                                  , &tcp_channel->access_point.sockaddr_length);
 
-    if (interval >= (tcp_channel->keepalive.keepalive_interval / 2)) {
-        //Send ping request
-        error_code = kaa_tcp_channel_ping(tcp_channel);
+        switch (resolve_state) {
+            case RET_STATE_VALUE_IN_PROGRESS:
+                KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel new access point [0x%08X] destination name resolve pending..."
+                                                                                                                    , tcp_channel->access_point.id);
+                tcp_channel->access_point.state = AP_IN_PROGRESS;
+                break;
+            case RET_STATE_VALUE_READY:
+                tcp_channel->access_point.state = AP_RESOLVED;
+                KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel new access point [0x%08X] destination resolved"
+                                                                                                    , tcp_channel->access_point.id);
+                error_code = kaa_tcp_channel_connect_access_point(tcp_channel);
+                if (error_code) {
+                    KAA_LOG_ERROR(tcp_channel->logger, error_code, "Kaa TCP channel new access point [0x%08X] failed to connect"
+                                                                                                            , tcp_channel->access_point.id);
+                    if (tcp_channel->event_callback)
+                        tcp_channel->event_callback(tcp_channel->event_context
+                                              , SOCKET_CONNECTION_ERROR
+                                              , tcp_channel->access_point.socket_descriptor);
+
+                    error_code = kaa_tcp_channel_on_access_point_failed(tcp_channel);
+                }
+                break;
+            case RET_STATE_VALUE_ERROR:
+                tcp_channel->access_point.state = AP_NOT_SET;
+                error_code = KAA_ERR_TCPCHANNEL_AP_RESOLVE_FAILED;
+                KAA_LOG_ERROR(tcp_channel->logger, error_code, "Kaa TCP channel new access point [0x%08X] hostname resolve failed"
+                                                                                                    , tcp_channel->access_point.id);
+                error_code = kaa_tcp_channel_on_access_point_failed(tcp_channel);
+                break;
+            case RET_STATE_BUFFER_NOT_ENOUGH:
+                tcp_channel->access_point.state = AP_NOT_SET;
+                error_code = KAA_ERR_TCPCHANNEL_AP_RESOLVE_FAILED;
+                KAA_LOG_ERROR(tcp_channel->logger, error_code, "Kaa TCP channel new access point [0x%08X] hostname resolve failed. "
+                                                                        "Address buffer is not enough", tcp_channel->access_point.id);
+                break;
+        }
+    } else {
+
+        KAA_LOG_INFO(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] checking keepalive"
+                                                                        , tcp_channel->access_point.id);
+
+        if (tcp_channel->keepalive.keepalive_interval == 0
+                || tcp_channel->channel_state != KAA_TCP_CHANNEL_AUTHORIZED) {
+            return error_code;
+        }
+
+        kaa_time_t interval = (kaa_time_t) ext_get_systime() - (kaa_time_t) tcp_channel->keepalive.last_sent_keepalive;
+
+        if (interval >= (tcp_channel->keepalive.keepalive_interval / 2)) {
+            //Send ping request
+
+            error_code = kaa_tcp_channel_ping(tcp_channel);
+        }
     }
 
     return error_code;
@@ -1035,15 +1063,7 @@ kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t *self)
     }
 
     if (self->sync_state == KAA_TCP_CHANNEL_SYNC_OP_STARTED) {
-        error_code = kaa_bootstrap_manager_on_access_point_failed(self->transport_context.bootstrap_manager
-                                                                , &self->protocol_id
-                                                                , self->channel_operation_type);
-        if (error_code != KAA_ERR_NOT_FOUND) {
-            KAA_LOG_ERROR(self->logger, error_code, "Kaa TCP channel [0x%08X] "
-                    "error notifying bootstrap manager on access point failure"
-                    , self->access_point.id);
-            error_code = KAA_ERR_NONE;
-        }
+        error_code = kaa_tcp_channel_on_access_point_failed(self);
     }
 
     kaa_buffer_reset(self->in_buffer);
@@ -1327,10 +1347,13 @@ kaa_error_t kaa_tcp_channel_set_access_point_hostname_resolved(void *context
                                                                     channel->access_point.id);
 
     kaa_error_t error_code = kaa_tcp_channel_connect_access_point(channel);
-    if (error_code && channel->event_callback)
-        channel->event_callback(channel->event_context
-                              , SOCKET_CONNECTION_ERROR
-                              , channel->access_point.socket_descriptor);
+    if (error_code) {
+        if (channel->event_callback)
+            channel->event_callback(channel->event_context
+                                  , SOCKET_CONNECTION_ERROR
+                                  , channel->access_point.socket_descriptor);
+        error_code = kaa_tcp_channel_on_access_point_failed((kaa_tcp_channel_t *) context);
+    }
     return error_code;
 }
 
