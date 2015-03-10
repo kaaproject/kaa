@@ -8,6 +8,7 @@ import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.server.common.core.algorithms.validator.DefaultUuidValidator;
 import org.kaaproject.kaa.server.common.core.algorithms.validator.UuidValidator;
 import org.kaaproject.kaa.server.common.core.configuration.KaaData;
+import org.kaaproject.kaa.server.common.core.configuration.OverrideData;
 import org.kaaproject.kaa.server.common.core.configuration.OverrideDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
@@ -52,12 +53,12 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
                     if (schemaDto != null) {
                         OverrideSchema overrideSchema = new OverrideSchema(schemaDto.getOverrideSchema());
                         LOG.debug("Create default UUID validator with override schema: {}", overrideSchema.getRawSchema());
-                        UuidValidator uuidValidator = new DefaultUuidValidator(overrideSchema, new OverrideDataFactory());
+                        UuidValidator<OverrideData> uuidValidator = new DefaultUuidValidator<>(overrideSchema, new OverrideDataFactory());
                         GenericAvroConverter<GenericRecord> avroConverter = new GenericAvroConverter<>(overrideSchema.getRawSchema());
                         try {
                             GenericRecord configRecord = avroConverter.decodeJson(userConfigBody);
                             // TODO: Need to use last active configuration instead of null. Will be changed after supporting delta configuration
-                            KaaData body = uuidValidator.validateUuidFields(configRecord, null);
+                            KaaData<OverrideSchema> body = uuidValidator.validateUuidFields(configRecord, null);
                             if (body != null) {
                                 userConfig.setBody(body.getRawData());
                                 userConfigurationDto = getDto(endpointUserConfigurationDao.save(userConfig));

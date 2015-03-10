@@ -1,0 +1,19 @@
+{
+  "testField1" : {
+    "string" : "abc"
+  },
+  "testField2" : {
+    "org.kaa.config.testRecordT" : {
+      "testField3" : { "int" : 34 },
+      "__uuid" : {
+        "org.kaaproject.configuration.uuidT" : "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0034"
+      }
+    }
+  },
+  "testField4" : {
+    "string" : "bcd"
+  },
+  "__uuid" : {
+    "org.kaaproject.configuration.uuidT" : "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0234"
+  }
+}
