@@ -24,6 +24,11 @@ import org.kaaproject.kaa.demo.photoframe.event.PlayInfoEvent;
 import android.os.Bundle;
 import android.widget.BaseAdapter;
 
+/**
+ * The Class DevicesFragment.
+ * Implementation of {@link ListFragment} class. 
+ * Represents view with list of remote devices.
+ */
 public class DevicesFragment extends ListFragment {
     
     public DevicesFragment() {

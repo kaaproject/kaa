@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ */
+
+/**
+ * NOTE: This is a auto-generated file. Do not edit it.
  */
 
 #include "kaa/KaaDefaults.hpp"
@@ -47,6 +51,8 @@ const char * const CLIENT_PUB_KEY_LOCATION = "%{application.public_key_location}
 const char * const CLIENT_PRIV_KEY_LOCATION = "%{application.private_key_location}";
 
 const char * const CLIENT_STATUS_FILE_LOCATION = "%{application.status_file_location}";
+
+const char * const DEFAULT_USER_VERIFIER_TOKEN = "%{user_verifier_token}";
 
 ITransportConnectionInfoPtr createTransportInfo(const std::int32_t& accessPointId
                                               , const std::int32_t& protocolId

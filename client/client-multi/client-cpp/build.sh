@@ -82,7 +82,7 @@ case "$cmd" in
     test_cleanup
     if [[ $TEST_RESULT -ne 0 ]]
     then
-        echo "Kaa C++ Client unittests failed!"
+        echo "Kaa C++ SDK unittests have failed!"
         exit $TEST_RESULT
     fi
     ;;

@@ -43,6 +43,12 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import de.greenrobot.event.EventBus;
 
+/**
+ * The Class PhotoFrameController.
+ * Receives Kaa events and user attach/detach callbacks and dispatch them to other 
+ * application components via event bus. It is also responsible for fetching albums 
+ * from android {@link MediaStore}.
+ */
 public class PhotoFrameController implements DefaultEventFamilyListener, UserAttachCallback, OnDetachEndpointOperationCallback {
 
     private final Context mContext;

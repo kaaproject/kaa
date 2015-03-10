@@ -52,7 +52,7 @@
             <artifactId>robotrun-shared</artifactId>
             <version>${project.version}</version>
             <classifier>robotrun-resources</classifier>
-            <type>zip</type>
+            <type>tar.gz</type>
             <scope>provided</scope>
         </dependency>
         <dependency>

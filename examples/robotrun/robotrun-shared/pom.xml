@@ -74,7 +74,7 @@
                         <phase>package</phase>
                         <configuration>
                             <descriptors>
-                                <descriptor>src/main/assembly/robotrun-resources.xml</descriptor>
+                                <descriptor>${project.basedir}/assembly/resources.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>

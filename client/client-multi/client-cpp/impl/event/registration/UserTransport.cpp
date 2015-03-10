@@ -22,7 +22,7 @@
 
 namespace kaa {
 
-UserTransport::UserTransport(IRegistrationProcessor & manager, IKaaChannelManager& channelManager)
+UserTransport::UserTransport(IRegistrationProcessor& manager, IKaaChannelManager& channelManager)
     : AbstractKaaTransport(channelManager)
     , manager_(manager)
 {
@@ -74,7 +74,7 @@ std::shared_ptr<UserSyncRequest> UserTransport::createUserRequest()
 void UserTransport::onUserResponse(const UserSyncResponse& response)
 {
     if (!response.userAttachResponse.is_null()) {
-        manager_.onUserAttach(response.userAttachResponse);
+        manager_.onUserAttach(response.userAttachResponse.get_UserAttachResponse());
     }
 
     if (!response.endpointAttachResponses.is_null()) {

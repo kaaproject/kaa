@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License") = 0;
  * you may not use this file except in compliance with the License.
@@ -17,108 +17,104 @@
 #ifndef IENDPOINTREGISTRATIONMANAGER_HPP_
 #define IENDPOINTREGISTRATIONMANAGER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
 #ifdef KAA_USE_EVENTS
 
-#include <list>
 #include <string>
+
+#include "kaa/event/registration/IUserAttachCallback.hpp"
+#include "kaa/event/registration/IAttachStatusListener.hpp"
+#include "kaa/event/registration/IAttachEndpointCallback.hpp"
+#include "kaa/event/registration/IDetachEndpointCallback.hpp"
 
 namespace kaa {
 
-typedef std::map<std::string/*epToken*/, std::string/*epHash*/> AttachedEndpoints;
-
-class IAttachedEndpointListListener;
-class IEndpointAttachStatusListener;
-
 /**
- * Manager which is responsible for Endpoints attach/detach.
+ * @brief The interface to a module which associates endpoints with users.
+ *
+ * @b NOTE: According to the Kaa architecture, endpoints must be associated with the same user in order to be able
+ * to communicate with each other.
  */
 class IEndpointRegistrationManager
 {
 public:
-    /**
-     * Generate new access token for a current endpoint
-     */
-    virtual void regenerateEndpointAccessToken() = 0;
 
     /**
-     * Retrieve an access token for a current endpoint
-     */
-    virtual const std::string& getEndpointAccessToken() = 0;
-
-    /**
-     * Adds new endpoint attach request
+     * @brief Attaches the specified endpoint to the user to which the current endpoint is attached.
      *
-     * @param endpointAccessToken Access token of the attaching endpoint
-     * @param listener Optional listener to notify about result of endpoint attaching.
-     *        Set to null if is no need in it.
+     * @param[in] endpointAccessToken    The access token of the endpoint to be attached to the user.
+     * @param[in] listener               The optional listener to notify of the result.
+     *
+     * @throw BadCredentials                The endpoint access token is empty.
+     * @throw TransportNotFoundException    The Kaa SDK isn't fully initialized.
+     * @throw KaaException                  Some other failure has happened.
      */
     virtual void attachEndpoint(const std::string&  endpointAccessToken
-                              , IEndpointAttachStatusListener* listener = nullptr) = 0;
+                              , IAttachEndpointCallbackPtr listener = IAttachEndpointCallbackPtr()) = 0;
 
     /**
-     * Adds new endpoint detach request
+     * @brief Detaches the specified endpoint from the user to which the current endpoint is attached.
      *
-     * @param endpointKeyHash Key hash of the attached endpoint
-     * @param listener Optional listener to notify about result of endpoint detaching.
-     *        Set to null if is no need in it.
+     * @param[in] endpointKeyHash    The key hash of the endpoint to be detached from the user.
+     * @param[in] listener           The optional listener to notify of the result.
+     *
+     * @throw BadCredentials                The endpoint access token is empty.
+     * @throw TransportNotFoundException    The Kaa SDK isn't fully initialized.
+     * @throw KaaException                  Some other failure has happened.
      */
     virtual void detachEndpoint(const std::string&  endpointKeyHash
-                              , IEndpointAttachStatusListener* listener = nullptr) = 0;
+                              , IDetachEndpointCallbackPtr listener = IDetachEndpointCallbackPtr()) = 0;
 
     /**
-     * Adds current endpoint detach request
-     * @param listener Optional listener to notify about result of endpoint detaching.
-     *        Set to null if is no need in it.
-     */
-    virtual void detachEndpoint(IEndpointAttachStatusListener* listener = nullptr) = 0;
-
-    /**
-     * Creates user attach request
+     * @brief Attaches the current endpoint to the specifier user. The user verification is carried out by the default verifier.
      *
-     * @param userExternalId
-     * @param userAccessToken
-     * @param listener Optional listener to notify about result of user attaching.
-     *        Set to null if there is no need in it.
+     * @b NOTE: If the default user verifier (@link DEFAULT_USER_VERIFIER_TOKEN @endlink) is not specified,
+     * the attach attempt fails with the @c KaaException exception.
+     *
+     * <b>Only endpoints associated with the same user can exchange events.</b>
+     *
+     * @param[in] userExternalId     The external user ID.
+     * @param[in] userAccessToken    The user access token.
+     *
+     * @throw BadCredentials                The endpoint access token is empty.
+     * @throw TransportNotFoundException    The Kaa SDK isn't fully initialized.
+     * @throw KaaException                  Some other failure has happened.
      */
     virtual void attachUser(const std::string& userExternalId
                           , const std::string& userAccessToken
-                          , IEndpointAttachStatusListener* listener = nullptr) = 0;
+                          , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr()) = 0;
 
     /**
-     * Retrieves list of attached endpoints
+     * @brief Attaches the endpoint to a user entity. The user verification will be carried out by the specified verifier.
      *
-     * @return set of attached endpoint's "access token/key hash" pair
-     */
-    virtual const AttachedEndpoints& getAttachedEndpoints() = 0;
-
-    /**
-     * Adds listener of attached endpoint list changes
+     * <b>Only endpoints associated with the same user can exchange events.</b>
      *
-     * @param listener Attached endpoints list change listener
-     */
-    virtual void addAttachedEndpointListListener(IAttachedEndpointListListener *listener) = 0;
-
-    /**
-     * Removes listener of attached endpoint list changes
+     * @param[in] userExternalId       The external user ID.
+     * @param[in] userAccessToken      The user access token.
+     * @param[in] userVerifierToken    The user verifier token.
+     * @param[in] listener             The optional listener to notify of the result.
      *
-     * @param listener Attached endpoints list change listener
+     * @throw BadCredentials                The endpoint access token is empty.
+     * @throw TransportNotFoundException    The Kaa SDK isn't fully initialized.
+     * @throw KaaException                  Some other failure has happened.
      */
-    virtual void removeAttachedEndpointListListener(IAttachedEndpointListListener *listener) = 0;
+    virtual void attachUser(const std::string& userExternalId
+                          , const std::string& userAccessToken
+                          , const std::string& userVerifierToken
+                          , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr()) = 0;
 
     /**
-     * Checks if current endpoint is already attached to some user
-     */
-    virtual bool isCurrentEndpointAttached() = 0;
-
-    /**
-     * Set lister to notify about attaching/detaching the current endpoint
-     * either by itself or another endpoint
+     * @brief Sets listener to notify of the current endpoint is attached/detached by another one.
      *
-     * @param listener Attach status listener
+     * @param[in] listener    Listener to notify of the attach status is changed.
      */
-    virtual void setAttachStatusListener(IEndpointAttachStatusListener* listener) = 0;
+    virtual void setAttachStatusListener(IAttachStatusListenerPtr listener) = 0;
+
+    /**
+     * @brief Checks if the current endpoint is already attached to some user.
+     *
+     * @return TRUE if the current endpoint is attached, FALSE otherwise.
+     */
+    virtual bool isAttachedToUser() = 0;
 
     virtual ~IEndpointRegistrationManager() {}
 };

@@ -26,8 +26,6 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.sandbox.demo.projects.Platform;
-import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.kaaproject.kaa.server.common.utils.FileUtils;
 import org.slf4j.Logger;
@@ -38,7 +36,7 @@ public class CityGuideDemoBuilder extends AbstractDemoBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(SmartHouseDemoBuilder.class);
     
     protected CityGuideDemoBuilder() {
-        super();
+        super("demo/cityguide");
     }
 
     @Override
@@ -64,14 +62,14 @@ public class CityGuideDemoBuilder extends AbstractDemoBuilder {
         configurationSchema.setApplicationId(cityGuideApplication.getId());
         configurationSchema.setName("City guide configuration schema");
         configurationSchema.setDescription("Configuration schema describing cities and places used by city guide application");
-        configurationSchema = client.createConfigurationSchema(configurationSchema, "demo/cityguide/city_guide.avsc");
+        configurationSchema = client.createConfigurationSchema(configurationSchema, getResourcePath("city_guide.avsc"));
         sdkKey.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
         
         ProfileSchemaDto profileSchema = new ProfileSchemaDto();
         profileSchema.setApplicationId(cityGuideApplication.getId());
         profileSchema.setName("City guide profile schema");
         profileSchema.setDescription("Profile schema describing city guide application profile");
-        profileSchema = client.createProfileSchema(profileSchema, "demo/cityguide/city_guide_profile.avsc");
+        profileSchema = client.createProfileSchema(profileSchema, getResourcePath("city_guide_profile.avsc"));
         sdkKey.setProfileSchemaVersion(profileSchema.getMajorVersion());
         
         EndpointGroupDto baseEndpointGroup = null;
@@ -90,7 +88,7 @@ public class CityGuideDemoBuilder extends AbstractDemoBuilder {
         baseConfiguration.setMajorVersion(configurationSchema.getMajorVersion());
         baseConfiguration.setMinorVersion(configurationSchema.getMinorVersion());
         baseConfiguration.setDescription("Base city guide configuration");
-        baseConfiguration.setBody(FileUtils.readResource("demo/cityguide/city_guide_data_all.json"));
+        baseConfiguration.setBody(FileUtils.readResource(getResourcePath("city_guide_data_all.json")));
         baseConfiguration.setStatus(UpdateStatus.INACTIVE);
         baseConfiguration = client.editConfiguration(baseConfiguration);
         client.activateConfiguration(baseConfiguration.getId());
@@ -112,7 +110,7 @@ public class CityGuideDemoBuilder extends AbstractDemoBuilder {
         atlantaConfiguration.setMajorVersion(configurationSchema.getMajorVersion());
         atlantaConfiguration.setMinorVersion(configurationSchema.getMinorVersion());
         atlantaConfiguration.setDescription("City guide configuration for Atlanta city");
-        atlantaConfiguration.setBody(FileUtils.readResource("demo/cityguide/city_guide_data_atlanta.json"));
+        atlantaConfiguration.setBody(FileUtils.readResource(getResourcePath("city_guide_data_atlanta.json")));
         atlantaConfiguration.setStatus(UpdateStatus.INACTIVE);
         atlantaConfiguration = client.editConfiguration(atlantaConfiguration);
         client.activateConfiguration(atlantaConfiguration.getId());
@@ -124,7 +122,7 @@ public class CityGuideDemoBuilder extends AbstractDemoBuilder {
         atlantaProfileFilter.setMajorVersion(profileSchema.getMajorVersion());
         atlantaProfileFilter.setMinorVersion(profileSchema.getMinorVersion());
         atlantaProfileFilter.setDescription("Profile filter for Atlanta city");
-        atlantaProfileFilter.setBody(FileUtils.readResource("demo/cityguide/city_guide_filter_atlanta.json"));
+        atlantaProfileFilter.setBody(FileUtils.readResource(getResourcePath("city_guide_filter_atlanta.json")));
         atlantaProfileFilter.setStatus(UpdateStatus.INACTIVE);
         atlantaProfileFilter = client.editProfileFilter(atlantaProfileFilter);
         client.activateProfileFilter(atlantaProfileFilter.getId());
@@ -146,7 +144,7 @@ public class CityGuideDemoBuilder extends AbstractDemoBuilder {
         amsterdamConfiguration.setMajorVersion(configurationSchema.getMajorVersion());
         amsterdamConfiguration.setMinorVersion(configurationSchema.getMinorVersion());
         amsterdamConfiguration.setDescription("City guide configuration for Amsterdam city");
-        amsterdamConfiguration.setBody(FileUtils.readResource("demo/cityguide/city_guide_data_amsterdam.json"));
+        amsterdamConfiguration.setBody(FileUtils.readResource(getResourcePath("city_guide_data_amsterdam.json")));
         amsterdamConfiguration.setStatus(UpdateStatus.INACTIVE);
         amsterdamConfiguration = client.editConfiguration(amsterdamConfiguration);
         client.activateConfiguration(amsterdamConfiguration.getId());
@@ -158,26 +156,12 @@ public class CityGuideDemoBuilder extends AbstractDemoBuilder {
         amsterdamProfileFilter.setMajorVersion(profileSchema.getMajorVersion());
         amsterdamProfileFilter.setMinorVersion(profileSchema.getMinorVersion());
         amsterdamProfileFilter.setDescription("Profile filter for Amsterdam city");
-        amsterdamProfileFilter.setBody(FileUtils.readResource("demo/cityguide/city_guide_filter_amsterdam.json"));
+        amsterdamProfileFilter.setBody(FileUtils.readResource(getResourcePath("city_guide_filter_amsterdam.json")));
         amsterdamProfileFilter.setStatus(UpdateStatus.INACTIVE);
         amsterdamProfileFilter = client.editProfileFilter(amsterdamProfileFilter);
         client.activateProfileFilter(amsterdamProfileFilter.getId());
         
         LOG.info("Finished loading 'City Guide Demo Application' data.");
-    }
-
-    @Override
-    protected void setupProjectConfigs() {
-        Project projectConfig = new Project();
-        projectConfig.setId("cityguide_demo");
-        projectConfig.setName("City guide");
-        projectConfig.setDescription("City guide application on android platform demonstrating configuration, profiling and grouping features");
-        projectConfig.setPlatform(Platform.ANDROID);
-        projectConfig.setSourceArchive("android/cityguide_demo.tar.gz");
-        projectConfig.setProjectFolder("cityguide_demo/CityGuide");
-        projectConfig.setSdkLibDir("cityguide_demo/CityGuide/libs");
-        projectConfig.setDestBinaryFile("cityguide_demo/CityGuide/bin/CityGuide-debug.apk");
-        projectConfigs.add(projectConfig);
     }
 
 }

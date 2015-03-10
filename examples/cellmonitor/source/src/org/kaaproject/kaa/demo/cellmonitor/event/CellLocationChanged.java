@@ -16,6 +16,10 @@
 
 package org.kaaproject.kaa.demo.cellmonitor.event;
 
+/**
+ * The Class CellLocationChanged.
+ * Event class is used to notify UI components after GSM cell location was changed.
+ */
 public class CellLocationChanged {
     
 }

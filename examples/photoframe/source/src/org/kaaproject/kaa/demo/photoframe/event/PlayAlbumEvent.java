@@ -16,6 +16,10 @@
 
 package org.kaaproject.kaa.demo.photoframe.event;
 
+/**
+ * The Class PlayAlbumEvent.
+ * Event class is used to notify UI components about received command to play album with specified bucketId.
+ */
 public class PlayAlbumEvent {
     
     private final String mBucketId;

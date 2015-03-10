@@ -23,6 +23,11 @@ import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 
+/**
+ * The Class CityGuideFragment.
+ * Implementation of {@link Fragment} class. Used as superclass for all application fragments.
+ * Implements common fragment lifecycle functions. Stores references to common application resources.
+ */
 public abstract class CityGuideFragment extends Fragment {
 
     public static final String AREA_NAME = "areaName";

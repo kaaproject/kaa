@@ -29,6 +29,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+/**
+ * The Class CitiesAdapter.
+ * Implementation of {@link BaseAdapter} class. Used as adapter class for cities list view.
+ * Provides list item views containing name of each city.
+ */
 public class CitiesAdapter extends BaseAdapter {
 
     private Context mContext;

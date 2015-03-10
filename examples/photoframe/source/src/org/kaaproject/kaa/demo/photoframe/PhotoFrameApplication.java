@@ -29,6 +29,11 @@ import org.slf4j.LoggerFactory;
 import android.app.Application;
 import de.greenrobot.event.EventBus;
 
+/**
+ * The Class PhotoFrameApplication.
+ * Implementation of base {@link Application} class. Performs initialization of 
+ * application resources including initialization of Kaa client. Handles Kaa client lifecycle.
+ */
 public class PhotoFrameApplication extends Application {
 
     private static final Logger LOG = LoggerFactory

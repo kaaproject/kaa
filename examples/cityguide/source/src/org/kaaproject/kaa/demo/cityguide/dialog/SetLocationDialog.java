@@ -31,6 +31,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+/**
+ * The Class SetLocationDialog.
+ * Implementation of {@link Dialog} class. Used to display view with current location input.
+ */
 public class SetLocationDialog extends Dialog {
 
     private CityGuideApplication mApplication;

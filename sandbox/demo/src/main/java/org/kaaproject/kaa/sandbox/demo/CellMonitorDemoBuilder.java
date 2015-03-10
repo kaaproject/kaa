@@ -23,8 +23,6 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.sandbox.demo.projects.Platform;
-import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.kaaproject.kaa.server.common.utils.FileUtils;
 import org.slf4j.Logger;
@@ -35,7 +33,7 @@ public class CellMonitorDemoBuilder extends AbstractDemoBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(CellMonitorDemoBuilder.class);
     
     protected CellMonitorDemoBuilder() {
-        super();
+        super("demo/cellmonitor");
     }
 
     @Override
@@ -62,7 +60,7 @@ public class CellMonitorDemoBuilder extends AbstractDemoBuilder {
         logSchema.setApplicationId(cellMonitorApplication.getId());
         logSchema.setName("Cell monitor configuration schema");
         logSchema.setDescription("Log schema describing cell monitor record with information about current cell location, signal strength and phone gps location.");
-        logSchema = client.createLogSchema(logSchema, "demo/cellmonitor/cell_monitor_log.avsc");
+        logSchema = client.createLogSchema(logSchema, getResourcePath("cell_monitor_log.avsc"));
         sdkKey.setLogSchemaVersion(logSchema.getMajorVersion());
         
         LogAppenderDto cellMonitorLogAppender = new LogAppenderDto();
@@ -78,24 +76,10 @@ public class CellMonitorDemoBuilder extends AbstractDemoBuilder {
                 LogHeaderStructureDto.TIMESTAMP, LogHeaderStructureDto.TOKEN, LogHeaderStructureDto.VERSION));
         cellMonitorLogAppender.setPluginTypeName("Mongo");
         cellMonitorLogAppender.setPluginClassName("org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender");
-        cellMonitorLogAppender.setJsonConfiguration(FileUtils.readResource("demo/cellmonitor/mongo_appender.json"));
+        cellMonitorLogAppender.setJsonConfiguration(FileUtils.readResource(getResourcePath("mongo_appender.json")));
         cellMonitorLogAppender = client.editLogAppenderDto(cellMonitorLogAppender);
         
         LOG.info("Finished loading 'Cell Monitor Demo Application' data.");
-    }
-
-    @Override
-    protected void setupProjectConfigs() {
-        Project projectConfig = new Project();
-        projectConfig.setId("cellmonitor_demo");
-        projectConfig.setName("Cell monitor");
-        projectConfig.setDescription("Cell monitor application on android platform demonstrating data collection feature");
-        projectConfig.setPlatform(Platform.ANDROID);
-        projectConfig.setSourceArchive("android/cellmonitor_demo.tar.gz");
-        projectConfig.setProjectFolder("cellmonitor_demo/CellMonitor");
-        projectConfig.setSdkLibDir("cellmonitor_demo/CellMonitor/libs");
-        projectConfig.setDestBinaryFile("cellmonitor_demo/CellMonitor/bin/CellMonitor-debug.apk");
-        projectConfigs.add(projectConfig);
     }
 
 }

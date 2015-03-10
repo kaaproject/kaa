@@ -47,6 +47,14 @@ import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import de.greenrobot.event.EventBus;
 
+/**
+ * The Class CellMonitorApplication.
+ * Implementation of base {@link Application} class. Performs initialization of 
+ * application resources including initialization of Kaa client. Handles Kaa client lifecycle.
+ * Implements and registers listener to monitor mobile cell location and signal strength.
+ * Implements and registers listener to monitor phone gps location.
+ * Sends cell monitor log records to Kaa cluster via Kaa client.
+ */
 public class CellMonitorApplication extends Application {
     
     private static final Logger LOG = LoggerFactory
