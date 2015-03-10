@@ -136,9 +136,6 @@ set ( KAA_TEST_SOURCES
         impl/kaatcp/KaaTcpTest.cpp
         impl/channel/IPConnectivityCheckerTest.cpp
         impl/log/LogUploadFailoverStrategyTest.cpp
-##        impl/bootstrap/BootstrapManagerTest.cpp
-##        impl/event/EventFamilyFactoryTest.cpp
-##        impl/event/EventListenersResolverTest.cpp
     )
 
 add_executable ( kaatest  ${KAA_TEST_SOURCES})
