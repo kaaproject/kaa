@@ -42,16 +42,11 @@ import org.slf4j.LoggerFactory;
 
 public class EventDemo {
 
-
     private static final Logger LOG = LoggerFactory.getLogger(EventDemo.class);
 
     public static void main(String[] args) {
-        LOG.info("Event demo has been started");
-        doWork();
-        LOG.info("Event demo has been stopped");
-    }
+        LOG.info("Event demo started");
 
-    public static void doWork() {
         KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(),
                 new SimpleKaaClientStateListener());
         kaaClient.start();
@@ -131,6 +126,9 @@ public class EventDemo {
         }
 
         kaaClient.stop();
+
+        LOG.info("Event demo stopped");
     }
+
 
 }

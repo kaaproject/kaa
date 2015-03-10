@@ -24,14 +24,18 @@ public class DemoBuildersRegistry {
     private static final List<DemoBuilder> demoBuilders = new ArrayList<>();
     
     static {
+        //ANDROID DEMOS
         demoBuilders.add(new NotificationDemoBuilder());
-        demoBuilders.add(new JDataCollectionDemoBuider());
-        demoBuilders.add(new JEventDemoBuilder());
         demoBuilders.add(new CellMonitorDemoBuilder());
         demoBuilders.add(new CityGuideDemoBuilder());
         demoBuilders.add(new PhotoFrameDemoBuilder());
         demoBuilders.add(new SmartHouseDemoBuilder());
 //        demoBuilders.add(new RobotRunDemoBuilder());
+
+
+        //PURE JAVA DEMOS
+        demoBuilders.add(new JEventDemoBuilder());
+        demoBuilders.add(new JDataCollectionDemoBuider());
     }
     
     public static List<DemoBuilder> getRegisteredDemoBuilders() {

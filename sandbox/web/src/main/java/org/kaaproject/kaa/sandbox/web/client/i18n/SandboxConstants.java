@@ -2,7 +2,6 @@ package org.kaaproject.kaa.sandbox.web.client.i18n;
 
 /**
  * Interface to represent the constants contained in resource bundle:
- * 	'/home/dyosick/projects/github_kaa/kaa/sandbox/web/src/main/java/org/kaaproject/kaa/sandbox/web/client/i18n/SandboxConstants.properties'.
  */
 public interface SandboxConstants extends com.google.gwt.i18n.client.ConstantsWithLookup {
   
