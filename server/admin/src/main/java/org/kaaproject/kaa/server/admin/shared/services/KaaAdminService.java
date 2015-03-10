@@ -68,6 +68,8 @@ public interface KaaAdminService extends RemoteService {
 
     public ApplicationDto getApplication(String applicationId) throws KaaAdminServiceException;
 
+    public ApplicationDto getApplicationByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+
     public ApplicationDto editApplication(ApplicationDto application) throws KaaAdminServiceException;
 
     public void deleteApplication(String applicationId) throws KaaAdminServiceException;

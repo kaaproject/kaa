@@ -175,7 +175,7 @@ public class EventManagerTest {
         EventSyncRequest request = new EventSyncRequest();
         eventManager.produceEvent("kaa.test.event.SomeEvent", new byte[0], "theTarget");
         eventManager.fillEventListenersSyncRequest(request);
-        request.setEvents(eventManager.getPendingEvents());
+        request.setEvents(eventManager.pollPendingEvents());
 
         assertNotNull(request.getEvents());
         assertEquals(1, request.getEvents().size());

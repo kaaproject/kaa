@@ -163,7 +163,8 @@ public class CSdkGenerator extends SdkGenerator {
                                                                  notificationSchemaVersion, logSchemaVersion,
                                                                  configurationProtocolSchemaBody,
                                                                  defaultConfigurationData,
-                                                                 eventFamilies);
+                                                                 eventFamilies,
+                                                                 defaultVerifierToken);
 
                     TarArchiveEntry kaaDefaultsEntry = new TarArchiveEntry(KAA_DEFAULTS_HEADER);
                     kaaDefaultsEntry.setSize(kaaDefaultsData.length);
@@ -289,7 +290,8 @@ public class CSdkGenerator extends SdkGenerator {
                                        int logSchemaVersion,
                                        String configurationProtocolSchemaBody,
                                        byte[] defaultConfigurationData,
-                                       List<EventFamilyMetadata> eventFamilies) throws IOException {
+                                       List<EventFamilyMetadata> eventFamilies,
+                                       String defaultVerifierToken) throws IOException {
 
         VelocityContext context = new VelocityContext();
 
@@ -303,6 +305,7 @@ public class CSdkGenerator extends SdkGenerator {
         context.put("user_nf_version", notificationSchemaVersion);
         context.put("log_version", logSchemaVersion);
         context.put("system_nf_version", 1);
+        context.put("user_verifier_token", (defaultVerifierToken != null ? defaultVerifierToken : ""));
 
         context.put("eventFamilies", eventFamilies);
         context.put("bootstrapNodes", bootstrapNodes);
@@ -319,12 +322,9 @@ public class CSdkGenerator extends SdkGenerator {
         Schema schema = new Schema.Parser().parse(profileSchemaBody);
         List<TarEntryData> tarEntries = new LinkedList<>();
 
-        tarEntries.add(createTarEntry(PROFILE_HEADER,
-                                      processHeaderTemplate("kaa_profile.vm", schema)));
+        tarEntries.add(createTarEntry(PROFILE_HEADER, processHeaderTemplate("kaa_profile.vm", schema)));
 
-        tarEntries.addAll(generateSourcesFromSchema(schema,
-                                                    KAA_PROFILE_SOURCE_NAME_PATTERN,
-                                                    "profile"));
+        tarEntries.addAll(generateSourcesFromSchema(schema, KAA_PROFILE_SOURCE_NAME_PATTERN, "profile"));
 
         return tarEntries;
     }
@@ -333,12 +333,9 @@ public class CSdkGenerator extends SdkGenerator {
         Schema schema = new Schema.Parser().parse(logSchemaBody);
         List<TarEntryData> tarEntries = new LinkedList<>();
 
-        tarEntries.add(createTarEntry(LOG_HEADER,
-                                      processHeaderTemplate("kaa_logging.vm", schema)));
+        tarEntries.add(createTarEntry(LOG_HEADER, processHeaderTemplate("kaa_logging.vm", schema)));
 
-        tarEntries.addAll(generateSourcesFromSchema(schema,
-                                                    KAA_LOG_SOURCE_NAME_PATTERN,
-                                                    "logging"));
+        tarEntries.addAll(generateSourcesFromSchema(schema, KAA_LOG_SOURCE_NAME_PATTERN, "logging"));
 
         return tarEntries;
     }
@@ -350,9 +347,7 @@ public class CSdkGenerator extends SdkGenerator {
         tarEntries.add(createTarEntry(CONFIGURATION_HEADER,
                                       processHeaderTemplate("kaa_configuration_definitions.vm", schema)));
 
-        tarEntries.addAll(generateSourcesFromSchema(schema,
-                                                    KAA_CONFIGURATION_SOURCE_NAME_PATTERN,
-                                                    "configuration"));
+        tarEntries.addAll(generateSourcesFromSchema(schema, KAA_CONFIGURATION_SOURCE_NAME_PATTERN, "configuration"));
 
         return tarEntries;
     }

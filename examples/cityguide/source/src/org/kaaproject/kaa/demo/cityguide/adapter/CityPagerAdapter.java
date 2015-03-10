@@ -29,6 +29,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+/**
+ * The Class CityPagerAdapter.
+ * Implementation of {@link FragmentStatePagerAdapter} class. Used as adapter class for city view pager.
+ * Provides fragments with places separated by place {@link Category}.
+ */
 public class CityPagerAdapter extends FragmentStatePagerAdapter {
 
     private static final int[] pageTitles = new int[] { R.string.hotels,

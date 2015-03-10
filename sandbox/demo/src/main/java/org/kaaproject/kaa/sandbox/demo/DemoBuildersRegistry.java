@@ -29,6 +29,7 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new JEventDemoBuilder());
         demoBuilders.add(new CellMonitorDemoBuilder());
         demoBuilders.add(new CityGuideDemoBuilder());
+        demoBuilders.add(new PhotoFrameDemoBuilder());
         demoBuilders.add(new SmartHouseDemoBuilder());
 //        demoBuilders.add(new RobotRunDemoBuilder());
     }

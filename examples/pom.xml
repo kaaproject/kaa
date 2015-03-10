@@ -41,6 +41,7 @@
         <module>jeventdemo</module>
         <module>cityguide</module>
         <module>cellmonitor</module>
+        <module>photoframe</module>
     </modules>
 
     <dependencyManagement>
