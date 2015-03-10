@@ -51,11 +51,11 @@ public class JEventDemoBuilder extends AbstractDemoBuilder {
         loginTenantAdmin(client);
 
         EventClassFamilyDto thermoEventClassFamily = new EventClassFamilyDto();
-        thermoEventClassFamily.setName("Thermo Event Class Family");
+        thermoEventClassFamily.setName("Thermostat Event Class Family");
         thermoEventClassFamily.setNamespace("org.kaaproject.kaa.schema.sample.event.thermo");
-        thermoEventClassFamily.setClassName("CustomThermoEventClassFamily");
+        thermoEventClassFamily.setClassName("ThermostatEventClassFamily");
         thermoEventClassFamily = client.editEventClassFamily(thermoEventClassFamily);
-        client.addEventClassFamilySchema(thermoEventClassFamily.getId(), "demo/jevent/thermoEventClassFamily.json");
+        client.addEventClassFamilySchema(thermoEventClassFamily.getId(), "demo/jevent/thermostatEventClassFamily.json");
 
         ApplicationDto jeventApplication = new ApplicationDto();
         jeventApplication.setName("Java Event Demo");
