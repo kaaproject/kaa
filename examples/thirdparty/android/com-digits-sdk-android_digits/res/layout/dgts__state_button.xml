@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/dgts__state_button"
+        style="@style/dgts__ButtonText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
+
+
+    <ProgressBar
+        android:id="@+id/dgts__state_progress"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="@dimen/dgts__progress_bar_side_length"
+        android:layout_height="@dimen/dgts__progress_bar_side_length"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/dgts__state_button"
+        android:layout_toStartOf="@+id/dgts__state_button"/>
+
+    <ImageView
+        android:id="@+id/dgts__state_success"
+        android:contentDescription="@string/dgts__success_desc"
+        android:layout_width="@dimen/dgts__progress_bar_side_length"
+        android:layout_height="@dimen/dgts__progress_bar_side_length"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/dgts__state_button"
+        android:layout_toStartOf="@+id/dgts__state_button"
+        android:src="@drawable/dgts__ic_success"/>
+</merge><!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/layout/dgts__state_button.xml -->

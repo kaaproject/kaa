@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-it/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">Annulla</string>
+    <string name="dgts__communication_error">Errore di comunicazione</string>
+    <string name="dgts__confirmation_code">Codice di conferma</string>
+    <string name="dgts__confirmation_edit_hint">Inserisci codice di conferma</string>
+    <string name="dgts__confirmation_error">Impossibile confermare il tuo numero di telefono</string>
+    <string name="dgts__confirmation_error_alternative">Spiacenti, stiamo avendo problemi a inviarti un codice di conferma. Prova accedendo qui sotto.</string>
+    <string name="dgts__confirmation_expired">Questo codice è scaduto. Reinvia codice di conferma.</string>
+    <string name="dgts__confirmation_send_text">Invia codice di conferma</string>
+    <string name="dgts__confirmation_sending_text">Invio codice di conferma</string>
+    <string name="dgts__confirmation_sent_text">Codice di conferma inviato</string>
+    <string name="dgts__confirmation_sms">Codice di conferma: %1$s. Inserisci questo codice in %2$s</string>
+    <string name="dgts__create_account_text">Crea account</string>
+    <string name="dgts__creating_account_text">Creazione dell\'account in corso</string>
+    <string name="dgts__dismiss">Rimuovi</string>
+    <string name="dgts__find_your_friends">Trova i tuoi amici</string>
+    <string name="dgts__image_header_description">Immagine intestazione per l\'accesso</string>
+    <string name="dgts__login_digits_text">Usa il mio numero di telefono</string>
+    <string name="dgts__network_error">Controlla la tua rete e riprova.</string>
+    <string name="dgts__not_now">Non adesso</string>
+    <string name="dgts__okay">Ok</string>
+    <string name="dgts__phone_number_edit_hint">Il tuo numero</string>
+    <string name="dgts__phone_number_text">Inserisci il tuo numero di telefono</string>
+    <string name="dgts__resend">Reinvia</string>
+    <string name="dgts__resend_confirmation_text">Reinvia codice di conferma</string>
+    <string name="dgts__sign_in">Accedi</string>
+    <string name="dgts__sign_in_error">Al momento non è stato possibile eseguire l\'accesso a Twitter. Riprova più tardi.</string>
+    <string name="dgts__sign_in_twitter">Accedi con Twitter</string>
+    <string name="dgts__signing_in">Accesso in corso</string>
+    <string name="dgts__success_desc">Icona Successo</string>
+    <string name="dgts__terms_text">Selezionando \"Invia codice di conferma\" qui sopra, ti verrà inviato un SMS da <u>Digits di Twitter</u> per confermare il tuo numero di telefono.</string>
+    <string name="dgts__terms_text_create">Selezionando \"Crea account\" qui sopra, accetti i <u>Termini di Servizio</u>, l\'<u>Informativa sulla Privacy</u> e l\'<u>Informativa sull\'uso dei cookie</u> di Digits di Twitter. Accetti inoltre che altri utenti dell\'app possano scoprire il tuo numero di telefono e/o la tua email.</string>
+    <string name="dgts__terms_text_create_app">Selezionando \"Crea account\" qui sopra, accetti i <u>Termini di Servizio</u>, l\'<u>Informativa sulla Privacy</u> e l\'<u>Informativa sull\'uso dei cookie</u> di Digits di Twitter. Accetti inoltre che altri utenti di %1$s possano scoprire il tuo numero di telefono e/o la tua email.</string>
+    <string name="dgts__try_again">Riprova</string>
+    <string name="dgts__try_again_confirmation">Controlla il tuo codice e riprova.</string>
+    <string name="dgts__try_again_phone_number">Controlla il tuo numero e riprova.</string>
+    <string name="dgts__try_another_phone">Prova con un numero di telefono diverso</string>
+    <string name="dgts__upload_contacts">Utilizziamo Digits by Twitter per trovare altri tuoi amici che usano quest\'app. Se tocchi OK, caricheremo la tua rubrica in Digits by Twitter e consentiremo ad altri utenti della nostra app di trovarti.</string>
+</resources>

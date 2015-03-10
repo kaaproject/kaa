@@ -1,0 +1,62 @@
+<!--Tweet container-->
+<RelativeLayout
+    android:id="@+id/tw__tweet_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/tw__CompactTweetContainer">
+
+    <ImageView
+        tools:ignore="ContentDescription"
+        android:id="@+id/tw__tweet_author_avatar"
+        style="@style/tw__TweetAvatar.Compact"
+        tools:background="@color/tw__tweet_media_preview_bg_color"/>
+
+    <!--Name and timestamp don't ellipsize, but @username in the middle does ellipsize-->
+    <LinearLayout
+        android:id="@+id/tw__author_attribution"
+        style="@style/tw__CompactAttributionLine"
+        android:layout_toRightOf="@id/tw__tweet_author_avatar"
+        android:layout_toEndOf="@id/tw__tweet_author_avatar">
+
+        <TextView
+            android:id="@+id/tw__tweet_author_full_name"
+            style="@style/tw__TweetFullName.Compact"
+            tools:text="Jack"/>
+
+        <TextView
+            android:id="@+id/tw__tweet_author_screen_name"
+            style="@style/tw__TweetScreenName.Compact"
+            tools:text="@jack"/>
+
+        <TextView
+            android:id="@+id/tw__tweet_timestamp"
+            style="@style/tw__TweetTimestamp.Compact"
+            tools:text="• 03/21/2006"/>
+
+    </LinearLayout>
+
+    <ImageView
+        tools:ignore="ContentDescription"
+        android:id="@+id/tw__twitter_logo"
+        style="@style/tw__TwitterLogo.Compact"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <com.twitter.sdk.android.tweetui.internal.util.AspectRatioImageView
+        tools:ignore="ContentDescription"
+        android:id="@+id/tw__tweet_media"
+        style="@style/tw__TweetMedia.Compact"
+        android:layout_below="@id/tw__author_attribution"
+        android:layout_toRightOf="@id/tw__tweet_author_avatar"
+        android:layout_toEndOf="@id/tw__tweet_author_avatar"/>
+
+    <TextView
+        android:id="@+id/tw__tweet_text"
+        style="@style/tw__TweetText.Compact"
+        android:layout_below="@id/tw__tweet_media"
+        android:layout_toRightOf="@id/tw__tweet_author_avatar"
+        android:layout_toEndOf="@id/tw__tweet_author_avatar"
+        tools:text="just setting up my twttr"/>
+
+</RelativeLayout>
+<!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/layout/tw__tweet_compact.xml -->

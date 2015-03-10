@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-nl/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">Annuleren</string>
+    <string name="dgts__communication_error">Communicatiefout </string>
+    <string name="dgts__confirmation_code">Bevestigingscode</string>
+    <string name="dgts__confirmation_edit_hint">Bevestigingscode invoeren</string>
+    <string name="dgts__confirmation_error">We konden je telefoonnummer niet bevestigen.</string>
+    <string name="dgts__confirmation_error_alternative">Sorry, we hebben wat problemen met je een bevestigingscode te sturen. Probeer hieronder in te loggen.</string>
+    <string name="dgts__confirmation_expired">De code is verlopen. Verstuur de bevestigingscode opnieuw.</string>
+    <string name="dgts__confirmation_send_text">Bevestigingscode versturen</string>
+    <string name="dgts__confirmation_sending_text">Bevestigingscode versturen…</string>
+    <string name="dgts__confirmation_sent_text">Bevestigingscode verzonden</string>
+    <string name="dgts__confirmation_sms">Bevestigingscode: %1$s. Voer deze code in in %2$s</string>
+    <string name="dgts__create_account_text">Registreren</string>
+    <string name="dgts__creating_account_text">Account aanmaken…</string>
+    <string name="dgts__dismiss">Verbergen</string>
+    <string name="dgts__find_your_friends">Je vrienden zoeken</string>
+    <string name="dgts__image_header_description">Afbeeldingskoptekst voor inloggen</string>
+    <string name="dgts__login_digits_text">Mijn telefoonnummer gebruiken</string>
+    <string name="dgts__network_error">Controleer je internetverbinding en probeer het opnieuw.</string>
+    <string name="dgts__not_now">Nu niet</string>
+    <string name="dgts__okay">Oké</string>
+    <string name="dgts__phone_number_edit_hint">Je telefoonnummer</string>
+    <string name="dgts__phone_number_text">Vul je telefoonnummer in</string>
+    <string name="dgts__resend">Opnieuw verzenden</string>
+    <string name="dgts__resend_confirmation_text">Bevestiging opnieuw verzenden</string>
+    <string name="dgts__sign_in">Inloggen</string>
+    <string name="dgts__sign_in_error">We kunnen je op dit moment niet inloggen op Twitter. Probeer het later opnieuw.</string>
+    <string name="dgts__sign_in_twitter">Inloggen met Twitter</string>
+    <string name="dgts__signing_in">Inloggen…</string>
+    <string name="dgts__success_desc">Gelukt-pictogram</string>
+    <string name="dgts__terms_text">Wanneer je hierboven op \'Bevestigingscode versturen\' tikt, stuurt         <u>Digits by Twitter        </u> je een sms-bericht om je telefoonnummer te bevestigen.</string>
+    <string name="dgts__terms_text_create">Wanneer je hierboven op \'Account maken\' tikt, ga je akkoord met de      \
+   <u>algemene voorwaarden</u>, het \
+<u>privacybeleid</u> en het <u>cookiebeleid</u> \
+van Digits by Twitter en ga je akkoord met het feit dat andere \
+gebruikers van deze app je kunnen vinden aan de hand van je telefoonnummer \
+en/of e-mailadres.</string>
+    <string name="dgts__terms_text_create_app">Wanneer je hierboven op \'Account maken\' tikt, ga je akkoord met de         <u>algemene voorwaarden</u>, het <u>privacybeleid</u> en het <u>cookiebeleid</u> van Digits by Twitter en ga je akkoord met het feit dat andere gebruikers van %1$s je kunnen vinden aan de hand van je telefoonnummer en/of e-mailadres.</string>
+    <string name="dgts__try_again">Probeer het opnieuw</string>
+    <string name="dgts__try_again_confirmation">Controleer je code en probeer het opnieuw.</string>
+    <string name="dgts__try_again_phone_number">Controleer je telefoonnummer en probeer het opnieuw.</string>
+    <string name="dgts__try_another_phone">Probeer een ander telefoonnummer</string>
+    <string name="dgts__upload_contacts">We gebruiken Digits by Twitter om meer vrienden van je te zoeken die deze app gebruiken. Wanneer je op Oké tikt, wordt je adresboek naar Digits by Twitter geüpload en kunnen andere gebruikers van onze app jou vinden.</string>
+</resources>

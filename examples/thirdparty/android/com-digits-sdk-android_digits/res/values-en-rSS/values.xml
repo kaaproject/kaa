@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-en-rSS/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">[[59330]] Cancel</string>
+    <string name="dgts__communication_error">[[59338]] Communication Error</string>
+    <string name="dgts__confirmation_code">[[59318]] Confirmation code</string>
+    <string name="dgts__confirmation_edit_hint">[[59324]] Enter confirmation code</string>
+    <string name="dgts__confirmation_error">[[59343]] Unable to confirm your phone number</string>
+    <string name="dgts__confirmation_error_alternative">[[59344]] Sorry, we are having trouble sending you a\
+        confirmation code. Please try signing in below.</string>
+    <string name="dgts__confirmation_expired">[[59337]] This code has expired. Please resend\
+        confirmation code.</string>
+    <string name="dgts__confirmation_send_text">[[59320]] Send confirmation code</string>
+    <string name="dgts__confirmation_sending_text">[[59322]] Sending confirmation code</string>
+    <string name="dgts__confirmation_sent_text">[[59321]] Sent confirmation code</string>
+    <string name="dgts__confirmation_sms">[[59319]] Confirmation code: %1$s. Enter this code in %2$s</string>
+    <string name="dgts__create_account_text">[[59325]] Create account</string>
+    <string name="dgts__creating_account_text">[[59326]] Creating account</string>
+    <string name="dgts__dismiss">[[59340]] Dismiss</string>
+    <string name="dgts__find_your_friends">[[59346]] Find your friends</string>
+    <string name="dgts__image_header_description">[[60972]] Image header for login</string>
+    <string name="dgts__login_digits_text">[[59315]] Use my phone number</string>
+    <string name="dgts__network_error">[[59339]] Please check your network and try again.</string>
+    <string name="dgts__not_now">[[59332]] Not now</string>
+    <string name="dgts__okay">[[59331]] Okay</string>
+    <string name="dgts__phone_number_edit_hint">[[59317]] Your Number</string>
+    <string name="dgts__phone_number_text">[[59316]] Enter your phone number</string>
+    <string name="dgts__resend">[[59341]] Resend</string>
+    <string name="dgts__resend_confirmation_text">[[59329]] Resend confirmation code</string>
+    <string name="dgts__sign_in">[[59333]] Sign in</string>
+    <string name="dgts__sign_in_error">[[59361]] We could not sign you in with Twitter at this time.\
+        Please try again later.</string>
+    <string name="dgts__sign_in_twitter">[[59345]] Sign in with Twitter</string>
+    <string name="dgts__signing_in">[[59334]] Signing in</string>
+    <string name="dgts__success_desc">[[60971]] Success Icon</string>
+    <string name="dgts__terms_text">[[60968]] By tapping \"Send confirmation code\" above,\
+        <u>Digits by Twitter</u>, will send you a SMS message to confirm your phone number.</string>
+    <string name="dgts__terms_text_create">[[60969]] By tapping \"Create account\" above, you agree to the <u>Terms\
+        of Service</u>, <u>Privacy Policy</u>, and <u>Cookies Policy</u> of Digits by Twitter, and that other\
+        users of this app can discover you by phone number and/or email.</string>
+    <string name="dgts__terms_text_create_app">[[60970]] By tapping \"Create account\" above, you agree to the\
+        <u>Terms of Service</u>, <u>Privacy Policy</u>, and <u>Cookies Policy</u> of Digits by Twitter, and that other\
+        users of %1$s can discover you by phone number and/or email.</string>
+    <string name="dgts__try_again">[[59342]] Try Again</string>
+    <string name="dgts__try_again_confirmation">[[59336]] Please check your code and try again.</string>
+    <string name="dgts__try_again_phone_number">[[59335]] Please check your number and try again.</string>
+    <string name="dgts__try_another_phone">[[59360]] Try a different phone number</string>
+    <string name="dgts__upload_contacts">[[59347]] We use Digits by Twitter to find more of your friends who use\
+        this app. When you tap Okay, we\'ll upload your address book to Digits by Twitter and\
+        enable other users of our app to discover you.</string>
+</resources>

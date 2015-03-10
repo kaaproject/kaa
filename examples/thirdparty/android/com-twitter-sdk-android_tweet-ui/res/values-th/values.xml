@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values-th/plurals.xml -->
+    <eat-comment/>
+    <plurals name="tw__time_hours">
+        <item quantity="one">1ชม.</item>
+        <item quantity="other">%dชม.</item>
+    </plurals>
+    <plurals name="tw__time_mins">
+        <item quantity="one">1นาที</item>
+        <item quantity="other">%dนาที</item>
+    </plurals>
+    <plurals name="tw__time_secs">
+        <item quantity="one">1วิ</item>
+        <item quantity="other">%dวิ</item>
+    </plurals>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values-th/strings.xml -->
+    <eat-comment/>
+    <string name="tw__loading_tweet">กำลังโหลดทวีต</string>
+    <string name="tw__relative_date_format_long">d/M/y</string>
+    <string name="tw__relative_date_format_short">d MMM</string>
+    <string name="tw__share_content_format">ดูทวีตของ \@%1$s: Tweet: https://twitter.com/%1$s/status/%2$s</string>
+    <string name="tw__share_subject_format">ทวีตจาก %1$s (\@%2$s)</string>
+    <string name="tw__share_tweet">แบ่งปันทวีต</string>
+    <string name="tw__tweet_content_description">%1$s. %2$s. %3$s.</string>
+</resources>

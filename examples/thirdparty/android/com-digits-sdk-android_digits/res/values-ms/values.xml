@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-ms/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">Batal</string>
+    <string name="dgts__communication_error">Ralat Komunikasi</string>
+    <string name="dgts__confirmation_code">Kod pengesahan</string>
+    <string name="dgts__confirmation_edit_hint">Masukkan kod pengesahan</string>
+    <string name="dgts__confirmation_error">Tidak dapat mengesahkan nombor telefon anda</string>
+    <string name="dgts__confirmation_error_alternative">Maaf, kami mengalami masalah semasa menghantar kod pengesahan anda. Sila cuba mendaftar masuk di bawah.</string>
+    <string name="dgts__confirmation_expired">Kod ini telah tamat tempoh. Sila hantar semula kod pengesahan.</string>
+    <string name="dgts__confirmation_send_text">Hantar kod pengesahan</string>
+    <string name="dgts__confirmation_sending_text">Menghantar kod pengesahan</string>
+    <string name="dgts__confirmation_sent_text">Kod pengesahan telah dihantar</string>
+    <string name="dgts__confirmation_sms">Kod pengesahan: %1$s. Masukkan kod ini dalam %2$s</string>
+    <string name="dgts__create_account_text">Cipta akaun</string>
+    <string name="dgts__creating_account_text">Mencipta akaun</string>
+    <string name="dgts__dismiss">Tolak</string>
+    <string name="dgts__find_your_friends">Cari rakan anda</string>
+    <string name="dgts__login_digits_text">Gunakan nombor telefon saya</string>
+    <string name="dgts__network_error">Sila semak rangkaian anda dan cuba sekali lagi.</string>
+    <string name="dgts__not_now">Bukan sekarang</string>
+    <string name="dgts__okay">Okay</string>
+    <string name="dgts__phone_number_edit_hint">Nombor Anda</string>
+    <string name="dgts__phone_number_text">Masukkan nombor telefon anda</string>
+    <string name="dgts__resend">Hantar Semula</string>
+    <string name="dgts__resend_confirmation_text">Hantar semula kod pengesahan</string>
+    <string name="dgts__sign_in">Daftar masuk</string>
+    <string name="dgts__sign_in_error">Kami tidak dapat mendaftar masuk anda dengan Twitter pada masa ini. Sila cuba lagi kemudian.</string>
+    <string name="dgts__sign_in_twitter">Daftar masuk dengan Twitter</string>
+    <string name="dgts__signing_in">Mendaftar masuk</string>
+    <string name="dgts__try_again">Cuba Lagi</string>
+    <string name="dgts__try_again_confirmation">Sila semak kod anda dan cuba sekali lagi.</string>
+    <string name="dgts__try_again_phone_number">Sila semak nombor anda dan cuba sekali lagi.</string>
+    <string name="dgts__try_another_phone">Cuba nombor telefon lain</string>
+    <string name="dgts__upload_contacts">Kami menggunaka Digits by Twitter untuk mencari lebih ramai rakan anda yang menggunakan aplikasi ini. Apabila anda mengetik Okay, kami akan memuat naik buku alamat anda ke Digits by Twitter dan membolehkan pengguna lain aplikasi anda menemui anda.</string>
+</resources>

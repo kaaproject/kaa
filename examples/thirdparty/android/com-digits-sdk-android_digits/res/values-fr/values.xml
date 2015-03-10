@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-fr/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">Annuler</string>
+    <string name="dgts__communication_error">Erreur de communication</string>
+    <string name="dgts__confirmation_code">Code de confirmation</string>
+    <string name="dgts__confirmation_edit_hint">Entrez le code de confirmation.</string>
+    <string name="dgts__confirmation_error">Impossible de confirmer votre numéro de téléphone</string>
+    <string name="dgts__confirmation_error_alternative">Désolé, nous ne réussissons pas à vous envoyer un code de         confirmation. Veuillez essayer de vous connecter ci-dessous.</string>
+    <string name="dgts__confirmation_expired">Ce code a expiré. Veuillez renvoyer le code de        confirmation.</string>
+    <string name="dgts__confirmation_send_text">Envoyer le code de confirmation</string>
+    <string name="dgts__confirmation_sending_text">Envoi du code de confirmation</string>
+    <string name="dgts__confirmation_sent_text">Code de confirmation envoyé</string>
+    <string name="dgts__confirmation_sms">Code de confirmation : %1$s. Entrez ce code dans %2$s.</string>
+    <string name="dgts__create_account_text">Créer un compte</string>
+    <string name="dgts__creating_account_text">Création du compte</string>
+    <string name="dgts__dismiss">Rejeter</string>
+    <string name="dgts__find_your_friends">Trouvez vos amis.</string>
+    <string name="dgts__image_header_description">Bannière pour la connexion</string>
+    <string name="dgts__login_digits_text">Utiliser mon numéro de téléphone</string>
+    <string name="dgts__network_error">Veuillez vérifier votre réseau et réessayer.</string>
+    <string name="dgts__not_now">Pas maintenant</string>
+    <string name="dgts__okay">OK</string>
+    <string name="dgts__phone_number_edit_hint">Votre numéro</string>
+    <string name="dgts__phone_number_text">Entrez votre numéro de téléphone.</string>
+    <string name="dgts__resend">Renvoyer</string>
+    <string name="dgts__resend_confirmation_text">Renvoyer le code de confirmation</string>
+    <string name="dgts__sign_in">Se connecter</string>
+    <string name="dgts__sign_in_error">Nous n\'avons pas pu vous connecter à Twitter. Veuillez réessayer plus tard.</string>
+    <string name="dgts__sign_in_twitter">Se connecter avec Twitter</string>
+    <string name="dgts__signing_in">Connexion</string>
+    <string name="dgts__success_desc">Icône Réussite</string>
+    <string name="dgts__terms_text">Si vous appuyez sur Envoyer le code de confirmation ci-dessus, le composant <u>Digits de Twitter</u> vous enverra un SMS pour confirmer votre numéro de téléphone.</string>
+    <string name="dgts__terms_text_create">En appuyant sur Créer un compte ci-dessus, vous acceptez les <u>conditions d\'utilisation</u>, la  <u>politique de confidentialité</u> et la  <u>politique relative aux cookies</u> du composant Digits de Twitter, et vous acceptez que d\'autres utilisateurs de cette application puissent vous trouver avec votre numéro de téléphone et/ou votre email.</string>
+    <string name="dgts__terms_text_create_app">En appuyant sur Créer un compte ci-dessus, vous acceptez les <u>conditions \
+d\'utilisation</u>, la <u>politique de confidentialité</u> et la <u>politique relative \
+aux cookies</u> du composant Digits de Twitter, et vous acceptez que \
+d\'autres utilisateurs de %1$s puissent vous trouver avec votre\
+numéro de téléphone et/ou votre email.</string>
+    <string name="dgts__try_again">Réessayer</string>
+    <string name="dgts__try_again_confirmation">Veuillez vérifier votre code et réessayer.</string>
+    <string name="dgts__try_again_phone_number">Veuillez vérifier votre numéro et réessayer.</string>
+    <string name="dgts__try_another_phone">Essayez un autre numéro de téléphone.</string>
+    <string name="dgts__upload_contacts">Nous utilisons le composant Digits de Twitter pour trouver plus d\'amis à vous qui utilisent cette application. Quand vous appuierez sur OK, nous\enverrons votre carnet d\'adresses à Digits et permettrons aux autres utilisateurs de notre application de vous trouver.</string>
+</resources>

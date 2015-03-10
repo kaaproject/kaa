@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-pl/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">Anuluj</string>
+    <string name="dgts__communication_error">Błąd połączenia</string>
+    <string name="dgts__confirmation_code">Kod potwierdzenia</string>
+    <string name="dgts__confirmation_edit_hint">Wpisz kod potwierdzenia</string>
+    <string name="dgts__confirmation_error">Nie udało nam się potwierdzić Twojego numeru telefonu</string>
+    <string name="dgts__confirmation_error_alternative">Mamy problem z wysłaniem Ci kodu potwierdzenia. Spróbuj zalogować się poniżej.</string>
+    <string name="dgts__confirmation_expired">Ten kod jest już nieważny. Poproś o nowy kod potwierdzający.</string>
+    <string name="dgts__confirmation_send_text">Wyślij kod potwierdzenia</string>
+    <string name="dgts__confirmation_sending_text">Wysyłanie kodu potwierdzenia</string>
+    <string name="dgts__confirmation_sent_text">Wysłany kod potwierdzenia</string>
+    <string name="dgts__confirmation_sms">Kod potwierdzenia: %1$s. Wpisz ten kod w ciągu %2$s</string>
+    <string name="dgts__create_account_text">Utwórz konto</string>
+    <string name="dgts__creating_account_text">Tworzenie konta</string>
+    <string name="dgts__dismiss">Odrzuć</string>
+    <string name="dgts__find_your_friends">Znajdź znajomych</string>
+    <string name="dgts__image_header_description">Nagłówek obrazu logowania</string>
+    <string name="dgts__login_digits_text">Użyj mojego numeru telefonu</string>
+    <string name="dgts__network_error">Sprawdź sieć i spróbuj ponownie.</string>
+    <string name="dgts__not_now">Nie teraz</string>
+    <string name="dgts__okay">OK</string>
+    <string name="dgts__phone_number_edit_hint">Twój numer</string>
+    <string name="dgts__phone_number_text">Wpisz swój numer telefonu</string>
+    <string name="dgts__resend">Wyślij ponownie</string>
+    <string name="dgts__resend_confirmation_text">Wyślij ponownie kod potwierdzenia</string>
+    <string name="dgts__sign_in">Zaloguj się</string>
+    <string name="dgts__sign_in_error">Obecnie nie możesz zalogować się na Tweeterze. Spróbuj ponownie później.</string>
+    <string name="dgts__sign_in_twitter">Zaloguj się, używając danych logowania z Twittera</string>
+    <string name="dgts__signing_in">Logowanie</string>
+    <string name="dgts__success_desc">Ikona sukcesu</string>
+    <string name="dgts__terms_text">Stuknij przycisk „Wyślij kod potwierdzenia” powyżej, a otrzymasz SMS z usługi <u>Digits zarządzanej przez Twittera</u>, za pomocą którego potwierdzimy Twój numer telefonu.</string>
+    <string name="dgts__terms_text_create">Stuknij przycisk „Utwórz konto” powyżej, aby zaakceptować <u>zasady użytkowania</u>, <u>politykę prywatności</u> i <u>politykę ciasteczek</u> usługi Digits zarządzanej przez Twittera oraz to, że inni użytkownicy tej aplikacji mogą rozpoznać Cię po numerze telefonu lub adresie e-mail.</string>
+    <string name="dgts__terms_text_create_app">Stuknij przycisk „Utwórz konto” powyżej, aby zaakceptować <u>zasady \
+użytkowania</u>, <u>politykę prywatności</u> i <u>politykę ciasteczek</u> usługi Digits \
+zarządzanej przez Twittera oraz to, że inni użytkownicy aplikacji %1$s \
+mogą rozpoznać Cię po numerze telefonu lub adresie e-mail.</string>
+    <string name="dgts__try_again">Spróbuj ponownie</string>
+    <string name="dgts__try_again_confirmation">Sprawdź kod i spróbuj ponownie.</string>
+    <string name="dgts__try_again_phone_number">Sprawdź numer i spróbuj ponownie.</string>
+    <string name="dgts__try_another_phone">Wpisz inny numer telefonu</string>
+    <string name="dgts__upload_contacts">Za pomocą usługi Digits zarządzanej przez Twittera szukamy Twoich znajomych, którzy korzystają z tej aplikacji. Stuknij OK, a prześlemy Twoją książkę adresową do usługi Digits zarządzanej przez Twittera i sprawimy, że inni użytkownicy naszej aplikacji będą mogli Cię rozpoznać.</string>
+</resources>

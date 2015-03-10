@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-iw/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">ביטול</string>
+    <string name="dgts__communication_error">שגיאת תקשורת</string>
+    <string name="dgts__confirmation_code">קוד אישור</string>
+    <string name="dgts__confirmation_edit_hint">הזן קוד אישור</string>
+    <string name="dgts__confirmation_error">לא ניתן לאשר את מספר הטלפון שלך</string>
+    <string name="dgts__confirmation_error_alternative">מצטערים, נתקלנו בבעיה בשליחת קוד האישור אליך. נסה להיכנס למערכת להלן.</string>
+    <string name="dgts__confirmation_expired">תוקף הקוד פג. שלח מחדש קוד אישור.</string>
+    <string name="dgts__confirmation_send_text">שלח קוד אישור</string>
+    <string name="dgts__confirmation_sending_text">שולח קוד אישור</string>
+    <string name="dgts__confirmation_sent_text">קוד אישור נשלח</string>
+    <string name="dgts__confirmation_sms">קוד אישור: %1$s. הזן קוד זה ב%2$s</string>
+    <string name="dgts__create_account_text">צור חשבון</string>
+    <string name="dgts__creating_account_text">יוצר חשבון</string>
+    <string name="dgts__dismiss">התעלם</string>
+    <string name="dgts__find_your_friends">חפש את החברים שלך</string>
+    <string name="dgts__login_digits_text">השתמש במספר הטלפון שלי</string>
+    <string name="dgts__network_error">בדוק את הרשת שלך ונסה שוב.</string>
+    <string name="dgts__not_now">לא עכשיו</string>
+    <string name="dgts__okay">אישור</string>
+    <string name="dgts__phone_number_edit_hint">המספר שלך</string>
+    <string name="dgts__phone_number_text">הזן את מספר הטלפון שלך</string>
+    <string name="dgts__resend">שלח מחדש</string>
+    <string name="dgts__resend_confirmation_text">שלח מחדש קוד אישור</string>
+    <string name="dgts__sign_in">כניסה</string>
+    <string name="dgts__sign_in_error">לא הצלחנו להכניס אותך לטוויטר בשלב זה. נסה שוב מאוחר יותר.</string>
+    <string name="dgts__sign_in_twitter">היכנס לטוויטר</string>
+    <string name="dgts__signing_in">נכנס</string>
+    <string name="dgts__try_again">נסה שוב</string>
+    <string name="dgts__try_again_confirmation">בדוק את הקוד שלך ונסה שוב.</string>
+    <string name="dgts__try_again_phone_number">בדוק את המספר שלך ונסה שוב.</string>
+    <string name="dgts__try_another_phone">נסה מספר טלפון אחר</string>
+    <string name="dgts__upload_contacts">אנחנו משתמשים ב-Digits by Twitter לאיתור עוד חברים שלך המשתמשים ביישום זה. בעת ההקשה על \'אישור\', אנחנו מעלים את פנקס הכתובות שלך ל-Digits by Twitter ומאפשרים למשתמשים אחרים של היישום לגלות אותך.</string>
+</resources>

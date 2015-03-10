@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        style="@style/tw__Permission_Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.digits.sdk.android.AccentImageView
+            android:id="@+id/dgts__header_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/dgts__image_header_description"
+            android:scaleType="center"
+            android:src="@drawable/dgts__login_header"/>
+
+        <TextView
+            android:id="@+id/dgts__error_title"
+            style="@style/tw__Permission_Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/dgts__confirmation_error"
+            />
+
+        <TextView
+            android:id="@+id/dgts__error_text"
+            style="@style/tw__Permission_Description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dgts__permissions_margin_bottom"
+            android:gravity="center"
+            android:text="@string/dgts__confirmation_error_alternative"/>
+
+        <com.digits.sdk.android.AccentButton
+            android:id="@+id/dgts__dismiss_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dgts__permissions_margin_bottom"
+            android:text="@string/dgts__dismiss"
+            android:textSize="@dimen/tw__login_btn_text_size"/>
+
+        <com.digits.sdk.android.LinkTextView
+            android:id="@+id/dgts__try_another_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/dgts__try_another_phone"
+            />
+    </LinearLayout>
+</ScrollView><!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/layout/dgts__activity_failure.xml -->

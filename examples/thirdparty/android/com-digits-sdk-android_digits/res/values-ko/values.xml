@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-ko/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">취소</string>
+    <string name="dgts__communication_error">통신 오류</string>
+    <string name="dgts__confirmation_code">인증 코드</string>
+    <string name="dgts__confirmation_edit_hint">인증 코드 입력</string>
+    <string name="dgts__confirmation_error">휴대폰 번호를 확인할 수 없음</string>
+    <string name="dgts__confirmation_error_alternative">죄송합니다. 인증 코드를 보내는 데 문제가 발생했습니다. 아래에서 로그인해 보세요.</string>
+    <string name="dgts__confirmation_expired">이 코드는 만료되었습니다. 인증 코드를 다시 보내세요.</string>
+    <string name="dgts__confirmation_send_text">인증 코드 보내기</string>
+    <string name="dgts__confirmation_sending_text">인증 코드를 보내는 중</string>
+    <string name="dgts__confirmation_sent_text">인증 코드 보내기 완료</string>
+    <string name="dgts__confirmation_sms">인증 코드: %1$s. 이 코드를 %2$s에 입력하세요.</string>
+    <string name="dgts__create_account_text">계정 만들기</string>
+    <string name="dgts__creating_account_text">계정을 만드는 중</string>
+    <string name="dgts__dismiss">숨기기</string>
+    <string name="dgts__find_your_friends">친구 찾기</string>
+    <string name="dgts__image_header_description">로그인용 이미지 헤더</string>
+    <string name="dgts__login_digits_text">내 휴대폰 번호 사용</string>
+    <string name="dgts__network_error">네트워크를 확인한 후 다시 시도하세요.</string>
+    <string name="dgts__not_now">나중에</string>
+    <string name="dgts__okay">확인</string>
+    <string name="dgts__phone_number_edit_hint">내 휴대폰 번호</string>
+    <string name="dgts__phone_number_text">휴대폰 번호 입력</string>
+    <string name="dgts__resend">다시 보내기</string>
+    <string name="dgts__resend_confirmation_text">인증 코드 다시 보내기</string>
+    <string name="dgts__sign_in">로그인</string>
+    <string name="dgts__sign_in_error">지금은 트위터에 로그인할 수 없습니다.\
+        잠시 후 다시 시도해 주세요.</string>
+    <string name="dgts__sign_in_twitter">트위터로 로그인</string>
+    <string name="dgts__signing_in">로그인하는 중</string>
+    <string name="dgts__success_desc">성공 아이콘</string>
+    <string name="dgts__terms_text">위의 \"인증 코드 보내기\"를 누르면 <u>Digits by Twitter</u>에서 휴대폰 번호 확인용 SMS 메시지를 보냅니다.</string>
+    <string name="dgts__terms_text_create">위의 \"계정 만들기\"를 누르면 Digits by Twitter의 <u>이용약관</u>, <u>개인정보취급방침</u> 및 <u>쿠키 정책</u>에 동의하게 되고 이 앱의 다른 사용자가 휴대폰 번호나 이메일로 나를 발견할 수 있습니다.</string>
+    <string name="dgts__terms_text_create_app">위의 \"계정 만들기\"를 누르면 Digits by Twitter의 <u>이용약관</u>, <u>개인정보취급방침</u> 및 <u>쿠키 정책</u>에 동의하게 되며, %1$s의 다른 사용자가 휴대폰 번호나 이메일로 나를 발견할 수 있습니다.</string>
+    <string name="dgts__try_again">다시 시도</string>
+    <string name="dgts__try_again_confirmation">코드를 확인한 후 다시 시도하세요.</string>
+    <string name="dgts__try_again_phone_number">휴대폰 번호를 확인하고 다시 시도해 주세요.</string>
+    <string name="dgts__try_another_phone">다른 휴대폰 번호로 시도</string>
+    <string name="dgts__upload_contacts">Digits by Twitter를 사용하여 이 앱을 사용하는 친구를 더 많이 찾을 수 있습니다. 확인을 누르면 주소록이 Digits by Twitter에 업로드되어 앱의 다른 사용자가 나를 발견할 수 있습니다.</string>
+</resources>

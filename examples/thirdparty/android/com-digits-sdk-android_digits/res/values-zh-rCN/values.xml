@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-zh-rCN/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">取消</string>
+    <string name="dgts__communication_error">通讯出错</string>
+    <string name="dgts__confirmation_code">确认码</string>
+    <string name="dgts__confirmation_edit_hint">输入确认码</string>
+    <string name="dgts__confirmation_error">无法确认你的手机号码</string>
+    <string name="dgts__confirmation_error_alternative">很抱歉，我们无法为你发送的确认码。请尝试在下面登录。</string>
+    <string name="dgts__confirmation_expired">此确认码已过期,请重新发送确认码。</string>
+    <string name="dgts__confirmation_send_text">发送确认码</string>
+    <string name="dgts__confirmation_sending_text">正在发送确认码</string>
+    <string name="dgts__confirmation_sent_text">发送确认码</string>
+    <string name="dgts__confirmation_sms">确认码: %1$s。在%2$s中输入确认码</string>
+    <string name="dgts__create_account_text">创建账号</string>
+    <string name="dgts__creating_account_text">正在创建账号</string>
+    <string name="dgts__dismiss">忽略</string>
+    <string name="dgts__find_your_friends">查找你的好友</string>
+    <string name="dgts__image_header_description">登录图片标题</string>
+    <string name="dgts__login_digits_text">使用我的手机号码</string>
+    <string name="dgts__network_error">请检查你的网络并重试。</string>
+    <string name="dgts__not_now">暂时不用</string>
+    <string name="dgts__okay">好的</string>
+    <string name="dgts__phone_number_edit_hint">你的手机号码</string>
+    <string name="dgts__phone_number_text">输入你的手机号码</string>
+    <string name="dgts__resend">重新发送</string>
+    <string name="dgts__resend_confirmation_text">重新发送确认码</string>
+    <string name="dgts__sign_in">登录</string>
+    <string name="dgts__sign_in_error">我们无法在这个时候让你登录Twitter。请稍后再试。</string>
+    <string name="dgts__sign_in_twitter">以Twitter登录</string>
+    <string name="dgts__signing_in">正在登录</string>
+    <string name="dgts__success_desc">成功图标</string>
+    <string name="dgts__terms_text">轻按上面的「发送确认码」按钮，<u>Twitter位数</u>便会向你的手机号码发送短信。</string>
+    <string name="dgts__terms_text_create">轻按上面的「创建账号」按钮意味着你同意Twitter位数的<u>服务条款</u>、<u>隐私政策</u>和<u>Cookies政策</u>，而这个应用程序的其他用户可以通过手机号码和/或邮件地址找到你。</string>
+    <string name="dgts__terms_text_create_app">轻按上面的「创建账号」按钮意味着你同意Twitter位数的<u>服务条款</u>、<u>隐私政策</u>和<u>Cookies政策</u>，而%1$s的其他用户可以通过手机号码和/或邮件地址找到你。</string>
+    <string name="dgts__try_again">重试</string>
+    <string name="dgts__try_again_confirmation">请检查你的确认码并重试。</string>
+    <string name="dgts__try_again_phone_number">请检查你的手机号码并重试。</string>
+    <string name="dgts__try_another_phone">请尝试其他手机号码</string>
+    <string name="dgts__upload_contacts">我们使用Twitter位数来查找更多你身边使用这个应用的朋友。当你请按「好的」，我们将在Twitter位数上传你的通讯录，并使我们的应用程序的其他用户能找到你。</string>
+</resources>

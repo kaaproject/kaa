@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-th/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">ยกเลิก</string>
+    <string name="dgts__communication_error">ข้อผิดพลาดการสื่อสาร</string>
+    <string name="dgts__confirmation_code">รหัสยืนยัน</string>
+    <string name="dgts__confirmation_edit_hint">กรอกรหัสยืนยัน</string>
+    <string name="dgts__confirmation_error">ไม่สามารถยืนยันหมายเลขโทรศัพท์ของคุณได้</string>
+    <string name="dgts__confirmation_error_alternative">ขออภัย เรามีปัญหาในการส่งรหัสยืนยันไปหาคุณ กรุณาลองเข้าสู่ระบบข้างล่างนี้</string>
+    <string name="dgts__confirmation_expired">รหัสนี้หมดอายุแล้ว กรุณากดส่งรหัสยืนยันใหม่อีกครั้ง</string>
+    <string name="dgts__confirmation_send_text">ส่งรหัสยืนยัน</string>
+    <string name="dgts__confirmation_sending_text">กําลังส่งรหัสยืนยัน</string>
+    <string name="dgts__confirmation_sent_text">ส่งรหัสยืนยันไปแล้ว</string>
+    <string name="dgts__confirmation_sms">รหัสยืนยัน: %1$s กรอกรหัสนี้ลงใน %2$s</string>
+    <string name="dgts__create_account_text">สร้างบัญชี</string>
+    <string name="dgts__creating_account_text">กําลังสร้างบัญชี</string>
+    <string name="dgts__dismiss">ไม่สนใจ</string>
+    <string name="dgts__find_your_friends">ค้นหาเพื่อนของคุณ</string>
+    <string name="dgts__image_header_description">ภาพส่วนหัวสำหรับการเข้าสู่ระบบ</string>
+    <string name="dgts__login_digits_text">ใช้หมายเลขโทรศัพท์ของฉัน</string>
+    <string name="dgts__network_error">กรุณาตรวจสอบการเชื่อมต่อของคุณแล้วลองอีกครั้ง</string>
+    <string name="dgts__not_now">ไม่ใช่ตอนนี้</string>
+    <string name="dgts__okay">โอเค</string>
+    <string name="dgts__phone_number_edit_hint">หมายเลขของคุณ</string>
+    <string name="dgts__phone_number_text">กรอกหมายเลขโทรศัพท์ของคุณ</string>
+    <string name="dgts__resend">ส่งอีกครั้ง</string>
+    <string name="dgts__resend_confirmation_text">ส่งรหัสยืนยันอีกครั้ง</string>
+    <string name="dgts__sign_in">เข้าสู่ระบบ</string>
+    <string name="dgts__sign_in_error">เราไม่สามารถเข้าสู่ระบบด้วยทวิตเตอร์ให้คุณได้ในตอนนี้ กรุณาลองอีกครั้งภายหลัง</string>
+    <string name="dgts__sign_in_twitter">เข้าสู่ระบบด้วยทวิตเตอร์</string>
+    <string name="dgts__signing_in">กําลังเข้าสู่ระบบ</string>
+    <string name="dgts__success_desc">ไอคอนความสำเร็จ</string>
+    <string name="dgts__terms_text">เมื่อแตะ \"ส่งรหัสยืนยัน\" ด้านบน <u>Digits โดยทวิตเตอร์</u> คุณจะได้รับข้อความ SMS เพื่อยืนยันหมายเลขโทรศัพท์ของคุณ</string>
+    <string name="dgts__terms_text_create">การแตะ \"สร้างบัญชี\" ที่ด้านบน จะถือว่าคุณยอมรับ <u>ข้อตกลงการใช้งาน</u> <u>นโยบายความเป็นส่วนตัว</u> และ <u>นโยบายคุกกี้</u> ของ Digits โดยทวิตเตอร์ และผู้ใช้แอพนี้รายอื่นๆ จะสามารถหาคุณได้จากหมายเลขโทรศัพท์และ/หรืออีเมลของคุณ</string>
+    <string name="dgts__terms_text_create_app">การแตะ \"สร้างบัญชี\" ที่ด้านบน จะถือว่าคุณยอมรับ <u>ข้อตกลงการใช้งาน</u> <u>นโยบายความเป็นส่วนตัว</u> และ <u>นโยบายคุกกี้</u> ของ Digits โดยทวิตเตอร์ และผู้ใช้ %1$s รายอื่นๆ จะสามารถหาคุณได้จากหมายเลขโทรศัพท์และ/หรืออีเมลของคุณ</string>
+    <string name="dgts__try_again">ลองใหม่</string>
+    <string name="dgts__try_again_confirmation">กรุณาตรวจสอบรหัสของคุณแล้วลองอีกครั้ง</string>
+    <string name="dgts__try_again_phone_number">กรุณาตรวจสอบหมายเลขของคุณแล้วลองอีกครั้ง</string>
+    <string name="dgts__try_another_phone">ลองใช้หมายเลขโทรศัพท์อื่น</string>
+    <string name="dgts__upload_contacts">เราใช้ Digits โดยทวิตเตอร์เพื่อตามหาเพื่อนของคุณที่ใช้งานแอปนี้เพิ่มเติม เมื่อคุณแตะที่ โอเค เราจะอัพโหลดสมุดที่อยู่ของคุณไปที่ Digits โดยทวิตเตอร์และอนุญาตให้ผู้ใช้อื่นในแอปของเราสามารถหาคุณเจอได้</string>
+</resources>

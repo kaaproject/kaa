@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-tl/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">Kanselahin</string>
+    <string name="dgts__communication_error">Error sa Komunikasyon</string>
+    <string name="dgts__confirmation_code">Code sa Pagkumpirma</string>
+    <string name="dgts__confirmation_edit_hint">Ipasok code ng kumpirmasyon</string>
+    <string name="dgts__confirmation_error">Hindi makumpirma ang numero ng iyong telepono. </string>
+    <string name="dgts__confirmation_error_alternative">Paumanhin, nagkakaproblema kami sa pagpapadala sa iyo ng code sa pagkumpirma.</string>
+    <string name="dgts__confirmation_expired">Paso na ang code na ito. Pakipadala ulit ang code sa kumpirmasyon.</string>
+    <string name="dgts__confirmation_send_text">Ipadala code ng kompirmasyon</string>
+    <string name="dgts__confirmation_sending_text">Pinapadala code ng kumpirmasyon</string>
+    <string name="dgts__confirmation_sent_text">Pinadala code ng kumpirmasyon</string>
+    <string name="dgts__confirmation_sms">Code sa pagkumpirma: %1$s. Ipasok itong code sa %2$s</string>
+    <string name="dgts__create_account_text">Lumikha ng account</string>
+    <string name="dgts__creating_account_text">Lumilikha ng account</string>
+    <string name="dgts__dismiss">I-dismiss</string>
+    <string name="dgts__find_your_friends">Hanapin ang mga kaibigan mo</string>
+    <string name="dgts__image_header_description">Image header para sa login</string>
+    <string name="dgts__login_digits_text">Gamitin ang numero ng telepono.</string>
+    <string name="dgts__network_error">Pakitingnan ang inyong network at subukan ulit.</string>
+    <string name="dgts__not_now">Hindi ngayon</string>
+    <string name="dgts__okay">Okay</string>
+    <string name="dgts__phone_number_edit_hint">Ang Numero Mo</string>
+    <string name="dgts__phone_number_text">Ipasok ang numero ng telepono mo.</string>
+    <string name="dgts__resend">Ipadala ulit</string>
+    <string name="dgts__resend_confirmation_text">Ipadala ulit code ng kumpirmasyon</string>
+    <string name="dgts__sign_in">Mag-sign in</string>
+    <string name="dgts__sign_in_error">Hindi namin ma-sign in kayo sa Twitter sa ngayon. Pakisubukan sa ibang pagkakataon.</string>
+    <string name="dgts__sign_in_twitter">Mag-sign sa Twitter</string>
+    <string name="dgts__signing_in">Nagsa-sign in</string>
+    <string name="dgts__success_desc">Success Icon</string>
+    <string name="dgts__terms_text">Sa pamamagitan ng pagtapik sa \"Magpadala ng confirmation code\" sa itaas,ang <u>Mga Digit ng Twitter</u>, ay papadalhan ka ng isang SMS upang kumpirmahin ang iyong numero ng telepono.</string>
+    <string name="dgts__terms_text_create">Sa pag-tap sa \"Lumilikha ng account\" sa itaas, sang-ayon ka sa <u>Mga Tuntunin ng Serbisyo</u>, <u>Patakaran sa Pagkapribado</u>, at <u>Patakaran sa Cookies</u> ng Digits ng Twitter, at ang iba pang mga user ng app na ito ay maaring matuklasan ka sa pamagitan ng numero ng telepono at/o email.</string>
+    <string name="dgts__terms_text_create_app">Sa pag-tap sa \"Lumilikha ng account\" sa itaas, sang-ayon ka sa <u>Mga Tuntunin ng Serbisyo</u>, <u>Patakaran sa Pagkapribado</u>, at <u>Patakaran sa Cookies</u> ng Digits by Twitter, at ang iba pang mga user ng %1$s ay maaring matuklasan ka sa pamagitan ng numero ng telepono at/o email.</string>
+    <string name="dgts__try_again">Subukan ulit</string>
+    <string name="dgts__try_again_confirmation">Pakitingan ulit ang inyong code a subukan ulit.</string>
+    <string name="dgts__try_again_phone_number">Pakitingnan ang numero ninyo at subukan ulit.</string>
+    <string name="dgts__try_another_phone">Subukan ang ibang numero ng telepono</string>
+    <string name="dgts__upload_contacts">Gumagamit kami ng Digits by Twitter para mahanap ang iba pang kaibigan na gumagamit ng app na ito. Kapag nag-tap ng Okay, i-a-upload namin ang inyong address book sa Digits by Twitter at paganahin ang ibang mga user ng app namin para matukasan kayo. </string>
+</resources>

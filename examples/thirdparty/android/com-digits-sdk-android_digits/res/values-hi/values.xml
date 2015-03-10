@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-hi/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">रद्द करें</string>
+    <string name="dgts__communication_error">संचार त्रुटि</string>
+    <string name="dgts__confirmation_code">पुष्टिकरण कोड</string>
+    <string name="dgts__confirmation_edit_hint">पुष्टि कोड दर्ज करें</string>
+    <string name="dgts__confirmation_error">आपके फ़ोन नंबर की पुष्टि करने में असमर्थ</string>
+    <string name="dgts__confirmation_error_alternative">क्षमा करें हमे आपको एक पुष्टिकरण कोड भेजने में परेशानी हो रही है. कृपया नीचे साइन इन करने का प्रयास करें.</string>
+    <string name="dgts__confirmation_expired">यह कोड समाप्त हो गया है. कृपया पुष्टिकरण कोड पुनः भेजें.</string>
+    <string name="dgts__confirmation_send_text">पुष्टिकरण कोड भेजें</string>
+    <string name="dgts__confirmation_sending_text">पुष्टिकरण कोड भेजा जा रहा है</string>
+    <string name="dgts__confirmation_sent_text">भेजा गया पुष्टिकरण कोड</string>
+    <string name="dgts__confirmation_sms">पुष्टिकरण कोड: %1$s. %2$s में इस कोड को दर्ज करें</string>
+    <string name="dgts__create_account_text">खाता बनाएं</string>
+    <string name="dgts__creating_account_text">खाता बना रहे हैं</string>
+    <string name="dgts__dismiss">बर्खास्त करें</string>
+    <string name="dgts__find_your_friends">अपने मित्रों को खोजें</string>
+    <string name="dgts__image_header_description">लॉगिन के लिए इमेज हैडर</string>
+    <string name="dgts__login_digits_text">मेरा फ़ोन नंबर इस्तेमाल करें</string>
+    <string name="dgts__network_error">कृपया अपने नेटवर्क की जांच करें और फिर कोशिश करें.</string>
+    <string name="dgts__not_now">अभी नहीं</string>
+    <string name="dgts__okay">ठीक है</string>
+    <string name="dgts__phone_number_edit_hint">आपका नंबर</string>
+    <string name="dgts__phone_number_text">अपना फ़ोन नंबर दर्ज करें</string>
+    <string name="dgts__resend">पुन: भेजें</string>
+    <string name="dgts__resend_confirmation_text">पुष्टिकरण कोड पुन: भेजें</string>
+    <string name="dgts__sign_in">साइन इन करें</string>
+    <string name="dgts__sign_in_error">फ़िलहाल हम आपको ट्विटर से साइन इन नहीं करवा सकते. कृपया बाद में फिर कोशिश करें.</string>
+    <string name="dgts__sign_in_twitter">ट्विटर के साथ साइन इन करें</string>
+    <string name="dgts__signing_in">साइन इन करें</string>
+    <string name="dgts__success_desc">सफलता चिह्न</string>
+    <string name="dgts__terms_text">उपरोक्त \"पुष्टिकरण कोड भेजें\" को दबाने से, <u>ट्विटर से डिजिट्स</u>, आपके फ़ोन नंबर की पुष्टि करने के लिए आपको एक एस एम एस संदेश भेज देंगे.</string>
+    <string name="dgts__terms_text_create">उपरोक्त \"खाता बनाएं\" को दबाकर, आप ट्विटर के डिजिट्स की <u>सेवा की शर्तें</u>, <u>गोपनीयता नीति</u> और <u>कुकीज़ नीति</u> से सहमत हैं, और यह भी कि इस एप्प के अन्य उपयोगकर्ता आपको फ़ोन नंबर और/या ईमेल के द्वारा खोज सकते हैं.</string>
+    <string name="dgts__terms_text_create_app">उपरोक्त \"खाता बनाएं\" को दबाकर, आप ट्विटर के डिजिट्स की <u>सेवा की शर्तें</u>, <u>गोपनीयता नीति</u> और <u>कुकीज़ नीति</u> से सहमत हैं, और यह भी कि %1$s के अन्य उपयोगकर्ता आपको फ़ोन नंबर और/या ईमेल के द्वारा खोज सकते हैं.</string>
+    <string name="dgts__try_again">फिर से कोशिश करें</string>
+    <string name="dgts__try_again_confirmation">कृपया अपने कोड की जांच करें और फिर कोशिश करें.</string>
+    <string name="dgts__try_again_phone_number">कृपया अपने नंबर की जांच करें और फिर कोशिश करें.</string>
+    <string name="dgts__try_another_phone">एक अलग फ़ोन नंबर आजमाएं</string>
+    <string name="dgts__upload_contacts">इस एप्प का इस्तेमाल करने वाले आपके मित्रों को ढूंढने के लिए हम ट्विटर के डिजिट्स का इस्तेमाल करेंगे. जब आप ठीक है को दबाएंगे, तब हम ट्विटर के डिजिट्स पर आपकी पता पुस्तिका को अपलोड करेंगे और आप को खोज पा ने के लिए हमारे एप्प के अन्य उपयोगकर्ताओं को सक्षम करेंगे.</string>
+</resources>

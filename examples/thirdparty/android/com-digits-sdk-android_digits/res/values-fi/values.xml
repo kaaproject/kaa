@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-fi/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">Peruuta</string>
+    <string name="dgts__communication_error">Viestintävirhe</string>
+    <string name="dgts__confirmation_code">Vahvistuskoodi</string>
+    <string name="dgts__confirmation_edit_hint">Syötä vahvistuskoodi</string>
+    <string name="dgts__confirmation_error">Puhelinnumeroasi ei pystytty vahvistamaan</string>
+    <string name="dgts__confirmation_error_alternative">Vahvistuskoodin lähettämisessä on nyt ongelmia. Yritä kirjautua sisään alla.</string>
+    <string name="dgts__confirmation_expired">Tämä koodi on vanhentunut. Lähetä vahvistuskoodi uudelleen.</string>
+    <string name="dgts__confirmation_send_text">Lähetä vahvistuskoodi</string>
+    <string name="dgts__confirmation_sending_text">Lähetetään vahvistuskoodia</string>
+    <string name="dgts__confirmation_sent_text">Vahvistuskoodi lähetetty</string>
+    <string name="dgts__confirmation_sms">Vahvistuskoodi: %1$s. Syötä tämä koodi kohteeseen %2$s</string>
+    <string name="dgts__create_account_text">Luo tili</string>
+    <string name="dgts__creating_account_text">Luodaan tiliä</string>
+    <string name="dgts__dismiss">Hylkää</string>
+    <string name="dgts__find_your_friends">Löydä ystäväsi</string>
+    <string name="dgts__image_header_description">Kirjautumisen kuvaotsake</string>
+    <string name="dgts__login_digits_text">Käytä puhelinnumeroani</string>
+    <string name="dgts__network_error">Tarkista verkkoyhteys ja yritä uudelleen</string>
+    <string name="dgts__not_now">Ei nyt</string>
+    <string name="dgts__okay">OK</string>
+    <string name="dgts__phone_number_edit_hint">Numerosi</string>
+    <string name="dgts__phone_number_text">Anna puhelinnumerosi</string>
+    <string name="dgts__resend">Lähetä uudelleen</string>
+    <string name="dgts__resend_confirmation_text">Lähetä vahvistuskoodi</string>
+    <string name="dgts__sign_in">Kirjaudu sisään</string>
+    <string name="dgts__sign_in_error">Kirjautuminen Twitteriin ei juuri nyt onnistu. Yritä myöhemmin uudelleen.</string>
+    <string name="dgts__sign_in_twitter">Kirjaudu Twitter-tunnuksellasi</string>
+    <string name="dgts__signing_in">Kirjaudutaan sisään</string>
+    <string name="dgts__success_desc">Onnistumiskuvake</string>
+    <string name="dgts__terms_text">Kun napautat yllä Lähetä vahvistuskoodi, <u>Digits by Twitter</u> -palvelu lähettää sinulle tekstiviestin puhelinnumerosi vahvistamista varten.</string>
+    <string name="dgts__terms_text_create">Napauttamalla yllä Luo tili hyväksyt Digits by Twitter -palvelun <u>käyttöehdot</u>, <u>yksityisyyskäytännön</u> ja <u>evästekäytännön</u> sekä hyväksyt sovelluksen muiden käyttäjien voivan löytää sinut puhelinnumeron ja/tai sähköpostiosoitteen avulla.</string>
+    <string name="dgts__terms_text_create_app">Napauttamalla yllä Luo tili hyväksyt Digits by Twitter -palvelun <u>käyttöehdot</u>, <u>yksityisyyskäytännön</u> ja <u>evästekäytännön</u> sekä hyväksyt sovelluksen %1$s muiden käyttäjien voivan löytää sinut puhelinnumeron ja/tai sähköpostiosoitteen avulla.</string>
+    <string name="dgts__try_again">Yritä uudelleen</string>
+    <string name="dgts__try_again_confirmation">Tarkista koodi ja yritä uudelleen.</string>
+    <string name="dgts__try_again_phone_number">Tarkista numero ja yritä uudelleen.</string>
+    <string name="dgts__try_another_phone">Kokeile toista puhelinnumeroa</string>
+    <string name="dgts__upload_contacts">Digits by Twitter -palvelu auttaa löytämään muita tätä sovellusta käyttäviä ystäviäsi. Kun napautat OK, lähetämme osoitekirjasi Digits by Twitterille ja sallimme sovelluksen muiden käyttäjien löytää sinut.</string>
+</resources>

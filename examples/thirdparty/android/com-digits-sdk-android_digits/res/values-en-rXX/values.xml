@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-en-rXX/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">[Cåäncéêl]</string>
+    <string name="dgts__communication_error">[Cöømmünïícåätïíöøn Erröør]</string>
+    <string name="dgts__confirmation_code">[Cöønfïírmåätïíöøn cöødéê]</string>
+    <string name="dgts__confirmation_edit_hint">[Entéêr cöønfïírmåätïíöøn cöødéê]</string>
+    <string name="dgts__confirmation_error">[Unåäbléê töø cöønfïírm yöøür phöønéê nümbéêr]</string>
+    <string name="dgts__confirmation_error_alternative">[Söørry, wéê åäréê håävïíng tröøübléê séêndïíng yöøü åä\
+        cöønfïírmåätïíöøn cöødéê. Pléêåäséê try sïígnïíng ïín béêlöøw.]</string>
+    <string name="dgts__confirmation_expired">[Thïís cöødéê håäs éêxpïíréêd. Pléêåäséê réêséênd\
+        cöønfïírmåätïíöøn cöødéê.]</string>
+    <string name="dgts__confirmation_send_text">[Séênd cöønfïírmåätïíöøn cöødéê]</string>
+    <string name="dgts__confirmation_sending_text">[Séêndïíng cöønfïírmåätïíöøn cöødéê]</string>
+    <string name="dgts__confirmation_sent_text">[Séênt cöønfïírmåätïíöøn cöødéê]</string>
+    <string name="dgts__confirmation_sms">[Cöønfïírmåätïíöøn cöødéê: %1$s. Entéêr thïís cöødéê ïín %2$s]</string>
+    <string name="dgts__create_account_text">[Créêåätéê åäccöøünt]</string>
+    <string name="dgts__creating_account_text">[Créêåätïíng åäccöøünt]</string>
+    <string name="dgts__dismiss">[Dïísmïíss]</string>
+    <string name="dgts__find_your_friends">[Fïínd yöøür frïíéênds]</string>
+    <string name="dgts__image_header_description">[Imåägéê héêåädéêr föør löøgïín]</string>
+    <string name="dgts__login_digits_text">[Uséê my phöønéê nümbéêr]</string>
+    <string name="dgts__network_error">[Pléêåäséê chéêck yöøür néêtwöørk åänd try åägåäïín.]</string>
+    <string name="dgts__not_now">[Nöøt nöøw]</string>
+    <string name="dgts__okay">[Okåäy]</string>
+    <string name="dgts__phone_number_edit_hint">[Yöøür Nümbéêr]</string>
+    <string name="dgts__phone_number_text">[Entéêr yöøür phöønéê nümbéêr]</string>
+    <string name="dgts__resend">[Réêséênd]</string>
+    <string name="dgts__resend_confirmation_text">[Réêséênd cöønfïírmåätïíöøn cöødéê]</string>
+    <string name="dgts__sign_in">[Sïígn ïín]</string>
+    <string name="dgts__sign_in_error">[Wéê cöøüld nöøt sïígn yöøü ïín wïíth Twïíttéêr åät thïís tïíméê.\
+        Pléêåäséê try åägåäïín låätéêr.]</string>
+    <string name="dgts__sign_in_twitter">[Sïígn ïín wïíth Twïíttéêr]</string>
+    <string name="dgts__signing_in">[Sïígnïíng ïín]</string>
+    <string name="dgts__success_desc">[Süccéêss Icöøn]</string>
+    <string name="dgts__terms_text">[By tåäppïíng \"Séênd cöønfïírmåätïíöøn cöødéê\" åäböøvéê,\
+        <u>Dïígïíts by Twïíttéêr</u>, wïíll séênd yöøü åä SMS méêssåägéê töø cöønfïírm yöøür phöønéê nümbéêr.]</string>
+    <string name="dgts__terms_text_create">[By tåäppïíng \"Créêåätéê åäccöøünt\" åäböøvéê, yöøü åägréêéê töø théê <u>Téêrms\
+        öøf Séêrvïícéê</u>, <u>Prïívåäcy Pöølïícy</u>, åänd <u>Cöøöøkïíéês Pöølïícy</u> öøf Dïígïíts by Twïíttéêr, åänd thåät öøthéêr\
+        üséêrs öøf thïís åäpp cåän dïíscöøvéêr yöøü by phöønéê nümbéêr åänd/öør éêmåäïíl.]</string>
+    <string name="dgts__terms_text_create_app">[By tåäppïíng \"Créêåätéê åäccöøünt\" åäböøvéê, yöøü åägréêéê töø théê\
+        <u>Téêrms öøf Séêrvïícéê</u>, <u>Prïívåäcy Pöølïícy</u>, åänd <u>Cöøöøkïíéês Pöølïícy</u> öøf Dïígïíts by Twïíttéêr, åänd thåät öøthéêr\
+        üséêrs öøf %1$s cåän dïíscöøvéêr yöøü by phöønéê nümbéêr åänd/öør éêmåäïíl.]</string>
+    <string name="dgts__try_again">[Try Agåäïín]</string>
+    <string name="dgts__try_again_confirmation">[Pléêåäséê chéêck yöøür cöødéê åänd try åägåäïín.]</string>
+    <string name="dgts__try_again_phone_number">[Pléêåäséê chéêck yöøür nümbéêr åänd try åägåäïín.]</string>
+    <string name="dgts__try_another_phone">[Try åä dïífféêréênt phöønéê nümbéêr]</string>
+    <string name="dgts__upload_contacts">[Wéê üséê Dïígïíts by Twïíttéêr töø fïínd möøréê öøf yöøür frïíéênds whöø üséê\
+        thïís åäpp. Whéên yöøü tåäp Okåäy, wéê\'ll üplöøåäd yöøür åäddréêss böøöøk töø Dïígïíts by Twïíttéêr åänd\
+        éênåäbléê öøthéêr üséêrs öøf öøür åäpp töø dïíscöøvéêr yöøü.]</string>
+</resources>

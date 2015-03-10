@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values-tr/plurals.xml -->
+    <eat-comment/>
+    <plurals name="tw__time_hours">
+        <item quantity="one">1s</item>
+        <item quantity="other">%ds</item>
+    </plurals>
+    <plurals name="tw__time_mins">
+        <item quantity="one">1d</item>
+        <item quantity="other">%dd</item>
+    </plurals>
+    <plurals name="tw__time_secs">
+        <item quantity="one">1s</item>
+        <item quantity="other">%d</item>
+    </plurals>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values-tr/strings.xml -->
+    <eat-comment/>
+    <string name="tw__loading_tweet">Tweet Yükleniyor</string>
+    <string name="tw__relative_date_format_long">dd.MM.y</string>
+    <string name="tw__relative_date_format_short">d MMM</string>
+    <string name="tw__share_content_format">\@%1$s adlı kişinin Tweetini incele: https://twitter.com/%1$s/status/%2$s</string>
+    <string name="tw__share_subject_format">Tweet gönderen: %1$s (\@%2$s)</string>
+    <string name="tw__share_tweet">Tweet Paylaş</string>
+    <string name="tw__tweet_content_description">%1$s. %2$s. %3$s.</string>
+</resources>

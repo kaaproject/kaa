@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-sv/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">Avbryt</string>
+    <string name="dgts__communication_error">Kommunikationsfel</string>
+    <string name="dgts__confirmation_code">Bekräftelsekod</string>
+    <string name="dgts__confirmation_edit_hint">Ange bekräftelsekod</string>
+    <string name="dgts__confirmation_error">Kunde inte bekräfta ditt telefonnummer</string>
+    <string name="dgts__confirmation_error_alternative">Ledsen, vi har för tillfället problem med att skicka en bekräftelsekod till dig. Vänligen prova att logga in nedan.</string>
+    <string name="dgts__confirmation_expired">Denna kod har upphört gälla. Vänligen begär en ny bekräftelsekod.</string>
+    <string name="dgts__confirmation_send_text">Skicka bekräftelsekod</string>
+    <string name="dgts__confirmation_sending_text">Skickar bekräftelsekod</string>
+    <string name="dgts__confirmation_sent_text">Bekräftelsekod skickad</string>
+    <string name="dgts__confirmation_sms">Bekräftelsekod: %1$s. Ange denna kod i %2$s</string>
+    <string name="dgts__create_account_text">Skapa konto</string>
+    <string name="dgts__creating_account_text">Konto skapas</string>
+    <string name="dgts__dismiss">Dölj</string>
+    <string name="dgts__find_your_friends">Hitta dina vänner</string>
+    <string name="dgts__image_header_description">Bildhuvud för inloggning</string>
+    <string name="dgts__login_digits_text">Använd mitt telefonnummer</string>
+    <string name="dgts__network_error">Vänligen kontrollera din nätverksanslutning och prova igen.</string>
+    <string name="dgts__not_now">Inte nu</string>
+    <string name="dgts__okay">Okej</string>
+    <string name="dgts__phone_number_edit_hint">Ditt nummer</string>
+    <string name="dgts__phone_number_text">Ange ditt telefonnummer</string>
+    <string name="dgts__resend">Skicka igen</string>
+    <string name="dgts__resend_confirmation_text">Skicka bekräftelsekod igen</string>
+    <string name="dgts__sign_in">Logga in</string>
+    <string name="dgts__sign_in_error">Vi kunde inte logga in dig med Twitter just nu. Vänligen prova igen senare.</string>
+    <string name="dgts__sign_in_twitter">Logga in med Twitter</string>
+    <string name="dgts__signing_in">Loggar in</string>
+    <string name="dgts__success_desc">Ikonen Lyckades</string>
+    <string name="dgts__terms_text">Om du trycker på Skicka bekräftelsekod ovan skickar <u>Digits by Twitter</u> ett SMS för att bekräfta ditt telefonnummer.</string>
+    <string name="dgts__terms_text_create">Om du trycker på Skapa konto ovan godkänner du Digits by Twitters <u>användarvillkor</u>, <u>sekretesspolicy</u> och <u>cookiepolicy</u> och att andra användare av den här appen kan identifiera dig genom ditt telefonnummer och/eller din e-postadress.</string>
+    <string name="dgts__terms_text_create_app">Om du trycker på Skapa konto ovan godkänner du Digits by Twitters \
+<u>användarvillkor</u>, <u>sekretesspolicy</u> \
+och <u>cookiepolicy</u> och att andra användare av %1$s kan identifiera dig genom ditt telefonnummer och/eller din \
+e-postadress.</string>
+    <string name="dgts__try_again">Försök igen</string>
+    <string name="dgts__try_again_confirmation">Vänligen kontrollera din kod och prova igen.</string>
+    <string name="dgts__try_again_phone_number">Vänligen kontrollera ditt nummer och prova igen.</string>
+    <string name="dgts__try_another_phone">Prova ett annat telefonnummer</string>
+    <string name="dgts__upload_contacts">Vi använder Digits by Twitter för att hitta fler av dina vänner som också använder denna applikation. När du klickar okej laddar vi upp din adressbok till Digits by Twitter och gör det möjligt för andra användare av applikationen att hitta dig.</string>
+</resources>

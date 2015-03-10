@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+              android:drawable="@drawable/dgts__spinner_light"
+              android:fromDegrees="0"
+              android:toDegrees="720"
+              android:pivotX="50%"
+              android:pivotY="50%"
+              android:repeatCount="infinite"/><!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/drawable/progress_light.xml -->

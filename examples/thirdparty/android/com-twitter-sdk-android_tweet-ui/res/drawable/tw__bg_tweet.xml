@@ -1,0 +1,7 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:shape="rectangle">
+    <solid android:color="@color/tw__tweet_light_container_bg_color"/>
+    <stroke
+        android:width="@dimen/tw__tweet_container_width"
+        android:color="@color/tw__tweet_container_border"/>
+</shape><!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/drawable/tw__bg_tweet.xml -->

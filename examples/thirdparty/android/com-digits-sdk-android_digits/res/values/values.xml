@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values/attrs.xml -->
+    <eat-comment/>
+    <attr format="reference|color" name="dgts__accentColor"/>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values/colors.xml -->
+    <eat-comment/>
+    <color name="dgts__default_accent">#5baaf4</color>
+    <color name="dgts__default_logo_name">#56626d</color>
+    <color name="dgts__purple">#744eaa</color>
+    <color name="dgts__purple_pressed">#553788</color>
+    <color name="dgts__text_dark">#ff030303</color>
+    <color name="dgts__text_light">#ffffff</color>
+    <declare-styleable name="StateButton"><attr format="string" name="finishStateText"/><attr format="string" name="progressStateText"/><attr format="string" name="startStateText"/><attr format="reference" name="dgts__StateButtonStyle"/></declare-styleable>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values/dimens.xml -->
+    <eat-comment/>
+    <dimen name="dgts__country_code_margin_bottom">1dp</dimen>
+    <dimen name="dgts__margin_bottom">16dp</dimen>
+    <dimen name="dgts__padding_container">14dp</dimen>
+    <dimen name="dgts__padding_title">10dp</dimen>
+    <dimen name="dgts__permissions_margin_bottom">18dp</dimen>
+    <dimen name="dgts__progress_bar_side_length">28dp</dimen>
+    <dimen name="dgts__terms_text_size">12sp</dimen>
+    <dimen name="dgts__title_text_size">22sp</dimen>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__associated_with_twitter_error">Number associated with Twitter account</string>
+    <string name="dgts__associated_with_twitter_error_alternative">Your number is already associated with a Twitter account.</string>
+    <string name="dgts__cancel">Cancel</string>
+    <string name="dgts__communication_error">Communication Error</string>
+    <string name="dgts__confirmation_code">Confirmation code</string>
+    <string name="dgts__confirmation_edit_hint">Enter confirmation code</string>
+    <string name="dgts__confirmation_error">Unable to confirm your phone number</string>
+    <string name="dgts__confirmation_error_alternative">Sorry, we are having trouble sending you a confirmation code.</string>
+    <string name="dgts__confirmation_expired">This code has expired. Please resend
+        confirmation code.</string>
+    <string name="dgts__confirmation_send_text">Send confirmation code</string>
+    <string name="dgts__confirmation_sending_text">Sending confirmation code</string>
+    <string name="dgts__confirmation_sent_text">Sent confirmation code</string>
+    <string name="dgts__confirmation_sms">Confirmation code: %1$s. Enter this code in %2$s</string>
+    <string name="dgts__country_spinner_format">%1$s +%2$d</string>
+    <string name="dgts__create_account_text">Create account</string>
+    <string name="dgts__creating_account_text">Creating account</string>
+    <string name="dgts__digits_logo_desc">digits logo icon</string>
+    <string name="dgts__digits_logo_name_desc">digits logo name</string>
+    <string name="dgts__dismiss">Dismiss</string>
+    <string name="dgts__find_your_friends">Find your friends</string>
+    <string name="dgts__image_header_description">Image header for login</string>
+    <string name="dgts__login_digits_text">Use my phone number</string>
+    <string name="dgts__network_error">Please check your network and try again.</string>
+    <string name="dgts__not_now">Not now</string>
+    <string name="dgts__okay">Okay</string>
+    <string name="dgts__phone_number_edit_hint">Your Number</string>
+    <string name="dgts__phone_number_text">Enter your phone number</string>
+    <string name="dgts__pin_code_verification_title">Enter 2-step verification code</string>
+    <string name="dgts__resend">Resend</string>
+    <string name="dgts__resend_confirmation_text">Resend confirmation code</string>
+    <string name="dgts__sign_in">Sign in</string>
+    <string name="dgts__sign_in_error">We could not sign you in with Twitter at this time.
+        Please try again later.</string>
+    <string name="dgts__sign_in_twitter">Sign in with Twitter</string>
+    <string name="dgts__signing_in">Signing in</string>
+    <string name="dgts__success_desc">Success Icon</string>
+    <string name="dgts__terms_text">By tapping \"Send confirmation code\" above, <u>Digits by Twitter</u>, will send you a SMS message to confirm your phone number.</string>
+    <string name="dgts__terms_text_create">By tapping \"Create account\" above, you agree to the <u>Terms of Service</u>, <u>Privacy Policy</u>, and <u>Cookies Policy</u> of Digits by Twitter, and that other users of this app can discover you by phone number and/or email.</string>
+    <string name="dgts__terms_text_create_app">By tapping \"Create account\" above, you agree to the <u>Terms of Service</u>, <u>Privacy Policy</u>, and <u>Cookies Policy</u> of Digits by Twitter, and that other users of %1$s can discover you by phone number and/or email.</string>
+    <string name="dgts__try_again">Try Again</string>
+    <string name="dgts__try_again_confirmation">Please check your code and try again.</string>
+    <string name="dgts__try_again_phone_number">Please check your number and try again.</string>
+    <string name="dgts__try_another_phone">Try a different phone number</string>
+    <string name="dgts__upload_contacts">We use Digits by Twitter to find more of your friends who use this app. When you tap Okay, we\'ll upload your address book to Digits by Twitter and enable other users of our app to discover you.</string>
+    <string name="dgts__verification_code">Verification code</string>
+    <string name="dgts_pin_code_terms">You have previously set a 2-step verification code on digits.com</string>
+    <string name="dgts_verify">Verify</string>
+    <string name="dgts_verifying">Verifying</string>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values/themes.xml -->
+    <eat-comment/>
+    <style name="Digits_default" parent="@android:style/Theme.Light">
+        <item name="dgts__accentColor">@color/dgts__default_accent</item>
+    </style>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values/styles.xml -->
+    <eat-comment/>
+    <style name="dgts__ButtonText">
+        <item name="android:textAppearance">?android:attr/textAppearanceButton</item>
+        <item name="android:textSize">@dimen/tw__login_btn_text_size</item>
+        <item name="android:paddingLeft">@dimen/tw__login_btn_left_padding</item>
+        <item name="android:paddingRight">@dimen/tw__login_btn_right_padding</item>
+    </style>
+    <style name="dgts__Container">
+        <item name="android:paddingLeft">@dimen/dgts__padding_container</item>
+        <item name="android:paddingRight">@dimen/dgts__padding_container</item>
+        <item name="android:paddingTop">30dp</item>
+        <item name="android:paddingBottom">30dp</item>
+    </style>
+    <style name="dgts__Terms">
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="android:textSize">@dimen/dgts__terms_text_size</item>
+    </style>
+    <style name="dgts__Title">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textSize">@dimen/dgts__title_text_size</item>
+        <item name="android:layout_marginBottom">24dp</item>
+    </style>
+</resources>

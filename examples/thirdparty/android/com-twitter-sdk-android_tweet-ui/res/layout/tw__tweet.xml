@@ -1,0 +1,82 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tw__tweet_view"
+    style="@style/tw__TweetContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        tools:ignore="ContentDescription"
+        android:id="@+id/tw__tweet_media"
+        style="@style/tw__TweetMedia"
+        android:adjustViewBounds="true"/>
+
+    <ImageView
+        tools:ignore="ContentDescription"
+        android:id="@+id/tw__tweet_author_avatar"
+        style="@style/tw__TweetAvatar"
+        android:layout_below="@id/tw__tweet_media"
+        tools:background="@color/tw__tweet_media_preview_bg_color"/>
+
+    <TextView
+        android:id="@+id/tw__tweet_author_full_name"
+        style="@style/tw__TweetFullName"
+        android:layout_below="@id/tw__tweet_media"
+        android:layout_toRightOf="@id/tw__tweet_author_avatar"
+        android:layout_toEndOf="@id/tw__tweet_author_avatar"
+        tools:text="Jack"/>
+
+    <ImageView
+        tools:ignore="ContentDescription"
+        android:id="@+id/tw__tweet_author_verified"
+        style="@style/tw__TweetVerifiedCheck"
+        android:layout_toRightOf="@id/tw__tweet_author_full_name"
+        android:layout_toEndOf="@id/tw__tweet_author_full_name"
+        android:layout_alignBottom="@id/tw__tweet_author_full_name"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <ImageView
+        tools:ignore="ContentDescription"
+        android:id="@+id/tw__twitter_logo"
+        style="@style/tw__TwitterLogo"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/tw__tweet_media"/>
+
+    <TextView
+        android:id="@+id/tw__tweet_author_screen_name"
+        style="@style/tw__TweetScreenName"
+        android:layout_below="@id/tw__tweet_author_full_name"
+        android:layout_alignBottom="@id/tw__tweet_author_avatar"
+        android:layout_toRightOf="@id/tw__tweet_author_avatar"
+        android:layout_toEndOf="@id/tw__tweet_author_avatar"
+        tools:text="@jack"/>
+
+    <TextView
+        android:id="@+id/tw__tweet_timestamp"
+        style="@style/tw__TweetTimestamp"
+        android:layout_below="@id/tw__tweet_author_full_name"
+        android:layout_alignBottom="@id/tw__tweet_author_screen_name"
+        android:layout_toRightOf="@id/tw__tweet_author_screen_name"
+        android:layout_toEndOf="@id/tw__tweet_author_screen_name"
+        tools:text="• 03/21/2006"/>
+
+    <TextView
+        android:id="@+id/tw__tweet_text"
+        style="@style/tw__TweetText"
+        android:layout_below="@id/tw__tweet_author_avatar"
+        android:visibility="gone"
+        tools:text="just setting up my twttr"
+        tools:visibility="visible"/>
+
+    <Button
+        android:id="@+id/tw__tweet_share"
+        style="@style/tw__TweetShare"
+        android:text="@string/tw__share_tweet"
+        android:layout_below="@id/tw__tweet_text"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+</RelativeLayout>
+<!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/layout/tw__tweet.xml -->

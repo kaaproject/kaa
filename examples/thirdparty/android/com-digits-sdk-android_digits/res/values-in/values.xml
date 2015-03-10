@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-in/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">Batal</string>
+    <string name="dgts__communication_error">Kesalahan Komunikasi</string>
+    <string name="dgts__confirmation_code">Kode konfimasi</string>
+    <string name="dgts__confirmation_edit_hint">Masukkan kode konfirmasi</string>
+    <string name="dgts__confirmation_error">Tidak dapat mengonfirmasi nomor ponsel Anda</string>
+    <string name="dgts__confirmation_error_alternative">Maaf, kami mengalami masalah saat mengirim kode konfirmasi Anda. Silakan coba masuk di bawah.</string>
+    <string name="dgts__confirmation_expired">Kode ini telah kedaluwarsa. Silakan kirim ulang kode konfirmasi.</string>
+    <string name="dgts__confirmation_send_text">Kirim kode konfirmasi</string>
+    <string name="dgts__confirmation_sending_text">Mengirim kode konfirmasi</string>
+    <string name="dgts__confirmation_sent_text">Telah mengirim kode konfirmasi</string>
+    <string name="dgts__confirmation_sms">Kode konfirmasi: %1$s. Masukkan kode ini di %2$s</string>
+    <string name="dgts__create_account_text">Buat akun</string>
+    <string name="dgts__creating_account_text">Membuat akun</string>
+    <string name="dgts__dismiss">Singkirkan</string>
+    <string name="dgts__find_your_friends">Temukan teman Anda</string>
+    <string name="dgts__image_header_description">Header gambar untuk masuk</string>
+    <string name="dgts__login_digits_text">Gunakan nomor ponsel saya</string>
+    <string name="dgts__network_error">Harap periksa jaringan Anda dan coba lagi.</string>
+    <string name="dgts__not_now">Tidak sekarang</string>
+    <string name="dgts__okay">Oke</string>
+    <string name="dgts__phone_number_edit_hint">Nomor Anda</string>
+    <string name="dgts__phone_number_text">Masukkan nomor ponsel Anda</string>
+    <string name="dgts__resend">Kirim ulang</string>
+    <string name="dgts__resend_confirmation_text">Mengirim ulang kode konfirmasi</string>
+    <string name="dgts__sign_in">Masuk</string>
+    <string name="dgts__sign_in_error">Anda tidak dapat masuk dengan Twitter saat ini. Silakan coba lagi nanti.</string>
+    <string name="dgts__sign_in_twitter">Masuk dengan Twitter</string>
+    <string name="dgts__signing_in">Masuk</string>
+    <string name="dgts__success_desc">Ikon Berhasil</string>
+    <string name="dgts__terms_text">Dengan menyentuh \"Kirim kode konfirmasi\" di atas, <u>Digits by Twitter</u>,\
+akan mengirim pesan SMS ke nomor ponsel Anda untuk mengonfirmasi nomor ponsel Anda.</string>
+    <string name="dgts__terms_text_create">Dengan menyentuh \"Buat akun\" di atas, Anda menyetujui <u>Persyaratan Layanan</u>, <u>Kebijakan Privasi</u>, dan <u>Kebijakan Kuki</u>  dari Digits by Twitter, dan bahwa pengguna aplikasi ini lainnya dapat menemukan Anda berdasarkan nomor ponsel dan/atau alamat email.</string>
+    <string name="dgts__terms_text_create_app">Dengan menyentuh \"Buat akun\" di atas, Anda menyetujui <u>Persyaratan \
+Layanan</u>, <u>Kebijakan Privasi</u>, dan <u>Kebijakan Kuki</u> dari Digits by Twitter, dan bahwa pengguna %1$s lainnya dapat menemukan Anda berdasarkan nomor ponsel dan/atau alamat email.</string>
+    <string name="dgts__try_again">Coba Lagi</string>
+    <string name="dgts__try_again_confirmation">Silakan periksa kode Anda dan coba lagi.</string>
+    <string name="dgts__try_again_phone_number">Silakan periksa nomor ponsel Anda dan coba lagi.</string>
+    <string name="dgts__try_another_phone">Coba nomor ponsel yang berbeda</string>
+    <string name="dgts__upload_contacts">Kami menggunakan Digits by Twitter untuk menemukan lebih banyak teman Anda yang menggunakan aplikasi ini. Bila Anda menyentuh Oke, kami akan mengunggah buku alamat Anda ke Digits by Twitter dan mengaktifkan pengguna aplikasi kami lainnya untuk menemukan Anda.</string>
+</resources>

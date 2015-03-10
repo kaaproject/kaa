@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-hu/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">Mégse</string>
+    <string name="dgts__communication_error">Kommunikációs hiba</string>
+    <string name="dgts__confirmation_code">Megerősítőkód</string>
+    <string name="dgts__confirmation_edit_hint">Add meg a megerősítőkódot!</string>
+    <string name="dgts__confirmation_error">A telefonszámod megerősítése sikertelen</string>
+    <string name="dgts__confirmation_error_alternative">Sajnáljuk, probléma van a megerősítőkód küldésével. Próbálj meg bejelentkezni lent!</string>
+    <string name="dgts__confirmation_expired">A kód lejárt. Küldd újra a megerősítő kódot!</string>
+    <string name="dgts__confirmation_send_text">Megerősítőkód küldése</string>
+    <string name="dgts__confirmation_sending_text">Megerősítőkód küldése</string>
+    <string name="dgts__confirmation_sent_text">Megerősítőkód elküldve</string>
+    <string name="dgts__confirmation_sms">Megerősítőkód: %1$s. Add meg a kódot itt: %2$s</string>
+    <string name="dgts__create_account_text">Fiók létrehozása</string>
+    <string name="dgts__creating_account_text">Fiók létrehozása</string>
+    <string name="dgts__dismiss">Bezárás</string>
+    <string name="dgts__find_your_friends">Ismerősök keresése</string>
+    <string name="dgts__login_digits_text">A telefonszámom használata</string>
+    <string name="dgts__network_error">Ellenőrizd a hálózatod és próbálkozz újra!</string>
+    <string name="dgts__not_now">Most nem</string>
+    <string name="dgts__okay">OK</string>
+    <string name="dgts__phone_number_edit_hint">A számod</string>
+    <string name="dgts__phone_number_text">Add meg a telefonszámod!</string>
+    <string name="dgts__resend">Újraküldés</string>
+    <string name="dgts__resend_confirmation_text">Megerősítőkód újraküldése</string>
+    <string name="dgts__sign_in">Bejelentkezés</string>
+    <string name="dgts__sign_in_error">Jelenleg nem tudunk beléptetni a Twitterre. Próbálkozz újra később!</string>
+    <string name="dgts__sign_in_twitter">Bejelentkezés Twitter-fiókkal</string>
+    <string name="dgts__signing_in">Bejelentkezés</string>
+    <string name="dgts__try_again">Próbáld újra!</string>
+    <string name="dgts__try_again_confirmation">Ellenőrizd a kódod és próbálkozz újra!</string>
+    <string name="dgts__try_again_phone_number">Ellenőrizd a számod és próbálkozz újra!</string>
+    <string name="dgts__try_another_phone">Próbálkozz másik telefonszámmal!</string>
+    <string name="dgts__upload_contacts">A Digits by Twitter segítségével megkeressük az alkalmazást használó ismerőseidet. Az OK gombra koppintva feltöltjük a címjegyzéked a Digits by Twitter szolgáltatásba, és lehetővé tesszük az alkalmazásunk többi felhasználójának, hogy megkereshessenek Téged.</string>
+</resources>

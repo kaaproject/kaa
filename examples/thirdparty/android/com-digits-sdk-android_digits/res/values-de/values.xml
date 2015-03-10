@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-de/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">Abbrechen</string>
+    <string name="dgts__communication_error">Kommunikationsfehler</string>
+    <string name="dgts__confirmation_code">Bestätigungscode</string>
+    <string name="dgts__confirmation_edit_hint">Bestätigungscode eingeben</string>
+    <string name="dgts__confirmation_error">Deine Telefonnummer konnte nicht bestätigt werden</string>
+    <string name="dgts__confirmation_error_alternative">Leider können wir Dir keinen Bestätigungscode senden. Versuche, Dich unten anzumelden.</string>
+    <string name="dgts__confirmation_expired">Dieser Code ist abgelaufen. Lass Dir einen neuen Bestätigungscode senden.</string>
+    <string name="dgts__confirmation_send_text">Bestätigungscode senden</string>
+    <string name="dgts__confirmation_sending_text">Bestätigungscode wird gesendet</string>
+    <string name="dgts__confirmation_sent_text">Bestätigungscode gesendet</string>
+    <string name="dgts__confirmation_sms">Bestätigungscode: %1$s. Diesen Code in %2$s eingeben</string>
+    <string name="dgts__create_account_text">Account erstellen</string>
+    <string name="dgts__creating_account_text">Account wird erstellt</string>
+    <string name="dgts__dismiss">Verwerfen</string>
+    <string name="dgts__find_your_friends">Freunde suchen</string>
+    <string name="dgts__image_header_description">Image-Header für Anmeldung</string>
+    <string name="dgts__login_digits_text">Meine Telefonnummer verwenden</string>
+    <string name="dgts__network_error">Prüfe bitte Dein Netzwerk und versuche es erneut.</string>
+    <string name="dgts__not_now">Nicht jetzt</string>
+    <string name="dgts__okay">Okay</string>
+    <string name="dgts__phone_number_edit_hint">Deine Nummer</string>
+    <string name="dgts__phone_number_text">Deine Telefonnummer eingeben</string>
+    <string name="dgts__resend">Erneut senden</string>
+    <string name="dgts__resend_confirmation_text">Bestätigungscode erneut senden</string>
+    <string name="dgts__sign_in">Anmelden</string>
+    <string name="dgts__sign_in_error">Derzeit konntest Du nicht mit Twitter angemeldet werden. Versuche es später erneut.</string>
+    <string name="dgts__sign_in_twitter">Mit Twitter anmelden</string>
+    <string name="dgts__signing_in">Anmeldung läuft</string>
+    <string name="dgts__success_desc">Erfolgssymbol</string>
+    <string name="dgts__terms_text">Wenn Du oben auf „Bestätigungscode senden“ tippst, sendet <u>Digits by Twitter</u> Dir eine SMS zur Bestätigung Deiner Telefonnummer.</string>
+    <string name="dgts__terms_text_create">Wenn Du oben auf „Account erstellen“ tippst, stimmst Du den <u>Allgemeinen Geschäftsbedingungen</u>, <u>Datenschutzbestimmungen</u> und <u>Cookie-Richtlinien</u> von Digits by Twitter zu und erklärst Dich damit einverstanden, dass andere Nutzer dieser App Dich anhand von Telefonnummer und/oder E-Mail finden können. </string>
+    <string name="dgts__terms_text_create_app">Wenn Du oben auf „Account erstellen“ tippst, stimmst Du den <u>Allgemeinen Geschäftsbedingungen</u>, <u>Datenschutzbestimmungen</u> und <u>Cookie-Richtlinien</u> von Digits by Twitter zu und erklärst Dich damit einverstanden, dass andere Nutzer von %1$s Dich anhand von Telefonnummer und/oder E-Mail finden können. </string>
+    <string name="dgts__try_again">Erneut versuchen</string>
+    <string name="dgts__try_again_confirmation">Prüfe bitte Deinen Code und versuche es erneut.</string>
+    <string name="dgts__try_again_phone_number">Prüfe bitte Deine Nummer und versuche es erneut.</string>
+    <string name="dgts__try_another_phone">Probiere eine andere Telefonnummer</string>
+    <string name="dgts__upload_contacts">Mit Digits by Twitter können wir mehrere Deiner Freunde finden, die diese App verwenden. Wenn Du auf „Okay“ tippst, laden wir Dein Adressuch in Digits by Twitter hoch und ermöglichen es anderen Nutzern unserer App, Dich zu entdecken.</string>
+</resources>

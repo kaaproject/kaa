@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-fa/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">لغو</string>
+    <string name="dgts__communication_error">خطای ارتباطی</string>
+    <string name="dgts__confirmation_code">کد تأیید</string>
+    <string name="dgts__confirmation_edit_hint">کد تأیید را وارد کنید</string>
+    <string name="dgts__confirmation_error">امکان تأیید شماره تلفنتان وجود ندارد</string>
+    <string name="dgts__confirmation_error_alternative">متأسفیم، ما در ارسال کد تأیید مشکل داریم. لطفاً از قسمت زیر وارد سیستم شوید.</string>
+    <string name="dgts__confirmation_expired">این کد منقضی شده است. لطفاً کد تأیید را دوباره ارسال کنید.</string>
+    <string name="dgts__confirmation_send_text">ارسال کد تأیید</string>
+    <string name="dgts__confirmation_sending_text">ارسال کد تأیید</string>
+    <string name="dgts__confirmation_sent_text">کد تأیید ارسال شد</string>
+    <string name="dgts__confirmation_sms">کد تأیید: %1$s. این کد را در %2$s وارد کنید</string>
+    <string name="dgts__create_account_text">ایجاد حساب</string>
+    <string name="dgts__creating_account_text">ایجاد حساب</string>
+    <string name="dgts__dismiss">نادیده گرفتن</string>
+    <string name="dgts__find_your_friends">دوستانتان را پیدا کنید</string>
+    <string name="dgts__login_digits_text">از شماره تلفن من استفاده شود</string>
+    <string name="dgts__network_error">لطفاً شبکه تان را بررسی کنید و دوباره امتحان کنید.</string>
+    <string name="dgts__not_now">حالا نه</string>
+    <string name="dgts__okay">تأیید</string>
+    <string name="dgts__phone_number_edit_hint">شماره شما</string>
+    <string name="dgts__phone_number_text">شماره تلفنتان را وارد کنید</string>
+    <string name="dgts__resend">ارسال مجدد</string>
+    <string name="dgts__resend_confirmation_text">ارسال مجدد کد تأیید</string>
+    <string name="dgts__sign_in">ورود به سیستم</string>
+    <string name="dgts__sign_in_error">این بار نتوانستیم شما را به سیستم وارد کنیم. لطفاً بعداً دوباره امتحان کنید.</string>
+    <string name="dgts__sign_in_twitter">ورود به برنامه با توییتر</string>
+    <string name="dgts__signing_in">در حال ورود به سیستم</string>
+    <string name="dgts__try_again">تلاش مجدد</string>
+    <string name="dgts__try_again_confirmation">لطفاً کدتان را بررسی کنید و دوباره امتحان کنید.</string>
+    <string name="dgts__try_again_phone_number">لطفاً شماره تان را بررسی کنید و دوباره امتحان کنید.</string>
+    <string name="dgts__try_another_phone">یک شماره تلفن دیگر را امتحان کنید</string>
+    <string name="dgts__upload_contacts">ما از Digits که ارائه است از توییتر استفاده می کنیم تا تعداد بیشتری از دوستان شما را پیدا کنیم که از این برنامه استفاده می کنند. پس از اینکه روی \"تأیید\" ضربه زدید، ما دفترچه آدرستان را در Digit ارائه شده توسط توییتر بارگذاری می کنیم و به سایر کاربران برنامه مان امکان می دهیم تا شما را پیدا کنند.</string>
+</resources>

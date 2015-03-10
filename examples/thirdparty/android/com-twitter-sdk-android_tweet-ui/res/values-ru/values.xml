@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values-ru/plurals.xml -->
+    <eat-comment/>
+    <plurals name="tw__time_hours">
+        <item quantity="one">1 ч</item>
+        <item quantity="other">%d ч</item>
+    </plurals>
+    <plurals name="tw__time_mins">
+        <item quantity="one">1 мин</item>
+        <item quantity="other">%d мин</item>
+    </plurals>
+    <plurals name="tw__time_secs">
+        <item quantity="one">1 с</item>
+        <item quantity="other">%d с</item>
+    </plurals>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values-ru/strings.xml -->
+    <eat-comment/>
+    <string name="tw__loading_tweet">Загрузка твита</string>
+    <string name="tw__relative_date_format_long">dd.MM.y</string>
+    <string name="tw__relative_date_format_short">d MMM</string>
+    <string name="tw__share_content_format">Посмотрите твит пользователя \@%1$s: https://twitter.com/%1$s/status/%2$s</string>
+    <string name="tw__share_subject_format">Твит от %1$s (\@%2$s)</string>
+    <string name="tw__share_tweet">Поделиться твитом</string>
+    <string name="tw__tweet_content_description">%1$s. %2$s. %3$s.</string>
+</resources>

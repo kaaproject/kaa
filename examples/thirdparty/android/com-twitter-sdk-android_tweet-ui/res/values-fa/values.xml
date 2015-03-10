@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values-fa/plurals.xml -->
+    <eat-comment/>
+    <plurals name="tw__time_hours">
+        <item quantity="one">1 ساعت</item>
+        <item quantity="other">%d ساعت</item>
+    </plurals>
+    <plurals name="tw__time_mins">
+        <item quantity="one">1 دقیقه</item>
+        <item quantity="other">%d دقیقه</item>
+    </plurals>
+    <plurals name="tw__time_secs">
+        <item quantity="one">1 ثانیه</item>
+        <item quantity="other">%d ثانیه</item>
+    </plurals>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values-fa/strings.xml -->
+    <eat-comment/>
+    <string name="tw__relative_date_format_long">y/M/d</string>
+    <string name="tw__relative_date_format_short">d LLL</string>
+</resources>

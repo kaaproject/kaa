@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-v21/themes.xml -->
+    <eat-comment/>
+    <style name="Digits_default" parent="@android:style/Theme.Material.Light">
+        <item name="dgts__accentColor">?android:attr/colorAccent</item>
+    </style>
+</resources>

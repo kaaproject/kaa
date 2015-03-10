@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-ja/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">キャンセル</string>
+    <string name="dgts__communication_error">通信エラー</string>
+    <string name="dgts__confirmation_code">認証コード</string>
+    <string name="dgts__confirmation_edit_hint">認証コードを入力</string>
+    <string name="dgts__confirmation_error">電話番号の認証に失敗しました</string>
+    <string name="dgts__confirmation_error_alternative">認証コードの送信に問題が発生しました。下からログインしてみてください。</string>
+    <string name="dgts__confirmation_expired">このコードは有効期限切れです。認証コードを再送信してください。</string>
+    <string name="dgts__confirmation_send_text">認証コードを送信</string>
+    <string name="dgts__confirmation_sending_text">認証コード送信中</string>
+    <string name="dgts__confirmation_sent_text">認証コード送信済み</string>
+    <string name="dgts__confirmation_sms">認証コード: %1$s。このコードを%2$sに入力</string>
+    <string name="dgts__create_account_text">アカウントを作成</string>
+    <string name="dgts__creating_account_text">アカウントを作成中</string>
+    <string name="dgts__dismiss">非表示</string>
+    <string name="dgts__find_your_friends">友だちを探す</string>
+    <string name="dgts__image_header_description">ログイン用のイメージヘッダー</string>
+    <string name="dgts__login_digits_text">電話番号を使用する</string>
+    <string name="dgts__network_error">ネットワークを確認し、やり直してください。</string>
+    <string name="dgts__not_now">今はしない</string>
+    <string name="dgts__okay">OK</string>
+    <string name="dgts__phone_number_edit_hint">ご利用の番号</string>
+    <string name="dgts__phone_number_text">電話番号を入力してください</string>
+    <string name="dgts__resend">再送信</string>
+    <string name="dgts__resend_confirmation_text">認証コードを再送信</string>
+    <string name="dgts__sign_in">ログイン</string>
+    <string name="dgts__sign_in_error">Twitterにログインできませんでした。しばらくしてからやり直してください。</string>
+    <string name="dgts__sign_in_twitter">Twitterにログイン</string>
+    <string name="dgts__signing_in">ログイン中</string>
+    <string name="dgts__success_desc">プロフィール画像</string>
+    <string name="dgts__terms_text">上の [認証コードを送信] をタップすると、電話番号を認証するためのSMSメッセージが<u>Twitter</u>から送信されます。</string>
+    <string name="dgts__terms_text_create">上の [アカウントを作成] をタップすることで、Twitterの<u>利用規約</u>、<u>プライバシーポリシー</u>、および<u>Cookieポリシー</u>、さらにこのアプリの他のユーザーが電話番号やメールアドレスからあなたを見つけることができることに同意します。</string>
+    <string name="dgts__terms_text_create_app">上の [アカウントを作成] をタップすることで、 Twitterの       <u>利用規約</u>、        <u>プライバシーポリシー</u>、および       <u>Cookieポリシー</u>、さらに%1$sの他のユーザーが電話番号やメールアドレスからあなたを見つけることができることに同意します。</string>
+    <string name="dgts__try_again">やり直してください</string>
+    <string name="dgts__try_again_confirmation">コードを確認し、やり直してください。</string>
+    <string name="dgts__try_again_phone_number">番号を確認し、やり直してください。</string>
+    <string name="dgts__try_another_phone">別の電話番号をお試しください</string>
+    <string name="dgts__upload_contacts">Twitterでは、このアプリを使う友だちをより多く見つけるためにDigits by Twitterを使います。[OK] をタップすると、アドレス帳がDigits by Twitterにアップロードされ、他のユーザーがあなたを見つけられるようになります。</string>
+</resources>

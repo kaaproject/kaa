@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:digits="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        style="@style/dgts__Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="24dp"
+            android:orientation="horizontal">
+
+            <com.digits.sdk.android.AccentImageView
+                android:id="@+id/dgts__logo_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/dgts__digits_logo_desc"
+                android:src="@drawable/dgts__logo"/>
+
+            <com.digits.sdk.android.ColorPrimaryImageView
+                android:id="@+id/dgts__logo_name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:contentDescription="@string/dgts__digits_logo_name_desc"
+                android:src="@drawable/dgts__logo_name"/>
+        </LinearLayout>
+
+        <TextView
+            style="@style/dgts__Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dgts__pin_code_verification_title"
+            />
+
+        <EditText
+            android:id="@+id/dgts__confirmationEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/dgts__margin_bottom"
+            android:hint="@string/dgts__verification_code"
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+        <com.digits.sdk.android.StateButton
+            android:id="@+id/dgts__createAccount"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tw__login_btn_height"
+            android:layout_marginBottom="@dimen/dgts__margin_bottom"
+            digits:finishStateText="@string/dgts__creating_account_text"
+            digits:progressStateText="@string/dgts__creating_account_text"
+            digits:startStateText="@string/dgts__create_account_text"/>
+
+        <TextView
+            android:id="@+id/dgts__termsTextCreateAccount"
+            style="@style/dgts__Terms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dgts__terms_text_create"/>
+    </LinearLayout>
+</ScrollView><!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/layout/dgts__activity_pin_code.xml -->

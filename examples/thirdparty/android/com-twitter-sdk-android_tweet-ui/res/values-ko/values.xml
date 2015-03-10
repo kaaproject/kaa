@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values-ko/plurals.xml -->
+    <eat-comment/>
+    <plurals name="tw__time_hours">
+        <item quantity="one">1시간</item>
+        <item quantity="other">%d시간</item>
+    </plurals>
+    <plurals name="tw__time_mins">
+        <item quantity="one">1분</item>
+        <item quantity="other">%d분</item>
+    </plurals>
+    <plurals name="tw__time_secs">
+        <item quantity="one">1초</item>
+        <item quantity="other">%d초</item>
+    </plurals>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values-ko/strings.xml -->
+    <eat-comment/>
+    <string name="tw__loading_tweet">y. M. d.</string>
+    <string name="tw__relative_date_format_long">yy/MM/dd</string>
+    <string name="tw__relative_date_format_short">MMM d일</string>
+    <string name="tw__share_content_format">\@%1$s 님의 트윗 보기: https://twitter.com/%1$s/status/%2$s</string>
+    <string name="tw__share_subject_format">%1$s (\@%2$s) 님의 트윗</string>
+    <string name="tw__share_tweet">트윗 공유하기</string>
+    <string name="tw__tweet_content_description">%1$s. %2$s. %3$s.</string>
+</resources>

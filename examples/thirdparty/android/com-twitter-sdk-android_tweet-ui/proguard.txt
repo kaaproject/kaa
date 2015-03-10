@@ -1,0 +1,2 @@
+#Picasso Proguard Config https://github.com/square/picasso
+-dontwarn com.squareup.okhttp.**

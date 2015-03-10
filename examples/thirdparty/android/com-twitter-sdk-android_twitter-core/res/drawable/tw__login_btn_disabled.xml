@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/tw__light_gray"/>
+
+    <corners android:bottomRightRadius="@dimen/tw__login_btn_radius"
+             android:bottomLeftRadius="@dimen/tw__login_btn_radius"
+             android:topLeftRadius="@dimen/tw__login_btn_radius"
+             android:topRightRadius="@dimen/tw__login_btn_radius"/>
+
+    <size android:height="@dimen/tw__login_btn_height"/>
+</shape><!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/twittercore/src/main/res/drawable/tw__login_btn_disabled.xml -->

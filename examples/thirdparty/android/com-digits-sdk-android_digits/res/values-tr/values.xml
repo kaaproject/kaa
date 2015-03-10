@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-tr/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">İptal</string>
+    <string name="dgts__communication_error">İletişim Hatası</string>
+    <string name="dgts__confirmation_code">Doğrulama kodu</string>
+    <string name="dgts__confirmation_edit_hint">Doğrulama kodunu gir</string>
+    <string name="dgts__confirmation_error">Telefon numaran doğrulanamıyor</string>
+    <string name="dgts__confirmation_error_alternative">Üzgünüz, sana doğrulama kodu göndermede sorun yaşıyoruz. Lütfen aşağıdan yeniden oturum açmayı dene.</string>
+    <string name="dgts__confirmation_expired">Bu kodun süresi dolmuş. Lütfen doğrulama kodunu yeniden gönder.</string>
+    <string name="dgts__confirmation_send_text">Kod gönder</string>
+    <string name="dgts__confirmation_sending_text">Kod gönderiliyor</string>
+    <string name="dgts__confirmation_sent_text">Doğrulama kodu gönderildi</string>
+    <string name="dgts__confirmation_sms">Doğrulama kodu: %1$s. Bu kodu şuraya gir: %2$s</string>
+    <string name="dgts__create_account_text">Hesap oluştur</string>
+    <string name="dgts__creating_account_text">Hesap oluşturuluyor</string>
+    <string name="dgts__dismiss">Gizle</string>
+    <string name="dgts__find_your_friends">Arkadaşlarını bul</string>
+    <string name="dgts__image_header_description">Giriş için görüntü başlığı</string>
+    <string name="dgts__login_digits_text">Telefon numaramı kullan</string>
+    <string name="dgts__network_error">Lütfen ağını kontrol et ve yeniden dene.</string>
+    <string name="dgts__not_now">Şimdi değil</string>
+    <string name="dgts__okay">Tamam</string>
+    <string name="dgts__phone_number_edit_hint">Numaran</string>
+    <string name="dgts__phone_number_text">Telefon numaranı gir</string>
+    <string name="dgts__resend">Yeniden Gönder</string>
+    <string name="dgts__resend_confirmation_text">Doğrulama kodunu yeniden gönder</string>
+    <string name="dgts__sign_in">Giriş yap</string>
+    <string name="dgts__sign_in_error">Şu anda Twitter\'a giriş yapmanı sağlayamıyoruz.\
+Lütfen daha sonra yeniden dene.</string>
+    <string name="dgts__sign_in_twitter">Twitter\'a giriş yap</string>
+    <string name="dgts__signing_in">Giriş yapılıyor</string>
+    <string name="dgts__success_desc">Başarılı Simgesi</string>
+    <string name="dgts__terms_text">Yukarıdaki \"Kod gönder\" düğmesine dokunduğunda, <u>Digits by Twitter</u> telefon numaranı doğrulamak için sana bir kısa mesaj gönderir.</string>
+    <string name="dgts__terms_text_create">Yukarıdaki \"Hesap oluştur\" düğmesine tıklayarak Digits by Twitter\'ın <u>Hizmet Şartları</u>\'nı, <u>Gizlilik Politikası</u>\'nı ve <u>Çerez Politikası</u>\'nı onaylamış ve bu uygulamanın diğer kullanıcılarının seni telefon numarandan ve/veya e-posta adresinden bulabileceğini kabul etmiş oluyorsun.</string>
+    <string name="dgts__terms_text_create_app">Yukarıdaki \"Hesap oluştur\" düğmesine tıklayarak Digits by Twitter\'ın \
+        <u>Hizmet Şartları</u>\'nı, <u>Gizlilik Politikası</u>\'nı ve \
+        <u>Çerez Politikası</u>\'nı \
+onaylamış ve %1$s uygulamasının diğer kullanıcılarının seni telefon \
+numarandan ve/veya e-posta adresinden bulabileceğini kabul etmiş \
+oluyorsun.</string>
+    <string name="dgts__try_again">Yeniden Dene</string>
+    <string name="dgts__try_again_confirmation">Lütfen kodunu kontrol et ve yeniden dene.</string>
+    <string name="dgts__try_again_phone_number">Lütfen numaranı kontrol et ve yeniden dene.</string>
+    <string name="dgts__try_another_phone">Farklı bir telefon numarası dene</string>
+    <string name="dgts__upload_contacts">Bu uygulamayı kullanan daha çok arkadaşını bulmak için Digits by Twitter\'ı kullanırız. Tamam\'a dokunduğunda, rehberin Digits by Twitter\'a yüklenir ve uygulamamızın diğer kullanıcılarının seni bulması sağlanır.</string>
+</resources>

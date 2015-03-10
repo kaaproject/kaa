@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:digits="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        style="@style/dgts__Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/dgts__Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dgts__phone_number_text"/>
+
+        <com.digits.sdk.android.CountryListSpinner
+            android:id="@+id/dgts__countryCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/dgts__country_code_margin_bottom"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+        <EditText
+            android:id="@+id/dgts__phoneNumberEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/dgts__margin_bottom"
+            android:hint="@string/dgts__phone_number_edit_hint"
+            android:imeOptions="actionNext"
+            android:inputType="phone"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+        <com.digits.sdk.android.StateButton
+            android:id="@+id/dgts__sendCodeButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tw__login_btn_height"
+            android:layout_marginBottom="@dimen/dgts__margin_bottom"
+            digits:finishStateText="@string/dgts__confirmation_sent_text"
+            digits:progressStateText="@string/dgts__confirmation_sending_text"
+            digits:startStateText="@string/dgts__confirmation_send_text"/>
+
+        <TextView
+            android:id="@+id/dgts__termsText"
+            style="@style/dgts__Terms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dgts__terms_text"/>
+    </LinearLayout>
+</ScrollView><!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/layout/dgts__activity_phone_number.xml -->

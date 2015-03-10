@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-ru/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">Отмена</string>
+    <string name="dgts__communication_error">Ошибка связи</string>
+    <string name="dgts__confirmation_code">Код подтверждения</string>
+    <string name="dgts__confirmation_edit_hint">Введите код подтверждения</string>
+    <string name="dgts__confirmation_error">Не удалось подтвердить ваш номер телефона</string>
+    <string name="dgts__confirmation_error_alternative">К сожалению, нам не удалось отправить вам код подтверждения. Попробуйте ввести реквизиты в размещённую ниже форму, чтобы войти.</string>
+    <string name="dgts__confirmation_expired">Срок действия кода истёк. Отправьте код подтверждения ещё раз.</string>
+    <string name="dgts__confirmation_send_text">Отправить код подтверждения</string>
+    <string name="dgts__confirmation_sending_text">Отправка кода подтверждения</string>
+    <string name="dgts__confirmation_sent_text">Код подтверждения отправлен</string>
+    <string name="dgts__confirmation_sms">Код подтверждения: %1$s. Введите этот код в %2$s</string>
+    <string name="dgts__create_account_text">Создать учётную запись</string>
+    <string name="dgts__creating_account_text">Создание учётной записи</string>
+    <string name="dgts__dismiss">Отмена</string>
+    <string name="dgts__find_your_friends">Найти друзей</string>
+    <string name="dgts__image_header_description">Заголовок изображения для входа</string>
+    <string name="dgts__login_digits_text">Использовать мой номер телефона</string>
+    <string name="dgts__network_error">Проверьте сеть и попробуйте ещё раз.</string>
+    <string name="dgts__not_now">Не сейчас</string>
+    <string name="dgts__okay">ОК</string>
+    <string name="dgts__phone_number_edit_hint">Ваш номер</string>
+    <string name="dgts__phone_number_text">Введите свой номер телефона</string>
+    <string name="dgts__resend">Отправить ещё раз</string>
+    <string name="dgts__resend_confirmation_text">Отправить код подтверждения ещё раз</string>
+    <string name="dgts__sign_in">Войти</string>
+    <string name="dgts__sign_in_error">В настоящее время вы не можете войти в Твиттер. Повторите попытку позже.</string>
+    <string name="dgts__sign_in_twitter">Войти с учётной записью Твиттера</string>
+    <string name="dgts__signing_in">Выполняется вход</string>
+    <string name="dgts__success_desc">Значок «Готово»</string>
+    <string name="dgts__terms_text">При нажатии расположенной выше кнопки «Отправить код подтверждения» приложение <u>Digits by Twitter</u> отправит вам SMS-сообщение для подтверждения вашего номера телефона.</string>
+    <string name="dgts__terms_text_create">Нажимая расположенную выше кнопку «Создать учётную запись», вы подтверждаете своё согласие с <u>Условиями предоставления услуг</u>, <u>Политикой конфиденциальности</u> и <u>Политикой использования файлов Сookie</u> приложения Digits by Twitter, а также с тем, что другие пользователи данного приложения смогут вас найти по номеру телефона и (или) адресу электронной почты.</string>
+    <string name="dgts__terms_text_create_app">Нажимая расположенную выше кнопку «Создать учётную запись», вы подтверждаете своё согласие с <u>Условиями предоставления услуг</u>, <u>Политикой конфиденциальности</u> и <u>Политикой использования файлов Сookie</u> приложения Digits by Twitter, а также с тем, что другие пользователи %1$s смогут вас найти по номеру телефона и (или) адресу электронной почты.</string>
+    <string name="dgts__try_again">Повторите попытку</string>
+    <string name="dgts__try_again_confirmation">Проверьте код и попробуйте ещё раз.</string>
+    <string name="dgts__try_again_phone_number">Проверьте свой номер и попробуйте ещё раз.</string>
+    <string name="dgts__try_another_phone">Попробуйте ввести другой номер телефона</string>
+    <string name="dgts__upload_contacts">Мы используем Digits by Twitter, чтобы помочь вам найти друзей, которые используют это приложение. Когда вы нажмёте «ОК», мы загрузим вашу адресную книгу в Digits by Twitter и разрешим другим пользователям вас находить.</string>
+</resources>

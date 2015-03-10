@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="http://schemas.android.com/tools">
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/colors.xml -->
+    <eat-comment/>
+    <color name="tw__tweet_action_color">#55acee</color>
+    <color name="tw__tweet_container_border">#1a000000</color>
+    <color name="tw__tweet_dark_container_bg_color">#d9000000</color>
+    <color name="tw__tweet_dark_primary_text_color">#e1ffffff</color>
+    <color name="tw__tweet_light_container_bg_color">#ffffff</color>
+    <color name="tw__tweet_light_primary_text_color">#292f33</color>
+    <color name="tw__tweet_media_preview_bg_color">#e5e5e5</color>
+    <declare-styleable name="tw__AspectRatioImageView"><attr format="float" name="tw__image_aspect_ratio"/><attr format="enum" name="tw__image_dimension_to_adjust"><enum name="height" value="0"/><enum name="width" value="1"/></attr></declare-styleable>
+    <declare-styleable name="tw__TweetView"><attr format="string" name="tw__tweet_id"/><attr format="color" name="tw__container_bg_color"/><attr format="color" name="tw__primary_text_color"/><attr format="color" name="tw__action_color"/></declare-styleable>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/dimens.xml -->
+    <eat-comment/>
+    <dimen name="tw__compact_tweet_attribution_line_margin_right">36dp</dimen>
+    <dimen name="tw__compact_tweet_avatar_margin_left">12dp</dimen>
+    <dimen name="tw__compact_tweet_avatar_margin_right">8dp</dimen>
+    <dimen name="tw__compact_tweet_avatar_margin_top">5.5dp</dimen>
+    <dimen name="tw__compact_tweet_container_padding_bottom">13dp</dimen>
+    <dimen name="tw__compact_tweet_container_padding_top">10.5dp</dimen>
+    <dimen name="tw__compact_tweet_full_name_margin_top">0dp</dimen>
+    <dimen name="tw__compact_tweet_logo_margin_right">12dp</dimen>
+    <dimen name="tw__compact_tweet_logo_margin_top">5dp</dimen>
+    <item format="float" name="tw__compact_tweet_media_aspect_ratio" type="dimen">1.777777</item>
+    <dimen name="tw__compact_tweet_media_margin_bottom">3dp</dimen>
+    <dimen name="tw__compact_tweet_media_margin_right">12dp</dimen>
+    <dimen name="tw__compact_tweet_media_margin_top">7dp</dimen>
+    <dimen name="tw__compact_tweet_screen_name_layout_width">0dp</dimen>
+    <dimen name="tw__compact_tweet_screen_name_margin_bottom">0dp</dimen>
+    <dimen name="tw__compact_tweet_screen_name_margin_top">0dp</dimen>
+    <dimen name="tw__compact_tweet_screen_name_padding_left">3dp</dimen>
+    <dimen name="tw__compact_tweet_text_margin_left">0dp</dimen>
+    <dimen name="tw__compact_tweet_text_margin_right">12dp</dimen>
+    <dimen name="tw__compact_tweet_text_margin_top">1dp</dimen>
+    <dimen name="tw__compact_tweet_timestamp_margin_top">0dp</dimen>
+    <dimen name="tw__font_size_large">16sp</dimen>
+    <dimen name="tw__login_btn_drawable_padding">4dp</dimen>
+    <dimen name="tw__login_btn_height">32dp</dimen>
+    <dimen name="tw__login_btn_left_padding">8dp</dimen>
+    <dimen name="tw__login_btn_radius">5dp</dimen>
+    <dimen name="tw__login_btn_right_padding">12dp</dimen>
+    <dimen name="tw__login_btn_text_size">14sp</dimen>
+    <dimen name="tw__text_size_large">16dp</dimen>
+    <dimen name="tw__text_size_medium">14dp</dimen>
+    <dimen name="tw__tweet_action_layout_margin_top">0dp</dimen>
+    <dimen name="tw__tweet_avatar_margin_left">20dp</dimen>
+    <dimen name="tw__tweet_avatar_margin_right">8dp</dimen>
+    <dimen name="tw__tweet_avatar_margin_top">18dp</dimen>
+    <dimen name="tw__tweet_avatar_size">36dp</dimen>
+    <dimen name="tw__tweet_container_padding_bottom">18dp</dimen>
+    <dimen name="tw__tweet_container_padding_top">0dp</dimen>
+    <dimen name="tw__tweet_container_width">1dp</dimen>
+    <dimen name="tw__tweet_full_name_margin_top">15dp</dimen>
+    <dimen name="tw__tweet_logo_margin_right">20dp</dimen>
+    <dimen name="tw__tweet_logo_margin_top">18dp</dimen>
+    <dimen name="tw__tweet_screen_name_margin_bottom">1dp</dimen>
+    <dimen name="tw__tweet_screen_name_margin_top">-4dp</dimen>
+    <dimen name="tw__tweet_share_extra_bottom_margin">2dp</dimen>
+    <dimen name="tw__tweet_share_extra_top_margin">11dp</dimen>
+    <dimen name="tw__tweet_share_layout_height">36dp</dimen>
+    <dimen name="tw__tweet_share_margin_left">20dp</dimen>
+    <dimen name="tw__tweet_share_padding_bottom">12dp</dimen>
+    <dimen name="tw__tweet_text_margin_left">20dp</dimen>
+    <dimen name="tw__tweet_text_margin_right">20dp</dimen>
+    <dimen name="tw__tweet_text_margin_top">12dp</dimen>
+    <dimen name="tw__tweet_timestamp_margin_top">-4dp</dimen>
+    <dimen name="tw__tweet_timestamp_padding_left">4dp</dimen>
+    <dimen name="tw__tweet_verified_check_padding_left">3dp</dimen>
+    <dimen name="tw__tweet_verified_margin_bottom">3dp</dimen>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/plurals.xml -->
+    <eat-comment/>
+    <plurals name="tw__time_hours">
+        <item quantity="one">1h</item>
+        <item quantity="other">%dh</item>
+    </plurals>
+    <plurals name="tw__time_mins">
+        <item quantity="one">1m</item>
+        <item quantity="other">%dm</item>
+    </plurals>
+    <plurals name="tw__time_secs">
+        <item quantity="one">1s</item>
+        <item quantity="other">%ds</item>
+    </plurals>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="tw__loading_tweet">Loading Tweet</string>
+    <string name="tw__relative_date_format_long">MM/dd/yy</string>
+    <string name="tw__relative_date_format_short">MMM dd</string>
+    <string name="tw__share_content_format">Check out @%1$s\'s Tweet: https://twitter.com/%1$s/status/%2$s</string>
+    <string name="tw__share_subject_format">Tweet from %1$s (@%2$s)</string>
+    <string name="tw__share_tweet">Share Tweet</string>
+    <string name="tw__tweet_content_description">%1$s. %2$s. %3$s.</string>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/tw__tweet_text_styles.xml -->
+    <eat-comment/>
+    <style name="tw__AttributionText" ns1:ignore="NewApi">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/tw__text_size_medium</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:singleLine">true</item>
+    </style>
+    <style name="tw__CompactAttributionLine" ns1:ignore="NewApi">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginRight">@dimen/tw__compact_tweet_attribution_line_margin_right</item>
+        <item name="android:importantForAccessibility">noHideDescendants</item>
+    </style>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/tw__tweet_layout_styles.xml -->
+    <eat-comment/>
+    <style name="tw__CompactTweetContainer" parent="tw__TweetFillWidth">
+        <item name="android:background">@drawable/tw__bg_tweet_compact</item>
+        <item name="android:paddingTop">@dimen/tw__compact_tweet_container_padding_top</item>
+        <item name="android:paddingBottom">@dimen/tw__compact_tweet_container_padding_bottom</item>
+    </style>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/tw__tweet_text_styles.xml -->
+    <eat-comment/>
+    <style name="tw__TweetAction" ns1:ignore="NewApi">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/tw__tweet_action_layout_margin_top</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/tw__tweet_media_styles.xml -->
+    <eat-comment/>
+    <style name="tw__TweetAvatar">
+        <item name="android:layout_width">@dimen/tw__tweet_avatar_size</item>
+        <item name="android:layout_height">@dimen/tw__tweet_avatar_size</item>
+        <item name="android:layout_marginTop">@dimen/tw__tweet_avatar_margin_top</item>
+        <item name="android:layout_marginLeft">@dimen/tw__tweet_avatar_margin_left</item>
+        <item name="android:layout_marginRight">@dimen/tw__tweet_avatar_margin_right</item>
+        <item name="android:focusable">false</item>
+    </style>
+    <style name="tw__TweetAvatar.Compact" parent="tw__TweetAvatar">
+        <item name="android:layout_width">@dimen/tw__tweet_avatar_size</item>
+        <item name="android:layout_height">@dimen/tw__tweet_avatar_size</item>
+        <item name="android:layout_marginTop">@dimen/tw__compact_tweet_avatar_margin_top</item>
+        <item name="android:layout_marginLeft">@dimen/tw__compact_tweet_avatar_margin_left</item>
+        <item name="android:layout_marginRight">@dimen/tw__compact_tweet_avatar_margin_right</item>
+        <item name="android:focusable">false</item>
+    </style>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/tw__tweet_layout_styles.xml -->
+    <eat-comment/>
+    <style name="tw__TweetContainer" parent="tw__TweetFillWidth">
+        <item name="android:background">@drawable/tw__bg_tweet</item>
+        <item name="android:paddingTop">@dimen/tw__tweet_container_padding_top</item>
+        <item name="android:paddingBottom">@dimen/tw__tweet_container_padding_bottom</item>
+    </style>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/styles.xml -->
+    <eat-comment/>
+    <style name="tw__TweetDarkStyle">
+        <item name="tw__container_bg_color">@color/tw__tweet_dark_container_bg_color</item>
+        <item name="tw__primary_text_color">@color/tw__tweet_dark_primary_text_color</item>
+        <item name="tw__action_color">@color/tw__tweet_action_color</item>
+    </style>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/tw__tweet_layout_styles.xml -->
+    <eat-comment/>
+    <style name="tw__TweetFillWidth">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/tw__tweet_text_styles.xml -->
+    <eat-comment/>
+    <style name="tw__TweetFullName" parent="tw__AttributionText" ns1:ignore="NewApi">
+        <item name="android:layout_marginTop">@dimen/tw__tweet_full_name_margin_top</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/tw__text_size_large</item>
+        <item name="android:textColor">@color/tw__tweet_light_primary_text_color</item>
+        <item name="android:focusable">false</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+    <style name="tw__TweetFullName.Compact">
+        <item name="android:layout_marginTop">@dimen/tw__compact_tweet_full_name_margin_top</item>
+        <item name="android:textSize">@dimen/tw__text_size_large</item>
+        <item name="android:ellipsize">none</item>
+    </style>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/styles.xml -->
+    <eat-comment/>
+    <style name="tw__TweetLightStyle">
+        <item name="tw__container_bg_color">@color/tw__tweet_light_container_bg_color</item>
+        <item name="tw__primary_text_color">@color/tw__tweet_light_primary_text_color</item>
+        <item name="tw__action_color">@color/tw__tweet_action_color</item>
+    </style>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/tw__tweet_media_styles.xml -->
+    <eat-comment/>
+    <style name="tw__TweetMedia">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:focusable">false</item>
+    </style>
+    <style name="tw__TweetMedia.Compact">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/tw__compact_tweet_media_margin_top</item>
+        <item name="android:layout_marginBottom">@dimen/tw__compact_tweet_media_margin_bottom</item>
+        <item name="android:layout_marginRight">@dimen/tw__compact_tweet_media_margin_right</item>
+        <item name="tw__image_aspect_ratio">@dimen/tw__compact_tweet_media_aspect_ratio</item>
+        <item name="tw__image_dimension_to_adjust">height</item>
+    </style>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/tw__tweet_text_styles.xml -->
+    <eat-comment/>
+    <style name="tw__TweetScreenName" parent="tw__AttributionText" ns1:ignore="NewApi">
+        <item name="android:layout_marginTop">@dimen/tw__tweet_screen_name_margin_top</item>
+        <item name="android:layout_marginBottom">@dimen/tw__tweet_screen_name_margin_bottom</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:focusable">false</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+    <style name="tw__TweetScreenName.Compact" ns1:ignore="NewApi">
+        <item name="android:layout_width">@dimen/tw__compact_tweet_screen_name_layout_width</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginTop">@dimen/tw__compact_tweet_screen_name_margin_top</item>
+        <item name="android:layout_marginBottom">@dimen/tw__compact_tweet_screen_name_margin_bottom</item>
+        <item name="android:paddingLeft">@dimen/tw__compact_tweet_screen_name_padding_left</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">@dimen/tw__text_size_medium</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="tw__TweetShare" ns1:ignore="NewApi">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/tw__tweet_share_layout_height</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_marginLeft">@dimen/tw__tweet_share_margin_left</item>
+        <item name="android:textSize">@dimen/tw__text_size_large</item>
+        <item name="android:textColor">@color/tw__tweet_action_color</item>
+        <item name="android:paddingBottom">@dimen/tw__tweet_share_padding_bottom</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+    <style name="tw__TweetText" ns1:ignore="NewApi">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/tw__tweet_text_margin_top</item>
+        <item name="android:layout_marginLeft">@dimen/tw__tweet_text_margin_left</item>
+        <item name="android:layout_marginRight">@dimen/tw__tweet_text_margin_right</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">@dimen/tw__font_size_large</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+        <item name="android:textColor">@color/tw__tweet_light_primary_text_color</item>
+        <item name="android:textColorLink">@color/tw__tweet_action_color</item>
+        <item name="android:focusable">false</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+    <style name="tw__TweetText.Compact" ns1:ignore="NewApi">
+        <item name="android:layout_marginTop">@dimen/tw__compact_tweet_text_margin_top</item>
+        <item name="android:layout_marginLeft">@dimen/tw__compact_tweet_text_margin_left</item>
+        <item name="android:layout_marginRight">@dimen/tw__compact_tweet_text_margin_right</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">@dimen/tw__font_size_large</item>
+    </style>
+    <style name="tw__TweetTimestamp" parent="tw__AttributionText" ns1:ignore="NewApi">
+        <item name="android:layout_marginTop">@dimen/tw__tweet_timestamp_margin_top</item>
+        <item name="android:paddingLeft">@dimen/tw__tweet_timestamp_padding_left</item>
+        <item name="android:ellipsize">none</item>
+        <item name="android:focusable">false</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+    <style name="tw__TweetTimestamp.Compact" ns1:ignore="NewApi">
+        <item name="android:layout_marginTop">@dimen/tw__compact_tweet_timestamp_margin_top</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">@dimen/tw__text_size_medium</item>
+        <item name="android:ellipsize">none</item>
+    </style>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values/tw__tweet_media_styles.xml -->
+    <eat-comment/>
+    <style name="tw__TweetVerifiedCheck">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/tw__tweet_verified_margin_bottom</item>
+        <item name="android:paddingLeft">@dimen/tw__tweet_verified_check_padding_left</item>
+        <item name="android:src">@drawable/tw__ic_tweet_verified</item>
+        <item name="android:focusable">false</item>
+    </style>
+    <style name="tw__TwitterLogo">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/tw__tweet_logo_margin_top</item>
+        <item name="android:layout_marginRight">@dimen/tw__tweet_logo_margin_right</item>
+        <item name="android:src">@drawable/tw__ic_logo_blue</item>
+        <item name="android:focusable">false</item>
+    </style>
+    <style name="tw__TwitterLogo.Compact">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/tw__compact_tweet_logo_margin_top</item>
+        <item name="android:layout_marginRight">@dimen/tw__compact_tweet_logo_margin_right</item>
+        <item name="android:src">@drawable/tw__ic_logo_blue</item>
+    </style>
+</resources>

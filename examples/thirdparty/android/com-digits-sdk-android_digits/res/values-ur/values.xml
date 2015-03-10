@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-ur/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">منسوخ کریں</string>
+    <string name="dgts__communication_error">مواصلاتی خرابی</string>
+    <string name="dgts__confirmation_code">تصدیقی کوڈ</string>
+    <string name="dgts__confirmation_edit_hint">تصدیقی کوڈ داخل کریں</string>
+    <string name="dgts__confirmation_error">آپ کے فون نمبر کی تصدیق کرنے سے قاصر</string>
+    <string name="dgts__confirmation_error_alternative">معذرت، ہمیں آپ کو تصدیقی کوڈ بھیجنے میں مشکل پیش آ رہی ہے۔ برائے مہربانی درج ذیل میں سائن ان کرنے کی کوشش کریں۔</string>
+    <string name="dgts__confirmation_expired">کوڈ کی معیاد کتم ہو گئی ہے۔ برائے مہربانی تصدیقی کوڈ دوبارہ بھیجیں۔</string>
+    <string name="dgts__confirmation_send_text">تصدیقی کوڈ بھیجیں</string>
+    <string name="dgts__confirmation_sending_text">تصدیقی کوڈ بھیج رہا ہے</string>
+    <string name="dgts__confirmation_sent_text">تصدیق کوڈ بھیجا</string>
+    <string name="dgts__confirmation_sms">تصدیقی کوڈ: %1$s. اس کوڈ کو %2$s میں داخل کریں</string>
+    <string name="dgts__create_account_text">اکاؤنٹ بنائیں</string>
+    <string name="dgts__creating_account_text">اکاؤنٹ بنا رہا ہے</string>
+    <string name="dgts__dismiss">برخاست کریں</string>
+    <string name="dgts__find_your_friends">اپنے دوستوں کو ڈھونڈیں</string>
+    <string name="dgts__login_digits_text">میرا فون نمبر استعمال کریں</string>
+    <string name="dgts__network_error">برائے مہربانی اپنے نیٹ ورک کی پڑتال کریں اور دوبارہ کوشش کریں۔</string>
+    <string name="dgts__not_now">ابھی نہیں</string>
+    <string name="dgts__okay">ٹھیک ہے</string>
+    <string name="dgts__phone_number_edit_hint">آپ کا نمبر</string>
+    <string name="dgts__phone_number_text">اپنا فون نمبر داخل کریں</string>
+    <string name="dgts__resend">دوبارہ بھیجیں</string>
+    <string name="dgts__resend_confirmation_text">تصدیقی کوڈ دوبارہ بھیجیں</string>
+    <string name="dgts__sign_in">سائن ان کریں</string>
+    <string name="dgts__sign_in_error">ہم اس وقت آپ کو ٹوئٹر میں سائن ان نہیں کر سکے۔ براہ مہربانی بعد میں دوبارہ کوشش کریں۔</string>
+    <string name="dgts__sign_in_twitter">ٹوئٹر کے ساتھ سائن ان کریں</string>
+    <string name="dgts__signing_in">سائن ان کر رہا ہے</string>
+    <string name="dgts__try_again">دوبارہ کوشش کریں</string>
+    <string name="dgts__try_again_confirmation">برائے مہربانی اپنے کوڈ کی پڑتال کریں اور دوبارہ کوشش کریں۔</string>
+    <string name="dgts__try_again_phone_number">برائے مہربانی اپنے نمبر کی پڑتال کریں اور دوبارہ کوشش کریں-</string>
+    <string name="dgts__try_another_phone">ایک مختلف فون نمبر آزمائیں</string>
+    <string name="dgts__upload_contacts">ہم آپ کے مزید دوستوں کو تلاش کرنے کیلئے جو یہ ایپ استعمال کرتے ہیں، اعداد بطرف ٹوئٹر استعمال کرتے ہیں۔ جب آپ ٹھیک ہے پر تھپتھپاتے ہیں، تو ہم اعداد بطرف ٹوئٹر پر آپ کی ایڈریس بک کو اپ لوڈ کریں گے اور اپنی ایپ کے دیگر صارفین کو آپ کو دریافت کر سکنے کے قابل بنائیں گے۔</string>
+</resources>

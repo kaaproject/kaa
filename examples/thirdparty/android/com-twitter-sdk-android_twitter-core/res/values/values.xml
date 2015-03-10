@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/twittercore/src/main/res/values/colors.xml -->
+    <eat-comment/>
+    <color name="tw__blue_default">#FF5BAAF4</color>
+    <color name="tw__blue_pressed">#FF4186C8</color>
+    <color name="tw__blue_pressed_light">#ffe1e8ed</color>
+    <color name="tw__light_gray">#ccd6dd</color>
+    <color name="tw__medium_gray">#8899a6</color>
+    <color name="tw__solid_white">#FFFFFFFF</color>
+    <color name="tw__transparent">#00000000</color>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/twittercore/src/main/res/values/dimens.xml -->
+    <eat-comment/>
+    <dimen name="tw__btn_bar_margin_left">8dp</dimen>
+    <dimen name="tw__btn_bar_margin_right">8dp</dimen>
+    <dimen name="tw__login_btn_drawable_padding">4dp</dimen>
+    <dimen name="tw__login_btn_height">32dp</dimen>
+    <dimen name="tw__login_btn_left_padding">8dp</dimen>
+    <dimen name="tw__login_btn_radius">5dp</dimen>
+    <dimen name="tw__login_btn_right_padding">12dp</dimen>
+    <dimen name="tw__login_btn_text_size">14sp</dimen>
+    <dimen name="tw__padding_permission_horizontal_container">24dp</dimen>
+    <dimen name="tw__padding_permission_vertical_container">24dp</dimen>
+    <dimen name="tw__permission_description_text_size">16sp</dimen>
+    <dimen name="tw__permission_title_text_size">24sp</dimen>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/twittercore/src/main/res/values/const_strings.xml -->
+    <eat-comment/>
+    <string name="kit_name">Twitter</string>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/twittercore/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="tw__allow_btn_txt">Allow</string>
+    <string name="tw__login_btn_txt">Log in with Twitter</string>
+    <string name="tw__not_now_btn_txt">Not now</string>
+    <string name="tw__share_email_desc">Get updates and other information from %1$s when you allow
+        them access to your email on your Twitter account \@%2$s</string>
+    <string name="tw__share_email_title">Share your email address</string>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/twittercore/src/main/res/values/styles.xml -->
+    <eat-comment/>
+    <style name="tw__Button">
+        <item name="android:background">@drawable/tw__login_btn</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/tw__login_btn_text_size</item>
+        <item name="android:textColor">@color/tw__solid_white</item>
+        <item name="android:paddingLeft">@dimen/tw__login_btn_left_padding</item>
+        <item name="android:paddingRight">@dimen/tw__login_btn_right_padding</item>
+    </style>
+    <style name="tw__Button.Light">
+        <item name="android:background">@drawable/tw__login_btn_light</item>
+        <item name="android:textColor">@drawable/tw__login_btn_text_color_light</item>
+    </style>
+    <style name="tw__ButtonBar">
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingTop">32dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+    </style>
+    <style name="tw__Permission_Container">
+        <item name="android:paddingLeft">@dimen/tw__padding_permission_horizontal_container</item>
+        <item name="android:paddingRight">@dimen/tw__padding_permission_horizontal_container</item>
+        <item name="android:paddingTop">@dimen/tw__padding_permission_vertical_container</item>
+        <item name="android:paddingBottom">@dimen/tw__padding_permission_vertical_container</item>
+    </style>
+    <style name="tw__Permission_Description">
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="android:textSize">@dimen/tw__permission_description_text_size</item>
+    </style>
+    <style name="tw__Permission_Title">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textSize">@dimen/tw__permission_title_text_size</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:layout_marginTop">30dp</item>
+    </style>
+</resources>

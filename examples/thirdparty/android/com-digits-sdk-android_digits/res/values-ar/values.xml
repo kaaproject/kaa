@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-ar/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">إلغاء</string>
+    <string name="dgts__communication_error">خطأ اتصال</string>
+    <string name="dgts__confirmation_code">رمز التأكيد</string>
+    <string name="dgts__confirmation_edit_hint">أدخل رمز التأكيد</string>
+    <string name="dgts__confirmation_error">لا يمكن تأكيد رقم هاتفك.</string>
+    <string name="dgts__confirmation_error_alternative">عذرًا! واجهتنا مشكلة في إرسال رمز التوثيق. يُرجى محاولة تسجيل الدخول أدناه.</string>
+    <string name="dgts__confirmation_expired">انتهت صلاحية هذا الرمز. يُرجى إعادة إرسال رمز التوثيق.</string>
+    <string name="dgts__confirmation_send_text">أرسل رمز التأكيد</string>
+    <string name="dgts__confirmation_sending_text">جاري إرسال رمز التأكيد</string>
+    <string name="dgts__confirmation_sent_text">تمّ إرسال رمز التأكيد</string>
+    <string name="dgts__confirmation_sms">رمز التأكيد: %1$s. أدخل هذا الرمز خلال %2$s</string>
+    <string name="dgts__create_account_text">إنشاء حساب</string>
+    <string name="dgts__creating_account_text">إنشاء حساب</string>
+    <string name="dgts__dismiss">تجاهل</string>
+    <string name="dgts__find_your_friends">ابحث عن أصدقائك</string>
+    <string name="dgts__image_header_description">عنوان الصورة لتسجيل الدخول</string>
+    <string name="dgts__login_digits_text">استخدام رقم الهاتف الخاص بي</string>
+    <string name="dgts__network_error">يُرجى التحقق من الشبكة وإعادة المحاولة.</string>
+    <string name="dgts__not_now">ليس الآن</string>
+    <string name="dgts__okay">حسنًا</string>
+    <string name="dgts__phone_number_edit_hint">رقم هاتفك</string>
+    <string name="dgts__phone_number_text">أدخل رقم الهاتف الخاص بك</string>
+    <string name="dgts__resend">إعادة إرسال</string>
+    <string name="dgts__resend_confirmation_text">إعادة إرسال رمز التوثيق</string>
+    <string name="dgts__sign_in">تسجيل الدخول</string>
+    <string name="dgts__sign_in_error">لا يمكننا تسجيل دخولك إلى تويتر في الوقت الحالى. يُرجى إعادة المحاولة مرة أخرى.</string>
+    <string name="dgts__sign_in_twitter">تسجيل الدخول إلى تويتر</string>
+    <string name="dgts__signing_in">تسجيل الدخول</string>
+    <string name="dgts__success_desc">أيقونة النجاح</string>
+    <string name="dgts__terms_text">بالضغط على \"إرسال رمز التوثيق\" أعلاه، سترسل لك <u>Digits بواسطة تويتر</u> رسالة نصّيّة قصيرة للتأكيد على رقم هاتفك.</string>
+    <string name="dgts__terms_text_create">بالضغط على \"إنشاء حساب\" أعلاه،\
+أنت توافق على <u>شروط الخدمة</u>، و<u>سياسة الخصوصية</u>، و<u>سياسة\
+ملفات ارتباط Digits\
+بواسطة تويتر</u>، ويمكن لمستخدمي التطبيق الآخرين اكتشاف هويتك عن طريق رقم\
+الهاتف و/ أو البريد الإلكترونيّ.</string>
+    <string name="dgts__terms_text_create_app">بالضغط على \"إنشاء حساب\" أعلاه،\
+أنت توافق على <u>شروط الخدمة</u>، و<u>سياسة الخصوصية</u>، و<u>سياسة\
+ملفات ارتباط  Digits\
+بواسطة تويتر</u>، ويمكن لمستخدمي %1$s الآخرين اكتشاف هويتك عن طريق رقم الهاتف و/ أو\
+البريد الإلكترونيّ.</string>
+    <string name="dgts__try_again">حاول مرّة أخرى</string>
+    <string name="dgts__try_again_confirmation">يُرجى التحقق من الرمز وإعادة المحاولة.</string>
+    <string name="dgts__try_again_phone_number">يُرجى التحقق من الرقم وإعادة المحاولة.</string>
+    <string name="dgts__try_another_phone">جرّب رقم هاتف مختلف.</string>
+    <string name="dgts__upload_contacts">نستخدم \" Digits بواسطة\
+تويتر\" للبحث عن مزيد من أصدقائك الذين يستخدمون هذا التطبيق. عند الضغط على\
+\"موافق\"، سنقوم/ برفع دفتر العناوين على \" Digits\
+بواسطة تويتر\"، ثمّ تمكين مستخدمي التطبيق الآخرين من اكتشاف هويتك.</string>
+</resources>

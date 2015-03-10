@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-en-rGB/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">Cancel</string>
+    <string name="dgts__communication_error">Communication Error</string>
+    <string name="dgts__confirmation_code">Confirmation code</string>
+    <string name="dgts__confirmation_edit_hint">Enter confirmation code</string>
+    <string name="dgts__confirmation_error">Unable to confirm your phone number</string>
+    <string name="dgts__confirmation_error_alternative">Sorry, we are having trouble sending you a\
+        confirmation code. Please try signing in below.</string>
+    <string name="dgts__confirmation_expired">This code has expired. Please resend\
+        confirmation code.</string>
+    <string name="dgts__confirmation_send_text">Send confirmation code</string>
+    <string name="dgts__confirmation_sending_text">Sending confirmation code</string>
+    <string name="dgts__confirmation_sent_text">Sent confirmation code</string>
+    <string name="dgts__confirmation_sms">Confirmation code: %1$s. Enter this code in %2$s</string>
+    <string name="dgts__create_account_text">Create account</string>
+    <string name="dgts__creating_account_text">Creating account</string>
+    <string name="dgts__dismiss">Dismiss</string>
+    <string name="dgts__find_your_friends">Find your friends</string>
+    <string name="dgts__login_digits_text">Use my phone number</string>
+    <string name="dgts__network_error">Please check your network and try again.</string>
+    <string name="dgts__not_now">Not now</string>
+    <string name="dgts__okay">OK</string>
+    <string name="dgts__phone_number_edit_hint">Your Number</string>
+    <string name="dgts__phone_number_text">Enter your phone number</string>
+    <string name="dgts__resend">Resend</string>
+    <string name="dgts__resend_confirmation_text">Resend confirmation code</string>
+    <string name="dgts__sign_in">Sign in</string>
+    <string name="dgts__sign_in_error">We could not sign you in with Twitter at this time.\
+        Please try again later.</string>
+    <string name="dgts__sign_in_twitter">Sign in with Twitter</string>
+    <string name="dgts__signing_in">Signing in</string>
+    <string name="dgts__try_again">Try Again</string>
+    <string name="dgts__try_again_confirmation">Please check your code and try again.</string>
+    <string name="dgts__try_again_phone_number">Please check your number and try again.</string>
+    <string name="dgts__try_another_phone">Try a different phone number</string>
+    <string name="dgts__upload_contacts">We use Digits by Twitter to find more of your friends who use\
+        this app. When you tap OK, we\'ll upload your address book to Digits by Twitter and\
+        enable other users of our app to discover you.</string>
+</resources>

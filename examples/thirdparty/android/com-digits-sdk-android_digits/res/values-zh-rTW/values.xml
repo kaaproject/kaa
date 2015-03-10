@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/digits/src/main/res/values-zh-rTW/strings.xml -->
+    <eat-comment/>
+    <string name="dgts__cancel">取消</string>
+    <string name="dgts__communication_error">資料傳送時發生錯誤</string>
+    <string name="dgts__confirmation_code">確認碼</string>
+    <string name="dgts__confirmation_edit_hint">輸入確認碼</string>
+    <string name="dgts__confirmation_error">無法確認你的電話號碼</string>
+    <string name="dgts__confirmation_error_alternative">抱歉，傳送你的確認碼時發生錯誤。請至下方嘗試重新登入。</string>
+    <string name="dgts__confirmation_expired">代碼已經失效。請重新傳送確認碼。</string>
+    <string name="dgts__confirmation_send_text">傳送確認碼</string>
+    <string name="dgts__confirmation_sending_text">確認碼傳送中</string>
+    <string name="dgts__confirmation_sent_text">已發送確認碼</string>
+    <string name="dgts__confirmation_sms">確認碼：%1$s。請在 %2$s 輸入此碼</string>
+    <string name="dgts__create_account_text">建立帳戶</string>
+    <string name="dgts__creating_account_text">正在建立帳戶</string>
+    <string name="dgts__dismiss">捨棄</string>
+    <string name="dgts__find_your_friends">尋找你的朋友</string>
+    <string name="dgts__login_digits_text">使用我的電話號碼</string>
+    <string name="dgts__network_error">請檢查網路，然後再試一次。</string>
+    <string name="dgts__not_now">現在不用</string>
+    <string name="dgts__okay">好的</string>
+    <string name="dgts__phone_number_edit_hint">你的號碼</string>
+    <string name="dgts__phone_number_text">輸入你的電話號碼</string>
+    <string name="dgts__resend">重新傳送</string>
+    <string name="dgts__resend_confirmation_text">重新傳送確認碼</string>
+    <string name="dgts__sign_in">登入</string>
+    <string name="dgts__sign_in_error">目前無法登入 Twitter。請稍後再試。</string>
+    <string name="dgts__sign_in_twitter">用 Twitter 登入</string>
+    <string name="dgts__signing_in">正在登入</string>
+    <string name="dgts__try_again">再試一次</string>
+    <string name="dgts__try_again_confirmation">請檢查你的代碼，然後再試一次。</string>
+    <string name="dgts__try_again_phone_number">請檢查你的號碼，然後再試一次。</string>
+    <string name="dgts__try_another_phone">請試試不同的電話號碼</string>
+    <string name="dgts__upload_contacts">我們使用 Digits by Twitter 為你尋找更多也在使用這個應用程式的朋友。當你點選「好的」，我們就會將你的通訊錄上傳到 Digits by Twitter 並讓應用程式的其他使用者可以找到你。</string>
+</resources>

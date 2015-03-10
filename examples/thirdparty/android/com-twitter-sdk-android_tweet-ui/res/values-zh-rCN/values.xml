@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values-zh-rCN/plurals.xml -->
+    <eat-comment/>
+    <plurals name="tw__time_hours">
+        <item quantity="one">1时</item>
+        <item quantity="other">%d时</item>
+    </plurals>
+    <plurals name="tw__time_mins">
+        <item quantity="one">1分</item>
+        <item quantity="other">%d分</item>
+    </plurals>
+    <plurals name="tw__time_secs">
+        <item quantity="one">1秒</item>
+        <item quantity="other">%d秒</item>
+    </plurals>
+    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/tweetui/src/main/res/values-zh-rCN/strings.xml -->
+    <eat-comment/>
+    <string name="tw__loading_tweet">加载推文</string>
+    <string name="tw__relative_date_format_long">y/M/d</string>
+    <string name="tw__relative_date_format_short">M月d日</string>
+    <string name="tw__share_content_format">看看\@%1$s\的推文：https://twitter.com/%1$s/status/%2$s</string>
+    <string name="tw__share_subject_format">来自%1$s的推文(\@%2$s)</string>
+    <string name="tw__share_tweet">分享推文</string>
+    <string name="tw__tweet_content_description">%1$s. %2$s. %3$s.</string>
+</resources>
