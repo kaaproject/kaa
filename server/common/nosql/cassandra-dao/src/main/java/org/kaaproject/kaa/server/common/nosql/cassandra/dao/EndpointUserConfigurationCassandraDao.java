@@ -1,12 +1,14 @@
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
-import com.datastax.driver.core.querybuilder.Delete;
 import com.datastax.driver.core.querybuilder.Select;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUserConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
@@ -20,6 +22,8 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 @Repository
 public class EndpointUserConfigurationCassandraDao extends AbstractCassandraDao<CassandraEndpointUserConfiguration, String> implements EndpointUserConfigurationDao<CassandraEndpointUserConfiguration> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(EndpointUserConfigurationCassandraDao.class);
+
     @Override
     protected Class<CassandraEndpointUserConfiguration> getColumnFamilyClass() {
         return CassandraEndpointUserConfiguration.class;
@@ -32,26 +36,49 @@ public class EndpointUserConfigurationCassandraDao extends AbstractCassandraDao<
 
     @Override
     public CassandraEndpointUserConfiguration save(EndpointUserConfigurationDto dto) {
-        return save(new CassandraEndpointUserConfiguration(dto));
+        LOG.debug("Saving user specific configuration {}", dto);
+        CassandraEndpointUserConfiguration userConfiguration = save(new CassandraEndpointUserConfiguration(dto));
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Saving result: {}", userConfiguration);
+        } else {
+            LOG.debug("Saving result: {}", userConfiguration != null);
+        }
+        return userConfiguration;
     }
 
     @Override
     public CassandraEndpointUserConfiguration findByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion) {
+        LOG.debug("Searching for user specific configuration by user id {}, application token {} and schema version {}", userId, appToken, schemaVersion);
         Select.Where select = select().from(getColumnFamilyName()).where(eq(EP_USER_CONF_USER_ID_PROPERTY, userId))
                 .and(eq(EP_USER_CONF_APP_TOKEN_PROPERTY, appToken)).and(eq(EP_USER_CONF_VERSION_PROPERTY, schemaVersion));
-        return findOneByStatement(select);
+        CassandraEndpointUserConfiguration userConfiguration = findOneByStatement(select);
+        if (LOG.isTraceEnabled()) {
+            LOG.debug("[{},{},{}] Search result: {}.", userId, appToken, schemaVersion, userConfiguration);
+        } else {
+            LOG.debug("[{},{},{}] Search result: {}.", userId, appToken, schemaVersion, userConfiguration != null);
+        }
+        return userConfiguration;
     }
 
     @Override
     public List<CassandraEndpointUserConfiguration> findByUserId(String userId) {
+        LOG.debug("Searching for user specific configurations by user id {}", userId);
         Select.Where select = select().from(getColumnFamilyName()).where(eq(EP_USER_CONF_USER_ID_PROPERTY, userId));
-        return findListByStatement(select);
+        List<CassandraEndpointUserConfiguration> configurationList = findListByStatement(select);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", userId, Arrays.toString(configurationList.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", userId, configurationList.size());
+        }
+        return configurationList;
     }
 
     @Override
     public void removeByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion) {
-        Delete.Where delete = delete().from(getColumnFamilyName()).where(eq(EP_USER_CONF_USER_ID_PROPERTY, userId))
-                .and(eq(EP_USER_CONF_APP_TOKEN_PROPERTY, appToken)).and(eq(EP_USER_CONF_VERSION_PROPERTY, schemaVersion));
-        execute(delete);
+        execute(delete().from(getColumnFamilyName())
+                .where(eq(EP_USER_CONF_USER_ID_PROPERTY, userId))
+                .and(eq(EP_USER_CONF_APP_TOKEN_PROPERTY, appToken))
+                .and(eq(EP_USER_CONF_VERSION_PROPERTY, schemaVersion)));
+        LOG.debug("Removed user specific configuration by user id {}, application token {} and schema version {}", userId, appToken, schemaVersion);
     }
 }

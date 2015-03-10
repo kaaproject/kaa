@@ -20,7 +20,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 @Repository
 public class EndpointUserConfigurationMongoDao extends AbstractMongoDao<MongoEndpointUserConfiguration, String> implements EndpointUserConfigurationDao<MongoEndpointUserConfiguration> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EndpointUserMongoDao.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EndpointUserConfigurationMongoDao.class);
 
     @Override
     protected String getCollectionName() {
