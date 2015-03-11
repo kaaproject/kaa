@@ -32,7 +32,7 @@
     <files>
         <file>
             <source>${project.basedir}/../thirdparty/android/social-networks-sdks.zip</source>
-            <outputDirectory>verifiers_demo/VerifiersDemo</outputDirectory>
+            <outputDirectory>verifiers_demo</outputDirectory>
         </file>
     </files>
     
