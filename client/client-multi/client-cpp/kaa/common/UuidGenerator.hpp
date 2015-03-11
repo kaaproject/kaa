@@ -19,7 +19,7 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#if defined(KAA_USE_EVENTS) || defined(KAA_USE_LOGGING)
+#if defined(KAA_USE_EVENTS)
 
 #include <string>
 #include <sstream>

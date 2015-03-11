@@ -17,10 +17,6 @@
 #ifndef ILOGSTORAGESTATUS_HPP_
 #define ILOGSTORAGESTATUS_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_LOGGING
-
 #include <cstdint>
 
 namespace kaa {
@@ -41,20 +37,18 @@ public:
      *
      * \return Size (in bytes) of consumed storage
      */
-    virtual std::size_t getConsumedVolume() const = 0;
+    virtual std::size_t getConsumedVolume() = 0;
 
     /**
      * Returns amount of stored records.
      *
      * \return Amount of stored records
      */
-    virtual std::size_t getRecordsCount() const   = 0;
+    virtual std::size_t getRecordsCount() = 0;
 
     virtual ~ILogStorageStatus() {}
 };
 
 }  // namespace kaa
-
-#endif
 
 #endif /* ILOGSTORAGESTATUS_HPP_ */

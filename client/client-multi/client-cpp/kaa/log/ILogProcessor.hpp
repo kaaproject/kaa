@@ -14,11 +14,31 @@
  * limitations under the License.
  */
 
-#include "kaa/log/LogRecord.hpp"
+#ifndef ILOGPROCESSOR_HPP_
+#define ILOGPROCESSOR_HPP_
 
 namespace kaa {
 
-kaa_thread_local AvroByteArrayConverter<KaaUserLogRecord> LogRecord::converter_;
+struct LogSyncRequest;
+struct LogSyncResponse;
 
-}
+/**
+ * @brief
+ */
+class ILogProcessor {
+public:
 
+    virtual std::shared_ptr<LogSyncRequest> getLogUploadRequest() = 0;
+    /**
+     * Called when log upload response arrived.
+     *
+     * \param   response    Response from operations server.
+     */
+    virtual void onLogUploadResponse(const LogSyncResponse& response) = 0;
+
+    virtual ~ILogProcessor() {}
+};
+
+} /* namespace kaa */
+
+#endif /* ILOGPROCESSOR_HPP_ */

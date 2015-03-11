@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,67 +17,68 @@
 #ifndef ILOGSTORAGE_HPP_
 #define ILOGSTORAGE_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_LOGGING
-
-#include "kaa/log/LogRecord.hpp"
 #include <list>
-#include <cstdint>
 #include <memory>
+#include <cstdint>
+#include <utility>
 
 namespace kaa {
+
+class LogRecord;
+class ILogStorageStatus;
+
+typedef std::shared_ptr<LogRecord> LogRecordPtr;
 
 /**
  * Interface for log storage.
  *
- * Default implementation can be found in \c MemoryLogStorage
- * \see MemoryLogStorage
+ * Default implementation can be found in @c MemoryLogStorage
+ * @see MemoryLogStorage
  */
 class ILogStorage {
 public:
-    typedef std::list<LogRecord>    container_type;
+    typedef std::int32_t RecordBlockId;
+    typedef std::list<LogRecordPtr> RecordBlock;
+    typedef std::pair<RecordBlockId, RecordBlock> RecordPack;
 
     /**
      *  Adds log record to storage.
      */
-    virtual void            addLogRecord(const LogRecord & record)  = 0;
+    virtual void addLogRecord(LogRecordPtr record) = 0;
+
+    /**
+     *
+     * @return
+     */
+    virtual ILogStorageStatus& getStatus() = 0;
 
     /**
      * Returns record block of given size
      *
-     * \param blockSize     Size of a log record block
-     * \param blockId       Unique identifier of the log record block.
-     * \return  Container of records
+     * @param[in] blockSize     Size of a log record block
+     * @return  Container of records
      */
-    virtual container_type  getRecordBlock(std::size_t blockSize, std::int32_t blockId)        = 0;
+    virtual RecordPack getRecordBlock(std::size_t blockSize) = 0;
 
     /**
      * Called when log block was successfully uploaded.
      *
-     * \param blockId   Unique identifier of the log block.
+     * @param[in] blockId   Unique identifier of the log block.
      */
-    virtual void            removeRecordBlock(std::int32_t blockId)       = 0;
+    virtual void removeRecordBlock(RecordBlockId id) = 0;
 
     /**
      * Called when log block upload failed.
      *
-     * \param blockId   Unique identifier of the log block.
+     * @param[in] blockId   Unique identifier of the log block.
      */
-    virtual void            notifyUploadFailed(std::int32_t blockId)      = 0;
-
-    /**
-     * Shrink storage to fit allowed volume size.
-     */
-    virtual void            removeOldestRecords(std::size_t allowedVolume)   = 0;
+    virtual void notifyUploadFailed(RecordBlockId id) = 0;
 
     virtual ~ILogStorage() {}
 };
 
-typedef std::shared_ptr<ILogStorage> LogStoragePtr;
+typedef std::shared_ptr<ILogStorage> ILogStoragePtr;
 
 }  // namespace kaa
-
-#endif
 
 #endif /* ILOGSTORAGE_HPP_ */

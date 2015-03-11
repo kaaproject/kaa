@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,77 +17,65 @@
 #ifndef MEMORYLOGSTORAGE_HPP_
 #define MEMORYLOGSTORAGE_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_LOGGING
-
 #include <list>
 #include <cstdint>
 
+#include "kaa/KaaThread.hpp"
 #include "kaa/log/ILogStorage.hpp"
 #include "kaa/log/ILogStorageStatus.hpp"
-#include "kaa/common/UuidGenerator.hpp"
 
 namespace kaa {
 
 /**
- * Default \c ILogStorage implementation.
+ * Default @c ILogStorage implementation.
  *
  * Log records are stored in memory. After application restarts logs will be purged.
  */
 class MemoryLogStorage : public ILogStorage, public ILogStorageStatus {
-private:
-    typedef struct __MemoryLogStorage__LogBlock__ {
-        __MemoryLogStorage__LogBlock__(size_t blockSize)
-                : blockId(0)
-        		, actualSize_(0)
-                , blockSize_(blockSize)
-                , finalized_(false)
-        {
-        }
-
-        std::int32_t                blockId;
-        ILogStorage::container_type logs_;
-        std::size_t                 actualSize_;
-        std::size_t                 blockSize_;
-        bool                        finalized_;
-    } LogBlock;
-
 public:
-    MemoryLogStorage(std::size_t blockSize) : blockSize_(blockSize), occupiedSize_(0) {
-        LogBlock initialBlock(blockSize);
-        initialBlock.actualSize_ = 0;
-        initialBlock.finalized_ = false;
-        logBlocks_.push_back(initialBlock);
-    }
-    ~MemoryLogStorage() {}
+    MemoryLogStorage();
+    MemoryLogStorage(size_t maxOccupiedSize, float percentToDelete);
 
-    /**
-     * \c ILogStorage public interface implementation
-     */
-    void            addLogRecord(const LogRecord & record);
-    container_type  getRecordBlock(std::size_t blockSize, std::int32_t blockId);
-    void            removeRecordBlock(std::int32_t blockId);
-    void            notifyUploadFailed(std::int32_t blockId);
-    void            removeOldestRecords(std::size_t allowedVolume);
+    virtual void addLogRecord(LogRecordPtr serializedRecord);
+    virtual ILogStorageStatus& getStatus() { return *(static_cast<ILogStorageStatus*>(this)); }
 
-    /**
-     * \c ILogStorageStatus public interface implementation
-     */
-    std::size_t          getConsumedVolume() const;
-    std::size_t          getRecordsCount() const;
+    virtual RecordPack getRecordBlock(std::size_t blockSize);
+    virtual void removeRecordBlock(RecordBlockId blockId);
+    virtual void notifyUploadFailed(RecordBlockId blockId);
+
+    virtual std::size_t getConsumedVolume();
+    virtual std::size_t getRecordsCount();
 
 private:
-    void            resize(std::size_t blockSize);
+    void shrinkToSize(std::size_t allowedVolume);
 
 private:
-    std::size_t          blockSize_;
-    std::size_t          occupiedSize_;
-    std::list<LogBlock>  logBlocks_;
+    struct LogRecordWrapper {
+        LogRecordWrapper(LogRecordPtr record, RecordBlockId id = NO_OWNER)
+            : record_(record), blockId_(id) {}
+
+        LogRecordPtr     record_;
+        RecordBlockId    blockId_;
+    };
+
+    typedef RequestId BlockId;
+
+private:
+    size_t totalOccupiedSize_ = 0;
+    size_t occupiedSizeOfUnmarkedRecords_ = 0;
+
+    size_t unmarkedRecordCount_ = 0;
+
+    size_t maxOccupiedSize_ = 0;
+    size_t shrinkedSize_ = 0;
+
+    std::list<LogRecordWrapper> logs_;
+    KAA_MUTEX_DECLARE(logsGuard_);
+
+    BlockId recordBlockId_;
+    static const BlockId NO_OWNER;
 };
 
 }  // namespace kaa
-
-#endif
 
 #endif /* MEMORYLOGSTORAGE_HPP_ */

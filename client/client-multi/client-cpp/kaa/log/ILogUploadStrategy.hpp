@@ -17,25 +17,21 @@
 #ifndef ILOGUPLOADSTRATEGY_HPP_
 #define ILOGUPLOADSTRATEGY_HPP_
 
-#include "kaa/KaaDefaults.hpp"
+#include <memory>
+#include <cstdint>
 
-#ifdef KAA_USE_LOGGING
-
-#include "kaa/log/ILogUploadConfiguration.hpp"
-#include "kaa/log/ILogStorageStatus.hpp"
+#include "kaa/gen/EndpointGen.hpp"
 
 namespace kaa {
+
+class ILogStorageStatus;
 
 /**
  * Enumeration of available decisions of log storage modifications.
  */
-enum LogUploadStrategyDecision {
-    /** Nothing to be done */
-    NOOP = 0,
-    /** Start uploading */
-    UPLOAD,
-    /** Release space */
-    CLEANUP,
+enum class LogUploadStrategyDecision {
+    NOOP = 0, /*!< Nothing to be done */
+    UPLOAD /*!< Start uploading */
 };
 
 /**
@@ -44,21 +40,47 @@ enum LogUploadStrategyDecision {
 class ILogUploadStrategy {
 public:
     /**
-     * Checks if log upload should be triggered.
-     * Called when each log record is produced or log upload parameters are changed
+     * Retrieves log upload decision based on current storage status and defined
+     * upload configuration.
      *
-     * \param configuration Current log upload configuration.
-     * \param status        Log storage status.
+     * @param status
+     *            Log storage status
      *
-     * \return  \see LogUploadStrategyDecision.
+     * @return Upload decision ({@link LogUploadStrategyDecision})
      */
-    virtual LogUploadStrategyDecision isUploadNeeded(const ILogUploadConfiguration* configuration, const ILogStorageStatus* status) = 0;
+    virtual LogUploadStrategyDecision isUploadNeeded(ILogStorageStatus& status) = 0;
+
+    /**
+     * Retrieves maximum size of the report pack
+     * that will be delivered in single request to server
+     * @return size of the batch
+     */
+    virtual std::size_t getBatchSize() = 0;
+
+    /**
+     * Maximum time to wait log delivery response.
+     *
+     * @return Time in seconds.
+     */
+    virtual std::size_t getTimeout() = 0;
+
+    /**
+     * Handles timeout of log delivery
+     * @param controller
+     */
+    virtual void onTimeout() = 0;
+
+    /**
+     * Handles failure of log delivery
+     * @param controller
+     */
+    virtual void onFailure(LogDeliveryErrorCode code) = 0;
 
     virtual ~ILogUploadStrategy() {}
 };
 
-}  // namespace kaa
+typedef std::shared_ptr<ILogUploadStrategy> ILogUploadStrategyPtr;
 
-#endif
+}  // namespace kaa
 
 #endif /* ILOGUPLOADSTRATEGY_HPP_ */

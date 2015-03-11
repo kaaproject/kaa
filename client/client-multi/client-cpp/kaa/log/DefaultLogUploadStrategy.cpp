@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-#ifndef KAA_LOG_ILOGUPLOADFAILOVERSTRATEGY_HPP_
-#define KAA_LOG_ILOGUPLOADFAILOVERSTRATEGY_HPP_
-
-#include "kaa/gen/EndpointGen.hpp"
+#include "kaa/log/DefaultLogUploadStrategy.hpp"
 
 namespace kaa {
 
-class ILogUploadFailoverStrategy {
-public:
-    virtual bool isUploadApproved() = 0;
+LogUploadStrategyDecision isUploadNeeded(const ILogStorageStatus& status);
 
-    virtual void onTimeout() = 0;
-    virtual void onFailure(LogDeliveryErrorCode code) = 0;
+void onTimeout();
+void onFailure(LogDeliveryErrorCode code);
 
-    virtual ~ILogUploadFailoverStrategy() {}
-};
+std::size_t getBatchSize();
+std::size_t getTimeout();
 
 } /* namespace kaa */
-
-#endif /* KAA_LOG_ILOGUPLOADFAILOVERSTRATEGY_HPP_ */

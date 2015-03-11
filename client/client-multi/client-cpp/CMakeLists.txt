@@ -122,7 +122,7 @@ if ( NOT KAA_WITHOUT_LOGGING )
             impl/log/LogCollector.cpp
             impl/log/LogRecord.cpp
             impl/log/MemoryLogStorage.cpp
-            impl/log/LogUploadFailoverStrategy.cpp
+            impl/log/DefaultLogUploadStrategy.cpp
     )
 endif()
 
