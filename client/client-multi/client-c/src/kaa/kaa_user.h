@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,15 @@
 #define KAA_USER_H_
 
 #include <stdbool.h>
+
 #include "kaa_error.h"
+#include "kaa_defaults.h"
 #include "platform/ext_user_callback.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 
 /**
@@ -42,30 +45,66 @@ extern "C" {
 #endif
 
 
+
 /**
- * @brief Attaches the endpoint to a user entity.
+ * @brief Attaches the endpoint to a user entity. The user verification is carried out by the default verifier.
  *
  * Use this function to request attachment of the endpoint to a user entity using the specified external authentication
  * credentials. Only endpoints associated with the same user entity can exchange events.
  *
- * @param[in]   self                Valid pointer to the user manager instance.
- * @param[in]   user_external_id    Null-terminated string representing external user ID.
- * @param[in]   user_access_token   Null-terminated string representing external access token.
+ * @param[in]   self                 The user manager instance.
+ * @param[in]   user_external_id     Null-terminated string representing external user ID.
+ * @param[in]   user_access_token    Null-terminated string representing external access token.
  *
  * @return      Error code.
  */
-kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self, const char *user_external_id, const char *access_token);
+#ifdef DEFAULT_USER_VERIFIER_TOKEN
+kaa_error_t kaa_user_manager_default_attach_to_user(kaa_user_manager_t *self
+                                                  , const char *user_external_id
+                                                  , const char *access_token);
+#endif
+
+
+
+/**
+ * @brief Attaches the endpoint to a user entity. The user verification is carried out by the specified verifier.
+ *
+ * Use this function to request attachment of the endpoint to a user entity using the specified external authentication
+ * credentials. Only endpoints associated with the same user entity can exchange events.
+ *
+ * @param[in]   self                   The user manager instance.
+ * @param[in]   user_external_id       Null-terminated string representing external user ID.
+ * @param[in]   user_access_token      Null-terminated string representing external access token.
+ * @param[in]   user_verifier_token    Null-terminated string representing user verifier token.
+ *
+ * @return      Error code.
+ */
+kaa_error_t kaa_user_manager_attach_to_user(kaa_user_manager_t *self
+                                          , const char *user_external_id
+                                          , const char *access_token
+                                          , const char *user_verifier_token);
+
+
+
+/**
+ * @brief Checks if current endpoint is attached to user.
+ *
+ * @param[in]   self    The user manager instance.
+ * @return      TRUE if the endpoint is attached to user, FALSE otherwise.
+ */
+bool kaa_user_manager_is_attached_to_user(kaa_user_manager_t *self);
 
 
 /**
  * @brief Sets callback functions to receive notifications when the endpoint gets attached or detached to (from) user.
  *
- * @param[in]   self                Valid pointer to the user manager instance.
- * @param[in]   listeners           A filled in @link kaa_attachment_status_listeners_t @endlink structure.
+ * @param[in]   self         The user manager instance.
+ * @param[in]   listeners    A filled in @link kaa_attachment_status_listeners_t @endlink structure.
  *
  * @return      Error code.
  */
-kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self, const kaa_attachment_status_listeners_t *listeners);
+kaa_error_t kaa_user_manager_set_attachment_listeners(kaa_user_manager_t *self
+                                                    , const kaa_attachment_status_listeners_t *listeners);
 
 #ifdef __cplusplus
 }      /* extern "C" */

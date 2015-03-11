@@ -29,19 +29,6 @@ extern "C" {
 #endif
 
 
-
-typedef enum {
-    NO_VERIFIER_CONFIGURED = 0,
-    TOKEN_INVALID          = 1,
-    TOKEN_EXPIRED          = 2,
-    INTERNAL_ERROR         = 3,
-    CONNECTION_ERROR       = 4,
-    REMOTE_ERROR           = 5,
-    OTHER                  = 6
-} user_verifier_error_code_t;
-
-
-
 /**
  * @brief Notifies about the successful attachment of the current endpoint to some user.
  *
@@ -73,30 +60,17 @@ typedef kaa_error_t (*on_detached_fn)(void *context, const char *endpoint_access
  *
  * @return  Error code
  */
-typedef kaa_error_t (*on_attach_success_fn)(void *context);
-
-/**
- * @brief Notifies about attach attempt was failed.
- *
- * @param[in]   context       Callback's context.
- * @param[in]   error_code    One of @link user_verifier_error_code_t @endlink values.
- * @param[in]   reason        Additional description for the error. May be NULL.
- *
- * @return  Error code
- */
-typedef kaa_error_t (*on_attach_failed_fn)(void *context, user_verifier_error_code_t error_code, const char *reason);
-
+typedef kaa_error_t (*on_attach_status_changed_fn)(void *context, bool is_attached);
 
 
 /**
  * @brief Interface for the user attachment status receiver.
  */
 typedef struct {
-    void                           *context;           /**< Context to pass to all functions below. */
-    on_attached_fn                  on_attached;       /**< Called when the current endpoint was attached to the user by another endpoint. */
-    on_detached_fn                  on_detached;       /**< Called when the current endpoint was detached from the user by another endpoint. */
-    on_attach_success_fn     on_attach_success; /**< Called when the current endpoint was successfully attached to the user. See @link kaa_user_manager_attach_to_user @endlink. */
-    on_attach_failed_fn             on_attach_failed;  /**< Called the attach attempt is failed. */
+    void                           *context;                /**< Context to pass to all functions below. */
+    on_attached_fn                  on_attached_callback;   /**< Called when a current endpoint was attached to the user by another endpoint. */
+    on_detached_fn                  on_detached_callback;   /**< Called when a current endpoint was detached from the user by another endpoint. */
+    on_attach_status_changed_fn     on_response_callback;   /**< Called on user attach/detach response from the server. See @link kaa_user_manager_attach_to_user @endlink. */
 } kaa_attachment_status_listeners_t;
 
 
