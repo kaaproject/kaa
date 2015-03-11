@@ -38,9 +38,7 @@ public:
      * Set user-defined profile container
      * @param container user-defined profile container
      */
-    void setProfileContainer(ProfileContainerPtr container) {
-        profileContainer_ = container;
-    }
+    void setProfileContainer(ProfileContainerPtr container) { profileContainer_ = container; }
 
 private:
     ProfileContainerPtr   profileContainer_;

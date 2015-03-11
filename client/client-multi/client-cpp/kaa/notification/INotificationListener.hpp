@@ -17,8 +17,6 @@
 #ifndef INOTIFICATIONLISTENER_HPP_
 #define INOTIFICATIONLISTENER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
 #include <string>
 #include <vector>
 #include <memory>

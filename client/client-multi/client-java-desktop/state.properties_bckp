@@ -1,7 +1,7 @@
-#Mon Jun 23 20:18:20 EEST 2014
+#Wed Mar 11 12:17:16 EET 2015
 attached_eps=
-PROFILE_HASH=2jmj7l5rSw0yVb/vlWAYkK/YBwk\=
-ENDPOINT_TOKEN=1e9a64c5-8f92-484e-aaae-79d89fa8b196
+properties.hash=20fqFsVlbtpeKtOLUDa6IpvU39I\=
+ENDPOINT_TOKEN=4fdc1b55-f60c-4413-9933-5539499de46c
+conf_schema_version=1
+event.seq.num=0
 nf_subscriptions=
-is_registered=true
-APP_STATE_SEQ_NUMBER=1

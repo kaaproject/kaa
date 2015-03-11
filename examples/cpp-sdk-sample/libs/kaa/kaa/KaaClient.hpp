@@ -52,8 +52,7 @@ typedef enum KaaOption
     USE_DEFAULT_CONNECTIVITY_CHECKER        = 0x10
 } KaaOption;
 
-class KaaClient : public IKaaClient
-{
+class KaaClient : public IKaaClient {
 public:
     KaaClient();
     virtual ~KaaClient() { }
@@ -64,29 +63,21 @@ public:
     void pause();
     void resume();
 
-    virtual IProfileManager&                    getProfileManager() { return *profileManager_; }
-#ifdef KAA_USE_CONFIGURATION
-    virtual IConfigurationPersistenceManager&   getConfigurationPersistenceManager() { return *configurationPersistenceManager_; }
-    virtual IConfigurationManager&              getConfigurationManager() { return *configurationManager_; }
-#endif
-#ifdef KAA_USE_NOTIFICATIONS
-    virtual INotificationManager&               getNotificationManager() { return *notificationManager_; }
-#endif
-#ifdef KAA_USE_EVENTS
-    virtual IEndpointRegistrationManager&       getEndpointRegistrationManager() { return *registrationManager_; }
-    virtual EventFamilyFactory&                 getEventFamilyFactory() { return *eventFamilyFactory_; }
-    virtual IEventListenersResolver&            getEventListenersResolver() { return *eventManager_; }
-#endif
-    virtual IKaaChannelManager&                 getChannelManager()  { return *channelManager_; }
-    virtual const KeyPair&                      getClientKeyPair() { return *clientKeys_; }
-#ifdef KAA_USE_LOGGING
-    virtual ILogCollector&                      getLogCollector() { return *logCollector_; }
-#endif
-    virtual IKaaDataMultiplexer&                getOperationMultiplexer() { return *syncProcessor_; }
-    virtual IKaaDataDemultiplexer&              getOperationDemultiplexer() { return *syncProcessor_; }
+    virtual IProfileManager&                    getProfileManager();
+    virtual IConfigurationPersistenceManager&   getConfigurationPersistenceManager();
+    virtual IConfigurationManager&              getConfigurationManager();
+    virtual INotificationManager&               getNotificationManager();
+    virtual IEndpointRegistrationManager&       getEndpointRegistrationManager();
+    virtual EventFamilyFactory&                 getEventFamilyFactory();
+    virtual IEventListenersResolver&            getEventListenersResolver();
+    virtual IKaaChannelManager&                 getChannelManager();
+    virtual const KeyPair&                      getClientKeyPair();
+    virtual ILogCollector&                      getLogCollector();
+    virtual IKaaDataMultiplexer&                getOperationMultiplexer();
+    virtual IKaaDataDemultiplexer&              getOperationDemultiplexer();
 
-    virtual IKaaDataMultiplexer&                getBootstrapMultiplexer()  { return *syncProcessor_; }
-    virtual IKaaDataDemultiplexer&              getBootstrapDemultiplexer() { return *syncProcessor_; }
+    virtual IKaaDataMultiplexer&                getBootstrapMultiplexer();
+    virtual IKaaDataDemultiplexer&              getBootstrapDemultiplexer();
 private:
     void initKaaConfiguration();
     void initKaaTransport();
@@ -102,41 +93,25 @@ private:
     IKaaClientStateStoragePtr                       status_;
     IBootstrapManagerPtr                            bootstrapManager_;
     std::unique_ptr<ProfileManager>                 profileManager_;
-#ifdef KAA_USE_NOTIFICATIONS
     std::unique_ptr<NotificationManager>            notificationManager_;
-#endif
 
     std::unique_ptr<KeyPair> clientKeys_;
-    std::string     publicKeyHash_;
+    std::string              publicKeyHash_;
 
-#ifdef KAA_USE_CONFIGURATION
     std::unique_ptr<ConfigurationManager>            configurationManager_;
     std::unique_ptr<ConfigurationProcessor>          configurationProcessor_;
     std::unique_ptr<ConfigurationPersistenceManager> configurationPersistenceManager_;
-#endif
-#ifdef KAA_USE_EVENTS
-    std::unique_ptr<EventManager>         eventManager_;
-    std::unique_ptr<EventFamilyFactory>   eventFamilyFactory_;
-    std::unique_ptr<EndpointRegistrationManager>    registrationManager_;
-#endif
-    std::unique_ptr<IKaaChannelManager>   channelManager_;
-    std::unique_ptr<SyncDataProcessor>  syncProcessor_;
+    std::unique_ptr<EventManager>                    eventManager_;
+    std::unique_ptr<EventFamilyFactory>              eventFamilyFactory_;
+    std::unique_ptr<EndpointRegistrationManager>     registrationManager_;
+    //std::unique_ptr<ILogCollector>                    logCollector_;
+    std::unique_ptr<IKaaChannelManager>              channelManager_;
+    std::unique_ptr<SyncDataProcessor>               syncProcessor_;
 
-#ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     std::unique_ptr<DefaultBootstrapChannel>          bootstrapChannel_;
-#endif
-#ifdef KAA_DEFAULT_TCP_CHANNEL
     std::unique_ptr<DefaultOperationTcpChannel>       opsTcpChannel_;
-#endif
-#ifdef KAA_DEFAULT_OPERATION_HTTP_CHANNEL
     std::unique_ptr<DefaultOperationHttpChannel>      opsHttpChannel_;
-#endif
-#ifdef KAA_DEFAULT_LONG_POLL_CHANNEL
     std::unique_ptr<DefaultOperationLongPollChannel>  opsLongPollChannel_;
-#endif
-#ifdef KAA_USE_LOGGING
-    std::unique_ptr<LogCollector>      logCollector_;
-#endif
 
     int options_;
 };

@@ -23,8 +23,6 @@
  *
  */
 
-#ifdef KAA_USE_EVENTS
-
 #include <map>
 #include <set>
 #include <memory>
@@ -34,21 +32,12 @@
 #include "kaa/event/IEventManager.hpp"
 #include "kaa/transact/ITransactable.hpp"
 
-#include "kaa/event/gen/DeviceEventClassFamily.hpp"
-
-
 namespace kaa {
 
 class EventFamilyFactory {
 public:
     EventFamilyFactory(IEventManager& manager, ITransactable &transactionManager)
-        : eventManager_(manager), transactionManager_(transactionManager) 
-        {
-                        efcNames_.insert("DeviceEventClassFamily");
-            FQNList DeviceEventClassFamilyEvents =         {"org.kaaproject.kaa.demo.smarthouse.device.DeviceInfoRequest","org.kaaproject.kaa.demo.smarthouse.device.DeviceInfoResponse"} /* {"fqn1","fqn2","fqn3"} */;
-            supportedFQNLists_.insert(std::make_pair("DeviceEventClassFamily", DeviceEventClassFamilyEvents));
-
-        }
+        : eventManager_(manager), transactionManager_(transactionManager) {}
 
     TransactionIdPtr startEventsBlock() {
         return transactionManager_.beginTransaction();
@@ -62,24 +51,13 @@ public:
         transactionManager_.rollback(trxId);
     }
 
-        DeviceEventClassFamily& getDeviceEventClassFamily()
-    {
-        if(!DeviceEventClassFamilyInst_){
-            DeviceEventClassFamilyInst_.reset(new DeviceEventClassFamily(eventManager_));
-            addEventFamilyByName("DeviceEventClassFamily", DeviceEventClassFamilyInst_);
-        }
-
-        return *DeviceEventClassFamilyInst_;
-    }
-
-
 private:
     IEventManager& eventManager_;
     ITransactable& transactionManager_;
     std::set<std::string> efcNames_;
     std::map<std::string, std::shared_ptr<IEventFamily> > eventFamilies_;
     std::map<std::string, FQNList > supportedFQNLists_;
-    
+
     std::shared_ptr<IEventFamily> getEventFamilyByName(const std::string& efcName) {
         auto it = eventFamilies_.find(efcName);
         if (it != eventFamilies_.end()) {
@@ -105,13 +83,8 @@ private:
     const std::set<std::string> &getEventFamilyClassNames() {
         return efcNames_;
     }
-
-        std::shared_ptr<DeviceEventClassFamily> DeviceEventClassFamilyInst_;
-
 };
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* EVENTFAMILYFACTORY_HPP_ */

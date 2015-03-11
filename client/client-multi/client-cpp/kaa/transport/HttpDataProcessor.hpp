@@ -19,10 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
-    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
-    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
-
 #include <vector>
 #include <memory>
 #include <cstdint>
@@ -69,7 +65,5 @@ private:
 typedef std::shared_ptr<HttpDataProcessor> HttpDataProcessorPtr;
 
 }
-
-#endif
 
 #endif /* HTTPDATAPROCESSOR_HPP_ */

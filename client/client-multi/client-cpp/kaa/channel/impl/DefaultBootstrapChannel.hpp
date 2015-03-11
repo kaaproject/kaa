@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
-
 #include "kaa/channel/impl/AbstractHttpChannel.hpp"
 
 namespace kaa {
@@ -61,7 +59,5 @@ private:
 };
 
 }
-
-#endif
 
 #endif /* DEFAULTBOOTSTRAPCHANNEL_HPP_ */

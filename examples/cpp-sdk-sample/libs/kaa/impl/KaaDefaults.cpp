@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ */
+
+/**
+ * NOTE: This is a auto-generated file. Do not edit it.
  */
 
 #include "kaa/KaaDefaults.hpp"
@@ -48,6 +52,8 @@ const char * const CLIENT_PRIV_KEY_LOCATION = "key.private";
 
 const char * const CLIENT_STATUS_FILE_LOCATION = "kaa.status";
 
+const char * const DEFAULT_USER_VERIFIER_TOKEN = "";
+
 ITransportConnectionInfoPtr createTransportInfo(const std::int32_t& accessPointId
                                               , const std::int32_t& protocolId
                                               , const std::int32_t& protocolVersion
@@ -79,7 +85,7 @@ const Botan::SecureVector<std::uint8_t>& getDefaultConfigData()
 
 const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo() 
 {
-    static const EventClassFamilyVersionInfos versions = { {"Device Event Class Family",1} };/* = {{"familyName1",1}, {"familyName2",3}};*/
+    static const EventClassFamilyVersionInfos versions {  };/* {{"familyName1",1}, {"familyName2",3}};*/
     return versions;
 }
 

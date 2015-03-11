@@ -17,8 +17,6 @@
 #ifndef ICONFIGURATIONSTORAGE_HPP_
 #define ICONFIGURATIONSTORAGE_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
 #include <vector>
 #include <memory>
 #include <cstdint>

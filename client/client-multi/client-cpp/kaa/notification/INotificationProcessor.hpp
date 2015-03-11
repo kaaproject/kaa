@@ -17,8 +17,6 @@
 #ifndef INOTIFICATIONPROCESSOR_HPP_
 #define INOTIFICATIONPROCESSOR_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
 #include <vector>
 
 #include "kaa/gen/EndpointGen.hpp"

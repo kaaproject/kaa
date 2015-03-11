@@ -17,7 +17,6 @@
 #ifndef ICONFIGURATIONPERSISTENCEMANAGER_HPP_
 #define ICONFIGURATIONPERSISTENCEMANAGER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
 
 #include <memory>
 

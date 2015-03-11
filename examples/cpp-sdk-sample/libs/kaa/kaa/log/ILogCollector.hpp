@@ -17,9 +17,9 @@
 #ifndef ILOGCOLLECTOR_HPP_
 #define ILOGCOLLECTOR_HPP_
 
-#ifdef KAA_USE_LOGGING
+//#ifdef KAA_USE_LOGGING
 
-#include "kaa/KaaDefaults.hpp"
+//#include "kaa/KaaDefaults.hpp"
 #include "kaa/log/gen/LogGen.hpp"
 
 namespace kaa {
@@ -91,6 +91,6 @@ public:
 
 }  // namespace kaa
 
-#endif
+//#endif
 
 #endif /* ILOGCOLLECTOR_HPP_ */

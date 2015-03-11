@@ -84,7 +84,7 @@ const Botan::SecureVector<std::uint8_t>& getDefaultConfigData()
 
 const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo() 
 {
-    static const EventClassFamilyVersionInfos versions = %{event.family_version};/* = {{"familyName1",1}, {"familyName2",3}};*/
+    static const EventClassFamilyVersionInfos versions %{event.family_version};/* {{"familyName1",1}, {"familyName2",3}};*/
     return versions;
 }
 

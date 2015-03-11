@@ -17,8 +17,6 @@
 #ifndef IEVENTLISTENERSRESOLVER_HPP_
 #define IEVENTLISTENERSRESOLVER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
 #include <list>
 #include <string>
 

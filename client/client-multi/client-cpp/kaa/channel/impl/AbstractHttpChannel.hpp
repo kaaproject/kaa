@@ -21,8 +21,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || defined (KAA_DEFAULT_OPERATION_HTTP_CHANNEL)
-
 #include "kaa/channel/ImpermanentDataChannel.hpp"
 
 #include <cstdint>
@@ -99,8 +97,6 @@ private:
 };
 
 }
-
-#endif
 
 #endif /* ABSTRACTHTTPCHANNEL_HPP_ */
 

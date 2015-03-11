@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,35 +14,25 @@
  * limitations under the License.
  */
 
-#ifndef IDELTARECEIVER_HPP_
-#define IDELTARECEIVER_HPP_
+#ifndef BADCREDENTIALS_HPP_
+#define BADCREDENTIALS_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_CONFIGURATION
-
-#include "kaa/configuration/delta/IConfigurationDelta.hpp"
+#include "KaaException.hpp"
 
 namespace kaa {
 
 /**
- * Interface for receivers of configuration deltas
+ * @brief The exception is thrown to indicate that something is wrong with the input identification data.
  */
-class IDeltaReceiver {
+class BadCredentials: public KaaException {
 public:
-    /**
-     * This callback method will be called on each received appropriate delta
-     *
-     * @param delta configuration delta
-     * @see IConfigurationDelta
-     */
-    virtual void loadDelta(ConfigurationDeltaPtr delta) = 0;
+    BadCredentials(boost::format f)
+        : KaaException(f) {}
 
-    virtual ~IDeltaReceiver() {}
+    BadCredentials(const std::string& message)
+        : KaaException(message) {}
 };
 
 } /* namespace kaa */
 
-#endif
-
-#endif /* IDELTARECEIVER_HPP_ */
+#endif /* BADCREDENTIALS_HPP_ */

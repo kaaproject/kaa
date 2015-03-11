@@ -52,7 +52,7 @@ then
     help
 fi
 
-mkdir -p build; cd build; cmake .. -DKAA_WITHOUT_LOGGING=1; cd ..
+mkdir -p build; cd build; cmake .. -DKAA_WITHOUT_LOGGING=1 -DKAA_WITHOUT_OPERATION_HTTP_CHANNEL=1 -DKAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL=1; cd ..
 
 for cmd in $@
 do

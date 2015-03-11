@@ -17,8 +17,6 @@
 #ifndef I_CONFIGURATION_MANAGER_HPP_
 #define I_CONFIGURATION_MANAGER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
 #include "kaa/configuration/manager/IConfigurationReceiver.hpp"
 
 namespace kaa {

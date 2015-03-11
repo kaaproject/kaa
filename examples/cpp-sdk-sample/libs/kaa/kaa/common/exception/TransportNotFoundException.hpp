@@ -14,17 +14,27 @@
  * limitations under the License.
  */
 
-#ifndef CONFIGURATIONDEFINITIONS_HPP_
-#define CONFIGURATIONDEFINITIONS_HPP_
+#ifndef TRANSPORTNOTFOUNDEXCEPTION_HPP_
+#define TRANSPORTNOTFOUNDEXCEPTION_HPP_
 
-
-#include "kaa/configuration/gen/ConfigurationGen.hpp"
+#include "kaa/common/exception/KaaException.hpp"
 
 namespace kaa {
 
-typedef ConfigurationData    KaaRootConfiguration;
+/**
+ * @brief The exception is thrown to indicate that Kaa SDK isn't fully initialized.
+ *
+ * In normal workflow this kind of errors shouldn't happen.
+ */
+class TransportNotFoundException: public KaaException {
+public:
+    TransportNotFoundException(boost::format f)
+        : KaaException(f) {}
 
-}
+    TransportNotFoundException(const std::string& message)
+        : KaaException(message) {}
+};
 
+} /* namespace kaa */
 
-#endif /* CONFIGURATIONDEFINITIONS_HPP_ */
+#endif /* TRANSPORTNOTFOUNDEXCEPTION_HPP_ */

@@ -69,8 +69,9 @@ public:
     AttachedEndpoints getAttachedEndpoints() const;
     void setAttachedEndpoints(const AttachedEndpoints& endpoints);
 
-    std::string getEndpointAccessToken() const;
+    std::string getEndpointAccessToken();
     void setEndpointAccessToken(const std::string& token);
+    std::string refreshEndpointAccessToken();
 
     bool getEndpointAttachStatus() const;
     void setEndpointAttachStatus(bool isAttached);
@@ -101,7 +102,6 @@ private:
     static const HashDigest                 endpointHashDefault_;
     static const DetailedTopicStates        topicStatesDefault_;
     static const AttachedEndpoints          attachedEndpoints_;
-    static const std::string                endpointAccessToken_;
     static const bool                       endpointDefaultAttachStatus_;
     static const std::string                endpointKeyHashDefault_;
 };

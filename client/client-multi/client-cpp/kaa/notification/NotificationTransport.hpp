@@ -17,8 +17,6 @@
 #ifndef DEFAULTNOTIFICATIONTRANSPORT_HPP_
 #define DEFAULTNOTIFICATIONTRANSPORT_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
 #include <map>
 #include <set>
 #include <string>

@@ -17,9 +17,9 @@
 #ifndef INOTIFICATIONTOPICLISTLISTENER_HPP_
 #define INOTIFICATIONTOPICLISTLISTENER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
 #include <memory>
+#include <vector>
+#include "kaa/gen/EndpointGen.hpp"
 
 namespace kaa {
 

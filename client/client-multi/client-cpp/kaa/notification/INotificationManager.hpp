@@ -17,8 +17,6 @@
 #ifndef INOTIFICATIONMANAGER_HPP_
 #define INOTIFICATIONMANAGER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
 #include <list>
 #include <string>
 
