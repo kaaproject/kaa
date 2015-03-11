@@ -24,54 +24,15 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}/../thirdparty/android/appcompat_v7</directory>
-            <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>verifiers_demo/appcompat_v7</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../thirdparty/android/com-digits-sdk-android_digits</directory>
-            <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>verifiers_demo/com-digits-sdk-android_digits</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../thirdparty/android/com-twitter-sdk-android_tweet-composer</directory>
-            <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>verifiers_demo/com-twitter-sdk-android_tweet-composer</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../thirdparty/android/com-twitter-sdk-android_tweet-ui</directory>
-            <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>verifiers_demo/com-twitter-sdk-android_tweet-ui</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../thirdparty/android/com-twitter-sdk-android_twitter</directory>
-            <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>verifiers_demo/com-twitter-sdk-android_twitter</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../thirdparty/android/com-twitter-sdk-android_twitter-core</directory>
-            <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>verifiers_demo/com-twitter-sdk-android_twitter-core</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../thirdparty/android/facebook-sdk</directory>
-            <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>verifiers_demo/facebook-sdk</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../thirdparty/android/google-play-services_lib</directory>
-            <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>verifiers_demo/google-play-services_lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../thirdparty/android/io-fabric-sdk-android_fabric</directory>
-            <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>verifiers_demo/io-fabric-sdk-android_fabric</outputDirectory>
-        </fileSet>
-        <fileSet>
             <directory>${project.basedir}/source</directory>
             <useDefaultExcludes>true</useDefaultExcludes>
             <outputDirectory>verifiers_demo/VerifiersDemo</outputDirectory>
         </fileSet>
+        <files>
+            <file>
+                <source>${project.basedir}/../thirdparty/android/social-networks-sdks.zip</source>
+                <outputDirectory>verifiers_demo/VerifiersDemo</outputDirectory>
+            </file>
+        </files>
     </fileSets>
 </assembly>

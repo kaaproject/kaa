@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_focused="true" android:state_pressed="false" android:color="@color/tw__blue_default" />
-    <item android:state_focused="true" android:state_pressed="true" android:color="@color/tw__blue_pressed" />
-    <item android:state_focused="false" android:state_pressed="true" android:color="@color/tw__blue_pressed" />
-    <item android:color="@color/tw__blue_default" />
-</selector><!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/twittercore/src/main/res/drawable/tw__login_btn_text_color_light.xml -->

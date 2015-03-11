@@ -35,8 +35,9 @@
 		unless="sdk.dir"
     />
 
-	
-    <target name="-pre-build"/>
+    <target name="-pre-build">
+        <unzip src="../social-networks-sdks.zip" dest="../"/>
+    </target>
 
     <target name="-post-build"/>
 

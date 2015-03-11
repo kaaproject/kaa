@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/twittercore/src/main/res/values-tr/strings.xml -->
-    <eat-comment/>
-    <string name="tw__login_btn_txt">Twitter ile giriş yap</string>
-</resources>

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- From: file:/Users/android/workspace/jenkins/workspace/fabric-android-deploy-to-staging/sdk/kits/twittercore/src/main/res/values-sw720dp/dimens.xml -->
-    <eat-comment/>
-    <dimen name="tw__padding_permission_horizontal_container">128dp</dimen>
-</resources>
