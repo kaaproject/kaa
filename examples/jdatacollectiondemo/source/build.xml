@@ -25,10 +25,14 @@
 
     <target name="debug">
         <antcall target="clean"></antcall>
-        <mkdir dir="build/classes"/>
-        <mkdir dir="build/jar"/>
-        <javac srcdir="src" destdir="build/classes" classpathref="classpath"/>
-        <jar destfile="build/jar/DataCollectionDemo.jar" includes="**/*.class" basedir="build/classes">
+        <mkdir dir="src/build/classes"/>
+        <mkdir dir="src/build/jar"/>
+        <javac srcdir="src" destdir="src/build/classes" classpathref="classpath"/>
+        <jar destfile="build/jar/DataCollectionDemo.jar">
+            <fileset file="../resources/logback.xml" />
+            <fileset dir="src/build/classes">
+                <include name="**/*.class"/>
+            </fileset>
             <manifest>
                 <attribute name="Main-Class"
                            value="org.kaaproject.kaa.demo.datacollection.DataCollectionDemo"/>
@@ -36,6 +40,4 @@
             <zipgroupfileset includes="*.jar" dir="lib"/>
         </jar>
     </target>
-
-
 </project>

@@ -38,7 +38,7 @@ public class JEventDemoBuilder extends AbstractDemoBuilder {
     private static final Logger logger = LoggerFactory.getLogger(JEventDemoBuilder.class);
 
     protected JEventDemoBuilder() {
-        super("demo/photoframe");
+        super("demo/jevent");
     }
 
     @Override
@@ -53,7 +53,7 @@ public class JEventDemoBuilder extends AbstractDemoBuilder {
         thermoEventClassFamily.setNamespace("org.kaaproject.kaa.schema.sample.event.thermo");
         thermoEventClassFamily.setClassName("ThermostatEventClassFamily");
         thermoEventClassFamily = client.editEventClassFamily(thermoEventClassFamily);
-        client.addEventClassFamilySchema(thermoEventClassFamily.getId(), "demo/jevent/thermostatEventClassFamily.json");
+        client.addEventClassFamilySchema(thermoEventClassFamily.getId(), getResourcePath("thermostatEventClassFamily.json"));
 
         ApplicationDto jeventApplication = new ApplicationDto();
         jeventApplication.setName("Java Event Demo");
