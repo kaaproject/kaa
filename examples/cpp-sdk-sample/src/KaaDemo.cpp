@@ -16,6 +16,7 @@
 
 
 #include <memory>
+#include <thread>
 
 #include <kaa/Kaa.hpp>
 #include <kaa/IKaaClient.hpp>
@@ -88,7 +89,7 @@ int main()
     Kaa::start();
 
     for (int i = 0; i < 100; ++i)
-        sleep(1);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
 
     Kaa::stop();
 
