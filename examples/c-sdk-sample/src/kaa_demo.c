@@ -325,6 +325,7 @@ int kaa_demo_event_loop()
         if (poll_result == 0) {
             kaa_demo_add_log_record();
             kaa_tcp_channel_check_keepalive(&operations_channel);
+            kaa_tcp_channel_check_keepalive(&bootstrap_channel);
         } else if (poll_result > 0) {
             if (bootstrap_fd >= 0) {
                 if (FD_ISSET(bootstrap_fd, &read_fds)) {

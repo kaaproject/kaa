@@ -424,6 +424,8 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
 
         size_t next_index;
         kaa_error_t error_code = get_next_bootstrap_access_point_index(protocol_id, index_from, &next_index);
+        if (error_code)
+            error_code = get_next_bootstrap_access_point_index(protocol_id, 0, &next_index); // Using the bootstrap server from the beginning of the list
 
         if (!error_code) {
             access_point = (kaa_access_point_t *)&(KAA_BOOTSTRAP_ACCESS_POINTS[next_index].access_point);
