@@ -35,27 +35,37 @@ import org.kaaproject.kaa.schema.sample.logging.LogData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- This class demonstrates Kaa log upload system. */
+ * This class demonstrates Kaa log upload system.
+ */
 public class DataCollectionDemo {
 
     private static final int LOGS_TO_SEND_COUNT = 5;
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(DataCollectionDemo.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DataCollectionDemo.class);
 
     public static void main(String[] args) {
-        LOGGER.info("Data collection demo started");
-        //Creating Kaa desktop client instance
+        LOG.info("Data collection demo started");
+        // Creating Kaa desktop client instance
         KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext());
-        //setting custom upload strategy
-        kaaClient.setLogUploadStrategy(new OneLogUploadStrategy());
-        //starting Kaa client
+
+		/*
+		 * setting custom upload strategy.
+		 * default upload strategy sends logs
+		 * after some count or some logs size reached 
+		 * this one sends every log record
+		 */
+        kaaClient.setLogUploadStrategy(new DefaultLogUploadStrategy() {
+            @Override
+            public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
+                return status.getRecordCount() >= 1 ? UPLOAD : NOOP;
+            }
+        });
+        // starting Kaa client
         kaaClient.start();
 
-        //sending logs in loop
-        for (LogData log : getLogs(LOGS_TO_SEND_COUNT)) {
+        // sending logs in loop
+        for (LogData log : generateLogs(LOGS_TO_SEND_COUNT)) {
             kaaClient.addLogRecord(log);
         }
 
@@ -65,12 +75,12 @@ public class DataCollectionDemo {
             e.printStackTrace();
         }
 
-        //stoping client
+        // stoping client
         kaaClient.stop();
-        LOGGER.info("Data collection demo stopped");
+        LOG.info("Data collection demo stopped");
     }
 
-    public static List<LogData> getLogs(int logCount) {
+    public static List<LogData> generateLogs(int logCount) {
         List<LogData> logs = new LinkedList<LogData>();
         for (int i = 0; i < logCount; i++) {
             logs.add(new LogData(Level.INFO, "TAG", "MESSAGE_" + i));
@@ -78,12 +88,4 @@ public class DataCollectionDemo {
         return logs;
     }
 
-    //default upload strategy sends logs after some count or some logs size reached
-    //this one sends every log record
-    private static class OneLogUploadStrategy extends DefaultLogUploadStrategy {
-        @Override
-        public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
-            return status.getRecordCount() >= 1 ? UPLOAD : NOOP;
-        }
-    }
 }

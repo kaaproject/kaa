@@ -34,8 +34,8 @@ import org.kaaproject.kaa.client.transact.TransactionId;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
 import org.kaaproject.kaa.schema.sample.event.thermo.ChangeDegreeRequest;
-import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatEventClassFamily;
-import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatEventClassFamily.DefaultEventFamilyListener;
+import org.kaaproject.kaa.schema.sample.event.thermo.CustomThermoEventClassFamily;
+import org.kaaproject.kaa.schema.sample.event.thermo.CustomThermoEventClassFamily.DefaultEventFamilyListener;
 import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoRequest;
 import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoResponse;
 import org.slf4j.Logger;
@@ -63,14 +63,14 @@ public class EventDemo {
             LOG.info("{}", e1);
         }
 
-        kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener());
+        kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(),
+                new SimpleKaaClientStateListener());
         kaaClient.start();
 
-        EndpointRegistrationManager registrationManager = kaaClient.getEndpointRegistrationManager();
 
         // Our demo application uses trustful verifier, so it does not matter
         // which credentials you would pass to registration manager
-        registrationManager.attachUser(USER_EXTERNAL_ID, USER_ACCESS_TOKEN,
+        kaaClient.attachUser(USER_EXTERNAL_ID, USER_ACCESS_TOKEN,
                 new UserAttachCallback() {
                     @Override
                     public void onAttachResult(UserAttachResponse response) {
@@ -92,38 +92,41 @@ public class EventDemo {
     }
 
 
-    public static void doWork() {
+    public static void doWork(){
 
-        List<String> FQNs = new LinkedList<>();
-        FQNs.add(ThermostatInfoRequest.class.getName());
-        FQNs.add(ChangeDegreeRequest.class.getName());
+        List<String> listenerFQNs = new LinkedList<>();
+        listenerFQNs.add(ThermostatInfoRequest.class.getName());
+        listenerFQNs.add(ChangeDegreeRequest.class.getName());
 
         //Getting event listener resolver
         EventListenersResolver eventListenersResolver = kaaClient.getEventListenerResolver();
 
         //And then finding all listener listening to events in FQNs list
-        eventListenersResolver.findEventListeners(FQNs, new FetchEventListeners() {
+        eventListenersResolver.findEventListeners(listenerFQNs,
+                new FetchEventListeners() {
 
-            //Doing something with event listeners in case of success
-            @Override
-            public void onEventListenersReceived(List<String> eventListeners) {
-                LOG.info("{} event listeners received", eventListeners.size());
-                for (String listener : eventListeners) {
-                    LOG.info("listener: {}", listener);
-                }
-            }
-
-            //Or if something gone wrong handling fail somehow
-            @Override
-            public void onRequestFailed() {
-                LOG.info("Request failed");
-            }
-        });
+                    //Doing something with event listeners in case of success
+                    @Override
+                    public void onEventListenersReceived(
+                            List<String> eventListeners) {
+                        LOG.info("{} event listeners received",eventListeners.size());
+                        for (String listener : eventListeners) {
+                            LOG.info("listener: {}", listener);
+                        }
+                    }
+                    //Or if something gone wrong handling fail
+                    @Override
+                    public void onRequestFailed() {
+                        LOG.info("Request failed");
+                    }
+                });
 
         //Getting event family factory
-        EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
+        EventFamilyFactory eventFamilyFactory = kaaClient
+                .getEventFamilyFactory();
         //Getting concrete event family
-        ThermostatEventClassFamily tecf = eventFamilyFactory.getThermostatEventClassFamily();
+        CustomThermoEventClassFamily tecf = eventFamilyFactory
+                .getCustomThermoEventClassFamily();
 
         //Adding event listeners for family factory
         tecf.addListener(new DefaultEventFamilyListener() {
