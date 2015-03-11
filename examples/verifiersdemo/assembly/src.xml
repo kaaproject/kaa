@@ -28,6 +28,11 @@
             <useDefaultExcludes>true</useDefaultExcludes>
             <outputDirectory>verifiers_demo/VerifiersDemo</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../thirdparty/android/appcompat_v7</directory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <outputDirectory>smarthouse_demo/appcompat_v7</outputDirectory>
+        </fileSet>
     </fileSets>
     <files>
         <file>
