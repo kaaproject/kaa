@@ -30,18 +30,18 @@
 extern "C" {
 # endif
 
-# define BUILD_VERSION                  "0.6.1-SNAPSHOT"
-# define BUILD_COMMIT_HASH              "N/A"
+# define BUILD_VERSION                   "0.6.1-SNAPSHOT"
+# define BUILD_COMMIT_HASH               "N/A"
 
-# define APPLICATION_TOKEN              "01234567890123456789"
+# define APPLICATION_TOKEN               "01234567890123456789"
 
-# define CONFIG_SCHEMA_VERSION          6
-# define PROFILE_SCHEMA_VERSION         7
-# define SYSTEM_NF_SCHEMA_VERSION       1
-# define USER_NF_SCHEMA_VERSION         5
-# define LOG_SCHEMA_VERSION             4
+# define CONFIG_SCHEMA_VERSION           6
+# define PROFILE_SCHEMA_VERSION          7
+# define SYSTEM_NF_SCHEMA_VERSION        1
+# define USER_NF_SCHEMA_VERSION          5
+# define LOG_SCHEMA_VERSION              4
 
-# define KAA_SYNC_TIMEOUT               60000L
+# define KAA_SYNC_TIMEOUT                60000L
 
 
 

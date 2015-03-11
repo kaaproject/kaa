@@ -18,19 +18,19 @@
 
 set(KAA_SOURCE_FILES 
         ${KAA_SOURCE_FILES}
-        src/platform-impl/ios/sha.c
-        src/platform-impl/posix/logger.c
-        src/platform-impl/ext_log_storage_memory.c
-        src/platform-impl/ext_log_upload_strategy_by_volume.c
+        src/kaa/platform-impl/ios/sha.c
+        src/kaa/platform-impl/posix/logger.c
+        src/kaa/platform-impl/ext_log_storage_memory.c
+        src/kaa/platform-impl/ext_log_upload_strategy_by_volume.c
     )
 
 if(NOT KAA_WITHOUT_TCP_CHANNEL)
     set(KAA_SOURCE_FILES 
             ${KAA_SOURCE_FILES}
-            src/kaa_protocols/kaa_tcp/kaatcp_parser.c
-            src/kaa_protocols/kaa_tcp/kaatcp_request.c
-            src/platform-impl/posix/posix_tcp_utils.c
-            src/platform-impl/kaa_tcp_channel.c
+            src/kaa/kaa_protocols/kaa_tcp/kaatcp_parser.c
+            src/kaa/kaa_protocols/kaa_tcp/kaatcp_request.c
+            src/kaa/platform-impl/posix/posix_tcp_utils.c
+            src/kaa/platform-impl/kaa_tcp_channel.c
         )
 endif()
 

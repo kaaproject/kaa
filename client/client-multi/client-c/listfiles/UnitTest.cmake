@@ -84,7 +84,7 @@ add_executable  (test_bootstrap_manager
 target_link_libraries(test_bootstrap_manager kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
 add_executable  (test_profile
-                    src/gen/kaa_profile_gen.c
+                    src/kaa/gen/kaa_profile_gen.c
                     test/test_kaa_profile.c
                     test/kaa_test_external.c
                 )
@@ -99,18 +99,18 @@ target_link_libraries(test_common kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 add_executable  (test_log
                     test/test_kaa_log.c
                     test/kaa_test_external.c
-                    src/gen/kaa_logging_gen.c
-                    src/avro_src/io.c
-                    src/avro_src/encoding_binary.c
-                    src/collections/kaa_list.c
-                    src/utilities/kaa_log.c
-                    src/platform-impl/posix/logger.c
-                    src/kaa_platform_utils.c
-                    src/kaa_bootstrap_manager.c
-                    src/kaa_channel_manager.c
-                    src/kaa_common_schema.c
-                    src/kaa_logging.c
-                    src/kaa_status.c
+                    src/kaa/gen/kaa_logging_gen.c
+                    src/kaa/avro_src/io.c
+                    src/kaa/avro_src/encoding_binary.c
+                    src/kaa/collections/kaa_list.c
+                    src/kaa/utilities/kaa_log.c
+                    src/kaa/platform-impl/posix/logger.c
+                    src/kaa/kaa_platform_utils.c
+                    src/kaa/kaa_bootstrap_manager.c
+                    src/kaa/kaa_channel_manager.c
+                    src/kaa/kaa_common_schema.c
+                    src/kaa/kaa_logging.c
+                    src/kaa/kaa_status.c
                 )
 target_link_libraries(test_log ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 

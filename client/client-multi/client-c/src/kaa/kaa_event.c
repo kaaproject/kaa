@@ -1022,8 +1022,7 @@ kaa_error_t kaa_event_finish_transaction(kaa_event_manager_t *self, kaa_event_bl
             event_transaction_t *trx = kaa_list_get_data(it);
             bool need_sync = false;
             if (kaa_get_max_log_level(self->logger) >= KAA_LOG_LEVEL_TRACE) {
-                size_t events_count = kaa_list_get_size(trx->events);
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Events batch with id %zu has %zu events", trx_id, events_count);
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Events batch with id %zu has %zu events", trx_id, kaa_list_get_size(trx->events));
             }
             if (trx->events && kaa_list_get_size(trx->events) > 0) {
                 kaa_lists_merge(self->pending_events, trx->events);
