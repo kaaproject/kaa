@@ -20,8 +20,6 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.event.*;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
-import org.kaaproject.kaa.sandbox.demo.projects.Platform;
-import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;

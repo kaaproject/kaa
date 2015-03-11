@@ -38,12 +38,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  This class demonstrates Kaa log upload system. */
-public class DataCollector {
+public class DataCollectionDemo {
 
     private static final int LOGS_TO_SEND_COUNT = 5;
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(DataCollector.class);
+            .getLogger(DataCollectionDemo.class);
 
     public static void main(String[] args) {
         LOGGER.info("Data collection demo started");
