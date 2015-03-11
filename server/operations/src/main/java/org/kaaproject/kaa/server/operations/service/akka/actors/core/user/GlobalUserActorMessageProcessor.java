@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.user;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -43,58 +44,79 @@ public class GlobalUserActorMessageProcessor {
     private final String userId;
     private final String tenantId;
     private final GlobalRouteTable<ConfigurationKey> map;
+    private final Map<ConfigurationKey, byte[]> ucfHashes;
 
     public GlobalUserActorMessageProcessor(AkkaContext context, String userId, String tenantId) {
         this.eventService = context.getEventService();
         this.userId = userId;
         this.tenantId = tenantId;
         this.map = new GlobalRouteTable<>();
+        this.ucfHashes = new HashMap<>();
     }
 
-    public void process(GlobalRouteInfo route) {
+    public void process(ActorContext context, GlobalRouteInfo route) {
         if (route.getRouteOperation() == RouteOperation.ADD) {
             LOG.debug("[{}][{}] Adding route {} for cf version {}", tenantId, userId, route, route.getCfVersion());
-            map.add(ConfigurationKey.fromRouteInfo(route), route);
+            ConfigurationKey key = ConfigurationKey.fromRouteInfo(route);
+            map.add(key, route);
+            checkHashAndSendNotification(context, key, route);
         } else if (route.getRouteOperation() == RouteOperation.DELETE) {
             LOG.debug("[{}][{}] Remove route {} for cf version {}", tenantId, userId, route, route.getCfVersion());
-            map.remove(ConfigurationKey.fromRouteInfo(route), route);
+            map.remove(route);
         } else {
             LOG.warn("[{}][{}] unsupported route operations {}", tenantId, userId, route.getRouteOperation());
         }
     }
 
     public void process(ActorContext context, UserConfigurationUpdate update) {
-        ConfigurationKey key = ConfigurationKey.fromUpdateMessage(update);
         LOG.debug("Processing notification {}", update);
+        ConfigurationKey key = ConfigurationKey.fromUpdateMessage(update);
+        ucfHashes.put(key, update.getHash());
         sendStateUpdatesToLocalServers(context, key, update);
-        sendStateUpdatesToRemoteServers(key, update);
+        sendStateUpdatesToRemoteServers(context, key, update);
     }
 
     private void sendStateUpdatesToLocalServers(ActorContext context, ConfigurationKey key, UserConfigurationUpdate update) {
         for (GlobalRouteInfo route : map.getLocalRoutes(key)) {
-            if (!Arrays.equals(update.getHash(), route.getUcfHash())) {
-                LOG.debug("Sending notification to route {}", update, route);
-                context.parent().tell(new EndpointStateUpdateMessage(toUpdate(update, route)), context.self());
-            } else {
-                LOG.debug("Ignoring notification to route {} due to matching hashes", update, route);
-            }
+            checkHashAndSendNotification(context, update.getHash(), route);
         }
     }
 
-    private void sendStateUpdatesToRemoteServers(ConfigurationKey key, UserConfigurationUpdate update) {
+    private void sendStateUpdatesToRemoteServers(ActorContext context, ConfigurationKey key, UserConfigurationUpdate update) {
         Map<String, Set<GlobalRouteInfo>> routes = map.getRemoteRoutes(key);
         for (Entry<String, Set<GlobalRouteInfo>> entry : routes.entrySet()) {
             LOG.debug("Sending notification to {} about configuration update", entry.getKey());
             for (GlobalRouteInfo route : entry.getValue()) {
-                LOG.debug("Sending notification to route {}", route);
-                eventService.sendEndpointStateInfo(route.getAddress().getServerId(), toUpdate(update, route));
+                checkHashAndSendNotification(context, update.getHash(), route);
             }
         }
     }
 
-    private EndpointUserConfigurationUpdate toUpdate(UserConfigurationUpdate update, GlobalRouteInfo route) {
-        return new EndpointUserConfigurationUpdate(tenantId, userId, update.getApplicationToken(),
-                route.getAddress().getEndpointKey(), update.getHash());
+    private void checkHashAndSendNotification(ActorContext context, ConfigurationKey key, GlobalRouteInfo route) {
+        byte[] currentUcfHash = ucfHashes.get(key);
+        if (currentUcfHash != null) {
+            checkHashAndSendNotification(context, currentUcfHash, route);
+        } else {
+            LOG.trace("No updates for key {} yet", key);
+        }
+    }
+
+    private void checkHashAndSendNotification(ActorContext context, byte[] newHash, GlobalRouteInfo route) {
+        if (!Arrays.equals(newHash, route.getUcfHash())) {
+            LOG.trace("Sending notification to route {}", route);
+            if (route.isLocal()) {
+                context.parent().tell(new EndpointStateUpdateMessage(toUpdate(newHash, route)), context.self());
+            } else {
+                eventService.sendEndpointStateInfo(route.getAddress().getServerId(), toUpdate(newHash, route));
+            }
+        } else {
+            LOG.trace("Ignoring notification to route {} due to matching hashes", route);
+        }
+    }
+
+    private EndpointUserConfigurationUpdate toUpdate(byte[] newHash, GlobalRouteInfo route) {
+        return new EndpointUserConfigurationUpdate(tenantId, userId, route.getAddress().getApplicationToken(), route.getAddress()
+                .getEndpointKey(), newHash);
     }
 
     private static class ConfigurationKey {
@@ -178,17 +200,16 @@ public class GlobalUserActorMessageProcessor {
             return keyRoutes.add(route);
         }
 
-        public boolean remove(T key, GlobalRouteInfo route) {
-            Set<GlobalRouteInfo> keyRoutes = routes.get(key);
-            if (keyRoutes == null) {
-                return false;
-            } else {
-                return keyRoutes.remove(route);
+        public boolean remove(GlobalRouteInfo route) {
+            boolean found = false;
+            for(T key : routes.keySet()){
+                found = found || routes.get(key).remove(route);
             }
+            return found;
         }
 
         public Set<GlobalRouteInfo> getRoutes(T key) {
-            return routes.get(key);
+            return notNull(routes.get(key));
         }
 
         public Set<GlobalRouteInfo> getLocalRoutes(T key) {
@@ -200,7 +221,7 @@ public class GlobalUserActorMessageProcessor {
                 }
                 result.add(route);
             }
-            return result;
+            return notNull(result);
         }
 
         public Map<String, Set<GlobalRouteInfo>> getRemoteRoutes(T key) {
@@ -219,6 +240,25 @@ public class GlobalUserActorMessageProcessor {
             }
             return result;
         }
+
+        public void clear() {
+            routes.clear();
+        }
+        
+        private static Set<GlobalRouteInfo> notNull(Set<GlobalRouteInfo> result) {
+            if(result != null){
+                return result;
+            }else{
+                return Collections.emptySet();
+            }
+        }
     }
 
+    public void processClusterUpdate(ActorContext context) {
+        if (!eventService.isMainUserNode(userId)) {
+            LOG.trace("No longer a global user node for user {}", userId);
+            map.clear();
+            context.stop(context.self());
+        }
+    }
 }

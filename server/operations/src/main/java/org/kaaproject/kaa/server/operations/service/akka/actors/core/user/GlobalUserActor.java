@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.user;
 
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointRouteUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdateMessage;
 import org.slf4j.Logger;
@@ -54,10 +55,12 @@ public class GlobalUserActor extends UntypedActor {
     @Override
     public void onReceive(Object message) throws Exception {
         LOG.debug("[{}] Received: {}", userId, message);
-        if(message instanceof EndpointRouteUpdateMessage){
-            messageProcessor.process(((EndpointRouteUpdateMessage) message).getRoute());
-        } else if (message instanceof UserConfigurationUpdateMessage){
+        if (message instanceof EndpointRouteUpdateMessage) {
+            messageProcessor.process(context(), ((EndpointRouteUpdateMessage) message).getRoute());
+        } else if (message instanceof UserConfigurationUpdateMessage) {
             messageProcessor.process(context(), ((UserConfigurationUpdateMessage) message).getUpdate());
+        } else if (message instanceof ClusterUpdateMessage) {
+            messageProcessor.processClusterUpdate(context());
         }
     }
 

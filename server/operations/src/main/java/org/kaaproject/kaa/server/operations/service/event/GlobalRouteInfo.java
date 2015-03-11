@@ -41,13 +41,25 @@ public final class GlobalRouteInfo extends ClusterRouteInfo {
         builder.append(cfVersion);
         builder.append(", ucfHash=");
         builder.append(Arrays.toString(ucfHash));
+        builder.append(", tenantId=");
+        builder.append(tenantId);
+        builder.append(", userId=");
+        builder.append(userId);
+        builder.append(", address=");
+        builder.append(address);
+        builder.append(", routeOperation=");
+        builder.append(routeOperation);
         builder.append("]");
         return builder.toString();
     }
 
+    public boolean isLocal() {
+        return getAddress().getServerId() == null;
+    }
+
     public static GlobalRouteInfo fromThrift(EndpointRouteUpdate message) {
         RouteTableAddress address = new RouteTableAddress(EndpointObjectHash.fromBytes(message.getRouteAddress().getEndpointKey()), message
-                .getRouteAddress().getApplicationToken());
+                .getRouteAddress().getApplicationToken(), message.getRouteAddress().getOperationsServerId());
         RouteOperation operation = message.getUpdateType() == EventRouteUpdateType.ADD ? RouteOperation.ADD : RouteOperation.DELETE;
         return new GlobalRouteInfo(message.getTenantId(), message.getUserId(), address, message.getCfSchemaVersion(), message.getUcfHash(),
                 operation);

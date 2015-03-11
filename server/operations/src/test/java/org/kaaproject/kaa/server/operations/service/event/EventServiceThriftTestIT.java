@@ -53,7 +53,6 @@ import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.operations.service.thrift.OperationsThriftServiceImpl;
 import org.kaaproject.kaa.server.sync.Event;
@@ -446,12 +445,6 @@ public class EventServiceThriftTestIT {
             }
 
             @Override
-            public void onConfigurationUpdate(UserConfigurationUpdate update) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
             public void onEndpointRouteUpdate(GlobalRouteInfo update) {
                 // TODO Auto-generated method stub
 
@@ -461,6 +454,12 @@ public class EventServiceThriftTestIT {
             public void onEndpointStateUpdate(EndpointUserConfigurationUpdate update) {
                 // TODO Auto-generated method stub
 
+            }
+
+            @Override
+            public void onClusterUpdated() {
+                // TODO Auto-generated method stub
+                
             }
 
         });
@@ -526,12 +525,6 @@ public class EventServiceThriftTestIT {
             }
 
             @Override
-            public void onConfigurationUpdate(UserConfigurationUpdate update) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
             public void onEndpointRouteUpdate(GlobalRouteInfo update) {
                 // TODO Auto-generated method stub
 
@@ -541,6 +534,12 @@ public class EventServiceThriftTestIT {
             public void onEndpointStateUpdate(EndpointUserConfigurationUpdate update) {
                 // TODO Auto-generated method stub
 
+            }
+
+            @Override
+            public void onClusterUpdated() {
+                // TODO Auto-generated method stub
+                
             }
         });
 

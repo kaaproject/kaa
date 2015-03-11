@@ -16,14 +16,11 @@
 
 package org.kaaproject.kaa.server.operations.service.config;
 
-
-
-
 /**
  * The Class OperationsServerConfig.
  */
 public class OperationsServerConfig {
-    
+
     private static final int DEFAULT_USER_HASH_PARTITIONS_SIZE = 10;
     private static final int DEFAULT_MAX_NEIGHBOR_CONNECTIONS = 10;
 
@@ -47,9 +44,9 @@ public class OperationsServerConfig {
 
     /** The zk ignore errors. */
     private boolean zkIgnoreErrors;
-    
+
     private int userHashPartitions = DEFAULT_USER_HASH_PARTITIONS_SIZE;
-    
+
     private int maxNumberNeighborConnections = DEFAULT_MAX_NEIGHBOR_CONNECTIONS;
 
     /**

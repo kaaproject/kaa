@@ -16,13 +16,12 @@
 
 package org.kaaproject.kaa.server.operations.service.akka;
 
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointStateUpdateMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointRouteUpdateMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointStateUpdateMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RemoteEndpointEventMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RouteInfoMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserRouteInfoMessage;
 import org.kaaproject.kaa.server.operations.service.event.EventServiceListener;
 import org.kaaproject.kaa.server.operations.service.event.GlobalRouteInfo;
@@ -43,13 +42,6 @@ final class AkkaEventServiceListener implements EventServiceListener {
     public AkkaEventServiceListener(ActorRef opsActor) {
         super();
         this.opsActor = opsActor;
-    }
-
-    @Override
-    public void onConfigurationUpdate(UserConfigurationUpdate update) {
-        UserConfigurationUpdateMessage message = new UserConfigurationUpdateMessage(update);
-        LOG.debug("Sending message {} to EPS actor", message);
-        opsActor.tell(message, ActorRef.noSender());
     }
 
     @Override
@@ -82,6 +74,13 @@ final class AkkaEventServiceListener implements EventServiceListener {
     public void onEndpointRouteUpdate(GlobalRouteInfo message) {
         opsActor.tell(new EndpointRouteUpdateMessage(message), ActorRef.noSender());
     }
+    
+    @Override
+    public void onClusterUpdated() {
+        LOG.trace("Detected cluster topology update");
+        opsActor.tell(new ClusterUpdateMessage(), ActorRef.noSender());
+    }
+
 
     @Override
     public void onServerError(String serverId) {

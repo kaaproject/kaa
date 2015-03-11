@@ -27,7 +27,7 @@ public class EndpointStateUpdateMessage extends EndpointAwareMessage implements 
         super(update.getApplicationToken(), update.getKey(), ActorRef.noSender());
         this.update = update;
     }
-    
+
     @Override
     public String getTenantId() {
         return update.getTenantId();
@@ -39,5 +39,14 @@ public class EndpointStateUpdateMessage extends EndpointAwareMessage implements 
 
     public EndpointUserConfigurationUpdate getUpdate() {
         return update;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("EndpointStateUpdateMessage [update=");
+        builder.append(update);
+        builder.append("]");
+        return builder.toString();
     }
 }

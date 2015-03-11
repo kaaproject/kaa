@@ -17,14 +17,11 @@
 package org.kaaproject.kaa.server.operations.service.event;
 
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
 
 public interface EventServiceListener {
 
     void onEvent(RemoteEndpointEvent event);
     
-    void onConfigurationUpdate(UserConfigurationUpdate update);
-
     void onRouteInfo(RouteInfo routeInfo);
 
     void onUserRouteInfo(UserRouteInfo routeInfo);
@@ -43,4 +40,8 @@ public interface EventServiceListener {
      */
     void onEndpointStateUpdate(EndpointUserConfigurationUpdate update);
 
+    /**
+     * Reports update of cluster topology;
+     */
+    void onClusterUpdated();
 }

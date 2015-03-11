@@ -22,11 +22,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.PostConstruct;
@@ -111,7 +111,7 @@ public class DefaultEventService implements EventService {
     @PostConstruct
     public void initBean() {
         LOG.info("Init default event service.");
-        listeners = Collections.synchronizedSet(new HashSet<EventServiceListener>());
+        listeners = Collections.newSetFromMap(new ConcurrentHashMap<EventServiceListener, Boolean>());
         neighbors = new Neighbors<MessageTemplate, Message>(new MessageTemplate(this),
                 operationsServerConfig.getMaxNumberNeighborConnections());
     }
@@ -267,8 +267,10 @@ public class DefaultEventService implements EventService {
                 break;
             case ENDPOINT_ROUTE_UPDATE:
                 onEndpointRouteUpdate(message.getEndpointRouteUpdate());
+                break;
             case ENDPOINT_STATE_UPDATE:
                 onEndpointStateUpdate(message.getEndpointStateUpdate());
+                break;
             default:
                 break;
             }
@@ -295,6 +297,16 @@ public class DefaultEventService implements EventService {
         }
         LOG.trace("comparing {} to {} for user {}", id, info.getConnectionInfo(), userId);
         return id.equals(Neighbors.getServerID(info.getConnectionInfo()));
+    }
+    
+    @Override
+    public String getUserNode(String userId) {
+        OperationsNodeInfo info = resolver.getNode(userId);
+        if(info != null){
+            return Neighbors.getServerID(info.getConnectionInfo());
+        }else{
+            return null;
+        }
     }
 
     /*
@@ -493,6 +505,7 @@ public class DefaultEventService implements EventService {
 
     private void sendMessagesToServer(NeighborConnection<MessageTemplate, Message> server, List<Message> messages) {
         try {
+            LOG.trace("Sending to server {} messages: {}", server.getId(), messages);
             server.sendMessages(messages);
         } catch (InterruptedException e) {
             LOG.error("Error sending events to server: ", e);
@@ -603,12 +616,20 @@ public class DefaultEventService implements EventService {
             public void onNodeRemoved(OperationsNodeInfo node) {
                 LOG.info("Remove of node {} is pushed to resolver {}", node, resolver);
                 resolver.removeNode(node);
+                notifyListeners();
             }
 
             @Override
             public void onNodeAdded(OperationsNodeInfo node) {
                 LOG.info("Add of node {} is pushed to resolver {}", node, resolver);
                 resolver.addNode(node);
+                notifyListeners();
+            }
+            
+            private void notifyListeners() {
+                for(EventServiceListener listener : listeners){
+                    listener.onClusterUpdated();
+                }
             }
         });
 
@@ -628,8 +649,13 @@ public class DefaultEventService implements EventService {
         route.setCfSchemaVersion(routeInfo.getCfVersion());
         route.setUcfHash(routeInfo.getUcfHash());
 
+        String opsServerId = routeInfo.getAddress().getServerId();
+        if(opsServerId == null){
+            opsServerId = id;
+        }
+        
         RouteAddress routeAddress = new RouteAddress(ByteBuffer.wrap(routeInfo.getAddress().getEndpointKey().getData()), routeInfo
-                .getAddress().getApplicationToken(), id);
+                .getAddress().getApplicationToken(), opsServerId);
         route.setRouteAddress(routeAddress);
 
         messages.add(new Message(type, getEventId(), null, null, null, route, null));

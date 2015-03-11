@@ -70,13 +70,10 @@ import akka.actor.Terminated;
 
 public class LocalUserActorMessageProcessor {
 
-    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(LocalUserActorMessageProcessor.class);
 
-    /** The cache service. */
     private final CacheService cacheService;
 
-    /** The event service. */
     private final EventService eventService;
 
     private final String userId;
@@ -95,6 +92,10 @@ public class LocalUserActorMessageProcessor {
 
     private boolean firstConnectRequestToActor = true;
 
+    private final Map<RouteTableAddress, GlobalRouteInfo> localRoutes;
+
+    private String mainUserNode;
+
     LocalUserActorMessageProcessor(CacheService cacheService, EventService eventService, String userId, String tenantId) {
         super();
         this.cacheService = cacheService;
@@ -106,6 +107,8 @@ public class LocalUserActorMessageProcessor {
         this.versionMap = new EndpointECFVersionMap();
         this.eventStorage = new EventStorage();
         this.eventDeliveryTable = new EventDeliveryTable();
+        this.localRoutes = new HashMap<RouteTableAddress, GlobalRouteInfo>();
+        this.mainUserNode = eventService.getUserNode(userId);
     }
 
     void processEndpointConnectMessage(ActorContext context, EndpointUserConnectMessage message) {
@@ -115,7 +118,20 @@ public class LocalUserActorMessageProcessor {
         registerEndpointForEvents(context, message, address);
 
         // report existence of this endpoint to global user actor
-        sendGlobalRouteUpdate(context, message, address);
+        addGlobalRoute(context, message, address);
+
+        endpoints.put(getActorPathName(message.getOriginator()), address.getEndpointKey());
+    }
+
+    void processClusterUpdate(ActorContext context) {
+        String newNode = eventService.getUserNode(userId);
+        if (!mainUserNode.equals(newNode)) {
+            LOG.trace("User node changed from {} to {}", mainUserNode, newNode);
+            mainUserNode = newNode;
+            for (GlobalRouteInfo route : localRoutes.values()) {
+                sendGlobalRouteUpdate(context, route);
+            }
+        }
     }
 
     void processEndpointDisconnectMessage(ActorContext context, EndpointUserDisconnectMessage message) {
@@ -242,7 +258,6 @@ public class LocalUserActorMessageProcessor {
                 }
             }
             versionMap.put(address.getEndpointKey(), message.getEcfVersions());
-            endpoints.put(getActorPathName(message.getOriginator()), address.getEndpointKey());
         }
     }
 
@@ -250,8 +265,13 @@ public class LocalUserActorMessageProcessor {
         return actorRef.path().name();
     }
 
-    private void sendGlobalRouteUpdate(ActorContext context, EndpointUserConnectMessage message, RouteTableAddress address) {
+    private void addGlobalRoute(ActorContext context, EndpointUserConnectMessage message, RouteTableAddress address) {
         GlobalRouteInfo route = GlobalRouteInfo.add(tenantId, userId, address, message.getCfVersion(), message.getUcfHash());
+        localRoutes.put(address, route);
+        sendGlobalRouteUpdate(context, route);
+    }
+
+    private void sendGlobalRouteUpdate(ActorContext context, GlobalRouteInfo route) {
         if (eventService.isMainUserNode(userId)) {
             context.parent().tell(new EndpointRouteUpdateMessage(route), context.self());
         } else {
@@ -374,19 +394,19 @@ public class LocalUserActorMessageProcessor {
     }
 
     protected void removeEndpoint(ActorContext context, EndpointObjectHash endpoint) {
-        LOG.debug("[{}] removing endpoint [{}] from local route table", userId, endpoint);
+        LOG.debug("[{}] removing endpoint [{}] from route tables", userId, endpoint);
         RouteTableAddress address = routeTable.removeLocal(endpoint);
         versionMap.remove(endpoint);
         for (String serverId : routeTable.getRemoteServers()) {
             LOG.debug("[{}] removing endpoint [{}] from remote route table on server {}", userId, endpoint, serverId);
             eventService.sendRouteInfo(RouteInfo.deleteRouteFromAddress(tenantId, userId, address), serverId);
         }
-
+        // cleanup and notify global route actor
         GlobalRouteInfo route = GlobalRouteInfo.delete(tenantId, userId, address);
         if (eventService.isMainUserNode(userId)) {
             context.parent().tell(new EndpointRouteUpdateMessage(route), context.self());
         } else {
-            LOG.debug("[{}] Sending connect message to global actor", userId);
+            LOG.debug("[{}] Sending disconnect message to global actor", userId);
             eventService.sendEndpointRouteInfo(route);
         }
     }

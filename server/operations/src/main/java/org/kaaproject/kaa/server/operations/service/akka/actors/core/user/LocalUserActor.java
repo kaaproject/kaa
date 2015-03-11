@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.user;
 
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.EndpointEventTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
@@ -84,7 +85,7 @@ public class LocalUserActor extends UntypedActor {
 
         /*
          * (non-Javadoc)
-         *
+         * 
          * @see akka.japi.Creator#create()
          */
         @Override
@@ -114,6 +115,8 @@ public class LocalUserActor extends UntypedActor {
             processUserRouteInfoMessage((UserRouteInfoMessage) message);
         } else if (message instanceof Terminated) {
             processTerminationMessage((Terminated) message);
+        } else if (message instanceof ClusterUpdateMessage) {
+            messageProcessor.processClusterUpdate(context());
         }
     }
 

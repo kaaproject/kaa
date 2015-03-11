@@ -655,10 +655,6 @@ public class EndpointActorMessageProcessor {
         scheduleActorTimeout(context);
     }
 
-    protected void tellActor(ActorContext context, ActorRef target, Object message) {
-        target.tell(message, context.self());
-    }
-
     protected void sendEventsIfPresent(ActorContext context, EventClientSync request) {
         List<Event> events = request.getEvents();
         if (state.getUserId() != null && events != null && !events.isEmpty()) {
@@ -741,6 +737,7 @@ public class EndpointActorMessageProcessor {
         ChannelMetaData channel = state.getChannelById(message.getChannelUuid());
         if (channel != null) {
             state.removeChannel(channel);
+            scheduleActorTimeout(context);
             return true;
         } else {
             LOG.debug("[{}][{}] Can't find channel by uuid [{}]", endpointKey, actorKey, message.getChannelUuid());
@@ -772,6 +769,7 @@ public class EndpointActorMessageProcessor {
                 LOG.debug("[{}][{}] Timeout message accepted for channel [{}]. Last activity time {} and timeout is {} ", endpointKey,
                         actorKey, message.getChannelUuid(), channel.getLastActivityTime(), message.getLastActivityTime());
                 state.removeChannel(channel);
+                scheduleActorTimeout(context);
                 return true;
             } else {
                 LOG.debug("[{}][{}] Timeout message ignored for channel [{}]. Last activity time {} and timeout is {} ", endpointKey,
@@ -781,6 +779,7 @@ public class EndpointActorMessageProcessor {
             }
         } else {
             LOG.debug("[{}][{}] Can't find channel by uuid [{}]", endpointKey, actorKey, message.getChannelUuid());
+            scheduleActorTimeout(context);
             return false;
         }
     }
@@ -832,5 +831,9 @@ public class EndpointActorMessageProcessor {
 
     protected void tellParent(ActorContext context, Object response) {
         context.parent().tell(response, context.self());
+    }
+    
+    protected void tellActor(ActorContext context, ActorRef target, Object message) {
+        target.tell(message, context.self());
     }
 }

@@ -1,5 +1,7 @@
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
+import java.util.Arrays;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
 public class EndpointUserConfigurationUpdate {
@@ -43,5 +45,22 @@ public class EndpointUserConfigurationUpdate {
             org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointStateUpdate notification) {
         return new EndpointUserConfigurationUpdate(notification.getTenantId(), notification.getUserId(),
                 notification.getApplicationToken(), EndpointObjectHash.fromBytes(notification.getEndpointKey()), notification.getUcfHash());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("EndpointUserConfigurationUpdate [tenantId=");
+        builder.append(tenantId);
+        builder.append(", userId=");
+        builder.append(userId);
+        builder.append(", applicationToken=");
+        builder.append(applicationToken);
+        builder.append(", key=");
+        builder.append(key);
+        builder.append(", hash=");
+        builder.append(Arrays.toString(hash));
+        builder.append("]");
+        return builder.toString();
     }
 }

@@ -60,6 +60,9 @@ public class ConsistentHashResolver implements OperationServerResolver {
     public ConsistentHashResolver(List<OperationsNodeInfo> nodes, int replicas) {
         this.replicas = replicas;
         this.circle = new ConcurrentSkipListMap<byte[], OperationsNodeInfo>(new ByteArrayComparator());
+        for(OperationsNodeInfo node : nodes){
+            addNode(node);
+        }
     }
 
     @Override

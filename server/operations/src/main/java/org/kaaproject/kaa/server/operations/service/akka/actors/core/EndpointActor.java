@@ -29,7 +29,6 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.Not
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointStateUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.verification.UserVerificationResponseMessage;
 import org.kaaproject.kaa.server.transport.channel.ChannelAware;
 import org.kaaproject.kaa.server.transport.message.SessionDisconnectMessage;

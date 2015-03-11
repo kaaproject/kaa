@@ -40,7 +40,7 @@ public interface EventService {
     /**
      * Stop Event service.
      */
-    public void shutdown();
+    void shutdown();
 
     /**
      * Send Remote Endpoint Event to specified in event neighbor, neighbor used
@@ -49,7 +49,7 @@ public interface EventService {
      * @param event
      *            RemoteEndpointEvent
      */
-    public void sendEvent(RemoteEndpointEvent event);
+    void sendEvent(RemoteEndpointEvent event);
 
     /**
      * Send RouteInfo to specified list of operations servers. null in
@@ -60,7 +60,7 @@ public interface EventService {
      * @param serverIdList
      *            list of operations servers in thriftHost:thriftPort format.
      */
-    public void sendRouteInfo(RouteInfo routeInfo, String... serverIdList);
+    void sendRouteInfo(RouteInfo routeInfo, String... serverIdList);
 
     /**
      * Send collection of RouteInfos to specified list of operations servers.
@@ -71,7 +71,7 @@ public interface EventService {
      * @param serverIdList
      *            list of operations servers in thriftHost:thriftPort format.
      */
-    public void sendRouteInfo(Collection<RouteInfo> routeInfos, String... serverIdList);
+    void sendRouteInfo(Collection<RouteInfo> routeInfos, String... serverIdList);
 
     /**
      * Send UserRouteInfo to all neighbors,
@@ -79,7 +79,7 @@ public interface EventService {
      * @param routeInfo
      *            UserRouteInfo
      */
-    public void sendUserRouteInfo(org.kaaproject.kaa.server.operations.service.event.UserRouteInfo routeInfo);
+    void sendUserRouteInfo(org.kaaproject.kaa.server.operations.service.event.UserRouteInfo routeInfo);
 
     /**
      * Register event route engine listener, used to inform route engine on
@@ -88,7 +88,7 @@ public interface EventService {
      * @param listener
      *            EventServiceListener
      */
-    public void addListener(EventServiceListener listener);
+    void addListener(EventServiceListener listener);
 
     /**
      * Deregister event route engine listener
@@ -96,7 +96,7 @@ public interface EventService {
      * @param listener
      *            EventServiceListener
      */
-    public void removeListener(EventServiceListener listener);
+    void removeListener(EventServiceListener listener);
 
     /**
      * Operations Server thrift interface, used to receive unified event message
@@ -105,14 +105,14 @@ public interface EventService {
      * @param messages
      *            List<EventMessage>
      */
-    public void sendEventMessage(List<Message> messages);
+    void sendEventMessage(List<Message> messages);
 
     /**
      * Used to set ZooKepper node.
      * 
      * @param operationsNode
      */
-    public void setZkNode(OperationsNode operationsNode);
+    void setZkNode(OperationsNode operationsNode);
 
     /**
      * Used to set {@link OperationServerResolver}.
@@ -120,14 +120,14 @@ public interface EventService {
      * @param resolver
      *            to set
      */
-    public void setResolver(OperationServerResolver resolver);
+    void setResolver(OperationServerResolver resolver);
 
     /**
      * Sends routing information about endpoint to global user actor
      * 
      * @param route
      */
-    public void sendEndpointRouteInfo(GlobalRouteInfo route);
+    void sendEndpointRouteInfo(GlobalRouteInfo route);
 
     /**
      * Sends configuration update information to specific endpoint actor;
@@ -135,7 +135,7 @@ public interface EventService {
      * @param serverId
      * @param update
      */
-    public void sendEndpointStateInfo(String serverId, EndpointUserConfigurationUpdate update);
+    void sendEndpointStateInfo(String serverId, EndpointUserConfigurationUpdate update);
 
     /**
      * Checks if global user actor for specified user is located on current node
@@ -145,5 +145,12 @@ public interface EventService {
      * @return true if global user actor is located on this node, false
      *         otherwise.
      */
-    public boolean isMainUserNode(String userId);
+    boolean isMainUserNode(String userId);
+
+    /**
+     * Returns id of the node that should contain global user actor
+     * @param userId
+     * @return id of the global user actor node
+     */
+    String getUserNode(String userId);
 }

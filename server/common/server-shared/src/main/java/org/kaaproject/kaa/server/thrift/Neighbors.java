@@ -64,18 +64,21 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
         this.neigbors = new ConcurrentHashMap<String, NeighborConnection<T, V>>();
     }
 
-    public void sendMessage(V msg) {
-        sendMessages(Collections.singleton(msg));
+    public void sendMessage(ConnectionInfo info, V msg) {
+        sendMessages(info, Collections.singleton(msg));
     }
 
-    public void sendMessages(Collection<V> msg) {
-        for (NeighborConnection<T, V> neighbor : neigbors.values()) {
+    public void sendMessages(ConnectionInfo info, Collection<V> msg) {
+        NeighborConnection<T, V> neighbor = neigbors.get(getServerID(info));
+        if(neighbor != null){
             try {
                 neighbor.sendMessages(msg);
             } catch (InterruptedException e) {
                 LOG.error("Failed to send message to {}", neighbor.getId());
                 throw new RuntimeException(e);
             }
+        }else{
+            LOG.warn("Can't find server for id {}", getServerID(info));
         }
     }
 

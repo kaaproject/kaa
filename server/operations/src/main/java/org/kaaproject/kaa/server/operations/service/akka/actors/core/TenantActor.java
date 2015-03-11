@@ -27,6 +27,7 @@ import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.GlobalUserActor;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.LocalUserActor;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionRouteMessage;
@@ -60,10 +61,9 @@ public class TenantActor extends UntypedActor {
 
     /** The local users. */
     private final Map<String, ActorRef> localUsers;
-    
+
     /** The global users. */
     private final Map<String, ActorRef> globalUsers;
-
 
     private final String tenantId;
 
@@ -129,7 +129,7 @@ public class TenantActor extends UntypedActor {
         }
         if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
-        } else if(message instanceof GlobalUserAwareMessage) {
+        } else if (message instanceof GlobalUserAwareMessage) {
             processGlobalUserAwareMessage((GlobalUserAwareMessage) message);
         } else if (message instanceof SessionControlMessage) {
             processSessionControlMessage((SessionControlMessage) message);
@@ -141,6 +141,17 @@ public class TenantActor extends UntypedActor {
             processNotificationMessage((ThriftNotificationMessage) message);
         } else if (message instanceof EndpointUserActionRouteMessage) {
             processEndpointUserActionRouteMessage((EndpointUserActionRouteMessage) message);
+        } else if (message instanceof ClusterUpdateMessage) {
+            processClusterUpdate((ClusterUpdateMessage) message);
+        }
+    }
+
+    private void processClusterUpdate(ClusterUpdateMessage message) {
+        for (ActorRef userActor : globalUsers.values()) {
+            userActor.tell(message, ActorRef.noSender());
+        }
+        for (ActorRef userActor : localUsers.values()) {
+            userActor.tell(message, ActorRef.noSender());
         }
     }
 
@@ -202,7 +213,7 @@ public class TenantActor extends UntypedActor {
             LOG.debug("[{}] user aware message ignored due to no such user actor: [{}]", tenantId, message.getUserId());
         }
     }
-    
+
     private void processGlobalUserAwareMessage(GlobalUserAwareMessage message) {
         getOrCreateGlobalUserActor(message.getUserId()).tell(message, self());
     }
@@ -212,21 +223,25 @@ public class TenantActor extends UntypedActor {
         ActorRef userActor = localUsers.get(localUserId);
         if (userActor == null && userId != null) {
             userActor = context().actorOf(
-                    Props.create(new LocalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME), localUserId);
+                    Props.create(new LocalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME),
+                    localUserId);
             LOG.debug("Create local user actor with id {}", userId);
             localUsers.put(localUserId, userActor);
+            context().watch(userActor);
         }
         return userActor;
     }
-    
+
     private ActorRef getOrCreateGlobalUserActor(String userId) {
         String globalUserId = toGlobal(userId);
         ActorRef userActor = globalUsers.get(globalUserId);
         if (userActor == null && userId != null) {
             userActor = context().actorOf(
-                    Props.create(new GlobalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME), globalUserId);
+                    Props.create(new GlobalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME),
+                    globalUserId);
             LOG.debug("Create global user actor with id {}", userId);
             globalUsers.put(globalUserId, userActor);
+            context().watch(userActor);
         }
         return userActor;
     }
@@ -274,11 +289,10 @@ public class TenantActor extends UntypedActor {
     private String toLocal(String name) {
         return "LOCAL_" + name;
     }
-    
+
     private String toGlobal(String name) {
         return "GLOBAL_" + name;
     }
-
 
     /*
      * (non-Javadoc)
