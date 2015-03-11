@@ -29,6 +29,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+/**
+ * The Class LoginFragment.
+ * Implementation of {@link PhotoFrameFragment} class. 
+ * Used to display login view.
+ */
 public class LoginFragment extends PhotoFrameFragment implements TextWatcher, OnClickListener {
 
     private EditText mUsernameInput;

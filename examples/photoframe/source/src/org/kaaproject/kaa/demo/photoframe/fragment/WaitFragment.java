@@ -24,7 +24,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
+/**
+ * The Class WaitFragment.
+ * Implementation of {@link PhotoFrameFragment} class. 
+ * Used to display busy progress view.
+ */
 public class WaitFragment extends PhotoFrameFragment {
     
     public WaitFragment() {

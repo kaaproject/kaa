@@ -21,7 +21,7 @@ import org.kaaproject.kaa.demo.photoframe.PhotoFrameController;
 import org.kaaproject.kaa.demo.photoframe.PlayInfo;
 import org.kaaproject.kaa.demo.photoframe.PlayStatus;
 import org.kaaproject.kaa.demo.photoframe.R;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +29,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+/**
+ * The Class DevicesAdapter.
+ * Implementation of {@link BaseAdapter} class. Used as adapter class for devices list view.
+ * Provides list item views with information about remote devices.
+ */
 public class DevicesAdapter extends BaseAdapter {
     
     private final Context mContext;
@@ -54,6 +59,7 @@ public class DevicesAdapter extends BaseAdapter {
         return position;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;

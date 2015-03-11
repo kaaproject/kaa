@@ -19,7 +19,10 @@
 
 #include "kaa/KaaDefaults.hpp"
 
+
+#include <string>
 #include <vector>
+#include <unordered_map>
 
 #include "kaa/gen/EndpointGen.hpp"
 
@@ -29,11 +32,11 @@ typedef std::shared_ptr<UserAttachRequest> UserAttachRequestPtr;
 
 class IRegistrationProcessor {
 public:
-    virtual std::map<std::int32_t, std::string>  getEndpointsToAttach() = 0;
-    virtual std::map<std::int32_t, std::string>  getEndpointsToDetach() = 0;
-    virtual UserAttachRequestPtr                getUserAttachRequest() = 0;
+    virtual UserAttachRequestPtr                           getUserAttachRequest() = 0;
+    virtual std::unordered_map<std::int32_t, std::string>  getEndpointsToAttach() = 0;
+    virtual std::unordered_map<std::int32_t, std::string>  getEndpointsToDetach() = 0;
 
-    virtual void onUserAttach(const UserSyncResponse::userAttachResponse_t& response) = 0;
+    virtual void onUserAttach(const UserAttachResponse& response) = 0;
 
     virtual void onEndpointsAttach(const std::vector<EndpointAttachResponse>& endpoints) = 0;
     virtual void onEndpointsDetach(const std::vector<EndpointDetachResponse>& endpoints) = 0;

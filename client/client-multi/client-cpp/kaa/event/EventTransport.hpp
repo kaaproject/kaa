@@ -22,6 +22,7 @@
 #include "kaa/gen/EndpointGen.hpp"
 #include "kaa/channel/transport/IEventTransport.hpp"
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
+#include "kaa/KaaThread.hpp"
 
 namespace kaa {
 
@@ -46,7 +47,8 @@ private:
     std::map<std::uint32_t, std::list<Event> >    events_;
 
     std::int32_t startEventSN_;
-    bool isEventSNSynchronized_;;
+    bool_type isEventSNSynchronized_;
+
 };
 
 }  // namespace kaa
