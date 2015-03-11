@@ -38,6 +38,10 @@ public class JConfigurationDemoBuilder extends AbstractDemoBuilder{
 
     private static final Logger logger = LoggerFactory.getLogger(JConfigurationDemoBuilder.class);
 
+    public JConfigurationDemoBuilder() {
+        super("demo/jconfiguration");
+    }
+
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
 
@@ -62,7 +66,7 @@ public class JConfigurationDemoBuilder extends AbstractDemoBuilder{
         configurationSchema.setApplicationId(configurationApplication.getId());
         configurationSchema.setName("JavaConfigurationDemo schema");
         configurationSchema.setDescription("Default configuration schema for the Java configuration demo application");
-        configurationSchema = client.createConfigurationSchema(configurationSchema, "demo/jconfiguration/config_schema.avsc");
+        configurationSchema = client.createConfigurationSchema(configurationSchema, getResourcePath("config_schema.avsc"));
         logger.info("Configuration schema version: {}", configurationSchema.getMajorVersion());
         sdkKey.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
         logger.info("Configuration schema was created.");
@@ -84,7 +88,7 @@ public class JConfigurationDemoBuilder extends AbstractDemoBuilder{
         baseConfiguration.setMajorVersion(configurationSchema.getMajorVersion());
         baseConfiguration.setMinorVersion(configurationSchema.getMinorVersion());
         baseConfiguration.setDescription("Base Java configuration demo configuration");
-        String body = FileUtils.readResource("demo/jconfiguration/config_data.json");
+        String body = FileUtils.readResource(getResourcePath("config_data.json"));
         logger.info("Configuration body: [{}]", body);
         baseConfiguration.setBody(body);
         baseConfiguration.setStatus(UpdateStatus.INACTIVE);
@@ -110,19 +114,5 @@ public class JConfigurationDemoBuilder extends AbstractDemoBuilder{
         sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
 
         logger.info("Finished loading 'Java configuration demo application' data...");
-    }
-
-    @Override
-    protected void setupProjectConfigs() {
-        Project projectConfig = new Project();
-        projectConfig.setId("jconfiguration_demo");
-        projectConfig.setName("Java configuration demo");
-        projectConfig.setDescription("Application on java platform demonstrating configuration subsystem (IoT)");
-        projectConfig.setPlatform(Platform.JAVA);
-        projectConfig.setSourceArchive("java/jconfiguration_demo.tar.gz");
-        projectConfig.setProjectFolder("jconfiguration_demo/JConfigurationDemo");
-        projectConfig.setSdkLibDir("jconfiguration_demo/JConfigurationDemo/lib");
-        projectConfig.setDestBinaryFile("jconfiguration_demo/JConfigurationDemo/build/jar/ConfigurationDemo.jar");
-        projectConfigs.add(projectConfig);
     }
 }

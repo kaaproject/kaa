@@ -29,4 +29,10 @@
             <outputDirectory>jconfiguration_demo/JConfigurationDemo</outputDirectory>
         </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>${project.basedir}/resources/logback.xml</source>
+            <outputDirectory>jconfiguration_demo/resources</outputDirectory>
+        </file>
+    </files>
 </assembly>

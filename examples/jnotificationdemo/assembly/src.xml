@@ -29,4 +29,10 @@
             <outputDirectory>jnotification_demo/JNotificationDemo</outputDirectory>
         </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>${project.basedir}/resources/logback.xml</source>
+            <outputDirectory>jnotification_demo/resources</outputDirectory>
+        </file>
+    </files>
 </assembly>

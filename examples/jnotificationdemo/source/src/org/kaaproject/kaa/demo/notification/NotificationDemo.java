@@ -22,23 +22,19 @@ import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.notification.NotificationListener;
 import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
 import org.kaaproject.kaa.client.notification.UnavailableTopicException;
+import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class NotificationDemo {
     private static final Logger LOG = LoggerFactory.getLogger(NotificationDemo.class);
-    private static final String SUBSCRIBE = "subscribe";
-    private static final String UNSUBSCRIBE = "unsubscribe";
-    private static final String LIST = "list";
-    private static final String HELP = "help";
-    private static final String EXIT = "exit";
-    private static final String QUIT = "quit";
-    private List<Topic> topicList;
+    private KaaClient kaaClient;
 
     public static void main(String[] args) {
         LOG.info("Notification demo application has started");
@@ -47,7 +43,7 @@ public class NotificationDemo {
     }
 
     public void doWork() {
-        KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext());
+        kaaClient = Kaa.newClient(new DesktopKaaPlatformContext());
 
         // Listener, which listens to topic list update
         NotificationTopicListListener topicListListener = new BasicNotificationTopicListListener();
@@ -60,51 +56,17 @@ public class NotificationDemo {
         // Start Kaa client
         kaaClient.start();
 
-
         // Get available topics
-        topicList = kaaClient.getTopics();
-        // List available topics
-        showTopicList();
+        List<Topic> topicList = kaaClient.getTopics();
 
-        displayHelpMessage();
-        // read input and manage topics until 'exit' is entered
-        try (Scanner in = new Scanner(System.in)) {
-            String line = "";
-            while (in.hasNextLine()) {
-                line = in.nextLine();
-                String command = extractCommand(line);
-                if (command == null || command.isEmpty()) continue;
-                if (command.equals(EXIT) || command.equals(QUIT)) break;
-                switch (command) {
-                    case LIST:
-                        showTopicList();
-                        break;
-                    case SUBSCRIBE:
-                        String topicId = getTopicId(line);
-                        try {
-                            // subscribe to a topic with id topicId with forced synchronization enabled
-                            kaaClient.subscribeToTopic(topicId, true);
-                        } catch (UnavailableTopicException e) {
-                            LOG.error("Subscription [{}]", e.getMessage());
-                        }
-                        break;
-                    case UNSUBSCRIBE:
-                        topicId = getTopicId(line);
-                        try {
-                            // unsubscribe from a topic with id topicId with forced synchronization enabled
-                            kaaClient.unsubscribeFromTopic(topicId, true);
-                        } catch (UnavailableTopicException e) {
-                            LOG.error("Subscription [{}]", e.getMessage());
-                        }
-                        break;
-                    case HELP:
-                        displayHelpMessage();
-                        break;
-                    default:
-                        System.out.println("Unknown command '" + command + "'. Print 'help' to see usage explanation");
-                        break;
-                }
-            }
+        // List available topics
+        showTopicList(topicList);
+
+        try {
+            // wait for some input before exiting
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         // don't listen to topics anymore
@@ -112,47 +74,44 @@ public class NotificationDemo {
         kaaClient.stop();
     }
 
-    // Listener, which is used to track notification topic list update
+    // Listener, which is used to track notification topic list updates
+    // and subscribes a client to each new topic update
     private class BasicNotificationTopicListListener implements NotificationTopicListListener {
         @Override
         public void onListUpdated(List<Topic> list) {
             LOG.info("Topic list was updated:");
-            topicList = list;
-            showTopicList();
+            showTopicList(list);
+            try {
+                kaaClient.subscribeToTopics(extractOptionalTopicIds(list), true);
+            } catch (UnavailableTopicException e) {
+                LOG.debug("Topic is unavailable, can't subscribe: {}", e.getMessage());
+            }
         }
     }
 
     private class BasicNotificationListener implements NotificationListener {
         @Override
         public void onNotification(String id, SampleNotification sampleNotification) {
-            LOG.info("Notification id [" + id + "] received: " + sampleNotification.toString());
+            LOG.info("Notification id [{}] received: {}", id, sampleNotification.toString());
         }
     }
 
-    private String getTopicId(String line) {
-        if (line.startsWith(SUBSCRIBE)) return line.substring(SUBSCRIBE.length(), line.length()).trim();
-        else return line.substring(UNSUBSCRIBE.length(), line.length()).trim();
-    }
-
-    private void showTopicList() {
-        if (topicList == null || topicList.isEmpty()) System.out.println("Topic list is empty");
-        for (Topic topic : topicList) {
-            System.out.printf("Id: %s, name: %s, type: %s\n",
-                    topic.getId(), topic.getName(), topic.getSubscriptionType());
+    private void showTopicList(List<Topic> topics) {
+        if (topics == null || topics.isEmpty()) {
+            LOG.info("Topic list is empty");
+        } else {
+            for (Topic topic : topics) {
+                LOG.info("Id: {}, name: {}, type: {}",
+                        topic.getId(), topic.getName(), topic.getSubscriptionType());
+            }
         }
     }
 
-    private void displayHelpMessage() {
-        System.out.println("Usage: \n" +
-                "'help' - displays this message\n" +
-                "'list' - displays available topics list\n" +
-                "'subscribe topic_id' - subscribes to a topic with the specified topic_id\n" +
-                "'unsubscribe topic_id' - unsubscribes from an optional topic with the specified topic_id\n" +
-                "'exit' - finishes the program");
-    }
-
-    private String extractCommand(String line) {
-        String[] tokenizedCommand = line.trim().split("\\s+");
-        return tokenizedCommand.length == 0 ? null : tokenizedCommand[0];
+    private List<String> extractOptionalTopicIds(List<Topic> list) {
+        List<String> topicIds = new ArrayList<>();
+        for (Topic t : list) {
+            if (t.getSubscriptionType() == SubscriptionType.OPTIONAL) topicIds.add(t.getId());
+        }
+        return topicIds;
     }
 }

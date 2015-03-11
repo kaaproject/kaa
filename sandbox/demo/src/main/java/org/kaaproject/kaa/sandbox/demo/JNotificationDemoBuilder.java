@@ -32,7 +32,11 @@ import org.kaaproject.kaa.server.verifiers.trustful.config.TrustfulVerifierConfi
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JNotificationDemoBuilder extends AbstractDemoBuilder{
+public class JNotificationDemoBuilder extends AbstractDemoBuilder {
+
+    public JNotificationDemoBuilder() {
+        super("demo/jnotification");
+    }
 
     private static final Logger logger = LoggerFactory.getLogger(JConfigurationDemoBuilder.class);
 
@@ -60,7 +64,7 @@ public class JNotificationDemoBuilder extends AbstractDemoBuilder{
         notificationSchemaDto.setApplicationId(notificationApplication.getId());
         notificationSchemaDto.setName("Notification schema");
         notificationSchemaDto.setDescription("Notification schema of a sample notification");
-        notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, "demo/jnotification/notification_schema.avsc");
+        notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, getResourcePath("notification_schema.avsc"));
         sdkKey.setNotificationSchemaVersion(notificationSchemaDto.getMajorVersion());
         logger.info("Notification schema was created.");
 
@@ -79,19 +83,5 @@ public class JNotificationDemoBuilder extends AbstractDemoBuilder{
         sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
 
         logger.info("Finished loading 'Java notification demo application' data...");
-    }
-
-    @Override
-    protected void setupProjectConfigs() {
-        Project projectConfig = new Project();
-        projectConfig.setId("jnotification_demo");
-        projectConfig.setName("Java notificaion demo");
-        projectConfig.setDescription("Application on java platform demonstrating notification subsystem (IoT)");
-        projectConfig.setPlatform(Platform.JAVA);
-        projectConfig.setSourceArchive("java/jnotification_demo.tar.gz");
-        projectConfig.setProjectFolder("jnotification_demo/JNotificationDemo");
-        projectConfig.setSdkLibDir("jnotification_demo/JNotificationDemo/lib");
-        projectConfig.setDestBinaryFile("jnotification_demo/JNotificationDemo/build/jar/NotificationDemo.jar");
-        projectConfigs.add(projectConfig);
     }
 }

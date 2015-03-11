@@ -24,7 +24,7 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}/schemas</directory>
+            <directory>${project.basedir}/resources</directory>
             <useDefaultExcludes>true</useDefaultExcludes>
             <outputDirectory></outputDirectory>
         </fileSet>

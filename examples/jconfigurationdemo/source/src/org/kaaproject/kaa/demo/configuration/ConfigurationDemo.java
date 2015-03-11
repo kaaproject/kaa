@@ -24,15 +24,10 @@ import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Scanner;
+import java.io.IOException;
 
 public class ConfigurationDemo {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationDemo.class);
-    private static final String EXIT = "exit";
-    private static final String QUIT = "quit";
-    private static final String HELP = "help";
-    private static final String CONFIGURATION = "configuration";
-    private static final String SHOW = "show";
     private SampleConfiguration configuration;
     private KaaClient kaaClient;
 
@@ -46,18 +41,14 @@ public class ConfigurationDemo {
         kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new ExampleSimpleKaaClientStateListener());
         kaaClient.addConfigurationListener(new ExampleConfigurationListener());
         kaaClient.start();
-        try (Scanner in = new Scanner(System.in)) {
-            // wait for 'exit' or 'quit' or EOF (Ctrl + D)
-            while (in.hasNextLine()) {
-                String command = extractCommand(in.nextLine());
-                if (closeCommand(command)) break;
-                else if (command.isEmpty()) continue;
-                else if (command.equals(HELP)) displayHelpMessage();
-                else if (command.equals(EXIT) || command.equals(QUIT)) break;
-                else if (command.equals(CONFIGURATION) || command.equals(SHOW)) displayConfiguration();
-                else System.out.println("Error: Unknown command: '" + command + "'. Print 'help' to list available commands");
-            }
+
+        displayConfiguration();
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
         kaaClient.stop();
     }
 
@@ -76,32 +67,17 @@ public class ConfigurationDemo {
         public void onConfigurationUpdate(SampleConfiguration sampleConfiguration) {
             LOG.info("Configuration was updated");
             configuration = sampleConfiguration;
-            LOG.info("Configuration body: [string: {}, integer: {}]", configuration.getMessageConf(),
+            LOG.info("Configuration body: [messageConf = {}, numberConf = {}]", configuration.getMessageConf(),
                     configuration.getNumberConf());
         }
     }
 
-    private boolean closeCommand(String command) {
-        return command.equals(EXIT) || command.equals(QUIT);
-    }
-
-    private String extractCommand(String line) {
-        return line.trim();
-    }
-
-    private void displayHelpMessage() {
-        System.out.println("Usage: \n" +
-                "'help' - displays this message\n" +
-                "'configuration' or 'show' - displays configuration\n" +
-                "'exit' or 'quit' - finishes the program");
-    }
-
     private void displayConfiguration() {
         if (configuration == null) {
-            System.out.println("Configuration isn't loaded");
+            LOG.info("Configuration isn't loaded");
         } else {
-            System.out.println("Configuration: {messageConf = " + configuration.getMessageConf() + "; numberConf = " +
-                    configuration.getNumberConf() + "}");
+            LOG.info("Configuration body: [messageConf = {}, numberConf = {}]", configuration.getMessageConf(),
+                    configuration.getNumberConf());
         }
     }
 }
