@@ -38,7 +38,7 @@ public class JDataCollectionDemoBuider extends AbstractDemoBuilder{
     private static final Logger logger = LoggerFactory.getLogger(JDataCollectionDemoBuider.class);
 
     protected JDataCollectionDemoBuider() {
-        super("demo/photoframe");
+        super("demo/jdatacollection");
     }
 
     @Override
@@ -64,7 +64,7 @@ public class JDataCollectionDemoBuider extends AbstractDemoBuilder{
         logSchemaDto.setApplicationId(notificationApplication.getId());
         logSchemaDto.setName("Log schema");
         logSchemaDto.setDescription("Log schema describing incoming logs");
-        logSchemaDto = client.createLogSchema(logSchemaDto, "demo/jdatacollection/logSchema.json");
+        logSchemaDto = client.createLogSchema(logSchemaDto, getResourcePath("logSchema.json"));
         sdkKey.setLogSchemaVersion(logSchemaDto.getMajorVersion());
 
         TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();

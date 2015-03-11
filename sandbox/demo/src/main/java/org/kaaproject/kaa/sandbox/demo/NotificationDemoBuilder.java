@@ -35,7 +35,7 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder {
     private static final Logger logger = LoggerFactory.getLogger(NotificationDemoBuilder.class);
 
     protected NotificationDemoBuilder() {
-        super("demo/photoframe");
+        super("demo/notification");
     }
 
     @Override
@@ -64,7 +64,7 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder {
         notificationSchemaDto.setApplicationId(notificationApplication.getId());
         notificationSchemaDto.setName("Notification schema");
         notificationSchemaDto.setDescription("Notification schema describing incoming notifications");
-        notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, "demo/notification/notificationSchema.json");
+        notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, getResourcePath("notificationSchema.json"));
         sdkKey.setNotificationSchemaVersion(notificationSchemaDto.getMajorVersion());
 
 

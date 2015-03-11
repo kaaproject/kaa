@@ -29,4 +29,10 @@
             <outputDirectory>jevent_demo/JEventDemo</outputDirectory>
         </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>${project.basedir}/resources/logback.xml</source>
+            <outputDirectory>jevent_demo/resources</outputDirectory>
+        </file>
+    </files>
 </assembly>
