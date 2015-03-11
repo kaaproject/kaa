@@ -17,15 +17,13 @@
 package org.kaaproject.kaa.demo.cellmonitor;
 
 import static org.kaaproject.kaa.demo.cellmonitor.CellMonitorApplication.UNDEFINED;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
 import org.kaaproject.kaa.demo.cellmonitor.event.CellLocationChanged;
 import org.kaaproject.kaa.demo.cellmonitor.event.GpsLocationChanged;
 import org.kaaproject.kaa.demo.cellmonitor.event.LogSent;
 import org.kaaproject.kaa.demo.cellmonitor.event.SignalStrengthChanged;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.location.Location;
 import android.os.Bundle;
@@ -39,12 +37,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+/**
+ * The Class CellMonitorFragment.
+ * Implementation of {@link Fragment} class.
+ * Implements common fragment lifecycle functions. Stores references to common application resources.
+ * Provides view with information about current GSM cell location, signal strength and phone GPS location.
+ * Displays current statistics about sent logs to Kaa cluster.   
+ */
 public class CellMonitorFragment extends Fragment {
 
     private CellMonitorActivity mActivity;
     private CellMonitorApplication mApplication;
     private ActionBar mActionBar;
     
+    @SuppressLint("SimpleDateFormat")
     private SimpleDateFormat mDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     private Calendar mCalendar = Calendar.getInstance();
     

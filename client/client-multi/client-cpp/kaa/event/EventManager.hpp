@@ -45,10 +45,9 @@ class EventManager : public IEventManager
 {
 public:
     EventManager(IKaaClientStateStoragePtr status)
-        : eventTransport_(nullptr)
+        : currentEventIndex_(0),eventTransport_(nullptr)
         , status_(status)
     {
-        eventSequenceNumber_ = status_->getEventSequenceNumber();
     }
 
     virtual void registerEventFamily(IEventFamily* eventFamily);
@@ -61,7 +60,7 @@ public:
     virtual void onEventsReceived(const EventSyncResponse::events_t& events);
     virtual void onEventListenersReceived(const EventSyncResponse::eventListenersResponses_t& listeners);
 
-    virtual std::list<Event> releasePendingEvents();
+    virtual std::map<std::int32_t, Event> releasePendingEvents();
     virtual bool hasPendingEvents() const;
 
     virtual std::map<std::int32_t, std::list<std::string> > getPendingListenerRequests();
@@ -95,11 +94,10 @@ private:
     void generateUniqueRequestId(std::string& requstId);
 private:
     std::set<IEventFamily*>   eventFamilies_;
-    std::list<Event>          pendingEvents_;
+    std::map<std::int32_t, Event>          pendingEvents_;
     KAA_MUTEX_MUTABLE_DECLARE(pendingEventsGuard_);
 
-    std::int32_t            eventSequenceNumber_;
-    KAA_MUTEX_DECLARE(sequenceGuard_);
+    std::int32_t currentEventIndex_;
 
     EventTransport *          eventTransport_;
     IKaaClientStateStoragePtr status_;

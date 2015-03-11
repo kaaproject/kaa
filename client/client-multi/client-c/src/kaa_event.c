@@ -266,7 +266,6 @@ kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p
     (*event_manager_p)->event_listeners_request_id = 0;
     (*event_manager_p)->trx_counter = 0;
     (*event_manager_p)->global_event_callback = NULL;
-    (*event_manager_p)->event_sequence_number = 0;
     (*event_manager_p)->event_sequence_number = status->event_seq_n;
 
     (*event_manager_p)->sequence_number_status = KAA_EVENT_SEQUENCE_NUMBER_UNSYNCHRONIZED;

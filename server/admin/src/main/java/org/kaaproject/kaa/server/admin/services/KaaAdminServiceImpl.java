@@ -445,6 +445,16 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public ApplicationDto getApplicationByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            return checkApplicationToken(applicationToken);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public ApplicationDto editApplication(ApplicationDto application) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {

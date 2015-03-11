@@ -16,6 +16,10 @@
 
 package org.kaaproject.kaa.demo.cityguide.event;
 
+/**
+ * The Class ConfigurationUpdated.
+ * Event class is used to notify UI components that new configuration was received from Kaa cluster.
+ */
 public class ConfigurationUpdated {
 
 }

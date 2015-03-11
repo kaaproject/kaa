@@ -18,7 +18,7 @@
 
 <resources>
 
-    <string name="app_name">Cell monitor</string>
+    <string name="app_name">Cell Monitor Demo</string>
     <string name="action_settings">Settings</string>
     <string name="cell_monitor_title">Cell monitor</string>
     <string name="network_operator">Network operator:</string>

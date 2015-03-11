@@ -261,6 +261,16 @@ public class KaaAdminController {
     }
 
     /**
+     * Gets the application by its id.
+     *
+     */
+    @RequestMapping(value="application/token/{applicationToken}", method=RequestMethod.GET)
+    @ResponseBody
+    public ApplicationDto getApplicationByApplicationToken(@PathVariable String applicationToken) throws KaaAdminServiceException {
+        return kaaAdminService.getApplicationByApplicationToken(applicationToken);
+    }
+
+    /**
      * Edits application to the list of all applications.
      *
      */

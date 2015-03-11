@@ -2,7 +2,7 @@ package org.kaaproject.kaa.server.admin.client.i18n;
 
 /**
  * Interface to represent the constants contained in resource bundle:
- * 	'C:/Users/ashvayka/Documents/GitHub/kaa/server/admin/src/main/java/org/kaaproject/kaa/server/admin/client/i18n/KaaAdminConstants.properties'.
+ * 	'server/admin/src/main/java/org/kaaproject/kaa/server/admin/client/i18n/KaaAdminConstants.properties'.
  */
 public interface KaaAdminConstants extends com.google.gwt.i18n.client.ConstantsWithLookup {
   

@@ -2,7 +2,7 @@ package org.kaaproject.kaa.sandbox.web.client.i18n;
 
 /**
  * Interface to represent the messages contained in resource bundle:
- * 	C:/Users/ashvayka/Documents/GitHub/kaa/sandbox/web/src/main/java/org/kaaproject/kaa/sandbox/web/client/i18n/SandboxMessages.properties'.
+ * 	'kaa/sandbox/web/src/main/java/org/kaaproject/kaa/sandbox/web/client/i18n/SandboxMessages.properties'.
  */
 public interface SandboxMessages extends com.google.gwt.i18n.client.Messages {
   

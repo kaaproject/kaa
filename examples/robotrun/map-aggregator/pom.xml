@@ -90,7 +90,7 @@
                         </goals>
                         <configuration>
                             <stringType>String</stringType>
-                            <sourceDirectory>${project.basedir}/../robotrun-shared/src/main/avro/</sourceDirectory>
+                            <sourceDirectory>${project.basedir}/../robotrun-shared/resources/</sourceDirectory>
                             <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
                             <fieldVisibility>PRIVATE</fieldVisibility>
                             <includes>

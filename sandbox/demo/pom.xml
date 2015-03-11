@@ -52,7 +52,7 @@
             <artifactId>robotrun-shared</artifactId>
             <version>${project.version}</version>
             <classifier>robotrun-resources</classifier>
-            <type>zip</type>
+            <type>tar.gz</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -116,6 +116,22 @@
             <artifactId>cellmonitor</artifactId>
             <version>${project.version}</version>
             <classifier>cellmonitor-android-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>        
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>photoframe</artifactId>
+            <version>${project.version}</version>
+            <classifier>photoframe-android-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>photoframe</artifactId>
+            <version>${project.version}</version>
+            <classifier>photoframe-android-src</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
         </dependency>        
@@ -234,6 +250,20 @@
                         </configuration>
                     </execution>                    
                     <execution>
+                        <id>unpack-photoframe-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/photoframe</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>photoframe</includeArtifactIds>
+                            <includeClassifiers>photoframe-android-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>                    
+                    <execution>
                         <id>copy</id>
                         <phase>prepare-package</phase>
                         <goals>
@@ -290,6 +320,16 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
                                     <destFileName>cellmonitor_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>photoframe</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>photoframe-android-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
+                                    <destFileName>photoframe_demo.tar.gz</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>

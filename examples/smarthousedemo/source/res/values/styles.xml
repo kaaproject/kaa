@@ -25,6 +25,7 @@
     
     <!-- Application theme. -->
     <style name="Theme.AppCompat.AppTheme" parent="Theme.AppCompat.AppBaseTheme">
+        <item name="actionBarWidgetTheme">@style/Theme.AppCompat.Light.DarkActionBar</item>
         <item name="vpiTabPageIndicatorStyle">@style/CustomTabPageIndicator</item>
         <item name="android:seekBarStyle">@style/Widget.Holo.Light.SeekBar</item>
     </style>
@@ -112,7 +113,7 @@
     <style name="medium_text" >
         <item name="android:gravity" >center</item>
         <item name="android:textSize" >20sp</item>
-        <item name="android:textColor">@color/abc_primary_text_material_light</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:layout_centerInParent">true</item>
     </style>
     
