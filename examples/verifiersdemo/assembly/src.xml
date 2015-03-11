@@ -28,11 +28,12 @@
             <useDefaultExcludes>true</useDefaultExcludes>
             <outputDirectory>verifiers_demo/VerifiersDemo</outputDirectory>
         </fileSet>
-        <files>
-            <file>
-                <source>${project.basedir}/../thirdparty/android/social-networks-sdks.zip</source>
-                <outputDirectory>verifiers_demo/VerifiersDemo</outputDirectory>
-            </file>
-        </files>
     </fileSets>
+    <files>
+        <file>
+            <source>${project.basedir}/../thirdparty/android/social-networks-sdks.zip</source>
+            <outputDirectory>verifiers_demo/VerifiersDemo</outputDirectory>
+        </file>
+    </files>
+    
 </assembly>
