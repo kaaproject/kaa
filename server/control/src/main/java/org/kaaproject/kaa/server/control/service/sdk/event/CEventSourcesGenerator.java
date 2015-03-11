@@ -40,8 +40,8 @@ public class CEventSourcesGenerator {
     private static final Logger LOG = LoggerFactory
             .getLogger(CppEventSourcesGenerator.class);
 
-    private static final String SOURCE_OUTPUT = "src/";
-    private static final String EVENT_SOURCE_OUTPUT = "src/gen/";
+    private static final String SOURCE_OUTPUT = "src/kaa/";
+    private static final String EVENT_SOURCE_OUTPUT = "src/kaa/gen/";
 
     private static final String NAME_PREFIX_TEMPLATE = "kaa_{name}";
     private static final String EVENT_FAMILY_DEFINITION_PATTERN = "kaa_{name}_definitions";

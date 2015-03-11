@@ -15,8 +15,8 @@
 #
 
 set (KAA_SOURCE_FILES  ${KAA_SOURCE_FILES}
-                       src/kaa/kaa_event.c
-                       src/kaa/gen/kaa_profile_gen.c
-                       src/kaa/gen/kaa_logging_gen.c
-                       src/kaa/gen/kaa_configuration_gen.c
+                       ${KAA_SRC_FOLDER}/kaa_event.c
+                       ${KAA_SRC_FOLDER}/gen/kaa_profile_gen.c
+                       ${KAA_SRC_FOLDER}/gen/kaa_logging_gen.c
+                       ${KAA_SRC_FOLDER}/gen/kaa_configuration_gen.c
 )

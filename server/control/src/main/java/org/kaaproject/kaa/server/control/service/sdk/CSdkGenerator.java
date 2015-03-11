@@ -62,7 +62,7 @@ public class CSdkGenerator extends SdkGenerator {
     private static final String C_SDK_DIR    = "sdk/c";
     private static final String TEMPLATE_DIR = "sdk/c";
 
-    private static final String KAA_GEN_SOURCE_DIR = "src/gen/";
+    private static final String KAA_GEN_SOURCE_DIR = "src/kaa/gen/";
 
     private static final String C_SDK_PREFIX       = "kaa-client-sdk-";
     private static final String C_SDK_NAME_PATTERN = C_SDK_PREFIX + "p{}-c{}-n{}-l{}.tar.gz";
@@ -73,10 +73,10 @@ public class CSdkGenerator extends SdkGenerator {
     private static final String C_SOURCE_SUFFIX = ".c";
 
     private static final String KAA_CMAKEGEN         = "listfiles/CMakeGen.cmake";
-    private static final String KAA_DEFAULTS_HEADER  = "src/kaa_defaults.h";
-    private static final String PROFILE_HEADER       = "src/kaa_profile.h";
-    private static final String LOG_HEADER           = "src/kaa_logging.h";
-    private static final String CONFIGURATION_HEADER = "src/gen/kaa_configuration_definitions.h";
+    private static final String KAA_DEFAULTS_HEADER  = "src/kaa/kaa_defaults.h";
+    private static final String PROFILE_HEADER       = "src/kaa/kaa_profile.h";
+    private static final String LOG_HEADER           = "src/kaa/kaa_logging.h";
+    private static final String CONFIGURATION_HEADER = "src/kaa/gen/kaa_configuration_definitions.h";
 
     private static final String KAA_PROFILE_SOURCE_NAME_PATTERN       = "kaa_profile_gen";
     private static final String KAA_LOG_SOURCE_NAME_PATTERN           = "kaa_logging_gen";
