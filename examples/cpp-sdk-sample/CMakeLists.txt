@@ -1,5 +1,5 @@
 #
-# Copyright 2014 CyberVision, Inc.
+# Copyright 2014-2015 CyberVision, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,15 +19,15 @@ cmake_minimum_required(VERSION 2.8.8)
 project (Cpp-SDK-sample)
 enable_language(CXX)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -I/usr/local/include -L/usr/lib/x86_64-linux-gnu")
-
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++11 -stdlib=libc++")
-endif()
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -I/usr/local/include")
 
 if (CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++0x")
-endif ()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -L/usr/lib/x86_64-linux-gnu -std=c++0x")
+endif()
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -L/usr/local/lib -std=gnu++11 -stdlib=libc++")
+endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
                     ${CMAKE_CURRENT_SOURCE_DIR}/libs/kaa
@@ -40,4 +40,11 @@ set (SAMPLE_SOURCE_FILES
 )
 
 add_executable(${APP_NAME} ${SAMPLE_SOURCE_FILES})
-target_link_libraries(${APP_NAME} kaacpp_s botan-1.10 boost_log boost_system avrocpp pthread)
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+    target_link_libraries(${APP_NAME} kaacpp_s botan-1.10 boost_log boost_system avrocpp pthread)
+endif()
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    target_link_libraries(${APP_NAME} kaacpp_s botan-1.10 boost_log-mt boost_system-mt avrocpp)
+endif()
