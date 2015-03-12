@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.demo.kaanotification;
+package org.kaaproject.kaa.demo.notification;
 
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
@@ -25,17 +25,18 @@ import java.util.List;
 
 public class TopicModel {
 
-    private boolean selected;
-
     private final Topic topic;
     private final LinkedList<Notification> notifications;
+    
+    private boolean selected;
     private boolean subscribedTo;
 
     public TopicModel(Topic topic) {
         this.topic = topic;
-        if (topic.getSubscriptionType() == SubscriptionType.MANDATORY)
-            selected = true;
-        notifications = new LinkedList<>();
+        if (topic.getSubscriptionType() == SubscriptionType.MANDATORY){        	
+        	selected = true;
+        }
+        notifications = new LinkedList<>(); 
     }
 
     public String getTopicName() {
@@ -62,7 +63,8 @@ public class TopicModel {
         return notifications.size();
     }
 
-    public List<Notification> getNotifications() {
+    @SuppressWarnings("serial")
+	public List<Notification> getNotifications() {
         if (notifications.size() > 0)
             return notifications;
         else return new LinkedList<Notification>() {{

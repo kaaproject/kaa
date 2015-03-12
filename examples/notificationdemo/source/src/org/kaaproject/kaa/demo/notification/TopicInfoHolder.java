@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.demo.kaanotification;
+package org.kaaproject.kaa.demo.notification;
 
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.schema.example.Notification;

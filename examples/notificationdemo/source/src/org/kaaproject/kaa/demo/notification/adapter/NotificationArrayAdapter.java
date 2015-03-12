@@ -14,31 +14,28 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.demo.kaanotification.adapter;
-
-import android.app.Activity;
+package org.kaaproject.kaa.demo.notification.adapter;
+ 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.kaaproject.www.kaanotification.R;
-import org.kaaproject.kaa.demo.kaanotification.ImageCache;
-
+import org.kaaproject.kaa.demo.notification.ImageCache;
+import org.kaaproject.kaa.demo.notification.R;
 import org.kaaproject.kaa.schema.example.Notification;
-
 import java.util.List;
 
 
 public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
     private final List<Notification> list;
-    private final Activity context;
+    private final LayoutInflater inflater;
 
-    public NotificationArrayAdapter(Activity context, List<Notification> list) {
-        super(context, R.layout.notification, list);
-        this.context = context;
+    public NotificationArrayAdapter(LayoutInflater inflater, List<Notification> list) {
+        super(inflater.getContext(), R.layout.notifications, list);
+        this.inflater = inflater;
         this.list = list;
     }
 
@@ -47,15 +44,15 @@ public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
         protected ImageView image;
     }
 
-    @Override
+    @SuppressLint("InflateParams")
+	@Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view;
         if (convertView == null) {
-            LayoutInflater inflator = context.getLayoutInflater();
-            view = inflator.inflate(R.layout.notification, null);
+            view = inflater.inflate(R.layout.notification, null);
             final ViewHolder viewHolder = new ViewHolder();
             viewHolder.message = (TextView) view.findViewById(R.id.notification_message);
-            viewHolder.image = (ImageView) view.findViewById(R.id.notification_img);
+            viewHolder.image = (ImageView) view.findViewById(R.id.notification_image);
             view.setTag(viewHolder);
             viewHolder.message.setTag(list.get(position));
         } else {

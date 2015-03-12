@@ -14,52 +14,49 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.demo.kaanotification;
+package org.kaaproject.kaa.demo.notification;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import org.kaaproject.www.kaanotification.R;
-
 import java.io.IOException;
-import java.lang.String;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.Map;
 import java.util.WeakHashMap;
-
 
 public class ImageCache {
 
-    private WeakHashMap<String, Bitmap> imageMap;
+    private final Map<String, Bitmap> imageMap;
 
+    private static final String DEFAULT_IMAGE_KEY = "default";
+	private static final String TAG = KaaNotificationApp.class.getSimpleName();
     public static final ImageCache cache = new ImageCache();
-    public static final String DEFAULT_IMAGE = "default";
-
+    
     private ImageCache() {
-        imageMap = new WeakHashMap();
+        imageMap = Collections.synchronizedMap(new WeakHashMap<String, Bitmap>());
         Bitmap bmp = BitmapFactory.decodeResource(KaaNotificationApp.getContext().getResources(), R.drawable.default_image);
-        imageMap.put(DEFAULT_IMAGE, bmp);
+        imageMap.put(DEFAULT_IMAGE_KEY, bmp);
     }
 
     public Bitmap getImage(String imageUrl) {
         Bitmap bmp;
-
         if (!imageMap.containsKey(imageUrl)) {
             try {
                 URL url = new URL(imageUrl);
                 bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
                 imageMap.put(imageUrl, bmp);
             } catch (MalformedURLException e) {
-                bmp = imageMap.get(DEFAULT_IMAGE);
-                Log.e("Invalid URL", e.getMessage());
+                bmp = imageMap.get(DEFAULT_IMAGE_KEY);
+                Log.e(TAG, e.getMessage());
             } catch (IOException e) {
-                bmp = imageMap.get(DEFAULT_IMAGE);
-                Log.e("Internal error", e.getMessage());
+                bmp = imageMap.get(DEFAULT_IMAGE_KEY);
+                Log.e(TAG, e.getMessage());
             }
         } else return imageMap.get(imageUrl);
         return bmp;
     }
-
 
 }

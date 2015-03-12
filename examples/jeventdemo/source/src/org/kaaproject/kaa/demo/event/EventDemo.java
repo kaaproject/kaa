@@ -63,36 +63,34 @@ public class EventDemo {
             LOG.info("{}", e1);
         }
 
-        kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(),
-                new SimpleKaaClientStateListener());
+        kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener());
         kaaClient.start();
 
 
         // Our demo application uses trustful verifier, so it does not matter
         // which credentials you would pass to registration manager
-        kaaClient.attachUser(USER_EXTERNAL_ID, USER_ACCESS_TOKEN,
-                new UserAttachCallback() {
-                    @Override
-                    public void onAttachResult(UserAttachResponse response) {
-                        LOG.info("Attach response {}", response.getResult());
+        kaaClient.attachUser(USER_EXTERNAL_ID, USER_ACCESS_TOKEN, new UserAttachCallback() {
+            @Override
+            public void onAttachResult(UserAttachResponse response) {
+                LOG.info("Attach response {}", response.getResult());
 
-                        //If our endpoint was successfully attached
-                        if (response.getResult() == SyncResponseResultType.SUCCESS) {
-                            doWork();
-                        }
-                        //If not - Release all network connections and application resources.
-                        // Shutdown all Kaa client tasks.
-                        else {
-                            kaaClient.stop();
-                            LOG.info("Event demo stopped");
-                        }
-                    }
-                });
+                //If our endpoint was successfully attached
+                if (response.getResult() == SyncResponseResultType.SUCCESS) {
+                    doWork();
+                }
+                //If not - Release all network connections and application resources.
+                //Shutdown all Kaa client tasks.
+                else {
+                    kaaClient.stop();
+                    LOG.info("Event demo stopped");
+                }
+            }
+        });
 
     }
 
 
-    public static void doWork(){
+    public static void doWork() {
 
         List<String> listenerFQNs = new LinkedList<>();
         listenerFQNs.add(ThermostatInfoRequest.class.getName());
@@ -102,31 +100,28 @@ public class EventDemo {
         EventListenersResolver eventListenersResolver = kaaClient.getEventListenerResolver();
 
         //And then finding all listener listening to events in FQNs list
-        eventListenersResolver.findEventListeners(listenerFQNs,
-                new FetchEventListeners() {
+        eventListenersResolver.findEventListeners(listenerFQNs, new FetchEventListeners() {
 
-                    //Doing something with event listeners in case of success
-                    @Override
-                    public void onEventListenersReceived(
-                            List<String> eventListeners) {
-                        LOG.info("{} event listeners received",eventListeners.size());
-                        for (String listener : eventListeners) {
-                            LOG.info("listener: {}", listener);
-                        }
-                    }
-                    //Or if something gone wrong handling fail
-                    @Override
-                    public void onRequestFailed() {
-                        LOG.info("Request failed");
-                    }
-                });
+            //Doing something with event listeners in case of success
+            @Override
+            public void onEventListenersReceived(List<String> eventListeners) {
+                LOG.info("{} event listeners received", eventListeners.size());
+                for (String listener : eventListeners) {
+                    LOG.info("listener: {}", listener);
+                }
+            }
+
+            //Or if something gone wrong handling fail
+            @Override
+            public void onRequestFailed() {
+                LOG.info("Request failed");
+            }
+        });
 
         //Getting event family factory
-        EventFamilyFactory eventFamilyFactory = kaaClient
-                .getEventFamilyFactory();
+        EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
         //Getting concrete event family
-        CustomThermoEventClassFamily tecf = eventFamilyFactory
-                .getCustomThermoEventClassFamily();
+        CustomThermoEventClassFamily tecf = eventFamilyFactory.getCustomThermoEventClassFamily();
 
         //Adding event listeners for family factory
         tecf.addListener(new DefaultEventFamilyListener() {
