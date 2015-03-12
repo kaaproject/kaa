@@ -28,7 +28,9 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new CityGuideDemoBuilder());
         demoBuilders.add(new PhotoFrameDemoBuilder());
         demoBuilders.add(new SmartHouseDemoBuilder());
-//        demoBuilders.add(new RobotRunDemoBuilder());
+//      demoBuilders.add(new RobotRunDemoBuilder());
+        demoBuilders.add(new JConfigurationDemoBuilder());
+        demoBuilders.add(new JNotificationDemoBuilder());
     }
     
     public static List<DemoBuilder> getRegisteredDemoBuilders() {
