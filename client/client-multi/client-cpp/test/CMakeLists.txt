@@ -72,23 +72,11 @@ set ( KAA_TEST_SOURCES
         ../impl/transport/HttpDataProcessor.cpp
         ../impl/bootstrap/BootstrapManager.cpp
         ../impl/bootstrap/BootstrapTransport.cpp
-        ../impl/common/CommonTypesFactory.cpp
-        ../impl/common/AvroGenericUtils.cpp
-        ../impl/common/types/CommonArray.cpp
-        ../impl/common/types/CommonEnum.cpp
-        ../impl/common/types/CommonFixed.cpp
-        ../impl/common/types/CommonRecord.cpp
-        ../impl/common/types/SetValueHelper.cpp
         ../impl/configuration/ConfigurationProcessor.cpp
         ../impl/configuration/ConfigurationTransport.cpp
         ../impl/configuration/manager/ConfigurationManager.cpp
-        ../impl/configuration/manager/Strategies.cpp
         ../impl/configuration/storage/ConfigurationPersistenceManager.cpp
-        ../impl/configuration/delta/DeltaHandlerId.cpp
-        ../impl/configuration/delta/DefaultDeltaManager.cpp
-        ../impl/configuration/delta/DefaultConfigurationDeltaFactory.cpp
-        ../impl/schema/SchemaProcessor.cpp
-        ../impl/schema/storage/SchemaPersistenceManager.cpp
+        ../impl/configuration/storage/FileConfigurationStorage.cpp
         ../impl/event/registration/EndpointRegistrationManager.cpp
         ../impl/event/registration/UserTransport.cpp
         ../impl/event/EventManager.cpp
@@ -119,16 +107,10 @@ set ( KAA_TEST_SOURCES
         TestRunner.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp
-        impl/common/AvroDatumsComparatorTest.cpp
-        impl/common/CommonTypesFactoryTest.cpp
-        impl/schema/SchemaProcessorTest.cpp
-        impl/schema/SchemaPersistenceTest.cpp
-        impl/configuration/ConfigurationTests.cpp
         impl/configuration/ConfigurationPersistenceTest.cpp
         impl/configuration/ConfigurationProcessorTest.cpp
-        impl/configuration/ProcessConfigurationTest.cpp
-        impl/configuration/delta/DeltaHandlerIdTest.cpp
-        impl/configuration/delta/DeltaTest.cpp
+        impl/configuration/ConfigurationManagerTest.cpp
+        impl/configuration/FileConfigurationStorageTest.cpp
         impl/http/HttpUrlTest.cpp
         impl/http/HttpResponseTest.cpp
         impl/http/HttpRequestTest.cpp
@@ -142,9 +124,6 @@ set ( KAA_TEST_SOURCES
         impl/kaatcp/KaaTcpTest.cpp
         impl/channel/IPConnectivityCheckerTest.cpp
         impl/log/LogUploadFailoverStrategyTest.cpp
-##        impl/bootstrap/BootstrapManagerTest.cpp
-##        impl/event/EventFamilyFactoryTest.cpp
-##        impl/event/EventListenersResolverTest.cpp
     )
 
 add_executable ( kaatest  ${KAA_TEST_SOURCES})

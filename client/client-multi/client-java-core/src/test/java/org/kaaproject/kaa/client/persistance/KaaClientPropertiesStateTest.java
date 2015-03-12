@@ -18,6 +18,7 @@ package org.kaaproject.kaa.client.persistance;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,8 +74,8 @@ public class KaaClientPropertiesStateTest {
         priv.delete();
         state.getPrivateKey();
         state.getPublicKey();
-        assertArrayEquals(KeyUtil.getPrivate(priv).getEncoded(), state.getPrivateKey().getEncoded());
-        assertArrayEquals(KeyUtil.getPublic(pub).getEncoded(), state.getPublicKey().getEncoded());
+        assertNotNull(state.getPrivateKey().getEncoded());
+        assertNotNull(state.getPublicKey().getEncoded());
     }
 
     @Test
@@ -83,14 +84,6 @@ public class KaaClientPropertiesStateTest {
         EndpointObjectHash hash = EndpointObjectHash.fromSHA1(new byte[]{1, 2, 3});
         state.setProfileHash(hash);
         assertEquals(hash, state.getProfileHash());
-    }
-
-    @Test
-    public void testConfigHash() throws IOException  {
-        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
-        EndpointObjectHash hash = EndpointObjectHash.fromSHA1(new byte[]{1, 2, 3});
-        state.setConfigurationHash(hash);
-        assertEquals(hash, state.getConfigurationHash());
     }
 
     @Test

@@ -121,7 +121,11 @@ public class HomeFragment extends Fragment {
             textView.setText(getContext().getResources().getString(type.getTitleRes()));
 
             textView = (TextView) row.findViewById(R.id.homeItemLabel);
-            textView.setText(String.valueOf(mActivity.getDeviceStore().getDevices(type).size()));
+            int deviceCount = 0;
+            if (mActivity.getDeviceStore().getDevices(type) != null) {
+                deviceCount = mActivity.getDeviceStore().getDevices(type).size();
+            }
+            textView.setText(String.valueOf(deviceCount));
 
             return row;
         }

@@ -28,28 +28,19 @@
 
 namespace kaa {
 
-class MetaDataTransport : public IMetaDataTransport {
+class MetaDataTransport : public IMetaDataTransport
+{
 public:
-    MetaDataTransport(IKaaClientStateStoragePtr status, EndpointObjectHash& keyHash, long timeout)
+    MetaDataTransport(IKaaClientStateStoragePtr status, EndpointObjectHash &keyHash, long timeout)
         : clientStatus_(status), publicKeyHash_(keyHash), timeout_(timeout) {}
 
-    std::shared_ptr<SyncRequestMetaData> createSyncRequestMetaData() {
+    std::shared_ptr<SyncRequestMetaData> createSyncRequestMetaData()
+    {
         std::shared_ptr<SyncRequestMetaData> request(new SyncRequestMetaData);
 
         request->applicationToken = APPLICATION_TOKEN;
         request->endpointPublicKeyHash.set_bytes(publicKeyHash_);
-
-        SharedDataBuffer buffer = clientStatus_->getProfileHash();
-
-        std::vector<std::uint8_t> profileHash;
-        profileHash.reserve(buffer.second);
-
-        for (size_t i = 0; i < buffer.second; ++i) {
-            profileHash.push_back(buffer.first[i]);
-        }
-
-        request->profileHash.set_bytes(profileHash);
-
+        request->profileHash.set_bytes(clientStatus_->getProfileHash());
         request->timeout.set_long(timeout_);
 
         return request;

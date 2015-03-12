@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.avro.Schema;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaGenerationAlgorithm;
@@ -39,24 +40,11 @@ public class ArrayOverrideStrategyResolverTest {
         SchemaGenerationAlgorithm generator = factory.createSchemaGenerator(configurationSchema);
 
         KaaSchema baseSchemaString = generator.getBaseSchema();
+        Schema.Parser baseParser = new Schema.Parser();
+        baseParser.parse(baseSchemaString.getRawSchema());
 
-        ArrayOverrideStrategyResolver arrayMergeStrategyResolver = new ArrayOverrideStrategyResolver(baseSchemaString);
+        ArrayOverrideStrategyResolver arrayMergeStrategyResolver = new ArrayOverrideStrategyResolver(baseParser.getTypes());
         arrayMergeStrategyResolver.resolve("wrong_parent_name", "org.kaa.config", "child_name");
-    }
-
-    @Test
-    public void testStrategyIsResolvedToOverrideWhenFieldsDefinitionIsMissed() throws Exception {
-        Path schemaUrl = Paths.get(Thread.currentThread().getContextClassLoader().getResource("override/schema_for_array_merge_strategy_resolver_with_missed_fields_definition.json").toURI());
-        DataSchema configurationSchema = new DataSchema(new String(Files.readAllBytes(schemaUrl)));
-
-        SchemaGenerationAlgorithmFactory factory = new SchemaGenerationAlgorithmFactoryImpl();
-        SchemaGenerationAlgorithm generator = factory.createSchemaGenerator(configurationSchema);
-
-        KaaSchema baseSchemaString = generator.getBaseSchema();
-
-        ArrayOverrideStrategyResolver arrayMergeStrategyResolver = new ArrayOverrideStrategyResolver(baseSchemaString);
-        ArrayOverrideStrategy actualArrayMergeStrategy = arrayMergeStrategyResolver.resolve("testT", "org.kaa.config", "child_name");
-        Assert.assertTrue(ArrayOverrideStrategy.REPLACE == actualArrayMergeStrategy);
     }
 
     @Test
@@ -68,8 +56,10 @@ public class ArrayOverrideStrategyResolverTest {
         SchemaGenerationAlgorithm generator = factory.createSchemaGenerator(configurationSchema);
 
         KaaSchema baseSchemaString = generator.getBaseSchema();
+        Schema.Parser baseParser = new Schema.Parser();
+        baseParser.parse(baseSchemaString.getRawSchema());
 
-        ArrayOverrideStrategyResolver arrayMergeStrategyResolver = new ArrayOverrideStrategyResolver(baseSchemaString);
+        ArrayOverrideStrategyResolver arrayMergeStrategyResolver = new ArrayOverrideStrategyResolver(baseParser.getTypes());
         ArrayOverrideStrategy actualArrayMergeStrategy = arrayMergeStrategyResolver.resolve("testT", "org.kaa.config", "child_name");
         Assert.assertTrue(ArrayOverrideStrategy.REPLACE == actualArrayMergeStrategy);
     }
@@ -84,7 +74,10 @@ public class ArrayOverrideStrategyResolverTest {
 
         KaaSchema baseSchemaString = generator.getBaseSchema();
 
-        ArrayOverrideStrategyResolver arrayMergeStrategyResolver = new ArrayOverrideStrategyResolver(baseSchemaString);
+        Schema.Parser baseParser = new Schema.Parser();
+        baseParser.parse(baseSchemaString.getRawSchema());
+
+        ArrayOverrideStrategyResolver arrayMergeStrategyResolver = new ArrayOverrideStrategyResolver(baseParser.getTypes());
         ArrayOverrideStrategy actualArrayMergeStrategy = arrayMergeStrategyResolver.resolve("testT", "org.kaa.config", "field1");
         Assert.assertTrue(ArrayOverrideStrategy.APPEND == actualArrayMergeStrategy);
     }

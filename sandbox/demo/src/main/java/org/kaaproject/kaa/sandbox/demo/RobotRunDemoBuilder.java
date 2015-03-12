@@ -21,15 +21,9 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
-import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
-import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
-import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.sandbox.demo.projects.Platform;
-import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +33,7 @@ public class RobotRunDemoBuilder extends AbstractDemoBuilder {
     private static final Logger logger = LoggerFactory.getLogger(RobotRunDemoBuilder.class);
 
     protected RobotRunDemoBuilder() {
-        super();
+        super("demo/robotrun");
     }
     
     @Override
@@ -54,7 +48,7 @@ public class RobotRunDemoBuilder extends AbstractDemoBuilder {
         robotRunEventClassFamily.setNamespace("org.kaaproject.kaa.examples.robotrun.gen.event");
         robotRunEventClassFamily.setClassName("RobotRunEventClassFamily");
         robotRunEventClassFamily = client.editEventClassFamily(robotRunEventClassFamily);
-        client.addEventClassFamilySchema(robotRunEventClassFamily.getId(), "demo/robotrun/robotRunEventClassFamily.json");
+        client.addEventClassFamilySchema(robotRunEventClassFamily.getId(), getResourcePath("robotRunEventClassFamily.json"));
 
         ApplicationDto robotRunApplication = new ApplicationDto();
         robotRunApplication.setName("Robot Run");
@@ -70,14 +64,14 @@ public class RobotRunDemoBuilder extends AbstractDemoBuilder {
         configurationSchema.setApplicationId(robotRunApplication.getId());
         configurationSchema.setName("Labirynth schema");
         configurationSchema.setDescription("Configuration schema describing labirynth");
-        configurationSchema = client.createConfigurationSchema(configurationSchema, "demo/robotrun/configSchema.json");
+        configurationSchema = client.createConfigurationSchema(configurationSchema, getResourcePath("configSchema.json"));
         sdkKey.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
         
         LogSchemaDto logSchema = new LogSchemaDto();
         logSchema.setApplicationId(robotRunApplication.getId());
         logSchema.setName("Cell log schema");
         logSchema.setDescription("Log schema describing information about discovered cell");
-        logSchema = client.createLogSchema(logSchema, "demo/robotrun/logSchema.json");
+        logSchema = client.createLogSchema(logSchema, getResourcePath("logSchema.json"));
         sdkKey.setLogSchemaVersion(logSchema.getMajorVersion());
         
         ApplicationEventFamilyMapDto robotRunAefMap = mapEventClassFamily(client, robotRunApplication, robotRunEventClassFamily);
@@ -89,55 +83,6 @@ public class RobotRunDemoBuilder extends AbstractDemoBuilder {
         
         logger.info("Finished loading 'Robot Run Demo Application' data.");
 
-    }
-    
-    private ApplicationEventFamilyMapDto mapEventClassFamily(AdminClient client, ApplicationDto application, EventClassFamilyDto eventClassFamily) throws Exception {
-        List<EventClassDto> eventClasses = 
-                client.getEventClassesByFamilyIdVersionAndType(eventClassFamily.getId(), 1, EventClassType.EVENT);
-
-        ApplicationEventFamilyMapDto aefMap = new ApplicationEventFamilyMapDto();
-        aefMap.setApplicationId(application.getId());
-        aefMap.setEcfId(eventClassFamily.getId());
-        aefMap.setEcfName(eventClassFamily.getName());
-        aefMap.setVersion(1);
-        
-        List<ApplicationEventMapDto> eventMaps = new ArrayList<>(eventClasses.size());
-        for (EventClassDto eventClass : eventClasses) {
-            ApplicationEventMapDto eventMap = new ApplicationEventMapDto();
-            eventMap.setEventClassId(eventClass.getId());
-            eventMap.setFqn(eventClass.getFqn());
-                eventMap.setAction(ApplicationEventAction.BOTH);
-            eventMaps.add(eventMap);
-        }
-        
-        aefMap.setEventMaps(eventMaps);
-        aefMap = client.editApplicationEventFamilyMap(aefMap);
-        return aefMap;
-    }
-
-    @Override
-    protected void setupProjectConfigs() {
-        Project projectConfig = new Project();
-        projectConfig.setId("robotrun_demo_desktop");
-        projectConfig.setName("Robot Run Demo Desktop");
-        projectConfig.setDescription("Robot Run java application to control and visualize labirynth");
-        projectConfig.setPlatform(Platform.JAVA);
-        projectConfig.setSourceArchive("java/robotrun_demo.tar.gz");
-        projectConfig.setProjectFolder("");
-        projectConfig.setSdkLibDir("lib");
-        projectConfig.setDestBinaryFile("target/visualization.tar.gz");
-        projectConfigs.add(projectConfig);
-        
-        projectConfig = new Project();
-        projectConfig.setId("robotrun_demo_android");
-        projectConfig.setName("Robot Run Demo Android");
-        projectConfig.setDescription("Robot Run android application to control robot");
-        projectConfig.setPlatform(Platform.ANDROID);
-        projectConfig.setSourceArchive("android/robotrun_demo.tar.gz");
-        projectConfig.setProjectFolder("robotrun_demo/RobotRun");
-        projectConfig.setSdkLibDir("robotrun_demo/RobotRun/libs");
-        projectConfig.setDestBinaryFile("robotrun_demo/RobotRun/bin/RobotRun-debug.apk");
-        projectConfigs.add(projectConfig);
     }
 
 }

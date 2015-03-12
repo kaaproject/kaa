@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_NOTIFICATIONS
-
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/notification/INotificationListener.hpp"
 
@@ -73,7 +71,5 @@ private:
 };
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* ABSTRACTNOTIFICATIONLISTENER_HPP_ */

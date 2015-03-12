@@ -89,41 +89,54 @@ endif()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL}")
 
 # Disables Kaa library modules.
+message("==================================")
 if(KAA_WITHOUT_EVENTS)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_EVENTS")
+else()
+    message( "EVENTS ENABLED")
 endif()
 
 if(KAA_WITHOUT_LOGGING)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_LOGGING")
+else()
+     message( "LOGGING ENABLED")
 endif()
 
+if(KAA_WITHOUT_CONFIGURATION)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_CONFIGURATION")
+else()
+     message("CONFIGURATION ENABLED")
+endif()
+message("==================================")
 # Sets path(s) to header files.
+set (KAA_SRC_FOLDER "src/kaa")
 include_directories(KAA_INCLUDE_PATHS
                         ${KAA_INCLUDE_PATHS}
-                        ${CMAKE_CURRENT_SOURCE_DIR}/src
+                        ${CMAKE_CURRENT_SOURCE_DIR}/${KAA_SRC_FOLDER}
                    )
 
 # Sets path(s) to source files.
 set (KAA_SOURCE_FILES
         ${KAA_SOURCE_FILES}
-        src/avro_src/io.c
-        src/avro_src/encoding_binary.c
-        src/collections/kaa_deque.c
-        src/collections/kaa_list.c
-        src/utilities/kaa_log.c
-        src/utilities/kaa_mem.c
-        src/utilities/kaa_buffer.c
-        src/kaa_platform_utils.c
-        src/kaa_platform_protocol.c
-        src/kaa_bootstrap_manager.c
-        src/kaa_channel_manager.c
-        src/kaa_common_schema.c
-        src/kaa_event.c
-        src/kaa_logging.c
-        src/kaa_profile.c
-        src/kaa_status.c
-        src/kaa_user.c
-        src/kaa.c
+        ${KAA_SRC_FOLDER}/avro_src/io.c
+        ${KAA_SRC_FOLDER}/avro_src/encoding_binary.c
+        ${KAA_SRC_FOLDER}/collections/kaa_deque.c
+        ${KAA_SRC_FOLDER}/collections/kaa_list.c
+        ${KAA_SRC_FOLDER}/utilities/kaa_log.c
+        ${KAA_SRC_FOLDER}/utilities/kaa_mem.c
+        ${KAA_SRC_FOLDER}/utilities/kaa_buffer.c
+        ${KAA_SRC_FOLDER}/kaa_platform_utils.c
+        ${KAA_SRC_FOLDER}/kaa_platform_protocol.c
+        ${KAA_SRC_FOLDER}/kaa_bootstrap_manager.c
+        ${KAA_SRC_FOLDER}/kaa_channel_manager.c
+        ${KAA_SRC_FOLDER}/kaa_common_schema.c
+        ${KAA_SRC_FOLDER}/kaa_event.c
+        ${KAA_SRC_FOLDER}/kaa_logging.c
+        ${KAA_SRC_FOLDER}/kaa_profile.c
+        ${KAA_SRC_FOLDER}/kaa_configuration_manager.c
+        ${KAA_SRC_FOLDER}/kaa_status.c
+        ${KAA_SRC_FOLDER}/kaa_user.c
+        ${KAA_SRC_FOLDER}/kaa.c
     )
 
 # Includes auto-generated and platform-dependent Cmake's scripts.
@@ -131,27 +144,27 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/CMakeGen.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/platform/${KAA_PLATFORM}/CMakeLists.txt)
 
 # Prints build parameters.
-message(STATUS "BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
-message(STATUS "KAA_PLATFORM = ${KAA_PLATFORM}")
-message(STATUS "KAA_MAX_LOG_LEVEL = ${KAA_MAX_LOG_LEVEL}")
+message( "BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+message( "KAA_PLATFORM = ${KAA_PLATFORM}")
+message( "KAA_MAX_LOG_LEVEL = ${KAA_MAX_LOG_LEVEL}")
 
 # Builds Kaa libraries.
 add_library(kaac_o OBJECT ${KAA_SOURCE_FILES})
-add_library(kaac_s STATIC ./src $<TARGET_OBJECTS:kaac_o>)
-add_library(kaac SHARED ./src $<TARGET_OBJECTS:kaac_o>)
+add_library(kaac_s STATIC ./${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o>)
+add_library(kaac SHARED ./${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o>)
 target_link_libraries(kaac ${KAA_THIRDPARTY_LIBRARIES})
 
 # Sets paths Kaa libraries will be installed in.
-install(TARGETS kaac kaac_s
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION lib
-)
+if(NOT KAA_INSTALL_PATH)
+	set(KAA_INSTALL_PATH "/usr/local")
+endif()
 
-install(DIRECTORY src/ 
-        DESTINATION include/kaac
-        FILES_MATCHING PATTERN *.h
-)
+message("KAA WILL BE INSTALLED TO  ${KAA_INSTALL_PATH} ")
+set(CMAKE_INSTALL_PREFIX ${KAA_INSTALL_PATH} ) 
+install (DIRECTORY ${KAA_SRC_FOLDER}/ DESTINATION ${KAA_INSTALL_PATH}/include/kaa
+    FILES_MATCHING PATTERN *.h)
+install (TARGETS kaac kaac_s DESTINATION ${KAA_INSTALL_PATH}/lib)
+
 
 # Builds unit tests.
 if(KAA_UNITTESTS_COMPILE)

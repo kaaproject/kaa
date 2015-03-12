@@ -30,29 +30,27 @@ namespace kaa {
 class IKaaChannelManager;
 
 class ProfileTransport: public AbstractKaaTransport<TransportType::PROFILE>,
-                        public IProfileTransport
-{
+                        public IProfileTransport {
 public:
     ProfileTransport(IKaaChannelManager& channelManager,
                      const PublicKey& publicKey);
 
-    virtual void sync() {
-        syncAll();
-    }
+    virtual void sync() { syncAll(); }
 
     virtual ProfileSyncRequestPtr createProfileRequest();
 
     virtual void onProfileResponse(const ProfileSyncResponse& response);
 
-    virtual void setProfileManager(IProfileManager* manager) {
-        if (manager != nullptr) {
+    virtual void setProfileManager(IProfileManager* manager)
+    {
+        if (manager) {
             profileManager_ = manager;
         }
     }
 
 private:
     void populateEventFamilyVersions(EndpointVersionInfo::eventFamilyVersions_t& versions);
-    bool isProfileOutDated(SharedDataBuffer profileHash);
+    bool isProfileOutDated(const HashDigest& profileHash);
 
 private:
     IProfileManager*               profileManager_;

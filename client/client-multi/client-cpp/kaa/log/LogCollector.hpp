@@ -47,7 +47,8 @@ public:
                , ILogUploadStrategy* strategy
                , ILogUploadFailoverStrategy* failoverStrategy);
 
-    virtual void addLogRecord(const SuperRecord& record) {
+    virtual void addLogRecord(const SuperRecord& record)
+    {
         makeLogRecord(LogRecord(record));
     }
 

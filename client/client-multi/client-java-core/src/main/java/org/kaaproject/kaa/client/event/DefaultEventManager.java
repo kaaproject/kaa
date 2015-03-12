@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.client.event;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -195,11 +194,22 @@ public class DefaultEventManager implements EventManager {
     }
 
     @Override
-    public List<Event> getPendingEvents() {
+    public List<Event> pollPendingEvents() {
+        return getPendingEvents(true);
+    }
+    
+    @Override
+    public List<Event> peekPendingEvents() {
+        return getPendingEvents(false);
+    }
+    
+    private List<Event> getPendingEvents(boolean clear) {
         List<Event> pendingEvents = new ArrayList<Event>();
         synchronized (eventsGuard) {
             pendingEvents.addAll(currentEvents);
-            currentEvents.clear();
+            if(clear){
+                currentEvents.clear();
+            }
         }
         return pendingEvents;
     }

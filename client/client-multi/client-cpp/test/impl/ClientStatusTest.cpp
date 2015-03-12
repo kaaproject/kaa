@@ -47,8 +47,7 @@ BOOST_AUTO_TEST_CASE(checkDefaults)
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().configurationSequenceNumber, 0);
     BOOST_CHECK_EQUAL(cs.getAppSeqNumber().notificationSequenceNumber, 0);
     BOOST_CHECK_EQUAL(cs.isRegistered(), false);
-    BOOST_CHECK_EQUAL(cs.getProfileHash().second, 0);
-    BOOST_CHECK_EQUAL(cs.getTopicStates().size(), 0);
+    BOOST_CHECK_EQUAL(cs.getProfileHash().empty(), true);
     BOOST_CHECK_EQUAL(cs.getAttachedEndpoints().size(), 0);
     BOOST_CHECK_EQUAL(cs.getEndpointAccessToken().empty(), true);
     BOOST_CHECK_EQUAL(cs.getEndpointAttachStatus(), false);
@@ -65,20 +64,13 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     cs.setRegistered(true);
     BOOST_CHECK_EQUAL(cs.isRegistered(), true);
 
-    SharedDataBuffer sdb;
-    sdb.first.reset(new std::uint8_t[5]);
-    std::uint8_t *temp = sdb.first.get();
-    temp[0] = 1;
-    temp[1] = 2;
-    temp[2] = 2;
-    temp[3] = 3;
-    temp[4] = 4;
-
-    sdb.second = 5;
+    HashDigest sdb;
+    for (uint8_t i = 0; i < 5; ++i) {
+        sdb.push_back(i);
+    }
     cs.setProfileHash(sdb);
-
-    BOOST_CHECK_EQUAL(cs.getProfileHash().second, 5);
-    BOOST_CHECK_EQUAL_COLLECTIONS(cs.getProfileHash().first.get(), cs.getProfileHash().first.get() + 5, temp, temp + 5);
+    auto checkHash = cs.getProfileHash();
+    BOOST_CHECK_EQUAL_COLLECTIONS(checkHash.begin(), checkHash.end(), sdb.begin(), sdb.end());
 
     DetailedTopicStates empty_ts = cs.getTopicStates();
     BOOST_CHECK_EQUAL(empty_ts.size(), 0);

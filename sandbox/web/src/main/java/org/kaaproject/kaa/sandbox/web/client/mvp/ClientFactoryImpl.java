@@ -16,10 +16,14 @@
 
 package org.kaaproject.kaa.sandbox.web.client.mvp;
 
+import org.kaaproject.kaa.sandbox.web.client.mvp.view.ChangeKaaHostView;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.MainView;
+import org.kaaproject.kaa.sandbox.web.client.mvp.view.ProjectView;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.header.HeaderViewImpl;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.main.MainViewImpl;
+import org.kaaproject.kaa.sandbox.web.client.mvp.view.project.ProjectViewImpl;
+import org.kaaproject.kaa.sandbox.web.client.mvp.view.settings.ChangeKaaHostViewImpl;
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.web.bindery.event.shared.EventBus;
@@ -33,7 +37,10 @@ public class ClientFactoryImpl implements ClientFactory {
     private final HeaderView headerView = new HeaderViewImpl();
     
     private final MainView mainView = new MainViewImpl();
-
+    
+    private final ProjectView projectView = new ProjectViewImpl();
+    
+    private final ChangeKaaHostView changeKaaHostView = new ChangeKaaHostViewImpl();
 
     @Override
     public EventBus getEventBus() {
@@ -53,6 +60,16 @@ public class ClientFactoryImpl implements ClientFactory {
     @Override
     public MainView getMainView() {
         return mainView;
+    }
+
+    @Override
+    public ProjectView getProjectView() {
+        return projectView;
+    }
+
+    @Override
+    public ChangeKaaHostView getChangeKaaHostView() {
+        return changeKaaHostView;
     }
 
 }

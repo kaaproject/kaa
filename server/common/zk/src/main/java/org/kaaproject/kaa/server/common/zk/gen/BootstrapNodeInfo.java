@@ -7,10 +7,11 @@ package org.kaaproject.kaa.server.common.zk.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"BootstrapNodeInfo\",\"namespace\":\"org.kaaproject.kaa.server.common.zk.gen\",\"fields\":[{\"name\":\"connectionInfo\",\"type\":{\"type\":\"record\",\"name\":\"ConnectionInfo\",\"fields\":[{\"name\":\"thriftHost\",\"type\":\"string\"},{\"name\":\"thriftPort\",\"type\":\"int\"},{\"name\":\"publicKey\",\"type\":[\"bytes\",\"null\"]}]}},{\"name\":\"transports\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"TransportMetaData\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"minSupportedVersion\",\"type\":\"int\"},{\"name\":\"maxSupportedVersion\",\"type\":\"int\"},{\"name\":\"connectionInfo\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"VersionConnectionInfoPair\",\"fields\":[{\"name\":\"version\",\"type\":\"int\"},{\"name\":\"conenctionInfo\",\"type\":\"bytes\"}]}}}]}}}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"BootstrapNodeInfo\",\"namespace\":\"org.kaaproject.kaa.server.common.zk.gen\",\"fields\":[{\"name\":\"connectionInfo\",\"type\":{\"type\":\"record\",\"name\":\"ConnectionInfo\",\"fields\":[{\"name\":\"thriftHost\",\"type\":\"string\"},{\"name\":\"thriftPort\",\"type\":\"int\"},{\"name\":\"publicKey\",\"type\":[\"bytes\",\"null\"]}]}},{\"name\":\"transports\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"TransportMetaData\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"minSupportedVersion\",\"type\":\"int\"},{\"name\":\"maxSupportedVersion\",\"type\":\"int\"},{\"name\":\"connectionInfo\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"VersionConnectionInfoPair\",\"fields\":[{\"name\":\"version\",\"type\":\"int\"},{\"name\":\"conenctionInfo\",\"type\":\"bytes\"}]}}}]}}},{\"name\":\"timeStarted\",\"type\":\"long\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo connectionInfo;
    private java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> transports;
+   private long timeStarted;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -22,9 +23,10 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
   /**
    * All-args constructor.
    */
-  public BootstrapNodeInfo(org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo connectionInfo, java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> transports) {
+  public BootstrapNodeInfo(org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo connectionInfo, java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> transports, java.lang.Long timeStarted) {
     this.connectionInfo = connectionInfo;
     this.transports = transports;
+    this.timeStarted = timeStarted;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -33,6 +35,7 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
     switch (field$) {
     case 0: return connectionInfo;
     case 1: return transports;
+    case 2: return timeStarted;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -42,6 +45,7 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
     switch (field$) {
     case 0: connectionInfo = (org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo)value$; break;
     case 1: transports = (java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData>)value$; break;
+    case 2: timeStarted = (java.lang.Long)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -76,6 +80,21 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
     this.transports = value;
   }
 
+  /**
+   * Gets the value of the 'timeStarted' field.
+   */
+  public java.lang.Long getTimeStarted() {
+    return timeStarted;
+  }
+
+  /**
+   * Sets the value of the 'timeStarted' field.
+   * @param value the value to set.
+   */
+  public void setTimeStarted(java.lang.Long value) {
+    this.timeStarted = value;
+  }
+
   /** Creates a new BootstrapNodeInfo RecordBuilder */
   public static org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder newBuilder() {
     return new org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder();
@@ -99,6 +118,7 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
 
     private org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo connectionInfo;
     private java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> transports;
+    private long timeStarted;
 
     /** Creates a new Builder */
     private Builder() {
@@ -116,6 +136,10 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
         this.transports = data().deepCopy(fields()[1].schema(), other.transports);
         fieldSetFlags()[1] = true;
       }
+      if (isValidValue(fields()[2], other.timeStarted)) {
+        this.timeStarted = data().deepCopy(fields()[2].schema(), other.timeStarted);
+        fieldSetFlags()[2] = true;
+      }
     }
     
     /** Creates a Builder by copying an existing BootstrapNodeInfo instance */
@@ -128,6 +152,10 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
       if (isValidValue(fields()[1], other.transports)) {
         this.transports = data().deepCopy(fields()[1].schema(), other.transports);
         fieldSetFlags()[1] = true;
+      }
+      if (isValidValue(fields()[2], other.timeStarted)) {
+        this.timeStarted = data().deepCopy(fields()[2].schema(), other.timeStarted);
+        fieldSetFlags()[2] = true;
       }
     }
 
@@ -181,12 +209,37 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
       return this;
     }
 
+    /** Gets the value of the 'timeStarted' field */
+    public java.lang.Long getTimeStarted() {
+      return timeStarted;
+    }
+    
+    /** Sets the value of the 'timeStarted' field */
+    public org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder setTimeStarted(long value) {
+      validate(fields()[2], value);
+      this.timeStarted = value;
+      fieldSetFlags()[2] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'timeStarted' field has been set */
+    public boolean hasTimeStarted() {
+      return fieldSetFlags()[2];
+    }
+    
+    /** Clears the value of the 'timeStarted' field */
+    public org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo.Builder clearTimeStarted() {
+      fieldSetFlags()[2] = false;
+      return this;
+    }
+
     @Override
     public BootstrapNodeInfo build() {
       try {
         BootstrapNodeInfo record = new BootstrapNodeInfo();
         record.connectionInfo = fieldSetFlags()[0] ? this.connectionInfo : (org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo) defaultValue(fields()[0]);
         record.transports = fieldSetFlags()[1] ? this.transports : (java.util.List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData>) defaultValue(fields()[1]);
+        record.timeStarted = fieldSetFlags()[2] ? this.timeStarted : (java.lang.Long) defaultValue(fields()[2]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

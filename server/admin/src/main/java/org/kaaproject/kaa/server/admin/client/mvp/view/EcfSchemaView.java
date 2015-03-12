@@ -16,8 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.event.EventClassDto;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 
 import com.google.gwt.user.client.ui.HasValue;
 
@@ -28,9 +27,7 @@ public interface EcfSchemaView extends BaseDetailsView {
     public HasValue<String> getCreatedUsername();
 
     public HasValue<String> getCreatedDateTime();
-
-    public HasValue<String> getSchema();
     
-    public AbstractGrid<EventClassDto, String> getEventClassesGrid();
+    public RecordPanel getEcfSchemaForm();
 
 }

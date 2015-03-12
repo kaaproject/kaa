@@ -22,12 +22,6 @@
 #include "kaa/bootstrap/BootstrapManager.hpp"
 #include "kaa/KaaDefaults.hpp"
 
-#include "kaa/configuration/ConfigurationProcessor.hpp"
-#include "kaa/configuration/manager/ConfigurationManager.hpp"
-#include "kaa/configuration/storage/ConfigurationPersistenceManager.hpp"
-#include "kaa/schema/SchemaProcessor.hpp"
-#include "kaa/schema/storage/SchemaPersistenceManager.hpp"
-
 #include "kaa/bootstrap/BootstrapTransport.hpp"
 #include "kaa/channel/MetaDataTransport.hpp"
 #include "kaa/configuration/ConfigurationTransport.hpp"
@@ -60,9 +54,7 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
     initClientKeys();
 
 #ifdef KAA_USE_CONFIGURATION
-    schemaProcessor_.reset(new SchemaProcessor);
     configurationProcessor_.reset(new ConfigurationProcessor);
-    deltaManager_.reset(new DefaultDeltaManager);
     configurationManager_.reset(new ConfigurationManager);
 #endif
 
@@ -90,8 +82,8 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 void KaaClient::start()
 {
 #ifdef KAA_USE_CONFIGURATION
-    auto configHash = configurationPersistenceManager_->getConfigurationHash().getHash();
-    if (!configHash.first || !configHash.second || !schemaProcessor_->getSchema()) {
+    auto configHash = configurationPersistenceManager_->getConfigurationHash().getHashDigest();
+    if (configHash.empty()) {
         SequenceNumber sn = { 0, 0, 1 };
         status_->setAppSeqNumber(sn);
         setDefaultConfiguration();
@@ -122,16 +114,8 @@ void KaaClient::initKaaConfiguration()
     cpm->setConfigurationProcessor(configurationProcessor_.get());
     configurationPersistenceManager_.reset(cpm);
 
-    SchemaPersistenceManager *spm = new SchemaPersistenceManager;
-    spm->setSchemaProcessor(schemaProcessor_.get());
-    schemaPersistenceManager_.reset(spm);
-
-    schemaProcessor_->subscribeForSchemaUpdates(*configurationProcessor_);
-    schemaProcessor_->subscribeForSchemaUpdates(*configurationPersistenceManager_);
-    schemaProcessor_->subscribeForSchemaUpdates(*schemaPersistenceManager_);
     configurationProcessor_->addOnProcessedObserver(*configurationManager_);
     configurationProcessor_->subscribeForUpdates(*configurationManager_);
-    configurationProcessor_->subscribeForUpdates(*deltaManager_);
     configurationManager_->subscribeForConfigurationChanges(*configurationPersistenceManager_);
 #endif
 }
@@ -150,7 +134,6 @@ void KaaClient::initKaaTransport()
     IConfigurationTransportPtr configurationTransport(new ConfigurationTransport(
             *channelManager_
             , configurationProcessor_.get()
-            , schemaProcessor_.get()
             , configurationPersistenceManager_.get()
             , status_));
 #endif
@@ -269,7 +252,8 @@ void KaaClient::initClientKeys()
     }
 
     EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().begin(), clientKeys_->getPublicKey().size());
-    publicKeyHash_ = Botan::base64_encode(publicKeyHash.getHash().first.get(), publicKeyHash.getHash().second);
+    auto digest = publicKeyHash.getHashDigest();
+    publicKeyHash_ = Botan::base64_encode(digest.data(), digest.size());
 
     status_->setEndpointKeyHash(publicKeyHash_);
     status_->save();
@@ -279,15 +263,109 @@ void KaaClient::initClientKeys()
 void KaaClient::setDefaultConfiguration()
 {
 #ifdef KAA_USE_CONFIGURATION
-    const std::string& schema = getDefaultConfigSchema();
-    if (!schema.empty()) {
-        schemaProcessor_->loadSchema(reinterpret_cast<const std::uint8_t*>(schema.data()), schema.length());
-        const Botan::SecureVector<std::uint8_t>& config = getDefaultConfigData();
-        if (!config.empty()) {
-            configurationProcessor_->processConfigurationData(config.begin(), config.size(), true);
-        }
+    const Botan::SecureVector<std::uint8_t>& config = getDefaultConfigData();
+    if (!config.empty()) {
+        configurationProcessor_->processConfigurationData(config.begin(), config.size(), true);
     }
 #endif
+}
+
+IProfileManager& KaaClient::getProfileManager()
+{
+    return *profileManager_;
+}
+
+IConfigurationPersistenceManager& KaaClient::getConfigurationPersistenceManager()
+{
+#ifdef KAA_USE_CONFIGURATION
+    return *configurationPersistenceManager_;
+#else
+    throw KaaException("Failed to retrieve ConfigurationPersistenceManager. Configuration subunit is disabled");
+#endif
+}
+
+IConfigurationManager& KaaClient::getConfigurationManager()
+{
+#ifdef KAA_USE_CONFIGURATION
+    return *configurationManager_;
+#else
+    throw KaaException("Failed to retrieve ConfigurationManager. Configuration subunit is disabled");
+#endif
+}
+
+INotificationManager& KaaClient::getNotificationManager()
+{
+#ifdef KAA_USE_NOTIFICATIONS
+    return *notificationManager_;
+#else
+    throw KaaException("Failed to retrieve NotificationManager. Notification subunit is disabled");
+#endif
+}
+
+IEndpointRegistrationManager& KaaClient::getEndpointRegistrationManager()
+{
+#ifdef KAA_USE_EVENTS
+    return *registrationManager_;
+#else
+    throw KaaException("Failed to retrieve EndpointRegistrationManage. Event subunit is disabled");
+#endif
+}
+
+EventFamilyFactory& KaaClient::getEventFamilyFactory()
+{
+#ifdef KAA_USE_EVENTS
+    return *eventFamilyFactory_;
+#else
+    throw KaaException("Failed to retrieve EventFamilyFactory. Event subunit is disabled");
+#endif
+}
+
+IEventListenersResolver& KaaClient::getEventListenersResolver()
+{
+#ifdef KAA_USE_EVENTS
+    return *eventManager_;
+#else
+    throw KaaException("Failed to retrieve EventListenersResolver. Event subunit is disabled");
+#endif
+}
+
+IKaaChannelManager& KaaClient::getChannelManager()
+{
+    return *channelManager_;
+}
+
+const KeyPair& KaaClient::getClientKeyPair()
+{
+    return *clientKeys_;
+}
+
+ILogCollector& KaaClient::getLogCollector()
+{
+#ifdef KAA_USE_LOGGING
+    return *logCollector_;
+#else
+    throw KaaException("Failed to retrieve LogCollector. Logging subunit is disabled");
+#endif
+}
+
+IKaaDataMultiplexer& KaaClient::getOperationMultiplexer()
+{
+    return *syncProcessor_;
+}
+
+IKaaDataDemultiplexer& KaaClient::getOperationDemultiplexer()
+{
+    return *syncProcessor_;
+}
+
+IKaaDataMultiplexer& KaaClient::getBootstrapMultiplexer()
+{
+    return *syncProcessor_;
+}
+
+IKaaDataDemultiplexer& KaaClient::getBootstrapDemultiplexer()
+{
+    return *syncProcessor_;
 }
 
 }

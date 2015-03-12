@@ -99,7 +99,7 @@ public class LogAppenderViewImpl extends BasePluginViewImpl implements LogAppend
             }
         });
 
-        Label logMetadata = new Label(Utils.constants.logMetada());
+        Label logMetadata = new Label(Utils.constants.logMetadata());
         generateMetadataListBox();
         idx++;
         detailsTable.setWidget(idx, 0, logMetadata);

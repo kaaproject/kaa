@@ -83,14 +83,15 @@ public class DefaultGenerationAlgorithmTest {
     }
 
     /**
-     * Verifies that configuration generation fails when schema is corrupted.
+     * Verifies that configuration generation fails when schema contains "by_default" field
+     * doesn't match to the actual field type.
      *
      * @throws Exception
      */
     @Test(expected = ConfigurationGenerationException.class)
-    public void testConfigurationGenerationFailedForCorruptedSchema() throws Exception {
+    public void testConfigurationGenerationFailedForSchemaWithUnsuitableDefault() throws Exception {
         // Read Configuration Schema
-        Path schemaPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("generation/corruptedSchema.json").toURI());
+        Path schemaPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("generation/schemaWithUnsuitableDefault.json").toURI());
         BaseSchema configuraionSchema = new BaseSchema(new String(Files.readAllBytes(schemaPath)));
 
         // generated default configuration
@@ -130,22 +131,6 @@ public class DefaultGenerationAlgorithmTest {
     }
 
     /**
-     * Checks generation fails for schema with missed 'by_default' option.
-     *
-     * @throws Exception
-     */
-    @Test(expected = ConfigurationGenerationException.class)
-    public void testGenerateDefaultConfigurationFailsForSchemaWithMissedByDefault() throws Exception {
-        // Read Configuration Schema
-        Path schemaPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("generation/schemaWithMissedByDefault.json").toURI());
-        BaseSchema configuraionSchema = new BaseSchema(new String(Files.readAllBytes(schemaPath)));
-
-        // generated default configuration
-        DefaultRecordGenerationAlgorithm configurationProcessor = new DefaultRecordGenerationAlgorithmImpl(configuraionSchema, new BaseDataFactory());
-        KaaData generatedConfiguration = configurationProcessor.getRootData();
-    }
-
-    /**
      * Checks generation of a default configuration for a schema with reused
      * type.
      *
@@ -176,18 +161,7 @@ public class DefaultGenerationAlgorithmTest {
         Assert.assertTrue(generatedConfigurationGenericRecord.equals(expectedGeneratedConfigurationGenericRecord));
     }
 
-    @Test(expected = ConfigurationGenerationException.class)
-    public void testGetRootJsonBytesConfigurationFailsWhenByDefauleIsMissed() throws Exception {
-        // Read Configuration Schema
-        Path schemaPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("generation/schemaWithMissedByDefault.json").toURI());
-        BaseSchema configuraionSchema = new BaseSchema(new String(Files.readAllBytes(schemaPath)));
-
-        // generated default configuration
-        DefaultRecordGenerationAlgorithm configurationProcessor = new DefaultRecordGenerationAlgorithmImpl(configuraionSchema, new BaseDataFactory());
-        KaaData generatedConfiguration = configurationProcessor.getRootData();
-    }
-
-    @Test(expected = ConfigurationGenerationException.class)
+    @Test
     public void testGetRootBinaryConfigurationFailsWhenByDefauleIsMissed() throws Exception {
         // Read Configuration Schema
         Path schemaPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("generation/schemaWithMissedByDefault.json").toURI());
@@ -195,7 +169,8 @@ public class DefaultGenerationAlgorithmTest {
 
         // generated default configuration
         DefaultRecordGenerationAlgorithm configurationProcessor = new DefaultRecordGenerationAlgorithmImpl(configuraionSchema, new BaseDataFactory());
-        KaaData generatedConfiguration = configurationProcessor.getRootData();
+        GenericRecord generatedConfiguration = configurationProcessor.getRootConfiguration();
+        Assert.assertEquals(0, generatedConfiguration.get("testField5"));
     }
 
     @Test
@@ -245,10 +220,11 @@ public class DefaultGenerationAlgorithmTest {
 
         // generated default configuration
         DefaultRecordGenerationAlgorithm configurationProcessor = new DefaultRecordGenerationAlgorithmImpl(configuraionSchema, new BaseDataFactory());
-        configurationProcessor.getConfigurationByName("testT", "org.kaa.config");
-        GenericRecord generatedConfiguration = configurationProcessor.getConfigurationByName("testRecordT", "org.kaa.config");
+        configurationProcessor.getConfigurationByName("testRecordItemT", "org.kaa.config");
+        GenericRecord generatedConfiguration = configurationProcessor.getConfigurationByName("testRecordItemT", "org.kaa.config");
 
         Assert.assertNotNull(generatedConfiguration);
+        Assert.assertEquals(4, generatedConfiguration.get("testField4"));
     }
 
 }

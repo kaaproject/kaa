@@ -16,19 +16,7 @@
 
 package org.kaaproject.kaa.server.common.core.algorithms.generation;
 
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.ARRAY_FIELD_VALUE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.BYTES_FIELD_VALUE;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.BY_DEFAULT_FIELD;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.ENUM_FIELD_VALUE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.FIELDS_FIELD;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.FIXED_FIELD_VALUE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.MAP_FIELD_VALUE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.NAMESPACE_FIELD;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.NAME_FIELD;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.NULL_FIELD_VALUE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.RECORD_FIELD_VALUE;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.SIZE_FIELD;
-import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.TYPE_FIELD;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.UUID_FIELD;
 
 import java.io.IOException;
@@ -38,16 +26,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.avro.Schema;
+import org.apache.avro.Schema.Field;
 import org.apache.avro.Schema.Type;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericEnumSymbol;
 import org.apache.avro.generic.GenericFixed;
 import org.apache.avro.generic.GenericRecord;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.JsonNode;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
-import org.kaaproject.kaa.server.common.core.algorithms.CommonUtils;
+import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 import org.kaaproject.kaa.server.common.core.configuration.KaaData;
 import org.kaaproject.kaa.server.common.core.configuration.KaaDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
@@ -59,28 +46,24 @@ import org.slf4j.LoggerFactory;
  * {@link org.kaaproject.kaa.server.common.dao.configuration.DefaultRecordGenerationAlgorithm}
  *
  */
-public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends KaaData> implements DefaultRecordGenerationAlgorithm<T> {
+public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends KaaData<U>> implements DefaultRecordGenerationAlgorithm<T> {
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRecordGenerationAlgorithmImpl.class);
 
-    /** The json mapper. */
-    private final ObjectMapper jsonMapper = new ObjectMapper();
-
     /** The processed types. */
-    private final Map<String, Object> processedTypes = new HashMap<>();
+    private final Map<String, GenericRecord> processedTypes = new HashMap<>();
 
-    /** The raw base schema. */
-    private final Map<String, Object> rawBaseSchema;
+    /** The avro schema parser. */
+    private final Schema.Parser avroSchemaParser;
 
-    /** The schema parser. */
-    private final Schema.Parser schemaParser = new Schema.Parser();
+    /** The avro base schema. */
+    private final Schema avroBaseSchema;
 
-    /** The root schema name. */
-    private final String rootSchemaName;
-
+    /** The data factory. */
     private final KaaDataFactory<U, T> dataFactory;
 
+    /** The root schema. */
     private final U rootSchema;
 
     /**
@@ -89,110 +72,121 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
      * @param kaaSchema the base schema
      * @throws ConfigurationGenerationException the configuration processing exception
      */
-    @SuppressWarnings("unchecked")
     public DefaultRecordGenerationAlgorithmImpl(U kaaSchema, KaaDataFactory<U, T> factory) throws ConfigurationGenerationException {
         LOG.debug("Generating default configuration for configuration schema: " + kaaSchema.getRawSchema());
 
-        try {
-            this.rootSchema = kaaSchema;
-            this.dataFactory = factory;
-            this.rawBaseSchema = jsonMapper.readValue(kaaSchema.getRawSchema(), Map.class);
-            this.rootSchemaName = getFullNameFromRaw(this.rawBaseSchema);
+        this.rootSchema = kaaSchema;
+        this.dataFactory = factory;
+        this.avroSchemaParser = new Schema.Parser();
+        this.avroBaseSchema = this.avroSchemaParser.parse(kaaSchema.getRawSchema());
+    }
 
-        } catch (IOException ioe) {
-            LOG.error("Unexpected exception occurred while generating configuration.", ioe);
-            throw new ConfigurationGenerationException(ioe);
+
+    /**
+     * Applies the default value.
+     *
+     * @param schemaNode the schema node.
+     * @param byDefault the default value.
+     * @return generated value.
+     * @throws ConfigurationGenerationException the configuration processing exception.
+     */
+    private Object applyDefaultValue(Schema schemaNode, JsonNode byDefault) throws ConfigurationGenerationException {
+        if (byDefault.isArray() && AvroUtils.getSchemaByType(schemaNode, Type.BYTES) != null) {
+            // if this is a 'bytes' type then convert json bytes array to
+            // avro 'bytes' representation or
+            // if this is a named type - look for already processed types
+            // or throw an exception because "by_default" is missed
+            ByteBuffer byteBuffer = ByteBuffer.allocate(byDefault.size());
+            for (JsonNode oneByte : byDefault) {
+                byteBuffer.put((byte) oneByte.asInt());
+            }
+            byteBuffer.flip();
+            return byteBuffer;
         }
+        if (byDefault.isBoolean() && AvroUtils.getSchemaByType(schemaNode, Type.BOOLEAN) != null) {
+            return byDefault.asBoolean();
+        }
+        if (byDefault.isDouble()) {
+            if (AvroUtils.getSchemaByType(schemaNode, Type.DOUBLE) != null) {
+                return byDefault.asDouble();
+            } else if (AvroUtils.getSchemaByType(schemaNode, Type.FLOAT) != null) {
+                return (float) byDefault.asDouble();
+            }
+        }
+        if (byDefault.isInt() && AvroUtils.getSchemaByType(schemaNode, Type.INT) != null) {
+            return byDefault.asInt();
+        }
+        if (byDefault.isLong() && AvroUtils.getSchemaByType(schemaNode, Type.LONG) != null) {
+            return byDefault.asLong();
+        }
+        if (byDefault.isTextual()) {
+            Schema enumSchema = AvroUtils.getSchemaByType(schemaNode, Type.ENUM);
+            if (enumSchema != null) {
+                String textDefaultValue = byDefault.asText();
+                if (enumSchema.hasEnumSymbol(textDefaultValue)) {
+                    return new GenericData.EnumSymbol(enumSchema, textDefaultValue);
+                }
+            }
+            if (AvroUtils.getSchemaByType(schemaNode, Type.STRING) != null) {
+                return byDefault.asText();
+            }
+        }
+        throw new ConfigurationGenerationException("Default value " + byDefault.toString() + " is not applicable for the field");
     }
 
     /**
      * Processes generic type.
      *
-     * @param rawSchemaNode schema for current type.
-     * @param byDefault the by default
+     * @param schemaNode schema for current type.
+     * @param byDefault the by default.
      * @return generated value for input type.
      * @throws ConfigurationGenerationException configuration processing
      * exception
-     * @throws IOException Signals that an I/O exception has occurred.
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private Object processType(Map<String, Object> rawSchemaNode, Object byDefault) throws ConfigurationGenerationException, IOException {
-        Object typeField = rawSchemaNode.get(TYPE_FIELD);
-        if (List.class.isAssignableFrom(typeField.getClass())) {
-            typeField = ((List)typeField).get(0);
+    private Object processType(Schema schemaNode, JsonNode byDefault) throws ConfigurationGenerationException {
+        if (byDefault != null && !byDefault.isNull()) {
+            return applyDefaultValue(schemaNode, byDefault);
         }
-        if (NULL_FIELD_VALUE.equals(typeField)) {
+        if (AvroUtils.getSchemaByType(schemaNode, Type.NULL) != null) {
             return null;
-        } else if (ARRAY_FIELD_VALUE.equals(typeField)) {
+        }
+
+        Schema schemaToProcess = schemaNode;
+        if (schemaToProcess.getType().equals(Type.UNION)) {
+            schemaToProcess = schemaToProcess.getTypes().get(0);
+        }
+        switch (schemaToProcess.getType()) {
+        case ARRAY:
             // if this an array type then return empty array instance
-            return processArray(rawSchemaNode);
-        } else if (RECORD_FIELD_VALUE.equals(typeField)) {
-            // if this a record type then process it in-depth
-            return processRecord(rawSchemaNode);
-        } else if (MAP_FIELD_VALUE.equals(typeField)) {
+            return processArray(schemaToProcess);
+        case RECORD:
+            return processRecord(schemaToProcess);
+        case FIXED:
+            return processFixed(schemaToProcess);
+        case ENUM:
+            return processEnum(schemaToProcess);
+        case BYTES:
+            ByteBuffer byteBuffer = ByteBuffer.allocate(byDefault.size());
+            byteBuffer.put((byte) 0);
+            byteBuffer.flip();
+            return byteBuffer;
+        case MAP:
             throw new ConfigurationGenerationException("Map is not supported.");
-        } else if (FIXED_FIELD_VALUE.equals(typeField)) {
-            return processFixed(rawSchemaNode);
-        } else if (ENUM_FIELD_VALUE.equals(typeField)) {
-            return processEnum(rawSchemaNode);
-        } else if (String.class.isAssignableFrom(typeField.getClass())) {
-            // if this is a 'bytes' type then convert json bytes array to
-            // avro 'bytes' representation or
-            // if this is a named type - look for already processed types
-            // or throw an exception because "by_default" is missed
-            String typeFieldString = String.class.cast(typeField);
-            if (BYTES_FIELD_VALUE.equals(typeFieldString) && byDefault != null) {
-                List<Integer> bytesArray = (List<Integer>) byDefault;
-                ByteBuffer byteBuffer = ByteBuffer.allocate(bytesArray.size());
-                for (Integer oneByte : bytesArray) {
-                    byteBuffer.put(oneByte.byteValue());
-                }
-                byteBuffer.flip();
-                return byteBuffer;
-            } else if (processedTypes.containsKey(typeFieldString)) {
-                return processedTypes.get(typeFieldString);
-            }
-        } else if (Map.class.isAssignableFrom(typeField.getClass())) {
-            Map typeFieldMap = Map.class.cast(typeField);
-            return processType(typeFieldMap, byDefault);
+        case INT:
+            return new Integer(0);
+        case BOOLEAN:
+            return Boolean.FALSE;
+        case DOUBLE:
+            return new Double(0.0);
+        case LONG:
+            return new Long(0);
+        case STRING:
+            return new String("");
+        case FLOAT:
+            return new Float(0.0);
+        default:
+            return null;
         }
-        return byDefault;
-    }
-
-    /**
-     * Gets the full name from raw.
-     *
-     * @param schemaNode the schema node
-     * @return the full name from raw
-     */
-    private static String getFullNameFromRaw(Map<String, Object> schemaNode) {
-        String name = (String) schemaNode.get(NAME_FIELD);
-        String namespace = (String) schemaNode.get(NAMESPACE_FIELD);
-
-        // building cache key to look for already processed type
-        String fullName = "";
-        if (!namespace.isEmpty()) {
-            fullName = namespace;
-        }
-        if (!name.isEmpty()) {
-            fullName = fullName.isEmpty() ? name : fullName + "." + name;
-        }
-        return fullName;
-    }
-
-    /**
-     * Gets the schema from raw.
-     *
-     * @param schemaNode the schema node
-     * @return the schema from raw
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    private Schema getSchemaFromRaw(Map<String, Object> schemaNode) throws IOException {
-        Schema avroSchema = schemaParser.getTypes().get(getFullNameFromRaw(schemaNode));
-        if (avroSchema == null) {
-            avroSchema = schemaParser.parse(jsonMapper.writeValueAsString(schemaNode));
-        }
-        return avroSchema;
     }
 
     /**
@@ -200,27 +194,19 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
      *
      * @param schemaNode schema for current type.
      * @return generated value for input record type.
-     * @throws IOException Signals that an I/O exception has occurred.
      * @throws ConfigurationGenerationException configuration processing
      * exception
      */
-    @SuppressWarnings("unchecked")
-    private Object processRecord(Map<String, Object> schemaNode) throws IOException, ConfigurationGenerationException {
-        Schema avroSchema = getSchemaFromRaw(schemaNode);
-        GenericRecord result = new GenericData.Record(avroSchema);
-        String fullName = getFullNameFromRaw(schemaNode);
-        if (!fullName.isEmpty()) {
-            processedTypes.put(fullName, result);
-        }
+    private Object processRecord(Schema schemaNode) throws ConfigurationGenerationException {
+        GenericRecord result = new GenericData.Record(schemaNode);
+        processedTypes.put(schemaNode.getFullName(), result);
 
         // process each field
-        List<Object> fields = (List<Object>) schemaNode.get(FIELDS_FIELD);
-        for (Object field : fields) {
-            Map<String, Object> fieldDefinition = (Map<String, Object>) field;
-            String fieldName = (String) fieldDefinition.get(NAME_FIELD);
-            Object processFieldResult = processField(fieldDefinition);
+        List<Field> fields = schemaNode.getFields();
+        for (Field field : fields) {
+            Object processFieldResult = processField(field);
             if (processFieldResult != null) {
-                result.put(fieldName, processFieldResult);
+                result.put(field.name(), processFieldResult);
             }
         }
 
@@ -233,7 +219,7 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
      * @param schemaNode schema for current type.
      * @return generated value for input array type.
      */
-    private Object processArray(Map<String, Object> schemaNode) {
+    private Object processArray(Schema schemaNode) {
         Schema elementTypeSchema = Schema.create(Type.NULL);
         return new GenericData.Array<>(0, Schema.createArray(elementTypeSchema));
     }
@@ -243,17 +229,9 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
      *
      * @param schemaNode schema for current type.
      * @return generated value for input enum type.
-     * @throws JsonGenerationException the json generation exception
-     * @throws JsonMappingException the json mapping exception
-     * @throws IOException Signals that an I/O exception has occurred.
      */
-    private Object processEnum(Map<String, Object> schemaNode) throws IOException {
-        Schema avroSchema = getSchemaFromRaw(schemaNode);
-        GenericEnumSymbol result = new GenericData.EnumSymbol(avroSchema, avroSchema.getEnumSymbols().get(0));
-        String fullName = getFullNameFromRaw(schemaNode);
-        if (!fullName.isEmpty()) {
-            processedTypes.put(fullName, result);
-        }
+    private Object processEnum(Schema schemaNode) {
+        GenericEnumSymbol result = new GenericData.EnumSymbol(schemaNode, schemaNode.getEnumSymbols().get(0));
         return result;
     }
 
@@ -262,24 +240,16 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
      *
      * @param schemaNode schema for current type.
      * @return generated value for input record type.
-     * @throws JsonGenerationException the json generation exception
-     * @throws JsonMappingException the json mapping exception
-     * @throws IOException Signals that an I/O exception has occurred.
      */
-    private Object processFixed(Map<String, Object> schemaNode) throws IOException {
-        Integer size = (Integer) schemaNode.get(SIZE_FIELD);
+    private Object processFixed(Schema schemaNode) {
+        int size = schemaNode.getFixedSize();
 
         byte [] bytes = new byte [size];
         for (int i = 0; i < size; i++) {
             bytes[i] = (byte) 0;
         }
 
-        Schema avroSchema = getSchemaFromRaw(schemaNode);
-        GenericFixed result = new GenericData.Fixed(avroSchema, bytes);
-        String fullName = getFullNameFromRaw(schemaNode);
-        if (!fullName.isEmpty()) {
-            processedTypes.put(fullName, result);
-        }
+        GenericFixed result = new GenericData.Fixed(schemaNode, bytes);
 
         return result;
     }
@@ -289,18 +259,16 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
      *
      * @param fieldDefinition schema for field.
      * @return generated value for field based on its definition.
-     * @throws IOException Signals that an I/O exception has occurred.
      * @throws ConfigurationGenerationException configuration processing
      * exception
      */
-    private Object processField(Map<String, Object> fieldDefinition) throws IOException, ConfigurationGenerationException {
-        Object nameField = fieldDefinition.get(NAME_FIELD);
+    private Object processField(Field fieldDefinition) throws ConfigurationGenerationException {
         // if this a "uuid" type then generate it
-        if (UUID_FIELD.equals(nameField)) {
-            return CommonUtils.generateUuidObject();
+        if (UUID_FIELD.equals(fieldDefinition.name())) {
+            return AvroUtils.generateUuidObject();
         }
 
-        return processType(fieldDefinition, fieldDefinition.get(BY_DEFAULT_FIELD));
+        return processType(fieldDefinition.schema(), fieldDefinition.getJsonProp(BY_DEFAULT_FIELD));
     }
 
     /* (non-Javadoc)
@@ -308,8 +276,7 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
      */
     @Override
     public final GenericRecord getRootConfiguration() throws ConfigurationGenerationException {
-        int dotIndex = rootSchemaName.lastIndexOf('.');
-        return getConfigurationByName(rootSchemaName.substring(dotIndex + 1), rootSchemaName.substring(0, dotIndex));
+        return getConfigurationByName(avroBaseSchema.getName(), avroBaseSchema.getNamespace());
     }
 
     /* (non-Javadoc)
@@ -322,8 +289,8 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
         try {
             return dataFactory.createData(rootSchema, converter.endcodeToJson(root));
         } catch (RuntimeException e) {
-            // NPE is thrown if "null" was wriotten into a field that is not nullable
-            // CCE is thrown if value of wrong type was written into a field
+            // NPE is thrown if "null" was written into a field that is not nullable
+            // CGE is thrown if value of wrong type was written into a field
             LOG.error("Unexpected exception occurred while generating configuration.", e);
             throw new ConfigurationGenerationException(e);
         }
@@ -335,16 +302,11 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
             return null;
         }
         if (processedTypes.containsKey(namespace + "." + name)) {
-            return (GenericRecord) processedTypes.get(namespace + "." + name);
+            return processedTypes.get(namespace + "." + name);
         }
-        Map<String, Object> schema = CommonUtils.findRawSchemaByName(rawBaseSchema, name, namespace);
+        Schema schema = avroSchemaParser.getTypes().get(namespace + "." + name);
         if (schema != null) {
-            try {
-                return (GenericRecord) processType(schema, null);
-            } catch (IOException ioe) {
-                LOG.error("Unexpected exception occurred while generating configuration.", ioe);
-                throw new ConfigurationGenerationException(ioe);
-            }
+            return (GenericRecord) processType(schema, null);
         }
         return null;
     }

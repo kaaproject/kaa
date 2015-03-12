@@ -37,7 +37,7 @@ public class ConfigFormStructView extends BaseStructView<ConfigurationRecordForm
     protected HasValue<RecordField> createBody(HasErrorMessage hasErrorMessage) {
         RecordPanel field = new RecordPanel(Utils.constants.configurationBody(), hasErrorMessage, false, false);
         field.getRecordWidget().setForceNavigation(true);
-        field.setMinHeightPx(200);
+        field.setPreferredHeightPx(200);
         return field;
     }
 
@@ -71,6 +71,9 @@ public class ConfigFormStructView extends BaseStructView<ConfigurationRecordForm
         return ((RecordPanel)body).validate();
     }
 
- 
+    @Override
+    protected void onShown() {
+        ((RecordPanel)body).getRecordWidget().onShown();
+    }
 
 }

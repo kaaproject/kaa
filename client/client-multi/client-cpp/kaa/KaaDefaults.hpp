@@ -44,39 +44,36 @@ namespace kaa {
  * Base endpoint configuration
  */
 extern const char * const BUILD_VERSION;
-
 extern const char * const BUILD_COMMIT_HASH;
 
 extern const char * const APPLICATION_TOKEN;
 
 extern const std::uint32_t PROFILE_VERSION;
-
 extern const std::uint32_t CONFIG_VERSION;
-
 extern const std::uint32_t SYSTEM_NF_VERSION;
-
 extern const std::uint32_t USER_NF_VERSION;
-
 extern const std::uint32_t LOG_SCHEMA_VERSION;
 
 extern const std::uint32_t POLLING_PERIOD_SECONDS;
 
 extern const char * const CLIENT_PUB_KEY_LOCATION;
-
 extern const char * const CLIENT_PRIV_KEY_LOCATION;
-
 extern const char * const CLIENT_STATUS_FILE_LOCATION;
+
+extern const char * const DEFAULT_USER_VERIFIER_TOKEN;
+
+
 
 typedef std::vector<ITransportConnectionInfoPtr> BootstrapServers;
 const BootstrapServers& getBootstrapServers();
 
 const Botan::SecureVector<std::uint8_t>& getDefaultConfigData();
-const std::string& getDefaultConfigSchema();
 
 typedef std::map<std::string, std::int32_t> EventClassFamilyVersionInfos;
 const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo();
 
-SharedDataBuffer getPropertiesHash();
+HashDigest getPropertiesHash();
+
 }
 
 #endif /* KAADEFAULTS_HPP_ */

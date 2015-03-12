@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@ public class DemoBuildersRegistry {
     private static final List<DemoBuilder> demoBuilders = new ArrayList<>();
     
     static {
+        demoBuilders.add(new CellMonitorDemoBuilder());
+        demoBuilders.add(new CityGuideDemoBuilder());
+        demoBuilders.add(new PhotoFrameDemoBuilder());
         demoBuilders.add(new SmartHouseDemoBuilder());
 //        demoBuilders.add(new RobotRunDemoBuilder());
     }

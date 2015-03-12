@@ -167,7 +167,8 @@ public class ClientFactoryImpl implements ClientFactory {
     private final EcfView ecfView = new EcfViewImpl(false);
     private final EcfView createEcfView = new EcfViewImpl(true);
 
-    private final EcfSchemaView ecfSchemaView = new EcfSchemaViewImpl();
+    private final EcfSchemaView ecfSchemaView = new EcfSchemaViewImpl(false);
+    private final EcfSchemaView createEcfSchemaView = new EcfSchemaViewImpl(true);
 
     private final BaseListView<ApplicationEventFamilyMapDto> aefMapsView = new AefMapsViewImpl();
     private final AefMapView aefMapView = new AefMapViewImpl(false);
@@ -393,6 +394,11 @@ public class ClientFactoryImpl implements ClientFactory {
     @Override
     public EcfSchemaView getEcfSchemaView() {
         return ecfSchemaView;
+    }
+    
+    @Override
+    public EcfSchemaView getCreateEcfSchemaView() {
+        return createEcfSchemaView;
     }
 
     @Override

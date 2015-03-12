@@ -89,7 +89,7 @@ public class UserProfileViewImpl extends BaseDetailsViewImpl implements UserProf
         detailsTable.setWidget(3, 0, emailLabel);
         detailsTable.setWidget(3, 1, email);
 
-        changePasswordButton = new Button(Utils.constants.change_password());
+        changePasswordButton = new Button(Utils.constants.changePassword());
 
         detailsTable.setWidget(4, 0, changePasswordButton);
 

@@ -24,13 +24,15 @@
 
 namespace kaa {
 
-class TestKaaClientStateStorage : public MockKaaClientStateStorage {
+class TestKaaClientStateStorage: public MockKaaClientStateStorage {
 public:
-    virtual std::int32_t getEventSequenceNumber() const {
+    virtual std::int32_t getEventSequenceNumber() const
+    {
         return sn_;
     }
 
-    virtual void setEventSequenceNumber(std::int32_t sn) {
+    virtual void setEventSequenceNumber(std::int32_t sn)
+    {
         sn_ = sn;
     }
 
@@ -38,22 +40,27 @@ private:
     std::int32_t sn_;
 };
 
-class TestEventDataProcessor : public IEventDataProcessor
-{
+class TestEventDataProcessor: public IEventDataProcessor {
 public:
-    virtual std::list<Event> releasePendingEvents() {
-        return events_;
+    virtual std::map<std::int32_t, Event> releasePendingEvents()
+    {
+        auto pevents = std::move(events_);
+        events_ = std::map<std::int32_t, Event>();
+        return pevents;
     }
 
-    virtual bool hasPendingEvents() const {
+    virtual bool hasPendingEvents() const
+    {
         return !events_.empty();
     }
 
-    void setPendingEvents(const std::list<Event>& newEvents) {
+    void setPendingEvents(const std::map<std::int32_t, Event> & newEvents)
+    {
         events_ = newEvents;
     }
 
-    virtual std::map<std::int32_t, std::list<std::string> > getPendingListenerRequests() {
+    virtual std::map<std::int32_t, std::list<std::string> > getPendingListenerRequests()
+    {
         static std::map<std::int32_t, std::list<std::string> > mock;
         return mock;
     }
@@ -63,11 +70,15 @@ public:
         return false;
     }
 
-    virtual void onEventsReceived(const EventSyncResponse::events_t& events) {}
-    virtual void onEventListenersReceived(const EventSyncResponse::eventListenersResponses_t& listeners) {}
+    virtual void onEventsReceived(const EventSyncResponse::events_t& events)
+    {
+    }
+    virtual void onEventListenersReceived(const EventSyncResponse::eventListenersResponses_t& listeners)
+    {
+    }
 
 private:
-    std::list<Event> events_;
+    std::map<std::int32_t, Event> events_;
 };
 
 BOOST_AUTO_TEST_SUITE(EventTransportTestSuite)
@@ -79,26 +90,28 @@ BOOST_AUTO_TEST_CASE(EventTransportSequenceNumberRequestTest)
     TestEventDataProcessor processor;
     EventTransport transport(processor, channelManager, clientState);
 
-    std::list<Event> events = { Event(), Event() };
-    processor.setPendingEvents(events);
+    std::map<std::int32_t, Event> pevents;
+    pevents[1] = Event();
+    pevents[2] = Event();
+
+    processor.setPendingEvents(pevents);
 
     std::int32_t requestId = 1;
-    std::shared_ptr<EventSyncRequest> eventSyncRequest1 =
-                        transport.createEventRequest(requestId++);
+    std::shared_ptr<EventSyncRequest> eventSyncRequest1 = transport.createEventRequest(requestId++);
 
     BOOST_CHECK(eventSyncRequest1);
     BOOST_CHECK(!eventSyncRequest1->eventSequenceNumberRequest.is_null());
     BOOST_CHECK(eventSyncRequest1->events.is_null());
 
-    std::shared_ptr<EventSyncRequest> eventSyncRequest2 =
-                        transport.createEventRequest(requestId++);
+    std::shared_ptr<EventSyncRequest> eventSyncRequest2 = transport.createEventRequest(requestId++);
 
     BOOST_CHECK(eventSyncRequest2);
     BOOST_CHECK(!eventSyncRequest2->eventSequenceNumberRequest.is_null());
     BOOST_CHECK(eventSyncRequest2->events.is_null());
 }
 
-Event createEvent(const std::int32_t& sn) {
+Event createEvent(const std::int32_t& sn)
+{
     Event e;
     e.seqNum = sn;
     return e;
@@ -114,16 +127,16 @@ BOOST_AUTO_TEST_CASE(SychronizedEventSequenceNumberTest)
     TestEventDataProcessor processor;
     EventTransport transport(processor, channelManager, clientState);
 
-    std::list<Event> events = { createEvent(sn + 1)
-                              , createEvent(sn)};
-    processor.setPendingEvents(events);
+    std::map<std::int32_t, Event> pevents;
+    pevents[1] = createEvent(sn + 1);
+    pevents[2] = createEvent(sn);
 
     std::int32_t requestId = 1;
     transport.createEventRequest(requestId++);
 
     EventSyncResponse eventResponse1;
     EventSequenceNumberResponse esnr;
-    esnr.seqNum = sn - 1;
+    esnr.seqNum = sn - 5;
 
     eventResponse1.eventSequenceNumberResponse.set_EventSequenceNumberResponse(esnr);
     eventResponse1.eventListenersResponses.set_null();
@@ -131,13 +144,11 @@ BOOST_AUTO_TEST_CASE(SychronizedEventSequenceNumberTest)
 
     transport.onEventResponse(eventResponse1);
 
-    std::shared_ptr<EventSyncRequest> eventSyncRequest =
-                        transport.createEventRequest(requestId++);
+    std::shared_ptr<EventSyncRequest> eventSyncRequest = transport.createEventRequest(requestId++);
 
     BOOST_CHECK(eventSyncRequest);
     BOOST_CHECK(eventSyncRequest->eventSequenceNumberRequest.is_null());
     BOOST_CHECK(!eventSyncRequest->events.is_null());
-
     const auto& sendingEvents = eventSyncRequest->events.get_array();
     for (const auto& e : sendingEvents) {
         if (e.seqNum != sn++) {
@@ -157,17 +168,17 @@ BOOST_AUTO_TEST_CASE(UnsychronizedEventSequenceNumberTest)
     TestEventDataProcessor processor;
     EventTransport transport(processor, channelManager, clientState);
 
-    std::list<Event> events = { createEvent(restored_sn + 1)
-                              , createEvent(restored_sn + 2)
-                              , createEvent(restored_sn)};
-    processor.setPendingEvents(events);
+    std::map<std::int32_t, Event> pevents;
+    pevents[1] = createEvent(restored_sn + 12);
+    pevents[2] = createEvent(restored_sn);
+    processor.setPendingEvents(pevents);
 
     std::int32_t requestId = 1;
     transport.createEventRequest(requestId++);
 
     EventSyncResponse eventResponse1;
     EventSequenceNumberResponse esnr;
-    esnr.seqNum = expected_sn - 1;
+    esnr.seqNum = expected_sn;
 
     eventResponse1.eventSequenceNumberResponse.set_EventSequenceNumberResponse(esnr);
     eventResponse1.eventListenersResponses.set_null();
@@ -175,8 +186,7 @@ BOOST_AUTO_TEST_CASE(UnsychronizedEventSequenceNumberTest)
 
     transport.onEventResponse(eventResponse1);
 
-    std::shared_ptr<EventSyncRequest> eventSyncRequest =
-                        transport.createEventRequest(requestId++);
+    std::shared_ptr<EventSyncRequest> eventSyncRequest = transport.createEventRequest(requestId++);
 
     BOOST_CHECK(eventSyncRequest);
     BOOST_CHECK(eventSyncRequest->eventSequenceNumberRequest.is_null());
@@ -184,12 +194,11 @@ BOOST_AUTO_TEST_CASE(UnsychronizedEventSequenceNumberTest)
 
     const auto& sendingEvents = eventSyncRequest->events.get_array();
     for (const auto& e : sendingEvents) {
-        if (e.seqNum != expected_sn++) {
+        if (e.seqNum != ++expected_sn) {
             BOOST_CHECK(false);
         }
     }
 }
-
 BOOST_AUTO_TEST_SUITE_END()
 
 }

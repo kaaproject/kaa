@@ -37,7 +37,7 @@ extern "C" {
 /**
  * Log records structure generated based on the specified data schema.
  */
-typedef kaa_logging_${logName}_t kaa_user_log_record_t;
+typedef kaa_logging_${record_name}_t kaa_user_log_record_t;
 
 
 

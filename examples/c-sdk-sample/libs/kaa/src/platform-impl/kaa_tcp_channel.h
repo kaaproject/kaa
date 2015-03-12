@@ -60,12 +60,12 @@ typedef kaa_error_t (*on_kaa_tcp_channel_event_fn)(void *context
 
 
 /**
- * @brief Creates Kaa tcp channel implementation.
+ * @brief Creates a Kaa TCP channel instance.
  *
- * @param[in]   channel                    The pointer to the channel's instance.
- * @param[in]   logger                     The pointer to Kaa logger instance.
- * @param[in]   supported_services         The list of supported services for this channel.
- * @param[in]   supported_service_count    The count of services in the list.
+ * @param[in]   channel                    The pointer to the channel instance.
+t* @param[in]   logger                     The pointer to the Kaa logger instance.
+ * @param[in]   supported_services         A list of supported services for this channel.
+ * @param[in]   supported_service_count    The number of services in the list.
  *
  * @return Error code
  */
@@ -76,10 +76,10 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
 
 
 /**
- * @brief Retrieves socket descriptor of the given channel.
+ * @brief Retrieves the socket descriptor from the given channel instance.
  *
- * @param[in]   channel    Channel's instance.
- * @param[out]  fd_p       Socket descriptor or KAA_TCP_SOCKET_NOT_SET
+ * @param[in]   channel    The channel instance.
+ * @param[out]  fd_p       The socket descriptor or KAA_TCP_SOCKET_NOT_SET
  *                         if there is no open descriptor.
  *
  * @return Error code.
@@ -89,12 +89,12 @@ kaa_error_t kaa_tcp_channel_get_descriptor(kaa_transport_channel_interface_t *se
 
 
 /**
- * @brief Checks if the given channel is ready for the specified event.
+ * @brief Checks whether the given channel instance is ready to handle the specified event.
  *
- * @param[in]   channel       Channel's instance.
- * @param[out]  event_type    Event type: FD_READ, FD_WRITE, FD_EXCEPTION.
+ * @param[in]   channel       The channel instance.
+ * @param[in]   event_type    The event type: FD_READ, FD_WRITE, FD_EXCEPTION.
  *
- * @return                    true - if the channel is ready for
+ * @return                    true - if the channel is ready to handle
  *                            the specified event, false - otherwise.
  */
 bool kaa_tcp_channel_is_ready(kaa_transport_channel_interface_t *self
@@ -102,10 +102,10 @@ bool kaa_tcp_channel_is_ready(kaa_transport_channel_interface_t *self
 
 
 /**
- * @brief Notifies the channel about the I/O event.
+ * @brief Notifies the channel instance about the I/O event.
  *
- * @param[in]   channel       Channel's instance.
- * @param[in]   event_type    Event type: FD_READ, FD_WRITE, FD_EXEPTION.
+ * @param[in]   channel       The channel instance.
+ * @param[in]   event_type    The event type: FD_READ, FD_WRITE, FD_EXEPTION.
  *
  * @return Error code.
  */
@@ -114,12 +114,12 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *sel
 
 
 /**
- * @brief Retrieves the maximum timeout for the Multiplexing I/O like select/poll.
+ * @brief Retrieves the maximum timeout for the multiplexing I/O like select/poll.
  * Used for @link kaa_tcp_channel_check_keepalive @endlink needs.
  *
- * @param[in]   channel        Channel's instance.
+ * @param[in]   channel        The channel instance.
  * @param[out]  max_timeout    The maximum timeout value (in seconds),
- *                             0 - means timeout is not used by this channel.
+ *                             0 - indicates that timeout is not used by this channel.
  *
  * @return Error code.
  */
@@ -128,12 +128,12 @@ kaa_error_t kaa_tcp_channel_get_max_timeout(kaa_transport_channel_interface_t *s
 
 
 /**
- * @brief Checks if the keepalive timeout occurred. If so, sends
- * keepalive message to a server.
+ * @brief Checks whether a keepalive timeout occurred. If so, sends a
+ * keepalive message to the server.
  *
- * Should be called on Multiplexing I/O (like select/poll) timeouts.
+ * Should be called if the multiplexing I/O (like select/poll) time limit expires.
  *
- * @param[in]   channel    Channel's instance.
+ * @param[in]   channel    The channel instance.
  *
  * @return Error code.
  */
@@ -141,13 +141,13 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
 
 
 /**
- * @brief Sets callback for the current channel connection state.
+ * @brief Sets the callback for the current channel connection state.
  *
  * See @link kaa_tcp_channel_event_fn @endlink .
  *
- * @param[in]   channel     Channel's instance.
- * @param[in]   callback    Connection event callback.
- * @param[in]   context     Callback context.
+ * @param[in]   channel     The channel instance.
+ * @param[in]   callback    The connection event callback.
+ * @param[in]   context     The callback context.
  *
  * @return Error code.
  */
@@ -159,9 +159,9 @@ kaa_error_t kaa_tcp_channel_set_socket_events_callback(kaa_transport_channel_int
 /**
  * @brief Sets a keepalive timeout for the current channel.
  *
- * @param[in]    channel      Channel's instance.
- * @param[in]    keepalive    Keepalive timeout (in seconds).
- *                            0 - means keepalive is not used.
+ * @param[in]    channel      The channel instance.
+ * @param[in]    keepalive    The keepalive timeout (in seconds).
+ *                            0 - indicates that a keepalive is not used.
  *
  * @return Error code
  */
@@ -170,9 +170,9 @@ kaa_error_t kaa_tcp_channel_set_keepalive_timeout(kaa_transport_channel_interfac
 
 
 /**
- * @brief Disconnects current channel. This channel's instance could not be used any more.
+ * @brief Disconnects the current channel.
  *
- * @param[in]    channel    Channel's instance.
+ * @param[in]    channel    The channel instance.
  *
  * @return Error code
  */

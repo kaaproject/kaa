@@ -82,7 +82,7 @@ public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
         GenericRecord mergedConfiguration = baseConverter.decodeJson(baseConfiguration.getRawData());
 
         try {
-            ArrayOverrideStrategyResolver arrayMergeStrategyResolver = new ArrayOverrideStrategyResolver(baseConfiguration.getSchema());
+            ArrayOverrideStrategyResolver arrayMergeStrategyResolver = new ArrayOverrideStrategyResolver(baseSchemaParser.getTypes());
             for (OverrideData entry : overrideConfigurations) {
                 String configurationToApply = entry.getRawData();
                 // else execute merge

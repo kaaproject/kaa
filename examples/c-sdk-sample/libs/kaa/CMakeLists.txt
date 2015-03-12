@@ -34,7 +34,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
 # Compiler specific flags.
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c1x")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -undefined dynamic_lookup")
 endif()
 
@@ -97,6 +97,10 @@ if(KAA_WITHOUT_LOGGING)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_LOGGING")
 endif()
 
+if(KAA_WITHOUT_CONFIGURATION)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_CONFIGURATION")
+endif()
+
 # Sets path(s) to header files.
 include_directories(KAA_INCLUDE_PATHS
                         ${KAA_INCLUDE_PATHS}
@@ -121,6 +125,7 @@ set (KAA_SOURCE_FILES
         src/kaa_event.c
         src/kaa_logging.c
         src/kaa_profile.c
+        src/kaa_configuration_manager.c
         src/kaa_status.c
         src/kaa_user.c
         src/kaa.c

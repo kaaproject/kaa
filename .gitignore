@@ -21,4 +21,6 @@ tmp_sh/
 bin/
 **/dependency-reduced-pom.xml
 server/common/server-shared/src/main/java/org/kaaproject/kaa/server/common/Version.java
+server/admin/src/main/java/org/kaaproject/kaa/server/admin/shared/Version.java
+sandbox/web/src/main/java/org/kaaproject/kaa/sandbox/web/shared/Version.java
 pom.xml.versionsBackup

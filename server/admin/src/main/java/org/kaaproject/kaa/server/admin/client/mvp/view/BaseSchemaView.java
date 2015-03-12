@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.FileUploadForm;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 
 import com.google.gwt.user.client.ui.HasValue;
 
@@ -34,8 +34,6 @@ public interface BaseSchemaView extends BaseDetailsView {
 
     public HasValue<String> getEndpointCount();
 
-    public HasValue<String> getSchema();
-
-    public FileUploadForm getSchemaFileUpload();
+    public RecordPanel getSchemaForm();
 
 }

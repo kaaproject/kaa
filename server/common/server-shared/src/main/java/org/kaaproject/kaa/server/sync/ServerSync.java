@@ -15,6 +15,9 @@
  */
 package org.kaaproject.kaa.server.sync;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kaaproject.kaa.server.sync.bootstrap.BootstrapServerSync;
 
 /**
@@ -214,6 +217,122 @@ public class ServerSync {
 
     public void setBootstrapSync(BootstrapServerSync bootstrapSync) {
         this.bootstrapSync = bootstrapSync;
+    }
+    
+    public static ServerSync deepCopy(ServerSync source) {
+        if (source == null) {
+            return null;
+        }
+        ServerSync copy = new ServerSync();
+        copy.setRequestId(source.getRequestId());
+        copy.setStatus(source.getStatus());
+        copy.setUserSync(deepCopy(source.getUserSync()));
+        copy.setRedirectSync(deepCopy(source.getRedirectSync()));
+        copy.setProfileSync(deepCopy(source.getProfileSync()));
+        copy.setNotificationSync(deepCopy(source.getNotificationSync()));
+        copy.setLogSync(deepCopy(source.getLogSync()));
+        copy.setEventSync(deepCopy(source.getEventSync()));
+        copy.setConfigurationSync(deepCopy(source.getConfigurationSync()));
+        return copy;
+    }
+
+    private static ConfigurationServerSync deepCopy(ConfigurationServerSync source) {
+        if (source == null) {
+            return null;
+        }
+        ConfigurationServerSync copy = new ConfigurationServerSync();
+        copy.setAppStateSeqNumber(source.getAppStateSeqNumber());
+        copy.setResponseStatus(source.getResponseStatus());
+        copy.setConfDeltaBody(source.getConfDeltaBody());
+        copy.setConfSchemaBody(source.getConfSchemaBody());
+        return copy;
+    }
+
+    private static EventServerSync deepCopy(EventServerSync source) {
+        if (source == null) {
+            return null;
+        }
+        EventServerSync copy = new EventServerSync();
+        if (source.getEventSequenceNumberResponse() != null) {
+            copy.setEventSequenceNumberResponse(source.getEventSequenceNumberResponse());
+        }
+        if (source.getEvents() != null) {
+            copy.setEvents(new ArrayList<>(source.getEvents()));
+        }
+        if (source.getEventListenersResponses() != null) {
+            copy.setEventListenersResponses(new ArrayList<>(source.getEventListenersResponses()));
+        }
+        return copy;
+    }
+
+    private static LogServerSync deepCopy(LogServerSync source) {
+        if (source == null) {
+            return null;
+        }
+        if (source.getDeliveryStatuses() != null) {
+            List<LogDeliveryStatus> statusList = new ArrayList<>(source.getDeliveryStatuses().size());
+            for (LogDeliveryStatus status : source.getDeliveryStatuses()) {
+                statusList.add(new LogDeliveryStatus(status.getRequestId(), status.getResult(), status.getErrorCode()));
+            }
+            return new LogServerSync(statusList);
+        } else {
+            return new LogServerSync();
+        }
+    }
+
+    private static NotificationServerSync deepCopy(NotificationServerSync source) {
+        if (source == null) {
+            return null;
+        }
+        NotificationServerSync copy = new NotificationServerSync();
+        copy.setAppStateSeqNumber(source.getAppStateSeqNumber());
+        copy.setResponseStatus(source.getResponseStatus());
+        if (source.getNotifications() != null) {
+            copy.setNotifications(new ArrayList<>(source.getNotifications()));
+        }
+        if (source.getAvailableTopics() != null) {
+            copy.setAvailableTopics(new ArrayList<>(source.getAvailableTopics()));
+        }
+        return copy;
+    }
+
+    private static ProfileServerSync deepCopy(ProfileServerSync source) {
+        if (source == null) {
+            return null;
+        }
+        return new ProfileServerSync(source.getResponseStatus());
+    }
+
+    private static RedirectServerSync deepCopy(RedirectServerSync source) {
+        if (source == null) {
+            return null;
+        }
+        return new RedirectServerSync(source.getAccessPointId());
+    }
+
+    private static UserServerSync deepCopy(UserServerSync source) {
+        if (source == null) {
+            return null;
+        }
+        UserServerSync copy = new UserServerSync();
+        if (source.getEndpointAttachResponses() != null) {
+            copy.setEndpointAttachResponses(new ArrayList<>(source.getEndpointAttachResponses()));
+        }
+        if (source.getEndpointDetachResponses() != null) {
+            copy.setEndpointDetachResponses(new ArrayList<>(source.getEndpointDetachResponses()));
+        }
+        if (source.getUserAttachNotification() != null) {
+            copy.setUserAttachNotification(new UserAttachNotification(source.getUserAttachNotification().getUserExternalId(), source
+                    .getUserAttachNotification().getEndpointAccessToken()));
+        }
+        if (source.getUserAttachResponse() != null) {
+            UserAttachResponse uarSource = source.getUserAttachResponse();
+            copy.setUserAttachResponse(new UserAttachResponse(uarSource.getResult(), uarSource.getErrorCode(), uarSource.getErrorReason()));
+        }
+        if (source.getUserDetachNotification() != null) {
+            copy.setUserDetachNotification(new UserDetachNotification(source.getUserDetachNotification().getEndpointAccessToken()));
+        }
+        return copy;
     }
 
     @Override

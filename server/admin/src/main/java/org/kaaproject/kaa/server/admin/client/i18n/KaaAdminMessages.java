@@ -1,98 +1,242 @@
-/*
- * Copyright 2014 CyberVision, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.kaaproject.kaa.server.admin.client.i18n;
 
-import com.google.gwt.i18n.client.Messages;
+/**
+ * Interface to represent the messages contained in resource bundle:
+ * 	D:/git/kaa_github/server/admin/src/main/java/org/kaaproject/kaa/server/admin/client/i18n/KaaAdminMessages.properties'.
+ */
+public interface KaaAdminMessages extends com.google.gwt.i18n.client.Messages {
+  
+  /**
+   * Translated "Are you sure you want to delete the selected entry?".
+   * 
+   * @return translated "Are you sure you want to delete the selected entry?"
+   */
+  @DefaultMessage("Are you sure you want to delete the selected entry?")
+  @Key("deleteSelectedEntryQuestion")
+  String deleteSelectedEntryQuestion();
 
-public interface KaaAdminMessages extends Messages {
+  /**
+   * Translated "Delete entry".
+   * 
+   * @return translated "Delete entry"
+   */
+  @DefaultMessage("Delete entry")
+  @Key("deleteSelectedEntryTitle")
+  String deleteSelectedEntryTitle();
 
-    @DefaultMessage("This is first time login.<br>Please enter Kaa admin username and password then click ''Login'' to register.")
-    String kaaAdminNotExists();
+  /**
+   * Translated "You have unsaved changes on this form. If you navigate away from this page without first saving, all changes will be lost.".
+   * 
+   * @return translated "You have unsaved changes on this form. If you navigate away from this page without first saving, all changes will be lost."
+   */
+  @DefaultMessage("You have unsaved changes on this form. If you navigate away from this page without first saving, all changes will be lost.")
+  @Key("detailsMayStopMessage")
+  String detailsMayStopMessage();
 
-    @DefaultMessage("Username and password shouldn''t be empty!")
-    String emptyUsernameOrPassword();
+  /**
+   * Translated "Username and password can not be empty!".
+   * 
+   * @return translated "Username and password can not be empty!"
+   */
+  @DefaultMessage("Username and password can not be empty!")
+  @Key("emptyUsernameOrPassword")
+  String emptyUsernameOrPassword();
 
-    @DefaultMessage("Unexpected Error occurred!")
-    String unexpectedError();
+  /**
+   * Translated "Powered by <b><a href=\"http://www.kaaproject.org\">Kaa IoT Application Plaform</a></b> {0} · <a href=\"http://jira.kaaproject.org/browse/KAA\">Report a bug</a> · <a href=\"https://docs.kaaproject.org/display/KAA\">Documentation</a>".
+   * 
+   * @return translated "Powered by <b><a href=\"http://www.kaaproject.org\">Kaa IoT Application Plaform</a></b> {0} · <a href=\"http://jira.kaaproject.org/browse/KAA\">Report a bug</a> · <a href=\"https://docs.kaaproject.org/display/KAA\">Documentation</a>"
+   */
+  @DefaultMessage("Powered by <b><a href=\"http://www.kaaproject.org\">Kaa IoT Application Plaform</a></b> {0} · <a href=\"http://jira.kaaproject.org/browse/KAA\">Report a bug</a> · <a href=\"https://docs.kaaproject.org/display/KAA\">Documentation</a>")
+  @Key("footerMessage")
+  String footerMessage(String arg0);
 
-    @DefaultMessage("Current password is temporary. Please change your password.")
-    String tempCredentials();
+  /**
+   * Translated "This client is not compatible with the server. Cleanup and refresh the browser.".
+   * 
+   * @return translated "This client is not compatible with the server. Cleanup and refresh the browser."
+   */
+  @DefaultMessage("This client is not compatible with the server. Cleanup and refresh the browser.")
+  @Key("incompatibleRemoteService")
+  String incompatibleRemoteService();
 
-    @DefaultMessage("Entered passwords doesn''t match")
-    String newPasswordsNotMatch();
+  /**
+   * Translated "Incorrect configuration. Validate your configuration regarding schema version.".
+   * 
+   * @return translated "Incorrect configuration. Validate your configuration regarding schema version."
+   */
+  @DefaultMessage("Incorrect configuration. Validate your configuration regarding schema version.")
+  @Key("incorrectConfiguration")
+  String incorrectConfiguration();
 
-    @DefaultMessage("New password should be different")
-    String newPasswordShouldDifferent();
+  /**
+   * Translated "This is the first time login.<br>Please enter Kaa administrator username and password then click ''Login'' to register.".
+   * 
+   * @return translated "This is the first time login.<br>Please enter Kaa administrator username and password then click ''Login'' to register."
+   */
+  @DefaultMessage("This is the first time login.<br>Please enter Kaa administrator username and password then click ''Login'' to register.")
+  @Key("kaaAdminNotExists")
+  String kaaAdminNotExists();
 
-    @DefaultMessage("Are you sure you want to delete selected entry?")
-    String deleteSelectedEntryQuestion();
+  /**
+   * Translated "<h1 title=\"Please login\">Please login</h1>".
+   * 
+   * @return translated "<h1 title=\"Please login\">Please login</h1>"
+   */
+  @DefaultMessage("<h1 title=\"Please login\">Please login</h1>")
+  @Key("loginTitle")
+  String loginTitle();
 
-    @DefaultMessage("Delete entry")
-    String deleteSelectedEntryTitle();
+  /**
+   * Translated "New password should be different".
+   * 
+   * @return translated "New password should be different"
+   */
+  @DefaultMessage("New password should be different")
+  @Key("newPasswordShouldDifferent")
+  String newPasswordShouldDifferent();
 
-    @DefaultMessage("Are you sure you want to unassign selected notification topic from endpoint group?")
-    String removeTopicFromEndpointGroupQuestion();
+  /**
+   * Translated "Entered passwords do not match".
+   * 
+   * @return translated "Entered passwords do not match"
+   */
+  @DefaultMessage("Entered passwords do not match")
+  @Key("newPasswordsNotMatch")
+  String newPasswordsNotMatch();
 
-    @DefaultMessage("Unassign notification topic")
-    String removeTopicFromEndpointGroupTitle();
+  /**
+   * Translated "Page {0} of {1}".
+   * 
+   * @return translated "Page {0} of {1}"
+   */
+  @DefaultMessage("Page {0} of {1}")
+  @Key("pagerText")
+  String pagerText(String arg0,  String arg1);
 
-    @DefaultMessage("Fields marked with <span class=\"{0}\"></span> needs to be filled before saving.")
-    String requiredFieldsNote(String requiredFieldClass);
+  /**
+   * Translated "Your password has been reset. You should receive mail with new temporary password.".
+   * 
+   * @return translated "Your password has been reset. You should receive mail with new temporary password."
+   */
+  @DefaultMessage("Your password has been reset. You should receive mail with new temporary password.")
+  @Key("passwordWasReset")
+  String passwordWasReset();
 
-    @DefaultMessage("<h1 title=\"Please login\">Please login</h1>")
-    String loginTitle();
+  /**
+   * Translated "Are you sure you want to delete selected log appender?".
+   * 
+   * @return translated "Are you sure you want to delete selected log appender?"
+   */
+  @DefaultMessage("Are you sure you want to delete selected log appender?")
+  @Key("removeLogAppenderQuestion")
+  String removeLogAppenderQuestion();
 
-    @DefaultMessage("Page {0} of {1}")
-    String pagerText(int current, int total);
+  /**
+   * Translated "Remove log appender".
+   * 
+   * @return translated "Remove log appender"
+   */
+  @DefaultMessage("Remove log appender")
+  @Key("removeLogAppenderTitle")
+  String removeLogAppenderTitle();
 
-    @DefaultMessage("Incorrect configuration. Validate your configuration regarding schema version.")
-    String incorrectConfiguration();
+  /**
+   * Translated "Are you sure you want to unassign selected notification topic from endpoint group?".
+   * 
+   * @return translated "Are you sure you want to unassign selected notification topic from endpoint group?"
+   */
+  @DefaultMessage("Are you sure you want to unassign selected notification topic from endpoint group?")
+  @Key("removeTopicFromEndpointGroupQuestion")
+  String removeTopicFromEndpointGroupQuestion();
 
-    @DefaultMessage("Are you sure you want to delete selected log appender?")
-    String removeLogAppenderQuestion();
+  /**
+   * Translated "Unassign notification topic".
+   * 
+   * @return translated "Unassign notification topic"
+   */
+  @DefaultMessage("Unassign notification topic")
+  @Key("removeTopicFromEndpointGroupTitle")
+  String removeTopicFromEndpointGroupTitle();
 
-    @DefaultMessage("Remove log appender")
-    String removeLogAppenderTitle();
+  /**
+   * Translated "Are you sure you want to delete selected user verifier?".
+   * 
+   * @return translated "Are you sure you want to delete selected user verifier?"
+   */
+  @DefaultMessage("Are you sure you want to delete selected user verifier?")
+  @Key("removeUserVerifierQuestion")
+  String removeUserVerifierQuestion();
 
-    @DefaultMessage("It looks like your session has timed out, or you have been logged out of site. You will need to log back in to continue.")
-    String sessionExpiredMessage();
-    
-    @DefaultMessage("You have unsaved changes on this form. If you navigate away from this page without first saving, all changes will be lost.")
-    String detailsMayStopMessage();
-    
-    @DefaultMessage("Please enter existing username or email in order to reset password.")
-    String resetPasswordMessage();
-    
-    @DefaultMessage("Email has been sent with further instruction to reset your password.")
-    String resetPasswordLinkWasSent();
+  /**
+   * Translated "Remove user verifier".
+   * 
+   * @return translated "Remove user verifier"
+   */
+  @DefaultMessage("Remove user verifier")
+  @Key("removeUserVerifierTitle")
+  String removeUserVerifierTitle();
 
-    @DefaultMessage("Your password has been reset. You should receive mail with new temporary password.")
-    String passwordWasReset();
+  /**
+   * Translated "Fields marked with <span class=\"{0}\"></span> are mandatory.".
+   * 
+   * @return translated "Fields marked with <span class=\"{0}\"></span> are mandatory."
+   */
+  @DefaultMessage("Fields marked with <span class=\"{0}\"></span> are mandatory.")
+  @Key("requiredFieldsNote")
+  String requiredFieldsNote(String arg0);
 
-    @DefaultMessage("This client is not compatible with the server. Cleanup and refresh the browser.")
-    String incompatibleRemoteService();
-    
-    @DefaultMessage("An error occurred while communicating with the server. Possible causes are:<br>a) Server is not running, or <br>b) Network problem.<br>Check your network connection or try again later.")
-    String serverIsUnreacheableMessage();
-    
-    @DefaultMessage("Remove user verifier")
-    String removeUserVerifierTitle();
-    
-    @DefaultMessage("Are you sure you want to delete selected user verifier?")
-    String removeUserVerifierQuestion();
+  /**
+   * Translated "Email has been sent with further instruction to reset your password.".
+   * 
+   * @return translated "Email has been sent with further instruction to reset your password."
+   */
+  @DefaultMessage("Email has been sent with further instruction to reset your password.")
+  @Key("resetPasswordLinkWasSent")
+  String resetPasswordLinkWasSent();
 
+  /**
+   * Translated "Please enter existing username or email in order to reset password.".
+   * 
+   * @return translated "Please enter existing username or email in order to reset password."
+   */
+  @DefaultMessage("Please enter existing username or email in order to reset password.")
+  @Key("resetPasswordMessage")
+  String resetPasswordMessage();
+
+  /**
+   * Translated "An error occurred while communicating with the server. Possible causes are:<br>a) Server is not running, or <br>b) Network problem.<br>Check your network connection or try again later.".
+   * 
+   * @return translated "An error occurred while communicating with the server. Possible causes are:<br>a) Server is not running, or <br>b) Network problem.<br>Check your network connection or try again later."
+   */
+  @DefaultMessage("An error occurred while communicating with the server. Possible causes are:<br>a) Server is not running, or <br>b) Network problem.<br>Check your network connection or try again later.")
+  @Key("serverIsUnreacheableMessage")
+  String serverIsUnreacheableMessage();
+
+  /**
+   * Translated "It looks like your session has timed out, or you have been logged out of site. You will need to log back in to continue.".
+   * 
+   * @return translated "It looks like your session has timed out, or you have been logged out of site. You will need to log back in to continue."
+   */
+  @DefaultMessage("It looks like your session has timed out, or you have been logged out of site. You will need to log back in to continue.")
+  @Key("sessionExpiredMessage")
+  String sessionExpiredMessage();
+
+  /**
+   * Translated "Current password is temporary. Please change your password.".
+   * 
+   * @return translated "Current password is temporary. Please change your password."
+   */
+  @DefaultMessage("Current password is temporary. Please change your password.")
+  @Key("tempCredentials")
+  String tempCredentials();
+
+  /**
+   * Translated "Unexpected error occurred".
+   * 
+   * @return translated "Unexpected error occurred"
+   */
+  @DefaultMessage("Unexpected error occurred")
+  @Key("unexpectedError")
+  String unexpectedError();
 }

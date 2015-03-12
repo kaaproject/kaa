@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.client.bootstrap.DefaultBootstrapManager;
@@ -97,16 +99,6 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * <p>
  * Abstract class that holds general elements of Kaa library.
@@ -141,9 +133,12 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaClient.class);
     private static final long LONG_POLL_TIMEOUT = 60000L;
 
-    private boolean isInitialized = false;
+    private volatile boolean isInitialized = false;
 
     protected final ConfigurationManager configurationManager;
+    protected final AbstractLogCollector logCollector;
+
+    private final ExecutorService lifecycleTasksExecutor = Executors.newSingleThreadExecutor();
 
     private final DefaultNotificationManager notificationManager;
     private final DefaultProfileManager profileManager;
@@ -155,7 +150,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     private final EventFamilyFactory eventFamilyFactory;
 
     private final DefaultEndpointRegistrationManager endpointRegistrationManager;
-    protected final AbstractLogCollector logCollector;
 
     private final Map<TransportType, KaaTransport> transports = new HashMap<TransportType, KaaTransport>();
     private final DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
@@ -239,7 +233,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         bootstrapTransport.setBootstrapManager(bootstrapManager);
 
         configurationManager = new ResyncConfigurationManager(properties);
-        
+
         transports.put(TransportType.BOOTSTRAP, bootstrapTransport);
         profileTransport.setProfileManager(profileManager);
         profileTransport.setClientProperties(this.properties);
@@ -250,7 +244,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         transports.put(TransportType.NOTIFICATION, notificationTransport);
         configurationTransport.setConfigurationHashContainer(configurationManager.getConfigurationHashContainer());
         configurationTransport.setConfigurationProcessor(configurationManager.getConfigurationProcessor());
-        //TODO: this should be part of properties and provided by user during SDK generation
+        // TODO: this should be part of properties and provided by user during
+        // SDK generation
         configurationTransport.setResyncOnly(true);
         transports.put(TransportType.CONFIGURATION, configurationTransport);
         userTransport.setEndpointRegistrationProcessor(endpointRegistrationManager);
@@ -273,73 +268,101 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void start() {
-        try {
-            if (!isInitialized) {
-                isInitialized = true;
-            } else {
-                LOG.warn("Client is already initialized!");
-                return;
+        lifecycleTasksExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                LOG.debug("Client startup initiated");
+                try {
+                    if (!isInitialized) {
+                        isInitialized = true;
+                    } else {
+                        LOG.warn("Client is already initialized!");
+                        return;
+                    }
+                    // Load configuration
+                    configurationManager.init();
+                    bootstrapManager.receiveOperationsServerList();
+                    if (stateListener != null) {
+                        stateListener.onStarted();
+                    }
+                } catch (TransportException e) {
+                    LOG.error("Start failed", e);
+                    if (stateListener != null) {
+                        stateListener.onStartFailure(new KaaClusterConnectionException(e));
+                    }
+                } catch (KaaRuntimeException e) {
+                    LOG.error("Start failed", e);
+                    if (stateListener != null) {
+                        stateListener.onStartFailure(new KaaException(e));
+                    }
+                }
             }
-            //Load configuration
-            configurationManager.init();
-            bootstrapManager.receiveOperationsServerList();
-            if (stateListener != null) {
-                stateListener.onStarted();
-            }
-        } catch (TransportException e) {
-            if (stateListener != null) {
-                stateListener.onStartFailure(new KaaClusterConnectionException(e));
-            }
-        } catch (KaaRuntimeException e) {
-            if (stateListener != null) {
-                stateListener.onStartFailure(new KaaException(e));
-            }
-        }
+        });
     }
 
     @Override
     public void stop() {
-        try {
-            kaaClientState.persist();
-            channelManager.shutdown();
-            isInitialized = false;
-            if (stateListener != null) {
-                stateListener.onStopped();
+        lifecycleTasksExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    logCollector.stop();
+                    kaaClientState.persist();
+                    channelManager.shutdown();
+                    isInitialized = false;
+                    if (stateListener != null) {
+                        stateListener.onStopped();
+                    }
+                } catch (Exception e) {
+                    LOG.error("Stop failed", e);
+                    if (stateListener != null) {
+                        stateListener.onStopFailure(new KaaException(e));
+                    }
+                }
             }
-        } catch (Exception e) {
-            if (stateListener != null) {
-                stateListener.onStopFailure(new KaaException(e));
-            }
-        }
+        });
+        lifecycleTasksExecutor.shutdown();
     }
 
     @Override
     public void pause() {
-        try {
-            kaaClientState.persist();
-            channelManager.pause();
-            if (stateListener != null) {
-                stateListener.onPaused();
+        lifecycleTasksExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    kaaClientState.persist();
+                    channelManager.pause();
+                    if (stateListener != null) {
+                        stateListener.onPaused();
+                    }
+                } catch (Exception e) {
+                    LOG.error("Pause failed", e);
+                    if (stateListener != null) {
+                        stateListener.onPauseFailure(new KaaException(e));
+                    }
+                }
             }
-        } catch (Exception e) {
-            if (stateListener != null) {
-                stateListener.onPauseFailure(new KaaException(e));
-            }
-        }
+        });
     }
 
     @Override
     public void resume() {
-        try {
-            channelManager.resume();
-            if (stateListener != null) {
-                stateListener.onResume();
+        lifecycleTasksExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    channelManager.resume();
+                    if (stateListener != null) {
+                        stateListener.onResume();
+                    }
+                } catch (Exception e) {
+                    LOG.error("Resume failed", e);
+                    if (stateListener != null) {
+                        stateListener.onResumeFailure(new KaaException(e));
+                    }
+                }
             }
-        } catch (Exception e) {
-            if (stateListener != null) {
-                stateListener.onResumeFailure(new KaaException(e));
-            }
-        }
+        });
     }
 
     @Override
@@ -351,7 +374,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     public void updateProfile() {
         this.profileManager.updateProfile();
     }
-    
+
     @Override
     public void setConfigurationStorage(ConfigurationStorage storage) {
         this.configurationManager.setConfigurationStorage(storage);

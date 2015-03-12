@@ -21,7 +21,7 @@
   <inherits name='com.google.gwt.user.User'/>
   <inherits name="com.google.gwt.i18n.I18N"/>
   <inherits name="com.google.gwt.i18n.CldrLocales"/>
-  <inherits name="com.google.gwt.user.theme.clean.CleanResources"/>
+  <inherits name="com.google.gwt.user.theme.clean.Clean"/>
 
   <inherits name="org.kaaproject.kaa.common.dto.Dto"/>
   <inherits name="org.kaaproject.avro.ui.gwt.client.AvroUIClient"/>
@@ -40,7 +40,7 @@
 
   <set-property-fallback name="locale" value="en"/>
   
-  <!--  set-property name="locale" value="en"/-->
+  <set-property name="locale" value="en"/>
   
   <set-configuration-property name="locale.cookie" value="KAA_ADMIN_LOCALE"/>
   <set-configuration-property name="locale.useragent" value="Y"/>

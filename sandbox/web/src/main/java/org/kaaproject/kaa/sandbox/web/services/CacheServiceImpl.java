@@ -16,13 +16,13 @@
 package org.kaaproject.kaa.sandbox.web.services;
 
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.sandbox.web.services.cache.CacheService;
 import org.kaaproject.kaa.sandbox.web.services.rest.AdminClientProvider;
 import org.kaaproject.kaa.sandbox.web.services.util.Utils;
 import org.kaaproject.kaa.sandbox.web.shared.dto.ProjectDataKey;
 import org.kaaproject.kaa.sandbox.web.shared.services.SandboxServiceException;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
-import org.kaaproject.kaa.server.common.admin.FileData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +40,7 @@ public class CacheServiceImpl implements CacheService {
     
     private static final String SDK_CACHE = "sdkCache";
     private static final String FILE_CACHE = "fileCache";
+    private static final String PROPS_CACHE = "propsCache";
     
     @Autowired
     private AdminClientProvider clientProvider;
@@ -77,6 +78,19 @@ public class CacheServiceImpl implements CacheService {
     public FileData putProjectFile(ProjectDataKey key, FileData data) {
         return data;
     }
+    
+    @Override
+    @Cacheable(value = PROPS_CACHE, key = "#propertyKey", unless="#result == null")
+    public Object getProperty(String propertyKey) {
+        return null;
+    }
+
+    @Override
+    @CachePut(value = PROPS_CACHE, key = "#propertyKey")
+    public Object putProperty(String propertyKey, Object propertyValue) {
+        return propertyValue;
+    }  
+
 
     @Override
     @Caching(evict = {
@@ -93,6 +107,5 @@ public class CacheServiceImpl implements CacheService {
         }
 
         LOG.info("All caches have been completely flushed.");        
-    }  
-
+    }
 }

@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.topic;
 
 import java.util.Date;
 
+import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
@@ -69,20 +70,23 @@ public class SendNotificationViewImpl extends BaseDetailsViewImpl implements Sen
         
         getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
         
-        notificationData = new RecordPanel(Utils.constants.notificationBody(), this, false, false);
+        notificationData = new RecordPanel(new AvroWidgetsConfig.Builder().
+                recordPanelWidth(900).gridHeight(250).tableHeight(230).createConfig(),
+                Utils.constants.notificationBody(), this, false, false);
+        
         notificationData.addValueChangeHandler(this);
-        getFooter().setWidth("800px");
+        getFooter().setWidth("1000px");
         getFooter().add(notificationData);
     }
     
     @Override
     protected String getCreateTitle() {
-        return Utils.constants.send_notification();
+        return Utils.constants.sendNotification();
     }
 
     @Override
     protected String getViewTitle() {
-        return Utils.constants.send_notification();
+        return Utils.constants.sendNotification();
     }
 
     @Override

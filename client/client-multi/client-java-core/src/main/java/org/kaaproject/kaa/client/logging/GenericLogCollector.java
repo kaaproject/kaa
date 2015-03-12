@@ -54,4 +54,9 @@ public interface GenericLogCollector {
      *            User-defined log upload strategy object.
      */
     void setStrategy(LogUploadStrategy strategy);
+    
+    /**
+     * Stops and/or cleanup resources. 
+     */
+    void stop();
 }

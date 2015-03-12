@@ -33,7 +33,7 @@ public class TypeConverter {
         String cType = new String();
         switch (schema.getType()) {
         case BOOLEAN:
-            cType = "bool";
+            cType = "int8_t";
             break;
         case INT:
             cType = "int32_t";
@@ -41,24 +41,30 @@ public class TypeConverter {
         case LONG:
             cType = "int64_t";
             break;
+        case FLOAT:
+            cType = "float";
+            break;
+        case DOUBLE:
+            cType = "double";
+            break;
         case STRING:
-            cType = "kaa_string_t*";
+            cType = "kaa_string_t *";
             break;
         case BYTES:
         case FIXED:
-            cType = "kaa_bytes_t*";
+            cType = "kaa_bytes_t *";
             break;
         case ARRAY:
-            cType = "kaa_list_t*";
+            cType = "kaa_list_t *";
             break;
         case UNION:
-            cType = "kaa_union_t*";
+            cType = "kaa_union_t *";
             break;
         case ENUM:
             cType = namespace + "_" + StyleUtils.toLowerUnderScore(schema.getName()) + "_t";
             break;
         case RECORD:
-            cType = namespace + "_" + StyleUtils.toLowerUnderScore(schema.getName()) + "_t*";
+            cType = namespace + "_" + StyleUtils.toLowerUnderScore(schema.getName()) + "_t *";
             break;
         default:
             // TODO: add handling
@@ -74,6 +80,7 @@ public class TypeConverter {
 
     public static String generateUnionName(String prefix, Schema schema) {
         StringBuilder builder = new StringBuilder(prefix + "_UNION_");
+
         List<Schema> branches = schema.getTypes();
         int branchCounter = branches.size();
 
@@ -119,8 +126,8 @@ public class TypeConverter {
 
     public static boolean isAvroPrimitive(Schema schema) {
         Type type = schema.getType();
-        return (type == Type.BOOLEAN || type == Type.INT ||
-                type == Type.LONG || type == Type.ENUM);
+        return (type == Type.BOOLEAN || type == Type.INT || type == Type.LONG ||
+                type == Type.ENUM || type == Type.FLOAT || type == Type.DOUBLE);
     }
 
     public static boolean isAvroNull(Schema schema) {
@@ -153,6 +160,14 @@ public class TypeConverter {
 
     public static boolean isAvroBytes(Schema schema) {
         return (schema.getType() == Type.BYTES);
+    }
+
+    public static boolean isAvroFloat(Schema schema) {
+        return (schema.getType() == Type.FLOAT);
+    }
+
+    public static boolean isAvroDouble(Schema schema) {
+        return (schema.getType() == Type.DOUBLE);
     }
 
     public static boolean isTypeOut(Schema schema) {

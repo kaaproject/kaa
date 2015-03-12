@@ -19,10 +19,6 @@
 
 #include  "kaa/KaaDefaults.hpp"
 
-#if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || \
-    defined(KAA_DEFAULT_OPERATION_HTTP_CHANNEL) || \
-    defined(KAA_DEFAULT_LONG_POLL_CHANNEL)
-
 #include <cstdint>
 #include <boost/shared_array.hpp>
 #include <string>
@@ -41,7 +37,5 @@ public:
 };
 
 }
-
-#endif
 
 #endif /* IHTTPRESPONSE_HPP_ */
