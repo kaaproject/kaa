@@ -224,5 +224,4 @@ public class KaaNotificationApp extends Application {
             }
         };
     }
-
 }

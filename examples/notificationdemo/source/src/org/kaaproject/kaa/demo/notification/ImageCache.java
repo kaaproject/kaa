@@ -60,5 +60,4 @@ public class ImageCache {
         }
         return bmp;
     }
-
 }

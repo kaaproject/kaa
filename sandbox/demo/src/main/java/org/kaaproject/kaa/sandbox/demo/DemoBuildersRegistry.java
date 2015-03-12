@@ -40,5 +40,4 @@ public class DemoBuildersRegistry {
     public static List<DemoBuilder> getRegisteredDemoBuilders() {
         return demoBuilders;
     }
-
 }

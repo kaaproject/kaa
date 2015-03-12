@@ -90,5 +90,4 @@ public class DataCollectionDemo {
         }
         return logs;
     }
-
 }

@@ -58,10 +58,14 @@ public class EventDemo {
         LOG.info("Event demo started");
 
         // Creating Kaa desktop client instance
-        kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener());
+        kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener() {
+            @Override
+            public void onStarted() {
+                LOG.info("Kaa client started");
+            }
+        });
         // Starting Kaa client
         kaaClient.start();
-        LOG.info("Kaa client started");
 
         // Our demo application uses trustful verifier, so it does not matter
         // which credentials you would pass to registration manager
@@ -72,7 +76,7 @@ public class EventDemo {
 
                 //If our endpoint was successfully attached
                 if (response.getResult() == SyncResponseResultType.SUCCESS) {
-                    doWork();
+                    onUserAttached();
                 }
                 //If not - release all network connections and application resources.
                 //Shutdown all Kaa client tasks.
@@ -86,7 +90,7 @@ public class EventDemo {
     }
 
 
-    public static void doWork() {
+    public static void onUserAttached() {
 
         List<String> listenerFQNs = new LinkedList<>();
         listenerFQNs.add(ThermostatInfoRequest.class.getName());
@@ -123,18 +127,18 @@ public class EventDemo {
         tecf.addListener(new DefaultEventFamilyListener() {
 
             @Override
-            public void onEvent(ChangeDegreeRequest arg0, String arg1) {
-                LOG.info("ChangeDegreeRequest event fired!");
+            public void onEvent(ChangeDegreeRequest changeDegreeRequest, String senderId) {
+                LOG.info("ChangeDegreeRequest event fired! change temperature by {} degrees, sender: {}", changeDegreeRequest.getDegree(), senderId);
             }
 
             @Override
-            public void onEvent(ThermostatInfoResponse arg0, String arg1) {
-                LOG.info("ThermostatInfoResponse event fired!");
+            public void onEvent(ThermostatInfoResponse thermostatInfoResponse, String senderId) {
+                LOG.info("ThermostatInfoResponse event fired! thermostat info: {}, sender: {}", thermostatInfoResponse.getThermostatInfo(), senderId);
             }
 
             @Override
-            public void onEvent(ThermostatInfoRequest arg0, String arg1) {
-                LOG.info("ThermostatInfoRequest event fired!");
+            public void onEvent(ThermostatInfoRequest thermostatInfoRequest, String senderId) {
+                LOG.info("ThermostatInfoRequest event fired! sender: {}",senderId);
             }
         });
 
@@ -148,7 +152,7 @@ public class EventDemo {
         // Adding a broadcasted event to the block
         tecf.addEventToBlock(trxId, new ThermostatInfoRequest());
         // Adding a targeted event to the block
-        tecf.addEventToBlock(trxId, new ChangeDegreeRequest(-30), "home_thermostat");
+        tecf.addEventToBlock(trxId, new ChangeDegreeRequest(-30), "thermostat_endpoint_id");
 
         // Send added events in a batch
         eventFamilyFactory.submitEventsBlock(trxId);

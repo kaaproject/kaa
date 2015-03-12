@@ -28,7 +28,6 @@ import org.kaaproject.kaa.demo.notification.R;
 import org.kaaproject.kaa.schema.example.Notification;
 import java.util.List;
 
-
 public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
     private final List<Notification> list;
     private final LayoutInflater inflater;
@@ -45,7 +44,7 @@ public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
     }
 
     @SuppressLint("InflateParams")
-	@Override
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view;
         if (convertView == null) {
@@ -64,5 +63,4 @@ public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
         holder.image.setImageBitmap(ImageCache.cache.getImage(notification.getImage()));
         return view;
     }
-
 }
