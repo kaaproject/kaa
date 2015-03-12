@@ -33,18 +33,12 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <main.dir>${basedir}/../../..</main.dir>
       <httpcomponents.version>4.2.6</httpcomponents.version>
-      <spring.version>3.2.10.RELEASE</spring.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>log-shared</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>admin-rest-client</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

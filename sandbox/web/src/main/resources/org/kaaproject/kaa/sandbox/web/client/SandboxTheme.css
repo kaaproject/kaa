@@ -1,0 +1,205 @@
+.b-app-header-title {
+	font-family: Arial; 
+	font-size: 34px; 
+	font-weight: bold; 
+	color: #666666; 
+	padding-left: 30px;
+}
+
+.b-app-header-menu {
+    font-family: Arial; 
+    font-size: 13px; 
+    color: #666666; 
+    font-weight: bold; 
+    padding: 0 25px;
+    cursor:pointer;
+}
+
+.b-app-header-menu .caret {
+    margin-left: 0;
+    margin-top: 8px;
+}
+
+.caret {
+    border-left: 4px solid rgba(0, 0, 0, 0);
+    border-right: 4px solid rgba(0, 0, 0, 0);
+    border-top: 4px solid #000000;
+    content: "";
+    display: inline-block;
+    height: 0;
+    vertical-align: top;
+    width: 0;
+}
+
+.b-app-footer {
+    font-family: Arial; 
+    font-size: 12px;
+    color: #666666; 
+}
+
+.b-app-footer a, .b-app-footer a:hover, .b-app-footer a:visited {
+    color: #666666;
+}
+
+.b-app-padded-panel {
+	padding-left: 30px;
+}
+
+.b-app-content-title {
+    color: #666;
+    font-family: Arial;
+    font-size: 30px;
+    font-weight: normal;
+    padding-left: 25px;
+}
+
+.b-app-back-button,  .b-app-back-button:hover {
+	border: 1px solid #CCCCCC;
+	background: #EEEEEE;
+	color: #444444;
+	padding: 2px 10px;
+}
+
+.b-app-back-button:hover {
+	background: #CCCCCC;
+	border-color: #AAAAAA;
+}
+
+.b-app-back-button:after {
+    content: "<";
+    font-weight: bold;
+    font-size: 23px;
+}
+
+.actionPopup {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 3.01px 3.01px 3.01px 3.01px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    padding: 5px 0;
+    background-color: #FFF;
+}
+
+.contentPanel {
+	padding-top: 15px;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+.contentTitleLabel {
+    color: #666;
+    font-family: Arial;
+    font-size: 24px;
+    font-weight: normal;
+}
+
+.contentLabel {
+	font-weight: bold;
+	font-size: 16px;
+	padding-right: 20px;
+}
+
+.descriptionLabel {
+	padding-top: 20px;
+	color: #666;
+    font-family: Arial;
+    font-size: 20px;
+    font-weight: normal;
+}
+
+.shadowPanel {
+    -webkit-box-shadow: 1px 1px 8px #888;
+    -moz-box-shadow: 1px 1px 8px #888;
+    box-shadow: 1px 1px 8px #888;
+    padding: 10px;
+}
+
+.demoProjectsWidget {
+	width: 100%;
+	display: block;
+	margin-left: -10px;
+}
+
+.demoProjectWidget {
+	width: 190px;
+	margin: 10px;
+	display: inline-block;
+	
+	-webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    
+    -webkit-box-shadow: 1px 1px 8px #888;
+    -moz-box-shadow: 1px 1px 8px #888;
+    box-shadow: 1px 1px 8px #888;
+}
+
+.demoProjectWidget .details {
+	cursor: pointer;
+
+	-webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.demoProjectWidget .platform-image-hover {
+	position: absolute;
+	top: 0;
+	transition: background-color 0.5s ease;
+    background-color: transparent;
+    
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+		
+.demoProjectWidget .platform-image-hover:hover {
+    transition: background-color 0.2s ease;
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+.demoProjectWidget .details-inner-top {
+    padding: 15px 15px 10px 15px; 
+}
+
+.demoProjectWidget .details-inner-center {
+    padding: 0px 15px 0px 15px; 
+}
+
+.demoProjectWidget .details-inner-bottom  {
+	padding: 10px 15px 15px 15px; 
+}
+
+.demoProjectWidget .title {
+	position: relative;
+    width: 160px;
+	color: #888;
+    font-family: "Roboto",Arial,sans-serif;
+    font-size: 24px;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 35px;
+    overflow: hidden;
+    display: block;
+    margin-top: 10px;
+    white-space: nowrap;
+} 
+
+.demoProjectWidget .title:after {
+    content: "";
+    width: 40px;
+    height: 30px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), #FFF) repeat scroll 0% 0% transparent; 
+}
+
+.demoProjectWidget .action {
+	color: #555;
+    font-family: "Roboto",Arial,sans-serif;
+    font-size: 14px;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1.42857;
+    text-transform: uppercase;
+}

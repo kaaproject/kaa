@@ -2,7 +2,7 @@ package org.kaaproject.kaa.server.admin.client.i18n;
 
 /**
  * Interface to represent the messages contained in resource bundle:
- * 	/home/dyosick/projects/github_kaa/kaa/server/admin/src/main/java/org/kaaproject/kaa/server/admin/client/i18n/KaaAdminMessages.properties'.
+ * 	D:/git/kaa_github/server/admin/src/main/java/org/kaaproject/kaa/server/admin/client/i18n/KaaAdminMessages.properties'.
  */
 public interface KaaAdminMessages extends com.google.gwt.i18n.client.Messages {
   
@@ -41,6 +41,15 @@ public interface KaaAdminMessages extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Username and password can not be empty!")
   @Key("emptyUsernameOrPassword")
   String emptyUsernameOrPassword();
+
+  /**
+   * Translated "Powered by <b><a href=\"http://www.kaaproject.org\">Kaa IoT Application Plaform</a></b> {0} · <a href=\"http://jira.kaaproject.org/browse/KAA\">Report a bug</a> · <a href=\"https://docs.kaaproject.org/display/KAA\">Documentation</a>".
+   * 
+   * @return translated "Powered by <b><a href=\"http://www.kaaproject.org\">Kaa IoT Application Plaform</a></b> {0} · <a href=\"http://jira.kaaproject.org/browse/KAA\">Report a bug</a> · <a href=\"https://docs.kaaproject.org/display/KAA\">Documentation</a>"
+   */
+  @DefaultMessage("Powered by <b><a href=\"http://www.kaaproject.org\">Kaa IoT Application Plaform</a></b> {0} · <a href=\"http://jira.kaaproject.org/browse/KAA\">Report a bug</a> · <a href=\"https://docs.kaaproject.org/display/KAA\">Documentation</a>")
+  @Key("footerMessage")
+  String footerMessage(String arg0);
 
   /**
    * Translated "This client is not compatible with the server. Cleanup and refresh the browser.".

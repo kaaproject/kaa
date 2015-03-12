@@ -26,7 +26,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public abstract class AbstractUserActivity<T extends UserDto, V extends UserView, P extends UserPlace> extends
         AbstractDetailsActivity<T, V, P> {
