@@ -23,7 +23,7 @@
     <artifactId>jconfigurationdemo</artifactId>
     <packaging>pom</packaging>
 
-    <name>Kaa Java Desktop Configuration Demo</name>
+    <name>Kaa java desktop configuration demo</name>
     <url>http://kaaproject.org</url>
 
     <properties>

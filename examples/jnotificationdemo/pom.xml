@@ -23,7 +23,7 @@
     <artifactId>jnotificationdemo</artifactId>
     <packaging>pom</packaging>
 
-    <name>Kaa Java Desktop Notification Demo</name>
+    <name>Kaa java desktop notification demo</name>
     <url>http://kaaproject.org</url>
 
     <properties>

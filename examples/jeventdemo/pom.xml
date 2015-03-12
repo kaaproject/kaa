@@ -26,7 +26,7 @@
     <artifactId>jeventdemo</artifactId>
     <packaging>pom</packaging>
 
-    <name>Kaa Demo examples</name>
+    <name>Kaa java desktop event demo</name>
     <url>http://kaaproject.org</url>
 
     <properties>
