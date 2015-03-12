@@ -34,60 +34,60 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PhotoFrameDemoBuilder extends AbstractDemoBuilder {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(PhotoFrameDemoBuilder.class);
-    
+
     protected PhotoFrameDemoBuilder() {
         super("demo/photoframe");
     }
-    
+
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
-        
+
         logger.info("Loading 'Photo Frame Demo Application' data...");
-        
+
         loginTenantAdmin(client);
-        
+
         EventClassFamilyDto photoFrameEventClassFamily = new EventClassFamilyDto();
         photoFrameEventClassFamily.setName("Photo Frame Event Class Family");
         photoFrameEventClassFamily.setNamespace("org.kaaproject.kaa.demo.photoframe");
         photoFrameEventClassFamily.setClassName("PhotoFrameEventClassFamily");
         photoFrameEventClassFamily = client.editEventClassFamily(photoFrameEventClassFamily);
         client.addEventClassFamilySchema(photoFrameEventClassFamily.getId(), getResourcePath("photoFrameEventClassFamily.json"));
-        
+
         ApplicationDto photoFrameApplication = new ApplicationDto();
         photoFrameApplication.setName("Photo frame");
         photoFrameApplication = client.editApplication(photoFrameApplication);
-               
+
         sdkKey.setApplicationId(photoFrameApplication.getId());
         sdkKey.setProfileSchemaVersion(1);
         sdkKey.setConfigurationSchemaVersion(1);
         sdkKey.setNotificationSchemaVersion(1);
         sdkKey.setLogSchemaVersion(1);
         sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
-        
+
         loginTenantDeveloper(client);
-        
+
         ApplicationEventFamilyMapDto photoFrameAefMap = mapEventClassFamily(client, photoFrameApplication, photoFrameEventClassFamily);
 
         List<String> aefMapIds = new ArrayList<>();
         aefMapIds.add(photoFrameAefMap.getId());
         sdkKey.setAefMapIds(aefMapIds);
-        
-        TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();        
+
+        TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();
         UserVerifierDto trustfulUserVerifier = new UserVerifierDto();
         trustfulUserVerifier.setApplicationId(photoFrameApplication.getId());
         trustfulUserVerifier.setName("Trustful verifier");
         trustfulUserVerifier.setPluginClassName(trustfulVerifierConfig.getPluginClassName());
         trustfulUserVerifier.setPluginTypeName(trustfulVerifierConfig.getPluginTypeName());
         RawSchema rawSchema = new RawSchema(trustfulVerifierConfig.getPluginConfigSchema().toString());
-        DefaultRecordGenerationAlgorithm<RawData> algotithm = 
-                    new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
+        DefaultRecordGenerationAlgorithm<RawData> algotithm =
+                new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
         RawData rawData = algotithm.getRootData();
-        trustfulUserVerifier.setJsonConfiguration(rawData.getRawData());        
+        trustfulUserVerifier.setJsonConfiguration(rawData.getRawData());
         trustfulUserVerifier = client.editUserVerifierDto(trustfulUserVerifier);
         sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
-        
+
         logger.info("Finished loading 'Photo Frame Demo Application' data.");
     }
 
