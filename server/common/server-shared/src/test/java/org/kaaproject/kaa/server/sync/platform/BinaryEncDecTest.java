@@ -170,7 +170,7 @@ public class BinaryEncDecTest {
         ByteBuffer buf = ByteBuffer.wrap(encDec.encode(sync));
         int size = 8 // header
                 + 8 + 4 // metadata
-                + 8 + 4// log sync
+                + 4 + 8 + 4// log sync
         ;
         Assert.assertEquals(size, buf.array().length);
         buf.position(buf.capacity() - 4);
