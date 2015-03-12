@@ -80,7 +80,7 @@ public class CSdkGenerator extends SdkGenerator {
     private static final String KAA_DEFAULTS_HEADER  = KAA_SRC_FOLDER + "/kaa_defaults.h";
     private static final String PROFILE_HEADER       = KAA_SRC_FOLDER + "/kaa_profile.h";
     private static final String LOG_HEADER           = KAA_SRC_FOLDER + "/kaa_logging.h";
-    private static final String CONFIGURATION_HEADER = KAA_SRC_FOLDER + "/gen/kaa_configuration_definitions.h";
+    private static final String CONFIGURATION_HEADER = KAA_GEN_SOURCE_DIR + "kaa_configuration_definitions.h";
 
     private static final String KAA_PROFILE_SOURCE_NAME_PATTERN       = "kaa_profile_gen";
     private static final String KAA_LOG_SOURCE_NAME_PATTERN           = "kaa_logging_gen";
