@@ -7,7 +7,7 @@
     the specific language governing permissions and limitations under the License. -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
@@ -29,11 +29,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>admin-rest-client</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>net.iharder</groupId>
             <artifactId>base64</artifactId>
             <version>2.3.8</version>
@@ -52,7 +47,7 @@
             <artifactId>robotrun-shared</artifactId>
             <version>${project.version}</version>
             <classifier>robotrun-resources</classifier>
-            <type>tar.gz</type>
+            <type>zip</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -89,9 +84,25 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>notificationdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>notification-android-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>cityguide</artifactId>
             <version>${project.version}</version>
             <classifier>cityguide-android-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>notificationdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>notification-android-src</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
         </dependency>
@@ -105,6 +116,14 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jdatacollectiondemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jdatacollection-java-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>cellmonitor</artifactId>
             <version>${project.version}</version>
             <classifier>cellmonitor-android-resources</classifier>
@@ -113,12 +132,45 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jdatacollectiondemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jdatacollection-java-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jeventdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jevent-java-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jeventdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jevent-java-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>cellmonitor</artifactId>
             <version>${project.version}</version>
             <classifier>cellmonitor-android-src</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
-        </dependency>        
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>admin-rest-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>photoframe</artifactId>
@@ -134,7 +186,7 @@
             <classifier>photoframe-android-src</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
-        </dependency>        
+        </dependency>
     </dependencies>
 
     <build>
@@ -195,18 +247,19 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <!--execution>
-                        <id>unpack-robotrun-resources</id>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/generated-resources/demo/robotrun</outputDirectory>
-                            <includeGroupIds>org.kaaproject.kaa.examples.robotrun</includeGroupIds>
-                            <includeArtifactIds>robotrun-shared</includeArtifactIds>
-                            <excludeTransitive>true</excludeTransitive>
-                        </configuration>
-                    </execution-->
+            <id>unpack-robotrun-resources</id>
+            <goals>
+                <goal>unpack-dependencies</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+                <outputDirectory>${project.build.directory}/generated-resources/demo/robotrun
+                </outputDirectory>
+                <includeGroupIds>org.kaaproject.kaa.examples.robotrun</includeGroupIds>
+                <includeArtifactIds>robotrun-shared</includeArtifactIds>
+                <excludeTransitive>true</excludeTransitive>
+            </configuration>
+            </execution-->
                     <execution>
                         <id>unpack-smarthouse-resources</id>
                         <goals>
@@ -214,10 +267,26 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/generated-resources/demo/smarthouse</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/smarthouse
+                            </outputDirectory>
                             <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
                             <includeArtifactIds>smarthousedemo</includeArtifactIds>
                             <includeClassifiers>smarthouse-android-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-notification-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/notification
+                            </outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>notificationdemo</includeArtifactIds>
+                            <includeClassifiers>notification-android-resources</includeClassifiers>
                             <excludeTransitive>true</excludeTransitive>
                         </configuration>
                     </execution>
@@ -228,7 +297,8 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/generated-resources/demo/cityguide</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/cityguide
+                            </outputDirectory>
                             <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
                             <includeArtifactIds>cityguide</includeArtifactIds>
                             <includeClassifiers>cityguide-android-resources</includeClassifiers>
@@ -242,13 +312,29 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/generated-resources/demo/cellmonitor</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/cellmonitor
+                            </outputDirectory>
                             <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
                             <includeArtifactIds>cellmonitor</includeArtifactIds>
                             <includeClassifiers>cellmonitor-android-resources</includeClassifiers>
                             <excludeTransitive>true</excludeTransitive>
                         </configuration>
-                    </execution>                    
+                    </execution>
+                    <execution>
+                        <id>unpack-jdatacollection-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/jdatacollection
+                            </outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>jdatacollectiondemo</includeArtifactIds>
+                            <includeClassifiers>jdatacollection-java-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>unpack-photoframe-resources</id>
                         <goals>
@@ -256,13 +342,30 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/generated-resources/demo/photoframe</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/photoframe
+                            </outputDirectory>
                             <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
                             <includeArtifactIds>photoframe</includeArtifactIds>
                             <includeClassifiers>photoframe-android-resources</includeClassifiers>
                             <excludeTransitive>true</excludeTransitive>
                         </configuration>
-                    </execution>                    
+                    </execution>
+                    <execution>
+                        <id>unpack-jevent-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/jevent
+                            </outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>jeventdemo</includeArtifactIds>
+                            <includeClassifiers>jevent-java-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+
                     <execution>
                         <id>copy</id>
                         <phase>prepare-package</phase>
@@ -300,6 +403,36 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
                                     <destFileName>smarthouse_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>notificationdemo</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>notification-android-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
+                                    <destFileName>notification_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>jdatacollectiondemo</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>jdatacollection-java-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/java</outputDirectory>
+                                    <destFileName>jdatacollection_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>jeventdemo</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>jevent-java-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/java</outputDirectory>
+                                    <destFileName>jevent_demo.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.examples</groupId>
@@ -351,7 +484,7 @@
         </plugins>
         <pluginManagement>
             <plugins>
-                <!--This plugin's configuration is used to store Eclipse 
+                <!--This plugin's configuration is used to store Eclipse
                     m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>

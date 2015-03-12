@@ -31,13 +31,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
@@ -142,6 +136,13 @@ public class AdminClient {
         params.add("configurationSchema", configurationSchema);
         params.add("file", getFileResource(schemaResource));
         return restTemplate.postForObject(url + "configurationSchema", params, ConfigurationSchemaDto.class);
+    }
+
+    public NotificationSchemaDto createNotificationSchema(NotificationSchemaDto notificationSchema, String schemaResource) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("notificationSchema", notificationSchema);
+        params.add("file", getFileResource(schemaResource));
+        return restTemplate.postForObject(url + "notificationSchema", params, NotificationSchemaDto.class);
     }
     
     public ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws Exception {
