@@ -20,6 +20,8 @@
  * Makes decisions purely based on the amount of logs collected in the storage.
  */
 
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+
 #include "../platform/platform.h"
 
 #include <time.h>
@@ -324,3 +326,5 @@ kaa_error_t ext_log_upload_strategy_by_volume_set_upload_retry_period(void *stra
     ((ext_log_upload_strategy_t *)strategy)->upload_retry_period = upload_retry_period;
     return KAA_ERR_NONE;
 }
+
+#endif
