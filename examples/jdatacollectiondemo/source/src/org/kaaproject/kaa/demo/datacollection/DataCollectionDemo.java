@@ -52,7 +52,7 @@ public class DataCollectionDemo {
 		/*
 		 * setting custom upload strategy.
 		 * default upload strategy sends logs
-		 * after some count or some logs size reached 
+		 * after some count or some logs size reached
 		 * this one sends every log record
 		 */
         kaaClient.setLogUploadStrategy(new DefaultLogUploadStrategy() {
@@ -63,10 +63,12 @@ public class DataCollectionDemo {
         });
         // starting Kaa client
         kaaClient.start();
+        LOG.info("Kaa client started");
 
         // sending logs in loop
         for (LogData log : generateLogs(LOGS_TO_SEND_COUNT)) {
             kaaClient.addLogRecord(log);
+            LOG.info("Log record {} sent", log.toString());
         }
 
         try {
@@ -77,6 +79,7 @@ public class DataCollectionDemo {
 
         // stoping client
         kaaClient.stop();
+        LOG.info("Kaa client stopped");
         LOG.info("Data collection demo stopped");
     }
 

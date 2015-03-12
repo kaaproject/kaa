@@ -34,8 +34,8 @@ import org.kaaproject.kaa.client.transact.TransactionId;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
 import org.kaaproject.kaa.schema.sample.event.thermo.ChangeDegreeRequest;
-import org.kaaproject.kaa.schema.sample.event.thermo.CustomThermoEventClassFamily;
-import org.kaaproject.kaa.schema.sample.event.thermo.CustomThermoEventClassFamily.DefaultEventFamilyListener;
+import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatEventClassFamily;
+import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatEventClassFamily.DefaultEventFamilyListener;
 import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoRequest;
 import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoResponse;
 import org.slf4j.Logger;
@@ -63,9 +63,11 @@ public class EventDemo {
             LOG.info("{}", e1);
         }
 
+        // Creating Kaa desktop client instance
         kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener());
+        // Starting Kaa client
         kaaClient.start();
-
+        LOG.info("Kaa client started");
 
         // Our demo application uses trustful verifier, so it does not matter
         // which credentials you would pass to registration manager
@@ -78,7 +80,7 @@ public class EventDemo {
                 if (response.getResult() == SyncResponseResultType.SUCCESS) {
                     doWork();
                 }
-                //If not - Release all network connections and application resources.
+                //If not - release all network connections and application resources.
                 //Shutdown all Kaa client tasks.
                 else {
                     kaaClient.stop();
@@ -121,7 +123,7 @@ public class EventDemo {
         //Getting event family factory
         EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
         //Getting concrete event family
-        CustomThermoEventClassFamily tecf = eventFamilyFactory.getCustomThermoEventClassFamily();
+        ThermostatEventClassFamily tecf = eventFamilyFactory.getThermostatEventClassFamily();
 
         //Adding event listeners for family factory
         tecf.addListener(new DefaultEventFamilyListener() {
@@ -156,6 +158,7 @@ public class EventDemo {
 
         // Send added events in a batch
         eventFamilyFactory.submitEventsBlock(trxId);
+        LOG.info("Batch of events (ThermostatInfoRequest & ChangeDegreeRequest) sent");
         // Dismiss the event batch (if the batch was not submitted as shown in the previous line)
         // eventFamilyFactory.removeEventsBlock(trxId);
 
@@ -169,6 +172,7 @@ public class EventDemo {
         //Release all network connections and application resources.
         //Shutdown all Kaa client tasks.
         kaaClient.stop();
+        LOG.info("Kaa client stopped");
 
         LOG.info("Event demo stopped");
     }

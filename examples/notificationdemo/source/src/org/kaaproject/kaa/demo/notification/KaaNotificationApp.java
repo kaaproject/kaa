@@ -46,6 +46,11 @@ import org.kaaproject.kaa.demo.notification.fragment.NotificationFragment;
 import org.kaaproject.kaa.demo.notification.fragment.TopicFragment;
 import org.kaaproject.kaa.schema.example.Notification;
 
+/**
+ * The Class KaaNotificationApp.
+ * Implementation of base {@link Application} class. Performs initialization of
+ * application resources including initialization of Kaa client. Handles Kaa client lifecycle.
+ */
 public class KaaNotificationApp extends Application {
 
 	public static final String TAG = KaaNotificationApp.class.getSimpleName();
@@ -65,11 +70,21 @@ public class KaaNotificationApp extends Application {
 		 */
 		mClient = Kaa.newClient(new AndroidKaaPlatformContext(this));
 		initPopup();
+
+        /*
+         * Initializing notification listener and adding it to Kaa client
+         */
 		initNotificationListener();
-		initNotificationTopicListListener();
-		
 		mClient.addNotificationListener(notificationListener);
+
+        /*
+         * Initializing topicList listener and adding it to Kaa client
+         */
+		initNotificationTopicListListener();
 		mClient.addTopicListListener(topicListListener);
+        /*
+         * Start Kaa client workflow.
+         */
 		mClient.start();
 	}
 
@@ -88,22 +103,34 @@ public class KaaNotificationApp extends Application {
 	@Override
 	public void onTerminate() {
 		super.onTerminate();
+
+        /*
+         * Stop Kaa client. Release all network connections and application
+         * resources. Shutdown all Kaa client tasks.
+         */
 		mClient.stop();
 	}
 
+    /*
+     * This method subscribes Kaa client to voluntary topic
+     */
 	public void subscribeToTopic(String topicId) {
 		try {
 			mClient.subscribeToTopic(topicId, true);
-			Log.i(TAG, "subscribing to " + topicId);
+			Log.i(TAG, "Subscribing to topic with id: " + topicId);
 		} catch (UnavailableTopicException e) {
 			Log.e(TAG, e.getMessage());
 		}
 	}
 
+
+    /*
+     * This method unbscribes Kaa client from voluntary topic
+     */
 	public void unsubscribeFromTopic(String topicId) {
 		try {
 			mClient.unsubscribeFromTopic(topicId, true);
-			Log.i(TAG, "unsubscribing " + topicId);
+			Log.i(TAG, "Unsubscribing from topic with id: " + topicId);
 		} catch (UnavailableTopicException e) {
 			Log.e(TAG, e.getMessage());
 		}

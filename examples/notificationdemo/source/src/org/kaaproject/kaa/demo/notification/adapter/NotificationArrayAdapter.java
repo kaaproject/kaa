@@ -49,7 +49,7 @@ public class NotificationArrayAdapter extends ArrayAdapter<Notification> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view;
         if (convertView == null) {
-            view = inflater.inflate(R.layout.notification, null);
+            view = inflater.inflate(R.layout.notifications, null);
             final ViewHolder viewHolder = new ViewHolder();
             viewHolder.message = (TextView) view.findViewById(R.id.notification_message);
             viewHolder.image = (ImageView) view.findViewById(R.id.notification_image);
