@@ -55,7 +55,9 @@ public class ImageCache {
                 bmp = imageMap.get(DEFAULT_IMAGE_KEY);
                 Log.e(TAG, e.getMessage());
             }
-        } else return imageMap.get(imageUrl);
+        } else {
+            return imageMap.get(imageUrl);
+        }
         return bmp;
     }
 
