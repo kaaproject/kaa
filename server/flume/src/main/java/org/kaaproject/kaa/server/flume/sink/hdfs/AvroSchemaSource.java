@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.flume.conf.Configurable;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
@@ -44,6 +45,8 @@ import org.kaaproject.kaa.server.flume.ConfigurationConstants;
 import com.google.common.base.Preconditions;
 
 public class AvroSchemaSource implements Configurable, ConfigurationConstants {
+
+    private static final String KAA_ADMIN_REST_API_LOG_SCHEMA = "/kaaAdmin/rest/api/logSchema/";
 
     public static final String SCHEMA_SOURCE = "flume.avro.schema.source";
     
@@ -105,10 +108,10 @@ public class AvroSchemaSource implements Configurable, ConfigurationConstants {
         Schema schema = null;
         String schemaString = null;
         if (schemaSourceType.equals(SCHEMA_SOURCE_REST)) {
-            HttpGet getRequest = new HttpGet("/kaaAdmin/rest/api/logSchema/"+key.getApplicationToken()+"/"+key.getSchemaVersion());
+            HttpGet getRequest = new HttpGet(KAA_ADMIN_REST_API_LOG_SCHEMA+key.getApplicationToken()+"/"+key.getSchemaVersion());
             HttpResponse httpResponse = httpClient.execute(restHost, getRequest, httpContext);
             HttpEntity entity = httpResponse.getEntity();
-            if (httpResponse.getStatusLine().getStatusCode() == 200 && entity != null) {
+            if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK && entity != null) {
                 String content = EntityUtils.toString(entity);
                 ObjectMapper mapper = new ObjectMapper();
                 LogSchemaDto logSchemaDto = mapper.readValue(content, LogSchemaDto.class);

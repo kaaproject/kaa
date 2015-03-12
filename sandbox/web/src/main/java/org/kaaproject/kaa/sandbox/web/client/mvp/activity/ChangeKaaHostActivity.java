@@ -41,96 +41,102 @@ public class ChangeKaaHostActivity extends AbstractActivity {
     private final ChangeKaaHostPlace place;
     private final ClientFactory clientFactory;
     private ChangeKaaHostView view;
-    
+
     private List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
-    
+
     public ChangeKaaHostActivity(ChangeKaaHostPlace place,
             ClientFactory clientFactory) {
         this.place = place;
         this.clientFactory = clientFactory;
     }
-    
+
     @Override
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
         view = clientFactory.getChangeKaaHostView();
         bind(eventBus);
         containerWidget.setWidget(view.asWidget());
     }
-    
+
     @Override
     public void onStop() {
         for (HandlerRegistration registration : registrations) {
-          registration.removeHandler();
+            registration.removeHandler();
         }
         registrations.clear();
     }
 
     private void bind(final EventBus eventBus) {
         view.reset();
-        
-        registrations.add(view.getBackButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                clientFactory.getPlaceController().goTo(place.getPreviousPlace());
-            }
-          }));
-        
-        
+
+        registrations.add(view.getBackButton().addClickHandler(
+                new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        clientFactory.getPlaceController().goTo(
+                                place.getPreviousPlace());
+                    }
+                }));
+
         fillView();
     }
 
     private void fillView() {
-        
-        Sandbox.getSandboxService().changeKaaHostEnabled(new BusyAsyncCallback<Boolean>() {
-            @Override
-            public void onFailureImpl(Throwable caught) {
-                view.setErrorMessage(Utils.getErrorMessage(caught));
-            }
 
-            @Override
-            public void onSuccessImpl(Boolean enabled) {
-                view.setChangeKaaHostEnabled(enabled);
-                if (enabled) {
-                  registrations.add(view.getChangeKaaHostButton().addClickHandler(new ClickHandler() {
+        Sandbox.getSandboxService().changeKaaHostEnabled(
+                new BusyAsyncCallback<Boolean>() {
                     @Override
-                    public void onClick(ClickEvent event) {
-                        changeKaaHost();
+                    public void onFailureImpl(Throwable caught) {
+                        view.setErrorMessage(Utils.getErrorMessage(caught));
                     }
-                  }));
-                }
-            }
-        });
+
+                    @Override
+                    public void onSuccessImpl(Boolean enabled) {
+                        view.setChangeKaaHostEnabled(enabled);
+                        if (enabled) {
+                            registrations.add(view.getChangeKaaHostButton()
+                                    .addClickHandler(new ClickHandler() {
+                                        @Override
+                                        public void onClick(ClickEvent event) {
+                                            changeKaaHost();
+                                        }
+                                    }));
+                        }
+                    }
+                });
     }
-    
+
     private void changeKaaHost() {
         final String host = view.getKaaHost().getValue();
-        if (host != null && host.length()>0) { 
+        if (host != null && host.length() > 0) {
             view.clearError();
             ConsoleDialog.startConsoleDialog(new ConsoleDialogListener() {
 
                 @Override
-                public void onOk(boolean success) {}
+                public void onOk(boolean success) {
+                }
 
                 @Override
-                public void onStart(String uuid, final ConsoleDialog dialog, final AsyncCallback<Void> callback) {
-                    Sandbox.getSandboxService().changeKaaHost(uuid, host, new AsyncCallback<Void>() {
-                      @Override
-                      public void onFailure(Throwable caught) {
-                          callback.onFailure(caught);
-                      }
-            
-                      @Override
-                      public void onSuccess(Void result) {
-                          dialog.appendToConsoleAtFinish("Succesfully changed kaa host to '" + host + "'\n");
-                          callback.onSuccess(result);
-                      }
-                    });
+                public void onStart(String uuid, final ConsoleDialog dialog,
+                        final AsyncCallback<Void> callback) {
+                    Sandbox.getSandboxService().changeKaaHost(uuid, host,
+                            new AsyncCallback<Void>() {
+                                @Override
+                                public void onFailure(Throwable caught) {
+                                    callback.onFailure(caught);
+                                }
+
+                                @Override
+                                public void onSuccess(Void result) {
+                                    dialog.appendToConsoleAtFinish("Succesfully changed kaa host to '"
+                                            + host + "'\n");
+                                    callback.onSuccess(result);
+                                }
+                            });
                 }
             });
-        }
-        else {
+        } else {
             view.setErrorMessage(Utils.messages.emptyKaaHostError());
         }
     }
-    
+
 }

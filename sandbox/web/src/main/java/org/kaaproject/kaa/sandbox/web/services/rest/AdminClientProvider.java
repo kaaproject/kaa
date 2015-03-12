@@ -22,7 +22,7 @@ import org.springframework.beans.factory.InitializingBean;
 public class AdminClientProvider implements InitializingBean {
 
     //@Value("#{properties[admin_host]}")
-    private String adminHost = "10.2.3.93";
+    private String adminHost = "localhost";
 
     //@Value("#{properties[admin_port]}")
     private int adminPort = 8080;
