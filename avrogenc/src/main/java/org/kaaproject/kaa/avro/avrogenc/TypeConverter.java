@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.avro.avrogenc;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.apache.avro.Schema;
@@ -84,12 +82,6 @@ public class TypeConverter {
         StringBuilder builder = new StringBuilder(prefix + "_UNION_");
 
         List<Schema> branches = schema.getTypes();
-        Collections.sort(branches, new Comparator<Schema>() {
-            @Override
-            public int compare(Schema o1, Schema o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
         int branchCounter = branches.size();
 
         for (Schema branchSchema : branches) {
