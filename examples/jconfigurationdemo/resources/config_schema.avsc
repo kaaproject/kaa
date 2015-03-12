@@ -1,16 +1,40 @@
 {
-  "type" : "record",
-  "name" : "SampleConfiguration",
-  "namespace" : "org.kaaproject.kaa.demo.configuration",
-  "fields" : [ {
-    "name" : "messageConf",
-    "type" : [ {
-      "type" : "string",
-      "avro.java.string" : "String"
-    }, "null" ]
-  }, {
-    "name" : "numberConf",
-    "type" : [ "int", "null" ]
-  } ],
-  "displayName" : "Sample configuration"
+  "type":"record",
+  "name":"SampleConfiguration",
+  "namespace":"org.kaaproject.kaa.demo.configuration",
+  "fields":[
+    {
+      "name":"AddressList",
+      "type":[
+        {
+          "type":"array",
+          "items":{
+            "type":"record",
+            "name":"Link",
+            "fields":[
+              {
+                "name":"label",
+                "type":{
+                  "type":"string",
+                  "avro.java.string":"String"
+                },
+                "displayName":"Site label"
+              },
+              {
+                "name":"url",
+                "type":{
+                  "type":"string",
+                  "avro.java.string":"String"
+                },
+                "displayName":"Site URL"
+              }
+            ],
+            "displayName":"Site address"
+          }
+        },
+        "null"
+      ],
+      "displayName":"URLs list"
+    }
+  ]
 }

@@ -144,7 +144,25 @@ public class AdminClient {
         params.add("file", getFileResource(schemaResource));
         return restTemplate.postForObject(url + "notificationSchema", params, NotificationSchemaDto.class);
     }
-    
+
+    public TopicDto createTopic(TopicDto topic) throws Exception {
+        return restTemplate.postForObject(url + "topic", topic, TopicDto.class);
+    }
+
+    public void addTopicToEndpointGroup(EndpointGroupDto endpointGroup, TopicDto topic) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("endpointGroupId", endpointGroup.getId());
+        params.add("topicId", topic.getId());
+        restTemplate.postForObject(url + "addTopicToEpGroup", params, EndpointGroupDto.class);
+    }
+
+    public void sendNotification(NotificationDto notification, String notificationResource) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("notification", notification);
+        params.add("file", getFileResource(notificationResource));
+        restTemplate.postForObject(url + "sendNotification", params, NotificationDto.class);
+    }
+
     public ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws Exception {
         return restTemplate.getForObject(url + "configurationSchema/"+configurationSchemaId, ConfigurationSchemaDto.class);
     }

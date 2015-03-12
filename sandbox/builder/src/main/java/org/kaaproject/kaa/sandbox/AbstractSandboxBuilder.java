@@ -433,7 +433,7 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
                 throw new RuntimeException("Failed to build demo project '" + sandboxProject.getName() + "'!");
             }
         }
-        LOG.info("Finihed building demo applications!");
+        LOG.info("Finished building demo applications!");
     }
 
     protected boolean isWin32() {

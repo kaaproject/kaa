@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,26 +32,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Notification demo application, which demonstrates Kaa notifications API
+ */
 public class NotificationDemo {
     private static final Logger LOG = LoggerFactory.getLogger(NotificationDemo.class);
-    private KaaClient kaaClient;
+    private static KaaClient kaaClient;
 
     public static void main(String[] args) {
         LOG.info("Notification demo application has started");
-        new NotificationDemo().doWork();
-        LOG.info("Notification demo application has finished");
-    }
-
-    public void doWork() {
         kaaClient = Kaa.newClient(new DesktopKaaPlatformContext());
 
-        // Listener, which listens to topic list update
+        // Listener, which listens to topic list updates
         NotificationTopicListListener topicListListener = new BasicNotificationTopicListListener();
         kaaClient.addTopicListListener(topicListListener);
 
-        // Create basic notification listener, which listens to all notifications
-        NotificationListener notificationListener = new BasicNotificationListener();
-        kaaClient.addNotificationListener(notificationListener);
+        // Add notification listener, which listens to all notifications
+        kaaClient.addNotificationListener(new NotificationListener() {
+            @Override
+            public void onNotification(String id, SampleNotification sampleNotification) {
+                LOG.info("Notification of topic id [{}], received: {}", id, sampleNotification.getMessage());
+            }
+        });
 
         // Start Kaa client
         kaaClient.start();
@@ -71,47 +73,46 @@ public class NotificationDemo {
 
         // don't listen to topics anymore
         kaaClient.removeTopicListListener(topicListListener);
+
+        // Stop Kaa client, gracefully closing all resources
         kaaClient.stop();
+        LOG.info("Notification demo application has finished");
     }
 
     // Listener, which is used to track notification topic list updates
     // and subscribes a client to each new topic update
-    private class BasicNotificationTopicListListener implements NotificationTopicListListener {
+    private static class BasicNotificationTopicListListener implements NotificationTopicListListener {
         @Override
         public void onListUpdated(List<Topic> list) {
             LOG.info("Topic list was updated:");
             showTopicList(list);
             try {
                 kaaClient.subscribeToTopics(extractOptionalTopicIds(list), true);
+                // List was updated, try to subscribe to all new optional topics, if any
             } catch (UnavailableTopicException e) {
                 LOG.debug("Topic is unavailable, can't subscribe: {}", e.getMessage());
             }
         }
     }
 
-    private class BasicNotificationListener implements NotificationListener {
-        @Override
-        public void onNotification(String id, SampleNotification sampleNotification) {
-            LOG.info("Notification id [{}] received: {}", id, sampleNotification.toString());
+    private static List<String> extractOptionalTopicIds(List<Topic> list) {
+        List<String> topicIds = new ArrayList<>();
+        for (Topic t : list) {
+            if (t.getSubscriptionType() == SubscriptionType.OPTIONAL) {
+                topicIds.add(t.getId());
+            }
         }
+        return topicIds;
     }
 
-    private void showTopicList(List<Topic> topics) {
+    private static void showTopicList(List<Topic> topics) {
         if (topics == null || topics.isEmpty()) {
             LOG.info("Topic list is empty");
         } else {
             for (Topic topic : topics) {
-                LOG.info("Id: {}, name: {}, type: {}",
+                LOG.info("Topic id: {}, name: {}, type: {}",
                         topic.getId(), topic.getName(), topic.getSubscriptionType());
             }
         }
-    }
-
-    private List<String> extractOptionalTopicIds(List<Topic> list) {
-        List<String> topicIds = new ArrayList<>();
-        for (Topic t : list) {
-            if (t.getSubscriptionType() == SubscriptionType.OPTIONAL) topicIds.add(t.getId());
-        }
-        return topicIds;
     }
 }
