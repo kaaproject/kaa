@@ -1,0 +1,30 @@
+{
+  "type":"record",
+  "name":"LogData",
+  "namespace":"org.kaaproject.kaa.schema.sample.logging",
+  "fields":[
+	{
+	  "name":"level",
+	  "type":{
+		"type":"enum",
+		"name":"Level",
+		"symbols":[
+		  "DEBUG",
+		  "ERROR",
+		  "FATAL",
+		  "INFO",
+		  "TRACE",
+		  "WARN"
+		]
+	  }
+	},
+	{
+	  "name":"tag",
+	  "type":"string"
+	},
+	{
+	  "name":"message",
+	  "type":"string"
+	}
+  ]
+}

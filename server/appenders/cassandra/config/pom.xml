@@ -90,6 +90,9 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <classifier>cassandra</classifier>
+                    <excludes>
+                        <exclude>**/logback.xml</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>

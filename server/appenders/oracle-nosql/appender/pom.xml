@@ -78,6 +78,9 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <classifier>oracle-nosql</classifier>
+                    <excludes>
+                        <exclude>**/logback.xml</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
