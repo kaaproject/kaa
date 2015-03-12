@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,32 @@ import org.apache.avro.Schema;
 import org.apache.commons.io.FileUtils;
 import org.apache.flume.Context;
 import org.apache.flume.conf.Configurable;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.server.common.admin.AdminClient;
-import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.flume.ConfigurationConstants;
 
 import com.google.common.base.Preconditions;
 
 public class AvroSchemaSource implements Configurable, ConfigurationConstants {
+
+    private static final String KAA_ADMIN_REST_API_LOG_SCHEMA = "/kaaAdmin/rest/api/logSchema/";
 
     public static final String SCHEMA_SOURCE = "flume.avro.schema.source";
     
@@ -39,7 +57,9 @@ public class AvroSchemaSource implements Configurable, ConfigurationConstants {
     private String kaaRestPassword;
     private String schemaLocalRoot;
     
-    private AdminClient adminClient;
+    private DefaultHttpClient httpClient;
+    private HttpHost restHost;
+    private HttpContext httpContext;
     
     @Override
     public void configure(Context context) {
@@ -55,9 +75,7 @@ public class AvroSchemaSource implements Configurable, ConfigurationConstants {
             Preconditions.checkArgument(kaaRestPassword != null && kaaRestPassword.length() > 0,
                     CONFIG_KAA_REST_PASSWORD + " must be specified for " + SCHEMA_SOURCE_REST + " avro schema source");
             
-            adminClient = new AdminClient(kaaRestHost, kaaRestPort);
-            adminClient.login(kaaRestUser, kaaRestPassword);
-
+            initHttpRestClient();
         }
         else {
             schemaLocalRoot = context.getString(CONFIG_AVRO_EVENT_SERIALIZER_SCHEMA_LOCAL_ROOT);
@@ -67,12 +85,39 @@ public class AvroSchemaSource implements Configurable, ConfigurationConstants {
         }
     }
     
+    private void initHttpRestClient() {
+        httpClient = new DefaultHttpClient();
+        restHost = new HttpHost(kaaRestHost, kaaRestPort, "http");
+        
+        AuthCache authCache = new BasicAuthCache();
+        BasicScheme basicAuth = new BasicScheme();
+        authCache.put(restHost, basicAuth);
+        
+        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        credsProvider.setCredentials(
+                new AuthScope(kaaRestHost, kaaRestPort, AuthScope.ANY_REALM),
+                 new UsernamePasswordCredentials(kaaRestUser, kaaRestPassword));
+        
+        httpContext = new BasicHttpContext();
+        httpContext.setAttribute(ClientContext.AUTH_CACHE, authCache);
+        httpContext.setAttribute(ClientContext.CREDS_PROVIDER, credsProvider);
+        
+    }
+    
     public Schema loadByKey(KaaSinkKey key) throws Exception {
         Schema schema = null;
         String schemaString = null;
         if (schemaSourceType.equals(SCHEMA_SOURCE_REST)) {
-            LogSchemaDto logSchemaDto = adminClient.getLogSchemaByApplicationTokenAndSchemaVersion(key.getApplicationToken(), key.getSchemaVersion());
-            schemaString = logSchemaDto.getSchema();
+            HttpGet getRequest = new HttpGet(KAA_ADMIN_REST_API_LOG_SCHEMA+key.getApplicationToken()+"/"+key.getSchemaVersion());
+            HttpResponse httpResponse = httpClient.execute(restHost, getRequest, httpContext);
+            HttpEntity entity = httpResponse.getEntity();
+            if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK && entity != null) {
+                String content = EntityUtils.toString(entity);
+                ObjectMapper mapper = new ObjectMapper();
+                LogSchemaDto logSchemaDto = mapper.readValue(content, LogSchemaDto.class);
+                schemaString = logSchemaDto.getSchema();
+                EntityUtils.consume(entity);
+            }
         }
         else {
             String applicationToken = key.getApplicationToken();

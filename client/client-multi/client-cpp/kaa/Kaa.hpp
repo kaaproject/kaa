@@ -19,6 +19,7 @@
 
 #include "kaa/KaaClient.hpp"
 #include <botan/botan.h>
+#include <memory>
 
 namespace kaa {
 
@@ -71,7 +72,7 @@ private:
 
 private:
     static Botan::LibraryInitializer botanInit_;
-    static KaaClient client_;
+    static std::unique_ptr<KaaClient> client_;
 
 };
 

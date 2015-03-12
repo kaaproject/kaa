@@ -17,10 +17,6 @@
 #ifndef I_CONFIGURATION_MANAGER_HPP_
 #define I_CONFIGURATION_MANAGER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_CONFIGURATION
-
 #include "kaa/configuration/manager/IConfigurationReceiver.hpp"
 
 namespace kaa {
@@ -30,8 +26,7 @@ namespace kaa {
  * Manages subscriptions for configuration processed.
  * Subscribers must derive @link IConfigurationReceiver @endlink.
  */
-class IConfigurationManager
-{
+class IConfigurationManager {
 public:
     virtual ~IConfigurationManager() {}
 
@@ -60,7 +55,5 @@ public:
 typedef std::shared_ptr<IConfigurationManager> IConfigurationManagerPtr;
 
 }  // namespace kaa
-
-#endif
 
 #endif /* I_CONFIGURATION_MANAGER_HPP_ */

@@ -30,9 +30,15 @@ public interface SandboxService extends RemoteService {
 
     public boolean changeKaaHostEnabled() throws SandboxServiceException;
     
+    public boolean showChangeKaaHostDialog() throws SandboxServiceException;
+    
+    public void changeKaaHostDialogShown() throws SandboxServiceException;
+    
     public void changeKaaHost(String uuid, String host) throws SandboxServiceException;
     
     public List<Project> getDemoProjects() throws SandboxServiceException;
+    
+    public Project getDemoProject(String projectId) throws SandboxServiceException;
     
     public boolean checkProjectDataExists(String projectId, ProjectDataType dataType) throws SandboxServiceException;
  

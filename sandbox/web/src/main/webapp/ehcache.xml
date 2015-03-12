@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014 CyberVision, Inc.
+  Copyright 2014-2015 CyberVision, Inc.
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -32,6 +32,10 @@
     <cache name="fileCache" maxEntriesLocalHeap="20" eternal="false" timeToIdleSeconds="3600" timeToLiveSeconds="86400" diskSpoolBufferSizeMB="30"
         maxEntriesLocalDisk="1000" diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU" statistics="false">
         <persistence strategy="localTempSwap" />
+    </cache>
+    
+    <cache name="propsCache" maxElementsInMemory="1" eternal="true" diskPersistent="true" overflowToDisk="true"
+        diskExpiryThreadIntervalSeconds="1200" memoryStoreEvictionPolicy="LRU" statistics="false">
     </cache>
     
 </ehcache>

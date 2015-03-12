@@ -17,10 +17,6 @@
 #ifndef CONFIGURATION_MANAGER_HPP_
 #define CONFIGURATION_MANAGER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_CONFIGURATION
-
 #include "kaa/configuration/IGenericDeltaReceiver.hpp"
 #include "kaa/configuration/IConfigurationProcessedObserver.hpp"
 #include "kaa/configuration/manager/IConfigurationManager.hpp"
@@ -40,9 +36,7 @@ namespace kaa {
  */
 class ConfigurationManager : public IConfigurationManager,
                              public IConfigurationProcessedObserver,
-                             public IGenericDeltaReceiver
-
-{
+                             public IGenericDeltaReceiver {
 public:
     ConfigurationManager() {}
     ~ConfigurationManager() {}
@@ -69,7 +63,5 @@ private:
 };
 
 }  // namespace kaa
-
-#endif
 
 #endif /* CONFIGURATION_MANAGER_HPP_ */

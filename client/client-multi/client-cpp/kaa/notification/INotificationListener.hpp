@@ -17,10 +17,6 @@
 #ifndef INOTIFICATIONLISTENER_HPP_
 #define INOTIFICATIONLISTENER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_NOTIFICATIONS
-
 #include <string>
 #include <vector>
 #include <memory>
@@ -51,7 +47,5 @@ public:
 typedef std::shared_ptr<INotificationListener> INotificationListenerPtr;
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* INOTIFICATIONLISTENER_HPP_ */

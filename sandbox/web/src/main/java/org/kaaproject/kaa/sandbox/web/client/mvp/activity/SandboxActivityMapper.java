@@ -17,7 +17,9 @@
 package org.kaaproject.kaa.sandbox.web.client.mvp.activity;
 
 import org.kaaproject.kaa.sandbox.web.client.mvp.ClientFactory;
+import org.kaaproject.kaa.sandbox.web.client.mvp.place.ChangeKaaHostPlace;
 import org.kaaproject.kaa.sandbox.web.client.mvp.place.MainPlace;
+import org.kaaproject.kaa.sandbox.web.client.mvp.place.ProjectPlace;
 
 import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.activity.shared.ActivityMapper;
@@ -40,6 +42,10 @@ public class SandboxActivityMapper implements ActivityMapper {
 
             if (clazz == MainPlace.class) {
                 return new MainActivity((MainPlace)place, clientFactory);
+            } else if (clazz == ProjectPlace.class) {
+                return new ProjectActivity((ProjectPlace)place, clientFactory);
+            } else if (clazz == ChangeKaaHostPlace.class) {
+                return new ChangeKaaHostActivity((ChangeKaaHostPlace)place, clientFactory);
             }
 
         }

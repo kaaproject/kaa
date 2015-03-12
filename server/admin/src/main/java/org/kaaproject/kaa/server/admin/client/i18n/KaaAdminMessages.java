@@ -43,6 +43,15 @@ public interface KaaAdminMessages extends com.google.gwt.i18n.client.Messages {
   String emptyUsernameOrPassword();
 
   /**
+   * Translated "Powered by <b><a href=\"http://www.kaaproject.org\">Kaa IoT Application Plaform</a></b> {0} · <a href=\"http://jira.kaaproject.org/browse/KAA\">Report a bug</a> · <a href=\"https://docs.kaaproject.org/display/KAA\">Documentation</a>".
+   * 
+   * @return translated "Powered by <b><a href=\"http://www.kaaproject.org\">Kaa IoT Application Plaform</a></b> {0} · <a href=\"http://jira.kaaproject.org/browse/KAA\">Report a bug</a> · <a href=\"https://docs.kaaproject.org/display/KAA\">Documentation</a>"
+   */
+  @DefaultMessage("Powered by <b><a href=\"http://www.kaaproject.org\">Kaa IoT Application Plaform</a></b> {0} · <a href=\"http://jira.kaaproject.org/browse/KAA\">Report a bug</a> · <a href=\"https://docs.kaaproject.org/display/KAA\">Documentation</a>")
+  @Key("footerMessage")
+  String footerMessage(String arg0);
+
+  /**
    * Translated "This client is not compatible with the server. Cleanup and refresh the browser.".
    * 
    * @return translated "This client is not compatible with the server. Cleanup and refresh the browser."
