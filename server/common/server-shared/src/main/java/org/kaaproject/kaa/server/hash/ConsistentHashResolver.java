@@ -25,19 +25,19 @@ import java.util.SortedMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
-import org.kaaproject.kaa.server.resolve.OperationServerResolver;
+import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * 
- * Implementation of {@link OperationServerResolver} based on consistent hash
+ * Implementation of {@link OperationsServerResolver} based on consistent hash
  * function and MD5 digest.
  * 
  * @author Andrew Shvayka
  *
  */
-public class ConsistentHashResolver implements OperationServerResolver {
+public class ConsistentHashResolver implements OperationsServerResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConsistentHashResolver.class);
 
@@ -61,7 +61,7 @@ public class ConsistentHashResolver implements OperationServerResolver {
         this.replicas = replicas;
         this.circle = new ConcurrentSkipListMap<byte[], OperationsNodeInfo>(new ByteArrayComparator());
         for(OperationsNodeInfo node : nodes){
-            addNode(node);
+            onNodeAdded(node);
         }
     }
 
@@ -71,7 +71,7 @@ public class ConsistentHashResolver implements OperationServerResolver {
     }
 
     @Override
-    public void addNode(OperationsNodeInfo node) {
+    public void onNodeAdded(OperationsNodeInfo node) {
         for (int i = 0; i < replicas; i++) {
             LOG.trace("Adding node {} replica {} to the circle", node.getConnectionInfo(), i);
             circle.put(hash(node, i), node);
@@ -79,7 +79,7 @@ public class ConsistentHashResolver implements OperationServerResolver {
     }
 
     @Override
-    public void removeNode(OperationsNodeInfo node) {
+    public void onNodeRemoved(OperationsNodeInfo node) {
         for (int i = 0; i < replicas; i++) {
             LOG.trace("Removing node {} replica {} from the circle", node.getConnectionInfo(), i);
             circle.remove(hash(node, i));
@@ -87,9 +87,9 @@ public class ConsistentHashResolver implements OperationServerResolver {
     }
 
     @Override
-    public void updateNode(OperationsNodeInfo node) {
-        removeNode(node);
-        addNode(node);
+    public void onNodeUpdated(OperationsNodeInfo node) {
+        onNodeRemoved(node);
+        onNodeAdded(node);
     }
 
     private OperationsNodeInfo getNearest(byte[] hash) {

@@ -103,7 +103,7 @@ import org.kaaproject.kaa.server.control.service.sdk.SdkGeneratorFactory;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 import org.kaaproject.kaa.server.hash.ConsistentHashResolver;
-import org.kaaproject.kaa.server.resolve.OperationServerResolver;
+import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
 import org.kaaproject.kaa.server.thrift.NeighborTemplate;
 import org.kaaproject.kaa.server.thrift.Neighbors;
 import org.slf4j.Logger;
@@ -193,7 +193,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     private volatile Neighbors<NeighborTemplate<UserConfigurationUpdate>, UserConfigurationUpdate> neighbors;
 
-    private volatile OperationServerResolver resolver;
+    private volatile OperationsServerResolver resolver;
 
     private Object zkLock = new Object();
 
@@ -800,19 +800,19 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
                         @Override
                         public void onNodeUpdated(OperationsNodeInfo node) {
                             LOG.info("Update of node {} is pushed to resolver {}", node, resolver);
-                            resolver.updateNode(node);
+                            resolver.onNodeUpdated(node);
                         }
 
                         @Override
                         public void onNodeRemoved(OperationsNodeInfo node) {
                             LOG.info("Remove of node {} is pushed to resolver {}", node, resolver);
-                            resolver.removeNode(node);
+                            resolver.onNodeRemoved(node);
                         }
 
                         @Override
                         public void onNodeAdded(OperationsNodeInfo node) {
                             LOG.info("Add of node {} is pushed to resolver {}", node, resolver);
-                            resolver.addNode(node);
+                            resolver.onNodeAdded(node);
                         }
                     });
                 }

@@ -16,14 +16,16 @@
 package org.kaaproject.kaa.server.resolve;
 
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
+import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 
-public interface OperationServerResolver {
+/**
+ * Resolves {@link OperationsNodeInfo operations server node} for given entities
+ * 
+ * @author Andrew Shvayka
+ *
+ */
+public interface OperationsServerResolver extends OperationsNodeListener{
 
     OperationsNodeInfo getNode(String user);
 
-    void addNode(OperationsNodeInfo node);
-
-    void updateNode(OperationsNodeInfo node);
-
-    void removeNode(OperationsNodeInfo node);
 }

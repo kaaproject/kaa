@@ -22,7 +22,7 @@ import java.util.List;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Message;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
-import org.kaaproject.kaa.server.resolve.OperationServerResolver;
+import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
 
 /**
  * EventService interface. Provides ability to send event messages:
@@ -115,12 +115,12 @@ public interface EventService {
     void setZkNode(OperationsNode operationsNode);
 
     /**
-     * Used to set {@link OperationServerResolver}.
+     * Used to set {@link OperationsServerResolver}.
      * 
      * @param resolver
      *            to set
      */
-    void setResolver(OperationServerResolver resolver);
+    void setResolver(OperationsServerResolver resolver);
 
     /**
      * Sends routing information about endpoint to global user actor

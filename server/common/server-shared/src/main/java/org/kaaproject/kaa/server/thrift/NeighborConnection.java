@@ -54,9 +54,6 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(NeighborConnection.class);
 
-    /** Default maximum number of opened connections to neighbor */
-    private static final int DEFAULT_MAX_NUMBER_OF_CONNECTION_TO_NEIGHBOR = 2;
-
     /** SOCKET_TIMEOUT on opened connection in seconds */
     // In seconds
     private static final long DEFAULT_SOCKET_TIMEOUT_CONNECTION_TO_NEIGHBOR = 20;
@@ -75,7 +72,7 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
     private final T template;
 
     /** Real SOCKET_TIMEOUT on opened connection, if not set used default */
-    private long socketTimeout = DEFAULT_SOCKET_TIMEOUT_CONNECTION_TO_NEIGHBOR;
+    private final long socketTimeout;
 
     /** Real maximum number of event messages queue */
     private final int messageQueueLingth = DEFAULT_EVENT_MESSAGE_QUEUE_LENGTH;
@@ -173,16 +170,16 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
 
     public synchronized void start() {
         if (!started) {
-            executor = Executors.newFixedThreadPool(getMaxNumberConnection());
+            executor = Executors.newFixedThreadPool(maxNumberConnection);
             messageQueue = new LinkedBlockingQueue<>(messageQueueLingth);
             workers = new LinkedList<>();
             clientFactory = ThriftFactory.create(OperationsThriftService.Iface.class);
             InetSocketAddress address = new InetSocketAddress(connectionInfo.getThriftHost().toString(), connectionInfo.getThriftPort());
             Set<InetSocketAddress> backends = new HashSet<InetSocketAddress>();
             backends.add(address);
-            thrift = clientFactory.withMaxConnectionsPerEndpoint(getMaxNumberConnection())
+            thrift = clientFactory.withMaxConnectionsPerEndpoint(maxNumberConnection)
                     .withSocketTimeout(Amount.of(socketTimeout, Time.SECONDS)).build(backends);
-            for (int i = 0; i < getMaxNumberConnection(); i++) {
+            for (int i = 0; i < maxNumberConnection; i++) {
                 EventWorker worker = new EventWorker(template);
                 workers.add(executor.submit(worker));
             }
@@ -244,19 +241,6 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
      */
     public ConnectionInfo getConnectionInfo() {
         return connectionInfo;
-    }
-
-    /**
-     * Maximum number of opened connections to neighbor getter.
-     * 
-     * @return the maxNumberConnection
-     */
-    public int getMaxNumberConnection() {
-        if (maxNumberConnection <= 0) {
-            return DEFAULT_MAX_NUMBER_OF_CONNECTION_TO_NEIGHBOR;
-        } else {
-            return maxNumberConnection;
-        }
     }
 
     /**

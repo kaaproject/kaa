@@ -49,7 +49,7 @@ import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
-import org.kaaproject.kaa.server.resolve.OperationServerResolver;
+import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
 import org.kaaproject.kaa.server.sync.platform.AvroEncDec;
 import org.kaaproject.kaa.server.thrift.NeighborConnection;
 import org.kaaproject.kaa.server.thrift.NeighborTemplate;
@@ -87,7 +87,7 @@ public class DefaultEventService implements EventService {
 
     private volatile OperationsNode operationsNode;
 
-    private volatile OperationServerResolver resolver;
+    private volatile OperationsServerResolver resolver;
 
     /** Listeners list which registered to receive event from thrift server. */
     private Set<EventServiceListener> listeners;
@@ -327,7 +327,7 @@ public class DefaultEventService implements EventService {
     }
 
     @Override
-    public void setResolver(OperationServerResolver resolver) {
+    public void setResolver(OperationsServerResolver resolver) {
         this.resolver = resolver;
         if (operationsNode != null) {
             updateResolver(this.resolver);
@@ -604,25 +604,25 @@ public class DefaultEventService implements EventService {
         }
     }
 
-    private void updateResolver(final OperationServerResolver resolver) {
+    private void updateResolver(final OperationsServerResolver resolver) {
         operationsNode.addListener(new OperationsNodeListener() {
             @Override
             public void onNodeUpdated(OperationsNodeInfo node) {
                 LOG.info("Update of node {} is pushed to resolver {}", node, resolver);
-                resolver.updateNode(node);
+                resolver.onNodeUpdated(node);
             }
 
             @Override
             public void onNodeRemoved(OperationsNodeInfo node) {
                 LOG.info("Remove of node {} is pushed to resolver {}", node, resolver);
-                resolver.removeNode(node);
+                resolver.onNodeRemoved(node);
                 notifyListeners();
             }
 
             @Override
             public void onNodeAdded(OperationsNodeInfo node) {
                 LOG.info("Add of node {} is pushed to resolver {}", node, resolver);
-                resolver.addNode(node);
+                resolver.onNodeAdded(node);
                 notifyListeners();
             }
             
@@ -634,7 +634,7 @@ public class DefaultEventService implements EventService {
         });
 
         for (OperationsNodeInfo info : operationsNode.getCurrentOperationServerNodes()) {
-            resolver.updateNode(info);
+            resolver.onNodeUpdated(info);
         }
     }
 
