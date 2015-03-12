@@ -21,9 +21,7 @@
 #include "kaa/configuration/IGenericDeltaReceiver.hpp"
 #include "kaa/configuration/gen/ConfigurationDefinitions.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
-#include "kaa/common/types/CommonRecord.hpp"
 #include "kaa/common/exception/KaaException.hpp"
-#include "kaa/common/CommonTypesFactory.hpp"
 #include "kaa/ClientStatus.hpp"
 
 #include <avro/Compiler.hh>
@@ -60,7 +58,7 @@ class CoonfigurationStorageStub : public IConfigurationStorage
 {
 public:
     CoonfigurationStorageStub() : configurationSaveCalled_(false), configurationLoadCalled_(false), configuration_(getDefaultConfigData().begin(), getDefaultConfigData().end())
-{
+    {
 
     }
 
@@ -99,19 +97,20 @@ BOOST_AUTO_TEST_CASE(checkConfigurationPersistence)
     try {
         ConfigurationProcessorStub cpstub;
 
-        CoonfigurationStorageStub csstub;
-        cpm.setConfigurationProcessor(&cpstub);
-        cpm.setConfigurationStorage(&csstub);
+        std::shared_ptr<CoonfigurationStorageStub> csstub = std::make_shared<CoonfigurationStorageStub>();
 
-        BOOST_CHECK(csstub.isLoadCalled());
-        BOOST_CHECK(!csstub.isSaveCalled());
+        cpm.setConfigurationProcessor(&cpstub);
+        cpm.setConfigurationStorage(csstub);
+
+        BOOST_CHECK(csstub->isLoadCalled());
+        BOOST_CHECK(!csstub->isSaveCalled());
         BOOST_CHECK(cpstub.isProcessConfigurationCalled());
 
         cpm.onConfigurationUpdated(configuration);
-        BOOST_CHECK(!csstub.isSaveCalled());
+        BOOST_CHECK(!csstub->isSaveCalled());
 
         cpm.onConfigurationUpdated(configuration);
-        BOOST_CHECK(csstub.isSaveCalled());
+        BOOST_CHECK(csstub->isSaveCalled());
 
         BOOST_CHECK(cpm.getConfigurationHash() == checkHash);
 

@@ -97,7 +97,9 @@ private:
         CallbackWrapper() : isRemoved_(false) { }
         CallbackWrapper(const Function& f) : callback_(f), isRemoved_(false) { }
         CallbackWrapper(const CallbackWrapper& o) : callback_(o.callback_), isRemoved_((bool) o.isRemoved_) { }
+        CallbackWrapper(CallbackWrapper&& o) : callback_(std::move(o.callback_)), isRemoved_((bool) o.isRemoved_) { }
         CallbackWrapper& operator=(const CallbackWrapper& o)  { callback_ = o.callback_; isRemoved_ = (bool) o.isRemoved_; return *this; }
+        CallbackWrapper& operator=(CallbackWrapper&& o)  { callback_ = std::move(o.callback_); isRemoved_ = (bool) o.isRemoved_; return *this; }
 
         template <typename... Args>
         void operator()(Args&&... args)

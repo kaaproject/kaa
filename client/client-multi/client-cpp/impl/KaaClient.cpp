@@ -270,4 +270,102 @@ void KaaClient::setDefaultConfiguration()
 #endif
 }
 
+IProfileManager& KaaClient::getProfileManager()
+{
+    return *profileManager_;
+}
+
+IConfigurationPersistenceManager& KaaClient::getConfigurationPersistenceManager()
+{
+#ifdef KAA_USE_CONFIGURATION
+    return *configurationPersistenceManager_;
+#else
+    throw KaaException("Failed to retrieve ConfigurationPersistenceManager. Configuration subunit is disabled");
+#endif
+}
+
+IConfigurationManager& KaaClient::getConfigurationManager()
+{
+#ifdef KAA_USE_CONFIGURATION
+    return *configurationManager_;
+#else
+    throw KaaException("Failed to retrieve ConfigurationManager. Configuration subunit is disabled");
+#endif
+}
+
+INotificationManager& KaaClient::getNotificationManager()
+{
+#ifdef KAA_USE_NOTIFICATIONS
+    return *notificationManager_;
+#else
+    throw KaaException("Failed to retrieve NotificationManager. Notification subunit is disabled");
+#endif
+}
+
+IEndpointRegistrationManager& KaaClient::getEndpointRegistrationManager()
+{
+#ifdef KAA_USE_EVENTS
+    return *registrationManager_;
+#else
+    throw KaaException("Failed to retrieve EndpointRegistrationManage. Event subunit is disabled");
+#endif
+}
+
+EventFamilyFactory& KaaClient::getEventFamilyFactory()
+{
+#ifdef KAA_USE_EVENTS
+    return *eventFamilyFactory_;
+#else
+    throw KaaException("Failed to retrieve EventFamilyFactory. Event subunit is disabled");
+#endif
+}
+
+IEventListenersResolver& KaaClient::getEventListenersResolver()
+{
+#ifdef KAA_USE_EVENTS
+    return *eventManager_;
+#else
+    throw KaaException("Failed to retrieve EventListenersResolver. Event subunit is disabled");
+#endif
+}
+
+IKaaChannelManager& KaaClient::getChannelManager()
+{
+    return *channelManager_;
+}
+
+const KeyPair& KaaClient::getClientKeyPair()
+{
+    return *clientKeys_;
+}
+
+ILogCollector& KaaClient::getLogCollector()
+{
+#ifdef KAA_USE_LOGGING
+    return *logCollector_;
+#else
+    throw KaaException("Failed to retrieve LogCollector. Logging subunit is disabled");
+#endif
+}
+
+IKaaDataMultiplexer& KaaClient::getOperationMultiplexer()
+{
+    return *syncProcessor_;
+}
+
+IKaaDataDemultiplexer& KaaClient::getOperationDemultiplexer()
+{
+    return *syncProcessor_;
+}
+
+IKaaDataMultiplexer& KaaClient::getBootstrapMultiplexer()
+{
+    return *syncProcessor_;
+}
+
+IKaaDataDemultiplexer& KaaClient::getBootstrapDemultiplexer()
+{
+    return *syncProcessor_;
+}
+
 }
