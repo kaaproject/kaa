@@ -69,7 +69,7 @@ public class ConfigurationDemo {
         try {
             System.in.read();
         } catch (IOException e) {
-            LOG.error("IOException was caught: ", e.toString());
+            LOG.error("IOException was caught", e);
         }
 
         // Stop Kaa client, which will gracefully close all used resources
