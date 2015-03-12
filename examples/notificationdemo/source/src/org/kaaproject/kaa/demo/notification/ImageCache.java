@@ -32,9 +32,9 @@ public class ImageCache {
     private final Map<String, Bitmap> imageMap;
 
     private static final String DEFAULT_IMAGE_KEY = "default";
-	private static final String TAG = KaaNotificationApp.class.getSimpleName();
+    private static final String TAG = KaaNotificationApp.class.getSimpleName();
     public static final ImageCache cache = new ImageCache();
-    
+
     private ImageCache() {
         imageMap = Collections.synchronizedMap(new WeakHashMap<String, Bitmap>());
         Bitmap bmp = BitmapFactory.decodeResource(KaaNotificationApp.getContext().getResources(), R.drawable.default_image);

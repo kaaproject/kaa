@@ -32,7 +32,6 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new SmartHouseDemoBuilder());
         demoBuilders.add(new RobotRunDemoBuilder());
 
-
         //PURE JAVA DEMOS
         demoBuilders.add(new JEventDemoBuilder());
         demoBuilders.add(new JDataCollectionDemoBuider());

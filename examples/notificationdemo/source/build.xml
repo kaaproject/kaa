@@ -15,33 +15,33 @@
   limitations under the License.
 -->
 <project name="KaaNotificationDemo" default="debug">
-	<!-- sdk location -->
-    <property file="../ant/sdk.properties" />
+    <!-- sdk location -->
+    <property file="../ant/sdk.properties"/>
 
-	<!-- optional sdk location -->
-    <property environment="env" />
+    <!-- optional sdk location -->
+    <property environment="env"/>
     <condition property="sdk.dir" value="${env.ANDROID_HOME}">
-        <isset property="env.ANDROID_HOME" />
+        <isset property="env.ANDROID_HOME"/>
     </condition>
 
-    <property name="java.target" value="1.7" />
-    <property name="java.source" value="1.7" />
+    <property name="java.target" value="1.7"/>
+    <property name="java.source" value="1.7"/>
 
-    <loadproperties srcFile="project.properties" />
+    <loadproperties srcFile="project.properties"/>
 
     <!-- quick check on sdk.dir -->
     <fail
-		message="sdk.dir is missing. Make sure to generate local.properties using 'android update project' or to inject it through the ANDROID_HOME environment variable."
-		unless="sdk.dir"
-    />
+            message="sdk.dir is missing. Make sure to generate local.properties using 'android update project' or to inject it through the ANDROID_HOME environment variable."
+            unless="sdk.dir"
+            />
 
-	
+
     <target name="-pre-build"/>
 
     <target name="-post-build"/>
 
-    <import file="custom_rules.xml" optional="true" />
+    <import file="custom_rules.xml" optional="true"/>
 
-    <import file="${sdk.dir}/tools/ant/build.xml" />
+    <import file="${sdk.dir}/tools/ant/build.xml"/>
 
 </project>

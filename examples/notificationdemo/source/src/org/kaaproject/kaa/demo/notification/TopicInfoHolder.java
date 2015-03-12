@@ -41,10 +41,11 @@ public class TopicInfoHolder {
 
     public String getTopicName(String topicId) {
         TopicModel model = topicModelMap.get(topicId);
-        if (null != model){
+        if (null != model) {
             return model.getTopicName();
+        } else {
+            return "";
         }
-        else return "";
     }
 
     public List<TopicModel> getTopicModelList() {
@@ -55,7 +56,7 @@ public class TopicInfoHolder {
 
     public void addNotification(String topicId, Notification notification) {
         TopicModel model = topicModelMap.get(topicId);
-        if (null != model){
+        if (null != model) {
             model.addNotification(notification);
         }
     }
@@ -65,7 +66,7 @@ public class TopicInfoHolder {
 
         for (Topic topic : updatedTopics) {
             String topicId = topic.getId();
-            if (!topicModelMap.containsKey(topicId)){
+            if (!topicModelMap.containsKey(topicId)) {
                 topicModelMap.put(topicId, new TopicModel(topic));
             }
             newIds.add(topicId);
@@ -73,7 +74,7 @@ public class TopicInfoHolder {
         Iterator<Map.Entry<String, TopicModel>> iter = topicModelMap.entrySet().iterator();
         while (iter.hasNext()) {
             String id = iter.next().getKey();
-            if (!newIds.contains(id)){
+            if (!newIds.contains(id)) {
                 iter.remove();
             }
         }

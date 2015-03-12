@@ -57,12 +57,6 @@ public class EventDemo {
     public static void main(String[] args) {
         LOG.info("Event demo started");
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e1) {
-            LOG.info("{}", e1);
-        }
-
         // Creating Kaa desktop client instance
         kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener());
         // Starting Kaa client

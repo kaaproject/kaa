@@ -28,22 +28,22 @@ import android.support.v4.app.FragmentTransaction;
 
 public class NotificationDemoActivity extends FragmentActivity {
 
-	enum CurrentFragment{
-		TOPIC, NOTIFICATION
-	}
+    enum CurrentFragment {
+        TOPIC, NOTIFICATION
+    }
 
-	public static final String TAG = KaaNotificationApp.class.getSimpleName();
-	private Bundle fragmentData;
-	private CurrentFragment currentFragment;
-	
-	public void saveFragmentData (Bundle dataBundle) {
-		this.fragmentData = dataBundle;
-	}
-	
-	public Bundle getFragmentData () {
-		return fragmentData;
-	}
-	
+    public static final String TAG = KaaNotificationApp.class.getSimpleName();
+    private Bundle fragmentData;
+    private CurrentFragment currentFragment;
+
+    public void saveFragmentData(Bundle dataBundle) {
+        this.fragmentData = dataBundle;
+    }
+
+    public Bundle getFragmentData() {
+        return fragmentData;
+    }
+
     public void addBackStackFragment(Fragment fragment, String tag) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
@@ -52,50 +52,49 @@ public class NotificationDemoActivity extends FragmentActivity {
         ft.addToBackStack(tag);
         ft.commit();
     }
-	
-	@Override
-	public void onBackPressed() {
-	    if (getFragmentManager().getBackStackEntryCount() > 0) {
-	        getFragmentManager().popBackStack();
-	    } else {
-	        super.onBackPressed();
-	    }
-	}
-	
-	@Override
-	public void onCreate(Bundle savedInstance) {
-		super.onCreate(savedInstance);
-		setContentView(R.layout.notification_demo);
-		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-		StrictMode.setThreadPolicy(policy);
-		if(null == savedInstance){			
-			showTopics();
-		}
-		else{
-			if(CurrentFragment.TOPIC == savedInstance.get("fragment")){
-				showTopics();
-			}else{
-				showNotifications();
-			}
-		}
-		((KaaNotificationApp)getApplicationContext()).setDemoActivity(this);
-	}
 
-	public void showNotifications() {
-		NotificationFragment notificationFragment = new NotificationFragment();
-		addBackStackFragment(notificationFragment, notificationFragment.getTag());
-		replaceFragment(notificationFragment, notificationFragment.getFragmentTag());
-		this.currentFragment = CurrentFragment.NOTIFICATION;
-	}
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
 
-	public void showTopics() {
-		TopicFragment topicFragment = new TopicFragment();
-		replaceFragment(topicFragment, topicFragment.getFragmentTag());
-		this.currentFragment = CurrentFragment.TOPIC;
-	}
+    @Override
+    public void onCreate(Bundle savedInstance) {
+        super.onCreate(savedInstance);
+        setContentView(R.layout.notification_demo);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        if (null == savedInstance) {
+            showTopics();
+        } else {
+            if (CurrentFragment.TOPIC == savedInstance.get("fragment")) {
+                showTopics();
+            } else {
+                showNotifications();
+            }
+        }
+        ((KaaNotificationApp) getApplicationContext()).setDemoActivity(this);
+    }
 
-	public void replaceFragment(Fragment fragment, String tag) {
-		getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, tag).commit();
-	}
+    public void showNotifications() {
+        NotificationFragment notificationFragment = new NotificationFragment();
+        addBackStackFragment(notificationFragment, notificationFragment.getTag());
+        replaceFragment(notificationFragment, notificationFragment.getFragmentTag());
+        this.currentFragment = CurrentFragment.NOTIFICATION;
+    }
+
+    public void showTopics() {
+        TopicFragment topicFragment = new TopicFragment();
+        replaceFragment(topicFragment, topicFragment.getFragmentTag());
+        this.currentFragment = CurrentFragment.TOPIC;
+    }
+
+    public void replaceFragment(Fragment fragment, String tag) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, tag).commit();
+    }
 
 }

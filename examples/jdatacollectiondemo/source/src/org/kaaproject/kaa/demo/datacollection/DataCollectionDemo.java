@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class demonstrates Kaa log upload system.
+ * This class demonstrates Kaa log upload subsystem.
  */
 public class DataCollectionDemo {
 

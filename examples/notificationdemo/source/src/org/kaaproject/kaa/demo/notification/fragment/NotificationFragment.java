@@ -33,41 +33,40 @@ import android.view.ViewGroup;
 
 public class NotificationFragment extends ListFragment {
 
-	public NotificationFragment() {
-		super();
-	}
-	
+    public NotificationFragment() {
+        super();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		setListAdapter(new NotificationArrayAdapter(inflater, getNotificationList()));
-		return super.onCreateView(inflater, container, savedInstanceState);
-	}
 
-	private List<Notification> getNotificationList() {
-		Bundle bundle = ((NotificationDemoActivity)getActivity()).getFragmentData();
-		if (null != bundle) {
-			List<TopicModel> list = TopicInfoHolder.holder.getTopicModelList();
-			if (null != list) {
-				Integer position = bundle.getInt("position");
-				TopicModel model = list.get(position);
-				if (null != model){
-					return model.getNotifications();
-				}
-				else{
-					return new LinkedList<Notification>();
-				}
-			}
-		}
-		return new LinkedList<Notification>();
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setListAdapter(new NotificationArrayAdapter(inflater, getNotificationList()));
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
 
-	public String getFragmentTag() {
-		return NotificationFragment.class.getSimpleName();
-	}
+    private List<Notification> getNotificationList() {
+        Bundle bundle = ((NotificationDemoActivity) getActivity()).getFragmentData();
+        if (null != bundle) {
+            List<TopicModel> list = TopicInfoHolder.holder.getTopicModelList();
+            if (null != list) {
+                Integer position = bundle.getInt("position");
+                TopicModel model = list.get(position);
+                if (null != model) {
+                    return model.getNotifications();
+                } else {
+                    return new LinkedList<Notification>();
+                }
+            }
+        }
+        return new LinkedList<Notification>();
+    }
+
+    public String getFragmentTag() {
+        return NotificationFragment.class.getSimpleName();
+    }
 
 }

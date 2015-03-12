@@ -30,7 +30,7 @@ import org.kaaproject.kaa.server.verifiers.trustful.config.TrustfulVerifierConfi
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JDataCollectionDemoBuider extends AbstractDemoBuilder{
+public class JDataCollectionDemoBuider extends AbstractDemoBuilder {
 
 
     private static final Logger logger = LoggerFactory.getLogger(JDataCollectionDemoBuider.class);

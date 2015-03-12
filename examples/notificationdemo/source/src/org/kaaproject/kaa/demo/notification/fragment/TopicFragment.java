@@ -29,32 +29,32 @@ import android.widget.ListView;
 
 public class TopicFragment extends ListFragment {
 
-	public TopicFragment() {
-		super();
-	}
+    public TopicFragment() {
+        super();
+    }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		setListAdapter(new TopicArrayAdapter(inflater, TopicInfoHolder.holder.getTopicModelList()));
-		return super.onCreateView(inflater, container, savedInstanceState);
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setListAdapter(new TopicArrayAdapter(inflater, TopicInfoHolder.holder.getTopicModelList()));
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
 
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		Bundle dataBundle = new Bundle();
-		dataBundle.putInt("position", position);
-		NotificationDemoActivity demoActivity = (NotificationDemoActivity) getActivity();
-		demoActivity.saveFragmentData(dataBundle);
-		demoActivity.showNotifications();
-	}
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        Bundle dataBundle = new Bundle();
+        dataBundle.putInt("position", position);
+        NotificationDemoActivity demoActivity = (NotificationDemoActivity) getActivity();
+        demoActivity.saveFragmentData(dataBundle);
+        demoActivity.showNotifications();
+    }
 
-	
-	public String getFragmentTag() {
-		return TopicFragment.class.getSimpleName();
-	}
+
+    public String getFragmentTag() {
+        return TopicFragment.class.getSimpleName();
+    }
 }

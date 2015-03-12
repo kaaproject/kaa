@@ -27,16 +27,16 @@ public class TopicModel {
 
     private final Topic topic;
     private final LinkedList<Notification> notifications;
-    
+
     private boolean selected;
     private boolean subscribedTo;
 
     public TopicModel(Topic topic) {
         this.topic = topic;
-        if (topic.getSubscriptionType() == SubscriptionType.MANDATORY){        	
-        	selected = true;
+        if (topic.getSubscriptionType() == SubscriptionType.MANDATORY) {
+            selected = true;
         }
-        notifications = new LinkedList<>(); 
+        notifications = new LinkedList<>();
     }
 
     public String getTopicName() {
@@ -64,12 +64,14 @@ public class TopicModel {
     }
 
     @SuppressWarnings("serial")
-	public List<Notification> getNotifications() {
-        if (notifications.size() > 0)
+    public List<Notification> getNotifications() {
+        if (notifications.size() > 0) {
             return notifications;
-        else return new LinkedList<Notification>() {{
-            add(new Notification("no notifications on this topic at the moment", ""));
-        }};
+        } else {
+            return new LinkedList<Notification>() {{
+                add(new Notification("no notifications on this topic at the moment", ""));
+            }};
+        }
     }
 
     public void addNotification(Notification notification) {
