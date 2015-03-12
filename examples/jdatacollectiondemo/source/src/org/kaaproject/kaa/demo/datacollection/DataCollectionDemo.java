@@ -49,12 +49,11 @@ public class DataCollectionDemo {
         // Creating Kaa desktop client instance
         KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext());
 
-	/*
-     * setting custom upload strategy.
-	 * default upload strategy sends logs
-	 * after some count or some logs size reached
-	 * this one sends every log record
-	 */
+
+        //setting custom upload strategy.
+        //default upload strategy sends logs
+        //after some count or some logs size reached
+        //this one sends every log record
         kaaClient.setLogUploadStrategy(new DefaultLogUploadStrategy() {
             @Override
             public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
