@@ -353,23 +353,26 @@
                         </configuration>
                     </execution>
                     <execution>
-<<<<<<< HEAD
                         <id>unpack-jdatacollection-resources</id>
-=======
-                        <id>unpack-jconfiguration-resources</id>
->>>>>>> origin/master
                         <goals>
                             <goal>unpack-dependencies</goal>
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-<<<<<<< HEAD
                             <outputDirectory>${project.build.directory}/generated-resources/demo/jdatacollection
                             </outputDirectory>
                             <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
                             <includeArtifactIds>jdatacollectiondemo</includeArtifactIds>
                             <includeClassifiers>jdatacollection-java-resources</includeClassifiers>
-=======
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-jconfiguration-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
                             <outputDirectory>${project.build.directory}/generated-resources/demo/jconfiguration</outputDirectory>
                             <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
                             <includeArtifactIds>jconfigurationdemo</includeArtifactIds>
@@ -388,7 +391,6 @@
                             <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
                             <includeArtifactIds>jnotificationdemo</includeArtifactIds>
                             <includeClassifiers>jnotification-java-resources</includeClassifiers>
->>>>>>> origin/master
                             <excludeTransitive>true</excludeTransitive>
                         </configuration>
                     </execution>
