@@ -17,13 +17,12 @@
 #ifndef EVENTTRANSPORT_HPP_
 #define EVENTTRANSPORT_HPP_
 
-#ifdef KAA_USE_EVENTS
-
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/KaaThread.hpp"
 #include "kaa/gen/EndpointGen.hpp"
 #include "kaa/channel/transport/IEventTransport.hpp"
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
+#include "kaa/KaaThread.hpp"
 
 namespace kaa {
 
@@ -48,11 +47,10 @@ private:
     std::map<std::uint32_t, std::list<Event> >    events_;
 
     std::int32_t startEventSN_;
-    bool isEventSNSynchronized_;;
+    bool_type isEventSNSynchronized_;
+
 };
 
 }  // namespace kaa
-
-#endif
 
 #endif /* EVENTTRANSPORT_HPP_ */

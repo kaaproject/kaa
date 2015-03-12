@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_EVENTS
-
 #include "kaa/gen/EndpointGen.hpp"
 #include <map>
 #include <list>
@@ -29,7 +27,7 @@ namespace kaa {
 
 class IEventDataProcessor {
 public:
-    virtual std::list<Event> releasePendingEvents() = 0;
+    virtual std::map<std::int32_t, Event> releasePendingEvents() = 0;
     virtual bool hasPendingEvents() const  = 0;
     virtual std::map<std::int32_t, std::list<std::string> > getPendingListenerRequests() = 0;
     virtual bool hasPendingListenerRequests() const = 0;
@@ -41,7 +39,5 @@ public:
 };
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* IEVENTDATAPROCESSOR_HPP_ */

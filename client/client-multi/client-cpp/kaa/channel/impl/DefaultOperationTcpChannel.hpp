@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_DEFAULT_TCP_CHANNEL
-
 #include <cstdint>
 #include <thread>
 #include <array>
@@ -148,7 +146,5 @@ private:
 };
 
 }
-
-#endif
 
 #endif /* DEFAULTOPERATIONTCPCHANNEL_HPP_ */

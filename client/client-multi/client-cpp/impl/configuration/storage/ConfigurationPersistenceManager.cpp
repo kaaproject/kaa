@@ -18,7 +18,6 @@
 
 #ifdef KAA_USE_CONFIGURATION
 
-#include "kaa/common/types/ICommonRecord.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 
@@ -27,7 +26,7 @@
 
 namespace kaa {
 
-void ConfigurationPersistenceManager::setConfigurationStorage(IConfigurationStorage *storage)
+void ConfigurationPersistenceManager::setConfigurationStorage(IConfigurationStoragePtr storage)
 {
     if (storage) {
         KAA_MUTEX_LOCKING("confPersistenceGuard_");
@@ -39,12 +38,12 @@ void ConfigurationPersistenceManager::setConfigurationStorage(IConfigurationStor
     }
 }
 
-void ConfigurationPersistenceManager::setConfigurationProcessor(IConfigurationProcessor *processor)
+void ConfigurationPersistenceManager::setConfigurationProcessor(IConfigurationProcessor* processor)
 {
     processor_ = processor;
 }
 
-void ConfigurationPersistenceManager::onConfigurationUpdated(const KaaRootConfiguration &configuration)
+void ConfigurationPersistenceManager::onConfigurationUpdated(const KaaRootConfiguration& configuration)
 {
     if (ignoreConfigurationUpdate_) {
         ignoreConfigurationUpdate_ = false;
@@ -91,7 +90,7 @@ void ConfigurationPersistenceManager::readStoredConfiguration()
     if (hash.empty()) {
         KAA_LOG_DEBUG("Going to read stored configuration.");
 
-        std::vector<std::uint8_t> bytes = storage_->loadConfiguration();
+        auto bytes = storage_->loadConfiguration();
 
         if (!bytes.empty()) {
             if (processor_) {
