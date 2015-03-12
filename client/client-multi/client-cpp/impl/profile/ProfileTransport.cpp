@@ -37,9 +37,12 @@ ProfileSyncRequestPtr ProfileTransport::createProfileRequest()
 {
     ProfileSyncRequestPtr request;
 
-    if (clientStatus_ != nullptr && profileManager_ != nullptr) {
+    if (clientStatus_ && profileManager_) {
         auto encodedProfile = profileManager_->getSerializedProfileContainer()->getSerializedProfile();
-        auto newHash = EndpointObjectHash(encodedProfile).getHashDigest();
+        HashDigest newHash;
+        if (encodedProfile.second) {
+            newHash = EndpointObjectHash(encodedProfile).getHashDigest();
+        }
         if (isProfileOutDated(newHash) || !clientStatus_->isRegistered()) {
             clientStatus_->setProfileHash(newHash);
             request.reset(new ProfileSyncRequest());
@@ -52,7 +55,9 @@ ProfileSyncRequestPtr ProfileTransport::createProfileRequest()
             }
 
             /* Profile */
-            request->profileBody.assign(encodedProfile.first.get(), encodedProfile.first.get() + encodedProfile.second);
+            if (encodedProfile.second) {
+                request->profileBody.assign(encodedProfile.first.get(), encodedProfile.first.get() + encodedProfile.second);
+            }
 
             /* Version info */
             request->versionInfo.configVersion = CONFIG_VERSION;

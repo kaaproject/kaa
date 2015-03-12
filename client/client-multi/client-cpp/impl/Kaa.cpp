@@ -19,36 +19,37 @@
 namespace kaa {
 
 Botan::LibraryInitializer Kaa::botanInit_("thread_safe=true");
-KaaClient Kaa::client_;
+std::unique_ptr<KaaClient> Kaa::client_;
 
 void Kaa::init(int options)
 {
-    client_.init(options);
+    client_.reset(new KaaClient);
+    client_->init(options);
 }
 
 void Kaa::start()
 {
-    client_.start();
+    client_->start();
 }
 
 void Kaa::stop()
 {
-    client_.stop();
+    client_->stop();
 }
 
 IKaaClient& Kaa::getKaaClient()
 {
-    return client_;
+    return *client_;
 }
 
 void Kaa::pause()
 {
-    client_.pause();
+    client_->pause();
 }
 
 void Kaa::resume()
 {
-    client_.resume();
+    client_->resume();
 }
 
 }

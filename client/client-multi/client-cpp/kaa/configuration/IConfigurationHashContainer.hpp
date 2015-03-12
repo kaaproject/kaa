@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_CONFIGURATION
-
 #include <memory>
 
 #include "kaa/common/EndpointObjectHash.hpp"
@@ -48,7 +46,5 @@ public:
 };
 
 }  // namespace kaa
-
-#endif
 
 #endif /* ICONFIGURATIONHASHCONTAINER_HPP_ */

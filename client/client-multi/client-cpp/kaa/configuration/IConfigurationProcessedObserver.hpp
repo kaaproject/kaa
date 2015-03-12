@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_CONFIGURATION
-
 namespace kaa {
 
 /**
@@ -28,8 +26,7 @@ namespace kaa {
  *
  * Receiver can be subscribed/unsubscribed via @link IConfigurationProcessedObservable @endlink
  */
-class IConfigurationProcessedObserver
-{
+class IConfigurationProcessedObserver {
 public:
     /**
      * Notify about configuration processing is finished.
@@ -40,7 +37,5 @@ public:
 };
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* I_CONFIGURATION_PROCESSED_OBSERVER_HPP_ */

@@ -17,8 +17,6 @@
 #ifndef CONFIGURATIONDEFINITIONS_HPP_
 #define CONFIGURATIONDEFINITIONS_HPP_
 
-#ifdef KAA_USE_CONFIGURATION
-
 #include "kaa/configuration/gen/ConfigurationGen.hpp"
 
 namespace kaa {
@@ -27,7 +25,5 @@ typedef ConfigurationRootRecord    KaaRootConfiguration;
 
 }
 
-
-#endif /* KAA_USE_CONFIGURATION */
 
 #endif /* CONFIGURATIONDEFINITIONS_HPP_ */

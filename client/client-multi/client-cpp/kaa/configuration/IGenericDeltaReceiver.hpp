@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_CONFIGURATION
-
 #include "kaa/configuration/gen/ConfigurationDefinitions.hpp"
 
 namespace kaa {
@@ -28,8 +26,7 @@ namespace kaa {
 /**
  * Interface for subscriber to receive deltas in avro generic objects
  */
-class IGenericDeltaReceiver
-{
+class IGenericDeltaReceiver {
 public:
     /**
      * Will be called on each deserialized configuration data
@@ -45,7 +42,5 @@ public:
 };
 
 }  // namespace kaa
-
-#endif
 
 #endif /* I_GENERIC_DELTA_RECEIVER_HPP_ */

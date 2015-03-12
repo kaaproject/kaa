@@ -14,17 +14,30 @@
  * limitations under the License.
  */
 
-#ifndef CONFIGURATIONDEFINITIONS_HPP_
-#define CONFIGURATIONDEFINITIONS_HPP_
+#ifndef FILECONFIGURATIONSTORAGE_HPP_
+#define FILECONFIGURATIONSTORAGE_HPP_
 
 
-#include "kaa/configuration/gen/ConfigurationGen.hpp"
+#include "kaa/configuration/storage/IConfigurationStorage.hpp"
+
+#include <string>
 
 namespace kaa {
 
-typedef %{configuration_record_class_name}    KaaRootConfiguration;
+class FileConfigurationStorage : public IConfigurationStorage {
+public:
+    FileConfigurationStorage(const std::string& filename) : filename_(filename) { }
+    FileConfigurationStorage(std::string&& filename) : filename_(std::move(filename)) { }
+
+    virtual void saveConfiguration(std::vector<std::uint8_t>&& bytes);
+    virtual std::vector<std::uint8_t> loadConfiguration();
+
+private:
+    std::string filename_;
+};
 
 }
 
 
-#endif /* CONFIGURATIONDEFINITIONS_HPP_ */
+
+#endif /* FILECONFIGURATIONSTORAGE_HPP_ */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,33 +14,31 @@
  * limitations under the License.
  */
 
-#ifndef I_SCHEMA_DEPENDENT_HPP_
-#define I_SCHEMA_DEPENDENT_HPP_
 
-#include "kaa/KaaDefaults.hpp"
+#include "kaa/configuration/storage/FileConfigurationStorage.hpp"
 
-#ifdef KAA_USE_CONFIGURATION
-
-#include <avro/Schema.hh>
+#include <boost/test/unit_test.hpp>
 
 namespace kaa {
 
-/**
- * Interface for objects whose serialization depends on schema
- */
-class ISchemaDependent {
-public:
-    /**
-     * @return schema object
-     * @see NodePtr
-     */
-    virtual const avro::NodePtr &getSchema() const = 0;
 
-    virtual ~ISchemaDependent() {}
-};
+BOOST_AUTO_TEST_SUITE(FileConfigurationStorageSuite)
+
+BOOST_AUTO_TEST_CASE(fileStorageTest)
+{
+    const std::uint8_t testData[] = { 't', 'e', 's', 't' };
+    FileConfigurationStorage storage("configuration.bin");
+
+    storage.saveConfiguration(std::vector<std::uint8_t>(testData, testData + 4));
+
+    auto result = storage.loadConfiguration();
+
+    BOOST_CHECK_EQUAL_COLLECTIONS(result.begin(), result.end(), testData, testData + 4);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
 
 }  // namespace kaa
 
-#endif
 
-#endif /* I_SCHEMA_DEPENDENT_HPP_ */
+

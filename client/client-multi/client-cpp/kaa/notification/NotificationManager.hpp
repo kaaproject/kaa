@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_NOTIFICATIONS
-
 #include "kaa/KaaThread.hpp"
 
 #include <memory>
@@ -111,7 +109,5 @@ private:
 };
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* DEFAULTNOTIFICATONMANAGER_HPP_ */
