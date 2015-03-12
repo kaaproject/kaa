@@ -1,0 +1,170 @@
+@def contentBackgroundColor #F5F5F5;
+@def selectionColor #0088CC;
+@def horizontalMenuSelectedColor #0088CC;
+@def commonFontSize 14px;
+
+th {
+    white-space: normal !important;
+}
+
+h1 {
+  font-size: 2em;
+  font-weight: bold;
+  color: #777777;
+  margin: 40px 0px 70px;
+  text-align: center;
+}
+
+body {
+    background: none repeat scroll 0 0 contentBackgroundColor;
+    border: 0 none;
+    color: #333333;
+    direction: ltr;
+    margin: 10px;
+    padding: 0;
+
+}
+
+body, table td, select, button {
+    font-family: Arial,sans-serif;
+    font-size: commonFontSize;
+    line-height: 1.42857;
+}
+
+pre {
+    font-family: "courier new",courier;
+    font-size: 12px;
+}
+
+button
+{
+  margin: 0px;
+  padding: 0px;
+}
+
+/* Firefox button padding fix */
+button::-moz-focus-inner
+{
+  border: 0;
+  padding: 0;
+}
+
+.gwt-Button, .gwt-ToggleButton {
+    border: none;
+    border-radius: 0px;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-family: Arial;
+    font-size: 16px;
+    font-variant: normal;
+    font-weight: normal;
+/*    height: 2.14286em;*/
+    line-height: 1.42857;
+    margin: 0;
+    padding: 8px 30px;
+    text-decoration: none;
+    vertical-align: baseline;
+    white-space: nowrap;
+    background: #4B9BCC;
+}
+
+.gwt-Button:hover, .gwt-ToggleButton:hover {
+    border: none;
+    border-radius: 0px;
+    background: #0088CC;
+    text-decoration: none;
+}
+
+.gwt-Button[disabled], .gwt-ToggleButton[disabled] {
+    border: none;
+    border-radius: 0px;
+    cursor: default;
+    background: #CCCCCC;
+    color: #FFFFFF;
+}
+
+.gwt-Button[disabled]:hover, .gwt-ToggleButton[disabled]:hover {
+    border: none;
+    border-radius: 0px;
+}
+
+.gwt-Button:active, .gwt-ToggleButton:active, .gwt-ToggleButton-down, .gwt-ToggleButton-down-hovering {
+    background-color: #85A6CC;
+    background-image: none;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) inset;
+    text-decoration: none;
+    text-shadow: none;
+}
+
+.gwt-MenuBar .gwt-MenuItem, .gwt-MenuItemLabel, .gwt-MenuItemContainer {
+    font-family: Arial;
+    font-size: 14px;
+    line-height: 1.42857;
+}
+
+.gwt-MenuBar .gwt-MenuItem, .gwt-MenuItemContainer {
+    cursor: pointer;
+}
+
+.gwt-MenuBar .gwt-MenuItemLabel {
+    font-weight: bold;
+}
+
+.gwt-MenuBar-horizontal {
+    background: none repeat scroll 0 0 selectionColor;
+    border-bottom-color: selectionColor;
+    color: #FFFFFF;
+}
+
+.gwt-MenuBar-horizontal .gwt-MenuItem, .gwt-MenuItemLabel, .gwt-MenuItemContainer {
+    color: #FFFFFF;
+    vertical-align: middle;
+    font-family: Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1;
+    padding: 10px 10px;
+}
+
+.gwt-MenuBar-horizontal .gwt-MenuItem {
+    font-weight: normal;
+}
+
+.gwt-MenuBar-horizontal .gwt-MenuItemLabel {
+    font-weight: bold;
+}
+
+.gwt-MenuBar-horizontal .gwt-MenuItemLabel .gwt-Label {
+    color: #FFFFFF;
+}
+
+.gwt-MenuBar-horizontal .gwt-MenuItemContainer {
+}
+
+.gwt-MenuBar-horizontal .gwt-MenuItem-selected {
+    background: none repeat scroll 0 0 horizontalMenuSelectedColor;
+    color: #F0F0F0;
+}
+
+.gwt-MenuBar-horizontal .gwt-MenuItemLabel-selected {
+}
+
+.gwt-MenuBar-horizontal .gwt-MenuItemContainer-selected {
+}
+
+.gwt-MenuBar-vertical .gwt-MenuItem {
+    padding: 3px 40px 3px 20px;
+}
+
+.gwt-MenuBar-vertical .gwt-MenuItem-selected {
+    background: none repeat scroll 0 0 selectionColor;
+    color: #FFFFFF;
+}
+
+.gwt-Label {
+    color: #666666;
+}
+
+.gwt-DisclosurePanel .header td {
+    color: #666666;
+}

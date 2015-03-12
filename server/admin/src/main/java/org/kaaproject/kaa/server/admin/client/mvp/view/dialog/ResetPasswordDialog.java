@@ -22,6 +22,7 @@ import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
 import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
 import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.avro.ui.gwt.client.widget.dialog.AvroUiDialog;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
@@ -38,7 +39,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ResetPasswordDialog extends KaaDialog implements HasErrorMessage {
+public class ResetPasswordDialog extends AvroUiDialog implements HasErrorMessage {
 
     private KaaAuthServiceAsync authService = KaaAuthServiceAsync.Util.getInstance();
 

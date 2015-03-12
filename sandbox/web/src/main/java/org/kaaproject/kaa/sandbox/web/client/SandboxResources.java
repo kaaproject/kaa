@@ -24,20 +24,40 @@ import com.google.gwt.resources.client.ImageResource.ImageOptions;
 
 public interface SandboxResources extends ClientBundle {
 
-    public interface Css extends CssResource {
+    public interface KaaTheme extends CssResource {
+        
+        String DEFAULT_CSS = "KaaTheme.css";
 
     }
 
+    public interface SandboxStyle extends SandboxTheme {
+        
+        String DEFAULT_CSS = "SandboxTheme.css";
+
+    }
+    
     @NotStrict
-    @Source("Sandbox.css")
-    Css css();
+    @Source(KaaTheme.DEFAULT_CSS)
+    KaaTheme kaaTheme();
+    
+    @NotStrict
+    @Source(SandboxStyle.DEFAULT_CSS)
+    SandboxStyle sandboxStyle();
 
-    @ImageOptions(width = 0, height = 0)
-    @Source("images/circles.png")
-    ImageResource circles();
+    @ImageOptions(width = 128, height = 128)
+    @Source("images/android.png")
+    ImageResource android();
+    
+    @ImageOptions(width = 128, height = 128)
+    @Source("images/java.png")
+    ImageResource java();
 
-    @ImageOptions(width = 0, height = 0)
-    @Source("images/circles_ie6.png")
-    ImageResource circles_ie6();
+    @ImageOptions(width = 128, height = 128)
+    @Source("images/c.png")
+    ImageResource c();
 
+    @ImageOptions(width = 128, height = 128)
+    @Source("images/cpp.png")
+    ImageResource cpp();
+    
 }

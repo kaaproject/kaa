@@ -16,6 +16,7 @@ package org.kaaproject.kaa.server.admin.client.layout;
 import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.Version;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -26,6 +27,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -52,6 +54,9 @@ public class AppLayout extends Composite {
     @UiField
     SimpleWidgetPanel appContent;
     CustomDeckLayoutPanel navContent;
+    @UiField 
+    HTMLPanel footerPanel;
+    
     @UiField(provided=true) 
     final KaaAdminStyle kaaAdminStyle;
     @UiField(provided=true) 
@@ -98,6 +103,8 @@ public class AppLayout extends Composite {
 
         appContent.setStyleName(avroUiStyle.bAppContent());
         navPanel.setStyleName(kaaAdminStyle.bNavPanel());
+        
+        footerPanel.getElement().setInnerHTML(Utils.messages.footerMessage(Version.PROJECT_VERSION));
 
         back.addClickHandler(new ClickHandler() {
 

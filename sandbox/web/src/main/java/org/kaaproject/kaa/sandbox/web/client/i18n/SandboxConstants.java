@@ -2,7 +2,7 @@ package org.kaaproject.kaa.sandbox.web.client.i18n;
 
 /**
  * Interface to represent the constants contained in resource bundle:
- * 	'/home/dyosick/projects/github_kaa/kaa/sandbox/web/src/main/java/org/kaaproject/kaa/sandbox/web/client/i18n/SandboxConstants.properties'.
+ * 	'/kaa/sandbox/web/src/main/java/org/kaaproject/kaa/sandbox/web/client/i18n/SandboxConstants.properties'.
  */
 public interface SandboxConstants extends com.google.gwt.i18n.client.ConstantsWithLookup {
   
@@ -34,11 +34,11 @@ public interface SandboxConstants extends com.google.gwt.i18n.client.ConstantsWi
   String change();
 
   /**
-   * Translated "To change kaa services host/ip enter new host<br>value in field below and click 'Change' button.".
+   * Translated "Change Kaa host/ip".
    * 
-   * @return translated "To change kaa services host/ip enter new host<br>value in field below and click 'Change' button."
+   * @return translated "Change Kaa host/ip"
    */
-  @DefaultStringValue("To change kaa services host/ip enter new host<br>value in field below and click 'Change' button.")
+  @DefaultStringValue("Change Kaa host/ip")
   @Key("changeKaaHost")
   String changeKaaHost();
 
@@ -52,15 +52,6 @@ public interface SandboxConstants extends com.google.gwt.i18n.client.ConstantsWi
   String close();
 
   /**
-   * Translated "Demo projects".
-   * 
-   * @return translated "Demo projects"
-   */
-  @DefaultStringValue("Demo projects")
-  @Key("demoProjects")
-  String demoProjects();
-
-  /**
    * Translated "Unexpected service error occurred: ".
    * 
    * @return translated "Unexpected service error occurred: "
@@ -70,6 +61,24 @@ public interface SandboxConstants extends com.google.gwt.i18n.client.ConstantsWi
   String generalError();
 
   /**
+   * Translated "Binary".
+   * 
+   * @return translated "Binary"
+   */
+  @DefaultStringValue("Binary")
+  @Key("getBinary")
+  String getBinary();
+
+  /**
+   * Translated "Source".
+   * 
+   * @return translated "Source"
+   */
+  @DefaultStringValue("Source")
+  @Key("getSourceCode")
+  String getSourceCode();
+
+  /**
    * Translated "Go to".
    * 
    * @return translated "Go to"
@@ -77,6 +86,15 @@ public interface SandboxConstants extends com.google.gwt.i18n.client.ConstantsWi
   @DefaultStringValue("Go to")
   @Key("goTo")
   String goTo();
+
+  /**
+   * Translated "Ignore".
+   * 
+   * @return translated "Ignore"
+   */
+  @DefaultStringValue("Ignore")
+  @Key("ignore")
+  String ignore();
 
   /**
    * Translated "Kaa administrative web console".
@@ -115,6 +133,15 @@ public interface SandboxConstants extends com.google.gwt.i18n.client.ConstantsWi
   String ok();
 
   /**
+   * Translated "Sample applications".
+   * 
+   * @return translated "Sample applications"
+   */
+  @DefaultStringValue("Sample applications")
+  @Key("sampleApplications")
+  String sampleApplications();
+
+  /**
    * Translated "Kaa sandbox - try Kaa in action!".
    * 
    * @return translated "Kaa sandbox - try Kaa in action!"
@@ -122,6 +149,24 @@ public interface SandboxConstants extends com.google.gwt.i18n.client.ConstantsWi
   @DefaultStringValue("Kaa sandbox - try Kaa in action!")
   @Key("sandboxHeaderTitle")
   String sandboxHeaderTitle();
+
+  /**
+   * Translated "Settings".
+   * 
+   * @return translated "Settings"
+   */
+  @DefaultStringValue("Settings")
+  @Key("settings")
+  String settings();
+
+  /**
+   * Translated "Target platform:".
+   * 
+   * @return translated "Target platform:"
+   */
+  @DefaultStringValue("Target platform:")
+  @Key("targetPlatform")
+  String targetPlatform();
 
   /**
    * Translated "Yes".

@@ -24,16 +24,16 @@ import com.google.gwt.place.shared.Place;
 
 public class HeaderActivityMapper implements ActivityMapper {
 
-    private final HeaderActivity headerActivity;
+    private final ClientFactory clientFactory;
 
     public HeaderActivityMapper(ClientFactory clientFactory) {
         super();
-        this.headerActivity = new HeaderActivity(clientFactory);
+        this.clientFactory = clientFactory;
     }
 
     @Override
     public Activity getActivity(Place place) {
-        return headerActivity;
+        return new HeaderActivity(place, clientFactory);
     }
 }
 

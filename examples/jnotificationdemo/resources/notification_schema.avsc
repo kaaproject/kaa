@@ -1,0 +1,18 @@
+{
+  "type":"record",
+  "name":"SampleNotification",
+  "namespace":"org.kaaproject.kaa.demo.notification",
+  "fields":[
+    {
+      "name":"message",
+      "type":[
+        {
+          "type":"string",
+          "avro.java.string":"String"
+        },
+        "null"
+      ]
+    }
+  ],
+  "displayName":"Sample notification to demonstrate API"
+}
