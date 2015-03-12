@@ -41,6 +41,8 @@
         <module>jeventdemo</module>
         <module>cityguide</module>
         <module>cellmonitor</module>
+        <module>jconfigurationdemo</module>
+        <module>jnotificationdemo</module>
         <module>photoframe</module>
     </modules>
 

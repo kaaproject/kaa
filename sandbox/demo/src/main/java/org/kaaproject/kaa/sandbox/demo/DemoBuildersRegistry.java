@@ -30,11 +30,13 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new CityGuideDemoBuilder());
         demoBuilders.add(new PhotoFrameDemoBuilder());
         demoBuilders.add(new SmartHouseDemoBuilder());
-        demoBuilders.add(new RobotRunDemoBuilder());
+//      demoBuilders.add(new RobotRunDemoBuilder());
 
-        //PURE JAVA DEMOS
+        //JAVA DEMOS
         demoBuilders.add(new JEventDemoBuilder());
         demoBuilders.add(new JDataCollectionDemoBuider());
+        demoBuilders.add(new JConfigurationDemoBuilder());
+        demoBuilders.add(new JNotificationDemoBuilder());
     }
 
     public static List<DemoBuilder> getRegisteredDemoBuilders() {
