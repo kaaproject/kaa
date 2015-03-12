@@ -20,6 +20,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -100,6 +101,7 @@ public class EndpointUserConfigurationMongoDaoTest extends AbstractMongoTest {
     }
 
     @Test
+    @Ignore("invalid")
     public void findByUserIdTest() throws IOException {
         EndpointUserDto userDto = generateEndpointUser(null);
         ApplicationDto appDto = generateApplication();

@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.operations.service.delta;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -161,12 +162,19 @@ public class DefaultDeltaService implements DeltaService {
 
             DeltaCacheEntry deltaCacheEntry = getDelta(endpointId, profile.getEndpointUserId(), deltaKey);
             byte[] configurationHash = deltaCacheEntry.getHash().getData();
+            if(LOG.isTraceEnabled()){
+                LOG.trace("[{}] Result configuration hash is {} for delta key {}", endpointId, Arrays.toString(configurationHash), deltaKey);
+            }
 
             if (isFirstRequestWithUpToDateConfiguration(request, profile, configurationHash)) {
                 response = new GetDeltaResponse(GetDeltaResponseType.NO_DELTA, curAppSeqNumber);
             } else {
                 if (resync) {
-                    response = new GetDeltaResponse(GetDeltaResponseType.CONF_RESYNC, curAppSeqNumber, deltaCacheEntry.getDelta());
+                    if(isConfigurationUpToDate(request, configurationHash)){
+                        response = new GetDeltaResponse(GetDeltaResponseType.NO_DELTA, curAppSeqNumber);
+                    }else{
+                        response = new GetDeltaResponse(GetDeltaResponseType.CONF_RESYNC, curAppSeqNumber, deltaCacheEntry.getDelta());
+                    }
                 } else {
                     if (deltaCacheEntry.getDelta().hasChanges()) {
                         response = new GetDeltaResponse(GetDeltaResponseType.DELTA, curAppSeqNumber, deltaCacheEntry.getDelta());
@@ -193,8 +201,12 @@ public class DefaultDeltaService implements DeltaService {
     }
 
     private boolean isFirstRequestWithUpToDateConfiguration(GetDeltaRequest request, EndpointProfileDto profile, byte[] configurationHash) {
-        return profile.getConfigurationHash() == null && request.getConfigurationHash() != null
-                && request.getConfigurationHash().binaryEquals(configurationHash);
+        return profile.getConfigurationHash() == null && isConfigurationUpToDate(request, configurationHash);
+    }
+    
+    private boolean isConfigurationUpToDate(GetDeltaRequest request, byte[] configurationHash){
+        return request.getConfigurationHash() != null
+            && request.getConfigurationHash().binaryEquals(configurationHash);
     }
 
     private void logHashMismatch(GetDeltaRequest request, EndpointProfileDto profile, String endpointId) {

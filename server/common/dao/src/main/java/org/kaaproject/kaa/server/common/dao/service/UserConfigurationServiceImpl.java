@@ -29,6 +29,7 @@ import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
+import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
 import org.slf4j.Logger;
@@ -54,7 +55,6 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
     @Autowired
     private ConfigurationService configurationService;
 
-    @Autowired
     private EndpointUserConfigurationDao<EndpointUserConfiguration> endpointUserConfigurationDao;
 
 
@@ -83,18 +83,23 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
                                 userConfigurationDto = getDto(endpointUserConfigurationDao.save(userConfig));
                             } else {
                                 LOG.warn("Validated endpoint user configuration body is empty");
+                                throw new IncorrectParameterException("Validated endpoint user configuration body is empty");
                             }
                         } catch (IOException e) {
                             LOG.error("Invalid endpoint user configuration for override schema.", e);
+                            throw new IncorrectParameterException("Invalid endpoint user configuration for override schema.");
                         }
                     } else {
                         LOG.warn("Can't find configuration schema with version {} for endpoint user configuration.", schemaVersion);
+                        throw new IncorrectParameterException("Can't find configuration schema for specified version.");
                     }
                 } else {
                     LOG.warn("Can't find application with token {} for endpoint user configuration.", appToken);
+                    throw new IncorrectParameterException("Can't find application for specified token.");
                 }
             } else {
                 LOG.warn("Invalid endpoint user configuration. Configuration body is empty");
+                throw new IncorrectParameterException("Configuration body is empty.");
             }
         }
         return userConfigurationDto;
