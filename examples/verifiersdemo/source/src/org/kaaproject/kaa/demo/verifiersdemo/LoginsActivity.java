@@ -118,7 +118,7 @@ public class LoginsActivity extends FragmentActivity {
     private static VerifiersDemoEventClassFamily vdecf;
 
     // Events listener
-    private static EventListener listener;
+    private static KaaEventListener listener;
 
     public enum AccountType {GOOGLE, FACEBOOK, TWITTER};
 
@@ -322,8 +322,10 @@ public class LoginsActivity extends FragmentActivity {
                                     Log.i(TAG, "Event listeners received: " + eventListeners);
                                 }
                             });
-                            if (listener != null) vdecf.removeListener(listener);
-                            listener = new EventListener();
+                            if (listener != null) {
+                                vdecf.removeListener(listener);
+                            }
+                            listener = new KaaEventListener();
                             vdecf.addListener(listener);
                         } else {
                             String failureString = userAttachResponse.getErrorReason() == null ?
@@ -384,7 +386,7 @@ public class LoginsActivity extends FragmentActivity {
     }
 
     // class, which is used to handle events
-    private class EventListener implements DefaultEventFamilyListener {
+    private class KaaEventListener implements DefaultEventFamilyListener {
         @Override
         public void onEvent(MessageEvent messageEvent, String sourceEndpoint) {
             Log.i(TAG, "Event was received: " + messageEvent.getMessage());

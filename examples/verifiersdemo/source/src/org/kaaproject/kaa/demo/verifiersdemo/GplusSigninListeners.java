@@ -55,7 +55,9 @@ public class GplusSigninListeners implements GoogleApiClient.ConnectionCallbacks
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "User is connected");
-        if (mSignInClicked) getTokenInBackground();
+        if (mSignInClicked) {
+            getTokenInBackground();
+        }
         mSignInClicked = false;
     }
 
@@ -75,7 +77,9 @@ public class GplusSigninListeners implements GoogleApiClient.ConnectionCallbacks
             client.connect();
         }
 
-        if (client.isConnected()) getTokenInBackground();
+        if (client.isConnected()) {
+            getTokenInBackground();
+        }
     }
 
     @Override
