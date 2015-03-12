@@ -17,8 +17,6 @@
 #ifndef IATTACHSTATUSLISTENER_HPP_
 #define IATTACHSTATUSLISTENER_HPP_
 
-#ifdef KAA_USE_EVENTS
-
 #include <string>
 #include <memory>
 
@@ -53,7 +51,5 @@ public:
 typedef std::shared_ptr<IAttachStatusListener> IAttachStatusListenerPtr;
 
 } /* namespace kaa */
-
-#endif /* KAA_USE_EVENTS */
 
 #endif /* IATTACHSTATUSLISTENER_HPP_ */

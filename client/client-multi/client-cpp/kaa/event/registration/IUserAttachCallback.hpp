@@ -17,8 +17,6 @@
 #ifndef IUSERATTACHCALLBACK_HPP_
 #define IUSERATTACHCALLBACK_HPP_
 
-#ifdef KAA_USE_EVENTS
-
 #include <string>
 #include <memory>
 
@@ -54,7 +52,5 @@ public:
 typedef std::shared_ptr<IUserAttachCallback> IUserAttachCallbackPtr;
 
 } /* namespace kaa */
-
-#endif /* KAA_USE_EVENTS */
 
 #endif /* IUSERATTACHCALLBACK_HPP_ */

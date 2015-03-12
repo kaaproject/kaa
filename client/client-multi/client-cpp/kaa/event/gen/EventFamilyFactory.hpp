@@ -23,8 +23,6 @@
  *
  */
 
-#ifdef KAA_USE_EVENTS
-
 #include <map>
 #include <set>
 #include <memory>
@@ -88,7 +86,5 @@ private:
 };
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* EVENTFAMILYFACTORY_HPP_ */

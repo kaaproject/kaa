@@ -40,8 +40,7 @@ typedef boost::bimaps::bimap<
         , boost::bimaps::left_based
 > bimap;
 
-class ClientStatus : public IKaaClientStateStorage
-{
+class ClientStatus : public IKaaClientStateStorage {
 public:
     ClientStatus(const std::string& filename);
     ~ClientStatus() { }
@@ -80,9 +79,7 @@ public:
     std::string getEndpointKeyHash() const;
     void setEndpointKeyHash(const std::string& keyHash);
 
-    virtual bool isConfigurationVersionUpdated() const {
-        return isConfigVersionUpdated;
-    }
+    virtual bool isConfigurationVersionUpdated() const { return isConfigVersionUpdated; }
 
     void read();
     void save();

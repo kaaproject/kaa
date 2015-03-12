@@ -17,8 +17,8 @@
 #ifndef IENDPOINTREGISTRATIONMANAGER_HPP_
 #define IENDPOINTREGISTRATIONMANAGER_HPP_
 
-#ifdef KAA_USE_EVENTS
 
+#include <list>
 #include <string>
 
 #include "kaa/event/registration/IUserAttachCallback.hpp"
@@ -120,7 +120,5 @@ public:
 };
 
 }
-
-#endif
 
 #endif /* IENDPOINTREGISTRATIONMANAGER_HPP_ */

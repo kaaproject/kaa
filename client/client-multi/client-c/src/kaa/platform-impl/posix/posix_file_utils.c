@@ -44,7 +44,7 @@ int posix_binary_file_read(const char *file_name, char **buffer, size_t *buffer_
 
     fseek(file, 0, SEEK_SET);
     if (fread(result_buffer, result_size, 1, file) == 0) {
-        free(result_buffer);
+        KAA_FREE(result_buffer);
         fclose(file);
         return -1;
     }

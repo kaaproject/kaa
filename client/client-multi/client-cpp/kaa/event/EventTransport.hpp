@@ -17,8 +17,6 @@
 #ifndef EVENTTRANSPORT_HPP_
 #define EVENTTRANSPORT_HPP_
 
-#ifdef KAA_USE_EVENTS
-
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/KaaThread.hpp"
 #include "kaa/gen/EndpointGen.hpp"
@@ -54,7 +52,5 @@ private:
 };
 
 }  // namespace kaa
-
-#endif
 
 #endif /* EVENTTRANSPORT_HPP_ */

@@ -17,8 +17,6 @@
 #ifndef IDETACHENDPOINTCALLBACK_HPP_
 #define IDETACHENDPOINTCALLBACK_HPP_
 
-#ifdef KAA_USE_EVENTS
-
 #include <memory>
 
 namespace kaa {
@@ -47,7 +45,5 @@ public:
 typedef std::shared_ptr<IDetachEndpointCallback> IDetachEndpointCallbackPtr;
 
 } /* namespace kaa */
-
-#endif /* KAA_USE_EVENTS */
 
 #endif /* IDETACHENDPOINTCALLBACK_HPP_ */
