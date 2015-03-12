@@ -16,8 +16,6 @@
 package org.kaaproject.kaa.server.common.admin;
 
 import java.io.IOException;
-import java.net.ConnectException;
-import java.net.SocketException;
 import java.net.URI;
 
 import org.apache.http.HttpHost;
@@ -29,19 +27,13 @@ import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ServiceUnavailableRetryStrategy;
-import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.AutoRetryHttpClient;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,17 +61,12 @@ public class HttpComponentsRequestFactoryBasicAuth extends
     }
     
     private static HttpClient createHttpClient() {
-        SchemeRegistry schemeRegistry = new SchemeRegistry();
-        schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
-        schemeRegistry.register(new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
-
-        PoolingClientConnectionManager connectionManager = new PoolingClientConnectionManager(schemeRegistry);
-        connectionManager.setMaxTotal(DEFAULT_MAX_TOTAL_CONNECTIONS);
-        connectionManager.setDefaultMaxPerRoute(DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
-
-        DefaultHttpClient defaultHttpClient = new DefaultHttpClient(connectionManager);
-        defaultHttpClient.setHttpRequestRetryHandler(new BasicHttpRequestRetryHandler(5, 10000));
-        HttpClient httpClient = new AutoRetryHttpClient(defaultHttpClient, new BaseServiceUnavailableRetryStrategy(3, 5000));
+        CloseableHttpClient httpClient = HttpClientBuilder.create().
+                setMaxConnTotal(DEFAULT_MAX_TOTAL_CONNECTIONS).
+                setMaxConnPerRoute(DEFAULT_MAX_CONNECTIONS_PER_ROUTE).
+                setRetryHandler(new BasicHttpRequestRetryHandler(5, 10000)).
+                setServiceUnavailableRetryStrategy(new BaseServiceUnavailableRetryStrategy(3, 5000)).
+                build();
         return httpClient;
     }
 
@@ -91,10 +78,10 @@ public class HttpComponentsRequestFactoryBasicAuth extends
         AuthCache authCache = new BasicAuthCache();
         BasicScheme basicAuth = new BasicScheme();
         authCache.put(host, basicAuth);
-        BasicHttpContext localcontext = new BasicHttpContext();
-        localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
-        localcontext.setAttribute(ClientContext.CREDS_PROVIDER, credsProvider);
-        return localcontext;
+        HttpClientContext context = HttpClientContext.create();
+        context.setCredentialsProvider(credsProvider);
+        context.setAuthCache(authCache);
+        return context;
     }
     
     public CredentialsProvider getCredentialsProvider() {

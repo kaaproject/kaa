@@ -40,15 +40,11 @@ import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.activity.shared.ActivityMapper;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.HeadElement;
-import com.google.gwt.dom.client.LinkElement;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
-import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
@@ -60,15 +56,11 @@ import com.google.web.bindery.event.shared.EventBus;
 
 public class KaaAdmin implements EntryPoint {
 
-    public static final String THEME = "clean"; //$NON-NLS-1$
-
     private static AuthResultDto authInfo;
 
     private static DataSource dataSource;
 
     private static KaaAuthServiceAsync authService = KaaAuthServiceAsync.Util.getInstance();
-
-    private static KaaAdminServiceAsync adminService = KaaAdminServiceAsync.Util.getInstance();
 
     private AppLayout appWidget = new AppLayout();
 
@@ -125,7 +117,6 @@ public class KaaAdmin implements EntryPoint {
     }
 
     private void init() {
-        injectThemeStyleSheet();
         Utils.injectKaaStyles();
         
         KaaAdminServiceAsync rpcService = GWT.create(KaaAdminService.class);
@@ -186,30 +177,6 @@ public class KaaAdmin implements EntryPoint {
         // Goes to the place represented on URL else default place
         historyHandler.handleCurrentHistory();
     }
-
-    /**
-     * Convenience method for getting the document's head element.
-     *
-     * @return the document's head element
-     */
-    private native HeadElement getHeadElement() /*-{
-      return $doc.getElementsByTagName("head")[0];
-    }-*/;
-
-
-    private void injectThemeStyleSheet() {
-        // Choose the name style sheet based on the locale.
-        String styleSheet = "gwt/" + THEME + "/" + THEME; //$NON-NLS-1$ //$NON-NLS-2$
-        styleSheet += LocaleInfo.getCurrentLocale().isRTL() ? "_rtl.css" : ".css"; //$NON-NLS-1$ //$NON-NLS-2$
-
-        // Load the GWT theme style sheet
-        String modulePath = GWT.getModuleBaseURL();
-        LinkElement linkElem = Document.get().createLinkElement();
-        linkElem.setRel("stylesheet"); //$NON-NLS-1$
-        linkElem.setType("text/css"); //$NON-NLS-1$
-        linkElem.setHref(modulePath + styleSheet);
-        getHeadElement().appendChild(linkElem);
-  }
 
     public static void signOut() {
         RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, GWT.getModuleBaseURL()+"j_spring_security_logout");

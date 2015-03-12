@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 
 import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
+import org.kaaproject.avro.ui.gwt.client.widget.dialog.AvroUiDialog;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -24,7 +25,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class UnauthorizedSessionDialog extends KaaDialog {
+public class UnauthorizedSessionDialog extends AvroUiDialog {
     
     public UnauthorizedSessionDialog(final Listener listener) {
         super(false, true);

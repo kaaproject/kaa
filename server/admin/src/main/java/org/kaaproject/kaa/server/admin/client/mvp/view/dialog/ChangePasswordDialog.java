@@ -21,6 +21,7 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
 import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
 import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
+import org.kaaproject.avro.ui.gwt.client.widget.dialog.AvroUiDialog;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ExtendedPasswordTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
@@ -39,7 +40,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ChangePasswordDialog extends KaaDialog {
+public class ChangePasswordDialog extends AvroUiDialog {
 
     private static final String REQUIRED = Utils.avroUiStyle.requiredField();
 

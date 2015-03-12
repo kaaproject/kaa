@@ -40,6 +40,7 @@ public class CacheServiceImpl implements CacheService {
     
     private static final String SDK_CACHE = "sdkCache";
     private static final String FILE_CACHE = "fileCache";
+    private static final String PROPS_CACHE = "propsCache";
     
     @Autowired
     private AdminClientProvider clientProvider;
@@ -77,6 +78,19 @@ public class CacheServiceImpl implements CacheService {
     public FileData putProjectFile(ProjectDataKey key, FileData data) {
         return data;
     }
+    
+    @Override
+    @Cacheable(value = PROPS_CACHE, key = "#propertyKey", unless="#result == null")
+    public Object getProperty(String propertyKey) {
+        return null;
+    }
+
+    @Override
+    @CachePut(value = PROPS_CACHE, key = "#propertyKey")
+    public Object putProperty(String propertyKey, Object propertyValue) {
+        return propertyValue;
+    }  
+
 
     @Override
     @Caching(evict = {
@@ -93,6 +107,5 @@ public class CacheServiceImpl implements CacheService {
         }
 
         LOG.info("All caches have been completely flushed.");        
-    }  
-
+    }
 }
