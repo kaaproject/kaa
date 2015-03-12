@@ -24,12 +24,12 @@ import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 
-public class TwitterSigninListeners extends Callback<TwitterSession> implements View.OnClickListener {
-    private LoginsActivity parentActivity;
+public class TwitterSigninListener extends Callback<TwitterSession> implements View.OnClickListener {
+    private LoginActivity parentActivity;
     private static String TAG = "Example-Twitter";
     private boolean isClicked;
 
-    public TwitterSigninListeners(LoginsActivity parentActivity) {
+    public TwitterSigninListener(LoginActivity parentActivity) {
         this.parentActivity = parentActivity;
     }
 
@@ -47,7 +47,7 @@ public class TwitterSigninListeners extends Callback<TwitterSession> implements 
             Log.i(TAG, "User id: " + userId);
             Log.i(TAG, "User name: " + userName);
 
-            parentActivity.updateUI(userName, userId, accessToken, LoginsActivity.AccountType.TWITTER);
+            parentActivity.updateUI(userName, userId, accessToken, LoginActivity.AccountType.TWITTER);
         }
     }
 

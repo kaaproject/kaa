@@ -58,7 +58,7 @@ import org.kaaproject.kaa.demo.verifiersdemo.VerifiersDemoEventClassFamily.Defau
 
 import io.fabric.sdk.android.Fabric;
 
-public class LoginsActivity extends FragmentActivity {
+public class LoginActivity extends FragmentActivity {
     // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
     private static final String TWITTER_KEY = "01Y9gbsMeGPetye1w9kkNvNMi";
     private static final String TWITTER_SECRET = "g4Pwh51o7SQlhd3RL6inNF3VxixBURAJDZc494uSISF7yOyJjc";
@@ -97,9 +97,9 @@ public class LoginsActivity extends FragmentActivity {
     private boolean buttonEnabled;
 
     // classes, handling each button's specific actions
-    private GplusSigninListeners gplusSigninListeners;
-    private FacebookSigninListeners facebookSigninListeners;
-    private TwitterSigninListeners twitterSigninListeners;
+    private GplusSigninListener gplusSigninListener;
+    private FacebookSigninListener facebookSigninListener;
+    private TwitterSigninListener twitterSigninListener;
 
     // Google API client, which is used to establish connection with Google
     // and access its API
@@ -160,35 +160,35 @@ public class LoginsActivity extends FragmentActivity {
 
         // Enable button, even if a user is signed-in
         twitterButton.setEnabled(true);
-        twitterSigninListeners = new TwitterSigninListeners(this);
+        twitterSigninListener = new TwitterSigninListener(this);
 
         // Attach listeners needed to keep track of connection
-        twitterButton.setCallback(twitterSigninListeners);
-        twitterButton.setOnClickListener(twitterSigninListeners);
+        twitterButton.setCallback(twitterSigninListener);
+        twitterButton.setOnClickListener(twitterSigninListener);
 
         // create listeners class for Google+
-        gplusSigninListeners = new GplusSigninListeners(this);
+        gplusSigninListener = new GplusSigninListener(this);
 
         googleButton = (SignInButton) findViewById(R.id.gplus_sign_in_button);
         googleButton.setSize(SignInButton.SIZE_WIDE);
-        googleButton.setOnClickListener(gplusSigninListeners);
+        googleButton.setOnClickListener(gplusSigninListener);
 
         // Google API client, which is capable of making requests for tokens, user info etc.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(gplusSigninListeners)
-                .addOnConnectionFailedListener(gplusSigninListeners)
+                .addConnectionCallbacks(gplusSigninListener)
+                .addOnConnectionFailedListener(gplusSigninListener)
                 .addApi(Plus.API)
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .build();
-        gplusSigninListeners.setClient(mGoogleApiClient);
+        gplusSigninListener.setClient(mGoogleApiClient);
 
         // create listeners class for Facebook
-        facebookSigninListeners = new FacebookSigninListeners(this);
+        facebookSigninListener = new FacebookSigninListener(this);
         facebookButton = (LoginButton) findViewById(R.id.facebook_sign_in_button);
 
-        facebookButton.setUserInfoChangedCallback(facebookSigninListeners);
+        facebookButton.setUserInfoChangedCallback(facebookSigninListener);
         // UI helper is used for managing Facebook's log in UI
-        uiHelper = new UiLifecycleHelper(this, facebookSigninListeners);
+        uiHelper = new UiLifecycleHelper(this, facebookSigninListener);
         uiHelper.onCreate(savedInstanceState);
 
         sendEventButton.setOnClickListener(new SendEventButtonClickListener());
@@ -210,7 +210,7 @@ public class LoginsActivity extends FragmentActivity {
         // respectively
         uiHelper.onActivityResult(requestCode, resultCode, data);
         twitterButton.onActivityResult(requestCode, resultCode, data);
-        gplusSigninListeners.onActivityResult(requestCode, resultCode, data);
+        gplusSigninListener.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -253,7 +253,7 @@ public class LoginsActivity extends FragmentActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        gplusSigninListeners.onStop();
+        gplusSigninListener.onStop();
     }
 
     public void updateUI(String userName, String userId, String token, AccountType type) {

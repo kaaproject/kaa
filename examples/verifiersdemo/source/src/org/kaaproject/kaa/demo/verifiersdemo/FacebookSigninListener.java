@@ -23,12 +23,12 @@ import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 
-public class FacebookSigninListeners implements LoginButton.UserInfoChangedCallback, Session.StatusCallback {
-    private LoginsActivity parentActivity;
+public class FacebookSigninListener implements LoginButton.UserInfoChangedCallback, Session.StatusCallback {
+    private LoginActivity parentActivity;
     private static final String TAG = "Example-Facebook";
     private boolean isClicked;
 
-    public FacebookSigninListeners(LoginsActivity parentActivity) {
+    public FacebookSigninListener(LoginActivity parentActivity) {
         this.parentActivity = parentActivity;
     }
 
@@ -45,7 +45,7 @@ public class FacebookSigninListeners implements LoginButton.UserInfoChangedCallb
             Log.i(TAG, "User id: " + userId);
             Log.i(TAG, "User name: " + user.getFirstName());
 
-            parentActivity.updateUI(userName, userId, accessToken, LoginsActivity.AccountType.FACEBOOK);
+            parentActivity.updateUI(userName, userId, accessToken, LoginActivity.AccountType.FACEBOOK);
 
             // Disconnect user from Facebook (to make Log out button disappear)
             Session.getActiveSession().closeAndClearTokenInformation();

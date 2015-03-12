@@ -31,7 +31,7 @@
         <fileSet>
             <directory>${project.basedir}/../thirdparty/android/appcompat_v7</directory>
             <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>smarthouse_demo/appcompat_v7</outputDirectory>
+            <outputDirectory>verifiers_demo/appcompat_v7</outputDirectory>
         </fileSet>
     </fileSets>
     <files>

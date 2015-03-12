@@ -32,19 +32,19 @@ import com.google.android.gms.plus.Plus;
 
 import java.io.IOException;
 
-public class GplusSigninListeners implements GoogleApiClient.ConnectionCallbacks,
+public class GplusSigninListener implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
     private static final int RC_SIGN_IN = 0;
     private static final String SCOPE = "oauth2:https://www.googleapis.com/auth/plus.login";
     private static final String TAG = "Example-G+";
 
     private GoogleApiClient client;
-    private LoginsActivity parentActivity;
+    private LoginActivity parentActivity;
     private boolean mSignInClicked;
     private boolean mIntentInProgress;
     private ConnectionResult mConnectionResult;
 
-    public GplusSigninListeners(LoginsActivity parentActivity) {
+    public GplusSigninListener(LoginActivity parentActivity) {
         this.parentActivity = parentActivity;
     }
 
@@ -141,9 +141,9 @@ public class GplusSigninListeners implements GoogleApiClient.ConnectionCallbacks
     }
 
     private class GetTokenInBackground extends AsyncTask<Void, Void, Void> {
-        private LoginsActivity activity;
+        private LoginActivity activity;
 
-        public GetTokenInBackground(LoginsActivity activity) {
+        public GetTokenInBackground(LoginActivity activity) {
             this.activity = activity;
         }
 
@@ -164,7 +164,7 @@ public class GplusSigninListeners implements GoogleApiClient.ConnectionCallbacks
                 Log.i(TAG, "User id: " + userId);
                 Log.i(TAG, "User name: " + userName);
 
-                parentActivity.updateUI(userName, userId, accessToken, LoginsActivity.AccountType.GOOGLE);
+                parentActivity.updateUI(userName, userId, accessToken, LoginActivity.AccountType.GOOGLE);
 
                 return null;
             } catch (IOException e) {
