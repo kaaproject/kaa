@@ -103,9 +103,9 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
     @Override
     public void onNotification(Notification notification) throws TException {
         LOG.debug("Received Notification from control server {}", notification);
-        LOG.debug("Notify cache service..");
+        LOG.debug("Going to notify cache service..");
         processCacheNotification(notification);
-        LOG.debug("Notify akka service..");
+        LOG.debug("Going to notify akka service..");
         akkaService.onNotification(notification);
     }
 
