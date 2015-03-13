@@ -43,6 +43,21 @@
             <classifier>trustful</classifier>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
+            <artifactId>config</artifactId>
+            <classifier>facebook</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
+            <artifactId>config</artifactId>
+            <classifier>twitter</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
+            <artifactId>config</artifactId>
+            <classifier>gplus</classifier>
+        </dependency>
+        <dependency>
             <groupId>org.kaaproject.kaa.examples.robotrun</groupId>
             <artifactId>robotrun-shared</artifactId>
             <version>${project.version}</version>
@@ -216,6 +231,22 @@
             <artifactId>photoframe</artifactId>
             <version>${project.version}</version>
             <classifier>photoframe-android-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>verifiersdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>verifiers-android-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>verifiersdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>verifiers-android-src</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
         </dependency>
@@ -424,7 +455,20 @@
                             <excludeTransitive>true</excludeTransitive>
                         </configuration>
                     </execution>
-
+                    <execution>
+                        <id>unpack-verifiers-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/verifiers</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>verifiersdemo</includeArtifactIds>
+                            <includeClassifiers>verifiers-android-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>copy</id>
                         <phase>prepare-package</phase>
@@ -542,6 +586,16 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
                                     <destFileName>photoframe_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>verifiersdemo</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>verifiers-android-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
+                                    <destFileName>verifiers_demo.tar.gz</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
