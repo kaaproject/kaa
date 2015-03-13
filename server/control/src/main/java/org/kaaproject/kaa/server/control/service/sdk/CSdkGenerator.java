@@ -62,10 +62,9 @@ public class CSdkGenerator extends SdkGenerator {
     private static final String C_SDK_DIR    = "sdk/c";
     private static final String TEMPLATE_DIR = "sdk/c";
     /**
-     * The variable KAA_SRC_FOLDER is set in CMakeList.txt
-     * located in the root folder of the C SDK project.
+     * The KAA_SRC_FOLDER variable is also set in CMakeList.txt located in the root folder of the C SDK project.
      */
-    private static final String KAA_SRC_FOLDER = "${KAA_SRC_FOLDER}";
+    private static final String KAA_SRC_FOLDER = "src/kaa";
     private static final String KAA_GEN_SOURCE_DIR = KAA_SRC_FOLDER + "/gen/";
 
     private static final String C_SDK_PREFIX       = "kaa-client-sdk-";

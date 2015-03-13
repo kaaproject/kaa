@@ -17,48 +17,88 @@
 #ifndef ILOGUPLOADSTRATEGY_HPP_
 #define ILOGUPLOADSTRATEGY_HPP_
 
-#include "kaa/KaaDefaults.hpp"
+#include <memory>
+#include <cstdint>
 
-#ifdef KAA_USE_LOGGING
-
-#include "kaa/log/ILogUploadConfiguration.hpp"
-#include "kaa/log/ILogStorageStatus.hpp"
+#include "kaa/gen/EndpointGen.hpp"
 
 namespace kaa {
 
-/**
- * Enumeration of available decisions of log storage modifications.
+/*
+ * Forward declaration.
  */
-enum LogUploadStrategyDecision {
-    /** Nothing to be done */
-    NOOP = 0,
-    /** Start uploading */
-    UPLOAD,
-    /** Release space */
-    CLEANUP,
+class ILogStorageStatus;
+
+/**
+ * @brief Log upload decisions.
+ */
+enum class LogUploadStrategyDecision {
+    NOOP = 0, /*!< Nothing to be done. */
+    UPLOAD    /*!< Initiate log upload. */
 };
 
 /**
- * Interface for determination if upload is needed.
+ * @brief The public interface for the log upload strategy.
+ *
+ * The default implementation can be found in @c DefaultLogUploadStrategy.
  */
 class ILogUploadStrategy {
 public:
     /**
-     * Checks if log upload should be triggered.
-     * Called when each log record is produced or log upload parameters are changed
+     * @brief Decides whether the log upload is needed.
      *
-     * \param configuration Current log upload configuration.
-     * \param status        Log storage status.
+     * The decision is made based on the current log storage status and, depending on the strategy implementation,
+     * on some additional information.
      *
-     * \return  \see LogUploadStrategyDecision.
+     * @param[in] status    The log storage status.
+     *
+     * @return    The log upload decision.
+     *
+     * @see ILogStorageStatus
+     * @see LogUploadStrategyDecision
      */
-    virtual LogUploadStrategyDecision isUploadNeeded(const ILogUploadConfiguration* configuration, const ILogStorageStatus* status) = 0;
+    virtual LogUploadStrategyDecision isUploadNeeded(ILogStorageStatus& status) = 0;
+
+    /**
+     * @brief Retrieves the maximum size of the report pack that will be delivered in the single request
+     * to the Operations server.
+     *
+     * @return    The size of the log batch in bytes.
+     */
+    virtual std::size_t getBatchSize() = 0;
+
+    /**
+     * @brief Maximum time to wait the log delivery response.
+     *
+     * @return    Time in seconds.
+     */
+    virtual std::size_t getTimeout() = 0;
+
+    /**
+     * @brief Callback is used when the log delivery timeout detected.
+     *
+     * More information about the detection of the log delivery timeout read in the documentation for @c ILogCollector.
+     */
+    virtual void onTimeout() = 0;
+
+    /**
+     * @brief Callback is used when the log delivery is failed.
+     *
+     * @param[in] code    The reason code of the log delivery failure.
+     *
+     * @see LogDeliveryErrorCode
+     */
+    virtual void onFailure(LogDeliveryErrorCode code) = 0;
 
     virtual ~ILogUploadStrategy() {}
 };
 
-}  // namespace kaa
 
-#endif
+/**
+ * @typedef The shared pointer to @c ILogUploadStrategy.
+ */
+typedef std::shared_ptr<ILogUploadStrategy> ILogUploadStrategyPtr;
+
+}  // namespace kaa
 
 #endif /* ILOGUPLOADSTRATEGY_HPP_ */

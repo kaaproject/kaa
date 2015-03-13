@@ -37,15 +37,12 @@ import org.slf4j.LoggerFactory;
 
 public class CEventSourcesGenerator {
     /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(CppEventSourcesGenerator.class);
-    
+    private static final Logger LOG = LoggerFactory.getLogger(CppEventSourcesGenerator.class);
+
     /**
-     * The variable KAA_SRC_FOLDER is set in CMakeList.txt
-     * located in the root folder of the C SDK project.
+     * The KAA_SRC_FOLDER variable is also set in CMakeList.txt located in the root folder of the C SDK project.
      */
-    private static final String KAA_SRC_FOLDER = "${KAA_SRC_FOLDER}";
-    private static final String SOURCE_OUTPUT = KAA_SRC_FOLDER;
+    private static final String KAA_SRC_FOLDER = "src/kaa";
     private static final String EVENT_SOURCE_OUTPUT = KAA_SRC_FOLDER + "/gen/";
 
     private static final String NAME_PREFIX_TEMPLATE = "kaa_{name}";
@@ -148,8 +145,7 @@ public class CEventSourcesGenerator {
             tarEntry = new TarEntryData(entry, data);
             eventSources.add(tarEntry);
 
-            entry = new TarArchiveEntry(SOURCE_OUTPUT +
-                    EVENT_C_FILE);
+            entry = new TarArchiveEntry(KAA_SRC_FOLDER + "/" + EVENT_C_FILE);
             data = commonWriter.toString().getBytes();
             entry.setSize(data.length);
             tarEntry = new TarEntryData(entry, data);

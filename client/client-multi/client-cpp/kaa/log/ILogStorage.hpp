@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,67 +17,92 @@
 #ifndef ILOGSTORAGE_HPP_
 #define ILOGSTORAGE_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_LOGGING
-
-#include "kaa/log/LogRecord.hpp"
 #include <list>
-#include <cstdint>
 #include <memory>
+#include <cstdint>
+#include <utility>
 
 namespace kaa {
 
+/*
+ * Forward declarations.
+ */
+class LogRecord;
+class ILogStorageStatus;
+
 /**
- * Interface for log storage.
+ * @typedef The shared pointer to the serialized @c LogRecord instance.
+ */
+typedef std::shared_ptr<LogRecord> LogRecordPtr;
+
+/**
+ * @brief The public interface to access to the log storage.
  *
- * Default implementation can be found in \c MemoryLogStorage
- * \see MemoryLogStorage
+ * The default implementation can be found in @c MemoryLogStorage.
  */
 class ILogStorage {
 public:
-    typedef std::list<LogRecord>    container_type;
-
     /**
-     *  Adds log record to storage.
-     */
-    virtual void            addLogRecord(const LogRecord & record)  = 0;
-
-    /**
-     * Returns record block of given size
+     * @brief The alias for the unique identifier of the requested log block.
      *
-     * \param blockSize     Size of a log record block
-     * \param blockId       Unique identifier of the log record block.
-     * \return  Container of records
+     * The identifier may be reuse after notifying of its status via @link removeRecordBlock(RecordBlockId id) @endlink
+     * and @link notifyUploadFailed(RecordBlockId id) @endlink.
      */
-    virtual container_type  getRecordBlock(std::size_t blockSize, std::int32_t blockId)        = 0;
+    typedef std::int32_t RecordBlockId;
 
     /**
-     * Called when log block was successfully uploaded.
+     * @brief The alias for the log block container.
+     */
+    typedef std::list<LogRecordPtr> RecordBlock;
+
+    /**
+     * @brief The alias for the log block marked by the unique identifier.
+     */
+    typedef std::pair<RecordBlockId, RecordBlock> RecordPack;
+
+    /**
+     * @brief Adds the log record to the storage.
+     */
+    virtual void addLogRecord(LogRecordPtr record) = 0;
+
+    /**
+     * @brief Returns the current log storage status.
      *
-     * \param blockId   Unique identifier of the log block.
+     * @return The current log storage status.
      */
-    virtual void            removeRecordBlock(std::int32_t blockId)       = 0;
+    virtual ILogStorageStatus& getStatus() = 0;
 
     /**
-     * Called when log block upload failed.
+     * @brief Returns the block of log records which total size is less or equal to the specified block size.
      *
-     * \param blockId   Unique identifier of the log block.
+     * @param[in] blockSize    The maximum size (in bytes) of the requested log record block.
+     *
+     * @return The log record block marked by the unique @c RecordBlockId identifier.
      */
-    virtual void            notifyUploadFailed(std::int32_t blockId)      = 0;
+    virtual RecordPack getRecordBlock(std::size_t blockSize) = 0;
 
     /**
-     * Shrink storage to fit allowed volume size.
+     * @brief Removes the log block marked by the specified id.
+     *
+     * @param[in] id    The unique identifier of the log block.
      */
-    virtual void            removeOldestRecords(std::size_t allowedVolume)   = 0;
+    virtual void removeRecordBlock(RecordBlockId id) = 0;
+
+    /**
+     * @brief Notifies of the delivery of the log block marked by the specified id has been failed.
+     *
+     * @param[in] id    The unique identifier of the log block.
+     */
+    virtual void notifyUploadFailed(RecordBlockId id) = 0;
 
     virtual ~ILogStorage() {}
 };
 
-typedef std::shared_ptr<ILogStorage> LogStoragePtr;
+/**
+ * @typedef The shared pointer to @c ILogStorage.
+ */
+typedef std::shared_ptr<ILogStorage> ILogStoragePtr;
 
 }  // namespace kaa
-
-#endif
 
 #endif /* ILOGSTORAGE_HPP_ */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,9 @@
 
 #include "kaa/log/LogRecord.hpp"
 
-#ifdef KAA_USE_LOGGING
-
 namespace kaa {
 
-    const std::vector<std::uint8_t>& LogRecord::getData() {
-    return logData_;
+kaa_thread_local AvroByteArrayConverter<KaaUserLogRecord> LogRecord::converter_;
+
 }
 
-size_t LogRecord::getSize() const {
-    return logData_.size();
-}
-
-}  // namespace kaa
-
-#endif
