@@ -19,6 +19,7 @@ package org.kaaproject.kaa.sandbox.web.client.mvp.view.base;
 import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
 import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel.Type;
 import org.kaaproject.kaa.sandbox.web.client.SandboxResources.SandboxStyle;
+import org.kaaproject.kaa.sandbox.web.client.layout.SimpleWidgetPanel;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.BaseView;
 import org.kaaproject.kaa.sandbox.web.client.util.Utils;
 
@@ -28,8 +29,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -38,20 +41,33 @@ public abstract class BaseViewImpl extends Composite implements BaseView {
     interface BaseViewImplUiBinder extends UiBinder<Widget, BaseViewImpl> { }
     private static BaseViewImplUiBinder uiBinder = GWT.create(BaseViewImplUiBinder.class);
 
+    @UiField public DockLayoutPanel dockPanel;
+    @UiField public VerticalPanel headerPanel;
     @UiField public HorizontalPanel backButtonPanel;
     @UiField public Button backButton;
     @UiField public Label titleLabel;
-    @UiField public VerticalPanel detailsPanel;
+    @UiField public SimpleWidgetPanel centerPanel;
+    //@UiField public VerticalPanel detailsPanel;
     @UiField (provided = true) public final AlertPanel errorPanel;
     @UiField (provided = true) public final SandboxStyle sandboxStyle;
     
-    public BaseViewImpl() {
+    protected VerticalPanel detailsPanel;
+    
+    public BaseViewImpl(boolean useDetailsPanel) {
         errorPanel = new AlertPanel(Type.ERROR);
         sandboxStyle = Utils.sandboxStyle;
         initWidget(uiBinder.createAndBindUi(this));
-        titleLabel.setText(getViewTitle());
-        initDetailsPanel();
-        
+        setTitle(getViewTitle());
+        if (useDetailsPanel) {
+            detailsPanel = new VerticalPanel();
+            detailsPanel.setWidth("100%");
+            detailsPanel.addStyleName(sandboxStyle.contentPanel());
+            ScrollPanel scroll = new ScrollPanel();
+            scroll.setWidth("100%");
+            scroll.add(detailsPanel);
+            centerPanel.setWidget(scroll);
+        }
+        initCenterPanel();        
         clearError();
     }
 
@@ -69,23 +85,27 @@ public abstract class BaseViewImpl extends Composite implements BaseView {
             titleLabel.setVisible(true);
             titleLabel.setText(title);
         }
+        updateHeaderHeight();
     }
     
     @Override
     public void clearError() {
         errorPanel.setMessage("");
         errorPanel.setVisible(false);
+        updateHeaderHeight();
     }
 
     @Override
     public void setErrorMessage(String message) {
         errorPanel.setMessage(message);
         errorPanel.setVisible(true);
+        updateHeaderHeight();
     }
     
     @Override
     public void setBackEnabled(boolean enabled) {
         backButtonPanel.setVisible(enabled);
+        updateHeaderHeight();
     }
     
     @Override
@@ -93,9 +113,13 @@ public abstract class BaseViewImpl extends Composite implements BaseView {
         return backButton;
     }
     
+    protected void updateHeaderHeight() {
+        dockPanel.setWidgetSize(headerPanel, headerPanel.getOffsetHeight());
+    }
+    
     protected abstract String getViewTitle();
     
-    protected abstract void initDetailsPanel();
+    protected abstract void initCenterPanel();
     
     protected abstract void resetImpl();
 

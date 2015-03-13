@@ -21,6 +21,7 @@ Copyright 2014-2015 CyberVision, Inc.
         <name>Java event demo</name>
         <description>Application on java platform demonstrating event subsystem (IoT)</description>
         <platform>JAVA</platform>
+        <features>EVENT</features>
         <sourceArchive>java/jevent_demo.tar.gz</sourceArchive>
         <projectFolder>jevent_demo/JEventDemo</projectFolder>
         <sdkLibDir>jevent_demo/JEventDemo/lib</sdkLibDir>

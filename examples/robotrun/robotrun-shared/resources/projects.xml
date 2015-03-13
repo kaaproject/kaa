@@ -21,6 +21,7 @@ Copyright 2014-2015 CyberVision, Inc.
         <name>Robot Run Demo Desktop</name>
         <description>Robot Run java application to control and visualize labirynth</description>
         <platform>JAVA</platform>
+        <features>CONFIGURATION EVENT</features>
         <sourceArchive>java/robotrun_demo.tar.gz</sourceArchive>
         <projectFolder></projectFolder>
         <sdkLibDir>lib</sdkLibDir>
@@ -30,6 +31,7 @@ Copyright 2014-2015 CyberVision, Inc.
         <name>Robot Run Demo Android</name>
         <description>Robot Run android application to control robot</description>
         <platform>ANDROID</platform>
+        <features>CONFIGURATION EVENT DATA_COLLECTION</features>
         <sourceArchive>android/robotrun_demo.tar.gz</sourceArchive>
         <projectFolder>robotrun_demo/RobotRun</projectFolder>
         <sdkLibDir>robotrun_demo/RobotRun/libs</sdkLibDir>

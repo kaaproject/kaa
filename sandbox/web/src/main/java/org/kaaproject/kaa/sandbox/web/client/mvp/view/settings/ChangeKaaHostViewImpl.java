@@ -37,7 +37,7 @@ public class ChangeKaaHostViewImpl extends BaseViewImpl implements ChangeKaaHost
     private Button changeKaaHostButton;
     
     public ChangeKaaHostViewImpl() {
-        super();
+        super(true);
         setBackEnabled(true);
     }
     
@@ -47,7 +47,7 @@ public class ChangeKaaHostViewImpl extends BaseViewImpl implements ChangeKaaHost
     }
 
     @Override
-    protected void initDetailsPanel() {
+    protected void initCenterPanel() {
         changeHostPanel = new VerticalPanel();
         HTML changeKaaHostLabel = new HTML(Utils.messages.changeKaaHostMessage());
         changeKaaHostLabel.addStyleName(Utils.sandboxStyle.descriptionLabel());
@@ -79,6 +79,7 @@ public class ChangeKaaHostViewImpl extends BaseViewImpl implements ChangeKaaHost
     @Override
     public void setChangeKaaHostEnabled(boolean enabled) {
         changeHostPanel.setVisible(enabled);
+        updateHeaderHeight();
     }
 
     @Override
