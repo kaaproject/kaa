@@ -128,12 +128,8 @@ public class CppSdkGenerator extends SdkGenerator {
     private static final String SDK_DEFAULTS_PATH = "impl/KaaDefaults.cpp";
 
     private static final String LOG_RECORD_SCHEMA_AVRO_SRC = "avro/log.avsc";
-    private static final String LOG_RECORD_TEMPLATE = "sdk/cpp/log/LogRecord.hpp.template";
-    private static final String LOG_RECORD_PATH = "kaa/log/LogRecord.hpp";
     private static final String ILOG_COLLECTOR_TEMPLATE = "sdk/cpp/log/ILogCollector.hpp.template";
     private static final String ILOG_COLLECTOR_PATH = "kaa/log/ILogCollector.hpp";
-    private static final String LOG_COLLECTOR_TEMPLATE = "sdk/cpp/log/LogCollector.hpp.template";
-    private static final String LOG_COLLECTOR_PATH = "kaa/log/LogCollector.hpp";
     private static final String LOG_RECORD_CLASS_NAME_VAR = "%{log_record_class_name}";
 
     private static final String CONFIGURATION_SCHEMA_AVRO_SRC = "avro/configuration.avsc";
@@ -213,25 +209,11 @@ public class CppSdkGenerator extends SdkGenerator {
             cppSources.add(tarEntry);
 
             Schema logSchema = new Schema.Parser().parse(logSchemaBody);
-            String logRecordHpp = SdkGenerator.readResource(LOG_RECORD_TEMPLATE);
-            entry = new TarArchiveEntry(LOG_RECORD_PATH);
-            byte [] logRecordData = replaceVar(logRecordHpp, LOG_RECORD_CLASS_NAME_VAR, logSchema.getName()).getBytes();
-            entry.setSize(logRecordData.length);
-            tarEntry = new TarEntryData(entry, logRecordData);
-            cppSources.add(tarEntry);
-
             String iLogCollectorHpp = SdkGenerator.readResource(ILOG_COLLECTOR_TEMPLATE);
             entry = new TarArchiveEntry(ILOG_COLLECTOR_PATH);
             byte [] iLogCollectorData = replaceVar(iLogCollectorHpp, LOG_RECORD_CLASS_NAME_VAR, logSchema.getName()).getBytes();
             entry.setSize(iLogCollectorData.length);
             tarEntry = new TarEntryData(entry, iLogCollectorData);
-            cppSources.add(tarEntry);
-
-            String logCollectorHpp = SdkGenerator.readResource(LOG_COLLECTOR_TEMPLATE);
-            entry = new TarArchiveEntry(LOG_COLLECTOR_PATH);
-            byte [] logCollectorData = replaceVar(logCollectorHpp, LOG_RECORD_CLASS_NAME_VAR, logSchema.getName()).getBytes();
-            entry.setSize(logCollectorData.length);
-            tarEntry = new TarEntryData(entry, logCollectorData);
             cppSources.add(tarEntry);
         }
 

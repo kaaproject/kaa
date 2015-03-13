@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,31 @@
  * limitations under the License.
  */
 
-#ifndef KAA_LOG_ILOGUPLOADFAILOVERSTRATEGY_HPP_
-#define KAA_LOG_ILOGUPLOADFAILOVERSTRATEGY_HPP_
-
-#include "kaa/gen/EndpointGen.hpp"
+#ifndef ILOGPROCESSOR_HPP_
+#define ILOGPROCESSOR_HPP_
 
 namespace kaa {
 
-class ILogUploadFailoverStrategy {
+struct LogSyncRequest;
+struct LogSyncResponse;
+
+/**
+ * @brief
+ */
+class ILogProcessor {
 public:
-    virtual bool isUploadApproved() = 0;
 
-    virtual void onTimeout() = 0;
-    virtual void onFailure(LogDeliveryErrorCode code) = 0;
+    virtual std::shared_ptr<LogSyncRequest> getLogUploadRequest() = 0;
+    /**
+     * Called when log upload response arrived.
+     *
+     * \param   response    Response from operations server.
+     */
+    virtual void onLogUploadResponse(const LogSyncResponse& response) = 0;
 
-    virtual ~ILogUploadFailoverStrategy() {}
+    virtual ~ILogProcessor() {}
 };
 
 } /* namespace kaa */
 
-#endif /* KAA_LOG_ILOGUPLOADFAILOVERSTRATEGY_HPP_ */
+#endif /* ILOGPROCESSOR_HPP_ */

@@ -14,11 +14,35 @@
  * limitations under the License.
  */
 
-#include "kaa/log/LogRecord.hpp"
+#ifndef MOCKLOGSTORAGESTATUS_HPP_
+#define MOCKLOGSTORAGESTATUS_HPP_
+
+#include "kaa/log/ILogStorageStatus.hpp"
 
 namespace kaa {
 
-kaa_thread_local AvroByteArrayConverter<KaaUserLogRecord> LogRecord::converter_;
+class MockLogStorageStatus: public ILogStorageStatus {
+public:
+    virtual std::size_t getConsumedVolume()
+    {
+        ++onGetConsumedVolume_;
+        return consumedVolume_;
+    }
 
-}
+    virtual std::size_t getRecordsCount()
+    {
+        ++onGetRecordsCount_;
+        return recordsCount_;
+    }
 
+public:
+    std::size_t consumedVolume_;
+    std::size_t recordsCount_;
+
+    std::size_t onGetConsumedVolume_ = 0;
+    std::size_t onGetRecordsCount_ = 0;
+};
+
+} /* namespace kaa */
+
+#endif /* MOCKLOGSTORAGESTATUS_HPP_ */
