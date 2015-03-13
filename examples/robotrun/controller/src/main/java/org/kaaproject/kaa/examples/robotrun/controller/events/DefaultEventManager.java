@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
-import org.kaaproject.kaa.client.event.FetchEventListeners;
+import org.kaaproject.kaa.client.event.FindEventListenersCallback;
 import org.kaaproject.kaa.client.event.registration.EndpointOperationResultListener;
 import org.kaaproject.kaa.client.event.registration.UserAuthResultListener;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
@@ -57,7 +57,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultEventManager implements EventManager, RobotRunEventClassFamily.Listener, UserAuthResultListener,
-        FetchEventListeners {
+        FindEventListenersCallback {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultEventManager.class);
 

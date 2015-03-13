@@ -34,7 +34,7 @@
     </properties>
 
     <modules>
-        <module>robotrun</module>
+        <!--module>robotrun</module-->
         <module>smarthousedemo</module>
         <module>notificationdemo</module>
         <module>jdatacollectiondemo</module>

@@ -27,7 +27,7 @@ import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
-import org.kaaproject.kaa.client.event.FetchEventListeners;
+import org.kaaproject.kaa.client.event.FindEventListenersCallback;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.client.transact.TransactionId;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
@@ -85,6 +85,18 @@ public class EventDemo {
             }
         });
 
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            LOG.error("IOException was caught", e);
+        }
+
+        //Release all network connections and application resources.
+        //Shutdown all Kaa client tasks.
+        kaaClient.stop();
+        LOG.info("Kaa client stopped");
+
+        LOG.info("Event demo stopped");
     }
 
 
@@ -95,7 +107,7 @@ public class EventDemo {
         listenerFQNs.add(ChangeDegreeRequest.class.getName());
 
         //And then finding all listener listening to events in FQNs list
-        kaaClient.findEventListeners(listenerFQNs, new FetchEventListeners() {
+        kaaClient.findEventListeners(listenerFQNs, new FindEventListenersCallback() {
 
             //Doing something with event listeners in case of success
             @Override
@@ -154,19 +166,5 @@ public class EventDemo {
         LOG.info("Batch of events (ThermostatInfoRequest & ChangeDegreeRequest) sent");
         // Dismiss the event batch (if the batch was not submitted as shown in the previous line)
         // eventFamilyFactory.removeEventsBlock(trxId);
-
-
-        try {
-            System.in.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        //Release all network connections and application resources.
-        //Shutdown all Kaa client tasks.
-        kaaClient.stop();
-        LOG.info("Kaa client stopped");
-
-        LOG.info("Event demo stopped");
     }
 }

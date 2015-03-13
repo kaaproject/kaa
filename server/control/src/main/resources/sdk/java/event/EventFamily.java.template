@@ -32,7 +32,7 @@ public class ${event_family_class_name} implements EventFamily {
 
     private final EventManager eventManager;
 
-    private final Set<DefaultEventFamilyListener> listeners = new HashSet<>();
+    private final Set<Listener> listeners = new HashSet<>();
 
     public ${event_family_class_name}(EventManager eventManager) {
         super();
@@ -55,11 +55,11 @@ public class ${event_family_class_name} implements EventFamily {
 
     }
 
-    public boolean addListener(DefaultEventFamilyListener listener) {
+    public boolean addListener(Listener listener) {
         return listeners.add(listener);
     }
 
-    public boolean removeListener(DefaultEventFamilyListener listener) {
+    public boolean removeListener(Listener listener) {
         return listeners.remove(listener);
     }
 

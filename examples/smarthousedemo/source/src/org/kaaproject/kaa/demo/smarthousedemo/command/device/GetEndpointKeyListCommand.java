@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.kaaproject.kaa.client.KaaClient;
-import org.kaaproject.kaa.client.event.FetchEventListeners;
+import org.kaaproject.kaa.client.event.FindEventListenersCallback;
 import org.kaaproject.kaa.demo.smarthouse.device.DeviceInfoRequest;
 import org.kaaproject.kaa.demo.smarthousedemo.command.AbstractClientCommand;
 import org.kaaproject.kaa.demo.smarthousedemo.exception.CommandException;
@@ -38,7 +38,7 @@ public class GetEndpointKeyListCommand extends AbstractClientCommand<List<String
         @Override
         protected void executeAsync() {
             List<String> fqns = Arrays.asList(DeviceInfoRequest.class.getName());
-            client.findEventListeners(fqns, new FetchEventListeners() {
+            client.findEventListeners(fqns, new FindEventListenersCallback() {
                 @Override
                 public void onEventListenersReceived(
                         List<String> endpontKeys) {

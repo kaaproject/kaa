@@ -48,7 +48,7 @@ import org.kaaproject.kaa.client.KaaClientPlatformContext;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
-import org.kaaproject.kaa.client.event.FetchEventListeners;
+import org.kaaproject.kaa.client.event.FindEventListenersCallback;
 import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
@@ -303,7 +303,7 @@ public class LoginActivity extends FragmentActivity {
                             List<String> FQNs = new LinkedList<>();
                             FQNs.add("org.kaaproject.kaa.demo.verifiersdemo.MessageEvent");
 
-                            kaaClient.findEventListeners(FQNs, new FetchEventListeners() {
+                            kaaClient.findEventListeners(FQNs, new FindEventListenersCallback() {
                                 @Override
                                 public void onRequestFailed() {
                                     Log.i(TAG, "Find event listeners request has failed");

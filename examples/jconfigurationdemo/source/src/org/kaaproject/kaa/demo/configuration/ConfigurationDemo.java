@@ -47,7 +47,6 @@ public class ConfigurationDemo {
             public void onStarted() {
                 super.onStarted();
                 displayConfiguration();
-                displayConfiguration();
             }
         });
 
