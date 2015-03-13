@@ -173,10 +173,6 @@ public abstract class AbstractCassandraDao<T, K> {
         getMapper().delete(key);
     }
 
-    protected String getStringId() {
-        return UUID.randomUUID().toString();
-    }
-
     protected ConsistencyLevel getReadConsistencyLevel() {
         ConsistencyLevel defaultConsistencyLevel = ConsistencyLevel.ONE;
         if (readConsistencyLevel != null) {

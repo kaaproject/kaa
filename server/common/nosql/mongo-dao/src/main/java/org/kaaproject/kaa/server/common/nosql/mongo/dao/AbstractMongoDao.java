@@ -16,8 +16,7 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-import java.util.List;
-
+import com.mongodb.DBCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,40 +25,11 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import com.mongodb.DBCollection;
+import java.util.List;
 
 public abstract class AbstractMongoDao<T, K> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMongoDao.class);
-
-    public static final String TENANT_ID = "tenant_id";
-    public static final String SEQUENCE_NUMBER = "seq_num";
-    public static final String SCHEMA_ID = "schema_id";
-    public static final String APPLICATION_ID = "application_id";
-    public static final String ENDPOINT_GROUP_ID = "endpoint_group_id";
-    public static final String MAJOR_VERSION = "major_version";
-    public static final String MINOR_VERSION = "minor_version";
-    public static final String STATUS = "status";
-    public static final String ACTIVATED_TIME = "activated_time";
-    public static final String ACTIVATED_USERNAME = "activated_username";
-    public static final String DEACTIVATED_TIME = "deactivated_time";
-    public static final String DEACTIVATED_USERNAME = "deactivated_username";
-    public static final String NAME = "name";
-    public static final String EXTERNAL_UID = "external_uid";
-    public static final String EXTERNAL_ID = "external_id";
-    public static final String AUTHORITY = "authority";
-    public static final String NOTIFICATION_SCHEMA_ID = "notification_schema_id";
-    public static final String NOTIFICATION_TYPE = "notification_type";
-    public static final String UPDATE_PROCESSING_STATUS = "upd.status";
-    public static final String UPDATE_SEQUENCE_NUMBER = "upd.seq_num";
-    public static final String ECF_ID = "ecf_id";
-    public static final String FQN = "fqn";
-    public static final String CLASS_NAME = "class_name";
-    public static final String VERSION = "version";
-    public static final String TYPE = "type";
-
-    protected static final String ID = "_id";
-    protected static final int ONE = 1;
 
     protected FindAndModifyOptions returnNew = new FindAndModifyOptions().returnNew(true);
 

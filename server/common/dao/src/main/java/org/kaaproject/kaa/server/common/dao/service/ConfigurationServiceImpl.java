@@ -580,5 +580,4 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         validateSqlId(applicationId, "Incorrect application id " + applicationId + ". Can't find latest configuration schema.");
         return getDto(configurationSchemaDao.findLatestByApplicationId(applicationId));
     }
-
 }

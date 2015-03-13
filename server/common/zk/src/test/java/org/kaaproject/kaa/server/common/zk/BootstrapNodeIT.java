@@ -32,6 +32,7 @@ import org.apache.curator.RetryPolicy;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.test.TestingCluster;
 import org.apache.curator.test.Timing;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNodeListener;
@@ -98,7 +99,6 @@ public class BootstrapNodeIT {
         cluster.start();
         try {
             ControlNodeInfo controlNodeInfo = buildControlNodeInfo();
-            Long removeTime = System.currentTimeMillis();
             BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
 
             ControlNode controlNode = new ControlNode(controlNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
@@ -112,14 +112,20 @@ public class BootstrapNodeIT {
 
             verify(mockListener).onNodeAdded(bootstrapNodeInfo);
 
-            // pretend receiving delete before add
-            bootstrapNodeInfo.setTimeStarted(removeTime);
+            BootstrapNodeInfo bootstrapNodeInfoWithGreaterTimeStarted = buildBootstrapNodeInfo();
+            BootstrapNode bootstrapNodeWithGreaterTimeStarted = new BootstrapNode(bootstrapNodeInfoWithGreaterTimeStarted, cluster.getConnectString(), buildDefaultRetryPolicy());
 
+            bootstrapNodeWithGreaterTimeStarted.start();
+            timing.sleepABit();
+            
             bootstrapNode.close();
             timing.sleepABit();
-
             verify(mockListener, never()).onNodeRemoved(bootstrapNodeInfo);
-            bootstrapNode.close();
+            
+            bootstrapNodeWithGreaterTimeStarted.close();
+            timing.sleepABit();
+            verify(mockListener).onNodeRemoved(bootstrapNodeInfoWithGreaterTimeStarted);
+
             controlNode.close();
         } finally {
             cluster.close();

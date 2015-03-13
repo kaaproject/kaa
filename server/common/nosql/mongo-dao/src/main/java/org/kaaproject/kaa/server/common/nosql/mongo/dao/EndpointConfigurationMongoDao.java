@@ -20,6 +20,7 @@ import com.mongodb.DBObject;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointConfiguration;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -28,6 +29,7 @@ import java.nio.ByteBuffer;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ID;
 
 @Repository
 public class EndpointConfigurationMongoDao extends AbstractMongoDao<MongoEndpointConfiguration, ByteBuffer> implements EndpointConfigurationDao<MongoEndpointConfiguration> {
@@ -36,7 +38,7 @@ public class EndpointConfigurationMongoDao extends AbstractMongoDao<MongoEndpoin
 
     @Override
     protected String getCollectionName() {
-        return MongoEndpointConfiguration.COLLECTION_NAME;
+        return MongoModelConstants.ENDPOINT_CONFIGURATION;
     }
 
     @Override
@@ -49,7 +51,7 @@ public class EndpointConfigurationMongoDao extends AbstractMongoDao<MongoEndpoin
     public MongoEndpointConfiguration findByHash(final byte[] hash) {
         LOG.debug("Find endpoint configuration by hash [{}] ", hash);
         DBObject dbObject = query(where(ID).is(hash)).getQueryObject();
-        DBObject result = mongoTemplate.getDb().getCollection(MongoEndpointConfiguration.COLLECTION_NAME).findOne(dbObject);
+        DBObject result = mongoTemplate.getDb().getCollection(getCollectionName()).findOne(dbObject);
         return mongoTemplate.getConverter().read(getDocumentClass(), result);
     }
 

@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -34,7 +35,7 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
-import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
+import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
@@ -49,12 +50,13 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.C
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.TimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicUnsubscriptionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicSubscriptionMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicUnsubscriptionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage.EventDeliveryStatus;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointStateUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserAttachMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
@@ -154,47 +156,18 @@ public class EndpointActorMessageProcessor {
         tellParent(context, response);
     }
 
-    protected void tellParent(ActorContext context, Object response) {
-        context.parent().tell(response, context.self());
-    }
-
     public void processThriftNotification(ActorContext context, ThriftNotificationMessage message) {
         Set<ChannelMetaData> channels = state.getChannelsByTypes(TransportType.CONFIGURATION, TransportType.NOTIFICATION);
 
         LOG.debug("[{}][{}] Processing thrift norification for {} channels", endpointKey, actorKey, channels.size());
 
-        for (ChannelMetaData channel : channels) {
-            ClientSync originalRequest = channel.getRequestMessage().getRequest();
-            ServerSync syncResponse = channel.getResponseHolder().getResponse();
+        syncChannels(context, channels, true, true);
+    }
 
-            ClientSync newRequest = new ClientSync();
-            newRequest.setRequestId(originalRequest.getRequestId());
-            newRequest.setClientSyncMetaData(originalRequest.getClientSyncMetaData());
-            if (originalRequest.getConfigurationSync() != null) {
-                ConfigurationClientSync configurationSyncRequest = originalRequest.getConfigurationSync();
-                if (syncResponse.getConfigurationSync() != null) {
-                    int newSeqNumber = syncResponse.getConfigurationSync().getAppStateSeqNumber();
-                    LOG.debug("[{}][{}] Change original configuration request {} appSeqNumber from {} to {}", endpointKey, actorKey,
-                            originalRequest, configurationSyncRequest.getAppStateSeqNumber(), newSeqNumber);
-                    configurationSyncRequest.setAppStateSeqNumber(newSeqNumber);
-                }
-                newRequest.setConfigurationSync(configurationSyncRequest);
-                originalRequest.setConfigurationSync(null);
-            }
-            if (originalRequest.getNotificationSync() != null) {
-                NotificationClientSync notificationSyncRequest = originalRequest.getNotificationSync();
-                if (syncResponse.getNotificationSync() != null) {
-                    int newSeqNumber = syncResponse.getNotificationSync().getAppStateSeqNumber();
-                    LOG.debug("[{}][{}] Change original notification request {} appSeqNumber from {} to {}", endpointKey, actorKey,
-                            originalRequest, notificationSyncRequest.getAppStateSeqNumber(), newSeqNumber);
-                    notificationSyncRequest.setAppStateSeqNumber(newSeqNumber);
-                }
-                newRequest.setNotificationSync(notificationSyncRequest);
-                originalRequest.setNotificationSync(null);
-            }
-            LOG.debug("[{}][{}] Processing request {}", endpointKey, actorKey, originalRequest);
-            sync(context, new SyncRequestMessage(channel.getRequestMessage().getSession(), newRequest, channel.getRequestMessage()
-                    .getCommand(), channel.getRequestMessage().getOriginator()));
+    public void processStateUpdate(ActorContext context, EndpointStateUpdateMessage message) {
+        if (message.getUpdate() != null) {
+            state.setUcfHash(message.getUpdate().getHash());
+            syncChannels(context, state.getChannelsByTypes(TransportType.CONFIGURATION), true, false);
         }
     }
 
@@ -202,21 +175,21 @@ public class EndpointActorMessageProcessor {
         LOG.debug("[{}][{}] Processing notification message {}", endpointKey, actorKey, message);
 
         List<ChannelMetaData> channels = state.getChannelsByType(TransportType.NOTIFICATION);
-        if(channels.isEmpty()){
+        if (channels.isEmpty()) {
             LOG.debug("[{}][{}] No channels to process notification message", endpointKey, actorKey);
             return;
         }
         String unicastNotificationId = message.getUnicastNotificationId();
         List<NotificationDto> validNfs = state.filter(message.getNotifications());
-        if(unicastNotificationId == null && validNfs.isEmpty()){
+        if (unicastNotificationId == null && validNfs.isEmpty()) {
             LOG.debug("[{}][{}] message is no longer valid for current endpoint", endpointKey, actorKey);
             return;
         }
         for (ChannelMetaData channel : channels) {
             LOG.debug("[{}][{}] processing channel {} and response {}", endpointKey, actorKey, channel, channel.getResponseHolder()
                     .getResponse());
-            ServerSync syncResponse = operationsService.updateSyncResponse(channel.getResponseHolder().getResponse(),
-                    validNfs, unicastNotificationId);
+            ServerSync syncResponse = operationsService.updateSyncResponse(channel.getResponseHolder().getResponse(), validNfs,
+                    unicastNotificationId);
             if (syncResponse != null) {
                 LOG.debug("[{}][{}] processed channel {} and response {}", endpointKey, actorKey, channel, syncResponse);
                 sendReply(context, channel.getRequestMessage(), syncResponse);
@@ -230,7 +203,7 @@ public class EndpointActorMessageProcessor {
     public void processRequestTimeoutMessage(ActorContext context, RequestTimeoutMessage message) {
         ChannelMetaData channel = state.getChannelByRequestId(message.getRequestId());
         if (channel != null) {
-            SyncResponseHolder response = channel.getResponseHolder();
+            SyncContext response = channel.getResponseHolder();
             sendReply(context, channel.getRequestMessage(), response.getResponse());
             if (!channel.getType().isAsync()) {
                 state.removeChannel(channel);
@@ -260,15 +233,16 @@ public class EndpointActorMessageProcessor {
             LOG.debug("[{}][{}] Processing sync request {} from {} channel [{}]", endpointKey, actorKey, request, channelType,
                     requestMessage.getChannelUuid());
 
-            SyncResponseHolder responseHolder = operationsService.sync(request, state.getProfile());
+            SyncContext responseHolder = sync(request);
 
             state.setProfile(responseHolder.getEndpointProfile());
 
             if (state.getProfile() != null) {
                 processLogUpload(context, request, responseHolder);
                 processUserAttachRequest(context, request, responseHolder);
+                updateUserConnection(context);
                 processEvents(context, request, responseHolder);
-                processUserAttachDetachResults(context, request, responseHolder);
+                notifyAffectedEndpoints(context, request, responseHolder);
             } else {
                 LOG.warn("[{}][{}] Endpoint profile is not set after request processing!", endpointKey, actorKey);
             }
@@ -298,6 +272,93 @@ public class EndpointActorMessageProcessor {
         }
     }
 
+    private SyncContext sync(ClientSync request) throws GetDeltaException {
+        if (!request.isValid()) {
+            LOG.warn("[{}] Request is not valid. It does not contain profile information!", endpointKey);
+            return SyncContext.failure(request.getRequestId());
+        }
+        SyncContext context = new SyncContext(new ServerSync());
+        context.setEndpointProfile(state.getProfile());
+        context.setRequestId(request.getRequestId());
+        context.setStatus(SyncStatus.SUCCESS);
+        context.setEndpointKey(endpointKey);
+        context.setRequestHash(request.hashCode());
+        context.setMetaData(request.getClientSyncMetaData());
+
+        LOG.trace("[{}][{}] processing sync. Request: {}", endpointKey, context.getRequestHash(), request);
+
+        context = operationsService.syncProfile(context, request.getProfileSync());
+
+        state.setProfile(context.getEndpointProfile());
+
+        if (context.getStatus() != SyncStatus.SUCCESS) {
+            return context;
+        }
+        if (state.isUcfHashRequiresIntialization()) {
+            byte[] hash = operationsService.fetchUcfHash(appToken, state.getProfile());
+            LOG.debug("[{}][{}] Initialized endpoint object hash {}", endpointKey, context.getRequestHash(), Arrays.toString(hash));
+            state.setUcfHash(hash);
+        }
+
+        context = operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
+        context = operationsService.processEventListenerRequests(context, request.getEventSync());
+
+        if (state.isUserConfigurationUpdatePending()) {
+            context.setUserConfigurationChanged(true);
+            context.setUserConfigurationHash(state.getUcfHash());
+        }
+
+        // TODO: do this only if there were some updates missed from control
+        // server or this is a first request for this actor
+        context = operationsService.syncConfiguration(context, request.getConfigurationSync());
+
+        // TODO: do this only if there were some updates missed from control
+        // server or this is a first request for this actor
+        context = operationsService.syncNotification(context, request.getNotificationSync());
+
+        state.setProfile(operationsService.updateProfile(context));
+
+        LOG.trace("[{}][{}] processed sync. Response is {}", endpointKey, request.hashCode(), context.getResponse());
+
+        return context;
+    }
+
+    private void syncChannels(ActorContext context, Set<ChannelMetaData> channels, boolean configuration, boolean notification) {
+        for (ChannelMetaData channel : channels) {
+            ClientSync originalRequest = channel.getRequestMessage().getRequest();
+            ServerSync syncResponse = channel.getResponseHolder().getResponse();
+
+            ClientSync newRequest = new ClientSync();
+            newRequest.setRequestId(originalRequest.getRequestId());
+            newRequest.setClientSyncMetaData(originalRequest.getClientSyncMetaData());
+            if (configuration && originalRequest.getConfigurationSync() != null) {
+                ConfigurationClientSync configurationSyncRequest = originalRequest.getConfigurationSync();
+                if (syncResponse.getConfigurationSync() != null) {
+                    int newSeqNumber = syncResponse.getConfigurationSync().getAppStateSeqNumber();
+                    LOG.debug("[{}][{}] Change original configuration request {} appSeqNumber from {} to {}", endpointKey, actorKey,
+                            originalRequest, configurationSyncRequest.getAppStateSeqNumber(), newSeqNumber);
+                    configurationSyncRequest.setAppStateSeqNumber(newSeqNumber);
+                }
+                newRequest.setConfigurationSync(configurationSyncRequest);
+                originalRequest.setConfigurationSync(null);
+            }
+            if (notification && originalRequest.getNotificationSync() != null) {
+                NotificationClientSync notificationSyncRequest = originalRequest.getNotificationSync();
+                if (syncResponse.getNotificationSync() != null) {
+                    int newSeqNumber = syncResponse.getNotificationSync().getAppStateSeqNumber();
+                    LOG.debug("[{}][{}] Change original notification request {} appSeqNumber from {} to {}", endpointKey, actorKey,
+                            originalRequest, notificationSyncRequest.getAppStateSeqNumber(), newSeqNumber);
+                    notificationSyncRequest.setAppStateSeqNumber(newSeqNumber);
+                }
+                newRequest.setNotificationSync(notificationSyncRequest);
+                originalRequest.setNotificationSync(null);
+            }
+            LOG.debug("[{}][{}] Processing request {}", endpointKey, actorKey, originalRequest);
+            sync(context, new SyncRequestMessage(channel.getRequestMessage().getSession(), newRequest, channel.getRequestMessage()
+                    .getCommand(), channel.getRequestMessage().getOriginator()));
+        }
+    }
+
     private ClientSync buildRequestForChannel(SyncRequestMessage requestMessage, ChannelMetaData channel) {
         ClientSync request;
         if (channel.getType().isAsync()) {
@@ -314,7 +375,7 @@ public class EndpointActorMessageProcessor {
         return request;
     }
 
-    private void processUserAttachRequest(ActorContext context, ClientSync syncRequest, SyncResponseHolder responseHolder) {
+    private void processUserAttachRequest(ActorContext context, ClientSync syncRequest, SyncContext responseHolder) {
         UserClientSync request = syncRequest.getUserSync();
         if (request != null && request.getUserAttachRequest() != null) {
             UserAttachRequest aRequest = request.getUserAttachRequest();
@@ -338,9 +399,8 @@ public class EndpointActorMessageProcessor {
         response.getUserSync().setUserAttachResponse(EntityConvertUtils.convert(message));
     }
 
-    private void processEvents(ActorContext context, ClientSync request, SyncResponseHolder responseHolder) {
+    private void processEvents(ActorContext context, ClientSync request, SyncContext responseHolder) {
         if (state.isValidForEvents()) {
-            updateUserConnection(context);
             if (request.getEventSync() != null) {
                 EventClientSync eventRequest = request.getEventSync();
                 processSeqNumber(eventRequest, responseHolder);
@@ -353,7 +413,7 @@ public class EndpointActorMessageProcessor {
         }
     }
 
-    private void processSeqNumber(EventClientSync request, SyncResponseHolder responseHolder) {
+    private void processSeqNumber(EventClientSync request, SyncContext responseHolder) {
         if (request.isSeqNumberRequest()) {
             EventServerSync response = responseHolder.getResponse().getEventSync();
             if (response == null) {
@@ -365,6 +425,9 @@ public class EndpointActorMessageProcessor {
     }
 
     private void updateUserConnection(ActorContext context) {
+        if (!state.isValidForUser()) {
+            return;
+        }
         if (state.userIdMismatch()) {
             sendDisconnectFromOldUser(context, state.getProfile());
             state.setUserRegistrationPending(false);
@@ -380,7 +443,7 @@ public class EndpointActorMessageProcessor {
         }
     }
 
-    private void processLogUpload(ActorContext context, ClientSync syncRequest, SyncResponseHolder responseHolder) {
+    private void processLogUpload(ActorContext context, ClientSync syncRequest, SyncContext responseHolder) {
         LogClientSync request = syncRequest.getLogSync();
         if (request != null) {
             if (request.getLogEntries() != null && request.getLogEntries().size() > 0) {
@@ -408,8 +471,8 @@ public class EndpointActorMessageProcessor {
 
     private void sendConnectToNewUser(ActorContext context, EndpointProfileDto endpointProfile) {
         List<EventClassFamilyVersion> ecfVersions = EntityConvertUtils.convertToECFVersions(endpointProfile.getEcfVersionStates());
-        EndpointUserConnectMessage userRegistrationMessage = new EndpointUserConnectMessage(state.getUserId(), key, ecfVersions, appToken,
-                context.self());
+        EndpointUserConnectMessage userRegistrationMessage = new EndpointUserConnectMessage(state.getUserId(), key, ecfVersions,
+                endpointProfile.getConfigurationVersion(), endpointProfile.getUserConfigurationHash(), appToken, context.self());
         LOG.debug("[{}][{}] Sending user registration request {}", endpointKey, actorKey, userRegistrationMessage);
         context.parent().tell(userRegistrationMessage, context.self());
     }
@@ -464,7 +527,7 @@ public class EndpointActorMessageProcessor {
         scheduleTimeoutMessage(context, message, channel.getKeepAlive() * 1000);
     }
 
-    private void processUserAttachDetachResults(ActorContext context, ClientSync request, SyncResponseHolder responseHolder) {
+    private void notifyAffectedEndpoints(ActorContext context, ClientSync request, SyncContext responseHolder) {
         if (responseHolder.getResponse().getUserSync() != null) {
             List<EndpointAttachResponse> attachResponses = responseHolder.getResponse().getUserSync().getEndpointAttachResponses();
             if (attachResponses != null && !attachResponses.isEmpty()) {
@@ -517,9 +580,9 @@ public class EndpointActorMessageProcessor {
      * @param response
      *            the response
      */
-    private void updateSubscriptionsToTopics(ActorContext context, SyncResponseHolder response) {
+    private void updateSubscriptionsToTopics(ActorContext context, SyncContext response) {
         Map<String, Integer> newStates = response.getSubscriptionStates();
-        if(newStates == null){
+        if (newStates == null) {
             return;
         }
         Map<String, Integer> currentStates = state.getSubscriptionStates();
@@ -529,16 +592,16 @@ public class EndpointActorMessageProcessor {
             String subscribedTopic = currentSubscriptionsIterator.next();
             if (!newStates.containsKey(subscribedTopic)) {
                 currentSubscriptionsIterator.remove();
-                TopicUnsubscriptionMessage topicSubscriptionMessage = new TopicUnsubscriptionMessage(subscribedTopic,
-                        appToken, key, context.self());
+                TopicUnsubscriptionMessage topicSubscriptionMessage = new TopicUnsubscriptionMessage(subscribedTopic, appToken, key,
+                        context.self());
                 context.parent().tell(topicSubscriptionMessage, context.self());
             }
         }
         // subscribe to new topics;
         for (Entry<String, Integer> entry : newStates.entrySet()) {
             if (!currentStates.containsKey(entry.getKey())) {
-                TopicSubscriptionMessage topicSubscriptionMessage = new TopicSubscriptionMessage(entry.getKey(),
-                        entry.getValue(), response.getSystemNfVersion(), response.getUserNfVersion(), appToken, key, context.self());
+                TopicSubscriptionMessage topicSubscriptionMessage = new TopicSubscriptionMessage(entry.getKey(), entry.getValue(),
+                        response.getSystemNfVersion(), response.getUserNfVersion(), appToken, key, context.self());
                 context.parent().tell(topicSubscriptionMessage, context.self());
             }
         }
@@ -556,7 +619,7 @@ public class EndpointActorMessageProcessor {
 
     private void addEventsAndReply(ActorContext context, ChannelMetaData channel, EndpointEventReceiveMessage message) {
         SyncRequestMessage pendingRequest = channel.getRequestMessage();
-        SyncResponseHolder pendingResponse = channel.getResponseHolder();
+        SyncContext pendingResponse = channel.getResponseHolder();
 
         EventServerSync eventResponse = pendingResponse.getResponse().getEventSync();
         if (eventResponse == null) {
@@ -589,10 +652,6 @@ public class EndpointActorMessageProcessor {
 
         tellActor(context, request.getOriginator(), response);
         scheduleActorTimeout(context);
-    }
-
-    protected void tellActor(ActorContext context, ActorRef target, Object message) {
-        target.tell(message, context.self());
     }
 
     protected void sendEventsIfPresent(ActorContext context, EventClientSync request) {
@@ -677,6 +736,7 @@ public class EndpointActorMessageProcessor {
         ChannelMetaData channel = state.getChannelById(message.getChannelUuid());
         if (channel != null) {
             state.removeChannel(channel);
+            scheduleActorTimeout(context);
             return true;
         } else {
             LOG.debug("[{}][{}] Can't find channel by uuid [{}]", endpointKey, actorKey, message.getChannelUuid());
@@ -708,6 +768,7 @@ public class EndpointActorMessageProcessor {
                 LOG.debug("[{}][{}] Timeout message accepted for channel [{}]. Last activity time {} and timeout is {} ", endpointKey,
                         actorKey, message.getChannelUuid(), channel.getLastActivityTime(), message.getLastActivityTime());
                 state.removeChannel(channel);
+                scheduleActorTimeout(context);
                 return true;
             } else {
                 LOG.debug("[{}][{}] Timeout message ignored for channel [{}]. Last activity time {} and timeout is {} ", endpointKey,
@@ -717,6 +778,7 @@ public class EndpointActorMessageProcessor {
             }
         } else {
             LOG.debug("[{}][{}] Can't find channel by uuid [{}]", endpointKey, actorKey, message.getChannelUuid());
+            scheduleActorTimeout(context);
             return false;
         }
     }
@@ -764,5 +826,13 @@ public class EndpointActorMessageProcessor {
             operationsService.attachEndpointToUser(state.getProfile(), appToken, message.getUserId());
             updateUserConnection(context);
         }
+    }
+
+    protected void tellParent(ActorContext context, Object response) {
+        context.parent().tell(response, context.self());
+    }
+    
+    protected void tellActor(ActorContext context, ActorRef target, Object message) {
+        target.tell(message, context.self());
     }
 }

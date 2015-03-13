@@ -28,7 +28,6 @@ import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.server.common.Base64Util;
@@ -48,8 +47,6 @@ import org.kaaproject.kaa.server.sync.EndpointDetachResponse;
 import org.kaaproject.kaa.server.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.sync.EventListenersResponse;
 import org.kaaproject.kaa.server.sync.SyncStatus;
-import org.kaaproject.kaa.server.sync.UserAttachRequest;
-import org.kaaproject.kaa.server.sync.UserAttachResponse;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -341,8 +338,7 @@ public class DefaultEndpointUserServiceTest {
         when(cacheService.getRouteKeys(new EventClassFqnVersion(TEST_TENANT_ID, "fqn2", ECF1_VERSION))).thenReturn(fqn2Keys);
         when(cacheService.getRouteKeys(new EventClassFqnVersion(TEST_TENANT_ID, "fqn3", ECF1_VERSION))).thenReturn(fqn3Keys);
 
-        EventListenersResponse response = endpointUserService.findListeners(profileMock,
-                                            new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUM), request);
+        EventListenersResponse response = endpointUserService.findListeners(profileMock, TEST_APP_TOKEN, request);
 
         assertNotNull(response);
         assertEquals(SyncStatus.SUCCESS, response.getResult());
@@ -365,8 +361,7 @@ public class DefaultEndpointUserServiceTest {
         when(profileMock.getId()).thenReturn("A");
         when(profileMock.getEndpointUserId()).thenReturn(null);
 
-        EventListenersResponse response = endpointUserService.findListeners(profileMock,
-                                            new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUM), request);
+        EventListenersResponse response = endpointUserService.findListeners(profileMock, TEST_APP_TOKEN, request);
 
         assertNotNull(response);
         assertEquals(SyncStatus.FAILURE, response.getResult());
@@ -393,8 +388,7 @@ public class DefaultEndpointUserServiceTest {
 
         when(endpointService.findEndpointProfilesByUserId(USER_ID)).thenReturn(Arrays.asList(profileMock));
 
-        EventListenersResponse response = endpointUserService.findListeners(profileMock,
-                                            new AppSeqNumber(TEST_TENANT_ID, TEST_APP_ID, TEST_APP_TOKEN, TEST_APP_SEQ_NUM), request);
+        EventListenersResponse response = endpointUserService.findListeners(profileMock, TEST_APP_TOKEN, request);
 
         assertNotNull(response);
         assertEquals(SyncStatus.SUCCESS, response.getResult());

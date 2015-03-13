@@ -173,6 +173,14 @@ public interface EndpointService {
      * @return the endpoint user dto
      */
     EndpointUserDto findEndpointUserById(String id);
+    
+    /**
+     * Find endpoint user by id.
+     *
+     * @param id the id
+     * @return the endpoint user dto
+     */
+    EndpointUserDto findEndpointUserByExternalIdAndTenantId(String externalId, String tenantId);
 
     /**
      * Save endpoint user.

@@ -19,6 +19,8 @@ package org.kaaproject.kaa.server.operations.pojo;
 import java.util.Map;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
+import org.kaaproject.kaa.server.sync.ClientSyncMetaData;
 import org.kaaproject.kaa.server.sync.ConfigurationServerSync;
 import org.kaaproject.kaa.server.sync.EventServerSync;
 import org.kaaproject.kaa.server.sync.NotificationServerSync;
@@ -29,14 +31,28 @@ import org.kaaproject.kaa.server.sync.SyncStatus;
 import org.kaaproject.kaa.server.sync.UserServerSync;
 
 /**
- * The Class SyncResponseHolder.
+ * The Class SyncContext.
  */
-public class SyncResponseHolder {
+public class SyncContext {
 
     /** The response. */
     private final ServerSync response;
 
+    private String endpointKey;
+
+    private int requestHash;
+
+    private ClientSyncMetaData metaData;
+
     private EndpointProfileDto endpointProfile;
+
+    private AppSeqNumber appSeqNumber;
+
+    private boolean updateProfileRequired;
+
+    private boolean userConfigurationChanged;
+
+    private byte[] userConfigurationHash;
 
     /** The subscription states. */
     private Map<String, Integer> subscriptionStates;
@@ -47,11 +63,11 @@ public class SyncResponseHolder {
     /** The user nf version. */
     private int userNfVersion;
 
-    public static SyncResponseHolder failure(Integer requestId) {
+    public static SyncContext failure(Integer requestId) {
         ServerSync response = new ServerSync();
         response.setRequestId(requestId);
         response.setStatus(SyncStatus.FAILURE);
-        return new SyncResponseHolder(response);
+        return new SyncContext(response);
     }
 
     /**
@@ -60,15 +76,17 @@ public class SyncResponseHolder {
      * @param response
      *            the response
      */
-    public SyncResponseHolder(ServerSync response) {
+    public SyncContext(ServerSync response) {
         super();
         this.response = response;
     }
 
     public void setEndpointProfile(EndpointProfileDto profile) {
         this.endpointProfile = profile;
-        this.systemNfVersion = profile.getSystemNfVersion();
-        this.userNfVersion = profile.getUserNfVersion();
+        if (profile != null) {
+            this.systemNfVersion = profile.getSystemNfVersion();
+            this.userNfVersion = profile.getUserNfVersion();
+        }
     }
 
     public void setSubscriptionStates(Map<String, Integer> subscriptionStates) {
@@ -147,6 +165,72 @@ public class SyncResponseHolder {
         this.response.setRequestId(value);
     }
 
+    public String getEndpointKey() {
+        return endpointKey;
+    }
+
+    public int getRequestHash() {
+        return requestHash;
+    }
+
+    public void setEndpointKey(String endpointKey) {
+        this.endpointKey = endpointKey;
+    }
+
+    public void setRequestHash(int requestHash) {
+        this.requestHash = requestHash;
+    }
+
+    public AppSeqNumber getAppSeqNumber() {
+        return appSeqNumber;
+    }
+
+    public void setAppSeqNumber(AppSeqNumber appSeqNumber) {
+        this.appSeqNumber = appSeqNumber;
+    }
+
+    public boolean isUpdateProfileRequired() {
+        return updateProfileRequired;
+    }
+
+    public void setUpdateProfileRequired(boolean updateProfileRequired) {
+        this.updateProfileRequired = updateProfileRequired;
+    }
+
+    public ClientSyncMetaData getMetaData() {
+        return metaData;
+    }
+
+    public void setMetaData(ClientSyncMetaData md) {
+        this.metaData = md;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + requestHash;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        SyncContext other = (SyncContext) obj;
+        if (requestHash != other.requestHash) {
+            return false;
+        }
+        return true;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -215,5 +299,24 @@ public class SyncResponseHolder {
             return true;
         }
         return false;
+    }
+
+    public void setUserConfigurationChanged(boolean userConfigurationChanged) {
+        this.userConfigurationChanged = userConfigurationChanged;
+    }
+
+    public boolean isUserConfigurationChanged() {
+        return userConfigurationChanged;
+    }
+
+    public byte[] getUserConfigurationHash() {
+        if (userConfigurationChanged) {
+            return userConfigurationHash;
+        }
+        return endpointProfile.getUserConfigurationHash();
+    }
+
+    public void setUserConfigurationHash(byte[] userConfigurationHash) {
+        this.userConfigurationHash = userConfigurationHash;
     }
 }

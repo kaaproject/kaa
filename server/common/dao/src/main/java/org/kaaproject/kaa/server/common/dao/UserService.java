@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.dao;
 
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.UserDto;
@@ -78,7 +79,6 @@ public interface UserService {
      * Find user by external Uid.
      *
      * @param externalUid the external user id
-     * @param tenantId the tenant id
      * @return the user dto
      */
     UserDto findUserByExternalUid(String externalUid);

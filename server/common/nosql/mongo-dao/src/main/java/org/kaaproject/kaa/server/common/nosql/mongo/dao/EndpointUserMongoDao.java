@@ -16,11 +16,6 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-
-import java.util.UUID;
-
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointUser;
@@ -28,13 +23,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_USER;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_EXTERNAL_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_TENANT_ID;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
+
 @Repository
 public class EndpointUserMongoDao extends AbstractMongoDao<MongoEndpointUser, String> implements EndpointUserDao<MongoEndpointUser> {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointUserMongoDao.class);
 
     @Override
     protected String getCollectionName() {
-        return MongoEndpointUser.COLLECTION_NAME;
+        return ENDPOINT_USER;
     }
 
     @Override
@@ -45,13 +48,13 @@ public class EndpointUserMongoDao extends AbstractMongoDao<MongoEndpointUser, St
     @Override
     public MongoEndpointUser findByExternalIdAndTenantId(String externalId, String tenantId) {
         LOG.debug("Find user by external uid [{}] and tenant id [{}] ", externalId, tenantId);
-        return findOne(query(where(EXTERNAL_ID).is(externalId).and(TENANT_ID).is(tenantId)));
+        return findOne(query(where(EP_USER_EXTERNAL_ID).is(externalId).and(EP_USER_TENANT_ID).is(tenantId)));
     }
 
     @Override
     public void removeByExternalIdAndTenantId(String externalId, String tenantId) {
         LOG.debug("Remove user by external uid [{}] and tenant id [{}] ", externalId, tenantId);
-        remove(query(where(EXTERNAL_ID).is(externalId).and(TENANT_ID).is(tenantId)));
+        remove(query(where(EP_USER_EXTERNAL_ID).is(externalId).and(EP_USER_TENANT_ID).is(tenantId)));
     }
 
     @Override
@@ -66,10 +69,10 @@ public class EndpointUserMongoDao extends AbstractMongoDao<MongoEndpointUser, St
     @Override
     public boolean checkAccessToken(String externalId, String tenantId, String accessToken) {
         MongoEndpointUser endpointUser = findByExternalIdAndTenantId(externalId, tenantId);
-        if(endpointUser == null){
+        if (endpointUser == null) {
             LOG.debug("Can't find user with external id {}", externalId);
             return false;
-        }else{
+        } else {
             String realAccessToken = endpointUser.getAccessToken();
             return realAccessToken != null && realAccessToken.equals(accessToken);
         }

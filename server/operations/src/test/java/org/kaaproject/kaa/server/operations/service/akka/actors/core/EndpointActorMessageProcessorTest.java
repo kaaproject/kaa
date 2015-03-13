@@ -15,32 +15,18 @@
  */
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
-import java.util.UUID;
-
 import org.junit.Assert;
 import org.junit.Test;
-import org.kaaproject.kaa.common.Constants;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
-import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.ActorTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
-import org.kaaproject.kaa.server.sync.ClientSync;
 import org.kaaproject.kaa.server.transport.channel.ChannelAware;
-import org.kaaproject.kaa.server.transport.channel.ChannelContext;
-import org.kaaproject.kaa.server.transport.channel.ChannelType;
-import org.kaaproject.kaa.server.transport.message.Message;
-import org.kaaproject.kaa.server.transport.session.SessionInfo;
 import org.mockito.Mockito;
 
 import akka.actor.ActorContext;
 import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Scheduler;
 
 public class EndpointActorMessageProcessorTest {
 
@@ -116,64 +102,6 @@ public class EndpointActorMessageProcessorTest {
         ChannelAware msg = Mockito.mock(ChannelAware.class);
 
         Assert.assertFalse(processor.processDisconnectMessage(ctxMock, msg));
-    }
-
-    @Test
-    public void processDisconnectMessageExistingChannelTest() throws GetDeltaException {
-        OperationsService osMock = Mockito.mock(OperationsService.class);
-        ActorContext ctxMock = Mockito.mock(ActorContext.class);
-        ActorSystem systemMock = Mockito.mock(ActorSystem.class);
-        Scheduler schedulerMock = Mockito.mock(Scheduler.class);
-
-        Mockito.when(ctxMock.system()).thenReturn(systemMock);
-        Mockito.when(systemMock.scheduler()).thenReturn(schedulerMock);
-
-        SyncResponseHolder responseHolder = Mockito.mock(SyncResponseHolder.class);
-        Mockito.when(osMock.sync(Mockito.any(ClientSync.class), Mockito.any(EndpointProfileDto.class))).thenReturn(responseHolder);
-
-        final UUID channelId = UUID.randomUUID();
-        SyncRequestMessage message = Mockito.mock(SyncRequestMessage.class);
-        ChannelContext channelCtx = Mockito.mock(ChannelContext.class);
-        Mockito.when(message.getChannelType()).thenReturn(ChannelType.ASYNC);
-        Mockito.when(message.getChannelUuid()).thenReturn(channelId);
-        Mockito.when(message.getChannelContext()).thenReturn(channelCtx);
-        Mockito.when(message.getSession()).thenReturn(
-                new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, channelCtx, ChannelType.ASYNC, null, EndpointObjectHash
-                        .fromSHA1("key"), "APP_TOKEN", 1000, true));
-        Mockito.when(message.getCommand()).thenReturn(Mockito.mock(Message.class));
-        Mockito.when(message.getOriginator()).thenReturn(Mockito.mock(ActorRef.class));
-
-        AkkaContext context = Mockito.mock(AkkaContext.class);
-        Mockito.when(context.getOperationsService()).thenReturn(osMock);
-        
-        EndpointActorMessageProcessor processor = Mockito.spy(new EndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
-                .fromSHA1("key"), "actorKey"));
-
-        Mockito.doNothing().when(processor)
-                .tellActor(Mockito.any(ActorContext.class), Mockito.any(ActorRef.class), Mockito.any(Object.class));
-
-        processor.processEndpointSync(ctxMock, message);
-
-        ChannelAware msg = new ChannelAware() {
-
-            @Override
-            public UUID getChannelUuid() {
-                // TODO Auto-generated method stub
-                return channelId;
-            }
-
-            @Override
-            public ChannelType getChannelType() {
-                return ChannelType.ASYNC;
-            }
-
-            @Override
-            public ChannelContext getChannelContext() {
-                return null;
-            }
-        };
-
-        Assert.assertTrue(processor.processDisconnectMessage(ctxMock, msg));
     }
 
 }

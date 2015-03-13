@@ -48,8 +48,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class DefaultProfileService implements ProfileService {
 
     /** The LOG constant. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(DefaultProfileService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultProfileService.class);
 
     /** The application service. */
     @Autowired
@@ -67,13 +66,11 @@ public class DefaultProfileService implements ProfileService {
     @Autowired
     private CacheService cacheService;
 
-
     /*
      * (non-Javadoc)
-     *
-     * @see
-     * org.kaaproject.kaa.server.operations.service.profile.ProfileService#getProfile
-     * (org.kaaproject.kaa.common.hash.EndpointObjectHash)
+     * 
+     * @see org.kaaproject.kaa.server.operations.service.profile.ProfileService#
+     * getProfile (org.kaaproject.kaa.common.hash.EndpointObjectHash)
      */
     @Override
     public EndpointProfileDto getProfile(EndpointObjectHash endpointKey) {
@@ -88,7 +85,7 @@ public class DefaultProfileService implements ProfileService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.profile.ProfileService#
      * registerProfile
      * (org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest)
@@ -103,29 +100,37 @@ public class DefaultProfileService implements ProfileService {
 
         String profileJson = decodeProfile(request.getProfile(), appSeqNumber.getAppToken(), request.getVersionInfo().getProfileVersion());
 
-        EndpointProfileDto dto = new EndpointProfileDto();
-        dto.setApplicationId(appSeqNumber.getAppId());
-        dto.setEndpointKey(request.getEndpointKey());
-        dto.setEndpointKeyHash(EndpointObjectHash.fromSHA1(request.getEndpointKey()).getData());
-        dto.setProfile(profileJson);
-        dto.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
+        EndpointObjectHash keyHash = EndpointObjectHash.fromSHA1(request.getEndpointKey());
 
-        populateVersionStates(appSeqNumber.getTenantId(), dto, request.getVersionInfo());
+        EndpointProfileDto dto = endpointService.findEndpointProfileByKeyHash(keyHash.getData());
+        if (dto == null) {
+            dto = new EndpointProfileDto();
+            dto.setApplicationId(appSeqNumber.getAppId());
+            dto.setEndpointKey(request.getEndpointKey());
+            dto.setEndpointKeyHash(keyHash.getData());
+            dto.setProfile(profileJson);
+            dto.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
 
-        if(request.getAccessToken() != null){
-            dto.setAccessToken(request.getAccessToken());
+            populateVersionStates(appSeqNumber.getTenantId(), dto, request.getVersionInfo());
+
+            if (request.getAccessToken() != null) {
+                dto.setAccessToken(request.getAccessToken());
+            }
+
+            dto.setCfSequenceNumber(0);
+            dto.setNfSequenceNumber(0);
+            dto.setChangedFlag(Boolean.FALSE);
+
+            return endpointService.saveEndpointProfile(dto);
+        } else {
+            return updateProfile(new UpdateProfileRequest(request.getAppToken(), keyHash, request.getAccessToken(), request.getProfile(),
+                    request.getVersionInfo()));
         }
-
-        dto.setCfSequenceNumber(0);
-        dto.setNfSequenceNumber(0);
-        dto.setChangedFlag(Boolean.FALSE);
-
-        return endpointService.saveEndpointProfile(dto);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.profile.ProfileService#
      * updateProfile
      * (org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest)
@@ -135,12 +140,12 @@ public class DefaultProfileService implements ProfileService {
         LOG.debug("Updating Profile for {}", request.getEndpointKeyHash());
 
         EndpointProfileDto dto = endpointService.findEndpointProfileByKeyHash(request.getEndpointKeyHash().getData());
-        
+
         AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(request.getApplicationToken());
 
         String profileJson = decodeProfile(request.getProfile(), appSeqNumber.getAppToken(), request.getVersionInfo().getProfileVersion());
 
-        if(request.getAccessToken() != null){
+        if (request.getAccessToken() != null) {
             dto.setAccessToken(request.getAccessToken());
         }
         dto.setProfile(profileJson);
@@ -162,17 +167,18 @@ public class DefaultProfileService implements ProfileService {
         dto.setSystemNfVersion(evInfo.getSystemNfVersion());
         dto.setUserNfVersion(evInfo.getUserNfVersion());
         dto.setLogSchemaVersion(evInfo.getLogSchemaVersion());
-        if(evInfo.getEventFamilyVersions() != null){
+        if (evInfo.getEventFamilyVersions() != null) {
             List<EventClassFamilyVersionStateDto> ecfVersionStates = new ArrayList<>(evInfo.getEventFamilyVersions().size());
-            for(EventClassFamilyVersionInfo ecfVersionInfo : evInfo.getEventFamilyVersions()){
+            for (EventClassFamilyVersionInfo ecfVersionInfo : evInfo.getEventFamilyVersions()) {
                 EventClassFamilyVersionStateDto ecfVersionDto = new EventClassFamilyVersionStateDto();
                 String ecfId = cacheService.getEventClassFamilyIdByName(new EventClassFamilyIdKey(tenantId, ecfVersionInfo.getName()));
-                if(ecfId != null){
+                if (ecfId != null) {
                     ecfVersionDto.setEcfId(ecfId);
                     ecfVersionDto.setVersion(ecfVersionInfo.getVersion());
                     ecfVersionStates.add(ecfVersionDto);
-                }else{
-                    LOG.warn("Failed to add ecf version state for ecf name {} and version {}", ecfVersionInfo.getName(), ecfVersionInfo.getVersion());
+                } else {
+                    LOG.warn("Failed to add ecf version state for ecf name {} and version {}", ecfVersionInfo.getName(),
+                            ecfVersionInfo.getVersion());
                 }
             }
             dto.setEcfVersionStates(ecfVersionStates);

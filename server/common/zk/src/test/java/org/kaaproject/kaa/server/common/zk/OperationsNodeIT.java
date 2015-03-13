@@ -70,7 +70,7 @@ public class OperationsNodeIT {
 
             assertNotNull(bootstrapNode.getCurrentOperationServerNodes());
             assertEquals(1, bootstrapNode.getCurrentOperationServerNodes().size());
-            
+
             OperationsNodeInfo testNodeInfo = bootstrapNode.getCurrentOperationServerNodes().get(0);
             assertNotNull(testNodeInfo.getTransports());
             assertEquals(2, testNodeInfo.getTransports().size());
@@ -80,7 +80,7 @@ public class OperationsNodeIT {
             assertNotNull(testNodeInfo.getTransports().get(0).getConnectionInfo());
 
             endpointNodeInfo.getTransports().get(0).setId(NEW_HTTP_ID);
-            
+
             endpointNode.updateNodeData(endpointNodeInfo);
             timing.sleepABit();
             verify(mockListener).onNodeUpdated(endpointNodeInfo);
@@ -158,8 +158,6 @@ public class OperationsNodeIT {
         cluster.start();
         try {
             OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
-            Long removeTime = System.currentTimeMillis();
-
             BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
 
             BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
@@ -173,12 +171,21 @@ public class OperationsNodeIT {
             timing.sleepABit();
             verify(mockListener).onNodeAdded(endpointNodeInfo);
 
-            // pretend receiving remove before add
-            endpointNodeInfo.setTimeStarted(removeTime);
+            OperationsNodeInfo endpointNodeInfoWithGreaterTimeStarted = buildOperationsNodeInfo();
+            OperationsNode endpointNodeWithGreaterTimeStarted = new OperationsNode(endpointNodeInfoWithGreaterTimeStarted,
+                    cluster.getConnectString(), buildDefaultRetryPolicy());
+
+            endpointNodeWithGreaterTimeStarted.start();
+            timing.sleepABit();
 
             endpointNode.close();
             timing.sleepABit();
             verify(mockListener, never()).onNodeRemoved(endpointNodeInfo);
+
+            endpointNodeWithGreaterTimeStarted.close();
+            timing.sleepABit();
+            verify(mockListener).onNodeRemoved(endpointNodeInfoWithGreaterTimeStarted);
+
             bootstrapNode.close();
         } finally {
             cluster.close();
