@@ -47,6 +47,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.UpdateUserConfigView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserVerifierView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
@@ -136,5 +137,7 @@ public interface ClientFactory {
     BaseListView<UserVerifierDto> getUserVerifiersView();
     UserVerifierView getUserVerifierView();
     UserVerifierView getCreateUserVerifierView();
+    
+    UpdateUserConfigView getUpdateUserConfigView();
 
 }

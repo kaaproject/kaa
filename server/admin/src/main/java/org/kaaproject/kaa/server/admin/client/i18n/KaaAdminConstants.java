@@ -1789,6 +1789,24 @@ public interface KaaAdminConstants extends com.google.gwt.i18n.client.ConstantsW
   String type();
 
   /**
+   * Translated "Update".
+   * 
+   * @return translated "Update"
+   */
+  @DefaultStringValue("Update")
+  @Key("update")
+  String update();
+
+  /**
+   * Translated "Update configuration".
+   * 
+   * @return translated "Update configuration"
+   */
+  @DefaultStringValue("Update configuration")
+  @Key("updateConfiguration")
+  String updateConfiguration();
+
+  /**
    * Translated "Upload".
    * 
    * @return translated "Upload"
@@ -1841,6 +1859,15 @@ public interface KaaAdminConstants extends com.google.gwt.i18n.client.ConstantsW
   @DefaultStringValue("There is no registered user with specified email")
   @Key("userEmailNotFound")
   String userEmailNotFound();
+
+  /**
+   * Translated "User id".
+   * 
+   * @return translated "User id"
+   */
+  @DefaultStringValue("User id")
+  @Key("userId")
+  String userId();
 
   /**
    * Translated "Username".

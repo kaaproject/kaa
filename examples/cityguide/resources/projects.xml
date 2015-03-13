@@ -21,6 +21,7 @@ Copyright 2014-2015 CyberVision, Inc.
         <name>City guide</name>
         <description>City guide application on android platform demonstrating configuration, profiling and grouping features</description>
         <platform>ANDROID</platform>
+        <features>CONFIGURATION PROFILING</features>
         <sourceArchive>android/cityguide_demo.tar.gz</sourceArchive>
         <projectFolder>cityguide_demo/CityGuide</projectFolder>
         <sdkLibDir>cityguide_demo/CityGuide/libs</sdkLibDir>

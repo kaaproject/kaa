@@ -24,6 +24,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
@@ -1116,7 +1117,29 @@ public class DataSource {
                 callback.onSuccess(userVerifierPluginInfos);
             }
         }
-    }        
+    }    
+    
+    public void getUserConfigurationSchemaInfosByApplicationId(String applicationId,
+            final AsyncCallback<List<SchemaInfoDto>> callback) {
+        rpcService.getUserConfigurationSchemaInfosByApplicationId(applicationId,
+                new DataCallback<List<SchemaInfoDto>>(callback) {
+            @Override
+            protected void onResult(List<SchemaInfoDto> result) {
+            }
+        });
+    }
+    
+    public void editUserConfiguration(
+            EndpointUserConfigurationDto endpointUserConfiguration,
+            String applicationId, RecordField configurationData,
+            final AsyncCallback<Void> callback) {
+        rpcService.editUserConfiguration(endpointUserConfiguration, applicationId, configurationData,
+                new DataCallback<Void>(callback) {
+                    @Override
+                    protected void onResult(Void result) {
+                    }
+                });
+    }
 
     abstract class DataCallback<T> implements AsyncCallback<T> {
 

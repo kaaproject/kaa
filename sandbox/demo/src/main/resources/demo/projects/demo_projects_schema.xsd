@@ -33,14 +33,32 @@
   <xs:restriction base="xs:string">
     <xs:enumeration value="ANDROID"/>
     <xs:enumeration value="JAVA"/>
+    <xs:enumeration value="CPP"/>
+    <xs:enumeration value="C"/>
   </xs:restriction>
 </xs:simpleType>
- 
+
+<xs:simpleType name="feature">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="CONFIGURATION"/>
+    <xs:enumeration value="PROFILING"/>
+    <xs:enumeration value="NOTIFICATION"/>
+    <xs:enumeration value="EVENT"/>
+    <xs:enumeration value="USER_VERIFIER"/>
+    <xs:enumeration value="DATA_COLLECTION"/>
+  </xs:restriction>
+</xs:simpleType>
+
 <xs:complexType name="project">
   <xs:sequence>
     <xs:element name="name" type="xs:string"/>
     <xs:element name="description" type="xs:string"/>
     <xs:element name="platform" type="platform"/>
+    <xs:element name="features">
+        <xs:simpleType>
+           <xs:list itemType="feature"/>
+        </xs:simpleType>
+    </xs:element>
     <xs:element name="sourceArchive" type="xs:string"/>
     <xs:element name="projectFolder" type="xs:string"/>
     <xs:element name="sdkLibDir" type="xs:string"/>

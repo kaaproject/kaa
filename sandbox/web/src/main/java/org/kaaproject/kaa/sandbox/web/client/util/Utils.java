@@ -18,6 +18,8 @@ package org.kaaproject.kaa.sandbox.web.client.util;
 
 import org.kaaproject.avro.ui.gwt.client.AvroUiResources;
 import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
+import org.kaaproject.kaa.sandbox.demo.projects.Feature;
+import org.kaaproject.kaa.sandbox.demo.projects.Platform;
 import org.kaaproject.kaa.sandbox.web.client.SandboxResources;
 import org.kaaproject.kaa.sandbox.web.client.SandboxResources.KaaTheme;
 import org.kaaproject.kaa.sandbox.web.client.SandboxResources.SandboxStyle;
@@ -26,6 +28,7 @@ import org.kaaproject.kaa.sandbox.web.client.i18n.SandboxMessages;
 import org.kaaproject.kaa.sandbox.web.shared.services.SandboxServiceException;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.ImageResource;
 
 public class Utils {
 
@@ -66,6 +69,70 @@ public class Utils {
         else {
             return throwable.getMessage();
         }
+    }
+    
+    public static String getFeatureText(Feature feature) {
+        switch (feature) {
+            case CONFIGURATION:
+                return constants.configuration();
+            case DATA_COLLECTION:
+                return constants.dataCollection();
+            case EVENT:
+                return constants.event();
+            case NOTIFICATION:
+                return constants.notification();
+            case PROFILING:
+                return constants.profiling();
+            case USER_VERIFIER:
+                return constants.userVerifier();
+        }
+        return null;
+    }
+    
+    public static ImageResource getFeatureIcon(Feature feature, boolean down) {
+        switch (feature) {
+            case CONFIGURATION:
+                return down ? resources.configFeatureDown() : resources.configFeature();
+            case DATA_COLLECTION:
+                return down ? resources.dataCollectionFeatureDown() : resources.dataCollectionFeature();
+            case EVENT:
+                return down ? resources.eventFeatureDown() : resources.eventFeature();
+            case NOTIFICATION:
+                return down ? resources.notificationFeatureDown() : resources.notificationFeature();
+            case PROFILING:
+                return down ? resources.profilingFeatureDown() : resources.profilingFeature();
+            case USER_VERIFIER:
+                return down ? resources.userVerifierFeatureDown() : resources.userVerifierFeature();
+        }
+        return null;
+    }
+    
+    public static String getPlatformText(Platform platform) {
+        switch(platform) {
+            case ANDROID:
+                return constants.android();
+            case C:
+                return constants.c();
+            case CPP:
+                return constants.cpp();
+            case JAVA:
+                return constants.java();
+        }
+        return null;
+    }
+    
+    public static ImageResource getPlatformIcon(Platform platform) {
+        switch(platform) {
+            case ANDROID:
+                return resources.android();
+            case C:
+                return resources.c();
+            case CPP:
+                return resources.cpp();
+            case JAVA:
+                return resources.java();
+        }
+        return null;
     }
 
 }

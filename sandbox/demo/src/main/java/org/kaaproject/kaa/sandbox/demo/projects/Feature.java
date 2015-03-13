@@ -13,36 +13,40 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for platform.
+ * <p>Java class for feature.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="platform">
+ * &lt;simpleType name="feature">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="ANDROID"/>
- *     &lt;enumeration value="JAVA"/>
- *     &lt;enumeration value="CPP"/>
- *     &lt;enumeration value="C"/>
+ *     &lt;enumeration value="CONFIGURATION"/>
+ *     &lt;enumeration value="PROFILING"/>
+ *     &lt;enumeration value="NOTIFICATION"/>
+ *     &lt;enumeration value="EVENT"/>
+ *     &lt;enumeration value="USER_VERIFIER"/>
+ *     &lt;enumeration value="DATA_COLLECTION"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
  * 
  */
-@XmlType(name = "platform")
+@XmlType(name = "feature")
 @XmlEnum
-public enum Platform {
+public enum Feature {
 
-    ANDROID,
-    JAVA,
-    CPP,
-    C;
+    CONFIGURATION,
+    PROFILING,
+    NOTIFICATION,
+    EVENT,
+    USER_VERIFIER,
+    DATA_COLLECTION;
 
     public String value() {
         return name();
     }
 
-    public static Platform fromValue(String v) {
+    public static Feature fromValue(String v) {
         return valueOf(v);
     }
 

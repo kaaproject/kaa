@@ -21,6 +21,7 @@ Copyright 2014-2015 CyberVision, Inc.
         <name>Java notificaion demo</name>
         <description>Application on java platform demonstrating notification subsystem (IoT)</description>
         <platform>JAVA</platform>
+        <features>NOTIFICATION</features>
         <sourceArchive>java/jnotification_demo.tar.gz</sourceArchive>
         <projectFolder>jnotification_demo/JNotificationDemo</projectFolder>
         <sdkLibDir>jnotification_demo/JNotificationDemo/lib</sdkLibDir>

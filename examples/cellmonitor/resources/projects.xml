@@ -21,6 +21,7 @@ Copyright 2014-2015 CyberVision, Inc.
         <name>Cell monitor</name>
         <description>Cell monitor application on android platform demonstrating data collection feature</description>
         <platform>ANDROID</platform>
+        <features>DATA_COLLECTION</features>
         <sourceArchive>android/cellmonitor_demo.tar.gz</sourceArchive>
         <projectFolder>cellmonitor_demo/CellMonitor</projectFolder>
         <sdkLibDir>cellmonitor_demo/CellMonitor/libs</sdkLibDir>

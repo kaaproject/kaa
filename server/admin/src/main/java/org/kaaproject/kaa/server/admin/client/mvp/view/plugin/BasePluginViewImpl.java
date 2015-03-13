@@ -49,8 +49,6 @@ public abstract class BasePluginViewImpl extends BaseDetailsViewImpl implements 
     private SizedTextBox createdDateTime;
     private RecordFieldWidget configuration;
     
-    protected static final String FULL_WIDTH = "100%";
-
     public BasePluginViewImpl(boolean create) {
         super(create);
     }

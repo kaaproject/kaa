@@ -16,6 +16,10 @@
 
 package org.kaaproject.kaa.sandbox.web.client.mvp.view.project;
 
+import java.util.List;
+
+import org.kaaproject.kaa.sandbox.demo.projects.Feature;
+import org.kaaproject.kaa.sandbox.demo.projects.Platform;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.ProjectView;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.base.BaseViewImpl;
 import org.kaaproject.kaa.sandbox.web.client.util.Utils;
@@ -23,8 +27,11 @@ import org.kaaproject.kaa.sandbox.web.client.util.Utils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 
@@ -32,11 +39,12 @@ public class ProjectViewImpl extends BaseViewImpl implements ProjectView {
     
     private Label descriptionLabel;
     private Label targetPlatform;
+    private HorizontalPanel featuresPanel;
     private Button getSourceButton;
     private Button getBinaryButton;
     
     public ProjectViewImpl() {
-        super();
+        super(true);
         setBackEnabled(true);
     }
 
@@ -46,14 +54,24 @@ public class ProjectViewImpl extends BaseViewImpl implements ProjectView {
     }
 
     @Override
-    protected void initDetailsPanel() {
-        HorizontalPanel targetPlatformPanel = new HorizontalPanel();
+    protected void initCenterPanel() {
+        FlexTable infoTable = new FlexTable();
+        infoTable.getColumnFormatter().setWidth(0, "150px");
+        infoTable.getColumnFormatter().setWidth(1, "300px");
+        
         Label targetPlatformLabel = new Label(Utils.constants.targetPlatform());
         targetPlatformLabel.addStyleName(Utils.sandboxStyle.contentLabel());
-        targetPlatformPanel.add(targetPlatformLabel);
+        infoTable.setWidget(0, 0, targetPlatformLabel);
         targetPlatform = new Label();
-        targetPlatformPanel.add(targetPlatform);
-        detailsPanel.add(targetPlatformPanel);
+        infoTable.setWidget(0, 1, targetPlatform);
+        
+        Label featuresLabel = new Label(Utils.constants.features());
+        featuresLabel.addStyleName(Utils.sandboxStyle.contentLabel());
+        infoTable.setWidget(1, 0, featuresLabel);
+        featuresPanel = new HorizontalPanel();
+        infoTable.setWidget(1, 1, featuresPanel);
+        
+        detailsPanel.add(infoTable);
         
         descriptionLabel = new Label();
         descriptionLabel.addStyleName(Utils.sandboxStyle.descriptionLabel());
@@ -78,13 +96,9 @@ public class ProjectViewImpl extends BaseViewImpl implements ProjectView {
     @Override
     protected void resetImpl() {
         targetPlatform.setText("");
+        featuresPanel.clear();
         descriptionLabel.setText("");
         setTitle("");
-    }
-
-    @Override
-    public HasText getTargetPlatform() {
-        return targetPlatform;
     }
 
     @Override
@@ -100,6 +114,26 @@ public class ProjectViewImpl extends BaseViewImpl implements ProjectView {
     @Override
     public HasClickHandlers getBinaryButton() {
         return getBinaryButton;
+    }
+
+    @Override
+    public void setTargetPlatform(Platform platform) {
+        targetPlatform.setText(Utils.getPlatformText(platform));
+        
+    }
+
+    @Override
+    public void setFeatures(List<Feature> features) {
+        for (Feature feature : features) {
+            Image image = new Image(Utils.getFeatureIcon(feature, false));
+            Label label = new Label(Utils.getFeatureText(feature));
+            featuresPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+            featuresPanel.add(image);
+            featuresPanel.add(label);
+            label.getElement().getStyle().setPaddingRight(15, Unit.PX);
+            label.getElement().getStyle().setPaddingLeft(8, Unit.PX);
+            
+        }
     }
 
 }
