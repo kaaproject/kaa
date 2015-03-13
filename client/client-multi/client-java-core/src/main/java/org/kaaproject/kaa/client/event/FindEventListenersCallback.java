@@ -26,7 +26,7 @@ import java.util.List;
  * @see EventListenersResolver
  *
  */
-public interface FetchEventListeners {
+public interface FindEventListenersCallback {
 
     /**
      * Called when resolve was successful

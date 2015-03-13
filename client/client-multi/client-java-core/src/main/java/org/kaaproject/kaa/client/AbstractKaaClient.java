@@ -66,12 +66,11 @@ import org.kaaproject.kaa.client.event.DefaultEventManager;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
-import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.EventManager;
+import org.kaaproject.kaa.client.event.FindEventListenersCallback;
 import org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback;
 import org.kaaproject.kaa.client.event.registration.DefaultEndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback;
-import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
@@ -481,18 +480,13 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     @Override
-    public EndpointRegistrationManager getEndpointRegistrationManager() {
-        return endpointRegistrationManager;
-    }
-
-    @Override
     public EventFamilyFactory getEventFamilyFactory() {
         return eventFamilyFactory;
     }
 
     @Override
-    public EventListenersResolver getEventListenerResolver() {
-        return eventManager;
+    public void findEventListeners(List<String> eventFQNs, FindEventListenersCallback listener){
+        eventManager.findEventListeners(eventFQNs, listener);
     }
 
     @Override

@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultChannelManager implements KaaInternalChannelManager {
 
-    public static final Logger LOG = LoggerFactory //NOSONAR
+    public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(DefaultChannelManager.class);
 
     private final List<KaaDataChannel> channels = new LinkedList<>();
@@ -52,12 +52,11 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     private ConnectivityChecker connectivityChecker;
     private boolean isShutdown = false;
     private boolean isPaused = false;
-    
+
     private KaaDataMultiplexer operationsMultiplexer;
     private KaaDataDemultiplexer operationsDemultiplexer;
     private KaaDataMultiplexer bootstrapMultiplexer;
     private KaaDataDemultiplexer bootstrapDemultiplexer;
-
 
     public DefaultChannelManager(BootstrapManager manager, Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers) {
         if (manager == null || bootststrapServers == null || bootststrapServers.isEmpty()) {
@@ -69,9 +68,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
 
     private boolean useChannelForType(KaaDataChannel channel, TransportType type) {
         ChannelDirection direction = channel.getSupportedTransportTypes().get(type);
-        if (direction != null &&
-                (direction.equals(ChannelDirection.BIDIRECTIONAL) || direction.equals(ChannelDirection.UP))) {
-            upChannels.put(type,  channel);
+        if (direction != null && (direction.equals(ChannelDirection.BIDIRECTIONAL) || direction.equals(ChannelDirection.UP))) {
+            upChannels.put(type, channel);
             return true;
         }
         return false;
@@ -117,7 +115,13 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                 channel.setServer(server);
             } else {
                 if (lastServers != null && lastServers.isEmpty()) {
-                    LOG.warn("Failed to find server for channel [{}] type {}", channel.getId(), channel.getTransportProtocolId());
+                    if (channel.getServerType() == ServerType.BOOTSTRAP) {
+                        LOG.warn("Failed to find bootstrap server for channel [{}] type {}", channel.getId(),
+                                channel.getTransportProtocolId());
+                    } else {
+                        LOG.info("Failed to find operations server for channel [{}] type {}", channel.getId(),
+                                channel.getTransportProtocolId());
+                    }
                 } else {
                     LOG.debug("list of servers is empty for channel [{}] type {}", channel.getId(), channel.getTransportProtocolId());
                 }
@@ -126,17 +130,15 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     }
 
     @Override
-    public synchronized void setChannel(TransportType transport,
-            KaaDataChannel channel) throws KaaInvalidChannelException {
+    public synchronized void setChannel(TransportType transport, KaaDataChannel channel) throws KaaInvalidChannelException {
         if (isShutdown) {
             LOG.warn("Can't set a channel. Channel manager is down");
             return;
         }
         if (channel != null) {
             if (!useChannelForType(channel, transport)) {
-                throw new KaaInvalidChannelException(
-                        "Unsupported transport type " + transport.toString()
-                                + " for channel \"" + channel.getId() + "\"");
+                throw new KaaInvalidChannelException("Unsupported transport type " + transport.toString() + " for channel \""
+                        + channel.getId() + "\"");
             }
             if (isPaused) {
                 channel.pause();
@@ -152,10 +154,10 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             return;
         }
         if (channel != null) {
-            if(ServerType.BOOTSTRAP == channel.getServerType()){
+            if (ServerType.BOOTSTRAP == channel.getServerType()) {
                 channel.setMultiplexer(bootstrapMultiplexer);
                 channel.setDemultiplexer(bootstrapDemultiplexer);
-            }else{
+            } else {
                 channel.setMultiplexer(operationsMultiplexer);
                 channel.setDemultiplexer(operationsDemultiplexer);
             }
@@ -213,11 +215,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         }
 
         for (KaaDataChannel channel : channels) {
-            if (channel.getServerType() == newServer.getServerType()
-                    && channel.getTransportProtocolId().equals(newServer.getTransportId()))
-            {
-                LOG.debug("Applying server {} for channel [{}] type {}"
-                        , newServer, channel.getId(), channel.getTransportProtocolId());
+            if (channel.getServerType() == newServer.getServerType() && channel.getTransportProtocolId().equals(newServer.getTransportId())) {
+                LOG.debug("Applying server {} for channel [{}] type {}", newServer, channel.getId(), channel.getTransportProtocolId());
                 channel.setServer(newServer);
             }
         }
@@ -258,8 +257,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     private TransportConnectionInfo getNextBootstrapServer(TransportConnectionInfo currentServer) {
         TransportConnectionInfo bsi = null;
 
-        List<TransportConnectionInfo> serverList =
-                bootststrapServers.get(currentServer.getTransportId());
+        List<TransportConnectionInfo> serverList = bootststrapServers.get(currentServer.getTransportId());
         int serverIndex = serverList.indexOf(currentServer);
 
         if (serverIndex >= 0) {
