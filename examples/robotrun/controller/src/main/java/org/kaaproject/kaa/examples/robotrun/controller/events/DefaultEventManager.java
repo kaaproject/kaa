@@ -47,7 +47,6 @@ import org.kaaproject.kaa.examples.robotrun.gen.event.Location;
 import org.kaaproject.kaa.examples.robotrun.gen.event.MovementRequest;
 import org.kaaproject.kaa.examples.robotrun.gen.event.MovementResponse;
 import org.kaaproject.kaa.examples.robotrun.gen.event.RobotRunEventClassFamily;
-import org.kaaproject.kaa.examples.robotrun.gen.event.RobotRunEventClassFamily.DefaultEventFamilyListener;
 import org.kaaproject.kaa.examples.robotrun.gen.event.StartRunRequest;
 import org.kaaproject.kaa.examples.robotrun.labyrinth.BorderType;
 import org.kaaproject.kaa.examples.robotrun.labyrinth.Cell;
@@ -57,7 +56,7 @@ import org.kaaproject.kaa.examples.robotrun.labyrinth.RobotPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultEventManager implements EventManager, DefaultEventFamilyListener, UserAuthResultListener,
+public class DefaultEventManager implements EventManager, RobotRunEventClassFamily.Listener, UserAuthResultListener,
         FetchEventListeners {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultEventManager.class);
@@ -106,7 +105,7 @@ public class DefaultEventManager implements EventManager, DefaultEventFamilyList
     }
 
     private void atachToUser() {
-        client.getEndpointRegistrationManager().attachUser(USER_EXTERNAL_ID, USER_ACCESS_TOKEN, this);
+        client.attachUser(USER_EXTERNAL_ID, USER_ACCESS_TOKEN, this);
     }
 
     @Override
@@ -129,7 +128,7 @@ public class DefaultEventManager implements EventManager, DefaultEventFamilyList
         LOG.info("Fetching endpoint keys...");
         List<String> fqns = Arrays.asList(StartRunRequest.class.getName(), EntityInfoRequest.class.getName(),
                 MovementRequest.class.getName());
-        client.getEventListenerResolver().findEventListeners(fqns, this);
+        client.findEventListeners(fqns, this);
     }
 
     @Override
@@ -162,7 +161,7 @@ public class DefaultEventManager implements EventManager, DefaultEventFamilyList
             final List<String> toDetach = new ArrayList<>(attachedEndpoints);
             for (final String endpointKeyHash : toDetach) {
                 EndpointKeyHash endpointKey = new EndpointKeyHash(endpointKeyHash);
-                client.getEndpointRegistrationManager().detachEndpoint(endpointKey,
+                client.detachEndpoint(endpointKey,
                         new EndpointOperationResultListener() {
                             @Override
                             public void sendResponse(String operation, SyncResponseResultType result, Object context) {

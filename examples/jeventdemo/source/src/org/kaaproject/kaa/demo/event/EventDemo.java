@@ -28,14 +28,12 @@ import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.FetchEventListeners;
-import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.client.transact.TransactionId;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
 import org.kaaproject.kaa.schema.sample.event.thermo.ChangeDegreeRequest;
 import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatEventClassFamily;
-import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatEventClassFamily.DefaultEventFamilyListener;
 import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoRequest;
 import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoResponse;
 import org.slf4j.Logger;
@@ -96,11 +94,8 @@ public class EventDemo {
         listenerFQNs.add(ThermostatInfoRequest.class.getName());
         listenerFQNs.add(ChangeDegreeRequest.class.getName());
 
-        //Getting event listener resolver
-        EventListenersResolver eventListenersResolver = kaaClient.getEventListenerResolver();
-
         //And then finding all listener listening to events in FQNs list
-        eventListenersResolver.findEventListeners(listenerFQNs, new FetchEventListeners() {
+        kaaClient.findEventListeners(listenerFQNs, new FetchEventListeners() {
 
             //Doing something with event listeners in case of success
             @Override
@@ -124,7 +119,7 @@ public class EventDemo {
         ThermostatEventClassFamily tecf = eventFamilyFactory.getThermostatEventClassFamily();
 
         //Adding event listeners for family factory
-        tecf.addListener(new DefaultEventFamilyListener() {
+        tecf.addListener(new ThermostatEventClassFamily.Listener() {
 
             @Override
             public void onEvent(ChangeDegreeRequest changeDegreeRequest, String senderId) {

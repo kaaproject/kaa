@@ -49,12 +49,11 @@ import org.kaaproject.kaa.client.event.EndpointKeyHash;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
 import org.kaaproject.kaa.client.event.FetchEventListeners;
-import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
 import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCallback;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
-import org.kaaproject.kaa.demo.verifiersdemo.VerifiersDemoEventClassFamily.DefaultEventFamilyListener;
+import org.kaaproject.kaa.demo.verifiersdemo.VerifiersDemoEventClassFamily;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -107,10 +106,6 @@ public class LoginActivity extends FragmentActivity {
 
     // Facebook UI helper class, used for managing login UI
     private static UiLifecycleHelper uiHelper;
-
-    // Kaa endpoint registration manager, responsible for attaching users to
-    // endpoints
-    private static EndpointRegistrationManager endpointRegistrationManager;
 
     // Is used to attach to Kaa server, manage events or configurations
     private static KaaClient kaaClient;
@@ -199,8 +194,6 @@ public class LoginActivity extends FragmentActivity {
 
         verifiersTokens = kaaClient.getConfiguration();
         Log.i(TAG, "Verifiers tokens: " + verifiersTokens.toString());
-
-        endpointRegistrationManager = kaaClient.getEndpointRegistrationManager();
     }
 
     @Override
@@ -290,7 +283,7 @@ public class LoginActivity extends FragmentActivity {
         updateViews();
 
         Log.i(TAG, "Attaching user...");
-        endpointRegistrationManager.attachUser(kaaVerifierToken, userIdCopy, token,
+        kaaClient.attachUser(kaaVerifierToken, userIdCopy, token,
                 new UserAttachCallback() {
                     @Override
                     public void onAttachResult(UserAttachResponse userAttachResponse) {
@@ -310,9 +303,7 @@ public class LoginActivity extends FragmentActivity {
                             List<String> FQNs = new LinkedList<>();
                             FQNs.add("org.kaaproject.kaa.demo.verifiersdemo.MessageEvent");
 
-                            EventListenersResolver eventListenersResolver = kaaClient.getEventListenerResolver();
-
-                            eventListenersResolver.findEventListeners(FQNs, new FetchEventListeners() {
+                            kaaClient.findEventListeners(FQNs, new FetchEventListeners() {
                                 @Override
                                 public void onRequestFailed() {
                                     Log.i(TAG, "Find event listeners request has failed");
@@ -326,7 +317,6 @@ public class LoginActivity extends FragmentActivity {
                                 vdecf.removeListener(listener);
                             }
                             listener = new KaaEventListener();
-                            vdecf.addListener(listener);
                         } else {
                             String failureString = userAttachResponse.getErrorReason() == null ?
                                     userAttachResponse.getErrorCode().toString() :
@@ -386,7 +376,7 @@ public class LoginActivity extends FragmentActivity {
     }
 
     // class, which is used to handle events
-    private class KaaEventListener implements DefaultEventFamilyListener {
+    private class KaaEventListener implements VerifiersDemoEventClassFamily.Listener {
         @Override
         public void onEvent(MessageEvent messageEvent, String sourceEndpoint) {
             Log.i(TAG, "Event was received: " + messageEvent.getMessage());

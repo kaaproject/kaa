@@ -38,7 +38,7 @@ public class GetEndpointKeyListCommand extends AbstractClientCommand<List<String
         @Override
         protected void executeAsync() {
             List<String> fqns = Arrays.asList(DeviceInfoRequest.class.getName());
-            client.getEventListenerResolver().findEventListeners(fqns, new FetchEventListeners() {
+            client.findEventListeners(fqns, new FetchEventListeners() {
                 @Override
                 public void onEventListenersReceived(
                         List<String> endpontKeys) {
