@@ -19,6 +19,7 @@ package org.kaaproject.kaa.sandbox.web.client.mvp.event.project;
 public enum ProjectAction {
 
     GET_SOURCE_CODE,
-    GET_BINARY;
+    GET_BINARY,
+    OPEN_DETAILS;
     
 }

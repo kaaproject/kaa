@@ -31,7 +31,6 @@
 
     <properties>
         <main.dir>${basedir}/../..</main.dir>
-        <spring.version>3.2.10.RELEASE</spring.version>
         <base.path>${project.build.directory}/sandbox</base.path>
         <distro.path>${base.path}/distro</distro.path>
         <webapps.path>${base.path}/sandbox/webapps</webapps.path>

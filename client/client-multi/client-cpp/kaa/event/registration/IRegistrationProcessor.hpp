@@ -19,7 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_EVENTS
 
 #include <string>
 #include <vector>
@@ -49,7 +48,5 @@ public:
 };
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* IREGISTRATIONPROCESSOR_HPP_ */

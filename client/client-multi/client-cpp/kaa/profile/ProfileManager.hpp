@@ -34,9 +34,7 @@ namespace kaa {
  */
 class ProfileManager : public IProfileManager {
 public:
-    ProfileManager() {
-        serializedProfileContainer_.reset(new SerializedProfileContainer);
-    }
+    ProfileManager() : serializedProfileContainer_(std::make_shared<SerializedProfileContainer>()) { }
 
     /**
      * Sets profile container implemented by the user
@@ -48,7 +46,8 @@ public:
      * Retrieves serialized profile container
      * @return serialized profile container
      */
-    ISerializedProfileContainerPtr getSerializedProfileContainer() {
+    ISerializedProfileContainerPtr getSerializedProfileContainer()
+    {
         return ISerializedProfileContainerPtr(serializedProfileContainer_);
     }
 
@@ -56,7 +55,8 @@ public:
      * Sets profile transport
      * @param Profile transport
      */
-    virtual void setTransport(IProfileTransportPtr transport) {
+    virtual void setTransport(IProfileTransportPtr transport)
+    {
         if (transport) {
             transport_ = transport;
         }

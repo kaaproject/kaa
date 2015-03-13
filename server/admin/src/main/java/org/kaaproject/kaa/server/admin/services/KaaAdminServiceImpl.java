@@ -1330,8 +1330,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
           Utils.checkNotNull(storedConfiguration);
           checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
           String username = this.getCurrentUser().getUsername();
-          ConfigurationDto stored = toDto(clientProvider.getClient().activateConfiguration(configurationId, username));
-          return toConfigurationRecordFormDto(stored);
+          return toDto(clientProvider.getClient().activateConfiguration(configurationId, username));
       } catch (Exception e) {
           throw Utils.handleException(e);
       }
