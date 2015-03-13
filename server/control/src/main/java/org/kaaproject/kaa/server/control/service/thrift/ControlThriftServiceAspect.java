@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.control.service.thrift;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
-import java.text.MessageFormat;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -34,8 +33,7 @@ import org.slf4j.LoggerFactory;
 public class ControlThriftServiceAspect {
 
     /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(ControlThriftServiceAspect.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ControlThriftServiceAspect.class);
 
     /**
      * Do control sevice method.
@@ -47,20 +45,17 @@ public class ControlThriftServiceAspect {
      *             the throwable
      */
     @Around("execution(* org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService.Iface.*(..))")
-    public Object doControlSeviceMethod(ProceedingJoinPoint pjp)
-            throws Throwable { //NOSONAR
+    public Object doControlSeviceMethod(ProceedingJoinPoint pjp) throws Throwable { // NOSONAR
         Object retVal = null;
         try {
             retVal = pjp.proceed();
         } catch (Exception t) {
-            LOG.error(MessageFormat.format("Unhandled exception: {0}", t.getMessage()), t);
+            LOG.error("Unhandled exception: {}", t.getMessage(), t);
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             PrintWriter writer = new PrintWriter(outStream);
-            t.printStackTrace(writer); //NOSONAR
+            t.printStackTrace(writer); // NOSONAR
             writer.flush();
-            throw new ControlThriftException(
-                    t.getMessage(), t.getClass().getName(),
-                    outStream.toString());
+            throw new ControlThriftException(t.getMessage(), t.getClass().getName(), outStream.toString());
         }
         return retVal;
     }

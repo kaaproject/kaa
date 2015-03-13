@@ -16,6 +16,35 @@
 
 package org.kaaproject.kaa.server.common.dao;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemAlreadyExistsException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+
+import javax.sql.DataSource;
+
 import org.junit.Assert;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
@@ -70,34 +99,6 @@ import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.sql.DataSource;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystemAlreadyExistsException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class AbstractTest {
 
@@ -183,9 +184,11 @@ public class AbstractTest {
     /**
      * Gets the resource as string.
      *
-     * @param path the path
+     * @param path
+     *            the path
      * @return the resource as string
-     * @throws java.io.IOException Signals that an I/O exception has occurred.
+     * @throws java.io.IOException
+     *             Signals that an I/O exception has occurred.
      */
     protected static String getResourceAsString(String path) throws IOException {
         URL url = Thread.currentThread().getContextClassLoader().getResource(path);
@@ -289,7 +292,8 @@ public class AbstractTest {
         return schemas;
     }
 
-    protected List<ConfigurationDto> generateConfiguration(String schemaId, String groupId, int count, boolean activate, boolean useBaseSchema) {
+    protected List<ConfigurationDto> generateConfiguration(String schemaId, String groupId, int count, boolean activate,
+            boolean useBaseSchema) {
         List<ConfigurationDto> ids = Collections.emptyList();
         try {
             ConfigurationSchemaDto schemaDto;
@@ -299,10 +303,10 @@ public class AbstractTest {
                 schemaDto = generateConfSchema(null, 1).get(0);
             }
             Assert.assertNotNull(schemaDto);
-            KaaSchema kaaSchema = useBaseSchema ? new BaseSchema(schemaDto.getBaseSchema()) : new OverrideSchema(schemaDto.getOverrideSchema());
-            DefaultRecordGenerationAlgorithmImpl configurationProcessor = new DefaultRecordGenerationAlgorithmImpl(
-                    kaaSchema, useBaseSchema ? new BaseDataFactory()
-                    : new OverrideDataFactory());
+            KaaSchema kaaSchema = useBaseSchema ? new BaseSchema(schemaDto.getBaseSchema()) : new OverrideSchema(
+                    schemaDto.getOverrideSchema());
+            DefaultRecordGenerationAlgorithmImpl configurationProcessor = new DefaultRecordGenerationAlgorithmImpl(kaaSchema,
+                    useBaseSchema ? new BaseDataFactory() : new OverrideDataFactory());
             ids = new ArrayList<>();
             for (int i = 0; i < count; i++) {
                 ConfigurationDto dto = new ConfigurationDto();
@@ -317,7 +321,8 @@ public class AbstractTest {
                 ConfigurationDto saved = configurationService.saveConfiguration(dto);
                 Assert.assertNotNull(saved);
                 if (activate) {
-                    ChangeConfigurationNotification notification = configurationService.activateConfiguration(saved.getId(), schemaDto.getCreatedUsername());
+                    ChangeConfigurationNotification notification = configurationService.activateConfiguration(saved.getId(),
+                            schemaDto.getCreatedUsername());
                     saved = notification.getConfigurationDto();
                 }
                 ids.add(saved);
@@ -340,7 +345,8 @@ public class AbstractTest {
             for (int i = 0; i < count; i++) {
                 schemaDto = new ProfileSchemaDto();
                 schemaDto.setApplicationId(appId);
-                schemaDto.setSchema(new KaaSchemaFactoryImpl().createDataSchema(readSchemaFileAsString("dao/schema/testDataSchema.json")).getRawSchema());
+                schemaDto.setSchema(new KaaSchemaFactoryImpl().createDataSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"))
+                        .getRawSchema());
                 schemaDto.setCreatedUsername("Test User");
                 schemaDto.setName("Test Name");
                 schemaDto = profileService.saveProfileSchema(schemaDto);
@@ -379,7 +385,8 @@ public class AbstractTest {
                 ProfileFilterDto saved = profileService.saveProfileFilter(dto);
                 Assert.assertNotNull(saved);
                 if (activate) {
-                    ChangeProfileFilterNotification notification = profileService.activateProfileFilter(saved.getId(), schemaDto.getCreatedUsername());
+                    ChangeProfileFilterNotification notification = profileService.activateProfileFilter(saved.getId(),
+                            schemaDto.getCreatedUsername());
                     saved = notification.getProfileFilterDto();
                 }
                 filters.add(saved);
@@ -409,7 +416,8 @@ public class AbstractTest {
             for (int i = 0; i < count; i++) {
                 schemaDto = new LogSchemaDto();
                 schemaDto.setApplicationId(appId);
-                schemaDto.setSchema(new KaaSchemaFactoryImpl().createDataSchema(readSchemaFileAsString("dao/schema/testDataSchema.json")).getRawSchema());
+                schemaDto.setSchema(new KaaSchemaFactoryImpl().createDataSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"))
+                        .getRawSchema());
                 schemaDto.setCreatedUsername("Test User");
                 schemaDto.setName("Test Name");
                 schemaDto = logSchemaService.saveLogSchema(schemaDto);
@@ -555,7 +563,7 @@ public class AbstractTest {
         EndpointUserDto endpointUser = new EndpointUserDto();
         endpointUser.setExternalId(ENDPOINT_USER_EXTERNAL_ID + UUID.randomUUID().toString());
         endpointUser.setUsername(ENDPOINT_USER_NAME + UUID.randomUUID().toString());
-        if(tenantId == null) {
+        if (tenantId == null) {
             tenantId = UUID.randomUUID().toString();
         }
         endpointUser.setTenantId(tenantId);
@@ -587,11 +595,13 @@ public class AbstractTest {
         return logAppendersService.saveLogAppender(logAppender);
     }
 
-    protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto, ConfigurationSchemaDto configurationSchema) {
+    protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto,
+            ConfigurationSchemaDto configurationSchema) {
         return generateEndpointUserConfiguration(endpointUser, applicationDto, configurationSchema, UUID.randomUUID().toString());
     }
 
-    protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto, ConfigurationSchemaDto configurationSchema, String body) {
+    protected EndpointUserConfigurationDto generateEndpointUserConfiguration(EndpointUserDto endpointUser, ApplicationDto applicationDto,
+            ConfigurationSchemaDto configurationSchema, String body) {
         EndpointUserConfigurationDto configurationDto = new EndpointUserConfigurationDto();
         if (endpointUser == null) {
             endpointUser = generateEndpointUser(null);

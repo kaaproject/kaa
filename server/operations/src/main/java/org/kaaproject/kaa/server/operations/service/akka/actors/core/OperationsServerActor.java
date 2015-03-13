@@ -146,9 +146,9 @@ public class OperationsServerActor extends UntypedActor {
         ActorRef tenantActor = getOrCreateTenantActorByAppToken(message.getSessionInfo().getApplicationToken());
         tenantActor.tell(message, self());
     }
-    
+
     private void processClusterUpdate(ClusterUpdateMessage message) {
-        for(ActorRef tenantActor : tenants.values()){
+        for (ActorRef tenantActor : tenants.values()) {
             tenantActor.tell(message, ActorRef.noSender());
         }
     }

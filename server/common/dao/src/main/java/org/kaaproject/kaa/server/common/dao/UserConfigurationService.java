@@ -19,6 +19,9 @@ import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 
 import java.util.List;
 
+/**
+ * Provides methods to operate with {@link EndpointUserConfigurationDto} 
+ */
 public interface UserConfigurationService {
 
     /**

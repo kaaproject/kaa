@@ -99,7 +99,7 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
     @Override
     protected void initServiceCommands() {
     }
-    
+
     @Override
     public void onNotification(Notification notification) throws TException {
         LOG.debug("Received Notification from control server {}", notification);
@@ -137,8 +137,10 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
 
     @Override
     public void sendUserConfigurationUpdates(List<UserConfigurationUpdate> updates) throws TException {
-        for(UserConfigurationUpdate update: updates){
-            akkaService.onUserConfigurationUpdate(org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate.fromThrift(update));
+        for (UserConfigurationUpdate update : updates) {
+            akkaService
+                    .onUserConfigurationUpdate(org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate
+                            .fromThrift(update));
         }
     }
 

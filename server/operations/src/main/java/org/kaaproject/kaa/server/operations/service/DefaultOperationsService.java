@@ -146,7 +146,7 @@ public class DefaultOperationsService implements OperationsService {
         context.setEndpointProfile(profile);
 
         if (!Arrays.equals(profile.getProfileHash(), toByteArray(metaData.getProfileHash()))) {
-            LOG.debug("[{}] Profile hash mismatch. Profile resync needed");
+            LOG.debug("[{}] Profile hash mismatch. Profile resync needed", context.getEndpointKey());
             context.setStatus(SyncStatus.PROFILE_RESYNC);
         }
 
@@ -275,11 +275,10 @@ public class DefaultOperationsService implements OperationsService {
         }
         EndpointUserConfigurationDto ucfDto = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(
                 profile.getEndpointUserId(), appToken, profile.getConfigurationVersion());
-        if (ucfDto == null) {
-            return null;
-        } else {
+        if (ucfDto != null) {
             return EndpointObjectHash.fromString(ucfDto.getBody()).getData();
         }
+        return null;
     }
 
     private EndpointProfileDto registerEndpoint(String endpointId, int requestHash, ClientSyncMetaData metaData, ProfileClientSync request) {
@@ -614,6 +613,7 @@ public class DefaultOperationsService implements OperationsService {
             for (Notification oldNotification : notifications) {
                 if (oldNotification.getSeqNumber() == newNotification.getSeqNumber()) {
                     found = true;
+                    break;
                 }
             }
             if (!found) {
@@ -628,6 +628,7 @@ public class DefaultOperationsService implements OperationsService {
             for (Notification oldNotification : notifications) {
                 if (oldNotification.getUid() != null && oldNotification.getUid().equals(unicastNotificationId)) {
                     found = true;
+                    break;
                 }
             }
             if (!found) {
@@ -644,11 +645,9 @@ public class DefaultOperationsService implements OperationsService {
             notificationResponse.setResponseStatus(SyncResponseStatus.DELTA);
             LOG.debug("Updated sync response {}", response);
             return response;
-        } else {
-            LOG.debug("Sync response was not updated!");
-            return null;
         }
-
+        LOG.debug("Sync response was not updated!");
+        return null;
     }
 
     @Override

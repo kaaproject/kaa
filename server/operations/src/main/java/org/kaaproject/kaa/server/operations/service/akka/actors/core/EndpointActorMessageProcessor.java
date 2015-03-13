@@ -166,8 +166,7 @@ public class EndpointActorMessageProcessor {
 
     public void processStateUpdate(ActorContext context, EndpointStateUpdateMessage message) {
         if (message.getUpdate() != null) {
-            byte[] ucfHash = message.getUpdate().getHash();
-            state.setUcfHash(ucfHash);
+            state.setUcfHash(message.getUpdate().getHash());
             syncChannels(context, state.getChannelsByTypes(TransportType.CONFIGURATION), true, false);
         }
     }
