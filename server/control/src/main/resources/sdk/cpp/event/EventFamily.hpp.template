@@ -17,7 +17,6 @@
 #ifndef ${event_family_class_name}_HPP_
 #define ${event_family_class_name}_HPP_
 
-#ifdef KAA_USE_EVENTS
 
 #include <set>
 #include <list>
@@ -106,7 +105,5 @@ private:
 };
 
 }
-
-#endif
 
 #endif /* ${event_family_class_name}_HPP_ */

@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_CONFIGURATION
-
 #include "kaa/configuration/IConfigurationProcessedObserver.hpp"
 
 namespace kaa {
@@ -52,7 +50,5 @@ public:
 };
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* I_CONFIGURATION_PROCESSED_OBSERVABLE_HPP_ */

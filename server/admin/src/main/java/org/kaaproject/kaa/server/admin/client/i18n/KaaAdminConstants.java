@@ -2,7 +2,7 @@ package org.kaaproject.kaa.server.admin.client.i18n;
 
 /**
  * Interface to represent the constants contained in resource bundle:
- * 	'/home/dyosick/projects/github_kaa/kaa/server/admin/src/main/java/org/kaaproject/kaa/server/admin/client/i18n/KaaAdminConstants.properties'.
+ * 	'/kaa/server/admin/src/main/java/org/kaaproject/kaa/server/admin/client/i18n/KaaAdminConstants.properties'.
  */
 public interface KaaAdminConstants extends com.google.gwt.i18n.client.ConstantsWithLookup {
   
@@ -79,20 +79,20 @@ public interface KaaAdminConstants extends com.google.gwt.i18n.client.ConstantsW
   String add();
 
   /**
-   * Translated "Add a configuration".
+   * Translated "Add configuration".
    * 
-   * @return translated "Add a configuration"
+   * @return translated "Add configuration"
    */
-  @DefaultStringValue("Add a configuration")
+  @DefaultStringValue("Add configuration")
   @Key("addConfiguration")
   String addConfiguration();
 
   /**
-   * Translated "Add a configuration schema".
+   * Translated "Add configuration schema".
    * 
-   * @return translated "Add a configuration schema"
+   * @return translated "Add configuration schema"
    */
-  @DefaultStringValue("Add a configuration schema")
+  @DefaultStringValue("Add configuration schema")
   @Key("addConfigurationSchema")
   String addConfigurationSchema();
 
@@ -124,128 +124,128 @@ public interface KaaAdminConstants extends com.google.gwt.i18n.client.ConstantsW
   String addLogSchema();
 
   /**
-   * Translated "Add new event family mapping".
+   * Translated "Add event family mapping".
    * 
-   * @return translated "Add new event family mapping"
+   * @return translated "Add event family mapping"
    */
-  @DefaultStringValue("Add new event family mapping")
+  @DefaultStringValue("Add event family mapping")
   @Key("addNewAefMap")
   String addNewAefMap();
 
   /**
-   * Translated "Add an application".
+   * Translated "Add application".
    * 
-   * @return translated "Add an application"
+   * @return translated "Add application"
    */
-  @DefaultStringValue("Add an application")
+  @DefaultStringValue("Add application")
   @Key("addNewApplication")
   String addNewApplication();
 
   /**
-   * Translated "Add new ECF".
+   * Translated "Add ECF".
    * 
-   * @return translated "Add new ECF"
+   * @return translated "Add ECF"
    */
-  @DefaultStringValue("Add new ECF")
+  @DefaultStringValue("Add ECF")
   @Key("addNewEcf")
   String addNewEcf();
 
   /**
-   * Translated "Add an endpoint group".
+   * Translated "Add endpoint group".
    * 
-   * @return translated "Add an endpoint group"
+   * @return translated "Add endpoint group"
    */
-  @DefaultStringValue("Add an endpoint group")
+  @DefaultStringValue("Add endpoint group")
   @Key("addNewEndpointGroup")
   String addNewEndpointGroup();
 
   /**
-   * Translated "Add new log appender".
+   * Translated "Add log appender".
    * 
-   * @return translated "Add new log appender"
+   * @return translated "Add log appender"
    */
-  @DefaultStringValue("Add new log appender")
+  @DefaultStringValue("Add log appender")
   @Key("addNewLogAppender")
   String addNewLogAppender();
 
   /**
-   * Translated "Add a notification topic".
+   * Translated "Add notification topic".
    * 
-   * @return translated "Add a notification topic"
+   * @return translated "Add notification topic"
    */
-  @DefaultStringValue("Add a notification topic")
+  @DefaultStringValue("Add notification topic")
   @Key("addNewNotificationTopic")
   String addNewNotificationTopic();
 
   /**
-   * Translated "Add a schema".
+   * Translated "Add schema".
    * 
-   * @return translated "Add a schema"
+   * @return translated "Add schema"
    */
-  @DefaultStringValue("Add a schema")
+  @DefaultStringValue("Add schema")
   @Key("addNewSchema")
   String addNewSchema();
 
   /**
-   * Translated "Add a tenant".
+   * Translated "Add tenant".
    * 
-   * @return translated "Add a tenant"
+   * @return translated "Add tenant"
    */
-  @DefaultStringValue("Add a tenant")
+  @DefaultStringValue("Add tenant")
   @Key("addNewTenant")
   String addNewTenant();
 
   /**
-   * Translated "Add a new user".
+   * Translated "Add user".
    * 
-   * @return translated "Add a new user"
+   * @return translated "Add user"
    */
-  @DefaultStringValue("Add a new user")
+  @DefaultStringValue("Add user")
   @Key("addNewUser")
   String addNewUser();
 
   /**
-   * Translated "Add new user verifier".
+   * Translated "Add user verifier".
    * 
-   * @return translated "Add new user verifier"
+   * @return translated "Add user verifier"
    */
-  @DefaultStringValue("Add new user verifier")
+  @DefaultStringValue("Add user verifier")
   @Key("addNewUserVerifier")
   String addNewUserVerifier();
 
   /**
-   * Translated "Add a notification schema".
+   * Translated "Add notification schema".
    * 
-   * @return translated "Add a notification schema"
+   * @return translated "Add notification schema"
    */
-  @DefaultStringValue("Add a notification schema")
+  @DefaultStringValue("Add notification schema")
   @Key("addNotificationSchema")
   String addNotificationSchema();
 
   /**
-   * Translated "Add a notification topic".
+   * Translated "Add notification topic".
    * 
-   * @return translated "Add a notification topic"
+   * @return translated "Add notification topic"
    */
-  @DefaultStringValue("Add a notification topic")
+  @DefaultStringValue("Add notification topic")
   @Key("addNotificationTopic")
   String addNotificationTopic();
 
   /**
-   * Translated "Add a profile filter".
+   * Translated "Add profile filter".
    * 
-   * @return translated "Add a profile filter"
+   * @return translated "Add profile filter"
    */
-  @DefaultStringValue("Add a profile filter")
+  @DefaultStringValue("Add profile filter")
   @Key("addProfileFilter")
   String addProfileFilter();
 
   /**
-   * Translated "Add a profile schema".
+   * Translated "Add profile schema".
    * 
-   * @return translated "Add a profile schema"
+   * @return translated "Add profile schema"
    */
-  @DefaultStringValue("Add a profile schema")
+  @DefaultStringValue("Add profile schema")
   @Key("addProfileSchema")
   String addProfileSchema();
 
@@ -259,11 +259,11 @@ public interface KaaAdminConstants extends com.google.gwt.i18n.client.ConstantsW
   String addSchema();
 
   /**
-   * Translated "Add a topic to the endpoint group".
+   * Translated "Add topic to the endpoint group".
    * 
-   * @return translated "Add a topic to the endpoint group"
+   * @return translated "Add topic to the endpoint group"
    */
-  @DefaultStringValue("Add a topic to the endpoint group")
+  @DefaultStringValue("Add topic to the endpoint group")
   @Key("addTopicToEp")
   String addTopicToEp();
 

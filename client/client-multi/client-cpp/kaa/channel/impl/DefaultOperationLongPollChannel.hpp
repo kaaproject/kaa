@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_DEFAULT_LONG_POLL_CHANNEL
-
 #include <cstdint>
 #include <thread>
 
@@ -114,7 +112,5 @@ private:
 };
 
 }
-
-#endif
 
 #endif /* DEFAULTOPERATIONLONGPOLLCHANNEL_HPP_ */

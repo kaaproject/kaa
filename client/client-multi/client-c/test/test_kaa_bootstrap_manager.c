@@ -446,7 +446,7 @@ void test_bootstrap_channel()
     error_code = kaa_bootstrap_manager_on_access_point_failed(bootstrap_manager
                                                             , (kaa_transport_protocol_id_t *)&(KAA_BOOTSTRAP_ACCESS_POINTS[index].protocol_id)
                                                             , KAA_SERVER_BOOTSTRAP);
-    ASSERT_EQUAL(error_code, KAA_ERR_NOT_FOUND);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_bootstrap_manager_destroy(bootstrap_manager);
     kaa_context.bootstrap_manager = NULL;

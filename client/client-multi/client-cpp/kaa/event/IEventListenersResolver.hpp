@@ -17,10 +17,6 @@
 #ifndef IEVENTLISTENERSRESOLVER_HPP_
 #define IEVENTLISTENERSRESOLVER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_EVENTS
-
 #include <list>
 #include <string>
 
@@ -47,7 +43,5 @@ public:
 };
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* IEVENTLISTENERSRESOLVER_HPP_ */

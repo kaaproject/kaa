@@ -21,162 +21,83 @@ import java.util.List;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.sandbox.web.client.mvp.event.project.HasProjectActionEventHandlers;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.MainView;
-import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.AlertPanel;
-import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.AlertPanel.Type;
-import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.DemoProjectsView;
+import org.kaaproject.kaa.sandbox.web.client.mvp.view.base.BaseViewImpl;
+import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.DemoProjectsWidget;
 import org.kaaproject.kaa.sandbox.web.client.util.Utils;
 
-import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MainViewImpl extends Composite implements MainView {
-
-    interface MainViewImplUiBinder extends UiBinder<Widget, MainViewImpl> { }
-    private static MainViewImplUiBinder uiBinder = GWT.create(MainViewImplUiBinder.class);
+public class MainViewImpl extends BaseViewImpl implements MainView {
 
     protected static final int DEFAULT_TEXTBOX_SIZE = 255;
 
-    @UiField public Label titleLabel;
-    @UiField public FlexTable detailsTable;
-    @UiField (provided=true) public AlertPanel errorPanel;
-    @UiField (provided=true) public AlertPanel infoPanel;
-
     private Anchor goToKaaAdminWeb;
     private Anchor goToAvroUiSandboxWeb;
-    private HTML changeKaaHostLabel;
-    private TextBox kaaHost;
-    private Button changeKaaHostButton;
-    private DemoProjectsView demoProjectsView;
+    private DemoProjectsWidget demoProjectsView;
     
     public MainViewImpl() {
-        errorPanel = new AlertPanel(Type.ERROR);
-        infoPanel =  new AlertPanel(Type.INFO);
-        initWidget(uiBinder.createAndBindUi(this));
-
-        titleLabel.setText(Utils.constants.mainConsole());
-
-        detailsTable.getColumnFormatter().setWidth(0, "200px");
-        detailsTable.getColumnFormatter().setWidth(1, "300px");
-
-        initDetailsTable();
-
-        clearMessages();
+        super();
+        setBackEnabled(false);
     }
 
     @Override
-    public void reset() {
-        clearMessages();
-        resetImpl();
+    protected String getViewTitle() {
+        return "";
     }
 
-    @Override
-    public void setTitle(String title) {
-        titleLabel.setText(title);
-    }
-
-    @Override
-    public void clearMessages() {
-        errorPanel.setMessage("");
-        UIObject.setVisible(errorPanel.getElement().getParentElement(), false);
-        infoPanel.setMessage("");
-        UIObject.setVisible(infoPanel.getElement().getParentElement(), false);
-    }
-
-    @Override
-    public void setErrorMessage(String message) {
-        errorPanel.setMessage(message);
-        UIObject.setVisible(errorPanel.getElement().getParentElement(), true);
-    }
-    
-    @Override
-    public void setInfoMessage(String message) {
-        infoPanel.setMessage(message);
-        UIObject.setVisible(infoPanel.getElement().getParentElement(), true);
-    }
-
-    @Override
-    public void setChangeKaaHostEnabled(boolean enabled) {
-        changeKaaHostLabel.setVisible(enabled);
-        kaaHost.setVisible(enabled);
-        changeKaaHostButton.setVisible(enabled);
-    }
-    
     private Widget constructGotoLink (Anchor anchor) {
-        HTML label = new HTML(Utils.constants.goTo());
-        HorizontalPanel panel = new HorizontalPanel();
-        panel.add(label);
-        label.getElement().getStyle().setPaddingRight(15, Unit.PX);
-        label.getElement().getStyle().setFontSize(16, Unit.PX);
+        FlowPanel panel = new FlowPanel();
+        panel.getElement().getStyle().setDisplay(Display.BLOCK);
+        anchor.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
         anchor.getElement().getStyle().setFontSize(16, Unit.PX);
         panel.add(anchor);
-        panel.getElement().getStyle().setPaddingBottom(40, Unit.PX);
         return panel;
     }
  
-    private void initDetailsTable() {
-        
-        int row = -1;
+    @Override
+    protected void initDetailsPanel() {
+        HorizontalPanel linksPanel = new HorizontalPanel();
+        linksPanel.setSpacing(6);
+        linksPanel.getElement().getStyle().setMarginLeft(-6, Unit.PX);
         
         goToKaaAdminWeb = new Anchor(Utils.constants.kaaAdminWeb());
         Widget gotoLink = constructGotoLink(goToKaaAdminWeb);
-        detailsTable.setWidget(++row, 0,  gotoLink);
-        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
+        gotoLink.addStyleName(Utils.sandboxStyle.shadowPanel());
+        linksPanel.add(gotoLink);
+        
+        SimplePanel spacing = new SimplePanel();
+        spacing.setWidth("10px");
+        linksPanel.add(spacing);
         
         goToAvroUiSandboxWeb = new Anchor(Utils.constants.avroUiSandboxWeb());
         gotoLink = constructGotoLink(goToAvroUiSandboxWeb);
-        detailsTable.setWidget(++row, 0,  gotoLink);
-        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
+        gotoLink.addStyleName(Utils.sandboxStyle.shadowPanel());
+        linksPanel.add(gotoLink);
+                
+        detailsPanel.add(linksPanel);
         
-        changeKaaHostLabel = new HTML(Utils.constants.changeKaaHost());
-        detailsTable.setWidget(++row, 0, changeKaaHostLabel);
-        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
-        kaaHost = new TextBox();
-        kaaHost.setWidth("200px");
-        detailsTable.setWidget(++row, 0, kaaHost);
-        changeKaaHostButton = new Button(Utils.constants.change());
-        detailsTable.setWidget(row, 1, changeKaaHostButton);
-        
-        Label demoProjectsTitle = new Label(Utils.constants.demoProjects());
-        demoProjectsTitle.getElement().getStyle().setPaddingTop(40, Unit.PX);
-        demoProjectsTitle.getElement().getStyle().setPaddingBottom(20, Unit.PX);
-        demoProjectsTitle.addStyleName("b-app-content-title");
+        Label sampleApplicationsTitle = new Label(Utils.constants.sampleApplications());
+        sampleApplicationsTitle.getElement().getStyle().setPaddingTop(10, Unit.PX);
+        sampleApplicationsTitle.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+        sampleApplicationsTitle.addStyleName(Utils.sandboxStyle.contentTitleLabel());
 
-        detailsTable.setWidget(++row, 0, demoProjectsTitle);
-        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
+        detailsPanel.add(sampleApplicationsTitle);
         
-        demoProjectsView = new DemoProjectsView();
-        detailsTable.setWidget(++row, 0, demoProjectsView);
-        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
+        demoProjectsView = new DemoProjectsWidget();
+        detailsPanel.add(demoProjectsView);
     }
 
-    private void resetImpl() {
-        setChangeKaaHostEnabled(false);
-        kaaHost.setText("");
+    @Override
+    protected void resetImpl() {
         demoProjectsView.reset();
-    }
-
-    @Override
-    public HasClickHandlers getChangeKaaHostButton() {
-        return changeKaaHostButton;
-    }
-
-    @Override
-    public HasValue<String> getKaaHost() {
-        return kaaHost;
     }
 
     @Override

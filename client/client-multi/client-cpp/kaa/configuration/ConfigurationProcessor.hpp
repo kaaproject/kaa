@@ -17,10 +17,6 @@
 #ifndef CONFIGURATION_PROCESSOR_HPP_
 #define CONFIGURATION_PROCESSOR_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_CONFIGURATION
-
 #include <cstdint>
 #include <memory>
 
@@ -44,8 +40,7 @@ namespace kaa {
  */
 class ConfigurationProcessor : public IConfigurationProcessor,
                                public IDecodedDeltaObservable,
-                               public IConfigurationProcessedObservable
-{
+                               public IConfigurationProcessedObservable {
 public:
     typedef avro::ValidSchema Schema;
 
@@ -72,13 +67,11 @@ public:
 private:
     KAA_R_MUTEX_DECLARE(confProcessorMutex_);
 
-    KaaObservable<void (int, const ConfigurationRootRecord &, bool), IGenericDeltaReceiver *> deltaReceivers_;
+    KaaObservable<void (int, const KaaRootConfiguration&, bool), IGenericDeltaReceiver *> deltaReceivers_;
     KaaObservable<void (), IConfigurationProcessedObserver *> onProcessedObservers_;
 
 };
 
 } // namespace kaa
-
-#endif
 
 #endif /* CONFIGURATION_PROCESSOR_HPP_ */

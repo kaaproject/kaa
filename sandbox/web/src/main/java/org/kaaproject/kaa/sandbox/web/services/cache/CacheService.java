@@ -28,6 +28,10 @@ public interface CacheService {
        
        FileData putProjectFile(ProjectDataKey key, FileData data);
        
+       Object getProperty(String propertyKey);
+       
+       Object putProperty(String propertyKey, Object propertyValue);
+       
        void flushAllCaches() throws SandboxServiceException;
         
 }

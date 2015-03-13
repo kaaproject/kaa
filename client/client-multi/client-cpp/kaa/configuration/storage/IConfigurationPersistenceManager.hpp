@@ -17,9 +17,6 @@
 #ifndef ICONFIGURATIONPERSISTENCEMANAGER_HPP_
 #define ICONFIGURATIONPERSISTENCEMANAGER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_CONFIGURATION
 
 #include <memory>
 
@@ -30,8 +27,7 @@ namespace kaa {
 /**
  * Interface for configuration persistence manager.
  */
-class IConfigurationPersistenceManager
-{
+class IConfigurationPersistenceManager {
 public:
     virtual ~IConfigurationPersistenceManager() {}
 
@@ -42,13 +38,11 @@ public:
      * @param storage User-defined persistence routines.
      * @see IConfigurationStorage
      */
-    virtual void setConfigurationStorage(IConfigurationStorage *storage) = 0;
+    virtual void setConfigurationStorage(IConfigurationStoragePtr storage) = 0;
 };
 
 typedef std::shared_ptr<IConfigurationPersistenceManager> IConfigurationPersistenceManagerPtr;
 
 }  // namespace kaa
-
-#endif
 
 #endif /* ICONFIGURATIONPERSISTENCEMANAGER_HPP_ */

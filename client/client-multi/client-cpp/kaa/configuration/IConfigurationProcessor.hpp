@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_CONFIGURATION
-
 #include <cstdint>
 #include <memory>
 
@@ -33,8 +31,7 @@ namespace kaa {
  * Receives and decodes the raw configuration data
  *
  */
-class IConfigurationProcessor
-{
+class IConfigurationProcessor {
 public:
     virtual ~IConfigurationProcessor() {}
 
@@ -51,7 +48,5 @@ public:
 typedef std::shared_ptr<IConfigurationProcessor> IConfigurationProcessorPtr;
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* I_CONFIGURATION_PROCESSOR_HPP_ */

@@ -17,7 +17,7 @@
 #ifndef ENDPOINTREGISTRATIONMANAGER_HPP_
 #define ENDPOINTREGISTRATIONMANAGER_HPP_
 
-#ifdef KAA_USE_EVENTS
+#include "kaa/KaaDefaults.hpp"
 
 #include <atomic>
 #include <string>
@@ -112,7 +112,5 @@ private:
 };
 
 }
-
-#endif
 
 #endif /* ENDPOINTREGISTRATIONMANAGER_HPP_ */
