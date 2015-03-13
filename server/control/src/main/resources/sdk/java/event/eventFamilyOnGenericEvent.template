@@ -2,7 +2,7 @@
             try {
                 AvroByteArrayConverter<${event_class_fqn}> converter = new AvroByteArrayConverter<>(${event_class_fqn}.class);
                 ${event_class_fqn} event = converter.fromByteArray(data);
-                for (DefaultEventFamilyListener listener : listeners) {
+                for (Listener listener : listeners) {
                     listener.onEvent(event, source);
                 }
             }

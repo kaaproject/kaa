@@ -186,7 +186,7 @@ public class EventManagerTest {
         request = new EventSyncRequest();
         List<String> eventFQNs = new ArrayList<String>();
         eventFQNs.add("eventFQN1");
-        eventManager.findEventListeners(eventFQNs, new FetchEventListeners() {
+        eventManager.findEventListeners(eventFQNs, new FindEventListenersCallback() {
 
             @Override
             public void onRequestFailed() {
@@ -196,7 +196,7 @@ public class EventManagerTest {
             public void onEventListenersReceived(List<String> eventListeners) {
             }
         });
-        eventManager.findEventListeners(eventFQNs, new FetchEventListeners() {
+        eventManager.findEventListeners(eventFQNs, new FindEventListenersCallback() {
 
             @Override
             public void onRequestFailed() {
@@ -223,7 +223,7 @@ public class EventManagerTest {
         List<String> eventFQNs = new ArrayList<String>();
         eventFQNs.add("eventFQN1");
 
-        FetchEventListeners fetchListener = mock(FetchEventListeners.class);
+        FindEventListenersCallback fetchListener = mock(FindEventListenersCallback.class);
         int requestIdOk = eventManager.findEventListeners(eventFQNs, fetchListener);
         int requestIdBad = eventManager.findEventListeners(eventFQNs, fetchListener);
 

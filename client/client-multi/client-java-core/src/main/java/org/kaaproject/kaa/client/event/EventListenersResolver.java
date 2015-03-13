@@ -49,7 +49,7 @@ import java.util.List;
  * {@code "org.kaaproject.test.FooEvent"} <b>AND</b> {@code "org.kaaproject.test.BarEvent"}.
  *
  * @author Taras Lemkin
- * @see FetchEventListeners
+ * @see FindEventListenersCallback
  */
 public interface EventListenersResolver {
 
@@ -57,9 +57,9 @@ public interface EventListenersResolver {
      * Submits an event listeners resolution request
      *
      * @param eventFQNs     List of event class FQNs which have to be supported by endpoint.
-     * @param listener      Result listener {@link FetchEventListeners}}
+     * @param listener      Result listener {@link FindEventListenersCallback}}
      *
      * @return Request ID of submitted request
      */
-    int findEventListeners(List<String> eventFQNs, FetchEventListeners listener);
+    int findEventListeners(List<String> eventFQNs, FindEventListenersCallback listener);
 }
