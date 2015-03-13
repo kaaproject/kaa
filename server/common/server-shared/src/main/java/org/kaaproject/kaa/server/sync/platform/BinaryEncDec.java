@@ -40,6 +40,7 @@ import org.kaaproject.kaa.server.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.sync.EventListenersResponse;
 import org.kaaproject.kaa.server.sync.EventServerSync;
 import org.kaaproject.kaa.server.sync.LogClientSync;
+import org.kaaproject.kaa.server.sync.LogDeliveryStatus;
 import org.kaaproject.kaa.server.sync.LogEntry;
 import org.kaaproject.kaa.server.sync.LogServerSync;
 import org.kaaproject.kaa.server.sync.Notification;
@@ -59,6 +60,7 @@ import org.kaaproject.kaa.server.sync.Topic;
 import org.kaaproject.kaa.server.sync.TopicState;
 import org.kaaproject.kaa.server.sync.UserAttachNotification;
 import org.kaaproject.kaa.server.sync.UserAttachRequest;
+import org.kaaproject.kaa.server.sync.UserAttachResponse;
 import org.kaaproject.kaa.server.sync.UserClientSync;
 import org.kaaproject.kaa.server.sync.UserDetachNotification;
 import org.kaaproject.kaa.server.sync.UserServerSync;
@@ -70,8 +72,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is an implementation of {@link PlatformEncDec} that
- * uses internal binary protocol for data serialization.
+ * This class is an implementation of {@link PlatformEncDec} that uses internal
+ * binary protocol for data serialization.
  *
  * @author Andrew Shvayka
  *
@@ -81,6 +83,7 @@ public class BinaryEncDec implements PlatformEncDec {
 
     private static final int EVENT_SEQ_NUMBER_REQUEST_OPTION = 0x02;
     private static final int CONFIGURATION_HASH_OPTION = 0x02;
+    private static final int CONFIGURATION_RESYNC_OPTION = 0x04;
     public static final short PROTOCOL_VERSION = 1;
     public static final int MIN_SUPPORTED_VERSION = 1;
     public static final int MAX_SUPPORTED_VERSION = 1;
@@ -109,7 +112,6 @@ public class BinaryEncDec implements PlatformEncDec {
     private static final int CLIENT_META_SYNC_PROFILE_HASH_OPTION = 0x04;
     private static final int CLIENT_META_SYNC_KEY_HASH_OPTION = 0x02;
     private static final int CLIENT_META_SYNC_TIMEOUT_OPTION = 0x01;
-
 
     // Notification types
     static final byte SYSTEM = 0x00;
@@ -260,7 +262,7 @@ public class BinaryEncDec implements PlatformEncDec {
         }
 
         buf.putShort(EXTENSIONS_COUNT_POSITION, extensionCount);
-        byte[] result =  buf.toByteArray();
+        byte[] result = buf.toByteArray();
         if (LOG.isTraceEnabled()) {
             LOG.trace("Encoded binary data {}", result);
         }
@@ -279,17 +281,17 @@ public class BinaryEncDec implements PlatformEncDec {
         buildExtensionHeader(buf, META_DATA_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
         buf.putInt(sync.getRequestId());
     }
-    
+
     private void encode(GrowingByteBuffer buf, BootstrapServerSync bootstrapSync) {
         buildExtensionHeader(buf, BOOTSTRAP_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 0);
         int extPosition = buf.position();
-        buf.putShort((short)bootstrapSync.getRequestId());
-        buf.putShort((short)bootstrapSync.getProtocolList().size());
-        for(ProtocolConnectionData data : bootstrapSync.getProtocolList()){
+        buf.putShort((short) bootstrapSync.getRequestId());
+        buf.putShort((short) bootstrapSync.getProtocolList().size());
+        for (ProtocolConnectionData data : bootstrapSync.getProtocolList()) {
             buf.putInt(data.getAccessPointId());
             buf.putInt(data.getProtocolId());
-            buf.putShort((short)data.getProtocolVersion());
-            buf.putShort((short)data.getConnectionData().length);
+            buf.putShort((short) data.getProtocolVersion());
+            buf.putShort((short) data.getConnectionData().length);
             put(buf, data.getConnectionData());
         }
         buf.putInt(extPosition - SIZE_OF_INT, buf.position() - extPosition);
@@ -304,10 +306,22 @@ public class BinaryEncDec implements PlatformEncDec {
         buildExtensionHeader(buf, USER_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 0);
         int extPosition = buf.position();
         if (userSync.getUserAttachResponse() != null) {
+            UserAttachResponse uaResponse = userSync.getUserAttachResponse();
             buf.put(USER_ATTACH_RESPONSE_FIELD_ID);
             buf.put(NOTHING);
-            buf.put(userSync.getUserAttachResponse().getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
+            buf.put(uaResponse.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
             buf.put(NOTHING);
+
+            if (uaResponse.getResult() != SyncStatus.SUCCESS) {
+                buf.putShort((short) (uaResponse.getErrorCode() != null ? uaResponse.getErrorCode().ordinal() : 0));
+                if (uaResponse.getErrorReason() != null) {
+                    byte[] data = uaResponse.getErrorReason().getBytes(UTF8);
+                    buf.putShort((short) data.length);
+                    put(buf, data);
+                } else {
+                    buf.putShort((short) 0);
+                }
+            }
         }
         if (userSync.getUserAttachNotification() != null) {
             UserAttachNotification nf = userSync.getUserAttachNotification();
@@ -334,7 +348,7 @@ public class BinaryEncDec implements PlatformEncDec {
                 } else {
                     buf.put(NOTHING);
                 }
-                buf.putShort((short) Integer.valueOf(response.getRequestId()).intValue());
+                buf.putShort((short) response.getRequestId());
                 if (response.getEndpointKeyHash() != null) {
                     putUTF(buf, response.getEndpointKeyHash());
                 }
@@ -347,7 +361,7 @@ public class BinaryEncDec implements PlatformEncDec {
             for (EndpointDetachResponse response : userSync.getEndpointDetachResponses()) {
                 buf.put(response.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
                 buf.put(NOTHING);
-                buf.putShort((short) Integer.valueOf(response.getRequestId()).intValue());
+                buf.putShort((short) response.getRequestId());
             }
         }
         buf.putInt(extPosition - SIZE_OF_INT, buf.position() - extPosition);
@@ -355,31 +369,47 @@ public class BinaryEncDec implements PlatformEncDec {
 
     private void encode(GrowingByteBuffer buf, LogServerSync logSync) {
         buildExtensionHeader(buf, LOGGING_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
-        buf.putShort((short) Integer.valueOf(logSync.getRequestId()).intValue());
-        buf.put(logSync.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
-        buf.put(NOTHING);
+        List<LogDeliveryStatus> statusList = logSync.getDeliveryStatuses();
+
+        if (statusList != null && !statusList.isEmpty()) {
+            buf.putInt(statusList.size());
+
+            for (LogDeliveryStatus status : statusList) {
+                buf.putShort((short) status.getRequestId());
+                buf.put(status.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
+                buf.put(status.getErrorCode() != null ? (byte) status.getErrorCode().ordinal() : NOTHING);
+            }
+        } else {
+            buf.putInt(0);
+        }
     }
 
     private void encode(GrowingByteBuffer buf, ConfigurationServerSync configurationSync) {
         int option = 0;
-        if (configurationSync.getConfSchemaBody() != null) {
-            option &= 0x01;
+        boolean confSchemaPresent = configurationSync.getConfSchemaBody() != null;
+        boolean confBodyPresent = configurationSync.getConfDeltaBody() != null;
+        if (confSchemaPresent) {
+            option |= 0x01;
         }
-        if (configurationSync.getConfDeltaBody() != null) {
-            option &= 0x02;
+        if (confBodyPresent) {
+            option |= 0x02;
         }
         buildExtensionHeader(buf, CONFIGURATION_EXTENSION_ID, NOTHING, NOTHING, (byte) option, 0);
         int extPosition = buf.position();
 
         buf.putInt(configurationSync.getAppStateSeqNumber());
-        if (configurationSync.getConfSchemaBody() != null) {
+        if (confSchemaPresent) {
             buf.putInt(configurationSync.getConfSchemaBody().array().length);
         }
-        if (configurationSync.getConfDeltaBody() != null) {
+        if (confBodyPresent) {
             buf.putInt(configurationSync.getConfDeltaBody().array().length);
         }
-        buf.put(configurationSync.getConfSchemaBody().array());
-        buf.put(configurationSync.getConfDeltaBody().array());
+        if (confSchemaPresent) {
+            put(buf, configurationSync.getConfSchemaBody().array());
+        }
+        if (confBodyPresent) {
+            put(buf, configurationSync.getConfDeltaBody().array());
+        }
 
         buf.putInt(extPosition - SIZE_OF_INT, buf.position() - extPosition);
     }
@@ -442,8 +472,8 @@ public class BinaryEncDec implements PlatformEncDec {
                 buf.putShort(response.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
                 if (response.getListeners() != null) {
                     buf.putInt(response.getListeners().size());
-                    for (String listner : response.getListeners()) {
-                        buf.put(Base64Util.decode(listner));
+                    for (String listener : response.getListeners()) {
+                        put(buf, Base64Util.decode(listener));
                     }
                 } else {
                     buf.putInt(0);
@@ -561,14 +591,14 @@ public class BinaryEncDec implements PlatformEncDec {
         }
         sync.setClientSyncMetaData(md);
     }
-    
+
     private void parseBootstrapClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
         int requestId = buf.getShort();
         int protocolCount = buf.getShort();
         List<ProtocolVersionId> keys = new ArrayList<>(protocolCount);
-        for(int i = 0; i < protocolCount; i++){
+        for (int i = 0; i < protocolCount; i++) {
             keys.add(new ProtocolVersionId(buf.getInt(), buf.getShort()));
-            //reserved
+            // reserved
             buf.getShort();
         }
         sync.setBootstrapSync(new BootstrapClientSync(requestId, keys));
@@ -649,6 +679,9 @@ public class BinaryEncDec implements PlatformEncDec {
         confSync.setAppStateSeqNumber(buf.getInt());
         if (hasOption(options, CONFIGURATION_HASH_OPTION)) {
             confSync.setConfigurationHash(getNewByteBuffer(buf, CONFIGURATION_HASH_SIZE));
+        }
+        if (hasOption(options, CONFIGURATION_RESYNC_OPTION)) {
+            confSync.setResyncOnly(true);
         }
         sync.setConfigurationSync(confSync);
     }
@@ -813,9 +846,13 @@ public class BinaryEncDec implements PlatformEncDec {
     private UserAttachRequest parseUserAttachRequest(ByteBuffer buf) {
         int extIdLength = buf.get() & 0xFF;
         int tokenLength = getIntFromUnsignedShort(buf);
+        int verifierTokenLength = getIntFromUnsignedShort(buf);
+        // reserved
+        buf.getShort();
         String userExternalId = getUTF8String(buf, extIdLength);
         String userAccessToken = getUTF8String(buf, tokenLength);
-        return new UserAttachRequest(userExternalId, userAccessToken);
+        String userVerifierToken = getUTF8String(buf, verifierTokenLength);
+        return new UserAttachRequest(userVerifierToken, userExternalId, userAccessToken);
     }
 
     private static List<EventClassFamilyVersionInfo> parseEventFamilyVersionList(ByteBuffer buf, int count) {

@@ -59,6 +59,9 @@ public class ArrayField extends FormField {
     
     public void setMinRowCount(int minRowCount) {
         this.minRowCount = minRowCount;
+        if (minRowCount == 0) {
+            setOptional(true);
+        }
     }
 
     @Override

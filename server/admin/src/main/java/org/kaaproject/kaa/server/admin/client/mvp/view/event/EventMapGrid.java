@@ -20,10 +20,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ValueSelectionCell;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell.ValueSelectionCell;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.cell.client.FieldUpdater;
@@ -36,10 +36,10 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 
-public class EventMapGrid extends AbstractGrid<ApplicationEventMapDto, String> {
+public class EventMapGrid extends AbstractKaaGrid<ApplicationEventMapDto, String> {
 
     public EventMapGrid(boolean editable) {
-        super(Unit.PX, false, true, editable);
+        super(Unit.PX, editable, true);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class EventMapGrid extends AbstractGrid<ApplicationEventMapDto, String> {
             }
         };
         
-        if (editable) {
+        if (enableActions) {
             List<ApplicationEventAction> actions = new ArrayList<>();
             for (ApplicationEventAction action : ApplicationEventAction.values()) {
                 actions.add(action);

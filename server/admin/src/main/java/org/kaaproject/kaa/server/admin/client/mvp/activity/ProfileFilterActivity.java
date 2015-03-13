@@ -29,7 +29,7 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterDto, BaseRecordView<ProfileFilterDto>, ProfileFilterPlace> {
+public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterDto, String, BaseRecordView<ProfileFilterDto, String>, ProfileFilterPlace> {
 
     public ProfileFilterActivity(ProfileFilterPlace place,
             ClientFactory clientFactory) {
@@ -37,7 +37,7 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
     }
 
     @Override
-    protected BaseRecordView<ProfileFilterDto> getRecordView(boolean create) {
+    protected BaseRecordView<ProfileFilterDto, String> getRecordView(boolean create) {
         if (create) {
             return clientFactory.getCreateProfileFilterView();
         } else {
@@ -90,6 +90,17 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
     @Override
     public String customizeErrorMessage(Throwable caught) {
         return Utils.parseErrorMessage(caught);
+    }
+
+    @Override
+    protected void updateBody(ProfileFilterDto struct, String value) {
+        struct.setBody(value);
+    }
+
+    @Override
+    protected void copyBody(ProfileFilterDto activeStruct,
+            ProfileFilterDto inactiveStruct) {
+        inactiveStruct.setBody(activeStruct.getBody());
     }
 
 }

@@ -22,15 +22,15 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
+import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextArea;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEvent;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEventHandler;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextArea;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -43,9 +43,14 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
-public class BaseStructView<T extends AbstractStructureDto> extends FlexTable implements InputEventHandler {
+public abstract class BaseStructView<T extends AbstractStructureDto, V> extends FlexTable implements InputEventHandler {
 
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
+    
+    private HasErrorMessage hasErrorMessage;
+    
     private Label dateTimeCreatedLabel;
     private SizedTextBox createdDateTime;
     private Label authorLabel;
@@ -63,7 +68,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
     private Label deactivatedByLabel;
     private SizedTextBox deactivatedUsername;
     private SizedTextArea description;
-    private SizedTextArea body;
+    protected HasValue<V> body;
     private Button saveButton;
     private Button activateButton;
     private Button deactivateButton;
@@ -74,11 +79,17 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
 
     protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
 
-    public BaseStructView() {
+    public BaseStructView(HasErrorMessage hasErrorMessage) {
+        this.hasErrorMessage = hasErrorMessage;
         init();
     }
 
     private void init() {
+        
+        getColumnFormatter().setWidth(0, "400px");
+        getColumnFormatter().setWidth(1, "400px");
+        getColumnFormatter().setWidth(2, "0px");
+        
         FlexTable dateTable = new FlexTable();
         FlexTable userTable = new FlexTable();
 
@@ -89,50 +100,58 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
         userTable.getColumnFormatter().setWidth(1, "200px");
 
         dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
+        dateTimeCreatedLabel.setWidth("200px");
         createdDateTime = new KaaAdminSizedTextBox(-1, false, false);
-        createdDateTime.setWidth("100%");
+        createdDateTime.setWidth("200px");
         dateTable.setWidget(0, 0, dateTimeCreatedLabel);
         dateTable.setWidget(0, 1, createdDateTime);
 
         dateTimeModifiedLabel = new Label(Utils.constants.dateTimeModified());
+        dateTimeModifiedLabel.setWidth("200px");
         modifiedDateTime = new KaaAdminSizedTextBox(-1, false, false);
-        modifiedDateTime.setWidth("100%");
+        modifiedDateTime.setWidth("200px");
         dateTable.setWidget(1, 0, dateTimeModifiedLabel);
         dateTable.setWidget(1, 1, modifiedDateTime);
 
         dateTimeActivatedLabel = new Label(Utils.constants.dateTimeActivated());
+        dateTimeActivatedLabel.setWidth("200px");
         activatedDateTime = new KaaAdminSizedTextBox(-1, false, false);
-        activatedDateTime.setWidth("100%");
+        activatedDateTime.setWidth("200px");
         dateTable.setWidget(2, 0, dateTimeActivatedLabel);
         dateTable.setWidget(2, 1, activatedDateTime);
 
         dateTimeDeactivatedLabel = new Label(Utils.constants.dateTimeDectivated());
+        dateTimeDeactivatedLabel.setWidth("200px");
         deactivatedDateTime = new KaaAdminSizedTextBox(-1, false, false);
-        deactivatedDateTime.setWidth("100%");
+        deactivatedDateTime.setWidth("200px");
         dateTable.setWidget(3, 0, dateTimeDeactivatedLabel);
         dateTable.setWidget(3, 1, deactivatedDateTime);
 
         authorLabel = new Label(Utils.constants.author());
+        authorLabel.setWidth("200px");
         createdUsername = new KaaAdminSizedTextBox(-1, false, false);
-        createdUsername.setWidth("100%");
+        createdUsername.setWidth("200px");
         userTable.setWidget(0, 0, authorLabel);
         userTable.setWidget(0, 1, createdUsername);
 
         modifiedByLabel = new Label(Utils.constants.lastModifiedBy());
+        modifiedByLabel.setWidth("200px");
         modifiedUsername = new KaaAdminSizedTextBox(-1, false, false);
-        modifiedUsername.setWidth("100%");
+        modifiedUsername.setWidth("200px");
         userTable.setWidget(1, 0, modifiedByLabel);
         userTable.setWidget(1, 1, modifiedUsername);
 
         activatedByLabel = new Label(Utils.constants.activatedBy());
+        activatedByLabel.setWidth("200px");
         activatedUsername = new KaaAdminSizedTextBox(-1, false, false);
-        activatedUsername.setWidth("100%");
+        activatedUsername.setWidth("200px");
         userTable.setWidget(2, 0, activatedByLabel);
         userTable.setWidget(2, 1, activatedUsername);
 
         deactivatedByLabel = new Label(Utils.constants.deactivatedBy());
+        deactivatedByLabel.setWidth("200px");
         deactivatedUsername = new KaaAdminSizedTextBox(-1, false, false);
-        deactivatedUsername.setWidth("100%");
+        deactivatedUsername.setWidth("200px");
         userTable.setWidget(3, 0, deactivatedByLabel);
         userTable.setWidget(3, 1, deactivatedUsername);
 
@@ -141,28 +160,35 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
 
         FlexTable detailsTable = new FlexTable();
         setWidget(1, 0, detailsTable);
-        getFlexCellFormatter().setColSpan(1, 0, 2);
+        getFlexCellFormatter().setColSpan(1, 0, 3);
 
         detailsTable.getColumnFormatter().setWidth(0, "200px");
-        detailsTable.getColumnFormatter().setWidth(1, "300px");
+        detailsTable.getColumnFormatter().setWidth(1, "600px");
+        detailsTable.getColumnFormatter().setWidth(2, "0px");
 
-
-        description = new KaaAdminSizedTextArea(1024);
-        description.setWidth("500px");
+        description = new SizedTextArea(1024);
+        description.setWidth("600px");
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
         Label descriptionLabel = new Label(Utils.constants.description());
+        descriptionLabel.setWidth("200px");
         detailsTable.setWidget(0, 0, descriptionLabel);
         detailsTable.setWidget(0, 1, description);
 
         detailsTable.getCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
 
-        bodyLabel = new Label(Utils.constants.body());
-        detailsTable.setWidget(1, 0, bodyLabel);
-        body = new KaaAdminSizedTextArea(524288);
-        body.setWidth("500px");
-        body.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 200);
-        detailsTable.setWidget(1, 1, body);
-        detailsTable.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
+        body = createBody(hasErrorMessage);
+
+        if (hasLabel()) {
+            bodyLabel = new Label(Utils.constants.body());
+            bodyLabel.setWidth("200px");
+            ((Widget)body).setWidth("600px");
+            detailsTable.setWidget(1, 0, bodyLabel);
+            detailsTable.setWidget(1, 1, (Widget)body);            
+            detailsTable.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
+        } else {
+            detailsTable.setWidget(1, 0, (Widget)body);
+            detailsTable.getFlexCellFormatter().setColSpan(1, 0, 3);
+        }
 
         HorizontalPanel buttonsPanel = new HorizontalPanel();
         buttonsPanel.setSpacing(5);
@@ -187,6 +213,20 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
             }
         });
     }
+    
+    protected abstract HasValue<V> createBody(HasErrorMessage hasErrorMessage);
+    
+    protected abstract boolean hasLabel();
+    
+    protected abstract void setBodyReadOnly(boolean readOnly);
+    
+    protected abstract void setBodyValue(T struct);
+    
+    protected abstract HandlerRegistration addBodyChangeHandler();
+    
+    protected abstract boolean validateBody();
+    
+    protected abstract void onShown();
 
     public void reset() {
         dateTimeCreatedLabel.setVisible(false);
@@ -206,13 +246,15 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
         deactivatedByLabel.setVisible(false);
         deactivatedUsername.setVisible(false);
         description.setValue("");
-        body.setValue("");
+        body.setValue(null);
         saveButton.setVisible(false);
         activateButton.setVisible(false);
-        deactivateButton.setVisible(false);
-        bodyLabel.removeStyleName("required");
+        deactivateButton.setVisible(false);        
+        if (hasLabel()) {
+            bodyLabel.removeStyleName(REQUIRED);
+        }        
         description.getTextArea().setReadOnly(true);
-        body.getTextArea().setReadOnly(true);
+        setBodyReadOnly(true);
 
         updateSaveButton(false, false);
 
@@ -227,7 +269,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
         activateButton.setVisible(false);
         deactivateButton.setVisible(false);
         description.getTextArea().setReadOnly(true);
-        body.getTextArea().setReadOnly(true);
+        setBodyReadOnly(true);
 
         for (HandlerRegistration registration : registrations) {
             registration.removeHandler();
@@ -270,24 +312,24 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
             deactivatedUsername.setValue(struct.getDeactivatedUsername());
         }
         description.setValue(struct.getDescription());
-        body.setValue(struct.getBody());
+        setBodyValue(struct);
 
         if (this.active) {
             if (struct.getStatus()==UpdateStatus.ACTIVE) {
                 deactivateButton.setVisible(true);
             }
-        }
-        else {
+        } else {
             description.getTextArea().setReadOnly(false);
-            body.getTextArea().setReadOnly(false);
-            bodyLabel.addStyleName("required");
+            setBodyReadOnly(false);
+            if (hasLabel()) {
+                bodyLabel.addStyleName(REQUIRED);
+            }
             registrations.add(description.addInputHandler(this));
-            registrations.add(body.addInputHandler(this));
+            registrations.add(addBodyChangeHandler());
             saveButton.setVisible(true);
             if (isEmpty(struct.getId())) {
                 saveButton.setText(Utils.constants.save());
-            }
-            else {
+            } else {
                 activateButton.setVisible(true);
             }
         }
@@ -298,14 +340,16 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
     }
 
     public void setBodyLabelText(String text) {
-        bodyLabel.setText(text);
+        if (hasLabel()) {
+            bodyLabel.setText(text);
+        }
     }
 
     public HasValue<String> getDescription() {
         return description;
     }
 
-    public HasValue<String> getBody() {
+    public HasValue<V> getBody() {
         return body;
     }
 
@@ -328,7 +372,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
 
     public void fireChanged() {
         if (!this.active) {
-            boolean valid = body.getValue().length()>0;
+            boolean valid = validateBody();
             updateSaveButton(valid, !valid);
         }
     }
@@ -336,8 +380,7 @@ public class BaseStructView<T extends AbstractStructureDto> extends FlexTable im
     private void updateSaveButton(boolean enabled, boolean invalid) {
         if (invalid) {
             saveButton.setText(Utils.constants.save());
-        }
-        else {
+        } else {
             saveButton.setText(enabled ? Utils.constants.save() : Utils.constants.saved());
         }
         saveButton.setEnabled(enabled);

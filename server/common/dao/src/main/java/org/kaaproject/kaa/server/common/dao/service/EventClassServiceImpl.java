@@ -23,15 +23,12 @@ import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlO
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.kaaproject.avro.ui.shared.NamesValidator;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
@@ -56,23 +53,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class EventClassServiceImpl implements EventClassService {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventClassServiceImpl.class);
-
-    private static final Pattern NAME_SPACE_PATTERN = Pattern.compile("^[a-zA-Z_\\$][\\w\\$]*(?:\\.[a-zA-Z_\\$][\\w\\$]*)*$");
-    private static final Pattern CLASS_NAME_PATTERN = Pattern.compile("[A-Za-z_$]+[a-zA-Z0-9_$]*");
-
-    private static final Set<String> RESERVED_KEYWORDS = new HashSet<String>(Arrays.asList(
-            "abstract",     "assert",        "boolean",      "break",           "byte",
-            "case",         "catch",         "char",         "class",           "const",
-            "continue",     "default",       "do",           "double",          "else",
-            "enum",         "extends",       "false",        "final",           "finally",
-            "float",        "for",           "goto",         "if",              "implements",
-            "import",       "instanceof",    "int",          "interface",       "long",
-            "native",       "new",           "null",         "package",         "private",
-            "protected",    "public",        "return",       "short",           "static",
-            "strictfp",     "super",         "switch",       "synchronized",    "this",
-            "throw",        "throws",        "transient",    "true",            "try",
-            "void",         "volatile",      "while"
-    ));
 
     @Autowired
     private EventClassFamilyDao<EventClassFamily> eventClassFamilyDao;
@@ -119,8 +99,8 @@ public class EventClassServiceImpl implements EventClassService {
         if (isValidSqlObject(eventClassFamilyDto)) {
             if (eventClassFamilyDao.validateName(eventClassFamilyDto.getTenantId(), eventClassFamilyDto.getId(), eventClassFamilyDto.getName())) {
                 if (StringUtils.isBlank(eventClassFamilyDto.getId())) {
-                    if (validateIdentifier(eventClassFamilyDto.getNamespace(), NAME_SPACE_PATTERN)) {
-                        if (validateIdentifier(eventClassFamilyDto.getClassName(), CLASS_NAME_PATTERN)) {
+                    if (NamesValidator.validateNamespace(eventClassFamilyDto.getNamespace())) {
+                        if (NamesValidator.validateClassName(eventClassFamilyDto.getClassName())) {
                             if (eventClassFamilyDao.validateClassName(eventClassFamilyDto.getTenantId(), eventClassFamilyDto.getId(), eventClassFamilyDto.getClassName())) {
                                 eventClassFamilyDto.setCreatedTime(System.currentTimeMillis());
                             } else {
@@ -143,18 +123,6 @@ public class EventClassServiceImpl implements EventClassService {
             }
         }
         return savedEventClassFamilyDto;
-    }
-
-    private static boolean validateIdentifier(String identifier, Pattern pattern) {
-        if (!pattern.matcher(identifier).matches()) {
-            return false;
-        }
-        for (String part : identifier.split("\\.")) {
-            if (RESERVED_KEYWORDS.contains(part)) {
-                return false;
-            }
-        }
-        return identifier.length() > 0;
     }
 
     @Override

@@ -15,14 +15,13 @@
  */
 package org.kaaproject.kaa.server.operations.pojo;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
 import org.junit.Test;
 import org.kaaproject.kaa.server.sync.ConfigurationServerSync;
-import org.kaaproject.kaa.server.sync.EndpointAttachRequest;
 import org.kaaproject.kaa.server.sync.EndpointAttachResponse;
 import org.kaaproject.kaa.server.sync.EndpointDetachResponse;
 import org.kaaproject.kaa.server.sync.Event;

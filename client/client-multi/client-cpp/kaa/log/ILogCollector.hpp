@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,74 +17,82 @@
 #ifndef ILOGCOLLECTOR_HPP_
 #define ILOGCOLLECTOR_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_LOGGING
-
-#include "kaa/log/LogRecord.hpp"
-#include "kaa/log/ILogStorage.hpp"
-#include "kaa/log/ILogStorageStatus.hpp"
-#include "kaa/log/ILogUploadConfiguration.hpp"
-#include "kaa/log/ILogUploadStrategy.hpp"
-#include "kaa/gen/EndpointGen.hpp"
 #include "kaa/log/gen/LogGen.hpp"
+#include "kaa/log/ILogStorage.hpp"
+#include "kaa/log/ILogUploadStrategy.hpp"
+
+/**
+ * @file ILogCollector.hpp
+ * @brief @b NOTE: THIS FILE IS AUTO-GENERATED. DO NOT EDIT IT MANUALLY.
+ */
 
 namespace kaa {
 
+/*
+ * Forward declaration.
+ */
+struct LogSyncResponse;
+
 /**
- * Public interface for accessing Kaa Log Subsystem.
+ * @typedef The user-defined log record structure.
+ */
+typedef SuperRecord KaaUserLogRecord;
+
+/**
+ * @brief The public interface to the Kaa log collecting subsystem.
+ *
+ * The log collecting subsystem is based on two main components - a log storage and an upload strategy. Each time
+ * a new log record is added to the storage, the strategy decides whether the log upload is needed at the moment.
+ *
+ * By default, @c MemoryLogStorage and @c DefaultLogUploadStrategy are used as the log storage and as the upload
+ * strategy respectively.
+ *
+ * The subsystem also tracks whether the log delivery timeout is occurred. The timeout means the log delivery response
+ * isn't received in time, specified by @link ILogUploadStrategy::getTimeout() @endlink.
+ * The check is done in the lazy manner, on each the @link addLogRecord() @endlink call. If the timeout is occurred,
+ * the log upload strategy will be notified of it via the @link ILogUploadStrategy::onTimeout() @endlink callback.
  */
 class ILogCollector {
 public:
+    /**
+     * @brief Adds a new log record to the log storage.
+     *
+     * To store log records, @c MemoryLogStorage is used by default. Use @link setStorage() @endlink to set
+     * your own implementation.
+     *
+     * @param[in] record    The log record to be added.
+     *
+     * @see KaaUserLogRecord
+     * @see ILogStorage
+     */
+    virtual void addLogRecord(const KaaUserLogRecord& record) = 0;
 
     /**
-     * Adds new log record to a storage.
+     * @brief Sets the new log storage.
      *
-     * \param   record  log record to be added.
+     * @c MemoryLogStorage is used by default.
+     *
+     * @param[in] storage    The @c ILogStorage implementation.
+     *
+     * @throw KaaException    The storage is NULL.
      */
-    virtual void addLogRecord(const SuperRecord& record) = 0;
+    virtual void setStorage(ILogStoragePtr storage) = 0;
 
     /**
-     * Provide specific Log storage.
+     * @brief Sets the new log upload strategy.
      *
-     * \param   storage \c ILogStorage implementation.
-     */
-    virtual void setStorage(ILogStorage * storage) = 0;
-
-    /**
-     * Provide specific log upload configurations used by \c ILogUploadStrategy
+     * @c DefaultLogUploadStrategy is used by default.
      *
-     * \param   storage \c ILogUploadConfiguration implementation.
-     */
-    virtual void setConfiguration(ILogUploadConfiguration * configuration) = 0;
-
-    /**
-     * Provide specific strategy to determine if log upload is needed.
+     * @param[in] strategy    The @c ILogUploadStrategy implementation.
      *
-     * \param   strategy    \c ILogUploadStrategy implementation.
+     * @throw KaaException    The strategy is NULL.
      */
-    virtual void setUploadStrategy(ILogUploadStrategy * strategy) = 0;
-
-    /**
-     * Provide object having information about current log storage state.
-     *
-     * \param   status  \c ILogStorageStatus implementation.
-     */
-    virtual void setStorageStatus(ILogStorageStatus * status) = 0;
-
-    /**
-     * Called when log upload response arrived.
-     *
-     * \param   response    Response from operations server.
-     */
-    virtual void onLogUploadResponse(const LogSyncResponse& response) = 0;
+    virtual void setUploadStrategy(ILogUploadStrategyPtr strategy) = 0;
 
     virtual ~ILogCollector() {}
 };
 
 }  // namespace kaa
-
-#endif
 
 #endif /* ILOGCOLLECTOR_HPP_ */
 

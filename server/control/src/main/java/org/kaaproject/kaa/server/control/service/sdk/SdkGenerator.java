@@ -54,12 +54,27 @@ public abstract class SdkGenerator {
      * @param configurationProtocolSchemaBody the configuration protocol schema body
      * @param defaultConfigurationData the default configuration data
      * @param eventFamilies the event families meta information
+     * @param logSchemaBody the log schema body
+     * @param defaultVerifierToken the default user verifier token
      *
      * @return the sdk
      * @throws Exception the exception
      */
-    public abstract Sdk generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, String appToken, int profileSchemaVersion, int configurationSchemaVersion,
-            int notificationSchemaVersion, int logSchemaVersion, String profileSchemaBody, String notificationSchemaBody, String configurationProtocolSchemaBody, byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies, String logSchemaBody) throws Exception; //NOSONAR
+    public abstract Sdk generateSdk(String buildVersion, 
+            List<BootstrapNodeInfo> bootstrapNodes, 
+            String appToken, 
+            int profileSchemaVersion, 
+            int configurationSchemaVersion,
+            int notificationSchemaVersion, 
+            int logSchemaVersion, 
+            String profileSchemaBody, 
+            String notificationSchemaBody, 
+            String configurationProtocolSchemaBody,
+            String configurationBaseSchemaBody,
+            byte[] defaultConfigurationData, 
+            List<EventFamilyMetadata> eventFamilies, 
+            String logSchemaBody,
+            String defaultVerifierToken) throws Exception; //NOSONAR
 
     /**
      * Read file.

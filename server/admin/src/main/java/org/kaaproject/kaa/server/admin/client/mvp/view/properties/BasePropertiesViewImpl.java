@@ -18,9 +18,10 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.properties;
 
 import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminRecordFieldWidget;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.RecordFieldWidget;
-import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
+import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
+import org.kaaproject.avro.ui.shared.RecordField;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -36,8 +37,8 @@ public abstract class BasePropertiesViewImpl extends BaseDetailsViewImpl impleme
 
     @Override
     protected void initDetailsTable() {
-        getFooter().setStyleName("b-app-content-details-table");
-        configuration = new KaaAdminRecordFieldWidget();
+        getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
+        configuration = new RecordFieldWidget(new AvroWidgetsConfig.Builder().createConfig());
         configuration.addValueChangeHandler(this);
         getFooter().add(configuration);
     }

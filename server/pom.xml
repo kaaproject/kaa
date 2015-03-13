@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject</groupId>
-        <version>0.6.3-SNAPSHOT</version>
+        <version>0.7.0-SNAPSHOT</version>
         <artifactId>kaa</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa</groupId>
@@ -42,6 +42,7 @@
         <module>flume</module>
         <module>appenders</module>
         <module>transports</module>
+        <module>verifiers</module>
     </modules>
 
 </project>

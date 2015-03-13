@@ -19,14 +19,14 @@
   <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.6.3-SNAPSHOT</version>
+        <version>0.7.0-SNAPSHOT</version>
         <artifactId>examples</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.examples</groupId>
     <artifactId>smarthousedemo</artifactId>
     <packaging>pom</packaging>
 
-    <name>Kaa Demo examples</name>
+    <name>Smarthouse demo application</name>
     <url>http://kaaproject.org</url>
 
     <properties>

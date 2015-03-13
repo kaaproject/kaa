@@ -34,9 +34,6 @@ import org.kaaproject.kaa.server.admin.shared.util.UrlParams;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.HeadElement;
-import com.google.gwt.dom.client.LinkElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -49,18 +46,12 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
-import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 
 public class Login implements EntryPoint {
-
-    public static final String THEME = "clean"; //$NON-NLS-1$
-
-    public static final KaaAdminResources resources = GWT.create(
-            KaaAdminResources.class);
 
     private KaaAuthServiceAsync authService = KaaAuthServiceAsync.Util.getInstance();
 
@@ -105,9 +96,7 @@ public class Login implements EntryPoint {
     }
 
     public void showLogin(){
-        injectThemeStyleSheet();
-        resources.css().ensureInjected();
-        
+        Utils.injectKaaStyles();
         checkPasswordReset(new AsyncCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
@@ -343,29 +332,5 @@ public class Login implements EntryPoint {
         String target = path + module + "/";
         Window.Location.assign(Window.Location.createUrlBuilder().setPath(target).buildString());
     }
-
-    /**
-     * Convenience method for getting the document's head element.
-     *
-     * @return the document's head element
-     */
-    private native HeadElement getHeadElement() /*-{
-      return $doc.getElementsByTagName("head")[0];
-    }-*/;
-
-
-    private void injectThemeStyleSheet() {
-        // Choose the name style sheet based on the locale.
-        String styleSheet = "gwt/" + THEME + "/" + THEME; //$NON-NLS-1$ //$NON-NLS-2$
-        styleSheet += LocaleInfo.getCurrentLocale().isRTL() ? "_rtl.css" : ".css"; //$NON-NLS-1$ //$NON-NLS-2$
-
-        // Load the GWT theme style sheet
-        String modulePath = GWT.getModuleBaseURL();
-        LinkElement linkElem = Document.get().createLinkElement();
-        linkElem.setRel("stylesheet"); //$NON-NLS-1$
-        linkElem.setType("text/css"); //$NON-NLS-1$
-        linkElem.setHref(modulePath + styleSheet);
-        getHeadElement().appendChild(linkElem);
-   }
 
 }

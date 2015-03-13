@@ -35,11 +35,13 @@ public abstract class TreePlace extends Place implements PlaceConstants {
 
     public abstract boolean isLeaf();
 
-    public abstract TreePlaceDataProvider getDataProvider(EventBus eventBus);
-
     public abstract TreePlace createDefaultPreviousPlace();
 
     private TreePlace previousPlace;
+    
+    public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
+        return null;
+    }
 
     public TreePlace getPreviousPlace() {
         if (previousPlace == null) {

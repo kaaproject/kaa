@@ -15,8 +15,11 @@
  */
 package org.kaaproject.kaa.server.transports.tcp.transport;
 
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -57,6 +60,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
     private final UUID uuid;
     private final MessageHandler handler;
     private volatile SessionInfo session;
+    private volatile boolean sessionDisconnected;
 
     private final static ErrorBuilder connectErrorConverter = new ErrorBuilder() {
         @Override
@@ -138,6 +142,24 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
         MqttFrame frame = msg.getRequest();
         LOG.trace("[{}] Processing {}", uuid, frame);
         if (frame.getMessageType() == MessageType.CONNECT) {
+            ChannelFuture closeFuture = ctx.channel().closeFuture();
+            closeFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
+                @Override
+                public void operationComplete(Future<? super Void> future) throws Exception {
+                    if (!sessionDisconnected) {
+                        if (session != null) {
+                            handler.process(new NettyTcpDisconnectMessage(session));
+                            LOG.trace("[{}] Channel is closed - sending disconnect", uuid);
+                        } else {
+                            LOG.trace("[{}] Session is not yet established. Skip sending disconnect", uuid);
+                        }
+                        sessionDisconnected = true;
+                    } else {
+                        LOG.trace("[{}] Channel is closed and disconnect is already sent", uuid);
+                    }
+                }
+            });
+
             if (session == null) {
                 handler.process(new NettyTcpConnectMessage(uuid, new NettyChannelContext(ctx), (Connect) frame, ChannelType.ASYNC, this,
                         connectResponseConverter, connectErrorConverter));
@@ -156,6 +178,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
                     handler.process(new NettyTcpPingMessage(session));
                     break;
                 case DISCONNECT:
+                    sessionDisconnected = true;
                     handler.process(new NettyTcpDisconnectMessage(session));
                     break;
                 default:
@@ -163,6 +186,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
                 }
             } else {
                 LOG.warn("[{}] Ignoring {} message due to incomplete CONNECT sequence", uuid, frame.getMessageType());
+                ctx.writeAndFlush(new ConnAck(ReturnCode.REFUSE_BAD_PROTOCOL));
             }
         }
     }

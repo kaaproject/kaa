@@ -18,11 +18,11 @@
 
 mkdir -p avro/event
 
-avrogencpp -i avro/bootstrap.avsc -o kaa/gen/BootstrapGen.hpp -n kaa
 avrogencpp -i avro/endpoint.avsc -o kaa/gen/EndpointGen.hpp -n kaa
 avrogencpp -i avro/profile.avsc -o kaa/gen/ProfileGen.hpp -n kaa
 avrogencpp -i avro/notification.avsc -o kaa/gen/NotificationGen.hpp -n kaa
 avrogencpp -i avro/log.avsc -o kaa/log/gen/LogGen.hpp -n kaa
+avrogencpp -i avro/configuration.avsc -o kaa/configuration/gen/ConfigurationGen.hpp -n kaa
 
 # List items must be sepated by space. Empty string is applicable as well.
 EVENT_CLASS_FAMILY_LIST=""

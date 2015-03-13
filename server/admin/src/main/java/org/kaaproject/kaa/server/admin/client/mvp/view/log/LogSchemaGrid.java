@@ -16,12 +16,12 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.log;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell.ActionListener;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell.ActionValidator;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowAction;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEvent;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell.ActionButtonCell;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell.ActionButtonCell.ActionListener;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.cell.ActionButtonCell.ActionValidator;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseSchemasGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
@@ -80,7 +80,7 @@ public class LogSchemaGrid extends BaseSchemasGrid<LogSchemaDto>{
                     @Override
                     public void onItemAction(LogSchemaDto value) {
                         Integer logSchemaVersion = value.getMajorVersion();
-                        RowActionEvent<String> rowDownloadLibraryEvent = new RowActionEvent<>(String.valueOf(logSchemaVersion), RowAction.DOWNLOAD_LIBRARY);
+                        RowActionEvent<String> rowDownloadLibraryEvent = new RowActionEvent<>(String.valueOf(logSchemaVersion), KaaRowAction.DOWNLOAD_LOG_SCHEMA_LIBRARY);
                         fireEvent(rowDownloadLibraryEvent);
                     }
                 }, new ActionValidator<LogSchemaDto>() {
@@ -104,7 +104,7 @@ public class LogSchemaGrid extends BaseSchemasGrid<LogSchemaDto>{
                     @Override
                     public void onItemAction(LogSchemaDto value) {
                         Integer logSchemaVersion = value.getMajorVersion();
-                        RowActionEvent<String> rowDownloadSchemaEvent = new RowActionEvent<>(String.valueOf(logSchemaVersion), RowAction.DOWNLOAD_SCHEMA);
+                        RowActionEvent<String> rowDownloadSchemaEvent = new RowActionEvent<>(String.valueOf(logSchemaVersion), KaaRowAction.DOWNLOAD_LOG_SCHEMA);
                         fireEvent(rowDownloadSchemaEvent);
                     }
                 }, new ActionValidator<LogSchemaDto>() {

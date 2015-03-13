@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class DefaultLogUploadStrategyTest {
+
     class TestLogStorageStatus implements LogStorageStatus {
         private final long consumedVolume;
         private final long recordCount;
@@ -43,33 +44,26 @@ public class DefaultLogUploadStrategyTest {
     @Test
     public void testNOOPDecision() {
         DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy();
-        DefaultLogUploadConfiguration conf = new DefaultLogUploadConfiguration(20, 60, 150);
+        strategy.setBatch(20);
+        strategy.setVolumeThreshold(60);
+        strategy.setTimeout(300);
         TestLogStorageStatus status = new TestLogStorageStatus(30, 3);
 
-        Assert.assertTrue(strategy.isUploadNeeded(conf, status) == LogUploadStrategyDecision.NOOP);
+        Assert.assertEquals(LogUploadStrategyDecision.NOOP, strategy.isUploadNeeded(status));
     }
 
     @Test
     public void testUpdateDecision() {
         DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy();
-        DefaultLogUploadConfiguration conf = new DefaultLogUploadConfiguration(20, 60, 150);
+        strategy.setBatch(20);
+        strategy.setVolumeThreshold(60);
+        strategy.setTimeout(300);
+
         TestLogStorageStatus status = new TestLogStorageStatus(60, 3);
 
-        Assert.assertTrue(strategy.isUploadNeeded(conf, status) == LogUploadStrategyDecision.UPLOAD);
+        Assert.assertEquals(LogUploadStrategyDecision.UPLOAD, strategy.isUploadNeeded(status));
 
         status = new TestLogStorageStatus(70, 3);
-        Assert.assertTrue(strategy.isUploadNeeded(conf, status) == LogUploadStrategyDecision.UPLOAD);
-    }
-
-    @Test
-    public void testCleanupDecision() {
-        DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy();
-        DefaultLogUploadConfiguration conf = new DefaultLogUploadConfiguration(20, 60, 150);
-        TestLogStorageStatus status = new TestLogStorageStatus(150, 3);
-
-        Assert.assertTrue(strategy.isUploadNeeded(conf, status) == LogUploadStrategyDecision.CLEANUP);
-
-        status = new TestLogStorageStatus(170, 3);
-        Assert.assertTrue(strategy.isUploadNeeded(conf, status) == LogUploadStrategyDecision.CLEANUP);
+        Assert.assertEquals(LogUploadStrategyDecision.UPLOAD, strategy.isUploadNeeded(status));
     }
 }

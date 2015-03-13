@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 
 public class DefaultLogAppenderBuilderTest {
@@ -23,21 +24,21 @@ public class DefaultLogAppenderBuilderTest {
     @Test(expected = ReflectiveOperationException.class)
     public void testGetNotExistingAppender() throws ReflectiveOperationException {
         LogAppenderDto dto = new LogAppenderDto();
-        dto.setAppenderClassName("not.existing.class.name");
+        dto.setPluginClassName("not.existing.class.name");
         builder.getAppender(dto);
     }
 
     @Test(expected = ReflectiveOperationException.class)
     public void testGetProtectedAppender() throws ReflectiveOperationException {
         LogAppenderDto dto = new LogAppenderDto();
-        dto.setAppenderClassName(TestPrivateAppender.class.getName());
+        dto.setPluginClassName(TestPrivateAppender.class.getName());
         builder.getAppender(dto);
     }
 
     @Test
     public void testGetPublicAppender() throws ReflectiveOperationException {
         LogAppenderDto dto = new LogAppenderDto();
-        dto.setAppenderClassName(TestPublicAppender.class.getName());
+        dto.setPluginClassName(TestPublicAppender.class.getName());
         builder.getAppender(dto);
     }
 
@@ -54,55 +55,46 @@ public class DefaultLogAppenderBuilderTest {
 
         @Override
         public void setName(String name) {
-            // TODO Auto-generated method stub
         }
 
         @Override
         public String getName() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public void setAppenderId(String appenderId) {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public String getAppenderId() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public void setApplicationToken(String applicationToken) {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public void init(LogAppenderDto appender) {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
-        public void doAppend(LogEventPack logEventPack) {
-            // TODO Auto-generated method stub
-
+        public void doAppend(LogEventPack logEventPack, LogDeliveryCallback callback) {
         }
 
         @Override
         public void close() {
-            // TODO Auto-generated method stub
-
         }
 
-		@Override
-		public boolean isSchemaVersionSupported(int version) {
-			// TODO Auto-generated method stub
-			return true;
-		}
+        @Override
+        public boolean isSchemaVersionSupported(int version) {
+            return true;
+        }
+
+        @Override
+        public boolean isDeliveryConfirmationRequired() {
+            return false;
+        }
     }
 }

@@ -18,6 +18,7 @@ package org.kaaproject.kaa.client.persistance;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +31,7 @@ import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
 import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
+import org.kaaproject.kaa.client.util.CommonsBase64;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
@@ -38,7 +40,7 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 public class KaaClientPropertiesStateTest {
 
     public static KaaClientProperties getProperties() throws IOException {
-        KaaClientProperties props = new KaaClientProperties();
+        KaaClientProperties props = new KaaClientProperties(CommonsBase64.getInstance());
         props.setProperty("state.file_location", "state.properties");
         props.setProperty("keys.public", "key.public");
         File pub = new File("key.public");
@@ -61,7 +63,7 @@ public class KaaClientPropertiesStateTest {
 
     @Test
     public void testKeys() throws Exception {
-        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), getProperties());
+        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
         state.getPublicKey();
         state.getPrivateKey();
         File pub = new File("key.public");
@@ -72,29 +74,21 @@ public class KaaClientPropertiesStateTest {
         priv.delete();
         state.getPrivateKey();
         state.getPublicKey();
-        assertArrayEquals(KeyUtil.getPrivate(priv).getEncoded(), state.getPrivateKey().getEncoded());
-        assertArrayEquals(KeyUtil.getPublic(pub).getEncoded(), state.getPublicKey().getEncoded());
+        assertNotNull(state.getPrivateKey().getEncoded());
+        assertNotNull(state.getPublicKey().getEncoded());
     }
 
     @Test
     public void testProfileHash() throws IOException  {
-        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), getProperties());
+        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
         EndpointObjectHash hash = EndpointObjectHash.fromSHA1(new byte[]{1, 2, 3});
         state.setProfileHash(hash);
         assertEquals(hash, state.getProfileHash());
     }
 
     @Test
-    public void testConfigHash() throws IOException  {
-        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), getProperties());
-        EndpointObjectHash hash = EndpointObjectHash.fromSHA1(new byte[]{1, 2, 3});
-        state.setConfigurationHash(hash);
-        assertEquals(hash, state.getConfigurationHash());
-    }
-
-    @Test
     public void testNfSubscription() throws IOException  {
-        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), getProperties());
+        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
 
         Topic topic1 = Topic.newBuilder().setId("1234").setName("testName")
                 .setSubscriptionType(SubscriptionType.OPTIONAL).build();
@@ -118,14 +112,14 @@ public class KaaClientPropertiesStateTest {
         assertEquals(expected, state.getNfSubscriptions());
 
         state.persist();
-        state = new KaaClientPropertiesState(new FilePersistentStorage(), getProperties());
+        state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
 
         assertEquals(expected, state.getNfSubscriptions());
 
         state.removeTopic(topic1.getId());
         state.persist();
 
-        state = new KaaClientPropertiesState(new FilePersistentStorage(), getProperties());
+        state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
         expected.remove(topic1.getId());
 
         assertEquals(expected, state.getNfSubscriptions());
@@ -134,7 +128,7 @@ public class KaaClientPropertiesStateTest {
     @Test
     public void testSDKPropertiesUpdate() throws IOException {
         KaaClientProperties props = getProperties();
-        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), props);
+        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), props);
 
         Assert.assertFalse(state.isRegistered());
 
@@ -146,7 +140,7 @@ public class KaaClientPropertiesStateTest {
         KaaClientProperties newProps = getProperties();
         newProps.setProperty(KaaClientProperties.LOG_SCHEMA_VERSION, Integer.toString(100500));
 
-        KaaClientState newState = new KaaClientPropertiesState(new FilePersistentStorage(), newProps);
+        KaaClientState newState = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), newProps);
 
         Assert.assertFalse(newState.isRegistered());
     }
@@ -154,7 +148,7 @@ public class KaaClientPropertiesStateTest {
     @Test
     public void testConfigVersionUpdates() throws Exception {
         KaaClientProperties props = getProperties();
-        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), props);
+        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), props);
 
         Assert.assertFalse(state.isConfigurationVersionUpdated());
 
@@ -163,7 +157,7 @@ public class KaaClientPropertiesStateTest {
         KaaClientProperties newProps = getProperties();
         newProps.setProperty(KaaClientProperties.CONFIG_VERSION, Integer.toString(100500));
 
-        KaaClientState newState = new KaaClientPropertiesState(new FilePersistentStorage(), newProps);
+        KaaClientState newState = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), newProps);
 
         Assert.assertTrue(newState.isConfigurationVersionUpdated());
     }

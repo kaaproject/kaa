@@ -19,9 +19,10 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
+import org.kaaproject.avro.ui.gwt.client.widget.dialog.AvroUiDialog;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.TopicListBox;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
@@ -38,7 +39,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AddTopicDialog extends KaaDialog implements ValueChangeHandler<List<TopicDto>>, HasErrorMessage {
+public class AddTopicDialog extends AvroUiDialog implements ValueChangeHandler<List<TopicDto>>, HasErrorMessage {
 
     private AlertPanel errorPanel;
 
@@ -72,7 +73,7 @@ public class AddTopicDialog extends KaaDialog implements ValueChangeHandler<List
 
         setWidth("500px");
 
-        setTitle(Utils.constants.add_topic_to_ep());
+        setTitle(Utils.constants.addTopicToEp());
 
         VerticalPanel dialogContents = new VerticalPanel();
         dialogContents.setSpacing(4);
@@ -88,7 +89,7 @@ public class AddTopicDialog extends KaaDialog implements ValueChangeHandler<List
         int row=0;
 
         Widget label = new Label(Utils.constants.selectNotificationTopics());
-        label.addStyleName("required");
+        label.addStyleName(Utils.avroUiStyle.requiredField());
         topic = new TopicListBox();
         topic.setWidth("200px");
         topic.setAcceptableValues(topics);

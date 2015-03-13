@@ -32,7 +32,10 @@ public enum Operation implements org.apache.thrift.TEnum {
   REMOVE_NOTIFICATION_VERSION(14),
   ADD_LOG_APPENDER(15),
   REMOVE_LOG_APPENDER(16),
-  UPDATE_LOG_APPENDER(17);
+  UPDATE_LOG_APPENDER(17),
+  ADD_USER_VERIFIER(18),
+  REMOVE_USER_VERIFIER(19),
+  UPDATE_USER_VERIFIER(20);
 
   private final int value;
 
@@ -87,6 +90,12 @@ public enum Operation implements org.apache.thrift.TEnum {
         return REMOVE_LOG_APPENDER;
       case 17:
         return UPDATE_LOG_APPENDER;
+      case 18:
+        return ADD_USER_VERIFIER;
+      case 19:
+        return REMOVE_USER_VERIFIER;
+      case 20:
+        return UPDATE_USER_VERIFIER;
       default:
         return null;
     }

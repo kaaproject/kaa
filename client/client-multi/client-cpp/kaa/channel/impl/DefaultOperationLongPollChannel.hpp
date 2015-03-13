@@ -19,19 +19,21 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_DEFAULT_LONG_POLL_CHANNEL
+#include <cstdint>
+#include <thread>
 
-#include "kaa/channel/IDataChannel.hpp"
-#include "kaa/channel/server/HttpLPServerInfo.hpp"
-#include "kaa/http/HttpClient.hpp"
 #include <boost/asio.hpp>
+
+#include "kaa/KaaThread.hpp"
+#include "kaa/channel/IDataChannel.hpp"
+#include "kaa/http/HttpClient.hpp"
 #include "kaa/security/KeyUtils.hpp"
 #include "kaa/transport/HttpDataProcessor.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
-#include "kaa/KaaThread.hpp"
-
-#include <cstdint>
-#include <thread>
+#include "kaa/security/SecurityDefinitions.hpp"
+#include "kaa/channel/IPTransportInfo.hpp"
+#include "kaa/channel/ITransportConnectionInfo.hpp"
+#include "kaa/channel/TransportProtocolIdConstants.hpp"
 
 namespace kaa {
 
@@ -44,20 +46,37 @@ public:
     virtual void syncAll();
     virtual void syncAck(TransportType type);
     virtual const std::string& getId() const { return CHANNEL_ID; }
-    virtual ChannelType getChannelType() const { return ChannelType::HTTP_LP; }
-    virtual ServerType getServerType() const { return ServerType::OPERATIONS; }
+
+    virtual TransportProtocolId getTransportProtocolId() const {
+        return TransportProtocolIdConstants::HTTP_TRANSPORT_ID;
+    }
+
+    virtual ServerType getServerType() const {
+        return ServerType::OPERATIONS;
+    }
 
     virtual void setMultiplexer(IKaaDataMultiplexer *multiplexer);
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
-    virtual void setServer(IServerInfoPtr server);
+    virtual void setServer(ITransportConnectionInfoPtr server);
 
-    virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const { return SUPPORTED_TYPES; }
+    virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const {
+        return SUPPORTED_TYPES;
+    }
 
     virtual void shutdown();
     virtual void pause();
     virtual void resume();
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
+
+    virtual ITransportConnectionInfoPtr getServer() {
+        return std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_);
+    }
+
+protected:
+    std::string getURLSuffix() {
+        return "/EP/LongSync";
+    }
 
 private:
     void startPoll();
@@ -84,7 +103,7 @@ private:
     IKaaDataMultiplexer *multiplexer_;
     IKaaDataDemultiplexer *demultiplexer_;
     IKaaChannelManager *channelManager_;
-    OperationServerLongPollInfoPtr currentServer_;
+    std::shared_ptr<IPTransportInfo> currentServer_;
     HttpDataProcessor httpDataProcessor_;
     HttpClient httpClient_;
     KAA_CONDITION_VARIABLE_DECLARE(waitCondition_);
@@ -93,7 +112,5 @@ private:
 };
 
 }
-
-#endif
 
 #endif /* DEFAULTOPERATIONLONGPOLLCHANNEL_HPP_ */

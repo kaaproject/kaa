@@ -18,14 +18,9 @@
 
 #include "kaa/KaaClient.hpp"
 
+#include "kaa/channel/connectivity/IPConnectivityChecker.hpp"
 #include "kaa/bootstrap/BootstrapManager.hpp"
 #include "kaa/KaaDefaults.hpp"
-
-#include "kaa/configuration/ConfigurationProcessor.hpp"
-#include "kaa/configuration/manager/ConfigurationManager.hpp"
-#include "kaa/configuration/storage/ConfigurationPersistenceManager.hpp"
-#include "kaa/schema/SchemaProcessor.hpp"
-#include "kaa/schema/storage/SchemaPersistenceManager.hpp"
 
 #include "kaa/bootstrap/BootstrapTransport.hpp"
 #include "kaa/channel/MetaDataTransport.hpp"
@@ -38,8 +33,6 @@
 #include "kaa/channel/RedirectionTransport.hpp"
 
 #include "kaa/channel/KaaChannelManager.hpp"
-
-#include "kaa/channel/connectivity/PingConnectivityChecker.hpp"
 
 #include "kaa/logging/Log.hpp"
 
@@ -61,14 +54,12 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
     initClientKeys();
 
 #ifdef KAA_USE_CONFIGURATION
-    schemaProcessor_.reset(new SchemaProcessor);
     configurationProcessor_.reset(new ConfigurationProcessor);
-    deltaManager_.reset(new DefaultDeltaManager);
     configurationManager_.reset(new ConfigurationManager);
 #endif
 
     bootstrapManager_.reset(new BootstrapManager);
-    channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getServerInfoList()));
+    channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getBootstrapServers()));
 #ifdef KAA_USE_EVENTS
     registrationManager_.reset(new EndpointRegistrationManager(status_));
     eventManager_.reset(new EventManager(status_));
@@ -81,7 +72,7 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
     profileManager_.reset(new ProfileManager());
 
 #ifdef KAA_USE_LOGGING
-    logCollector_.reset(new LogCollector());
+    logCollector_.reset(new LogCollector(channelManager_.get()));
 #endif
 
     initKaaConfiguration();
@@ -91,8 +82,8 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 void KaaClient::start()
 {
 #ifdef KAA_USE_CONFIGURATION
-    auto configHash = configurationPersistenceManager_->getConfigurationHash().getHash();
-    if (!configHash.first || !configHash.second || !schemaProcessor_->getSchema()) {
+    auto configHash = configurationPersistenceManager_->getConfigurationHash().getHashDigest();
+    if (configHash.empty()) {
         SequenceNumber sn = { 0, 0, 1 };
         status_->setAppSeqNumber(sn);
         setDefaultConfiguration();
@@ -123,16 +114,8 @@ void KaaClient::initKaaConfiguration()
     cpm->setConfigurationProcessor(configurationProcessor_.get());
     configurationPersistenceManager_.reset(cpm);
 
-    SchemaPersistenceManager *spm = new SchemaPersistenceManager;
-    spm->setSchemaProcessor(schemaProcessor_.get());
-    schemaPersistenceManager_.reset(spm);
-
-    schemaProcessor_->subscribeForSchemaUpdates(*configurationProcessor_);
-    schemaProcessor_->subscribeForSchemaUpdates(*configurationPersistenceManager_);
-    schemaProcessor_->subscribeForSchemaUpdates(*schemaPersistenceManager_);
     configurationProcessor_->addOnProcessedObserver(*configurationManager_);
     configurationProcessor_->subscribeForUpdates(*configurationManager_);
-    configurationProcessor_->subscribeForUpdates(*deltaManager_);
     configurationManager_->subscribeForConfigurationChanges(*configurationPersistenceManager_);
 #endif
 }
@@ -140,19 +123,17 @@ void KaaClient::initKaaConfiguration()
 void KaaClient::initKaaTransport()
 {
     IBootstrapTransportPtr bootstrapTransport(new BootstrapTransport(*channelManager_, *bootstrapManager_));
-    bootstrapProcessor_.reset(new BootstrapDataProcessor(bootstrapTransport));
 
-    bootstrapManager_->setTransport(std::dynamic_pointer_cast<BootstrapTransport, IBootstrapTransport>(bootstrapTransport).get());
+    bootstrapManager_->setTransport(bootstrapTransport.get());
     bootstrapManager_->setChannelManager(channelManager_.get());
 
-    EndpointObjectHash publicKeyHash(clientKeys_.first.begin(), clientKeys_.first.size());
+    EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().begin(), clientKeys_->getPublicKey().size());
     IMetaDataTransportPtr metaDataTransport(new MetaDataTransport(status_, publicKeyHash, 60000L));
-    IProfileTransportPtr profileTransport(new ProfileTransport(*channelManager_, clientKeys_.first));
+    IProfileTransportPtr profileTransport(new ProfileTransport(*channelManager_, clientKeys_->getPublicKey()));
 #ifdef KAA_USE_CONFIGURATION
     IConfigurationTransportPtr configurationTransport(new ConfigurationTransport(
             *channelManager_
             , configurationProcessor_.get()
-            , schemaProcessor_.get()
             , configurationPersistenceManager_.get()
             , status_));
 #endif
@@ -173,9 +154,10 @@ void KaaClient::initKaaTransport()
     dynamic_cast<ProfileTransport*>(profileTransport.get())->setClientState(status_);
     profileManager_->setTransport(profileTransport);
 
-    operationsProcessor_.reset(
-            new OperationsDataProcessor(
+    syncProcessor_.reset(
+            new SyncDataProcessor(
               metaDataTransport
+            , bootstrapTransport
             , profileTransport
 #ifdef KAA_USE_CONFIGURATION
             , configurationTransport
@@ -214,43 +196,43 @@ void KaaClient::initKaaTransport()
 #endif
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     if (options_ & KaaOption::USE_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) {
-        bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), clientKeys_));
-        bootstrapChannel_->setDemultiplexer(bootstrapProcessor_.get());
-        bootstrapChannel_->setMultiplexer(bootstrapProcessor_.get());
+        bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), *clientKeys_));
+        bootstrapChannel_->setDemultiplexer(syncProcessor_.get());
+        bootstrapChannel_->setMultiplexer(syncProcessor_.get());
         KAA_LOG_INFO(boost::format("Going to set default bootstrap channel: %1%") % bootstrapChannel_.get());
         channelManager_->addChannel(bootstrapChannel_.get());
     }
 #endif
 #ifdef KAA_DEFAULT_OPERATION_HTTP_CHANNEL
     if (options_ & KaaOption::USE_DEFAULT_OPERATION_HTTP_CHANNEL) {
-        opsHttpChannel_.reset(new DefaultOperationHttpChannel(channelManager_.get(), clientKeys_));
-        opsHttpChannel_->setMultiplexer(operationsProcessor_.get());
-        opsHttpChannel_->setDemultiplexer(operationsProcessor_.get());
+        opsHttpChannel_.reset(new DefaultOperationHttpChannel(channelManager_.get(), *clientKeys_));
+        opsHttpChannel_->setMultiplexer(syncProcessor_.get());
+        opsHttpChannel_->setDemultiplexer(syncProcessor_.get());
         KAA_LOG_INFO(boost::format("Going to set default operations Kaa HTTP channel: %1%") % opsHttpChannel_.get());
         channelManager_->addChannel(opsHttpChannel_.get());
     }
 #endif
 #ifdef KAA_DEFAULT_LONG_POLL_CHANNEL
     if (options_ & KaaOption::USE_DEFAULT_OPERATION_LONG_POLL_CHANNEL) {
-        opsLongPollChannel_.reset(new DefaultOperationLongPollChannel(channelManager_.get(), clientKeys_));
-        opsLongPollChannel_->setMultiplexer(operationsProcessor_.get());
-        opsLongPollChannel_->setDemultiplexer(operationsProcessor_.get());
+        opsLongPollChannel_.reset(new DefaultOperationLongPollChannel(channelManager_.get(), *clientKeys_));
+        opsLongPollChannel_->setMultiplexer(syncProcessor_.get());
+        opsLongPollChannel_->setDemultiplexer(syncProcessor_.get());
         KAA_LOG_INFO(boost::format("Going to set default operations Kaa HTTP Long Poll channel: %1%") % opsLongPollChannel_.get());
         channelManager_->addChannel(opsLongPollChannel_.get());
     }
 #endif
 #ifdef KAA_DEFAULT_TCP_CHANNEL
     if (options_ & KaaOption::USE_DEFAULT_OPERATION_KAATCP_CHANNEL) {
-        opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), clientKeys_));
-        opsTcpChannel_->setDemultiplexer(operationsProcessor_.get());
-        opsTcpChannel_->setMultiplexer(operationsProcessor_.get());
+        opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), *clientKeys_));
+        opsTcpChannel_->setDemultiplexer(syncProcessor_.get());
+        opsTcpChannel_->setMultiplexer(syncProcessor_.get());
         KAA_LOG_INFO(boost::format("Going to set default operations Kaa TCP channel: %1%") % opsTcpChannel_.get());
         channelManager_->addChannel(opsTcpChannel_.get());
     }
 #endif
 #ifdef KAA_DEFAULT_CONNECTIVITY_CHECKER
     if (options_ & KaaOption::USE_DEFAULT_CONNECTIVITY_CHECKER) {
-        ConnectivityCheckerPtr connectivityChecker(new PingConnectivityChecker(
+        ConnectivityCheckerPtr connectivityChecker(new IPConnectivityChecker(
                 *static_cast<KaaChannelManager*>(channelManager_.get())));
         channelManager_->setConnectivityChecker(connectivityChecker);
     }
@@ -263,14 +245,15 @@ void KaaClient::initClientKeys()
     bool exists = key.good();
     key.close();
     if (exists) {
-        clientKeys_ = KeyUtils::loadKeyPair(CLIENT_PUB_KEY_LOCATION, CLIENT_PRIV_KEY_LOCATION);
+        clientKeys_.reset(new KeyPair(KeyUtils::loadKeyPair(CLIENT_PUB_KEY_LOCATION, CLIENT_PRIV_KEY_LOCATION)));
     } else {
-        clientKeys_ = KeyUtils().generateKeyPair(2048);
-        KeyUtils::saveKeyPair(clientKeys_, CLIENT_PUB_KEY_LOCATION, CLIENT_PRIV_KEY_LOCATION);
+        clientKeys_.reset(new KeyPair(KeyUtils().generateKeyPair(2048)));
+        KeyUtils::saveKeyPair(*clientKeys_, CLIENT_PUB_KEY_LOCATION, CLIENT_PRIV_KEY_LOCATION);
     }
 
-    EndpointObjectHash publicKeyHash(clientKeys_.first.begin(), clientKeys_.first.size());
-    publicKeyHash_ = Botan::base64_encode(publicKeyHash.getHash().first.get(), publicKeyHash.getHash().second);
+    EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().begin(), clientKeys_->getPublicKey().size());
+    auto digest = publicKeyHash.getHashDigest();
+    publicKeyHash_ = Botan::base64_encode(digest.data(), digest.size());
 
     status_->setEndpointKeyHash(publicKeyHash_);
     status_->save();
@@ -280,15 +263,109 @@ void KaaClient::initClientKeys()
 void KaaClient::setDefaultConfiguration()
 {
 #ifdef KAA_USE_CONFIGURATION
-    const std::string& schema = getDefaultConfigSchema();
-    if (!schema.empty()) {
-        schemaProcessor_->loadSchema(reinterpret_cast<const std::uint8_t*>(schema.data()), schema.length());
-        const Botan::SecureVector<std::uint8_t>& config = getDefaultConfigData();
-        if (!config.empty()) {
-            configurationProcessor_->processConfigurationData(config.begin(), config.size(), true);
-        }
+    const Botan::SecureVector<std::uint8_t>& config = getDefaultConfigData();
+    if (!config.empty()) {
+        configurationProcessor_->processConfigurationData(config.begin(), config.size(), true);
     }
 #endif
+}
+
+IProfileManager& KaaClient::getProfileManager()
+{
+    return *profileManager_;
+}
+
+IConfigurationPersistenceManager& KaaClient::getConfigurationPersistenceManager()
+{
+#ifdef KAA_USE_CONFIGURATION
+    return *configurationPersistenceManager_;
+#else
+    throw KaaException("Failed to retrieve ConfigurationPersistenceManager. Configuration subunit is disabled");
+#endif
+}
+
+IConfigurationManager& KaaClient::getConfigurationManager()
+{
+#ifdef KAA_USE_CONFIGURATION
+    return *configurationManager_;
+#else
+    throw KaaException("Failed to retrieve ConfigurationManager. Configuration subunit is disabled");
+#endif
+}
+
+INotificationManager& KaaClient::getNotificationManager()
+{
+#ifdef KAA_USE_NOTIFICATIONS
+    return *notificationManager_;
+#else
+    throw KaaException("Failed to retrieve NotificationManager. Notification subunit is disabled");
+#endif
+}
+
+IEndpointRegistrationManager& KaaClient::getEndpointRegistrationManager()
+{
+#ifdef KAA_USE_EVENTS
+    return *registrationManager_;
+#else
+    throw KaaException("Failed to retrieve EndpointRegistrationManage. Event subunit is disabled");
+#endif
+}
+
+EventFamilyFactory& KaaClient::getEventFamilyFactory()
+{
+#ifdef KAA_USE_EVENTS
+    return *eventFamilyFactory_;
+#else
+    throw KaaException("Failed to retrieve EventFamilyFactory. Event subunit is disabled");
+#endif
+}
+
+IEventListenersResolver& KaaClient::getEventListenersResolver()
+{
+#ifdef KAA_USE_EVENTS
+    return *eventManager_;
+#else
+    throw KaaException("Failed to retrieve EventListenersResolver. Event subunit is disabled");
+#endif
+}
+
+IKaaChannelManager& KaaClient::getChannelManager()
+{
+    return *channelManager_;
+}
+
+const KeyPair& KaaClient::getClientKeyPair()
+{
+    return *clientKeys_;
+}
+
+ILogCollector& KaaClient::getLogCollector()
+{
+#ifdef KAA_USE_LOGGING
+    return *logCollector_;
+#else
+    throw KaaException("Failed to retrieve LogCollector. Logging subunit is disabled");
+#endif
+}
+
+IKaaDataMultiplexer& KaaClient::getOperationMultiplexer()
+{
+    return *syncProcessor_;
+}
+
+IKaaDataDemultiplexer& KaaClient::getOperationDemultiplexer()
+{
+    return *syncProcessor_;
+}
+
+IKaaDataMultiplexer& KaaClient::getBootstrapMultiplexer()
+{
+    return *syncProcessor_;
+}
+
+IKaaDataDemultiplexer& KaaClient::getBootstrapDemultiplexer()
+{
+    return *syncProcessor_;
 }
 
 }

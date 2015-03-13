@@ -110,6 +110,23 @@ enum SyncResponseResultType {
     REDIRECT,
 };
 
+enum LogDeliveryErrorCode {
+    NO_APPENDERS_CONFIGURED,
+    APPENDER_INTERNAL_ERROR,
+    REMOTE_CONNECTION_ERROR,
+    REMOTE_INTERNAL_ERROR,
+};
+
+enum UserAttachErrorCode {
+    NO_VERIFIER_CONFIGURED,
+    TOKEN_INVALID,
+    TOKEN_EXPIRED,
+    INTERNAL_ERROR,
+    CONNECTION_ERROR,
+    REMOTE_ERROR,
+    OTHER,
+};
+
 struct SubscriptionCommand {
     std::string topicId;
     SubscriptionCommandType command;
@@ -120,18 +137,62 @@ struct SubscriptionCommand {
 };
 
 struct UserAttachRequest {
+    std::string userVerifierId;
     std::string userExternalId;
     std::string userAccessToken;
     UserAttachRequest() :
+        userVerifierId(std::string()),
         userExternalId(std::string()),
         userAccessToken(std::string())
         { }
 };
 
+struct _endpoint_avsc_Union__1__ {
+private:
+    size_t idx_;
+    boost::any value_;
+public:
+    size_t idx() const { return idx_; }
+    UserAttachErrorCode get_UserAttachErrorCode() const;
+    void set_UserAttachErrorCode(const UserAttachErrorCode& v);
+    bool is_null() const {
+        return (idx_ == 1);
+    }
+    void set_null() {
+        idx_ = 1;
+        value_ = boost::any();
+    }
+    _endpoint_avsc_Union__1__();
+};
+
+struct _endpoint_avsc_Union__2__ {
+private:
+    size_t idx_;
+    boost::any value_;
+public:
+    size_t idx() const { return idx_; }
+    std::string get_string() const;
+    void set_string(const std::string& v);
+    bool is_null() const {
+        return (idx_ == 1);
+    }
+    void set_null() {
+        idx_ = 1;
+        value_ = boost::any();
+    }
+    _endpoint_avsc_Union__2__();
+};
+
 struct UserAttachResponse {
+    typedef _endpoint_avsc_Union__1__ errorCode_t;
+    typedef _endpoint_avsc_Union__2__ errorReason_t;
     SyncResponseResultType result;
+    errorCode_t errorCode;
+    errorReason_t errorReason;
     UserAttachResponse() :
-        result(SyncResponseResultType())
+        result(SyncResponseResultType()),
+        errorCode(errorCode_t()),
+        errorReason(errorReason_t())
         { }
 };
 
@@ -160,7 +221,7 @@ struct EndpointAttachRequest {
         { }
 };
 
-struct _endpoint_avsc_Union__1__ {
+struct _endpoint_avsc_Union__3__ {
 private:
     size_t idx_;
     boost::any value_;
@@ -175,11 +236,11 @@ public:
         idx_ = 1;
         value_ = boost::any();
     }
-    _endpoint_avsc_Union__1__();
+    _endpoint_avsc_Union__3__();
 };
 
 struct EndpointAttachResponse {
-    typedef _endpoint_avsc_Union__1__ endpointKeyHash_t;
+    typedef _endpoint_avsc_Union__3__ endpointKeyHash_t;
     int32_t requestId;
     endpointKeyHash_t endpointKeyHash;
     SyncResponseResultType result;
@@ -208,7 +269,7 @@ struct EndpointDetachResponse {
         { }
 };
 
-struct _endpoint_avsc_Union__2__ {
+struct _endpoint_avsc_Union__4__ {
 private:
     size_t idx_;
     boost::any value_;
@@ -223,10 +284,10 @@ public:
         idx_ = 1;
         value_ = boost::any();
     }
-    _endpoint_avsc_Union__2__();
+    _endpoint_avsc_Union__4__();
 };
 
-struct _endpoint_avsc_Union__3__ {
+struct _endpoint_avsc_Union__5__ {
 private:
     size_t idx_;
     boost::any value_;
@@ -241,12 +302,12 @@ public:
         idx_ = 1;
         value_ = boost::any();
     }
-    _endpoint_avsc_Union__3__();
+    _endpoint_avsc_Union__5__();
 };
 
 struct Event {
-    typedef _endpoint_avsc_Union__2__ source_t;
-    typedef _endpoint_avsc_Union__3__ target_t;
+    typedef _endpoint_avsc_Union__4__ source_t;
+    typedef _endpoint_avsc_Union__5__ target_t;
     int32_t seqNum;
     std::string eventClassFQN;
     std::vector<uint8_t> eventData;
@@ -270,7 +331,7 @@ struct EventListenersRequest {
         { }
 };
 
-struct _endpoint_avsc_Union__4__ {
+struct _endpoint_avsc_Union__6__ {
 private:
     size_t idx_;
     boost::any value_;
@@ -285,11 +346,11 @@ public:
         idx_ = 1;
         value_ = boost::any();
     }
-    _endpoint_avsc_Union__4__();
+    _endpoint_avsc_Union__6__();
 };
 
 struct EventListenersResponse {
-    typedef _endpoint_avsc_Union__4__ listeners_t;
+    typedef _endpoint_avsc_Union__6__ listeners_t;
     int32_t requestId;
     listeners_t listeners;
     SyncResponseResultType result;
@@ -312,7 +373,7 @@ struct EventSequenceNumberResponse {
         { }
 };
 
-struct _endpoint_avsc_Union__5__ {
+struct _endpoint_avsc_Union__7__ {
 private:
     size_t idx_;
     boost::any value_;
@@ -327,10 +388,10 @@ public:
         idx_ = 1;
         value_ = boost::any();
     }
-    _endpoint_avsc_Union__5__();
+    _endpoint_avsc_Union__7__();
 };
 
-struct _endpoint_avsc_Union__6__ {
+struct _endpoint_avsc_Union__8__ {
 private:
     size_t idx_;
     boost::any value_;
@@ -345,12 +406,12 @@ public:
         idx_ = 1;
         value_ = boost::any();
     }
-    _endpoint_avsc_Union__6__();
+    _endpoint_avsc_Union__8__();
 };
 
 struct Notification {
-    typedef _endpoint_avsc_Union__5__ uid_t;
-    typedef _endpoint_avsc_Union__6__ seqNumber_t;
+    typedef _endpoint_avsc_Union__7__ uid_t;
+    typedef _endpoint_avsc_Union__8__ seqNumber_t;
     std::string topicId;
     NotificationType type;
     uid_t uid;
@@ -383,64 +444,14 @@ struct LogEntry {
         { }
 };
 
-struct _endpoint_avsc_Union__7__ {
-private:
-    size_t idx_;
-    boost::any value_;
-public:
-    size_t idx() const { return idx_; }
-    std::vector<uint8_t> get_bytes() const;
-    void set_bytes(const std::vector<uint8_t>& v);
-    bool is_null() const {
-        return (idx_ == 1);
-    }
-    void set_null() {
-        idx_ = 1;
-        value_ = boost::any();
-    }
-    _endpoint_avsc_Union__7__();
-};
-
-struct SyncRequestMetaData {
-    typedef _endpoint_avsc_Union__7__ profileHash_t;
-    std::string applicationToken;
-    std::vector<uint8_t> endpointPublicKeyHash;
-    profileHash_t profileHash;
-    int64_t timeout;
-    SyncRequestMetaData() :
-        applicationToken(std::string()),
-        endpointPublicKeyHash(std::vector<uint8_t>()),
-        profileHash(profileHash_t()),
-        timeout(int64_t())
-        { }
-};
-
-struct _endpoint_avsc_Union__8__ {
-private:
-    size_t idx_;
-    boost::any value_;
-public:
-    size_t idx() const { return idx_; }
-    std::vector<uint8_t> get_bytes() const;
-    void set_bytes(const std::vector<uint8_t>& v);
-    bool is_null() const {
-        return (idx_ == 1);
-    }
-    void set_null() {
-        idx_ = 1;
-        value_ = boost::any();
-    }
-    _endpoint_avsc_Union__8__();
-};
-
 struct _endpoint_avsc_Union__9__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::string get_string() const;
-    void set_string(const std::string& v);
+    std::vector<uint8_t> get_bytes() const;
+    void set_bytes(const std::vector<uint8_t>& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -449,21 +460,6 @@ public:
         value_ = boost::any();
     }
     _endpoint_avsc_Union__9__();
-};
-
-struct ProfileSyncRequest {
-    typedef _endpoint_avsc_Union__8__ endpointPublicKey_t;
-    typedef _endpoint_avsc_Union__9__ endpointAccessToken_t;
-    endpointPublicKey_t endpointPublicKey;
-    std::vector<uint8_t> profileBody;
-    EndpointVersionInfo versionInfo;
-    endpointAccessToken_t endpointAccessToken;
-    ProfileSyncRequest() :
-        endpointPublicKey(endpointPublicKey_t()),
-        profileBody(std::vector<uint8_t>()),
-        versionInfo(EndpointVersionInfo()),
-        endpointAccessToken(endpointAccessToken_t())
-        { }
 };
 
 struct _endpoint_avsc_Union__10__ {
@@ -484,24 +480,14 @@ public:
     _endpoint_avsc_Union__10__();
 };
 
-struct ConfigurationSyncRequest {
-    typedef _endpoint_avsc_Union__10__ configurationHash_t;
-    int32_t appStateSeqNumber;
-    configurationHash_t configurationHash;
-    ConfigurationSyncRequest() :
-        appStateSeqNumber(int32_t()),
-        configurationHash(configurationHash_t())
-        { }
-};
-
 struct _endpoint_avsc_Union__11__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<uint8_t> get_bytes() const;
-    void set_bytes(const std::vector<uint8_t>& v);
+    int64_t get_long() const;
+    void set_long(const int64_t& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -512,14 +498,30 @@ public:
     _endpoint_avsc_Union__11__();
 };
 
+struct SyncRequestMetaData {
+    typedef _endpoint_avsc_Union__9__ endpointPublicKeyHash_t;
+    typedef _endpoint_avsc_Union__10__ profileHash_t;
+    typedef _endpoint_avsc_Union__11__ timeout_t;
+    std::string applicationToken;
+    endpointPublicKeyHash_t endpointPublicKeyHash;
+    profileHash_t profileHash;
+    timeout_t timeout;
+    SyncRequestMetaData() :
+        applicationToken(std::string()),
+        endpointPublicKeyHash(endpointPublicKeyHash_t()),
+        profileHash(profileHash_t()),
+        timeout(timeout_t())
+        { }
+};
+
 struct _endpoint_avsc_Union__12__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<TopicState > get_array() const;
-    void set_array(const std::vector<TopicState >& v);
+    std::vector<uint8_t> get_bytes() const;
+    void set_bytes(const std::vector<uint8_t>& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -536,8 +538,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<std::string > get_array() const;
-    void set_array(const std::vector<std::string >& v);
+    std::string get_string() const;
+    void set_string(const std::string& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -548,14 +550,47 @@ public:
     _endpoint_avsc_Union__13__();
 };
 
+struct ProfileSyncRequest {
+    typedef _endpoint_avsc_Union__12__ endpointPublicKey_t;
+    typedef _endpoint_avsc_Union__13__ endpointAccessToken_t;
+    endpointPublicKey_t endpointPublicKey;
+    std::vector<uint8_t> profileBody;
+    EndpointVersionInfo versionInfo;
+    endpointAccessToken_t endpointAccessToken;
+    ProfileSyncRequest() :
+        endpointPublicKey(endpointPublicKey_t()),
+        profileBody(std::vector<uint8_t>()),
+        versionInfo(EndpointVersionInfo()),
+        endpointAccessToken(endpointAccessToken_t())
+        { }
+};
+
+struct ProtocolVersionPair {
+    int32_t id;
+    int32_t version;
+    ProtocolVersionPair() :
+        id(int32_t()),
+        version(int32_t())
+        { }
+};
+
+struct BootstrapSyncRequest {
+    int32_t requestId;
+    std::vector<ProtocolVersionPair > supportedProtocols;
+    BootstrapSyncRequest() :
+        requestId(int32_t()),
+        supportedProtocols(std::vector<ProtocolVersionPair >())
+        { }
+};
+
 struct _endpoint_avsc_Union__14__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<SubscriptionCommand > get_array() const;
-    void set_array(const std::vector<SubscriptionCommand >& v);
+    std::vector<uint8_t> get_bytes() const;
+    void set_bytes(const std::vector<uint8_t>& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -566,33 +601,14 @@ public:
     _endpoint_avsc_Union__14__();
 };
 
-struct NotificationSyncRequest {
-    typedef _endpoint_avsc_Union__11__ topicListHash_t;
-    typedef _endpoint_avsc_Union__12__ topicStates_t;
-    typedef _endpoint_avsc_Union__13__ acceptedUnicastNotifications_t;
-    typedef _endpoint_avsc_Union__14__ subscriptionCommands_t;
-    int32_t appStateSeqNumber;
-    topicListHash_t topicListHash;
-    topicStates_t topicStates;
-    acceptedUnicastNotifications_t acceptedUnicastNotifications;
-    subscriptionCommands_t subscriptionCommands;
-    NotificationSyncRequest() :
-        appStateSeqNumber(int32_t()),
-        topicListHash(topicListHash_t()),
-        topicStates(topicStates_t()),
-        acceptedUnicastNotifications(acceptedUnicastNotifications_t()),
-        subscriptionCommands(subscriptionCommands_t())
-        { }
-};
-
 struct _endpoint_avsc_Union__15__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    UserAttachRequest get_UserAttachRequest() const;
-    void set_UserAttachRequest(const UserAttachRequest& v);
+    bool get_bool() const;
+    void set_bool(const bool& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -603,14 +619,27 @@ public:
     _endpoint_avsc_Union__15__();
 };
 
+struct ConfigurationSyncRequest {
+    typedef _endpoint_avsc_Union__14__ configurationHash_t;
+    typedef _endpoint_avsc_Union__15__ resyncOnly_t;
+    int32_t appStateSeqNumber;
+    configurationHash_t configurationHash;
+    resyncOnly_t resyncOnly;
+    ConfigurationSyncRequest() :
+        appStateSeqNumber(int32_t()),
+        configurationHash(configurationHash_t()),
+        resyncOnly(resyncOnly_t())
+        { }
+};
+
 struct _endpoint_avsc_Union__16__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<EndpointAttachRequest > get_array() const;
-    void set_array(const std::vector<EndpointAttachRequest >& v);
+    std::vector<uint8_t> get_bytes() const;
+    void set_bytes(const std::vector<uint8_t>& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -627,8 +656,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<EndpointDetachRequest > get_array() const;
-    void set_array(const std::vector<EndpointDetachRequest >& v);
+    std::vector<TopicState > get_array() const;
+    void set_array(const std::vector<TopicState >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -639,28 +668,14 @@ public:
     _endpoint_avsc_Union__17__();
 };
 
-struct UserSyncRequest {
-    typedef _endpoint_avsc_Union__15__ userAttachRequest_t;
-    typedef _endpoint_avsc_Union__16__ endpointAttachRequests_t;
-    typedef _endpoint_avsc_Union__17__ endpointDetachRequests_t;
-    userAttachRequest_t userAttachRequest;
-    endpointAttachRequests_t endpointAttachRequests;
-    endpointDetachRequests_t endpointDetachRequests;
-    UserSyncRequest() :
-        userAttachRequest(userAttachRequest_t()),
-        endpointAttachRequests(endpointAttachRequests_t()),
-        endpointDetachRequests(endpointDetachRequests_t())
-        { }
-};
-
 struct _endpoint_avsc_Union__18__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    EventSequenceNumberRequest get_EventSequenceNumberRequest() const;
-    void set_EventSequenceNumberRequest(const EventSequenceNumberRequest& v);
+    std::vector<std::string > get_array() const;
+    void set_array(const std::vector<std::string >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -677,8 +692,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<EventListenersRequest > get_array() const;
-    void set_array(const std::vector<EventListenersRequest >& v);
+    std::vector<SubscriptionCommand > get_array() const;
+    void set_array(const std::vector<SubscriptionCommand >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -689,14 +704,33 @@ public:
     _endpoint_avsc_Union__19__();
 };
 
+struct NotificationSyncRequest {
+    typedef _endpoint_avsc_Union__16__ topicListHash_t;
+    typedef _endpoint_avsc_Union__17__ topicStates_t;
+    typedef _endpoint_avsc_Union__18__ acceptedUnicastNotifications_t;
+    typedef _endpoint_avsc_Union__19__ subscriptionCommands_t;
+    int32_t appStateSeqNumber;
+    topicListHash_t topicListHash;
+    topicStates_t topicStates;
+    acceptedUnicastNotifications_t acceptedUnicastNotifications;
+    subscriptionCommands_t subscriptionCommands;
+    NotificationSyncRequest() :
+        appStateSeqNumber(int32_t()),
+        topicListHash(topicListHash_t()),
+        topicStates(topicStates_t()),
+        acceptedUnicastNotifications(acceptedUnicastNotifications_t()),
+        subscriptionCommands(subscriptionCommands_t())
+        { }
+};
+
 struct _endpoint_avsc_Union__20__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<Event > get_array() const;
-    void set_array(const std::vector<Event >& v);
+    UserAttachRequest get_UserAttachRequest() const;
+    void set_UserAttachRequest(const UserAttachRequest& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -707,28 +741,14 @@ public:
     _endpoint_avsc_Union__20__();
 };
 
-struct EventSyncRequest {
-    typedef _endpoint_avsc_Union__18__ eventSequenceNumberRequest_t;
-    typedef _endpoint_avsc_Union__19__ eventListenersRequests_t;
-    typedef _endpoint_avsc_Union__20__ events_t;
-    eventSequenceNumberRequest_t eventSequenceNumberRequest;
-    eventListenersRequests_t eventListenersRequests;
-    events_t events;
-    EventSyncRequest() :
-        eventSequenceNumberRequest(eventSequenceNumberRequest_t()),
-        eventListenersRequests(eventListenersRequests_t()),
-        events(events_t())
-        { }
-};
-
 struct _endpoint_avsc_Union__21__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<LogEntry > get_array() const;
-    void set_array(const std::vector<LogEntry >& v);
+    std::vector<EndpointAttachRequest > get_array() const;
+    void set_array(const std::vector<EndpointAttachRequest >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -739,31 +759,14 @@ public:
     _endpoint_avsc_Union__21__();
 };
 
-struct LogSyncRequest {
-    typedef _endpoint_avsc_Union__21__ logEntries_t;
-    int32_t requestId;
-    logEntries_t logEntries;
-    LogSyncRequest() :
-        requestId(int32_t()),
-        logEntries(logEntries_t())
-        { }
-};
-
-struct ProfileSyncResponse {
-    SyncResponseStatus responseStatus;
-    ProfileSyncResponse() :
-        responseStatus(SyncResponseStatus())
-        { }
-};
-
 struct _endpoint_avsc_Union__22__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<uint8_t> get_bytes() const;
-    void set_bytes(const std::vector<uint8_t>& v);
+    std::vector<EndpointDetachRequest > get_array() const;
+    void set_array(const std::vector<EndpointDetachRequest >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -774,14 +777,28 @@ public:
     _endpoint_avsc_Union__22__();
 };
 
+struct UserSyncRequest {
+    typedef _endpoint_avsc_Union__20__ userAttachRequest_t;
+    typedef _endpoint_avsc_Union__21__ endpointAttachRequests_t;
+    typedef _endpoint_avsc_Union__22__ endpointDetachRequests_t;
+    userAttachRequest_t userAttachRequest;
+    endpointAttachRequests_t endpointAttachRequests;
+    endpointDetachRequests_t endpointDetachRequests;
+    UserSyncRequest() :
+        userAttachRequest(userAttachRequest_t()),
+        endpointAttachRequests(endpointAttachRequests_t()),
+        endpointDetachRequests(endpointDetachRequests_t())
+        { }
+};
+
 struct _endpoint_avsc_Union__23__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<uint8_t> get_bytes() const;
-    void set_bytes(const std::vector<uint8_t>& v);
+    EventSequenceNumberRequest get_EventSequenceNumberRequest() const;
+    void set_EventSequenceNumberRequest(const EventSequenceNumberRequest& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -792,29 +809,14 @@ public:
     _endpoint_avsc_Union__23__();
 };
 
-struct ConfigurationSyncResponse {
-    typedef _endpoint_avsc_Union__22__ confSchemaBody_t;
-    typedef _endpoint_avsc_Union__23__ confDeltaBody_t;
-    int32_t appStateSeqNumber;
-    SyncResponseStatus responseStatus;
-    confSchemaBody_t confSchemaBody;
-    confDeltaBody_t confDeltaBody;
-    ConfigurationSyncResponse() :
-        appStateSeqNumber(int32_t()),
-        responseStatus(SyncResponseStatus()),
-        confSchemaBody(confSchemaBody_t()),
-        confDeltaBody(confDeltaBody_t())
-        { }
-};
-
 struct _endpoint_avsc_Union__24__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<Notification > get_array() const;
-    void set_array(const std::vector<Notification >& v);
+    std::vector<EventListenersRequest > get_array() const;
+    void set_array(const std::vector<EventListenersRequest >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -831,8 +833,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<Topic > get_array() const;
-    void set_array(const std::vector<Topic >& v);
+    std::vector<Event > get_array() const;
+    void set_array(const std::vector<Event >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -843,18 +845,17 @@ public:
     _endpoint_avsc_Union__25__();
 };
 
-struct NotificationSyncResponse {
-    typedef _endpoint_avsc_Union__24__ notifications_t;
-    typedef _endpoint_avsc_Union__25__ availableTopics_t;
-    int32_t appStateSeqNumber;
-    SyncResponseStatus responseStatus;
-    notifications_t notifications;
-    availableTopics_t availableTopics;
-    NotificationSyncResponse() :
-        appStateSeqNumber(int32_t()),
-        responseStatus(SyncResponseStatus()),
-        notifications(notifications_t()),
-        availableTopics(availableTopics_t())
+struct EventSyncRequest {
+    typedef _endpoint_avsc_Union__23__ eventSequenceNumberRequest_t;
+    typedef _endpoint_avsc_Union__24__ eventListenersRequests_t;
+    typedef _endpoint_avsc_Union__25__ events_t;
+    eventSequenceNumberRequest_t eventSequenceNumberRequest;
+    eventListenersRequests_t eventListenersRequests;
+    events_t events;
+    EventSyncRequest() :
+        eventSequenceNumberRequest(eventSequenceNumberRequest_t()),
+        eventListenersRequests(eventListenersRequests_t()),
+        events(events_t())
         { }
 };
 
@@ -864,8 +865,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    UserAttachResponse get_UserAttachResponse() const;
-    void set_UserAttachResponse(const UserAttachResponse& v);
+    std::vector<LogEntry > get_array() const;
+    void set_array(const std::vector<LogEntry >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -876,14 +877,51 @@ public:
     _endpoint_avsc_Union__26__();
 };
 
+struct LogSyncRequest {
+    typedef _endpoint_avsc_Union__26__ logEntries_t;
+    int32_t requestId;
+    logEntries_t logEntries;
+    LogSyncRequest() :
+        requestId(int32_t()),
+        logEntries(logEntries_t())
+        { }
+};
+
+struct ProtocolMetaData {
+    int32_t accessPointId;
+    ProtocolVersionPair protocolVersionInfo;
+    std::vector<uint8_t> connectionInfo;
+    ProtocolMetaData() :
+        accessPointId(int32_t()),
+        protocolVersionInfo(ProtocolVersionPair()),
+        connectionInfo(std::vector<uint8_t>())
+        { }
+};
+
+struct BootstrapSyncResponse {
+    int32_t requestId;
+    std::vector<ProtocolMetaData > supportedProtocols;
+    BootstrapSyncResponse() :
+        requestId(int32_t()),
+        supportedProtocols(std::vector<ProtocolMetaData >())
+        { }
+};
+
+struct ProfileSyncResponse {
+    SyncResponseStatus responseStatus;
+    ProfileSyncResponse() :
+        responseStatus(SyncResponseStatus())
+        { }
+};
+
 struct _endpoint_avsc_Union__27__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    UserAttachNotification get_UserAttachNotification() const;
-    void set_UserAttachNotification(const UserAttachNotification& v);
+    std::vector<uint8_t> get_bytes() const;
+    void set_bytes(const std::vector<uint8_t>& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -900,8 +938,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    UserDetachNotification get_UserDetachNotification() const;
-    void set_UserDetachNotification(const UserDetachNotification& v);
+    std::vector<uint8_t> get_bytes() const;
+    void set_bytes(const std::vector<uint8_t>& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -912,14 +950,29 @@ public:
     _endpoint_avsc_Union__28__();
 };
 
+struct ConfigurationSyncResponse {
+    typedef _endpoint_avsc_Union__27__ confSchemaBody_t;
+    typedef _endpoint_avsc_Union__28__ confDeltaBody_t;
+    int32_t appStateSeqNumber;
+    SyncResponseStatus responseStatus;
+    confSchemaBody_t confSchemaBody;
+    confDeltaBody_t confDeltaBody;
+    ConfigurationSyncResponse() :
+        appStateSeqNumber(int32_t()),
+        responseStatus(SyncResponseStatus()),
+        confSchemaBody(confSchemaBody_t()),
+        confDeltaBody(confDeltaBody_t())
+        { }
+};
+
 struct _endpoint_avsc_Union__29__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<EndpointAttachResponse > get_array() const;
-    void set_array(const std::vector<EndpointAttachResponse >& v);
+    std::vector<Notification > get_array() const;
+    void set_array(const std::vector<Notification >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -936,8 +989,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<EndpointDetachResponse > get_array() const;
-    void set_array(const std::vector<EndpointDetachResponse >& v);
+    std::vector<Topic > get_array() const;
+    void set_array(const std::vector<Topic >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -948,23 +1001,18 @@ public:
     _endpoint_avsc_Union__30__();
 };
 
-struct UserSyncResponse {
-    typedef _endpoint_avsc_Union__26__ userAttachResponse_t;
-    typedef _endpoint_avsc_Union__27__ userAttachNotification_t;
-    typedef _endpoint_avsc_Union__28__ userDetachNotification_t;
-    typedef _endpoint_avsc_Union__29__ endpointAttachResponses_t;
-    typedef _endpoint_avsc_Union__30__ endpointDetachResponses_t;
-    userAttachResponse_t userAttachResponse;
-    userAttachNotification_t userAttachNotification;
-    userDetachNotification_t userDetachNotification;
-    endpointAttachResponses_t endpointAttachResponses;
-    endpointDetachResponses_t endpointDetachResponses;
-    UserSyncResponse() :
-        userAttachResponse(userAttachResponse_t()),
-        userAttachNotification(userAttachNotification_t()),
-        userDetachNotification(userDetachNotification_t()),
-        endpointAttachResponses(endpointAttachResponses_t()),
-        endpointDetachResponses(endpointDetachResponses_t())
+struct NotificationSyncResponse {
+    typedef _endpoint_avsc_Union__29__ notifications_t;
+    typedef _endpoint_avsc_Union__30__ availableTopics_t;
+    int32_t appStateSeqNumber;
+    SyncResponseStatus responseStatus;
+    notifications_t notifications;
+    availableTopics_t availableTopics;
+    NotificationSyncResponse() :
+        appStateSeqNumber(int32_t()),
+        responseStatus(SyncResponseStatus()),
+        notifications(notifications_t()),
+        availableTopics(availableTopics_t())
         { }
 };
 
@@ -974,8 +1022,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    EventSequenceNumberResponse get_EventSequenceNumberResponse() const;
-    void set_EventSequenceNumberResponse(const EventSequenceNumberResponse& v);
+    UserAttachResponse get_UserAttachResponse() const;
+    void set_UserAttachResponse(const UserAttachResponse& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -992,8 +1040,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<EventListenersResponse > get_array() const;
-    void set_array(const std::vector<EventListenersResponse >& v);
+    UserAttachNotification get_UserAttachNotification() const;
+    void set_UserAttachNotification(const UserAttachNotification& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1010,8 +1058,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    std::vector<Event > get_array() const;
-    void set_array(const std::vector<Event >& v);
+    UserDetachNotification get_UserDetachNotification() const;
+    void set_UserDetachNotification(const UserDetachNotification& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1022,44 +1070,14 @@ public:
     _endpoint_avsc_Union__33__();
 };
 
-struct EventSyncResponse {
-    typedef _endpoint_avsc_Union__31__ eventSequenceNumberResponse_t;
-    typedef _endpoint_avsc_Union__32__ eventListenersResponses_t;
-    typedef _endpoint_avsc_Union__33__ events_t;
-    eventSequenceNumberResponse_t eventSequenceNumberResponse;
-    eventListenersResponses_t eventListenersResponses;
-    events_t events;
-    EventSyncResponse() :
-        eventSequenceNumberResponse(eventSequenceNumberResponse_t()),
-        eventListenersResponses(eventListenersResponses_t()),
-        events(events_t())
-        { }
-};
-
-struct LogSyncResponse {
-    int32_t requestId;
-    SyncResponseResultType result;
-    LogSyncResponse() :
-        requestId(int32_t()),
-        result(SyncResponseResultType())
-        { }
-};
-
-struct RedirectSyncResponse {
-    std::string dnsName;
-    RedirectSyncResponse() :
-        dnsName(std::string())
-        { }
-};
-
 struct _endpoint_avsc_Union__34__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    SyncRequestMetaData get_SyncRequestMetaData() const;
-    void set_SyncRequestMetaData(const SyncRequestMetaData& v);
+    std::vector<EndpointAttachResponse > get_array() const;
+    void set_array(const std::vector<EndpointAttachResponse >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1076,8 +1094,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    ProfileSyncRequest get_ProfileSyncRequest() const;
-    void set_ProfileSyncRequest(const ProfileSyncRequest& v);
+    std::vector<EndpointDetachResponse > get_array() const;
+    void set_array(const std::vector<EndpointDetachResponse >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1088,14 +1106,34 @@ public:
     _endpoint_avsc_Union__35__();
 };
 
+struct UserSyncResponse {
+    typedef _endpoint_avsc_Union__31__ userAttachResponse_t;
+    typedef _endpoint_avsc_Union__32__ userAttachNotification_t;
+    typedef _endpoint_avsc_Union__33__ userDetachNotification_t;
+    typedef _endpoint_avsc_Union__34__ endpointAttachResponses_t;
+    typedef _endpoint_avsc_Union__35__ endpointDetachResponses_t;
+    userAttachResponse_t userAttachResponse;
+    userAttachNotification_t userAttachNotification;
+    userDetachNotification_t userDetachNotification;
+    endpointAttachResponses_t endpointAttachResponses;
+    endpointDetachResponses_t endpointDetachResponses;
+    UserSyncResponse() :
+        userAttachResponse(userAttachResponse_t()),
+        userAttachNotification(userAttachNotification_t()),
+        userDetachNotification(userDetachNotification_t()),
+        endpointAttachResponses(endpointAttachResponses_t()),
+        endpointDetachResponses(endpointDetachResponses_t())
+        { }
+};
+
 struct _endpoint_avsc_Union__36__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    ConfigurationSyncRequest get_ConfigurationSyncRequest() const;
-    void set_ConfigurationSyncRequest(const ConfigurationSyncRequest& v);
+    EventSequenceNumberResponse get_EventSequenceNumberResponse() const;
+    void set_EventSequenceNumberResponse(const EventSequenceNumberResponse& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1112,8 +1150,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    NotificationSyncRequest get_NotificationSyncRequest() const;
-    void set_NotificationSyncRequest(const NotificationSyncRequest& v);
+    std::vector<EventListenersResponse > get_array() const;
+    void set_array(const std::vector<EventListenersResponse >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1130,8 +1168,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    UserSyncRequest get_UserSyncRequest() const;
-    void set_UserSyncRequest(const UserSyncRequest& v);
+    std::vector<Event > get_array() const;
+    void set_array(const std::vector<Event >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1142,14 +1180,28 @@ public:
     _endpoint_avsc_Union__38__();
 };
 
+struct EventSyncResponse {
+    typedef _endpoint_avsc_Union__36__ eventSequenceNumberResponse_t;
+    typedef _endpoint_avsc_Union__37__ eventListenersResponses_t;
+    typedef _endpoint_avsc_Union__38__ events_t;
+    eventSequenceNumberResponse_t eventSequenceNumberResponse;
+    eventListenersResponses_t eventListenersResponses;
+    events_t events;
+    EventSyncResponse() :
+        eventSequenceNumberResponse(eventSequenceNumberResponse_t()),
+        eventListenersResponses(eventListenersResponses_t()),
+        events(events_t())
+        { }
+};
+
 struct _endpoint_avsc_Union__39__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    EventSyncRequest get_EventSyncRequest() const;
-    void set_EventSyncRequest(const EventSyncRequest& v);
+    LogDeliveryErrorCode get_LogDeliveryErrorCode() const;
+    void set_LogDeliveryErrorCode(const LogDeliveryErrorCode& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1160,14 +1212,26 @@ public:
     _endpoint_avsc_Union__39__();
 };
 
+struct LogDeliveryStatus {
+    typedef _endpoint_avsc_Union__39__ errorCode_t;
+    int32_t requestId;
+    SyncResponseResultType result;
+    errorCode_t errorCode;
+    LogDeliveryStatus() :
+        requestId(int32_t()),
+        result(SyncResponseResultType()),
+        errorCode(errorCode_t())
+        { }
+};
+
 struct _endpoint_avsc_Union__40__ {
 private:
     size_t idx_;
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    LogSyncRequest get_LogSyncRequest() const;
-    void set_LogSyncRequest(const LogSyncRequest& v);
+    std::vector<LogDeliveryStatus > get_array() const;
+    void set_array(const std::vector<LogDeliveryStatus >& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1178,31 +1242,18 @@ public:
     _endpoint_avsc_Union__40__();
 };
 
-struct SyncRequest {
-    typedef _endpoint_avsc_Union__34__ syncRequestMetaData_t;
-    typedef _endpoint_avsc_Union__35__ profileSyncRequest_t;
-    typedef _endpoint_avsc_Union__36__ configurationSyncRequest_t;
-    typedef _endpoint_avsc_Union__37__ notificationSyncRequest_t;
-    typedef _endpoint_avsc_Union__38__ userSyncRequest_t;
-    typedef _endpoint_avsc_Union__39__ eventSyncRequest_t;
-    typedef _endpoint_avsc_Union__40__ logSyncRequest_t;
-    int32_t requestId;
-    syncRequestMetaData_t syncRequestMetaData;
-    profileSyncRequest_t profileSyncRequest;
-    configurationSyncRequest_t configurationSyncRequest;
-    notificationSyncRequest_t notificationSyncRequest;
-    userSyncRequest_t userSyncRequest;
-    eventSyncRequest_t eventSyncRequest;
-    logSyncRequest_t logSyncRequest;
-    SyncRequest() :
-        requestId(int32_t()),
-        syncRequestMetaData(syncRequestMetaData_t()),
-        profileSyncRequest(profileSyncRequest_t()),
-        configurationSyncRequest(configurationSyncRequest_t()),
-        notificationSyncRequest(notificationSyncRequest_t()),
-        userSyncRequest(userSyncRequest_t()),
-        eventSyncRequest(eventSyncRequest_t()),
-        logSyncRequest(logSyncRequest_t())
+struct LogSyncResponse {
+    typedef _endpoint_avsc_Union__40__ deliveryStatuses_t;
+    deliveryStatuses_t deliveryStatuses;
+    LogSyncResponse() :
+        deliveryStatuses(deliveryStatuses_t())
+        { }
+};
+
+struct RedirectSyncResponse {
+    int32_t accessPointId;
+    RedirectSyncResponse() :
+        accessPointId(int32_t())
         { }
 };
 
@@ -1212,8 +1263,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    ProfileSyncResponse get_ProfileSyncResponse() const;
-    void set_ProfileSyncResponse(const ProfileSyncResponse& v);
+    SyncRequestMetaData get_SyncRequestMetaData() const;
+    void set_SyncRequestMetaData(const SyncRequestMetaData& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1230,8 +1281,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    ConfigurationSyncResponse get_ConfigurationSyncResponse() const;
-    void set_ConfigurationSyncResponse(const ConfigurationSyncResponse& v);
+    BootstrapSyncRequest get_BootstrapSyncRequest() const;
+    void set_BootstrapSyncRequest(const BootstrapSyncRequest& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1248,8 +1299,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    NotificationSyncResponse get_NotificationSyncResponse() const;
-    void set_NotificationSyncResponse(const NotificationSyncResponse& v);
+    ProfileSyncRequest get_ProfileSyncRequest() const;
+    void set_ProfileSyncRequest(const ProfileSyncRequest& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1266,8 +1317,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    UserSyncResponse get_UserSyncResponse() const;
-    void set_UserSyncResponse(const UserSyncResponse& v);
+    ConfigurationSyncRequest get_ConfigurationSyncRequest() const;
+    void set_ConfigurationSyncRequest(const ConfigurationSyncRequest& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1284,8 +1335,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    EventSyncResponse get_EventSyncResponse() const;
-    void set_EventSyncResponse(const EventSyncResponse& v);
+    NotificationSyncRequest get_NotificationSyncRequest() const;
+    void set_NotificationSyncRequest(const NotificationSyncRequest& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1302,8 +1353,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    RedirectSyncResponse get_RedirectSyncResponse() const;
-    void set_RedirectSyncResponse(const RedirectSyncResponse& v);
+    UserSyncRequest get_UserSyncRequest() const;
+    void set_UserSyncRequest(const UserSyncRequest& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1320,8 +1371,8 @@ private:
     boost::any value_;
 public:
     size_t idx() const { return idx_; }
-    LogSyncResponse get_LogSyncResponse() const;
-    void set_LogSyncResponse(const LogSyncResponse& v);
+    EventSyncRequest get_EventSyncRequest() const;
+    void set_EventSyncRequest(const EventSyncRequest& v);
     bool is_null() const {
         return (idx_ == 1);
     }
@@ -1332,16 +1383,211 @@ public:
     _endpoint_avsc_Union__47__();
 };
 
+struct _endpoint_avsc_Union__48__ {
+private:
+    size_t idx_;
+    boost::any value_;
+public:
+    size_t idx() const { return idx_; }
+    LogSyncRequest get_LogSyncRequest() const;
+    void set_LogSyncRequest(const LogSyncRequest& v);
+    bool is_null() const {
+        return (idx_ == 1);
+    }
+    void set_null() {
+        idx_ = 1;
+        value_ = boost::any();
+    }
+    _endpoint_avsc_Union__48__();
+};
+
+struct SyncRequest {
+    typedef _endpoint_avsc_Union__41__ syncRequestMetaData_t;
+    typedef _endpoint_avsc_Union__42__ bootstrapSyncRequest_t;
+    typedef _endpoint_avsc_Union__43__ profileSyncRequest_t;
+    typedef _endpoint_avsc_Union__44__ configurationSyncRequest_t;
+    typedef _endpoint_avsc_Union__45__ notificationSyncRequest_t;
+    typedef _endpoint_avsc_Union__46__ userSyncRequest_t;
+    typedef _endpoint_avsc_Union__47__ eventSyncRequest_t;
+    typedef _endpoint_avsc_Union__48__ logSyncRequest_t;
+    int32_t requestId;
+    syncRequestMetaData_t syncRequestMetaData;
+    bootstrapSyncRequest_t bootstrapSyncRequest;
+    profileSyncRequest_t profileSyncRequest;
+    configurationSyncRequest_t configurationSyncRequest;
+    notificationSyncRequest_t notificationSyncRequest;
+    userSyncRequest_t userSyncRequest;
+    eventSyncRequest_t eventSyncRequest;
+    logSyncRequest_t logSyncRequest;
+    SyncRequest() :
+        requestId(int32_t()),
+        syncRequestMetaData(syncRequestMetaData_t()),
+        bootstrapSyncRequest(bootstrapSyncRequest_t()),
+        profileSyncRequest(profileSyncRequest_t()),
+        configurationSyncRequest(configurationSyncRequest_t()),
+        notificationSyncRequest(notificationSyncRequest_t()),
+        userSyncRequest(userSyncRequest_t()),
+        eventSyncRequest(eventSyncRequest_t()),
+        logSyncRequest(logSyncRequest_t())
+        { }
+};
+
+struct _endpoint_avsc_Union__49__ {
+private:
+    size_t idx_;
+    boost::any value_;
+public:
+    size_t idx() const { return idx_; }
+    BootstrapSyncResponse get_BootstrapSyncResponse() const;
+    void set_BootstrapSyncResponse(const BootstrapSyncResponse& v);
+    bool is_null() const {
+        return (idx_ == 1);
+    }
+    void set_null() {
+        idx_ = 1;
+        value_ = boost::any();
+    }
+    _endpoint_avsc_Union__49__();
+};
+
+struct _endpoint_avsc_Union__50__ {
+private:
+    size_t idx_;
+    boost::any value_;
+public:
+    size_t idx() const { return idx_; }
+    ProfileSyncResponse get_ProfileSyncResponse() const;
+    void set_ProfileSyncResponse(const ProfileSyncResponse& v);
+    bool is_null() const {
+        return (idx_ == 1);
+    }
+    void set_null() {
+        idx_ = 1;
+        value_ = boost::any();
+    }
+    _endpoint_avsc_Union__50__();
+};
+
+struct _endpoint_avsc_Union__51__ {
+private:
+    size_t idx_;
+    boost::any value_;
+public:
+    size_t idx() const { return idx_; }
+    ConfigurationSyncResponse get_ConfigurationSyncResponse() const;
+    void set_ConfigurationSyncResponse(const ConfigurationSyncResponse& v);
+    bool is_null() const {
+        return (idx_ == 1);
+    }
+    void set_null() {
+        idx_ = 1;
+        value_ = boost::any();
+    }
+    _endpoint_avsc_Union__51__();
+};
+
+struct _endpoint_avsc_Union__52__ {
+private:
+    size_t idx_;
+    boost::any value_;
+public:
+    size_t idx() const { return idx_; }
+    NotificationSyncResponse get_NotificationSyncResponse() const;
+    void set_NotificationSyncResponse(const NotificationSyncResponse& v);
+    bool is_null() const {
+        return (idx_ == 1);
+    }
+    void set_null() {
+        idx_ = 1;
+        value_ = boost::any();
+    }
+    _endpoint_avsc_Union__52__();
+};
+
+struct _endpoint_avsc_Union__53__ {
+private:
+    size_t idx_;
+    boost::any value_;
+public:
+    size_t idx() const { return idx_; }
+    UserSyncResponse get_UserSyncResponse() const;
+    void set_UserSyncResponse(const UserSyncResponse& v);
+    bool is_null() const {
+        return (idx_ == 1);
+    }
+    void set_null() {
+        idx_ = 1;
+        value_ = boost::any();
+    }
+    _endpoint_avsc_Union__53__();
+};
+
+struct _endpoint_avsc_Union__54__ {
+private:
+    size_t idx_;
+    boost::any value_;
+public:
+    size_t idx() const { return idx_; }
+    EventSyncResponse get_EventSyncResponse() const;
+    void set_EventSyncResponse(const EventSyncResponse& v);
+    bool is_null() const {
+        return (idx_ == 1);
+    }
+    void set_null() {
+        idx_ = 1;
+        value_ = boost::any();
+    }
+    _endpoint_avsc_Union__54__();
+};
+
+struct _endpoint_avsc_Union__55__ {
+private:
+    size_t idx_;
+    boost::any value_;
+public:
+    size_t idx() const { return idx_; }
+    RedirectSyncResponse get_RedirectSyncResponse() const;
+    void set_RedirectSyncResponse(const RedirectSyncResponse& v);
+    bool is_null() const {
+        return (idx_ == 1);
+    }
+    void set_null() {
+        idx_ = 1;
+        value_ = boost::any();
+    }
+    _endpoint_avsc_Union__55__();
+};
+
+struct _endpoint_avsc_Union__56__ {
+private:
+    size_t idx_;
+    boost::any value_;
+public:
+    size_t idx() const { return idx_; }
+    LogSyncResponse get_LogSyncResponse() const;
+    void set_LogSyncResponse(const LogSyncResponse& v);
+    bool is_null() const {
+        return (idx_ == 1);
+    }
+    void set_null() {
+        idx_ = 1;
+        value_ = boost::any();
+    }
+    _endpoint_avsc_Union__56__();
+};
+
 struct SyncResponse {
-    typedef _endpoint_avsc_Union__41__ profileSyncResponse_t;
-    typedef _endpoint_avsc_Union__42__ configurationSyncResponse_t;
-    typedef _endpoint_avsc_Union__43__ notificationSyncResponse_t;
-    typedef _endpoint_avsc_Union__44__ userSyncResponse_t;
-    typedef _endpoint_avsc_Union__45__ eventSyncResponse_t;
-    typedef _endpoint_avsc_Union__46__ redirectSyncResponse_t;
-    typedef _endpoint_avsc_Union__47__ logSyncResponse_t;
+    typedef _endpoint_avsc_Union__49__ bootstrapSyncResponse_t;
+    typedef _endpoint_avsc_Union__50__ profileSyncResponse_t;
+    typedef _endpoint_avsc_Union__51__ configurationSyncResponse_t;
+    typedef _endpoint_avsc_Union__52__ notificationSyncResponse_t;
+    typedef _endpoint_avsc_Union__53__ userSyncResponse_t;
+    typedef _endpoint_avsc_Union__54__ eventSyncResponse_t;
+    typedef _endpoint_avsc_Union__55__ redirectSyncResponse_t;
+    typedef _endpoint_avsc_Union__56__ logSyncResponse_t;
     int32_t requestId;
     SyncResponseResultType status;
+    bootstrapSyncResponse_t bootstrapSyncResponse;
     profileSyncResponse_t profileSyncResponse;
     configurationSyncResponse_t configurationSyncResponse;
     notificationSyncResponse_t notificationSyncResponse;
@@ -1352,6 +1598,7 @@ struct SyncResponse {
     SyncResponse() :
         requestId(int32_t()),
         status(SyncResponseResultType()),
+        bootstrapSyncResponse(bootstrapSyncResponse_t()),
         profileSyncResponse(profileSyncResponse_t()),
         configurationSyncResponse(configurationSyncResponse_t()),
         notificationSyncResponse(notificationSyncResponse_t()),
@@ -1371,7 +1618,7 @@ struct TopicSubscriptionInfo {
         { }
 };
 
-struct _endpoint_avsc_Union__48__ {
+struct _endpoint_avsc_Union__57__ {
 private:
     size_t idx_;
     boost::any value_;
@@ -1393,6 +1640,10 @@ public:
     void set_SubscriptionCommandType(const SubscriptionCommandType& v);
     SyncResponseResultType get_SyncResponseResultType() const;
     void set_SyncResponseResultType(const SyncResponseResultType& v);
+    LogDeliveryErrorCode get_LogDeliveryErrorCode() const;
+    void set_LogDeliveryErrorCode(const LogDeliveryErrorCode& v);
+    UserAttachErrorCode get_UserAttachErrorCode() const;
+    void set_UserAttachErrorCode(const UserAttachErrorCode& v);
     SubscriptionCommand get_SubscriptionCommand() const;
     void set_SubscriptionCommand(const SubscriptionCommand& v);
     UserAttachRequest get_UserAttachRequest() const;
@@ -1431,6 +1682,10 @@ public:
     void set_SyncRequestMetaData(const SyncRequestMetaData& v);
     ProfileSyncRequest get_ProfileSyncRequest() const;
     void set_ProfileSyncRequest(const ProfileSyncRequest& v);
+    ProtocolVersionPair get_ProtocolVersionPair() const;
+    void set_ProtocolVersionPair(const ProtocolVersionPair& v);
+    BootstrapSyncRequest get_BootstrapSyncRequest() const;
+    void set_BootstrapSyncRequest(const BootstrapSyncRequest& v);
     ConfigurationSyncRequest get_ConfigurationSyncRequest() const;
     void set_ConfigurationSyncRequest(const ConfigurationSyncRequest& v);
     NotificationSyncRequest get_NotificationSyncRequest() const;
@@ -1441,6 +1696,10 @@ public:
     void set_EventSyncRequest(const EventSyncRequest& v);
     LogSyncRequest get_LogSyncRequest() const;
     void set_LogSyncRequest(const LogSyncRequest& v);
+    ProtocolMetaData get_ProtocolMetaData() const;
+    void set_ProtocolMetaData(const ProtocolMetaData& v);
+    BootstrapSyncResponse get_BootstrapSyncResponse() const;
+    void set_BootstrapSyncResponse(const BootstrapSyncResponse& v);
     ProfileSyncResponse get_ProfileSyncResponse() const;
     void set_ProfileSyncResponse(const ProfileSyncResponse& v);
     ConfigurationSyncResponse get_ConfigurationSyncResponse() const;
@@ -1451,6 +1710,8 @@ public:
     void set_UserSyncResponse(const UserSyncResponse& v);
     EventSyncResponse get_EventSyncResponse() const;
     void set_EventSyncResponse(const EventSyncResponse& v);
+    LogDeliveryStatus get_LogDeliveryStatus() const;
+    void set_LogDeliveryStatus(const LogDeliveryStatus& v);
     LogSyncResponse get_LogSyncResponse() const;
     void set_LogSyncResponse(const LogSyncResponse& v);
     RedirectSyncResponse get_RedirectSyncResponse() const;
@@ -1461,7 +1722,7 @@ public:
     void set_SyncResponse(const SyncResponse& v);
     TopicSubscriptionInfo get_TopicSubscriptionInfo() const;
     void set_TopicSubscriptionInfo(const TopicSubscriptionInfo& v);
-    _endpoint_avsc_Union__48__();
+    _endpoint_avsc_Union__57__();
 };
 
 inline
@@ -1479,15 +1740,15 @@ void _endpoint_avsc_Union__0__::set_array(const std::vector<EventClassFamilyVers
 }
 
 inline
-std::string _endpoint_avsc_Union__1__::get_string() const {
+UserAttachErrorCode _endpoint_avsc_Union__1__::get_UserAttachErrorCode() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
-    return boost::any_cast<std::string >(value_);
+    return boost::any_cast<UserAttachErrorCode >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__1__::set_string(const std::string& v) {
+void _endpoint_avsc_Union__1__::set_UserAttachErrorCode(const UserAttachErrorCode& v) {
     idx_ = 0;
     value_ = v;
 }
@@ -1521,15 +1782,15 @@ void _endpoint_avsc_Union__3__::set_string(const std::string& v) {
 }
 
 inline
-std::vector<std::string > _endpoint_avsc_Union__4__::get_array() const {
+std::string _endpoint_avsc_Union__4__::get_string() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
-    return boost::any_cast<std::vector<std::string > >(value_);
+    return boost::any_cast<std::string >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__4__::set_array(const std::vector<std::string >& v) {
+void _endpoint_avsc_Union__4__::set_string(const std::string& v) {
     idx_ = 0;
     value_ = v;
 }
@@ -1549,49 +1810,21 @@ void _endpoint_avsc_Union__5__::set_string(const std::string& v) {
 }
 
 inline
-int32_t _endpoint_avsc_Union__6__::get_int() const {
+std::vector<std::string > _endpoint_avsc_Union__6__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
-    return boost::any_cast<int32_t >(value_);
+    return boost::any_cast<std::vector<std::string > >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__6__::set_int(const int32_t& v) {
+void _endpoint_avsc_Union__6__::set_array(const std::vector<std::string >& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<uint8_t> _endpoint_avsc_Union__7__::get_bytes() const {
-    if (idx_ != 0) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<std::vector<uint8_t> >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__7__::set_bytes(const std::vector<uint8_t>& v) {
-    idx_ = 0;
-    value_ = v;
-}
-
-inline
-std::vector<uint8_t> _endpoint_avsc_Union__8__::get_bytes() const {
-    if (idx_ != 0) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<std::vector<uint8_t> >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__8__::set_bytes(const std::vector<uint8_t>& v) {
-    idx_ = 0;
-    value_ = v;
-}
-
-inline
-std::string _endpoint_avsc_Union__9__::get_string() const {
+std::string _endpoint_avsc_Union__7__::get_string() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1599,7 +1832,35 @@ std::string _endpoint_avsc_Union__9__::get_string() const {
 }
 
 inline
-void _endpoint_avsc_Union__9__::set_string(const std::string& v) {
+void _endpoint_avsc_Union__7__::set_string(const std::string& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+int32_t _endpoint_avsc_Union__8__::get_int() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<int32_t >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__8__::set_int(const int32_t& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+std::vector<uint8_t> _endpoint_avsc_Union__9__::get_bytes() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<std::vector<uint8_t> >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__9__::set_bytes(const std::vector<uint8_t>& v) {
     idx_ = 0;
     value_ = v;
 }
@@ -1619,7 +1880,21 @@ void _endpoint_avsc_Union__10__::set_bytes(const std::vector<uint8_t>& v) {
 }
 
 inline
-std::vector<uint8_t> _endpoint_avsc_Union__11__::get_bytes() const {
+int64_t _endpoint_avsc_Union__11__::get_long() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<int64_t >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__11__::set_long(const int64_t& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+std::vector<uint8_t> _endpoint_avsc_Union__12__::get_bytes() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1627,13 +1902,69 @@ std::vector<uint8_t> _endpoint_avsc_Union__11__::get_bytes() const {
 }
 
 inline
-void _endpoint_avsc_Union__11__::set_bytes(const std::vector<uint8_t>& v) {
+void _endpoint_avsc_Union__12__::set_bytes(const std::vector<uint8_t>& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<TopicState > _endpoint_avsc_Union__12__::get_array() const {
+std::string _endpoint_avsc_Union__13__::get_string() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<std::string >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__13__::set_string(const std::string& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+std::vector<uint8_t> _endpoint_avsc_Union__14__::get_bytes() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<std::vector<uint8_t> >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__14__::set_bytes(const std::vector<uint8_t>& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+bool _endpoint_avsc_Union__15__::get_bool() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<bool >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__15__::set_bool(const bool& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+std::vector<uint8_t> _endpoint_avsc_Union__16__::get_bytes() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<std::vector<uint8_t> >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__16__::set_bytes(const std::vector<uint8_t>& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+std::vector<TopicState > _endpoint_avsc_Union__17__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1641,13 +1972,13 @@ std::vector<TopicState > _endpoint_avsc_Union__12__::get_array() const {
 }
 
 inline
-void _endpoint_avsc_Union__12__::set_array(const std::vector<TopicState >& v) {
+void _endpoint_avsc_Union__17__::set_array(const std::vector<TopicState >& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<std::string > _endpoint_avsc_Union__13__::get_array() const {
+std::vector<std::string > _endpoint_avsc_Union__18__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1655,13 +1986,13 @@ std::vector<std::string > _endpoint_avsc_Union__13__::get_array() const {
 }
 
 inline
-void _endpoint_avsc_Union__13__::set_array(const std::vector<std::string >& v) {
+void _endpoint_avsc_Union__18__::set_array(const std::vector<std::string >& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<SubscriptionCommand > _endpoint_avsc_Union__14__::get_array() const {
+std::vector<SubscriptionCommand > _endpoint_avsc_Union__19__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1669,13 +2000,13 @@ std::vector<SubscriptionCommand > _endpoint_avsc_Union__14__::get_array() const 
 }
 
 inline
-void _endpoint_avsc_Union__14__::set_array(const std::vector<SubscriptionCommand >& v) {
+void _endpoint_avsc_Union__19__::set_array(const std::vector<SubscriptionCommand >& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-UserAttachRequest _endpoint_avsc_Union__15__::get_UserAttachRequest() const {
+UserAttachRequest _endpoint_avsc_Union__20__::get_UserAttachRequest() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1683,13 +2014,13 @@ UserAttachRequest _endpoint_avsc_Union__15__::get_UserAttachRequest() const {
 }
 
 inline
-void _endpoint_avsc_Union__15__::set_UserAttachRequest(const UserAttachRequest& v) {
+void _endpoint_avsc_Union__20__::set_UserAttachRequest(const UserAttachRequest& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<EndpointAttachRequest > _endpoint_avsc_Union__16__::get_array() const {
+std::vector<EndpointAttachRequest > _endpoint_avsc_Union__21__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1697,13 +2028,13 @@ std::vector<EndpointAttachRequest > _endpoint_avsc_Union__16__::get_array() cons
 }
 
 inline
-void _endpoint_avsc_Union__16__::set_array(const std::vector<EndpointAttachRequest >& v) {
+void _endpoint_avsc_Union__21__::set_array(const std::vector<EndpointAttachRequest >& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<EndpointDetachRequest > _endpoint_avsc_Union__17__::get_array() const {
+std::vector<EndpointDetachRequest > _endpoint_avsc_Union__22__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1711,13 +2042,13 @@ std::vector<EndpointDetachRequest > _endpoint_avsc_Union__17__::get_array() cons
 }
 
 inline
-void _endpoint_avsc_Union__17__::set_array(const std::vector<EndpointDetachRequest >& v) {
+void _endpoint_avsc_Union__22__::set_array(const std::vector<EndpointDetachRequest >& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-EventSequenceNumberRequest _endpoint_avsc_Union__18__::get_EventSequenceNumberRequest() const {
+EventSequenceNumberRequest _endpoint_avsc_Union__23__::get_EventSequenceNumberRequest() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1725,13 +2056,13 @@ EventSequenceNumberRequest _endpoint_avsc_Union__18__::get_EventSequenceNumberRe
 }
 
 inline
-void _endpoint_avsc_Union__18__::set_EventSequenceNumberRequest(const EventSequenceNumberRequest& v) {
+void _endpoint_avsc_Union__23__::set_EventSequenceNumberRequest(const EventSequenceNumberRequest& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<EventListenersRequest > _endpoint_avsc_Union__19__::get_array() const {
+std::vector<EventListenersRequest > _endpoint_avsc_Union__24__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1739,13 +2070,13 @@ std::vector<EventListenersRequest > _endpoint_avsc_Union__19__::get_array() cons
 }
 
 inline
-void _endpoint_avsc_Union__19__::set_array(const std::vector<EventListenersRequest >& v) {
+void _endpoint_avsc_Union__24__::set_array(const std::vector<EventListenersRequest >& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<Event > _endpoint_avsc_Union__20__::get_array() const {
+std::vector<Event > _endpoint_avsc_Union__25__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1753,13 +2084,13 @@ std::vector<Event > _endpoint_avsc_Union__20__::get_array() const {
 }
 
 inline
-void _endpoint_avsc_Union__20__::set_array(const std::vector<Event >& v) {
+void _endpoint_avsc_Union__25__::set_array(const std::vector<Event >& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<LogEntry > _endpoint_avsc_Union__21__::get_array() const {
+std::vector<LogEntry > _endpoint_avsc_Union__26__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1767,13 +2098,13 @@ std::vector<LogEntry > _endpoint_avsc_Union__21__::get_array() const {
 }
 
 inline
-void _endpoint_avsc_Union__21__::set_array(const std::vector<LogEntry >& v) {
+void _endpoint_avsc_Union__26__::set_array(const std::vector<LogEntry >& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<uint8_t> _endpoint_avsc_Union__22__::get_bytes() const {
+std::vector<uint8_t> _endpoint_avsc_Union__27__::get_bytes() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1781,13 +2112,13 @@ std::vector<uint8_t> _endpoint_avsc_Union__22__::get_bytes() const {
 }
 
 inline
-void _endpoint_avsc_Union__22__::set_bytes(const std::vector<uint8_t>& v) {
+void _endpoint_avsc_Union__27__::set_bytes(const std::vector<uint8_t>& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<uint8_t> _endpoint_avsc_Union__23__::get_bytes() const {
+std::vector<uint8_t> _endpoint_avsc_Union__28__::get_bytes() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1795,13 +2126,13 @@ std::vector<uint8_t> _endpoint_avsc_Union__23__::get_bytes() const {
 }
 
 inline
-void _endpoint_avsc_Union__23__::set_bytes(const std::vector<uint8_t>& v) {
+void _endpoint_avsc_Union__28__::set_bytes(const std::vector<uint8_t>& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<Notification > _endpoint_avsc_Union__24__::get_array() const {
+std::vector<Notification > _endpoint_avsc_Union__29__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1809,13 +2140,13 @@ std::vector<Notification > _endpoint_avsc_Union__24__::get_array() const {
 }
 
 inline
-void _endpoint_avsc_Union__24__::set_array(const std::vector<Notification >& v) {
+void _endpoint_avsc_Union__29__::set_array(const std::vector<Notification >& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<Topic > _endpoint_avsc_Union__25__::get_array() const {
+std::vector<Topic > _endpoint_avsc_Union__30__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1823,13 +2154,13 @@ std::vector<Topic > _endpoint_avsc_Union__25__::get_array() const {
 }
 
 inline
-void _endpoint_avsc_Union__25__::set_array(const std::vector<Topic >& v) {
+void _endpoint_avsc_Union__30__::set_array(const std::vector<Topic >& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-UserAttachResponse _endpoint_avsc_Union__26__::get_UserAttachResponse() const {
+UserAttachResponse _endpoint_avsc_Union__31__::get_UserAttachResponse() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1837,13 +2168,13 @@ UserAttachResponse _endpoint_avsc_Union__26__::get_UserAttachResponse() const {
 }
 
 inline
-void _endpoint_avsc_Union__26__::set_UserAttachResponse(const UserAttachResponse& v) {
+void _endpoint_avsc_Union__31__::set_UserAttachResponse(const UserAttachResponse& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-UserAttachNotification _endpoint_avsc_Union__27__::get_UserAttachNotification() const {
+UserAttachNotification _endpoint_avsc_Union__32__::get_UserAttachNotification() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1851,13 +2182,13 @@ UserAttachNotification _endpoint_avsc_Union__27__::get_UserAttachNotification() 
 }
 
 inline
-void _endpoint_avsc_Union__27__::set_UserAttachNotification(const UserAttachNotification& v) {
+void _endpoint_avsc_Union__32__::set_UserAttachNotification(const UserAttachNotification& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-UserDetachNotification _endpoint_avsc_Union__28__::get_UserDetachNotification() const {
+UserDetachNotification _endpoint_avsc_Union__33__::get_UserDetachNotification() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1865,13 +2196,13 @@ UserDetachNotification _endpoint_avsc_Union__28__::get_UserDetachNotification() 
 }
 
 inline
-void _endpoint_avsc_Union__28__::set_UserDetachNotification(const UserDetachNotification& v) {
+void _endpoint_avsc_Union__33__::set_UserDetachNotification(const UserDetachNotification& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<EndpointAttachResponse > _endpoint_avsc_Union__29__::get_array() const {
+std::vector<EndpointAttachResponse > _endpoint_avsc_Union__34__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1879,13 +2210,13 @@ std::vector<EndpointAttachResponse > _endpoint_avsc_Union__29__::get_array() con
 }
 
 inline
-void _endpoint_avsc_Union__29__::set_array(const std::vector<EndpointAttachResponse >& v) {
+void _endpoint_avsc_Union__34__::set_array(const std::vector<EndpointAttachResponse >& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<EndpointDetachResponse > _endpoint_avsc_Union__30__::get_array() const {
+std::vector<EndpointDetachResponse > _endpoint_avsc_Union__35__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1893,13 +2224,13 @@ std::vector<EndpointDetachResponse > _endpoint_avsc_Union__30__::get_array() con
 }
 
 inline
-void _endpoint_avsc_Union__30__::set_array(const std::vector<EndpointDetachResponse >& v) {
+void _endpoint_avsc_Union__35__::set_array(const std::vector<EndpointDetachResponse >& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-EventSequenceNumberResponse _endpoint_avsc_Union__31__::get_EventSequenceNumberResponse() const {
+EventSequenceNumberResponse _endpoint_avsc_Union__36__::get_EventSequenceNumberResponse() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1907,13 +2238,13 @@ EventSequenceNumberResponse _endpoint_avsc_Union__31__::get_EventSequenceNumberR
 }
 
 inline
-void _endpoint_avsc_Union__31__::set_EventSequenceNumberResponse(const EventSequenceNumberResponse& v) {
+void _endpoint_avsc_Union__36__::set_EventSequenceNumberResponse(const EventSequenceNumberResponse& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<EventListenersResponse > _endpoint_avsc_Union__32__::get_array() const {
+std::vector<EventListenersResponse > _endpoint_avsc_Union__37__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1921,13 +2252,13 @@ std::vector<EventListenersResponse > _endpoint_avsc_Union__32__::get_array() con
 }
 
 inline
-void _endpoint_avsc_Union__32__::set_array(const std::vector<EventListenersResponse >& v) {
+void _endpoint_avsc_Union__37__::set_array(const std::vector<EventListenersResponse >& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-std::vector<Event > _endpoint_avsc_Union__33__::get_array() const {
+std::vector<Event > _endpoint_avsc_Union__38__::get_array() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1935,13 +2266,41 @@ std::vector<Event > _endpoint_avsc_Union__33__::get_array() const {
 }
 
 inline
-void _endpoint_avsc_Union__33__::set_array(const std::vector<Event >& v) {
+void _endpoint_avsc_Union__38__::set_array(const std::vector<Event >& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-SyncRequestMetaData _endpoint_avsc_Union__34__::get_SyncRequestMetaData() const {
+LogDeliveryErrorCode _endpoint_avsc_Union__39__::get_LogDeliveryErrorCode() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<LogDeliveryErrorCode >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__39__::set_LogDeliveryErrorCode(const LogDeliveryErrorCode& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+std::vector<LogDeliveryStatus > _endpoint_avsc_Union__40__::get_array() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<std::vector<LogDeliveryStatus > >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__40__::set_array(const std::vector<LogDeliveryStatus >& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+SyncRequestMetaData _endpoint_avsc_Union__41__::get_SyncRequestMetaData() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1949,13 +2308,27 @@ SyncRequestMetaData _endpoint_avsc_Union__34__::get_SyncRequestMetaData() const 
 }
 
 inline
-void _endpoint_avsc_Union__34__::set_SyncRequestMetaData(const SyncRequestMetaData& v) {
+void _endpoint_avsc_Union__41__::set_SyncRequestMetaData(const SyncRequestMetaData& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-ProfileSyncRequest _endpoint_avsc_Union__35__::get_ProfileSyncRequest() const {
+BootstrapSyncRequest _endpoint_avsc_Union__42__::get_BootstrapSyncRequest() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<BootstrapSyncRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__42__::set_BootstrapSyncRequest(const BootstrapSyncRequest& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+ProfileSyncRequest _endpoint_avsc_Union__43__::get_ProfileSyncRequest() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1963,13 +2336,13 @@ ProfileSyncRequest _endpoint_avsc_Union__35__::get_ProfileSyncRequest() const {
 }
 
 inline
-void _endpoint_avsc_Union__35__::set_ProfileSyncRequest(const ProfileSyncRequest& v) {
+void _endpoint_avsc_Union__43__::set_ProfileSyncRequest(const ProfileSyncRequest& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-ConfigurationSyncRequest _endpoint_avsc_Union__36__::get_ConfigurationSyncRequest() const {
+ConfigurationSyncRequest _endpoint_avsc_Union__44__::get_ConfigurationSyncRequest() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1977,13 +2350,13 @@ ConfigurationSyncRequest _endpoint_avsc_Union__36__::get_ConfigurationSyncReques
 }
 
 inline
-void _endpoint_avsc_Union__36__::set_ConfigurationSyncRequest(const ConfigurationSyncRequest& v) {
+void _endpoint_avsc_Union__44__::set_ConfigurationSyncRequest(const ConfigurationSyncRequest& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-NotificationSyncRequest _endpoint_avsc_Union__37__::get_NotificationSyncRequest() const {
+NotificationSyncRequest _endpoint_avsc_Union__45__::get_NotificationSyncRequest() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -1991,13 +2364,13 @@ NotificationSyncRequest _endpoint_avsc_Union__37__::get_NotificationSyncRequest(
 }
 
 inline
-void _endpoint_avsc_Union__37__::set_NotificationSyncRequest(const NotificationSyncRequest& v) {
+void _endpoint_avsc_Union__45__::set_NotificationSyncRequest(const NotificationSyncRequest& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-UserSyncRequest _endpoint_avsc_Union__38__::get_UserSyncRequest() const {
+UserSyncRequest _endpoint_avsc_Union__46__::get_UserSyncRequest() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -2005,13 +2378,13 @@ UserSyncRequest _endpoint_avsc_Union__38__::get_UserSyncRequest() const {
 }
 
 inline
-void _endpoint_avsc_Union__38__::set_UserSyncRequest(const UserSyncRequest& v) {
+void _endpoint_avsc_Union__46__::set_UserSyncRequest(const UserSyncRequest& v) {
     idx_ = 0;
     value_ = v;
 }
 
 inline
-EventSyncRequest _endpoint_avsc_Union__39__::get_EventSyncRequest() const {
+EventSyncRequest _endpoint_avsc_Union__47__::get_EventSyncRequest() const {
     if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
@@ -2019,560 +2392,14 @@ EventSyncRequest _endpoint_avsc_Union__39__::get_EventSyncRequest() const {
 }
 
 inline
-void _endpoint_avsc_Union__39__::set_EventSyncRequest(const EventSyncRequest& v) {
+void _endpoint_avsc_Union__47__::set_EventSyncRequest(const EventSyncRequest& v) {
     idx_ = 0;
-    value_ = v;
-}
-
-inline
-LogSyncRequest _endpoint_avsc_Union__40__::get_LogSyncRequest() const {
-    if (idx_ != 0) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<LogSyncRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__40__::set_LogSyncRequest(const LogSyncRequest& v) {
-    idx_ = 0;
-    value_ = v;
-}
-
-inline
-ProfileSyncResponse _endpoint_avsc_Union__41__::get_ProfileSyncResponse() const {
-    if (idx_ != 0) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<ProfileSyncResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__41__::set_ProfileSyncResponse(const ProfileSyncResponse& v) {
-    idx_ = 0;
-    value_ = v;
-}
-
-inline
-ConfigurationSyncResponse _endpoint_avsc_Union__42__::get_ConfigurationSyncResponse() const {
-    if (idx_ != 0) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<ConfigurationSyncResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__42__::set_ConfigurationSyncResponse(const ConfigurationSyncResponse& v) {
-    idx_ = 0;
-    value_ = v;
-}
-
-inline
-NotificationSyncResponse _endpoint_avsc_Union__43__::get_NotificationSyncResponse() const {
-    if (idx_ != 0) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<NotificationSyncResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__43__::set_NotificationSyncResponse(const NotificationSyncResponse& v) {
-    idx_ = 0;
-    value_ = v;
-}
-
-inline
-UserSyncResponse _endpoint_avsc_Union__44__::get_UserSyncResponse() const {
-    if (idx_ != 0) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<UserSyncResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__44__::set_UserSyncResponse(const UserSyncResponse& v) {
-    idx_ = 0;
-    value_ = v;
-}
-
-inline
-EventSyncResponse _endpoint_avsc_Union__45__::get_EventSyncResponse() const {
-    if (idx_ != 0) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EventSyncResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__45__::set_EventSyncResponse(const EventSyncResponse& v) {
-    idx_ = 0;
-    value_ = v;
-}
-
-inline
-RedirectSyncResponse _endpoint_avsc_Union__46__::get_RedirectSyncResponse() const {
-    if (idx_ != 0) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<RedirectSyncResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__46__::set_RedirectSyncResponse(const RedirectSyncResponse& v) {
-    idx_ = 0;
-    value_ = v;
-}
-
-inline
-LogSyncResponse _endpoint_avsc_Union__47__::get_LogSyncResponse() const {
-    if (idx_ != 0) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<LogSyncResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__47__::set_LogSyncResponse(const LogSyncResponse& v) {
-    idx_ = 0;
-    value_ = v;
-}
-
-inline
-EventClassFamilyVersionInfo _endpoint_avsc_Union__48__::get_EventClassFamilyVersionInfo() const {
-    if (idx_ != 0) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EventClassFamilyVersionInfo >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_EventClassFamilyVersionInfo(const EventClassFamilyVersionInfo& v) {
-    idx_ = 0;
-    value_ = v;
-}
-
-inline
-EndpointVersionInfo _endpoint_avsc_Union__48__::get_EndpointVersionInfo() const {
-    if (idx_ != 1) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EndpointVersionInfo >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_EndpointVersionInfo(const EndpointVersionInfo& v) {
-    idx_ = 1;
-    value_ = v;
-}
-
-inline
-TopicState _endpoint_avsc_Union__48__::get_TopicState() const {
-    if (idx_ != 2) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<TopicState >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_TopicState(const TopicState& v) {
-    idx_ = 2;
-    value_ = v;
-}
-
-inline
-SyncResponseStatus _endpoint_avsc_Union__48__::get_SyncResponseStatus() const {
-    if (idx_ != 3) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<SyncResponseStatus >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_SyncResponseStatus(const SyncResponseStatus& v) {
-    idx_ = 3;
-    value_ = v;
-}
-
-inline
-NotificationType _endpoint_avsc_Union__48__::get_NotificationType() const {
-    if (idx_ != 4) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<NotificationType >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_NotificationType(const NotificationType& v) {
-    idx_ = 4;
-    value_ = v;
-}
-
-inline
-SubscriptionType _endpoint_avsc_Union__48__::get_SubscriptionType() const {
-    if (idx_ != 5) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<SubscriptionType >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_SubscriptionType(const SubscriptionType& v) {
-    idx_ = 5;
-    value_ = v;
-}
-
-inline
-SubscriptionCommandType _endpoint_avsc_Union__48__::get_SubscriptionCommandType() const {
-    if (idx_ != 6) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<SubscriptionCommandType >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_SubscriptionCommandType(const SubscriptionCommandType& v) {
-    idx_ = 6;
-    value_ = v;
-}
-
-inline
-SyncResponseResultType _endpoint_avsc_Union__48__::get_SyncResponseResultType() const {
-    if (idx_ != 7) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<SyncResponseResultType >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_SyncResponseResultType(const SyncResponseResultType& v) {
-    idx_ = 7;
-    value_ = v;
-}
-
-inline
-SubscriptionCommand _endpoint_avsc_Union__48__::get_SubscriptionCommand() const {
-    if (idx_ != 8) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<SubscriptionCommand >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_SubscriptionCommand(const SubscriptionCommand& v) {
-    idx_ = 8;
-    value_ = v;
-}
-
-inline
-UserAttachRequest _endpoint_avsc_Union__48__::get_UserAttachRequest() const {
-    if (idx_ != 9) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<UserAttachRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_UserAttachRequest(const UserAttachRequest& v) {
-    idx_ = 9;
-    value_ = v;
-}
-
-inline
-UserAttachResponse _endpoint_avsc_Union__48__::get_UserAttachResponse() const {
-    if (idx_ != 10) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<UserAttachResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_UserAttachResponse(const UserAttachResponse& v) {
-    idx_ = 10;
-    value_ = v;
-}
-
-inline
-UserAttachNotification _endpoint_avsc_Union__48__::get_UserAttachNotification() const {
-    if (idx_ != 11) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<UserAttachNotification >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_UserAttachNotification(const UserAttachNotification& v) {
-    idx_ = 11;
-    value_ = v;
-}
-
-inline
-UserDetachNotification _endpoint_avsc_Union__48__::get_UserDetachNotification() const {
-    if (idx_ != 12) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<UserDetachNotification >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_UserDetachNotification(const UserDetachNotification& v) {
-    idx_ = 12;
-    value_ = v;
-}
-
-inline
-EndpointAttachRequest _endpoint_avsc_Union__48__::get_EndpointAttachRequest() const {
-    if (idx_ != 13) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EndpointAttachRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_EndpointAttachRequest(const EndpointAttachRequest& v) {
-    idx_ = 13;
-    value_ = v;
-}
-
-inline
-EndpointAttachResponse _endpoint_avsc_Union__48__::get_EndpointAttachResponse() const {
-    if (idx_ != 14) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EndpointAttachResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_EndpointAttachResponse(const EndpointAttachResponse& v) {
-    idx_ = 14;
-    value_ = v;
-}
-
-inline
-EndpointDetachRequest _endpoint_avsc_Union__48__::get_EndpointDetachRequest() const {
-    if (idx_ != 15) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EndpointDetachRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_EndpointDetachRequest(const EndpointDetachRequest& v) {
-    idx_ = 15;
-    value_ = v;
-}
-
-inline
-EndpointDetachResponse _endpoint_avsc_Union__48__::get_EndpointDetachResponse() const {
-    if (idx_ != 16) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EndpointDetachResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_EndpointDetachResponse(const EndpointDetachResponse& v) {
-    idx_ = 16;
-    value_ = v;
-}
-
-inline
-Event _endpoint_avsc_Union__48__::get_Event() const {
-    if (idx_ != 17) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<Event >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_Event(const Event& v) {
-    idx_ = 17;
-    value_ = v;
-}
-
-inline
-EventListenersRequest _endpoint_avsc_Union__48__::get_EventListenersRequest() const {
-    if (idx_ != 18) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EventListenersRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_EventListenersRequest(const EventListenersRequest& v) {
-    idx_ = 18;
-    value_ = v;
-}
-
-inline
-EventListenersResponse _endpoint_avsc_Union__48__::get_EventListenersResponse() const {
-    if (idx_ != 19) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EventListenersResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_EventListenersResponse(const EventListenersResponse& v) {
-    idx_ = 19;
-    value_ = v;
-}
-
-inline
-EventSequenceNumberRequest _endpoint_avsc_Union__48__::get_EventSequenceNumberRequest() const {
-    if (idx_ != 20) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EventSequenceNumberRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_EventSequenceNumberRequest(const EventSequenceNumberRequest& v) {
-    idx_ = 20;
-    value_ = v;
-}
-
-inline
-EventSequenceNumberResponse _endpoint_avsc_Union__48__::get_EventSequenceNumberResponse() const {
-    if (idx_ != 21) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EventSequenceNumberResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_EventSequenceNumberResponse(const EventSequenceNumberResponse& v) {
-    idx_ = 21;
-    value_ = v;
-}
-
-inline
-Notification _endpoint_avsc_Union__48__::get_Notification() const {
-    if (idx_ != 22) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<Notification >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_Notification(const Notification& v) {
-    idx_ = 22;
-    value_ = v;
-}
-
-inline
-Topic _endpoint_avsc_Union__48__::get_Topic() const {
-    if (idx_ != 23) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<Topic >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_Topic(const Topic& v) {
-    idx_ = 23;
-    value_ = v;
-}
-
-inline
-LogEntry _endpoint_avsc_Union__48__::get_LogEntry() const {
-    if (idx_ != 24) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<LogEntry >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_LogEntry(const LogEntry& v) {
-    idx_ = 24;
-    value_ = v;
-}
-
-inline
-SyncRequestMetaData _endpoint_avsc_Union__48__::get_SyncRequestMetaData() const {
-    if (idx_ != 25) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<SyncRequestMetaData >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_SyncRequestMetaData(const SyncRequestMetaData& v) {
-    idx_ = 25;
-    value_ = v;
-}
-
-inline
-ProfileSyncRequest _endpoint_avsc_Union__48__::get_ProfileSyncRequest() const {
-    if (idx_ != 26) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<ProfileSyncRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_ProfileSyncRequest(const ProfileSyncRequest& v) {
-    idx_ = 26;
-    value_ = v;
-}
-
-inline
-ConfigurationSyncRequest _endpoint_avsc_Union__48__::get_ConfigurationSyncRequest() const {
-    if (idx_ != 27) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<ConfigurationSyncRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_ConfigurationSyncRequest(const ConfigurationSyncRequest& v) {
-    idx_ = 27;
-    value_ = v;
-}
-
-inline
-NotificationSyncRequest _endpoint_avsc_Union__48__::get_NotificationSyncRequest() const {
-    if (idx_ != 28) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<NotificationSyncRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_NotificationSyncRequest(const NotificationSyncRequest& v) {
-    idx_ = 28;
-    value_ = v;
-}
-
-inline
-UserSyncRequest _endpoint_avsc_Union__48__::get_UserSyncRequest() const {
-    if (idx_ != 29) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<UserSyncRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_UserSyncRequest(const UserSyncRequest& v) {
-    idx_ = 29;
-    value_ = v;
-}
-
-inline
-EventSyncRequest _endpoint_avsc_Union__48__::get_EventSyncRequest() const {
-    if (idx_ != 30) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<EventSyncRequest >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_EventSyncRequest(const EventSyncRequest& v) {
-    idx_ = 30;
     value_ = v;
 }
 
 inline
 LogSyncRequest _endpoint_avsc_Union__48__::get_LogSyncRequest() const {
-    if (idx_ != 31) {
+    if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
     return boost::any_cast<LogSyncRequest >(value_);
@@ -2580,199 +2407,866 @@ LogSyncRequest _endpoint_avsc_Union__48__::get_LogSyncRequest() const {
 
 inline
 void _endpoint_avsc_Union__48__::set_LogSyncRequest(const LogSyncRequest& v) {
-    idx_ = 31;
+    idx_ = 0;
     value_ = v;
 }
 
 inline
-ProfileSyncResponse _endpoint_avsc_Union__48__::get_ProfileSyncResponse() const {
-    if (idx_ != 32) {
+BootstrapSyncResponse _endpoint_avsc_Union__49__::get_BootstrapSyncResponse() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<BootstrapSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__49__::set_BootstrapSyncResponse(const BootstrapSyncResponse& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+ProfileSyncResponse _endpoint_avsc_Union__50__::get_ProfileSyncResponse() const {
+    if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
     return boost::any_cast<ProfileSyncResponse >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__48__::set_ProfileSyncResponse(const ProfileSyncResponse& v) {
-    idx_ = 32;
+void _endpoint_avsc_Union__50__::set_ProfileSyncResponse(const ProfileSyncResponse& v) {
+    idx_ = 0;
     value_ = v;
 }
 
 inline
-ConfigurationSyncResponse _endpoint_avsc_Union__48__::get_ConfigurationSyncResponse() const {
-    if (idx_ != 33) {
+ConfigurationSyncResponse _endpoint_avsc_Union__51__::get_ConfigurationSyncResponse() const {
+    if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
     return boost::any_cast<ConfigurationSyncResponse >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__48__::set_ConfigurationSyncResponse(const ConfigurationSyncResponse& v) {
-    idx_ = 33;
+void _endpoint_avsc_Union__51__::set_ConfigurationSyncResponse(const ConfigurationSyncResponse& v) {
+    idx_ = 0;
     value_ = v;
 }
 
 inline
-NotificationSyncResponse _endpoint_avsc_Union__48__::get_NotificationSyncResponse() const {
-    if (idx_ != 34) {
+NotificationSyncResponse _endpoint_avsc_Union__52__::get_NotificationSyncResponse() const {
+    if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
     return boost::any_cast<NotificationSyncResponse >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__48__::set_NotificationSyncResponse(const NotificationSyncResponse& v) {
-    idx_ = 34;
+void _endpoint_avsc_Union__52__::set_NotificationSyncResponse(const NotificationSyncResponse& v) {
+    idx_ = 0;
     value_ = v;
 }
 
 inline
-UserSyncResponse _endpoint_avsc_Union__48__::get_UserSyncResponse() const {
-    if (idx_ != 35) {
+UserSyncResponse _endpoint_avsc_Union__53__::get_UserSyncResponse() const {
+    if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
     return boost::any_cast<UserSyncResponse >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__48__::set_UserSyncResponse(const UserSyncResponse& v) {
-    idx_ = 35;
+void _endpoint_avsc_Union__53__::set_UserSyncResponse(const UserSyncResponse& v) {
+    idx_ = 0;
     value_ = v;
 }
 
 inline
-EventSyncResponse _endpoint_avsc_Union__48__::get_EventSyncResponse() const {
-    if (idx_ != 36) {
+EventSyncResponse _endpoint_avsc_Union__54__::get_EventSyncResponse() const {
+    if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
     return boost::any_cast<EventSyncResponse >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__48__::set_EventSyncResponse(const EventSyncResponse& v) {
-    idx_ = 36;
+void _endpoint_avsc_Union__54__::set_EventSyncResponse(const EventSyncResponse& v) {
+    idx_ = 0;
     value_ = v;
 }
 
 inline
-LogSyncResponse _endpoint_avsc_Union__48__::get_LogSyncResponse() const {
-    if (idx_ != 37) {
-        throw avro::Exception("Invalid type for union");
-    }
-    return boost::any_cast<LogSyncResponse >(value_);
-}
-
-inline
-void _endpoint_avsc_Union__48__::set_LogSyncResponse(const LogSyncResponse& v) {
-    idx_ = 37;
-    value_ = v;
-}
-
-inline
-RedirectSyncResponse _endpoint_avsc_Union__48__::get_RedirectSyncResponse() const {
-    if (idx_ != 38) {
+RedirectSyncResponse _endpoint_avsc_Union__55__::get_RedirectSyncResponse() const {
+    if (idx_ != 0) {
         throw avro::Exception("Invalid type for union");
     }
     return boost::any_cast<RedirectSyncResponse >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__48__::set_RedirectSyncResponse(const RedirectSyncResponse& v) {
+void _endpoint_avsc_Union__55__::set_RedirectSyncResponse(const RedirectSyncResponse& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+LogSyncResponse _endpoint_avsc_Union__56__::get_LogSyncResponse() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<LogSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__56__::set_LogSyncResponse(const LogSyncResponse& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+EventClassFamilyVersionInfo _endpoint_avsc_Union__57__::get_EventClassFamilyVersionInfo() const {
+    if (idx_ != 0) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EventClassFamilyVersionInfo >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_EventClassFamilyVersionInfo(const EventClassFamilyVersionInfo& v) {
+    idx_ = 0;
+    value_ = v;
+}
+
+inline
+EndpointVersionInfo _endpoint_avsc_Union__57__::get_EndpointVersionInfo() const {
+    if (idx_ != 1) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EndpointVersionInfo >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_EndpointVersionInfo(const EndpointVersionInfo& v) {
+    idx_ = 1;
+    value_ = v;
+}
+
+inline
+TopicState _endpoint_avsc_Union__57__::get_TopicState() const {
+    if (idx_ != 2) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<TopicState >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_TopicState(const TopicState& v) {
+    idx_ = 2;
+    value_ = v;
+}
+
+inline
+SyncResponseStatus _endpoint_avsc_Union__57__::get_SyncResponseStatus() const {
+    if (idx_ != 3) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<SyncResponseStatus >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_SyncResponseStatus(const SyncResponseStatus& v) {
+    idx_ = 3;
+    value_ = v;
+}
+
+inline
+NotificationType _endpoint_avsc_Union__57__::get_NotificationType() const {
+    if (idx_ != 4) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<NotificationType >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_NotificationType(const NotificationType& v) {
+    idx_ = 4;
+    value_ = v;
+}
+
+inline
+SubscriptionType _endpoint_avsc_Union__57__::get_SubscriptionType() const {
+    if (idx_ != 5) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<SubscriptionType >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_SubscriptionType(const SubscriptionType& v) {
+    idx_ = 5;
+    value_ = v;
+}
+
+inline
+SubscriptionCommandType _endpoint_avsc_Union__57__::get_SubscriptionCommandType() const {
+    if (idx_ != 6) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<SubscriptionCommandType >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_SubscriptionCommandType(const SubscriptionCommandType& v) {
+    idx_ = 6;
+    value_ = v;
+}
+
+inline
+SyncResponseResultType _endpoint_avsc_Union__57__::get_SyncResponseResultType() const {
+    if (idx_ != 7) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<SyncResponseResultType >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_SyncResponseResultType(const SyncResponseResultType& v) {
+    idx_ = 7;
+    value_ = v;
+}
+
+inline
+LogDeliveryErrorCode _endpoint_avsc_Union__57__::get_LogDeliveryErrorCode() const {
+    if (idx_ != 8) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<LogDeliveryErrorCode >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_LogDeliveryErrorCode(const LogDeliveryErrorCode& v) {
+    idx_ = 8;
+    value_ = v;
+}
+
+inline
+UserAttachErrorCode _endpoint_avsc_Union__57__::get_UserAttachErrorCode() const {
+    if (idx_ != 9) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<UserAttachErrorCode >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_UserAttachErrorCode(const UserAttachErrorCode& v) {
+    idx_ = 9;
+    value_ = v;
+}
+
+inline
+SubscriptionCommand _endpoint_avsc_Union__57__::get_SubscriptionCommand() const {
+    if (idx_ != 10) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<SubscriptionCommand >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_SubscriptionCommand(const SubscriptionCommand& v) {
+    idx_ = 10;
+    value_ = v;
+}
+
+inline
+UserAttachRequest _endpoint_avsc_Union__57__::get_UserAttachRequest() const {
+    if (idx_ != 11) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<UserAttachRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_UserAttachRequest(const UserAttachRequest& v) {
+    idx_ = 11;
+    value_ = v;
+}
+
+inline
+UserAttachResponse _endpoint_avsc_Union__57__::get_UserAttachResponse() const {
+    if (idx_ != 12) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<UserAttachResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_UserAttachResponse(const UserAttachResponse& v) {
+    idx_ = 12;
+    value_ = v;
+}
+
+inline
+UserAttachNotification _endpoint_avsc_Union__57__::get_UserAttachNotification() const {
+    if (idx_ != 13) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<UserAttachNotification >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_UserAttachNotification(const UserAttachNotification& v) {
+    idx_ = 13;
+    value_ = v;
+}
+
+inline
+UserDetachNotification _endpoint_avsc_Union__57__::get_UserDetachNotification() const {
+    if (idx_ != 14) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<UserDetachNotification >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_UserDetachNotification(const UserDetachNotification& v) {
+    idx_ = 14;
+    value_ = v;
+}
+
+inline
+EndpointAttachRequest _endpoint_avsc_Union__57__::get_EndpointAttachRequest() const {
+    if (idx_ != 15) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EndpointAttachRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_EndpointAttachRequest(const EndpointAttachRequest& v) {
+    idx_ = 15;
+    value_ = v;
+}
+
+inline
+EndpointAttachResponse _endpoint_avsc_Union__57__::get_EndpointAttachResponse() const {
+    if (idx_ != 16) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EndpointAttachResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_EndpointAttachResponse(const EndpointAttachResponse& v) {
+    idx_ = 16;
+    value_ = v;
+}
+
+inline
+EndpointDetachRequest _endpoint_avsc_Union__57__::get_EndpointDetachRequest() const {
+    if (idx_ != 17) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EndpointDetachRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_EndpointDetachRequest(const EndpointDetachRequest& v) {
+    idx_ = 17;
+    value_ = v;
+}
+
+inline
+EndpointDetachResponse _endpoint_avsc_Union__57__::get_EndpointDetachResponse() const {
+    if (idx_ != 18) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EndpointDetachResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_EndpointDetachResponse(const EndpointDetachResponse& v) {
+    idx_ = 18;
+    value_ = v;
+}
+
+inline
+Event _endpoint_avsc_Union__57__::get_Event() const {
+    if (idx_ != 19) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<Event >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_Event(const Event& v) {
+    idx_ = 19;
+    value_ = v;
+}
+
+inline
+EventListenersRequest _endpoint_avsc_Union__57__::get_EventListenersRequest() const {
+    if (idx_ != 20) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EventListenersRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_EventListenersRequest(const EventListenersRequest& v) {
+    idx_ = 20;
+    value_ = v;
+}
+
+inline
+EventListenersResponse _endpoint_avsc_Union__57__::get_EventListenersResponse() const {
+    if (idx_ != 21) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EventListenersResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_EventListenersResponse(const EventListenersResponse& v) {
+    idx_ = 21;
+    value_ = v;
+}
+
+inline
+EventSequenceNumberRequest _endpoint_avsc_Union__57__::get_EventSequenceNumberRequest() const {
+    if (idx_ != 22) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EventSequenceNumberRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_EventSequenceNumberRequest(const EventSequenceNumberRequest& v) {
+    idx_ = 22;
+    value_ = v;
+}
+
+inline
+EventSequenceNumberResponse _endpoint_avsc_Union__57__::get_EventSequenceNumberResponse() const {
+    if (idx_ != 23) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EventSequenceNumberResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_EventSequenceNumberResponse(const EventSequenceNumberResponse& v) {
+    idx_ = 23;
+    value_ = v;
+}
+
+inline
+Notification _endpoint_avsc_Union__57__::get_Notification() const {
+    if (idx_ != 24) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<Notification >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_Notification(const Notification& v) {
+    idx_ = 24;
+    value_ = v;
+}
+
+inline
+Topic _endpoint_avsc_Union__57__::get_Topic() const {
+    if (idx_ != 25) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<Topic >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_Topic(const Topic& v) {
+    idx_ = 25;
+    value_ = v;
+}
+
+inline
+LogEntry _endpoint_avsc_Union__57__::get_LogEntry() const {
+    if (idx_ != 26) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<LogEntry >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_LogEntry(const LogEntry& v) {
+    idx_ = 26;
+    value_ = v;
+}
+
+inline
+SyncRequestMetaData _endpoint_avsc_Union__57__::get_SyncRequestMetaData() const {
+    if (idx_ != 27) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<SyncRequestMetaData >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_SyncRequestMetaData(const SyncRequestMetaData& v) {
+    idx_ = 27;
+    value_ = v;
+}
+
+inline
+ProfileSyncRequest _endpoint_avsc_Union__57__::get_ProfileSyncRequest() const {
+    if (idx_ != 28) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<ProfileSyncRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_ProfileSyncRequest(const ProfileSyncRequest& v) {
+    idx_ = 28;
+    value_ = v;
+}
+
+inline
+ProtocolVersionPair _endpoint_avsc_Union__57__::get_ProtocolVersionPair() const {
+    if (idx_ != 29) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<ProtocolVersionPair >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_ProtocolVersionPair(const ProtocolVersionPair& v) {
+    idx_ = 29;
+    value_ = v;
+}
+
+inline
+BootstrapSyncRequest _endpoint_avsc_Union__57__::get_BootstrapSyncRequest() const {
+    if (idx_ != 30) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<BootstrapSyncRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_BootstrapSyncRequest(const BootstrapSyncRequest& v) {
+    idx_ = 30;
+    value_ = v;
+}
+
+inline
+ConfigurationSyncRequest _endpoint_avsc_Union__57__::get_ConfigurationSyncRequest() const {
+    if (idx_ != 31) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<ConfigurationSyncRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_ConfigurationSyncRequest(const ConfigurationSyncRequest& v) {
+    idx_ = 31;
+    value_ = v;
+}
+
+inline
+NotificationSyncRequest _endpoint_avsc_Union__57__::get_NotificationSyncRequest() const {
+    if (idx_ != 32) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<NotificationSyncRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_NotificationSyncRequest(const NotificationSyncRequest& v) {
+    idx_ = 32;
+    value_ = v;
+}
+
+inline
+UserSyncRequest _endpoint_avsc_Union__57__::get_UserSyncRequest() const {
+    if (idx_ != 33) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<UserSyncRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_UserSyncRequest(const UserSyncRequest& v) {
+    idx_ = 33;
+    value_ = v;
+}
+
+inline
+EventSyncRequest _endpoint_avsc_Union__57__::get_EventSyncRequest() const {
+    if (idx_ != 34) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EventSyncRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_EventSyncRequest(const EventSyncRequest& v) {
+    idx_ = 34;
+    value_ = v;
+}
+
+inline
+LogSyncRequest _endpoint_avsc_Union__57__::get_LogSyncRequest() const {
+    if (idx_ != 35) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<LogSyncRequest >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_LogSyncRequest(const LogSyncRequest& v) {
+    idx_ = 35;
+    value_ = v;
+}
+
+inline
+ProtocolMetaData _endpoint_avsc_Union__57__::get_ProtocolMetaData() const {
+    if (idx_ != 36) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<ProtocolMetaData >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_ProtocolMetaData(const ProtocolMetaData& v) {
+    idx_ = 36;
+    value_ = v;
+}
+
+inline
+BootstrapSyncResponse _endpoint_avsc_Union__57__::get_BootstrapSyncResponse() const {
+    if (idx_ != 37) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<BootstrapSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_BootstrapSyncResponse(const BootstrapSyncResponse& v) {
+    idx_ = 37;
+    value_ = v;
+}
+
+inline
+ProfileSyncResponse _endpoint_avsc_Union__57__::get_ProfileSyncResponse() const {
+    if (idx_ != 38) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<ProfileSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_ProfileSyncResponse(const ProfileSyncResponse& v) {
     idx_ = 38;
     value_ = v;
 }
 
 inline
-SyncRequest _endpoint_avsc_Union__48__::get_SyncRequest() const {
+ConfigurationSyncResponse _endpoint_avsc_Union__57__::get_ConfigurationSyncResponse() const {
     if (idx_ != 39) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<ConfigurationSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_ConfigurationSyncResponse(const ConfigurationSyncResponse& v) {
+    idx_ = 39;
+    value_ = v;
+}
+
+inline
+NotificationSyncResponse _endpoint_avsc_Union__57__::get_NotificationSyncResponse() const {
+    if (idx_ != 40) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<NotificationSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_NotificationSyncResponse(const NotificationSyncResponse& v) {
+    idx_ = 40;
+    value_ = v;
+}
+
+inline
+UserSyncResponse _endpoint_avsc_Union__57__::get_UserSyncResponse() const {
+    if (idx_ != 41) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<UserSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_UserSyncResponse(const UserSyncResponse& v) {
+    idx_ = 41;
+    value_ = v;
+}
+
+inline
+EventSyncResponse _endpoint_avsc_Union__57__::get_EventSyncResponse() const {
+    if (idx_ != 42) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<EventSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_EventSyncResponse(const EventSyncResponse& v) {
+    idx_ = 42;
+    value_ = v;
+}
+
+inline
+LogDeliveryStatus _endpoint_avsc_Union__57__::get_LogDeliveryStatus() const {
+    if (idx_ != 43) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<LogDeliveryStatus >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_LogDeliveryStatus(const LogDeliveryStatus& v) {
+    idx_ = 43;
+    value_ = v;
+}
+
+inline
+LogSyncResponse _endpoint_avsc_Union__57__::get_LogSyncResponse() const {
+    if (idx_ != 44) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<LogSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_LogSyncResponse(const LogSyncResponse& v) {
+    idx_ = 44;
+    value_ = v;
+}
+
+inline
+RedirectSyncResponse _endpoint_avsc_Union__57__::get_RedirectSyncResponse() const {
+    if (idx_ != 45) {
+        throw avro::Exception("Invalid type for union");
+    }
+    return boost::any_cast<RedirectSyncResponse >(value_);
+}
+
+inline
+void _endpoint_avsc_Union__57__::set_RedirectSyncResponse(const RedirectSyncResponse& v) {
+    idx_ = 45;
+    value_ = v;
+}
+
+inline
+SyncRequest _endpoint_avsc_Union__57__::get_SyncRequest() const {
+    if (idx_ != 46) {
         throw avro::Exception("Invalid type for union");
     }
     return boost::any_cast<SyncRequest >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__48__::set_SyncRequest(const SyncRequest& v) {
-    idx_ = 39;
+void _endpoint_avsc_Union__57__::set_SyncRequest(const SyncRequest& v) {
+    idx_ = 46;
     value_ = v;
 }
 
 inline
-SyncResponse _endpoint_avsc_Union__48__::get_SyncResponse() const {
-    if (idx_ != 40) {
+SyncResponse _endpoint_avsc_Union__57__::get_SyncResponse() const {
+    if (idx_ != 47) {
         throw avro::Exception("Invalid type for union");
     }
     return boost::any_cast<SyncResponse >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__48__::set_SyncResponse(const SyncResponse& v) {
-    idx_ = 40;
+void _endpoint_avsc_Union__57__::set_SyncResponse(const SyncResponse& v) {
+    idx_ = 47;
     value_ = v;
 }
 
 inline
-TopicSubscriptionInfo _endpoint_avsc_Union__48__::get_TopicSubscriptionInfo() const {
-    if (idx_ != 41) {
+TopicSubscriptionInfo _endpoint_avsc_Union__57__::get_TopicSubscriptionInfo() const {
+    if (idx_ != 48) {
         throw avro::Exception("Invalid type for union");
     }
     return boost::any_cast<TopicSubscriptionInfo >(value_);
 }
 
 inline
-void _endpoint_avsc_Union__48__::set_TopicSubscriptionInfo(const TopicSubscriptionInfo& v) {
-    idx_ = 41;
+void _endpoint_avsc_Union__57__::set_TopicSubscriptionInfo(const TopicSubscriptionInfo& v) {
+    idx_ = 48;
     value_ = v;
 }
 
 inline _endpoint_avsc_Union__0__::_endpoint_avsc_Union__0__() : idx_(0), value_(std::vector<EventClassFamilyVersionInfo >()) { }
-inline _endpoint_avsc_Union__1__::_endpoint_avsc_Union__1__() : idx_(0), value_(std::string()) { }
+inline _endpoint_avsc_Union__1__::_endpoint_avsc_Union__1__() : idx_(0), value_(UserAttachErrorCode()) { }
 inline _endpoint_avsc_Union__2__::_endpoint_avsc_Union__2__() : idx_(0), value_(std::string()) { }
 inline _endpoint_avsc_Union__3__::_endpoint_avsc_Union__3__() : idx_(0), value_(std::string()) { }
-inline _endpoint_avsc_Union__4__::_endpoint_avsc_Union__4__() : idx_(0), value_(std::vector<std::string >()) { }
+inline _endpoint_avsc_Union__4__::_endpoint_avsc_Union__4__() : idx_(0), value_(std::string()) { }
 inline _endpoint_avsc_Union__5__::_endpoint_avsc_Union__5__() : idx_(0), value_(std::string()) { }
-inline _endpoint_avsc_Union__6__::_endpoint_avsc_Union__6__() : idx_(0), value_(int32_t()) { }
-inline _endpoint_avsc_Union__7__::_endpoint_avsc_Union__7__() : idx_(0), value_(std::vector<uint8_t>()) { }
-inline _endpoint_avsc_Union__8__::_endpoint_avsc_Union__8__() : idx_(0), value_(std::vector<uint8_t>()) { }
-inline _endpoint_avsc_Union__9__::_endpoint_avsc_Union__9__() : idx_(0), value_(std::string()) { }
+inline _endpoint_avsc_Union__6__::_endpoint_avsc_Union__6__() : idx_(0), value_(std::vector<std::string >()) { }
+inline _endpoint_avsc_Union__7__::_endpoint_avsc_Union__7__() : idx_(0), value_(std::string()) { }
+inline _endpoint_avsc_Union__8__::_endpoint_avsc_Union__8__() : idx_(0), value_(int32_t()) { }
+inline _endpoint_avsc_Union__9__::_endpoint_avsc_Union__9__() : idx_(0), value_(std::vector<uint8_t>()) { }
 inline _endpoint_avsc_Union__10__::_endpoint_avsc_Union__10__() : idx_(0), value_(std::vector<uint8_t>()) { }
-inline _endpoint_avsc_Union__11__::_endpoint_avsc_Union__11__() : idx_(0), value_(std::vector<uint8_t>()) { }
-inline _endpoint_avsc_Union__12__::_endpoint_avsc_Union__12__() : idx_(0), value_(std::vector<TopicState >()) { }
-inline _endpoint_avsc_Union__13__::_endpoint_avsc_Union__13__() : idx_(0), value_(std::vector<std::string >()) { }
-inline _endpoint_avsc_Union__14__::_endpoint_avsc_Union__14__() : idx_(0), value_(std::vector<SubscriptionCommand >()) { }
-inline _endpoint_avsc_Union__15__::_endpoint_avsc_Union__15__() : idx_(0), value_(UserAttachRequest()) { }
-inline _endpoint_avsc_Union__16__::_endpoint_avsc_Union__16__() : idx_(0), value_(std::vector<EndpointAttachRequest >()) { }
-inline _endpoint_avsc_Union__17__::_endpoint_avsc_Union__17__() : idx_(0), value_(std::vector<EndpointDetachRequest >()) { }
-inline _endpoint_avsc_Union__18__::_endpoint_avsc_Union__18__() : idx_(0), value_(EventSequenceNumberRequest()) { }
-inline _endpoint_avsc_Union__19__::_endpoint_avsc_Union__19__() : idx_(0), value_(std::vector<EventListenersRequest >()) { }
-inline _endpoint_avsc_Union__20__::_endpoint_avsc_Union__20__() : idx_(0), value_(std::vector<Event >()) { }
-inline _endpoint_avsc_Union__21__::_endpoint_avsc_Union__21__() : idx_(0), value_(std::vector<LogEntry >()) { }
-inline _endpoint_avsc_Union__22__::_endpoint_avsc_Union__22__() : idx_(0), value_(std::vector<uint8_t>()) { }
-inline _endpoint_avsc_Union__23__::_endpoint_avsc_Union__23__() : idx_(0), value_(std::vector<uint8_t>()) { }
-inline _endpoint_avsc_Union__24__::_endpoint_avsc_Union__24__() : idx_(0), value_(std::vector<Notification >()) { }
-inline _endpoint_avsc_Union__25__::_endpoint_avsc_Union__25__() : idx_(0), value_(std::vector<Topic >()) { }
-inline _endpoint_avsc_Union__26__::_endpoint_avsc_Union__26__() : idx_(0), value_(UserAttachResponse()) { }
-inline _endpoint_avsc_Union__27__::_endpoint_avsc_Union__27__() : idx_(0), value_(UserAttachNotification()) { }
-inline _endpoint_avsc_Union__28__::_endpoint_avsc_Union__28__() : idx_(0), value_(UserDetachNotification()) { }
-inline _endpoint_avsc_Union__29__::_endpoint_avsc_Union__29__() : idx_(0), value_(std::vector<EndpointAttachResponse >()) { }
-inline _endpoint_avsc_Union__30__::_endpoint_avsc_Union__30__() : idx_(0), value_(std::vector<EndpointDetachResponse >()) { }
-inline _endpoint_avsc_Union__31__::_endpoint_avsc_Union__31__() : idx_(0), value_(EventSequenceNumberResponse()) { }
-inline _endpoint_avsc_Union__32__::_endpoint_avsc_Union__32__() : idx_(0), value_(std::vector<EventListenersResponse >()) { }
-inline _endpoint_avsc_Union__33__::_endpoint_avsc_Union__33__() : idx_(0), value_(std::vector<Event >()) { }
-inline _endpoint_avsc_Union__34__::_endpoint_avsc_Union__34__() : idx_(0), value_(SyncRequestMetaData()) { }
-inline _endpoint_avsc_Union__35__::_endpoint_avsc_Union__35__() : idx_(0), value_(ProfileSyncRequest()) { }
-inline _endpoint_avsc_Union__36__::_endpoint_avsc_Union__36__() : idx_(0), value_(ConfigurationSyncRequest()) { }
-inline _endpoint_avsc_Union__37__::_endpoint_avsc_Union__37__() : idx_(0), value_(NotificationSyncRequest()) { }
-inline _endpoint_avsc_Union__38__::_endpoint_avsc_Union__38__() : idx_(0), value_(UserSyncRequest()) { }
-inline _endpoint_avsc_Union__39__::_endpoint_avsc_Union__39__() : idx_(0), value_(EventSyncRequest()) { }
-inline _endpoint_avsc_Union__40__::_endpoint_avsc_Union__40__() : idx_(0), value_(LogSyncRequest()) { }
-inline _endpoint_avsc_Union__41__::_endpoint_avsc_Union__41__() : idx_(0), value_(ProfileSyncResponse()) { }
-inline _endpoint_avsc_Union__42__::_endpoint_avsc_Union__42__() : idx_(0), value_(ConfigurationSyncResponse()) { }
-inline _endpoint_avsc_Union__43__::_endpoint_avsc_Union__43__() : idx_(0), value_(NotificationSyncResponse()) { }
-inline _endpoint_avsc_Union__44__::_endpoint_avsc_Union__44__() : idx_(0), value_(UserSyncResponse()) { }
-inline _endpoint_avsc_Union__45__::_endpoint_avsc_Union__45__() : idx_(0), value_(EventSyncResponse()) { }
-inline _endpoint_avsc_Union__46__::_endpoint_avsc_Union__46__() : idx_(0), value_(RedirectSyncResponse()) { }
-inline _endpoint_avsc_Union__47__::_endpoint_avsc_Union__47__() : idx_(0), value_(LogSyncResponse()) { }
-inline _endpoint_avsc_Union__48__::_endpoint_avsc_Union__48__() : idx_(0), value_(EventClassFamilyVersionInfo()) { }
+inline _endpoint_avsc_Union__11__::_endpoint_avsc_Union__11__() : idx_(0), value_(int64_t()) { }
+inline _endpoint_avsc_Union__12__::_endpoint_avsc_Union__12__() : idx_(0), value_(std::vector<uint8_t>()) { }
+inline _endpoint_avsc_Union__13__::_endpoint_avsc_Union__13__() : idx_(0), value_(std::string()) { }
+inline _endpoint_avsc_Union__14__::_endpoint_avsc_Union__14__() : idx_(0), value_(std::vector<uint8_t>()) { }
+inline _endpoint_avsc_Union__15__::_endpoint_avsc_Union__15__() : idx_(0), value_(bool()) { }
+inline _endpoint_avsc_Union__16__::_endpoint_avsc_Union__16__() : idx_(0), value_(std::vector<uint8_t>()) { }
+inline _endpoint_avsc_Union__17__::_endpoint_avsc_Union__17__() : idx_(0), value_(std::vector<TopicState >()) { }
+inline _endpoint_avsc_Union__18__::_endpoint_avsc_Union__18__() : idx_(0), value_(std::vector<std::string >()) { }
+inline _endpoint_avsc_Union__19__::_endpoint_avsc_Union__19__() : idx_(0), value_(std::vector<SubscriptionCommand >()) { }
+inline _endpoint_avsc_Union__20__::_endpoint_avsc_Union__20__() : idx_(0), value_(UserAttachRequest()) { }
+inline _endpoint_avsc_Union__21__::_endpoint_avsc_Union__21__() : idx_(0), value_(std::vector<EndpointAttachRequest >()) { }
+inline _endpoint_avsc_Union__22__::_endpoint_avsc_Union__22__() : idx_(0), value_(std::vector<EndpointDetachRequest >()) { }
+inline _endpoint_avsc_Union__23__::_endpoint_avsc_Union__23__() : idx_(0), value_(EventSequenceNumberRequest()) { }
+inline _endpoint_avsc_Union__24__::_endpoint_avsc_Union__24__() : idx_(0), value_(std::vector<EventListenersRequest >()) { }
+inline _endpoint_avsc_Union__25__::_endpoint_avsc_Union__25__() : idx_(0), value_(std::vector<Event >()) { }
+inline _endpoint_avsc_Union__26__::_endpoint_avsc_Union__26__() : idx_(0), value_(std::vector<LogEntry >()) { }
+inline _endpoint_avsc_Union__27__::_endpoint_avsc_Union__27__() : idx_(0), value_(std::vector<uint8_t>()) { }
+inline _endpoint_avsc_Union__28__::_endpoint_avsc_Union__28__() : idx_(0), value_(std::vector<uint8_t>()) { }
+inline _endpoint_avsc_Union__29__::_endpoint_avsc_Union__29__() : idx_(0), value_(std::vector<Notification >()) { }
+inline _endpoint_avsc_Union__30__::_endpoint_avsc_Union__30__() : idx_(0), value_(std::vector<Topic >()) { }
+inline _endpoint_avsc_Union__31__::_endpoint_avsc_Union__31__() : idx_(0), value_(UserAttachResponse()) { }
+inline _endpoint_avsc_Union__32__::_endpoint_avsc_Union__32__() : idx_(0), value_(UserAttachNotification()) { }
+inline _endpoint_avsc_Union__33__::_endpoint_avsc_Union__33__() : idx_(0), value_(UserDetachNotification()) { }
+inline _endpoint_avsc_Union__34__::_endpoint_avsc_Union__34__() : idx_(0), value_(std::vector<EndpointAttachResponse >()) { }
+inline _endpoint_avsc_Union__35__::_endpoint_avsc_Union__35__() : idx_(0), value_(std::vector<EndpointDetachResponse >()) { }
+inline _endpoint_avsc_Union__36__::_endpoint_avsc_Union__36__() : idx_(0), value_(EventSequenceNumberResponse()) { }
+inline _endpoint_avsc_Union__37__::_endpoint_avsc_Union__37__() : idx_(0), value_(std::vector<EventListenersResponse >()) { }
+inline _endpoint_avsc_Union__38__::_endpoint_avsc_Union__38__() : idx_(0), value_(std::vector<Event >()) { }
+inline _endpoint_avsc_Union__39__::_endpoint_avsc_Union__39__() : idx_(0), value_(LogDeliveryErrorCode()) { }
+inline _endpoint_avsc_Union__40__::_endpoint_avsc_Union__40__() : idx_(0), value_(std::vector<LogDeliveryStatus >()) { }
+inline _endpoint_avsc_Union__41__::_endpoint_avsc_Union__41__() : idx_(0), value_(SyncRequestMetaData()) { }
+inline _endpoint_avsc_Union__42__::_endpoint_avsc_Union__42__() : idx_(0), value_(BootstrapSyncRequest()) { }
+inline _endpoint_avsc_Union__43__::_endpoint_avsc_Union__43__() : idx_(0), value_(ProfileSyncRequest()) { }
+inline _endpoint_avsc_Union__44__::_endpoint_avsc_Union__44__() : idx_(0), value_(ConfigurationSyncRequest()) { }
+inline _endpoint_avsc_Union__45__::_endpoint_avsc_Union__45__() : idx_(0), value_(NotificationSyncRequest()) { }
+inline _endpoint_avsc_Union__46__::_endpoint_avsc_Union__46__() : idx_(0), value_(UserSyncRequest()) { }
+inline _endpoint_avsc_Union__47__::_endpoint_avsc_Union__47__() : idx_(0), value_(EventSyncRequest()) { }
+inline _endpoint_avsc_Union__48__::_endpoint_avsc_Union__48__() : idx_(0), value_(LogSyncRequest()) { }
+inline _endpoint_avsc_Union__49__::_endpoint_avsc_Union__49__() : idx_(0), value_(BootstrapSyncResponse()) { }
+inline _endpoint_avsc_Union__50__::_endpoint_avsc_Union__50__() : idx_(0), value_(ProfileSyncResponse()) { }
+inline _endpoint_avsc_Union__51__::_endpoint_avsc_Union__51__() : idx_(0), value_(ConfigurationSyncResponse()) { }
+inline _endpoint_avsc_Union__52__::_endpoint_avsc_Union__52__() : idx_(0), value_(NotificationSyncResponse()) { }
+inline _endpoint_avsc_Union__53__::_endpoint_avsc_Union__53__() : idx_(0), value_(UserSyncResponse()) { }
+inline _endpoint_avsc_Union__54__::_endpoint_avsc_Union__54__() : idx_(0), value_(EventSyncResponse()) { }
+inline _endpoint_avsc_Union__55__::_endpoint_avsc_Union__55__() : idx_(0), value_(RedirectSyncResponse()) { }
+inline _endpoint_avsc_Union__56__::_endpoint_avsc_Union__56__() : idx_(0), value_(LogSyncResponse()) { }
+inline _endpoint_avsc_Union__57__::_endpoint_avsc_Union__57__() : idx_(0), value_(EventClassFamilyVersionInfo()) { }
 }
 namespace avro {
 template<> struct codec_traits<kaa::EventClassFamilyVersionInfo> {
@@ -2957,6 +3451,50 @@ template<> struct codec_traits<kaa::SyncResponseResultType> {
     }
 };
 
+template<> struct codec_traits<kaa::LogDeliveryErrorCode> {
+    static void encode(Encoder& e, kaa::LogDeliveryErrorCode v) {
+		if (v < kaa::NO_APPENDERS_CONFIGURED || v > kaa::REMOTE_INTERNAL_ERROR)
+		{
+			std::ostringstream error;
+			error << "enum value " << v << " is out of bound for kaa::LogDeliveryErrorCode and cannot be encoded";
+			throw avro::Exception(error.str());
+		}
+        e.encodeEnum(v);
+    }
+    static void decode(Decoder& d, kaa::LogDeliveryErrorCode& v) {
+		size_t index = d.decodeEnum();
+		if (index < kaa::NO_APPENDERS_CONFIGURED || index > kaa::REMOTE_INTERNAL_ERROR)
+		{
+			std::ostringstream error;
+			error << "enum value " << index << " is out of bound for kaa::LogDeliveryErrorCode and cannot be decoded";
+			throw avro::Exception(error.str());
+		}
+        v = static_cast<kaa::LogDeliveryErrorCode>(index);
+    }
+};
+
+template<> struct codec_traits<kaa::UserAttachErrorCode> {
+    static void encode(Encoder& e, kaa::UserAttachErrorCode v) {
+		if (v < kaa::NO_VERIFIER_CONFIGURED || v > kaa::OTHER)
+		{
+			std::ostringstream error;
+			error << "enum value " << v << " is out of bound for kaa::UserAttachErrorCode and cannot be encoded";
+			throw avro::Exception(error.str());
+		}
+        e.encodeEnum(v);
+    }
+    static void decode(Decoder& d, kaa::UserAttachErrorCode& v) {
+		size_t index = d.decodeEnum();
+		if (index < kaa::NO_VERIFIER_CONFIGURED || index > kaa::OTHER)
+		{
+			std::ostringstream error;
+			error << "enum value " << index << " is out of bound for kaa::UserAttachErrorCode and cannot be decoded";
+			throw avro::Exception(error.str());
+		}
+        v = static_cast<kaa::UserAttachErrorCode>(index);
+    }
+};
+
 template<> struct codec_traits<kaa::SubscriptionCommand> {
     static void encode(Encoder& e, const kaa::SubscriptionCommand& v) {
         avro::encode(e, v.topicId);
@@ -2970,21 +3508,89 @@ template<> struct codec_traits<kaa::SubscriptionCommand> {
 
 template<> struct codec_traits<kaa::UserAttachRequest> {
     static void encode(Encoder& e, const kaa::UserAttachRequest& v) {
+        avro::encode(e, v.userVerifierId);
         avro::encode(e, v.userExternalId);
         avro::encode(e, v.userAccessToken);
     }
     static void decode(Decoder& d, kaa::UserAttachRequest& v) {
+        avro::decode(d, v.userVerifierId);
         avro::decode(d, v.userExternalId);
         avro::decode(d, v.userAccessToken);
+    }
+};
+
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__1__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__1__ v) {
+        e.encodeUnionIndex(v.idx());
+        switch (v.idx()) {
+        case 0:
+            avro::encode(e, v.get_UserAttachErrorCode());
+            break;
+        case 1:
+            e.encodeNull();
+            break;
+        }
+    }
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__1__& v) {
+        size_t n = d.decodeUnionIndex();
+        if (n >= 2) { throw avro::Exception("Union index too big"); }
+        switch (n) {
+        case 0:
+            {
+                kaa::UserAttachErrorCode vv;
+                avro::decode(d, vv);
+                v.set_UserAttachErrorCode(vv);
+            }
+            break;
+        case 1:
+            d.decodeNull();
+            v.set_null();
+            break;
+        }
+    }
+};
+
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__2__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__2__ v) {
+        e.encodeUnionIndex(v.idx());
+        switch (v.idx()) {
+        case 0:
+            avro::encode(e, v.get_string());
+            break;
+        case 1:
+            e.encodeNull();
+            break;
+        }
+    }
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__2__& v) {
+        size_t n = d.decodeUnionIndex();
+        if (n >= 2) { throw avro::Exception("Union index too big"); }
+        switch (n) {
+        case 0:
+            {
+                std::string vv;
+                avro::decode(d, vv);
+                v.set_string(vv);
+            }
+            break;
+        case 1:
+            d.decodeNull();
+            v.set_null();
+            break;
+        }
     }
 };
 
 template<> struct codec_traits<kaa::UserAttachResponse> {
     static void encode(Encoder& e, const kaa::UserAttachResponse& v) {
         avro::encode(e, v.result);
+        avro::encode(e, v.errorCode);
+        avro::encode(e, v.errorReason);
     }
     static void decode(Decoder& d, kaa::UserAttachResponse& v) {
         avro::decode(d, v.result);
+        avro::decode(d, v.errorCode);
+        avro::decode(d, v.errorReason);
     }
 };
 
@@ -3019,8 +3625,8 @@ template<> struct codec_traits<kaa::EndpointAttachRequest> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__1__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__1__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__3__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__3__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3031,7 +3637,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__1__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__1__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__3__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3085,8 +3691,8 @@ template<> struct codec_traits<kaa::EndpointDetachResponse> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__2__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__2__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__4__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__4__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3097,7 +3703,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__2__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__2__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__4__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3116,8 +3722,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__2__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__3__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__3__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__5__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__5__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3128,7 +3734,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__3__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__3__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__5__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3175,8 +3781,8 @@ template<> struct codec_traits<kaa::EventListenersRequest> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__4__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__4__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__6__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__6__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3187,7 +3793,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__4__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__4__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__6__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3235,8 +3841,8 @@ template<> struct codec_traits<kaa::EventSequenceNumberResponse> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__5__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__5__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__7__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__7__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3247,7 +3853,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__5__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__5__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__7__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3266,8 +3872,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__5__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__6__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__6__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__8__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__8__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3278,7 +3884,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__6__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__6__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__8__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3336,89 +3942,12 @@ template<> struct codec_traits<kaa::LogEntry> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__7__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__7__ v) {
-        e.encodeUnionIndex(v.idx());
-        switch (v.idx()) {
-        case 0:
-            avro::encode(e, v.get_bytes());
-            break;
-        case 1:
-            e.encodeNull();
-            break;
-        }
-    }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__7__& v) {
-        size_t n = d.decodeUnionIndex();
-        if (n >= 2) { throw avro::Exception("Union index too big"); }
-        switch (n) {
-        case 0:
-            {
-                std::vector<uint8_t> vv;
-                avro::decode(d, vv);
-                v.set_bytes(vv);
-            }
-            break;
-        case 1:
-            d.decodeNull();
-            v.set_null();
-            break;
-        }
-    }
-};
-
-template<> struct codec_traits<kaa::SyncRequestMetaData> {
-    static void encode(Encoder& e, const kaa::SyncRequestMetaData& v) {
-        avro::encode(e, v.applicationToken);
-        avro::encode(e, v.endpointPublicKeyHash);
-        avro::encode(e, v.profileHash);
-        avro::encode(e, v.timeout);
-    }
-    static void decode(Decoder& d, kaa::SyncRequestMetaData& v) {
-        avro::decode(d, v.applicationToken);
-        avro::decode(d, v.endpointPublicKeyHash);
-        avro::decode(d, v.profileHash);
-        avro::decode(d, v.timeout);
-    }
-};
-
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__8__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__8__ v) {
-        e.encodeUnionIndex(v.idx());
-        switch (v.idx()) {
-        case 0:
-            avro::encode(e, v.get_bytes());
-            break;
-        case 1:
-            e.encodeNull();
-            break;
-        }
-    }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__8__& v) {
-        size_t n = d.decodeUnionIndex();
-        if (n >= 2) { throw avro::Exception("Union index too big"); }
-        switch (n) {
-        case 0:
-            {
-                std::vector<uint8_t> vv;
-                avro::decode(d, vv);
-                v.set_bytes(vv);
-            }
-            break;
-        case 1:
-            d.decodeNull();
-            v.set_null();
-            break;
-        }
-    }
-};
-
 template<> struct codec_traits<kaa::_endpoint_avsc_Union__9__> {
     static void encode(Encoder& e, kaa::_endpoint_avsc_Union__9__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
-            avro::encode(e, v.get_string());
+            avro::encode(e, v.get_bytes());
             break;
         case 1:
             e.encodeNull();
@@ -3431,9 +3960,9 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__9__> {
         switch (n) {
         case 0:
             {
-                std::string vv;
+                std::vector<uint8_t> vv;
                 avro::decode(d, vv);
-                v.set_string(vv);
+                v.set_bytes(vv);
             }
             break;
         case 1:
@@ -3441,21 +3970,6 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__9__> {
             v.set_null();
             break;
         }
-    }
-};
-
-template<> struct codec_traits<kaa::ProfileSyncRequest> {
-    static void encode(Encoder& e, const kaa::ProfileSyncRequest& v) {
-        avro::encode(e, v.endpointPublicKey);
-        avro::encode(e, v.profileBody);
-        avro::encode(e, v.versionInfo);
-        avro::encode(e, v.endpointAccessToken);
-    }
-    static void decode(Decoder& d, kaa::ProfileSyncRequest& v) {
-        avro::decode(d, v.endpointPublicKey);
-        avro::decode(d, v.profileBody);
-        avro::decode(d, v.versionInfo);
-        avro::decode(d, v.endpointAccessToken);
     }
 };
 
@@ -3490,19 +4004,54 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__10__> {
     }
 };
 
-template<> struct codec_traits<kaa::ConfigurationSyncRequest> {
-    static void encode(Encoder& e, const kaa::ConfigurationSyncRequest& v) {
-        avro::encode(e, v.appStateSeqNumber);
-        avro::encode(e, v.configurationHash);
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__11__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__11__ v) {
+        e.encodeUnionIndex(v.idx());
+        switch (v.idx()) {
+        case 0:
+            avro::encode(e, v.get_long());
+            break;
+        case 1:
+            e.encodeNull();
+            break;
+        }
     }
-    static void decode(Decoder& d, kaa::ConfigurationSyncRequest& v) {
-        avro::decode(d, v.appStateSeqNumber);
-        avro::decode(d, v.configurationHash);
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__11__& v) {
+        size_t n = d.decodeUnionIndex();
+        if (n >= 2) { throw avro::Exception("Union index too big"); }
+        switch (n) {
+        case 0:
+            {
+                int64_t vv;
+                avro::decode(d, vv);
+                v.set_long(vv);
+            }
+            break;
+        case 1:
+            d.decodeNull();
+            v.set_null();
+            break;
+        }
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__11__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__11__ v) {
+template<> struct codec_traits<kaa::SyncRequestMetaData> {
+    static void encode(Encoder& e, const kaa::SyncRequestMetaData& v) {
+        avro::encode(e, v.applicationToken);
+        avro::encode(e, v.endpointPublicKeyHash);
+        avro::encode(e, v.profileHash);
+        avro::encode(e, v.timeout);
+    }
+    static void decode(Decoder& d, kaa::SyncRequestMetaData& v) {
+        avro::decode(d, v.applicationToken);
+        avro::decode(d, v.endpointPublicKeyHash);
+        avro::decode(d, v.profileHash);
+        avro::decode(d, v.timeout);
+    }
+};
+
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__12__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__12__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3513,7 +4062,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__11__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__11__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__12__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3532,8 +4081,182 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__11__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__12__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__12__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__13__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__13__ v) {
+        e.encodeUnionIndex(v.idx());
+        switch (v.idx()) {
+        case 0:
+            avro::encode(e, v.get_string());
+            break;
+        case 1:
+            e.encodeNull();
+            break;
+        }
+    }
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__13__& v) {
+        size_t n = d.decodeUnionIndex();
+        if (n >= 2) { throw avro::Exception("Union index too big"); }
+        switch (n) {
+        case 0:
+            {
+                std::string vv;
+                avro::decode(d, vv);
+                v.set_string(vv);
+            }
+            break;
+        case 1:
+            d.decodeNull();
+            v.set_null();
+            break;
+        }
+    }
+};
+
+template<> struct codec_traits<kaa::ProfileSyncRequest> {
+    static void encode(Encoder& e, const kaa::ProfileSyncRequest& v) {
+        avro::encode(e, v.endpointPublicKey);
+        avro::encode(e, v.profileBody);
+        avro::encode(e, v.versionInfo);
+        avro::encode(e, v.endpointAccessToken);
+    }
+    static void decode(Decoder& d, kaa::ProfileSyncRequest& v) {
+        avro::decode(d, v.endpointPublicKey);
+        avro::decode(d, v.profileBody);
+        avro::decode(d, v.versionInfo);
+        avro::decode(d, v.endpointAccessToken);
+    }
+};
+
+template<> struct codec_traits<kaa::ProtocolVersionPair> {
+    static void encode(Encoder& e, const kaa::ProtocolVersionPair& v) {
+        avro::encode(e, v.id);
+        avro::encode(e, v.version);
+    }
+    static void decode(Decoder& d, kaa::ProtocolVersionPair& v) {
+        avro::decode(d, v.id);
+        avro::decode(d, v.version);
+    }
+};
+
+template<> struct codec_traits<kaa::BootstrapSyncRequest> {
+    static void encode(Encoder& e, const kaa::BootstrapSyncRequest& v) {
+        avro::encode(e, v.requestId);
+        avro::encode(e, v.supportedProtocols);
+    }
+    static void decode(Decoder& d, kaa::BootstrapSyncRequest& v) {
+        avro::decode(d, v.requestId);
+        avro::decode(d, v.supportedProtocols);
+    }
+};
+
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__14__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__14__ v) {
+        e.encodeUnionIndex(v.idx());
+        switch (v.idx()) {
+        case 0:
+            avro::encode(e, v.get_bytes());
+            break;
+        case 1:
+            e.encodeNull();
+            break;
+        }
+    }
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__14__& v) {
+        size_t n = d.decodeUnionIndex();
+        if (n >= 2) { throw avro::Exception("Union index too big"); }
+        switch (n) {
+        case 0:
+            {
+                std::vector<uint8_t> vv;
+                avro::decode(d, vv);
+                v.set_bytes(vv);
+            }
+            break;
+        case 1:
+            d.decodeNull();
+            v.set_null();
+            break;
+        }
+    }
+};
+
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__15__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__15__ v) {
+        e.encodeUnionIndex(v.idx());
+        switch (v.idx()) {
+        case 0:
+            avro::encode(e, v.get_bool());
+            break;
+        case 1:
+            e.encodeNull();
+            break;
+        }
+    }
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__15__& v) {
+        size_t n = d.decodeUnionIndex();
+        if (n >= 2) { throw avro::Exception("Union index too big"); }
+        switch (n) {
+        case 0:
+            {
+                bool vv;
+                avro::decode(d, vv);
+                v.set_bool(vv);
+            }
+            break;
+        case 1:
+            d.decodeNull();
+            v.set_null();
+            break;
+        }
+    }
+};
+
+template<> struct codec_traits<kaa::ConfigurationSyncRequest> {
+    static void encode(Encoder& e, const kaa::ConfigurationSyncRequest& v) {
+        avro::encode(e, v.appStateSeqNumber);
+        avro::encode(e, v.configurationHash);
+        avro::encode(e, v.resyncOnly);
+    }
+    static void decode(Decoder& d, kaa::ConfigurationSyncRequest& v) {
+        avro::decode(d, v.appStateSeqNumber);
+        avro::decode(d, v.configurationHash);
+        avro::decode(d, v.resyncOnly);
+    }
+};
+
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__16__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__16__ v) {
+        e.encodeUnionIndex(v.idx());
+        switch (v.idx()) {
+        case 0:
+            avro::encode(e, v.get_bytes());
+            break;
+        case 1:
+            e.encodeNull();
+            break;
+        }
+    }
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__16__& v) {
+        size_t n = d.decodeUnionIndex();
+        if (n >= 2) { throw avro::Exception("Union index too big"); }
+        switch (n) {
+        case 0:
+            {
+                std::vector<uint8_t> vv;
+                avro::decode(d, vv);
+                v.set_bytes(vv);
+            }
+            break;
+        case 1:
+            d.decodeNull();
+            v.set_null();
+            break;
+        }
+    }
+};
+
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__17__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__17__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3544,7 +4267,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__12__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__12__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__17__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3563,8 +4286,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__12__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__13__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__13__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__18__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__18__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3575,7 +4298,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__13__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__13__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__18__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3594,8 +4317,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__13__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__14__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__14__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__19__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__19__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3606,7 +4329,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__14__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__14__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__19__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3642,8 +4365,8 @@ template<> struct codec_traits<kaa::NotificationSyncRequest> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__15__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__15__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__20__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__20__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3654,7 +4377,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__15__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__15__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__20__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3673,8 +4396,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__15__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__16__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__16__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__21__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__21__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3685,7 +4408,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__16__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__16__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__21__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3704,8 +4427,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__16__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__17__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__17__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__22__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__22__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3716,7 +4439,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__17__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__17__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__22__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3748,8 +4471,8 @@ template<> struct codec_traits<kaa::UserSyncRequest> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__18__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__18__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__23__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__23__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3760,7 +4483,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__18__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__18__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__23__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3779,8 +4502,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__18__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__19__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__19__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__24__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__24__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3791,7 +4514,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__19__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__19__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__24__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3810,8 +4533,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__19__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__20__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__20__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__25__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__25__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3822,7 +4545,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__20__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__20__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__25__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3854,8 +4577,8 @@ template<> struct codec_traits<kaa::EventSyncRequest> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__21__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__21__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__26__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__26__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3866,7 +4589,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__21__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__21__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__26__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3896,6 +4619,30 @@ template<> struct codec_traits<kaa::LogSyncRequest> {
     }
 };
 
+template<> struct codec_traits<kaa::ProtocolMetaData> {
+    static void encode(Encoder& e, const kaa::ProtocolMetaData& v) {
+        avro::encode(e, v.accessPointId);
+        avro::encode(e, v.protocolVersionInfo);
+        avro::encode(e, v.connectionInfo);
+    }
+    static void decode(Decoder& d, kaa::ProtocolMetaData& v) {
+        avro::decode(d, v.accessPointId);
+        avro::decode(d, v.protocolVersionInfo);
+        avro::decode(d, v.connectionInfo);
+    }
+};
+
+template<> struct codec_traits<kaa::BootstrapSyncResponse> {
+    static void encode(Encoder& e, const kaa::BootstrapSyncResponse& v) {
+        avro::encode(e, v.requestId);
+        avro::encode(e, v.supportedProtocols);
+    }
+    static void decode(Decoder& d, kaa::BootstrapSyncResponse& v) {
+        avro::decode(d, v.requestId);
+        avro::decode(d, v.supportedProtocols);
+    }
+};
+
 template<> struct codec_traits<kaa::ProfileSyncResponse> {
     static void encode(Encoder& e, const kaa::ProfileSyncResponse& v) {
         avro::encode(e, v.responseStatus);
@@ -3905,8 +4652,8 @@ template<> struct codec_traits<kaa::ProfileSyncResponse> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__22__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__22__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__27__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__27__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3917,7 +4664,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__22__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__22__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__27__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3936,8 +4683,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__22__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__23__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__23__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__28__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__28__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3948,7 +4695,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__23__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__23__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__28__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -3982,8 +4729,8 @@ template<> struct codec_traits<kaa::ConfigurationSyncResponse> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__24__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__24__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__29__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__29__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -3994,7 +4741,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__24__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__24__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__29__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4013,8 +4760,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__24__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__25__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__25__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__30__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__30__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4025,7 +4772,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__25__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__25__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__30__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4059,8 +4806,8 @@ template<> struct codec_traits<kaa::NotificationSyncResponse> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__26__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__26__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__31__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__31__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4071,7 +4818,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__26__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__26__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__31__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4090,8 +4837,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__26__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__27__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__27__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__32__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__32__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4102,7 +4849,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__27__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__27__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__32__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4121,8 +4868,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__27__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__28__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__28__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__33__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__33__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4133,7 +4880,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__28__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__28__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__33__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4152,8 +4899,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__28__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__29__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__29__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__34__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__34__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4164,7 +4911,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__29__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__29__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__34__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4183,8 +4930,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__29__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__30__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__30__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__35__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__35__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4195,7 +4942,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__30__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__30__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__35__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4231,8 +4978,8 @@ template<> struct codec_traits<kaa::UserSyncResponse> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__31__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__31__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__36__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__36__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4243,7 +4990,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__31__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__31__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__36__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4262,8 +5009,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__31__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__32__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__32__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__37__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__37__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4274,7 +5021,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__32__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__32__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__37__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4293,8 +5040,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__32__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__33__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__33__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__38__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__38__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4305,7 +5052,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__33__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__33__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__38__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4337,28 +5084,101 @@ template<> struct codec_traits<kaa::EventSyncResponse> {
     }
 };
 
-template<> struct codec_traits<kaa::LogSyncResponse> {
-    static void encode(Encoder& e, const kaa::LogSyncResponse& v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__39__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__39__ v) {
+        e.encodeUnionIndex(v.idx());
+        switch (v.idx()) {
+        case 0:
+            avro::encode(e, v.get_LogDeliveryErrorCode());
+            break;
+        case 1:
+            e.encodeNull();
+            break;
+        }
+    }
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__39__& v) {
+        size_t n = d.decodeUnionIndex();
+        if (n >= 2) { throw avro::Exception("Union index too big"); }
+        switch (n) {
+        case 0:
+            {
+                kaa::LogDeliveryErrorCode vv;
+                avro::decode(d, vv);
+                v.set_LogDeliveryErrorCode(vv);
+            }
+            break;
+        case 1:
+            d.decodeNull();
+            v.set_null();
+            break;
+        }
+    }
+};
+
+template<> struct codec_traits<kaa::LogDeliveryStatus> {
+    static void encode(Encoder& e, const kaa::LogDeliveryStatus& v) {
         avro::encode(e, v.requestId);
         avro::encode(e, v.result);
+        avro::encode(e, v.errorCode);
     }
-    static void decode(Decoder& d, kaa::LogSyncResponse& v) {
+    static void decode(Decoder& d, kaa::LogDeliveryStatus& v) {
         avro::decode(d, v.requestId);
         avro::decode(d, v.result);
+        avro::decode(d, v.errorCode);
+    }
+};
+
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__40__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__40__ v) {
+        e.encodeUnionIndex(v.idx());
+        switch (v.idx()) {
+        case 0:
+            avro::encode(e, v.get_array());
+            break;
+        case 1:
+            e.encodeNull();
+            break;
+        }
+    }
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__40__& v) {
+        size_t n = d.decodeUnionIndex();
+        if (n >= 2) { throw avro::Exception("Union index too big"); }
+        switch (n) {
+        case 0:
+            {
+                std::vector<kaa::LogDeliveryStatus > vv;
+                avro::decode(d, vv);
+                v.set_array(vv);
+            }
+            break;
+        case 1:
+            d.decodeNull();
+            v.set_null();
+            break;
+        }
+    }
+};
+
+template<> struct codec_traits<kaa::LogSyncResponse> {
+    static void encode(Encoder& e, const kaa::LogSyncResponse& v) {
+        avro::encode(e, v.deliveryStatuses);
+    }
+    static void decode(Decoder& d, kaa::LogSyncResponse& v) {
+        avro::decode(d, v.deliveryStatuses);
     }
 };
 
 template<> struct codec_traits<kaa::RedirectSyncResponse> {
     static void encode(Encoder& e, const kaa::RedirectSyncResponse& v) {
-        avro::encode(e, v.dnsName);
+        avro::encode(e, v.accessPointId);
     }
     static void decode(Decoder& d, kaa::RedirectSyncResponse& v) {
-        avro::decode(d, v.dnsName);
+        avro::decode(d, v.accessPointId);
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__34__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__34__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__41__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__41__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4369,7 +5189,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__34__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__34__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__41__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4388,8 +5208,39 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__34__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__35__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__35__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__42__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__42__ v) {
+        e.encodeUnionIndex(v.idx());
+        switch (v.idx()) {
+        case 0:
+            avro::encode(e, v.get_BootstrapSyncRequest());
+            break;
+        case 1:
+            e.encodeNull();
+            break;
+        }
+    }
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__42__& v) {
+        size_t n = d.decodeUnionIndex();
+        if (n >= 2) { throw avro::Exception("Union index too big"); }
+        switch (n) {
+        case 0:
+            {
+                kaa::BootstrapSyncRequest vv;
+                avro::decode(d, vv);
+                v.set_BootstrapSyncRequest(vv);
+            }
+            break;
+        case 1:
+            d.decodeNull();
+            v.set_null();
+            break;
+        }
+    }
+};
+
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__43__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__43__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4400,7 +5251,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__35__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__35__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__43__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4419,8 +5270,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__35__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__36__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__36__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__44__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__44__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4431,7 +5282,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__36__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__36__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__44__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4450,8 +5301,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__36__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__37__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__37__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__45__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__45__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4462,7 +5313,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__37__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__37__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__45__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4481,8 +5332,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__37__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__38__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__38__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__46__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__46__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4493,7 +5344,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__38__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__38__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__46__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4512,8 +5363,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__38__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__39__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__39__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__47__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__47__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4524,7 +5375,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__39__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__39__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__47__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4543,8 +5394,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__39__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__40__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__40__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__48__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__48__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4555,7 +5406,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__40__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__40__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__48__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4578,6 +5429,7 @@ template<> struct codec_traits<kaa::SyncRequest> {
     static void encode(Encoder& e, const kaa::SyncRequest& v) {
         avro::encode(e, v.requestId);
         avro::encode(e, v.syncRequestMetaData);
+        avro::encode(e, v.bootstrapSyncRequest);
         avro::encode(e, v.profileSyncRequest);
         avro::encode(e, v.configurationSyncRequest);
         avro::encode(e, v.notificationSyncRequest);
@@ -4588,6 +5440,7 @@ template<> struct codec_traits<kaa::SyncRequest> {
     static void decode(Decoder& d, kaa::SyncRequest& v) {
         avro::decode(d, v.requestId);
         avro::decode(d, v.syncRequestMetaData);
+        avro::decode(d, v.bootstrapSyncRequest);
         avro::decode(d, v.profileSyncRequest);
         avro::decode(d, v.configurationSyncRequest);
         avro::decode(d, v.notificationSyncRequest);
@@ -4597,8 +5450,39 @@ template<> struct codec_traits<kaa::SyncRequest> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__41__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__41__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__49__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__49__ v) {
+        e.encodeUnionIndex(v.idx());
+        switch (v.idx()) {
+        case 0:
+            avro::encode(e, v.get_BootstrapSyncResponse());
+            break;
+        case 1:
+            e.encodeNull();
+            break;
+        }
+    }
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__49__& v) {
+        size_t n = d.decodeUnionIndex();
+        if (n >= 2) { throw avro::Exception("Union index too big"); }
+        switch (n) {
+        case 0:
+            {
+                kaa::BootstrapSyncResponse vv;
+                avro::decode(d, vv);
+                v.set_BootstrapSyncResponse(vv);
+            }
+            break;
+        case 1:
+            d.decodeNull();
+            v.set_null();
+            break;
+        }
+    }
+};
+
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__50__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__50__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4609,7 +5493,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__41__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__41__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__50__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4628,8 +5512,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__41__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__42__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__42__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__51__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__51__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4640,7 +5524,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__42__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__42__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__51__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4659,8 +5543,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__42__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__43__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__43__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__52__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__52__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4671,7 +5555,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__43__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__43__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__52__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4690,8 +5574,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__43__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__44__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__44__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__53__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__53__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4702,7 +5586,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__44__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__44__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__53__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4721,8 +5605,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__44__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__45__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__45__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__54__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__54__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4733,7 +5617,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__45__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__45__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__54__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4752,8 +5636,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__45__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__46__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__46__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__55__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__55__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4764,7 +5648,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__46__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__46__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__55__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4783,8 +5667,8 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__46__> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__47__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__47__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__56__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__56__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4795,7 +5679,7 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__47__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__47__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__56__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -4818,6 +5702,7 @@ template<> struct codec_traits<kaa::SyncResponse> {
     static void encode(Encoder& e, const kaa::SyncResponse& v) {
         avro::encode(e, v.requestId);
         avro::encode(e, v.status);
+        avro::encode(e, v.bootstrapSyncResponse);
         avro::encode(e, v.profileSyncResponse);
         avro::encode(e, v.configurationSyncResponse);
         avro::encode(e, v.notificationSyncResponse);
@@ -4829,6 +5714,7 @@ template<> struct codec_traits<kaa::SyncResponse> {
     static void decode(Decoder& d, kaa::SyncResponse& v) {
         avro::decode(d, v.requestId);
         avro::decode(d, v.status);
+        avro::decode(d, v.bootstrapSyncResponse);
         avro::decode(d, v.profileSyncResponse);
         avro::decode(d, v.configurationSyncResponse);
         avro::decode(d, v.notificationSyncResponse);
@@ -4850,8 +5736,8 @@ template<> struct codec_traits<kaa::TopicSubscriptionInfo> {
     }
 };
 
-template<> struct codec_traits<kaa::_endpoint_avsc_Union__48__> {
-    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__48__ v) {
+template<> struct codec_traits<kaa::_endpoint_avsc_Union__57__> {
+    static void encode(Encoder& e, kaa::_endpoint_avsc_Union__57__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -4879,112 +5765,133 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__48__> {
             avro::encode(e, v.get_SyncResponseResultType());
             break;
         case 8:
-            avro::encode(e, v.get_SubscriptionCommand());
+            avro::encode(e, v.get_LogDeliveryErrorCode());
             break;
         case 9:
-            avro::encode(e, v.get_UserAttachRequest());
+            avro::encode(e, v.get_UserAttachErrorCode());
             break;
         case 10:
-            avro::encode(e, v.get_UserAttachResponse());
+            avro::encode(e, v.get_SubscriptionCommand());
             break;
         case 11:
-            avro::encode(e, v.get_UserAttachNotification());
+            avro::encode(e, v.get_UserAttachRequest());
             break;
         case 12:
-            avro::encode(e, v.get_UserDetachNotification());
+            avro::encode(e, v.get_UserAttachResponse());
             break;
         case 13:
-            avro::encode(e, v.get_EndpointAttachRequest());
+            avro::encode(e, v.get_UserAttachNotification());
             break;
         case 14:
-            avro::encode(e, v.get_EndpointAttachResponse());
+            avro::encode(e, v.get_UserDetachNotification());
             break;
         case 15:
-            avro::encode(e, v.get_EndpointDetachRequest());
+            avro::encode(e, v.get_EndpointAttachRequest());
             break;
         case 16:
-            avro::encode(e, v.get_EndpointDetachResponse());
+            avro::encode(e, v.get_EndpointAttachResponse());
             break;
         case 17:
-            avro::encode(e, v.get_Event());
+            avro::encode(e, v.get_EndpointDetachRequest());
             break;
         case 18:
-            avro::encode(e, v.get_EventListenersRequest());
+            avro::encode(e, v.get_EndpointDetachResponse());
             break;
         case 19:
-            avro::encode(e, v.get_EventListenersResponse());
+            avro::encode(e, v.get_Event());
             break;
         case 20:
-            avro::encode(e, v.get_EventSequenceNumberRequest());
+            avro::encode(e, v.get_EventListenersRequest());
             break;
         case 21:
-            avro::encode(e, v.get_EventSequenceNumberResponse());
+            avro::encode(e, v.get_EventListenersResponse());
             break;
         case 22:
-            avro::encode(e, v.get_Notification());
+            avro::encode(e, v.get_EventSequenceNumberRequest());
             break;
         case 23:
-            avro::encode(e, v.get_Topic());
+            avro::encode(e, v.get_EventSequenceNumberResponse());
             break;
         case 24:
-            avro::encode(e, v.get_LogEntry());
+            avro::encode(e, v.get_Notification());
             break;
         case 25:
-            avro::encode(e, v.get_SyncRequestMetaData());
+            avro::encode(e, v.get_Topic());
             break;
         case 26:
-            avro::encode(e, v.get_ProfileSyncRequest());
+            avro::encode(e, v.get_LogEntry());
             break;
         case 27:
-            avro::encode(e, v.get_ConfigurationSyncRequest());
+            avro::encode(e, v.get_SyncRequestMetaData());
             break;
         case 28:
-            avro::encode(e, v.get_NotificationSyncRequest());
+            avro::encode(e, v.get_ProfileSyncRequest());
             break;
         case 29:
-            avro::encode(e, v.get_UserSyncRequest());
+            avro::encode(e, v.get_ProtocolVersionPair());
             break;
         case 30:
-            avro::encode(e, v.get_EventSyncRequest());
+            avro::encode(e, v.get_BootstrapSyncRequest());
             break;
         case 31:
-            avro::encode(e, v.get_LogSyncRequest());
+            avro::encode(e, v.get_ConfigurationSyncRequest());
             break;
         case 32:
-            avro::encode(e, v.get_ProfileSyncResponse());
+            avro::encode(e, v.get_NotificationSyncRequest());
             break;
         case 33:
-            avro::encode(e, v.get_ConfigurationSyncResponse());
+            avro::encode(e, v.get_UserSyncRequest());
             break;
         case 34:
-            avro::encode(e, v.get_NotificationSyncResponse());
+            avro::encode(e, v.get_EventSyncRequest());
             break;
         case 35:
-            avro::encode(e, v.get_UserSyncResponse());
+            avro::encode(e, v.get_LogSyncRequest());
             break;
         case 36:
-            avro::encode(e, v.get_EventSyncResponse());
+            avro::encode(e, v.get_ProtocolMetaData());
             break;
         case 37:
-            avro::encode(e, v.get_LogSyncResponse());
+            avro::encode(e, v.get_BootstrapSyncResponse());
             break;
         case 38:
-            avro::encode(e, v.get_RedirectSyncResponse());
+            avro::encode(e, v.get_ProfileSyncResponse());
             break;
         case 39:
-            avro::encode(e, v.get_SyncRequest());
+            avro::encode(e, v.get_ConfigurationSyncResponse());
             break;
         case 40:
-            avro::encode(e, v.get_SyncResponse());
+            avro::encode(e, v.get_NotificationSyncResponse());
             break;
         case 41:
+            avro::encode(e, v.get_UserSyncResponse());
+            break;
+        case 42:
+            avro::encode(e, v.get_EventSyncResponse());
+            break;
+        case 43:
+            avro::encode(e, v.get_LogDeliveryStatus());
+            break;
+        case 44:
+            avro::encode(e, v.get_LogSyncResponse());
+            break;
+        case 45:
+            avro::encode(e, v.get_RedirectSyncResponse());
+            break;
+        case 46:
+            avro::encode(e, v.get_SyncRequest());
+            break;
+        case 47:
+            avro::encode(e, v.get_SyncResponse());
+            break;
+        case 48:
             avro::encode(e, v.get_TopicSubscriptionInfo());
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__48__& v) {
+    static void decode(Decoder& d, kaa::_endpoint_avsc_Union__57__& v) {
         size_t n = d.decodeUnionIndex();
-        if (n >= 42) { throw avro::Exception("Union index too big"); }
+        if (n >= 49) { throw avro::Exception("Union index too big"); }
         switch (n) {
         case 0:
             {
@@ -5044,236 +5951,285 @@ template<> struct codec_traits<kaa::_endpoint_avsc_Union__48__> {
             break;
         case 8:
             {
+                kaa::LogDeliveryErrorCode vv;
+                avro::decode(d, vv);
+                v.set_LogDeliveryErrorCode(vv);
+            }
+            break;
+        case 9:
+            {
+                kaa::UserAttachErrorCode vv;
+                avro::decode(d, vv);
+                v.set_UserAttachErrorCode(vv);
+            }
+            break;
+        case 10:
+            {
                 kaa::SubscriptionCommand vv;
                 avro::decode(d, vv);
                 v.set_SubscriptionCommand(vv);
             }
             break;
-        case 9:
+        case 11:
             {
                 kaa::UserAttachRequest vv;
                 avro::decode(d, vv);
                 v.set_UserAttachRequest(vv);
             }
             break;
-        case 10:
+        case 12:
             {
                 kaa::UserAttachResponse vv;
                 avro::decode(d, vv);
                 v.set_UserAttachResponse(vv);
             }
             break;
-        case 11:
+        case 13:
             {
                 kaa::UserAttachNotification vv;
                 avro::decode(d, vv);
                 v.set_UserAttachNotification(vv);
             }
             break;
-        case 12:
+        case 14:
             {
                 kaa::UserDetachNotification vv;
                 avro::decode(d, vv);
                 v.set_UserDetachNotification(vv);
             }
             break;
-        case 13:
+        case 15:
             {
                 kaa::EndpointAttachRequest vv;
                 avro::decode(d, vv);
                 v.set_EndpointAttachRequest(vv);
             }
             break;
-        case 14:
+        case 16:
             {
                 kaa::EndpointAttachResponse vv;
                 avro::decode(d, vv);
                 v.set_EndpointAttachResponse(vv);
             }
             break;
-        case 15:
+        case 17:
             {
                 kaa::EndpointDetachRequest vv;
                 avro::decode(d, vv);
                 v.set_EndpointDetachRequest(vv);
             }
             break;
-        case 16:
+        case 18:
             {
                 kaa::EndpointDetachResponse vv;
                 avro::decode(d, vv);
                 v.set_EndpointDetachResponse(vv);
             }
             break;
-        case 17:
+        case 19:
             {
                 kaa::Event vv;
                 avro::decode(d, vv);
                 v.set_Event(vv);
             }
             break;
-        case 18:
+        case 20:
             {
                 kaa::EventListenersRequest vv;
                 avro::decode(d, vv);
                 v.set_EventListenersRequest(vv);
             }
             break;
-        case 19:
+        case 21:
             {
                 kaa::EventListenersResponse vv;
                 avro::decode(d, vv);
                 v.set_EventListenersResponse(vv);
             }
             break;
-        case 20:
+        case 22:
             {
                 kaa::EventSequenceNumberRequest vv;
                 avro::decode(d, vv);
                 v.set_EventSequenceNumberRequest(vv);
             }
             break;
-        case 21:
+        case 23:
             {
                 kaa::EventSequenceNumberResponse vv;
                 avro::decode(d, vv);
                 v.set_EventSequenceNumberResponse(vv);
             }
             break;
-        case 22:
+        case 24:
             {
                 kaa::Notification vv;
                 avro::decode(d, vv);
                 v.set_Notification(vv);
             }
             break;
-        case 23:
+        case 25:
             {
                 kaa::Topic vv;
                 avro::decode(d, vv);
                 v.set_Topic(vv);
             }
             break;
-        case 24:
+        case 26:
             {
                 kaa::LogEntry vv;
                 avro::decode(d, vv);
                 v.set_LogEntry(vv);
             }
             break;
-        case 25:
+        case 27:
             {
                 kaa::SyncRequestMetaData vv;
                 avro::decode(d, vv);
                 v.set_SyncRequestMetaData(vv);
             }
             break;
-        case 26:
+        case 28:
             {
                 kaa::ProfileSyncRequest vv;
                 avro::decode(d, vv);
                 v.set_ProfileSyncRequest(vv);
             }
             break;
-        case 27:
+        case 29:
+            {
+                kaa::ProtocolVersionPair vv;
+                avro::decode(d, vv);
+                v.set_ProtocolVersionPair(vv);
+            }
+            break;
+        case 30:
+            {
+                kaa::BootstrapSyncRequest vv;
+                avro::decode(d, vv);
+                v.set_BootstrapSyncRequest(vv);
+            }
+            break;
+        case 31:
             {
                 kaa::ConfigurationSyncRequest vv;
                 avro::decode(d, vv);
                 v.set_ConfigurationSyncRequest(vv);
             }
             break;
-        case 28:
+        case 32:
             {
                 kaa::NotificationSyncRequest vv;
                 avro::decode(d, vv);
                 v.set_NotificationSyncRequest(vv);
             }
             break;
-        case 29:
+        case 33:
             {
                 kaa::UserSyncRequest vv;
                 avro::decode(d, vv);
                 v.set_UserSyncRequest(vv);
             }
             break;
-        case 30:
+        case 34:
             {
                 kaa::EventSyncRequest vv;
                 avro::decode(d, vv);
                 v.set_EventSyncRequest(vv);
             }
             break;
-        case 31:
+        case 35:
             {
                 kaa::LogSyncRequest vv;
                 avro::decode(d, vv);
                 v.set_LogSyncRequest(vv);
             }
             break;
-        case 32:
+        case 36:
+            {
+                kaa::ProtocolMetaData vv;
+                avro::decode(d, vv);
+                v.set_ProtocolMetaData(vv);
+            }
+            break;
+        case 37:
+            {
+                kaa::BootstrapSyncResponse vv;
+                avro::decode(d, vv);
+                v.set_BootstrapSyncResponse(vv);
+            }
+            break;
+        case 38:
             {
                 kaa::ProfileSyncResponse vv;
                 avro::decode(d, vv);
                 v.set_ProfileSyncResponse(vv);
             }
             break;
-        case 33:
+        case 39:
             {
                 kaa::ConfigurationSyncResponse vv;
                 avro::decode(d, vv);
                 v.set_ConfigurationSyncResponse(vv);
             }
             break;
-        case 34:
+        case 40:
             {
                 kaa::NotificationSyncResponse vv;
                 avro::decode(d, vv);
                 v.set_NotificationSyncResponse(vv);
             }
             break;
-        case 35:
+        case 41:
             {
                 kaa::UserSyncResponse vv;
                 avro::decode(d, vv);
                 v.set_UserSyncResponse(vv);
             }
             break;
-        case 36:
+        case 42:
             {
                 kaa::EventSyncResponse vv;
                 avro::decode(d, vv);
                 v.set_EventSyncResponse(vv);
             }
             break;
-        case 37:
+        case 43:
+            {
+                kaa::LogDeliveryStatus vv;
+                avro::decode(d, vv);
+                v.set_LogDeliveryStatus(vv);
+            }
+            break;
+        case 44:
             {
                 kaa::LogSyncResponse vv;
                 avro::decode(d, vv);
                 v.set_LogSyncResponse(vv);
             }
             break;
-        case 38:
+        case 45:
             {
                 kaa::RedirectSyncResponse vv;
                 avro::decode(d, vv);
                 v.set_RedirectSyncResponse(vv);
             }
             break;
-        case 39:
+        case 46:
             {
                 kaa::SyncRequest vv;
                 avro::decode(d, vv);
                 v.set_SyncRequest(vv);
             }
             break;
-        case 40:
+        case 47:
             {
                 kaa::SyncResponse vv;
                 avro::decode(d, vv);
                 v.set_SyncResponse(vv);
             }
             break;
-        case 41:
+        case 48:
             {
                 kaa::TopicSubscriptionInfo vv;
                 avro::decode(d, vv);

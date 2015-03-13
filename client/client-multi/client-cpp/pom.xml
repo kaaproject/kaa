@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.client</groupId>
-        <version>0.6.3-SNAPSHOT</version>
+        <version>0.7.0-SNAPSHOT</version>
         <artifactId>client-multi</artifactId>
     </parent>
     <artifactId>client-cpp</artifactId>
@@ -106,25 +106,6 @@
                                         <argument>../../../common/endpoint-shared/src/main/avro/endpoint.avsc</argument>
                                         <argument>-o</argument>
                                         <argument>kaa/gen/EndpointGen.hpp</argument>
-                                        <argument>-n</argument>
-                                        <argument>kaa</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>compile_bootstrap_schema</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>/usr/local/bin/avrogencpp</executable>
-                                    <workingDirectory>${basedir}</workingDirectory>
-                                    <arguments>
-                                        <argument>-i</argument>
-                                        <argument>../../../common/endpoint-shared/src/main/avro/bootstrap.avsc</argument>
-                                        <argument>-o</argument>
-                                        <argument>kaa/gen/BootstrapGen.hpp</argument>
                                         <argument>-n</argument>
                                         <argument>kaa</argument>
                                     </arguments>

@@ -24,6 +24,7 @@ import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.to
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDto;
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDtoList;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,6 +37,11 @@ import net.iharder.Base64;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
 import org.apache.avro.generic.GenericRecord;
+//import org.codehaus.jackson.map.ObjectMapper;
+//import org.codehaus.jackson.map.SerializationConfig;
+import org.kaaproject.avro.ui.converter.FormAvroConverter;
+import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -57,7 +63,6 @@ import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -65,9 +70,13 @@ import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
+import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderRestDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginDto;
+import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.dao.PropertiesFacade;
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
@@ -77,36 +86,39 @@ import org.kaaproject.kaa.server.admin.services.entity.User;
 import org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties;
 import org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties;
 import org.kaaproject.kaa.server.admin.services.messaging.MessagingService;
+import org.kaaproject.kaa.server.admin.services.schema.ConfigurationSchemaFormAvroConverter;
+import org.kaaproject.kaa.server.admin.services.schema.EcfSchemaFormAvroConverter;
+import org.kaaproject.kaa.server.admin.services.schema.SimpleSchemaFormAvroConverter;
 import org.kaaproject.kaa.server.admin.services.thrift.ControlThriftClientProvider;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.file.FileData;
-import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderFormWrapper;
-import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
+import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
+import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
-import org.kaaproject.kaa.server.common.avro.ui.converter.FormAvroConverter;
-import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
-import org.kaaproject.kaa.server.common.log.shared.annotation.KaaAppenderConfig;
-import org.kaaproject.kaa.server.common.log.shared.config.AppenderConfig;
+import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginType;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
+import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service("kaaAdminService")
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
-
+    
     /** The Constant logger. */
     private static final Logger LOG = LoggerFactory.getLogger(KaaAdminServiceImpl.class);
 
@@ -124,30 +136,60 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     @Autowired
     private CacheService cacheService;
+    
+    @Value("#{properties[additional_plugins_scan_package]}")
+    private String additionalPluginsScanPackage;
 
     private PasswordEncoder passwordEncoder;
+    
+    private SchemaFormAvroConverter simpleSchemaFormAvroConverter;
+    
+    private SchemaFormAvroConverter commonSchemaFormAvroConverter;
+    
+    private SchemaFormAvroConverter configurationSchemaFormAvroConverter;
+    
+    private SchemaFormAvroConverter ecfSchemaFormAvroConverter;
     
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
     
-    private List<LogAppenderInfoDto> appenders = new ArrayList<>();
-    private Map<String, Schema> appenderConfigSchemas = new HashMap<>();
+    private Map<PluginType, Map<String, PluginInfoDto>> pluginsInfo =
+            new HashMap<>();
+    {
+        for (PluginType type : PluginType.values()) {
+            pluginsInfo.put(type, new HashMap<String, PluginInfoDto>());
+        }
+    }
     
     @Override
     public void afterPropertiesSet() throws Exception {
         ClassPathScanningCandidateComponentProvider scanner =
                 new ClassPathScanningCandidateComponentProvider(false);
-        scanner.addIncludeFilter(new AnnotationTypeFilter(KaaAppenderConfig.class));
-        Set<BeanDefinition> beans = scanner.findCandidateComponents("org.kaaproject.kaa.server.appenders");
+        scanner.addIncludeFilter(new AnnotationTypeFilter(KaaPluginConfig.class));
+        scanPluginsPackage(scanner, "org.kaaproject.kaa.server.appenders");
+        scanPluginsPackage(scanner, "org.kaaproject.kaa.server.verifiers");
+        if (!isEmpty(additionalPluginsScanPackage)) {
+            scanPluginsPackage(scanner, additionalPluginsScanPackage);
+        }
+        simpleSchemaFormAvroConverter = new SimpleSchemaFormAvroConverter();
+        commonSchemaFormAvroConverter = new SchemaFormAvroConverter();
+        configurationSchemaFormAvroConverter = new ConfigurationSchemaFormAvroConverter();
+        ecfSchemaFormAvroConverter = new EcfSchemaFormAvroConverter();
+    }
+    
+    private void scanPluginsPackage(ClassPathScanningCandidateComponentProvider scanner, 
+            String packageName) throws Exception {
+        Set<BeanDefinition> beans = scanner.findCandidateComponents(packageName);
         for (BeanDefinition bean : beans) {
             Class<?> clazz = Class.forName(bean.getBeanClassName());
-            AppenderConfig appenderConfig = (AppenderConfig)clazz.newInstance();
-            appenderConfigSchemas.put(appenderConfig.getLogAppenderClass(), appenderConfig.getConfigSchema());
-            RecordField appenderConfigForm = FormAvroConverter.createRecordFieldFromSchema(appenderConfig.getConfigSchema());
-            LogAppenderInfoDto appender = new LogAppenderInfoDto(
-                    appenderConfig.getName(), appenderConfigForm, appenderConfig.getLogAppenderClass());
-            appenders.add(appender);
+            KaaPluginConfig annotation = clazz.getAnnotation(KaaPluginConfig.class);
+            PluginConfig pluginConfig = (PluginConfig)clazz.newInstance();
+            RecordField fieldConfiguration = 
+                    FormAvroConverter.createRecordFieldFromSchema(pluginConfig.getPluginConfigSchema());
+            PluginInfoDto pluginInfo = new PluginInfoDto(
+                    pluginConfig.getPluginTypeName(), fieldConfiguration, pluginConfig.getPluginClassName());
+            pluginsInfo.get(annotation.pluginType()).put(pluginInfo.getPluginClassName(), pluginInfo);
         }
     }
 
@@ -402,6 +444,16 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public ApplicationDto getApplicationByApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            return checkApplicationToken(applicationToken);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public ApplicationDto editApplication(ApplicationDto application) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
@@ -453,16 +505,12 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
-
+    
     @Override
-    public String getSdk(String applicationId, Integer configurationSchemaVersion,
-            Integer profileSchemaVersion, Integer notificationSchemaVersion,
-            SdkPlatform targetPlatform, List<String> aefMapIds, Integer logSchemaVersion) throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+    public String generateSdk(SdkKey key) throws KaaAdminServiceException {
         try {
-            checkApplicationId(applicationId);
-            SdkKey sdkKey = new SdkKey(applicationId, configurationSchemaVersion, profileSchemaVersion, notificationSchemaVersion, logSchemaVersion, targetPlatform, aefMapIds);
-            return Base64.encodeObject(sdkKey, Base64.URL_SAFE);
+            doGenerateSdk(key);
+            return Base64.encodeObject(key, Base64.URL_SAFE);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -470,17 +518,51 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     
     @Override
     public FileData getSdk(SdkKey key) throws KaaAdminServiceException {
+        try {
+            return doGenerateSdk(key);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+    private FileData doGenerateSdk(SdkKey key) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             checkApplicationId(key.getApplicationId());
-            Sdk sdk = cacheService.getSdk(key);
-            FileData data = new FileData();
-            data.setFileName(sdk.getFileName());
-            data.setContentType(key.getTargetPlatform().getContentType());
-            data.setFileData(sdk.getData());
-            return data;
+            FileData sdkFile = cacheService.getSdk(key);
+            if (sdkFile == null) {
+                SdkPlatform targetPlatform = toSdkPlatform(key.getTargetPlatform());            
+                Sdk sdk = clientProvider.getClient().generateSdk(targetPlatform,
+                          key.getApplicationId(), key.getProfileSchemaVersion(),
+                          key.getConfigurationSchemaVersion(), 
+                          key.getNotificationSchemaVersion(), 
+                          key.getAefMapIds(), 
+                          key.getLogSchemaVersion(),
+                          key.getDefaultVerifierToken());
+                sdkFile = new FileData();
+                sdkFile.setFileName(sdk.getFileName());
+                sdkFile.setContentType(key.getTargetPlatform().getContentType());
+                sdkFile.setFileData(sdk.getData());
+                cacheService.putSdk(key, sdkFile);
+            }
+            return sdkFile;
         } catch (Exception e) {
             throw Utils.handleException(e);
+        }
+    }
+    
+    private SdkPlatform toSdkPlatform(org.kaaproject.kaa.common.dto.admin.SdkPlatform sdkPlatform) {
+        switch (sdkPlatform) {
+        case JAVA:
+            return SdkPlatform.JAVA;
+        case ANDROID:
+            return SdkPlatform.ANDROID;
+        case CPP:
+            return SdkPlatform.CPP;
+        case C:
+            return SdkPlatform.C;
+        default:
+            return null;
         }
     }
     
@@ -497,6 +579,102 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+    
+    @Override
+    public RecordField createSimpleEmptySchemaForm()
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            return simpleSchemaFormAvroConverter.getEmptySchemaFormInstance();
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public RecordField createCommonEmptySchemaForm()
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            return commonSchemaFormAvroConverter.getEmptySchemaFormInstance();
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public RecordField createConfigurationEmptySchemaForm()
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            return configurationSchemaFormAvroConverter.getEmptySchemaFormInstance();
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public RecordField createEcfEmptySchemaForm() throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            return ecfSchemaFormAvroConverter.getEmptySchemaFormInstance();
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }    
+    }
+    
+    @Override
+    public RecordField generateSimpleSchemaForm(String fileItemName)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            byte[] data = getFileContent(fileItemName);
+            String avroSchema = new String(data);
+            Schema schema = new Schema.Parser().parse(avroSchema);
+            return simpleSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        } 
+    }
+
+    @Override
+    public RecordField generateCommonSchemaForm(String fileItemName)
+            throws KaaAdminServiceException {
+        try {
+            byte[] data = getFileContent(fileItemName);
+            String avroSchema = new String(data);
+            Schema schema = new Schema.Parser().parse(avroSchema);
+            return commonSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        } 
+    }
+
+    @Override
+    public RecordField generateConfigurationSchemaForm(String fileItemName)
+            throws KaaAdminServiceException {
+        try {
+            byte[] data = getFileContent(fileItemName);
+            String avroSchema = new String(data);
+            Schema schema = new Schema.Parser().parse(avroSchema);
+            return configurationSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        } 
+    }
+
+    @Override
+    public RecordField generateEcfSchemaForm(String fileItemName)
+            throws KaaAdminServiceException {
+        try {
+            byte[] data = getFileContent(fileItemName);
+            String avroSchema = new String(data);
+            Schema schema = new Schema.Parser().parse(avroSchema);
+            return ecfSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }     
     }
 
     @Override
@@ -525,27 +703,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema, String fileItemName) throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-        try {
-            if (isEmpty(profileSchema.getId())) {
-                profileSchema.setCreatedUsername(getCurrentUser().getUsername());
-                checkApplicationId(profileSchema.getApplicationId());
-                setSchema(profileSchema, fileItemName);
-            }
-            else {
-                ProfileSchemaDto storedProfileSchema = toDto(clientProvider.getClient().getProfileSchema(profileSchema.getId()));
-                Utils.checkNotNull(storedProfileSchema);
-                checkApplicationId(storedProfileSchema.getApplicationId());
-                profileSchema.setSchema(storedProfileSchema.getSchema());
-            }
-            return toDto(clientProvider.getClient().editProfileSchema(toDataStruct(profileSchema)));
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
-    }
-
-    @Override
     public ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema,
             byte[] schema) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
@@ -566,6 +723,54 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
+    
+    private void convertToSchemaForm(AbstractSchemaDto dto, SchemaFormAvroConverter converter) throws IOException {
+        Schema schema = new Schema.Parser().parse(dto.getSchema());
+        RecordField schemaForm = converter.createSchemaFormFromSchema(schema);
+        dto.setSchemaForm(schemaForm);
+    }
+
+    private void convertToStringSchema(AbstractSchemaDto dto, SchemaFormAvroConverter converter) throws Exception {
+        Schema schema = converter.createSchemaFromSchemaForm(dto.getSchemaForm());
+        String schemaString = SchemaFormAvroConverter.createSchemaString(schema, true);
+        dto.setSchema(schemaString);
+    }
+
+    @Override
+    public ProfileSchemaDto getProfileSchemaForm(String profileSchemaId)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            ProfileSchemaDto profileSchema = getProfileSchema(profileSchemaId);
+            convertToSchemaForm(profileSchema, simpleSchemaFormAvroConverter);
+            return profileSchema;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }    
+    }
+
+    @Override
+    public ProfileSchemaDto editProfileSchemaForm(ProfileSchemaDto profileSchema)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            if (isEmpty(profileSchema.getId())) {
+                profileSchema.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(profileSchema.getApplicationId());
+                convertToStringSchema(profileSchema, simpleSchemaFormAvroConverter);
+            }
+            else {
+                ProfileSchemaDto storedProfileSchema = toDto(clientProvider.getClient().getProfileSchema(profileSchema.getId()));
+                Utils.checkNotNull(storedProfileSchema);
+                checkApplicationId(storedProfileSchema.getApplicationId());
+                profileSchema.setSchema(storedProfileSchema.getSchema());
+            }
+            return toDto(clientProvider.getClient().editProfileSchema(toDataStruct(profileSchema)));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
 
     @Override
     public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(
@@ -595,28 +800,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     @Override
     public ConfigurationSchemaDto editConfigurationSchema(
-            ConfigurationSchemaDto configurationSchema, String fileItemName) throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-        try {
-            if (isEmpty(configurationSchema.getId())) {
-                configurationSchema.setCreatedUsername(getCurrentUser().getUsername());
-                checkApplicationId(configurationSchema.getApplicationId());
-                setSchema(configurationSchema, fileItemName);
-            }
-            else {
-                ConfigurationSchemaDto storedConfigurationSchema = toDto(clientProvider.getClient().getConfigurationSchema(configurationSchema.getId()));
-                Utils.checkNotNull(storedConfigurationSchema);
-                checkApplicationId(storedConfigurationSchema.getApplicationId());
-                configurationSchema.setSchema(storedConfigurationSchema.getSchema());
-            }
-            return toDto(clientProvider.getClient().editConfigurationSchema(toDataStruct(configurationSchema)));
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
-    }
-
-    @Override
-    public ConfigurationSchemaDto editConfigurationSchema(
             ConfigurationSchemaDto configurationSchema, byte[] schema)
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
@@ -636,6 +819,42 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+    
+    @Override
+    public ConfigurationSchemaDto getConfigurationSchemaForm(
+            String configurationSchemaId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            ConfigurationSchemaDto configurationSchema = getConfigurationSchema(configurationSchemaId);
+            convertToSchemaForm(configurationSchema, configurationSchemaFormAvroConverter);
+            return configurationSchema;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public ConfigurationSchemaDto editConfigurationSchemaForm(
+            ConfigurationSchemaDto configurationSchema)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            if (isEmpty(configurationSchema.getId())) {
+                configurationSchema.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(configurationSchema.getApplicationId());
+                convertToStringSchema(configurationSchema, configurationSchemaFormAvroConverter);
+            }
+            else {
+                ConfigurationSchemaDto storedConfigurationSchema = toDto(clientProvider.getClient().getConfigurationSchema(configurationSchema.getId()));
+                Utils.checkNotNull(storedConfigurationSchema);
+                checkApplicationId(storedConfigurationSchema.getApplicationId());
+                configurationSchema.setSchema(storedConfigurationSchema.getSchema());
+            }
+            return toDto(clientProvider.getClient().editConfigurationSchema(toDataStruct(configurationSchema)));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }    
     }
 
     @Override
@@ -662,6 +881,28 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
+    
+    @Override
+    public List<SchemaInfoDto> getUserNotificationSchemaInfosByApplicationId(
+            String applicationId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationId(applicationId);            
+            List<NotificationSchemaDto> notificationSchemas = toDtoList(clientProvider.getClient().findNotificationSchemasByAppIdAndType(applicationId,
+                    toGenericDataStruct(NotificationTypeDto.USER)));
+            List<SchemaInfoDto> schemaInfos = new ArrayList<>(notificationSchemas.size());
+            for (NotificationSchemaDto notificationSchema : notificationSchemas) {
+                SchemaInfoDto schemaInfo = new SchemaInfoDto(notificationSchema);
+                Schema schema = new Schema.Parser().parse(notificationSchema.getSchema());
+                RecordField schemaForm = FormAvroConverter.createRecordFieldFromSchema(schema);
+                schemaInfo.setSchemaForm(schemaForm);
+                schemaInfos.add(schemaInfo);
+            }
+            return schemaInfos;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
 
     @Override
     public NotificationSchemaDto getNotificationSchema(String notificationSchemaId)
@@ -672,30 +913,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             Utils.checkNotNull(notificationSchema);
             checkApplicationId(notificationSchema.getApplicationId());
             return notificationSchema;
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
-    }
-
-    @Override
-    public NotificationSchemaDto editNotificationSchema(
-            NotificationSchemaDto notificationSchema, String fileItemName)
-            throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-        try {
-            if (isEmpty(notificationSchema.getId())) {
-                notificationSchema.setCreatedUsername(getCurrentUser().getUsername());
-                checkApplicationId(notificationSchema.getApplicationId());
-                setSchema(notificationSchema, fileItemName);
-            }
-            else {
-                NotificationSchemaDto storedNotificationSchema = toDto(clientProvider.getClient().getNotificationSchema(notificationSchema.getId()));
-                Utils.checkNotNull(storedNotificationSchema);
-                checkApplicationId(storedNotificationSchema.getApplicationId());
-                notificationSchema.setSchema(storedNotificationSchema.getSchema());
-            }
-            notificationSchema.setType(NotificationTypeDto.USER);
-            return toDto(clientProvider.getClient().editNotificationSchema(toDataStruct(notificationSchema)));
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -725,6 +942,43 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    @Override
+    public NotificationSchemaDto getNotificationSchemaForm(
+            String notificationSchemaId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            NotificationSchemaDto notificationSchema = getNotificationSchema(notificationSchemaId);
+            convertToSchemaForm(notificationSchema, commonSchemaFormAvroConverter);
+            return notificationSchema;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }    
+    }
+
+    @Override
+    public NotificationSchemaDto editNotificationSchemaForm(
+            NotificationSchemaDto notificationSchema)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            if (isEmpty(notificationSchema.getId())) {
+                notificationSchema.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(notificationSchema.getApplicationId());
+                convertToStringSchema(notificationSchema, commonSchemaFormAvroConverter);
+            }
+            else {
+                NotificationSchemaDto storedNotificationSchema = toDto(clientProvider.getClient().getNotificationSchema(notificationSchema.getId()));
+                Utils.checkNotNull(storedNotificationSchema);
+                checkApplicationId(storedNotificationSchema.getApplicationId());
+                notificationSchema.setSchema(storedNotificationSchema.getSchema());
+            }
+            notificationSchema.setType(NotificationTypeDto.USER);
+            return toDto(clientProvider.getClient().editNotificationSchema(toDataStruct(notificationSchema)));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }    
+    }
+    
     @Override
     public List<LogSchemaDto> getLogSchemasByApplicationId(
             String applicationId) throws KaaAdminServiceException {
@@ -780,27 +1034,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public LogSchemaDto editLogSchema(LogSchemaDto logSchema, String fileItemName) throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-        try {
-            if (isEmpty(logSchema.getId())) {
-                logSchema.setCreatedUsername(getCurrentUser().getUsername());
-                checkApplicationId(logSchema.getApplicationId());
-                setSchema(logSchema, fileItemName);
-            }
-            else {
-                LogSchemaDto storedLogSchema = toDto(clientProvider.getClient().getLogSchema(logSchema.getId()));
-                Utils.checkNotNull(storedLogSchema);
-                checkApplicationId(storedLogSchema.getApplicationId());
-                logSchema.setSchema(storedLogSchema.getSchema());
-            }
-            return toDto(clientProvider.getClient().editLogSchema(toDataStruct(logSchema)));
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
-    }
-
-    @Override
     public LogSchemaDto editLogSchema(LogSchemaDto logSchema,
             byte[] schema) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
@@ -820,6 +1053,41 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+    
+    @Override
+    public LogSchemaDto getLogSchemaForm(String logSchemaId)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            LogSchemaDto logSchema = getLogSchema(logSchemaId);
+            convertToSchemaForm(logSchema, simpleSchemaFormAvroConverter);
+            return logSchema;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }    
+    }
+
+    @Override
+    public LogSchemaDto editLogSchemaForm(LogSchemaDto logSchema)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            if (isEmpty(logSchema.getId())) {
+                logSchema.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(logSchema.getApplicationId());
+                convertToStringSchema(logSchema, simpleSchemaFormAvroConverter);
+            }
+            else {
+                LogSchemaDto storedLogSchema = toDto(clientProvider.getClient().getLogSchema(logSchema.getId()));
+                Utils.checkNotNull(storedLogSchema);
+                checkApplicationId(storedLogSchema.getApplicationId());
+                logSchema.setSchema(storedLogSchema.getSchema());
+            }
+            return toDto(clientProvider.getClient().editLogSchema(toDataStruct(logSchema)));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }    
     }
 
     @Override
@@ -1004,6 +1272,186 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
+    
+    @Override
+    public StructureRecordDto<ConfigurationRecordFormDto> getConfigurationRecordForm(
+            String schemaId, String endpointGroupId)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            StructureRecordDto<ConfigurationDto> record = getConfigurationRecord(schemaId, endpointGroupId);
+            return toConfigurationRecordFormStructure(record);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+  @Override
+  public ConfigurationDto editConfiguration(ConfigurationDto configuration)
+          throws KaaAdminServiceException {
+      checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+      try {
+          String username = this.getCurrentUser().getUsername();
+          if (isEmpty(configuration.getId())) {
+              configuration.setCreatedUsername(username);
+              checkEndpointGroupId(configuration.getEndpointGroupId());
+          }
+          else {
+              configuration.setModifiedUsername(username);
+              ConfigurationDto storedConfiguration = toDto(clientProvider.getClient().getConfiguration(configuration.getId()));
+              Utils.checkNotNull(storedConfiguration);
+              checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
+          }
+          return toDto(clientProvider.getClient().editConfiguration(toDataStruct(configuration)));
+      } catch (Exception e) {
+          throw Utils.handleException(e);
+      }
+  }
+  
+  @Override
+  public ConfigurationRecordFormDto editConfigurationRecordForm(ConfigurationRecordFormDto configuration)
+          throws KaaAdminServiceException {
+      checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+      try {
+          ConfigurationDto toSave = toConfigurationDto(configuration);
+          ConfigurationDto stored = editConfiguration(toSave);
+          return toConfigurationRecordFormDto(stored);
+      } catch (Exception e) {
+          throw Utils.handleException(e);
+      }
+  }
+  
+  @Override
+  public ConfigurationDto activateConfiguration(String configurationId)
+          throws KaaAdminServiceException {
+      checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+      try {
+          ConfigurationDto storedConfiguration = toDto(clientProvider.getClient().getConfiguration(configurationId));
+          Utils.checkNotNull(storedConfiguration);
+          checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
+          String username = this.getCurrentUser().getUsername();
+          return toDto(clientProvider.getClient().activateConfiguration(configurationId, username));
+      } catch (Exception e) {
+          throw Utils.handleException(e);
+      }
+  }
+
+  @Override
+  public ConfigurationRecordFormDto activateConfigurationRecordForm(String configurationId)
+          throws KaaAdminServiceException {
+      checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+      try {
+          ConfigurationDto storedConfiguration = activateConfiguration(configurationId);
+          return toConfigurationRecordFormDto(storedConfiguration);
+      } catch (Exception e) {
+          throw Utils.handleException(e);
+      }
+  }
+  
+  @Override
+  public ConfigurationDto deactivateConfiguration(String configurationId)
+          throws KaaAdminServiceException {
+      checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+      try {
+          ConfigurationDto storedConfiguration = toDto(clientProvider.getClient().getConfiguration(configurationId));
+          Utils.checkNotNull(storedConfiguration);
+          checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
+          String username = this.getCurrentUser().getUsername();
+          ConfigurationDto stored = toDto(clientProvider.getClient().deactivateConfiguration(configurationId, username));
+          return toConfigurationRecordFormDto(stored);
+      } catch (Exception e) {
+          throw Utils.handleException(e);
+      }
+  }
+
+  @Override
+  public ConfigurationRecordFormDto deactivateConfigurationRecordForm(String configurationId)
+          throws KaaAdminServiceException {
+      checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+      try {
+          ConfigurationDto storedConfiguration = deactivateConfiguration(configurationId);
+          return toConfigurationRecordFormDto(storedConfiguration);
+      } catch (Exception e) {
+          throw Utils.handleException(e);
+      }
+  }
+    
+    private StructureRecordDto<ConfigurationRecordFormDto> toConfigurationRecordFormStructure(StructureRecordDto<ConfigurationDto> record) 
+            throws KaaAdminServiceException, IOException {
+        
+        ConfigurationSchemaDto schemaDto = this.getConfigurationSchema(record.getSchemaId());
+        EndpointGroupDto endpointGroup = this.getEndpointGroup(record.getEndpointGroupId());
+        
+        String rawSchema = endpointGroup.getWeight() == 0 ? schemaDto.getBaseSchema() : 
+            schemaDto.getOverrideSchema();
+        
+        Schema schema = new Schema.Parser().parse(rawSchema);
+        
+        ConfigurationRecordFormDto activeConfig = null;
+        ConfigurationRecordFormDto inactiveConfig = null;
+        if (record.getActiveStructureDto() != null) {
+            activeConfig = toConfigurationRecordFormDto(record.getActiveStructureDto(), schema);
+        }
+        if (record.getInactiveStructureDto() != null) {
+            inactiveConfig = toConfigurationRecordFormDto(record.getInactiveStructureDto(), schema);
+        }
+        
+        StructureRecordDto<ConfigurationRecordFormDto> result = new 
+                StructureRecordDto<>(activeConfig, inactiveConfig);
+        
+        return result;
+    }
+    
+    private ConfigurationRecordFormDto toConfigurationRecordFormDto(ConfigurationDto configuration) 
+            throws KaaAdminServiceException, IOException {
+        
+        ConfigurationSchemaDto schemaDto = this.getConfigurationSchema(configuration.getSchemaId());
+        EndpointGroupDto endpointGroup = this.getEndpointGroup(configuration.getEndpointGroupId());
+        
+        String rawSchema = endpointGroup.getWeight() == 0 ? schemaDto.getBaseSchema() : 
+            schemaDto.getOverrideSchema();
+        
+        Schema schema = new Schema.Parser().parse(rawSchema);
+        
+        return toConfigurationRecordFormDto(configuration, schema);
+    }
+    
+    private ConfigurationRecordFormDto toConfigurationRecordFormDto(ConfigurationDto configuration,
+            Schema schema) 
+            throws KaaAdminServiceException, IOException {
+        
+        String body = configuration.getBody();
+        
+        RecordField configurationRecord;
+        
+        if (!isEmpty(body)) {
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
+            GenericRecord record = converter.decodeJson(body);
+            configurationRecord = FormAvroConverter.createRecordFieldFromGenericRecord(record);
+        } else {
+            configurationRecord = FormAvroConverter.createRecordFieldFromSchema(schema);
+        }
+        
+        ConfigurationRecordFormDto configurationRecordForm = new ConfigurationRecordFormDto(configuration);
+        configurationRecordForm.setConfigurationRecord(configurationRecord);
+        
+        return configurationRecordForm;
+    }
+    
+    private ConfigurationDto toConfigurationDto(ConfigurationRecordFormDto configuration) 
+            throws KaaAdminServiceException, IOException {
+        
+        String body = null;
+        RecordField configurationRecord = configuration.getConfigurationRecord();
+        if (configurationRecord != null) {
+            GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(configurationRecord);
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
+            body = converter.endcodeToJson(record);
+        }
+        ConfigurationDto result = new ConfigurationDto(configuration);
+        result.setBody(body);
+        return result;
+    }
 
     @Override
     public List<SchemaDto> getVacantConfigurationSchemasByEndpointGroupId(
@@ -1016,57 +1464,34 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
-
+    
     @Override
-    public ConfigurationDto editConfiguration(ConfigurationDto configuration)
-            throws KaaAdminServiceException {
+    public List<SchemaInfoDto> getVacantConfigurationSchemaInfosByEndpointGroupId(
+            String endpointGroupId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            String username = this.getCurrentUser().getUsername();
-            if (isEmpty(configuration.getId())) {
-                configuration.setCreatedUsername(username);
-                checkEndpointGroupId(configuration.getEndpointGroupId());
-            }
-            else {
-                configuration.setModifiedUsername(username);
-                ConfigurationDto storedConfiguration = toDto(clientProvider.getClient().getConfiguration(configuration.getId()));
-                Utils.checkNotNull(storedConfiguration);
-                checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
-            }
-            return toDto(clientProvider.getClient().editConfiguration(toDataStruct(configuration)));
+            EndpointGroupDto endpointGroup = checkEndpointGroupId(endpointGroupId);
+            List<SchemaDto> schemas = getVacantConfigurationSchemasByEndpointGroupId(endpointGroupId);
+            return toConfigurationSchemaInfos(schemas, endpointGroup);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
-
-    @Override
-    public ConfigurationDto activateConfiguration(String configurationId)
-            throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-        try {
-            ConfigurationDto storedConfiguration = toDto(clientProvider.getClient().getConfiguration(configurationId));
-            Utils.checkNotNull(storedConfiguration);
-            checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
-            String username = this.getCurrentUser().getUsername();
-            return toDto(clientProvider.getClient().activateConfiguration(configurationId, username));
-        } catch (Exception e) {
-            throw Utils.handleException(e);
+    
+    private List<SchemaInfoDto> toConfigurationSchemaInfos (List<SchemaDto> schemas, EndpointGroupDto endpointGroup) 
+            throws KaaAdminServiceException, IOException {
+        List<SchemaInfoDto> schemaInfos = new ArrayList<>();
+        for (SchemaDto schemaDto : schemas) {
+            ConfigurationSchemaDto configSchema = this.getConfigurationSchema(schemaDto.getId());
+            String rawSchema = endpointGroup.getWeight() == 0 ? configSchema.getBaseSchema() : 
+                configSchema.getOverrideSchema();
+            Schema schema = new Schema.Parser().parse(rawSchema);
+            SchemaInfoDto schemaInfo = new SchemaInfoDto(schemaDto);
+            RecordField schemaForm = FormAvroConverter.createRecordFieldFromSchema(schema);
+            schemaInfo.setSchemaForm(schemaForm);
+            schemaInfos.add(schemaInfo);
         }
-    }
-
-    @Override
-    public ConfigurationDto deactivateConfiguration(String configurationId)
-            throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-        try {
-            ConfigurationDto storedConfiguration = toDto(clientProvider.getClient().getConfiguration(configurationId));
-            Utils.checkNotNull(storedConfiguration);
-            checkEndpointGroupId(storedConfiguration.getEndpointGroupId());
-            String username = this.getCurrentUser().getUsername();
-            return toDto(clientProvider.getClient().deactivateConfiguration(configurationId, username));
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
+        return schemaInfos;
     }
 
     @Override
@@ -1164,6 +1589,40 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
+    
+    private void setPluginRawConfigurationFromForm(PluginDto plugin) throws IOException {
+        RecordField fieldConfiguration = plugin.getFieldConfiguration();        
+        GenericRecord record = FormAvroConverter.
+                createGenericRecordFromRecordField(fieldConfiguration);
+        GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
+        byte[] rawConfiguration = converter.encode(record);
+        plugin.setRawConfiguration(rawConfiguration);
+    }
+    
+    private void setPluginRawConfigurationFromJson(PluginDto plugin, PluginType type) {
+        PluginInfoDto pluginInfo = pluginsInfo.get(type).get(plugin.getPluginClassName());
+        byte[] rawConfiguration = GenericAvroConverter.toRawData(plugin.getJsonConfiguration(), 
+                pluginInfo.getFieldConfiguration().getSchema());
+        plugin.setRawConfiguration(rawConfiguration);
+    }
+    
+    private void setPluginFormConfigurationFromRaw(PluginDto plugin, PluginType type) throws IOException {
+        PluginInfoDto pluginInfo = pluginsInfo.get(type).get(plugin.getPluginClassName());
+        byte[] rawConfiguration = plugin.getRawConfiguration();
+        GenericAvroConverter<GenericRecord> converter = 
+                new GenericAvroConverter<>(pluginInfo.getFieldConfiguration().getSchema());
+        GenericRecord record = converter.decodeBinary(rawConfiguration);
+        RecordField formData = FormAvroConverter.createRecordFieldFromGenericRecord(record);
+        plugin.setFieldConfiguration(formData);
+    }   
+    
+    private void setPluginJsonConfigurationFromRaw(PluginDto plugin, PluginType type) {
+        PluginInfoDto pluginInfo = pluginsInfo.get(type).get(plugin.getPluginClassName());
+        byte[] rawConfiguration = plugin.getRawConfiguration();
+        String jsonConfiguration = GenericAvroConverter.toJson(rawConfiguration, 
+                pluginInfo.getFieldConfiguration().getSchema());
+        plugin.setJsonConfiguration(jsonConfiguration);
+    }   
 
     @Override
     public List<LogAppenderDto> getLogAppendersByApplicationId(String appId)
@@ -1210,78 +1669,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
     
     @Override
-    public List<LogAppenderRestDto> getRestLogAppendersByApplicationId(String appId) throws KaaAdminServiceException {
-        List<LogAppenderDto> logAppenders = getLogAppendersByApplicationId(appId);
-        List<LogAppenderRestDto> restLogAppenders = new ArrayList<>(logAppenders.size());
-        for (LogAppenderDto logAppender : logAppenders) {
-            restLogAppenders.add(toRestLogAppender(logAppender));
-        }
-        return restLogAppenders;
-    }
-
-    @Override
-    public LogAppenderRestDto getRestLogAppender(String appenderId) throws KaaAdminServiceException {
-        LogAppenderDto logAppender = getLogAppender(appenderId);
-        return toRestLogAppender(logAppender);
-    }
-
-    @Override
-    public LogAppenderRestDto editRestLogAppender(LogAppenderRestDto restLogAppender) throws KaaAdminServiceException {
-        LogAppenderDto logAppender = toLogAppender(restLogAppender);
-        LogAppenderDto savedLogAppender = editLogAppender(logAppender);
-        return toRestLogAppender(savedLogAppender);
-    }
-
-    private LogAppenderRestDto toRestLogAppender(LogAppenderDto logAppender) {
-        LogAppenderRestDto restLogAppender = new LogAppenderRestDto(logAppender);
-        Schema schema = appenderConfigSchemas.get(restLogAppender.getAppenderClassName());
-        String configuration = GenericAvroConverter.toJson(logAppender.getRawConfiguration(), schema.toString());
-        restLogAppender.setConfiguration(configuration);
-        return restLogAppender;
-    }
-    
-    private LogAppenderDto toLogAppender(LogAppenderRestDto restLogAppender) {
-        LogAppenderDto logAppender = restLogAppender.toLogAppenderDto();
-        Schema schema = appenderConfigSchemas.get(restLogAppender.getAppenderClassName());
-        byte[] rawConfiguration = GenericAvroConverter.toRawData(restLogAppender.getConfiguration(), schema.toString());
-        logAppender.setRawConfiguration(rawConfiguration);
-        return logAppender;
-    }
-
-    @Override
-    public LogAppenderFormWrapper getLogAppenderForm(String appenderId) throws KaaAdminServiceException {
-        LogAppenderDto logAppender =  getLogAppender(appenderId);
-        try {
-            LogAppenderFormWrapper wrapper = new LogAppenderFormWrapper(logAppender);
-            Schema schema = appenderConfigSchemas.get(wrapper.getAppenderClassName());
-            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
-            GenericRecord record = converter.decodeBinary(wrapper.getRawConfiguration());
-            RecordField formData = FormAvroConverter.createRecordFieldFromGenericRecord(record);
-            wrapper.setConfiguration(formData);
-            return wrapper;
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
-    }
-
-    @Override
-    public LogAppenderFormWrapper editLogAppenderForm(LogAppenderFormWrapper wrapper) throws KaaAdminServiceException {
-        LogAppenderDto logAppender = wrapper.getLogAppender();
-        try {
-            Schema schema = appenderConfigSchemas.get(logAppender.getAppenderClassName());
-            GenericRecord record = FormAvroConverter.createGenericRecordFormRecordField(wrapper.getConfiguration(), schema);
-            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
-            byte[] rawConfiguration = converter.encode(record);
-            logAppender.setRawConfiguration(rawConfiguration);
-            LogAppenderDto saved = editLogAppender(logAppender);
-            LogAppenderFormWrapper savedWrapper = new LogAppenderFormWrapper(saved);
-            return savedWrapper;
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
-    }
-
-    @Override
     public void deleteLogAppender(String appenderId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -1295,10 +1682,174 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
     
     @Override
-    public List<LogAppenderInfoDto> getLogAppenderInfos()
+    public LogAppenderDto getLogAppenderForm(String appenderId) throws KaaAdminServiceException {
+        LogAppenderDto logAppender =  getLogAppender(appenderId);
+        try {
+            setPluginFormConfigurationFromRaw(logAppender, PluginType.LOG_APPENDER);
+            return logAppender;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public LogAppenderDto editLogAppenderForm(LogAppenderDto logAppender) throws KaaAdminServiceException {
+        try {
+            setPluginRawConfigurationFromForm(logAppender);
+            LogAppenderDto saved = editLogAppender(logAppender);
+            return saved;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+    @Override
+    public List<LogAppenderDto> getRestLogAppendersByApplicationId(String appId) throws KaaAdminServiceException {
+        List<LogAppenderDto> logAppenders = getLogAppendersByApplicationId(appId);
+        for (LogAppenderDto logAppender : logAppenders) {
+            setPluginJsonConfigurationFromRaw(logAppender, PluginType.LOG_APPENDER);
+        }
+        return logAppenders;
+    }
+
+    @Override
+    public LogAppenderDto getRestLogAppender(String appenderId) throws KaaAdminServiceException {
+        LogAppenderDto logAppender = getLogAppender(appenderId);
+        setPluginJsonConfigurationFromRaw(logAppender, PluginType.LOG_APPENDER);
+        return logAppender;
+    }
+
+    @Override
+    public LogAppenderDto editRestLogAppender(LogAppenderDto logAppender) throws KaaAdminServiceException {
+        setPluginRawConfigurationFromJson(logAppender, PluginType.LOG_APPENDER);
+        LogAppenderDto savedLogAppender = editLogAppender(logAppender);
+        setPluginJsonConfigurationFromRaw(savedLogAppender, PluginType.LOG_APPENDER);
+        return savedLogAppender;
+    }
+
+    @Override
+    public List<PluginInfoDto> getLogAppenderPluginInfos()
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-        return appenders;
+        return new ArrayList<PluginInfoDto>(pluginsInfo.get(PluginType.LOG_APPENDER).values());
+    }
+    
+    @Override
+    public List<UserVerifierDto> getUserVerifiersByApplicationId(String appId)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationId(appId);
+            return toDtoList(clientProvider.getClient().getUserVerifiersByApplicationId(appId));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public UserVerifierDto getUserVerifier(String userVerifierId)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            UserVerifierDto userVerifier = toDto(clientProvider.getClient().getUserVerifier(userVerifierId));
+            Utils.checkNotNull(userVerifier);
+            checkApplicationId(userVerifier.getApplicationId());
+            return userVerifier;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public UserVerifierDto editUserVerifier(UserVerifierDto userVerifier)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            if (isEmpty(userVerifier.getId())) {
+                userVerifier.setCreatedUsername(getCurrentUser().getUsername());
+                checkApplicationId(userVerifier.getApplicationId());
+            }
+            else {
+                UserVerifierDto storedUserVerifier = toDto(clientProvider.getClient().getUserVerifier(userVerifier.getId()));
+                Utils.checkNotNull(storedUserVerifier);
+                checkApplicationId(storedUserVerifier.getApplicationId());
+            }
+            return toDto(clientProvider.getClient().editUserVerifier(toDataStruct(userVerifier)));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public void deleteUserVerifier(String userVerifierId)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            UserVerifierDto userVerifier = toDto(clientProvider.getClient().getUserVerifier(userVerifierId));
+            Utils.checkNotNull(userVerifier);
+            checkApplicationId(userVerifier.getApplicationId());
+            clientProvider.getClient().deleteUserVerifier(userVerifierId);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public UserVerifierDto getUserVerifierForm(String userVerifierId)
+            throws KaaAdminServiceException {
+        UserVerifierDto userVerifier =  getUserVerifier(userVerifierId);
+        try {
+            setPluginFormConfigurationFromRaw(userVerifier, PluginType.USER_VERIFIER);
+            return userVerifier;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public UserVerifierDto editUserVerifierForm(UserVerifierDto userVerifier)
+            throws KaaAdminServiceException {
+        try {
+            setPluginRawConfigurationFromForm(userVerifier);
+            UserVerifierDto saved = editUserVerifier(userVerifier);
+            return saved;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public List<UserVerifierDto> getRestUserVerifiersByApplicationId(String appId)
+            throws KaaAdminServiceException {
+        List<UserVerifierDto> userVerifiers = getUserVerifiersByApplicationId(appId);
+        for (UserVerifierDto userVerifier : userVerifiers) {
+            setPluginJsonConfigurationFromRaw(userVerifier, PluginType.USER_VERIFIER);
+        }
+        return userVerifiers;
+    }
+
+    @Override
+    public UserVerifierDto getRestUserVerifier(String userVerifierId)
+            throws KaaAdminServiceException {
+        UserVerifierDto userVerifier = getUserVerifier(userVerifierId);
+        setPluginJsonConfigurationFromRaw(userVerifier, PluginType.USER_VERIFIER);
+        return userVerifier;    
+    }
+
+    @Override
+    public UserVerifierDto editRestUserVerifier(UserVerifierDto userVerifier)
+            throws KaaAdminServiceException {
+        setPluginRawConfigurationFromJson(userVerifier, PluginType.USER_VERIFIER);
+        UserVerifierDto savedUserVerifier = editUserVerifier(userVerifier);
+        setPluginJsonConfigurationFromRaw(savedUserVerifier, PluginType.USER_VERIFIER);
+        return savedUserVerifier;    
+    }
+
+    @Override
+    public List<PluginInfoDto> getUserVerifierPluginInfos()
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        return new ArrayList<PluginInfoDto>(pluginsInfo.get(PluginType.USER_VERIFIER).values());
     }
 
     @Override
@@ -1332,11 +1883,28 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public void sendNotification(NotificationDto notification, String fileItemName)
+    public RecordField getRecordDataFromFile(String schema, String fileItemName)
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             byte[] body = getFileContent(fileItemName);
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
+            GenericRecord record = converter.decodeJson(body);
+            RecordField recordData = FormAvroConverter.createRecordFieldFromGenericRecord(record);
+            return recordData;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+    
+    @Override
+    public void sendNotification(NotificationDto notification,
+            RecordField notificationData) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(notificationData);
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
+            byte[] body = converter.encodeToJsonBytes(record);
             notification.setBody(body);
             checkApplicationId(notification.getApplicationId());
             TopicDto topic = toDto(clientProvider.getClient().getTopic(notification.getTopicId()));
@@ -1347,7 +1915,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
-
+    
     @Override
     public void sendNotification(NotificationDto notification, byte[] body)
             throws KaaAdminServiceException {
@@ -1383,6 +1951,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             EventClassFamilyDto eventClassFamily = toDto(clientProvider.getClient().getEventClassFamily(eventClassFamilyId));
             Utils.checkNotNull(eventClassFamily);
             checkTenantId(eventClassFamily.getTenantId());
+            for (EventSchemaVersionDto eventSchemaVersion : eventClassFamily.getSchemas()) {
+                Schema schema = new Schema.Parser().parse(eventSchemaVersion.getSchema());
+                RecordField schemaForm = ecfSchemaFormAvroConverter.createSchemaFormFromSchema(schema);
+                eventSchemaVersion.setSchemaForm(schemaForm);
+            }
             return eventClassFamily;
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1411,20 +1984,19 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public void addEventClassFamilySchema(String eventClassFamilyId,
-            String fileItemName) throws KaaAdminServiceException {
+    public void addEventClassFamilySchemaForm(String eventClassFamilyId,
+            RecordField schemaForm) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
-            byte[] data = getFileContent(fileItemName);
-            String schema = new String(data);
-            validateSchema(schema);
+            Schema schema = ecfSchemaFormAvroConverter.createSchemaFromSchemaForm(schemaForm);
+            String schemaString = SchemaFormAvroConverter.createSchemaString(schema, true);
 
             EventClassFamilyDto storedEventClassFamily = toDto(clientProvider.getClient().getEventClassFamily(eventClassFamilyId));
             Utils.checkNotNull(storedEventClassFamily);
             checkTenantId(storedEventClassFamily.getTenantId());
 
             String username = this.getCurrentUser().getUsername();
-            clientProvider.getClient().addEventClassFamilySchema(eventClassFamilyId, schema, username);
+            clientProvider.getClient().addEventClassFamilySchema(eventClassFamilyId, schemaString, username);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -1592,11 +2164,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         return result.getUserId();
     }
 
-    private void setSchema (AbstractSchemaDto schemaDto, String fileItemName) throws KaaAdminServiceException {
-        byte[] data = getFileContent(fileItemName);
-        setSchema(schemaDto, data);
-    }
-
     private void setSchema (AbstractSchemaDto schemaDto, byte[] data) throws KaaAdminServiceException {
         String schema = new String(data);
         validateSchema(schema);
@@ -1618,7 +2185,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             try {
                 byte[] data = cacheService.uploadedFile(fileItemName, null);
                 if (data == null) {
-                    throw new KaaAdminServiceException("Unable to get file content!", ServiceErrorCode.GENERAL_ERROR);
+                    throw new KaaAdminServiceException("Unable to get file content!", ServiceErrorCode.FILE_NOT_FOUND);
                 }
                 return data;
             }
@@ -1627,7 +2194,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
         }
         else {
-            throw new KaaAdminServiceException("Unable to get file content, file item name is empty!", ServiceErrorCode.GENERAL_ERROR);
+            throw new KaaAdminServiceException("Unable to get file content, file item name is empty!", ServiceErrorCode.FILE_NOT_FOUND);
         }
     }
 
@@ -1666,6 +2233,20 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    private ApplicationDto checkApplicationToken(String applicationToken) throws KaaAdminServiceException {
+        try {
+            if (isEmpty(applicationToken)) {
+                throw new KaaAdminServiceException(ServiceErrorCode.INVALID_ARGUMENTS);
+            }
+            ApplicationDto application = toDto(clientProvider.getClient().getApplicationByApplicationToken(applicationToken));
+            Utils.checkNotNull(application);
+            checkTenantId(application.getTenantId());
+            return application;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
     private EndpointGroupDto checkEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException {
         try {
             if (isEmpty(endpointGroupId)) {
@@ -1694,4 +2275,5 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw new KaaAdminServiceException(ServiceErrorCode.NOT_AUTHORIZED);
         }
     }
+
 }

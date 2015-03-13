@@ -174,6 +174,14 @@ public abstract class Schema<T extends AbstractSchemaDto> extends GenericModel<T
         this.application = application;
     }
 
+    public String getApplicationId() {
+        Long id = null;
+        if (application != null) {
+            id = application.getId();
+        }
+        return id != null ? String.valueOf(id) : null;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 33;

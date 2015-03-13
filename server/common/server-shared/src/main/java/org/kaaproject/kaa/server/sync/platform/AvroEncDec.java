@@ -35,6 +35,7 @@ import org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.Notification;
@@ -53,6 +54,7 @@ import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
+import org.kaaproject.kaa.common.endpoint.gen.UserAttachErrorCode;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
 import org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification;
@@ -71,6 +73,7 @@ import org.kaaproject.kaa.server.sync.EventClientSync;
 import org.kaaproject.kaa.server.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.sync.EventServerSync;
 import org.kaaproject.kaa.server.sync.LogClientSync;
+import org.kaaproject.kaa.server.sync.LogDeliveryStatus;
 import org.kaaproject.kaa.server.sync.LogEntry;
 import org.kaaproject.kaa.server.sync.LogServerSync;
 import org.kaaproject.kaa.server.sync.NotificationClientSync;
@@ -81,10 +84,12 @@ import org.kaaproject.kaa.server.sync.RedirectServerSync;
 import org.kaaproject.kaa.server.sync.ServerSync;
 import org.kaaproject.kaa.server.sync.SubscriptionCommand;
 import org.kaaproject.kaa.server.sync.SubscriptionCommandType;
+import org.kaaproject.kaa.server.sync.SyncStatus;
 import org.kaaproject.kaa.server.sync.TopicState;
 import org.kaaproject.kaa.server.sync.UserAttachRequest;
 import org.kaaproject.kaa.server.sync.UserClientSync;
 import org.kaaproject.kaa.server.sync.UserServerSync;
+import org.kaaproject.kaa.server.sync.UserVerifierErrorCode;
 import org.kaaproject.kaa.server.sync.bootstrap.BootstrapClientSync;
 import org.kaaproject.kaa.server.sync.bootstrap.BootstrapServerSync;
 import org.kaaproject.kaa.server.sync.bootstrap.ProtocolConnectionData;
@@ -394,7 +399,7 @@ public class AvroEncDec implements PlatformEncDec {
             sync.setUserDetachNotification(new UserDetachNotification(source.getUserDetachNotification().getEndpointAccessToken()));
         }
         if (source.getUserAttachResponse() != null) {
-            sync.setUserAttachResponse(new UserAttachResponse(convert(source.getUserAttachResponse().getResult())));
+            sync.setUserAttachResponse(convert(source.getUserAttachResponse()));
         }
         if (source.getEndpointAttachResponses() != null) {
             List<EndpointAttachResponse> responses = new ArrayList<>(source.getEndpointAttachResponses().size());
@@ -412,6 +417,29 @@ public class AvroEncDec implements PlatformEncDec {
             sync.setEndpointDetachResponses(responses);
         }
         return sync;
+    }
+
+    private static UserAttachResponse convert(org.kaaproject.kaa.server.sync.UserAttachResponse source) {
+        UserAttachResponse response = new UserAttachResponse();
+        response.setResult(source.getResult() == SyncStatus.SUCCESS ? SyncResponseResultType.SUCCESS : SyncResponseResultType.FAILURE);
+        response.setErrorCode(convert(source.getErrorCode()));
+        response.setErrorReason(source.getErrorReason());
+        return response;
+    }
+
+    private static UserAttachErrorCode convert(UserVerifierErrorCode errorCode) {
+        if(errorCode == null){
+            return null;
+        }
+        switch(errorCode){
+            case NO_VERIFIER_CONFIGURED : return UserAttachErrorCode.NO_VERIFIER_CONFIGURED;
+            case TOKEN_INVALID : return UserAttachErrorCode.TOKEN_INVALID;
+            case TOKEN_EXPIRED : return UserAttachErrorCode.TOKEN_EXPIRED;
+            case INTERNAL_ERROR : return UserAttachErrorCode.INTERNAL_ERROR;
+            case CONNECTION_ERROR : return UserAttachErrorCode.CONNECTION_ERROR;
+            case REMOTE_ERROR : return UserAttachErrorCode.REMOTE_ERROR;
+            default: return UserAttachErrorCode.OTHER;
+        }
     }
 
     private static NotificationType convert(org.kaaproject.kaa.server.sync.NotificationType type) {
@@ -447,9 +475,32 @@ public class AvroEncDec implements PlatformEncDec {
             return null;
         }
         LogSyncResponse sync = new LogSyncResponse();
-        sync.setRequestId(source.getRequestId());
-        sync.setResult(convert(source.getResult()));
+        List<org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus> statuses = new ArrayList<org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus>();
+        for (LogDeliveryStatus status : source.getDeliveryStatuses()) {
+            statuses.add(convert(status));
+        }
+        sync.setDeliveryStatuses(statuses);
         return sync;
+    }
+    
+    private static org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus convert(LogDeliveryStatus source) {
+        if (source == null) {
+            return null;
+        }
+        return new org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus(source.getRequestId(), convert(source.getResult()), convert(source.getErrorCode()));
+    }
+
+    private static LogDeliveryErrorCode convert(org.kaaproject.kaa.server.sync.LogDeliveryErrorCode errorCode) {
+        if(errorCode == null){
+            return null;
+        }
+        switch(errorCode){
+            case NO_APPENDERS_CONFIGURED : return LogDeliveryErrorCode.NO_APPENDERS_CONFIGURED;
+            case APPENDER_INTERNAL_ERROR : return LogDeliveryErrorCode.APPENDER_INTERNAL_ERROR;
+            case REMOTE_INTERNAL_ERROR : return LogDeliveryErrorCode.REMOTE_INTERNAL_ERROR;
+            case REMOTE_CONNECTION_ERROR : return LogDeliveryErrorCode.REMOTE_CONNECTION_ERROR;
+            default: return null;
+        }
     }
 
     private static ClientSyncMetaData convert(SyncRequestMetaData source) {
@@ -514,7 +565,8 @@ public class AvroEncDec implements PlatformEncDec {
         if (source == null) {
             return null;
         }
-        return new ConfigurationClientSync(source.getAppStateSeqNumber(), source.getConfigurationHash());
+        boolean resyncOnly = source.getResyncOnly() != null ? source.getResyncOnly() : false;
+        return new ConfigurationClientSync(source.getAppStateSeqNumber(), source.getConfigurationHash(), resyncOnly);
     }
 
     private static NotificationClientSync convert(NotificationSyncRequest source) {
@@ -599,7 +651,7 @@ public class AvroEncDec implements PlatformEncDec {
         }
         UserClientSync sync = new UserClientSync();
         if (source.getUserAttachRequest() != null) {
-            sync.setUserAttachRequest(new UserAttachRequest(source.getUserAttachRequest().getUserExternalId(), source
+            sync.setUserAttachRequest(new UserAttachRequest(source.getUserAttachRequest().getUserVerifierId(), source.getUserAttachRequest().getUserExternalId(), source
                     .getUserAttachRequest().getUserAccessToken()));
         }
         if (source.getEndpointAttachRequests() != null) {

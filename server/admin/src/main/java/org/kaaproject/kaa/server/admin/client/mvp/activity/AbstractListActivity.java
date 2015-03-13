@@ -19,14 +19,14 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEventHandler;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowAction;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEvent;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEventHandler;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
@@ -116,18 +116,18 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
                 @Override
                 public void onRowAction(RowActionEvent<String> event) {
                     String id = event.getClickedId();
-                    if (event.getAction()==RowAction.CLICK) {
+                    if (event.getAction()==RowActionEvent.CLICK) {
                         goTo(existingEntityPlace(id));
                     }
-                    else if (event.getAction()==RowAction.DELETE) {
-                        deleteEntity(id, new AsyncCallback<Void>() {
+                    else if (event.getAction()==RowActionEvent.DELETE) {
+                        deleteEntity(id, new BusyAsyncCallback<Void>() {
                             @Override
-                            public void onFailure(Throwable caught) {
+                            public void onFailureImpl(Throwable caught) {
                                 Utils.handleException(caught, listView);
                             }
 
                             @Override
-                            public void onSuccess(Void result) {}
+                            public void onSuccessImpl(Void result) {}
                         });
                     }
                     onCustomRowAction(event);

@@ -17,35 +17,26 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.appender;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.plugin.BasePluginGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 
-public class LogAppenderGrid extends AbstractGrid<LogAppenderDto, String> {
+public class LogAppenderGrid extends BasePluginGrid<LogAppenderDto> {
 
     public LogAppenderGrid(boolean embedded) {
-        super(Unit.PX, true, embedded);
+        super(embedded);
     }
 
     @Override
     protected float constructColumnsImpl(DataGrid<LogAppenderDto> table) {
-        float prefWidth = 0;
+        float prefWidth = super.constructColumnsImpl(table);
 
-        prefWidth += constructStringColumn(table, Utils.constants.name(),
-                new StringValueProvider<LogAppenderDto>() {
-            @Override
-            public String getValue(LogAppenderDto item) {
-                return item.getName();
-            }
-        }, 80);
         prefWidth += constructStringColumn(table, Utils.constants.minVersion(),
                 new StringValueProvider<LogAppenderDto>() {
             @Override
             public String getValue(LogAppenderDto item) {
                 return String.valueOf(item.getMinLogSchemaVersion());
-
             }
         }, 80);
         prefWidth += constructStringColumn(table, Utils.constants.maxVersion(),
@@ -58,38 +49,27 @@ public class LogAppenderGrid extends AbstractGrid<LogAppenderDto, String> {
                 else {
                     return String.valueOf(item.getMaxLogSchemaVersion());
                 }
-
             }
         }, 80);
-        prefWidth += constructStringColumn(table, Utils.constants.logAppenderType(),
-                new StringValueProvider<LogAppenderDto>() {
-            @Override
-            public String getValue(LogAppenderDto item) {
-                return item.getTypeName();
-            }
-        }, 80);
-
+        prefWidth += constructBooleanColumn(table,
+                Utils.constants.confirmDelivery(),
+                new BooleanValueProvider<LogAppenderDto>() {
+                    @Override
+                    public Boolean getValue(LogAppenderDto item) {
+                        return item.isConfirmDelivery();
+                    }
+                }, 40);
         return prefWidth;
     }
 
     @Override
     protected String deleteQuestion() {
-        if (embedded) {
-            return Utils.messages.removeLogAppenderQuestion();
-        }
-        else {
-            return super.deleteQuestion();
-        }
+        return Utils.messages.removeLogAppenderQuestion();
     }
 
     @Override
     protected String deleteTitle() {
-        if (embedded) {
-            return Utils.messages.removeLogAppenderTitle();
-        }
-        else {
-            return super.deleteTitle();
-        }
+        return Utils.messages.removeLogAppenderTitle();
     }
 
 }

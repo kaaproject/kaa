@@ -19,13 +19,18 @@ package org.kaaproject.kaa.sandbox.web.client.mvp.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.sandbox.web.client.Sandbox;
 import org.kaaproject.kaa.sandbox.web.client.mvp.ClientFactory;
 import org.kaaproject.kaa.sandbox.web.client.mvp.event.project.ProjectActionEvent;
 import org.kaaproject.kaa.sandbox.web.client.mvp.event.project.ProjectActionEventHandler;
+import org.kaaproject.kaa.sandbox.web.client.mvp.place.ChangeKaaHostPlace;
 import org.kaaproject.kaa.sandbox.web.client.mvp.place.MainPlace;
+import org.kaaproject.kaa.sandbox.web.client.mvp.place.ProjectPlace;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.MainView;
+import org.kaaproject.kaa.sandbox.web.client.mvp.view.dialog.ChangeHostDialog;
+import org.kaaproject.kaa.sandbox.web.client.mvp.view.dialog.ChangeHostDialog.Listener;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.dialog.ConsoleDialog;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.dialog.ConsoleDialog.ConsoleDialogListener;
 import org.kaaproject.kaa.sandbox.web.client.servlet.ServletHelper;
@@ -37,28 +42,24 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
-public class MainActivity extends AbstractActivity implements MainView.Presenter {
+public class MainActivity extends AbstractActivity {
 
     private final ClientFactory clientFactory;
-    private MainPlace place;
     private MainView view;
     
     private List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
     
     public MainActivity(MainPlace place,
             ClientFactory clientFactory) {
-        this.place = place;
         this.clientFactory = clientFactory;
     }
     
     @Override
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
         view = clientFactory.getMainView();
-        view.setPresenter(this);
         bind(eventBus);
         containerWidget.setWidget(view.asWidget());
     }
@@ -70,17 +71,18 @@ public class MainActivity extends AbstractActivity implements MainView.Presenter
         }
         registrations.clear();
     }
-    
-    @Override
-    public void goTo(Place place) {
-        clientFactory.getPlaceController().goTo(place);
-    }
 
     private void bind(final EventBus eventBus) {
         registrations.add(view.getGoToKaaAdminWeb().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 gotoKaaAdminWeb();
+            }
+          }));
+        registrations.add(view.getGoToAvroUiSandboxWeb().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                gotoAvroUiSandboxWeb();
             }
           }));
         
@@ -94,45 +96,74 @@ public class MainActivity extends AbstractActivity implements MainView.Presenter
                 case GET_BINARY:
                     getProjectBinary(event.getProjectId());
                     break;
+                case OPEN_DETAILS:
+                    clientFactory.getPlaceController().goTo(new ProjectPlace(event.getProjectId()));
+                    break;
+                default:
+                    break;
                 }
             }
         }));
         
         view.reset();
         fillView();
+        showChangeKaaHostDialog();
     }
 
     private void fillView() {
         
-        Sandbox.getSandboxService().changeKaaHostEnabled(new AsyncCallback<Boolean>() {
+        Sandbox.getSandboxService().getDemoProjects(new BusyAsyncCallback<List<Project>>() {
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailureImpl(Throwable caught) {
                 view.setErrorMessage(Utils.getErrorMessage(caught));
             }
 
             @Override
-            public void onSuccess(Boolean enabled) {
-                view.setChangeKaaHostEnabled(enabled);
-                if (enabled) {
-                  registrations.add(view.getChangeKaaHostButton().addClickHandler(new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        changeKaaHost();
-                    }
-                  }));
-                }
+            public void onSuccessImpl(List<Project> result) {
+                view.setProjects(result);
             }
         });
-        
-        Sandbox.getSandboxService().getDemoProjects(new AsyncCallback<List<Project>>() {
+    }
+    
+    private void showChangeKaaHostDialog() {
+        Sandbox.getSandboxService().showChangeKaaHostDialog(new BusyAsyncCallback<Boolean>() {
+            
             @Override
-            public void onFailure(Throwable caught) {
-                view.setErrorMessage(Utils.getErrorMessage(caught));
+            public void onSuccessImpl(Boolean result) {
+                if (result) {
+                    ChangeHostDialog.showChangeHostDialog(new Listener() {
+                        
+                        @Override
+                        public void onIgnore() {
+                            Sandbox.getSandboxService().changeKaaHostDialogShown(new BusyAsyncCallback<Void>() {
+                                @Override
+                                public void onSuccessImpl(Void result) {}
+                                @Override
+                                public void onFailureImpl(Throwable caught) {}
+                            });
+                        }
+                        
+                        @Override
+                        public void onChangeHost() {
+                            Sandbox.getSandboxService().changeKaaHostDialogShown(new BusyAsyncCallback<Void>() {
+                                @Override
+                                public void onSuccessImpl(Void result) {
+                                    clientFactory.getPlaceController().goTo(new ChangeKaaHostPlace());
+                                }
+                                @Override
+                                public void onFailureImpl(Throwable caught) {
+                                    view.setErrorMessage(Utils.getErrorMessage(caught));
+                                }
+                            });
+                            
+                        }
+                    });
+                }
             }
-
+            
             @Override
-            public void onSuccess(List<Project> result) {
-                view.setProjects(result);
+            public void onFailureImpl(Throwable caught) {
+                view.setErrorMessage(Utils.getErrorMessage(caught));
             }
         });
     }
@@ -140,35 +171,9 @@ public class MainActivity extends AbstractActivity implements MainView.Presenter
     private void gotoKaaAdminWeb() {
         Sandbox.redirectToModule("kaaAdmin");
     }
-
-    private void changeKaaHost() {
-    	final String host = view.getKaaHost().getValue();
-    	if (host != null && host.length()>0) { 
-    		ConsoleDialog.startConsoleDialog(new ConsoleDialogListener() {
-
-				@Override
-				public void onOk(boolean success) {}
-
-				@Override
-				public void onStart(String uuid, final ConsoleDialog dialog, final AsyncCallback<Void> callback) {
-			        Sandbox.getSandboxService().changeKaaHost(uuid, host, new AsyncCallback<Void>() {
-			          @Override
-			          public void onFailure(Throwable caught) {
-			              callback.onFailure(caught);
-			          }
-			
-			          @Override
-			          public void onSuccess(Void result) {
-			        	  dialog.appendToConsoleAtFinish("Succesfully changed kaa host to '" + host + "'\n");
-			        	  callback.onSuccess(result);
-			          }
-			        });
-				}
-    		});
-    	}
-    	else {
-    		view.setErrorMessage("Kaa host field can not be empty!");
-    	}
+    
+    private void gotoAvroUiSandboxWeb() {
+        Sandbox.redirectToModule("avroUiSandbox");
     }
     
     private void getProjectSourceCode(String projectId) {
@@ -180,16 +185,16 @@ public class MainActivity extends AbstractActivity implements MainView.Presenter
     }
     
     private void getProjectData(final String projectId, final ProjectDataType type) {
-        view.clearMessages();
-        Sandbox.getSandboxService().checkProjectDataExists(projectId, type, new AsyncCallback<Boolean>() {
+        view.clearError();
+        Sandbox.getSandboxService().checkProjectDataExists(projectId, type, new BusyAsyncCallback<Boolean>() {
 
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailureImpl(Throwable caught) {
                 view.setErrorMessage(Utils.getErrorMessage(caught));
             }
 
             @Override
-            public void onSuccess(Boolean result) {
+            public void onSuccessImpl(Boolean result) {
                 if (result) {
                     ServletHelper.downloadProjectFile(projectId, type);
                 }

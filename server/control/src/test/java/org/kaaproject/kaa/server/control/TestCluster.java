@@ -154,7 +154,7 @@ public class TestCluster {
                 keys.getPublic().getEncoded());
         ByteBuffer testKeyData = ByteBuffer.wrap(x509EncodedKeySpec.getEncoded());
         nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, testKeyData));
-        
+        nodeInfo.setTimeStarted(System.currentTimeMillis());
         nodeInfo.setTransports(new ArrayList<TransportMetaData>());
         
         return nodeInfo;

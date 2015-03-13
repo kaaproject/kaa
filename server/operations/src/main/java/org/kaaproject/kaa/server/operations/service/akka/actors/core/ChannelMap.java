@@ -102,7 +102,6 @@ public class ChannelMap {
         }
 
         public void update(SyncResponseHolder response){
-            this.lastActivityTime = System.currentTimeMillis();
             this.request.updateRequest(response.getResponse());
             this.response = response;
         }
@@ -181,9 +180,6 @@ public class ChannelMap {
         public boolean isFirstRequest() {
             return response == null;
         }
-
-
-
     }
 
     public boolean isEmpty() {

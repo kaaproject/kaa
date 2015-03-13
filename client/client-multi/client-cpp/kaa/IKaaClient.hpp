@@ -18,7 +18,6 @@
 #define IKAACLIENT_HPP_
 
 #include "kaa/security/KeyUtils.hpp"
-#include "kaa/KaaDefaults.hpp"
 
 namespace kaa {
 
@@ -28,7 +27,6 @@ class EventFamilyFactory;
 class INotificationManager;
 class IConfigurationManager;
 class IEventListenersResolver;
-class IExternalTransportManager;
 class ISchemaPersistenceManager;
 class IEndpointRegistrationManager;
 class IConfigurationPersistenceManager;
@@ -48,16 +46,6 @@ class IKaaDataDemultiplexer;
 class IKaaClient {
 public:
 
-#ifdef KAA_USE_CONFIGURATION
-    /**
-     * Retrieves Kaa delta manager.
-     *
-     * @return @link IDeltaManager @endlink object.
-     *
-     */
-    virtual IDeltaManager&                    getDeltaManager() = 0;
-#endif
-
     /**
      * Retrieves Kaa profile manager.
      *
@@ -66,7 +54,6 @@ public:
      */
     virtual IProfileManager&                  getProfileManager() = 0;
 
-#ifdef KAA_USE_EVENTS
     /**
      * Retrieves Kaa event family factory.
      *
@@ -74,9 +61,7 @@ public:
      *
      */
     virtual EventFamilyFactory&               getEventFamilyFactory() = 0;
-#endif
 
-#ifdef KAA_USE_NOTIFICATIONS
     /**
      * Retrieves Kaa notification manager.
      *
@@ -84,9 +69,7 @@ public:
      *
      */
     virtual INotificationManager&             getNotificationManager() = 0;
-#endif
 
-#ifdef KAA_USE_CONFIGURATION
     /**
      * Retrieves Kaa configuration manager.
      *
@@ -96,23 +79,13 @@ public:
     virtual IConfigurationManager&            getConfigurationManager() = 0;
 
     /**
-     * Retrieves Kaa schema persistence manager.
-     *
-     * @return @link ISchemaPersistenceManager @endlink object.
-     *
-     */
-    virtual ISchemaPersistenceManager&        getSchemaPersistenceManager() = 0;
-
-    /**
      * Retrieves Kaa configuration persistence manager.
      *
      * @return @link IConfigurationPersistenceManager @endlink object.
      *
      */
     virtual IConfigurationPersistenceManager& getConfigurationPersistenceManager() = 0;
-#endif
 
-#ifdef KAA_USE_EVENTS
     /**
      * Retrieves Kaa endpoint registration manager
      *
@@ -126,7 +99,6 @@ public:
      * @return @link IEventListenersResolver @endlink object
      */
     virtual IEventListenersResolver&          getEventListenersResolver() = 0;
-#endif
 
     /**
      * Retrieves Kaa channel manager
@@ -148,14 +120,12 @@ public:
      */
     virtual const KeyPair&                    getClientKeyPair() = 0;
 
-#ifdef KAA_USE_LOGGING
     /**
      * Retrieves Kaa log collector
      *
      * @return @link LogCollector @endlink object
      */
     virtual ILogCollector&                    getLogCollector() = 0;
-#endif
 
     /**
      * Retrieves Kaa operations data multiplexer

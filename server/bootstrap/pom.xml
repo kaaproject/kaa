@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.6.3-SNAPSHOT</version>
+        <version>0.7.0-SNAPSHOT</version>
         <artifactId>server</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server</groupId>
@@ -70,6 +70,26 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>thrift-cli-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.transports.http</groupId>
+            <artifactId>transport</artifactId>
+            <classifier>http</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.transports.http</groupId>
+            <artifactId>config</artifactId>
+            <classifier>http</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
+            <artifactId>transport</artifactId>
+            <classifier>tcp</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
+            <artifactId>config</artifactId>
+            <classifier>tcp</classifier>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -467,42 +487,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>http-transport</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.kaaproject.kaa.server.transports.http</groupId>
-                    <artifactId>transport</artifactId>
-                    <classifier>http</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>org.kaaproject.kaa.server.transports.http</groupId>
-                    <artifactId>config</artifactId>
-                    <classifier>http</classifier>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>tcp-transport</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
-                    <artifactId>transport</artifactId>
-                    <classifier>tcp</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
-                    <artifactId>config</artifactId>
-                    <classifier>tcp</classifier>
-                </dependency>
-            </dependencies>
         </profile>
     </profiles>
 </project>

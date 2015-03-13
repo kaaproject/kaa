@@ -16,23 +16,13 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_APPENDER_CLASS_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_APPLICATION_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_CREATED_TIME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_CREATED_USERNAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_DESCRIPTION;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_CONFIRM_DELIVERY;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_MAX_LOG_SCHEMA_VERSION;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_MIN_LOG_SCHEMA_VERSION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_RAW_CONFIGURATION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_STATUS;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_TYPE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.CollectionTable;
@@ -43,60 +33,26 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogAppenderStatusDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 
 @Entity
 @Table(name = LOG_APPENDER_TABLE_NAME)
 @Inheritance(strategy = InheritanceType.JOINED)
-public final class LogAppender extends GenericModel<LogAppenderDto> implements Serializable {
+public final class LogAppender extends Plugin<LogAppenderDto> implements Serializable {
 
     private static final long serialVersionUID = 8884800929390746097L;
-
-    @Column(name = LOG_APPENDER_NAME)
-    private String name;
-
-    @ManyToOne
-    @JoinColumn(name = LOG_APPENDER_APPLICATION_ID, nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Application application;
 
     @Column(name = LOG_APPENDER_MIN_LOG_SCHEMA_VERSION)
     private int minLogSchemaVersion;
 
     @Column(name = LOG_APPENDER_MAX_LOG_SCHEMA_VERSION)
     private int maxLogSchemaVersion;
-    
-    @Column(name = LOG_APPENDER_STATUS)
-    @Enumerated(EnumType.STRING)
-    private LogAppenderStatusDto status;
 
-    @Column(name = LOG_APPENDER_DESCRIPTION, length = 1000)
-    private String description;
-
-    @Column(name = LOG_APPENDER_CREATED_USERNAME)
-    private String createdUsername;
-
-    @Column(name = LOG_APPENDER_CREATED_TIME)
-    private long createdTime;
-
-    @Column(name = LOG_APPENDER_TYPE_NAME)
-    private String typeName;
-    
-    @Column(name = LOG_APPENDER_APPENDER_CLASS_NAME)
-    private String appenderClassName;
-
-    @Lob
-    @Column(name = LOG_APPENDER_RAW_CONFIGURATION)
-    private byte[] rawConfiguration;
+    @Column(name = LOG_APPENDER_CONFIRM_DELIVERY)
+    private boolean confirmDelivery;
 
     @ElementCollection(targetClass = LogHeaderStructureDto.class)
     @Enumerated(EnumType.STRING)
@@ -105,41 +61,21 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
     private List<LogHeaderStructureDto> headerStructure;
 
     public LogAppender() {
+        super();
+    }
+    
+    public LogAppender(Long id) {
+        this.id = id;
     }
 
     public LogAppender(LogAppenderDto dto) {
+        super(dto);
         if (dto != null) {
-            this.id = getLongId(dto.getId());
-            Long appId = getLongId(dto.getApplicationId());
-            this.application = appId != null ? new Application(appId) : null;
             this.minLogSchemaVersion = dto.getMinLogSchemaVersion();
             this.maxLogSchemaVersion = dto.getMaxLogSchemaVersion();
-            this.name = dto.getName();
-            this.status = dto.getStatus();
-            this.description = dto.getDescription();
-            this.createdUsername = dto.getCreatedUsername();
-            this.createdTime = dto.getCreatedTime();
-            this.typeName = dto.getTypeName();
-            this.appenderClassName = dto.getAppenderClassName();
-            this.rawConfiguration = dto.getRawConfiguration();
+            this.confirmDelivery = dto.isConfirmDelivery();
             this.headerStructure = dto.getHeaderStructure();
         }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Application getApplication() {
-        return application;
-    }
-
-    public void setApplication(Application application) {
-        this.application = application;
     }
 
     public int getMinLogSchemaVersion() {
@@ -158,36 +94,12 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
         this.maxLogSchemaVersion = maxLogSchemaVersion;
     }
 
-    public LogAppenderStatusDto getStatus() {
-        return status;
+    public boolean isConfirmDelivery() {
+        return confirmDelivery;
     }
 
-    public void setStatus(LogAppenderStatusDto status) {
-        this.status = status;
-    }
-
-    public String getTypeName() {
-        return typeName;
-    }
-
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
-    }
-
-    public String getAppenderClassName() {
-        return appenderClassName;
-    }
-
-    public void setAppenderClassName(String appenderClassName) {
-        this.appenderClassName = appenderClassName;
-    }
-
-    public byte[] getRawConfiguration() {
-        return rawConfiguration;
-    }
-
-    public void setRawConfiguration(byte[] rawConfiguration) {
-        this.rawConfiguration = rawConfiguration;
+    public void setConfirmDelivery(boolean confirmDelivery) {
+        this.confirmDelivery = confirmDelivery;
     }
 
     public List<LogHeaderStructureDto> getHeaderStructure() {
@@ -200,21 +112,15 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
 
     @Override
     public LogAppenderDto toDto() {
-        LogAppenderDto dto = createDto();
+        LogAppenderDto dto = super.toDto();
         dto.setId(getStringId());
-        dto.setApplicationId(application.getStringId());
-        dto.setApplicationToken(application.getApplicationToken());
-        dto.setTenantId(application.getTenant().getStringId());
-        dto.setName(name);
-        dto.setCreatedTime(createdTime);
-        dto.setCreatedUsername(createdUsername);
-        dto.setDescription(description);
+        if (application != null) {
+            dto.setApplicationToken(application.getApplicationToken());
+            dto.setTenantId(application.getTenant().getStringId());
+        }
         dto.setMinLogSchemaVersion(minLogSchemaVersion);
         dto.setMaxLogSchemaVersion(maxLogSchemaVersion);
-        dto.setStatus(status);
-        dto.setTypeName(typeName);
-        dto.setAppenderClassName(appenderClassName);
-        dto.setRawConfiguration(rawConfiguration);
+        dto.setConfirmDelivery(confirmDelivery);
         dto.setHeaderStructure(headerStructure != null ? new ArrayList<>(headerStructure) : new ArrayList<LogHeaderStructureDto>());
         return dto;
     }
@@ -223,18 +129,67 @@ public final class LogAppender extends GenericModel<LogAppenderDto> implements S
     protected LogAppenderDto createDto() {
         return new LogAppenderDto();
     }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + (confirmDelivery ? 1231 : 1237);
+        result = prime * result
+                + ((headerStructure == null) ? 0 : headerStructure.hashCode());
+        result = prime * result + maxLogSchemaVersion;
+        result = prime * result + minLogSchemaVersion;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        LogAppender other = (LogAppender) obj;
+        if (confirmDelivery != other.confirmDelivery) {
+            return false;
+        }
+        if (headerStructure == null) {
+            if (other.headerStructure != null) {
+                return false;
+            }
+        } else if (!headerStructure.equals(other.headerStructure)) {
+            return false;
+        }
+        if (maxLogSchemaVersion != other.maxLogSchemaVersion) {
+            return false;
+        }
+        if (minLogSchemaVersion != other.minLogSchemaVersion) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public String toString() {
-        return "LogAppender [name=" + name + ", application=" + application
-                + ", minLogSchemaVersion=" + minLogSchemaVersion
-                + ", maxLogSchemaVersion=" + maxLogSchemaVersion + ", status="
-                + status + ", description=" + description
-                + ", createdUsername=" + createdUsername + ", createdTime="
-                + createdTime + ", typeName=" + typeName
-                + ", appenderClassName=" + appenderClassName
-                + ", rawConfiguration=" + Arrays.toString(rawConfiguration)
-                + ", headerStructure=" + headerStructure + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("LogAppender [minLogSchemaVersion=");
+        builder.append(minLogSchemaVersion);
+        builder.append(", maxLogSchemaVersion=");
+        builder.append(maxLogSchemaVersion);
+        builder.append(", confirmDelivery=");
+        builder.append(confirmDelivery);
+        builder.append(", headerStructure=");
+        builder.append(headerStructure);
+        builder.append(", parent=");
+        builder.append(super.toString());
+        builder.append("]");
+        return builder.toString();
     }
+
+
 
 }

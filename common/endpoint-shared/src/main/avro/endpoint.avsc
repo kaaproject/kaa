@@ -65,6 +65,19 @@
 },
 {
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "enum",
+ "name": "LogDeliveryErrorCode",
+ "direction": "in",
+ "symbols" : ["NO_APPENDERS_CONFIGURED", "APPENDER_INTERNAL_ERROR", "REMOTE_CONNECTION_ERROR", "REMOTE_INTERNAL_ERROR"]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "enum",
+ "name": "UserAttachErrorCode",
+ "symbols" : ["NO_VERIFIER_CONFIGURED", "TOKEN_INVALID", "TOKEN_EXPIRED", "INTERNAL_ERROR", "CONNECTION_ERROR", "REMOTE_ERROR", "OTHER"]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "record",
  "direction": "out",
  "name": "SubscriptionCommand",
@@ -79,6 +92,7 @@
  "direction": "out",
  "name": "UserAttachRequest",
  "fields": [
+     {"name": "userVerifierId", "type": "string"},
      {"name": "userExternalId", "type": "string"},
      {"name": "userAccessToken", "type": "string"}
  ]
@@ -89,7 +103,9 @@
  "name": "UserAttachResponse",
  "direction": "in",
  "fields": [
-     {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"}
+     {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"},
+     {"name": "errorCode", "type": ["org.kaaproject.kaa.common.endpoint.gen.UserAttachErrorCode", "null"]},
+     {"name": "errorReason", "type": ["string", "null"]}
  ]
 },
 {
@@ -262,7 +278,6 @@
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "record",
  "name": "ProtocolVersionPair",
- "direction": "out",
  "fields": [
      {"name": "id", "type": "int"},
      {"name": "version", "type": "int"}
@@ -285,7 +300,8 @@
  "direction": "out",
  "fields": [
      {"name": "appStateSeqNumber", "type": "int"},
-     {"name": "configurationHash",  "type": ["bytes", "null"]}
+     {"name": "configurationHash",  "type": ["bytes", "null"]},
+     {"name": "resyncOnly", "type": ["boolean", "null"]}
  ]
 },
 
@@ -338,7 +354,7 @@
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "record",
  "name": "ProtocolMetaData",
- "direction": "out",
+ "direction": "in",
  "fields": [
      {"name": "accessPointId", "type": "int"},
      {"name": "protocolVersionInfo", "type": "org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair"},
@@ -349,7 +365,7 @@
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "record",
  "name": "BootstrapSyncResponse",
- "direction": "out",
+ "direction": "in",
  "fields": [
      {"name": "requestId", "type": "int"},
      {"name": "supportedProtocols", "type": {"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData"}}
@@ -415,11 +431,21 @@
 {
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "record",
- "name": "LogSyncResponse",
+ "name": "LogDeliveryStatus",
  "direction": "in",
  "fields": [
      {"name": "requestId", "type": "int"},
-     {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"}
+     {"name": "result", "type": "org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType"},
+     {"name": "errorCode", "type": ["org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.common.endpoint.gen",
+ "type": "record",
+ "name": "LogSyncResponse",
+ "direction": "in",
+ "fields": [
+     {"name": "deliveryStatuses", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus"}, "null"]}
  ]
 },
 {

@@ -15,7 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-
 public final class ModelConstants {
 
     /**
@@ -206,7 +205,7 @@ public final class ModelConstants {
     public static final String EVENT_CLASS_FAMILY_CREATED_USERNAME = CREATED_USERNAME;
     public static final String EVENT_CLASS_FAMILY_CREATED_TIME = CREATED_TIME;
 
-     /**
+    /**
      * Event class constants.
      */
     public static final String EVENT_CLASS_TABLE_NAME = "event_class";
@@ -235,27 +234,45 @@ public final class ModelConstants {
     public static final String APPLICATION_EVENT_FAMILY_MAP_VERSION = VERSION;
     public static final String APPLICATION_EVENT_FAMILY_MAP_CREATED_USERNAME = CREATED_USERNAME;
     public static final String APPLICATION_EVENT_FAMILY_MAP_CREATED_TIME = CREATED_TIME;
+    
+    
+    /**
+     * Plugin constants.
+     */
+    public static final String PLUGIN_TABLE_NAME = "plugin";
+    public static final String PLUGIN_NAME = "name";
+    public static final String PLUGIN_DESCRIPTION = DESCRIPTION;
+    public static final String PLUGIN_CREATED_USERNAME = CREATED_USERNAME;
+    public static final String PLUGIN_CREATED_TIME = CREATED_TIME;
+    public static final String PLUGIN_APPLICATION_ID = "application_id";
+    public static final String PLUGIN_TYPE_NAME = "plugin_type_name";
+    public static final String PLUGIN_CLASS_NAME = "plugin_class_name";
+    public static final String PLUGIN_RAW_CONFIGURATION = "raw_configuration";
+
+    /**
+     * User verifier constants.
+     */
+    public static final String USER_VERIFIER_TABLE_NAME = "user_verifier";
+    public static final String USER_VERIFIER_TOKEN = "verifier_token";
 
     /**
      * Log schema constants.
      */
     public static final String LOG_SCHEMA_TABLE_NAME = "log_schema";
-    
+
+    /**
+     * Notification schema constants
+     */
+    public static final String NOTIFICATION_SCHEMA_TABLE_NAME = "notification_schema";
+    public static final String NOTIFICATION_SCHEMA_TYPE_PROPERTY = "type";
+
     /**
      * Log appender constants.
      */
     public static final String LOG_APPENDER_TABLE_NAME = "log_appender";
-    public static final String LOG_APPENDER_NAME = "name";
-    public static final String LOG_APPENDER_APPLICATION_ID = "application_id";
     public static final String LOG_APPENDER_MIN_LOG_SCHEMA_VERSION = "min_log_schema_version";
     public static final String LOG_APPENDER_MAX_LOG_SCHEMA_VERSION = "max_log_schema_version";
-    public static final String LOG_APPENDER_STATUS = "status";
-    public static final String LOG_APPENDER_TYPE_NAME = "type_name";
-    public static final String LOG_APPENDER_APPENDER_CLASS_NAME = "appender_class_name";
-    public static final String LOG_APPENDER_RAW_CONFIGURATION = "raw_configuration";
-    public static final String LOG_APPENDER_DESCRIPTION = DESCRIPTION;
-    public static final String LOG_APPENDER_CREATED_USERNAME = CREATED_USERNAME;
-    public static final String LOG_APPENDER_CREATED_TIME = CREATED_TIME;
+    public static final String LOG_APPENDER_CONFIRM_DELIVERY = "confirm_delivery";
 
     /**
      * File log appender constants.

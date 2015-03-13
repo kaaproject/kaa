@@ -17,11 +17,8 @@
 #ifndef ICONFIGURATIONSTORAGE_HPP_
 #define ICONFIGURATIONSTORAGE_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_CONFIGURATION
-
 #include <vector>
+#include <memory>
 #include <cstdint>
 
 namespace kaa {
@@ -34,7 +31,6 @@ namespace kaa {
  */
 class IConfigurationStorage {
 public:
-    typedef std::vector<std::uint8_t> byte_buffer;
     virtual ~IConfigurationStorage() {}
 
     /**
@@ -42,18 +38,18 @@ public:
      *
      * @param bytes Configuration binary data.
      */
-    virtual void        saveConfiguration(const byte_buffer &bytes) = 0;
+    virtual void saveConfiguration(std::vector<std::uint8_t>&& bytes) = 0;
 
     /**
      * Specifies routine to load configuration data.
      *
      * @return Configuration binary data.
      */
-    virtual byte_buffer loadConfiguration() = 0;
+    virtual std::vector<std::uint8_t> loadConfiguration() = 0;
 };
 
-}  // namespace kaa
+typedef std::shared_ptr<IConfigurationStorage> IConfigurationStoragePtr;
 
-#endif
+}  // namespace kaa
 
 #endif /* ICONFIGURATIONSTORAGE_HPP_ */

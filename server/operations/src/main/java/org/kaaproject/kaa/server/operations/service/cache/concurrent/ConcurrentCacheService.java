@@ -428,7 +428,7 @@ public class ConcurrentCacheService implements CacheService {
     @Override
     @CachePut(value = "configurations", key = "#key")
     public EndpointConfigurationDto putConfiguration(EndpointObjectHash key, EndpointConfigurationDto value) {
-        if (value != null && value.getId() == null) {
+        if (value != null) {
             LOG.debug("Fetching result for getConfByHash");
             value = endpointService.saveEndpointConfiguration(value);
         }

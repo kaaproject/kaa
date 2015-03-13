@@ -15,7 +15,11 @@
  */
 
 #include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
 
+#include "kaa_status.h"
 #include "kaa_test.h"
 
 #include "kaa_context.h"
@@ -25,9 +29,11 @@
 #include "kaa_context.h"
 #include "kaa_profile.h"
 #include "kaa_defaults.h"
-#include "kaa_external.h"
 #include "gen/kaa_profile_gen.h"
 #include "kaa_platform_utils.h"
+#include "platform/ext_status.h"
+#include "platform/ext_sha.h"
+#include "platform/ext_key_utils.h"
 
 
 
@@ -228,12 +234,19 @@ void test_profile_sync_serialize()
                                                            , profile_sync_size - KAA_EXTENSION_HEADER_SIZE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    network_order_32 = KAA_HTONL(serialized_profile_size);
+    bool need_resync = true;
+    ASSERT_EQUAL(kaa_profile_need_profile_resync(profile_manager, &need_resync), KAA_ERR_NONE);
+
+    network_order_32 = KAA_HTONL(0);
+    if (need_resync)
+        network_order_32 = KAA_HTONL(serialized_profile_size);
     error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_platform_message_write_aligned(manual_writer, serialized_profile, serialized_profile_size);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    if (need_resync) {
+        error_code = kaa_platform_message_write_aligned(manual_writer, serialized_profile, serialized_profile_size);
+        ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    }
 
     network_order_32 = KAA_HTONS(CONFIG_SCHEMA_VERSION) << 16 | CONFIG_SCHEMA_VERSION_VALUE;
     error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));

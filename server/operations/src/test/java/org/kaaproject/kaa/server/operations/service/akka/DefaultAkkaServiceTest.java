@@ -42,6 +42,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest;
@@ -72,6 +73,7 @@ import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -95,6 +97,7 @@ import org.kaaproject.kaa.server.operations.service.metrics.MeterClient;
 import org.kaaproject.kaa.server.operations.service.metrics.MetricsService;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
+import org.kaaproject.kaa.server.operations.service.user.EndpointUserService;
 import org.kaaproject.kaa.server.sync.ClientSync;
 import org.kaaproject.kaa.server.sync.ConfigurationServerSync;
 import org.kaaproject.kaa.server.sync.EventServerSync;
@@ -150,6 +153,7 @@ public class DefaultAkkaServiceTest {
     private SyncResponseHolder noDeltaResponseWithTopicState;
     private NotificationDto topicNotification;
     private LogAppenderService logAppenderService;
+    private EndpointUserService endpointUserService;
 
     private KeyPair clientPair;
     private KeyPair targetPair;
@@ -163,6 +167,9 @@ public class DefaultAkkaServiceTest {
     @Before
     public void before() throws GeneralSecurityException {
         akkaService = new DefaultAkkaService();
+        
+        AkkaContext context = new AkkaContext();
+        
         cacheService = mock(CacheService.class);
         metricsService = mock(MetricsService.class);
         keyStoreService = mock(KeyStoreService.class);
@@ -171,15 +178,17 @@ public class DefaultAkkaServiceTest {
         applicationService = mock(ApplicationService.class);
         eventService = mock(EventService.class);
         logAppenderService = mock(LogAppenderService.class);
+        endpointUserService = mock(EndpointUserService.class);
 
-        ReflectionTestUtils.setField(akkaService, "cacheService", cacheService);
-        ReflectionTestUtils.setField(akkaService, "metricsService", metricsService);
-        ReflectionTestUtils.setField(akkaService, "keyStoreService", keyStoreService);
-        ReflectionTestUtils.setField(akkaService, "operationsService", operationsService);
-        ReflectionTestUtils.setField(akkaService, "notificationDeltaService", notificationDeltaService);
-        ReflectionTestUtils.setField(akkaService, "applicationService", applicationService);
-        ReflectionTestUtils.setField(akkaService, "eventService", eventService);
-        ReflectionTestUtils.setField(akkaService, "logAppenderService", logAppenderService);
+        ReflectionTestUtils.setField(context, "cacheService", cacheService);
+        ReflectionTestUtils.setField(context, "metricsService", metricsService);
+        ReflectionTestUtils.setField(context, "keyStoreService", keyStoreService);
+        ReflectionTestUtils.setField(context, "operationsService", operationsService);
+        ReflectionTestUtils.setField(context, "notificationDeltaService", notificationDeltaService);
+        ReflectionTestUtils.setField(context, "applicationService", applicationService);
+        ReflectionTestUtils.setField(context, "eventService", eventService);
+        ReflectionTestUtils.setField(context, "logAppenderService", logAppenderService);
+        ReflectionTestUtils.setField(context, "endpointUserService", endpointUserService);
 
         clientPair = KeyUtil.generateKeyPair();
         targetPair = KeyUtil.generateKeyPair();
@@ -189,6 +198,8 @@ public class DefaultAkkaServiceTest {
         Mockito.when(keyStoreService.getPrivateKey()).thenReturn(serverPair.getPrivate());
         Mockito.when(metricsService.createMeter(Mockito.anyString(), Mockito.anyString())).thenReturn(Mockito.mock(MeterClient.class));
 
+        ReflectionTestUtils.setField(akkaService, "context", context);
+        
         if (akkaService.getActorSystem() == null) {
             akkaService.initActorSystem();
         }
@@ -250,6 +261,8 @@ public class DefaultAkkaServiceTest {
 
         when(applicationService.findAppByApplicationToken(APP_TOKEN)).thenReturn(applicationDto);
         when(applicationService.findAppById(APP_ID)).thenReturn(applicationDto);
+        
+        when(endpointUserService.findUserVerifiers(APP_ID)).thenReturn(new ArrayList<UserVerifierDto>());
     }
 
     @After
@@ -359,6 +372,7 @@ public class DefaultAkkaServiceTest {
     public void testDecodeSessionException() throws Exception {
         SessionAwareMessage message = Mockito.mock(SessionAwareMessage.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
         SessionInfo sessionInfo = new SessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID,
                 Mockito.mock(ChannelContext.class), ChannelType.ASYNC, Mockito.mock(CipherPair.class),
                 EndpointObjectHash.fromSHA1("test"), "applicationToken", 100, true);
@@ -1209,7 +1223,9 @@ public class DefaultAkkaServiceTest {
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).sync(Mockito.any(ClientSync.class),
                 Mockito.any(EndpointProfileDto.class));
         Mockito.verify(logAppenderService, Mockito.timeout(TIMEOUT).atLeastOnce()).getLogSchema(APP_ID, 44);
-        Mockito.verify(mockAppender, Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(Mockito.any(LogEventPack.class));
+
+        Mockito.verify(mockAppender, Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(Mockito.any(LogEventPack.class), Mockito.any(LogDeliveryCallback.class));
+
         Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce())
                 .build(Mockito.any(byte[].class), Mockito.any(boolean.class));
     }
@@ -1385,6 +1401,7 @@ public class DefaultAkkaServiceTest {
                 .singletonList(new org.kaaproject.kaa.server.sync.EndpointAttachResponse(REQUEST_ID, Base64Util
                         .encode(targetPublicKeyHash.array()), org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS)));
         sourceResponse.setUserSync(userSyncResponse);
+
         SyncResponseHolder sourceResponseHolder = new SyncResponseHolder(sourceResponse);
         sourceResponseHolder.setEndpointProfile(sourceProfileMock);
 

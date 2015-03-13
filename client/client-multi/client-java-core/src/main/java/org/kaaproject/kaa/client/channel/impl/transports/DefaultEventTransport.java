@@ -20,9 +20,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.kaaproject.kaa.client.channel.EventTransport;
 import org.kaaproject.kaa.client.event.EventManager;
@@ -35,72 +39,57 @@ import org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultEventTransport extends AbstractKaaTransport implements EventTransport
-{
+public class DefaultEventTransport extends AbstractKaaTransport implements EventTransport {
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultEventTransport.class);
 
-    private final KaaClientState clientState;
+    private final Map<Integer, Set<Event>> pendingEvents = new HashMap<>();
+    private final EventComparator eventSeqNumberComparator = new EventComparator();
 
-    private final Map<Integer, List<Event>> sentEvents = new HashMap<Integer, List<Event>>();
-    private EventManager manager;
-    private final EventComparator eventComparator = new EventComparator();
+    private final KaaClientState clientState;
+    private EventManager eventManager;
+
 
     private boolean isEventSNSynchronized = false;
-    private int startEventSN;
+    private final AtomicInteger startEventSN;
 
     public DefaultEventTransport(KaaClientState state) {
-        clientState = state;
-        startEventSN = clientState.getEventSeqNum();
+        this.clientState = state;
+        this.startEventSN = new AtomicInteger(clientState.getEventSeqNum());
     }
 
     @Override
     public EventSyncRequest createEventRequest(Integer requestId) {
-        if (manager != null) {
+        if (eventManager != null) {
             EventSyncRequest request = new EventSyncRequest();
 
-            manager.fillEventListenersSyncRequest(request);
+            eventManager.fillEventListenersSyncRequest(request);
 
             if (isEventSNSynchronized) {
-                List<Event> events = new LinkedList<Event>();
+                Set<Event> eventsSet = new HashSet<Event>();
 
-                if (!sentEvents.isEmpty()) {
-                    for (Map.Entry<Integer, List<Event>> pendingEvents : sentEvents.entrySet()) {
-                        LOG.debug("Have not received response for {} events sent with request id {}",
-                                pendingEvents.getValue().size(), pendingEvents.getKey());
-                        events.addAll(pendingEvents.getValue());
+                if (!pendingEvents.isEmpty()) {
+                    for (Map.Entry<Integer, Set<Event>> pendingEntry : pendingEvents.entrySet()) {
+                        LOG.debug("Have not received response for {} events sent with request id {}", pendingEntry.getValue().size(),
+                                pendingEntry.getKey());
+                        eventsSet.addAll(pendingEntry.getValue());
                     }
-                    sentEvents.clear();
                 }
 
-                events.addAll(manager.getPendingEvents());
+                eventsSet.addAll(eventManager.pollPendingEvents());
 
+                List<Event> events = new ArrayList<Event>(eventsSet);
                 if (!events.isEmpty()) {
-                    Collections.sort(events, eventComparator);
-
-                    if (events.get(0).getSeqNum() != startEventSN) {
-                        clientState.setEventSeqNum(startEventSN + events.size());
-
-                        LOG.info("Put in order event sequence numbers (expected: {}, actual: {})"
-                                                        , startEventSN , events.get(0).getSeqNum());
-
-                        for (Event e : events) {
-                            e.setSeqNum(startEventSN++);
-                        }
-                    } else {
-                        startEventSN += events.size();
-                    }
-
-                    LOG.debug("Going to send {} event{}", events.size()
-                            , (events.size() == 1 ? "" : "s")); //NOSONAR
+                    Collections.sort(events, eventSeqNumberComparator);
+                    LOG.debug("Going to send {} event{}", events.size(), (events.size() == 1 ? "" : "s")); // NOSONAR
                     request.setEvents(events);
-                    sentEvents.put(requestId, events);
+                    pendingEvents.put(requestId, eventsSet);
                 }
 
                 request.setEventSequenceNumberRequest(null);
             } else {
                 request.setEventSequenceNumberRequest(new EventSequenceNumberRequest());
-                LOG.trace("Sending event sequence number request: "
-                                    + "restored_sn = {}", startEventSN);
+                LOG.trace("Sending event sequence number request: " + "restored_sn = {}", startEventSN);
             }
 
             return request;
@@ -110,15 +99,36 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
 
     @Override
     public void onEventResponse(EventSyncResponse response) {
-        if (manager != null) {
-            if (!isEventSNSynchronized && response.getEventSequenceNumberResponse() != null)
-            {
+        if (eventManager != null) {
+            if (!isEventSNSynchronized && response.getEventSequenceNumberResponse() != null) {
                 int lastSN = response.getEventSequenceNumberResponse().getSeqNum();
                 int expectedSN = (lastSN > 0 ? lastSN + 1 : lastSN);
 
-                if (startEventSN != expectedSN) {
-                    startEventSN = expectedSN;
-                    clientState.setEventSeqNum(startEventSN);
+                if (startEventSN.get() != expectedSN) {
+                    startEventSN.set(expectedSN);
+                    clientState.setEventSeqNum(startEventSN.get());
+
+                    Set<Event> eventsSet = new HashSet<Event>();
+                    for (Set<Event> events : pendingEvents.values()) {
+                        eventsSet.addAll(events);
+                    }
+                    
+                    eventsSet.addAll(eventManager.peekPendingEvents());
+
+                    List<Event> events = new ArrayList<Event>(eventsSet);
+                    Collections.sort(events, eventSeqNumberComparator);
+
+                    clientState.setEventSeqNum(startEventSN.get() + events.size());
+                    if (!events.isEmpty() && events.get(0).getSeqNum() != startEventSN.get()) {
+                        LOG.info("Put in order event sequence numbers (expected: {}, actual: {})", startEventSN, events.get(0).getSeqNum());
+
+                        for (Event e : events) {
+                            e.setSeqNum(startEventSN.getAndIncrement());
+                        }
+                    } else {
+                        startEventSN.getAndAdd(events.size());
+                    }
+
                     LOG.info("Event sequence number is unsynchronized. Set to {}", startEventSN);
                 } else {
                     LOG.info("Event sequence number is up to date: {}", startEventSN);
@@ -129,13 +139,13 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
 
             if (response.getEvents() != null && !response.getEvents().isEmpty()) {
                 List<Event> events = new ArrayList<>(response.getEvents());
-                Collections.sort(events, eventComparator);
+                Collections.sort(events, eventSeqNumberComparator);
                 for (Event event : events) {
-                    manager.onGenericEvent(event.getEventClassFQN(), event.getEventData().array(), event.getSource());
+                    eventManager.onGenericEvent(event.getEventClassFQN(), event.getEventData().array(), event.getSource());
                 }
             }
             if (response.getEventListenersResponses() != null && !response.getEventListenersResponses().isEmpty()) {
-                manager.eventListenersResponseReceived(response.getEventListenersResponses());
+                eventManager.eventListenersResponseReceived(response.getEventListenersResponses());
             }
         }
         LOG.trace("Processed event response");
@@ -143,22 +153,31 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
 
     @Override
     public void setEventManager(EventManager manager) {
-        this.manager = manager;
+        this.eventManager = manager;
     }
 
-    class EventComparator implements Comparator<Event>{
-
+    class EventComparator implements Comparator<Event> {
         @Override
         public int compare(Event e1, Event e2) {
             return e1.getSeqNum() - e2.getSeqNum();
         }
-
     }
 
     @Override
     public void onSyncResposeIdReceived(Integer requestId) {
         LOG.debug("Events sent with request id {} were accepted.", requestId);
-        sentEvents.remove(requestId);
+        Set<Event> acceptedEvents = pendingEvents.remove(requestId);
+        if (acceptedEvents != null) {
+            Iterator<Entry<Integer, Set<Event>>> entrySetIterator = pendingEvents.entrySet().iterator();
+            while (entrySetIterator.hasNext()) {
+                Entry<Integer, Set<Event>> entry = entrySetIterator.next();
+                entry.getValue().removeAll(acceptedEvents);
+                if (entry.getValue().size() == 0) {
+                    LOG.debug("Remove entry for request {}.", requestId);
+                    entrySetIterator.remove();
+                }
+            }
+        }
     }
 
     @Override
@@ -168,18 +187,17 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
 
     @Override
     public void blockEventManager() {
-        if (manager != null) {
-            manager.engageDataChannel();
+        if (eventManager != null) {
+            eventManager.engageDataChannel();
         }
     }
 
     @Override
     public void releaseEventManager() {
-        if (manager != null) {
-            if (manager.releaseDataChannel()) {
+        if (eventManager != null) {
+            if (eventManager.releaseDataChannel()) {
                 sync();
             }
         }
     }
-
 }

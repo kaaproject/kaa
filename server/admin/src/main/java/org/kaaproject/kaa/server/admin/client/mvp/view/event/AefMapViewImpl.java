@@ -18,15 +18,15 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.EcfListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -113,7 +113,7 @@ public class AefMapViewImpl extends BaseDetailsViewImpl implements AefMapView {
         createdDateTime.setVisible(!create);
         
         Label ecfLabel = new Label(Utils.constants.ecf());
-        ecfLabel.addStyleName("required");
+        ecfLabel.addStyleName(Utils.avroUiStyle.requiredField());
         ecf = new EcfListBox();
         ecf.setWidth("100%");
         detailsTable.setWidget(2, 0, ecfLabel);
@@ -151,7 +151,7 @@ public class AefMapViewImpl extends BaseDetailsViewImpl implements AefMapView {
         
         eventMapGrid.setSize("700px", "400px");
         Label eventMapLabel = new Label(Utils.constants.eventMap());
-        eventMapLabel.addStyleName("b-app-content-title-label");
+        eventMapLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
 
         detailsTable.setWidget(5, 0, eventMapLabel);
         eventMapLabel.getElement().getParentElement().getStyle().setPropertyPx("paddingBottom", 10);

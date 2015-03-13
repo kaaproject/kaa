@@ -28,12 +28,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.compress.utils.Charsets;
 import org.kaaproject.kaa.client.channel.GenericTransportInfo;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
+import org.kaaproject.kaa.client.util.Base64;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.EventClassFamilyVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
@@ -69,14 +69,19 @@ public class KaaClientProperties extends Properties {
     public static final String LOG_SCHEMA_VERSION = "logs_version";
 
     private static final String PROPERTIES_HASH_ALGORITHM = "SHA";
-    private byte[] propertiesHash;
 
-    public KaaClientProperties(Properties properties) {
+    private final Base64 base64;  
+
+    private byte[] propertiesHash;
+    
+    public KaaClientProperties(Base64 base64, Properties properties) {
         super(properties);
+        this.base64 = base64;
     }
 
-    public KaaClientProperties() throws IOException {
+    public KaaClientProperties(Base64 base64) throws IOException {
         super(loadProperties());
+        this.base64 = base64;
     }
 
     private static Properties loadProperties() throws IOException {
@@ -86,7 +91,7 @@ public class KaaClientProperties extends Properties {
             propertiesLocation = System.getProperty(KAA_CLIENT_PROPERTIES_FILE);
         }
         properties = new Properties();
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader classLoader = Kaa.class.getClassLoader();
         properties.load(classLoader.getResourceAsStream(propertiesLocation));
         return properties;
     }
@@ -195,7 +200,7 @@ public class KaaClientProperties extends Properties {
                 ProtocolMetaData md = new ProtocolMetaData();
                 md.setAccessPointId(Integer.valueOf(tokens[0]));
                 md.setProtocolVersionInfo(new ProtocolVersionPair(Integer.valueOf(tokens[1]), Integer.valueOf(tokens[2])));
-                md.setConnectionInfo(ByteBuffer.wrap(Base64.decodeBase64(tokens[3])));
+                md.setConnectionInfo(ByteBuffer.wrap(base64.decodeBase64(tokens[3])));
                 TransportProtocolId key = new TransportProtocolId(md.getProtocolVersionInfo().getId(), md.getProtocolVersionInfo()
                         .getVersion());
                 List<TransportConnectionInfo> serverList = servers.get(key);
@@ -229,7 +234,7 @@ public class KaaClientProperties extends Properties {
 
     public byte[] getDefaultConfigData() {
         String config = getProperty(KaaClientProperties.CONFIG_DATA_DEFAULT);
-        return (config != null) ? Base64.decodeBase64(config.getBytes(Charsets.UTF_8)) : null;
+        return (config != null) ? base64.decodeBase64(config.getBytes(Charsets.UTF_8)) : null;
     }
 
     public byte[] getDefaultConfigSchema() {

@@ -7,7 +7,7 @@ package org.kaaproject.kaa.server.admin.services.entity.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class GeneralProperties extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"GeneralProperties\",\"namespace\":\"org.kaaproject.kaa.server.admin.services.entity.gen\",\"fields\":[{\"name\":\"appTitle\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"Kaa\",\"displayName\":\"Application title\",\"maxLength\":1000},{\"name\":\"baseUrl\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"http://localhost:8080\",\"displayName\":\"Base URL\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"GeneralProperties\",\"namespace\":\"org.kaaproject.kaa.server.admin.services.entity.gen\",\"fields\":[{\"name\":\"appTitle\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Application title\",\"maxLength\":1000,\"by_default\":\"Kaa\"},{\"name\":\"baseUrl\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Base URL\",\"by_default\":\"http://localhost:8080\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String appTitle;
    private java.lang.String baseUrl;

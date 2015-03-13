@@ -1,0 +1,20 @@
+[
+  {
+    "type":"record",
+    "name":"MessageEvent",
+    "namespace":"org.kaaproject.kaa.demo.verifiersdemo",
+    "fields":[
+      {
+        "name":"message",
+        "type":[
+          {
+            "type":"string",
+            "avro.java.string":"String"
+          },
+          "null"
+        ]
+      }
+    ],
+    "classType":"event"
+  }
+]

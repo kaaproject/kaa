@@ -34,6 +34,7 @@ import org.kaaproject.kaa.server.sync.EventClientSync;
 import org.kaaproject.kaa.server.sync.EventSequenceNumberResponse;
 import org.kaaproject.kaa.server.sync.EventServerSync;
 import org.kaaproject.kaa.server.sync.LogClientSync;
+import org.kaaproject.kaa.server.sync.LogDeliveryStatus;
 import org.kaaproject.kaa.server.sync.LogServerSync;
 import org.kaaproject.kaa.server.sync.NotificationClientSync;
 import org.kaaproject.kaa.server.sync.ProfileClientSync;
@@ -163,7 +164,7 @@ public class BinaryEncDecTest {
     public void testEncodeLogServerSync() throws PlatformEncDecException {
         ServerSync sync = new ServerSync();
         sync.setRequestId(MAGIC_NUMBER);
-        LogServerSync lSync = new LogServerSync(MAGIC_NUMBER, SyncStatus.FAILURE);
+        LogServerSync lSync = new LogServerSync(Collections.singletonList(new LogDeliveryStatus(MAGIC_NUMBER, SyncStatus.FAILURE, null)));
         sync.setLogSync(lSync);
 
         ByteBuffer buf = ByteBuffer.wrap(encDec.encode(sync));
@@ -315,17 +316,22 @@ public class BinaryEncDecTest {
 
     @Test
     public void testUserClientSync() throws PlatformEncDecException {
-        ByteBuffer buf = ByteBuffer.wrap(new byte[4 + 4 + 8 + 4 + 4 + 8 + 4 + 4 + SHA_1_LENGTH]);
+        ByteBuffer buf = ByteBuffer.wrap(new byte[4 + 4 + 4 + 8 + 8 + 4 + 4 + 8 + 4 + 4 + SHA_1_LENGTH]);
         // user assign request
         buf.put((byte) 0);
         buf.put((byte) 4);
         buf.put((byte) 0);
         buf.put((byte) 5);
+        buf.put((byte) 0);
+        buf.put((byte) 8);
+        buf.put((byte) 0);
+        buf.put((byte) 0);
         buf.put("user".getBytes(Charset.forName("UTF-8")));
         buf.put("token".getBytes(Charset.forName("UTF-8")));
         buf.put((byte) 0);
         buf.put((byte) 0);
         buf.put((byte) 0);
+        buf.put("verifier".getBytes(Charset.forName("UTF-8")));
         // attach requests
         buf.put((byte) 1);
         buf.put((byte) 0);

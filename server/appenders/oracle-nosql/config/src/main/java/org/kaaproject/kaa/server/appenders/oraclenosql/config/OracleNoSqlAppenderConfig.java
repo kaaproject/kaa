@@ -17,27 +17,28 @@ package org.kaaproject.kaa.server.appenders.oraclenosql.config;
 
 import org.apache.avro.Schema;
 import org.kaaproject.kaa.server.appenders.oraclenosql.config.gen.OracleNoSqlConfig;
-import org.kaaproject.kaa.server.common.log.shared.annotation.KaaAppenderConfig;
-import org.kaaproject.kaa.server.common.log.shared.config.AppenderConfig;
+import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginType;
 
-@KaaAppenderConfig
-public class OracleNoSqlAppenderConfig implements AppenderConfig{
+@KaaPluginConfig(pluginType = PluginType.LOG_APPENDER)
+public class OracleNoSqlAppenderConfig implements PluginConfig{
 
     public OracleNoSqlAppenderConfig() {
     }
     
     @Override
-    public String getName() {
+    public String getPluginTypeName() {
         return "Oracle NoSQL";
     }
 
     @Override
-    public String getLogAppenderClass() {
+    public String getPluginClassName() {
         return "org.kaaproject.kaa.server.appenders.oraclenosql.appender.OracleNoSqlLogAppender";
     }
 
     @Override
-    public Schema getConfigSchema() {
+    public Schema getPluginConfigSchema() {
         return OracleNoSqlConfig.getClassSchema();
     }
 

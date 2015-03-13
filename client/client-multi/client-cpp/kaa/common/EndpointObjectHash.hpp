@@ -19,6 +19,7 @@
 
 #include <utility>
 #include <cstring>
+#include <vector>
 
 #include <botan/sha160.h>
 
@@ -28,16 +29,15 @@
 namespace kaa {
 
 typedef std::pair<boost::shared_array<std::uint8_t>, std::uint32_t> SharedDataBuffer;
+typedef std::vector<std::uint8_t> HashDigest;
 
 /**
  * Used to calculate SHA-1 hash
  */
-class EndpointObjectHash : protected Botan::SHA_160 {
+class EndpointObjectHash
+{
 public:
-    /*
-     * Default constructor
-     */
-    EndpointObjectHash();
+    EndpointObjectHash() { }
 
     /*
      * Specific constructors
@@ -46,53 +46,46 @@ public:
     EndpointObjectHash(const std::string& str);
     EndpointObjectHash(const std::uint8_t* data, const std::uint32_t& dataSize);
     EndpointObjectHash(const SharedDataBuffer& endpointHash);
-    EndpointObjectHash(EndpointObjectHash& endpointHash);
+    EndpointObjectHash(const EndpointObjectHash& endpointHash);
+    EndpointObjectHash(EndpointObjectHash&& endpointHash);
 
     /*
      * Copy operator
      * Throws \ref KaaException when invalid data was passed (zero-sized or null buffer)
      */
-    EndpointObjectHash& operator=(EndpointObjectHash& endpointHash);
+    EndpointObjectHash& operator=(const EndpointObjectHash& endpointHash);
+
+    /*
+     * Move operator
+     * Throws \ref KaaException when invalid data was passed (zero-sized or null buffer)
+     */
+    EndpointObjectHash& operator=(EndpointObjectHash&& endpointHash);
 
     /**
-     * Retrieves data hash
-     * @return Buffer with hash or empty one if no data was put
+     * Retrieves digest
+     * @return Buffer with digest or empty one if no data was put
      */
-    SharedDataBuffer getHash();
+    HashDigest getHashDigest();
 
     /**
      * Checks if two hashes are equal
      * @return the result of comparison
      */
-    bool operator==(EndpointObjectHash& endpointHash) {
-        return isEqual(getHash(), endpointHash.getHash());
-    }
+    bool operator==(const EndpointObjectHash& endpointHash) { return hashDigest_ == endpointHash.hashDigest_; }
 
     /**
      * Checks if two hashes are not equal
      * @return the result of comparison
      */
-    bool operator!=(EndpointObjectHash& endpointHash) {
-        return !isEqual(getHash(), endpointHash.getHash());
-    }
-
-    /**
-     * Check if two buffer are equal
-     * @return the result of comparison
-     */
-    static bool isEqual(SharedDataBuffer left, SharedDataBuffer right);
+    bool operator!=(const EndpointObjectHash& endpointHash) { return hashDigest_ != endpointHash.hashDigest_; }
 
     operator std::vector<std::uint8_t>();
 
 private:
-    void cloneHash(const std::uint8_t* data, const std::uint32_t& dataSize);
+    void calculateHash(const std::uint8_t* data, std::uint32_t dataSize);
 
 private:
-    /**
-     * Indicates whether some data was already put.
-     */
-    bool withData_;
-    SharedDataBuffer hashBuffer_;
+    std::vector<std::uint8_t> hashDigest_;
 };
 
 } /* namespace kaa */

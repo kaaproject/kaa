@@ -17,26 +17,27 @@ package org.kaaproject.kaa.server.appenders.cdap.config;
 
 import org.apache.avro.Schema;
 import org.kaaproject.kaa.server.appenders.cdap.config.gen.CdapConfig;
-import org.kaaproject.kaa.server.common.log.shared.annotation.KaaAppenderConfig;
-import org.kaaproject.kaa.server.common.log.shared.config.AppenderConfig;
+import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginConfig;
+import org.kaaproject.kaa.server.common.plugin.PluginType;
 
-@KaaAppenderConfig
-public class CdapAppenderConfig implements AppenderConfig{
+@KaaPluginConfig(pluginType = PluginType.LOG_APPENDER)
+public class CdapAppenderConfig implements PluginConfig{
 
     public CdapAppenderConfig() {}
     
     @Override
-    public String getName() {
+    public String getPluginTypeName() {
         return "Cdap";
     }
 
     @Override
-    public String getLogAppenderClass() {
+    public String getPluginClassName() {
         return "org.kaaproject.kaa.server.appenders.cdap.appender.CdapLogAppender";
     }
 
     @Override
-    public Schema getConfigSchema() {
+    public Schema getPluginConfigSchema() {
         return CdapConfig.getClassSchema();
     }
 

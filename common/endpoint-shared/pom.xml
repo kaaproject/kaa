@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.6.3-SNAPSHOT</version>
+        <version>0.7.0-SNAPSHOT</version>
         <artifactId>common</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.common</groupId>
@@ -141,6 +141,9 @@
                       <exclude>**/gen/*.java</exclude>
                       <exclude>**/*.avsc</exclude>
                       <exclude>src/main/java/org/kaaproject/kaa/schema/base/Profile.java</exclude>
+                      <exclude>src/main/java/org/kaaproject/kaa/schema/base/Log.java</exclude>
+                      <exclude>src/main/java/org/kaaproject/kaa/schema/base/Notification.java</exclude>
+                      <exclude>src/main/java/org/kaaproject/kaa/schema/base/Configuration.java</exclude>
                   </excludes>
               </configuration>
           </plugin>

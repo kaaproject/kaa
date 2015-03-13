@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014 CyberVision, Inc.
+  Copyright 2014-2015 CyberVision, Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,14 +19,14 @@
     When updating your version of GWT, you should also update this DTD reference,
     so that your app can take advantage of the latest GWT module capabilities.
 -->
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.6.0//EN" "http://google-web-toolkit.googlecode.com/svn/tags/2.6.0/distro-source/core/src/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.6.1//EN" "https://raw.githubusercontent.com/gwtproject/gwt/release/2.6/distro-source/core/src/gwt-module.dtd">
 <module rename-to='kaaAdmin'>
   <!-- Inherit the core Web Toolkit stuff. -->
   <inherits name="com.google.gwt.core.Core"/>
   <inherits name='com.google.gwt.user.User'/>
   <inherits name="com.google.gwt.i18n.I18N"/>
   <inherits name="com.google.gwt.i18n.CldrLocales"/>
-  <inherits name="com.google.gwt.user.theme.clean.CleanResources"/>
+  <inherits name="com.google.gwt.user.theme.clean.Clean"/>
   <!-- inherits name="com.google.gwt.user.theme.standard.StandardResources"/ -->
   <!-- inherits name="com.google.gwt.user.theme.chrome.ChromeResources"/ -->
   <!--  inherits name="com.google.gwt.user.theme.dark.DarkResources"/-->
@@ -39,7 +39,7 @@
   <inherits name="com.watopi.chosen.Chosen"/>
 
   <inherits name="org.kaaproject.kaa.common.dto.Dto"/>
-  <inherits name="org.kaaproject.kaa.server.common.avro.ui.gwt.client.AvroUIClient"/>
+  <inherits name="org.kaaproject.avro.ui.gwt.client.AvroUIClient"/>
 
   <!--  inherits name='com.google.gwt.visualization.Visualization'/-->
 
@@ -65,6 +65,9 @@
     <extend-property name="locale" values="en"/>
 
     <set-property-fallback name="locale" value="en"/>
+    
+    <set-property name="locale" value="en"/>
+    
     <set-configuration-property name="locale.cookie" value="KAA_ADMIN_LOCALE"/>
     <set-configuration-property name="locale.useragent" value="Y"/>
 

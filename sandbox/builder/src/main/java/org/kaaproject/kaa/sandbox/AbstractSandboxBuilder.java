@@ -154,7 +154,7 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
         baseImageFile = new File(System.getProperty("java.io.tmpdir"), fileName);
         LOG.info("Downloading base image to file '{}'...", baseImageFile.getAbsolutePath());
         downloadFile(baseImageUrl, baseImageFile);
-        
+
         if (baseImageFile.exists() && baseImageFile.isFile()) {
             LOG.info("Downloaded base image to file '{}'.", baseImageFile.getAbsolutePath());
         } else {
@@ -408,17 +408,17 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
 
         executeSudoSsh("chmod +x " + SANDBOX_FOLDER + "/"+CHANGE_KAA_HOST);
         executeSudoSsh("chmod +x " + SANDBOX_FOLDER + "/"+SANDBOX_SPLASH_PY);
-        
+
         String startAdminCommand = osType.getStartServiceTemplate().
-                replaceAll(SERVICE_NAME_VAR, KaaPackage.ADMIN.getServiceName());        
+                replaceAll(SERVICE_NAME_VAR, KaaPackage.ADMIN.getServiceName());
         executeSudoSsh(startAdminCommand);
-        
+
         LOG.info("Sleeping 50 sec.");
         Thread.sleep(50000);
-        
+
         LOG.info("Building demo applications...");
         SandboxClient sandboxClient = new SandboxClient(DEFAULT_HOST, webAdminForwardPort);
-        
+
         List<Project> sandboxProjects = sandboxClient.getDemoProjects();
         if (projects.size() != sandboxProjects.size()) {
             LOG.error("Demo projects count mismatch, expected {}, actual {}", projects.size(), sandboxProjects.size());
@@ -433,7 +433,7 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
                 throw new RuntimeException("Failed to build demo project '" + sandboxProject.getName() + "'!");
             }
         }
-        LOG.info("Finihed building demo applications!");
+        LOG.info("Finished building demo applications!");
     }
 
     protected boolean isWin32() {
@@ -532,7 +532,7 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
         ssh.setHost(DEFAULT_HOST);
         ssh.setTrust(true);
     }
-    
+
     private boolean compareChecksum(File targetFile, String downloadedCheckSum) {
         String checkSum = "";
         try (FileInputStream fileInput = new FileInputStream(targetFile)) {
@@ -550,7 +550,7 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
         }
         return checkSum.equalsIgnoreCase(downloadedCheckSum);
     }
-    
+
     public String downloadCheckSumFile(HttpClient httpClient, HttpContext context, String url) throws Exception {
         LOG.debug("Starting download [{}] ...", url);
         HttpGet httpGet = new HttpGet(URI.create(url));

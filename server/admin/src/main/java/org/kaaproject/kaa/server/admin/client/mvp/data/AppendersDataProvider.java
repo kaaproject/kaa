@@ -15,6 +15,7 @@
  */
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
+
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.util.List;

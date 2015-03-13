@@ -19,19 +19,25 @@ package org.kaaproject.kaa.server.appenders.file.appender;
 import static org.mockito.Mockito.mock;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.common.avro.AvroJsonConverter;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig;
+import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
+import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
+import org.kaaproject.kaa.server.common.core.configuration.RawData;
+import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
+import org.kaaproject.kaa.server.common.core.schema.RawSchema;
+import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
@@ -48,13 +54,11 @@ public class FileSystemLogAppenderTest {
     private FileSystemLogEventService fileSystemLogEventService;
 
     @Test
-    public void testAppend() throws IOException {
+    public void testAppend() throws Exception {
         FileSystemLogAppender appender = new FileSystemLogAppender();
         appender.setName("test");
         FileSystemLogEventService service = Mockito.mock(FileSystemLogEventService.class);
-        //FileSystemLogger logger = new LogbackFileSystemLogger();
         ReflectionTestUtils.setField(appender, "fileSystemLogEventService", service);
-        //ReflectionTestUtils.setField(appender, "logger", logger);
         appender.setName(APPENDER_NAME);
         appender.setAppenderId(APPENDER_ID);
 
@@ -62,30 +66,66 @@ public class FileSystemLogAppenderTest {
         logAppenderDto.setApplicationId(APPLICATION_ID);
         logAppenderDto.setName("test");
         logAppenderDto.setTenantId(TENANT_ID);
-        
+
         try {
             appender.init(logAppenderDto);
-            
+
             ReflectionTestUtils.setField(appender, "header", Arrays.asList(LogHeaderStructureDto.values()));
-            GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(BasicEndpointProfile.SCHEMA$);
+            GenericAvroConverter<BasicEndpointProfile> converter = new GenericAvroConverter<BasicEndpointProfile>(
+                    BasicEndpointProfile.SCHEMA$);
             BasicEndpointProfile theLog = new BasicEndpointProfile("test");
-    
+
             LogSchemaDto schemaDto = new LogSchemaDto();
             schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
             LogSchema schema = new LogSchema(schemaDto);
             LogEvent logEvent = new LogEvent();
-    
+
             logEvent.setLogData(converter.encode(theLog));
             LogEventPack logEventPack = new LogEventPack("endpointKey", 1234567l, schema, Collections.singletonList(logEvent));
-            appender.doAppend(logEventPack);
+            TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+            appender.doAppend(logEventPack, callback);
+            Assert.assertTrue(callback.success);
         } finally {
             appender.close();
         }
-        //Mockito.verify(logger).append(Mockito.anyString());
     }
 
     @Test
-    public void initTest() throws IOException {
+    public void testAppendWithInternalError() throws Exception {
+        FileSystemLogAppender appender = new FileSystemLogAppender();
+        appender.setName("test");
+        FileSystemLogEventService service = Mockito.mock(FileSystemLogEventService.class);
+        ReflectionTestUtils.setField(appender, "fileSystemLogEventService", service);
+        appender.setName(APPENDER_NAME);
+        appender.setAppenderId(APPENDER_ID);
+
+        LogAppenderDto logAppenderDto = prepareConfig();
+        logAppenderDto.setApplicationId(APPLICATION_ID);
+        logAppenderDto.setName("test");
+        logAppenderDto.setTenantId(TENANT_ID);
+
+        try {
+            appender.init(logAppenderDto);
+
+            ReflectionTestUtils.setField(appender, "header", Arrays.asList(LogHeaderStructureDto.values()));
+
+            LogSchemaDto schemaDto = new LogSchemaDto();
+            schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
+            LogSchema schema = new LogSchema(schemaDto);
+            LogEvent logEvent = new LogEvent();
+
+            logEvent.setLogData(new byte[0]);
+            LogEventPack logEventPack = new LogEventPack("endpointKey", 1234567l, schema, Collections.singletonList(logEvent));
+            TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+            appender.doAppend(logEventPack, callback);
+            Assert.assertTrue(callback.internallError);
+        } finally {
+            appender.close();
+        }
+    }
+
+    @Test
+    public void initTest() throws Exception {
         FileSystemLogAppender appender = new FileSystemLogAppender();
         fileSystemLogEventService = mock(FileSystemLogEventService.class);
         FileSystemLogger logger = Mockito.mock(FileSystemLogger.class);
@@ -108,21 +148,53 @@ public class FileSystemLogAppenderTest {
         }
     }
     
-    private LogAppenderDto prepareConfig() throws IOException {
+    private LogAppenderDto prepareConfig() throws Exception {
+
         LogAppenderDto logAppenderDto = new LogAppenderDto();
         logAppenderDto.setApplicationId(APPLICATION_ID);
         logAppenderDto.setName("test");
         logAppenderDto.setTenantId(TENANT_ID);
         
-        FileConfig fileConfig = FileConfig.newBuilder().
-                setLogsRootPath(System.getProperty("java.io.tmpdir") + File.separator + "tmp_logs_"+System.currentTimeMillis()).build();
+        RawSchema rawSchema = new RawSchema(FileConfig.getClassSchema().toString());
+        DefaultRecordGenerationAlgorithm<RawData> algotithm = 
+                    new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
+        RawData rawData = algotithm.getRootData();
+        AvroJsonConverter<FileConfig> converter = 
+                new AvroJsonConverter<>(FileConfig.getClassSchema(), FileConfig.class);
+        FileConfig fileConfig = converter.decodeJson(rawData.getRawData());
         
-        AvroByteArrayConverter<FileConfig> converter = new AvroByteArrayConverter<>(FileConfig.class);
-        byte[] rawConfiguration = converter.toByteArray(fileConfig);
+        fileConfig.setLogsRootPath(System.getProperty("java.io.tmpdir") + File.separator + "tmp_logs_"+System.currentTimeMillis());
+        
+        AvroByteArrayConverter<FileConfig> byteConverter = new AvroByteArrayConverter<>(FileConfig.class);
+        byte[] rawConfiguration = byteConverter.toByteArray(fileConfig);
         
         logAppenderDto.setRawConfiguration(rawConfiguration);
 
         return logAppenderDto;
     }
 
+    private static class TestLogDeliveryCallback implements LogDeliveryCallback {
+
+        private volatile boolean success;
+        private volatile boolean internallError;
+
+        @Override
+        public void onSuccess() {
+            success = true;
+        }
+
+        @Override
+        public void onInternalError() {
+            internallError = true;
+        }
+
+        @Override
+        public void onConnectionError() {
+        }
+
+        @Override
+        public void onRemoteError() {
+        }
+
+    }
 }

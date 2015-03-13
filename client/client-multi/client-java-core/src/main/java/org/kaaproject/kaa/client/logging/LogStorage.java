@@ -26,12 +26,20 @@ package org.kaaproject.kaa.client.logging;
  * <p>Reference implementation used by default ({@link MemoryLogStorage}).</p>
  */
 public interface LogStorage {
+
     /**
      * Persists new log record.
      *
      * @param record New record ({@link LogRecord})
      */
     void addLogRecord(LogRecord record);
+
+    /**
+     * Gets log storage status.
+     *
+     * @return current status of log storage
+     */
+    LogStorageStatus getStatus();
 
     /**
      * <p>Retrieves new log block of specified size or null if there is no logs.</p>
@@ -52,14 +60,6 @@ public interface LogStorage {
      * @param id Unique id of sent log block
      */
     void removeRecordBlock(int id);
-
-    /**
-     * Removes elder records until occupied size becomes equal or less than
-     * specified in a passed parameter.
-     *
-     * @param maximumAllowedVolume Maximum size of inner storage
-     */
-    void removeOldestRecord(long maximumAllowedVolume);
 
     /**
      * Notifies if sending of a log block with a specified id was failed.

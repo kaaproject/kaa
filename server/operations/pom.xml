@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.6.3-SNAPSHOT</version>
+        <version>0.7.0-SNAPSHOT</version>
         <artifactId>server</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server</groupId>
@@ -52,10 +52,6 @@
             <artifactId>dao</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
-            <artifactId>mongo</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>dto</artifactId>
         </dependency>
@@ -76,8 +72,29 @@
             <artifactId>zk</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>netty-server</artifactId>
+            <groupId>org.kaaproject.kaa.server.transports.http</groupId>
+            <artifactId>transport</artifactId>
+            <classifier>http</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.transports.http</groupId>
+            <artifactId>config</artifactId>
+            <classifier>http</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
+            <artifactId>transport</artifactId>
+            <classifier>tcp</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
+            <artifactId>config</artifactId>
+            <classifier>tcp</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
+            <artifactId>verifier</artifactId>
+            <classifier>trustful</classifier>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
@@ -86,6 +103,10 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>transport-shared</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>verifier-shared</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.common</groupId>
@@ -99,7 +120,7 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
-            <artifactId>mongo</artifactId>
+            <artifactId>mongo-dao</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -213,6 +234,34 @@
             <classifier>flume</classifier>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
+            <artifactId>verifier</artifactId>
+            <version>${project.version}</version>
+            <classifier>trustful</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
+            <artifactId>verifier</artifactId>
+            <version>${project.version}</version>
+            <classifier>gplus</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
+            <artifactId>verifier</artifactId>
+            <version>${project.version}</version>
+            <classifier>facebook</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
+            <artifactId>verifier</artifactId>
+            <version>${project.version}</version>
+            <classifier>twitter</classifier>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -278,6 +327,7 @@
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>
                             <overWriteIfNewer>true</overWriteIfNewer>
+                            <excludeTypes>test-jar</excludeTypes>
                             <includeScope>runtime</includeScope>
                         </configuration>
                     </execution>
@@ -289,6 +339,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <server_log_dir>./logs</server_log_dir>
+                        <server_log_sufix>operations</server_log_sufix>
                         <server_home_dir>.</server_home_dir>
                     </systemPropertyVariables>
                 </configuration>
@@ -479,7 +530,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>../common/nosql/mongo/src/main/resources/common-dao-mongodb-context.xml</src>
+                                    <src>${db.context}</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -488,7 +539,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>../common/nosql/mongo/src/main/resources/common-dao-mongodb.properties</src>
+                                    <src>${db.property}</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -497,7 +548,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>../common/dao/src/main/resources/default_profile_schema.json</src>
+                                    <src>../../common/endpoint-shared/src/main/avro/default_profile_schema.avsc</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -506,7 +557,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>../common/dao/src/main/resources/default_configuration_schema.json</src>
+                                    <src>../../common/endpoint-shared/src/main/avro/default_configuration_schema.avsc</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -524,7 +575,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>../common/dao/src/main/resources/default_notification_schema.json</src>
+                                    <src>../../common/endpoint-shared/src/main/avro/default_notification_schema.avsc</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -555,7 +606,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 
@@ -611,20 +661,6 @@
                                     <groupname>kaa</groupname>
                                     <sources>
                                         <source>
-                                            <location>../common/dao/src/main/resources/common-dao-context.xml</location>
-                                        </source>
-                                        <source>
-                                            <location>../common/dao/src/main/resources/common-dao-sql-context.xml</location>
-                                        </source>
-                                    </sources>
-                                </mapping>
-                                <mapping>
-                                    <directory>/usr/lib/${script.server.name}/conf</directory>
-                                    <filemode>755</filemode>
-                                    <username>kaa</username>
-                                    <groupname>kaa</groupname>
-                                    <sources>
-                                        <source>
                                             <location>src/main/resources</location>
                                         </source>
                                         <source>
@@ -637,10 +673,10 @@
                                             <location>../common/dao/src/main/resources/dao.properties</location>
                                         </source>
                                         <source>
-                                            <location>../common/nosql/mongo/src/main/resources/common-dao-mongodb-context.xml</location>
+                                            <location>${db.context}</location>
                                         </source>
                                         <source>
-                                            <location>../common/nosql/mongo/src/main/resources/common-dao-mongodb.properties</location>
+                                            <location>${db.property}</location>
                                         </source>
                                     </sources>
                                 </mapping>
@@ -710,38 +746,45 @@
             </dependencies>
         </profile>
         <profile>
-            <id>http-transport</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <id>cassandra</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.kaaproject.kaa.server.transports.http</groupId>
-                    <artifactId>transport</artifactId>
-                    <classifier>http</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>org.kaaproject.kaa.server.transports.http</groupId>
-                    <artifactId>config</artifactId>
-                    <classifier>http</classifier>
+                    <groupId>org.kaaproject.kaa.server.appenders.cassandra</groupId>
+                    <artifactId>appender</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>cassandra</classifier>
+                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>
         <profile>
-            <id>tcp-transport</id>
+            <id>mongo-dao</id>
+            <properties>
+                <db.context>../common/nosql/mongo-dao/src/main/resources/common-dao-mongodb-context.xml</db.context>
+                <db.property>../common/nosql/mongo-dao/src/main/resources/common-dao-mongodb.properties</db.property>
+            </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <dependencies>
                 <dependency>
-                    <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
-                    <artifactId>transport</artifactId>
-                    <classifier>tcp</classifier>
+                    <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+                    <artifactId>mongo-dao</artifactId>
+                    <scope>runtime</scope>
                 </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>cassandra-dao</id>
+            <properties>
+                <db.context>../common/nosql/cassandra-dao/src/main/resources/common-dao-cassandra-context.xml</db.context>
+                <db.property>../common/nosql/cassandra-dao/src/main/resources/common-dao-cassandra.properties</db.property>
+            </properties>
+            <dependencies>
                 <dependency>
-                    <groupId>org.kaaproject.kaa.server.transports.tcp</groupId>
-                    <artifactId>config</artifactId>
-                    <classifier>tcp</classifier>
+                    <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+                    <artifactId>cassandra-dao</artifactId>
+                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>

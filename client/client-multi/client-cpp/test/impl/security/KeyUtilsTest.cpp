@@ -40,9 +40,9 @@ BOOST_AUTO_TEST_CASE(SaveLoadKeyPairTest)
     KeyUtils::saveKeyPair(generatedKeyPair, newPublicKeyPath, newPrivateKeyPath);
     auto loadedKeyPair = KeyUtils::loadKeyPair(newPublicKeyPath, newPrivateKeyPath);
 
-    BOOST_CHECK_MESSAGE(generatedKeyPair.first == loadedKeyPair.first
+    BOOST_CHECK_MESSAGE(generatedKeyPair.getPublicKey() == loadedKeyPair.getPublicKey()
                                     , "Loaded and saved public key don't match");
-    BOOST_CHECK_MESSAGE(generatedKeyPair.second == loadedKeyPair.second
+    BOOST_CHECK_MESSAGE(generatedKeyPair.getPrivateKey() == loadedKeyPair.getPrivateKey()
                                     , "Loaded and saved private key don't match");
 
     std::remove(newPublicKeyPath.c_str());

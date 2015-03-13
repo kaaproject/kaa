@@ -18,13 +18,14 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
+import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
+import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
+import org.kaaproject.avro.ui.gwt.client.widget.dialog.AvroUiDialog;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.AlertPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ExtendedPasswordTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthServiceAsync;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEvent;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEventHandler;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -39,7 +40,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ChangePasswordDialog extends KaaDialog {
+public class ChangePasswordDialog extends AvroUiDialog {
+
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
 
     private KaaAuthServiceAsync authService = KaaAuthServiceAsync.Util.getInstance();
 
@@ -69,7 +72,7 @@ public class ChangePasswordDialog extends KaaDialog {
 
         setWidth("500px");
 
-        setTitle(Utils.constants.change_password());
+        setTitle(Utils.constants.changePassword());
 
         VerticalPanel dialogContents = new VerticalPanel();
         dialogContents.setSpacing(4);
@@ -90,7 +93,7 @@ public class ChangePasswordDialog extends KaaDialog {
 
         int row=0;
         Widget label = new Label(Utils.constants.oldPassword());
-        label.addStyleName("required");
+        label.addStyleName(REQUIRED);
         oldPassword = new ExtendedPasswordTextBox();
         table.setWidget(row, 0, label);
         table.setWidget(row, 1, oldPassword);
@@ -100,7 +103,7 @@ public class ChangePasswordDialog extends KaaDialog {
         table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
         row++;
         label = new Label(Utils.constants.newPassword());
-        label.addStyleName("required");
+        label.addStyleName(REQUIRED);
         newPassword = new ExtendedPasswordTextBox();
         table.setWidget(row, 0, label);
         table.setWidget(row, 1, newPassword);
@@ -110,7 +113,7 @@ public class ChangePasswordDialog extends KaaDialog {
         table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
         row++;
         label = new Label(Utils.constants.newPasswordAgain());
-        label.addStyleName("required");
+        label.addStyleName(REQUIRED);
         newPasswordAgain = new ExtendedPasswordTextBox();
         table.setWidget(row, 0, label);
         table.setWidget(row, 1, newPasswordAgain);
@@ -121,7 +124,7 @@ public class ChangePasswordDialog extends KaaDialog {
 
         dialogContents.add(table);
 
-        changePasswordButton = new Button(Utils.constants.change_password(), handler);
+        changePasswordButton = new Button(Utils.constants.changePassword(), handler);
 
         Button cancelButton = new Button(Utils.constants.cancel(), new ClickHandler() {
             @Override

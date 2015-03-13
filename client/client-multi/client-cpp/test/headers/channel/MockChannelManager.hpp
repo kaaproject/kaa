@@ -25,45 +25,55 @@ namespace kaa {
 
 class MockChannelManager: public IKaaChannelManager {
 public:
-    virtual void setChannel(TransportType type, IDataChannelPtr channel) {}
-    virtual void addChannel(IDataChannelPtr channel) {}
-    virtual void removeChannel(IDataChannelPtr channel) {}
-    virtual void removeChannel(const std::string& id) {}
+    virtual void setChannel(TransportType type, IDataChannelPtr channel) { ++onSetChannel_; }
+    virtual void addChannel(IDataChannelPtr channel) { ++onAddChannel_; }
+    virtual void removeChannel(IDataChannelPtr channel) { ++onRemoveChannel_; }
+    virtual void removeChannel(const std::string& id) { ++onRemoveChannelById_; }
 
     virtual std::list<IDataChannelPtr> getChannels() {
         static std::list<IDataChannelPtr> channels;
+        ++onGetChannels_;
         return channels;
-    }
-
-    virtual std::list<IDataChannelPtr> getChannelsByType(ChannelType type) {
-        static std::list<IDataChannelPtr> typedChannels;
-        return typedChannels;
     }
 
     virtual IDataChannelPtr getChannelByTransportType(TransportType type) {
         static IDataChannelPtr channel(new MockDataChannel);
+        ++onGetChannelByTransportType_;
         return channel;
     }
 
     virtual IDataChannelPtr getChannel(const std::string& channelId) {
         static IDataChannelPtr channel(new MockDataChannel);
+        ++onGetChannel_;
         return channel;
     }
 
-    virtual void onServerUpdated(IServerInfoPtr server) {}
-    virtual void onServerFailed(IServerInfoPtr server) {}
+    virtual void onTransportConnectionInfoUpdated(ITransportConnectionInfoPtr server) { ++onGetChannelByTransportType_; }
+    virtual void onServerFailed(ITransportConnectionInfoPtr server) { ++onServerFailed_; }
 
-    virtual void clearChannelList() {}
+    virtual void clearChannelList() { ++onClearChannelList_; }
 
-    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) { ++onSetConnectivityChecker_; }
 
-    virtual void shutdown() {}
+    virtual void shutdown() { ++onShutdown_; }
+    virtual void pause() { ++onPause_; }
+    virtual void resume() { ++onResume; }
 
-    virtual void pause() {}
-
-    virtual void resume() {}
-
-    virtual ~MockChannelManager() {}
+public:
+    std::size_t onSetChannel_ = 0;
+    std::size_t onAddChannel_ = 0;
+    std::size_t onRemoveChannel_ = 0;
+    std::size_t onRemoveChannelById_ = 0;
+    std::size_t onGetChannels_ = 0;
+    std::size_t onGetChannelByTransportType_ = 0;
+    std::size_t onGetChannel_ = 0;
+    std::size_t onTransportConnectionInfoUpdated_ = 0;
+    std::size_t onServerFailed_ = 0;
+    std::size_t onClearChannelList_ = 0;
+    std::size_t onSetConnectivityChecker_ = 0;
+    std::size_t onShutdown_ = 0;
+    std::size_t onPause_ = 0;
+    std::size_t onResume = 0;
 };
 
 } /* namespace kaa */

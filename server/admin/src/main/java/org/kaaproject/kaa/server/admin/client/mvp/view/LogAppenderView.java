@@ -19,34 +19,22 @@ package org.kaaproject.kaa.server.admin.client.mvp.view;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
-import org.kaaproject.kaa.server.admin.shared.logs.LogAppenderInfoDto;
-import org.kaaproject.kaa.server.common.avro.ui.shared.RecordField;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ValueListBox;
 
-public interface LogAppenderView extends BaseDetailsView {
+public interface LogAppenderView extends BasePluginView {
 
     ValueListBox<Integer> getMinSchemaVersion();
 
     ValueListBox<Integer> getMaxSchemaVersion();
     
-    HasValue<String> getName();
-
-    ValueListBox<LogAppenderInfoDto> getAppenderInfo();
-
-    HasValue<String> getDescription();
-
-    HasValue<String> getCreatedDateTime();
-
-    HasValue<String> getCreatedUsername();
-
+    HasValue<Boolean> getConfirmDelivery();
+    
     void setMetadataListBox(List<LogHeaderStructureDto> header);
 
     List<LogHeaderStructureDto> getHeader();
-    
-    HasValue<RecordField> getConfiguration();
-    
+
     void setSchemaVersions(List<Integer> schemaVersions);
-    
+
 }

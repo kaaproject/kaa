@@ -62,10 +62,10 @@
  * }
  * </pre>
  * EndpointKeyHash for endpoint can be received with AttachEndpoint operation
- * provided from Operations server. See {@link org.kaaproject.kaa.client.event.registration.EndpointOperationResultListener}. <br>
+ * provided from Operations server. See {@link org.kaaproject.kaa.client.event.registration.EndpointOperationCallback}. <br>
  * <br>
  * If current endpoint is assumed to be attached or detached by another endpoint,
- * specific {@link org.kaaproject.kaa.client.event.registration.CurrentEndpointAttachListener} and {@link org.kaaproject.kaa.client.event.registration.CurrentEndpointDetachListener}
+ * specific {@link org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback} and {@link org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback}
  * may be specified to receive notification about such event.<br>
  * <br>
  * </p>

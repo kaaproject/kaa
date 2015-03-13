@@ -3,7 +3,7 @@
     "type": "record",
     "name": "OracleNoSqlConfig",
     "fields": [
-            {"name": "storeName", "displayName": "KVStore name", "default": "kvstore", "type": "string"},
+            {"name": "storeName", "displayName": "KVStore name", "by_default": "kvstore", "type": "string"},
             {
                "name": "kvStoreNodes", 
                "displayName": "KVStore nodes",
@@ -15,22 +15,22 @@
                       "type": "record",
                       "name": "KvStoreNode",
                       "fields": [
-                          {"name": "host", "displayName": "Host", "weight": 0.75, "default": "localhost", "type": "string"},
-                          {"name": "port", "displayName": "Port", "weight": 0.25, "default": 5000, "type": "int"}
+                          {"name": "host", "displayName": "Host", "weight": 0.75, "by_default": "localhost", "type": "string"},
+                          {"name": "port", "displayName": "Port", "weight": 0.25, "by_default": 5000, "type": "int"}
                       ]
                   }
                }
             },
-            {"name": "username", "displayName": "Username", "optional": true, "type": ["string", "null"]},
-            {"name": "walletDir", "displayName": "Oracle Wallet directory", "optional": true, "type": ["string", "null"]},
-            {"name": "pwdFile", "displayName": "Password store file", "optional": true, "type": ["string", "null"]},
-            {"name": "securityFile", "displayName": "Security properties file", "optional": true, "type": ["string", "null"]},
-            {"name": "transport", "displayName": "KVStore communication transport", "optional": true, "type": ["string", "null"]},
-            {"name": "ssl", "displayName": "Security transport", "optional": true, "type": ["string", "null"]},
-            {"name": "sslCipherSuites", "displayName": "SSL/TLS cipher suites", "optional": true, "type": ["string", "null"]},
-            {"name": "sslProtocols", "displayName": "SSL/TLS procotols", "optional": true, "type": ["string", "null"]},
-            {"name": "sslHostnameVerifier", "displayName": "SSL/TLS hostname verifier", "optional": true, "type": ["string", "null"]},
-            {"name": "sslTrustStore", "displayName": "Java truststore file location", "optional": true, "type": ["string", "null"]},
-            {"name": "sslTrustStoreType", "displayName": "Java truststore type", "optional": true, "type": ["string", "null"]}
+            {"name": "username", "displayName": "Username", "type": ["string", "null"]},
+            {"name": "walletDir", "displayName": "Oracle Wallet directory", "type": ["string", "null"]},
+            {"name": "pwdFile", "displayName": "Password store file", "type": ["string", "null"]},
+            {"name": "securityFile", "displayName": "Security properties file", "type": ["string", "null"]},
+            {"name": "transport", "displayName": "KVStore communication transport", "type": ["string", "null"]},
+            {"name": "ssl", "displayName": "Security transport", "type": ["string", "null"]},
+            {"name": "sslCipherSuites", "displayName": "SSL/TLS cipher suites", "type": ["string", "null"]},
+            {"name": "sslProtocols", "displayName": "SSL/TLS procotols", "type": ["string", "null"]},
+            {"name": "sslHostnameVerifier", "displayName": "SSL/TLS hostname verifier", "type": ["string", "null"]},
+            {"name": "sslTrustStore", "displayName": "Java truststore file location", "type": ["string", "null"]},
+            {"name": "sslTrustStoreType", "displayName": "Java truststore type", "type": ["string", "null"]}
     ]
 }

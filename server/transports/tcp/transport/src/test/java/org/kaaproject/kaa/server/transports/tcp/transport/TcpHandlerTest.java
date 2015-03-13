@@ -16,6 +16,10 @@
 
 package org.kaaproject.kaa.server.transports.tcp.transport;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 
@@ -44,22 +48,25 @@ import org.kaaproject.kaa.server.transports.tcp.transport.messages.NettyTcpConne
 import org.kaaproject.kaa.server.transports.tcp.transport.messages.NettyTcpDisconnectMessage;
 import org.kaaproject.kaa.server.transports.tcp.transport.messages.NettyTcpSyncMessage;
 import org.kaaproject.kaa.server.transports.tcp.transport.netty.AbstractKaaTcpCommandProcessor;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+
+import static org.junit.Assert.assertEquals;
 
 public class TcpHandlerTest {
 
-    MessageHandler akkaService = new MessageHandler() {
+    MessageHandler messageHandler = new MessageHandler() {
 
         @Override
         public void process(SessionInitMessage message) {
             Object[] response = message.getMessageBuilder().build("response".getBytes(), false);
-            Assert.assertEquals(2, response.length);
+            assertEquals(2, response.length);
             Assert.assertTrue(response[0] instanceof ConnAck);
             Assert.assertTrue(response[1] instanceof KaaSync);
             response = message.getErrorBuilder().build(Mockito.mock(GeneralSecurityException.class));
             Assert.assertTrue(response[0] instanceof ConnAck);
             ConnAck connAck = (ConnAck) response[0];
-            Assert.assertEquals(ReturnCode.REFUSE_BAD_CREDENTIALS, connAck.getReturnCode());
+            assertEquals(ReturnCode.REFUSE_BAD_CREDENTIALS, connAck.getReturnCode());
         }
 
         @Override
@@ -70,11 +77,11 @@ public class TcpHandlerTest {
                 response = request.getErrorBuilder().build(Mockito.mock(GeneralSecurityException.class));
                 Assert.assertTrue(response[0] instanceof Disconnect);
                 Disconnect disconnect = (Disconnect) response[0];
-                Assert.assertEquals(DisconnectReason.BAD_REQUEST, disconnect.getReason());
+                assertEquals(DisconnectReason.BAD_REQUEST, disconnect.getReason());
                 response = request.getErrorBuilder().build(Mockito.mock(RuntimeException.class));
                 Assert.assertTrue(response[0] instanceof Disconnect);
                 disconnect = (Disconnect) response[0];
-                Assert.assertEquals(DisconnectReason.INTERNAL_ERROR, disconnect.getReason());
+                assertEquals(DisconnectReason.INTERNAL_ERROR, disconnect.getReason());
             }
 
         }
@@ -87,7 +94,7 @@ public class TcpHandlerTest {
         AbstractKaaTcpCommandProcessor msg = Mockito.mock(AbstractKaaTcpCommandProcessor.class);
         Mockito.when(msg.getRequest()).thenReturn(new Connect());
         TcpHandler handler = new TcpHandler(uuid, akkaService);
-        handler.channelRead0(null, msg);
+        handler.channelRead0(buildDummyCtxMock(), msg);
         Mockito.verify(akkaService).process(Mockito.any(NettyTcpConnectMessage.class));
     }
 
@@ -99,7 +106,7 @@ public class TcpHandlerTest {
         Mockito.when(msg.getRequest()).thenReturn(new Connect());
         TcpHandler handler = new TcpHandler(uuid, akkaService);
         handler.onSessionCreated(buildSessionInfo(uuid));
-        handler.channelRead0(null, msg);
+        handler.channelRead0(buildDummyCtxMock(), msg);
         Mockito.verify(akkaService, Mockito.never()).process(Mockito.any(NettyTcpConnectMessage.class));
     }
 
@@ -108,9 +115,13 @@ public class TcpHandlerTest {
         UUID uuid = UUID.randomUUID();
         MessageHandler akkaService = Mockito.mock(MessageHandler.class);
         AbstractKaaTcpCommandProcessor msg = Mockito.mock(AbstractKaaTcpCommandProcessor.class);
-        Mockito.when(msg.getRequest()).thenReturn(new SyncRequest());
+        Mockito.when(msg.getRequest()).thenReturn(new KaaSync());
         TcpHandler handler = new TcpHandler(uuid, akkaService);
-        handler.channelRead0(null, msg);
+        ChannelHandlerContext context = buildDummyCtxMock();
+        handler.channelRead0(context, msg);
+        ArgumentCaptor<ConnAck> captor = ArgumentCaptor.forClass(ConnAck.class);
+        Mockito.verify(context).writeAndFlush(captor.capture());
+        Assert.assertTrue(captor.getValue().getReturnCode() == ReturnCode.REFUSE_BAD_PROTOCOL);
         Mockito.verify(akkaService, Mockito.never()).process(Mockito.any(NettyTcpConnectMessage.class));
     }
 
@@ -132,7 +143,7 @@ public class TcpHandlerTest {
 
         AbstractKaaTcpCommandProcessor msg = Mockito.mock(AbstractKaaTcpCommandProcessor.class);
         Mockito.when(msg.getRequest()).thenReturn(new SyncRequest());
-        TcpHandler handler = new TcpHandler(uuid, akkaService);
+        TcpHandler handler = new TcpHandler(uuid, messageHandler);
         handler.onSessionCreated(buildSessionInfo(uuid));
         handler.channelRead0(null, msg);
     }
@@ -174,8 +185,16 @@ public class TcpHandlerTest {
         Mockito.verify(akkaService, Mockito.never()).process(Mockito.any(SessionInitMessage.class));
     }
 
+    private ChannelHandlerContext buildDummyCtxMock() {
+        ChannelHandlerContext channelCtx = Mockito.mock(ChannelHandlerContext.class);
+        Channel channel = Mockito.mock(Channel.class);
+        Mockito.when(channel.closeFuture()).thenReturn(Mockito.mock(ChannelFuture.class));
+        Mockito.when(channelCtx.channel()).thenReturn(channel);
+        return channelCtx;
+    }
+
     protected SessionInfo buildSessionInfo(UUID uuid) {
-        return new SessionInfo(uuid, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, Mockito.mock(ChannelContext.class), ChannelType.ASYNC, Mockito.mock(CipherPair.class),
-                EndpointObjectHash.fromSHA1("test"), "applicationToken", 100, true);
+        return new SessionInfo(uuid, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, Mockito.mock(ChannelContext.class), ChannelType.ASYNC,
+                Mockito.mock(CipherPair.class), EndpointObjectHash.fromSHA1("test"), "applicationToken", 100, true);
     }
 }

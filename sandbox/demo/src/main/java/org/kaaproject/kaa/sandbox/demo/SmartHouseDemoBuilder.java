@@ -20,15 +20,16 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
-import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
-import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
-import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.sandbox.demo.projects.Platform;
-import org.kaaproject.kaa.sandbox.demo.projects.Project;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
+import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
+import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
+import org.kaaproject.kaa.server.common.core.configuration.RawData;
+import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
+import org.kaaproject.kaa.server.common.core.schema.RawSchema;
+import org.kaaproject.kaa.server.verifiers.trustful.config.TrustfulVerifierConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
     private static final Logger logger = LoggerFactory.getLogger(SmartHouseDemoBuilder.class);
     
     protected SmartHouseDemoBuilder() {
-        super();
+        super("demo/smarthouse");
     }
     
     @Override
@@ -52,25 +53,26 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
         deviceEventClassFamily.setNamespace("org.kaaproject.kaa.demo.smarthouse.device");
         deviceEventClassFamily.setClassName("DeviceEventClassFamily");
         deviceEventClassFamily = client.editEventClassFamily(deviceEventClassFamily);
-        client.addEventClassFamilySchema(deviceEventClassFamily.getId(), "demo/smarthouse/deviceEventClassFamily.json");
+        client.addEventClassFamilySchema(deviceEventClassFamily.getId(), getResourcePath("deviceEventClassFamily.json"));
 
         EventClassFamilyDto thermoEventClassFamily = new EventClassFamilyDto();
         thermoEventClassFamily.setName("Thermo Event Class Family");
         thermoEventClassFamily.setNamespace("org.kaaproject.kaa.demo.smarthouse.thermo");
         thermoEventClassFamily.setClassName("ThermoEventClassFamily");
         thermoEventClassFamily = client.editEventClassFamily(thermoEventClassFamily);
-        client.addEventClassFamilySchema(thermoEventClassFamily.getId(), "demo/smarthouse/thermoEventClassFamily.json");
+        client.addEventClassFamilySchema(thermoEventClassFamily.getId(), getResourcePath("thermoEventClassFamily.json"));
 
         EventClassFamilyDto musicEventClassFamily = new EventClassFamilyDto();
         musicEventClassFamily.setName("Music Event Class Family");
         musicEventClassFamily.setNamespace("org.kaaproject.kaa.demo.smarthouse.music");
         musicEventClassFamily.setClassName("MusicEventClassFamily");
         musicEventClassFamily = client.editEventClassFamily(musicEventClassFamily);
-        client.addEventClassFamilySchema(musicEventClassFamily.getId(), "demo/smarthouse/musicEventClassFamily.json");
+        client.addEventClassFamilySchema(musicEventClassFamily.getId(), getResourcePath("musicEventClassFamily.json"));
         
         ApplicationDto smartHouseApplication = new ApplicationDto();
         smartHouseApplication.setName("Smart House");
         smartHouseApplication = client.editApplication(smartHouseApplication);
+               
         sdkKey.setApplicationId(smartHouseApplication.getId());
         sdkKey.setProfileSchemaVersion(1);
         sdkKey.setConfigurationSchemaVersion(1);
@@ -89,45 +91,22 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
         aefMapIds.add(thermoAefMap.getId());
         aefMapIds.add(musicAefMap.getId());
         sdkKey.setAefMapIds(aefMapIds);
+        
+        TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();        
+        UserVerifierDto trustfulUserVerifier = new UserVerifierDto();
+        trustfulUserVerifier.setApplicationId(smartHouseApplication.getId());
+        trustfulUserVerifier.setName("Trustful verifier");
+        trustfulUserVerifier.setPluginClassName(trustfulVerifierConfig.getPluginClassName());
+        trustfulUserVerifier.setPluginTypeName(trustfulVerifierConfig.getPluginTypeName());
+        RawSchema rawSchema = new RawSchema(trustfulVerifierConfig.getPluginConfigSchema().toString());
+        DefaultRecordGenerationAlgorithm<RawData> algotithm = 
+                    new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
+        RawData rawData = algotithm.getRootData();
+        trustfulUserVerifier.setJsonConfiguration(rawData.getRawData());        
+        trustfulUserVerifier = client.editUserVerifierDto(trustfulUserVerifier);
+        sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
+        
         logger.info("Finished loading 'Smart House Demo Application' data.");
-    }
-    
-    private ApplicationEventFamilyMapDto mapEventClassFamily(AdminClient client, ApplicationDto application, EventClassFamilyDto eventClassFamily) throws Exception {
-        List<EventClassDto> eventClasses = 
-                client.getEventClassesByFamilyIdVersionAndType(eventClassFamily.getId(), 1, EventClassType.EVENT);
-
-        ApplicationEventFamilyMapDto aefMap = new ApplicationEventFamilyMapDto();
-        aefMap.setApplicationId(application.getId());
-        aefMap.setEcfId(eventClassFamily.getId());
-        aefMap.setEcfName(eventClassFamily.getName());
-        aefMap.setVersion(1);
-        
-        List<ApplicationEventMapDto> eventMaps = new ArrayList<>(eventClasses.size());
-        for (EventClassDto eventClass : eventClasses) {
-            ApplicationEventMapDto eventMap = new ApplicationEventMapDto();
-            eventMap.setEventClassId(eventClass.getId());
-            eventMap.setFqn(eventClass.getFqn());
-                eventMap.setAction(ApplicationEventAction.BOTH);
-            eventMaps.add(eventMap);
-        }
-        
-        aefMap.setEventMaps(eventMaps);
-        aefMap = client.editApplicationEventFamilyMap(aefMap);
-        return aefMap;
-    }
-
-    @Override
-    protected void setupProjectConfigs() {
-        Project projectConfig = new Project();
-        projectConfig.setId("smarthouse_demo");
-        projectConfig.setName("Smart House Demo");
-        projectConfig.setDescription("Smart house application on android platform demonstrating event subsystem (IoT)");
-        projectConfig.setPlatform(Platform.ANDROID);
-        projectConfig.setSourceArchive("android/smarthouse_demo.tar.gz");
-        projectConfig.setProjectFolder("smarthouse_demo/SmartHouseDemo");
-        projectConfig.setSdkLibDir("smarthouse_demo/SmartHouseDemo/libs");
-        projectConfig.setDestBinaryFile("smarthouse_demo/SmartHouseDemo/bin/SmartHouseDemo-debug.apk");
-        projectConfigs.add(projectConfig);
     }
 
 }

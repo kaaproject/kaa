@@ -17,6 +17,9 @@
 #ifndef METADATATRANSPORT_HPP_
 #define METADATATRANSPORT_HPP_
 
+#include <vector>
+#include <algorithm>
+
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/channel/transport/IMetaDataTransport.hpp"
@@ -25,23 +28,21 @@
 
 namespace kaa {
 
-class MetaDataTransport : public IMetaDataTransport {
+class MetaDataTransport : public IMetaDataTransport
+{
 public:
-    MetaDataTransport(IKaaClientStateStoragePtr status, EndpointObjectHash& keyHash, long timeout)
+    MetaDataTransport(IKaaClientStateStoragePtr status, EndpointObjectHash &keyHash, long timeout)
         : clientStatus_(status), publicKeyHash_(keyHash), timeout_(timeout) {}
 
-    std::shared_ptr<SyncRequestMetaData> createSyncRequestMetaData() {
+    std::shared_ptr<SyncRequestMetaData> createSyncRequestMetaData()
+    {
         std::shared_ptr<SyncRequestMetaData> request(new SyncRequestMetaData);
 
         request->applicationToken = APPLICATION_TOKEN;
-        request->endpointPublicKeyHash = publicKeyHash_;
-        SharedDataBuffer buffer = clientStatus_->getProfileHash();
-        std::vector<std::uint8_t> profileHash;
-        for (size_t i =0; i < buffer.second; ++i) {
-            profileHash.push_back(buffer.first[i]);
-        }
-        request->profileHash.set_bytes(profileHash);
-        request->timeout = timeout_;
+        request->endpointPublicKeyHash.set_bytes(publicKeyHash_);
+        request->profileHash.set_bytes(clientStatus_->getProfileHash());
+        request->timeout.set_long(timeout_);
+
         return request;
     }
 

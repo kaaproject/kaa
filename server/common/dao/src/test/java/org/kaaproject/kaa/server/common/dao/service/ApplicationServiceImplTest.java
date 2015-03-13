@@ -26,7 +26,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.AbstractTest;
 
 @Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
 public class ApplicationServiceImplTest extends AbstractTest {
@@ -94,7 +94,6 @@ public class ApplicationServiceImplTest extends AbstractTest {
     @Test(expected = IncorrectParameterException.class)
     public void saveAppTest() {
         ApplicationDto app = generateApplication();
-        app.setUserVerifierName("UserVerifierName");
         applicationService.saveApp(app);
     }
 }

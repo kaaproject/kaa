@@ -15,19 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TOPIC_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TOPICS_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TOPIC_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.WEIGHT_PROPERTY;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
@@ -38,6 +25,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TOPICS_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TOPIC_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TOPIC_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.WEIGHT_PROPERTY;
 
 @Repository
 public class HibernateEndpointGroupDao extends HibernateAbstractDao<EndpointGroup> implements EndpointGroupDao<EndpointGroup> {
@@ -80,6 +80,8 @@ public class HibernateEndpointGroupDao extends HibernateAbstractDao<EndpointGrou
             Topic topic = it.next();
             if (topic.getId() == Long.parseLong(topicId)) {
                 it.remove();
+                topic.getEndpointGroups().remove(endpointGroup);
+                topicDao.save(topic);
                 break;
             }
         }
@@ -105,14 +107,50 @@ public class HibernateEndpointGroupDao extends HibernateAbstractDao<EndpointGrou
     @Override
     public EndpointGroup addTopicToEndpointGroup(String id, String topicId) {
         EndpointGroup endpointGroup = findById(id);
-        Topic topic = topicDao.findById(topicId);
+        if (endpointGroup != null) {
+            addTopicToEndpointGroup(endpointGroup, topicId);
+        }
+        return endpointGroup;
+    }
+
+    @Override
+    public EndpointGroup save(EndpointGroup endpointGroup) {
         Set<Topic> topics = endpointGroup.getTopics();
-        topics.add(topic);
-        return save(endpointGroup);
+        endpointGroup = super.save(endpointGroup);
+        if (topics != null && !topics.isEmpty()) {
+            for (Topic topic : topics) {
+                addTopicToEndpointGroup(endpointGroup, topic.getStringId());
+            }
+        }
+        return endpointGroup;
+    }
+
+    private EndpointGroup addTopicToEndpointGroup(EndpointGroup endpointGroup, String topicId) {
+        Topic topic = topicDao.findById(topicId);
+        if (topic != null) {
+            topic.getEndpointGroups().add(endpointGroup);
+        }
+        endpointGroup.getTopics().add(save(topic, Topic.class));
+        return endpointGroup;
     }
 
     @Override
     protected Class<EndpointGroup> getEntityClass() {
         return EndpointGroup.class;
+    }
+
+    @Override
+    public void removeById(String id) {
+        EndpointGroup endpointGroup = findById(id);
+        if (endpointGroup != null) {
+            Set<Topic> topics = endpointGroup.getTopics();
+            if (topics != null && !topics.isEmpty()) {
+                for (Topic topic : topics) {
+                    topic.getEndpointGroups().remove(endpointGroup);
+                    topicDao.save(topic);
+                }
+            }
+        }
+        remove(endpointGroup);
     }
 }

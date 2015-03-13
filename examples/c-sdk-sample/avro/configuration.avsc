@@ -1,0 +1,8 @@
+{
+    "type":"record",
+    "name":"ConfigurationData",
+    "namespace":"org.kaaproject.kaa.schema.sample.configuration",
+    "fields":[
+        { "name": "message", "type": ["string", "null"] }
+    ]
+}

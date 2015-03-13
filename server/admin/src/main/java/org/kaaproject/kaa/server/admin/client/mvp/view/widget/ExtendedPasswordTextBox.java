@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.HasInputEventHandlers;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEvent;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.input.InputEventHandler;
+import org.kaaproject.avro.ui.gwt.client.input.HasInputEventHandlers;
+import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
+import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
 
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;

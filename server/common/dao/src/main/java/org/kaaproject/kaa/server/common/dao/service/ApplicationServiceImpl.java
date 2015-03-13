@@ -42,8 +42,6 @@ import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
-import org.kaaproject.kaa.server.common.dao.EndpointUserVerifier;
-import org.kaaproject.kaa.server.common.dao.EndpointUserVerifierResolver;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
@@ -71,10 +69,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private static final String GROUP_ALL = "All";
 
-    private static final String DEFAULT_PROFILE_SCHEMA_FILE = "/default_profile_schema.json";
-    private static final String DEFAULT_CONFIGURATION_SCHEMA_FILE = "/default_configuration_schema.json";
-    private static final String DEFAULT_NOTIFICATION_SCHEMA_FILE = "/default_notification_schema.json";
-    private static final String DEFAULT_LOG_SCHEMA_FILE = "/default_log_schema.json";
+    private static final String DEFAULT_PROFILE_SCHEMA_FILE = "/default_profile_schema.avsc";
+    private static final String DEFAULT_CONFIGURATION_SCHEMA_FILE = "/default_configuration_schema.avsc";
+    private static final String DEFAULT_NOTIFICATION_SCHEMA_FILE = "/default_notification_schema.avsc";
+    private static final String DEFAULT_LOG_SCHEMA_FILE = "/default_log_schema.avsc";
     private static final String DEFAULT_SCHEMA_NAME = "Generated";
     
 
@@ -101,9 +99,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
     private UserDao<User> userDao;
-
-    @Autowired
-    private EndpointUserVerifierResolver verifierResolver;
 
     @Override
     public List<ApplicationDto> findAppsByTenantId(String tenantId) {
@@ -170,18 +165,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             String appToken = RandomStringUtils.randomNumeric(Constants.APP_TOKEN_SIZE);
             applicationDto.setApplicationToken(appToken);
 
-            if(applicationDto.getUserVerifierName() == null || applicationDto.getUserVerifierName().isEmpty()){
-                applicationDto.setUserVerifierName(DUMMY_ENDPOINT_USER_VERIFIER);
-            }
-
             if(applicationDto.getLogAppendersNames() == null || applicationDto.getLogAppendersNames().isEmpty()){
                 applicationDto.setLogAppendersNames(MONGODB_ENDPOINT_LOG_APPENDER + "," + FILESYSTEM_ENDPOINT_LOG_APPENDER);
-            }
-
-            EndpointUserVerifier userVerifier = verifierResolver.resolve(applicationDto.getUserVerifierName());
-            if(userVerifier == null){
-                LOG.warn("Cant find endpoint user verifier {}", applicationDto.getUserVerifierName());
-                throw new RuntimeException("Cant find endpoint user verifier " + applicationDto.getUserVerifierName()); //NOSONAR
             }
 
             Application application = new Application(applicationDto);

@@ -41,6 +41,7 @@ import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -70,8 +71,7 @@ import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.AbstractTest;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
@@ -82,6 +82,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.sync.ClientSync;
@@ -122,6 +123,7 @@ public class OperationsServiceIT extends AbstractTest {
     private static final String ENDPOINT_ACCESS_TOKEN = "endpointAccessToken";
     private static final String INVALID_ENDPOINT_ACCESS_TOKEN = "InvalidEndpointAccessToken";
     private static final int REQUEST_ID1 = 42;
+    private static final String USER_VERIFIER_ID = "user@test.com";
     private static final String USER_EXTERNAL_ID = "user@test.com";
     private static final String USER_ACCESS_TOKEN = "userAccessToken";
     private static final String INVALID_USER_ACCESS_TOKEN = "invalidUserAccessToken";
@@ -207,6 +209,8 @@ public class OperationsServiceIT extends AbstractTest {
 
     @Autowired
     protected ProfileFilterDao<ProfileFilter> profileFilterDao;
+    
+    private EndpointUserDto userDto;
 
     private KeyPair keyPair;
 
@@ -240,7 +244,6 @@ public class OperationsServiceIT extends AbstractTest {
         Application appObj = new Application();
         appObj.setTenant(customer);
         appObj.setName(APPLICATION_NAME);
-        appObj.setUserVerifierName("kaaEndpointUserVerifier");
 
         ApplicationDto applicationDto = applicationService.saveApp(appObj.toDto());
         Assert.assertNotNull(applicationDto);
@@ -288,7 +291,7 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertNotNull(confSchema);
         Assert.assertNotNull(confSchema.getId());
 
-        EndpointUserDto userDto = new EndpointUserDto();
+        userDto = new EndpointUserDto();
         userDto.setTenantId(customer.getId().toString());
         userDto.setExternalId(USER_EXTERNAL_ID);
         userDto.setAccessToken(USER_ACCESS_TOKEN);
@@ -335,6 +338,10 @@ public class OperationsServiceIT extends AbstractTest {
 
     @Test
     public void basicRegistrationTest() throws GetDeltaException, IOException {
+        registerEndpoint();
+    }
+
+    private EndpointProfileDto registerEndpoint() throws IOException, GetDeltaException {
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
         ClientSync request = new ClientSync();
 
@@ -362,6 +369,7 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertNotNull(response.getConfigurationSync().getConfDeltaBody());
         // Kaa #7786
         Assert.assertNull(response.getConfigurationSync().getConfSchemaBody());
+        return holder.getEndpointProfile();
     }
 
     @Test
@@ -557,60 +565,14 @@ public class OperationsServiceIT extends AbstractTest {
 
     @Test
     public void basicUserAttachTest() throws GetDeltaException, IOException {
-        basicRegistrationTest();
-        byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
+        EndpointProfileDto profile = registerEndpoint();
 
-        ClientSync request = new ClientSync();
-
-        ClientSyncMetaData md = new ClientSyncMetaData();
-        md.setApplicationToken(application.getApplicationToken());
-        md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
-        md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
-        request.setClientSyncMetaData(md);
-
-        UserClientSync userRequest = new UserClientSync();
-        userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
-        request.setUserSync(userRequest);
-
-
-        ServerSync response = operationsService.sync(request).getResponse();
-        Assert.assertNotNull(response);
-        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
-        Assert.assertNull(response.getConfigurationSync());
-        Assert.assertNull(response.getNotificationSync());
-        Assert.assertNotNull(response.getUserSync());
-        Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
-        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
+        profile.setEndpointUserId(null);
+        profile = operationsService.attachEndpointToUser(profile, application.getApplicationToken(), USER_EXTERNAL_ID);
+        Assert.assertNotNull(profile.getEndpointUserId());
     }
 
-    @Test
-    public void basicUserAttachFailTest() throws GetDeltaException, IOException {
-        basicRegistrationTest();
-        byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
-
-        ClientSync request = new ClientSync();
-
-        ClientSyncMetaData md = new ClientSyncMetaData();
-        md.setApplicationToken(application.getApplicationToken());
-        md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
-        md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(profile).getData()));
-        request.setClientSyncMetaData(md);
-
-        UserClientSync userRequest = new UserClientSync();
-        userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, INVALID_USER_ACCESS_TOKEN));
-        request.setUserSync(userRequest);
-
-        ServerSync response = operationsService.sync(request).getResponse();
-        Assert.assertNotNull(response);
-        Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
-        Assert.assertNull(response.getConfigurationSync());
-        Assert.assertNull(response.getNotificationSync());
-        Assert.assertNotNull(response.getUserSync());
-        Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
-        Assert.assertEquals(SyncStatus.FAILURE, response.getUserSync().getUserAttachResponse().getResult());
-    }
-
-    private void createSecondEndpoint() throws GetDeltaException, IOException {
+    private EndpointProfileDto createSecondEndpoint() throws GetDeltaException, IOException {
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
 
         ClientSync request = new ClientSync();
@@ -628,15 +590,18 @@ public class OperationsServiceIT extends AbstractTest {
 
         request.setConfigurationSync(new ConfigurationClientSync());
 
-        ServerSync response = operationsService.sync(request).getResponse();
+        SyncResponseHolder holder = operationsService.sync(request);
+        
+        ServerSync response = holder.getResponse();
         Assert.assertNotNull(response);
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
+        return holder.getEndpointProfile();
     }
 
     @Test
     public void basicEndpointAttachTest() throws GetDeltaException, IOException {
         // register main endpoint
-        basicRegistrationTest();
+        EndpointProfileDto profileDto = registerEndpoint();
         // register second endpoint
         createSecondEndpoint();
 
@@ -651,18 +616,15 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         UserClientSync userRequest = new UserClientSync();
-        userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
         userRequest.setEndpointAttachRequests(Collections.singletonList(new EndpointAttachRequest(REQUEST_ID1, ENDPOINT_ACCESS_TOKEN)));
         request.setUserSync(userRequest);
 
-        ServerSync response = operationsService.sync(request).getResponse();
+        profileDto.setEndpointUserId(userDto.getId());
+        ServerSync response = operationsService.sync(request, profileDto).getResponse();
         Assert.assertNotNull(response);
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNull(response.getConfigurationSync());
         Assert.assertNull(response.getNotificationSync());
-        Assert.assertNotNull(response.getUserSync());
-        Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
-        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
         Assert.assertNotNull(response.getUserSync().getEndpointAttachResponses());
         Assert.assertEquals(1, response.getUserSync().getEndpointAttachResponses().size());
         Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getEndpointAttachResponses().get(0).getResult());
@@ -671,10 +633,12 @@ public class OperationsServiceIT extends AbstractTest {
     @Test
     public void basicEndpointAttachFailTest() throws GetDeltaException, IOException {
         // register main endpoint
-        basicRegistrationTest();
+        EndpointProfileDto profileDto = registerEndpoint();
         // register second endpoint
         createSecondEndpoint();
 
+        operationsService.attachEndpointToUser(profileDto, application.getApplicationToken(), USER_EXTERNAL_ID);
+        
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
 
         ClientSync request = new ClientSync();
@@ -686,7 +650,6 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         UserClientSync userRequest = new UserClientSync();
-        userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
         userRequest.setEndpointAttachRequests(Collections.singletonList(new EndpointAttachRequest(REQUEST_ID1, INVALID_ENDPOINT_ACCESS_TOKEN)));
         request.setUserSync(userRequest);
 
@@ -696,8 +659,6 @@ public class OperationsServiceIT extends AbstractTest {
         Assert.assertNull(response.getConfigurationSync());
         Assert.assertNull(response.getNotificationSync());
         Assert.assertNotNull(response.getUserSync());
-        Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
-        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
         Assert.assertNotNull(response.getUserSync().getEndpointAttachResponses());
         Assert.assertEquals(1, response.getUserSync().getEndpointAttachResponses().size());
         Assert.assertEquals(SyncStatus.FAILURE, response.getUserSync().getEndpointAttachResponses().get(0).getResult());
@@ -706,9 +667,14 @@ public class OperationsServiceIT extends AbstractTest {
     @Test
     public void basicEndpointDetachTest() throws GetDeltaException, IOException {
         // register main endpoint
-        basicEndpointAttachTest();
+        EndpointProfileDto profileDto = registerEndpoint();
         byte[] profile = avroConverter.encode(ENDPOINT_PROFILE);
+        // register second endpoint
+        EndpointProfileDto secondDto = createSecondEndpoint();
 
+        operationsService.attachEndpointToUser(profileDto, application.getApplicationToken(), USER_EXTERNAL_ID);
+        operationsService.attachEndpointToUser(secondDto, application.getApplicationToken(), USER_EXTERNAL_ID);
+        
         ClientSync request = new ClientSync();
 
         ClientSyncMetaData md = new ClientSyncMetaData();
@@ -718,18 +684,15 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         UserClientSync userRequest = new UserClientSync();
-        userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
         userRequest.setEndpointDetachRequests(Collections.singletonList(new EndpointDetachRequest(REQUEST_ID1, Base64Util.encode(EndpointObjectHash.fromSHA1(ENDPOINT_KEY2).getData()))));
         request.setUserSync(userRequest);
 
-        ServerSync response = operationsService.sync(request).getResponse();
+        ServerSync response = operationsService.sync(request, profileDto).getResponse();
         Assert.assertNotNull(response);
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNull(response.getConfigurationSync());
         Assert.assertNull(response.getNotificationSync());
         Assert.assertNotNull(response.getUserSync());
-        Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
-        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
         Assert.assertNotNull(response.getUserSync().getEndpointDetachResponses());
         Assert.assertEquals(1, response.getUserSync().getEndpointDetachResponses().size());
         Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getEndpointDetachResponses().get(0).getResult());
@@ -738,7 +701,7 @@ public class OperationsServiceIT extends AbstractTest {
     @Test
     public void basicEndpointDetachFailTest() throws GetDeltaException, IOException {
         // register main endpoint
-        basicRegistrationTest();
+        EndpointProfileDto profileDto = registerEndpoint();
         // register second endpoint
         createSecondEndpoint();
 
@@ -753,18 +716,17 @@ public class OperationsServiceIT extends AbstractTest {
         request.setClientSyncMetaData(md);
 
         UserClientSync userRequest = new UserClientSync();
-        userRequest.setUserAttachRequest(new UserAttachRequest(USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
+        userRequest.setUserAttachRequest(new UserAttachRequest(USER_VERIFIER_ID, USER_EXTERNAL_ID, USER_ACCESS_TOKEN));
         userRequest.setEndpointDetachRequests(Collections.singletonList(new EndpointDetachRequest(REQUEST_ID1, Base64Util.encode(EndpointObjectHash.fromSHA1(ENDPOINT_KEY2).getData()))));
         request.setUserSync(userRequest);
 
-        ServerSync response = operationsService.sync(request).getResponse();
+        profileDto.setEndpointUserId(userDto.getId());
+        ServerSync response = operationsService.sync(request, profileDto).getResponse();
         Assert.assertNotNull(response);
         Assert.assertEquals(SyncStatus.SUCCESS, response.getStatus());
         Assert.assertNull(response.getConfigurationSync());
         Assert.assertNull(response.getNotificationSync());
         Assert.assertNotNull(response.getUserSync());
-        Assert.assertNotNull(response.getUserSync().getUserAttachResponse());
-        Assert.assertEquals(SyncStatus.SUCCESS, response.getUserSync().getUserAttachResponse().getResult());
         Assert.assertNotNull(response.getUserSync().getEndpointDetachResponses());
         Assert.assertEquals(1, response.getUserSync().getEndpointDetachResponses().size());
         Assert.assertEquals(SyncStatus.FAILURE, response.getUserSync().getEndpointDetachResponses().get(0).getResult());

@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.6.3-SNAPSHOT</version>
+        <version>0.7.0-SNAPSHOT</version>
         <artifactId>server</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server</groupId>
@@ -133,8 +133,8 @@
             <artifactId>hibernate-entitymanager</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -181,20 +181,20 @@
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>${avro.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>dto</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+            <groupId>org.kaaproject.avro-ui</groupId>
             <artifactId>gwt-client</artifactId>
+            <version>${avro-ui.version}</version>
         </dependency>        
         <dependency>
-            <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+            <groupId>org.kaaproject.avro-ui</groupId>
             <artifactId>converter</artifactId>
+            <version>${avro-ui.version}</version>
         </dependency>           
         <dependency>
             <groupId>org.kaaproject.kaa.common</groupId>
@@ -204,6 +204,10 @@
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>log-shared</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>verifier-shared</artifactId>
+        </dependency>        
         <dependency>
             <groupId>org.versly</groupId>
             <artifactId>versly-wsdoc</artifactId>
@@ -264,8 +268,31 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>flume</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
+            <artifactId>config</artifactId>
+            <classifier>trustful</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
+            <artifactId>config</artifactId>
+            <classifier>gplus</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
+            <artifactId>config</artifactId>
+            <classifier>facebook</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
+            <artifactId>config</artifactId>
+            <classifier>twitter</classifier>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
@@ -283,12 +310,6 @@
             </resource>
         </resources>
         <plugins>
-<!-- 		      <plugin> -->
-<!-- 		        <artifactId>maven-war-plugin</artifactId> -->
-<!-- 		        <configuration> -->
-<!-- 		          <outputFileNameMapping>@{artifactId}@@{dashClassifier?}@-@{version}@.@{extension}@</outputFileNameMapping> -->
-<!-- 		        </configuration> -->
-<!-- 		      </plugin> -->
             <!-- REST documentation parse -->
             <plugin>
                 <groupId>org.apache.avro</groupId>
@@ -382,24 +403,61 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>gwt-maven-plugin</artifactId>
-                <version>${gwt.version}</version>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
                 <executions>
                     <execution>
+                        <phase>process-sources</phase>
                         <goals>
-                            <goal>generateAsync</goal>
+                            <goal>replace</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
+                    <file>${basedir}/src/main/java/org/kaaproject/kaa/server/admin/shared/Version.template</file>
+                    <outputFile>${basedir}/src/main/java/org/kaaproject/kaa/server/admin/shared/Version.java</outputFile>
+                    <replacements>
+                        <replacement>
+                            <token>@projectVersion@</token>
+                            <value>${project.version}</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>             
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <version>${gwt.version}</version>
+                <configuration>
+                    <i18nConstantsWithLookupBundle>org.kaaproject.kaa.server.admin.client.i18n.KaaAdminConstants</i18nConstantsWithLookupBundle>
+                    <i18nMessagesBundle>org.kaaproject.kaa.server.admin.client.i18n.KaaAdminMessages</i18nMessagesBundle>
+                    <cssFile>org/kaaproject/kaa/server/admin/client/KaaAdminTheme.css</cssFile>
                     <compileSourcesArtifacts>
-                        <artifact>org.kaaproject.kaa.server.common:dto</artifact>  <!-- groupId:artifactId -->
+                        <artifact>org.kaaproject.kaa.server.common:dto</artifact>
                     </compileSourcesArtifacts>
                     <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
                     <runTarget>KaaAdmin.html</runTarget>
                 </configuration>
-            </plugin>
+                <executions>
+                    <execution>
+                        <id>generateAsync</id>
+                        <goals>
+                            <goal>generateAsync</goal>
+                        </goals>
+                    </execution>                      
+                    <execution>
+                        <id>source-generation</id>
+                        <goals>
+                            <goal>i18n</goal>
+                            <goal>css</goal>
+                        </goals>
+                        <configuration>
+                            <generateDirectory>${basedir}/src/main/java</generateDirectory>
+                        </configuration>                        
+                    </execution>
+                </executions>
+            </plugin>           
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -466,25 +524,6 @@
                     </execution>                    
                 </executions>
             </plugin>
-			<plugin>
-				<groupId>org.apache.rat</groupId>
-				<artifactId>apache-rat-plugin</artifactId>
-				<version>${rat.version}</version>
-				<configuration>
-					<excludes>
-                        <exclude>**/deb/control/control</exclude>					    					    
-						<exclude>**/_remote.repositories</exclude>
-						<exclude>**/.gwt/**</exclude>
-						<exclude>**/*.css</exclude>
-						<exclude>**/*.html</exclude>
-						<exclude>**/*.properties</exclude>		
-                        <exclude>**/*.avsc</exclude>      
-                        <exclude>**/gen/*.java</exclude>
-						<exclude>src/main/sh/bin/jetty.sh</exclude>
-						<exclude>src/main/resources/jetty/**</exclude>
-					</excludes>
-				</configuration>
-			</plugin>            
 			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
@@ -657,6 +696,44 @@
                                         <ignore></ignore>
                                     </action>
                                 </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.codehaus.mojo
+                                        </groupId>
+                                        <artifactId>
+                                            gwt-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [2.6.1,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>i18n</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            com.google.code.maven-replacer-plugin
+                                        </groupId>
+                                        <artifactId>
+                                            replacer
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.5.3,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>replace</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
@@ -683,7 +760,7 @@
                         </executions>
                         <configuration>
                             <compileSourcesArtifacts>
-                                <artifact>org.kaaproject.kaa.server.common:dto</artifact>  <!-- groupId:artifactId -->
+                                <artifact>org.kaaproject.kaa.server.common:dto</artifact>
                             </compileSourcesArtifacts>
                             <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
                             <runTarget>KaaAdmin.html</runTarget>
@@ -826,6 +903,18 @@
                     <artifactId>config</artifactId>
                     <version>${project.version}</version>
                     <classifier>oracle-nosql</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>cassandra</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.appenders.cassandra</groupId>
+                    <artifactId>config</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>cassandra</classifier>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>

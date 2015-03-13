@@ -16,12 +16,12 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.tenant;
 
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
@@ -31,6 +31,8 @@ import com.google.gwt.user.client.ui.Label;
 
 public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
 
+    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
+    
     private SizedTextBox tenantName;
     private SizedTextBox userName;
     private SizedTextBox email;
@@ -62,7 +64,7 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
         tenantName.addInputHandler(this);
 
         Label titleLabel = new Label(Utils.constants.tenantName());
-        titleLabel.addStyleName("required");
+        titleLabel.addStyleName(REQUIRED);
         detailsTable.setWidget(0, 0, titleLabel);
         detailsTable.setWidget(0, 1, tenantName);
 
@@ -72,7 +74,7 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
 
         Label userLabel = new Label(Utils.constants.tenantAdminUsername());
         if (create) {
-            userLabel.addStyleName("required");
+            userLabel.addStyleName(REQUIRED);
         }
         detailsTable.setWidget(1, 0, userLabel);
         detailsTable.setWidget(1, 1, userName);
@@ -82,7 +84,7 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
         email.addInputHandler(this);
 
         Label emailLabel = new Label(Utils.constants.tenantAdminEmail());
-        emailLabel.addStyleName("required");
+        emailLabel.addStyleName(REQUIRED);
         detailsTable.setWidget(2, 0, emailLabel);
         detailsTable.setWidget(2, 1, email);
 

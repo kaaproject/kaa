@@ -31,8 +31,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDBTestRunner;
-import org.kaaproject.kaa.server.common.dao.impl.mongo.MongoDataLoader;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDataLoader;
 
 /**
  * The Class ControlServerUnicastNotificationIT.

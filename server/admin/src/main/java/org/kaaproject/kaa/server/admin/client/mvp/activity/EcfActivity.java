@@ -16,19 +16,18 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.data.EcfSchemasDataProvider;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowAction;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEvent;
-import org.kaaproject.kaa.server.admin.client.mvp.event.grid.RowActionEventHandler;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.AddEcfSchemaDialog;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -71,7 +70,7 @@ public class EcfActivity
               @Override
               public void onRowAction(RowActionEvent<Integer> event) {
                   Integer id = event.getClickedId();
-                  if (event.getAction()==RowAction.CLICK) {
+                  if (event.getAction()==RowActionEvent.CLICK) {
                       EcfSchemaPlace ecfSchemaPlace = new EcfSchemaPlace(entityId, id);
                       ecfSchemaPlace.setPreviousPlace(place);
                       goTo(ecfSchemaPlace);
@@ -127,8 +126,8 @@ public class EcfActivity
         onSave();
 
         editEntity(entity,
-            new AsyncCallback<EventClassFamilyDto>() {
-                public void onSuccess(EventClassFamilyDto result) {
+            new BusyAsyncCallback<EventClassFamilyDto>() {
+                public void onSuccessImpl(EventClassFamilyDto result) {
                     if (create) {
                         goTo(new EcfPlace(result.getId()));
                     }
@@ -137,7 +136,7 @@ public class EcfActivity
                     }
                 }
 
-                public void onFailure(Throwable caught) {
+                public void onFailureImpl(Throwable caught) {
                     Utils.handleException(caught, detailsView);
                 }
             });
@@ -155,16 +154,9 @@ public class EcfActivity
     }
 
     private void addEcfSchema() {
-        AddEcfSchemaDialog.showAddEcfSchemaDialog(entityId, new AddEcfSchemaDialog.Listener() {
-            
-            @Override
-            public void onClose() {}
-            
-            @Override
-            public void onAdd() {
-                loadEntity();
-            }
-        });
+        EcfSchemaPlace ecfSchemaPlace = new EcfSchemaPlace(entityId, -1);
+        ecfSchemaPlace.setPreviousPlace(place);
+        goTo(ecfSchemaPlace);
     }
 
 }

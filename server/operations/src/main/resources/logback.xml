@@ -33,8 +33,8 @@
     </appender>
 
     <logger name="org.kaaproject.kaa" level="INFO"/>
-    <logger name="org.kaaproject.kaa.metrics" level="INFO"/>
-    <logger name="org.kaaproject.kaa.server.operations.service.statistics" level="INFO"/>
+    <logger name="org.kaaproject.kaa.metrics" level="WARN"/>
+    <logger name="org.kaaproject.kaa.server.operations.service.statistics" level="WARN"/>
     <logger name="org.kaaproject.kaa.server.common.Environment" level="INFO"/>
     <logger name="org.springframework" level="INFO"/>
     <logger name="org.hibernate" level="INFO"/>

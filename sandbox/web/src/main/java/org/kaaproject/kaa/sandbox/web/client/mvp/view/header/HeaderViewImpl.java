@@ -16,11 +16,16 @@
 
 package org.kaaproject.kaa.sandbox.web.client.mvp.view.header;
 
+import org.kaaproject.kaa.sandbox.web.client.SandboxResources.SandboxStyle;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.HeaderView;
+import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.ActionsLabel;
+import org.kaaproject.kaa.sandbox.web.client.util.Utils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class HeaderViewImpl extends Composite implements HeaderView {
@@ -28,15 +33,21 @@ public class HeaderViewImpl extends Composite implements HeaderView {
     interface HeaderViewImplUiBinder extends UiBinder<Widget, HeaderViewImpl> { }
     private static HeaderViewImplUiBinder uiBinder = GWT.create(HeaderViewImplUiBinder.class);
 
-    private Presenter presenter;
-
+    @UiField HTMLPanel headerTitlePanel;
+    @UiField(provided=true) final ActionsLabel settingsLabel;
+    @UiField(provided = true) public final SandboxStyle sandboxStyle;
+    
     public HeaderViewImpl() {
+        settingsLabel = new ActionsLabel(Utils.constants.settings());
+        sandboxStyle = Utils.sandboxStyle;
+        settingsLabel.setStyleName(sandboxStyle.bAppHeaderMenu());
         initWidget(uiBinder.createAndBindUi(this));
+        headerTitlePanel.getElement().setInnerHTML(Utils.constants.sandboxHeaderTitle());
     }
 
     @Override
-    public void setPresenter(Presenter presenter) {
-        this.presenter = presenter;
+    public ActionsLabel getSettingsLabel() {
+        return settingsLabel;
     }
 
 }

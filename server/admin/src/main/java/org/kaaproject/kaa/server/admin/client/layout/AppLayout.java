@@ -13,6 +13,11 @@
 
 package org.kaaproject.kaa.server.admin.client.layout;
 
+import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
+import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.admin.shared.Version;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -22,6 +27,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -48,8 +54,17 @@ public class AppLayout extends Composite {
     @UiField
     SimpleWidgetPanel appContent;
     CustomDeckLayoutPanel navContent;
+    @UiField 
+    HTMLPanel footerPanel;
+    
+    @UiField(provided=true) 
+    final KaaAdminStyle kaaAdminStyle;
+    @UiField(provided=true) 
+    final AvroUiStyle avroUiStyle;
 
     public AppLayout() {
+        kaaAdminStyle = Utils.kaaAdminStyle;
+        avroUiStyle = Utils.avroUiStyle;
         initWidget(uiBinder.createAndBindUi(this));
         init();
     }
@@ -76,18 +91,20 @@ public class AppLayout extends Composite {
         navContent.setAnimationVertical(false);
 
         navContent.setAnimationDuration(0);
-        navContent.setStyleName("b-nav-content");
+        navContent.setStyleName(kaaAdminStyle.bNavContent());
         navContent.setSize("200px", "100%");
 
         navPanel.add(navContent);
         final Label back = new Label(OPEN);
-        back.setStyleName("b-nav-label");
+        back.setStyleName(kaaAdminStyle.bNavLabel());
 
         navPanel.add(back);
         appHeader.setSize("100%", "60px");
 
-        appContent.setStyleName("b-app-content");
-        navPanel.setStyleName("b-nav-panel");
+        appContent.setStyleName(avroUiStyle.bAppContent());
+        navPanel.setStyleName(kaaAdminStyle.bNavPanel());
+        
+        footerPanel.getElement().setInnerHTML(Utils.messages.footerMessage(Version.PROJECT_VERSION));
 
         back.addClickHandler(new ClickHandler() {
 

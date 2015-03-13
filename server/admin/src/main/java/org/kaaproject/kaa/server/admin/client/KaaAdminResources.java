@@ -23,14 +23,26 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ImageResource.ImageOptions;
 
 public interface KaaAdminResources extends ClientBundle {
-
-    public interface Css extends CssResource {
+    
+    public interface KaaTheme extends CssResource {
+        
+        String DEFAULT_CSS = "KaaTheme.css";
 
     }
 
+    public interface KaaAdminStyle extends KaaAdminTheme {
+
+        String DEFAULT_CSS = "KaaAdminTheme.css";
+        
+    }
+    
     @NotStrict
-    @Source("KaaAdmin.css")
-    Css css();
+    @Source(KaaTheme.DEFAULT_CSS)
+    KaaTheme kaaTheme();
+
+    @NotStrict
+    @Source(KaaAdminStyle.DEFAULT_CSS)
+    KaaAdminStyle kaaAdminStyle();
 
     @ImageOptions(width = 14, height = 14)
     @Source("images/remove.png")
@@ -51,22 +63,6 @@ public interface KaaAdminResources extends ClientBundle {
     @ImageOptions(width = 14, height = 14)
     @Source("images/drop-down.png")
     ImageResource drop_down();
-
-    @ImageOptions(width = 0, height = 0)
-    @Source("images/circles.png")
-    ImageResource circles();
-
-    @ImageOptions(width = 0, height = 0)
-    @Source("images/circles_ie6.png")
-    ImageResource circles_ie6();
-    
-    @ImageOptions(width = 0, height = 0)
-    @Source("images/vborder.png")
-    ImageResource vborder();
-
-    @ImageOptions(width = 0, height = 0)
-    @Source("images/vborder_ie6.png")
-    ImageResource vborder_ie6();
 
     @ImageOptions(width = 14, height = 14)
     @Source("images/download_icon_grey.png")

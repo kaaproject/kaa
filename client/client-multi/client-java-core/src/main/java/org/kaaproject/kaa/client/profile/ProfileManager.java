@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.client.profile;
 
+import java.io.IOException;
+
 /**
  * <p>Interface for the profile manager.</p>
  *
@@ -57,6 +59,7 @@ package org.kaaproject.kaa.client.profile;
  * </pre>
  *
  * @author Yaroslav Zeygerman
+ * @author Andrew Shvayka
  *
  * @see AbstractProfileContainer
  * @see SerializedProfileContainer
@@ -73,11 +76,15 @@ public interface ProfileManager {
     void setProfileContainer(ProfileContainer container);
 
     /**
-     * Retrieves container responsible for profile serializing
+     * Retrieves serialized profile
      *
-     * @return Container which contains the serialized profile
+     * @return serialized profile data
      *
      */
-    SerializedProfileContainer getSerializedProfileContainer();
-
+    byte[] getSerializedProfile() throws IOException;
+    
+    /**
+     * Force sync of updated profile with server
+     */
+    void updateProfile();
 }

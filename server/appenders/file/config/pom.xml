@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.server.appenders</groupId>
-        <version>0.6.3-SNAPSHOT</version>
+        <version>0.7.0-SNAPSHOT</version>
         <artifactId>file</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
@@ -96,6 +96,9 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <classifier>file</classifier>
+                    <excludes>
+                        <exclude>**/logback.xml</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>

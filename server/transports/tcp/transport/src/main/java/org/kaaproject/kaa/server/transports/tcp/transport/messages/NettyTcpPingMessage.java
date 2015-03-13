@@ -15,10 +15,10 @@
  */
 package org.kaaproject.kaa.server.transports.tcp.transport.messages;
 
-import org.kaaproject.kaa.server.transport.message.SessionControlMessage;
+import org.kaaproject.kaa.server.transport.message.SessionPingMessage;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
-public class NettyTcpPingMessage extends SessionControlMessage {
+public class NettyTcpPingMessage extends SessionPingMessage {
 
     public NettyTcpPingMessage(SessionInfo session) {
         super(session);

@@ -24,7 +24,7 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
  *
  * @param <T> the generic type
  */
-public interface EndpointUserDao<T extends EndpointUser> extends Dao<T> {
+public interface EndpointUserDao<T extends EndpointUser> extends Dao<T, String> {
 
     T save(EndpointUserDto dto);
     

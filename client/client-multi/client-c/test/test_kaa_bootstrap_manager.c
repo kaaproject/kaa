@@ -18,6 +18,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
+#include <stdio.h>
 
 #include "kaa_test.h"
 
@@ -131,7 +133,7 @@ static void test_create_channel_interface(kaa_transport_channel_interface_t *cha
     channel->get_protocol_id = &test_get_protocol_info;
     channel->get_supported_services = &test_get_supported_services;
     channel->sync_handler = &test_sync_handler;
-    channel->release_context = NULL;
+    channel->destroy = NULL;
     channel->init = &test_init_channel;
     channel->set_access_point = &test_set_access_point;
 }
@@ -337,7 +339,7 @@ void test_handle_server_sync()
     error_code = kaa_bootstrap_manager_on_access_point_failed(protocol1_channel_context.transport_context.bootstrap_manager
                                                             , &protocol1_channel_context.protocol_info
                                                             , KAA_SERVER_OPERATIONS);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(error_code, KAA_ERR_NOT_FOUND);
 
     /**
      * CLEAN UP

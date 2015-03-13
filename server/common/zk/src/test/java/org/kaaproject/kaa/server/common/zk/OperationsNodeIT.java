@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.zk;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
@@ -150,6 +151,40 @@ public class OperationsNodeIT {
         }
     }
 
+    @Test
+    public void outdatedRemovalTest() throws Exception {
+        Timing timing = new Timing();
+        TestingCluster cluster = new TestingCluster(3);
+        cluster.start();
+        try {
+            OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
+            Long removeTime = System.currentTimeMillis();
+
+            BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
+
+            BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
+            OperationsNodeListener mockListener = mock(OperationsNodeListener.class);
+            bootstrapNode.addListener(mockListener);
+            bootstrapNode.start();
+
+            OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
+
+            endpointNode.start();
+            timing.sleepABit();
+            verify(mockListener).onNodeAdded(endpointNodeInfo);
+
+            // pretend receiving remove before add
+            endpointNodeInfo.setTimeStarted(removeTime);
+
+            endpointNode.close();
+            timing.sleepABit();
+            verify(mockListener, never()).onNodeRemoved(endpointNodeInfo);
+            bootstrapNode.close();
+        } finally {
+            cluster.close();
+        }
+    }
+
     private RetryPolicy buildDefaultRetryPolicy() {
         return new ExponentialBackoffRetry(100, 1);
     }
@@ -158,6 +193,7 @@ public class OperationsNodeIT {
         BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
         ByteBuffer testKeyData = ByteBuffer.wrap(new byte[] { 10, 11, 12, 45, 34, 23, 67, 89, 66, 12 });
         nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, testKeyData));
+        nodeInfo.setTimeStarted(System.currentTimeMillis());
         nodeInfo.setTransports(BootstrapNodeIT.getHttpAndTcpTransportMD());
         return nodeInfo;
     }

@@ -17,6 +17,8 @@
 #ifndef MOCKDATACHANNEL_HPP_
 #define MOCKDATACHANNEL_HPP_
 
+#include "kaa/channel/ITransportConnectionInfo.hpp"
+
 namespace kaa {
 
 class MockDataChannel: public IDataChannel {
@@ -29,8 +31,9 @@ public:
         return id;
     }
 
-    virtual ChannelType getChannelType() const {
-        return HTTP;
+    virtual TransportProtocolId getTransportProtocolId() const {
+        static TransportProtocolId protocolId(1, 1);
+        return protocolId;
     }
 
     virtual ServerType getServerType() const {
@@ -40,7 +43,11 @@ public:
     virtual void setMultiplexer(IKaaDataMultiplexer *multiplexer) {}
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer) {}
 
-    virtual void setServer(IServerInfoPtr server) {}
+    virtual void setServer(ITransportConnectionInfoPtr server) {}
+
+    virtual ITransportConnectionInfoPtr getServer() {
+        return ITransportConnectionInfoPtr();
+    }
 
     virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const {
         static std::map<TransportType, ChannelDirection> types =

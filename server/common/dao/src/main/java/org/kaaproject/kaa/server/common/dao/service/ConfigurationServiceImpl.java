@@ -353,9 +353,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         ChangeConfigurationNotification configurationNotification = null;
         validateSqlId(schemaId, "Incorrect configuration schema id " + schemaId + ".");
         validateSqlId(groupId, "Incorrect group id " + groupId + ".");
-        ConfigurationDto configurationDto = getDto(configurationDao.deactivateOldConfiguration(schemaId.toString(),
-                groupId.toString(),
-                deactivatedUsername));
+        ConfigurationDto configurationDto = getDto(configurationDao.deactivateOldConfiguration(schemaId, groupId, deactivatedUsername));
         if (configurationDto != null) {
             HistoryDto historyDto = addHistory(configurationDto, ChangeType.REMOVE_CONF);
             ChangeNotificationDto changeNotificationDto = createNotification(configurationDto, historyDto);

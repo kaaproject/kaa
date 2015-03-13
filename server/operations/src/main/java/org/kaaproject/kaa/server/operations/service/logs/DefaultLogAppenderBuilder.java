@@ -38,7 +38,7 @@ public class DefaultLogAppenderBuilder implements LogAppenderBuilder {
         try {
             @SuppressWarnings("unchecked")
             Class<LogAppender> appenderClass = (Class<LogAppender>) Class
-                    .forName(appenderConfig.getAppenderClassName());
+                    .forName(appenderConfig.getPluginClassName());
             LogAppender logAppender = appenderClass.newInstance();
             LOG.debug("Init log appender [{}] with appender configuration {[]}.", logAppender, appenderConfig);
             logAppender.setName(appenderConfig.getName());
@@ -47,10 +47,10 @@ public class DefaultLogAppenderBuilder implements LogAppenderBuilder {
             logAppender.init(appenderConfig);
             return logAppender;
         } catch (ClassNotFoundException e) {
-            LOG.error("Unable to find custom appender class {}", appenderConfig.getAppenderClassName());
+            LOG.error("Unable to find custom appender class {}", appenderConfig.getPluginClassName());
             throw e;
         } catch (InstantiationException | IllegalAccessException e) {
-            LOG.error("Unable to instantiate custom appender from class {}", appenderConfig.getAppenderClassName());
+            LOG.error("Unable to instantiate custom appender from class {}", appenderConfig.getPluginClassName());
             throw e;
         }
     }

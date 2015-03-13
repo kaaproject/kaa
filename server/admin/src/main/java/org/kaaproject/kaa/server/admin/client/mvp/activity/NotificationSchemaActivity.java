@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -50,13 +51,24 @@ public class NotificationSchemaActivity
     @Override
     protected void getEntity(String id,
             AsyncCallback<NotificationSchemaDto> callback) {
-        KaaAdmin.getDataSource().getNotificationSchema(id, callback);
+        KaaAdmin.getDataSource().getNotificationSchemaForm(id, callback);
     }
 
     @Override
     protected void editEntity(NotificationSchemaDto entity,
             AsyncCallback<NotificationSchemaDto> callback) {
-        KaaAdmin.getDataSource().editNotificationSchema(entity, fileItemName, callback);
+        KaaAdmin.getDataSource().editNotificationSchemaForm(entity, callback);
+    }
+
+    @Override
+    protected void createEmptySchemaForm(AsyncCallback<RecordField> callback) {
+        KaaAdmin.getDataSource().createCommonEmptySchemaForm(callback);
+    }
+
+    @Override
+    public void loadFormData(String fileItemName,
+            AsyncCallback<RecordField> callback) {
+        KaaAdmin.getDataSource().generateCommonSchemaForm(fileItemName, callback);
     }
 
 }

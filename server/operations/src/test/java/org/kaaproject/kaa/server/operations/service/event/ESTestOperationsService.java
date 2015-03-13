@@ -59,5 +59,11 @@ public class ESTestOperationsService implements OperationsService {
         return null;
     }
 
+    @Override
+    public EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 
 }

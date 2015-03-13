@@ -63,14 +63,15 @@ public:
     virtual DetailedTopicStates getTopicStates() const = 0;
     virtual void setTopicStates(const DetailedTopicStates& stateContainer) = 0;
 
-    virtual SharedDataBuffer getProfileHash() const = 0;
-    virtual void setProfileHash(SharedDataBuffer hash) = 0;
+    virtual HashDigest getProfileHash() const = 0;
+    virtual void setProfileHash(HashDigest hash) = 0;
 
     virtual AttachedEndpoints getAttachedEndpoints() const = 0;
     virtual void setAttachedEndpoints(const AttachedEndpoints& endpoints) = 0;
 
-    virtual std::string getEndpointAccessToken() const = 0;
+    virtual std::string getEndpointAccessToken() = 0;
     virtual void setEndpointAccessToken(const std::string& token) = 0;
+    virtual std::string refreshEndpointAccessToken() = 0;
 
     virtual bool getEndpointAttachStatus() const = 0;
     virtual void setEndpointAttachStatus(bool isAttached) = 0;

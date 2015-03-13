@@ -16,20 +16,24 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.ENDPOINT_DISPATCHER_NAME;
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.LOG_DISPATCHER_NAME;
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.TOPIC_DISPATCHER_NAME;
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.VERIFIER_DISPATCHER_NAME;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
-import org.kaaproject.kaa.server.operations.service.OperationsService;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicRegistrationRequestMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicSubscriptionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage.EventDeliveryStatus;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
@@ -38,8 +42,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.Endp
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionRouteMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserDisconnectMessage;
-import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
-import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.verification.UserVerificationRequestMessage;
 import org.kaaproject.kaa.server.transport.session.SessionAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,11 +62,8 @@ public class ApplicationActor extends UntypedActor {
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationActor.class);
 
-    /** The operations service. */
-    private final OperationsService operationsService;
-
-    /** The notification delta service. */
-    private final NotificationDeltaService notificationDeltaService;
+    /** The Akka service context */
+    private final AkkaContext context;
 
     /** The endpoint sessions. */
     private final Map<EndpointObjectHash, ActorMetaData> endpointSessions;
@@ -77,11 +77,11 @@ public class ApplicationActor extends UntypedActor {
 
     private final Map<String, ActorRef> logsSessions;
 
-    private final LogAppenderService logAppenderService;
-
-    private final ApplicationService applicationService;
+    private final Map<String, ActorRef> userVerifierSessions;
 
     private ActorRef applicationLogActor;
+
+    private ActorRef userVerifierActor;
 
     /**
      * Instantiates a new application actor.
@@ -91,18 +91,16 @@ public class ApplicationActor extends UntypedActor {
      * @param notificationDeltaService
      *            the notification delta service
      */
-    private ApplicationActor(OperationsService operationsService, NotificationDeltaService notificationDeltaService,
-            ApplicationService applicationService, LogAppenderService logAppenderService, String applicationToken) {
-        this.operationsService = operationsService;
-        this.applicationService = applicationService;
-        this.logAppenderService = logAppenderService;
-        this.notificationDeltaService = notificationDeltaService;
+    private ApplicationActor(AkkaContext context, String applicationToken) {
+        this.context = context;
         this.applicationToken = applicationToken;
         this.endpointSessions = new HashMap<>();
         this.endpointActorMap = new HashMap<>();
         this.topicSessions = new HashMap<>();
         this.logsSessions = new HashMap<>();
-        this.applicationLogActor = getOrCreateLogActor(null, logAppenderService, applicationService);
+        this.userVerifierSessions = new HashMap<>();
+        this.applicationLogActor = getOrCreateLogActor();
+        this.userVerifierActor = getOrCreateUserVerifierActor();
     }
 
     /**
@@ -113,17 +111,8 @@ public class ApplicationActor extends UntypedActor {
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
-        /** The operations service. */
-        private final OperationsService operationsService;
-
-        /** The notification delta service. */
-        private final NotificationDeltaService notificationDeltaService;
-
-        /** The application service. */
-        private final ApplicationService applicationService;
-
-        /** The log appender service. */
-        private final LogAppenderService logAppenderService;
+        /** The Akka service context */
+        private final AkkaContext context;
 
         private final String applicationToken;
 
@@ -135,14 +124,10 @@ public class ApplicationActor extends UntypedActor {
          * @param notificationDeltaService
          *            the notification delta service
          */
-        public ActorCreator(OperationsService operationsService, NotificationDeltaService notificationDeltaService,
-                ApplicationService applicationService, LogAppenderService logAppenderService, String applicationToken) {
+        public ActorCreator(AkkaContext context, String applicationToken) {
             super();
-            this.operationsService = operationsService;
-            this.notificationDeltaService = notificationDeltaService;
+            this.context = context;
             this.applicationToken = applicationToken;
-            this.applicationService = applicationService;
-            this.logAppenderService = logAppenderService;
         }
 
         /*
@@ -152,8 +137,7 @@ public class ApplicationActor extends UntypedActor {
          */
         @Override
         public ApplicationActor create() throws Exception {
-            return new ApplicationActor(operationsService, notificationDeltaService, applicationService, logAppenderService,
-                    applicationToken);
+            return new ApplicationActor(context, applicationToken);
         }
     }
 
@@ -184,6 +168,8 @@ public class ApplicationActor extends UntypedActor {
             updateEndpointActor((EndpointStopMessage) message);
         } else if (message instanceof LogEventPackMessage) {
             processLogEventPackMessage((LogEventPackMessage) message);
+        } else if (message instanceof UserVerificationRequestMessage) {
+            processUserVerificationRequestMessage((UserVerificationRequestMessage) message);
         } else if (message instanceof EndpointUserActionMessage) {
             processEndpointUserActionMessage((EndpointUserActionMessage) message, true);
         } else if (message instanceof EndpointUserActionRouteMessage) {
@@ -202,9 +188,22 @@ public class ApplicationActor extends UntypedActor {
         applicationLogActor.tell(message, self());
     }
 
+    private void processUserVerificationRequestMessage(UserVerificationRequestMessage message) {
+        LOG.debug("[{}] Processing user verification request message", applicationToken);
+        userVerifierActor.tell(message, self());
+    }
+
     private void processLogNotificationMessage(ThriftNotificationMessage message) {
-        LOG.debug("[{}] Processing thrift notification message", applicationToken);
-        applicationLogActor.tell(message, self());
+        processThriftNotificationMessage(applicationLogActor, message);
+    }
+
+    private void processUserVerifierNotificationMessage(ThriftNotificationMessage message) {
+        processThriftNotificationMessage(userVerifierActor, message);
+    }
+
+    private void processThriftNotificationMessage(ActorRef actor, ThriftNotificationMessage message) {
+        LOG.debug("[{}] Processing thrift notification message {}", applicationToken, message);
+        actor.tell(message, self());
     }
 
     /**
@@ -224,6 +223,9 @@ public class ApplicationActor extends UntypedActor {
         } else if (notification.isSetAppenderId()) {
             LOG.debug("[{}] Forwarding message to application log actor", applicationToken);
             processLogNotificationMessage(message);
+        } else if (notification.isSetUserVerifierToken()) {
+            LOG.debug("[{}] Forwarding message to application log actor", applicationToken);
+            processUserVerifierNotificationMessage(message);
         } else {
             LOG.debug("[{}] Broadcasting message to all endpoints", applicationToken);
             broadcastToAllEndpoints(message);
@@ -252,7 +254,9 @@ public class ApplicationActor extends UntypedActor {
     private ActorRef getOrCreateTopic(String topicId) {
         ActorRef topicActor = topicSessions.get(topicId);
         if (topicActor == null) {
-            topicActor = context().actorOf(Props.create(new TopicActor.ActorCreator(notificationDeltaService)), buildTopicKey(topicId));
+            topicActor = context().actorOf(
+                    Props.create(new TopicActor.ActorCreator(context.getNotificationDeltaService())).withDispatcher(TOPIC_DISPATCHER_NAME),
+                    buildTopicKey(topicId));
             topicSessions.put(topicId, topicActor);
             context().watch(topicActor);
         }
@@ -294,8 +298,8 @@ public class ApplicationActor extends UntypedActor {
      *            the message
      */
     private void processEndpointAwareMessage(EndpointAwareMessage message) {
-        if (message instanceof TopicRegistrationRequestMessage) {
-            processEndpointTopicRegistration((TopicRegistrationRequestMessage) message);
+        if (message instanceof TopicSubscriptionMessage) {
+            processEndpointTopicRegistration((TopicSubscriptionMessage) message);
         } else if (message instanceof EndpointUserConnectMessage) {
             processEndpointUserRegistration((EndpointUserConnectMessage) message);
         } else if (message instanceof EndpointUserDisconnectMessage) {
@@ -350,7 +354,7 @@ public class ApplicationActor extends UntypedActor {
      * @param message
      *            the message
      */
-    private void processEndpointTopicRegistration(TopicRegistrationRequestMessage message) {
+    private void processEndpointTopicRegistration(TopicSubscriptionMessage message) {
         ActorRef topicActor = getOrCreateTopic(message.getTopicId());
         topicActor.tell(message, self());
     }
@@ -387,10 +391,10 @@ public class ApplicationActor extends UntypedActor {
             UUID uuid = UUID.randomUUID();
             String endpointActorId = uuid.toString().replaceAll("-", "");
             LOG.debug("[{}] Creating actor with endpointKey: {}", applicationToken, endpointActorId);
-            endpointMetaData = new ActorMetaData(context()
-                    .actorOf(
-                            Props.create(new EndpointActor.ActorCreator(operationsService, endpointActorId, message.getAppToken(), message
-                                    .getKey())), endpointActorId), endpointActorId);
+            endpointMetaData = new ActorMetaData(context().actorOf(
+                    Props.create(
+                            new EndpointActor.ActorCreator(context, endpointActorId, message.getAppToken(), message
+                                    .getKey())).withDispatcher(ENDPOINT_DISPATCHER_NAME), endpointActorId), endpointActorId);
             endpointSessions.put(message.getKey(), endpointMetaData);
             endpointActorMap.put(endpointActorId, message.getKey());
             context().watch(endpointMetaData.actorRef);
@@ -450,23 +454,47 @@ public class ApplicationActor extends UntypedActor {
                 LOG.debug("[{}] removed topic: {}", applicationToken, localActor);
             } else if (logsSessions.remove(name) != null) {
                 LOG.debug("[{}] removed log: {}", applicationToken, localActor);
-                applicationLogActor = getOrCreateLogActor(name, logAppenderService, applicationService);
+                applicationLogActor = getOrCreateLogActor(name);
+                LOG.debug("[{}] created log: {}", applicationToken, applicationLogActor);
+            } else if (userVerifierSessions.remove(name) != null) {
+                LOG.debug("[{}] removed log: {}", applicationToken, localActor);
+                userVerifierActor = getOrCreateUserVerifierActor(name);
                 LOG.debug("[{}] created log: {}", applicationToken, applicationLogActor);
             }
         } else {
             LOG.warn("remove commands for remote actors are not supported yet!");
         }
     }
+    
+    private ActorRef getOrCreateLogActor() {
+        return getOrCreateLogActor(null);
+    }
 
-    private ActorRef getOrCreateLogActor(String name, LogAppenderService logAppenderService, ApplicationService applicationService) {
+    private ActorRef getOrCreateLogActor(String name) {
         ActorRef logActor = logsSessions.get(name);
         if (logActor == null) {
             logActor = context().actorOf(
-                    Props.create(new ApplicationLogActor.ActorCreator(logAppenderService, applicationService, applicationToken)));
+                    Props.create(new ApplicationLogActor.ActorCreator(context, applicationToken)).withDispatcher(LOG_DISPATCHER_NAME));
             context().watch(logActor);
             logsSessions.put(logActor.path().name(), logActor);
         }
         return logActor;
+    }
+
+    private ActorRef getOrCreateUserVerifierActor() {
+        return getOrCreateUserVerifierActor(null);
+    }
+    
+    private ActorRef getOrCreateUserVerifierActor(String name) {
+        ActorRef userVerifierActor = userVerifierSessions.get(name);
+        if (userVerifierActor == null) {
+            userVerifierActor = context().actorOf(
+                    Props.create(new ApplicationUserVerifierActor.ActorCreator(context, applicationToken))
+                            .withDispatcher(VERIFIER_DISPATCHER_NAME));
+            context().watch(userVerifierActor);
+            userVerifierSessions.put(userVerifierActor.path().name(), userVerifierActor);
+        }
+        return userVerifierActor;
     }
 
     /**

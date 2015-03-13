@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.apache.avro.Schema;
 import org.apache.thrift.TException;
+import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
 import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
@@ -57,11 +58,8 @@ import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.Version;
-import org.kaaproject.kaa.server.common.core.algorithms.delta.DefaultDeltaCalculatorFactory;
-import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculationAlgorithm;
-import org.kaaproject.kaa.server.common.core.configuration.BaseData;
-import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
@@ -75,6 +73,7 @@ import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.UserService;
+import org.kaaproject.kaa.server.common.dao.UserVerifierService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService;
@@ -163,6 +162,9 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
     @Autowired
     private LogAppendersService logAppenderService;
+
+    @Autowired
+    private UserVerifierService userVerifierService;
 
     /*
      * (non-Javadoc)
@@ -362,6 +364,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
      * .Iface#getApplicationByApplicationToken(java.lang.String)
      */
     /* GUI method */
+    /* CLI method */
     @Override
     public DataStruct getApplicationByApplicationToken(String applicationToken) throws TException {
         return toDataStruct(applicationService
@@ -850,7 +853,8 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     @Override
     public Sdk generateSdk(SdkPlatform sdkPlatform, String applicationId,
             int profileSchemaVersion, int configurationSchemaVersion,
-            int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion) throws TException {
+            int notificationSchemaVersion, List<String> aefMapIds,
+            int logSchemaVersion, String defaultVerifierToken) throws TException {
 
         try {
             ApplicationDto application = applicationService.findAppById(applicationId);
@@ -882,17 +886,18 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
             DataSchema profileDataSchema = new DataSchema(profileSchema.getSchema());
             DataSchema notificationDataSchema = new DataSchema(notificationSchema.getSchema());
             ProtocolSchema protocolSchema = new ProtocolSchema(configurationShema.getProtocolSchema());
-            BaseSchema baseSchema = new BaseSchema(configurationShema.getBaseSchema());
             DataSchema logDataSchema = new DataSchema(logSchema.getSchema());
 
             String appToken = application.getApplicationToken();
             String profileSchemaBody = profileDataSchema.getRawSchema();
-            DeltaCalculationAlgorithm calculator = new DefaultDeltaCalculatorFactory().createDeltaCalculator(protocolSchema, baseSchema);
-            byte[] defaultConfigurationData = calculator.calculate(new BaseData(baseSchema, defaultConfiguration.getBody())).getData();
+
+            byte[] defaultConfigurationData = GenericAvroConverter.toRawData(defaultConfiguration.getBody(),
+                                                                             configurationShema.getBaseSchema());
 
             List<EventFamilyMetadata> eventFamilies = new ArrayList<>();
             if (aefMapIds != null) {
-                List<ApplicationEventFamilyMapDto> aefMaps = applicationEventMapService.findApplicationEventFamilyMapsByIds(aefMapIds);
+                List<ApplicationEventFamilyMapDto> aefMaps =
+                        applicationEventMapService.findApplicationEventFamilyMapsByIds(aefMapIds);
                 for(ApplicationEventFamilyMapDto aefMap : aefMaps) {
                     EventFamilyMetadata efm = new EventFamilyMetadata();
                     efm.setVersion(aefMap.getVersion());
@@ -914,18 +919,20 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
 
             SdkGenerator generator = SdkGeneratorFactory.createSdkGenerator(sdkPlatform);
             return generator.generateSdk(Version.PROJECT_VERSION,
-                    controlZKService.getCurrentBootstrapNodes(),
-                    appToken,
-                    profileSchemaVersion,
-                    configurationSchemaVersion,
-                    notificationSchemaVersion,
-                    logSchemaVersion,
-                    profileSchemaBody,
-                    notificationDataSchema.getRawSchema(),
-                    protocolSchema.getRawSchema(),
-                    defaultConfigurationData,
-                    eventFamilies,
-                    logDataSchema.getRawSchema());
+                                         controlZKService.getCurrentBootstrapNodes(),
+                                         appToken,
+                                         profileSchemaVersion,
+                                         configurationSchemaVersion,
+                                         notificationSchemaVersion,
+                                         logSchemaVersion,
+                                         profileSchemaBody,
+                                         notificationDataSchema.getRawSchema(),
+                                         protocolSchema.getRawSchema(),
+                                         configurationShema.getBaseSchema(),
+                                         defaultConfigurationData,
+                                         eventFamilies,
+                                         logDataSchema.getRawSchema(),
+                                         defaultVerifierToken);
         } catch (Exception e) {
             LOG.error("Unable to generate SDK", e);
             throw new TException(e);
@@ -1130,7 +1137,9 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     /* CLI method */
     @Override
     public void deleteTopicById(String topicId) throws TException {
-        topicService.removeTopicById(topicId);
+        for(UpdateNotificationDto dto : topicService.removeTopicById(topicId)){
+            notifyAndGetPayload(dto);
+        }
     }
 
     /* (non-Javadoc)
@@ -1548,16 +1557,6 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
     }
 
     @Override
-    public DataStruct registerLogAppender(String logAppenderId) throws ControlThriftException, TException {
-        return toDataStruct(logAppenderService.registerLogAppenderById(logAppenderId));
-    }
-
-    @Override
-    public DataStruct unregisterLogAppender(String logAppenderId) throws ControlThriftException, TException {
-        return toDataStruct(logAppenderService.unregisterLogAppenderById(logAppenderId));
-    }
-
-    @Override
     public void deleteLogAppender(String logAppenderId) throws ControlThriftException, TException {
         LogAppenderDto logAppenderDto = logAppenderService.findLogAppenderById(logAppenderId);
         LOG.info("Remove log appender ...");
@@ -1567,6 +1566,58 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements
         thriftNotification.setAppenderId(logAppenderDto.getId());
         thriftNotification.setOp(Operation.REMOVE_LOG_APPENDER);
         LOG.info("Send notification to operation servers about removing appender.");
+        controlZKService.sendEndpointNotification(thriftNotification);
+    }
+
+    @Override
+    public List<DataStruct> getUserVerifiersByApplicationId(String applicationId)
+            throws ControlThriftException, TException {
+        return toDataStructList(userVerifierService.findUserVerifiersByAppId(applicationId));
+    }
+
+    @Override
+    public DataStruct getUserVerifier(String userVerifierId)
+            throws ControlThriftException, TException {
+        return toDataStruct(userVerifierService.findUserVerifierById(userVerifierId));
+    }
+
+    @Override
+    public DataStruct editUserVerifier(DataStruct userVerifier)
+            throws ControlThriftException, TException {
+        UserVerifierDto userVerifierDto = ThriftDtoConverter.<UserVerifierDto> toDto(userVerifier);
+        DataStruct dataStruct = null;
+        if (userVerifierDto != null) {
+            UserVerifierDto saved = userVerifierService.saveUserVerifier(userVerifierDto);
+            if (saved != null) {
+                Notification thriftNotification = new Notification();
+                thriftNotification.setAppId(saved.getApplicationId());
+                thriftNotification.setUserVerifierToken(saved.getVerifierToken());
+                if (userVerifierDto.getId() == null) {
+                    LOG.info("Add new user verifier ...");
+                    thriftNotification.setOp(Operation.ADD_USER_VERIFIER);
+                    LOG.info("Send notification to operation servers about new user verifier.");
+                } else {
+                    thriftNotification.setOp(Operation.UPDATE_USER_VERIFIER);
+                    LOG.info("Send notification to operation servers about update user verifier configuration.");
+                }
+                dataStruct = toDataStruct(saved);
+                controlZKService.sendEndpointNotification(thriftNotification);
+            }
+        }
+        return dataStruct;
+    }
+
+    @Override
+    public void deleteUserVerifier(String userVerifierId)
+            throws ControlThriftException, TException {
+        UserVerifierDto userVerifierDto = userVerifierService.findUserVerifierById(userVerifierId);
+        LOG.info("Remove user verifier ...");
+        userVerifierService.removeUserVerifierById(userVerifierId);
+        Notification thriftNotification = new Notification();
+        thriftNotification.setAppId(userVerifierDto.getApplicationId());
+        thriftNotification.setUserVerifierToken(userVerifierDto.getVerifierToken());
+        thriftNotification.setOp(Operation.REMOVE_USER_VERIFIER);
+        LOG.info("Send notification to operation servers about removing user verifier.");
         controlZKService.sendEndpointNotification(thriftNotification);
     }
 

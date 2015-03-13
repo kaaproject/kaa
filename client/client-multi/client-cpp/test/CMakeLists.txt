@@ -72,23 +72,11 @@ set ( KAA_TEST_SOURCES
         ../impl/transport/HttpDataProcessor.cpp
         ../impl/bootstrap/BootstrapManager.cpp
         ../impl/bootstrap/BootstrapTransport.cpp
-        ../impl/common/CommonTypesFactory.cpp
-        ../impl/common/AvroGenericUtils.cpp
-        ../impl/common/types/CommonArray.cpp
-        ../impl/common/types/CommonEnum.cpp
-        ../impl/common/types/CommonFixed.cpp
-        ../impl/common/types/CommonRecord.cpp
-        ../impl/common/types/SetValueHelper.cpp
         ../impl/configuration/ConfigurationProcessor.cpp
         ../impl/configuration/ConfigurationTransport.cpp
         ../impl/configuration/manager/ConfigurationManager.cpp
-        ../impl/configuration/manager/Strategies.cpp
         ../impl/configuration/storage/ConfigurationPersistenceManager.cpp
-        ../impl/configuration/delta/DeltaHandlerId.cpp
-        ../impl/configuration/delta/DefaultDeltaManager.cpp
-        ../impl/configuration/delta/DefaultConfigurationDeltaFactory.cpp
-        ../impl/schema/SchemaProcessor.cpp
-        ../impl/schema/storage/SchemaPersistenceManager.cpp
+        ../impl/configuration/storage/FileConfigurationStorage.cpp
         ../impl/event/registration/EndpointRegistrationManager.cpp
         ../impl/event/registration/UserTransport.cpp
         ../impl/event/EventManager.cpp
@@ -98,49 +86,46 @@ set ( KAA_TEST_SOURCES
         ../impl/channel/impl/DefaultOperationHttpChannel.cpp
         ../impl/channel/impl/DefaultBootstrapChannel.cpp
         ../impl/channel/impl/DefaultOperationTcpChannel.cpp
-        ../impl/channel/OperationsDataProcessor.cpp
-        ../impl/channel/BootstrapDataProcessor.cpp
+        ../impl/channel/impl/AbstractHttpChannel.cpp
+        ../impl/channel/SyncDataProcessor.cpp
         ../impl/channel/RedirectionTransport.cpp
         ../impl/channel/KaaChannelManager.cpp
         ../impl/notification/NotificationTransport.cpp
         ../impl/notification/NotificationManager.cpp
         ../impl/log/LogCollector.cpp
         ../impl/log/LogRecord.cpp
+        ../impl/log/DefaultLogUploadStrategy.cpp
         ../impl/log/MemoryLogStorage.cpp
         ../impl/kaatcp/KaaTcpCommon.cpp
         ../impl/kaatcp/KaaTcpParser.cpp
         ../impl/kaatcp/ConnackMessage.cpp
         ../impl/kaatcp/KaaSyncResponse.cpp
         ../impl/kaatcp/KaaTcpResponseProcessor.cpp
-        ../impl/channel/connectivity/PingConnectivityChecker.cpp
+        ../impl/channel/connectivity/IPConnectivityChecker.cpp
+        ../impl/channel/TransportProtocolIdConstants.cpp
+        ../impl/channel/IPTransportInfo.cpp
         TestRunner.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp
-        impl/common/AvroDatumsComparatorTest.cpp
-        impl/common/CommonTypesFactoryTest.cpp
-        impl/schema/SchemaProcessorTest.cpp
-        impl/schema/SchemaPersistenceTest.cpp
-        impl/configuration/ConfigurationTests.cpp
         impl/configuration/ConfigurationPersistenceTest.cpp
         impl/configuration/ConfigurationProcessorTest.cpp
-        impl/configuration/ProcessConfigurationTest.cpp
-        impl/configuration/delta/DeltaHandlerIdTest.cpp
-        impl/configuration/delta/DeltaTest.cpp
+        impl/configuration/ConfigurationManagerTest.cpp
+        impl/configuration/FileConfigurationStorageTest.cpp
         impl/http/HttpUrlTest.cpp
         impl/http/HttpResponseTest.cpp
         impl/http/HttpRequestTest.cpp
         impl/ClientStatusTest.cpp
         impl/event/EndpointRegistrationManagerTest.cpp
-        impl/bootstrap/ServerInfoTest.cpp
-        impl/channel/HttpServerInfoTest.cpp
         impl/security/KeyUtilsTest.cpp
         impl/event/EventTransportTest.cpp
-        impl/channel/AbstractServerInfoTest.cpp
         impl/channel/KaaChannelManagerTest.cpp
         impl/notification/NotificationTransportTest.cpp
         impl/notification/NotificationManagerTest.cpp
         impl/kaatcp/KaaTcpTest.cpp
-        impl/channel/PingConnectivityCheckerTest.cpp
+        impl/channel/IPConnectivityCheckerTest.cpp
+        impl/log/DefaultLogUploadStrategyTest.cpp
+        impl/log/MemoryLogStorageTest.cpp
+        impl/log/LogCollectorTest.cpp
     )
 
 add_executable ( kaatest  ${KAA_TEST_SOURCES})

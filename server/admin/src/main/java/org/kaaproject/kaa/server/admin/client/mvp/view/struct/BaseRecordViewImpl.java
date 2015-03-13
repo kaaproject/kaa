@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.struct;
 
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
@@ -23,7 +24,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.common.avro.ui.gwt.client.widget.SizedTextBox;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -32,11 +32,11 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public abstract class BaseRecordViewImpl<T extends AbstractStructureDto> extends BaseDetailsViewImpl implements BaseRecordView<T>, ValueChangeHandler<SchemaDto> {
+public abstract class BaseRecordViewImpl<T extends AbstractStructureDto,V> extends BaseDetailsViewImpl implements BaseRecordView<T,V>, ValueChangeHandler<SchemaDto> {
 
     private SchemaListBox schema;
     private SizedTextBox schemaVersion;
-    private AbstractRecordPanel<T> recordPanel;
+    private AbstractRecordPanel<T,V> recordPanel;
 
     public BaseRecordViewImpl(boolean create) {
         super(create);
@@ -55,7 +55,7 @@ public abstract class BaseRecordViewImpl<T extends AbstractStructureDto> extends
         detailsTable.setWidget(0, 0, schemaLabel);
 
         if (create) {
-            schemaLabel.addStyleName("required");
+            schemaLabel.addStyleName(Utils.avroUiStyle.requiredField());
             schema = new SchemaListBox();
             schema.setWidth("80px");
             VerticalPanel panel = new VerticalPanel();
@@ -82,7 +82,7 @@ public abstract class BaseRecordViewImpl<T extends AbstractStructureDto> extends
         recordPanel.setSchemaSelected(schema.getValue() != null);
     }
 
-    protected abstract AbstractRecordPanel<T> createRecordPanel();
+    protected abstract AbstractRecordPanel<T,V> createRecordPanel();
 
     @Override
     protected void resetImpl() {
@@ -111,7 +111,7 @@ public abstract class BaseRecordViewImpl<T extends AbstractStructureDto> extends
     }
 
     @Override
-    public AbstractRecordPanel<T> getRecordPanel() {
+    public AbstractRecordPanel<T,V> getRecordPanel() {
         return recordPanel;
     }
 

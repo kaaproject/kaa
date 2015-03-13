@@ -30,6 +30,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.EcfsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.GeneralPropertiesPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.GenerateSdkPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppenderPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogAppendersPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemaPlace;
@@ -40,11 +41,14 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemasPlace
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileFilterPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.SendNotificationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TopicPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TopicsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.UserVerifierPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.UserVerifiersPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UsersPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserProfilePlace;
 
@@ -88,6 +92,10 @@ public class AppActivityMapper implements ActivityMapper {
             }
             else if (clazz == ApplicationPlace.class) {
                 return new ApplicationActivity((ApplicationPlace) place, clientFactory);
+            }
+            
+            else if (clazz == GenerateSdkPlace.class) {
+                return new GenerateSdkActivity((GenerateSdkPlace) place, clientFactory);
             }
 
             else if (clazz == UsersPlace.class) {
@@ -156,6 +164,10 @@ public class AppActivityMapper implements ActivityMapper {
             else if (clazz == TopicPlace.class) {
                 return new TopicActivity((TopicPlace) place, clientFactory);
             }
+            
+            else if (clazz == SendNotificationPlace.class) {
+                return new SendNotificationActivity((SendNotificationPlace) place, clientFactory);
+            }
 
             else if (clazz == AefMapsPlace.class) {
                 return new AefMapsActivity((AefMapsPlace) place, clientFactory);
@@ -168,6 +180,12 @@ public class AppActivityMapper implements ActivityMapper {
             }
             else if (clazz ==  LogAppenderPlace.class) {
                 return new LogAppenderActivity((LogAppenderPlace) place, clientFactory);
+            }
+            else if (clazz ==  UserVerifiersPlace.class) {
+                return new UserVerifiersActivity((UserVerifiersPlace) place, clientFactory);
+            }
+            else if (clazz ==  UserVerifierPlace.class) {
+                return new UserVerifierActivity((UserVerifierPlace) place, clientFactory);
             }
 
         }

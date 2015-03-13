@@ -404,6 +404,4 @@ public class EndpointProfileDto implements HasId, Serializable {
         builder.append("]");
         return builder.toString();
     }
-
-
 }

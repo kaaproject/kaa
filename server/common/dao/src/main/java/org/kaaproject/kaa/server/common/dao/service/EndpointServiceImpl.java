@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
@@ -42,8 +41,6 @@ import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
-import org.kaaproject.kaa.server.common.dao.EndpointUserVerifier;
-import org.kaaproject.kaa.server.common.dao.EndpointUserVerifierResolver;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
@@ -78,9 +75,9 @@ public class EndpointServiceImpl implements EndpointService {
     @Autowired
     private ProfileFilterDao<ProfileFilter> profileFilterDao;
     @Autowired
-    private HistoryService historyService;
+    private ProfileFilterDao<ProfileFilter> verifierDao;
     @Autowired
-    private EndpointUserVerifierResolver endpointUserVerifierResolver;
+    private HistoryService historyService;
     
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
     private EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
@@ -215,8 +212,6 @@ public class EndpointServiceImpl implements EndpointService {
 
     @Override
     public EndpointConfigurationDto saveEndpointConfiguration(EndpointConfigurationDto endpointConfigurationDto) {
-        validateObject(endpointConfigurationDto, "Can't save endpoint configuration object. Incorrect endpoint configuration object."
-                + endpointConfigurationDto);
         return getDto(endpointConfigurationDao.save(endpointConfigurationDto));
     }
 
@@ -253,11 +248,11 @@ public class EndpointServiceImpl implements EndpointService {
                 dto = getDto(endpointProfileDao.save(endpointProfileDto));
             } else {
                 EndpointProfile storedProfile = endpointProfileDao.findByKeyHash(keyHash);
-                if(Arrays.equals(storedProfile.getEndpointKey(), endpointProfileDto.getEndpointKey())){
+                if (Arrays.equals(storedProfile.getEndpointKey(), endpointProfileDto.getEndpointKey())) {
                     LOG.debug("Got register profile for already existing profile {}. Will overwrite existing profile!", keyHash);
                     endpointProfileDto.setId(storedProfile.getId());
                     dto = getDto(endpointProfileDao.save(endpointProfileDto));
-                }else{
+                } else {
                     LOG.warn("Endpoint profile with key hash {} already exists.", keyHash);
                     throw new DatabaseProcessingException("Can't save endpoint profile with existing key hash.");
                 }
@@ -270,91 +265,79 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
-    public boolean checkAccessToken(ApplicationDto appDto, String userExternalId, String userAccessToken) {
-        validateString(userExternalId, "Incorrect userExternalId " + userExternalId);
-        validateString(userExternalId, "Incorrect userAccessToken " + userAccessToken);
-        String kaaEndpointUserVerifierName = appDto.getUserVerifierName();
-        EndpointUserVerifier verifier = endpointUserVerifierResolver.resolve(kaaEndpointUserVerifierName);
-        if(verifier == null){
-            LOG.error("Can't find endpoint user verifier: {}!", kaaEndpointUserVerifierName);
-            return false;
-        }else{
-            LOG.debug("executing checkAccessToken using verifier: {}", kaaEndpointUserVerifierName);
-            return verifier.checkAccessToken(appDto.getTenantId(), userExternalId, userAccessToken);
-        }
-    }
-
-    @Override
-    public EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, String userAccessToken, EndpointProfileDto profile) {
+    public EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, EndpointProfileDto profile) {
         validateString(userExternalId, "Incorrect userExternalId " + userExternalId);
         EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(userExternalId, tenantId);
-        if(endpointUser == null){
+        if (endpointUser == null) {
             LOG.info("Creating new endpoint user with external id: [{}] in context of [{}] tenant", userExternalId, tenantId);
             EndpointUserDto endpointUserDto = new EndpointUserDto();
             endpointUserDto.setTenantId(tenantId);
             endpointUserDto.setExternalId(userExternalId);
             endpointUserDto.setUsername(userExternalId);
-            endpointUserDto.setAccessToken(userAccessToken);
             endpointUser = endpointUserDao.save(endpointUserDto);
         }
-
         List<String> endpointIds = endpointUser.getEndpointIds();
-        if(endpointIds == null){
+        if (endpointIds == null) {
             endpointIds = new ArrayList<>();
             endpointUser.setEndpointIds(endpointIds);
         }
         endpointIds.add(profile.getId());
         endpointUserDao.save(endpointUser);
         profile.setEndpointUserId(endpointUser.getId());
+        LOG.trace("Save endpoint user {} and endpoint profile {}", endpointUser, profile);
         return saveEndpointProfile(profile);
     }
 
     @Override
     public EndpointProfileDto attachEndpointToUser(String endpointUserId, String endpointAccessToken) {
+        LOG.info("Try to attach endpoint with access token {} to user with {}", endpointAccessToken, endpointUserId);
         validateString(endpointUserId, "Incorrect endpointUserId " + endpointUserId);
         EndpointUser endpointUser = endpointUserDao.findById(endpointUserId);
-        if(endpointUser != null){
+        LOG.trace("[{}] Found endpoint user with id {} ", endpointUserId, endpointUser);
+        if (endpointUser != null) {
             EndpointProfile endpoint = endpointProfileDao.findByAccessToken(endpointAccessToken);
-            if(endpoint != null){
-                if(endpoint.getEndpointUserId() == null || endpointUserId.equals(endpoint.getEndpointUserId())){
+            LOG.trace("[{}] Found endpoint profile by with access token {} ", endpointAccessToken, endpoint);
+            if (endpoint != null) {
+                if (endpoint.getEndpointUserId() == null || endpointUserId.equals(endpoint.getEndpointUserId())) {
                     List<String> endpointIds = endpointUser.getEndpointIds();
-                    if(endpointIds == null){
+                    if (endpointIds == null) {
                         endpointIds = new ArrayList<>();
                         endpointUser.setEndpointIds(endpointIds);
                     }
+                    LOG.debug("Attach endpoint profile with id {} to endpoint user with id {} ", endpoint.getId(), endpointUser.getId());
                     endpointIds.add(endpoint.getId());
                     endpointUserDao.save(endpointUser);
                     endpoint.setEndpointUserId(endpointUser.getId());
                     endpoint = endpointProfileDao.save(endpoint);
                     return getDto(endpoint);
-                }else{
+                } else {
                     LOG.warn("Endpoint is already assigned to different user {}. Unassign it first!.", endpoint.getEndpointUserId());
                     throw new DatabaseProcessingException("Endpoint is already assigned to different user.");
                 }
-            }else{
+            } else {
                 LOG.warn("Endpoint with accessToken {} is not present in db.", endpointAccessToken);
                 throw new DatabaseProcessingException("No endpoint found for specified accessToken.");
             }
-        }else{
+        } else {
             LOG.warn("Endpoint user with id {} is not present in db.", endpointUserId);
             throw new DatabaseProcessingException("Endpoint user is not present in db.");
         }
     }
 
     @Override
-    public void detachEndpointFromUser(EndpointProfileDto detachEndpoint){
+    public void detachEndpointFromUser(EndpointProfileDto detachEndpoint) {
         String endpointUserId = detachEndpoint.getEndpointUserId();
         validateString(endpointUserId, "Incorrect endpointUserId " + endpointUserId);
         EndpointUser endpointUser = endpointUserDao.findById(endpointUserId);
-        if(endpointUser != null){
+        if (endpointUser != null) {
             List<String> endpointIds = endpointUser.getEndpointIds();
-            if(endpointIds != null){
+            if (endpointIds != null) {
                 endpointIds.remove(detachEndpoint.getId());
             }
             endpointUserDao.save(endpointUser);
             detachEndpoint.setEndpointUserId(null);
             saveEndpointProfile(detachEndpoint);
-        }else{
+        } else {
             LOG.warn("Endpoint user with id {} is not present in db.", endpointUserId);
             throw new DatabaseProcessingException("Endpoint user is not present in db.");
         }
@@ -419,7 +402,8 @@ public class EndpointServiceImpl implements EndpointService {
     /**
      * This method remove endpoint group by id and check if endpoint group is not default.
      * It's forbidden to remove default endpoint group by id
-     * @param id endpoint group id
+     *
+     * @param id          endpoint group id
      * @param forceRemove boolean flag define if its removing groups by application.
      */
     private void removeEndpointGroup(String id, boolean forceRemove) {
