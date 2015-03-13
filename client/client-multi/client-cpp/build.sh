@@ -84,6 +84,8 @@ case "$cmd" in
     then
         echo "Kaa C++ SDK unittests have failed!"
         exit $TEST_RESULT
+    else
+        echo "Kaa C++ SDK unittests have successfully passed!"
     fi
     ;;
     

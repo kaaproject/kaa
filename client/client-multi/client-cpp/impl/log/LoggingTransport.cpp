@@ -16,17 +16,14 @@
 
 #include "kaa/log/LoggingTransport.hpp"
 
-#ifdef KAA_USE_LOGGING
-
-#include "kaa/log/LogCollector.hpp"
-
 #include "kaa/logging/Log.hpp"
+#include "kaa/log/LogCollector.hpp"
+#include "kaa/log/ILogProcessor.hpp"
 
 namespace kaa {
 
-LoggingTransport::LoggingTransport(IKaaChannelManager& manager, LogCollector& collector)
-    : AbstractKaaTransport(manager)
-    , collector_(collector)
+LoggingTransport::LoggingTransport(IKaaChannelManager& manager, ILogProcessor& logProcessor_)
+    : AbstractKaaTransport(manager), logProcessor_(logProcessor_)
 {
 }
 
@@ -37,21 +34,12 @@ void LoggingTransport::sync()
 
 std::shared_ptr<LogSyncRequest> LoggingTransport::createLogSyncRequest()
 {
-    std::shared_ptr<LogSyncRequest> request(new LogSyncRequest());
-
-    LogSyncRequest logBlockRequest = collector_.getLogUploadRequest();
-    if (logBlockRequest.requestId != 0) {
-        request.reset(new LogSyncRequest(logBlockRequest));
-    }
-
-    return request;
+    return logProcessor_.getLogUploadRequest();
 }
 
 void LoggingTransport::onLogSyncResponse(const LogSyncResponse& response)
 {
-    collector_.onLogUploadResponse(response);
+    logProcessor_.onLogUploadResponse(response);
 }
 
 }  // namespace kaa
-
-#endif

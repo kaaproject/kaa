@@ -312,9 +312,8 @@ public class SyncContext {
     public byte[] getUserConfigurationHash() {
         if (userConfigurationChanged) {
             return userConfigurationHash;
-        } else {
-            return endpointProfile.getUserConfigurationHash();
         }
+        return endpointProfile.getUserConfigurationHash();
     }
 
     public void setUserConfigurationHash(byte[] userConfigurationHash) {

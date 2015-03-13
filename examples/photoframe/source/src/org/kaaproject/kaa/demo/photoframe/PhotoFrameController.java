@@ -28,7 +28,7 @@ import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCal
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
-import org.kaaproject.kaa.demo.photoframe.PhotoFrameEventClassFamily.DefaultEventFamilyListener;
+import org.kaaproject.kaa.demo.photoframe.PhotoFrameEventClassFamily;
 import org.kaaproject.kaa.demo.photoframe.event.AlbumListEvent;
 import org.kaaproject.kaa.demo.photoframe.event.DeviceInfoEvent;
 import org.kaaproject.kaa.demo.photoframe.event.PlayAlbumEvent;
@@ -49,7 +49,7 @@ import de.greenrobot.event.EventBus;
  * application components via event bus. It is also responsible for fetching albums 
  * from android {@link MediaStore}.
  */
-public class PhotoFrameController implements DefaultEventFamilyListener, UserAttachCallback, OnDetachEndpointOperationCallback {
+public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener, UserAttachCallback, OnDetachEndpointOperationCallback {
 
     private final Context mContext;
     private final EventBus mEventBus;
@@ -88,7 +88,7 @@ public class PhotoFrameController implements DefaultEventFamilyListener, UserAtt
         /*
          * Check if endpoint already attached to verified user. 
          */        
-        mUserAttached = mClient.getEndpointRegistrationManager().isAttachedToUser();
+        mUserAttached = mClient.isAttachedToUser();
         
         /*
          * Initialize all device information needed to provide response events

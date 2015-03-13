@@ -30,6 +30,7 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new CityGuideDemoBuilder());
         demoBuilders.add(new PhotoFrameDemoBuilder());
         demoBuilders.add(new SmartHouseDemoBuilder());
+        demoBuilders.add(new VerifiersDemoBuilder());
 //      demoBuilders.add(new RobotRunDemoBuilder());
 
         //JAVA DEMOS

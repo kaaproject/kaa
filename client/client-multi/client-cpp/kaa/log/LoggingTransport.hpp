@@ -19,29 +19,26 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_LOGGING
-
 #include "kaa/channel/transport/AbstractKaaTransport.hpp"
 #include "kaa/channel/transport/ILoggingTransport.hpp"
 
 namespace kaa {
 
-class LogCollector;
+class ILogProcessor;
 
 class LoggingTransport : public AbstractKaaTransport<TransportType::LOGGING>, public ILoggingTransport {
 public:
-    LoggingTransport(IKaaChannelManager &manager, LogCollector& collector);
+    LoggingTransport(IKaaChannelManager &manager, ILogProcessor& logProcessor);
 
-    void sync();
+    virtual void sync();
 
-    std::shared_ptr<LogSyncRequest>     createLogSyncRequest();
-    void                                onLogSyncResponse(const LogSyncResponse& response);
+    virtual std::shared_ptr<LogSyncRequest> createLogSyncRequest();
+    virtual void onLogSyncResponse(const LogSyncResponse& response);
+
 private:
-    LogCollector&   collector_;
+    ILogProcessor&   logProcessor_;
 };
 
 }  // namespace kaa
-
-#endif
 
 #endif /* LOGGINGTRANSPORT_HPP_ */

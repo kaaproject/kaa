@@ -20,6 +20,9 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
 
 import java.util.List;
 
+/**
+ * Provides CRUD methods for {@link EndpointUserConfiguration} 
+ */
 public interface EndpointUserConfigurationDao<T extends EndpointUserConfiguration> extends Dao<T, String> {
 
     /**

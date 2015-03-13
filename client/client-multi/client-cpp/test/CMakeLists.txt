@@ -94,8 +94,8 @@ set ( KAA_TEST_SOURCES
         ../impl/notification/NotificationManager.cpp
         ../impl/log/LogCollector.cpp
         ../impl/log/LogRecord.cpp
+        ../impl/log/DefaultLogUploadStrategy.cpp
         ../impl/log/MemoryLogStorage.cpp
-        ../impl/log/LogUploadFailoverStrategy.cpp
         ../impl/kaatcp/KaaTcpCommon.cpp
         ../impl/kaatcp/KaaTcpParser.cpp
         ../impl/kaatcp/ConnackMessage.cpp
@@ -123,7 +123,9 @@ set ( KAA_TEST_SOURCES
         impl/notification/NotificationManagerTest.cpp
         impl/kaatcp/KaaTcpTest.cpp
         impl/channel/IPConnectivityCheckerTest.cpp
-        impl/log/LogUploadFailoverStrategyTest.cpp
+        impl/log/DefaultLogUploadStrategyTest.cpp
+        impl/log/MemoryLogStorageTest.cpp
+        impl/log/LogCollectorTest.cpp
     )
 
 add_executable ( kaatest  ${KAA_TEST_SOURCES})

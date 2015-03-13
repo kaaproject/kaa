@@ -202,7 +202,7 @@ public class GlobalUserActorMessageProcessor {
 
         public boolean remove(GlobalRouteInfo route) {
             boolean found = false;
-            for(T key : routes.keySet()){
+            for (T key : routes.keySet()) {
                 found = found || routes.get(key).remove(route);
             }
             return found;
@@ -215,8 +215,7 @@ public class GlobalUserActorMessageProcessor {
         public Set<GlobalRouteInfo> getLocalRoutes(T key) {
             Set<GlobalRouteInfo> result = new HashSet<GlobalRouteInfo>();
             for (GlobalRouteInfo route : getRoutes(key)) {
-                String serverId = route.getAddress().getServerId();
-                if (serverId != null) {
+                if (route.getAddress().getServerId() != null) {
                     continue;
                 }
                 result.add(route);
@@ -244,11 +243,11 @@ public class GlobalUserActorMessageProcessor {
         public void clear() {
             routes.clear();
         }
-        
+
         private static Set<GlobalRouteInfo> notNull(Set<GlobalRouteInfo> result) {
-            if(result != null){
+            if (result != null) {
                 return result;
-            }else{
+            } else {
                 return Collections.emptySet();
             }
         }

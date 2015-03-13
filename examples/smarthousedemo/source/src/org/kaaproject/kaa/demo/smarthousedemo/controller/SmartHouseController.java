@@ -65,9 +65,9 @@ import org.kaaproject.kaa.demo.smarthousedemo.data.DeviceType;
 import android.content.Context;
 import android.util.Log;
 
-public class SmartHouseController implements DeviceEventClassFamily.DefaultEventFamilyListener,
-                                             ThermoEventClassFamily.DefaultEventFamilyListener,
-                                             MusicEventClassFamily.DefaultEventFamilyListener,
+public class SmartHouseController implements DeviceEventClassFamily.Listener,
+                                             ThermoEventClassFamily.Listener,
+                                             MusicEventClassFamily.Listener,
                                              AttachEndpointToUserCallback, DetachEndpointFromUserCallback
 {
 
@@ -205,7 +205,7 @@ public class SmartHouseController implements DeviceEventClassFamily.DefaultEvent
     
     public boolean isAttachedToUser() {
         checkInited();
-        return client.getEndpointRegistrationManager().isAttachedToUser();
+        return client.isAttachedToUser();
     }
     
     @Override

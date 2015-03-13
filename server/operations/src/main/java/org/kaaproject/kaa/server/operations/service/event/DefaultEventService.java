@@ -298,15 +298,14 @@ public class DefaultEventService implements EventService {
         LOG.trace("comparing {} to {} for user {}", id, info.getConnectionInfo(), userId);
         return id.equals(Neighbors.getServerID(info.getConnectionInfo()));
     }
-    
+
     @Override
     public String getUserNode(String userId) {
         OperationsNodeInfo info = resolver.getNode(userId);
-        if(info != null){
+        if (info != null) {
             return Neighbors.getServerID(info.getConnectionInfo());
-        }else{
-            return null;
         }
+        return null;
     }
 
     /*
@@ -345,8 +344,7 @@ public class DefaultEventService implements EventService {
         EventMessageType type = EventMessageType.ROUTE_UPDATE;
         List<Message> messages = new LinkedList<>();
         for (EventRoute route : routes) {
-            Message message = new Message(type, getEventId(), null, route, null, null, null);
-            messages.add(message);
+            messages.add(new Message(type, getEventId(), null, route, null, null, null));
         }
         return messages;
     }
@@ -359,13 +357,7 @@ public class DefaultEventService implements EventService {
      * @return List<EventMessage>
      */
     private List<Message> packMessage(UserRouteInfo userRoute) {
-        EventMessageType type = EventMessageType.USER_ROUTE_INFO;
-        List<Message> messages = new LinkedList<>();
-
-        Message message = new Message(type, getEventId(), null, null, userRoute, null, null);
-        messages.add(message);
-
-        return messages;
+        return Collections.singletonList(new Message(EventMessageType.USER_ROUTE_INFO, getEventId(), null, null, userRoute, null, null));
     }
 
     /**
@@ -376,11 +368,7 @@ public class DefaultEventService implements EventService {
      * @return List<EventMessage>
      */
     private List<Message> packMessage(Event event) {
-        EventMessageType type = EventMessageType.EVENT;
-        List<Message> messages = new LinkedList<>();
-        Message message = new Message(type, getEventId(), event, null, null, null, null);
-        messages.add(message);
-        return messages;
+        return Collections.singletonList(new Message(EventMessageType.EVENT, getEventId(), event, null, null, null, null));
     }
 
     /**
@@ -417,9 +405,7 @@ public class DefaultEventService implements EventService {
             routeInfosTh.get(key).add(riTh);
         }
         for (UserTenantKey key : routeInfosTh.keySet()) {
-
-            EventRoute route = new EventRoute(key.getUserId(), key.getTenantId(), routeInfosTh.get(key), id);
-            routes.add(route);
+            routes.add(new EventRoute(key.getUserId(), key.getTenantId(), routeInfosTh.get(key), id));
         }
         return routes;
     }
@@ -625,9 +611,9 @@ public class DefaultEventService implements EventService {
                 resolver.onNodeAdded(node);
                 notifyListeners();
             }
-            
+
             private void notifyListeners() {
-                for(EventServiceListener listener : listeners){
+                for (EventServiceListener listener : listeners) {
                     listener.onClusterUpdated();
                 }
             }
@@ -650,10 +636,10 @@ public class DefaultEventService implements EventService {
         route.setUcfHash(routeInfo.getUcfHash());
 
         String opsServerId = routeInfo.getAddress().getServerId();
-        if(opsServerId == null){
+        if (opsServerId == null) {
             opsServerId = id;
         }
-        
+
         RouteAddress routeAddress = new RouteAddress(ByteBuffer.wrap(routeInfo.getAddress().getEndpointKey().getData()), routeInfo
                 .getAddress().getApplicationToken(), opsServerId);
         route.setRouteAddress(routeAddress);

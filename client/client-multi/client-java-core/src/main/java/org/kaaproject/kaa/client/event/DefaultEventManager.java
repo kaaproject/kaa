@@ -58,18 +58,18 @@ public class DefaultEventManager implements EventManager {
 
 
     private class EventListenersRequestBinding {
-        private final FetchEventListeners listener;
+        private final FindEventListenersCallback listener;
         private final EventListenersRequest request;
         private Boolean sent;
 
-        public EventListenersRequestBinding(FetchEventListeners listener,
+        public EventListenersRequestBinding(FindEventListenersCallback listener,
                                             EventListenersRequest request) {
             this.listener = listener;
             this.request = request;
             this.sent = false;
         }
 
-        public FetchEventListeners getListener() {
+        public FindEventListenersCallback getListener() {
             return listener;
         }
 
@@ -164,7 +164,7 @@ public class DefaultEventManager implements EventManager {
 
     @Override
     public int findEventListeners(List<String> eventClassFQNs,
-                                  FetchEventListeners listener) {
+                                  FindEventListenersCallback listener) {
         int requestId = new Random().nextInt();
         EventListenersRequest request = new EventListenersRequest(requestId, eventClassFQNs);
         EventListenersRequestBinding bind = new EventListenersRequestBinding(listener, request);

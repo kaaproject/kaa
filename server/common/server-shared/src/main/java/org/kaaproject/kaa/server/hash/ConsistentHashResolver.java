@@ -60,7 +60,7 @@ public class ConsistentHashResolver implements OperationsServerResolver {
     public ConsistentHashResolver(List<OperationsNodeInfo> nodes, int replicas) {
         this.replicas = replicas;
         this.circle = new ConcurrentSkipListMap<byte[], OperationsNodeInfo>(new ByteArrayComparator());
-        for(OperationsNodeInfo node : nodes){
+        for (OperationsNodeInfo node : nodes) {
             onNodeAdded(node);
         }
     }
@@ -115,27 +115,27 @@ public class ConsistentHashResolver implements OperationsServerResolver {
     private byte[] hash(String data) {
         return md5.get().digest(data.getBytes(UTF8));
     }
-    
+
     private final class ByteArrayComparator implements Comparator<byte[]> {
         @Override
         public int compare(byte[] a1, byte[] a2) {
             if (a1 == a2) {
                 return 0;
             } else {
-                if (a1 == null){
+                if (a1 == null) {
                     return -1;
                 }
-                if (a2 == null){
+                if (a2 == null) {
                     return 1;
                 }
-                if (a1.length == a2.length){
-                    for(int i = 0; i < a1.length; i++){
-                        if(a1[i] != a2[i]){
+                if (a1.length == a2.length) {
+                    for (int i = 0; i < a1.length; i++) {
+                        if (a1[i] != a2[i]) {
                             return a1[i] - a2[i];
                         }
                     }
                     return 0;
-                }else{
+                } else {
                     return a1.length - a2.length;
                 }
             }

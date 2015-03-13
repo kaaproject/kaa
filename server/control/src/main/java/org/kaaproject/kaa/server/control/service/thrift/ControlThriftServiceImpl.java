@@ -758,7 +758,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
         if (server != null) {
             UserConfigurationUpdate msg = new UserConfigurationUpdate(appDto.getTenantId(), ucfDto.getUserId(), ucfDto.getAppToken(),
                     ucfDto.getSchemaVersion(), hash.getDataBuf());
-            if(LOG.isTraceEnabled()){
+            if (LOG.isTraceEnabled()) {
                 LOG.trace("Sending message {} to [{}]", msg, Neighbors.getServerID(server.getConnectionInfo()));
             }
             neighbors.sendMessage(server.getConnectionInfo(), msg);
@@ -780,7 +780,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
                                 @Override
                                 public void onServerError(String serverId, Exception e) {
-                                    LOG.error(MessageFormat.format("Can't send configuration update to {0}", serverId), e);
+                                    LOG.error("Can't send configuration update to {}", serverId, e);
                                 }
                             }, neighborConnectionsSize);
                     ControlNode zkNode = controlZKService.getControlZKNode();

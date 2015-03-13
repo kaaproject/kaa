@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,14 +70,14 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
 
     public void sendMessages(ConnectionInfo info, Collection<V> msg) {
         NeighborConnection<T, V> neighbor = neigbors.get(getServerID(info));
-        if(neighbor != null){
+        if (neighbor != null) {
             try {
                 neighbor.sendMessages(msg);
             } catch (InterruptedException e) {
                 LOG.error("Failed to send message to {}", neighbor.getId());
                 throw new RuntimeException(e);
             }
-        }else{
+        } else {
             LOG.warn("Can't find server for id {}", getServerID(info));
         }
     }

@@ -32,6 +32,8 @@ import java.util.List;
 @Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
 public class UserConfigurationServiceImplTest extends AbstractTest {
 
+    private static final String OVERRIDE_USER_DATA_JSON = "dao/user/overrideData.json";
+
     @Before
     public void beforeTest() throws Exception {
         clearDBData();
@@ -42,9 +44,9 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
         EndpointUserDto userDto = generateEndpointUser(null);
         ApplicationDto appDto = generateApplication();
         ConfigurationSchemaDto schema = generateConfSchema(appDto.getId(), 1).get(0);
-        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, schema, readSchemaFileAsString("dao/user/overrideData.json"));
-        generateEndpointUserConfiguration(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));
-        generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString("dao/user/overrideData.json"));
+        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, schema, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        generateEndpointUserConfiguration(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         EndpointUserConfigurationDto found = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getMajorVersion());
         Assert.assertEquals(firstUserConfigurationDto, found);
     }
@@ -53,12 +55,12 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
     public void findUserConfigurationByUserIdTest() throws IOException {
         EndpointUserDto userDto = generateEndpointUser(null);
         ApplicationDto appDto = generateApplication();
-        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));
-        EndpointUserConfigurationDto secondUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));
+        EndpointUserConfigurationDto firstUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        EndpointUserConfigurationDto secondUserConfigurationDto = generateEndpointUserConfiguration(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         List<EndpointUserConfigurationDto> expectedList = new ArrayList<>();
         expectedList.add(firstUserConfigurationDto);
         expectedList.add(secondUserConfigurationDto);
-        generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString("dao/user/overrideData.json"));
+        generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         List<EndpointUserConfigurationDto> foundList = userConfigurationService.findUserConfigurationByUserId(userDto.getId());
         Assert.assertEquals(expectedList.size(), foundList.size());
     }
@@ -68,9 +70,9 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
         EndpointUserDto userDto = generateEndpointUser(null);
         ApplicationDto appDto = generateApplication();
         ConfigurationSchemaDto schema = generateConfSchema(appDto.getId(), 1).get(0);
-        generateEndpointUserConfiguration(userDto, appDto, schema, readSchemaFileAsString("dao/user/overrideData.json"));
-        generateEndpointUserConfiguration(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));
-        generateEndpointUserConfiguration(userDto, appDto, null, readSchemaFileAsString("dao/user/overrideData.json"));
+        generateEndpointUserConfiguration(userDto, appDto, schema, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        generateEndpointUserConfiguration(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        generateEndpointUserConfiguration(userDto, appDto, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         userConfigurationService.removeByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getMajorVersion());
         EndpointUserConfigurationDto removed = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userDto.getId(), appDto.getApplicationToken(), schema.getMajorVersion());
         Assert.assertNull(removed);
@@ -80,7 +82,7 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
 
     @Test
     public void saveUserConfigurationTest() throws IOException {
-        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString("dao/user/overrideData.json"));
+        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         Assert.assertNotNull(configurationDto);
     }
 }
