@@ -27,17 +27,35 @@
 namespace kaa {
 
 /**
- * Default @c ILogStorage implementation.
+ * @brief The default @c ILogStorage implementation.
  *
- * Log records are stored in memory. After application restarts logs will be purged.
+ * @b NOTE: Collected logs are stored in a memory. So logs will be lost if the SDK has been restarted earlier than
+ * they are delivered to the Operations server.
  */
 class MemoryLogStorage : public ILogStorage, public ILogStorageStatus {
 public:
+    /**
+     * @brief Creates the size-unlimited log storage.
+     */
     MemoryLogStorage();
+
+    /**
+     * @brief Creates the size-limited log storage.
+     *
+     * If the size of collected logs exceeds the specified maximum size of the log storage, elder logs will be
+     * forcibly deleted. The amount of logs (in bytes) to be deleted is computed by the formula:
+     *
+     * SIZE = (MAX_SIZE * PERCENT_TO_DELETE) / 100, where PERCENT_TO_DELETE is in the (0.0, 100.0] range.
+     *
+     * @param[in] maxOccupiedSize    The maximum size (in bytes) that collected logs can occupy.
+     * @param[in] percentToDelete    The percent of logs (in bytes) to be forcibly deleted.
+     *
+     * @throw KaaException The percentage is out of the range.
+     */
     MemoryLogStorage(size_t maxOccupiedSize, float percentToDelete);
 
     virtual void addLogRecord(LogRecordPtr serializedRecord);
-    virtual ILogStorageStatus& getStatus() { return *(static_cast<ILogStorageStatus*>(this)); }
+    virtual ILogStorageStatus& getStatus() { return *this; }
 
     virtual RecordPack getRecordBlock(std::size_t blockSize);
     virtual void removeRecordBlock(RecordBlockId blockId);

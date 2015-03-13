@@ -76,7 +76,6 @@ void LogCollector::setStorage(ILogStoragePtr storage)
     if (!storage) {
         KAA_LOG_ERROR("Failed to set log storage: bad data");
         throw KaaException("Bad log storage");
-        return;
     }
 
     KAA_MUTEX_LOCKING(storageGuard_);
@@ -92,7 +91,6 @@ void LogCollector::setUploadStrategy(ILogUploadStrategyPtr strategy)
     if (!strategy) {
         KAA_LOG_ERROR("Failed to set log upload strategy: bad data");
         throw KaaException("Bad log upload strategy");
-        return;
     }
 
     KAA_MUTEX_LOCKING(storageGuard_);

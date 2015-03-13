@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,27 +22,24 @@
 namespace kaa {
 
 /**
- * Interface to retrieve status of log storage.
+ * @brief The public interface to represent the current log storage state.
  *
- * Extend this interface to get extra information about
- * specific \c ILogStorage implementation.
- *
- * Default implementation can be found in \c MemoryLogStorage
- * \see MemoryLogStorage
+ * Extend this interface to get extra information about the specific @c ILogStorage implementation.
+ * The default implementation can be found in @c MemoryLogStorage.
  */
 class ILogStorageStatus {
 public:
     /**
-     * Returns amount of bytes consumed by log storage.
+     * @brief Returns amount of bytes collected logs are consumed.
      *
-     * \return Size (in bytes) of consumed storage
+     * @return Size (in bytes).
      */
     virtual std::size_t getConsumedVolume() = 0;
 
     /**
-     * Returns amount of stored records.
+     * @brief Returns the number of collected logs.
      *
-     * \return Amount of stored records
+     * @return The number of collected logs.
      */
     virtual std::size_t getRecordsCount() = 0;
 

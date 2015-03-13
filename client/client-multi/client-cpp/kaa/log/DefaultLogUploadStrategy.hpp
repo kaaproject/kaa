@@ -26,7 +26,28 @@
 namespace kaa {
 
 /**
- * @brief
+ * @brief The default @c ILogUploadStrategy implementation.
+ *
+ * The decision algorithm depends on the log delivery status:
+ *
+ * 1. The normal work flow (the Operations server successfully receives logs).
+ *
+ * The @c LogUploadStrategyDecision::UPLOAD decision applies in two cases:
+ * 1) the consumed volume of the log storage is equal or greater than the corresponding value, specified
+ * in the strategy via @link setVolumeThreshold() @endlink (@link DEFAULT_UPLOAD_VOLUME_THRESHOLD @endlink is used
+ * by default);
+ * 2) the number of collected logs is equal or greater than the corresponding value, specified in the strategy
+ * via @link setCountThreshold() @endlink (@link DEFAULT_UPLOAD_COUNT_THRESHOLD @endlink is used by default);
+ *
+ * 2. The delivery error.
+ *
+ * If one of @c LogDeliveryErrorCode errors has occurred, the @c LogUploadStrategyDecision::NOOP will apply until
+ * the retry period, specified via @link setRetryPeriod @endlink (@link DEFAULT_RETRY_PERIOD @endlink is used
+ * by default) will have elapsed.
+ *
+ * 3. The delivery timeout.
+ *
+ * In this case the strategy tries to switch to the next transport channel supported the logging feature.
  */
 class DefaultLogUploadStrategy: public ILogUploadStrategy {
 public:

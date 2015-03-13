@@ -24,61 +24,79 @@
 
 namespace kaa {
 
+/*
+ * Forward declaration.
+ */
 class ILogStorageStatus;
 
 /**
- * Enumeration of available decisions of log storage modifications.
+ * @brief Log upload decisions.
  */
 enum class LogUploadStrategyDecision {
-    NOOP = 0, /*!< Nothing to be done */
-    UPLOAD /*!< Start uploading */
+    NOOP = 0, /*!< Nothing to be done. */
+    UPLOAD    /*!< Initiate log upload. */
 };
 
 /**
- * Interface for determination if upload is needed.
+ * @brief The public interface for the log upload strategy.
+ *
+ * The default implementation can be found in @c DefaultLogUploadStrategy.
  */
 class ILogUploadStrategy {
 public:
     /**
-     * Retrieves log upload decision based on current storage status and defined
-     * upload configuration.
+     * @brief Decides whether the log upload is needed.
      *
-     * @param status
-     *            Log storage status
+     * The decision is made based on the current log storage status and, depending on the strategy implementation,
+     * on some additional information.
      *
-     * @return Upload decision ({@link LogUploadStrategyDecision})
+     * @param[in] status    The log storage status.
+     *
+     * @return    The log upload decision.
+     *
+     * @see ILogStorageStatus
+     * @see LogUploadStrategyDecision
      */
     virtual LogUploadStrategyDecision isUploadNeeded(ILogStorageStatus& status) = 0;
 
     /**
-     * Retrieves maximum size of the report pack
-     * that will be delivered in single request to server
-     * @return size of the batch
+     * @brief Retrieves the maximum size of the report pack that will be delivered in the single request
+     * to the Operations server.
+     *
+     * @return    The size of the log batch in bytes.
      */
     virtual std::size_t getBatchSize() = 0;
 
     /**
-     * Maximum time to wait log delivery response.
+     * @brief Maximum time to wait the log delivery response.
      *
-     * @return Time in seconds.
+     * @return    Time in seconds.
      */
     virtual std::size_t getTimeout() = 0;
 
     /**
-     * Handles timeout of log delivery
-     * @param controller
+     * @brief Callback is used when the log delivery timeout detected.
+     *
+     * More information about the detection of the log delivery timeout read in the documentation for @c ILogCollector.
      */
     virtual void onTimeout() = 0;
 
     /**
-     * Handles failure of log delivery
-     * @param controller
+     * @brief Callback is used when the log delivery is failed.
+     *
+     * @param[in] code    The reason code of the log delivery failure.
+     *
+     * @see LogDeliveryErrorCode
      */
     virtual void onFailure(LogDeliveryErrorCode code) = 0;
 
     virtual ~ILogUploadStrategy() {}
 };
 
+
+/**
+ * @typedef The shared pointer to @c ILogUploadStrategy.
+ */
 typedef std::shared_ptr<ILogUploadStrategy> ILogUploadStrategyPtr;
 
 }  // namespace kaa
