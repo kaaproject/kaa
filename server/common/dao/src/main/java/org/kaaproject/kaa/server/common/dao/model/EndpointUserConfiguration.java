@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kaaproject.kaa.server.common.dao.model;
 
-package org.kaaproject.kaa.server.operations.service.event;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
+public interface EndpointUserConfiguration extends ToDto<EndpointUserConfigurationDto> {
 
-import org.junit.Test;
+    String getUserId();
 
-public class RouteInfoTest {
+    void setUserId(String userId);
 
-    @Test
-    public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(RouteInfo.class).verify();
-    }
+    String getAppToken();
+
+    public void setAppToken(String appToken);
+
+    Integer getSchemaVersion();
+
+    void setSchemaVersion(Integer schemaVersion);
 }

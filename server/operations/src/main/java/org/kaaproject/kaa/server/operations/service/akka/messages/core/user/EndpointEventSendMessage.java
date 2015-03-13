@@ -20,11 +20,21 @@ import java.util.Collections;
 import java.util.List;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.EndpointActor;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.LocalUserActor;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.sync.Event;
 
 import akka.actor.ActorRef;
 
+/**
+ * Represents message with events.
+ * Originator: {@link EndpointActor}
+ * Destination: {@link LocalUserActor}
+ * 
+ * @author Andrew Shvayka
+ *
+ */
 public class EndpointEventSendMessage extends EndpointAwareMessage implements UserAwareMessage{
 
     private final String userId;

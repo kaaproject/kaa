@@ -21,11 +21,15 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
+import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
-import org.kaaproject.kaa.server.sync.ClientSync;
+import org.kaaproject.kaa.server.sync.ConfigurationClientSync;
+import org.kaaproject.kaa.server.sync.EventClientSync;
+import org.kaaproject.kaa.server.sync.NotificationClientSync;
+import org.kaaproject.kaa.server.sync.ProfileClientSync;
 import org.kaaproject.kaa.server.sync.ServerSync;
+import org.kaaproject.kaa.server.sync.UserClientSync;
 
 /**
  * @author Andrey Panasenko
@@ -34,17 +38,9 @@ import org.kaaproject.kaa.server.sync.ServerSync;
 public class ESTestOperationsService implements OperationsService {
 
     @Override
-    public void setPublicKey(PublicKey publicKey) {
+    public EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId) {
         // TODO Auto-generated method stub
-
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.OperationsService#sync(org.kaaproject.kaa.common.endpoint.gen.SyncRequest)
-     */
-    @Override
-    public SyncResponseHolder sync(ClientSync request) throws GetDeltaException {
-        return sync(request, null);
+        return null;
     }
 
     @Override
@@ -54,16 +50,50 @@ public class ESTestOperationsService implements OperationsService {
     }
 
     @Override
-    public SyncResponseHolder sync(ClientSync request, EndpointProfileDto profile) throws GetDeltaException {
+    public void setPublicKey(PublicKey publicKey) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public SyncContext syncProfile(SyncContext context, ProfileClientSync request) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId) {
+    public SyncContext processEndpointAttachDetachRequests(SyncContext context, UserClientSync request) {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
+    public SyncContext processEventListenerRequests(SyncContext context, EventClientSync request) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
+    @Override
+    public SyncContext syncConfiguration(SyncContext context, ConfigurationClientSync request) throws GetDeltaException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public SyncContext syncNotification(SyncContext context, NotificationClientSync request) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public EndpointProfileDto updateProfile(SyncContext context) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public byte[] fetchUcfHash(String appToken, EndpointProfileDto profile) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

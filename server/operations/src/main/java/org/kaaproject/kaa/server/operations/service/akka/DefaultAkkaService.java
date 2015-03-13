@@ -22,13 +22,15 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.OperationsServerActor;
 import org.kaaproject.kaa.server.operations.service.akka.actors.io.EncDecActor;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
-import org.kaaproject.kaa.server.operations.service.event.EventService;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.sync.platform.PlatformLookup;
 import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.kaaproject.kaa.server.transport.session.SessionAware;
@@ -161,5 +163,10 @@ public class DefaultAkkaService implements AkkaService {
     @Override
     public void process(SessionInitMessage message) {
         ioRouter.tell(message, ActorRef.noSender());
+    }
+
+    @Override
+    public void onUserConfigurationUpdate(UserConfigurationUpdate update) {
+        opsActor.tell(new UserConfigurationUpdateMessage(update), ActorRef.noSender());
     }
 }

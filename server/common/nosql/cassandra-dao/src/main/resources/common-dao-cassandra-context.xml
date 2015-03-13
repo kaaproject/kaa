@@ -35,5 +35,6 @@
         <property name="endpointUserDao" ref="endpointUserDao"/>
     </bean>
     <bean id="endpointUserDao" class="org.kaaproject.kaa.server.common.nosql.cassandra.dao.EndpointUserCassandraDao"/>
+    <bean id="endpointUserConfigurationDao" class="org.kaaproject.kaa.server.common.nosql.cassandra.dao.EndpointUserConfigurationCassandraDao"/>
 
 </beans>

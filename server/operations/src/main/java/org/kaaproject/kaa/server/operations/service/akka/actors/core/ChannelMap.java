@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
+import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.sync.ClientSync;
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
@@ -83,14 +83,14 @@ public class ChannelMap {
     static final class ChannelMetaData{
         private final SessionInfo session;
         SyncRequestMessage request;
-        SyncResponseHolder response;
+        SyncContext response;
         private long lastActivityTime;
 
         public ChannelMetaData(SyncRequestMessage request){
             this(request, null);
         }
 
-        private ChannelMetaData(SyncRequestMessage request, SyncResponseHolder response) {
+        private ChannelMetaData(SyncRequestMessage request, SyncContext response) {
             super();
             this.session = request.getSession();
             this.request = request;
@@ -101,7 +101,7 @@ public class ChannelMap {
             return this.request.merge(syncRequest);
         }
 
-        public void update(SyncResponseHolder response){
+        public void update(SyncContext response){
             this.request.updateRequest(response.getResponse());
             this.response = response;
         }
@@ -126,7 +126,7 @@ public class ChannelMap {
             return request;
         }
 
-        public SyncResponseHolder getResponseHolder() {
+        public SyncContext getResponseHolder() {
             return response;
         }
 

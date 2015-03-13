@@ -44,6 +44,7 @@ public class EndpointProfileDto implements HasId, Serializable {
     private byte[] profileHash;
     private int profileVersion;
     private byte[] configurationHash;
+    private byte[] userConfigurationHash;
     private int configurationVersion;
     private int notificationVersion;
     private int systemNfVersion;
@@ -164,6 +165,14 @@ public class EndpointProfileDto implements HasId, Serializable {
 
     public void setConfigurationHash(byte[] configurationHash) {
         this.configurationHash = getArrayCopy(configurationHash);
+    }
+
+    public byte[] getUserConfigurationHash() {
+        return userConfigurationHash;
+    }
+
+    public void setUserConfigurationHash(byte[] userConfigurationHash) {
+        this.userConfigurationHash = userConfigurationHash;
     }
 
     public int getConfigurationVersion() {
@@ -295,6 +304,9 @@ public class EndpointProfileDto implements HasId, Serializable {
         if (!Arrays.equals(configurationHash, that.configurationHash)) {
             return false;
         }
+        if (!Arrays.equals(userConfigurationHash, that.userConfigurationHash)) {
+            return false;
+        }
         if (cfGroupState != null ? !cfGroupState.equals(that.cfGroupState) : that.cfGroupState != null) {
             return false;
         }
@@ -343,6 +355,7 @@ public class EndpointProfileDto implements HasId, Serializable {
         result = 31 * result + (profileHash != null ? Arrays.hashCode(profileHash) : 0);
         result = 31 * result + profileVersion;
         result = 31 * result + (configurationHash != null ? Arrays.hashCode(configurationHash) : 0);
+        result = 31 * result + (userConfigurationHash != null ? Arrays.hashCode(userConfigurationHash) : 0);
         result = 31 * result + configurationVersion;
         result = 31 * result + notificationVersion;
         result = 31 * result + systemNfVersion;
@@ -389,6 +402,8 @@ public class EndpointProfileDto implements HasId, Serializable {
         builder.append(profileVersion);
         builder.append(", configurationHash=");
         builder.append(Arrays.toString(configurationHash));
+        builder.append(", userConfigurationHash=");
+        builder.append(Arrays.toString(userConfigurationHash));
         builder.append(", configurationVersion=");
         builder.append(configurationVersion);
         builder.append(", notificationVersion=");

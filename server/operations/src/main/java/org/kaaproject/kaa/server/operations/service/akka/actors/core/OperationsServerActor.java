@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.TenantAwareMessage;
 import org.kaaproject.kaa.server.transport.message.SessionControlMessage;
@@ -109,6 +110,8 @@ public class OperationsServerActor extends UntypedActor {
             processTenantAwareMessage((TenantAwareMessage) message);
         } else if (message instanceof ThriftNotificationMessage) {
             processNotificationMessage((ThriftNotificationMessage) message);
+        } else if (message instanceof ClusterUpdateMessage) {
+            processClusterUpdate((ClusterUpdateMessage) message);
         }
     }
 
@@ -142,6 +145,12 @@ public class OperationsServerActor extends UntypedActor {
     private void processSessionControlMessage(SessionControlMessage message) {
         ActorRef tenantActor = getOrCreateTenantActorByAppToken(message.getSessionInfo().getApplicationToken());
         tenantActor.tell(message, self());
+    }
+
+    private void processClusterUpdate(ClusterUpdateMessage message) {
+        for (ActorRef tenantActor : tenants.values()) {
+            tenantActor.tell(message, ActorRef.noSender());
+        }
     }
 
     /**

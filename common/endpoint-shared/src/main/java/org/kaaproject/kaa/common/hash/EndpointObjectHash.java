@@ -16,7 +16,11 @@
 
 package org.kaaproject.kaa.common.hash;
 
+import org.apache.commons.codec.binary.Base64;
+
 import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 
@@ -26,6 +30,9 @@ import java.util.Arrays;
  * @author Andrew Shvayka
  */
 public final class EndpointObjectHash implements Serializable {
+
+    private static final Charset UTF8 = Charset.forName("UTF-8");
+
     private static final long serialVersionUID = 1L;
 
     private final byte[] data;
@@ -38,6 +45,19 @@ public final class EndpointObjectHash implements Serializable {
     private EndpointObjectHash(byte[] data) {
         super();
         this.data = Arrays.copyOf(data, data.length);
+    }
+
+    /**
+     * From bytes.
+     *
+     * @param data the data
+     * @return the endpoint object hash
+     */
+    public static EndpointObjectHash fromString(String data) {
+        if (data == null) {
+            return null;
+        }
+        return new EndpointObjectHash(Base64.encodeBase64(data.getBytes(UTF8)));
     }
 
     /**
@@ -86,6 +106,15 @@ public final class EndpointObjectHash implements Serializable {
      */
     public byte[] getData() {
         return Arrays.copyOf(data, data.length);
+    }
+    
+    /**
+     * Gets the byte buffer with a hash.
+     *
+     * @return the data
+     */
+    public ByteBuffer getDataBuf() {
+        return ByteBuffer.wrap(getData());
     }
 
     /**

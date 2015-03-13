@@ -28,6 +28,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -1080,6 +1081,16 @@ public class KaaAdminController {
     public List<AefMapInfoDto> getEventClassFamiliesByApplicationId(
             @PathVariable String applicationId) throws KaaAdminServiceException {
         return kaaAdminService.getEventClassFamiliesByApplicationId(applicationId);
+    }
+    
+    /**
+     * Edits endpoint group to the list of all endpoint groups.
+     *
+     */
+    @RequestMapping(value="userConfiguration", method=RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void editEndpointGroup(@RequestBody EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException {
+        kaaAdminService.editUserConfiguration(endpointUserConfiguration);
     }
 
     /**
