@@ -68,7 +68,6 @@ Copyright 2014 CyberVision, Inc.
         <commons-lang3.version>3.1</commons-lang3.version>
         <commons-logging.version>1.1.1</commons-logging.version>
         <httpcomponents.version>4.3.2</httpcomponents.version>
-        <httpcomponents.core.version>4.3</httpcomponents.core.version>
         <jackson.version>2.4.1</jackson.version>
         <joda-time.version>2.2</joda-time.version>
         <junit.version>4.11</junit.version>
@@ -977,18 +976,8 @@ Copyright 2014 CyberVision, Inc.
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>${httpcomponents.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpmime</artifactId>
                 <version>${httpcomponents.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>${httpcomponents.core.version}</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>

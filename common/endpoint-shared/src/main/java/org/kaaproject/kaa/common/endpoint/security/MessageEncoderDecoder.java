@@ -135,8 +135,6 @@ public class MessageEncoderDecoder {
      *            the private key
      * @param publicKey
      *            the public key
-     * @param remotePublicKey
-     *            the remote public key
      */
     public MessageEncoderDecoder(PrivateKey privateKey, PublicKey publicKey) {
         this(privateKey, publicKey, null);
