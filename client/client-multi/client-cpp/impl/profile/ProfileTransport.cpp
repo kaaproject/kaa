@@ -39,10 +39,7 @@ ProfileSyncRequestPtr ProfileTransport::createProfileRequest()
 
     if (clientStatus_ && profileManager_) {
         auto encodedProfile = profileManager_->getSerializedProfileContainer()->getSerializedProfile();
-        HashDigest newHash;
-        if (encodedProfile.second) {
-            newHash = EndpointObjectHash(encodedProfile).getHashDigest();
-        }
+        HashDigest newHash = EndpointObjectHash(encodedProfile).getHashDigest();
         if (isProfileOutDated(newHash) || !clientStatus_->isRegistered()) {
             clientStatus_->setProfileHash(newHash);
             request.reset(new ProfileSyncRequest());
@@ -64,6 +61,7 @@ ProfileSyncRequestPtr ProfileTransport::createProfileRequest()
             request->versionInfo.profileVersion = PROFILE_VERSION;
             request->versionInfo.systemNfVersion = SYSTEM_NF_VERSION;
             request->versionInfo.userNfVersion = USER_NF_VERSION;
+            request->versionInfo.logSchemaVersion = LOG_SCHEMA_VERSION;
             populateEventFamilyVersions(request->versionInfo.eventFamilyVersions);
         } else {
             KAA_LOG_INFO("Profile is up to date");
@@ -78,6 +76,7 @@ ProfileSyncRequestPtr ProfileTransport::createProfileRequest()
 void ProfileTransport::onProfileResponse(const ProfileSyncResponse& response)
 {
     if (response.responseStatus == SyncResponseStatus::RESYNC) {
+        KAA_LOG_INFO("Going to resync profile...");
         syncAll();
     } else if (clientStatus_ != nullptr && !clientStatus_->isRegistered()) {
         clientStatus_->setRegistered(true);
@@ -93,14 +92,14 @@ void ProfileTransport::populateEventFamilyVersions(EndpointVersionInfo::eventFam
 
     versions.set_null();
 
-    if (versionContainer.empty() && !predefinedVersions.empty()) {
+    if (!predefinedVersions.empty() && versionContainer.empty()) {
         versionContainer.resize(predefinedVersions.size());
-        auto it = predefinedVersions.begin();
 
-        for (auto& version : versionContainer) {
-            version.name = it->first;
-            version.version = it->second;
-            ++it;
+        for (const auto& version : predefinedVersions) {
+            EventClassFamilyVersionInfo info;
+            info.name = version.first;
+            info.version = version.second;
+            versionContainer.push_back(info);
         }
     }
 
