@@ -22,19 +22,19 @@
 #include <execinfo.h>
 #include <sys/select.h>
 
-#include <kaa.h>
-#include <kaa_error.h>
-#include <kaa_context.h>
-#include <kaa_profile.h>
-#include <kaa_logging.h>
-#include <kaa_channel_manager.h>
-#include <kaa_configuration_manager.h>
+#include <kaa/kaa.h>
+#include <kaa/kaa_error.h>
+#include <kaa/kaa_context.h>
+#include <kaa/kaa_profile.h>
+#include <kaa/kaa_logging.h>
+#include <kaa/kaa_channel_manager.h>
+#include <kaa/kaa_configuration_manager.h>
 
-#include <utilities/kaa_log.h>
+#include <kaa/utilities/kaa_log.h>
 
-#include <platform/ext_sha.h>
-#include <platform/ext_transport_channel.h>
-#include <platform-impl/kaa_tcp_channel.h>
+#include <kaa/platform/ext_sha.h>
+#include <kaa/platform/ext_transport_channel.h>
+#include <kaa/platform-impl/kaa_tcp_channel.h>
 
 
 
