@@ -2290,4 +2290,44 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    @Override
+    public List<SchemaInfoDto> getUserConfigurationSchemaInfosByApplicationId(
+            String applicationId) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationId(applicationId);            
+            List<ConfigurationSchemaDto> configurationSchemas = toDtoList(clientProvider.getClient().getConfigurationSchemasByApplicationId(applicationId));
+            List<SchemaInfoDto> schemaInfos = new ArrayList<>(configurationSchemas.size());
+            for (ConfigurationSchemaDto configurationSchema : configurationSchemas) {
+                SchemaInfoDto schemaInfo = new SchemaInfoDto(configurationSchema);
+                Schema schema = new Schema.Parser().parse(configurationSchema.getOverrideSchema());
+                RecordField schemaForm = FormAvroConverter.createRecordFieldFromSchema(schema);
+                schemaInfo.setSchemaForm(schemaForm);
+                schemaInfos.add(schemaInfo);
+            }
+            return schemaInfos;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public void editUserConfiguration(
+            EndpointUserConfigurationDto endpointUserConfiguration,
+            String applicationId, RecordField configurationData)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            ApplicationDto application = checkApplicationId(applicationId);
+            endpointUserConfiguration.setAppToken(application.getApplicationToken());
+            GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(configurationData);
+            GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
+            String body = converter.endcodeToJson(record);
+            endpointUserConfiguration.setBody(body);
+            clientProvider.getClient().editUserConfiguration(toGenericDataStruct(endpointUserConfiguration));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
 }

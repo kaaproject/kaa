@@ -21,6 +21,7 @@ Copyright 2014-2015 CyberVision, Inc.
         <name>Photo frame</name>
         <description>Photo frame application on android platform demonstrating event API</description>
         <platform>ANDROID</platform>
+        <features>EVENT USER_VERIFIER</features>
         <sourceArchive>android/photoframe_demo.tar.gz</sourceArchive>
         <projectFolder>photoframe_demo/PhotoFrame</projectFolder>
         <sdkLibDir>photoframe_demo/PhotoFrame/libs</sdkLibDir>

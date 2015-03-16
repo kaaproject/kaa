@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,44 +19,43 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.server.admin.client.KaaAdmin;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceTokenizer;
-import com.google.gwt.place.shared.Prefix;
 import com.google.gwt.view.client.HasData;
 
-public class ApplicationPlace extends TreePlace {
+public class EndpointUsersPlace extends TreePlace {
 
-    private String applicationId;
-    private String applicationName;
+    protected String applicationId;
 
-    private ApplicationDetailsPlaceDataProvider dataProvider;
+    private EndpointUsersPlaceDataProvider dataProvider;
 
-    public ApplicationPlace(String applicationId) {
+    public EndpointUsersPlace(String applicationId) {
         this.applicationId = applicationId;
-    }
-
-    public void setApplicationName(String name) {
-        this.applicationName = name;
     }
 
     public String getApplicationId() {
         return applicationId;
     }
 
-    @Prefix(value = "app")
-    public static class Tokenizer implements PlaceTokenizer<ApplicationPlace>, PlaceConstants {
+    @Override
+    public String getName() {
+        return Utils.constants.users();
+    }
+
+    public static abstract class Tokenizer<P extends EndpointUsersPlace> implements PlaceTokenizer<P>, PlaceConstants {
 
         @Override
-        public ApplicationPlace getPlace(String token) {
+        public P getPlace(String token) {
             PlaceParams.paramsFromToken(token);
-            return new ApplicationPlace(PlaceParams.getParam(APPLICATION_ID));
+            return getPlaceImpl(PlaceParams.getParam(APPLICATION_ID));
         }
 
+        protected abstract P getPlaceImpl(String applicationId);
+
         @Override
-        public String getToken(ApplicationPlace place) {
+        public String getToken(P place) {
             PlaceParams.clear();
             PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
             return PlaceParams.generateToken();
@@ -71,7 +70,7 @@ public class ApplicationPlace extends TreePlace {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ApplicationPlace other = (ApplicationPlace) obj;
+        EndpointUsersPlace other = (EndpointUsersPlace) obj;
         if (applicationId == null) {
             if (other.applicationId != null)
                 return false;
@@ -81,36 +80,25 @@ public class ApplicationPlace extends TreePlace {
     }
 
     @Override
-    public String getName() {
-        return applicationName;
-    }
-
-    @Override
     public boolean isLeaf() {
-        return !KaaAdmin.checkAuthorities(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        return false;
     }
 
     @Override
     public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
         if (dataProvider == null) {
-            dataProvider = new ApplicationDetailsPlaceDataProvider();
+            dataProvider = new EndpointUsersPlaceDataProvider();
         }
         return dataProvider;
     }
 
-    class ApplicationDetailsPlaceDataProvider extends TreePlaceDataProvider {
+    class EndpointUsersPlaceDataProvider extends TreePlaceDataProvider {
 
         @Override
         protected void loadData(LoadCallback callback,
                 HasData<TreePlace> display) {
             List<TreePlace> result = new ArrayList<TreePlace>();
-            result.add(new SchemasPlace(applicationId));
-            result.add(new TopicsPlace(applicationId));
-            result.add(new EndpointGroupsPlace(applicationId));
-            result.add(new AefMapsPlace(applicationId));
-            result.add(new LogAppendersPlace(applicationId));
-            result.add(new UserVerifiersPlace(applicationId));
-            result.add(new EndpointUsersPlace(applicationId));
+            result.add(new UpdateUserConfigPlace(applicationId));
             callback.onSuccess(result, display);
         }
 
@@ -118,6 +106,6 @@ public class ApplicationPlace extends TreePlace {
 
     @Override
     public TreePlace createDefaultPreviousPlace() {
-        return new ApplicationsPlace();
+        return new ApplicationPlace(applicationId);
     }
 }

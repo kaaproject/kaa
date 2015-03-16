@@ -21,6 +21,7 @@ Copyright 2014-2015 CyberVision, Inc.
         <name>Smart House Demo</name>
         <description>Smart house application on android platform demonstrating event subsystem (IoT)</description>
         <platform>ANDROID</platform>
+        <features>EVENT USER_VERIFIER</features>
         <sourceArchive>android/smarthouse_demo.tar.gz</sourceArchive>
         <projectFolder>smarthouse_demo/SmartHouseDemo</projectFolder>
         <sdkLibDir>smarthouse_demo/SmartHouseDemo/libs</sdkLibDir>

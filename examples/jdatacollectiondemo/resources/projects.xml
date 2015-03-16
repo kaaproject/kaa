@@ -21,6 +21,7 @@ Copyright 2014-2015 CyberVision, Inc.
         <name>Java data collection demo</name>
         <description>Application on java platform demonstrating data collection subsystem (IoT)</description>
         <platform>JAVA</platform>
+        <features>DATA_COLLECTION</features>
         <sourceArchive>java/jdatacollection_demo.tar.gz</sourceArchive>
         <projectFolder>jdatacollection_demo/JDataCollectionDemo</projectFolder>
         <sdkLibDir>jdatacollection_demo/JDataCollectionDemo/lib</sdkLibDir>

@@ -52,8 +52,18 @@ interface SandboxTheme extends CssResource {
   @ClassName("details-inner-top")
   String detailsInnerTop();
   
+  String featureButton();
+  
+  @ClassName("featureButton-down")
+  String featureButtonDown();
+  
+  @ClassName("featureButton-down-hovering")
+  String featureButtonDownHovering();
+  
   @ClassName("platform-image-hover")
   String platformImageHover();
+  
+  String platformSectionTitle();
   
   String shadowPanel();
   

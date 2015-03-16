@@ -108,7 +108,8 @@ public class ProjectActivity extends AbstractActivity {
             @Override
             public void onSuccessImpl(Project result) {
                 view.setTitle(result.getName());
-                view.getTargetPlatform().setText(result.getPlatform().toString());
+                view.setTargetPlatform(result.getPlatform());
+                view.setFeatures(result.getFeatures());
                 view.getDescription().setText(result.getDescription());
             }
         });

@@ -29,9 +29,9 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -44,7 +44,7 @@ public class MainViewImpl extends BaseViewImpl implements MainView {
     private DemoProjectsWidget demoProjectsView;
     
     public MainViewImpl() {
-        super();
+        super(false);
         setBackEnabled(false);
     }
 
@@ -63,10 +63,15 @@ public class MainViewImpl extends BaseViewImpl implements MainView {
     }
  
     @Override
-    protected void initDetailsPanel() {
+    protected void initCenterPanel() {
+        DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.PX);
+        centerPanel.setWidget(dockPanel);        
+        centerPanel.setWidgetTopBottom(dockPanel, 15, Unit.PX, 0, Unit.PX);
+        centerPanel.setWidgetLeftRight(dockPanel, 30, Unit.PX, 30, Unit.PX);
+        
         HorizontalPanel linksPanel = new HorizontalPanel();
         linksPanel.setSpacing(6);
-        linksPanel.getElement().getStyle().setMarginLeft(-6, Unit.PX);
+        //linksPanel.getElement().getStyle().setMarginLeft(-6, Unit.PX);
         
         goToKaaAdminWeb = new Anchor(Utils.constants.kaaAdminWeb());
         Widget gotoLink = constructGotoLink(goToKaaAdminWeb);
@@ -82,17 +87,19 @@ public class MainViewImpl extends BaseViewImpl implements MainView {
         gotoLink.addStyleName(Utils.sandboxStyle.shadowPanel());
         linksPanel.add(gotoLink);
                 
-        detailsPanel.add(linksPanel);
+        dockPanel.addNorth(linksPanel, 60);
         
-        Label sampleApplicationsTitle = new Label(Utils.constants.sampleApplications());
-        sampleApplicationsTitle.getElement().getStyle().setPaddingTop(10, Unit.PX);
-        sampleApplicationsTitle.getElement().getStyle().setPaddingBottom(10, Unit.PX);
-        sampleApplicationsTitle.addStyleName(Utils.sandboxStyle.contentTitleLabel());
-
-        detailsPanel.add(sampleApplicationsTitle);
+//        Label sampleApplicationsTitle = new Label(Utils.constants.sampleApplications());
+//        sampleApplicationsTitle.getElement().getStyle().setPaddingTop(10, Unit.PX);
+//        sampleApplicationsTitle.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+//        sampleApplicationsTitle.addStyleName(Utils.sandboxStyle.contentTitleLabel());
+//
+//        detailsPanel.add(sampleApplicationsTitle);
         
         demoProjectsView = new DemoProjectsWidget();
-        detailsPanel.add(demoProjectsView);
+        //demoProjectsView.setHeight("400px");
+        demoProjectsView.setTitle(Utils.constants.sampleApplications());
+        dockPanel.add(demoProjectsView);
     }
 
     @Override

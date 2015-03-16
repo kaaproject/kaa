@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.sandbox.web.client.mvp.view.widget;
 
+import org.kaaproject.kaa.sandbox.demo.projects.Feature;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.sandbox.web.client.mvp.event.project.HasProjectActionEventHandlers;
 import org.kaaproject.kaa.sandbox.web.client.mvp.event.project.ProjectAction;
@@ -39,6 +40,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class DemoProjectWidget extends VerticalPanel implements HasProjectActionEventHandlers {
     
     private Image platformImage;
+    private HorizontalPanel featuresPanel;
     private Anchor projectTitle;
     private Anchor getSourceAnchor;
     private Anchor getBinaryAnchor;
@@ -83,6 +85,11 @@ public class DemoProjectWidget extends VerticalPanel implements HasProjectAction
 
         add(detailsPanel);
         
+        featuresPanel = new HorizontalPanel();
+        featuresPanel.addStyleName(Utils.sandboxStyle.detailsInnerCenter());
+        add(featuresPanel);
+        featuresPanel.getElement().getStyle().setPaddingTop(10, Unit.PX);
+        
         HorizontalPanel buttonsPanel = new HorizontalPanel();
         buttonsPanel.setWidth("100%");
         buttonsPanel.addStyleName(Utils.sandboxStyle.detailsInnerBottom());
@@ -96,7 +103,6 @@ public class DemoProjectWidget extends VerticalPanel implements HasProjectAction
         buttonsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
         buttonsPanel.add(getBinaryAnchor);
         add(buttonsPanel);
- 
         
         detailsPanel.addHandler(new ClickHandler() {
             @Override
@@ -131,18 +137,14 @@ public class DemoProjectWidget extends VerticalPanel implements HasProjectAction
     
     public void setProject(Project project) {
         this.project = project;
-        switch (project.getPlatform()) {
-        case ANDROID:
-            platformImage.setResource(Utils.resources.android());
-            break;
-        case JAVA:
-            platformImage.setResource(Utils.resources.java());
-            break;
-        default:
-            break;
-        }
+        platformImage.setResource(Utils.getPlatformIcon(project.getPlatform()));
         projectTitle.setText(project.getName());
         projectTitle.setTitle(project.getName());
+        for (Feature feature : project.getFeatures()) {
+            Image image = new Image(Utils.getFeatureIcon(feature, false));
+            image.getElement().getStyle().setPaddingRight(8, Unit.PX);
+            featuresPanel.add(image);
+        }
     }
 
     @Override
