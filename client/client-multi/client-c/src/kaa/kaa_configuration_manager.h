@@ -17,10 +17,6 @@
 #ifndef KAA_CONFIGURATION_MANAGER_H_
 #define KAA_CONFIGURATION_MANAGER_H_
 
-
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-
-
 #include "gen/kaa_configuration_definitions.h"
 #include "platform/ext_configuration_receiver.h"
 
@@ -64,5 +60,4 @@ kaa_error_t kaa_configuration_manager_set_root_receiver(kaa_configuration_manage
 } // extern "C"
 #endif
 
-#endif /* KAA_DISABLE_FEATURE_CONFIGURATION */
 #endif /* KAA_CONFIGURATION_MANAGER_H_ */
