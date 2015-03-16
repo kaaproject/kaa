@@ -18,27 +18,27 @@
 PREFACE
 ************************************
 
-This example introduces the Kaa log collection features using the Kaa C++ SDK.
-To read more about the logging feature, please visit https://docs.kaaproject.org/display/KAA/Logging.
+This demo application illustrates the Kaa logging feature using the Kaa C++ SDK.
+To read more about the logging feature, visit https://docs.kaaproject.org/display/KAA/Logging.
 
 ************************************
 INSTALLATION
 ************************************
 
-To run the demo application you must do the following steps:
+To run the demo application, do the following:
 
-1. Install thirdparty dependencies to build the Kaa C++ SDK.
+1. Install third-party libraries to build the Kaa C++ SDK.
 Follow https://docs.kaaproject.org/display/KAA/Third-party+components#Third-partycomponents-Kaaendpoint to see the full
-list of thirdparty dependencies for the Kaa C++ SDK.
-2. Download and install the Kaa Sandbox (https://docs.kaaproject.org/display/KAA/Sandbox).
-3. Generate the C++ SDK using the Kaa Sandbox. The Avro log schema locates in the 'avro' directory. Put the SDK archive
-into the 'libs/kaa' directory.
+list of third-party dependencies for the Kaa C++ SDK.
+2. Download and install the Kaa sandbox (https://docs.kaaproject.org/display/KAA/sandbox).
+3. Generate the C++ SDK using the Kaa sandbox. The Avro log schema required for the demo application is located in 
+the 'avro' directory. Put the SDK archive into the 'libs/kaa' directory.
 4. Use the build.sh script to build and run the demo application (the 'deploy' option).
 
 ************************************
 ABOUT
 ************************************
 
-If you are interested in the Kaa IoT framework and want to read more about it, you may visit our official site 
-http://www.kaaproject.org/. The documentation can be found in https://docs.kaaproject.org/display/KAA/Kaa+IoT+Platform+Home.
+If you are interested in the Kaa IoT framework and want to read more about it, visit our official site
+http://www.kaaproject.org/. The documentation can be found at https://docs.kaaproject.org/display/KAA/Kaa+IoT+Platform+Home.
 
