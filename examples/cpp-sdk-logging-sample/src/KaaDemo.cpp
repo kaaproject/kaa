@@ -32,7 +32,8 @@ int main()
      * Initialize the Kaa endpoint.
      */
     Kaa::init();
-    IKaaClient& kaaClient = Kaa::getKaaClient();
+    IKaaClient& kaaClient =  Kaa::getKaaClient();
+    ILogCollector& logCollector = Kaa::getKaaClient().getLogCollector();
 
     /*
      * Create the log upload strategy and specifies the threshold record count to initiate upload.
@@ -44,7 +45,7 @@ int main()
     /*
      * Set the user-defined log upload strategy.
      */
-    kaaClient.getLogCollector().setUploadStrategy(uploadStrategy);
+    logCollector.setUploadStrategy(uploadStrategy);
 
     /*
      * Run the Kaa endpoint.
@@ -64,7 +65,7 @@ int main()
      */
     size_t logNumber = 0;
     while (logNumber++ < LOG_NUMBER_TO_SEND) {
-        kaaClient.getLogCollector().addLogRecord(logRecord);
+        logCollector.addLogRecord(logRecord);
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
