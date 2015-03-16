@@ -61,7 +61,12 @@ public class EventDemo {
             public void onStarted() {
                 LOG.info("Kaa client started");
             }
+            @Override
+            public void onStopped() {
+                LOG.info("Kaa client stopped");
+            }
         });
+
         // Starting Kaa client
         kaaClient.start();
 
@@ -94,7 +99,6 @@ public class EventDemo {
         //Release all network connections and application resources.
         //Shutdown all Kaa client tasks.
         kaaClient.stop();
-        LOG.info("Kaa client stopped");
 
         LOG.info("Event demo stopped");
     }
@@ -145,7 +149,7 @@ public class EventDemo {
 
             @Override
             public void onEvent(ThermostatInfoRequest thermostatInfoRequest, String senderId) {
-                LOG.info("ThermostatInfoRequest event fired! sender: {}",senderId);
+                LOG.info("ThermostatInfoRequest event fired! sender: {}", senderId);
             }
         });
 
