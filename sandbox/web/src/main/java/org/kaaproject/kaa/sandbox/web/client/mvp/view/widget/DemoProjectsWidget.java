@@ -106,6 +106,9 @@ public class DemoProjectsWidget extends Composite implements HasProjectActionEve
 
     void updateProjects() {
         reset();
+        for (DemoProjectsPlatformSection section : demoProjectPlatformSectionsMap.values()) {
+            registrations.add(section.addProjectActionHandler(this));
+        }
         Map<Feature, FeatureButton> filterMap = filter.getFilterMap();
         boolean useFilter = false;
         for (ToggleButton b : filterMap.values()) {
@@ -125,7 +128,6 @@ public class DemoProjectsWidget extends Composite implements HasProjectActionEve
             if (hasFeature) {
                 DemoProjectsPlatformSection section = demoProjectPlatformSectionsMap.get(project.getPlatform());
                 section.addProject(project);
-                registrations.add(section.addProjectActionHandler(this));
             }
         }
     }

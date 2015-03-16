@@ -37,6 +37,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 
 public class ProjectViewImpl extends BaseViewImpl implements ProjectView {
     
+    private Image applicationImage;
     private Label descriptionLabel;
     private Label targetPlatform;
     private HorizontalPanel featuresPanel;
@@ -55,7 +56,12 @@ public class ProjectViewImpl extends BaseViewImpl implements ProjectView {
 
     @Override
     protected void initCenterPanel() {
+        applicationImage = new Image();
+        detailsPanel.add(applicationImage);
+        
         FlexTable infoTable = new FlexTable();
+        
+        infoTable.getElement().getStyle().setPaddingTop(20, Unit.PX);
         infoTable.getColumnFormatter().setWidth(0, "150px");
         infoTable.getColumnFormatter().setWidth(1, "300px");
         
@@ -119,7 +125,6 @@ public class ProjectViewImpl extends BaseViewImpl implements ProjectView {
     @Override
     public void setTargetPlatform(Platform platform) {
         targetPlatform.setText(Utils.getPlatformText(platform));
-        
     }
 
     @Override
@@ -134,6 +139,11 @@ public class ProjectViewImpl extends BaseViewImpl implements ProjectView {
             label.getElement().getStyle().setPaddingLeft(8, Unit.PX);
             
         }
+    }
+
+    @Override
+    public Image getApplicationImage() {
+        return applicationImage;
     }
 
 }

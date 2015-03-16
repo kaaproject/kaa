@@ -60,51 +60,51 @@ public interface SandboxResources extends ClientBundle {
     @Source("images/cpp.png")
     ImageResource cpp();
     
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/config_feature.png")
     ImageResource configFeature();
 
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/config_feature_down.png")
     ImageResource configFeatureDown();
 
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/profiling_feature.png")
     ImageResource profilingFeature();
 
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/profiling_feature_down.png")
     ImageResource profilingFeatureDown();
     
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/notification_feature.png")
     ImageResource notificationFeature();
 
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/notification_feature_down.png")
     ImageResource notificationFeatureDown();
     
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/event_feature.png")
     ImageResource eventFeature();
 
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/event_feature_down.png")
     ImageResource eventFeatureDown();
     
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/user_verifier_feature.png")
     ImageResource userVerifierFeature();
 
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/user_verifier_feature_down.png")
     ImageResource userVerifierFeatureDown();
     
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/data_collection_feature.png")
     ImageResource dataCollectionFeature();
 
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/data_collection_feature_down.png")
     ImageResource dataCollectionFeatureDown();
     
