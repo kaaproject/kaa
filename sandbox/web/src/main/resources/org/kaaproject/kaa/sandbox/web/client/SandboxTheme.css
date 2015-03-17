@@ -214,7 +214,7 @@
     text-transform: uppercase;
     background-color: transparent;
     cursor: pointer;
-    border: 1px solid #999;
+    box-shadow: 1px 1px 8px #888;
 }
 
 .featureButton:hover {
@@ -224,13 +224,11 @@
 .featureButton-down {
 	color: #FFF;
 	background-color: #999;
-	border: 1px solid transparent;
 }
 
 .featureButton-down-hovering, .featureButton-down-hovering:hover {
 	color: #FFF;
 	background-color: #777;
-    border: 1px solid transparent;
 }
 
 .platformSectionTitle {

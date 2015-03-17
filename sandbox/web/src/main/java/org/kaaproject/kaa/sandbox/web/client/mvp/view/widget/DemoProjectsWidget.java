@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class DemoProjectsWidget extends Composite implements HasProjectActionEve
     @UiField public VerticalPanel demoProjectSectionsPanel;
     @UiField (provided = true) public final SandboxStyle sandboxStyle;
     
-    private List<Project> projects;
+    private List<DemoProjectWidget> projectWidgets;
     
     private Map<Platform, DemoProjectsPlatformSection> demoProjectPlatformSectionsMap;
     private DemoProjectsFeatureFilter filter;
@@ -95,29 +95,41 @@ public class DemoProjectsWidget extends Composite implements HasProjectActionEve
     }
     
     public void setProjects(List<Project> projects) {
-        this.projects = projects;
-        updateProjects();
+        loadProjects(projects);
     }
     
     @Override
     public void onValueChange(ValueChangeEvent<Boolean> event) {
-        updateProjects();
+        updateProjects(true);
     }
-
-    void updateProjects() {
+    
+    void loadProjects(List<Project> projects) {
         reset();
         for (DemoProjectsPlatformSection section : demoProjectPlatformSectionsMap.values()) {
             registrations.add(section.addProjectActionHandler(this));
         }
+        projectWidgets = new ArrayList<>();
+        for (Project project : projects) {
+            DemoProjectsPlatformSection section = demoProjectPlatformSectionsMap.get(project.getPlatform());
+            projectWidgets.add(section.addProject(project));
+        }
+        updateProjects(false);
+    }
+
+    void updateProjects(boolean animate) {
+        for (DemoProjectsPlatformSection section : demoProjectPlatformSectionsMap.values()) {
+            section.setVisible(false);
+        }
+        
         Map<Feature, FeatureButton> filterMap = filter.getFilterMap();
         boolean useFilter = false;
         for (ToggleButton b : filterMap.values()) {
             useFilter |= b.getValue();
         }
-        for (Project project : projects) {
+        for (DemoProjectWidget projectWidget : projectWidgets) {
             boolean hasFeature = !useFilter;
             if (useFilter) {
-                List<Feature> features = project.getFeatures();
+                List<Feature> features = projectWidget.getProject().getFeatures();
                 for (Feature feature : features) {
                     if (filterMap.get(feature).getValue()) {
                         hasFeature = true;
@@ -126,8 +138,12 @@ public class DemoProjectsWidget extends Composite implements HasProjectActionEve
                 }
             }
             if (hasFeature) {
-                DemoProjectsPlatformSection section = demoProjectPlatformSectionsMap.get(project.getPlatform());
-                section.addProject(project);
+                projectWidget.show(animate);
+            } else {
+                projectWidget.hide(animate);
+            }
+            if (hasFeature) {
+                demoProjectPlatformSectionsMap.get(projectWidget.getProject().getPlatform()).setVisible(true);
             }
         }
     }
@@ -145,8 +161,6 @@ public class DemoProjectsWidget extends Composite implements HasProjectActionEve
     
     private class DemoProjectsPlatformSection extends VerticalPanel implements HasProjectActionEventHandlers, ProjectActionEventHandler {
         
-        private List<Project> projects = new ArrayList<>();
-        
         private FlowPanel demoProjectsPanel = new FlowPanel();
         
         private List<HandlerRegistration> registrations = new ArrayList<>();
@@ -161,13 +175,13 @@ public class DemoProjectsWidget extends Composite implements HasProjectActionEve
             add(demoProjectsPanel);
         }
         
-        void addProject(Project project) {
-            projects.add(project);
+        DemoProjectWidget addProject(Project project) {
             DemoProjectWidget demoProjectWidget = new DemoProjectWidget();
             demoProjectWidget.setProject(project);
             demoProjectsPanel.add(demoProjectWidget);
             registrations.add(demoProjectWidget.addProjectActionHandler(this));
             setVisible(true);
+            return demoProjectWidget;
         }
         
         public void reset() {
@@ -175,7 +189,6 @@ public class DemoProjectsWidget extends Composite implements HasProjectActionEve
                 registration.removeHandler();
             }
             demoProjectsPanel.clear();
-            projects.clear();
             setVisible(false);
         }
 
