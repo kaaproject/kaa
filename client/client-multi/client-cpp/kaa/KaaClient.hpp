@@ -70,10 +70,9 @@ public:
     virtual EventFamilyFactory&                 getEventFamilyFactory();
 
     virtual void                                addLogRecord(const KaaUserLogRecord& record);
-    virtual void                                setStorage(ILogStoragePtr storage);
-    virtual void                                setUploadStrategy(ILogUploadStrategyPtr strategy);
+    virtual void                                setLogStorage(ILogStoragePtr storage);
+    virtual void                                setLogUploadStrategy(ILogUploadStrategyPtr strategy);
     virtual void                                setProfileContainer(ProfileContainerPtr container);
-    virtual ISerializedProfileContainerPtr      getSerializedProfileContainer();
     virtual void                                addTopicListListener(INotificationTopicListListenerPtr listener);
     virtual void                                removeTopicListListener(INotificationTopicListListenerPtr listener);
     virtual Topics                              getTopics();
@@ -87,9 +86,9 @@ public:
     virtual void                                subscribeToTopics(const std::list<std::string>& idList, bool forceSync);
     virtual void                                unsubscribeFromTopic(const std::string& id, bool forceSync);
     virtual void                                unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync);
-    virtual void                                sync();
-    virtual void                                subscribeForConfigurationChanges(IConfigurationReceiver &receiver);
-    virtual void                                unsubscribeFromConfigurationChanges(IConfigurationReceiver &receiver);
+    virtual void                                syncTopicsList();
+    virtual void                                addConfigurationListener(IConfigurationReceiver &receiver);
+    virtual void                                removeConfigurationListener(IConfigurationReceiver &receiver);
     virtual const KaaRootConfiguration&         getConfiguration();
     virtual void                                setConfigurationStorage(IConfigurationStoragePtr storage);
     virtual void                                attachEndpoint(const std::string&  endpointAccessToken

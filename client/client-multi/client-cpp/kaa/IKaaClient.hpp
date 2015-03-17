@@ -68,14 +68,6 @@ public:
     virtual void setProfileContainer(ProfileContainerPtr container) = 0;
 
     /**
-     * Retrieves container responsible for profile serializing
-     *
-     * @return Container which contains the serialized profile
-     *
-     */
-    virtual ISerializedProfileContainerPtr getSerializedProfileContainer() = 0;
-
-    /**
      * Retrieves Kaa event family factory.
      *
      * @return @link IEventFamilyFactory @endlink object.
@@ -246,22 +238,21 @@ public:
      * @endcode
      * </pre>
      */
-    virtual void sync() = 0;
-
+    virtual void syncTopicsList() = 0;
 
     /**
      * Subscribes listener of configuration updates.
      *
      * @param receiver Listener to be added to notification list.
      */
-    virtual void subscribeForConfigurationChanges(IConfigurationReceiver &receiver) = 0;
+    virtual void addConfigurationListener(IConfigurationReceiver &receiver) = 0;
 
     /**
      * Unsubscribes listener of configuration updates.
      *
      * @param receiver Listener to be removed from notification list.
      */
-    virtual void unsubscribeFromConfigurationChanges(IConfigurationReceiver &receiver) = 0;
+    virtual void removeConfigurationListener(IConfigurationReceiver &receiver) = 0;
     /**
      * Returns full configuration tree which is actual at current moment.
      *
@@ -326,7 +317,7 @@ public:
     virtual void attachUser(const std::string& userExternalId
                               , const std::string& userAccessToken
                               , const std::string& userVerifierToken
-                              , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr());
+                              , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr()) = 0;
 
      /**
      * @brief Sets listener to notify of the current endpoint is attached/detached by another one.
@@ -354,6 +345,9 @@ public:
     virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs
                , IFetchEventListeners* listener) = 0;
 
+    virtual void addLogRecord(const KaaUserLogRecord& record) = 0;
+    virtual void setLogStorage(ILogStoragePtr storage) = 0;
+    virtual void setLogUploadStrategy(ILogUploadStrategyPtr strategy) = 0;
     /**
      * Retrieves the client's public and private key.
      *

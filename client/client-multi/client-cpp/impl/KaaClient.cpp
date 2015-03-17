@@ -275,32 +275,27 @@ void KaaClient::setProfileContainer(ProfileContainerPtr container) {
     profileManager_->setProfileContainer(container);
 }
 
-ISerializedProfileContainerPtr KaaClient::getSerializedProfileContainer() {
-    return profileManager_->getSerializedProfileContainer();
-}
-
-
 void KaaClient::setConfigurationStorage(IConfigurationStoragePtr storage) {
 #ifdef KAA_USE_CONFIGURATION
     configurationPersistenceManager_->setConfigurationStorage(storage);
 #else
-    throw KaaException("Failed to set configuration storage. Configuration subunit is disabled");
+    throw KaaException("Failed to set configuration storage. Configuration subsystem is disabled");
 #endif
 }
 
-void KaaClient::subscribeForConfigurationChanges(IConfigurationReceiver &receiver) {
+void KaaClient::addConfigurationListener(IConfigurationReceiver &receiver) {
 #ifdef KAA_USE_CONFIGURATION
     configurationManager_->subscribeForConfigurationChanges(receiver);
 #else
-    throw KaaException("Failed to subscribe to configuration changes. Configuration subunit is disabled");
+    throw KaaException("Failed to subscribe to configuration changes. Configuration subsystem is disabled");
 #endif
 }
 
-void KaaClient::unsubscribeFromConfigurationChanges(IConfigurationReceiver &receiver) {
+void KaaClient::removeConfigurationListener(IConfigurationReceiver &receiver) {
 #ifdef KAA_USE_CONFIGURATION
     configurationManager_->unsubscribeFromConfigurationChanges(receiver);
 #else
-    throw KaaException("Failed to unsubscribe from configuration changes. Configuration subunit is disabled");
+    throw KaaException("Failed to unsubscribe from configuration changes. Configuration subsystem is disabled");
 #endif
 }
 
@@ -308,14 +303,14 @@ const KaaRootConfiguration& KaaClient::getConfiguration() {
 #ifdef KAA_USE_CONFIGURATION
     return configurationManager_->getConfiguration();
 #else
-    throw KaaException("Failed to subscribe to get configuration. Configuration subunit is disabled");
+    throw KaaException("Failed to subscribe to get configuration. Configuration subsystem is disabled");
 #endif
 }
 void KaaClient::addTopicListListener(INotificationTopicListListenerPtr listener) {
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->addTopicListListener(listener);
 #else
-    throw KaaException("Failed to add topic list listeners. Notification subunit is disabled");
+    throw KaaException("Failed to add topic list listeners. Notification subsystem is disabled");
 #endif
 }
 
@@ -323,7 +318,7 @@ void KaaClient::removeTopicListListener(INotificationTopicListListenerPtr listen
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->removeTopicListListener(listener);
 #else
-    throw KaaException("Failed to remove topic list listeners. Notification subunit is disabled");
+    throw KaaException("Failed to remove topic list listeners. Notification subsystem is disabled");
 #endif
 }
 
@@ -331,21 +326,21 @@ Topics KaaClient::getTopics() {
 #ifdef KAA_USE_NOTIFICATIONS
     return notificationManager_->getTopics();
 #else
-    throw KaaException("Failed to get topics. Notification subunit is disabled");
+    throw KaaException("Failed to get topics. Notification subsystem is disabled");
 #endif
 }
 void KaaClient::addNotificationListener(INotificationListenerPtr listener) {
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->addNotificationListener(listener);
 #else
-    throw KaaException("Failed to add notification listener. Notification subunit is disabled");
+    throw KaaException("Failed to add notification listener. Notification subsystem is disabled");
 #endif
 }
 void KaaClient::addNotificationListener(const std::string& topidId, INotificationListenerPtr listener) {
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->addNotificationListener(topidId,listener);
 #else
-    throw KaaException("Failed to add notification listener. Notification subunit is disabled");
+    throw KaaException("Failed to add notification listener. Notification subsystem is disabled");
 #endif
 }
 
@@ -353,7 +348,7 @@ void KaaClient::removeNotificationListener(INotificationListenerPtr listener) {
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->removeNotificationListener(listener);
 #else
-    throw KaaException("Failed to remove notification listener. Notification subunit is disabled");
+    throw KaaException("Failed to remove notification listener. Notification subsystem is disabled");
 #endif
 }
 
@@ -361,7 +356,7 @@ void KaaClient::removeNotificationListener(const std::string& topidId, INotifica
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->removeNotificationListener(topidId,listener);
 #else
-    throw KaaException("Failed to remove notification listener. Notification subunit is disabled");
+    throw KaaException("Failed to remove notification listener. Notification subsystem is disabled");
 #endif
 }
 
@@ -369,7 +364,7 @@ void KaaClient::subscribeToTopic(const std::string& id, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->subscribeToTopic(id,forceSync);
 #else
-    throw KaaException("Failed to subscribe to topics. Notification subunit is disabled");
+    throw KaaException("Failed to subscribe to topics. Notification subsystem is disabled");
 #endif
 }
 
@@ -377,14 +372,14 @@ void KaaClient::subscribeToTopics(const std::list<std::string>& idList, bool for
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->subscribeToTopics(idList,forceSync);
 #else
-    throw KaaException("Failed to subscribe to topics. Notification subunit is disabled");
+    throw KaaException("Failed to subscribe to topics. Notification subsystem is disabled");
 #endif
 }
 void KaaClient::unsubscribeFromTopic(const std::string& id, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->unsubscribeFromTopic(id,forceSync);
 #else
-    throw KaaException("Failed to unsubscribe to topics. Notification subunit is disabled");
+    throw KaaException("Failed to unsubscribe to topics. Notification subsystem is disabled");
 #endif
 }
 
@@ -392,14 +387,14 @@ void KaaClient::unsubscribeFromTopics(const std::list<std::string>& idList, bool
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->unsubscribeFromTopics(idList,forceSync);
 #else
-    throw KaaException("Failed to unsubscribe to topics. Notification subunit is disabled");
+    throw KaaException("Failed to unsubscribe to topics. Notification subsystem is disabled");
 #endif
 }
-void KaaClient::sync() {
+void KaaClient::syncTopicsList() {
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->sync();
 #else
-    throw KaaException("Failed to get synchronized . Notification subunit is disabled");
+    throw KaaException("Failed to get synchronized . Notification subsystem is disabled");
 #endif
 }
 
@@ -408,7 +403,7 @@ void KaaClient::attachEndpoint(const std::string&  endpointAccessToken,
 #ifdef KAA_USE_EVENTS
     return registrationManager_->attachEndpoint(endpointAccessToken,listener);
 #else
-    throw KaaException("Failed to attach endpoint. Event subunit is disabled");
+    throw KaaException("Failed to attach endpoint. Event subsystem is disabled");
 #endif
 }
 
@@ -417,7 +412,7 @@ void KaaClient::detachEndpoint(const std::string&  endpointKeyHash
 #ifdef KAA_USE_EVENTS
     return registrationManager_->detachEndpoint(endpointKeyHash,listener);
 #else
-    throw KaaException("Failed to detach endpoint. Event subunit is disabled");
+    throw KaaException("Failed to detach endpoint. Event subsystem is disabled");
 #endif
 }
 
@@ -427,7 +422,7 @@ void KaaClient::attachUser(const std::string& userExternalId
 #ifdef KAA_USE_EVENTS
     return registrationManager_->attachUser(userExternalId,userAccessToken,listener);
 #else
-    throw KaaException("Failed to attach user. Event subunit is disabled");
+    throw KaaException("Failed to attach user. Event subsystem is disabled");
 #endif
 }
 
@@ -438,7 +433,7 @@ void KaaClient::attachUser(const std::string& userExternalId
 #ifdef KAA_USE_EVENTS
     return registrationManager_->attachUser(userExternalId,userAccessToken,userVerifierToken,listener);
 #else
-    throw KaaException("Failed to attach user. Event subunit is disabled");
+    throw KaaException("Failed to attach user. Event subsystem is disabled");
 #endif
 }
 
@@ -446,7 +441,7 @@ void KaaClient::setAttachStatusListener(IAttachStatusListenerPtr listener) {
 #ifdef KAA_USE_EVENTS
     return registrationManager_->setAttachStatusListener(listener);
 #else
-    throw KaaException("Failed to set listerner's status. Event subunit is disabled");
+    throw KaaException("Failed to set listerner's status. Event subsystem is disabled");
 #endif
 }
 
@@ -454,7 +449,7 @@ bool KaaClient::isAttachedToUser() {
 #ifdef KAA_USE_EVENTS
         return registrationManager_->isAttachedToUser();
 #else
-        throw KaaException("Failed to set listerner's status. Event subunit is disabled");
+        throw KaaException("Failed to set listerner's status. Event subsystem is disabled");
 #endif
 }
 
@@ -463,7 +458,7 @@ EventFamilyFactory& KaaClient::getEventFamilyFactory()
 #ifdef KAA_USE_EVENTS
     return *eventFamilyFactory_;
 #else
-    throw KaaException("Failed to retrieve EventFamilyFactory. Event subunit is disabled");
+    throw KaaException("Failed to retrieve EventFamilyFactory. Event subsystem is disabled");
 #endif
 }
 
@@ -471,7 +466,7 @@ std::int32_t KaaClient::findEventListeners(const std::list<std::string>& eventFQ
 #ifdef KAA_USE_EVENTS
     return eventManager_->findEventListeners(eventFQNs,listener);
 #else
-    throw KaaException("Failed to find event listeners. Event subunit is disabled");
+    throw KaaException("Failed to find event listeners. Event subsystem is disabled");
 #endif
 }
 IKaaChannelManager& KaaClient::getChannelManager()
@@ -488,22 +483,22 @@ void KaaClient::addLogRecord(const KaaUserLogRecord& record) {
 #ifdef KAA_USE_LOGGING
     return logCollector_->addLogRecord(record);
 #else
-    throw KaaException("Failed to add log record. Logging subunit is disabled");
+    throw KaaException("Failed to add log record. Logging subsystem is disabled");
 #endif
 }
-void KaaClient::setStorage(ILogStoragePtr storage) {
+void KaaClient::setLogStorage(ILogStoragePtr storage) {
 #ifdef KAA_USE_LOGGING
     return logCollector_->setStorage(storage);
 #else
-    throw KaaException("Failed to set storage. Logging subunit is disabled");
+    throw KaaException("Failed to set storage. Logging subsystem is disabled");
 #endif
 }
 
-void KaaClient::setUploadStrategy(ILogUploadStrategyPtr strategy) {
+void KaaClient::setLogUploadStrategy(ILogUploadStrategyPtr strategy) {
 #ifdef KAA_USE_LOGGING
         return logCollector_->setUploadStrategy(strategy);
 #else
-        throw KaaException("Failed to set strategy. Logging subunit is disabled");
+        throw KaaException("Failed to set strategy. Logging subsystem is disabled");
 #endif
 }
 IKaaDataMultiplexer& KaaClient::getOperationMultiplexer()
