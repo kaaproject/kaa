@@ -16,10 +16,13 @@
 
 package org.kaaproject.kaa.client.channel.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
@@ -32,6 +35,7 @@ import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
+import org.kaaproject.kaa.client.channel.impl.sync.SyncTask;
 import org.kaaproject.kaa.common.TransportType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +53,9 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     private final Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers;
     private final Map<TransportProtocolId, TransportConnectionInfo> lastBSServers = new HashMap<>();
 
+    private final Map<String, BlockingQueue<SyncTask>> syncTaskQueueMap = new HashMap<String, BlockingQueue<SyncTask>>();
+    private final Map<String, SyncWorker> syncWorkers = new HashMap<String, DefaultChannelManager.SyncWorker>(); 
+
     private ConnectivityChecker connectivityChecker;
     private boolean isShutdown = false;
     private boolean isPaused = false;
@@ -64,69 +71,6 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         }
         this.bootstrapManager = manager;
         this.bootststrapServers = bootststrapServers;
-    }
-
-    private boolean useChannelForType(KaaDataChannel channel, TransportType type) {
-        ChannelDirection direction = channel.getSupportedTransportTypes().get(type);
-        if (direction != null && (direction.equals(ChannelDirection.BIDIRECTIONAL) || direction.equals(ChannelDirection.UP))) {
-            upChannels.put(type, channel);
-            return true;
-        }
-        return false;
-    }
-
-    private void useNewChannelForType(TransportType type) {
-        for (KaaDataChannel channel : channels) {
-            if (useChannelForType(channel, type)) {
-                return;
-            }
-        }
-        upChannels.put(type, null);
-    }
-
-    private void applyNewChannel(KaaDataChannel channel) {
-        for (TransportType type : channel.getSupportedTransportTypes().keySet()) {
-            useChannelForType(channel, type);
-        }
-    }
-
-    private void replaceAndRemoveChannel(KaaDataChannel channel) {
-        channels.remove(channel);
-        for (Map.Entry<TransportType, KaaDataChannel> entry : upChannels.entrySet()) {
-            if (entry.getValue() == channel) {
-                useNewChannelForType(entry.getKey());
-            }
-        }
-        channel.shutdown();
-    }
-
-    private void addChannelToList(KaaDataChannel channel) {
-        if (!channels.contains(channel)) {
-            channel.setConnectivityChecker(connectivityChecker);
-            channels.add(channel);
-            TransportConnectionInfo server;
-            if (channel.getServerType() == ServerType.BOOTSTRAP) {
-                server = getCurrentBootstrapServer(channel.getTransportProtocolId());
-            } else {
-                server = lastServers.get(channel.getTransportProtocolId());
-            }
-            if (server != null) {
-                LOG.debug("Applying server {} for channel [{}] type {}", server, channel.getId(), channel.getTransportProtocolId());
-                channel.setServer(server);
-            } else {
-                if (lastServers != null && lastServers.isEmpty()) {
-                    if (channel.getServerType() == ServerType.BOOTSTRAP) {
-                        LOG.warn("Failed to find bootstrap server for channel [{}] type {}", channel.getId(),
-                                channel.getTransportProtocolId());
-                    } else {
-                        LOG.info("Failed to find operations server for channel [{}] type {}", channel.getId(),
-                                channel.getTransportProtocolId());
-                    }
-                } else {
-                    LOG.debug("list of servers is empty for channel [{}] type {}", channel.getId(), channel.getTransportProtocolId());
-                }
-            }
-        }
     }
 
     @Override
@@ -190,8 +134,36 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     }
 
     @Override
-    public synchronized KaaDataChannel getChannelByTransportType(TransportType type) {
-        return upChannels.get(type);
+    public TransportConnectionInfo getActiveServer(TransportType type) {
+        KaaDataChannel channel = upChannels.get(type);
+        if (channel == null) {
+            return null;
+        }
+        return channel.getServer();
+    }
+
+    private KaaDataChannel getChannel(TransportType type) {
+        KaaDataChannel result = upChannels.get(type);
+        if (result == null) {
+            LOG.error("Failed to find channel for transport {}", type);
+            throw new ChannelRuntimeException("Failed to find channel for transport " + type.toString());
+        }
+        return result;
+    }
+
+    @Override
+    public void sync(TransportType type) {
+        sync(type, false, false);
+    }
+
+    @Override
+    public void syncAck(TransportType type) {
+        sync(type, true, false);
+    }
+
+    @Override
+    public void syncAll(TransportType type) {
+        sync(type, false, true);
     }
 
     @Override
@@ -341,4 +313,143 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         this.bootstrapDemultiplexer = demultiplexer;
     }
 
+    private boolean useChannelForType(KaaDataChannel channel, TransportType type) {
+        ChannelDirection direction = channel.getSupportedTransportTypes().get(type);
+        if (direction != null && (direction.equals(ChannelDirection.BIDIRECTIONAL) || direction.equals(ChannelDirection.UP))) {
+            upChannels.put(type, channel);
+            return true;
+        }
+        return false;
+    }
+
+    private void useNewChannelForType(TransportType type) {
+        for (KaaDataChannel channel : channels) {
+            if (useChannelForType(channel, type)) {
+                return;
+            }
+        }
+        upChannels.put(type, null);
+    }
+
+    private void applyNewChannel(KaaDataChannel channel) {
+        for (TransportType type : channel.getSupportedTransportTypes().keySet()) {
+            useChannelForType(channel, type);
+        }
+    }
+
+    private void replaceAndRemoveChannel(KaaDataChannel channel) {
+        channels.remove(channel);
+        for (Map.Entry<TransportType, KaaDataChannel> entry : upChannels.entrySet()) {
+            if (entry.getValue() == channel) {
+                useNewChannelForType(entry.getKey());
+            }
+        }
+        stopWorker(channel);
+        channel.shutdown();
+    }
+
+    private void addChannelToList(KaaDataChannel channel) {
+        if (!channels.contains(channel)) {
+            channel.setConnectivityChecker(connectivityChecker);
+            channels.add(channel);
+            startWorker(channel);
+            TransportConnectionInfo server;
+            if (channel.getServerType() == ServerType.BOOTSTRAP) {
+                server = getCurrentBootstrapServer(channel.getTransportProtocolId());
+            } else {
+                server = lastServers.get(channel.getTransportProtocolId());
+            }
+            if (server != null) {
+                LOG.debug("Applying server {} for channel [{}] type {}", server, channel.getId(), channel.getTransportProtocolId());
+                channel.setServer(server);
+            } else {
+                if (lastServers != null && lastServers.isEmpty()) {
+                    if (channel.getServerType() == ServerType.BOOTSTRAP) {
+                        LOG.warn("Failed to find bootstrap server for channel [{}] type {}", channel.getId(),
+                                channel.getTransportProtocolId());
+                    } else {
+                        LOG.info("Failed to find operations server for channel [{}] type {}", channel.getId(),
+                                channel.getTransportProtocolId());
+                    }
+                } else {
+                    LOG.debug("list of servers is empty for channel [{}] type {}", channel.getId(), channel.getTransportProtocolId());
+                }
+            }
+        }
+    }
+
+    private void sync(TransportType type, boolean ack, boolean all) {
+        LOG.debug("Lookup channel by type {}", type);
+        KaaDataChannel channel = getChannel(type);
+        BlockingQueue<SyncTask> queue = syncTaskQueueMap.get(channel.getId());
+        if (queue != null) {
+            // TODO: create worker per channel;
+            queue.offer(new SyncTask(type, ack, all));
+        } else {
+            LOG.debug("Can't find queue for channel [{}]", channel.getId());
+        }
+    }
+    
+    private void startWorker(KaaDataChannel channel) {
+        stopWorker(channel);
+        SyncWorker worker = new SyncWorker(channel);
+        syncTaskQueueMap.put(channel.getId(), new LinkedBlockingQueue<SyncTask>());
+        syncWorkers.put(channel.getId(), worker);
+        worker.start();
+    }
+    
+    private void stopWorker(KaaDataChannel channel){
+        BlockingQueue<SyncTask> skippedTasks = syncTaskQueueMap.remove(channel.getId());
+        if(skippedTasks != null){
+            for(SyncTask task : skippedTasks){
+                LOG.info("Task skipped due to worker shutdown: {}", task);
+            }
+        }
+        SyncWorker worker = syncWorkers.remove(channel);
+        if(worker != null){
+            worker.shutdown();
+        }
+    }
+
+    private class SyncWorker extends Thread {
+        private final KaaDataChannel channel;
+        private volatile boolean stop;
+
+        private SyncWorker(KaaDataChannel channel) {
+            super();
+            this.channel = channel;
+        }
+
+        @Override
+        public void run() {
+            LOG.debug("Worker started");
+            while (!stop) {
+                try {
+                    BlockingQueue<SyncTask> taskQueue = syncTaskQueueMap.get(channel.getId());
+                    SyncTask task = taskQueue.take();
+                    List<SyncTask> additionalTasks = new ArrayList<SyncTask>();
+                    if (taskQueue.drainTo(additionalTasks) > 0) {
+                        task = SyncTask.merge(task, additionalTasks);
+                    }
+                    if (task.isAll()) {
+                        LOG.debug("Going to invoke syncAll method on channel {}", channel);
+                        channel.syncAll();
+                    } else if (task.isAckOnly()) {
+                        LOG.debug("Going to invoke syncAck method on channel {}", channel);
+                        channel.syncAck(task.getTypes());
+                    } else {
+                        LOG.debug("Going to invoke sync method on channel {}", channel);
+                        channel.sync(task.getTypes());
+                    }
+                } catch (InterruptedException e) {
+                    LOG.debug("Worker is interrupted", e);
+                }
+            }
+            LOG.debug("Worker stopped");
+        }
+        
+        public void shutdown(){
+            this.stop = true;
+        }
+    }
 }

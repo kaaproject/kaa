@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultBootstrapChannel extends AbstractHttpChannel {
 
-    public static final Logger LOG = LoggerFactory //NOSONAR
+    public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(DefaultBootstrapChannel.class);
 
     private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<TransportType, ChannelDirection>();
@@ -61,10 +61,11 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
 
     private void processTypes(Map<TransportType, ChannelDirection> types) throws Exception {
         byte[] requestBodyRaw = getMultiplexer().compileRequest(types);
-        byte [] decodedResponse = null;
+        byte[] decodedResponse = null;
         synchronized (this) {
-            LinkedHashMap<String, byte[]> requestEntity = HttpRequestCreator.createBootstrapHttpRequest(requestBodyRaw, getHttpClient().getEncoderDecoder());
-            byte [] responseDataRaw = getHttpClient().executeHttpRequest("", requestEntity, false);
+            LinkedHashMap<String, byte[]> requestEntity = HttpRequestCreator.createBootstrapHttpRequest(requestBodyRaw, getHttpClient()
+                    .getEncoderDecoder());
+            byte[] responseDataRaw = getHttpClient().executeHttpRequest("", requestEntity, false);
             decodedResponse = getHttpClient().getEncoderDecoder().decodeData(responseDataRaw);
         }
         getDemultiplexer().processResponse(decodedResponse);
@@ -86,8 +87,7 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
     }
 
     @Override
-    protected Runnable createChannelRunnable(
-            Map<TransportType, ChannelDirection> typeMap) {
+    protected Runnable createChannelRunnable(Map<TransportType, ChannelDirection> typeMap) {
         return new BootstrapRunnable();
     }
 

@@ -27,8 +27,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
-import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.LogTransport;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus;
 import org.kaaproject.kaa.common.endpoint.gen.LogEntry;
@@ -186,9 +186,9 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     private class DefaultLogUploadController implements LogFailoverCommand {
         @Override
         public void switchAccessPoint() {
-            KaaDataChannel channel = channelManager.getChannelByTransportType(TransportType.LOGGING);
-            if (channel != null) {
-                channelManager.onServerFailed(channel.getServer());
+            TransportConnectionInfo server = channelManager.getActiveServer(TransportType.LOGGING);
+            if (server != null) {
+                channelManager.onServerFailed(server);
             } else {
                 LOG.warn("Failed to switch Operation server. No channel is used for logging transport");
             }

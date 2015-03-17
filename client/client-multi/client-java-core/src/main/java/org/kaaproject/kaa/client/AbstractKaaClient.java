@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.client.bootstrap.DefaultBootstrapManager;
@@ -137,8 +136,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     protected final ConfigurationManager configurationManager;
     protected final AbstractLogCollector logCollector;
 
-    private final ExecutorService lifecycleTasksExecutor = Executors.newSingleThreadExecutor();
-
     private final DefaultNotificationManager notificationManager;
     private final DefaultProfileManager profileManager;
 
@@ -209,6 +206,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         endpointRegistrationManager = new DefaultEndpointRegistrationManager(kaaClientState, userTransport, profileTransport);
 
         channelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers);
+        channelManager.setConnectivityChecker(context.createConnectivityChecker());
+
         logCollector = new DefaultLogCollector(logTransport, channelManager);
 
         KaaDataChannel bootstrapChannel = new DefaultBootstrapChannel(this, kaaClientState);
@@ -257,8 +256,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
             transport.setChannelManager(channelManager);
             transport.setClientState(kaaClientState);
         }
-
-        channelManager.setConnectivityChecker(context.createConnectivityChecker());
     }
 
     public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
@@ -267,7 +264,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void start() {
-        lifecycleTasksExecutor.submit(new Runnable() {
+        context.getExecutorContext().init();
+        getLifeCycleExecutor().submit(new Runnable() {
             @Override
             public void run() {
                 LOG.debug("Client startup initiated");
@@ -301,7 +299,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void stop() {
-        lifecycleTasksExecutor.submit(new Runnable() {
+        getLifeCycleExecutor().submit(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -320,12 +318,12 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 }
             }
         });
-        lifecycleTasksExecutor.shutdown();
+        context.getExecutorContext().stop();
     }
 
     @Override
     public void pause() {
-        lifecycleTasksExecutor.submit(new Runnable() {
+        getLifeCycleExecutor().submit(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -346,7 +344,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     @Override
     public void resume() {
-        lifecycleTasksExecutor.submit(new Runnable() {
+        getLifeCycleExecutor().submit(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -362,6 +360,10 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 }
             }
         });
+    }
+
+    private ExecutorService getLifeCycleExecutor() {
+        return context.getExecutorContext().getLifeCycleExecutor();
     }
 
     @Override

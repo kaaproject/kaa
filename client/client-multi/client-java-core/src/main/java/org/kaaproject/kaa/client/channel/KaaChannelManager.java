@@ -153,7 +153,7 @@ public interface KaaChannelManager {
      * @see KaaDataChannel
      *
      */
-    KaaDataChannel getChannelByTransportType(TransportType type);
+//    KaaDataChannel getChannelByTransportType(TransportType type);
 
     /**
      * Retrieves channel by the unique channel id.
@@ -179,4 +179,12 @@ public interface KaaChannelManager {
      * Clears the list of channels.
      */
     void clearChannelList();
+    
+    void sync(TransportType type);
+
+    void syncAck(TransportType type);
+    
+    void syncAll(TransportType type);
+
+    TransportConnectionInfo getActiveServer(TransportType logging);
 }

@@ -44,10 +44,8 @@ public class DefaultNotificationTransportTest {
 
     @Test(expected = ChannelRuntimeException.class)
     public void testSyncNegative() {
-        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         NotificationTransport transport = new DefaultNotificationTransport();
-        transport.setChannelManager(channelManager);
         transport.setClientState(clientState);
         transport.sync();
     }
@@ -56,15 +54,13 @@ public class DefaultNotificationTransportTest {
     public void testSync() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
-        KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channelManager.getChannelByTransportType(TransportType.NOTIFICATION)).thenReturn(channel);
-
+        
         NotificationTransport transport = new DefaultNotificationTransport();
         transport.setChannelManager(channelManager);
         transport.setClientState(clientState);
         transport.sync();
 
-        Mockito.verify(channel, Mockito.times(1)).sync(TransportType.NOTIFICATION);
+        Mockito.verify(channelManager, Mockito.times(1)).sync(TransportType.NOTIFICATION);
     }
 
     @Test
@@ -111,8 +107,6 @@ public class DefaultNotificationTransportTest {
         response1.setResponseStatus(SyncResponseStatus.DELTA);
 
         KaaChannelManager channelManagerMock = Mockito.mock(KaaChannelManager.class);
-        KaaDataChannel channelMock = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channelManagerMock.getChannelByTransportType(TransportType.NOTIFICATION)).thenReturn(channelMock);
 
         NotificationTransport transport = new DefaultNotificationTransport();
         transport.setChannelManager(channelManagerMock);
@@ -154,8 +148,6 @@ public class DefaultNotificationTransportTest {
         String topicId2 = "topicId2";
 
         KaaChannelManager channelManagerMock = Mockito.mock(KaaChannelManager.class);
-        KaaDataChannel channelMock = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channelManagerMock.getChannelByTransportType(TransportType.NOTIFICATION)).thenReturn(channelMock);
 
         NotificationTransport transport = new DefaultNotificationTransport();
         transport.setChannelManager(channelManagerMock);
@@ -200,8 +192,6 @@ public class DefaultNotificationTransportTest {
         response.setResponseStatus(SyncResponseStatus.DELTA);
 
         KaaChannelManager channelManagerMock = Mockito.mock(KaaChannelManager.class);
-        KaaDataChannel channelMock = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channelManagerMock.getChannelByTransportType(TransportType.NOTIFICATION)).thenReturn(channelMock);
 
         NotificationTransport transport = new DefaultNotificationTransport();
         transport.setChannelManager(channelManagerMock);

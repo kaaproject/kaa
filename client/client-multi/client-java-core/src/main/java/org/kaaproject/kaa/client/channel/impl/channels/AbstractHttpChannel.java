@@ -16,8 +16,10 @@
 
 package org.kaaproject.kaa.client.channel.impl.channels;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -38,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractHttpChannel implements KaaDataChannel {
-    public static final Logger LOG = LoggerFactory //NOSONAR
+    public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(AbstractHttpChannel.class);
 
     private IPTransportInfo currentServer;
@@ -64,7 +66,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
         LOG.info("Creating a new executor for channel {}", getId());
         return Executors.newSingleThreadExecutor();
     }
-    
+
     @Override
     public TransportProtocolId getTransportProtocolId() {
         return TransportProtocolIdConstants.HTTP_TRANSPORT_ID;
@@ -72,6 +74,11 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
 
     @Override
     public synchronized void sync(TransportType type) {
+        sync(Collections.singleton(type));
+    }
+
+    @Override
+    public synchronized void sync(Set<TransportType> types) {
         if (isShutdown) {
             LOG.info("Can't sync. Channel {} is down", getId());
             return;
@@ -80,22 +87,29 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
             LOG.info("Can't sync. Channel {} is paused", getId());
             return;
         }
-        LOG.info("Processing sync {} for channel {}", type, getId());
-        if (multiplexer != null && demultiplexer != null) {
-            if (currentServer != null) {
-                ChannelDirection direction = getSupportedTransportTypes().get(type);
-                if (direction != null) {
-                    Map<TransportType, ChannelDirection> typeMap = new HashMap<>(1);
-                    typeMap.put(type, direction);
-                    executor.submit(createChannelRunnable(typeMap));
-                } else {
-                    LOG.error("Unsupported type {} for channel {}", type, getId());
-                }
+        if (multiplexer == null) {
+            LOG.warn("Can't sync. Channel {} multiplexer is not set", getId());
+            return;
+        }
+        if (demultiplexer == null) {
+            LOG.warn("Can't sync. Channel {} demultiplexer is not set", getId());
+            return;
+        }
+        if (currentServer == null) {
+            lastConnectionFailed = true;
+            LOG.warn("Can't sync. Server is null");
+        }
+        Map<TransportType, ChannelDirection> typeMap = new HashMap<>(1);
+        for (TransportType type : types) {
+            LOG.info("Processing sync {} for channel {}", type, getId());
+            ChannelDirection direction = getSupportedTransportTypes().get(type);
+            if (direction != null) {
+                typeMap.put(type, direction);
             } else {
-                lastConnectionFailed = true;
-                LOG.warn("Can't sync. Server is null");
+                LOG.error("Unsupported type {} for channel {}", type, getId());
             }
         }
+        executor.submit(createChannelRunnable(typeMap));
     }
 
     @Override
@@ -121,6 +135,11 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
 
     @Override
     public void syncAck(TransportType type) {
+        syncAck(Collections.singleton(type));
+    }
+    
+    @Override
+    public void syncAck(Set<TransportType> types) {
         LOG.info("Sync ack message is ignored for Channel {}", getId());
     }
 
@@ -149,14 +168,15 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
         }
         if (server != null) {
             this.currentServer = new IPTransportInfo(server);
-            this.httpClient = client.createHttpClient(currentServer.getURL() + getURLSufix(), state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
+            this.httpClient = client.createHttpClient(currentServer.getURL() + getURLSufix(), state.getPrivateKey(), state.getPublicKey(),
+                    currentServer.getPublicKey());
             if (lastConnectionFailed && !isPaused) {
                 lastConnectionFailed = false;
                 syncAll();
             }
         }
     }
-    
+
     protected abstract String getURLSufix();
 
     @Override
@@ -165,7 +185,8 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     }
 
     @Override
-    public void setConnectivityChecker(ConnectivityChecker checker) {}
+    public void setConnectivityChecker(ConnectivityChecker checker) {
+    }
 
     @Override
     public void shutdown() {
