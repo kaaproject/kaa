@@ -53,6 +53,11 @@ public:
     virtual void onProfileResponse(const ProfileSyncResponse& response) = 0;
 
     /**
+     * Processes the profile resync request received the Operations server.
+     */
+    virtual void onProfileResync() = 0;
+
+    /**
      * Sets the given Profile manager.
      *
      * @param manager the Profile manager to be set.

@@ -215,7 +215,7 @@ public:
     static std::string ProfileSyncResponseToString(const SyncResponse::profileSyncResponse_t& response) {
         std::ostringstream ss;
         if (!response.is_null()) {
-            ss << KVSTRING(profileBody, SyncResponseStatusToString(response.get_ProfileSyncResponse().responseStatus));
+            ss << KVSTRING(responseStatus, SyncResponseStatusToString(response.get_ProfileSyncResponse().responseStatus));
         } else {
             ss << "null";
         }
@@ -279,7 +279,7 @@ public:
     static std::string AttachUserResponseToString(const UserSyncResponse::userAttachResponse_t& response) {
         std::ostringstream ss;
         if (!response.is_null()) {
-            ss << KVSTRING(result, RequestResultTypeToString(response.get_UserAttachResponse().result));
+            ss << KVSTRING(result, SyncResponseResultTypeToString(response.get_UserAttachResponse().result));
         } else {
             ss << "null";
         }
@@ -553,7 +553,7 @@ public:
             for (auto it = container.begin(); it != container.end(); ++it) {
                 stream << "{id: " << it->requestId << ", ";
                 stream << "token: " << (it->endpointKeyHash.is_null() ? "null" : it->endpointKeyHash.get_string()) << ", ";
-                stream << "type: " << RequestResultTypeToString(it->result) << "}";
+                stream << "type: " << SyncResponseResultTypeToString(it->result) << "}";
                 if ((it + 1) != container.end()) { stream << ", "; }
             }
             stream << "]";
@@ -572,7 +572,7 @@ public:
             stream << "[";
             for (auto it = container.begin(); it != container.end(); ++it) {
                 stream << "{id: " << it->requestId << ", ";
-                stream << "epHash: " << RequestResultTypeToString(it->result) << "}";
+                stream << "epHash: " << SyncResponseResultTypeToString(it->result) << "}";
                 if ((it + 1) != container.end()) { stream << ", "; }
             }
             stream << "]";
@@ -583,7 +583,7 @@ public:
         return stream.str();
     }
 
-    static std::string RequestResultTypeToString(SyncResponseResultType type) {
+    static std::string SyncResponseResultTypeToString(SyncResponseResultType type) {
         std::string description;
 
         switch (type) {
@@ -663,7 +663,7 @@ public:
             stream << "[";
             for (auto it = container.begin(); it != container.end(); ++it) {
                 stream << "{requestId: " << it->requestId << ", ";
-                stream << "res: " << RequestResultTypeToString(it->result) << ", ";
+                stream << "res: " << SyncResponseResultTypeToString(it->result) << ", ";
                 stream << "listeners: [";
 
                 if (!it->listeners.is_null()) {
@@ -736,8 +736,8 @@ public:
                     }
 
                     stream << "{ requestId: " << deliveryStatuses[i].requestId
-                           << ", result: " << RequestResultTypeToString(deliveryStatuses[i].result)
-                           << ", code: " << (deliveryStatuses[i].errorCode.is_null() ? "" :
+                           << ", result: " << SyncResponseResultTypeToString(deliveryStatuses[i].result)
+                           << ", code: " << (deliveryStatuses[i].errorCode.is_null() ? "null" :
                            LogDeliveryErrorCodeToString(deliveryStatuses[i].errorCode.get_LogDeliveryErrorCode())) << "}";
                 }
                 return stream.str();

@@ -59,7 +59,7 @@ do
 
 case "$cmd" in
     build)
-    cd build && make && cd ..
+    cd build && make -j4 && cd ..
     ;;
 
     install)
