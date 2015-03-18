@@ -338,7 +338,7 @@ void KaaClient::addNotificationListener(INotificationListenerPtr listener) {
 }
 void KaaClient::addNotificationListener(const std::string& topidId, INotificationListenerPtr listener) {
 #ifdef KAA_USE_NOTIFICATIONS
-    notificationManager_->addNotificationListener(topidId,listener);
+    notificationManager_->addNotificationListener(topidId, listener);
 #else
     throw KaaException("Failed to add notification listener. Notification subsystem is disabled");
 #endif
@@ -354,7 +354,7 @@ void KaaClient::removeNotificationListener(INotificationListenerPtr listener) {
 
 void KaaClient::removeNotificationListener(const std::string& topidId, INotificationListenerPtr listener) {
 #ifdef KAA_USE_NOTIFICATIONS
-    notificationManager_->removeNotificationListener(topidId,listener);
+    notificationManager_->removeNotificationListener(topidId, listener);
 #else
     throw KaaException("Failed to remove notification listener. Notification subsystem is disabled");
 #endif
@@ -362,7 +362,7 @@ void KaaClient::removeNotificationListener(const std::string& topidId, INotifica
 
 void KaaClient::subscribeToTopic(const std::string& id, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
-    notificationManager_->subscribeToTopic(id,forceSync);
+    notificationManager_->subscribeToTopic(id, forceSync);
 #else
     throw KaaException("Failed to subscribe to topics. Notification subsystem is disabled");
 #endif
@@ -370,14 +370,14 @@ void KaaClient::subscribeToTopic(const std::string& id, bool forceSync) {
 
 void KaaClient::subscribeToTopics(const std::list<std::string>& idList, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
-    notificationManager_->subscribeToTopics(idList,forceSync);
+    notificationManager_->subscribeToTopics(idList, forceSync);
 #else
     throw KaaException("Failed to subscribe to topics. Notification subsystem is disabled");
 #endif
 }
 void KaaClient::unsubscribeFromTopic(const std::string& id, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
-    notificationManager_->unsubscribeFromTopic(id,forceSync);
+    notificationManager_->unsubscribeFromTopic(id, forceSync);
 #else
     throw KaaException("Failed to unsubscribe to topics. Notification subsystem is disabled");
 #endif
@@ -385,7 +385,7 @@ void KaaClient::unsubscribeFromTopic(const std::string& id, bool forceSync) {
 
 void KaaClient::unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync) {
 #ifdef KAA_USE_NOTIFICATIONS
-    notificationManager_->unsubscribeFromTopics(idList,forceSync);
+    notificationManager_->unsubscribeFromTopics(idList, forceSync);
 #else
     throw KaaException("Failed to unsubscribe to topics. Notification subsystem is disabled");
 #endif
@@ -401,7 +401,7 @@ void KaaClient::syncTopicsList() {
 void KaaClient::attachEndpoint(const std::string&  endpointAccessToken,
                     IAttachEndpointCallbackPtr listener) {
 #ifdef KAA_USE_EVENTS
-    return registrationManager_->attachEndpoint(endpointAccessToken,listener);
+    return registrationManager_->attachEndpoint(endpointAccessToken, listener);
 #else
     throw KaaException("Failed to attach endpoint. Event subsystem is disabled");
 #endif
@@ -410,7 +410,7 @@ void KaaClient::attachEndpoint(const std::string&  endpointAccessToken,
 void KaaClient::detachEndpoint(const std::string&  endpointKeyHash
                               , IDetachEndpointCallbackPtr listener) {
 #ifdef KAA_USE_EVENTS
-    return registrationManager_->detachEndpoint(endpointKeyHash,listener);
+    return registrationManager_->detachEndpoint(endpointKeyHash, listener);
 #else
     throw KaaException("Failed to detach endpoint. Event subsystem is disabled");
 #endif
@@ -420,7 +420,7 @@ void KaaClient::attachUser(const std::string& userExternalId
                           , const std::string& userAccessToken
                           , IUserAttachCallbackPtr listener) {
 #ifdef KAA_USE_EVENTS
-    return registrationManager_->attachUser(userExternalId,userAccessToken,listener);
+    return registrationManager_->attachUser(userExternalId, userAccessToken, listener);
 #else
     throw KaaException("Failed to attach user. Event subsystem is disabled");
 #endif
@@ -431,7 +431,7 @@ void KaaClient::attachUser(const std::string& userExternalId
                           , const std::string& userVerifierToken
                           , IUserAttachCallbackPtr listener) {
 #ifdef KAA_USE_EVENTS
-    return registrationManager_->attachUser(userExternalId,userAccessToken,userVerifierToken,listener);
+    return registrationManager_->attachUser(userExternalId, userAccessToken, userVerifierToken, listener);
 #else
     throw KaaException("Failed to attach user. Event subsystem is disabled");
 #endif
@@ -464,7 +464,7 @@ EventFamilyFactory& KaaClient::getEventFamilyFactory()
 
 std::int32_t KaaClient::findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListeners* listener) {
 #ifdef KAA_USE_EVENTS
-    return eventManager_->findEventListeners(eventFQNs,listener);
+    return eventManager_->findEventListeners(eventFQNs, listener);
 #else
     throw KaaException("Failed to find event listeners. Event subsystem is disabled");
 #endif
