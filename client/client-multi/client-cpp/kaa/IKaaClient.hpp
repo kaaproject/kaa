@@ -260,7 +260,7 @@ public:
      *
      * @param storage User-defined persistence routines.
      * @see IConfigurationStorage
-        */
+     */
     virtual void setConfigurationStorage(IConfigurationStoragePtr storage) = 0;
 
     /**
