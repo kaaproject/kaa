@@ -92,8 +92,8 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         LogBlock group = null;
         synchronized (storage) {
             isUploading = false;
-            if (storage.getStatus().getConsumedVolume() == 0) {
-                LOG.debug("Log group is null: storage is empty");
+            if (storage.getStatus().getRecordCount() == 0) {
+                LOG.debug("Storage is empty");
                 return;
             }
             group = storage.getRecordBlock(strategy.getBatchSize());
