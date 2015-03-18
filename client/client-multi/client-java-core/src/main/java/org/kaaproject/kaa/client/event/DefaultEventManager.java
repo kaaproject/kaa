@@ -27,6 +27,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.kaaproject.kaa.client.channel.EventTransport;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.transact.TransactionId;
 import org.kaaproject.kaa.common.endpoint.gen.Event;
@@ -52,6 +53,7 @@ public class DefaultEventManager implements EventManager {
     private final Map<Integer, EventListenersRequestBinding> eventListenersRequests = new HashMap<Integer, EventListenersRequestBinding>();
     private final EventTransport transport;
     private final KaaClientState state;
+    private final ExecutorContext executorContext;
 
     private Boolean isEngaged = false;
     private final Map<TransactionId, List<Event>> transactions = new HashMap<>();
@@ -86,9 +88,10 @@ public class DefaultEventManager implements EventManager {
         }
     }
 
-    public DefaultEventManager(KaaClientState state, EventTransport transport) {
+    public DefaultEventManager(KaaClientState state, ExecutorContext executorContext, EventTransport transport) {
         this.state = state;
         this.transport = transport;
+        this.executorContext = executorContext;
     }
 
     @Override
@@ -151,13 +154,18 @@ public class DefaultEventManager implements EventManager {
     }
 
     @Override
-    public void onGenericEvent(String eventFqn, byte[] data, String source) {
+    public void onGenericEvent(final String eventFqn, final byte[] data, final String source) {
         LOG.info("Received event [eventClassFQN: {}]", eventFqn);
-        for (EventFamily family : registeredEventFamilies) {
+        for (final EventFamily family : registeredEventFamilies) {
             LOG.info("Lookup event fqn {} in family {}", eventFqn, family);
             if (family.getSupportedEventFQNs().contains(eventFqn)) {
                 LOG.info("Event fqn {} found in family {}", eventFqn, family);
-                family.onGenericEvent(eventFqn, data, source);
+                executorContext.getCallbackExecutor().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        family.onGenericEvent(eventFqn, data, source);
+                    }
+                });
             }
         }
     }

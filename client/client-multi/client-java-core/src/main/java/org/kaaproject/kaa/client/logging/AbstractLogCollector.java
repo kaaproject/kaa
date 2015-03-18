@@ -29,7 +29,9 @@ import java.util.concurrent.TimeUnit;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.common.TransportType;
+import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode;
 import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus;
 import org.kaaproject.kaa.common.endpoint.gen.LogEntry;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
@@ -51,6 +53,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     // TODO: reuse this scheduler in other subsystems
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
+    protected final ExecutorContext executorContext;
     private final LogTransport transport;
     private final Map<Integer, Long> timeoutMap = new LinkedHashMap<>();
     private final KaaChannelManager channelManager;
@@ -61,12 +64,13 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     private volatile boolean isUploading = false;
 
-    public AbstractLogCollector(LogTransport transport, KaaChannelManager manager) {
+    public AbstractLogCollector(LogTransport transport, ExecutorContext executorContext, KaaChannelManager manager) {
         this.strategy = new DefaultLogUploadStrategy();
         this.storage = new MemoryLogStorage(strategy.getBatchSize());
         this.controller = new DefaultLogUploadController();
         this.channelManager = manager;
         this.transport = transport;
+        this.executorContext = executorContext;
     }
 
     @Override
@@ -124,7 +128,14 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                     storage.removeRecordBlock(response.getRequestId());
                 } else {
                     storage.notifyUploadFailed(response.getRequestId());
-                    strategy.onFailure(controller, response.getErrorCode());
+                    final LogDeliveryErrorCode errorCode = response.getErrorCode();
+                    final LogFailoverCommand controller = this.controller;
+                    executorContext.getCallbackExecutor().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            strategy.onFailure(controller, errorCode);
+                        }
+                    });
                 }
 
                 timeoutMap.remove(response.getRequestId());
@@ -173,7 +184,13 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
             }
 
             timeoutMap.clear();
-            strategy.onTimeout(controller);
+            final LogFailoverCommand controller = this.controller;
+            executorContext.getCallbackExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    strategy.onTimeout(controller);
+                }
+            });
         }
 
         return isTimeout;

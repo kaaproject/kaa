@@ -28,7 +28,6 @@ public class SingleThreadExecutorContext extends AbstractExecutorContext impleme
     
     public SingleThreadExecutorContext(){
         super();
-        
     }
 
     @Override

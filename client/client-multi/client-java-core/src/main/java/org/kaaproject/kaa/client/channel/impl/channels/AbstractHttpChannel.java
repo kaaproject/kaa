@@ -47,7 +47,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     private final AbstractKaaClient client;
     private final KaaClientState state;
 
-    private ExecutorService executor;
+    private volatile ExecutorService executor;
 
     private volatile boolean lastConnectionFailed = false;
     private volatile boolean isShutdown = false;

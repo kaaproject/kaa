@@ -21,6 +21,7 @@ import javax.annotation.Generated;
 
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.schema.base.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,22 +34,27 @@ import org.slf4j.LoggerFactory;
 @Generated("DefaultLogCollector.java.template")
 public class DefaultLogCollector extends AbstractLogCollector{
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLogCollector.class);
-    
-    public DefaultLogCollector(LogTransport transport, KaaChannelManager manager) {
-        super(transport, manager);
+
+    public DefaultLogCollector(LogTransport transport, ExecutorContext executorContext, KaaChannelManager manager) {
+        super(transport, executorContext, manager);
     }
 
     @Override
-    public synchronized void addLogRecord(Log record) {
-        try {
-            storage.addLogRecord(new LogRecord(record));
-        } catch (IOException e) {
-            LOG.warn("Can't serialize log record {}", record);
-        }
+    public synchronized void addLogRecord(final Log record) {
+        executorContext.getApiExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    storage.addLogRecord(new LogRecord(record));
+                } catch (IOException e) {
+                    LOG.warn("Can't serialize log record {}", record);
+                }
 
-        if (!isDeliveryTimeout()) {
-            uploadIfNeeded();
-        }
+                if (!isDeliveryTimeout()) {
+                    uploadIfNeeded();
+                }
+            }
+        });
     }
 
 }
