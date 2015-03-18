@@ -77,19 +77,20 @@ int main()
     clientProfile.os = OS::Linux;
     clientProfile.os_version = "Client OS Version";
 
-    kaaClient.getProfileManager().setProfileContainer(std::make_shared<UserProfileContainer>(clientProfile));
+    kaaClient.setProfileContainer(std::make_shared<UserProfileContainer>(clientProfile));
 
     // Setupping configuration subunit
 
     IConfigurationStoragePtr storage(std::make_shared<FileConfigurationStorage>("configuration.bin"));
-    kaaClient.getConfigurationPersistenceManager().setConfigurationStorage(storage);
+    kaaClient.setConfigurationStorage(storage);
     UserConfigurationReceiver receiver;
-    kaaClient.getConfigurationManager().subscribeForConfigurationChanges(receiver);
+    kaaClient.addConfigurationListener(receiver);
 
     Kaa::start();
 
     for (int i = 0; i < 100; ++i)
         std::this_thread::sleep_for(std::chrono::seconds(1));
+
 
     Kaa::stop();
 
