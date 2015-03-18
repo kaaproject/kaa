@@ -17,35 +17,29 @@
 #ifndef IKAACLIENT_HPP_
 #define IKAACLIENT_HPP_
 
-#include "kaa/ClientStatus.hpp"
-#include "kaa/event/EventManager.hpp"
-#include "kaa/profile/IProfileManager.hpp"
-#include "kaa/bootstrap/IBootstrapManager.hpp"
-#include "kaa/event/gen/EventFamilyFactory.hpp"
-#include "kaa/profile/ProfileManager.hpp"
-#include "kaa/channel/SyncDataProcessor.hpp"
-#include "kaa/notification/NotificationManager.hpp"
-#include "kaa/event/registration/EndpointRegistrationManager.hpp"
-#include "kaa/configuration/ConfigurationProcessor.hpp"
-#include "kaa/configuration/manager/ConfigurationManager.hpp"
-#include "kaa/configuration/storage/ConfigurationPersistenceManager.hpp"
-#include "kaa/log/LogCollector.hpp"
+#include "kaa/profile/IProfileContainer.hpp"
+#include "kaa/notification/INotificationTopicListListener.hpp"
+#include "kaa/notification/INotificationProcessor.hpp"
+#include "kaa/notification/INotificationListener.hpp"
+#include "kaa/configuration/storage/IConfigurationStorage.hpp"
+#include "kaa/configuration/gen/ConfigurationDefinitions.hpp"
+#include "kaa/event/registration/IAttachEndpointCallback.hpp"
+#include "kaa/event/registration/IDetachEndpointCallback.hpp"
+#include "kaa/event/registration/IUserAttachCallback.hpp"
+#include "kaa/event/registration/IAttachStatusListener.hpp"
+#include "kaa/log/ILogCollector.hpp"
+
 
 namespace kaa {
 
-class IDeltaManager;
-class IProfileManager;
-class EventFamilyFactory;
-class INotificationManager;
-class IConfigurationManager;
-class IEventListenersResolver;
-class ISchemaPersistenceManager;
-class IEndpointRegistrationManager;
-class IConfigurationPersistenceManager;
+class EventFamilyFactory;;
 class IKaaChannelManager;
 class ILogCollector;
 class IKaaDataMultiplexer;
 class IKaaDataDemultiplexer;
+class IFetchEventListeners;
+class IConfigurationReceiver;
+class KeyPair;
 
 /**
  * Interface for the Kaa client.
@@ -269,7 +263,7 @@ public:
         */
     virtual void setConfigurationStorage(IConfigurationStoragePtr storage) = 0;
 
-   /**
+    /**
      * @brief Attaches the specified endpoint to the user to which the current endpoint is attached.
      *
      *    @param[in] endpointAccessToken    The access token of the endpoint to be attached to the user.
@@ -282,7 +276,7 @@ public:
     virtual void attachEndpoint(const std::string&  endpointAccessToken
                                  , IAttachEndpointCallbackPtr listener = IAttachEndpointCallbackPtr()) = 0;
 
-   /**
+    /**
      * @brief Detaches the specified endpoint from the user to which the current endpoint is attached.
      *
      * @param[in] endpointKeyHash    The key hash of the endpoint to be detached from the user.
@@ -319,13 +313,13 @@ public:
                               , const std::string& userVerifierToken
                               , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr()) = 0;
 
-     /**
+    /**
      * @brief Sets listener to notify of the current endpoint is attached/detached by another one.
      *
      * @param[in] listener    Listener to notify of the attach status is changed.
      */
     virtual void setAttachStatusListener(IAttachStatusListenerPtr listener) = 0;
-     /**
+    /**
      * @brief Checks if the current endpoint is already attached to some user.
      *
      * @return TRUE if the current endpoint is attached, FALSE otherwise.
@@ -348,6 +342,11 @@ public:
     virtual void addLogRecord(const KaaUserLogRecord& record) = 0;
     virtual void setLogStorage(ILogStoragePtr storage) = 0;
     virtual void setLogUploadStrategy(ILogUploadStrategyPtr strategy) = 0;
+
+    /**
+     * Retrieves the Channel Manager
+     */
+    virtual IKaaChannelManager&                 getChannelManager() = 0;
     /**
      * Retrieves the client's public and private key.
      *
