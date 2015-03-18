@@ -191,6 +191,52 @@ size_t kaa_bytes_get_size(void *data)
 
 }
 
+kaa_bytes_t *kaa_fixed_move_create(const uint8_t *data, size_t data_len, destroy_fn destroy)
+{
+    return kaa_bytes_move_create(data, data_len, destroy);
+}
+
+kaa_bytes_t *kaa_fixed_copy_create(const uint8_t *data, size_t data_len)
+{
+    return kaa_bytes_copy_create(data, data_len);
+}
+
+void kaa_fixed_destroy(void *data)
+{
+    kaa_bytes_destroy(data);
+}
+
+void kaa_fixed_serialize(avro_writer_t writer, void *data)
+{
+    kaa_bytes_t *bytes = (kaa_bytes_t *)data;
+    KAA_RETURN_IF_NIL4(writer, bytes, bytes->buffer, bytes->size, );
+
+    avro_write(writer, (char *)bytes->buffer, bytes->size);
+}
+
+kaa_bytes_t *kaa_fixed_deserialize(avro_reader_t reader, void *context)
+{
+    KAA_RETURN_IF_NIL(reader, NULL);
+
+    kaa_bytes_t *bytes = (kaa_bytes_t *)KAA_MALLOC(sizeof(kaa_bytes_t));
+    KAA_RETURN_IF_NIL(bytes, NULL);
+    bytes->buffer = (uint8_t*)KAA_MALLOC((*(size_t *)context) * sizeof(uint8_t));
+    KAA_RETURN_IF_NIL(bytes->buffer, NULL);
+
+    avro_read(reader, (void *)bytes->buffer, (*(size_t *)context));
+    bytes->size = (*(size_t *)context);
+    bytes->destroy = kaa_data_destroy;
+
+    return bytes;
+}
+
+size_t kaa_fixed_get_size(void *data)
+{
+    kaa_bytes_t *bytes = (kaa_bytes_t *)data;
+    KAA_RETURN_IF_NIL3(bytes, bytes->buffer, bytes->size, 0);
+    return bytes->size;
+}
+
 void kaa_boolean_serialize(avro_writer_t writer, void *data)
 {
     KAA_RETURN_IF_NIL2(writer, data,);
@@ -328,7 +374,7 @@ void kaa_array_serialize(avro_writer_t writer, kaa_list_t *array, serialize_fn s
     KAA_RETURN_IF_NIL(writer, );
 
     if (array) {
-        int64_t element_count = kaa_list_get_size(array);
+        size_t element_count = kaa_list_get_size(array);
 
         if (element_count > 0) {
             avro_binary_encoding.write_long(writer, element_count);
@@ -344,7 +390,16 @@ void kaa_array_serialize(avro_writer_t writer, kaa_list_t *array, serialize_fn s
     avro_binary_encoding.write_long(writer, 0);
 }
 
-kaa_list_t *kaa_array_deserialize(avro_reader_t reader, deserialize_fn deserialize)
+static void *do_deserialize(avro_reader_t reader, deserialize_fn deserialize, void *context)
+{
+    if (context) {
+        return ((deserialize_w_ctx_fn)deserialize)(reader, context);
+    }
+
+    return ((deserialize_wo_ctx_fn)deserialize)(reader);
+}
+
+static kaa_list_t *kaa_array_deserialize(avro_reader_t reader, deserialize_fn deserialize, void *context)
 {
     KAA_RETURN_IF_NIL2(reader, deserialize, NULL);
 
@@ -360,10 +415,12 @@ kaa_list_t *kaa_array_deserialize(avro_reader_t reader, deserialize_fn deseriali
             avro_binary_encoding.read_long(reader, &temp);
         }
 
-        array = kaa_list_create(deserialize(reader));
+        if (!array) {
+            array = kaa_list_create(do_deserialize(reader, deserialize, context));
+        }
 
-        while (--element_count > 0) {
-            array = kaa_list_push_front(array, deserialize(reader));
+        while (element_count-- > 0) {
+            array = kaa_list_push_front(array, do_deserialize(reader, deserialize, context));
         }
 
         avro_binary_encoding.read_long(reader, &element_count);
@@ -372,9 +429,21 @@ kaa_list_t *kaa_array_deserialize(avro_reader_t reader, deserialize_fn deseriali
     return array;
 }
 
+kaa_list_t *kaa_array_deserialize_wo_ctx(avro_reader_t reader, deserialize_wo_ctx_fn deserialize)
+{
+    KAA_RETURN_IF_NIL2(reader, deserialize, NULL);
+    return kaa_array_deserialize(reader, deserialize, NULL);
+}
+
+kaa_list_t *kaa_array_deserialize_w_ctx(avro_reader_t reader, deserialize_w_ctx_fn deserialize, void *context)
+{
+    KAA_RETURN_IF_NIL3(reader, deserialize, context, NULL);
+    return kaa_array_deserialize(reader, deserialize, context);
+}
+
 size_t kaa_array_get_size(kaa_list_t *array, get_size_fn get_size)
 {
-    KAA_RETURN_IF_NIL2(array, get_size, 0);
+    KAA_RETURN_IF_NIL(get_size, 0);
 
     size_t array_size = 0;
     size_t count = 0;
@@ -386,8 +455,11 @@ size_t kaa_array_get_size(kaa_list_t *array, get_size_fn get_size)
         cursor = kaa_list_next(cursor);
     }
 
-    array_size += avro_long_get_size(count)
-                + avro_long_get_size(0);
+    if (count) {
+        array_size += avro_long_get_size(count);
+    }
+
+    array_size += avro_long_get_size(0);
 
     return array_size;
 }
