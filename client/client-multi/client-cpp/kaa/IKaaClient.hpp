@@ -19,7 +19,7 @@
 
 #include "kaa/profile/IProfileContainer.hpp"
 #include "kaa/notification/INotificationTopicListListener.hpp"
-#include "kaa/notification/INotificationProcessor.hpp"
+#include "kaa/notification/gen/NotificationDefinitions.hpp"
 #include "kaa/notification/INotificationListener.hpp"
 #include "kaa/configuration/storage/IConfigurationStorage.hpp"
 #include "kaa/configuration/gen/ConfigurationDefinitions.hpp"

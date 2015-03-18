@@ -19,13 +19,10 @@
 
 #include <vector>
 
-#include "kaa/gen/EndpointGen.hpp"
+#include "kaa/notification/gen/NotificationDefinitions.hpp"
 #include "kaa/notification/INotificationManager.hpp"
 
 namespace kaa {
-
-typedef std::vector<Topic>          Topics;
-typedef std::vector<Notification>   Notifications;
 
 /**
  *  Interface for listeners of both topic and notification list updates
