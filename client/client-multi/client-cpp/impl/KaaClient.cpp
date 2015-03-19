@@ -398,8 +398,8 @@ void KaaClient::syncTopicsList() {
 #endif
 }
 
-void KaaClient::attachEndpoint(const std::string&  endpointAccessToken,
-                    IAttachEndpointCallbackPtr listener) {
+void KaaClient::attachEndpoint(const std::string&  endpointAccessToken
+                              , IAttachEndpointCallbackPtr listener) {
 #ifdef KAA_USE_EVENTS
     return registrationManager_->attachEndpoint(endpointAccessToken, listener);
 #else
@@ -416,8 +416,7 @@ void KaaClient::detachEndpoint(const std::string&  endpointKeyHash
 #endif
 }
 
-void KaaClient::attachUser(const std::string& userExternalId
-                          , const std::string& userAccessToken
+void KaaClient::attachUser(const std::string& userExternalId, const std::string& userAccessToken
                           , IUserAttachCallbackPtr listener) {
 #ifdef KAA_USE_EVENTS
     return registrationManager_->attachUser(userExternalId, userAccessToken, listener);
@@ -426,10 +425,8 @@ void KaaClient::attachUser(const std::string& userExternalId
 #endif
 }
 
-void KaaClient::attachUser(const std::string& userExternalId
-                          , const std::string& userAccessToken
-                          , const std::string& userVerifierToken
-                          , IUserAttachCallbackPtr listener) {
+void KaaClient::attachUser(const std::string& userExternalId, const std::string& userAccessToken
+                          , const std::string& userVerifierToken, IUserAttachCallbackPtr listener) {
 #ifdef KAA_USE_EVENTS
     return registrationManager_->attachUser(userExternalId, userAccessToken, userVerifierToken, listener);
 #else

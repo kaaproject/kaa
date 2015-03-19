@@ -274,7 +274,7 @@ public:
      * @throw KaaException                  Some other failure has happened.
      */
     virtual void attachEndpoint(const std::string&  endpointAccessToken
-                                 , IAttachEndpointCallbackPtr listener = IAttachEndpointCallbackPtr()) = 0;
+                               , IAttachEndpointCallbackPtr listener = IAttachEndpointCallbackPtr()) = 0;
 
     /**
      * @brief Detaches the specified endpoint from the user to which the current endpoint is attached.
@@ -287,7 +287,7 @@ public:
      * @throw KaaException                  Some other failure has happened.
      */
     virtual void detachEndpoint(const std::string&  endpointKeyHash
-                                  , IDetachEndpointCallbackPtr listener = IDetachEndpointCallbackPtr()) = 0;
+                               , IDetachEndpointCallbackPtr listener = IDetachEndpointCallbackPtr()) = 0;
 
     /**
      * @brief Attaches the current endpoint to the specifier user. The user verification is carried out by the default verifier.
@@ -304,14 +304,11 @@ public:
      * @throw TransportNotFoundException    The Kaa SDK isn't fully initialized.
      * @throw KaaException                  Some other failure has happened.
      */
-    virtual void attachUser(const std::string& userExternalId
-                              , const std::string& userAccessToken
-                              , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr()) = 0;
+    virtual void attachUser(const std::string& userExternalId, const std::string& userAccessToken
+                           , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr()) = 0;
 
-    virtual void attachUser(const std::string& userExternalId
-                              , const std::string& userAccessToken
-                              , const std::string& userVerifierToken
-                              , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr()) = 0;
+    virtual void attachUser(const std::string& userExternalId, const std::string& userAccessToken
+                           , const std::string& userVerifierToken, IUserAttachCallbackPtr listener = IUserAttachCallbackPtr()) = 0;
 
     /**
      * @brief Sets listener to notify of the current endpoint is attached/detached by another one.
@@ -336,9 +333,7 @@ public:
      *
      * @return Request ID of submitted request
      */
-    virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs
-               , IFetchEventListeners* listener) = 0;
-
+    virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListeners* listener) = 0;
     virtual void addLogRecord(const KaaUserLogRecord& record) = 0;
     virtual void setLogStorage(ILogStoragePtr storage) = 0;
     virtual void setLogUploadStrategy(ILogUploadStrategyPtr strategy) = 0;
