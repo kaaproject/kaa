@@ -345,6 +345,7 @@ float *kaa_float_deserialize(avro_reader_t reader)
 
 size_t kaa_float_get_size(void *data)
 {
+    KAA_RETURN_IF_NIL(data, 0);
     return AVRO_FLOAT_SIZE;
 }
 
@@ -366,6 +367,7 @@ double *kaa_double_deserialize(avro_reader_t reader)
 
 size_t kaa_double_get_size(void *data)
 {
+    KAA_RETURN_IF_NIL(data, 0);
     return AVRO_DOUBLE_SIZE;
 }
 
@@ -417,6 +419,7 @@ static kaa_list_t *kaa_array_deserialize(avro_reader_t reader, deserialize_fn de
 
         if (!array) {
             array = kaa_list_create(do_deserialize(reader, deserialize, context));
+            --element_count;
         }
 
         while (element_count-- > 0) {
@@ -466,6 +469,7 @@ size_t kaa_array_get_size(kaa_list_t *array, get_size_fn get_size)
 
 void kaa_null_serialize(avro_writer_t writer, void *data)
 {
+
 }
 
 void *kaa_null_deserialize(avro_reader_t reader)
