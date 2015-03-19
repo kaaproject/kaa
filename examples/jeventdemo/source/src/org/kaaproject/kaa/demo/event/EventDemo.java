@@ -135,10 +135,10 @@ public class EventDemo {
             }
         });
 
-        //And then finding all listener listening to events in FQNs list
+        //Finding all listener listening to events in FQNs list
         kaaClient.findEventListeners(listenerFQNs, new FindEventListenersCallback() {
 
-            //Doing something with event listeners in case of success
+            //Sending some events in case of success
             @Override
             public void onEventListenersReceived(List<String> eventListeners) {
                 LOG.info("{} event listeners received", eventListeners.size());
