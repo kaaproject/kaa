@@ -21,8 +21,11 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -47,7 +50,43 @@ public class DefaultLogCollectorTest {
     public static void beforeSuite() {
         executorContext = Mockito.mock(ExecutorContext.class);
         executor = Executors.newSingleThreadExecutor();
-        Mockito.when(executorContext.getApiExecutor()).thenReturn(executor);
+        Mockito.when(executorContext.getApiExecutor()).thenReturn(new AbstractExecutorService() {
+
+            @Override
+            public void execute(Runnable command) {
+                command.run();
+            }
+
+            @Override
+            public List<Runnable> shutdownNow() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public void shutdown() {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public boolean isTerminated() {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            @Override
+            public boolean isShutdown() {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            @Override
+            public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+                // TODO Auto-generated method stub
+                return false;
+            }
+        });
         Mockito.when(executorContext.getCallbackExecutor()).thenReturn(executor);
     }
 
@@ -85,7 +124,6 @@ public class DefaultLogCollectorTest {
     public void testStorageStatusAffect() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
-
         AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
         LogStorage storage = Mockito.mock(LogStorage.class);
         logCollector.setStorage(storage);
@@ -169,8 +207,6 @@ public class DefaultLogCollectorTest {
         });
         logCollector.addLogRecord(record);
 
-        Thread.sleep(500);
-        
         Mockito.when(storage.getRecordBlock(Mockito.anyLong())).thenReturn(
                 new LogBlock(1, Arrays.asList(new LogRecord(record), new LogRecord(record), new LogRecord(record))));
 
