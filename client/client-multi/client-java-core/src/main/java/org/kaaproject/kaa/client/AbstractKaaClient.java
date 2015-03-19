@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -230,30 +231,27 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
         configurationManager = new ResyncConfigurationManager(properties);
 
-        initTransport(bootstrapTransport);
         profileTransport.setProfileManager(profileManager);
         profileTransport.setClientProperties(this.properties);
-        initTransport(profileTransport);
         eventTransport.setEventManager(eventManager);
-        initTransport(eventTransport);
         notificationTransport.setNotificationProcessor(notificationManager);
-        initTransport(notificationTransport);
         configurationTransport.setConfigurationHashContainer(configurationManager.getConfigurationHashContainer());
         configurationTransport.setConfigurationProcessor(configurationManager.getConfigurationProcessor());
         // TODO: this should be part of properties and provided by user during
         // SDK generation
         configurationTransport.setResyncOnly(true);
-        initTransport(configurationTransport);
         userTransport.setEndpointRegistrationProcessor(endpointRegistrationManager);
-        initTransport(userTransport);
         redirectionTransport.setBootstrapManager(bootstrapManager);
-        initTransport(logTransport);
         logTransport.setLogProcessor(logCollector);
+        initTransports(Arrays.asList(bootstrapTransport, profileTransport, eventTransport, notificationTransport, configurationTransport,
+                userTransport, logTransport));
     }
 
-    private void initTransport(KaaTransport transport) {
-        transport.setChannelManager(channelManager);
-        transport.setClientState(kaaClientState);
+    private void initTransports(List<KaaTransport> transports) {
+        for (KaaTransport transport : transports) {
+            transport.setChannelManager(channelManager);
+            transport.setClientState(kaaClientState);
+        }
     }
 
     public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {

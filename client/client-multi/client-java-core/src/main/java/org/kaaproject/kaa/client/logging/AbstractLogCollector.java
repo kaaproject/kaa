@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -56,7 +57,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     protected final ExecutorContext executorContext;
     private final LogTransport transport;
-    private final Map<Integer, Long> timeoutMap = new LinkedHashMap<>();
+    private final Map<Integer, Long> timeoutMap = new ConcurrentHashMap<>();
     private final KaaChannelManager channelManager;
 
     protected LogStorage storage;

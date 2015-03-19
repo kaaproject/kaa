@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
@@ -53,7 +54,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     private final Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers;
     private final Map<TransportProtocolId, TransportConnectionInfo> lastBSServers = new HashMap<>();
 
-    private final Map<String, BlockingQueue<SyncTask>> syncTaskQueueMap = new HashMap<String, BlockingQueue<SyncTask>>();
+    private final Map<String, BlockingQueue<SyncTask>> syncTaskQueueMap = new ConcurrentHashMap<String, BlockingQueue<SyncTask>>();
     private final Map<String, SyncWorker> syncWorkers = new HashMap<String, DefaultChannelManager.SyncWorker>();
 
     private ConnectivityChecker connectivityChecker;

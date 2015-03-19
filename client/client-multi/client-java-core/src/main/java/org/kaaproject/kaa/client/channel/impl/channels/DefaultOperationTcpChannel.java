@@ -20,11 +20,9 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
@@ -38,8 +36,8 @@ import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
-import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
@@ -94,7 +92,6 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     private volatile boolean isShutdown = false;
     private volatile boolean isPaused = false;
     private boolean isFirstResponseReceived = false;
-    private boolean isPendingSyncRequest = false;
 
     private KaaDataDemultiplexer demultiplexer;
     private KaaDataMultiplexer multiplexer;
@@ -106,8 +103,6 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private final int RECONNECT_TIMEOUT = 5; // in sec
     private ConnectivityChecker connectivityChecker;
-
-    private final List<TransportType> ackTypes = new ArrayList<TransportType>();
 
     private final Runnable openConnectionTask = new Runnable() {
         @Override
@@ -163,27 +158,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     demultiplexer.processResponse(resultBody);
                     demultiplexer.postProcess();
                 } catch (Exception e) {
-                    LOG.error("Failed to process response for channel [{}]", getId());
-                    LOG.error("Stack Trace: ", e);
+                    LOG.error("Failed to process response for channel [{}]", getId(), e);
                 }
-            }
-            synchronized (this) {
-                if (!isFirstResponseReceived) {
-                    LOG.info("First KaaSync message received and processed for channel [{}]", getId());
-                    isFirstResponseReceived = true;
-                    if (isPendingSyncRequest) {
-                        LOG.debug("There are pending requests for channel [{}] -> starting sync", getId());
-                        syncAll();
-                    }
-                } else if (ackTypes.size() > 0) {
-                    LOG.debug("Acknowledgment is pending for channel [{}] -> starting sync", getId());
-                    if (ackTypes.size() > 1) {
-                        syncAll();
-                    } else {
-                        sync(ackTypes.get(0));
-                    }
-                    ackTypes.clear();
-                }
+                isFirstResponseReceived = true;
             }
         }
     };
@@ -302,7 +279,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     private void sendConnect() throws Exception {
-        LOG.debug("Sending Connect from channel [{}]", getId());
+        LOG.debug("Sending Connect to channel [{}]", getId());
         byte[] body = multiplexer.compileRequest(getSupportedTransportTypes());
         byte[] requestBodyEncoded = encDec.encodeData(body);
         byte[] sessionKey = encDec.getEncodedSessionKey();
@@ -397,7 +374,6 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         }
         if (!isFirstResponseReceived) {
             LOG.info("Can't sync. Channel [{}] is waiting for CONNACK message + KAASYNC message", getId());
-            isPendingSyncRequest = true;
             return;
         }
         if (multiplexer == null) {
@@ -447,7 +423,6 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         }
         if (!isFirstResponseReceived) {
             LOG.info("Can't sync. Channel [{}] is waiting for CONNACK + KAASYNC message", getId());
-            isPendingSyncRequest = true;
             return;
         }
         LOG.info("Processing sync all for channel [{}]", getId());
@@ -468,13 +443,25 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     @Override
     public void syncAck(TransportType type) {
         LOG.info("Adding sync acknowledgement for type {} as a regular sync for channel [{}]", type, getId());
-        ackTypes.add(type);
+        syncAck(Collections.singleton(type));
     }
 
     @Override
     public void syncAck(Set<TransportType> types) {
-        for (TransportType type : types) {
-            syncAck(type);
+        synchronized (this) {
+            if (!isFirstResponseReceived) {
+                LOG.info("First KaaSync message received and processed for channel [{}]", getId());
+                isFirstResponseReceived = true;
+                LOG.debug("There are pending requests for channel [{}] -> starting sync", getId());
+                syncAll();
+            } else {
+                LOG.debug("Acknowledgment is pending for channel [{}] -> starting sync", getId());
+                if (types.size() == 1) {
+                    sync(types.iterator().next());
+                } else {
+                    syncAll();
+                }
+            }
         }
     }
 

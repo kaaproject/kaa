@@ -38,7 +38,7 @@ public class DefaultLogCollector extends AbstractLogCollector{
     }
 
     @Override
-    public synchronized void addLogRecord(final ${log_record_class} record) {
+    public void addLogRecord(final ${log_record_class} record) {
         executorContext.getApiExecutor().execute(new Runnable() {
             @Override
             public void run() {

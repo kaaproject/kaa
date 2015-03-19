@@ -238,8 +238,10 @@ public class DefaultChannelManagerTest {
         TransportProtocolId type = TransportProtocolIdConstants.TCP_TRANSPORT_ID;
         KaaDataChannel channel1 = Mockito.mock(KaaDataChannel.class);
         Mockito.when(channel1.getTransportProtocolId()).thenReturn(type);
+        Mockito.when(channel1.getId()).thenReturn("Channel1");
         KaaDataChannel channel2 = Mockito.mock(KaaDataChannel.class);
         Mockito.when(channel2.getTransportProtocolId()).thenReturn(type);
+        Mockito.when(channel2.getId()).thenReturn("Channel2");
 
         channelManager.addChannel(channel1);
         channelManager.addChannel(channel2);
@@ -253,6 +255,7 @@ public class DefaultChannelManagerTest {
 
         KaaDataChannel channel3 = Mockito.mock(KaaDataChannel.class);
         Mockito.when(channel3.getTransportProtocolId()).thenReturn(type);
+        Mockito.when(channel3.getId()).thenReturn("Channel3");
 
         channelManager.addChannel(channel3);
         Mockito.verify(channel3, Mockito.times(1)).setConnectivityChecker(checker);
