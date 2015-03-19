@@ -383,10 +383,9 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         KaaDataChannel channel = getChannel(type);
         BlockingQueue<SyncTask> queue = syncTaskQueueMap.get(channel.getId());
         if (queue != null) {
-            // TODO: create worker per channel;
             queue.offer(new SyncTask(type, ack, all));
         } else {
-            LOG.debug("Can't find queue for channel [{}]", channel.getId());
+            LOG.warn("Can't find queue for channel [{}]", channel.getId());
         }
     }
 
@@ -407,6 +406,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         }
         SyncWorker worker = syncWorkers.remove(channel);
         if (worker != null) {
+            LOG.debug("[{}] stopping worker", channel.getId());
             worker.shutdown();
         }
     }
@@ -422,30 +422,31 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
 
         @Override
         public void run() {
-            LOG.debug("Worker started");
+            LOG.debug("[{}] Worker started", channel.getId());
             while (!stop) {
                 try {
                     BlockingQueue<SyncTask> taskQueue = syncTaskQueueMap.get(channel.getId());
                     SyncTask task = taskQueue.take();
                     List<SyncTask> additionalTasks = new ArrayList<SyncTask>();
                     if (taskQueue.drainTo(additionalTasks) > 0) {
+                        LOG.debug("[{}] Merging task {} with {}", channel.getId(), task, additionalTasks);
                         task = SyncTask.merge(task, additionalTasks);
                     }
                     if (task.isAll()) {
-                        LOG.debug("Going to invoke syncAll method on channel {}", channel);
+                        LOG.debug("[{}] Going to invoke syncAll method for types {}", channel.getId(), task.getTypes());
                         channel.syncAll();
                     } else if (task.isAckOnly()) {
-                        LOG.debug("Going to invoke syncAck method on channel {}", channel);
+                        LOG.debug("[{}] Going to invoke syncAck method for types {}", channel.getId(), task.getTypes());
                         channel.syncAck(task.getTypes());
                     } else {
-                        LOG.debug("Going to invoke sync method on channel {}", channel);
+                        LOG.debug("[{}] Going to invoke sync method", channel.getId());
                         channel.sync(task.getTypes());
                     }
                 } catch (InterruptedException e) {
-                    LOG.debug("Worker is interrupted", e);
+                    LOG.debug("[{}] Worker is interrupted", channel.getId(), e);
                 }
             }
-            LOG.debug("Worker stopped");
+            LOG.debug("[{}] Worker stopped", channel.getId());
         }
 
         public void shutdown() {
