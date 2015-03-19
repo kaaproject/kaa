@@ -117,7 +117,7 @@ public class EventDemo {
         final ThermostatEventClassFamily tecf = eventFamilyFactory.getThermostatEventClassFamily();
 
         //Adding event listeners for family factory
-        tecf.addListener(new DefaultEventFamilyListener() {
+        tecf.addListener(new ThermostatEventClassFamily.Listener() {
 
             @Override
             public void onEvent(ChangeDegreeRequest changeDegreeRequest, String senderId) {
@@ -132,6 +132,7 @@ public class EventDemo {
             @Override
             public void onEvent(ThermostatInfoRequest thermostatInfoRequest, String senderId) {
                 LOG.info("ThermostatInfoRequest event received! sender: {}", senderId);
+                tecf.sendEvent(new ThermostatInfoResponse(), senderId);
             }
         });
 
