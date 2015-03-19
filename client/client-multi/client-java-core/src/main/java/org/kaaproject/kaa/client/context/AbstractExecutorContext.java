@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public abstract class AbstractExecutorContext implements ExecutorContext {
     }
 
     protected void shutdownExecutor(ExecutorService executor) {
-        if(executor == null){
+        if (executor == null) {
             LOG.warn("Can't shutdown empty executor");
             return;
         }

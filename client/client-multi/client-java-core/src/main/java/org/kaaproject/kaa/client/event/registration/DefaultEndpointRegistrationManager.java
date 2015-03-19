@@ -67,7 +67,8 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     private volatile ProfileTransport profileTransport;
     private final ExecutorContext executorContext;
 
-    public DefaultEndpointRegistrationManager(KaaClientState state, ExecutorContext executorContext, UserTransport userTransport, ProfileTransport profileTransport) {
+    public DefaultEndpointRegistrationManager(KaaClientState state, ExecutorContext executorContext, UserTransport userTransport,
+            ProfileTransport profileTransport) {
         this.userTransport = userTransport;
         this.profileTransport = profileTransport;
         this.state = state;
@@ -143,19 +144,17 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     }
 
     @Override
-    public void onUpdate(List<EndpointAttachResponse> attachResponses,
-            List<EndpointDetachResponse> detachResponses,
-            final UserAttachResponse userResponse,
-            final UserAttachNotification userAttachNotification,
+    public void onUpdate(List<EndpointAttachResponse> attachResponses, List<EndpointDetachResponse> detachResponses,
+            final UserAttachResponse userResponse, final UserAttachNotification userAttachNotification,
             final UserDetachNotification userDetachNotification) throws IOException {
         if (userResponse != null) {
             if (userAttachCallback != null) {
-                final UserAttachCallback callback = userAttachCallback; 
+                final UserAttachCallback callback = userAttachCallback;
                 executorContext.getCallbackExecutor().submit(new Runnable() {
                     @Override
                     public void run() {
                         callback.onAttachResult(userResponse);
-                        
+
                     }
                 });
                 userAttachCallback = null;
@@ -177,8 +176,8 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
 
         if (attachResponses != null && !attachResponses.isEmpty()) {
             for (EndpointAttachResponse attached : attachResponses) {
-                notifyAttachedListener(attached.getResult(), endpointAttachListeners.remove(attached.getRequestId())
-                        , new EndpointKeyHash(attached.getEndpointKeyHash()));
+                notifyAttachedListener(attached.getResult(), endpointAttachListeners.remove(attached.getRequestId()), new EndpointKeyHash(
+                        attached.getEndpointKeyHash()));
                 attachEndpointRequests.remove(attached.getRequestId());
             }
         }
@@ -201,7 +200,8 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
                 executorContext.getCallbackExecutor().submit(new Runnable() {
                     @Override
                     public void run() {
-                        callback.onAttachedToUser(userAttachNotification.getUserExternalId(), userAttachNotification.getEndpointAccessToken());
+                        callback.onAttachedToUser(userAttachNotification.getUserExternalId(),
+                                userAttachNotification.getEndpointAccessToken());
                     }
                 });
             }
@@ -221,8 +221,9 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
         }
     }
 
-    private void notifyAttachedListener(final SyncResponseResultType result, final OnAttachEndpointOperationCallback operationCallback, final EndpointKeyHash keyHash) {
-        if(operationCallback != null){
+    private void notifyAttachedListener(final SyncResponseResultType result, final OnAttachEndpointOperationCallback operationCallback,
+            final EndpointKeyHash keyHash) {
+        if (operationCallback != null) {
             executorContext.getCallbackExecutor().submit(new Runnable() {
                 @Override
                 public void run() {
@@ -233,7 +234,7 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     }
 
     private void notifyDetachedListener(final SyncResponseResultType result, final OnDetachEndpointOperationCallback operationCallback) {
-        if(operationCallback != null){
+        if (operationCallback != null) {
             executorContext.getCallbackExecutor().submit(new Runnable() {
                 @Override
                 public void run() {

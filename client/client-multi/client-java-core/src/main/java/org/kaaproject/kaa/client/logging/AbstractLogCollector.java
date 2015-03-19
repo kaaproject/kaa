@@ -47,9 +47,10 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractLogCollector implements LogCollector, LogProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractLogCollector.class);
-    
-    public static final long MAX_BATCH_VOLUME = 512 * 1024; // Framework limitation
-    
+
+    public static final long MAX_BATCH_VOLUME = 512 * 1024; // Framework
+                                                            // limitation
+
     // TODO: reuse this scheduler in other subsystems
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -144,7 +145,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
             processUploadDecision(strategy.isUploadNeeded(storage.getStatus()));
         }
     }
-    
+
     @Override
     public void stop() {
         scheduler.shutdown();
@@ -164,7 +165,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         }
     }
 
-    //TODO: fix this. it is now executed only when new log record is added. 
+    // TODO: fix this. it is now executed only when new log record is added.
     protected boolean isDeliveryTimeout() {
         boolean isTimeout = false;
         long currentTime = System.currentTimeMillis();

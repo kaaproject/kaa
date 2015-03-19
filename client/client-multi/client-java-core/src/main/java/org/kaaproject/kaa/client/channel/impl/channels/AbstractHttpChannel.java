@@ -137,7 +137,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     public void syncAck(TransportType type) {
         syncAck(Collections.singleton(type));
     }
-    
+
     @Override
     public void syncAck(Set<TransportType> types) {
         LOG.info("Sync ack message is ignored for Channel {}", getId());

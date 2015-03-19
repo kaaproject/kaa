@@ -200,7 +200,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         notificationManager = new DefaultNotificationManager(kaaClientState, context.getExecutorContext(), notificationTransport);
         eventManager = new DefaultEventManager(kaaClientState, context.getExecutorContext(), eventTransport);
         eventFamilyFactory = new EventFamilyFactory(eventManager, context.getExecutorContext());
-        endpointRegistrationManager = new DefaultEndpointRegistrationManager(kaaClientState, context.getExecutorContext(), userTransport, profileTransport);
+        endpointRegistrationManager = new DefaultEndpointRegistrationManager(kaaClientState, context.getExecutorContext(), userTransport,
+                profileTransport);
 
         channelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers);
         channelManager.setConnectivityChecker(context.createConnectivityChecker());
@@ -249,8 +250,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         initTransport(logTransport);
         logTransport.setLogProcessor(logCollector);
     }
-    
-    private void initTransport(KaaTransport transport){
+
+    private void initTransport(KaaTransport transport) {
         transport.setChannelManager(channelManager);
         transport.setClientState(kaaClientState);
     }
@@ -484,7 +485,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     @Override
-    public void findEventListeners(List<String> eventFQNs, FindEventListenersCallback listener){
+    public void findEventListeners(List<String> eventFQNs, FindEventListenersCallback listener) {
         eventManager.findEventListeners(eventFQNs, listener);
     }
 
@@ -509,12 +510,12 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     @Override
-    public void setEndpointAccessToken(String token){
+    public void setEndpointAccessToken(String token) {
         endpointRegistrationManager.updateEndpointAccessToken(token);
     }
-    
+
     @Override
-    public String refreshEndpointAccessToken() { 
+    public String refreshEndpointAccessToken() {
         return endpointRegistrationManager.refreshEndpointAccessToken();
     }
 

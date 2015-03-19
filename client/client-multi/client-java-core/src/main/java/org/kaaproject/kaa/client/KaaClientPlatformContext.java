@@ -34,36 +34,44 @@ public interface KaaClientPlatformContext {
 
     /**
      * Returns platform SDK properties
+     * 
      * @return client SDK properties
      */
     KaaClientProperties getProperties();
 
     /**
      * Returns platform dependent implementation of http client
+     * 
      * @return platform dependent implementation of http client
      */
     AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey);
 
     /**
-     * Returns platform dependent implementation of {@link PersistentStorage persistent storage}
+     * Returns platform dependent implementation of {@link PersistentStorage
+     * persistent storage}
+     * 
      * @return implementation of {@link PersistentStorage persistent storage}
      */
     PersistentStorage createPersistentStorage();
 
     /**
-     * Returns platform dependent implementation of {@link Base64 base64} algorithm
+     * Returns platform dependent implementation of {@link Base64 base64}
+     * algorithm
+     * 
      * @return implementation of {@link Base64 base64} algorithm
      */
     Base64 getBase64();
 
     /**
      * Returns platform dependent implementation of {@link ConnectivityChecker}
+     * 
      * @return implementation of {@link ConnectivityChecker}
      */
     ConnectivityChecker createConnectivityChecker();
 
     /**
      * Returns SDK thread execution context
+     * 
      * @return SDK thread execution context
      */
     ExecutorContext getExecutorContext();

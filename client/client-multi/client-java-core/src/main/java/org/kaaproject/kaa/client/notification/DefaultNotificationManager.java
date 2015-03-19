@@ -60,7 +60,6 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     private final KaaClientState state;
 
     private volatile NotificationTransport transport;
-    
 
     public DefaultNotificationManager(KaaClientState state, ExecutorContext executorContext, NotificationTransport transport) {
         this.state = state;
@@ -186,7 +185,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
         synchronized (topicsListeners) {
             topicsListeners.remove(topicId);
         }
-        
+
         updateSubscriptionInfo(topicId, SubscriptionCommandType.REMOVE);
 
         if (forceSync) {
@@ -208,7 +207,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
             synchronized (topicsListeners) {
                 topicsListeners.remove(id);
             }
-            
+
             subscriptionUpdate.add(new SubscriptionCommand(id, SubscriptionCommandType.REMOVE));
         }
 
@@ -322,7 +321,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     private void notifyListeners(Collection<NotificationListener> listeners, final Topic topic, final Notification notification) {
-        final Collection<NotificationListener> listenersCopy = new ArrayList<NotificationListener>(listeners); 
+        final Collection<NotificationListener> listenersCopy = new ArrayList<NotificationListener>(listeners);
         if (notification.getBody() != null) {
             executorContext.getCallbackExecutor().submit(new Runnable() {
                 @Override

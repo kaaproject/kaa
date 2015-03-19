@@ -22,11 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SingleThreadExecutorContext extends AbstractExecutorContext implements ExecutorContext {
-    private static final Logger LOG = LoggerFactory.getLogger(SingleThreadExecutorContext.class);    
-    
+    private static final Logger LOG = LoggerFactory.getLogger(SingleThreadExecutorContext.class);
+
     private ExecutorService singleThreadExecutor;
-    
-    public SingleThreadExecutorContext(){
+
+    public SingleThreadExecutorContext() {
         super();
     }
 

@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrew Shvayka
  */
 @Generated("DefaultLogCollector.java.template")
-public class DefaultLogCollector extends AbstractLogCollector{
+public class DefaultLogCollector extends AbstractLogCollector {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLogCollector.class);
 
     public DefaultLogCollector(LogTransport transport, ExecutorContext executorContext, KaaChannelManager manager) {

@@ -54,7 +54,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     private final Map<TransportProtocolId, TransportConnectionInfo> lastBSServers = new HashMap<>();
 
     private final Map<String, BlockingQueue<SyncTask>> syncTaskQueueMap = new HashMap<String, BlockingQueue<SyncTask>>();
-    private final Map<String, SyncWorker> syncWorkers = new HashMap<String, DefaultChannelManager.SyncWorker>(); 
+    private final Map<String, SyncWorker> syncWorkers = new HashMap<String, DefaultChannelManager.SyncWorker>();
 
     private ConnectivityChecker connectivityChecker;
     private boolean isShutdown = false;
@@ -71,6 +71,71 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         }
         this.bootstrapManager = manager;
         this.bootststrapServers = bootststrapServers;
+    }
+
+    private boolean useChannelForType(KaaDataChannel channel, TransportType type) {
+        ChannelDirection direction = channel.getSupportedTransportTypes().get(type);
+        if (direction != null && (direction.equals(ChannelDirection.BIDIRECTIONAL) || direction.equals(ChannelDirection.UP))) {
+            upChannels.put(type, channel);
+            return true;
+        }
+        return false;
+    }
+
+    private void useNewChannelForType(TransportType type) {
+        for (KaaDataChannel channel : channels) {
+            if (useChannelForType(channel, type)) {
+                return;
+            }
+        }
+        upChannels.put(type, null);
+    }
+
+    private void applyNewChannel(KaaDataChannel channel) {
+        for (TransportType type : channel.getSupportedTransportTypes().keySet()) {
+            useChannelForType(channel, type);
+        }
+    }
+
+    private void replaceAndRemoveChannel(KaaDataChannel channel) {
+        channels.remove(channel);
+        for (Map.Entry<TransportType, KaaDataChannel> entry : upChannels.entrySet()) {
+            if (entry.getValue() == channel) {
+                useNewChannelForType(entry.getKey());
+            }
+        }
+        stopWorker(channel);
+        channel.shutdown();
+    }
+
+    private void addChannelToList(KaaDataChannel channel) {
+        if (!channels.contains(channel)) {
+            channel.setConnectivityChecker(connectivityChecker);
+            channels.add(channel);
+            startWorker(channel);
+            TransportConnectionInfo server;
+            if (channel.getServerType() == ServerType.BOOTSTRAP) {
+                server = getCurrentBootstrapServer(channel.getTransportProtocolId());
+            } else {
+                server = lastServers.get(channel.getTransportProtocolId());
+            }
+            if (server != null) {
+                LOG.debug("Applying server {} for channel [{}] type {}", server, channel.getId(), channel.getTransportProtocolId());
+                channel.setServer(server);
+            } else {
+                if (lastServers != null && lastServers.isEmpty()) {
+                    if (channel.getServerType() == ServerType.BOOTSTRAP) {
+                        LOG.warn("Failed to find bootstrap server for channel [{}] type {}", channel.getId(),
+                                channel.getTransportProtocolId());
+                    } else {
+                        LOG.info("Failed to find operations server for channel [{}] type {}", channel.getId(),
+                                channel.getTransportProtocolId());
+                    }
+                } else {
+                    LOG.debug("list of servers is empty for channel [{}] type {}", channel.getId(), channel.getTransportProtocolId());
+                }
+            }
+        }
     }
 
     @Override
@@ -313,71 +378,6 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         this.bootstrapDemultiplexer = demultiplexer;
     }
 
-    private boolean useChannelForType(KaaDataChannel channel, TransportType type) {
-        ChannelDirection direction = channel.getSupportedTransportTypes().get(type);
-        if (direction != null && (direction.equals(ChannelDirection.BIDIRECTIONAL) || direction.equals(ChannelDirection.UP))) {
-            upChannels.put(type, channel);
-            return true;
-        }
-        return false;
-    }
-
-    private void useNewChannelForType(TransportType type) {
-        for (KaaDataChannel channel : channels) {
-            if (useChannelForType(channel, type)) {
-                return;
-            }
-        }
-        upChannels.put(type, null);
-    }
-
-    private void applyNewChannel(KaaDataChannel channel) {
-        for (TransportType type : channel.getSupportedTransportTypes().keySet()) {
-            useChannelForType(channel, type);
-        }
-    }
-
-    private void replaceAndRemoveChannel(KaaDataChannel channel) {
-        channels.remove(channel);
-        for (Map.Entry<TransportType, KaaDataChannel> entry : upChannels.entrySet()) {
-            if (entry.getValue() == channel) {
-                useNewChannelForType(entry.getKey());
-            }
-        }
-        stopWorker(channel);
-        channel.shutdown();
-    }
-
-    private void addChannelToList(KaaDataChannel channel) {
-        if (!channels.contains(channel)) {
-            channel.setConnectivityChecker(connectivityChecker);
-            channels.add(channel);
-            startWorker(channel);
-            TransportConnectionInfo server;
-            if (channel.getServerType() == ServerType.BOOTSTRAP) {
-                server = getCurrentBootstrapServer(channel.getTransportProtocolId());
-            } else {
-                server = lastServers.get(channel.getTransportProtocolId());
-            }
-            if (server != null) {
-                LOG.debug("Applying server {} for channel [{}] type {}", server, channel.getId(), channel.getTransportProtocolId());
-                channel.setServer(server);
-            } else {
-                if (lastServers != null && lastServers.isEmpty()) {
-                    if (channel.getServerType() == ServerType.BOOTSTRAP) {
-                        LOG.warn("Failed to find bootstrap server for channel [{}] type {}", channel.getId(),
-                                channel.getTransportProtocolId());
-                    } else {
-                        LOG.info("Failed to find operations server for channel [{}] type {}", channel.getId(),
-                                channel.getTransportProtocolId());
-                    }
-                } else {
-                    LOG.debug("list of servers is empty for channel [{}] type {}", channel.getId(), channel.getTransportProtocolId());
-                }
-            }
-        }
-    }
-
     private void sync(TransportType type, boolean ack, boolean all) {
         LOG.debug("Lookup channel by type {}", type);
         KaaDataChannel channel = getChannel(type);
@@ -389,7 +389,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             LOG.debug("Can't find queue for channel [{}]", channel.getId());
         }
     }
-    
+
     private void startWorker(KaaDataChannel channel) {
         stopWorker(channel);
         SyncWorker worker = new SyncWorker(channel);
@@ -397,16 +397,16 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         syncWorkers.put(channel.getId(), worker);
         worker.start();
     }
-    
-    private void stopWorker(KaaDataChannel channel){
+
+    private void stopWorker(KaaDataChannel channel) {
         BlockingQueue<SyncTask> skippedTasks = syncTaskQueueMap.remove(channel.getId());
-        if(skippedTasks != null){
-            for(SyncTask task : skippedTasks){
+        if (skippedTasks != null) {
+            for (SyncTask task : skippedTasks) {
                 LOG.info("Task skipped due to worker shutdown: {}", task);
             }
         }
         SyncWorker worker = syncWorkers.remove(channel);
-        if(worker != null){
+        if (worker != null) {
             worker.shutdown();
         }
     }
@@ -447,8 +447,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             }
             LOG.debug("Worker stopped");
         }
-        
-        public void shutdown(){
+
+        public void shutdown() {
             this.stop = true;
         }
     }
