@@ -135,7 +135,7 @@ public class EventDemo {
             }
         });
 
-        //Finding all listener listening to events in FQNs list
+        //Finding all listeners listening to events in FQNs list
         kaaClient.findEventListeners(listenerFQNs, new FindEventListenersCallback() {
 
             //Sending some events in case of success
