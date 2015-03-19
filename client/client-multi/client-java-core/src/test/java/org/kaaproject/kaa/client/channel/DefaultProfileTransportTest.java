@@ -39,10 +39,8 @@ public class DefaultProfileTransportTest {
 
     @Test(expected = ChannelRuntimeException.class)
     public void testSyncNegative() {
-        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         ProfileTransport transport = new DefaultProfileTransport();
-        transport.setChannelManager(channelManager);
         transport.setClientState(clientState);
         transport.sync();
     }
@@ -51,15 +49,13 @@ public class DefaultProfileTransportTest {
     public void testSync() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
-        KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channelManager.getChannelByTransportType(TransportType.PROFILE)).thenReturn(channel);
 
         ProfileTransport transport = new DefaultProfileTransport();
         transport.setChannelManager(channelManager);
         transport.setClientState(clientState);
         transport.sync();
 
-        Mockito.verify(channel, Mockito.times(1)).syncAll();
+        Mockito.verify(channelManager, Mockito.times(1)).syncAll(TransportType.PROFILE);
     }
 
     @Test
@@ -118,8 +114,6 @@ public class DefaultProfileTransportTest {
     public void onProfileResponse() throws Exception {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         KaaClientState clientState1 = Mockito.mock(KaaClientState.class);
-        KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channelManager.getChannelByTransportType(TransportType.PROFILE)).thenReturn(channel);
 
         ProfileTransport transport = new DefaultProfileTransport();
         transport.setChannelManager(channelManager);
@@ -130,7 +124,7 @@ public class DefaultProfileTransportTest {
 
         transport.onProfileResponse(response1);
 
-        Mockito.verify(channel, Mockito.times(1)).syncAll();
+        Mockito.verify(channelManager, Mockito.times(1)).syncAll(TransportType.PROFILE);
 
 
         ProfileSyncResponse response2 = new ProfileSyncResponse();

@@ -35,19 +35,19 @@ public class DefaultProfileManager implements ProfileManager {
     public DefaultProfileManager(ProfileTransport transport) {
         this.transport = transport;
     }
-    
+
     @Override
-    public void setProfileContainer(ProfileContainer container){
+    public void setProfileContainer(ProfileContainer container) {
         this.container = container;
     }
 
     @Override
     public byte[] getSerializedProfile() throws IOException {
         return serializer.toByteArray(container);
-    };
+    }
 
     @Override
-    public void updateProfile(){
+    public void updateProfile() {
         transport.sync();
-    };
+    }
 }

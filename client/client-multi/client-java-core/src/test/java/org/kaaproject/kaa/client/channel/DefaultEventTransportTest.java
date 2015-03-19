@@ -39,10 +39,8 @@ public class DefaultEventTransportTest {
 
     @Test(expected = ChannelRuntimeException.class)
     public void testSyncNegative() {
-        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         EventTransport transport = new DefaultEventTransport(clientState);
-        transport.setChannelManager(channelManager);
         transport.sync();
     }
 
@@ -50,14 +48,12 @@ public class DefaultEventTransportTest {
     public void testSync() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
-        KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channelManager.getChannelByTransportType(TransportType.EVENT)).thenReturn(channel);
 
         EventTransport transport = new DefaultEventTransport(clientState);
         transport.setChannelManager(channelManager);
         transport.sync();
 
-        Mockito.verify(channel, Mockito.times(1)).sync(TransportType.EVENT);
+        Mockito.verify(channelManager, Mockito.times(1)).sync(TransportType.EVENT);
     }
 
     @Test

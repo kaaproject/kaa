@@ -30,6 +30,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
@@ -147,6 +148,10 @@ public class DefaultOperationsService implements OperationsService {
 
         if (!Arrays.equals(profile.getProfileHash(), toByteArray(metaData.getProfileHash()))) {
             LOG.debug("[{}] Profile hash mismatch. Profile resync needed", context.getEndpointKey());
+            if(LOG.isTraceEnabled()){
+                LOG.trace("[{}] persisted profile hash is {}", context.getEndpointKey(), MessageEncoderDecoder.bytesToHex(profile.getProfileHash()));
+                LOG.trace("[{}] client profile hash is {}", context.getEndpointKey(),  MessageEncoderDecoder.bytesToHex(toByteArray(metaData.getProfileHash())));
+            }
             context.setStatus(SyncStatus.PROFILE_RESYNC);
         }
 
