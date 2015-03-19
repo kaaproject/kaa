@@ -61,6 +61,7 @@ public class EventDemo {
             public void onStarted() {
                 LOG.info("Kaa client started");
             }
+
             @Override
             public void onStopped() {
                 LOG.info("Kaa client stopped");
@@ -110,6 +111,30 @@ public class EventDemo {
         listenerFQNs.add(ThermostatInfoRequest.class.getName());
         listenerFQNs.add(ChangeDegreeRequest.class.getName());
 
+        //Getting event family factory
+        final EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
+        //Getting concrete event family
+        final ThermostatEventClassFamily tecf = eventFamilyFactory.getThermostatEventClassFamily();
+
+        //Adding event listeners for family factory
+        tecf.addListener(new DefaultEventFamilyListener() {
+
+            @Override
+            public void onEvent(ChangeDegreeRequest changeDegreeRequest, String senderId) {
+                LOG.info("ChangeDegreeRequest event received! change temperature by {} degrees, sender: {}", changeDegreeRequest.getDegree(), senderId);
+            }
+
+            @Override
+            public void onEvent(ThermostatInfoResponse thermostatInfoResponse, String senderId) {
+                LOG.info("ThermostatInfoResponse event received! thermostat info: {}, sender: {}", thermostatInfoResponse.getThermostatInfo(), senderId);
+            }
+
+            @Override
+            public void onEvent(ThermostatInfoRequest thermostatInfoRequest, String senderId) {
+                LOG.info("ThermostatInfoRequest event received! sender: {}", senderId);
+            }
+        });
+
         //And then finding all listener listening to events in FQNs list
         kaaClient.findEventListeners(listenerFQNs, new FindEventListenersCallback() {
 
@@ -120,6 +145,22 @@ public class EventDemo {
                 for (String listener : eventListeners) {
                     LOG.info("listener: {}", listener);
                 }
+                //Broadcasting ChangeDegreeRequest event
+                tecf.sendEventToAll(new ChangeDegreeRequest(10));
+                LOG.info("Broadcast ChangeDegreeRequest sent");
+
+                TransactionId trxId = eventFamilyFactory.startEventsBlock();
+                // Add events to the block
+                // Adding a broadcasted event to the block
+                tecf.addEventToBlock(trxId, new ThermostatInfoRequest());
+                // Adding a targeted event to the block
+                tecf.addEventToBlock(trxId, new ChangeDegreeRequest(-30), eventListeners.get(0));
+
+                // Send added events in a batch
+                eventFamilyFactory.submitEventsBlock(trxId);
+                LOG.info("Batch of events sent: broadcast ThermostatInfoRequest & ChangeDegreeRequest to endpoint with id {}", eventListeners.get(0));
+                // Dismiss the event batch (if the batch was not submitted as shown in the previous line)
+                // eventFamilyFactory.removeEventsBlock(trxId);
             }
 
             //Or if something gone wrong handling fail
@@ -129,46 +170,5 @@ public class EventDemo {
             }
         });
 
-        //Getting event family factory
-        EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
-        //Getting concrete event family
-        ThermostatEventClassFamily tecf = eventFamilyFactory.getThermostatEventClassFamily();
-
-        //Adding event listeners for family factory
-        tecf.addListener(new ThermostatEventClassFamily.Listener() {
-
-            @Override
-            public void onEvent(ChangeDegreeRequest changeDegreeRequest, String senderId) {
-                LOG.info("ChangeDegreeRequest event fired! change temperature by {} degrees, sender: {}", changeDegreeRequest.getDegree(), senderId);
-            }
-
-            @Override
-            public void onEvent(ThermostatInfoResponse thermostatInfoResponse, String senderId) {
-                LOG.info("ThermostatInfoResponse event fired! thermostat info: {}, sender: {}", thermostatInfoResponse.getThermostatInfo(), senderId);
-            }
-
-            @Override
-            public void onEvent(ThermostatInfoRequest thermostatInfoRequest, String senderId) {
-                LOG.info("ThermostatInfoRequest event fired! sender: {}", senderId);
-            }
-        });
-
-
-        //Broadcasting ChangeDegreeRequest event
-        tecf.sendEventToAll(new ChangeDegreeRequest(10));
-        LOG.info("ChangeDegreeRequest sent");
-
-        TransactionId trxId = eventFamilyFactory.startEventsBlock();
-        // Add events to the block
-        // Adding a broadcasted event to the block
-        tecf.addEventToBlock(trxId, new ThermostatInfoRequest());
-        // Adding a targeted event to the block
-        tecf.addEventToBlock(trxId, new ChangeDegreeRequest(-30), "thermostat_endpoint_id");
-
-        // Send added events in a batch
-        eventFamilyFactory.submitEventsBlock(trxId);
-        LOG.info("Batch of events (ThermostatInfoRequest & ChangeDegreeRequest) sent");
-        // Dismiss the event batch (if the batch was not submitted as shown in the previous line)
-        // eventFamilyFactory.removeEventsBlock(trxId);
     }
 }
