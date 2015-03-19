@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-# ifndef KAA_DISABLE_FEATURE_EVENTS
+
 
 # include <stdbool.h>
 # include <stdint.h>
@@ -1199,4 +1199,3 @@ const char *kaa_find_class_family_name(const char *fqn)
     return NULL;
 }
 
-# endif

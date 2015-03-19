@@ -330,30 +330,36 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
                 KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the user extension");
             break;
         }
-#ifndef KAA_DISABLE_FEATURE_EVENTS
         case KAA_SERVICE_EVENT: {
+#ifndef KAA_DISABLE_FEATURE_EVENTS
             error_code = kaa_event_request_serialize(self->kaa_context->event_manager, self->request_id, writer);
             if (error_code)
                 KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the event extension");
+#else
+            --total_services_count;
+#endif
             break;
         }
-#endif
-#ifndef KAA_DISABLE_FEATURE_LOGGING
         case KAA_SERVICE_LOGGING: {
+#ifndef KAA_DISABLE_FEATURE_LOGGING
             error_code = kaa_logging_request_serialize(self->kaa_context->log_collector, writer);
             if (error_code)
                 KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the logging extension");
+#else
+            --total_services_count;
+#endif
             break;
         }
-#endif
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
         case KAA_SERVICE_CONFIGURATION: {
+#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
             error_code = kaa_configuration_manager_request_serialize(self->kaa_context->configuration_manager, writer);
             if (error_code)
                 KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the configuration extension");
+#else
+            --total_services_count;
+#endif
             break;
         }
-#endif
         default:
             break;
         }

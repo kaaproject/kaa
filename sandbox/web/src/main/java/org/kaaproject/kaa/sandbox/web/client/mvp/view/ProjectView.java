@@ -23,12 +23,15 @@ import org.kaaproject.kaa.sandbox.demo.projects.Platform;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.Image;
 
 public interface ProjectView extends BaseView {
 
     void setTargetPlatform(Platform platform);
     
     void setFeatures(List<Feature> features);
+    
+    Image getApplicationImage();
     
     HasText getDescription();
     

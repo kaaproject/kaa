@@ -65,7 +65,7 @@ std::vector<std::uint8_t> EndpointObjectHash::getHashDigest()
 
 void EndpointObjectHash::calculateHash(const std::uint8_t* data, std::uint32_t dataSize)
 {
-    if (!data || dataSize == 0) {
+    if (!data && dataSize != 0) {
         throw KaaException("empty raw data or null size");
     }
     Botan::SHA_160 sha;

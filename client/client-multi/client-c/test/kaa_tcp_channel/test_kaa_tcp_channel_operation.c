@@ -580,6 +580,8 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
 
     error_code = channel->set_access_point(channel->context, &access_point);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    error_code= kaa_tcp_channel_check_keepalive(channel);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     //Check correct call of gethostbyaddr
     ASSERT_EQUAL(access_point_test_info.gethostbyaddr_requested, true);
     //Check if new socket created

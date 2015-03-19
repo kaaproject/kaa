@@ -39,7 +39,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class DemoProjectWidget extends VerticalPanel implements HasProjectActionEventHandlers {
     
-    private Image platformImage;
+    private Image applicationImage;
     private HorizontalPanel featuresPanel;
     private Anchor projectTitle;
     private Anchor getSourceAnchor;
@@ -63,9 +63,9 @@ public class DemoProjectWidget extends VerticalPanel implements HasProjectAction
         VerticalPanel platformImagePanel  = new VerticalPanel();
         platformImagePanel.addStyleName(Utils.sandboxStyle.detailsInnerTop());
         platformImagePanel.setWidth("100%");
-        platformImage = new Image();
+        applicationImage = new Image();
         platformImagePanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-        platformImagePanel.add(platformImage);
+        platformImagePanel.add(applicationImage);
         
         layoutPanel.add(platformImagePanel);
         SimplePanel platformImageHoverPanel = new SimplePanel();
@@ -137,7 +137,11 @@ public class DemoProjectWidget extends VerticalPanel implements HasProjectAction
     
     public void setProject(Project project) {
         this.project = project;
-        platformImage.setResource(Utils.getPlatformIcon(project.getPlatform()));
+        if (project.getIconBase64() != null && project.getIconBase64().length() > 0) {
+            applicationImage.setUrl("data:image/png;base64,"+project.getIconBase64());
+        } else {
+            applicationImage.setResource(Utils.getPlatformIcon(project.getPlatform()));
+        }
         projectTitle.setText(project.getName());
         projectTitle.setTitle(project.getName());
         for (Feature feature : project.getFeatures()) {
