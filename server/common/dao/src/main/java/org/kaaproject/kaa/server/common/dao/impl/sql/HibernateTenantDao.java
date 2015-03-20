@@ -15,8 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.NAME_PROPERTY;
-
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
@@ -24,6 +22,8 @@ import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.NAME_PROPERTY;
 
 @Repository
 public class HibernateTenantDao extends HibernateAbstractDao<Tenant> implements TenantDao<Tenant> {

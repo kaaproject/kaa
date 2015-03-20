@@ -15,26 +15,10 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_ACTIVATED_TIME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_ACTIVATED_USERNAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_APPLICATION_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_CREATED_TIME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_CREATED_USERNAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_DEACTIVATED_TIME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_DEACTIVATED_USERNAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_DESCRIPTION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_ENDPOINT_COUNT;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_ENDPOINT_GROUP_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_LAST_MODIFY_TIME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_MAJOR_VERSION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_MINOR_VERSION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_MODIFIED_USERNAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_SEQUENCE_NUMBER;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_STATUS;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ABSTRACT_STRUCTURE_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
-
-import java.io.Serializable;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.AbstractStructureDto;
+import org.kaaproject.kaa.common.dto.UpdateStatus;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,11 +29,26 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.AbstractStructureDto;
-import org.kaaproject.kaa.common.dto.UpdateStatus;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_ACTIVATED_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_ACTIVATED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_CREATED_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_CREATED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_DEACTIVATED_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_DEACTIVATED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_DESCRIPTION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_ENDPOINT_COUNT;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_ENDPOINT_GROUP_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_LAST_MODIFY_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_MAJOR_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_MINOR_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_MODIFIED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_SEQUENCE_NUMBER;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_STATUS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
 @Table(name = ABSTRACT_STRUCTURE_TABLE_NAME)

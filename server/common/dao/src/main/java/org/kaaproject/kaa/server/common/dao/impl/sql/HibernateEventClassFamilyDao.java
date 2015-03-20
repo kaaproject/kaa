@@ -15,18 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.CLASS_NAME_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.NAME_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_REFERENCE;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
@@ -34,6 +22,18 @@ import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CLASS_NAME_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.NAME_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_REFERENCE;
 
 @Repository
 public class HibernateEventClassFamilyDao extends HibernateAbstractDao<EventClassFamily> implements EventClassFamilyDao<EventClassFamily> {

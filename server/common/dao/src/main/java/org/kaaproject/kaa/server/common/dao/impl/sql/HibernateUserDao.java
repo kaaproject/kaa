@@ -15,14 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.AUTHORITY_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.EXTERNAL_UID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_REFERENCE;
-
-import java.util.List;
-
 import org.hibernate.criterion.Restrictions;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.server.common.dao.impl.UserDao;
@@ -30,6 +22,14 @@ import org.kaaproject.kaa.server.common.dao.model.sql.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.AUTHORITY_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EXTERNAL_UID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_REFERENCE;
 
 @Repository
 public class HibernateUserDao extends HibernateAbstractDao<User> implements UserDao<User> {

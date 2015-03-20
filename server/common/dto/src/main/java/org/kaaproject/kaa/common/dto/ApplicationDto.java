@@ -27,10 +27,6 @@ public class ApplicationDto implements HasId, Serializable {
     private String name;
     private int sequenceNumber;
     private String tenantId;
-    private String publicKey;
-
-    /** log appenders names splitted by comma */
-    private String logAppendersNames;
 
     @Override
     public String getId() {
@@ -72,22 +68,6 @@ public class ApplicationDto implements HasId, Serializable {
 
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
-    }
-
-    public String getLogAppendersNames() {
-        return logAppendersNames;
-    }
-
-    public void setLogAppendersNames(String logAppendersNames) {
-        this.logAppendersNames = logAppendersNames;
-    }
-
-    public String getPublicKey() {
-        return publicKey;
-    }
-
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
     }
 
     @Override

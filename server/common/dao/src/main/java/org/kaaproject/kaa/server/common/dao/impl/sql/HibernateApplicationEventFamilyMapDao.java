@@ -15,20 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ECF_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ECF_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ECF_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.VERSION_PROPERTY;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -37,6 +23,20 @@ import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ECF_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ECF_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ECF_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.VERSION_PROPERTY;
 
 @Repository
 public class HibernateApplicationEventFamilyMapDao extends HibernateAbstractDao<ApplicationEventFamilyMap> implements ApplicationEventFamilyMapDao<ApplicationEventFamilyMap> {

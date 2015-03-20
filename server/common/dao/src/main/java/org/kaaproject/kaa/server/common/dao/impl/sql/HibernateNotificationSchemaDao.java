@@ -29,9 +29,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.MAJOR_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.NOTIFICATION_SCHEMA_TYPE_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.MAJOR_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.NOTIFICATION_SCHEMA_TYPE_PROPERTY;
 
 @Repository
 public class HibernateNotificationSchemaDao extends HibernateAbstractDao<NotificationSchema> implements NotificationSchemaDao<NotificationSchema> {

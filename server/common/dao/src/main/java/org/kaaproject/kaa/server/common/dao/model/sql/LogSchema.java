@@ -15,14 +15,14 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_SCHEMA_TABLE_NAME;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_SCHEMA_TABLE_NAME;
 
 @Entity
 @Table(name = LOG_SCHEMA_TABLE_NAME)

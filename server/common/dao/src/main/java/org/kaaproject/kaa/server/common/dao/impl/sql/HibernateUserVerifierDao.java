@@ -16,21 +16,21 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.USER_VERIFIER_TOKEN;
-
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.criterion.Restrictions;
 import org.kaaproject.kaa.server.common.dao.impl.UserVerifierDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.UserVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.USER_VERIFIER_TOKEN;
 
 @Repository
 public class HibernateUserVerifierDao extends HibernateAbstractDao<UserVerifier> implements UserVerifierDao<UserVerifier>{

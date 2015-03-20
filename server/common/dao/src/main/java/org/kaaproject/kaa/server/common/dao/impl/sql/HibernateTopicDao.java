@@ -15,19 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ENDPOINT_GROUP_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ENDPOINT_GROUPS_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ENDPOINT_GROUP_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TOPIC_TYPE_PROPERTY;
-
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
@@ -36,6 +23,19 @@ import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUPS_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_TYPE_PROPERTY;
 
 @Repository
 public class HibernateTopicDao extends HibernateAbstractDao<Topic> implements TopicDao<Topic> {

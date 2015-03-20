@@ -15,16 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.*;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_REFERENCE;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.criterion.Restrictions;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
@@ -32,43 +22,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_NAME_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TOKEN_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_ENTITY_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_REFERENCE;
+
 @Repository
 public class HibernateApplicationDao extends HibernateAbstractDao<Application> implements ApplicationDao<Application> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateApplicationDao.class);
-
-    @Override
-    public List<Application> findByTenantId(String tenantId) {
-        LOG.debug("Find applications by tenant id {}", tenantId);
-        List<Application> applications = Collections.emptyList();
-        if (isNotBlank(tenantId)) {
-            applications = findListByCriterionWithAlias(TENANT_PROPERTY, TENANT_ALIAS, Restrictions.eq(TENANT_REFERENCE, Long.valueOf(tenantId)));
-        }
-        LOG.info("Found applications {} by tenant id {} ", applications.size(), tenantId);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found applications {} by tenant id {} ", Arrays.toString(applications.toArray()), tenantId);
-        }
-        return applications;
-    }
-
-    @Override
-    public Application findByApplicationToken(String token) {
-        LOG.debug("Find application by token {}", token);
-        Application app = findOneByCriterion(Restrictions.eq(APPLICATION_TOKEN_PROPERTY, token));
-        LOG.debug("Found application {} by token {}", app, token);
-        return app;
-    }
-
-    @Override
-    public Application getNextSeqNumber(String id) {
-        Application app = findById(id);
-        if (app != null) {
-            app.incrementSequenceNumber();
-            LOG.debug("Increment application sequence number {}", app);
-            save(app);
-        }
-        return app;
-    }
 
     @Override
     protected Class<Application> getEntityClass() {
@@ -76,20 +43,63 @@ public class HibernateApplicationDao extends HibernateAbstractDao<Application> i
     }
 
     @Override
+    public List<Application> findByTenantId(String tenantId) {
+        LOG.debug("Searching applications by tenant id {}", tenantId);
+        List<Application> applications = findListByCriterionWithAlias(TENANT_ENTITY_NAME, TENANT_ALIAS, Restrictions.eq(TENANT_REFERENCE, Long.valueOf(tenantId)));
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", tenantId, Arrays.toString(applications.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", tenantId, applications.size());
+        }
+        return applications;
+    }
+
+    @Override
+    public Application findByApplicationToken(String token) {
+        LOG.debug("Searching for application by token {}", token);
+        Application app = findOneByCriterion(Restrictions.eq(APPLICATION_TOKEN_PROPERTY, token));
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", token, app);
+        } else {
+            LOG.debug("[{}] Search result: {}.", token, app != null);
+        }
+        return app;
+    }
+
+    // TODO: Need to add optimistic lock
+    @Override
+    public Application getNextSeqNumber(String id) {
+        Application app = findById(id);
+        if (app != null) {
+            app.incrementSequenceNumber();
+            save(app);
+            LOG.debug("Incremented application sequence number to {}", app.getSequenceNumber());
+        }
+        return app;
+    }
+
+    @Override
     public Application findByNameAndTenantId(String name, String tenantId) {
-        LOG.debug("Find application by name [{}] and tenant id [{}] ", name, tenantId);
+        LOG.debug("Searching for application by name [{}] and tenant id [{}] ", name, tenantId);
         Application application = findOneByCriterionWithAlias(TENANT_PROPERTY, TENANT_ALIAS,
                 Restrictions.and(
-                Restrictions.eq(TENANT_REFERENCE, Long.valueOf(tenantId)),
-                Restrictions.eq(APPLICATION_NAME_PROPERTY, name)));
+                        Restrictions.eq(TENANT_REFERENCE, Long.valueOf(tenantId)),
+                        Restrictions.eq(APPLICATION_NAME_PROPERTY, name)));
         LOG.debug("Found application {} by tenant id [{}] and name [{}]", application, tenantId, name);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{},{}] Search result: {}.", name, tenantId, application);
+        } else {
+            LOG.trace("[{},{}] Search result: {}.", name, tenantId, application != null);
+        }
         return application;
     }
 
     @Override
     public void removeByApplicationToken(String token) {
-        LOG.debug("Remove application by application token [{}] ", token);
-        Application app = findOneByCriterion(Restrictions.eq(APPLICATION_TOKEN_PROPERTY, token));
-        remove(app);
+        Application app = findByApplicationToken(token);
+        if (app != null) {
+            remove(app);
+        }
+        LOG.debug("Removed application by application token [{}] ", token);
     }
 }

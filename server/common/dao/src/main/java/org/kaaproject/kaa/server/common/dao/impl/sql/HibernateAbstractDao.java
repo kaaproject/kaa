@@ -34,6 +34,7 @@ import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
+@SuppressWarnings("unchecked")
 public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements SqlDao<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateAbstractDao.class);
@@ -57,7 +58,7 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         return getSession().createQuery(hql);
     }
 
-    @SuppressWarnings("unchecked")
+
     protected List<T> findListByCriterion(Criterion criterion) {
         String className = getSimpleClassName();
         LOG.debug("Find {} entities by criterion [{}] ", className, criterion);
@@ -90,7 +91,6 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         return findListByCriterionWithAlias(path, alias, null, criterion);
     }
 
-    @SuppressWarnings("unchecked")
     protected List<T> findListByCriterionWithAlias(String path, String alias, JoinType type, Criterion criterion) {
         String className = getSimpleClassName();
         LOG.debug("Find {} entities by criterion [{}] ", className, criterion);
@@ -108,7 +108,6 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         return resultList;
     }
 
-    @SuppressWarnings("unchecked")
     protected List<T> findListByCriteria(Criteria criteria) {
         String className = getSimpleClassName();
         LOG.debug("Find {} entities by criteria [{}] ", className, criteria);
@@ -119,7 +118,6 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         return resultList;
     }
 
-    @SuppressWarnings("unchecked")
     protected T findOneByCriterion(Criterion criterion) {
         String className = getSimpleClassName();
         LOG.debug("Find {} entity by criterion [{}] ", className, criterion);
@@ -130,7 +128,6 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     protected T findOneByCriterionWithAlias(String path, String alias, Criterion criterion) {
         String className = getSimpleClassName();
         LOG.debug("Find {} entity by criterion [{}] ", className, criterion);
@@ -142,7 +139,6 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     protected T findOneByCriteria(Criteria criteria) {
         String className = getSimpleClassName();
         LOG.debug("Find {} entity by criteria [{}] ", className, criteria);
@@ -151,20 +147,20 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         return result;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    protected T takeFirst(List result) {
-        T object = null;
-        if (result != null && !result.isEmpty()) {
-            object = (T) result.get(FIRST);
+    @Override
+    public T save(T o) {
+        LOG.debug("Saving {} entity {}", getEntityClass(), o);
+        o = (T) getSession().merge(o);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Saving result: {}", o);
+        } else {
+            LOG.debug("Saving result: {}", o != null);
         }
-        return object;
+        return o;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public T save(T o) {
-        Session session = getSession();
-        o = (T) session.merge(o);
+    public T update(T o) {
+        getSession().update(o);
         LOG.debug("Saved {} entity: [{}] ", getSimpleClassName(), o);
         return o;
     }
@@ -186,7 +182,6 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<T> find() {
         List<T> resultList = getCriteria().list();
         if (LOG.isDebugEnabled() && resultList != null) {
@@ -201,7 +196,6 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public T findById(String id, boolean lazy) {
         T result = null;
         String className = getSimpleClassName();

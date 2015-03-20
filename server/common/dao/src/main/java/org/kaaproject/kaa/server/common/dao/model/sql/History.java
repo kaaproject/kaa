@@ -15,14 +15,9 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.HISTORY_APPLICATION_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.HISTORY_CHANGE_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.HISTORY_LAST_MODIFY_TIME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.HISTORY_SEQUENCE_NUMBER;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.HISTORY_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
-
-import java.io.Serializable;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.HistoryDto;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,10 +26,14 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.HistoryDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.HISTORY_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.HISTORY_CHANGE_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.HISTORY_LAST_MODIFY_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.HISTORY_SEQUENCE_NUMBER;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.HISTORY_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
 @Table(name = HISTORY_TABLE_NAME)

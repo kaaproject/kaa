@@ -15,22 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ECF_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ECF_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ECF_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.EVENT_CLASS_TYPE_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.FQN_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.VERSION_PROPERTY;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
@@ -40,6 +24,22 @@ import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ECF_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ECF_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ECF_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TYPE_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.FQN_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.VERSION_PROPERTY;
 
 @Repository
 public class HibernateEventClassDao extends HibernateAbstractDao<EventClass> implements EventClassDao<EventClass> {

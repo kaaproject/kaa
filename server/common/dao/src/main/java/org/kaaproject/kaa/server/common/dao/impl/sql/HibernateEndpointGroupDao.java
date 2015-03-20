@@ -31,13 +31,13 @@ import java.util.List;
 import java.util.Set;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TOPICS_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TOPIC_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TOPIC_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.WEIGHT_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPICS_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.WEIGHT_PROPERTY;
 
 @Repository
 public class HibernateEndpointGroupDao extends HibernateAbstractDao<EndpointGroup> implements EndpointGroupDao<EndpointGroup> {
