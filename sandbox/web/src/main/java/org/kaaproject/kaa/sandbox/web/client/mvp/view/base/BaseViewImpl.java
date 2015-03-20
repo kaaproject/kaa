@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.sandbox.web.client.mvp.view.base;
 
+import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
 import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
 import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel.Type;
 import org.kaaproject.kaa.sandbox.web.client.SandboxResources.SandboxStyle;
@@ -47,15 +48,16 @@ public abstract class BaseViewImpl extends Composite implements BaseView {
     @UiField public Button backButton;
     @UiField public Label titleLabel;
     @UiField public SimpleWidgetPanel centerPanel;
-    //@UiField public VerticalPanel detailsPanel;
     @UiField (provided = true) public final AlertPanel errorPanel;
     @UiField (provided = true) public final SandboxStyle sandboxStyle;
+    @UiField (provided = true) public final AvroUiStyle avroUiStyle;
     
     protected VerticalPanel detailsPanel;
     
     public BaseViewImpl(boolean useDetailsPanel) {
         errorPanel = new AlertPanel(Type.ERROR);
         sandboxStyle = Utils.sandboxStyle;
+        avroUiStyle = Utils.avroUiStyle;
         initWidget(uiBinder.createAndBindUi(this));
         setTitle(getViewTitle());
         if (useDetailsPanel) {
@@ -113,6 +115,10 @@ public abstract class BaseViewImpl extends Composite implements BaseView {
         return backButton;
     }
     
+    protected void setBackButton(Button button) {
+        backButton = button;
+    }
+    
     protected void updateHeaderHeight() {
         dockPanel.setWidgetSize(headerPanel, headerPanel.getOffsetHeight());
     }
@@ -120,7 +126,7 @@ public abstract class BaseViewImpl extends Composite implements BaseView {
     protected abstract String getViewTitle();
     
     protected abstract void initCenterPanel();
-    
+
     protected abstract void resetImpl();
 
 
