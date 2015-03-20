@@ -106,6 +106,10 @@ void kaa_on_thermostat_info_request(void *context, kaa_thermostat_event_class_fa
 
     kaa_event_manager_send_kaa_thermostat_event_class_family_thermostat_info_response(kaa_context_->event_manager,
                                                                                       response, NULL);
+
+    info->destroy(info); // Destroying event that was successfully sent
+
+    event->destroy(event);
 }
 
 
@@ -129,6 +133,8 @@ void kaa_on_thermostat_info_response(void *context, kaa_thermostat_event_class_f
             KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa Demo is_set_manually=%s", (*is_set_manually) ? "true" : "false");
         }
     }
+
+    event->destroy(event);
 }
 
 void kaa_on_change_degree_request(void *context, kaa_thermostat_event_class_family_change_degree_request_t *event, kaa_endpoint_id_p source)
@@ -138,6 +144,7 @@ void kaa_on_change_degree_request(void *context, kaa_thermostat_event_class_fami
         int32_t *degree = (int32_t *) event->degree->data;
         KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa Demo changing degree to %d", *degree);
     }
+    event->destroy(event);
 }
 
 
@@ -167,9 +174,13 @@ kaa_error_t kaa_on_event_listeners(void *context, const kaa_endpoint_id listener
             kaa_context_->event_manager, change_degree_request, NULL, trx_id);
     KAA_RETURN_IF_ERR(error_code);
 
+    change_degree_request->destroy(change_degree_request); // Destroying event that was successfully added
+
     error_code = kaa_event_manager_add_kaa_thermostat_event_class_family_thermostat_info_request_event_to_block(
             kaa_context_->event_manager, info_request, NULL, trx_id);
     KAA_RETURN_IF_ERR(error_code);
+
+    info_request->destroy(info_request); // Destroying event that was successfully added
 
     error_code = kaa_event_finish_transaction(kaa_context_->event_manager, trx_id);
     KAA_RETURN_IF_ERR(error_code);
