@@ -18,7 +18,7 @@ Copyright 2014-2015 CyberVision, Inc.
 
 <projectsConfig>
     <project id="jevent_demo">
-        <name>Java event demo</name>
+        <name>Event demo</name>
         <description>Application on java platform demonstrating event subsystem (IoT)</description>
         <platform>JAVA</platform>
         <features>EVENT</features>

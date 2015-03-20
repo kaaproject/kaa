@@ -61,58 +61,55 @@ public class ActionsLabel extends Label {
     }
 
     @UiConstructor
-    public ActionsLabel(String text) {
+    public ActionsLabel(String text, boolean hasPopup) {
         super();
         if (template == null) {
             template = GWT.create(Template.class);
         }
-        String definedStyles = getElement().getAttribute("style");
-        getElement().setAttribute("style",
-                definedStyles + "; vertical-align:middle;");
         Element textElement = DOM.createElement("span");
-        textElement.setInnerText(text + " ");
+        textElement.setInnerText(text);
         DOM.insertChild(getElement(), textElement, 0);
-        Element caretSpan = DOM.createElement("span");
-        caretSpan.setClassName(Utils.sandboxStyle.caret());
-        DOM.appendChild(getElement(), caretSpan);
-
-        actionsPopup = new PopupPanel(true, false);
-        actionsPopup.addStyleName(Utils.sandboxStyle.actionPopup());
-        actionsPopup.setWidget(menu);
-        actionsPopup.addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
-                // ActionsLabel.this.setDown(false);
-            }
-        });
-
-        actionsPopup.addAutoHidePartner(getElement());
-
-        addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                if (!actionsPopup.isShowing()) {
-                    // Instantiate the popup and show it.
-                    final Element parent = ActionsLabel.this.getElement();
-                    actionsPopup
-                            .setPopupPositionAndShow(new PopupPanel.PositionCallback() {
-                                public void setPosition(int offsetWidth,
-                                        int offsetHeight) {
-                                    int left = parent.getAbsoluteLeft();
-                                    int top = parent.getAbsoluteTop()
-                                            + parent.getOffsetHeight() + 2;
-                                    if (left + actionsPopup.getOffsetWidth() > Window
-                                            .getClientWidth()) {
-                                        left = parent.getAbsoluteRight()
-                                                - actionsPopup.getOffsetWidth();
-                                    }
-                                    actionsPopup.setPopupPosition(left, top);
-                                }
-                            });
-                } else {
-                    actionsPopup.hide();
+        
+        if (hasPopup) {
+            textElement.addClassName(Utils.sandboxStyle.caret());
+            actionsPopup = new PopupPanel(true, false);
+            actionsPopup.addStyleName(Utils.sandboxStyle.actionPopup());
+            actionsPopup.setWidget(menu);
+            actionsPopup.addCloseHandler(new CloseHandler<PopupPanel>() {
+                @Override
+                public void onClose(CloseEvent<PopupPanel> event) {
+                    // ActionsLabel.this.setDown(false);
                 }
-            }
-        });
+            });
+    
+            actionsPopup.addAutoHidePartner(getElement());
+    
+            addClickHandler(new ClickHandler() {
+                public void onClick(ClickEvent event) {
+                    if (!actionsPopup.isShowing()) {
+                        // Instantiate the popup and show it.
+                        final Element parent = ActionsLabel.this.getElement();
+                        actionsPopup
+                                .setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+                                    public void setPosition(int offsetWidth,
+                                            int offsetHeight) {
+                                        int left = parent.getAbsoluteLeft();
+                                        int top = parent.getAbsoluteTop()
+                                                + parent.getOffsetHeight() + 2;
+                                        if (left + actionsPopup.getOffsetWidth() > Window
+                                                .getClientWidth()) {
+                                            left = parent.getAbsoluteRight()
+                                                    - actionsPopup.getOffsetWidth();
+                                        }
+                                        actionsPopup.setPopupPosition(left, top);
+                                    }
+                                });
+                    } else {
+                        actionsPopup.hide();
+                    }
+                }
+            });
+        }
     }
 
     public void addMenuItem(String text,

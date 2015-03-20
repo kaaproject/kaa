@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.sandbox.web.client.mvp.view;
+package org.kaaproject.kaa.sandbox.web.client.mvp.event.project;
 
-import java.util.List;
+import com.google.gwt.event.shared.EventHandler;
 
-import org.kaaproject.kaa.sandbox.demo.projects.Project;
-import org.kaaproject.kaa.sandbox.web.client.mvp.event.project.HasProjectActionEventHandlers;
-import org.kaaproject.kaa.sandbox.web.client.mvp.event.project.ProjectFilter;
+public interface ProjectFilterEventHandler extends EventHandler {
 
-public interface MainView extends BaseView {
-
-    void setProjects(List<Project> projects);
+    void onProjectFilter(ProjectFilterEvent event);
     
-    void updateProjectFilter(ProjectFilter filter);
-    
-    HasProjectActionEventHandlers getProjectsActionSource();
-
 }

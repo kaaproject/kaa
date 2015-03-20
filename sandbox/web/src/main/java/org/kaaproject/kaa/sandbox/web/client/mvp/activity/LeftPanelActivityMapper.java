@@ -22,18 +22,18 @@ import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.activity.shared.ActivityMapper;
 import com.google.gwt.place.shared.Place;
 
-public class HeaderActivityMapper implements ActivityMapper {
+public class LeftPanelActivityMapper implements ActivityMapper {
 
-    private final ClientFactory clientFactory;
+    private final Activity leftPanelActivity; 
 
-    public HeaderActivityMapper(ClientFactory clientFactory) {
+    public LeftPanelActivityMapper(ClientFactory clientFactory) {
         super();
-        this.clientFactory = clientFactory;
+        leftPanelActivity = new LeftPanelActivity(clientFactory);
     }
 
     @Override
     public Activity getActivity(Place place) {
-        return new HeaderActivity(place, clientFactory);
+        return leftPanelActivity;
     }
 }
 

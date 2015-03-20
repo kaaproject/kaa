@@ -36,6 +36,8 @@ public class AppLayout extends Composite {
         @UiField SimplePanel appHeader;
         @UiField SimpleWidgetPanel appContent;
         @UiField HTMLPanel footerPanel;
+        @UiField SimplePanel leftPanel;
+
         @UiField (provided = true) public final AvroUiStyle avroUiStyle;
         @UiField (provided = true) public final SandboxStyle sandboxStyle;
 
@@ -49,9 +51,13 @@ public class AppLayout extends Composite {
         public SimplePanel getAppHeaderHolder() {
             return this.appHeader;
         }
-
+        
         public SimpleWidgetPanel getAppContentHolder() {
             return this.appContent;
+        }
+        
+        public SimplePanel getLeftPanel() {
+            return this.leftPanel;
         }
 
 }

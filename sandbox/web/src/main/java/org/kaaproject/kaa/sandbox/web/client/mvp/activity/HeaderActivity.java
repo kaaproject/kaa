@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.ActionsLabel.Action
 import org.kaaproject.kaa.sandbox.web.client.util.Utils;
 
 import com.google.gwt.activity.shared.AbstractActivity;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
@@ -59,23 +61,37 @@ public class HeaderActivity extends AbstractActivity {
             registration.removeHandler();
         }
         registrations.clear();
-        headerView.getSettingsLabel().clearItems();
+        headerView.getSettings().clearItems();
     }
 
     private void bind(final HeaderView headerView, final EventBus eventBus) {
-        headerView.getSettingsLabel().setVisible(false);
+        
+        registrations.add(headerView.getGoToKaaAdminWeb().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                gotoKaaAdminWeb();
+            }
+          }));
+        registrations.add(headerView.getGoToAvroUiSandboxWeb().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                gotoAvroUiSandboxWeb();
+            }
+          }));
+        
+        headerView.setSettingsVisible(false);
         
         Sandbox.getSandboxService().changeKaaHostEnabled(new BusyAsyncCallback<Boolean>() {
             @Override
             public void onFailureImpl(Throwable caught) {
-                headerView.getSettingsLabel().setVisible(false);
+                headerView.setSettingsVisible(false);
             }
 
             @Override
             public void onSuccessImpl(Boolean enabled) {
-                headerView.getSettingsLabel().setVisible(enabled);
+                headerView.setSettingsVisible(enabled);
                 if (enabled) {
-                    headerView.getSettingsLabel().addMenuItem(Utils.constants.changeKaaHost(), new ActionMenuItemListener() {
+                    headerView.getSettings().addMenuItem(Utils.constants.changeKaaHost(), new ActionMenuItemListener() {
                         @Override
                         public void onMenuItemSelected() {
                             clientFactory.getPlaceController().goTo(new ChangeKaaHostPlace(place));
@@ -83,8 +99,15 @@ public class HeaderActivity extends AbstractActivity {
                     });
                 }
             }
-        });
-        
+        });        
+    }
+    
+    private void gotoKaaAdminWeb() {
+        Sandbox.redirectToModule("kaaAdmin");
+    }
+    
+    private void gotoAvroUiSandboxWeb() {
+        Sandbox.redirectToModule("avroUiSandbox");
     }
 
 }

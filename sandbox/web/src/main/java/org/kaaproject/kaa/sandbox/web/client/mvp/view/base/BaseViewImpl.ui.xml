@@ -21,12 +21,13 @@
         xmlns:avroUi="urn:import:org.kaaproject.avro.ui.gwt.client.widget">
     
         <ui:with field='sandboxStyle' type='org.kaaproject.kaa.sandbox.web.client.SandboxResources.SandboxStyle'/>  
+        <ui:with field='avroUiStyle' type='org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle'/>  
     
         <ui:style>
             .topPadding { padding-top: 10px; }
         </ui:style>
     
-        <gwt:DockLayoutPanel unit="PX" ui:field="dockPanel">
+        <gwt:DockLayoutPanel unit="PX" ui:field="dockPanel" addStyleNames="{avroUiStyle.bAppContent}">
             <gwt:north size="0">
                 <gwt:VerticalPanel width="100%" ui:field="headerPanel" addStyleNames='{style.topPadding}'>
                     <gwt:cell>
@@ -35,14 +36,14 @@
                                 <gwt:FlowPanel width="100%" height="100%">
                                     <gwt:HorizontalPanel height="100%">
                                         <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                            <gwt:HorizontalPanel height="100%" visible="false" ui:field="backButtonPanel" styleName="{sandboxStyle.bAppPaddedPanel}">
+                                            <gwt:HorizontalPanel height="100%" visible="false" ui:field="backButtonPanel" styleName="{sandboxStyle.appPaddedPanel}">
                                                 <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                                    <gwt:Button ui:field="backButton" addStyleNames="{sandboxStyle.bAppBackButton}"></gwt:Button>
+                                                    <gwt:Button ui:field="backButton" addStyleNames="{sandboxStyle.appBackButton}"></gwt:Button>
                                                 </gwt:cell>
                                             </gwt:HorizontalPanel>
                                         </gwt:cell>                                            
                                         <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" height="100%">
-                                            <gwt:Label ui:field="titleLabel" visible="false" styleName="{sandboxStyle.bAppContentTitle}">
+                                            <gwt:Label ui:field="titleLabel" visible="false" styleName="{sandboxStyle.appContentTitle}">
                                             </gwt:Label>                                    
                                         </gwt:cell>
                                     </gwt:HorizontalPanel>
@@ -64,12 +65,10 @@
                         </gwt:HorizontalPanel>
                     </gwt:cell>                        
                 </gwt:VerticalPanel>
-            </gwt:north>
+            </gwt:north>                        
             <gwt:center>
                 <kaa:layout.SimpleWidgetPanel ui:field="centerPanel" />
-<!--                 <gwt:ScrollPanel width="100%"> -->
-<!--                       <gwt:VerticalPanel width="100%" ui:field="detailsPanel" styleName="{sandboxStyle.contentPanel}"/> -->
-<!--                 </gwt:ScrollPanel> -->
             </gwt:center>
         </gwt:DockLayoutPanel>
+        
 </ui:UiBinder>

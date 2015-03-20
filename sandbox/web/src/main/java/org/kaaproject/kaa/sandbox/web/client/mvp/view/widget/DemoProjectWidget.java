@@ -32,7 +32,9 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -43,10 +45,11 @@ public class DemoProjectWidget extends VerticalPanel implements
         HasProjectActionEventHandlers {
 
     private Image applicationImage;
+    private HorizontalPanel platformPanel;
     private HorizontalPanel featuresPanel;
     private Anchor projectTitle;
-    private Anchor getSourceAnchor;
-    private Anchor getBinaryAnchor;
+    private Button getSourceButton;
+    private Button getBinaryButton;
 
     private Project project;
 
@@ -56,6 +59,7 @@ public class DemoProjectWidget extends VerticalPanel implements
         super();
 
         addStyleName(Utils.sandboxStyle.demoProjectWidget());
+        setVisible(false);
 
         projectWidgetAnimation = new ProjectWidgetAnimation(this, 190, 10.0);
 
@@ -84,33 +88,44 @@ public class DemoProjectWidget extends VerticalPanel implements
         layoutPanel.setSize("100%", "100%");
 
         detailsPanel.add(layoutPanel);
-        SimplePanel titlePanel = new SimplePanel();
+        VerticalPanel titlePanel = new VerticalPanel();
         titlePanel.addStyleName(Utils.sandboxStyle.detailsInnerCenter());
+        titlePanel.addStyleName(Utils.sandboxStyle.titlePanel());
         projectTitle = new Anchor();
         projectTitle.addStyleName(Utils.sandboxStyle.title());
         titlePanel.add(projectTitle);
+        titlePanel.setCellVerticalAlignment(projectTitle, HasVerticalAlignment.ALIGN_MIDDLE);
 
         detailsPanel.add(titlePanel);
 
         add(detailsPanel);
 
+        HorizontalPanel iconsPanel = new HorizontalPanel();
+        iconsPanel.setWidth("100%");
+        iconsPanel.addStyleName(Utils.sandboxStyle.detailsInnerCenter());
+        iconsPanel.getElement().getStyle().setPaddingTop(10, Unit.PX);
+        platformPanel = new HorizontalPanel();
+        iconsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+        iconsPanel.add(platformPanel);
+        
         featuresPanel = new HorizontalPanel();
-        featuresPanel.addStyleName(Utils.sandboxStyle.detailsInnerCenter());
-        add(featuresPanel);
-        featuresPanel.getElement().getStyle().setPaddingTop(10, Unit.PX);
+        iconsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+        iconsPanel.add(featuresPanel);
+        
+        add(iconsPanel);
 
         HorizontalPanel buttonsPanel = new HorizontalPanel();
         buttonsPanel.setWidth("100%");
         buttonsPanel.addStyleName(Utils.sandboxStyle.detailsInnerBottom());
-        getSourceAnchor = new Anchor(Utils.constants.getSourceCode());
-        getSourceAnchor.addStyleName(Utils.sandboxStyle.action());
-        getSourceAnchor.getElement().getStyle().setMarginRight(20, Unit.PX);
-        getBinaryAnchor = new Anchor(Utils.constants.getBinary());
-        getBinaryAnchor.addStyleName(Utils.sandboxStyle.action());
+        getSourceButton = new Button(Utils.constants.getSourceCode());
+        getSourceButton.addStyleName(Utils.sandboxStyle.action());
+        getSourceButton.getElement().getStyle().setMarginRight(20, Unit.PX);
+        getBinaryButton = new Button(Utils.constants.getBinary());
+        getBinaryButton.addStyleName(Utils.sandboxStyle.action());
         buttonsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-        buttonsPanel.add(getSourceAnchor);
+        buttonsPanel.add(getSourceButton);
         buttonsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-        buttonsPanel.add(getBinaryAnchor);
+        buttonsPanel.add(getBinaryButton);
         add(buttonsPanel);
 
         detailsPanel.addHandler(new ClickHandler() {
@@ -124,7 +139,7 @@ public class DemoProjectWidget extends VerticalPanel implements
             }
         }, ClickEvent.getType());
 
-        getSourceAnchor.addClickHandler(new ClickHandler() {
+        getSourceButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 if (project != null) {
@@ -135,7 +150,7 @@ public class DemoProjectWidget extends VerticalPanel implements
             }
         });
 
-        getBinaryAnchor.addClickHandler(new ClickHandler() {
+        getBinaryButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 if (project != null) {
@@ -154,14 +169,16 @@ public class DemoProjectWidget extends VerticalPanel implements
             applicationImage.setUrl("data:image/png;base64,"
                     + project.getIconBase64());
         } else {
-            applicationImage.setResource(Utils.getPlatformIcon(project
+            applicationImage.setResource(Utils.getPlatformIconBig(project
                     .getPlatform()));
         }
         projectTitle.setText(project.getName());
         projectTitle.setTitle(project.getName());
+        Image platformImage = new Image(Utils.getPlatformIcon(project.getPlatform()));
+        platformPanel.add(platformImage);
         for (Feature feature : project.getFeatures()) {
-            Image image = new Image(Utils.getFeatureIcon(feature, false));
-            image.getElement().getStyle().setPaddingRight(8, Unit.PX);
+            Image image = new Image(Utils.getFeatureIcon(feature));
+            image.getElement().getStyle().setPaddingRight(4, Unit.PX);
             featuresPanel.add(image);
         }
     }
@@ -201,11 +218,12 @@ public class DemoProjectWidget extends VerticalPanel implements
         private int width;
         private double rightMargin;
 
-        private boolean show = true;
+        private boolean show;
 
         public ProjectWidgetAnimation(Widget widget, int width,
                 double rightMargin) {
             this.widget = widget;
+            this.show = widget.isVisible();
             this.width = width;
             this.rightMargin = rightMargin;
         }

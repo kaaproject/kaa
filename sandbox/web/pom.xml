@@ -31,7 +31,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<main.dir>${basedir}/../..</main.dir>
-		<!--  spring.version>3.2.10.RELEASE</spring.version-->
 	</properties>
 
 	<dependencies>
@@ -158,27 +157,27 @@
 		<dependency>
 			<groupId>org.atmosphere.extensions</groupId>
 			<artifactId>atmosphere-gwt20-client</artifactId>
-			<version>2.1.2</version>
+			<version>2.2.2-GWT27</version>
 		</dependency>
 		<dependency>
             <groupId>org.atmosphere.extensions</groupId>
             <artifactId>atmosphere-gwt20-server</artifactId>
-            <version>2.1.2</version>
+            <version>2.2.2-GWT27</version>
         </dependency>
         <dependency>
             <groupId>org.atmosphere.extensions</groupId>
             <artifactId>atmosphere-gwt20-managed</artifactId>
-            <version>2.1.2</version>
+            <version>2.2.2-GWT27</version>
             </dependency>
         <dependency>
 			<groupId>org.atmosphere</groupId>
 			<artifactId>atmosphere-runtime</artifactId>
-			<version>2.1.6</version>
+			<version>2.2.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.atmosphere.client</groupId>
 			<artifactId>javascript</artifactId>
-			<version>2.2.2</version>
+			<version>2.2.8</version>
 			<type>war</type>
 			<scope>compile</scope>
 		</dependency>		
@@ -295,7 +294,6 @@
                             <goal>css</goal>
 						</goals>
                         <configuration>
-                            <generateDirectory>${basedir}/src/main/java</generateDirectory>
                         </configuration>                        
 					</execution>
 				</executions>
@@ -333,25 +331,6 @@
 		            <configuration>
 		                <lifecycleMappingMetadata>
 		                    <pluginExecutions>
-		                        <pluginExecution>
-		                            <pluginExecutionFilter>
-		                                <groupId>
-		                                    org.codehaus.mojo
-		                                </groupId>
-		                                <artifactId>
-		                                    gwt-maven-plugin
-		                                </artifactId>
-		                                <versionRange>
-		                                    [2.6.1,)
-		                                </versionRange>
-		                                <goals>
-		                                    <goal>i18n</goal>
-		                                </goals>
-		                            </pluginExecutionFilter>
-		                            <action>
-		                                <ignore></ignore>
-		                            </action>
-		                        </pluginExecution>
 		                        <pluginExecution>
 		                            <pluginExecutionFilter>
 		                                <groupId>

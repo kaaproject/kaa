@@ -79,12 +79,7 @@ public class ConsoleDialog extends AvroUiDialog {
         int width= Window.getClientWidth();
         int height= Window.getClientHeight();
         console.setSize(width*2/3 + "px", height*2/3   + "px");
-        Style consoleStyle = console.getElement().getStyle();
-        consoleStyle.setPropertyPx("minHeight", 200);
-        consoleStyle.setBackgroundColor("#000000");
-        consoleStyle.setColor("#00FF00");
-        consoleStyle.setFontSize(11, Unit.PX);
-        consoleStyle.setProperty("fontFamily", "Georgia");
+        console.addStyleName(Utils.sandboxStyle.consoleArea());
         okButton = new Button("Ok");
         addButton(okButton);
         
@@ -194,7 +189,8 @@ public class ConsoleDialog extends AvroUiDialog {
 	public void appendToConsole(String text) {
 		console.setText(console.getText() + text);
 		if (console.getText().length()>0) {
-			console.setSelectionRange(console.getText().length()-1, 0);
+			console.setCursorPos(console.getText().length()-1);
+			console.getElement().setScrollTop(console.getElement().getScrollHeight());
 		}
 	}
 	
