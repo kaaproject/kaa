@@ -148,7 +148,7 @@ kaa_error_t ext_log_storage_add_log_record(void *context, kaa_log_record_t *reco
 {
     mock_storage_context_t *self = (mock_storage_context_t *)context;
 
-    kaa_log_record_t *rec = KAA_MALLOC(sizeof(kaa_log_record_t *));
+    kaa_log_record_t *rec = KAA_MALLOC(sizeof(kaa_log_record_t));
     *rec = *record;
 
     if (self->logs) {

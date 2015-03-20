@@ -27,9 +27,10 @@ import org.kaaproject.kaa.common.TransportType;
  * Channel manager establishes/removes channels' links between client and
  * server.<br>
  * <br>
- * Use this manager to add or remove specific network channel implementation
- * for client-server communication.<br>
+ * Use this manager to add or remove specific network channel implementation for
+ * client-server communication.<br>
  * <br>
+ * 
  * <pre>
  * {@code
  * class SpecificDataChannel implements KaaDataChannel {...}
@@ -38,39 +39,39 @@ import org.kaaproject.kaa.common.TransportType;
  * kaaClient.getChannelManager().addChannel(dataChannel1);
  * }
  * </pre>
+ * 
  * The code above registers new data channel in the KaaChannelManager instance.
  * This channel will be used by each transport abstraction which is supported by
  * this channel (See {@link KaaDataChannel#getSupportedTransportTypes()}).<br>
  * <br>
- * Channel manager will use the latest added channel for each {@link TransportType}
- * for data transferring. For example, if there are two {@link KaaDataChannel}
- * implementations <b>ChannelA</b> and <b>ChannelB</b> such as:
- * <br>
- * <il>
- *      <li>
- *          <b>ChannelA</b> is data transceiver ({@link ChannelDirection#BIDIRECTIONAL})
- *          for transport types [{@link TransportType#EVENT}, {@link TransportType#LOGGING}];
- *      </li>
- *      <li>
- *          <b>ChannelB</b> is data transmitter ({@link ChannelDirection#UP})
- *          for [{@link TransportType#EVENT}].
- *      </li>
- * <il>
- * <br>
- * and they are added to {@link #addChannel(KaaDataChannel)} in the following order:
- * <br>
+ * Channel manager will use the latest added channel for each
+ * {@link TransportType} for data transferring. For example, if there are two
+ * {@link KaaDataChannel} implementations <b>ChannelA</b> and <b>ChannelB</b>
+ * such as: <br>
+ * <il> <li>
+ * <b>ChannelA</b> is data transceiver ({@link ChannelDirection#BIDIRECTIONAL})
+ * for transport types [{@link TransportType#EVENT},
+ * {@link TransportType#LOGGING}];</li> <li>
+ * <b>ChannelB</b> is data transmitter ({@link ChannelDirection#UP}) for [
+ * {@link TransportType#EVENT}].</li> <il> <br>
+ * and they are added to {@link #addChannel(KaaDataChannel)} in the following
+ * order: <br>
+ * 
  * <pre>
- * {@code
- * ChannelA channelA = new ChannelA();
- * ChannelB channelB = new ChannelB();
- * kaaClient.getChannelManager().addChannel(channelA);
- * kaaClient.getChannelManager().addChannel(channelB);
+ * {
+ *     &#064;code
+ *     ChannelA channelA = new ChannelA();
+ *     ChannelB channelB = new ChannelB();
+ *     kaaClient.getChannelManager().addChannel(channelA);
+ *     kaaClient.getChannelManager().addChannel(channelB);
  * }
  * </pre>
- * then <b>ChannelA</b> instance will be used to receive {@link TransportType#EVENT}
- * and {@link TransportType#LOGGING} data, but to transmit only {@link TransportType#LOGGING}
- * data. For {@link TransportType#EVENT} data transmission will be used
- * <b>ChannelB</b> instance.<br>
+ * 
+ * then <b>ChannelA</b> instance will be used to receive
+ * {@link TransportType#EVENT} and {@link TransportType#LOGGING} data, but to
+ * transmit only {@link TransportType#LOGGING} data. For
+ * {@link TransportType#EVENT} data transmission will be used <b>ChannelB</b>
+ * instance.<br>
  * <b>NOTE:</b> If mentioned above channels will be added in reverse order,
  * <b>ChannelB</b> instance will not be used until channelA will not be removed
  * using {@link #removeChannel(KaaDataChannel)}<br>
@@ -85,8 +86,9 @@ import org.kaaproject.kaa.common.TransportType;
  * <br>
  * Call to {@link #clearChannelList()} removes <b>all</b> existing channels.<br>
  * <br>
- * If physical connection to remote server failed, call {@link #onServerFailed(TransportConnectionInfo)}
- * to switch to another available server.
+ * If physical connection to remote server failed, call
+ * {@link #onServerFailed(TransportConnectionInfo)} to switch to another
+ * available server.
  *
  * @author Yaroslav Zeygerman
  *
@@ -95,10 +97,12 @@ import org.kaaproject.kaa.common.TransportType;
 public interface KaaChannelManager {
 
     /**
-     * Updates the manager by setting the channel to the specified {@link TransportType}.
+     * Updates the manager by setting the channel to the specified
+     * {@link TransportType}.
      *
      * @param transport
-     *            the type of the transport which is going to receive updates using the specified channel.
+     *            the type of the transport which is going to receive updates
+     *            using the specified channel.
      * @param channel
      *            the channel to be added.
      * @see KaaDataChannel
@@ -119,7 +123,8 @@ public interface KaaChannelManager {
     /**
      * Updates the manager by removing the channel from the manager.
      *
-     * @param channel the channel to be removed.
+     * @param channel
+     *            the channel to be removed.
      * @see KaaDataChannel
      *
      */
@@ -128,7 +133,8 @@ public interface KaaChannelManager {
     /**
      * Updates the manager by removing the channel from the manager.
      *
-     * @param id the channel's id.
+     * @param id
+     *            the channel's id.
      * @see KaaDataChannel
      *
      */
@@ -144,21 +150,10 @@ public interface KaaChannelManager {
     List<KaaDataChannel> getChannels();
 
     /**
-     * Retrieves a list of channels by the specific transport type.
-     *
-     * @param type the transport's type.
-     * @return a list of channels.
-     *
-     * @see TransportType
-     * @see KaaDataChannel
-     *
-     */
-    KaaDataChannel getChannelByTransportType(TransportType type);
-
-    /**
      * Retrieves channel by the unique channel id.
      *
-     * @param id the channel's id.
+     * @param id
+     *            the channel's id.
      * @return channel object.
      *
      * @see KaaDataChannel
@@ -169,7 +164,8 @@ public interface KaaChannelManager {
     /**
      * Reports to Channel Manager in case link with server was not established.
      *
-     * @param server the parameters of server that was not connected.
+     * @param server
+     *            the parameters of server that was not connected.
      * @see TransportConnectionInfo
      *
      */
@@ -179,4 +175,29 @@ public interface KaaChannelManager {
      * Clears the list of channels.
      */
     void clearChannelList();
+
+    /**
+     * Invoke sync on active channel by specified transport type
+     * @param type
+     */
+    void sync(TransportType type);
+
+    /**
+     * Invoke sync acknowledgement on active channel by specified transport type
+     * @param type
+     */
+    void syncAck(TransportType type);
+
+    /**
+     * Invoke sync acknowledgement on active channel
+     * @param type - type that is used to identify active channel
+     */
+    void syncAll(TransportType type);
+
+    /**
+     * Returns information about server that is used for data transfer for specified {@link TransportType} 
+     * @param type - type that is used to identify active channel
+     * @return
+     */
+    TransportConnectionInfo getActiveServer(TransportType type);
 }
