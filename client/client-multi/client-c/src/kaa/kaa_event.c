@@ -811,6 +811,7 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
         extension_length -= sizeof(uint32_t);
 
         if (self->sequence_number_status != KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED) {
+            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Event sequence number synchronize response received");
             self->sequence_number_status = KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED;
 
             if (self->event_sequence_number != event_sequence_number) {
@@ -1024,7 +1025,7 @@ kaa_error_t kaa_event_finish_transaction(kaa_event_manager_t *self, kaa_event_bl
                 KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Events batch with id %zu has %zu events", trx_id, kaa_list_get_size(trx->events));
             }
             if (trx->events && kaa_list_get_size(trx->events) > 0) {
-                kaa_lists_merge(self->pending_events, trx->events);
+                self->pending_events = kaa_lists_merge(self->pending_events, trx->events);
                 need_sync = true;
                 trx->events = NULL;
             }

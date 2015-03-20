@@ -89,6 +89,9 @@ kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_manager_p
     profile_manager->status = status;
     profile_manager->logger = logger;
 
+    ext_calculate_sha_hash(NULL, 0, profile_manager->profile_hash);
+    ext_copy_sha_hash(profile_manager->status->profile_hash, profile_manager->profile_hash);
+
     *profile_manager_p = profile_manager;
     return KAA_ERR_NONE;
 }
