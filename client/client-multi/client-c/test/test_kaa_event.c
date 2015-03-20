@@ -387,7 +387,7 @@ void test_event_sync_serialize()
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ++event_count;
 
-    size_t event_sync_size;
+    size_t event_sync_size = 0;
     error_code = kaa_event_request_get_size(event_manager, &event_sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 

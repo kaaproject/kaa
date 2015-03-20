@@ -45,7 +45,7 @@
             <directory>${project.basedir}</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
-                <include>build.sh</include>
+                <include>README</include>
                 <include>CMakeLists.txt</include>
                 <include>sonar-project.properties.in</include>
             </includes>

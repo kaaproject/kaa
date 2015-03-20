@@ -151,7 +151,7 @@ public class EndpointActorMessageProcessor {
         } else {
             LOG.debug("[{}] Message ignored due to no channel contexts registered for events", actorKey, message);
             response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.FAILURE);
-            state.setUserRegistrationPending(true);
+            state.setUserRegistrationPending(false);
         }
         tellParent(context, response);
     }

@@ -155,3 +155,9 @@ add_executable  (test_kaa_configuration_manager
                     test/kaa_test_external.c
                 )
 target_link_libraries(test_kaa_configuration_manager kaac ${CUNIT_LIB_NAME})
+
+add_executable  (test_kaa_common_schema
+                    test/test_kaa_common_schema.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_kaa_common_schema kaac ${CUNIT_LIB_NAME})

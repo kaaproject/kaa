@@ -101,13 +101,12 @@ void kaa_profile_manager_destroy(kaa_profile_manager_t *self)
     if (self) {
         if (self->profile_body.buffer && self->profile_body.size > 0) {
             KAA_FREE(self->profile_body.buffer);
-            if (self->extension_data) {
-                if (self->extension_data->public_key.destroy) {
-                    self->extension_data->public_key.destroy(
-                            self->extension_data->public_key.buffer);
-                }
-                KAA_FREE(self->extension_data);
+        }
+        if (self->extension_data) {
+            if (self->extension_data->public_key.buffer && self->extension_data->public_key.destroy) {
+                self->extension_data->public_key.destroy(self->extension_data->public_key.buffer);
             }
+            KAA_FREE(self->extension_data);
         }
         KAA_FREE(self);
     }

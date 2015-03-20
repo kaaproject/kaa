@@ -154,6 +154,8 @@ void test_specified_user_verifier()
     ASSERT_EQUAL(memcmp(buf_cursor, USER_VERIFIER, strlen(USER_VERIFIER)), 0);
     buf_cursor += kaa_aligned_size_get(strlen(USER_VERIFIER));
 
+    kaa_platform_message_writer_destroy(writer);
+
     KAA_TRACE_OUT(logger);
 }
 
@@ -184,6 +186,8 @@ void test_success_response()
     ASSERT_TRUE(is_attach_success_invoked);
     ASSERT_TRUE(last_is_attached_result);
 
+    kaa_platform_message_reader_destroy(reader);
+
     KAA_TRACE_OUT(logger);
 }
 
@@ -207,6 +211,8 @@ void test_failed_response()
 
     ASSERT_EQUAL(kaa_user_handle_server_sync(user_manager, reader, 0, 28), KAA_ERR_NONE);
     ASSERT_TRUE(is_attach_failed_invoked);
+
+    kaa_platform_message_reader_destroy(reader);
 
     KAA_TRACE_OUT(logger);
 }
