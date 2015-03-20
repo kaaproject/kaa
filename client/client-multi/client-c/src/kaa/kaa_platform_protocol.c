@@ -345,8 +345,8 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
 #ifndef KAA_DISABLE_FEATURE_LOGGING
             bool need_resync = false;
             error_code = kaa_logging_need_logging_resync(self->kaa_context->log_collector, &need_resync);
-            if(!error_code) {
-                if(need_resync) {
+            if (!error_code) {
+                if (need_resync) {
                     error_code = kaa_logging_request_serialize(self->kaa_context->log_collector, writer);
                     if (error_code)
                          KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the logging extension");

@@ -35,7 +35,6 @@
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
-extern kaa_error_t kaa_init(kaa_context_t **kaa_context_p);
 extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context);
 extern kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector_p
                                           , kaa_status_t *status
@@ -44,12 +43,6 @@ extern kaa_error_t kaa_log_collector_create(kaa_log_collector_t ** log_collector
 
 extern kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p, kaa_context_t *context
                                               , kaa_status_t *status);
-
-extern kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t *self, const kaa_serialize_info_t *info
-                                                             , char **buffer, size_t *buffer_size);
-
-extern kaa_error_t kaa_deinit(kaa_context_t *kaa_context);
-
 
 static kaa_context_t* kaa_context= NULL;
 static kaa_logger_t *logger = NULL;
@@ -86,22 +79,22 @@ typedef struct {
 void test_empty_log_collector_extension_count(void)
 {
     kaa_service_t service = KAA_SERVICE_LOGGING;
-    info = (kaa_serialize_info_t *) malloc(sizeof(kaa_serialize_info_t));
+    info = (kaa_serialize_info_t *) malloc (sizeof(kaa_serialize_info_t));
     info->services = &service;
     info->services_count = 1;
     info->allocator = &allocator;
     info->allocator_context = mock;
     mock_strategy_context_t *strategy = (mock_strategy_context_t*) malloc(sizeof(mock_strategy_context_t));
     mock_storage_context_t *storage = (mock_storage_context_t*) malloc(sizeof(mock_storage_context_t));
-    if(!storage || !strategy) {
-        exit(KAA_ERR_NOMEM);
-    }
+    ASSERT_NOT_NULL(storage);
+    ASSERT_NOT_NULL(strategy);
     memset(storage, 0, sizeof(mock_storage_context_t));
     memset(strategy, 0, sizeof(mock_strategy_context_t));
     kaa_error_t error_code = kaa_logging_init(log_collector, storage, strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     kaa_context->log_collector = log_collector;
     error_code = kaa_platform_protocol_serialize_client_sync(protocol, info, &buffer, &buffer_size);
+    free(info);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     char count_of_extensions = *(buffer + 7);
     KAA_LOG_DEBUG(kaa_context->logger, KAA_ERR_NONE, "count of extensions is %d", count_of_extensions);
@@ -110,29 +103,29 @@ void test_empty_log_collector_extension_count(void)
 int initialize()
 {
     kaa_error_t error_code = kaa_init(&kaa_context);
-    if(error_code) {
+    if (error_code) {
     	exit(error_code);
     }
     error_code = kaa_status_create(&status);
-    if(error_code) {
+    if (error_code) {
         exit(error_code);
     }
     error_code = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
-    if(error_code || !logger) {
+    if (error_code || !logger) {
         exit(error_code);
     }
 
     kaa_context->logger = logger;
     error_code = kaa_platform_protocol_create(&protocol, kaa_context,status);
-    if(error_code) {
+    if (error_code) {
     	exit(error_code);
     }
     error_code = kaa_channel_manager_create(&channel_manager, kaa_context);
-    if(error_code) {
+    if (error_code) {
         exit(error_code);
         }
     error_code = kaa_log_collector_create(&log_collector, status, channel_manager, logger);
-    if(error_code) {
+    if (error_code) {
         exit(error_code);
         }
 	return KAA_ERR_NONE;
@@ -141,12 +134,13 @@ int initialize()
 int free_resources()
 {
     kaa_deinit(kaa_context);
+    free(buffer);
     return KAA_ERR_NONE;
 }
 
 #endif
 
-KAA_SUITE_MAIN(Protocol_test,initialize,free_resources
+KAA_SUITE_MAIN(plarform_protocol_test,initialize,free_resources
 #ifndef KAA_DISABLE_FEATURE_LOGGING
        ,
        KAA_TEST_CASE(empty_log_collector_test, test_empty_log_collector_extension_count)

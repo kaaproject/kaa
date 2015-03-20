@@ -70,6 +70,15 @@ struct kaa_log_collector {
 static const kaa_service_t logging_sync_services[1] = {KAA_SERVICE_LOGGING};
 
 
+kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result)
+{
+    KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
+    if (self->is_sync_ignored) {
+            return KAA_ERR_NONE;
+        }
+    *result = true;
+    return KAA_ERR_NONE;
+}
 
 static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_id)
 {
@@ -289,11 +298,9 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
     KAA_RETURN_IF_NIL(self->log_storage_context, KAA_ERR_NOT_INITIALIZED);
-
     if (self->is_sync_ignored) {
         return KAA_ERR_NONE;
     }
-
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile log client sync");
 
     kaa_platform_message_writer_t tmp_writer = *writer;
