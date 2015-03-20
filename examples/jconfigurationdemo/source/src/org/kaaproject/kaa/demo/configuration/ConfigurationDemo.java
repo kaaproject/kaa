@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Configuration demo application, which demonstrates Kaa configuration API
+ * Configuration demo application which demonstrates Kaa configuration API
  */
 public class ConfigurationDemo {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationDemo.class);
