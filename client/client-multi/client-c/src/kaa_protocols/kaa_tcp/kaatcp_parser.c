@@ -17,6 +17,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <sys/types.h>
 
 #include "kaatcp_parser.h"

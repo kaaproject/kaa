@@ -28,7 +28,7 @@
 
 #include "../kaa_error.h"
 
-#define KAA_MAX_LOG_MESSAGE_LENGTH  512
+#define KAA_MAX_LOG_MESSAGE_LENGTH  256
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,7 +52,7 @@ extern "C" {
 
 #ifndef KAA_MAX_LOG_LEVEL
 /** Use KAA_LOG_TRACE as the max log level by default */
-#define KAA_MAX_LOG_LEVEL   KAA_LOG_LEVEL_TRACE
+#define KAA_MAX_LOG_LEVEL   KAA_LOG_LEVEL_NONE
 #endif
 
 #define KAA_LOG_LEVEL_FATAL_ENABLED     (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_FATAL)

@@ -25,7 +25,7 @@ extern "C" {
 
 
 
-#define KAATCP_PARSER_MAX_MESSAGE_LENGTH    1024
+#define KAATCP_PARSER_MAX_MESSAGE_LENGTH    999
 
 
 

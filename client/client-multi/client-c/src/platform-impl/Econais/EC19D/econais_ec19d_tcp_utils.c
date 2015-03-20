@@ -29,20 +29,25 @@
 #include "../../../kaa_error.h"
 #include "../../../kaa_common.h"
 
+#define START_BASE_PORT 51000
 /* Auxilaury function to get socket error status,
  * which is a socket level option, so set_sock_option is used */
-static int get_sock_error(int sockid)
+static kaa_error_t get_sock_error(kaa_fd_t sockid, int *sockerror)
 {
-   int sockerr;
-   unsigned int sockerrlen = sizeof(sockerr);
+    KAA_RETURN_IF_NIL(sockerror, KAA_ERR_BADPARAM);
+    if (sockid < 0)
+        return KAA_ERR_BADPARAM;
 
-   assert(sockid >= 0);
-   assert(sndc_sock_getsockopt(sockid, SNDC_SOL_SOCKET, SNDC_SO_ERROR,
-                               &sockerr, &sockerrlen) == 0);
-   assert(sockerrlen == sizeof(sockerr));
-   return sockerr;
+   unsigned int sockerrlen = sizeof(*sockerror);
+
+
+   if (sndc_sock_getsockopt(sockid, SNDC_SOL_SOCKET, SNDC_SO_ERROR,
+                               (void *)sockerror, &sockerrlen) != 0) {
+       return KAA_ERR_BADDATA;
+   }
+
+   return KAA_ERR_NONE;
 }
-
 
 ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener
                                                                 , const kaa_dns_resolve_info_t *resolve_props
@@ -100,34 +105,60 @@ kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd
 {
     KAA_RETURN_IF_NIL3(fd, destination, destination_size, KAA_ERR_BADPARAM);
 
+    *fd = -1;
+
     if (destination->sa_family != SNDC_AF_INET) {
         return KAA_ERR_SOCKET_INVALID_FAMILY;
     }
 
-    kaa_fd_t sock = sndc_sock_socket(SNDC_PF_INET, SNDC_SOCK_STREAM, 0);
+    kaa_fd_t sock = sndc_sock_socket(SNDC_PF_INET, SNDC_SOCK_STREAM, SNDC_IPPROTO_TCP);
     if (sock < 0)
         return KAA_ERR_SOCKET_ERROR;
-
-    int flags = sndc_sock_fcntl(sock, SNDC_F_GETFL, 0);
-    if (flags < 0) {
-        ext_tcp_utils_tcp_socket_close(sock);
-        return KAA_ERR_SOCKET_ERROR;
-    }
-
-    if (sndc_sock_fcntl(sock, SNDC_F_SETFL, flags | SNDC_O_NONBLOCK) < 0) {
-        ext_tcp_utils_tcp_socket_close(sock);
-        return KAA_ERR_SOCKET_ERROR;
-    }
-
     int status = 0;
+    int iteration = 10;
+    struct sndc_sockaddr_in bind_sockaddr;
+    do {
+        memset(&bind_sockaddr, 0, sizeof(bind_sockaddr));
+
+        bind_sockaddr.sin_family = SNDC_AF_INET;
+        bind_sockaddr.sin_len = sizeof(bind_sockaddr);
+        bind_sockaddr.sin_addr.s_addr = SNDC_INADDR_ANY;
+
+        uint16_t bind_port = START_BASE_PORT + sndc_sys_getRandom() % 10000;
+        bind_sockaddr.sin_port = sndc_htons(bind_port);
+
+        status = sndc_sock_bind(sock, (struct sndc_sockaddr*) &bind_sockaddr, sizeof(bind_sockaddr));
+        iteration--;
+    } while (status && iteration);
+
+    bool_t t = true;
+    if (sndc_sock_ioctl(sock, SNDC_FIONBIO, (void *)&t) < 0) {
+        ext_tcp_utils_tcp_socket_close(sock);
+        return KAA_ERR_SOCKET_ERROR;
+    }
+
+    if (sndc_sock_fcntl(sock, SNDC_F_SETFL, SNDC_O_NONBLOCK) < 0) {
+        ext_tcp_utils_tcp_socket_close(sock);
+        return KAA_ERR_SOCKET_ERROR;
+    }
+
+    status = 0;
 
     status = sndc_sock_connect(sock, destination, destination_size);
 
-    if (status && status != EINPROGRESS) {
-        ext_tcp_utils_tcp_socket_close(sock);
-        return KAA_ERR_SOCKET_CONNECT_ERROR;
+    if (status) {
+        if (get_sock_error(sock, &status)) {
+            ext_tcp_utils_tcp_socket_close(sock);
+            return KAA_ERR_SOCKET_ERROR;
+        }
+        if (!(status == EINPROGRESS
+                || status == EAGAIN)) {
+            sndc_printf("Socket %d connect error %d\n", sock, status);
+            ext_tcp_utils_tcp_socket_close(sock);
+            return KAA_ERR_SOCKET_CONNECT_ERROR;
+        }
     }
-
+    *fd = sock;
     return KAA_ERR_NONE;
 }
 
@@ -135,17 +166,20 @@ ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd
                                                     , const kaa_sockaddr_t *destination
                                                     , kaa_socklen_t destination_size)
 {
-    int status = sndc_sock_connect(fd, destination, destination_size);
-    if (status) {
-        switch (status) {
-            case EINPROGRESS:
-            case EALREADY:
-                return KAA_TCP_SOCK_CONNECTING;
-            case EISCONN:
-                return KAA_TCP_SOCK_CONNECTED;
-            default:
-                return KAA_TCP_SOCK_ERROR;
-        }
+    int status = 0;
+    kaa_error_t error = get_sock_error(fd, &status);
+    if (error) {
+        return KAA_TCP_SOCK_ERROR;
+    }
+    switch (status) {
+        case EINPROGRESS:
+        case EALREADY:
+            return KAA_TCP_SOCK_CONNECTING;
+        case 0:
+        case EISCONN:
+            return KAA_TCP_SOCK_CONNECTED;
+        default:
+            return KAA_TCP_SOCK_ERROR;
     }
     return KAA_TCP_SOCK_CONNECTED;
 }
@@ -158,7 +192,9 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd
     KAA_RETURN_IF_NIL2(buffer, buffer_size, KAA_TCP_SOCK_IO_ERROR);
     int write_result = sndc_sock_write(fd, (void *)buffer, buffer_size);
     if (write_result < 0) {
-        int status = get_sock_error(fd);
+        int status = 0;
+        kaa_error_t error = get_sock_error(fd, &status);
+        KAA_RETURN_IF_ERR(error);
         if (status != EAGAIN)
             return KAA_TCP_SOCK_IO_ERROR;
     }
@@ -177,7 +213,9 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd
     if (!read_result)
         return KAA_TCP_SOCK_IO_EOF;
     if (read_result < 0) {
-        int status = get_sock_error(fd);
+        int status = 0;
+        kaa_error_t error = get_sock_error(fd, &status);
+        KAA_RETURN_IF_ERR(error);
         if (status != EAGAIN)
             return KAA_TCP_SOCK_IO_ERROR;
     }

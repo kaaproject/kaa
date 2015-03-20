@@ -244,10 +244,11 @@ static kaa_error_t init_channel(kaa_channel_manager_t *self
         transport_context.bootstrap_manager = self->kaa_context->bootstrap_manager;
     }
 
-    channel->init(channel->context, &transport_context);
+    kaa_error_t error_code = channel->init(channel->context, &transport_context);
+    KAA_RETURN_IF_ERR(error_code);
 
     kaa_transport_protocol_id_t protocol_id;
-    kaa_error_t error_code = channel->get_protocol_id(channel->context, &protocol_id);
+    error_code = channel->get_protocol_id(channel->context, &protocol_id);
 
     if (!error_code) {
         kaa_access_point_t *access_point;
@@ -273,7 +274,8 @@ static kaa_error_t init_channel(kaa_channel_manager_t *self
             KAA_LOG_TRACE(self->kaa_context->logger, KAA_ERR_NONE, "Found %s access point [0x%08X] for channel [0x%08X] "
                                 "(protocol: id=0x%08X, version=%u)", (is_bootstrap_channel ? "Bootstrap" : "Operations")
                                 , access_point->id, id, protocol_id.id, protocol_id.version);
-            channel->set_access_point(channel->context, access_point);
+            error_code = channel->set_access_point(channel->context, access_point);
+            KAA_RETURN_IF_ERR(error_code);
         } else {
             KAA_LOG_WARN(self->kaa_context->logger, KAA_ERR_NOT_FOUND, "Could not find access point for channel [0x%08X] "
                                 "(protocol: id=0x%08X, version=%u)", id, protocol_id.id, protocol_id.version);
@@ -291,7 +293,7 @@ kaa_error_t kaa_channel_manager_add_transport_channel(kaa_channel_manager_t *sel
 
     kaa_error_t error_code = add_channel(self, channel, channel_id);
     if (!error_code) {
-        init_channel(self, channel);
+        error_code = init_channel(self, channel);
     }
 
     return error_code;
@@ -454,14 +456,15 @@ kaa_error_t kaa_channel_manager_on_new_access_point(kaa_channel_manager_t *self
 {
     KAA_RETURN_IF_NIL3(self, protocol_id, access_point, KAA_ERR_BADPARAM);
 
-    kaa_transport_channel_wrapper_t *channel_wrapper;
+    kaa_transport_channel_wrapper_t *channel_wrapper = NULL;
+
     kaa_list_t *channel_it = kaa_list_find_next(self->transport_channels
                                               , &find_channel_by_protocol_id
                                               , protocol_id);
 
     while (channel_it) {
         channel_wrapper = kaa_list_get_data(channel_it);
-        if (channel_wrapper->server_type == server_type) {
+        if (channel_wrapper && channel_wrapper->server_type == server_type) {
             KAA_LOG_TRACE(self->kaa_context->logger, KAA_ERR_NONE, "Set new %s access point [0x%08X] for channel [0x%08X] "
                                  "(protocol: id=0x%08X, version=%u)"
                                 , (channel_wrapper->server_type == KAA_SERVER_BOOTSTRAP ? "Bootstrap" : "Operations")
