@@ -700,7 +700,7 @@ public abstract class AbstractTestControlServer {
             configuration.setEndpointGroupId(endpointGroupId);
         }
         GenericAvroConverter converter = new GenericAvroConverter(configSchema.getOverrideSchema());
-        configuration.setBody(converter.endcodeToJson(converter.decodeJson(config)));
+        configuration.setBody(converter.encodeToJson(converter.decodeJson(config)));
         ConfigurationDto savedConfiguration = toDto(client
                 .editConfiguration(toDataStruct(configuration)));
         return savedConfiguration;

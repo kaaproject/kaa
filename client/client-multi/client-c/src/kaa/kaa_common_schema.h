@@ -36,7 +36,9 @@ extern "C" {
 
 
 typedef void (*serialize_fn)(avro_writer_t writer, void *data);
-typedef void *(*deserialize_fn)(avro_reader_t reader);
+typedef void *(*deserialize_fn)();
+typedef void *(*deserialize_wo_ctx_fn)(avro_reader_t reader);
+typedef void *(*deserialize_w_ctx_fn)(avro_reader_t reader, void *context);
 typedef size_t (*get_size_fn)(void *data);
 typedef void (*destroy_fn)(void *data);
 
@@ -86,6 +88,16 @@ size_t kaa_bytes_get_size(void *data);
 
 
 
+kaa_bytes_t *kaa_fixed_move_create(const uint8_t *data, size_t data_len, destroy_fn destroy);
+kaa_bytes_t *kaa_fixed_copy_create(const uint8_t *data, size_t data_len);
+
+void kaa_fixed_destroy(void *data);
+void kaa_fixed_serialize(avro_writer_t writer, void *data);
+kaa_bytes_t *kaa_fixed_deserialize(avro_reader_t reader, void *context);
+size_t kaa_fixed_get_size(void *data);
+
+
+
 void kaa_boolean_serialize(avro_writer_t writer, void *data);
 int8_t *kaa_boolean_deserialize(avro_reader_t reader);
 size_t kaa_boolean_get_size(void *data);
@@ -123,7 +135,8 @@ size_t kaa_double_get_size(void *data);
 
 
 void kaa_array_serialize(avro_writer_t writer, kaa_list_t *array, serialize_fn serialize);
-kaa_list_t *kaa_array_deserialize(avro_reader_t reader, deserialize_fn deserialize);
+kaa_list_t *kaa_array_deserialize_wo_ctx(avro_reader_t reader, deserialize_wo_ctx_fn deserialize);
+kaa_list_t *kaa_array_deserialize_w_ctx(avro_reader_t reader, deserialize_w_ctx_fn deserialize, void *deserialize_context);
 size_t kaa_array_get_size(kaa_list_t *array, get_size_fn get_size);
 
 

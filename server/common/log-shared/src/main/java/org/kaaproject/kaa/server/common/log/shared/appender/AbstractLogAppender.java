@@ -203,8 +203,8 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
                 LOG.trace("Avro record converter [{}] with log data [{}]", eventConverter, logEvent.getLogData());
                 GenericRecord decodedLog = eventConverter.decodeBinary(logEvent.getLogData());
                 LOG.trace("Avro header record converter [{}]", headerConverter);
-                String encodedJsonLogHeader = headerConverter.endcodeToJson(header);
-                String encodedJsonLog = eventConverter.endcodeToJson(decodedLog);
+                String encodedJsonLogHeader = headerConverter.encodeToJson(header);
+                String encodedJsonLog = eventConverter.encodeToJson(decodedLog);
                 events.add(new LogEventDto(encodedJsonLogHeader, encodedJsonLog));
             }
         } catch (IOException e) {

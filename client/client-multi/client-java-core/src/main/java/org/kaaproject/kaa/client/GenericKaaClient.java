@@ -499,6 +499,11 @@ public interface GenericKaaClient {
     PrivateKey getClientPrivateKey();
 
     /**
+     * Set new access token for a current endpoint
+     */
+    void setEndpointAccessToken(String token);
+
+    /**
      * Generate new access token for a current endpoint
      */
     String refreshEndpointAccessToken();
