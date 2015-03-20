@@ -141,6 +141,12 @@ public class SchemaUtil {
             case MAP:
                 childs.addAll(getChildSchemas(parent.getValueType()));
                 break;
+            case ENUM:
+                childs.add(parent);
+                break;
+            case FIXED:
+                childs.add(parent);
+                break;
             default:
                 break;
         }

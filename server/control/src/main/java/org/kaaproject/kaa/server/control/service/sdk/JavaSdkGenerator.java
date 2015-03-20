@@ -525,10 +525,12 @@ public class JavaSdkGenerator extends SdkGenerator {
         javaSources.add(logCollectorInterfaceClassBean);
         javaSources.add(logCollectorSourceClassBean);
 
-        for (Schema eventFamilySchema : eventFamilySchemas) {
-            javaSources.addAll(generateSchemaSources(eventFamilySchema, uniqueSchemasMap));
+        if (eventFamilies != null && !eventFamilies.isEmpty()) {
+            for (Schema eventFamilySchema : eventFamilySchemas) {
+                javaSources.addAll(generateSchemaSources(eventFamilySchema, uniqueSchemasMap));
+            }
+            javaSources.addAll(JavaEventClassesGenerator.generateEventClasses(eventFamilies));
         }
-        javaSources.addAll(JavaEventClassesGenerator.generateEventClasses(eventFamilies));
 
         String userVerifierConstantsTemplate = readResource(USER_VERIFIER_CONSTANTS_SOURCE_TEMPLATE);
         if (defaultVerifierToken == null) {
