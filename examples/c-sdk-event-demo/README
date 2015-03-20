@@ -18,8 +18,8 @@
 PREFACE
 ************************************
 
-This demo application illustrates the Kaa logging feature using the Kaa C++ SDK.
-To read more about the logging feature, visit https://docs.kaaproject.org/display/KAA/Logging.
+This demo application illustrates the Kaa event feature using the Kaa C SDK.
+To read more about the logging feature, visit https://docs.kaaproject.org/display/KAA/Events.
 
 ************************************
 INSTALLATION
