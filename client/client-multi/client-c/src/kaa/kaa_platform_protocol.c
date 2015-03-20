@@ -201,7 +201,7 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
     *expected_size += extension_size;
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated meta extension size %u", extension_size);
 
-    for (;!err_code && services_count--;) {
+    while (!err_code && services_count--) {
         switch (services[services_count]) {
         case KAA_SERVICE_BOOTSTRAP: {
             err_code = kaa_channel_manager_bootstrap_request_get_size(self->kaa_context->channel_manager
