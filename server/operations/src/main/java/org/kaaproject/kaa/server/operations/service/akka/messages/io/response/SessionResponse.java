@@ -28,6 +28,6 @@ public interface SessionResponse extends ChannelAware, PlatformAware{
     ServerSync getResponse();
     SessionInfo getSessionInfo();
     MessageBuilder getMessageBuilder();
-    ErrorBuilder getErrorConverter();
+    ErrorBuilder getErrorBuilder();
 
 }

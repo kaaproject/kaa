@@ -33,13 +33,13 @@ public class NettySessionResponseMessage implements SessionResponse{
     private final SessionInfo sessionInfo;
     private final ServerSync syncResponse;
     private final MessageBuilder responseConverter;
-    private final ErrorBuilder errorConverter;
+    private final ErrorBuilder errorBuilder;
 
     public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, MessageBuilder responseConverter, ErrorBuilder errorConverter){
         this.sessionInfo = sessionInfo;
         this.syncResponse = syncResponse;
         this.responseConverter = responseConverter;
-        this.errorConverter = errorConverter;
+        this.errorBuilder = errorConverter;
     }
 
     public ServerSync getSyncResponse() {
@@ -47,8 +47,8 @@ public class NettySessionResponseMessage implements SessionResponse{
     }
 
     @Override
-    public ErrorBuilder getErrorConverter() {
-        return errorConverter;
+    public ErrorBuilder getErrorBuilder() {
+        return errorBuilder;
     }
 
     @Override

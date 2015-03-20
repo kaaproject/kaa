@@ -113,13 +113,17 @@ public class EncDecActorMessageProcessor {
             sessionResponseMeter.mark();
             processSessionResponse(message);
         } catch (Exception e) {
-            processErrors(message.getChannelContext(), message.getErrorConverter(), e);
+            processErrors(message.getChannelContext(), message.getErrorBuilder(), e);
         }
     }
 
     public void forward(ActorContext context, SessionAware message) {
         LOG.debug("Forwarding session aware message: {}", message);
-        this.opsActor.tell(message, context.self());
+        if (isApplicationTokenValid(message.getSessionInfo().getApplicationToken())) {
+            this.opsActor.tell(message, context.self());
+        } else {
+            sendFailureResponseMessage(message);
+        }
     }
 
     void redirect(RedirectionRule redirection, SessionInitMessage message) {
@@ -149,7 +153,7 @@ public class EncDecActorMessageProcessor {
 
             SessionInfo sessionInfo = message.getSessionInfo();
             SessionResponse responseMessage = new NettySessionResponseMessage(sessionInfo, response, message.getMessageBuilder(),
-                    message.getErrorBuilder());
+                        message.getErrorBuilder());
             LOG.debug("Redirect Response: {}", response);
             processSessionResponse(responseMessage);
         } catch (Exception e) {
@@ -185,7 +189,11 @@ public class EncDecActorMessageProcessor {
 
     private void forwardToOpsActor(ActorContext context, SessionInfo session, ClientSync request, Message requestMessage) {
         SyncRequestMessage message = new SyncRequestMessage(session, request, requestMessage, context.self());
-        this.opsActor.tell(message, context.self());
+        if (isApplicationTokenValid(message.getAppToken())) {
+            this.opsActor.tell(message, context.self());
+        } else {
+            sendFailureResponseMessage(message);
+        }
     }
 
     private void processSessionResponse(SessionResponse message) throws GeneralSecurityException, PlatformEncDecException {
@@ -335,6 +343,21 @@ public class EncDecActorMessageProcessor {
 
     private String getAppToken(ClientSync request) {
         return request.getClientSyncMetaData().getApplicationToken();
+    }
+
+    private boolean isApplicationTokenValid(String applicationToken) {
+        String tenantId = cacheService.getTenantIdByAppToken(applicationToken);
+        return tenantId != null;
+    }
+
+    private void sendFailureResponseMessage(SyncRequestMessage message) {
+        LOG.debug("Sending failure response...");
+        // TODO: send response
+    }
+
+    private void sendFailureResponseMessage(SessionAware message) {
+        LOG.debug("Sending failure response...");
+        // TODO: send response
     }
 
     protected EndpointObjectHash getEndpointObjectHash(ClientSync request) {
