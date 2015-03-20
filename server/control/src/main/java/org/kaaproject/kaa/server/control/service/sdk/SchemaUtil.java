@@ -10,8 +10,12 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.avro.Schema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SchemaUtil {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SchemaUtil.class);
 
     public static boolean isEqualSchemas(Schema s1, Schema s2) {
 
@@ -111,7 +115,8 @@ public class SchemaUtil {
                 map.put(key, schema);
             } else {
                 if (!SchemaUtil.isEqualSchemas(schema, map.get(key))) {
-                    throw new Exception("Some schemas describe classes with same package and name but different fields");
+                    LOG.debug("classes {} are not the same: \n{}\n\n{}", key, schema.toString(), map.get(key).toString());
+                    throw new IllegalArgumentException("multiple occurrences of "+key+" with different fields");
                 }
             }
         }
