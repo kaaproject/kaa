@@ -15,12 +15,14 @@
  */
 package org.kaaproject.kaa.server.operations.service.akka.actors.io;
 
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Set;
 
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -352,12 +354,12 @@ public class EncDecActorMessageProcessor {
 
     private void sendFailureResponseMessage(SyncRequestMessage message) {
         LOG.debug("Sending failure response...");
-        // TODO: send response
+        message.getChannelContext().writeAndFlush(new ConnAck(ConnAck.ReturnCode.REFUSE_BAD_CREDENTIALS));
     }
 
     private void sendFailureResponseMessage(SessionAware message) {
         LOG.debug("Sending failure response...");
-        // TODO: send response
+        message.getSessionInfo().getCtx().writeAndFlush(new ConnAck(ConnAck.ReturnCode.REFUSE_BAD_CREDENTIALS));
     }
 
     protected EndpointObjectHash getEndpointObjectHash(ClientSync request) {
