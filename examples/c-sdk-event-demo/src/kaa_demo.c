@@ -107,7 +107,7 @@ void kaa_on_thermostat_info_request(void *context, kaa_thermostat_event_class_fa
     kaa_event_manager_send_kaa_thermostat_event_class_family_thermostat_info_response(kaa_context_->event_manager,
                                                                                       response, NULL);
 
-    info->destroy(info); // Destroying event that was successfully sent
+    response->destroy(response); // Destroying event that was successfully sent
 
     event->destroy(event);
 }
