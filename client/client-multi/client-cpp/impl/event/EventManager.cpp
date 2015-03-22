@@ -45,7 +45,7 @@ void EventManager::registerEventFamily(IEventFamily* eventFamily)
 void EventManager::produceEvent(const std::string& fqn, const std::vector<std::uint8_t>& data,
                                 const std::string& target, TransactionIdPtr trxId)
 {
-    if (fqn.empty() || data.empty()) {
+    if (fqn.empty()) {
         KAA_LOG_WARN("Failed to process outgoing event: bad input data");
         return;
     }
@@ -115,7 +115,7 @@ bool EventManager::hasPendingListenerRequests() const
 void EventManager::onEventFromServer(const std::string& eventClassFQN, const std::vector<std::uint8_t>& data,
                                      const std::string& source)
 {
-    if (eventClassFQN.empty() || data.empty()) {
+    if (eventClassFQN.empty()) {
         KAA_LOG_WARN("Failed to process incoming event: bad input data");
         return;
     }

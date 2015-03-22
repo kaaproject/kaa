@@ -60,7 +60,7 @@ public:
                               , const std::vector<std::uint8_t>& data
                               , const std::string& source)
     {
-        if (fqn.empty() || data.empty()) {
+        if (fqn.empty()) {
             KAA_LOG_WARN("Failed to process incoming event: bad data");
             return;
         }
