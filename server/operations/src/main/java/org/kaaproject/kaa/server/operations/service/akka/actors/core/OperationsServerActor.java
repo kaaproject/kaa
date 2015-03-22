@@ -102,7 +102,6 @@ public class OperationsServerActor extends UntypedActor {
     @Override
     public void onReceive(Object message) throws Exception {
         LOG.debug("Received: {}", message);
-        LOG.info("Received: {}", message);
         if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
         } else if (message instanceof SessionControlMessage) {
