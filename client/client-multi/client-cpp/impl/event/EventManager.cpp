@@ -163,7 +163,10 @@ void EventManager::onEventListenersReceived(const EventSyncResponse::eventListen
             auto it = eventListenersRequests_.find(response.requestId);
 
             if (it != eventListenersRequests_.end()) {
+                auto callback = *it;
+                eventListenersRequests_.erase(it);
                 KAA_UNLOCK(lock);
+
                 if (response.result == SyncResponseResultType::SUCCESS) {
                     std::vector<std::string> listeners;
                     if (!response.listeners.is_null()) {
@@ -171,15 +174,11 @@ void EventManager::onEventListenersReceived(const EventSyncResponse::eventListen
                         listeners.assign(result.begin(), result.end());
                     }
 
-                    it->second->listener_->onEventListenersReceived(listeners);
+                    callback.second->listener_->onEventListenersReceived(listeners);
                 } else {
-                    it->second->listener_->onRequestFailed();
+                    callback.second->listener_->onRequestFailed();
                 }
 
-                KAA_LOCK(lock);
-                // Removing by request id, because the iterator could become outdated
-                // after the user's callback processing.
-                eventListenersRequests_.erase(response.requestId);
             } else {
                 KAA_LOG_WARN(boost::format("Failed to find requester for event listeners (request id = %1%)")
                              % response.requestId);
