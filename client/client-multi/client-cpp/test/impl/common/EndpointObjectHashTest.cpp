@@ -16,6 +16,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <cstdlib>
+
 #include "kaa/common/EndpointObjectHash.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 
@@ -31,9 +33,9 @@ BOOST_AUTO_TEST_CASE(NoData)
      * EndpointObjectHash with no data should return empty hash buffer.
      */
     EndpointObjectHash hashObject;
-    SharedDataBuffer empty = hashObject.getHash();
+    HashDigest empty = hashObject.getHashDigest();
 
-    BOOST_CHECK(empty.first.get() == nullptr && empty.second == 0);
+    BOOST_CHECK(empty.empty());
 }
 
 BOOST_AUTO_TEST_CASE(SameDataHash)
@@ -77,10 +79,10 @@ BOOST_AUTO_TEST_CASE(EmptyHash)
     EndpointObjectHash hash(str);
     EndpointObjectHash empty;
 
-    BOOST_CHECK(!EndpointObjectHash::isEqual(hash.getHash(), empty.getHash()));
+    BOOST_CHECK(hash != empty);
 }
 
-void createInvalidHashObject() { EndpointObjectHash hash(nullptr, 0); }
+void createInvalidHashObject() { EndpointObjectHash hash(nullptr, 1 + std::rand()); }
 
 BOOST_AUTO_TEST_CASE(InvalidData)
 {
@@ -95,21 +97,17 @@ BOOST_AUTO_TEST_CASE(CompareCalculationWithSample)
     /*
      * Compare EndpointObjectHash stuff with pre-defined SHA-1 sample.
      */
-    SharedDataBuffer sampleBuffer;
+    HashDigest sampleBuffer = { 0x2f, 0xd4, 0xe1, 0xc6,
+            0x7a, 0x2d, 0x28, 0xfc,
+            0xed, 0x84, 0x9e, 0xe1,
+            0xbb, 0x76, 0xe7, 0x39,
+            0x1b, 0x93, 0xeb, 0x12 };
     std::string str("The quick brown fox jumps over the lazy dog");
-    std::uint8_t* sample = new uint8_t[SHA1_SIZE] {0x2f, 0xd4, 0xe1, 0xc6,
-                                                     0x7a, 0x2d, 0x28, 0xfc,
-                                                     0xed, 0x84, 0x9e, 0xe1,
-                                                     0xbb, 0x76, 0xe7, 0x39,
-                                                     0x1b, 0x93, 0xeb, 0x12};
 
-    sampleBuffer.first.reset(sample);
-    sampleBuffer.second = SHA1_SIZE;
+    HashDigest calculatedHash = EndpointObjectHash(
+            reinterpret_cast<const std::uint8_t*>(str.data()), str.length()).getHashDigest();
 
-    SharedDataBuffer calculatedHash = EndpointObjectHash(
-            reinterpret_cast<const std::uint8_t*>(str.data()), str.length()).getHash();
-
-    BOOST_CHECK(EndpointObjectHash::isEqual(calculatedHash, sampleBuffer));
+    BOOST_CHECK(sampleBuffer == calculatedHash);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -1,5 +1,5 @@
 #
-# Copyright 2014 CyberVision, Inc.
+# Copyright 2014-2015 CyberVision, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,21 +15,76 @@
 #
 
 cmake_minimum_required(VERSION 2.8.8)
+
 project (Kaa-cpp)
+enable_language(CXX)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/Modules)
+# Path to CMake's scripts.
+set(CMAKE_MODULE_PATH 
+	 ${CMAKE_MODULE_PATH}
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Modules
+    )
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++0x -g")
-endif ()
+#
+# Sets common compilation flags.
+# 
+# NOTE: Platform specific compilation flags should be set 
+# in the corresponding platform CMake script(s).
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++11 -stdlib=libc++ -g")
+if (KAA_DEBUG_ENABLED)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb")
+else()
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Os")
+    if (CMAKE_COMPILER_IS_GNUCXX)
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
+    endif()
 endif()
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+#Compiler specific flags
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++11 -stdlib=libc++")
+endif()
 
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++0x") 
+endif ()
+
+
+# Release version is built by default.
+if(KAA_DEBUG_ENABLED)
+    set(CMAKE_BUILD_TYPE DEBUG)
+else()
+    set(CMAKE_BUILD_TYPE RELEASE)
+endif()
+
+#
+# Sets maximum Kaa SDK log level.
+#
+# Logging constants:
+# NONE  - 0
+# FATAL - 1
+# ERROR - 2
+# WARN  - 3
+# INFO  - 4
+# DEBUG - 5
+# TRACE - 6
+if(NOT DEFINED KAA_MAX_LOG_LEVEL)
+    if(KAA_DEBUG_ENABLED)
+        set(KAA_MAX_LOG_LEVEL 6)
+    else()
+        set(KAA_MAX_LOG_LEVEL 4)
+    endif()
+endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL}")
+
+
+# Disables Kaa library modules.
+message( "==================================")
 if ( NOT KAA_WITHOUT_EVENTS )
+    message( "EVENTS ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_EVENTS")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/event/registration/EndpointRegistrationManager.cpp
@@ -39,49 +94,43 @@ if ( NOT KAA_WITHOUT_EVENTS )
     )
 endif()
 
-if ( NOT KAA_WITHOUT_NOTIFICATIONS )
+if ( NOT KAA_WITHOUT_NOTIFICATIONS ) 
+    message( "NOTIFICATIONS ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_NOTIFICATIONS")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/notification/NotificationManager.cpp
             impl/notification/NotificationTransport.cpp
     )
+    
 endif()
 
 if ( NOT KAA_WITHOUT_CONFIGURATION )
+    message( "CONFIGURATION ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_CONFIGURATION")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/configuration/ConfigurationProcessor.cpp
             impl/configuration/ConfigurationTransport.cpp
             impl/configuration/manager/ConfigurationManager.cpp
-            impl/configuration/manager/Strategies.cpp
             impl/configuration/storage/ConfigurationPersistenceManager.cpp
-            impl/configuration/delta/DeltaHandlerId.cpp
-            impl/configuration/delta/DefaultDeltaManager.cpp
-            impl/configuration/delta/DefaultConfigurationDeltaFactory.cpp
-            impl/schema/SchemaProcessor.cpp
-            impl/schema/storage/SchemaPersistenceManager.cpp
-            impl/common/CommonTypesFactory.cpp
-            impl/common/AvroGenericUtils.cpp
-            impl/common/types/CommonArray.cpp
-            impl/common/types/CommonEnum.cpp
-            impl/common/types/CommonFixed.cpp
-            impl/common/types/CommonRecord.cpp
-            impl/common/types/SetValueHelper.cpp
+            impl/configuration/storage/FileConfigurationStorage.cpp
     )
 endif()
 
+
 if ( NOT KAA_WITHOUT_LOGGING )
+    message( "LOGGING ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_LOGGING")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/log/LoggingTransport.cpp
             impl/log/LogCollector.cpp
             impl/log/LogRecord.cpp
             impl/log/MemoryLogStorage.cpp
-            impl/log/LogUploadFailoverStrategy.cpp
+            impl/log/DefaultLogUploadStrategy.cpp
     )
 endif()
 
 if ( NOT KAA_WITHOUT_OPERATION_TCP_CHANNEL )
+    message( "OPERATION_TCP_CHANNEL ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_TCP_CHANNEL")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/channel/impl/DefaultOperationTcpChannel.cpp
@@ -89,6 +138,7 @@ if ( NOT KAA_WITHOUT_OPERATION_TCP_CHANNEL )
 endif()
 
 if ( NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL )
+    message( "OPERATION_LONG_POLL_CHANNEL ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_LONG_POLL_CHANNEL")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/channel/impl/DefaultOperationLongPollChannel.cpp
@@ -96,6 +146,7 @@ if ( NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL )
 endif()
 
 if ( NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL )
+    message( "OPERATION_HTTP_CHANNEL ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_OPERATION_HTTP_CHANNEL")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/channel/impl/DefaultOperationHttpChannel.cpp
@@ -103,6 +154,7 @@ if ( NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL )
 endif()
 
 if ( NOT KAA_WITHOUT_BOOTSTRAP_HTTP_CHANNEL )
+    message( "BOOTSTRAP_HTTP_CHANNEL ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/channel/impl/DefaultBootstrapChannel.cpp
@@ -110,12 +162,13 @@ if ( NOT KAA_WITHOUT_BOOTSTRAP_HTTP_CHANNEL )
 endif()
 
 if ( NOT KAA_WITHOUT_CONNECTIVITY_CHECKER )
+    message( "CONNECTIVITY_CHECKER ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_CONNECTIVITY_CHECKER")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/channel/connectivity/IPConnectivityChecker.cpp
     )
 endif()
-
+message( "==================================")
 if ( NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL OR NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL OR NOT KAA_WITHOUT_BOOTSTRAP_HTTP_CHANNEL )
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/http/HttpUrl.cpp
@@ -139,6 +192,8 @@ find_package (Botan REQUIRED)
 
 add_definitions (${Boost_LIB_DIAGNOSTIC_DEFINITIONS} -DBOOST_LOG_DYN_LINK)
 
+
+# Sets path(s) to source files.
 include_directories (${CMAKE_CURRENT_SOURCE_DIR} 
                      ${Boost_INCLUDE_DIRS}
                      ${Avro_INCLUDE_DIRS} 
@@ -170,22 +225,22 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/channel/IPTransportInfo.cpp
     )
 
+# Builds Kaa libraries.
 add_library(kaacpp_o OBJECT ${KAA_SOURCE_FILES})
-
 add_library (kaacpp SHARED ./kaa $<TARGET_OBJECTS:kaacpp_o>)
-
 target_link_libraries(kaacpp pthread
     ${BOTAN_LIBRARY}
     ${AVRO_LIBRARIES}
-    ${Boost_LIBRARIES})
-
+    ${Boost_LIBRARIES}
+)
 add_library (kaacpp_s STATIC ./kaa $<TARGET_OBJECTS:kaacpp_o>)
+# Sets paths Kaa libraries will be installed in.
+if(NOT KAA_INSTALL_PATH)
+	set(KAA_INSTALL_PATH "/usr/local")
+endif()
 
-install (TARGETS kaacpp kaacpp_s
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION lib)
-
-install (DIRECTORY kaa/ DESTINATION include/kaa
+message(STATUS "KAA WILL BE INSTALLED TO  ${KAA_INSTALL_PATH} ")
+set(CMAKE_INSTALL_PREFIX ${KAA_INSTALL_PATH} ) 
+install (DIRECTORY kaa/ DESTINATION ${KAA_INSTALL_PATH}/include/kaa
     FILES_MATCHING PATTERN *.hpp)
-
+install (TARGETS kaacpp kaacpp_s DESTINATION ${KAA_INSTALL_PATH}/lib)

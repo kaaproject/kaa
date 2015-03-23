@@ -110,6 +110,7 @@ public class ApplicationPlace extends TreePlace {
             result.add(new AefMapsPlace(applicationId));
             result.add(new LogAppendersPlace(applicationId));
             result.add(new UserVerifiersPlace(applicationId));
+            result.add(new EndpointUsersPlace(applicationId));
             callback.onSuccess(result, display);
         }
 

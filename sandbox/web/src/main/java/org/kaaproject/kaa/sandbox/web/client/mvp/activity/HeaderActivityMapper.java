@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,16 +24,16 @@ import com.google.gwt.place.shared.Place;
 
 public class HeaderActivityMapper implements ActivityMapper {
 
-    private final HeaderActivity headerActivity;
+    private final ClientFactory clientFactory;
 
     public HeaderActivityMapper(ClientFactory clientFactory) {
         super();
-        this.headerActivity = new HeaderActivity(clientFactory);
+        this.clientFactory = clientFactory;
     }
 
     @Override
     public Activity getActivity(Place place) {
-        return headerActivity;
+        return new HeaderActivity(place, clientFactory);
     }
 }
 

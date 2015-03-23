@@ -17,27 +17,27 @@
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
 
-import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
-
-import java.io.Serializable;
-import java.util.Arrays;
-
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = MongoEndpointNotification.COLLECTION_NAME)
+import java.io.Serializable;
+import java.util.Arrays;
+
+import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_NF_ENDPOINT_KEY_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_NOTIFICATION;
+
+@Document(collection = ENDPOINT_NOTIFICATION)
 public final class MongoEndpointNotification implements EndpointNotification, Serializable {
 
     private static final long serialVersionUID = -6770166693195322360L;
 
-    public static final String COLLECTION_NAME = "endpoint_notification";
-
     @Id
     private String id;
-    @Field("endpoint_key_hash")
+    @Field(EP_NF_ENDPOINT_KEY_HASH)
     private byte[] endpointKeyHash;
     private MongoNotification notification;
 

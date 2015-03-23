@@ -19,9 +19,7 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_CONFIGURATION
-
-#include <avro/Generic.hh>
+#include "kaa/configuration/gen/ConfigurationDefinitions.hpp"
 
 namespace kaa {
 
@@ -31,20 +29,18 @@ namespace kaa {
 class IGenericDeltaReceiver {
 public:
     /**
-     * Will be called on each deserialized delta
+     * Will be called on each deserialized configuration data
      *
      * @param index index of the current delta in the union list
-     * @param data avro generic object with deserialized delta
-     * @param full_resunc signals if delta contains full configuration resync or partial update
+     * @param data configuration object with deserialized data
+     * @param fullResync signals if delta contains full configuration resync or partial update
      *
      */
-    virtual void onDeltaRecevied(int index, const avro::GenericDatum &data, bool full_resync) = 0;
+    virtual void onDeltaReceived(int index, const KaaRootConfiguration& data, bool fullResync) = 0;
 
     virtual ~IGenericDeltaReceiver() {}
 };
 
 }  // namespace kaa
-
-#endif
 
 #endif /* I_GENERIC_DELTA_RECEIVER_HPP_ */

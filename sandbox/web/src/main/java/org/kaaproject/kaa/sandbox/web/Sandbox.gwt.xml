@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014 CyberVision, Inc.
+  Copyright 2014-2015 CyberVision, Inc.
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@
   <inherits name='com.google.gwt.user.User'/>
   <inherits name="com.google.gwt.i18n.I18N"/>
   <inherits name="com.google.gwt.i18n.CldrLocales"/>
-  <inherits name="com.google.gwt.user.theme.clean.CleanResources"/>
+  <inherits name="com.google.gwt.user.theme.clean.Clean"/>
   <inherits name="com.google.gwt.logging.Logging"/>
   <!-- inherits name="com.google.gwt.user.theme.standard.StandardResources"/ -->
   <!-- inherits name="com.google.gwt.user.theme.chrome.ChromeResources"/ -->
@@ -40,11 +40,17 @@
   <inherits name="org.atmosphere.gwt20.AtmosphereGwt20"/>
   <inherits name="org.kaaproject.kaa.common.dto.Dto"/>
   <inherits name="org.kaaproject.kaa.sandbox.demo.projects.DemoProjects"/>
-  
+  <inherits name="org.kaaproject.avro.ui.gwt.client.AvroUIClient"/>
   
   <!--  inherits name='com.google.gwt.visualization.Visualization'/-->
   
   <set-property name="gwt.enableDebugId" value="true"/> 
+  
+      <!--  Need for SuperDev mode-->
+  <add-linker name="xsiframe"/>
+  <set-configuration-property name="devModeRedirectEnabled" value="true"/>
+  <!-- enable source maps -->
+  <set-property name="compiler.useSourceMaps" value="true" />
   
   <set-property name="gwt.logging.logLevel" value="INFO"/>
   <set-property name="gwt.logging.enabled" value="FALSE"/> 
@@ -63,11 +69,14 @@
     <extend-property name="locale" values="en"/>
     
     <set-property-fallback name="locale" value="en"/>
+    
+    <set-property name="locale" value="en"/>
+    
     <set-configuration-property name="locale.cookie" value="KAA_SANDBOX_LOCALE"/>
   	<set-configuration-property name="locale.useragent" value="Y"/>
 
 	<!-- Specify the paths for translatable code                    -->
-	<source path='client' />
-	<source path='shared' />
+	<source path="client" />
+	<source path="shared" />
 	
 </module>

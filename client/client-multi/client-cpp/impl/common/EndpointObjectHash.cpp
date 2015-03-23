@@ -21,90 +21,61 @@
 
 namespace kaa {
 
-EndpointObjectHash::EndpointObjectHash()
-    : Botan::SHA_160(), withData_(false) {}
-
-EndpointObjectHash::EndpointObjectHash(const std::uint8_t* data, const std::uint32_t& dataSize)
-    : Botan::SHA_160(), withData_(true)
+EndpointObjectHash::EndpointObjectHash(const std::uint8_t *data, const std::uint32_t &dataSize)
 {
-    cloneHash(data, dataSize);
+    calculateHash(data, dataSize);
 }
 
 EndpointObjectHash::EndpointObjectHash(const std::string& str)
-    : Botan::SHA_160(), withData_(true)
 {
-    update(str);
+    calculateHash(reinterpret_cast<const std::uint8_t *>(str.c_str()), str.size());
 }
 
 EndpointObjectHash::EndpointObjectHash(const SharedDataBuffer& endpointHash)
-    : Botan::SHA_160(), withData_(true)
 {
-    cloneHash(endpointHash.first.get(), endpointHash.second);
+    calculateHash(endpointHash.first.get(), endpointHash.second);
 }
 
-EndpointObjectHash::EndpointObjectHash(EndpointObjectHash& endpointHash)
-    : Botan::SHA_160()
+EndpointObjectHash::EndpointObjectHash(const EndpointObjectHash& endpointHash) : hashDigest_(endpointHash.hashDigest_)
 {
-    withData_ = endpointHash.withData_;
 
-    if (endpointHash.withData_) {
-        hashBuffer_ = endpointHash.getHash();
-    }
 }
 
-EndpointObjectHash& EndpointObjectHash::operator=(EndpointObjectHash& endpointHash)
+EndpointObjectHash::EndpointObjectHash(EndpointObjectHash&& endpointHash) : hashDigest_(std::move(endpointHash.hashDigest_))
 {
-    withData_ = endpointHash.withData_;
 
-    if (endpointHash.withData_) {
-        hashBuffer_ = endpointHash.getHash();
-    }
+}
 
+EndpointObjectHash& EndpointObjectHash::operator=(const EndpointObjectHash& endpointHash)
+{
+    hashDigest_ = endpointHash.hashDigest_;
     return *this;
 }
 
-SharedDataBuffer EndpointObjectHash::getHash()
+EndpointObjectHash& EndpointObjectHash::operator=(EndpointObjectHash&& endpointHash)
 {
-    if (withData_ && !hashBuffer_.first) {
-        std::uint32_t size = output_length();
-
-        hashBuffer_.first.reset(new std::uint8_t[size]);
-        hashBuffer_.second = size;
-        final(hashBuffer_.first.get());
-    }
-
-    return hashBuffer_;
+    hashDigest_ = std::move(endpointHash.hashDigest_);
+    return *this;
 }
 
-void EndpointObjectHash::cloneHash(const std::uint8_t* data, const std::uint32_t& dataSize)
+std::vector<std::uint8_t> EndpointObjectHash::getHashDigest()
 {
-    if (!data || dataSize == 0) {
+    return hashDigest_;
+}
+
+void EndpointObjectHash::calculateHash(const std::uint8_t* data, std::uint32_t dataSize)
+{
+    if (!data && dataSize != 0) {
         throw KaaException("empty raw data or null size");
     }
-
-    update(reinterpret_cast<const Botan::byte*>(data), dataSize);
-}
-
-bool EndpointObjectHash::isEqual(SharedDataBuffer left, SharedDataBuffer right)
-{
-    if (left.first && left.second > 0 && right.first && right.second > 0 &&
-            left.second == right.second)
-    {
-        return !memcmp(left.first.get(), right.first.get(), left.second);
-    }
-
-    return false;
+    Botan::SHA_160 sha;
+    const auto& result = sha.process(data, dataSize);
+    hashDigest_.assign(result.begin(), result.end());
 }
 
 EndpointObjectHash::operator std::vector<std::uint8_t>()
 {
-    SharedDataBuffer buffer = getHash();
-    std::vector<std::uint8_t> result;
-
-    for (size_t i = 0; i < buffer.second; ++i) {
-        result.push_back(buffer.first[i]);
-    }
-    return result;
+    return hashDigest_;
 }
 
 } /* namespace kaa */

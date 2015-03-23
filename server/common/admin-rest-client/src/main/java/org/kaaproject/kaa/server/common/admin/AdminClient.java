@@ -31,11 +31,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
@@ -46,6 +42,7 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.utils.FileUtils;
@@ -140,9 +137,41 @@ public class AdminClient {
         params.add("file", getFileResource(schemaResource));
         return restTemplate.postForObject(url + "configurationSchema", params, ConfigurationSchemaDto.class);
     }
-    
+
+    public NotificationSchemaDto createNotificationSchema(NotificationSchemaDto notificationSchema, String schemaResource) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("notificationSchema", notificationSchema);
+        params.add("file", getFileResource(schemaResource));
+        return restTemplate.postForObject(url + "notificationSchema", params, NotificationSchemaDto.class);
+    }
+
+    public TopicDto createTopic(TopicDto topic) throws Exception {
+        return restTemplate.postForObject(url + "topic", topic, TopicDto.class);
+    }
+
+    public void addTopicToEndpointGroup(EndpointGroupDto endpointGroup, TopicDto topic) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("endpointGroupId", endpointGroup.getId());
+        params.add("topicId", topic.getId());
+        restTemplate.postForObject(url + "addTopicToEpGroup", params, EndpointGroupDto.class);
+    }
+
+    public void sendNotification(NotificationDto notification, String notificationResource) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("notification", notification);
+        params.add("file", getFileResource(notificationResource));
+        restTemplate.postForObject(url + "sendNotification", params, NotificationDto.class);
+    }
+
     public ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws Exception {
         return restTemplate.getForObject(url + "configurationSchema/"+configurationSchemaId, ConfigurationSchemaDto.class);
+    }
+    
+    public ProfileSchemaDto createProfileSchema(ProfileSchemaDto profileSchema, String schemaResource) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("profileSchema", profileSchema);
+        params.add("file", getFileResource(schemaResource));
+        return restTemplate.postForObject(url + "profileSchema", params, ProfileSchemaDto.class);
     }
     
     public LogSchemaDto createLogSchema(LogSchemaDto logSchema, String schemaResource) throws Exception {
@@ -150,6 +179,10 @@ public class AdminClient {
         params.add("logSchema", logSchema);
         params.add("file", getFileResource(schemaResource));
         return restTemplate.postForObject(url + "logSchema", params, LogSchemaDto.class);
+    }
+    
+    public EndpointGroupDto editEndpointGroup(EndpointGroupDto endpointGroup) throws Exception {
+        return restTemplate.postForObject(url + "endpointGroup", endpointGroup, EndpointGroupDto.class);
     }
     
     public List<EndpointGroupDto> getEndpointGroups(String applicationId) throws Exception {
@@ -172,6 +205,14 @@ public class AdminClient {
     
     public void activateConfiguration(String configurationId) throws Exception {
         restTemplate.postForLocation(url + "activateConfiguration", configurationId);
+    }
+    
+    public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws Exception {
+        return restTemplate.postForObject(url + "profileFilter", profileFilter, ProfileFilterDto.class);
+    }
+    
+    public void activateProfileFilter(String profileFilterId) throws Exception {
+        restTemplate.postForLocation(url + "activateProfileFilter", profileFilterId);
     }
     
     public UserDto editUser(UserDto user) throws Exception {
@@ -214,6 +255,10 @@ public class AdminClient {
     
     public ApplicationEventFamilyMapDto editApplicationEventFamilyMap(ApplicationEventFamilyMapDto applicationEventFamilyMap) throws Exception {
         return restTemplate.postForObject(url + "applicationEventMap", applicationEventFamilyMap, ApplicationEventFamilyMapDto.class);
+    }
+    
+    public LogAppenderDto editLogAppenderDto(LogAppenderDto logAppenderDto) throws Exception {
+        return restTemplate.postForObject(url + "logAppender", logAppenderDto, LogAppenderDto.class);
     }
     
     public UserVerifierDto editUserVerifierDto(UserVerifierDto userVerifierDto) throws Exception {

@@ -58,9 +58,6 @@
                     </gwt:cell>
                 </gwt:VerticalPanel>
             </gwt:north>
-            <gwt:south size="70">
-                <gwt:FlowPanel />
-            </gwt:south>
         </gwt:DockLayoutPanel>
 
 </ui:UiBinder>

@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
-import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.sync.EndpointAttachRequest;
 import org.kaaproject.kaa.server.sync.EndpointAttachResponse;
 import org.kaaproject.kaa.server.sync.EndpointDetachRequest;
@@ -40,6 +39,6 @@ public interface EndpointUserService {
 
     EndpointDetachResponse detachEndpoint(EndpointProfileDto profile, EndpointDetachRequest endpointDetachRequest);
 
-    EventListenersResponse findListeners(EndpointProfileDto profile, AppSeqNumber appSeqNumber, EventListenersRequest request);
+    EventListenersResponse findListeners(EndpointProfileDto profile, String appToken, EventListenersRequest request);
 
 }

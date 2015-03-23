@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.zk;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
@@ -69,7 +70,7 @@ public class OperationsNodeIT {
 
             assertNotNull(bootstrapNode.getCurrentOperationServerNodes());
             assertEquals(1, bootstrapNode.getCurrentOperationServerNodes().size());
-            
+
             OperationsNodeInfo testNodeInfo = bootstrapNode.getCurrentOperationServerNodes().get(0);
             assertNotNull(testNodeInfo.getTransports());
             assertEquals(2, testNodeInfo.getTransports().size());
@@ -79,7 +80,7 @@ public class OperationsNodeIT {
             assertNotNull(testNodeInfo.getTransports().get(0).getConnectionInfo());
 
             endpointNodeInfo.getTransports().get(0).setId(NEW_HTTP_ID);
-            
+
             endpointNode.updateNodeData(endpointNodeInfo);
             timing.sleepABit();
             verify(mockListener).onNodeUpdated(endpointNodeInfo);
@@ -150,6 +151,47 @@ public class OperationsNodeIT {
         }
     }
 
+    @Test
+    public void outdatedRemovalTest() throws Exception {
+        Timing timing = new Timing();
+        TestingCluster cluster = new TestingCluster(3);
+        cluster.start();
+        try {
+            OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
+            BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
+
+            BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
+            OperationsNodeListener mockListener = mock(OperationsNodeListener.class);
+            bootstrapNode.addListener(mockListener);
+            bootstrapNode.start();
+
+            OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
+
+            endpointNode.start();
+            timing.sleepABit();
+            verify(mockListener).onNodeAdded(endpointNodeInfo);
+
+            OperationsNodeInfo endpointNodeInfoWithGreaterTimeStarted = buildOperationsNodeInfo();
+            OperationsNode endpointNodeWithGreaterTimeStarted = new OperationsNode(endpointNodeInfoWithGreaterTimeStarted,
+                    cluster.getConnectString(), buildDefaultRetryPolicy());
+
+            endpointNodeWithGreaterTimeStarted.start();
+            timing.sleepABit();
+
+            endpointNode.close();
+            timing.sleepABit();
+            verify(mockListener, never()).onNodeRemoved(endpointNodeInfo);
+
+            endpointNodeWithGreaterTimeStarted.close();
+            timing.sleepABit();
+            verify(mockListener).onNodeRemoved(endpointNodeInfoWithGreaterTimeStarted);
+
+            bootstrapNode.close();
+        } finally {
+            cluster.close();
+        }
+    }
+
     private RetryPolicy buildDefaultRetryPolicy() {
         return new ExponentialBackoffRetry(100, 1);
     }
@@ -158,6 +200,7 @@ public class OperationsNodeIT {
         BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
         ByteBuffer testKeyData = ByteBuffer.wrap(new byte[] { 10, 11, 12, 45, 34, 23, 67, 89, 66, 12 });
         nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, testKeyData));
+        nodeInfo.setTimeStarted(System.currentTimeMillis());
         nodeInfo.setTransports(BootstrapNodeIT.getHttpAndTcpTransportMD());
         return nodeInfo;
     }

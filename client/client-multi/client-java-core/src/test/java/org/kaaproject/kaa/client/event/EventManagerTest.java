@@ -33,9 +33,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.EventTransport;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.persistance.KaaClientPropertiesStateTest;
 import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
 import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
@@ -80,8 +83,9 @@ public class EventManagerTest {
 
         EventTransport transport = Mockito.mock(EventTransport.class);
         EventFamily eventFamily = Mockito.mock(EventFamily.class);
+        ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
 
-        EventManager eventManager = new DefaultEventManager(state, transport);
+        EventManager eventManager = new DefaultEventManager(state, executorContext, transport);
         eventManager.registerEventFamily(eventFamily);
         eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null);
         Mockito.verify(transport, times(1)).sync();
@@ -95,8 +99,9 @@ public class EventManagerTest {
 
         EventTransport transport = Mockito.mock(EventTransport.class);
         EventFamily eventFamily = Mockito.mock(EventFamily.class);
+        ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
 
-        EventManager eventManager = new DefaultEventManager(state, transport);
+        EventManager eventManager = new DefaultEventManager(state, executorContext, transport);
         eventManager.registerEventFamily(eventFamily);
         eventManager.produceEvent("kaa.test.event.PlayEvent", new byte[0], null);
         Mockito.verify(transport, times(1)).sync();
@@ -113,8 +118,9 @@ public class EventManagerTest {
 
         EventTransport transport = Mockito.mock(EventTransport.class);
         EventFamily eventFamily = Mockito.mock(EventFamily.class);
+        ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
 
-        EventManager eventManager = new DefaultEventManager(state, transport);
+        EventManager eventManager = new DefaultEventManager(state, executorContext, transport);
         eventManager.registerEventFamily(eventFamily);
 
         TransactionId trxId = eventManager.beginTransaction();
@@ -134,14 +140,18 @@ public class EventManagerTest {
     }
 
     @Test
-    public void testOneEventForTwoDifferentFamilies() throws IOException {
+    public void testOneEventForTwoDifferentFamilies() throws Exception {
         KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
 
         EventTransport transport = Mockito.mock(EventTransport.class);
         ConcreteEventFamily eventFamily = new ConcreteEventFamily("kaa.test.event.PlayEvent");
         ConcreteEventFamily eventFamily2 = new ConcreteEventFamily("kaa.test.event.StopEvent");
+        
+        ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Mockito.when(executorContext.getCallbackExecutor()).thenReturn(executor);
 
-        EventManager eventManager = new DefaultEventManager(state, transport);
+        EventManager eventManager = new DefaultEventManager(state, executorContext, transport);
 
         eventManager.registerEventFamily(eventFamily);
         eventManager.registerEventFamily(eventFamily2);
@@ -151,15 +161,21 @@ public class EventManagerTest {
 
         eventManager.onGenericEvent("kaa.test.event.PlayEvent", new byte[0], null);
 
+        Thread.sleep(500);
+        
         assertEquals("Events count doesn't match", new Integer(1), eventFamily.getEventsCount());
         assertEquals("Events count doesn't match", new Integer(0), eventFamily2.getEventsCount());
 
         eventManager.onGenericEvent("kaa.test.event.StopEvent", new byte[0], null);
+        
+        Thread.sleep(500);
 
         assertEquals("Events count doesn't match", new Integer(1), eventFamily.getEventsCount());
         assertEquals("Events count doesn't match", new Integer(1), eventFamily2.getEventsCount());
 
         eventManager.onGenericEvent("kaa.test.event.NoSuchEvent", new byte[0], null);
+        
+        Thread.sleep(500);
 
         assertEquals("Events count doesn't match", new Integer(1), eventFamily.getEventsCount());
         assertEquals("Events count doesn't match", new Integer(1), eventFamily2.getEventsCount());
@@ -170,12 +186,13 @@ public class EventManagerTest {
         KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
 
         EventTransport transport = Mockito.mock(EventTransport.class);
-        EventManager eventManager = new DefaultEventManager(state, transport);
+        ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
+        EventManager eventManager = new DefaultEventManager(state, executorContext, transport);
 
         EventSyncRequest request = new EventSyncRequest();
         eventManager.produceEvent("kaa.test.event.SomeEvent", new byte[0], "theTarget");
         eventManager.fillEventListenersSyncRequest(request);
-        request.setEvents(eventManager.getPendingEvents());
+        request.setEvents(eventManager.pollPendingEvents());
 
         assertNotNull(request.getEvents());
         assertEquals(1, request.getEvents().size());
@@ -186,7 +203,7 @@ public class EventManagerTest {
         request = new EventSyncRequest();
         List<String> eventFQNs = new ArrayList<String>();
         eventFQNs.add("eventFQN1");
-        eventManager.findEventListeners(eventFQNs, new FetchEventListeners() {
+        eventManager.findEventListeners(eventFQNs, new FindEventListenersCallback() {
 
             @Override
             public void onRequestFailed() {
@@ -196,7 +213,7 @@ public class EventManagerTest {
             public void onEventListenersReceived(List<String> eventListeners) {
             }
         });
-        eventManager.findEventListeners(eventFQNs, new FetchEventListeners() {
+        eventManager.findEventListeners(eventFQNs, new FindEventListenersCallback() {
 
             @Override
             public void onRequestFailed() {
@@ -218,12 +235,13 @@ public class EventManagerTest {
         KaaClientPropertiesState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
 
         EventTransport transport = Mockito.mock(EventTransport.class);
-        EventManager eventManager = new DefaultEventManager(state, transport);
+        ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
+        EventManager eventManager = new DefaultEventManager(state, executorContext, transport);
 
         List<String> eventFQNs = new ArrayList<String>();
         eventFQNs.add("eventFQN1");
 
-        FetchEventListeners fetchListener = mock(FetchEventListeners.class);
+        FindEventListenersCallback fetchListener = mock(FindEventListenersCallback.class);
         int requestIdOk = eventManager.findEventListeners(eventFQNs, fetchListener);
         int requestIdBad = eventManager.findEventListeners(eventFQNs, fetchListener);
 

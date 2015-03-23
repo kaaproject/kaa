@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.client.notification;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.kaaproject.kaa.client.channel.NotificationTransport;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.endpoint.gen.Notification;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand;
@@ -47,6 +49,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
 
     private Map<String, Topic> topics = new HashMap<String, Topic>();
 
+    private final ExecutorContext executorContext;
     private final NotificationDeserializer deserializer = new NotificationDeserializer();
     private final Set<NotificationListener> mandatoryListeners = new HashSet<NotificationListener>();
     private final Map<String, List<NotificationListener>> optionalListeners = new HashMap<String, List<NotificationListener>>();
@@ -58,9 +61,10 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
 
     private volatile NotificationTransport transport;
 
-    public DefaultNotificationManager(KaaClientState state, NotificationTransport transport) {
+    public DefaultNotificationManager(KaaClientState state, ExecutorContext executorContext, NotificationTransport transport) {
         this.state = state;
         this.transport = transport;
+        this.executorContext = executorContext;
 
         List<Topic> topicList = state.getTopics();
 
@@ -178,7 +182,10 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
             throw new UnavailableTopicException(String.format("Topic '%s' isn't optional", topicId));
         }
 
-        topicsListeners.remove(topicId);
+        synchronized (topicsListeners) {
+            topicsListeners.remove(topicId);
+        }
+
         updateSubscriptionInfo(topicId, SubscriptionCommandType.REMOVE);
 
         if (forceSync) {
@@ -197,7 +204,10 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
                 throw new UnavailableTopicException(String.format("Topic '%s' isn't optional", id));
             }
 
-            topicsListeners.remove(id);
+            synchronized (topicsListeners) {
+                topicsListeners.remove(id);
+            }
+
             subscriptionUpdate.add(new SubscriptionCommand(id, SubscriptionCommandType.REMOVE));
         }
 
@@ -253,7 +263,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     @Override
-    public void topicsListUpdated(List<Topic> list) {
+    public void topicsListUpdated(final List<Topic> list) {
         Map<String, Topic> newTopics = new HashMap<String, Topic>();
 
         synchronized (topics) {
@@ -273,8 +283,13 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
         }
 
         synchronized (topicsListeners) {
-            for (NotificationTopicListListener listener : topicsListeners) {
-                listener.onListUpdated(list);
+            for (final NotificationTopicListListener listener : topicsListeners) {
+                executorContext.getCallbackExecutor().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onListUpdated(list);
+                    }
+                });
             }
         }
     }
@@ -305,9 +320,19 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
         }
     }
 
-    private void notifyListeners(Collection<NotificationListener> listeners, Topic topic, Notification notification) throws IOException {
+    private void notifyListeners(Collection<NotificationListener> listeners, final Topic topic, final Notification notification) {
+        final Collection<NotificationListener> listenersCopy = new ArrayList<NotificationListener>(listeners);
         if (notification.getBody() != null) {
-            deserializer.notify(Collections.unmodifiableCollection(listeners), topic, notification.getBody().array());
+            executorContext.getCallbackExecutor().submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        deserializer.notify(Collections.unmodifiableCollection(listenersCopy), topic, notification.getBody().array());
+                    } catch (IOException e) {
+                        LOG.error("Failed to process notification for topic {}", topic.getId(), e);
+                    }
+                }
+            });
         }
     }
 

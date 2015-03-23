@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
@@ -32,8 +33,11 @@ import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.UserService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.UserDao;
+import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
+import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.dao.model.sql.User;
 import org.slf4j.Logger;
@@ -50,10 +54,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao<User> userDao;
-
     @Autowired
     private TenantDao<Tenant> tenantDao;
-
     @Autowired
     private ApplicationService applicationService;
 
@@ -227,5 +229,4 @@ public class UserServiceImpl implements UserService {
             return null; //NOSONAR
         }
     }
-
 }

@@ -39,10 +39,8 @@ public class DefaultEventTransportTest {
 
     @Test(expected = ChannelRuntimeException.class)
     public void testSyncNegative() {
-        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         EventTransport transport = new DefaultEventTransport(clientState);
-        transport.setChannelManager(channelManager);
         transport.sync();
     }
 
@@ -50,14 +48,12 @@ public class DefaultEventTransportTest {
     public void testSync() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
-        KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channelManager.getChannelByTransportType(TransportType.EVENT)).thenReturn(channel);
 
         EventTransport transport = new DefaultEventTransport(clientState);
         transport.setChannelManager(channelManager);
         transport.sync();
 
-        Mockito.verify(channel, Mockito.times(1)).sync(TransportType.EVENT);
+        Mockito.verify(channelManager, Mockito.times(1)).sync(TransportType.EVENT);
     }
 
     @Test
@@ -68,7 +64,7 @@ public class DefaultEventTransportTest {
         event1.setSeqNum(1);
         Event event2 = new Event();
         event2.setSeqNum(2);
-        Mockito.when(manager.getPendingEvents()).thenReturn(Arrays.asList(event1, event2));
+        Mockito.when(manager.pollPendingEvents()).thenReturn(Arrays.asList(event1, event2));
 
         EventTransport transport = new DefaultEventTransport(clientState);
         transport.createEventRequest(1);
@@ -113,7 +109,7 @@ public class DefaultEventTransportTest {
     public void testRemoveByResponseId() {
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         EventManager manager = Mockito.mock(EventManager.class);
-        Mockito.when(manager.getPendingEvents()).thenReturn(Arrays.asList(new Event(), new Event()));
+        Mockito.when(manager.pollPendingEvents()).thenReturn(Arrays.asList(new Event(), new Event()));
 
         EventTransport transport = new DefaultEventTransport(clientState);
         transport.createEventRequest(1);
@@ -134,7 +130,7 @@ public class DefaultEventTransportTest {
 
         List<Event> events = Arrays.asList(new Event(1, null, null, null, null));
         EventManager manager = Mockito.mock(EventManager.class);
-        Mockito.when(manager.getPendingEvents()).thenReturn(events);
+        Mockito.when(manager.pollPendingEvents()).thenReturn(events);
 
         EventTransport transport = new DefaultEventTransport(clientState);
         transport.setEventManager(manager);
@@ -164,7 +160,7 @@ public class DefaultEventTransportTest {
                                           , new Event(restoredEventSN++, null, null, null, null));
 
         EventManager manager = Mockito.mock(EventManager.class);
-        Mockito.when(manager.getPendingEvents()).thenReturn(events);
+        Mockito.when(manager.pollPendingEvents()).thenReturn(events);
 
         EventTransport transport = new DefaultEventTransport(clientState);
         transport.setEventManager(manager);
@@ -200,7 +196,8 @@ public class DefaultEventTransportTest {
                                           , new Event(restoredEventSN++, null, null, null, null));
 
         EventManager manager1 = Mockito.mock(EventManager.class);
-        Mockito.when(manager1.getPendingEvents()).thenReturn(events1);
+        Mockito.when(manager1.pollPendingEvents()).thenReturn(events1);
+        Mockito.when(manager1.peekPendingEvents()).thenReturn(events1);
 
         EventTransport transport = new DefaultEventTransport(clientState);
         transport.setEventManager(manager1);
@@ -221,14 +218,14 @@ public class DefaultEventTransportTest {
 
         int synchronizedSN = lastReceivedSN + 1;
         for (Event e : eventRequest2.getEvents()) {
-            Assert.assertTrue(e.getSeqNum() == synchronizedSN++);
+            Assert.assertEquals(synchronizedSN++, e.getSeqNum().intValue());
         }
 
         transport.onSyncResposeIdReceived(requestId++);
 
         List<Event> events2 = Arrays.asList(new Event(synchronizedSN, null, null, null, null));
         EventManager manager2 = Mockito.mock(EventManager.class);
-        Mockito.when(manager2.getPendingEvents()).thenReturn(events2);
+        Mockito.when(manager2.pollPendingEvents()).thenReturn(events2);
         transport.setEventManager(manager2);
 
         EventSyncRequest eventRequest4 = transport.createEventRequest(requestId++);

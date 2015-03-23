@@ -25,13 +25,12 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_CONFIGURATION;
 
-@Document(collection = MongoEndpointConfiguration.COLLECTION_NAME)
+@Document(collection = ENDPOINT_CONFIGURATION)
 public final class MongoEndpointConfiguration implements EndpointConfiguration, Serializable {
 
     private static final long serialVersionUID = -5646769700581347085L;
-
-    public static final String COLLECTION_NAME = "endpoint_configuration";
 
     @Id
     private byte[] configurationHash;

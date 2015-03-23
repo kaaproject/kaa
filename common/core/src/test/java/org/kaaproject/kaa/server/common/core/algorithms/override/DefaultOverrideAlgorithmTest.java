@@ -94,27 +94,4 @@ public class DefaultOverrideAlgorithmTest {
         Assert.assertNull(mergeResult);
     }
 
-    @Test(expected = OverrideException.class)
-    public void testMergeFailsWhenBaseSchemaIsCorrupted() throws Exception {
-        // Create Configuration Schema
-        Path schemaUrl = Paths.get(Thread.currentThread().getContextClassLoader().getResource("override/corruptedSchema.json").toURI());
-        DataSchema configuraionSchema = new DataSchema(new String(Files.readAllBytes(schemaUrl)));
-        BaseSchema baseSchema = new BaseSchema(configuraionSchema.getRawSchema());
-        OverrideSchema overrideSchema = new OverrideSchema(configuraionSchema.getRawSchema());
-
-        // Create Configuration weight 0
-        Path configuraionWeight0Path = Paths.get(Thread.currentThread().getContextClassLoader().getResource("override/config_weight_0.json").toURI());
-        BaseData baseData = new BaseData(baseSchema, new String(Files.readAllBytes(configuraionWeight0Path)));
-
-        // Create Configuration weight 1
-        Path configuraionWeight1Path = Paths.get(Thread.currentThread().getContextClassLoader().getResource("override/config_weight_1.json").toURI());
-        OverrideData data1 = new OverrideData(overrideSchema, new String(Files.readAllBytes(configuraionWeight1Path)));
-
-        List<OverrideData> configurations = new ArrayList<>();
-        configurations.add(data1);
-
-        OverrideAlgorithm merger = new DefaultOverrideAlgorithm();
-        merger.override(baseData, configurations);
-    }
-
 }

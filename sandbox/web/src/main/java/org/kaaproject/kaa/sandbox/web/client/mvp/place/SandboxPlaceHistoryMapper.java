@@ -19,7 +19,9 @@ package org.kaaproject.kaa.sandbox.web.client.mvp.place;
 import com.google.gwt.place.shared.PlaceHistoryMapper;
 import com.google.gwt.place.shared.WithTokenizers;
 
-@WithTokenizers({MainPlace.Tokenizer.class})
+@WithTokenizers({MainPlace.Tokenizer.class,
+    ProjectPlace.Tokenizer.class,
+    ChangeKaaHostPlace.Tokenizer.class})
 public interface SandboxPlaceHistoryMapper extends PlaceHistoryMapper
 {
 }

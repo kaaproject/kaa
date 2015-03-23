@@ -76,7 +76,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
                     }
                 }
 
-                eventsSet.addAll(eventManager.getPendingEvents());
+                eventsSet.addAll(eventManager.pollPendingEvents());
 
                 List<Event> events = new ArrayList<Event>(eventsSet);
                 if (!events.isEmpty()) {
@@ -113,7 +113,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
                         eventsSet.addAll(events);
                     }
                     
-                    eventsSet.addAll(eventManager.getPendingEvents());
+                    eventsSet.addAll(eventManager.peekPendingEvents());
 
                     List<Event> events = new ArrayList<Event>(eventsSet);
                     Collections.sort(events, eventSeqNumberComparator);

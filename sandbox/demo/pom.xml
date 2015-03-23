@@ -7,7 +7,7 @@
     the specific language governing permissions and limitations under the License. -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
@@ -29,11 +29,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>admin-rest-client</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>net.iharder</groupId>
             <artifactId>base64</artifactId>
             <version>2.3.8</version>
@@ -46,6 +41,21 @@
             <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
             <artifactId>config</artifactId>
             <classifier>trustful</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
+            <artifactId>config</artifactId>
+            <classifier>facebook</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
+            <artifactId>config</artifactId>
+            <classifier>twitter</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
+            <artifactId>config</artifactId>
+            <classifier>gplus</classifier>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples.robotrun</groupId>
@@ -84,6 +94,159 @@
             <artifactId>smarthousedemo</artifactId>
             <version>${project.version}</version>
             <classifier>smarthouse-android-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>notificationdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>notification-android-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>cityguide</artifactId>
+            <version>${project.version}</version>
+            <classifier>cityguide-android-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>notificationdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>notification-android-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>cityguide</artifactId>
+            <version>${project.version}</version>
+            <classifier>cityguide-android-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jdatacollectiondemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jdatacollection-java-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>cellmonitor</artifactId>
+            <version>${project.version}</version>
+            <classifier>cellmonitor-android-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jdatacollectiondemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jdatacollection-java-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jeventdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jevent-java-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jeventdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jevent-java-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>cellmonitor</artifactId>
+            <version>${project.version}</version>
+            <classifier>cellmonitor-android-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common</groupId>
+            <artifactId>admin-rest-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jconfigurationdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jconfiguration-java-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jconfigurationdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jconfiguration-java-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>photoframe</artifactId>
+            <version>${project.version}</version>
+            <classifier>photoframe-android-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jnotificationdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jnotification-java-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>jnotificationdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>jnotification-java-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>photoframe</artifactId>
+            <version>${project.version}</version>
+            <classifier>photoframe-android-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>verifiersdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>verifiers-android-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>verifiersdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>verifiers-android-src</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
         </dependency>
@@ -147,18 +310,19 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <!--execution>
-                        <id>unpack-robotrun-resources</id>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/generated-resources/demo/robotrun</outputDirectory>
-                            <includeGroupIds>org.kaaproject.kaa.examples.robotrun</includeGroupIds>
-                            <includeArtifactIds>robotrun-shared</includeArtifactIds>
-                            <excludeTransitive>true</excludeTransitive>
-                        </configuration>
-                    </execution-->
+            <id>unpack-robotrun-resources</id>
+            <goals>
+                <goal>unpack-dependencies</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+                <outputDirectory>${project.build.directory}/generated-resources/demo/robotrun
+                </outputDirectory>
+                <includeGroupIds>org.kaaproject.kaa.examples.robotrun</includeGroupIds>
+                <includeArtifactIds>robotrun-shared</includeArtifactIds>
+                <excludeTransitive>true</excludeTransitive>
+            </configuration>
+            </execution-->
                     <execution>
                         <id>unpack-smarthouse-resources</id>
                         <goals>
@@ -166,10 +330,142 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/generated-resources/demo/smarthouse</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/smarthouse
+                            </outputDirectory>
                             <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
                             <includeArtifactIds>smarthousedemo</includeArtifactIds>
                             <includeClassifiers>smarthouse-android-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-notification-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/notification
+                            </outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>notificationdemo</includeArtifactIds>
+                            <includeClassifiers>notification-android-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-cityguide-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/cityguide
+                            </outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>cityguide</includeArtifactIds>
+                            <includeClassifiers>cityguide-android-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-cellmonitor-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/cellmonitor
+                            </outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>cellmonitor</includeArtifactIds>
+                            <includeClassifiers>cellmonitor-android-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-jdatacollection-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/jdatacollection
+                            </outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>jdatacollectiondemo</includeArtifactIds>
+                            <includeClassifiers>jdatacollection-java-resources</includeClassifiers>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-jconfiguration-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/jconfiguration</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>jconfigurationdemo</includeArtifactIds>
+                            <includeClassifiers>jconfiguration-java-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-jnotification-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/jnotification</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>jnotificationdemo</includeArtifactIds>
+                            <includeClassifiers>jnotification-java-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-photoframe-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/photoframe
+                            </outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>photoframe</includeArtifactIds>
+                            <includeClassifiers>photoframe-android-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-jevent-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/jevent
+                            </outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>jeventdemo</includeArtifactIds>
+                            <includeClassifiers>jevent-java-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-verifiers-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/verifiers</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>verifiersdemo</includeArtifactIds>
+                            <includeClassifiers>verifiers-android-resources</includeClassifiers>
                             <excludeTransitive>true</excludeTransitive>
                         </configuration>
                     </execution>
@@ -211,6 +507,96 @@
                                     <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
                                     <destFileName>smarthouse_demo.tar.gz</destFileName>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>notificationdemo</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>notification-android-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
+                                    <destFileName>notification_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>jdatacollectiondemo</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>jdatacollection-java-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/java</outputDirectory>
+                                    <destFileName>jdatacollection_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>jeventdemo</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>jevent-java-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/java</outputDirectory>
+                                    <destFileName>jevent_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>cityguide</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>cityguide-android-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
+                                    <destFileName>cityguide_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>cellmonitor</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>cellmonitor-android-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
+                                    <destFileName>cellmonitor_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>jconfigurationdemo</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>jconfiguration-java-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/java</outputDirectory>
+                                    <destFileName>jconfiguration_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>jnotificationdemo</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>jnotification-java-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/java</outputDirectory>
+                                    <destFileName>jnotification_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>photoframe</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>photoframe-android-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
+                                    <destFileName>photoframe_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>verifiersdemo</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>verifiers-android-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
+                                    <destFileName>verifiers_demo.tar.gz</destFileName>
+                                </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
@@ -231,7 +617,7 @@
         </plugins>
         <pluginManagement>
             <plugins>
-                <!--This plugin's configuration is used to store Eclipse 
+                <!--This plugin's configuration is used to store Eclipse
                     m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>

@@ -32,7 +32,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.dir>${basedir}/../../..</main.dir>
-        <httpcomponents.version>4.2.6</httpcomponents.version>
+        <flume.httpcomponents.version>4.2.6</flume.httpcomponents.version>
+        <flume.httpcore.version>4.2.5</flume.httpcore.version>
         <spring.version>3.2.10.RELEASE</spring.version>
     </properties>
 
@@ -66,7 +67,13 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>${httpcomponents.version}</version>
+            <version>${flume.httpcomponents.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>${flume.httpcore.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -90,7 +97,7 @@
                         </goals>
                         <configuration>
                             <stringType>String</stringType>
-                            <sourceDirectory>${project.basedir}/../robotrun-shared/src/main/avro/</sourceDirectory>
+                            <sourceDirectory>${project.basedir}/../robotrun-shared/resources/</sourceDirectory>
                             <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
                             <fieldVisibility>PRIVATE</fieldVisibility>
                             <includes>

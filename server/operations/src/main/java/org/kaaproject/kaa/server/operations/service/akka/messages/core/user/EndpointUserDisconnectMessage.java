@@ -21,6 +21,12 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.
 
 import akka.actor.ActorRef;
 
+/**
+ * Represents intent of endpoint to disconnect from local user actor
+ * 
+ * @author Andrew Shvayka
+ *
+ */
 public class EndpointUserDisconnectMessage extends EndpointAwareMessage implements UserAwareMessage{
 
     private final String userId;

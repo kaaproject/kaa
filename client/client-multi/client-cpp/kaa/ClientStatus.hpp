@@ -63,14 +63,15 @@ public:
     DetailedTopicStates getTopicStates() const;
     void setTopicStates(const DetailedTopicStates& stateContainer);
 
-    SharedDataBuffer getProfileHash() const;
-    void setProfileHash(SharedDataBuffer hash);
+    HashDigest getProfileHash() const;
+    void setProfileHash(HashDigest hash);
 
     AttachedEndpoints getAttachedEndpoints() const;
     void setAttachedEndpoints(const AttachedEndpoints& endpoints);
 
-    std::string getEndpointAccessToken() const;
+    std::string getEndpointAccessToken();
     void setEndpointAccessToken(const std::string& token);
+    std::string refreshEndpointAccessToken();
 
     bool getEndpointAttachStatus() const;
     void setEndpointAttachStatus(bool isAttached);
@@ -78,9 +79,7 @@ public:
     std::string getEndpointKeyHash() const;
     void setEndpointKeyHash(const std::string& keyHash);
 
-    virtual bool isConfigurationVersionUpdated() const {
-        return isConfigVersionUpdated;
-    }
+    virtual bool isConfigurationVersionUpdated() const { return isConfigVersionUpdated; }
 
     void read();
     void save();
@@ -100,10 +99,9 @@ private:
     static const bimap                      parameterToToken_;
     static const SequenceNumber             appSeqNumberDefault_;
     static const bool                       isRegisteredDefault_;
-    static const SharedDataBuffer           endpointHashDefault_;
+    static const HashDigest                 endpointHashDefault_;
     static const DetailedTopicStates        topicStatesDefault_;
     static const AttachedEndpoints          attachedEndpoints_;
-    static const std::string                endpointAccessToken_;
     static const bool                       endpointDefaultAttachStatus_;
     static const std::string                endpointKeyHashDefault_;
 };

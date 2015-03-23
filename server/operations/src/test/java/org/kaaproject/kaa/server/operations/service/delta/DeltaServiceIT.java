@@ -155,7 +155,7 @@ public class DeltaServiceIT {
     public void beforeTest() throws IOException, DeltaCalculatorException {
         String dataSchema = OperationsServiceIT.getResourceAsString(OperationsServiceIT.DATA_SCHEMA_LOCATION);
         PROFILE_BYTES = avroConverter.encode(ENDPOINT_PROFILE);
-        PROFILE_JSON = avroConverter.endcodeToJson(ENDPOINT_PROFILE);
+        PROFILE_JSON = avroConverter.encodeToJson(ENDPOINT_PROFILE);
 
         tenant = new TenantDto();
         tenant.setName(CUSTOMER_ID);
@@ -245,18 +245,6 @@ public class DeltaServiceIT {
     @After
     public void afterTest() {
         MongoDBTestRunner.getDB().dropDatabase();
-    }
-
-    @Test
-    public void testDeltaServiceSameSeqNumbers() throws Exception {
-        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration
-                .getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
-        GetDeltaResponse response = deltaService.getDelta(request, new HistoryDelta(), OLD_ENDPOINT_SEQ_NUMBER);
-        assertNotNull(response);
-        assertEquals(GetDeltaResponse.GetDeltaResponseType.NO_DELTA, response.getResponseType());
-        assertEquals(OLD_ENDPOINT_SEQ_NUMBER, response.getSequenceNumber());
-        assertNull(response.getDelta());
-        assertNull(response.getConfSchema());
     }
 
     @Test

@@ -20,11 +20,11 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -36,8 +36,8 @@ import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
-import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultOperationTcpChannel implements KaaDataChannel {
 
-    public static final Logger LOG = LoggerFactory //NOSONAR
+    public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(DefaultOperationTcpChannel.class);
 
     private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<TransportType, ChannelDirection>();
@@ -92,7 +92,6 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     private volatile boolean isShutdown = false;
     private volatile boolean isPaused = false;
     private boolean isFirstResponseReceived = false;
-    private boolean isPendingSyncRequest = false;
 
     private KaaDataDemultiplexer demultiplexer;
     private KaaDataMultiplexer multiplexer;
@@ -104,8 +103,6 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private final int RECONNECT_TIMEOUT = 5; // in sec
     private ConnectivityChecker connectivityChecker;
-
-    private final List<TransportType> ackTypes = new ArrayList<TransportType>();
 
     private final Runnable openConnectionTask = new Runnable() {
         @Override
@@ -140,8 +137,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
         @Override
         public void onMessage(SyncResponse message) {
-            LOG.info("KaaSync message (zipped={}, encrypted={}) received for channel [{}]", message.isZipped(), message.isEncrypted(), getId());
-            byte [] resultBody = null;
+            LOG.info("KaaSync message (zipped={}, encrypted={}) received for channel [{}]", message.isZipped(), message.isEncrypted(),
+                    getId());
+            byte[] resultBody = null;
             if (message.isEncrypted()) {
                 synchronized (this) {
                     try {
@@ -160,27 +158,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     demultiplexer.processResponse(resultBody);
                     demultiplexer.postProcess();
                 } catch (Exception e) {
-                    LOG.error("Failed to process response for channel [{}]", getId());
-                    LOG.error("Stack Trace: ", e);
+                    LOG.error("Failed to process response for channel [{}]", getId(), e);
                 }
-            }
-            synchronized (this) {
-                if(!isFirstResponseReceived){
-                    LOG.info("First KaaSync message received and processed for channel [{}]", getId());
-                    isFirstResponseReceived = true;
-                    if(isPendingSyncRequest){
-                        LOG.debug("There are pending requests for channel [{}] -> starting sync", getId());
-                        syncAll();
-                    }
-                } else if (ackTypes.size() > 0) {
-                    LOG.debug("Acknowledgment is pending for channel [{}] -> starting sync", getId());
-                    if (ackTypes.size() > 1) {
-                        syncAll();
-                    } else {
-                        sync(ackTypes.get(0));
-                    }
-                    ackTypes.clear();
-                }
+                isFirstResponseReceived = true;
             }
         }
     };
@@ -199,8 +179,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         }
     };
 
-    private final Runnable readTask =  new Runnable() {
-        byte [] buffer = new byte[1024];
+    private final Runnable readTask = new Runnable() {
+        byte[] buffer = new byte[1024];
 
         @Override
         public void run() {
@@ -211,7 +191,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     LOG.info("Channel [{}] is read data {} bytes from stream", getId(), size);
                     if (size > 0) {
                         messageFactory.getFramer().pushBytes(Arrays.copyOf(buffer, size));
-                    }else if(size == -1){
+                    } else if (size == -1) {
                         LOG.info("Channel [{}] received end of stream", getId(), size);
                         break;
                     }
@@ -293,17 +273,17 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private void sendKaaSyncRequest(Map<TransportType, ChannelDirection> types) throws Exception {
         LOG.debug("Sending KaaSync from channel [{}]", getId());
-        byte [] body = multiplexer.compileRequest(types);
+        byte[] body = multiplexer.compileRequest(types);
         byte[] requestBodyEncoded = encDec.encodeData(body);
-        sendFrame( new SyncRequest(requestBodyEncoded, false, true));
+        sendFrame(new SyncRequest(requestBodyEncoded, false, true));
     }
 
     private void sendConnect() throws Exception {
-        LOG.debug("Sending Connect from channel [{}]", getId());
-        byte [] body = multiplexer.compileRequest(getSupportedTransportTypes());
-        byte [] requestBodyEncoded = encDec.encodeData(body);
-        byte [] sessionKey = encDec.getEncodedSessionKey();
-        byte [] signature = encDec.sign(sessionKey);
+        LOG.debug("Sending Connect to channel [{}]", getId());
+        byte[] body = multiplexer.compileRequest(getSupportedTransportTypes());
+        byte[] requestBodyEncoded = encDec.encodeData(body);
+        byte[] sessionKey = encDec.getEncodedSessionKey();
+        byte[] signature = encDec.sign(sessionKey);
         sendFrame(new Connect(CHANNEL_TIMEOUT, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, sessionKey, requestBodyEncoded, signature));
     }
 
@@ -379,6 +359,11 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     @Override
     public synchronized void sync(TransportType type) {
+        sync(Collections.singleton(type));
+    }
+
+    @Override
+    public synchronized void sync(Set<TransportType> types) {
         if (isShutdown) {
             LOG.info("Can't sync. Channel [{}] is down", getId());
             return;
@@ -389,34 +374,40 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         }
         if (!isFirstResponseReceived) {
             LOG.info("Can't sync. Channel [{}] is waiting for CONNACK message + KAASYNC message", getId());
-            isPendingSyncRequest = true;
             return;
         }
-        LOG.info("Processing sync {} for channel [{}]", type, getId());
-        if (multiplexer != null && demultiplexer != null) {
-            if (currentServer != null && socket != null) {
-                ChannelDirection direction = getSupportedTransportTypes().get(type);
-                if (direction != null) {
-                    Map<TransportType, ChannelDirection> typeMap = new HashMap<>(getSupportedTransportTypes().size());
-                    typeMap.put(type, direction);
-                    for (Map.Entry<TransportType, ChannelDirection> typeIt : getSupportedTransportTypes().entrySet()) {
-                        if (!typeIt.getKey().equals(type)) {
-                            typeMap.put(typeIt.getKey(), ChannelDirection.DOWN);
-                        }
-                    }
-                    try {
-                        sendKaaSyncRequest(typeMap);
-                    } catch (Exception e) {
-                        LOG.error("Failed to sync channel [{}]", getId());
-                        LOG.error("Stack trace: ", e);
-                        onServerFailed();
-                    }
-                } else {
-                    LOG.error("Unsupported type {} for channel [{}]", type, getId());
-                }
+        if (multiplexer == null) {
+            LOG.warn("Can't sync. Channel {} multiplexer is not set", getId());
+            return;
+        }
+        if (demultiplexer == null) {
+            LOG.warn("Can't sync. Channel {} demultiplexer is not set", getId());
+            return;
+        }
+        if (currentServer == null || socket == null) {
+            LOG.warn("Can't sync. Server is {}, socket is \"{}\"", currentServer, socket);
+            return;
+        }
+
+        Map<TransportType, ChannelDirection> typeMap = new HashMap<>(getSupportedTransportTypes().size());
+        for (TransportType type : types) {
+            LOG.info("Processing sync {} for channel [{}]", type, getId());
+            ChannelDirection direction = getSupportedTransportTypes().get(type);
+            if (direction != null) {
+                typeMap.put(type, direction);
             } else {
-                LOG.warn("Can't sync. Server is {}, socket is \"{}\"", currentServer, socket);
+                LOG.error("Unsupported type {} for channel [{}]", type, getId());
             }
+            for (Map.Entry<TransportType, ChannelDirection> typeIt : getSupportedTransportTypes().entrySet()) {
+                if (!typeIt.getKey().equals(type)) {
+                    typeMap.put(typeIt.getKey(), ChannelDirection.DOWN);
+                }
+            }
+        }
+        try {
+            sendKaaSyncRequest(typeMap);
+        } catch (Exception e) {
+            LOG.error("Failed to sync channel [{}]", getId(), e);
         }
     }
 
@@ -432,7 +423,6 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         }
         if (!isFirstResponseReceived) {
             LOG.info("Can't sync. Channel [{}] is waiting for CONNACK + KAASYNC message", getId());
-            isPendingSyncRequest = true;
             return;
         }
         LOG.info("Processing sync all for channel [{}]", getId());
@@ -453,7 +443,26 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     @Override
     public void syncAck(TransportType type) {
         LOG.info("Adding sync acknowledgement for type {} as a regular sync for channel [{}]", type, getId());
-        ackTypes.add(type);
+        syncAck(Collections.singleton(type));
+    }
+
+    @Override
+    public void syncAck(Set<TransportType> types) {
+        synchronized (this) {
+            if (!isFirstResponseReceived) {
+                LOG.info("First KaaSync message received and processed for channel [{}]", getId());
+                isFirstResponseReceived = true;
+                LOG.debug("There are pending requests for channel [{}] -> starting sync", getId());
+                syncAll();
+            } else {
+                LOG.debug("Acknowledgment is pending for channel [{}] -> starting sync", getId());
+                if (types.size() == 1) {
+                    sync(types.iterator().next());
+                } else {
+                    syncAll();
+                }
+            }
+        }
     }
 
     @Override

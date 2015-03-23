@@ -26,6 +26,7 @@ import org.atmosphere.gwt20.client.AtmosphereRequestConfig;
 import org.atmosphere.gwt20.client.AtmosphereResponse;
 import org.atmosphere.gwt20.client.managed.RPCEvent;
 import org.atmosphere.gwt20.client.managed.RPCSerializer;
+import org.kaaproject.avro.ui.gwt.client.widget.dialog.AvroUiDialog;
 import org.kaaproject.kaa.sandbox.web.client.util.Utils;
 
 import com.google.gwt.core.client.GWT;
@@ -39,7 +40,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class ConsoleDialog extends KaaDialog {
+public class ConsoleDialog extends AvroUiDialog {
 
     private final static Logger logger = Logger.getLogger("ConsoleDialog");
     
@@ -78,12 +79,7 @@ public class ConsoleDialog extends KaaDialog {
         int width= Window.getClientWidth();
         int height= Window.getClientHeight();
         console.setSize(width*2/3 + "px", height*2/3   + "px");
-        Style consoleStyle = console.getElement().getStyle();
-        consoleStyle.setPropertyPx("minHeight", 200);
-        consoleStyle.setBackgroundColor("#000000");
-        consoleStyle.setColor("#00FF00");
-        consoleStyle.setFontSize(11, Unit.PX);
-        consoleStyle.setProperty("fontFamily", "Georgia");
+        console.addStyleName(Utils.sandboxStyle.consoleArea());
         okButton = new Button("Ok");
         addButton(okButton);
         
@@ -193,7 +189,8 @@ public class ConsoleDialog extends KaaDialog {
 	public void appendToConsole(String text) {
 		console.setText(console.getText() + text);
 		if (console.getText().length()>0) {
-			console.setSelectionRange(console.getText().length()-1, 0);
+			console.setCursorPos(console.getText().length()-1);
+			console.getElement().setScrollTop(console.getElement().getScrollHeight());
 		}
 	}
 	

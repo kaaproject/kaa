@@ -107,6 +107,8 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     
     private static final String SANDBOX_ENV_FILE = "sandbox-env.properties";
     
+    private static final String CHANGE_KAA_HOST_DIALOG_SHOWN_PROPERTY = "changeKaaHostDialogShown";
+    
     @Autowired
     private CacheService cacheService;
     
@@ -172,6 +174,21 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     }
     
     @Override
+    public boolean showChangeKaaHostDialog() throws SandboxServiceException {
+        if (guiChangeHostEnabled) {
+            Boolean result = (Boolean) cacheService.getProperty(CHANGE_KAA_HOST_DIALOG_SHOWN_PROPERTY);
+            return result == null || !result.booleanValue();
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void changeKaaHostDialogShown() throws SandboxServiceException {
+        cacheService.putProperty(CHANGE_KAA_HOST_DIALOG_SHOWN_PROPERTY, Boolean.TRUE);
+    }
+    
+    @Override
     public void changeKaaHost(String uuid, String host) throws SandboxServiceException {
     	AtmosphereResource res = AtmosphereResourceFactory.getDefault().find(uuid);
         try {
@@ -190,6 +207,12 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     @Override
     public List<Project> getDemoProjects() throws SandboxServiceException {
         return new ArrayList<Project>(projectsMap.values());
+    }
+
+    @Override
+    public Project getDemoProject(String projectId)
+            throws SandboxServiceException {
+        return projectsMap.get(projectId);
     }
 
     @Override
@@ -290,7 +313,6 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
             } else {
                 outStream.println("No project configuration found!");
             }
-            
         } catch (Exception e) {
             if (outStream != null) {
                 outStream.println("Unexpected error occurred: " + e.getMessage());
@@ -376,5 +398,6 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
 	        }
 		}
     }
+
 
 }

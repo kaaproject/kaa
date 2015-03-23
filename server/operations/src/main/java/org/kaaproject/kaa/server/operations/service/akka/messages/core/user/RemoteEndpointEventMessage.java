@@ -16,8 +16,18 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
+import org.kaaproject.kaa.server.common.dao.EndpointService;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.LocalUserActor;
 import org.kaaproject.kaa.server.operations.service.event.RemoteEndpointEvent;
 
+/**
+ * Represents message with events that was sent from remote server.
+ * Originator: {@link EndpointService}
+ * Destination: {@link LocalUserActor}
+ * 
+ * @author Andrew Shvayka
+ *
+ */
 public class RemoteEndpointEventMessage implements UserAwareMessage, TenantAwareMessage{
 
     private final RemoteEndpointEvent event;

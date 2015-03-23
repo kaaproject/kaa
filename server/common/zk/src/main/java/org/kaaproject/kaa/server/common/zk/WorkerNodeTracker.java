@@ -17,10 +17,7 @@
 package org.kaaproject.kaa.server.common.zk;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.curator.RetryPolicy;
@@ -57,6 +54,14 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     /** The bootstrap listeners. */
     private List<BootstrapNodeListener> bootstrapListeners;
 
+    /** Correspondence between each functioning operation node's thriftHost+thriftPort
+     * string and its start time */
+    private Map<String, Long> operationNodesStartTimes;
+
+    /** Correspondence between each functioning bootstrap node's thriftHost+thriftPort
+     * string and its start time */
+    private Map<String, Long> bootstrapNodesStartTimes;
+
     /**
      * Instantiates a new worker node tracker.
      *
@@ -92,6 +97,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
         bootstrapCache = new PathChildrenCache(client, BOOTSTRAP_SERVER_NODE_PATH, true);
         endpointListeners = new CopyOnWriteArrayList<OperationsNodeListener>();
         bootstrapListeners = new CopyOnWriteArrayList<BootstrapNodeListener>();
+        operationNodesStartTimes = new HashMap<String, Long>();
+        bootstrapNodesStartTimes = new HashMap<String, Long>();
     }
 
     /*
@@ -190,6 +197,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
      */
     protected void endpointAdded(ChildData data) {
         OperationsNodeInfo nodeInfo = extractOperationServerInfo(data);
+        String endpointAddress = constructEndpointAddress(nodeInfo);
+        operationNodesStartTimes.put(endpointAddress, nodeInfo.getTimeStarted());
         for (OperationsNodeListener listener : endpointListeners) {
             listener.onNodeAdded(nodeInfo);
         }
@@ -203,6 +212,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
      */
     protected void endpointUpdated(ChildData data) {
         OperationsNodeInfo nodeInfo = extractOperationServerInfo(data);
+        String endpointAddress = constructEndpointAddress(nodeInfo);
+        operationNodesStartTimes.put(endpointAddress, nodeInfo.getTimeStarted());
         for (OperationsNodeListener listener : endpointListeners) {
             listener.onNodeUpdated(nodeInfo);
         }
@@ -216,8 +227,16 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
      */
     protected void endpointRemoved(ChildData data) {
         OperationsNodeInfo nodeInfo = extractOperationServerInfo(data);
-        for (OperationsNodeListener listener : endpointListeners) {
-            listener.onNodeRemoved(nodeInfo);
+        String endpointAddress = constructEndpointAddress(nodeInfo);
+        Long removeTime = nodeInfo.getTimeStarted();
+        Long updateTime = operationNodesStartTimes.get(endpointAddress);
+        if (updateTime == null || removeTime >= updateTime) {
+            operationNodesStartTimes.remove(endpointAddress);
+            for (OperationsNodeListener listener : endpointListeners) {
+                listener.onNodeRemoved(nodeInfo);
+            }
+        } else {
+            LOG.debug("Ignoring [{}] endpoint removal, as it was before add/update", endpointAddress);
         }
     }
 
@@ -229,6 +248,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
      */
     protected void bootstrapAdded(ChildData data) {
         BootstrapNodeInfo nodeInfo = extractBootstrapServerInfo(data);
+        String bootstrapAddress = constructBootstrapAddress(nodeInfo);
+        bootstrapNodesStartTimes.put(bootstrapAddress, nodeInfo.getTimeStarted());
         for (BootstrapNodeListener listener : bootstrapListeners) {
             listener.onNodeAdded(nodeInfo);
         }
@@ -242,6 +263,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
      */
     protected void bootstrapUpdated(ChildData data) {
         BootstrapNodeInfo nodeInfo = extractBootstrapServerInfo(data);
+        String bootstrapAddress = constructBootstrapAddress(nodeInfo);
+        bootstrapNodesStartTimes.put(bootstrapAddress, nodeInfo.getTimeStarted());
         for (BootstrapNodeListener listener : bootstrapListeners) {
             listener.onNodeUpdated(nodeInfo);
         }
@@ -255,8 +278,15 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
      */
     protected void bootstrapRemoved(ChildData data) {
         BootstrapNodeInfo nodeInfo = extractBootstrapServerInfo(data);
-        for (BootstrapNodeListener listener : bootstrapListeners) {
-            listener.onNodeRemoved(nodeInfo);
+        String bootstrapAddress = constructBootstrapAddress(nodeInfo);
+        Long removeTime = nodeInfo.getTimeStarted();
+        Long updateTime = bootstrapNodesStartTimes.get(bootstrapAddress);
+        if (updateTime == null || removeTime >= updateTime) {
+            for (BootstrapNodeListener listener : bootstrapListeners) {
+                listener.onNodeRemoved(nodeInfo);
+            }
+        } else {
+            LOG.debug("Ignoring [{}] bootstrap removal, as it was before add/update", bootstrapAddress);
         }
     }
 
@@ -348,6 +378,16 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
             LOG.error("error reading control server info", e);
         }
         return bootstrapServerInfo;
+    }
+
+    private String constructEndpointAddress(OperationsNodeInfo nodeInfo) {
+        return nodeInfo.getConnectionInfo().getThriftHost() + ":" +
+                String.valueOf(nodeInfo.getConnectionInfo().getThriftPort());
+    }
+
+    private String constructBootstrapAddress(BootstrapNodeInfo nodeInfo) {
+        return nodeInfo.getConnectionInfo().getThriftHost() + ":" +
+                String.valueOf(nodeInfo.getConnectionInfo().getThriftPort());
     }
 
     /*

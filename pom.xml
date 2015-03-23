@@ -41,7 +41,7 @@ Copyright 2014 CyberVision, Inc.
         <h2.driver.ver>1.4.179</h2.driver.ver>
         <oracle-nosql-client.version>3.0.14</oracle-nosql-client.version>
         <oracle-kvstore.version>3.1.7</oracle-kvstore.version>
-        <gwt.version>2.6.1</gwt.version>
+        <gwt.version>2.7.0</gwt.version>
         <aspectj.version>1.7.4</aspectj.version>
         <twitter.common.thrift.version>0.0.64</twitter.common.thrift.version>
 
@@ -453,8 +453,6 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/*-transport.config</exclude>
                         <exclude>**/akka.conf</exclude>
                         <exclude>**/*.cql</exclude>
-                        <exclude>**/client/i18n/*Constants.java</exclude>
-                        <exclude>**/client/i18n/*Messages.java</exclude>
                         <exclude>**/src/main/sh/bin/jetty.sh</exclude>
                         <exclude>**/src/main/resources/jetty/**</exclude>
                     </excludes>
@@ -570,6 +568,24 @@ Copyright 2014 CyberVision, Inc.
                 <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
                 <artifactId>config</artifactId>
                 <classifier>trustful</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
+                <artifactId>config</artifactId>
+                <classifier>facebook</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
+                <artifactId>config</artifactId>
+                <classifier>twitter</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
+                <artifactId>config</artifactId>
+                <classifier>gplus</classifier>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -743,6 +759,11 @@ Copyright 2014 CyberVision, Inc.
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
+                <version>${httpcomponents.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
                 <version>${httpcomponents.version}</version>
             </dependency>
             <dependency>

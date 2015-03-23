@@ -16,10 +16,16 @@
 
 package org.kaaproject.kaa.sandbox.web.client.layout;
 
+import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
+import org.kaaproject.kaa.sandbox.web.client.SandboxResources.SandboxStyle;
+import org.kaaproject.kaa.sandbox.web.client.util.Utils;
+import org.kaaproject.kaa.sandbox.web.shared.Version;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -29,17 +35,29 @@ public class AppLayout extends Composite {
 
         @UiField SimplePanel appHeader;
         @UiField SimpleWidgetPanel appContent;
+        @UiField HTMLPanel footerPanel;
+        @UiField SimplePanel leftPanel;
+
+        @UiField (provided = true) public final AvroUiStyle avroUiStyle;
+        @UiField (provided = true) public final SandboxStyle sandboxStyle;
 
         public AppLayout() {
-                initWidget(uiBinder.createAndBindUi(this));
+            avroUiStyle = Utils.avroUiStyle;
+            sandboxStyle = Utils.sandboxStyle;
+            initWidget(uiBinder.createAndBindUi(this));
+            footerPanel.getElement().setInnerHTML(Utils.messages.footerMessage(Version.PROJECT_VERSION));
         }
 
         public SimplePanel getAppHeaderHolder() {
             return this.appHeader;
         }
-
+        
         public SimpleWidgetPanel getAppContentHolder() {
-                return this.appContent;
+            return this.appContent;
+        }
+        
+        public SimplePanel getLeftPanel() {
+            return this.leftPanel;
         }
 
 }

@@ -59,7 +59,7 @@ do
 
 case "$cmd" in
     build)
-    cd build && make && cd ..
+    cd build && make -j4 && cd ..
     ;;
 
     install)
@@ -82,8 +82,10 @@ case "$cmd" in
     test_cleanup
     if [[ $TEST_RESULT -ne 0 ]]
     then
-        echo "Kaa C++ Client unittests failed!"
+        echo "Kaa C++ SDK unittests have failed!"
         exit $TEST_RESULT
+    else
+        echo "Kaa C++ SDK unittests have successfully passed!"
     fi
     ;;
     

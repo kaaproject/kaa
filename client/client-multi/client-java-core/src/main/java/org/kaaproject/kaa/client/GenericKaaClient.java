@@ -23,6 +23,7 @@ import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
 import org.kaaproject.kaa.client.event.EventListenersResolver;
+import org.kaaproject.kaa.client.event.FindEventListenersCallback;
 import org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback;
 import org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback;
 import org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager;
@@ -438,18 +439,14 @@ public interface GenericKaaClient {
     EventFamilyFactory getEventFamilyFactory();
 
     /**
-     * Retrieves Kaa endpoint registration manager
+     * Submits an event listeners resolution request
      *
-     * @return {@link EndpointRegistrationManager} object
-     */
-    EndpointRegistrationManager getEndpointRegistrationManager();
-
-    /**
-     * Retrieves Kaa event listeners resolver
+     * @param eventFQNs     List of event class FQNs which have to be supported by endpoint.
+     * @param listener      Result listener {@link FindEventListenersCallback}}
      *
-     * @return {@link EventListenersResolver} object
+     * @return Request ID of submitted request
      */
-    EventListenersResolver getEventListenerResolver();
+    void findEventListeners(List<String> eventFQNs, FindEventListenersCallback listener);
 
     /**
      * Retrieves Kaa channel manager
@@ -500,6 +497,11 @@ public interface GenericKaaClient {
      * @return client's private key
      */
     PrivateKey getClientPrivateKey();
+
+    /**
+     * Set new access token for a current endpoint
+     */
+    void setEndpointAccessToken(String token);
 
     /**
      * Generate new access token for a current endpoint

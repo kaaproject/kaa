@@ -16,13 +16,32 @@
 
 package org.kaaproject.kaa.server.operations.service.event;
 
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
+
 public interface EventServiceListener {
 
     void onEvent(RemoteEndpointEvent event);
-
+    
     void onRouteInfo(RouteInfo routeInfo);
 
     void onUserRouteInfo(UserRouteInfo routeInfo);
 
     void onServerError(String serverId);
+    
+    /**
+     * Reports information about endpoint to global user actor  
+     * @param update - information about endpoint activity
+     */
+    void onEndpointRouteUpdate(GlobalRouteInfo update);
+    
+    /**
+     * Reports update of user configuration to the endpoint user actor
+     * @param update - endpoint user configuration update
+     */
+    void onEndpointStateUpdate(EndpointUserConfigurationUpdate update);
+
+    /**
+     * Reports update of cluster topology;
+     */
+    void onClusterUpdated();
 }

@@ -30,6 +30,18 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/sonar-project.properties.in"
                "${CMAKE_CURRENT_SOURCE_DIR}/sonar-project.properties"
               )
 
+add_executable  (test_ext_log_storage_memory
+                    test/platform-impl/test_ext_log_storage_memory.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_ext_log_storage_memory kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+
+add_executable  (test_ext_log_upload_strategy_by_volume
+                    test/platform-impl/test_ext_log_upload_strategy_by_volume.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_ext_log_upload_strategy_by_volume kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+
 add_executable  (test_user_extension
                     test/test_kaa_user.c
                     test/kaa_test_external.c
@@ -72,7 +84,7 @@ add_executable  (test_bootstrap_manager
 target_link_libraries(test_bootstrap_manager kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
 add_executable  (test_profile
-                    src/gen/kaa_profile_gen.c
+                    ${KAA_SRC_FOLDER}/gen/kaa_profile_gen.c
                     test/test_kaa_profile.c
                     test/kaa_test_external.c
                 )
@@ -85,11 +97,22 @@ add_executable  (test_common
 target_link_libraries(test_common kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
 add_executable  (test_log
-                    src/gen/kaa_logging_gen.c
                     test/test_kaa_log.c
                     test/kaa_test_external.c
+                    ${KAA_SRC_FOLDER}/gen/kaa_logging_gen.c
+                    ${KAA_SRC_FOLDER}/avro_src/io.c
+                    ${KAA_SRC_FOLDER}/avro_src/encoding_binary.c
+                    ${KAA_SRC_FOLDER}/collections/kaa_list.c
+                    ${KAA_SRC_FOLDER}/utilities/kaa_log.c
+                    ${KAA_SRC_FOLDER}/platform-impl/posix/logger.c
+                    ${KAA_SRC_FOLDER}/kaa_platform_utils.c
+                    ${KAA_SRC_FOLDER}/kaa_bootstrap_manager.c
+                    ${KAA_SRC_FOLDER}/kaa_channel_manager.c
+                    ${KAA_SRC_FOLDER}/kaa_common_schema.c
+                    ${KAA_SRC_FOLDER}/kaa_logging.c
+                    ${KAA_SRC_FOLDER}/kaa_status.c
                 )
-target_link_libraries(test_log kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+target_link_libraries(test_log ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
 add_executable  (test_deque
                     test/test_kaa_deque.c
@@ -132,3 +155,9 @@ add_executable  (test_kaa_configuration_manager
                     test/kaa_test_external.c
                 )
 target_link_libraries(test_kaa_configuration_manager kaac ${CUNIT_LIB_NAME})
+
+add_executable  (test_kaa_common_schema
+                    test/test_kaa_common_schema.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_kaa_common_schema kaac ${CUNIT_LIB_NAME})

@@ -31,7 +31,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<main.dir>${basedir}/../..</main.dir>
-		<spring.version>3.2.10.RELEASE</spring.version>
 	</properties>
 
 	<dependencies>
@@ -50,7 +49,6 @@
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
 			<version>${gwt.version}</version>
-            <scope>provided</scope>
 		</dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>
@@ -139,6 +137,11 @@
             <artifactId>avro</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.avro-ui</groupId>
+            <artifactId>gwt-client</artifactId>
+            <version>${avro-ui.version}</version>
+        </dependency>             
+        <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>utils</artifactId>
         </dependency> 
@@ -154,27 +157,27 @@
 		<dependency>
 			<groupId>org.atmosphere.extensions</groupId>
 			<artifactId>atmosphere-gwt20-client</artifactId>
-			<version>2.1.2</version>
+			<version>2.2.2-GWT27</version>
 		</dependency>
 		<dependency>
             <groupId>org.atmosphere.extensions</groupId>
             <artifactId>atmosphere-gwt20-server</artifactId>
-            <version>2.1.2</version>
+            <version>2.2.2-GWT27</version>
         </dependency>
         <dependency>
             <groupId>org.atmosphere.extensions</groupId>
             <artifactId>atmosphere-gwt20-managed</artifactId>
-            <version>2.1.2</version>
+            <version>2.2.2-GWT27</version>
             </dependency>
         <dependency>
 			<groupId>org.atmosphere</groupId>
 			<artifactId>atmosphere-runtime</artifactId>
-			<version>2.1.6</version>
+			<version>2.2.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.atmosphere.client</groupId>
 			<artifactId>javascript</artifactId>
-			<version>2.2.2</version>
+			<version>2.2.8</version>
 			<type>war</type>
 			<scope>compile</scope>
 		</dependency>		
@@ -239,36 +242,60 @@
 					</filesets>
 				</configuration>
 			</plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <file>${basedir}/src/main/java/org/kaaproject/kaa/sandbox/web/shared/Version.template</file>
+                    <outputFile>${basedir}/src/main/java/org/kaaproject/kaa/sandbox/web/shared/Version.java</outputFile>
+                    <replacements>
+                        <replacement>
+                            <token>@projectVersion@</token>
+                            <value>${project.version}</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>            
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>${gwt.version}</version>
+                <configuration>
+                    <i18nConstantsWithLookupBundle>org.kaaproject.kaa.sandbox.web.client.i18n.SandboxConstants</i18nConstantsWithLookupBundle>
+                    <i18nMessagesBundle>org.kaaproject.kaa.sandbox.web.client.i18n.SandboxMessages</i18nMessagesBundle>
+                    <cssFile>org/kaaproject/kaa/sandbox/web/client/SandboxTheme.css</cssFile>
+                    <compileSourcesArtifacts>
+                        <artifact>org.kaaproject.kaa.server.common:dto</artifact>
+                        <artifact>org.kaaproject.kaa.sandbox:sandbox-demo</artifact>
+                    </compileSourcesArtifacts>
+                    <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
+                    <runTarget>Sandbox.html</runTarget>
+                </configuration>                    
 				<executions>
-					<execution>
+                    <execution>
                         <id>generateAsync</id>
+                        <goals>
+                            <goal>generateAsync</goal>
+                        </goals>
+                    </execution>                
+					<execution>
+                        <id>source-generation</id>
 						<goals>
-							<goal>generateAsync</goal>
+                            <goal>i18n</goal>
+                            <goal>css</goal>
 						</goals>
                         <configuration>
-                            <compileSourcesArtifacts>
-                                <artifact>org.kaaproject.kaa.server.common:dto</artifact>
-                                <artifact>org.kaaproject.kaa.sandbox:sandbox-demo</artifact>
-                            </compileSourcesArtifacts>
-                            <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
-                            <runTarget>Sandbox.html</runTarget>
-                        </configuration>
+                        </configuration>                        
 					</execution>
-                    <execution>
-                        <id>i18n</id>
-                        <goals>
-                            <goal>i18n</goal>
-                        </goals>
-                        <configuration>
-                            <i18nConstantsWithLookupBundle>org.kaaproject.kaa.sandbox.web.client.i18n.SandboxConstants</i18nConstantsWithLookupBundle>
-                            <i18nMessagesBundle>org.kaaproject.kaa.sandbox.web.client.i18n.SandboxMessages</i18nMessagesBundle>
-                            <generateDirectory>${basedir}/src/main/java</generateDirectory>
-                        </configuration>                    
-                    </execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -307,16 +334,16 @@
 		                        <pluginExecution>
 		                            <pluginExecutionFilter>
 		                                <groupId>
-		                                    org.codehaus.mojo
+		                                    com.google.code.maven-replacer-plugin
 		                                </groupId>
 		                                <artifactId>
-		                                    gwt-maven-plugin
+		                                    replacer
 		                                </artifactId>
 		                                <versionRange>
-		                                    [2.6.1,)
+		                                    [1.5.3,)
 		                                </versionRange>
 		                                <goals>
-		                                    <goal>i18n</goal>
+		                                    <goal>replace</goal>
 		                                </goals>
 		                            </pluginExecutionFilter>
 		                            <action>

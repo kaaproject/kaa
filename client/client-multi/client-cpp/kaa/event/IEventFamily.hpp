@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_EVENTS
-
 #include <list>
 #include <string>
 #include <vector>
@@ -59,7 +57,5 @@ public:
 };
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* IEVENTFAMILY_HPP_ */

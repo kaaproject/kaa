@@ -311,13 +311,16 @@ public class BinaryEncDec implements PlatformEncDec {
             buf.put(NOTHING);
             buf.put(uaResponse.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
             buf.put(NOTHING);
-            buf.putShort((short) (uaResponse.getErrorCode() != null ? uaResponse.getErrorCode().ordinal() : 0));
-            if (uaResponse.getErrorReason() != null) {
-                byte[] data = uaResponse.getErrorReason().getBytes(UTF8);
-                buf.putShort((short) data.length);
-                put(buf, data);
-            } else {
-                buf.putShort((short) 0);
+
+            if (uaResponse.getResult() != SyncStatus.SUCCESS) {
+                buf.putShort((short) (uaResponse.getErrorCode() != null ? uaResponse.getErrorCode().ordinal() : 0));
+                if (uaResponse.getErrorReason() != null) {
+                    byte[] data = uaResponse.getErrorReason().getBytes(UTF8);
+                    buf.putShort((short) data.length);
+                    put(buf, data);
+                } else {
+                    buf.putShort((short) 0);
+                }
             }
         }
         if (userSync.getUserAttachNotification() != null) {
@@ -345,7 +348,7 @@ public class BinaryEncDec implements PlatformEncDec {
                 } else {
                     buf.put(NOTHING);
                 }
-                buf.putShort((short) Integer.valueOf(response.getRequestId()).intValue());
+                buf.putShort((short) response.getRequestId());
                 if (response.getEndpointKeyHash() != null) {
                     putUTF(buf, response.getEndpointKeyHash());
                 }
@@ -358,18 +361,26 @@ public class BinaryEncDec implements PlatformEncDec {
             for (EndpointDetachResponse response : userSync.getEndpointDetachResponses()) {
                 buf.put(response.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
                 buf.put(NOTHING);
-                buf.putShort((short) Integer.valueOf(response.getRequestId()).intValue());
+                buf.putShort((short) response.getRequestId());
             }
         }
         buf.putInt(extPosition - SIZE_OF_INT, buf.position() - extPosition);
     }
 
     private void encode(GrowingByteBuffer buf, LogServerSync logSync) {
-        for (LogDeliveryStatus status : logSync.getDeliveryStatuses()) {
-            buildExtensionHeader(buf, LOGGING_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
-            buf.putShort((short) Integer.valueOf(status.getRequestId()).intValue());
-            buf.put(status.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
-            buf.put(NOTHING);
+        buildExtensionHeader(buf, LOGGING_EXTENSION_ID, NOTHING, NOTHING, NOTHING, 4);
+        List<LogDeliveryStatus> statusList = logSync.getDeliveryStatuses();
+
+        if (statusList != null && !statusList.isEmpty()) {
+            buf.putInt(statusList.size());
+
+            for (LogDeliveryStatus status : statusList) {
+                buf.putShort((short) status.getRequestId());
+                buf.put(status.getResult() == SyncStatus.SUCCESS ? SUCCESS : FAILURE);
+                buf.put(status.getErrorCode() != null ? (byte) status.getErrorCode().ordinal() : NOTHING);
+            }
+        } else {
+            buf.putInt(0);
         }
     }
 

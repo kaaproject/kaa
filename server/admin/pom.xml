@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014 CyberVision, Inc.
+  Copyright 2014-2015 CyberVision, Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-codeserver</artifactId>
             <version>${gwt.version}</version>
-            <scope>runtime</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.jdramaix</groupId>
@@ -300,21 +300,18 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>gplus</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>facebook</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>twitter</classifier>
             <scope>runtime</scope>
         </dependency>
@@ -431,33 +428,57 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <file>${basedir}/src/main/java/org/kaaproject/kaa/server/admin/shared/Version.template</file>
+                    <outputFile>${basedir}/src/main/java/org/kaaproject/kaa/server/admin/shared/Version.java</outputFile>
+                    <replacements>
+                        <replacement>
+                            <token>@projectVersion@</token>
+                            <value>${project.version}</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>             
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <version>${gwt.version}</version>
+                <configuration>
+                    <i18nConstantsWithLookupBundle>org.kaaproject.kaa.server.admin.client.i18n.KaaAdminConstants</i18nConstantsWithLookupBundle>
+                    <i18nMessagesBundle>org.kaaproject.kaa.server.admin.client.i18n.KaaAdminMessages</i18nMessagesBundle>
+                    <cssFile>org/kaaproject/kaa/server/admin/client/KaaAdminTheme.css</cssFile>
+                    <compileSourcesArtifacts>
+                        <artifact>org.kaaproject.kaa.server.common:dto</artifact>
+                    </compileSourcesArtifacts>
+                    <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
+                    <runTarget>KaaAdmin.html</runTarget>
+                </configuration>
                 <executions>
                     <execution>
                         <id>generateAsync</id>
                         <goals>
                             <goal>generateAsync</goal>
                         </goals>
-                        <configuration>
-                            <compileSourcesArtifacts>
-                                <artifact>org.kaaproject.kaa.server.common:dto</artifact>
-                            </compileSourcesArtifacts>
-                            <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
-                            <runTarget>KaaAdmin.html</runTarget>
-                        </configuration>
-                    </execution>
+                    </execution>                      
                     <execution>
-                        <id>i18n</id>
+                        <id>source-generation</id>
                         <goals>
                             <goal>i18n</goal>
+                            <goal>css</goal>
                         </goals>
                         <configuration>
-                            <i18nConstantsWithLookupBundle>org.kaaproject.kaa.server.admin.client.i18n.KaaAdminConstants</i18nConstantsWithLookupBundle>
-                            <i18nMessagesBundle>org.kaaproject.kaa.server.admin.client.i18n.KaaAdminMessages</i18nMessagesBundle>
-                            <generateDirectory>${basedir}/src/main/java</generateDirectory>
-                        </configuration>                    
+                        </configuration>                        
                     </execution>
                 </executions>
             </plugin>           
@@ -702,16 +723,16 @@
                                 <pluginExecution>
                                     <pluginExecutionFilter>
                                         <groupId>
-                                            org.codehaus.mojo
+                                            com.google.code.maven-replacer-plugin
                                         </groupId>
                                         <artifactId>
-                                            gwt-maven-plugin
+                                            replacer
                                         </artifactId>
                                         <versionRange>
-                                            [2.6.1,)
+                                            [1.5.3,)
                                         </versionRange>
                                         <goals>
-                                            <goal>i18n</goal>
+                                            <goal>replace</goal>
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>

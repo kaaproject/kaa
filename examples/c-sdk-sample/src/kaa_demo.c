@@ -22,19 +22,19 @@
 #include <execinfo.h>
 #include <sys/select.h>
 
-#include <kaa.h>
-#include <kaa_error.h>
-#include <kaa_context.h>
-#include <kaa_profile.h>
-#include <kaa_logging.h>
-#include <kaa_channel_manager.h>
-#include <kaa_configuration_manager.h>
+#include <kaa/kaa.h>
+#include <kaa/kaa_error.h>
+#include <kaa/kaa_context.h>
+#include <kaa/kaa_profile.h>
+#include <kaa/kaa_logging.h>
+#include <kaa/kaa_channel_manager.h>
+#include <kaa/kaa_configuration_manager.h>
 
-#include <utilities/kaa_log.h>
+#include <kaa/utilities/kaa_log.h>
 
-#include <platform/ext_sha.h>
-#include <platform/ext_transport_channel.h>
-#include <platform-impl/kaa_tcp_channel.h>
+#include <kaa/platform/ext_sha.h>
+#include <kaa/platform/ext_transport_channel.h>
+#include <kaa/platform-impl/kaa_tcp_channel.h>
 
 
 
@@ -48,9 +48,7 @@
 /*
  * Strategy-specific configuration parameters used by Kaa log collection feature.
  */
-#define KAA_DEMO_MAX_UPLOAD_THRESHOLD     150   /* Size of collected serialized logs needed to initiate log upload */
-#define KAA_DEMO_MAX_LOG_BUCKET_SIZE      160   /* Max size of a log batch has been sent by SDK during one upload. */
-#define KAA_DEMO_MAX_CLEANUP_THRESHOLD    10000 /* Max size of an inner log storage. If size is exceeded, elder logs will be removed. */
+#define KAA_DEMO_UPLOAD_COUNT_THRESHOLD     5   /* Count of collected serialized logs needed to initiate log upload */
 
 #define KAA_DEMO_LOG_GENERATION_FREQUENCY    3 /* seconds */
 
@@ -97,12 +95,14 @@ static bool is_shutdown = false;
 
 /* forward declarations */
 
-extern kaa_error_t ext_log_storage_create(void **log_storage_context_p
-                                        , kaa_logger_t *logger);
+extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
+                                                    , kaa_logger_t *logger);
+
 extern kaa_error_t ext_log_upload_strategy_by_volume_create(void **strategy_p
-                                                          , size_t max_upload_threshold
-                                                          , size_t max_log_bucket_size
-                                                          , size_t max_cleanup_threshold);
+                                                          , kaa_channel_manager_t   *channel_manager
+                                                          , kaa_bootstrap_manager_t *bootstrap_manager);
+extern kaa_error_t ext_log_upload_strategy_by_volume_set_threshold_count(void *strategy, size_t threshold_count);
+
 
 
 /*
@@ -110,20 +110,23 @@ extern kaa_error_t ext_log_upload_strategy_by_volume_create(void **strategy_p
  */
 kaa_error_t kaa_log_collector_init()
 {
-    kaa_error_t error_code = ext_log_storage_create(&log_storage_context, kaa_context_->logger);
+    kaa_error_t error_code = ext_unlimited_log_storage_create(&log_storage_context, kaa_context_->logger);
     if (error_code) {
         KAA_LOG_ERROR(kaa_context_->logger, error_code, "Failed to create log storage");
         return error_code;
     }
 
     error_code = ext_log_upload_strategy_by_volume_create(&log_upload_strategy_context
-                                                        , KAA_DEMO_MAX_UPLOAD_THRESHOLD
-                                                        , KAA_DEMO_MAX_LOG_BUCKET_SIZE
-                                                        , KAA_DEMO_MAX_CLEANUP_THRESHOLD);
+                                                        , kaa_context_->channel_manager
+                                                        , kaa_context_->bootstrap_manager);
+
     if (error_code) {
-        KAA_LOG_ERROR(kaa_context_->logger, error_code, "Failed to create common log storage interface: error_code = %d", error_code);
+        KAA_LOG_ERROR(kaa_context_->logger, error_code, "Failed to create log upload strategy");
         return error_code;
     }
+
+    error_code = ext_log_upload_strategy_by_volume_set_threshold_count(log_upload_strategy_context
+                                                                     , KAA_DEMO_UPLOAD_COUNT_THRESHOLD);
 
     error_code = kaa_logging_init(kaa_context_->log_collector
                                 , log_storage_context
@@ -135,7 +138,7 @@ kaa_error_t kaa_log_collector_init()
 
 void kaa_demo_print_configuration_message(const kaa_root_configuration_t *configuration)
 {
-    if (configuration->message->type == KAA_CONFIGURATION_UNION_NULL_OR_STRING_BRANCH_0) {
+    if (configuration->message->type == KAA_CONFIGURATION_UNION_STRING_OR_NULL_BRANCH_1) {
         KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Current configuration: null");
     } else {
         kaa_string_t *message = (kaa_string_t *) configuration->message->data;
@@ -322,6 +325,7 @@ int kaa_demo_event_loop()
         if (poll_result == 0) {
             kaa_demo_add_log_record();
             kaa_tcp_channel_check_keepalive(&operations_channel);
+            kaa_tcp_channel_check_keepalive(&bootstrap_channel);
         } else if (poll_result > 0) {
             if (bootstrap_fd >= 0) {
                 if (FD_ISSET(bootstrap_fd, &read_fds)) {

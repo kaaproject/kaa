@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014 CyberVision, Inc.
+  Copyright 2014-2015 CyberVision, Inc.
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -22,11 +22,22 @@
         <ui:with field='kaaAdminStyle' type='org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle'/>  
         <ui:with field='avroUiStyle' type='org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle'/>  
         
-        <gwt:FlowPanel ui:field="mainLayoutPanel">
-            <gwt:SimplePanel ui:field="appHeader" />
-            <gwt:FlowPanel ui:field="navPanel">
-            </gwt:FlowPanel>
-            <kaa:layout.SimpleWidgetPanel styleName="{avroUiStyle.bAppContent}" ui:field="appContent" />
-        </gwt:FlowPanel>
-
+        <gwt:DockLayoutPanel unit="PX">
+                <gwt:north size="60">
+                        <gwt:SimplePanel ui:field="appHeader" />
+                </gwt:north>    
+                <gwt:center>
+                    <gwt:FlowPanel ui:field="mainLayoutPanel">
+                        <gwt:FlowPanel ui:field="navPanel"/>
+                        <kaa:layout.SimpleWidgetPanel styleName="{avroUiStyle.bAppContent}" ui:field="appContent" />
+                    </gwt:FlowPanel>
+                </gwt:center>
+                <gwt:south size="60">
+                        <gwt:HorizontalPanel width="100%" height="100%">
+                            <gwt:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+                                <gwt:HTMLPanel ui:field="footerPanel" styleName="{kaaAdminStyle.bAppFooter}"/>
+                            </gwt:cell>
+                        </gwt:HorizontalPanel>
+                </gwt:south>
+        </gwt:DockLayoutPanel>
 </ui:UiBinder>

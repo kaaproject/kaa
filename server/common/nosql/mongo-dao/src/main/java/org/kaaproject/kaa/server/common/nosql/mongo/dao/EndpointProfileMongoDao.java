@@ -28,6 +28,11 @@ import org.springframework.stereotype.Repository;
 import java.nio.ByteBuffer;
 import java.util.List;
 
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -36,13 +41,9 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileMongoDao.class);
 
-    private static final String ENDPOINT_KEY_HASH = "endpoint_key_hash";
-    private static final String ACCESS_TOKEN = "access_token";
-    private static final String ENDPOINT_USER_ID = "endpoint_user_id";
-
     @Override
     protected String getCollectionName() {
-        return MongoEndpointProfile.COLLECTION_NAME;
+        return ENDPOINT_PROFILE;
     }
 
     @Override
@@ -53,42 +54,42 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     @Override
     public MongoEndpointProfile findByKeyHash(byte[] endpointKeyHash) {
         LOG.debug("Find endpoint profile by endpoint key hash [{}] ", endpointKeyHash);
-        DBObject dbObject = query(where(ENDPOINT_KEY_HASH).is(endpointKeyHash)).getQueryObject();
-        DBObject result = mongoTemplate.getDb().getCollection(MongoEndpointProfile.COLLECTION_NAME).findOne(dbObject);
+        DBObject dbObject = query(where(EP_ENDPOINT_KEY_HASH).is(endpointKeyHash)).getQueryObject();
+        DBObject result = mongoTemplate.getDb().getCollection(getCollectionName()).findOne(dbObject);
         return mongoTemplate.getConverter().read(getDocumentClass(), result);
     }
 
     @Override
     public long getCountByKeyHash(byte[] endpointKeyHash) {
         LOG.debug("Get count of endpoint profiles by endpoint key hash [{}] ", endpointKeyHash);
-        DBObject dbObject = query(where(ENDPOINT_KEY_HASH).is(endpointKeyHash)).getQueryObject();
-        return mongoTemplate.getDb().getCollection(MongoEndpointProfile.COLLECTION_NAME).count(dbObject);
+        DBObject dbObject = query(where(EP_ENDPOINT_KEY_HASH).is(endpointKeyHash)).getQueryObject();
+        return mongoTemplate.getDb().getCollection(getCollectionName()).count(dbObject);
     }
 
     @Override
     public void removeByKeyHash(byte[] endpointKeyHash) {
         LOG.debug("Remove endpoint profile by endpoint key hash [{}] ", endpointKeyHash);
-        mongoTemplate.remove(query(where(ENDPOINT_KEY_HASH).is(endpointKeyHash)), getCollectionName());
+        mongoTemplate.remove(query(where(EP_ENDPOINT_KEY_HASH).is(endpointKeyHash)), getCollectionName());
     }
 
     @Override
     public void removeByAppId(String appId) {
         LOG.debug("Remove endpoint profile by application id [{}] ", appId);
-        remove(query(where(APPLICATION_ID).is(appId)));
+        remove(query(where(EP_APPLICATION_ID).is(appId)));
     }
 
     @Override
     public MongoEndpointProfile findByAccessToken(String endpointAccessToken) {
         LOG.debug("Find endpoint profile by access token [{}] ", endpointAccessToken);
-        DBObject dbObject = query(where(ACCESS_TOKEN).is(endpointAccessToken)).getQueryObject();
-        DBObject result = mongoTemplate.getDb().getCollection(MongoEndpointProfile.COLLECTION_NAME).findOne(dbObject);
+        DBObject dbObject = query(where(EP_ACCESS_TOKEN).is(endpointAccessToken)).getQueryObject();
+        DBObject result = mongoTemplate.getDb().getCollection(getCollectionName()).findOne(dbObject);
         return mongoTemplate.getConverter().read(getDocumentClass(), result);
     }
 
     @Override
     public List<MongoEndpointProfile> findByEndpointUserId(String endpointUserId) {
         LOG.debug("Find endpoint profiles by endpoint user id [{}] ", endpointUserId);
-        return find(query(where(ENDPOINT_USER_ID).is(endpointUserId)));
+        return find(query(where(EP_USER_ID).is(endpointUserId)));
     }
 
     @Override

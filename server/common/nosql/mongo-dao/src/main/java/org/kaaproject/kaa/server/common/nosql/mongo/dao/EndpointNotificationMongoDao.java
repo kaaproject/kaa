@@ -16,12 +16,8 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointNotification;
@@ -29,20 +25,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_NOTIFICATION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Repository
 public class EndpointNotificationMongoDao extends AbstractMongoDao<MongoEndpointNotification, String> implements EndpointNotificationDao<MongoEndpointNotification> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointNotificationMongoDao.class);
 
-    private static final String ENDPOINT_KEY_HASH = "endpoint_key_hash";
-    public static final String APPLICATION_ID = "notification.application_id";
+    public static final String EP_NF_APPLICATION_ID = "notification.application_id";
 
     @Override
     protected String getCollectionName() {
-        return MongoEndpointNotification.COLLECTION_NAME;
+        return ENDPOINT_NOTIFICATION;
     }
 
     @Override
@@ -54,8 +54,8 @@ public class EndpointNotificationMongoDao extends AbstractMongoDao<MongoEndpoint
     @Override
     public List<MongoEndpointNotification> findNotificationsByKeyHash(final byte[] keyHash) {
         LOG.debug("Find unicast notifications by endpoint key hash [{}] ", keyHash);
-        DBObject dbObject = query(where(ENDPOINT_KEY_HASH).is(keyHash)).getQueryObject();
-        DBCursor cursor = mongoTemplate.getDb().getCollection(MongoEndpointNotification.COLLECTION_NAME).find(dbObject);
+        DBObject dbObject = query(where(EP_ENDPOINT_KEY_HASH).is(keyHash)).getQueryObject();
+        DBCursor cursor = mongoTemplate.getDb().getCollection(getCollectionName()).find(dbObject);
         List<MongoEndpointNotification> endpointNotifications = new ArrayList<>();
         while (cursor.hasNext()) {
             endpointNotifications.add(mongoTemplate.getConverter().read(MongoEndpointNotification.class, cursor.next()));
@@ -66,13 +66,13 @@ public class EndpointNotificationMongoDao extends AbstractMongoDao<MongoEndpoint
     @Override
     public void removeNotificationsByKeyHash(final byte[] keyHash) {
         LOG.debug("Remove unicast notifications by endpoint key hash [{}] ", keyHash);
-        mongoTemplate.remove(query(where(ENDPOINT_KEY_HASH).is(keyHash)), getCollectionName());
+        mongoTemplate.remove(query(where(EP_ENDPOINT_KEY_HASH).is(keyHash)), getCollectionName());
     }
 
     @Override
     public void removeNotificationsByAppId(final String appId) {
         LOG.debug("Remove unicast notifications by application id [{}] ", appId);
-        remove(query(where(APPLICATION_ID).is(appId)));
+        remove(query(where(EP_NF_APPLICATION_ID).is(appId)));
     }
 
     @Override

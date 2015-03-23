@@ -60,11 +60,11 @@ public:
     }
     virtual void setTopicStates(const DetailedTopicStates&) {}
 
-    virtual SharedDataBuffer getProfileHash() const {
-        static SharedDataBuffer profileHash;
+    virtual HashDigest getProfileHash() const {
+        static HashDigest profileHash;
         return profileHash;
     }
-    virtual void setProfileHash(SharedDataBuffer) {}
+    virtual void setProfileHash(HashDigest) {}
 
     virtual AttachedEndpoints getAttachedEndpoints() const {
         static AttachedEndpoints endpoints;
@@ -73,10 +73,16 @@ public:
 
     virtual void setAttachedEndpoints(const AttachedEndpoints&) {}
 
-    virtual std::string getEndpointAccessToken() const {
+    virtual std::string getEndpointAccessToken() {
         static std::string token("token");
         return token;
     }
+
+    std::string refreshEndpointAccessToken() {
+        static std::string token("token");
+        return token;
+    }
+
     virtual void setEndpointAccessToken(const std::string&) {}
 
     virtual bool getEndpointAttachStatus() const {

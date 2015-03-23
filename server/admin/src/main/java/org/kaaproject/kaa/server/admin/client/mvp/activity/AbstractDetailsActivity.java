@@ -16,13 +16,12 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
-
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
-import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseDetailsView;
@@ -37,7 +36,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
-public abstract class AbstractDetailsActivity<T extends HasId, V extends BaseDetailsView, P extends TreePlace> extends AbstractActivity implements BaseDetailsView.Presenter {
+public abstract class AbstractDetailsActivity<T, V extends BaseDetailsView, P extends TreePlace> extends AbstractActivity implements BaseDetailsView.Presenter {
 
     protected final ClientFactory clientFactory;
     protected final String entityId;

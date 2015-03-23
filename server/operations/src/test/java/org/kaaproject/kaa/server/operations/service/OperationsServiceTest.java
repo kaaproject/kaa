@@ -34,7 +34,7 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
-import org.kaaproject.kaa.server.operations.pojo.SyncResponseHolder;
+import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.service.delta.DeltaServiceIT;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
 import org.kaaproject.kaa.server.sync.ClientSync;
@@ -179,15 +179,6 @@ public class OperationsServiceTest {
         assertEquals(NotificationType.SYSTEM, result.getNotificationSync().getNotifications().get(0).getType());
         assertNull(result.getNotificationSync().getNotifications().get(0).getUid());
         assertNotNull(result.getNotificationSync().getNotifications().get(0).getSeqNumber());
-    }
-
-    @Test
-    public void buildProfileResyncResponseTest(){
-        ClientSync syncRequest = new ClientSync();
-        SyncResponseHolder syncResponseHolder = DefaultOperationsService.buildProfileResyncResponse(syncRequest);
-        assertNotNull(syncResponseHolder);
-        assertNotNull(syncResponseHolder.getResponse());
-        assertEquals(SyncStatus.PROFILE_RESYNC, syncResponseHolder.getResponse().getStatus());
     }
 
     @Test

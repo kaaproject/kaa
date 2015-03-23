@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -181,6 +181,16 @@ static kaa_access_point_t *create_access_point()
     return access_point;
 }
 
+static void destroy_access_point(kaa_access_point_t * access_point)
+{
+    if (access_point) {
+        if (access_point->connection_data) {
+            KAA_FREE(access_point->connection_data);
+        }
+        KAA_FREE(access_point);
+    }
+}
+
 void test_handle_server_sync()
 {
     KAA_TRACE_IN(logger);
@@ -302,7 +312,7 @@ void test_handle_server_sync()
         ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     }
 
-    kaa_platform_message_reader_t *reader;
+    kaa_platform_message_reader_t *reader = NULL;
     error_code = kaa_platform_message_reader_create(&reader, server_sync_buffer, server_sync_payload_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
@@ -340,11 +350,14 @@ void test_handle_server_sync()
     error_code = kaa_bootstrap_manager_on_access_point_failed(protocol1_channel_context.transport_context.bootstrap_manager
                                                             , &protocol1_channel_context.protocol_info
                                                             , KAA_SERVER_OPERATIONS);
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ASSERT_EQUAL(error_code, KAA_ERR_NOT_FOUND);
 
     /**
      * CLEAN UP
      */
+    destroy_access_point(access_point1_protocol1);
+    destroy_access_point(access_point1_protocol2);
+    destroy_access_point(access_point2_protocol1);
     kaa_channel_manager_remove_transport_channel(channel_manager, protocol1_channel_id);
     kaa_channel_manager_remove_transport_channel(channel_manager, protocol2_channel_id);
     kaa_channel_manager_remove_transport_channel(channel_manager, protocol3_channel_id);
