@@ -74,8 +74,9 @@ kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *res
 {
     KAA_RETURN_IF_NIL2(self, result, KAA_ERR_BADPARAM);
     if (self->is_sync_ignored) {
-            return KAA_ERR_NONE;
-        }
+        *result = false;
+        return KAA_ERR_NONE;
+    }
     *result = true;
     return KAA_ERR_NONE;
 }

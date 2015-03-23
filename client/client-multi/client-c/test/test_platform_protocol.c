@@ -36,7 +36,7 @@
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
 static kaa_context_t* kaa_context= NULL;
-static kaa_serialize_info_t *info;
+static kaa_serialize_info_t *info = NULL;
 char *buffer = NULL;
 size_t buffer_size = 0;
 static void *mock = NULL;
@@ -44,7 +44,7 @@ static void *mock = NULL;
 
 char* allocator(void *mock_context, size_t size)
 {
-    return (char *) malloc(size);
+    return (char *) KAA_MALLOC(size);
 }
 
 typedef struct {
@@ -65,45 +65,45 @@ typedef struct {
 void test_empty_log_collector_extension_count(void)
 {
     kaa_service_t service = KAA_SERVICE_LOGGING;
-    info = (kaa_serialize_info_t *) malloc (sizeof(kaa_serialize_info_t));
+    info = (kaa_serialize_info_t *) KAA_MALLOC(sizeof(kaa_serialize_info_t));
     info->services = &service;
     info->services_count = 1;
     info->allocator = &allocator;
     info->allocator_context = mock;
-    mock_strategy_context_t *strategy = (mock_strategy_context_t*) malloc(sizeof(mock_strategy_context_t));
-    mock_storage_context_t *storage = (mock_storage_context_t*) malloc(sizeof(mock_storage_context_t));
-    ASSERT_NOT_NULL(storage);
+    mock_strategy_context_t *strategy = (mock_strategy_context_t*) KAA_MALLOC(sizeof(mock_strategy_context_t));
     ASSERT_NOT_NULL(strategy);
+    mock_storage_context_t *storage = (mock_storage_context_t*) KAA_MALLOC(sizeof(mock_storage_context_t));
+    ASSERT_NOT_NULL(storage);
     memset(storage, 0, sizeof(mock_storage_context_t));
     memset(strategy, 0, sizeof(mock_strategy_context_t));
     kaa_error_t error_code = kaa_logging_init(kaa_context->log_collector, storage, strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     error_code = kaa_platform_protocol_serialize_client_sync(kaa_context->platfrom_protocol, info, &buffer, &buffer_size);
-    free(info);
+    KAA_FREE(info);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     char count_of_extensions = *(buffer + 7);
-    KAA_LOG_DEBUG(kaa_context->logger, KAA_ERR_NONE, "count of extensions is %d", count_of_extensions);
+    KAA_LOG_DEBUG(kaa_context->logger, KAA_ERR_NONE, "count of extensions is %d, expected 1", count_of_extensions);
     ASSERT_EQUAL(count_of_extensions, 1);
 }
-int initialize()
+int test_init()
 {
     kaa_error_t error_code = kaa_init(&kaa_context);
     if (error_code) {
-    	exit(error_code);
+    	return KAA_ERR_NOMEM;
     }
 	return KAA_ERR_NONE;
 }
 
-int free_resources()
+int test_deinit()
 {
     kaa_deinit(kaa_context);
-    free(buffer);
+    KAA_FREE(buffer);
     return KAA_ERR_NONE;
 }
 
 #endif
 
-KAA_SUITE_MAIN(plarform_protocol_test,initialize,free_resources
+KAA_SUITE_MAIN(plarform_protocol_test,test_init,test_deinit
 #ifndef KAA_DISABLE_FEATURE_LOGGING
        ,
        KAA_TEST_CASE(empty_log_collector_test, test_empty_log_collector_extension_count)

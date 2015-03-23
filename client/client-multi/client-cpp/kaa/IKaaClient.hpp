@@ -334,8 +334,40 @@ public:
      * @return Request ID of submitted request
      */
     virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListeners* listener) = 0;
+
+    /**
+     * @brief Adds a new log record to the log storage.
+     *
+     * To store log records, @c MemoryLogStorage is used by default. Use @link setStorage() @endlink to set
+     * your own implementation.
+     *
+     * @param[in] record    The log record to be added.
+     *
+     * @see KaaUserLogRecord
+     * @see ILogStorage
+     */
     virtual void addLogRecord(const KaaUserLogRecord& record) = 0;
+
+    /**
+     * @brief Sets the new log storage.
+     *
+     * @c MemoryLogStorage is used by default.
+     *
+     * @param[in] storage    The @c ILogStorage implementation.
+     *
+     * @throw KaaException    The storage is NULL.
+     */
     virtual void setLogStorage(ILogStoragePtr storage) = 0;
+
+    /**
+     * @brief Sets the new log upload strategy.
+     *
+     * @c DefaultLogUploadStrategy is used by default.
+     *
+     * @param[in] strategy    The @c ILogUploadStrategy implementation.
+     *
+     * @throw KaaException    The strategy is NULL.
+     */
     virtual void setLogUploadStrategy(ILogUploadStrategyPtr strategy) = 0;
 
     /**
