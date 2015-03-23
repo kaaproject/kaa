@@ -49,6 +49,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.UpdateUserConfigView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserVerifierView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
@@ -61,6 +62,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationSchem
 import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.enduser.UpdateUserConfigViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.AefMapViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.AefMapsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.EcfSchemaViewImpl;
@@ -167,11 +169,14 @@ public class ClientFactoryImpl implements ClientFactory {
     private final EcfView ecfView = new EcfViewImpl(false);
     private final EcfView createEcfView = new EcfViewImpl(true);
 
-    private final EcfSchemaView ecfSchemaView = new EcfSchemaViewImpl();
+    private final EcfSchemaView ecfSchemaView = new EcfSchemaViewImpl(false);
+    private final EcfSchemaView createEcfSchemaView = new EcfSchemaViewImpl(true);
 
     private final BaseListView<ApplicationEventFamilyMapDto> aefMapsView = new AefMapsViewImpl();
     private final AefMapView aefMapView = new AefMapViewImpl(false);
     private final AefMapView createAefMapView = new AefMapViewImpl(true);
+    
+    private final UpdateUserConfigView updateUserConfigView = new UpdateUserConfigViewImpl();
 
     private Place homePlace;
 
@@ -394,6 +399,11 @@ public class ClientFactoryImpl implements ClientFactory {
     public EcfSchemaView getEcfSchemaView() {
         return ecfSchemaView;
     }
+    
+    @Override
+    public EcfSchemaView getCreateEcfSchemaView() {
+        return createEcfSchemaView;
+    }
 
     @Override
     public BaseListView<ApplicationEventFamilyMapDto> getAefMapsView() {
@@ -448,6 +458,11 @@ public class ClientFactoryImpl implements ClientFactory {
     @Override
     public UserVerifierView getCreateUserVerifierView() {
         return createUserVerifierView;
+    }
+
+    @Override
+    public UpdateUserConfigView getUpdateUserConfigView() {
+        return updateUserConfigView;
     }
 
 }

@@ -21,14 +21,13 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.commons.codec.binary.Base64;
+import org.kaaproject.kaa.client.AndroidKaaPlatformContext;
 import org.kaaproject.kaa.client.Kaa;
-import org.kaaproject.kaa.client.KaaAndroid;
 import org.kaaproject.kaa.client.KaaClient;
+import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
-import org.kaaproject.kaa.client.event.registration.CurrentEndpointAttachListener;
-import org.kaaproject.kaa.client.event.registration.CurrentEndpointDetachListener;
-import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback;
+import org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback;
 import org.kaaproject.kaa.demo.smarthouse.device.DeviceEventClassFamily;
 import org.kaaproject.kaa.demo.smarthouse.device.DeviceInfo;
 import org.kaaproject.kaa.demo.smarthouse.device.DeviceInfoRequest;
@@ -62,18 +61,18 @@ import org.kaaproject.kaa.demo.smarthousedemo.concurrent.BlockingCallable;
 import org.kaaproject.kaa.demo.smarthousedemo.concurrent.TimeoutExecutor;
 import org.kaaproject.kaa.demo.smarthousedemo.data.DeviceStore;
 import org.kaaproject.kaa.demo.smarthousedemo.data.DeviceType;
-import org.kaaproject.kaa.demo.smarthousedemo.profile.SmartHouseProfileContainer;
 
 import android.content.Context;
 import android.util.Log;
 
-public class SmartHouseController implements DeviceEventClassFamily.DefaultEventFamilyListener,
-                                             ThermoEventClassFamily.DefaultEventFamilyListener,
-                                             MusicEventClassFamily.DefaultEventFamilyListener,
-                                             CurrentEndpointAttachListener,
-                                             CurrentEndpointDetachListener
+public class SmartHouseController implements DeviceEventClassFamily.Listener,
+                                             ThermoEventClassFamily.Listener,
+                                             MusicEventClassFamily.Listener,
+                                             AttachEndpointToUserCallback, DetachEndpointFromUserCallback
 {
 
+    private static final String TAG = SmartHouseController.class.getSimpleName();
+    
     /** Default timeout for commands in milliseconds */
     private static final long DEFAULT_TASK_TIMEOUT = 10000;
     
@@ -85,10 +84,7 @@ public class SmartHouseController implements DeviceEventClassFamily.DefaultEvent
     private String userAccount;
     
     private DeviceStore deviceStore;
-    
-    /** Reference to Kaa client SDK */
-    private Kaa kaa;
-    
+        
     /** Reference to Kaa client */
     private KaaClient client;
     
@@ -170,8 +166,8 @@ public class SmartHouseController implements DeviceEventClassFamily.DefaultEvent
     /** Stop Kaa client and release resourceEndpointKeys */
     public void stop() {
         if (inited) {
-            if (kaa != null) {
-                kaa.stop();
+            if (client != null) {
+                client.stop();
             }
             inited = false;
         }
@@ -179,18 +175,18 @@ public class SmartHouseController implements DeviceEventClassFamily.DefaultEvent
     
     public void pause() {
         if (inited) {
-            if (kaa != null) {
+            if (client != null) {
                 Log.d("Kaa", " Pausing Kaa client...");
-                kaa.pause();
+                client.pause();
             }
         }
     }
     
     public void resume() {
         if (inited) {
-            if (kaa != null) {
+            if (client != null) {
                 Log.d("Kaa", "Resuming Kaa client...");
-                kaa.resume();
+                client.resume();
             }
         }
     }
@@ -204,12 +200,12 @@ public class SmartHouseController implements DeviceEventClassFamily.DefaultEvent
     
     public String getEndpointAccessToken() {
         checkInited();
-        return client.getEndpointRegistrationManager().getEndpointAccessToken();
+        return client.getEndpointAccessToken();
     }
     
     public boolean isAttachedToUser() {
         checkInited();
-        return client.getEndpointRegistrationManager().isAttachedToUser();
+        return client.isAttachedToUser();
     }
     
     @Override
@@ -278,11 +274,10 @@ public class SmartHouseController implements DeviceEventClassFamily.DefaultEvent
         @Override
         protected void executeAsync() {
             try {
-                Log.d("Kaa", "Initializing Kaa client...");
-                kaa = new KaaAndroid(context);
-                client = kaa.getClient();
-                client.getProfileManager().setProfileContainer(new SmartHouseProfileContainer());
-                EventFamilyFactory eventFamilyFactory = kaa.getClient().getEventFamilyFactory();
+                Log.d("Kaa", "Initializing Kaa client..."); 
+                client = Kaa.newClient(new AndroidKaaPlatformContext(context), new SimpleKaaClientStateListener());
+
+                EventFamilyFactory eventFamilyFactory = client.getEventFamilyFactory();
                 devices = eventFamilyFactory.getDeviceEventClassFamily();
                 devices.addListener(SmartHouseController.this);
                 if (deviceType == null || deviceType == DeviceType.THERMOSTAT) {
@@ -294,10 +289,10 @@ public class SmartHouseController implements DeviceEventClassFamily.DefaultEvent
                     soundSystems.addListener(SmartHouseController.this);
                 }
                 if (deviceType != null) {
-                    client.getEndpointRegistrationManager().setAttachedListener(SmartHouseController.this);
-                    client.getEndpointRegistrationManager().setDetachedListener(SmartHouseController.this);
+                    client.setAttachedListener(SmartHouseController.this);
+                    client.setDetachedListener(SmartHouseController.this);
                 }
-                kaa.start();
+                client.start();
                 Log.d("Kaa", "Kaa client initialization completed.");
                 onComplete(true);
             } catch (Exception e) {
@@ -607,6 +602,4 @@ public class SmartHouseController implements DeviceEventClassFamily.DefaultEvent
             deviceStore.onDeviceInfoDiscovered(sourceEndpointKey, DeviceType.SOUND_SYSTEM, playbackInfoResponse.getPlaybackInfo());
         }
     }
-
-
 }

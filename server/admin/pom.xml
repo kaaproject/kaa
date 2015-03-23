@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014 CyberVision, Inc.
+  Copyright 2014-2015 CyberVision, Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-codeserver</artifactId>
             <version>${gwt.version}</version>
-            <scope>runtime</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.jdramaix</groupId>
@@ -300,15 +300,19 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>gplus</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>facebook</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
+            <artifactId>config</artifactId>
+            <classifier>twitter</classifier>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
@@ -424,24 +428,60 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>gwt-maven-plugin</artifactId>
-                <version>${gwt.version}</version>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
                 <executions>
                     <execution>
+                        <phase>process-sources</phase>
                         <goals>
-                            <goal>generateAsync</goal>
+                            <goal>replace</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
+                    <file>${basedir}/src/main/java/org/kaaproject/kaa/server/admin/shared/Version.template</file>
+                    <outputFile>${basedir}/src/main/java/org/kaaproject/kaa/server/admin/shared/Version.java</outputFile>
+                    <replacements>
+                        <replacement>
+                            <token>@projectVersion@</token>
+                            <value>${project.version}</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>             
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <version>${gwt.version}</version>
+                <configuration>
+                    <i18nConstantsWithLookupBundle>org.kaaproject.kaa.server.admin.client.i18n.KaaAdminConstants</i18nConstantsWithLookupBundle>
+                    <i18nMessagesBundle>org.kaaproject.kaa.server.admin.client.i18n.KaaAdminMessages</i18nMessagesBundle>
+                    <cssFile>org/kaaproject/kaa/server/admin/client/KaaAdminTheme.css</cssFile>
                     <compileSourcesArtifacts>
                         <artifact>org.kaaproject.kaa.server.common:dto</artifact>
                     </compileSourcesArtifacts>
                     <gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
                     <runTarget>KaaAdmin.html</runTarget>
                 </configuration>
-            </plugin>
+                <executions>
+                    <execution>
+                        <id>generateAsync</id>
+                        <goals>
+                            <goal>generateAsync</goal>
+                        </goals>
+                    </execution>                      
+                    <execution>
+                        <id>source-generation</id>
+                        <goals>
+                            <goal>i18n</goal>
+                            <goal>css</goal>
+                        </goals>
+                        <configuration>
+                        </configuration>                        
+                    </execution>
+                </executions>
+            </plugin>           
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -508,25 +548,6 @@
                     </execution>                    
                 </executions>
             </plugin>
-			<plugin>
-				<groupId>org.apache.rat</groupId>
-				<artifactId>apache-rat-plugin</artifactId>
-				<version>${rat.version}</version>
-				<configuration>
-					<excludes>
-                        <exclude>**/deb/control/control</exclude>					    					    
-						<exclude>**/_remote.repositories</exclude>
-						<exclude>**/.gwt/**</exclude>
-						<exclude>**/*.css</exclude>
-						<exclude>**/*.html</exclude>
-						<exclude>**/*.properties</exclude>		
-                        <exclude>**/*.avsc</exclude>      
-                        <exclude>**/gen/**/*.java</exclude>
-						<exclude>src/main/sh/bin/jetty.sh</exclude>
-						<exclude>src/main/resources/jetty/**</exclude>
-					</excludes>
-				</configuration>
-			</plugin>            
 			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
@@ -693,6 +714,25 @@
                                         </versionRange>
                                         <goals>
                                             <goal>process</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            com.google.code.maven-replacer-plugin
+                                        </groupId>
+                                        <artifactId>
+                                            replacer
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.5.3,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>replace</goal>
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
@@ -868,6 +908,18 @@
                     <artifactId>config</artifactId>
                     <version>${project.version}</version>
                     <classifier>oracle-nosql</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>cassandra</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.appenders.cassandra</groupId>
+                    <artifactId>config</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>cassandra</classifier>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>

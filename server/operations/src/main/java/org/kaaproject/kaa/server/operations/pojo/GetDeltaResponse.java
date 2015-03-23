@@ -137,4 +137,19 @@ public class GetDeltaResponse{
     public String getConfSchema() {
         return confSchema;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("GetDeltaResponse [responseType=");
+        builder.append(responseType);
+        builder.append(", delta=");
+        builder.append(delta);
+        builder.append(", confSchema=");
+        builder.append(confSchema);
+        builder.append(", sequenceNumber=");
+        builder.append(sequenceNumber);
+        builder.append("]");
+        return builder.toString();
+    }
 }

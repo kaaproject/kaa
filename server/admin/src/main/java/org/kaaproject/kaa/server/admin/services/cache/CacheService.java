@@ -20,14 +20,15 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
-import org.kaaproject.kaa.server.common.thrift.gen.control.FileData;
-import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 
 public interface CacheService {
 
-    Sdk getSdk(SdkKey key) throws KaaAdminServiceException;
-    
+    FileData getSdk(SdkKey key);
+
+    FileData putSdk(SdkKey key, FileData sdkFile);
+
     void flushSdk(SdkKey key) throws KaaAdminServiceException;
     
     List<SdkKey> getCachedSdkKeys(String applicationId);

@@ -49,6 +49,7 @@ import org.atmosphere.interceptor.AtmosphereResourceLifecycleInterceptor;
 import org.atmosphere.interceptor.IdleResourceInterceptor;
 import org.atmosphere.interceptor.SuspendTrackerInterceptor;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.sandbox.demo.projects.Platform;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.sandbox.demo.projects.ProjectsConfig;
@@ -59,7 +60,6 @@ import org.kaaproject.kaa.sandbox.web.shared.dto.ProjectDataKey;
 import org.kaaproject.kaa.sandbox.web.shared.dto.ProjectDataType;
 import org.kaaproject.kaa.sandbox.web.shared.services.SandboxService;
 import org.kaaproject.kaa.sandbox.web.shared.services.SandboxServiceException;
-import org.kaaproject.kaa.server.common.admin.FileData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -106,6 +106,8 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     private static final String DEMO_PROJECTS_XML_FILE = "demo_projects.xml";
     
     private static final String SANDBOX_ENV_FILE = "sandbox-env.properties";
+    
+    private static final String CHANGE_KAA_HOST_DIALOG_SHOWN_PROPERTY = "changeKaaHostDialogShown";
     
     @Autowired
     private CacheService cacheService;
@@ -172,6 +174,21 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     }
     
     @Override
+    public boolean showChangeKaaHostDialog() throws SandboxServiceException {
+        if (guiChangeHostEnabled) {
+            Boolean result = (Boolean) cacheService.getProperty(CHANGE_KAA_HOST_DIALOG_SHOWN_PROPERTY);
+            return result == null || !result.booleanValue();
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void changeKaaHostDialogShown() throws SandboxServiceException {
+        cacheService.putProperty(CHANGE_KAA_HOST_DIALOG_SHOWN_PROPERTY, Boolean.TRUE);
+    }
+    
+    @Override
     public void changeKaaHost(String uuid, String host) throws SandboxServiceException {
     	AtmosphereResource res = AtmosphereResourceFactory.getDefault().find(uuid);
         try {
@@ -193,6 +210,12 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     }
 
     @Override
+    public Project getDemoProject(String projectId)
+            throws SandboxServiceException {
+        return projectsMap.get(projectId);
+    }
+
+    @Override
     public boolean checkProjectDataExists(String projectId,
             ProjectDataType dataType) throws SandboxServiceException {
         ProjectDataKey dataKey = new ProjectDataKey(projectId, dataType);
@@ -204,6 +227,7 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     public void buildProjectData(String uuid, BuildOutputData outputData, String projectId, ProjectDataType dataType) throws SandboxServiceException {
         AtmosphereResource res = null;
         PrintStream outPrint = null;
+        ClientMessageOutputStream outStream = null;
         ByteArrayOutputStream byteOutStream = null;
         if (uuid != null) {
             res = AtmosphereResourceFactory.getDefault().find(uuid);
@@ -212,7 +236,7 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
             outPrint = new PrintStream(byteOutStream);
         }
         try {
-            ClientMessageOutputStream outStream = new ClientMessageOutputStream(res, outPrint);
+            outStream = new ClientMessageOutputStream(res, outPrint);
             Project project = projectsMap.get(projectId);
             if (project != null) {
                 String sdkKeyBase64 = project.getSdkKeyBase64();
@@ -289,8 +313,10 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
             } else {
                 outStream.println("No project configuration found!");
             }
-            
         } catch (Exception e) {
+            if (outStream != null) {
+                outStream.println("Unexpected error occurred: " + e.getMessage());
+            }
             throw Utils.handleException(e);
         } finally {
             if (res != null) {
@@ -372,5 +398,6 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
 	        }
 		}
     }
+
 
 }

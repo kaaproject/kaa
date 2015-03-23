@@ -16,9 +16,9 @@
 package org.kaaproject.kaa.sandbox.web.services.cache;
 
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.sandbox.web.shared.dto.ProjectDataKey;
 import org.kaaproject.kaa.sandbox.web.shared.services.SandboxServiceException;
-import org.kaaproject.kaa.server.common.admin.FileData;
 
 public interface CacheService {
 
@@ -27,6 +27,10 @@ public interface CacheService {
        FileData getProjectFile(ProjectDataKey key);
        
        FileData putProjectFile(ProjectDataKey key, FileData data);
+       
+       Object getProperty(String propertyKey);
+       
+       Object putProperty(String propertyKey, Object propertyValue);
        
        void flushAllCaches() throws SandboxServiceException;
         

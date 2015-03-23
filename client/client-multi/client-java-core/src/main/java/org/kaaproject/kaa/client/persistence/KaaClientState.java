@@ -45,9 +45,6 @@ public interface KaaClientState {
     void setNotificationSeqNumber(int notificationSeqNumber);
     int getNotificationSeqNumber();
 
-    void setConfigurationHash(EndpointObjectHash hash);
-    EndpointObjectHash getConfigurationHash();
-
     void setProfileHash(EndpointObjectHash hash);
     EndpointObjectHash getProfileHash();
 
@@ -74,4 +71,6 @@ public interface KaaClientState {
     boolean isConfigurationVersionUpdated();
 
     void persist();
+
+    String refreshEndpointAccessToken();
 }

@@ -1,5 +1,5 @@
 ##
-## Copyright 2014 CyberVision, Inc.
+## Copyright 2014-2015 CyberVision, Inc.
 ##
 ## Licensed under the Apache License, Version 2.0 (the "License");
 ## you may not use this file except in compliance with the License.
@@ -23,20 +23,20 @@
 # define ${UNION_NAME}_H_
 
 #foreach ($branch_schema in $schema.getTypes())
-# define ${UNION_NAME}_BRANCH_${branch_number} ${branch_number}
+# define ${UNION_NAME}_BRANCH_${branch_number}    ${branch_number}
 #set ($branch_number = $branch_number + 1)
 #end
 
 #set ($branch_number = 0)
 #if ($generationContext.isTypeOut())
 #foreach ($branch_schema in $schema.getTypes())
-kaa_union_t* ${union_name}_branch_${branch_number}_create();
+kaa_union_t *${union_name}_branch_${branch_number}_create();
 #set ($branch_number = $branch_number + 1)
 #end
 
 #end
 #if ($generationContext.isTypeIn())
-kaa_union_t* ${union_name}_deserialize(avro_reader_t reader);
+kaa_union_t *${union_name}_deserialize(avro_reader_t reader);
 
 #end
 # endif // ${UNION_NAME}_H_

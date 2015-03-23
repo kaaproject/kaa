@@ -28,6 +28,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -49,6 +50,7 @@ import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -61,7 +63,6 @@ import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthService;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
-import org.kaaproject.kaa.server.common.thrift.gen.control.FileData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spring4gwt.server.SpringGwtRemoteServiceServlet;
@@ -260,6 +261,16 @@ public class KaaAdminController {
     }
 
     /**
+     * Gets the application by its id.
+     *
+     */
+    @RequestMapping(value="application/token/{applicationToken}", method=RequestMethod.GET)
+    @ResponseBody
+    public ApplicationDto getApplicationByApplicationToken(@PathVariable String applicationToken) throws KaaAdminServiceException {
+        return kaaAdminService.getApplicationByApplicationToken(applicationToken);
+    }
+
+    /**
      * Edits application to the list of all applications.
      *
      */
@@ -369,7 +380,7 @@ public class KaaAdminController {
             HttpServletRequest request,
             HttpServletResponse response) throws KaaAdminServiceException {
         try {
-            org.kaaproject.kaa.server.admin.shared.file.FileData sdkData = kaaAdminService.getSdk(key);
+            FileData sdkData = kaaAdminService.getSdk(key);
             response.setContentType(sdkData.getContentType());
             ServletUtils.prepareDisposition(request, response, sdkData.getFileName());
             response.setContentLength(sdkData.getFileData().length);
@@ -637,9 +648,9 @@ public class KaaAdminController {
             FileData file = cacheService.getRecordLibrary(key);
             response.setContentType("application/java-archive");
             ServletUtils.prepareDisposition(request, response, file.getFileName());
-            response.setContentLength(file.getData().length);
+            response.setContentLength(file.getFileData().length);
             response.setBufferSize(BUFFER);
-            response.getOutputStream().write(file.getData());
+            response.getOutputStream().write(file.getFileData());
             response.flushBuffer();
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -659,9 +670,9 @@ public class KaaAdminController {
             FileData file = cacheService.getRecordSchema(key);
             response.setContentType("text/plain");
             ServletUtils.prepareDisposition(request, response, file.getFileName());
-            response.setContentLength(file.getData().length);
+            response.setContentLength(file.getFileData().length);
             response.setBufferSize(BUFFER);
-            response.getOutputStream().write(file.getData());
+            response.getOutputStream().write(file.getFileData());
             response.flushBuffer();
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -1070,6 +1081,16 @@ public class KaaAdminController {
     public List<AefMapInfoDto> getEventClassFamiliesByApplicationId(
             @PathVariable String applicationId) throws KaaAdminServiceException {
         return kaaAdminService.getEventClassFamiliesByApplicationId(applicationId);
+    }
+    
+    /**
+     * Edits endpoint group to the list of all endpoint groups.
+     *
+     */
+    @RequestMapping(value="userConfiguration", method=RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void editEndpointGroup(@RequestBody EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException {
+        kaaAdminService.editUserConfiguration(endpointUserConfiguration);
     }
 
     /**

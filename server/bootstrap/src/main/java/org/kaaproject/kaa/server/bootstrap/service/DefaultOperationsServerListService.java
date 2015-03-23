@@ -65,8 +65,8 @@ public class DefaultOperationsServerListService implements OperationsServerListS
                 new Computable<List<ProtocolVersionId>, Set<ProtocolConnectionData>>() {
 
                     @Override
-                    public Set<ProtocolConnectionData> compute(List<ProtocolVersionId> arg) throws InterruptedException {
-                        return filterProtocolInstances(arg);
+                    public Set<ProtocolConnectionData> compute(List<ProtocolVersionId> protocolVersions) throws InterruptedException {
+                        return filterProtocolInstances(protocolVersions);
                     }
 
                 });

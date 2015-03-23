@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,6 @@
 
 #ifndef INOTIFICATIONMANAGER_HPP_
 #define INOTIFICATIONMANAGER_HPP_
-
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_NOTIFICATIONS
 
 #include <list>
 #include <string>
@@ -213,7 +209,5 @@ public:
 };
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* INOTIFICATIONMANAGER_HPP_ */

@@ -39,7 +39,7 @@ import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 public class EventMapGrid extends AbstractKaaGrid<ApplicationEventMapDto, String> {
 
     public EventMapGrid(boolean editable) {
-        super(Unit.PX, false, true, editable);
+        super(Unit.PX, editable, true);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class EventMapGrid extends AbstractKaaGrid<ApplicationEventMapDto, String
             }
         };
         
-        if (editable) {
+        if (enableActions) {
             List<ApplicationEventAction> actions = new ArrayList<>();
             for (ApplicationEventAction action : ApplicationEventAction.values()) {
                 actions.add(action);

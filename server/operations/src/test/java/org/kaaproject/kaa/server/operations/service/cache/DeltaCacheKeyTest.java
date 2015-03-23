@@ -37,14 +37,14 @@ public class DeltaCacheKeyTest {
     
     @Test
     public void deltaSameCacheKeyTest() {
-        DeltaCacheKey key1 = new DeltaCacheKey(new AppVersionKey("appId1", 1), null, EndpointObjectHash.fromSHA1("test1"));
-        DeltaCacheKey key2 = new DeltaCacheKey(new AppVersionKey("appId1", 1), null, EndpointObjectHash.fromSHA1("test1"));
+        DeltaCacheKey key1 = new DeltaCacheKey(new AppVersionKey("appId1", 1), null, null, EndpointObjectHash.fromSHA1("test1"));
+        DeltaCacheKey key2 = new DeltaCacheKey(new AppVersionKey("appId1", 1), null, null, EndpointObjectHash.fromSHA1("test1"));
         Assert.assertEquals(key1, key2);
-        key1 = new DeltaCacheKey(new AppVersionKey("appId1", 1), null, null);
-        key2 = new DeltaCacheKey(new AppVersionKey("appId1", 1), null, null);
+        key1 = new DeltaCacheKey(new AppVersionKey("appId1", 1), null, null, null);
+        key2 = new DeltaCacheKey(new AppVersionKey("appId1", 1), null, null, null);
         Assert.assertEquals(key1, key2);
-        key1 = new DeltaCacheKey(null, null, null);
-        key2 = new DeltaCacheKey(null, null, null);
+        key1 = new DeltaCacheKey(null, null, null, null);
+        key2 = new DeltaCacheKey(null, null, null, null);
         Assert.assertEquals(key1, key2);
     }
 
@@ -52,20 +52,20 @@ public class DeltaCacheKeyTest {
     public void deltaDifferentCacheKeyTest() {
         List<EndpointGroupStateDto> egsList = new ArrayList<>();
         egsList.add(new EndpointGroupStateDto("eg1", "pf1", "cf1"));
-        DeltaCacheKey key1 = new DeltaCacheKey(new AppVersionKey("appId1", 1), egsList, EndpointObjectHash.fromSHA1("test1"));
-        DeltaCacheKey key2 = new DeltaCacheKey(new AppVersionKey("appId1", 1), egsList, EndpointObjectHash.fromSHA1("test2"));
+        DeltaCacheKey key1 = new DeltaCacheKey(new AppVersionKey("appId1", 1), egsList, null, EndpointObjectHash.fromSHA1("test1"));
+        DeltaCacheKey key2 = new DeltaCacheKey(new AppVersionKey("appId1", 1), egsList, null, EndpointObjectHash.fromSHA1("test2"));
         Assert.assertNotEquals(key1, key2);
 
         List<EndpointGroupStateDto> egsList2 = new ArrayList<>();
         egsList2.add(new EndpointGroupStateDto("eg1", "pf1", "cf2"));
 
-        DeltaCacheKey key3 = new DeltaCacheKey(new AppVersionKey("appId1", 1), egsList2, EndpointObjectHash.fromSHA1("test1"));
+        DeltaCacheKey key3 = new DeltaCacheKey(new AppVersionKey("appId1", 1), egsList2, null, EndpointObjectHash.fromSHA1("test1"));
         Assert.assertNotEquals(key1, key3);
 
-        DeltaCacheKey key4 = new DeltaCacheKey(new AppVersionKey("appId2", 1), egsList, EndpointObjectHash.fromSHA1("test1"));
+        DeltaCacheKey key4 = new DeltaCacheKey(new AppVersionKey("appId2", 1), egsList, null, EndpointObjectHash.fromSHA1("test1"));
         Assert.assertNotEquals(key1, key4);
 
-        DeltaCacheKey key5 = new DeltaCacheKey(new AppVersionKey("appId1", 2), egsList, EndpointObjectHash.fromSHA1("test1"));
+        DeltaCacheKey key5 = new DeltaCacheKey(new AppVersionKey("appId1", 2), egsList, null, EndpointObjectHash.fromSHA1("test1"));
         Assert.assertNotEquals(key1, key5);
 
     }

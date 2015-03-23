@@ -20,7 +20,7 @@
     tools:context="org.kaaproject.kaa.demo.smarthousedemo.ProgressFragment" >
     <ProgressBar
             android:id="@+id/progressDark"
-            style="@android:style/Widget.ProgressBar.Large.Inverse"
+            style="?android:attr/progressBarStyleLarge"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_centerHorizontal="true"
@@ -28,7 +28,7 @@
             android:visibility="gone"/>
     <ProgressBar
             android:id="@+id/progressLight"
-            style="@android:style/Widget.ProgressBar.Large"
+            style="?android:attr/progressBarStyleLargeInverse"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_centerHorizontal="true"
@@ -38,8 +38,8 @@
             android:id="@+id/errorTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@android:style/TextAppearance.Large"
-            android:textColor="?android:attr/textColorPrimary"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="?android:attr/textColorPrimary"            
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:visibility="gone"/>

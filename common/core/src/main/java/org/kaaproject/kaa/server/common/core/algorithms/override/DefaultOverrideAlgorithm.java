@@ -82,7 +82,7 @@ public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
         GenericRecord mergedConfiguration = baseConverter.decodeJson(baseConfiguration.getRawData());
 
         try {
-            ArrayOverrideStrategyResolver arrayMergeStrategyResolver = new ArrayOverrideStrategyResolver(baseConfiguration.getSchema());
+            ArrayOverrideStrategyResolver arrayMergeStrategyResolver = new ArrayOverrideStrategyResolver(baseSchemaParser.getTypes());
             for (OverrideData entry : overrideConfigurations) {
                 String configurationToApply = entry.getRawData();
                 // else execute merge
@@ -91,7 +91,7 @@ public class DefaultOverrideAlgorithm implements OverrideAlgorithm {
                 LOG.info("configurationToApply: {}", nodeToApply);
                 applyNode(mergedConfiguration, nodeToApply, arrayMergeStrategyResolver);
             }
-            return new BaseData(baseConfiguration.getSchema(), baseConverter.endcodeToJson(mergedConfiguration));
+            return new BaseData(baseConfiguration.getSchema(), baseConverter.encodeToJson(mergedConfiguration));
         } catch (IOException | ConfigurationGenerationException e) {
             throw new OverrideException(e);
         }

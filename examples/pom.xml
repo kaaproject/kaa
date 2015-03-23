@@ -34,8 +34,17 @@
     </properties>
 
     <modules>
-        <module>robotrun</module>
+        <!--module>robotrun</module-->
         <module>smarthousedemo</module>
+        <module>notificationdemo</module>
+        <module>jdatacollectiondemo</module>
+        <module>jeventdemo</module>
+        <module>cityguide</module>
+        <module>cellmonitor</module>
+        <module>jconfigurationdemo</module>
+        <module>jnotificationdemo</module>
+        <module>photoframe</module>
+        <module>verifiersdemo</module>
     </modules>
 
     <dependencyManagement>

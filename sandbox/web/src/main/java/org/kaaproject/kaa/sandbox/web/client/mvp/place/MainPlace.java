@@ -34,4 +34,16 @@ public class MainPlace extends Place {
             return "";
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+       if (obj != null && obj instanceof MainPlace) {
+           return true;
+       } else {
+           return false;
+       }
+    }
+    
+    
+    
 }

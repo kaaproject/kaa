@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.client.event;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.kaaproject.kaa.client.transact.Transactable;
@@ -48,7 +47,7 @@ public interface EventManager extends EventListenersResolver, Transactable {
      * @param data      Event data
      * @param target    Event target, null for event broadcasting.
      */
-    void produceEvent(String eventFqn, byte[] data, String target) throws IOException;
+    void produceEvent(String eventFqn, byte[] data, String target);
 
     /**
      * Creates an Event and passes it to OPS
@@ -58,7 +57,7 @@ public interface EventManager extends EventListenersResolver, Transactable {
      * @param target    Event target, null for event broadcasting.
      * @param trxId     Transaction Id of event
      */
-    void produceEvent(String eventFqn, byte[] data, String target, TransactionId trxId) throws IOException;
+    void produceEvent(String eventFqn, byte[] data, String target, TransactionId trxId);
 
     /**
      * Retrieves an event.
@@ -87,12 +86,21 @@ public interface EventManager extends EventListenersResolver, Transactable {
     void fillEventListenersSyncRequest(EventSyncRequest request);
 
     /**
-     * Retrieves list of pending events and removes them from EventManager.
+     * Retrieves and clears list of pending events and removes them from EventManager.
      *
      * @return List of Event objects
      * @see Event
      */
-    List<Event> getPendingEvents();
+    List<Event> pollPendingEvents();
+
+    /**
+     * Peek but not clear list of pending events and removes them from EventManager.
+     *
+     * @return List of Event objects
+     * @see Event
+     */
+    List<Event> peekPendingEvents();
+
 
     /**
      * Clears the current manager's state.

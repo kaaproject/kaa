@@ -16,6 +16,20 @@
 
 package org.kaaproject.kaa.server.operations.service.delta;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import javax.transaction.Transactional;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericContainer;
 import org.apache.avro.generic.GenericRecord;
@@ -60,19 +74,6 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.transaction.Transactional;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-test-context.xml")
@@ -139,7 +140,6 @@ public class DeltaServiceIT {
     private String pfAllId;
     private String cfAllId;
 
-
     @BeforeClass
     public static void init() throws Exception {
         MongoDBTestRunner.setUp();
@@ -155,7 +155,7 @@ public class DeltaServiceIT {
     public void beforeTest() throws IOException, DeltaCalculatorException {
         String dataSchema = OperationsServiceIT.getResourceAsString(OperationsServiceIT.DATA_SCHEMA_LOCATION);
         PROFILE_BYTES = avroConverter.encode(ENDPOINT_PROFILE);
-        PROFILE_JSON = avroConverter.endcodeToJson(ENDPOINT_PROFILE);
+        PROFILE_JSON = avroConverter.encodeToJson(ENDPOINT_PROFILE);
 
         tenant = new TenantDto();
         tenant.setName(CUSTOMER_ID);
@@ -248,19 +248,9 @@ public class DeltaServiceIT {
     }
 
     @Test
-    public void testDeltaServiceSameSeqNumbers() throws Exception {
-        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
-        GetDeltaResponse response = deltaService.getDelta(request, new HistoryDelta(), OLD_ENDPOINT_SEQ_NUMBER);
-        assertNotNull(response);
-        assertEquals(GetDeltaResponse.GetDeltaResponseType.NO_DELTA, response.getResponseType());
-        assertEquals(OLD_ENDPOINT_SEQ_NUMBER, response.getSequenceNumber());
-        assertNull(response.getDelta());
-        assertNull(response.getConfSchema());
-    }
-
-    @Test
     public void testDeltaServiceNoHistoryDelta() throws Exception {
-        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
+        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration
+                .getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
         request.setEndpointProfile(endpointProfile);
         HistoryDelta historyDelta = new HistoryDelta(new ArrayList<EndpointGroupStateDto>(), false, false);
         GetDeltaResponse response = deltaService.getDelta(request, historyDelta, NEW_APPLICATION_SEQ_NUMBER);
@@ -274,7 +264,8 @@ public class DeltaServiceIT {
     @Test
     @Ignore("Kaa #7786")
     public void testDeltaServiceNoHistoryDeltaFetchSchema() throws Exception {
-        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
+        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration
+                .getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
         request.setEndpointProfile(endpointProfile);
         request.setFetchSchema(true);
         HistoryDelta historyDelta = new HistoryDelta(new ArrayList<EndpointGroupStateDto>(), false, false);
@@ -303,11 +294,33 @@ public class DeltaServiceIT {
         endpointConfigurationBytes = response.getDelta().getData();
         assertNotNull(endpointConfigurationBytes);
     }
+    
+    @Test
+    public void testDeltaServiceFirstRequestResync() throws Exception {
+        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), OLD_ENDPOINT_SEQ_NUMBER, true);
+        request.setEndpointProfile(endpointProfile);
+        List<EndpointGroupStateDto> changes = new ArrayList<>();
+        changes.add(new EndpointGroupStateDto(egAllId, pfAllId, cfAllId));
+        HistoryDelta historyDelta = new HistoryDelta(changes, true, false);
+        GetDeltaResponse response = deltaService.getDelta(request, historyDelta, NEW_APPLICATION_SEQ_NUMBER);
+        endpointConfiguration.setConfigurationHash(EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()).getData());
+
+        assertNotNull(response);
+        assertEquals(GetDeltaResponse.GetDeltaResponseType.CONF_RESYNC, response.getResponseType());
+        assertEquals(NEW_APPLICATION_SEQ_NUMBER, response.getSequenceNumber());
+        assertNotNull(response.getDelta());
+        endpointConfigurationBytes = response.getDelta().getData();
+        assertNotNull(endpointConfigurationBytes);
+        GenericAvroConverter<GenericContainer> converter = new GenericAvroConverter<GenericContainer>(confSchema.getBaseSchema());
+        GenericContainer container = converter.decodeBinary(endpointConfigurationBytes);
+        assertNotNull(container);
+        LOG.info("decoded data {}", container.toString());
+    }
 
     @Test
     public void testDeltaServiceHashMismatch() throws Exception {
         byte[] wrongConf = Arrays.copyOf(endpointConfiguration.getConfiguration(), endpointConfiguration.getConfiguration().length);
-        wrongConf[0] = (byte)(wrongConf[0]+1);
+        wrongConf[0] = (byte) (wrongConf[0] + 1);
         EndpointObjectHash newConfHash = EndpointObjectHash.fromSHA1(wrongConf);
         GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), newConfHash, OLD_ENDPOINT_SEQ_NUMBER);
 
@@ -325,8 +338,10 @@ public class DeltaServiceIT {
 
     @Test
     public void testDeltaServiceSecondRequest() throws Exception {
-        GenericAvroConverter<GenericContainer> newConfConverter = new GenericAvroConverter<>(new Schema.Parser().parse(confSchema.getBaseSchema()));
-        GenericContainer container = newConfConverter.decodeJson(OperationsServiceIT.getResourceAsString(OperationsServiceIT.BASE_DATA_UPDATED_LOCATION));
+        GenericAvroConverter<GenericContainer> newConfConverter = new GenericAvroConverter<>(new Schema.Parser().parse(confSchema
+                .getBaseSchema()));
+        GenericContainer container = newConfConverter.decodeJson(OperationsServiceIT
+                .getResourceAsString(OperationsServiceIT.BASE_DATA_UPDATED_LOCATION));
         byte[] newConfData = newConfConverter.encodeToJsonBytes(container);
 
         ConfigurationDto newConfDto = new ConfigurationDto();
@@ -337,7 +352,8 @@ public class DeltaServiceIT {
         newConfDto = configurationService.saveConfiguration(newConfDto);
         configurationService.activateConfiguration(newConfDto.getId(), "test");
 
-        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
+        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration
+                .getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
 
         request.setEndpointProfile(endpointProfile);
         List<EndpointGroupStateDto> changes = new ArrayList<>();
@@ -353,7 +369,8 @@ public class DeltaServiceIT {
 
     @Test
     public void testDeltaServiceSecondRequestNoChanges() throws Exception {
-        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
+        GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration
+                .getConfiguration()), OLD_ENDPOINT_SEQ_NUMBER);
         endpointProfile.setConfigurationHash(EndpointObjectHash.fromSHA1(endpointConfiguration.getConfiguration()).getData());
         request.setEndpointProfile(endpointProfile);
         List<EndpointGroupStateDto> changes = new ArrayList<>();

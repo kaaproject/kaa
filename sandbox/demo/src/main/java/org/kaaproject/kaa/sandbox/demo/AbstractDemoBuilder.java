@@ -16,19 +16,33 @@
 package org.kaaproject.kaa.sandbox.demo;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
 import net.iharder.Base64;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
+import org.kaaproject.kaa.common.dto.event.EventClassDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.sandbox.demo.projects.Platform;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
+import org.kaaproject.kaa.sandbox.demo.projects.ProjectsConfig;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +77,10 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
 
     private static final String TENANT_DEVELOPER_USERNAME_VAR = "\\$\\{tenant_developer_username\\}";
     private static final String TENANT_DEVELOPER_PASSWORD_VAR = "\\$\\{tenant_developer_password\\}";
+    
+    private static final String PROJECTS_XML = "projects.xml";
+    
+    private static final String ICON_PNG = "icon.png";
 
     private static boolean usersCreated = false;
     
@@ -75,8 +93,9 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
     public static String tenantDeveloperUser = DEFAULT_TENANT_DEVELOPER_USER;
     public static String tenantDeveloperPassword = DEFAULT_TENANT_DEVELOPER_PASSWORD;
     
+    private final String resourcesPath;
     protected final SdkKey sdkKey;
-    protected final List<Project> projectConfigs = new ArrayList<>();
+    private List<Project> projectConfigs;
     
     public static void updateCredentialsFromArgs(String[] args) {
         logger.info("Updating credentials information from arguments...");
@@ -127,7 +146,8 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
                 .replaceAll(TENANT_DEVELOPER_PASSWORD_VAR, tenantDeveloperPassword);
     }
 
-    protected AbstractDemoBuilder() {
+    protected AbstractDemoBuilder(String resourcesPath) {
+        this.resourcesPath = resourcesPath;
         this.sdkKey = new SdkKey();
     }
     
@@ -136,10 +156,12 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
         logger.info("Demo application build started...");
         createUsers(client);
         buildDemoApplicationImpl(client);
-        setupProjectConfigs();
+        projectConfigs = loadProjectConfigs();
+        String iconBase64 = loadIconBase64();
         logger.info("Demo application build finished.");
         try {
             for (Project projectConfig : projectConfigs) {
+                projectConfig.setIconBase64(iconBase64);
                 if (projectConfig.getPlatform()==Platform.ANDROID) {
                     sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
                 }
@@ -160,7 +182,9 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
     
     protected abstract void buildDemoApplicationImpl(AdminClient client) throws Exception;
     
-    protected abstract void setupProjectConfigs();
+    protected String getResourcePath(String resource) {
+        return resourcesPath + "/" + resource;
+    }
     
     private void createUsers(AdminClient client) throws Exception {
         if (!usersCreated) {
@@ -204,6 +228,24 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
             client.changePassword(tenantDeveloper.getUsername(), tenantDeveloper.getTempPassword(), tenantDeveloperPassword);
         }
     }
+    
+    private List<Project> loadProjectConfigs() throws JAXBException {
+        JAXBContext jc = JAXBContext.newInstance("org.kaaproject.kaa.sandbox.demo.projects");
+        Unmarshaller unmarshaller = jc.createUnmarshaller();
+        InputStream is = getClass().getClassLoader().getResourceAsStream(getResourcePath(PROJECTS_XML));
+        ProjectsConfig projectsConfig = (ProjectsConfig)unmarshaller.unmarshal(is);
+        return projectsConfig.getProjects();
+    }
+    
+    private String loadIconBase64() throws IOException {
+        String base64 = null;
+        InputStream is = getClass().getClassLoader().getResourceAsStream(getResourcePath(ICON_PNG));
+        if (is != null) {
+            byte[] data = IOUtils.toByteArray(is);
+            base64 = Base64.encodeBytes(data);
+        }
+        return base64;
+    }
 
     protected void loginKaaAdmin(AdminClient client) throws Exception {
         client.login(kaaAdminUser, kaaAdminPassword);
@@ -218,4 +260,31 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
     protected void loginTenantDeveloper(AdminClient client) throws Exception {
         client.login(tenantDeveloperUser, tenantDeveloperPassword);
     }
+    
+    protected static ApplicationEventFamilyMapDto mapEventClassFamily(AdminClient client, 
+            ApplicationDto application, 
+            EventClassFamilyDto eventClassFamily) throws Exception {
+        List<EventClassDto> eventClasses = 
+                client.getEventClassesByFamilyIdVersionAndType(eventClassFamily.getId(), 1, EventClassType.EVENT);
+
+        ApplicationEventFamilyMapDto aefMap = new ApplicationEventFamilyMapDto();
+        aefMap.setApplicationId(application.getId());
+        aefMap.setEcfId(eventClassFamily.getId());
+        aefMap.setEcfName(eventClassFamily.getName());
+        aefMap.setVersion(1);
+        
+        List<ApplicationEventMapDto> eventMaps = new ArrayList<>(eventClasses.size());
+        for (EventClassDto eventClass : eventClasses) {
+            ApplicationEventMapDto eventMap = new ApplicationEventMapDto();
+            eventMap.setEventClassId(eventClass.getId());
+            eventMap.setFqn(eventClass.getFqn());
+                eventMap.setAction(ApplicationEventAction.BOTH);
+            eventMaps.add(eventMap);
+        }
+        
+        aefMap.setEventMaps(eventMaps);
+        aefMap = client.editApplicationEventFamilyMap(aefMap);
+        return aefMap;
+    }
+    
 }

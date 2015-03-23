@@ -29,7 +29,7 @@ import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericFixed;
 import org.apache.avro.generic.GenericRecord;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
-import org.kaaproject.kaa.server.common.core.algorithms.CommonUtils;
+import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 import org.kaaproject.kaa.server.common.core.configuration.KaaData;
 import org.kaaproject.kaa.server.common.core.configuration.KaaDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
@@ -97,7 +97,7 @@ public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implem
     }
 
     private void generateUuidForRecord(GenericRecord record) {
-        GenericData.Fixed newUuid = CommonUtils.generateUuidObject();
+        GenericData.Fixed newUuid = AvroUtils.generateUuidObject();
         LOG.trace("Generated new UUID {}", newUuid);
         record.put(UUID_FIELD, newUuid);
         processedUuids.add(newUuid);
@@ -219,7 +219,7 @@ public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implem
         }
         validateRecord(currentRecord, previousRecord, previousRecord);
         if(currentRecord != null) {
-            config = converter.endcodeToJson(currentRecord);
+            config = converter.encodeToJson(currentRecord);
         }
         LOG.trace("Generated uuid fields for records {}", currentRecord);
         return dataFactory.createData(schema, config);
@@ -235,7 +235,7 @@ public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implem
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema.getRawSchema());
         validateRecord(configurationToValidate, previousConfiguration, previousConfiguration);
         if(configurationToValidate != null) {
-            config = converter.endcodeToJson(configurationToValidate);
+            config = converter.encodeToJson(configurationToValidate);
         }
         LOG.trace("Generated uuid fields for records {}", configurationToValidate);
         return dataFactory.createData(schema, config);

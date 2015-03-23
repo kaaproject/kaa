@@ -17,15 +17,13 @@
 #ifndef CONFIGURATION_PROCESSOR_HPP_
 #define CONFIGURATION_PROCESSOR_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_CONFIGURATION
-
 #include <cstdint>
 #include <memory>
 
 #include "kaa/observer/KaaObservable.hpp"
 #include "kaa/configuration/IConfigurationProcessor.hpp"
+#include "kaa/configuration/IConfigurationProcessedObservable.hpp"
+#include "kaa/configuration/IDecodedDeltaObservable.hpp"
 
 namespace kaa {
 
@@ -40,13 +38,14 @@ namespace kaa {
  * This class receives data schema updates from \c ISchemaProcessor.
  *
  */
-class ConfigurationProcessor : public IConfigurationProcessor {
+class ConfigurationProcessor : public IConfigurationProcessor,
+                               public IDecodedDeltaObservable,
+                               public IConfigurationProcessedObservable {
 public:
     typedef avro::ValidSchema Schema;
 
     ConfigurationProcessor() {}
-    ConfigurationProcessor(std::shared_ptr<avro::ValidSchema> schema) { schema_ = schema; }
-    ~ConfigurationProcessor() { schema_.reset(); }
+    ~ConfigurationProcessor() {  }
 
     /**
      * \c IConfigurationProcessor implementation
@@ -65,22 +64,14 @@ public:
     void addOnProcessedObserver(IConfigurationProcessedObserver &observer);
     void removeOnProcessedObserver(IConfigurationProcessedObserver &observer);
 
-    /**
-     * \c ISchemaUpdatesReceiver implementation
-     */
-    void onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema);
-
 private:
     KAA_R_MUTEX_DECLARE(confProcessorMutex_);
 
-    KaaObservable<void (int, const avro::GenericDatum &, bool), IGenericDeltaReceiver *> deltaReceivers_;
+    KaaObservable<void (int, const KaaRootConfiguration&, bool), IGenericDeltaReceiver *> deltaReceivers_;
     KaaObservable<void (), IConfigurationProcessedObserver *> onProcessedObservers_;
 
-    std::shared_ptr<Schema>                                       schema_;
 };
 
 } // namespace kaa
-
-#endif
 
 #endif /* CONFIGURATION_PROCESSOR_HPP_ */

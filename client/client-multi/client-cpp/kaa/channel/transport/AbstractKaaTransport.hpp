@@ -25,21 +25,24 @@
 namespace kaa {
 
 template <TransportType Type>
-class AbstractKaaTransport : public IKaaTransport {
+class AbstractKaaTransport : public IKaaTransport
+{
 public:
     virtual ~AbstractKaaTransport() {}
 
     AbstractKaaTransport(IKaaChannelManager& channelManager)
         : type_(Type), channelManager_(channelManager), clientStatus_(nullptr) {}
 
-    virtual void setClientState(IKaaClientStateStoragePtr status) {
+    virtual void setClientState(IKaaClientStateStoragePtr status)
+    {
         if (status != nullptr) {
             clientStatus_ = status;
         }
     }
 
 private:
-    IDataChannelPtr getChannel(TransportType transportType = Type) {
+    IDataChannelPtr getChannel(TransportType transportType = Type)
+    {
         IDataChannelPtr channel = channelManager_.getChannelByTransportType(transportType);
         if (channel) {
             return channel;
@@ -48,15 +51,18 @@ private:
     }
 
 protected:
-    void syncByType(TransportType transportType = Type) {
+    void syncByType(TransportType transportType = Type)
+    {
         getChannel(transportType)->sync(transportType);
     }
 
-    void syncAll() {
+    void syncAll()
+    {
         getChannel()->syncAll();
     }
 
-    void syncAck(TransportType transportType = Type) {
+    void syncAck(TransportType transportType = Type)
+    {
         getChannel(transportType)->syncAck(transportType);
     }
 

@@ -52,4 +52,7 @@
     <bean id="notificationService" class="org.kaaproject.kaa.server.common.dao.service.NotificationServiceImpl"/>
 
     <bean id="topicService" class="org.kaaproject.kaa.server.common.dao.service.TopicServiceImpl"/>
+
+    <bean id="userConfigurationService" class="org.kaaproject.kaa.server.common.dao.service.UserConfigurationServiceImpl"/>
+
 </beans>

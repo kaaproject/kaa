@@ -1,0 +1,342 @@
+{
+   "availableAreas":{
+      "org.kaaproject.configuration.unchangedT":"unchanged"
+   },
+   "areas":{
+      "array":[
+         {
+            "name":{
+               "string":"North America"
+            },
+            "cities":{
+               "array":[
+                  {
+                     "name":{
+                        "string":"Atlanta"
+                     },
+                     "places":{
+                        "array":[
+                           {
+                              "category":{
+                                 "org.kaaproject.kaa.demo.cityguide.Category":"HOTEL"
+                              },
+                              "title":{
+                                 "string":"Omni Atlanta Hotel at CNN Center"
+                              },
+                              "photoUrl":{
+                                 "string":"http://media-cdn.tripadvisor.com/media/photo-f/06/fd/ef/93/double-queen-guest-room.jpg"
+                              },
+                              "description":{
+                                 "string":"Near Georgia Aquarium, Popular upscale hotel in Atlanta, Upscale"
+                              },
+                              "location":{
+                                 "org.kaaproject.kaa.demo.cityguide.Location":{
+                                    "latitude":{
+                                       "double":33.759376
+                                    },
+                                    "longitude":{
+                                       "double":-84.394991
+                                    },
+                                    "__uuid": null
+                                 }
+                              },
+                              "__uuid": null
+                           },
+                           {
+                              "category":{
+                                 "org.kaaproject.kaa.demo.cityguide.Category":"HOTEL"
+                              },
+                              "title":{
+                                 "string":"InterContinental Buckhead Atlanta"
+                              },
+                              "photoUrl":{
+                                 "string":"http://media-cdn.tripadvisor.com/media/photo-f/06/2b/14/6e/hotel-exterior-of-intercontine.jpg"
+                              },
+                              "description":{
+                                 "string":"Popular luxury hotel in Atlanta, Top-tier hotel, Other travelers love this hotel"
+                              },
+                              "location":{
+                                 "org.kaaproject.kaa.demo.cityguide.Location":{
+                                    "latitude":{
+                                       "double":33.845817
+                                    },
+                                    "longitude":{
+                                       "double":-84.36787
+                                    },
+                                    "__uuid": null
+                                 }
+                              },
+                              "__uuid": null
+                           },
+                           {
+                              "category":{
+                                 "org.kaaproject.kaa.demo.cityguide.Category":"HOTEL"
+                              },
+                              "title":{
+                                 "string":"Loews Atlanta Hotel"
+                              },
+                              "photoUrl":{
+                                 "string":"http://media-cdn.tripadvisor.com/media/photo-f/06/2d/7c/28/grand-king-room.jpg"
+                              },
+                              "description":{
+                                 "string":"Good choice for travelers who love local culture, Offers free wifi, Popular elegant hotel in Atlanta"
+                              },
+                              "location":{
+                                 "org.kaaproject.kaa.demo.cityguide.Location":{
+                                    "latitude":{
+                                       "double":33.782991
+                                    },
+                                    "longitude":{
+                                       "double":-84.38332
+                                    },
+                                    "__uuid": null
+                                 }
+                              },
+                              "__uuid": null
+                           },
+                           {
+                              "category":{
+                                 "org.kaaproject.kaa.demo.cityguide.Category":"SHOP"
+                              },
+                              "title":{
+                                 "string":"Atlantic Station"
+                              },
+                              "photoUrl":{
+                                 "string":"http://images.atlanta.net/WebImage.ashx?mode=logo&accountnum=00128166"
+                              },
+                              "description":{
+                                 "string":"The Atlantic Station neighborhood in Atlanta is the national model for smart growth and sustainable development. Picture a community with unsurpassed architectural quality, a fusion of functionality and finesse that combines an attractive mix of affordable, middle-income and up-scale housing with world-class restaurants, theaters and retailers. "
+                              },
+                              "location":{
+                                 "org.kaaproject.kaa.demo.cityguide.Location":{
+                                    "latitude":{
+                                       "double":33.792771
+                                    },
+                                    "longitude":{
+                                       "double":-84.396187
+                                    },
+                                    "__uuid": null
+                                 }
+                              },
+                              "__uuid": null
+			      },
+                              {
+                                 "category":{
+                                    "org.kaaproject.kaa.demo.cityguide.Category":"SHOP"
+                                 },
+                                 "title":{
+                                    "string":"Buckhead Atlanta"
+                                 },
+                                 "photoUrl":{
+                                    "string":"http://images.atlanta.net/WebImage.ashx?mode=logo&accountnum=00095518"
+                                 },
+                                 "description":{
+                                    "string":"Buckhead Atlanta is a luxury shopping/dining entertainment, office, and residential district spanning six blocks in the heart of Buckhead Atlanta."
+                                 },
+                                 "location":{
+                                    "org.kaaproject.kaa.demo.cityguide.Location":{
+                                       "latitude":{
+                                          "double":33.839611
+                                       },
+                                       "longitude":{
+                                          "double":-84.381425
+                                       },
+                                       "__uuid": null
+                                    }
+                                 },
+                                 "__uuid": null
+                              },
+                              {
+                                 "category":{
+                                    "org.kaaproject.kaa.demo.cityguide.Category":"SHOP"
+                                 },
+                                 "title":{
+                                    "string":"City of East Point"
+                                 },
+                                 "photoUrl":{
+                                    "string":"http://images.atlanta.net/WebImage.ashx?mode=logo&accountnum=015858"
+                                 },
+                                 "description":{
+                                    "string":"East Point is one of Georgia's fastest growing cities. Accessibility is one of the many advantages that the City of East Point offers. Its location provides easy access to public transportation, major highways, Atlanta's Hartsfield-Jackson Airport and the world-renowned attractions, dining and shopping of Atlanta."
+                                 },
+                                 "location":{
+                                    "org.kaaproject.kaa.demo.cityguide.Location":{
+                                       "latitude":{
+                                          "double":33.68088
+                                       },
+                                       "longitude":{
+                                          "double":-84.442149
+                                       },
+                                       "__uuid": null
+                                    }
+                                 },
+                                 "__uuid": null
+                              },
+                              {
+                                 "category":{
+                                    "org.kaaproject.kaa.demo.cityguide.Category":"MUSEUM"
+                                 },
+                                 "title":{
+                                    "string":"Atlanta Contemporary Art Center"
+                                 },
+                                 "photoUrl":{
+                                    "string":"http://upload.wikimedia.org/wikipedia/commons/0/0e/Atlanta_Contemporary_Art_Center.jpg"
+                                 },
+                                 "description":{
+                                    "string":"Local, national, and international contemporary art; education geared toward working artists and collectors of art"
+                                 },
+                                 "location":{
+                                    "org.kaaproject.kaa.demo.cityguide.Location":{
+                                       "latitude":{
+                                          "double":33.762106
+                                       },
+                                       "longitude":{
+                                          "double":-84.391468
+                                       },
+                                       "__uuid": null
+                                    }
+                                 },
+                                 "__uuid": null
+                              },
+                              {
+                                 "category":{
+                                    "org.kaaproject.kaa.demo.cityguide.Category":"MUSEUM"
+                                 },
+                                 "title":{
+                                    "string":"Atlanta Cyclorama & Civil War Museum"
+                                 },
+                                 "photoUrl":{
+                                    "string":"http://upload.wikimedia.org/wikipedia/commons/6/6f/Atlanta_Cyclorama.jpg"
+                                 },
+                                 "description":{
+                                    "string":"Displays pictures and artifacts from the Civil War and houses a massive cylindrical panoramic painting of the Battle of Atlanta."
+                                 },
+                                 "location":{
+                                    "org.kaaproject.kaa.demo.cityguide.Location":{
+                                       "latitude":{
+                                          "double":33.734158
+                                       },
+                                       "longitude":{
+                                          "double":-84.371064
+                                       },
+                                       "__uuid": null
+                                    }
+                                 },
+                                 "__uuid": null
+                              },
+                              {
+                                 "category":{
+                                    "org.kaaproject.kaa.demo.cityguide.Category":"MUSEUM"
+                                 },
+                                 "title":{
+                                    "string":"Atlanta History Center"
+                                 },
+                                 "photoUrl":{
+                                    "string":"http://upload.wikimedia.org/wikipedia/commons/8/8a/Swan_Coach_House.jpg"
+                                 },
+                                 "description":{
+                                    "string":"History of Atlanta and Georgia; includes the Centennial Olympic Games Museum and one of the nation's most complete Civil War exhibitions."
+                                 },
+                                 "location":{
+                                    "org.kaaproject.kaa.demo.cityguide.Location":{
+                                       "latitude":{
+                                          "double":33.84282
+                                       },
+                                       "longitude":{
+                                          "double":-84.38573
+                                       },
+                                       "__uuid": null
+                                    }
+                                 },
+                                 "__uuid": null
+                              },
+                              {
+                                 "category":{
+                                    "org.kaaproject.kaa.demo.cityguide.Category":"RESTAURANT"
+                                 },
+                                 "title":{
+                                    "string":"Fandangles"
+                                 },
+                                 "photoUrl":{
+                                    "string":"http://media-cdn.tripadvisor.com/media/photo-l/04/2d/46/fa/fandangles.jpg"
+                                 },
+                                 "description":{
+                                    "string":"Located inside the Sheraton Atlanta Hotel, Fandangles promotes health-conscious Southern evolution food. The menu includes Southern Comforts like the 24-oz Bone-in Rib-eye and The Roasted Corn and Chicken Chowder to items that are a bit lighter fare like our locally sourced House Smoked Trout or our Quinoa Kale salad. We offer an uniquely..."
+                                 },
+                                 "location":{
+                                    "org.kaaproject.kaa.demo.cityguide.Location":{
+                                       "latitude":{
+                                          "double":33.759269
+                                       },
+                                       "longitude":{
+                                          "double":-84.383103
+                                       },
+                                       "__uuid": null
+                                    }
+                                 },
+                                 "__uuid": null
+                              },
+                              {
+                                 "category":{
+                                    "org.kaaproject.kaa.demo.cityguide.Category":"RESTAURANT"
+                                 },
+                                 "title":{
+                                    "string":"Canoe"
+                                 },
+                                 "photoUrl":{
+                                    "string":"http://media-cdn.tripadvisor.com/media/photo-l/01/fa/1f/43/canoe.jpg"
+                                 },
+                                 "description":{
+                                    "string":"Canoe is located in Atlanta's historic Vinings area on the Chattahoochee River where Buckhead meets Vinings. Canoe's beautiful historic riverside setting makes it the perfect spot for weddings, receptions and private celebrations. Its original cuisine and distinctive design have already been featured in Bon Appetit, Food And Wine, Gourmet, The Wine Spectator and The New York Times."
+                                 },
+                                 "location":{
+                                    "org.kaaproject.kaa.demo.cityguide.Location":{
+                                       "latitude":{
+                                          "double":33.860061
+                                       },
+                                       "longitude":{
+                                          "double":-84.455461
+                                       },
+                                       "__uuid": null
+                                    }
+                                 },
+                                 "__uuid": null
+                              },
+                              {
+                                 "category":{
+                                    "org.kaaproject.kaa.demo.cityguide.Category":"RESTAURANT"
+                                 },
+                                 "title":{
+                                    "string":"Bone's Restaurant"
+                                 },
+                                 "photoUrl":{
+                                    "string":"http://media-cdn.tripadvisor.com/media/photo-l/01/23/67/77/bones.jpg"
+                                 },
+                                 "description":{
+                                    "string":"Bone\u2019s opened its doors in 1979 with a mission to provide only the finest service, steaks and seafood. Since that time, we're proud to have been recognized as the best steakhouse in Atlanta -- and by many, as the best steakhouse in America. Prime beef, fresh seafood, and Maine lobster are served along with regional specialties from our Southern roots.  Known for business lunches and business dinners, Bone\u2019s provides private party rooms and personalized menus to accommodate fine dining experiences and special occasions."
+                                 },
+                                 "location":{
+                                    "org.kaaproject.kaa.demo.cityguide.Location":{
+                                       "latitude":{
+                                          "double":33.842361
+                                       },
+                                       "longitude":{
+                                          "double":-84.371015
+                                       },
+                                       "__uuid": null
+                                    }
+                                 },
+                                 "__uuid": null
+                              }
+                           ]
+                        },
+                        "__uuid": null
+                     }
+                  ]
+               },
+               "__uuid": null
+            }
+         ]
+      },
+      "__uuid": null
+   }

@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-#include "kaa_test.h"
 
+#include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "kaa_test.h"
 
 #include "kaa_common.h"
 #include "kaa_bootstrap_manager.h"
@@ -124,7 +129,7 @@ static void test_create_channel_interface(kaa_transport_channel_interface_t *cha
     channel->get_protocol_id = &test_get_protocol_info;
     channel->get_supported_services = &test_get_supported_services;
     channel->sync_handler = &test_sync_handler;
-    channel->release_context = NULL;
+    channel->destroy = NULL;
     channel->init = &test_init_channel;
     channel->set_access_point =&test_set_access_point;
 }
@@ -135,15 +140,15 @@ static void compare_channels(kaa_transport_channel_interface_t *actual_channel
     KAA_RETURN_IF_NIL2(actual_channel, expected_channel,);
 
     kaa_error_t error_code;
-    kaa_transport_protocol_id_t expected_info;
-    kaa_transport_protocol_id_t actual_info;
+    kaa_transport_protocol_id_t expected_info = { 0, 0 };
+    kaa_transport_protocol_id_t actual_info = { 1, 1 };
 
     error_code = expected_channel->get_protocol_id(expected_channel->context, &expected_info);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     error_code = actual_channel->get_protocol_id(actual_channel->context, &actual_info);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    ASSERT_EQUAL(0, memcmp(&actual_info, &expected_info, sizeof(kaa_transport_protocol_id_t)));
+    ASSERT_NOT_EQUAL(0, kaa_transport_protocol_id_equals(&actual_info, &expected_info));
 }
 
 

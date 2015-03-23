@@ -19,6 +19,7 @@ package org.kaaproject.kaa.sandbox.web.client;
 import org.kaaproject.kaa.sandbox.web.client.layout.AppLayout;
 import org.kaaproject.kaa.sandbox.web.client.mvp.ClientFactory;
 import org.kaaproject.kaa.sandbox.web.client.mvp.activity.HeaderActivityMapper;
+import org.kaaproject.kaa.sandbox.web.client.mvp.activity.LeftPanelActivityMapper;
 import org.kaaproject.kaa.sandbox.web.client.mvp.activity.SandboxActivityMapper;
 import org.kaaproject.kaa.sandbox.web.client.mvp.place.MainPlace;
 import org.kaaproject.kaa.sandbox.web.client.mvp.place.SandboxPlaceHistoryMapper;
@@ -29,10 +30,6 @@ import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.activity.shared.ActivityMapper;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.HeadElement;
-import com.google.gwt.dom.client.LinkElement;
-import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
@@ -41,8 +38,6 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class Sandbox implements EntryPoint {
-
-    public static final String THEME = "clean"; //$NON-NLS-1$
 
     private static SandboxServiceAsync sandboxService = SandboxServiceAsync.Util.getInstance();
 
@@ -58,8 +53,7 @@ public class Sandbox implements EntryPoint {
     }
 
     private void init() {
-        injectThemeStyleSheet();
-        Utils.resources.css().ensureInjected();
+        Utils.injectSandboxStyles();
 
         ClientFactory clientFactory = GWT.create(ClientFactory.class);
         EventBus eventBus = clientFactory.getEventBus();
@@ -69,6 +63,10 @@ public class Sandbox implements EntryPoint {
         ActivityMapper headerActivityMapper = new HeaderActivityMapper(clientFactory);
         ActivityManager headerActivityManager = new ActivityManager(headerActivityMapper, eventBus);
         headerActivityManager.setDisplay(appWidget.getAppHeaderHolder());
+        
+        ActivityMapper leftPanelActivityMapper = new LeftPanelActivityMapper(clientFactory);
+        ActivityManager leftPanelActivityManager = new ActivityManager(leftPanelActivityMapper, eventBus);
+        leftPanelActivityManager.setDisplay(appWidget.getLeftPanel());
 
         ActivityMapper appActivityMapper = new SandboxActivityMapper(clientFactory);
         ActivityManager appActivityManager = new ActivityManager(appActivityMapper, eventBus);
@@ -88,30 +86,6 @@ public class Sandbox implements EntryPoint {
         historyHandler.handleCurrentHistory();
     }
 
-    /**
-     * Convenience method for getting the document's head element.
-     *
-     * @return the document's head element
-     */
-    private native HeadElement getHeadElement() /*-{
-      return $doc.getElementsByTagName("head")[0];
-    }-*/;
-
-
-    private void injectThemeStyleSheet() {
-        // Choose the name style sheet based on the locale.
-        String styleSheet = "gwt/" + THEME + "/" + THEME; //$NON-NLS-1$ //$NON-NLS-2$
-        styleSheet += LocaleInfo.getCurrentLocale().isRTL() ? "_rtl.css" : ".css"; //$NON-NLS-1$ //$NON-NLS-2$
-
-        // Load the GWT theme style sheet
-        String modulePath = GWT.getModuleBaseURL();
-        LinkElement linkElem = Document.get().createLinkElement();
-        linkElem.setRel("stylesheet"); //$NON-NLS-1$
-        linkElem.setType("text/css"); //$NON-NLS-1$
-        linkElem.setHref(modulePath + styleSheet);
-        getHeadElement().appendChild(linkElem);
-  }
- 
     public static void redirectToModule(String module) {
         setWindowHref("/"+module);
     }

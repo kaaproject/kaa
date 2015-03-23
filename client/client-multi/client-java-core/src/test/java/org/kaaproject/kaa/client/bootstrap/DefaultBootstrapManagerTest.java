@@ -29,13 +29,16 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.IPTransportInfoTest;
-import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
+import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
+import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
 import org.kaaproject.kaa.client.channel.KaaInvalidChannelException;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
@@ -47,7 +50,7 @@ import org.mockito.Mockito;
 
 public class DefaultBootstrapManagerTest {
 
-    public class ChanelManagerMock implements KaaChannelManager {
+    public class ChanelManagerMock implements KaaInternalChannelManager {
 
         private boolean serverUpdated = false;
         private String receivedUrl;
@@ -84,11 +87,6 @@ public class DefaultBootstrapManagerTest {
         }
 
         @Override
-        public KaaDataChannel getChannelByTransportType(TransportType type) {
-            return null;
-        }
-
-        @Override
         public KaaDataChannel getChannel(String id) {
             return null;
         }
@@ -110,8 +108,7 @@ public class DefaultBootstrapManagerTest {
         }
 
         @Override
-        public void setChannel(TransportType transport, KaaDataChannel channel)
-                throws KaaInvalidChannelException {
+        public void setChannel(TransportType transport, KaaDataChannel channel) throws KaaInvalidChannelException {
 
         }
 
@@ -133,6 +130,54 @@ public class DefaultBootstrapManagerTest {
         @Override
         public void resume() {
 
+        }
+
+        @Override
+        public void setOperationMultiplexer(KaaDataMultiplexer multiplexer) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void setOperationDemultiplexer(KaaDataDemultiplexer demultiplexer) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void setBootstrapMultiplexer(KaaDataMultiplexer multiplexer) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void setBootstrapDemultiplexer(KaaDataDemultiplexer demultiplexer) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void sync(TransportType type) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void syncAck(TransportType type) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void syncAll(TransportType type) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public TransportConnectionInfo getActiveServer(TransportType logging) {
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 
@@ -175,7 +220,8 @@ public class DefaultBootstrapManagerTest {
         KeyPair keyPair = keyGen.genKeyPair();
 
         List<ProtocolMetaData> list = new ArrayList<ProtocolMetaData>();
-        ProtocolMetaData md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, keyPair.getPublic());
+        ProtocolMetaData md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889,
+                keyPair.getPublic());
         list.add(md);
 
         ChanelManagerMock channelManager = spy(new ChanelManagerMock());
@@ -207,7 +253,8 @@ public class DefaultBootstrapManagerTest {
         KeyPair keyPair = keyGen.genKeyPair();
 
         List<ProtocolMetaData> list = new ArrayList<ProtocolMetaData>();
-        ProtocolMetaData md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, keyPair.getPublic());
+        ProtocolMetaData md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889,
+                keyPair.getPublic());
         list.add(md);
 
         manager.onProtocolListUpdated(list);

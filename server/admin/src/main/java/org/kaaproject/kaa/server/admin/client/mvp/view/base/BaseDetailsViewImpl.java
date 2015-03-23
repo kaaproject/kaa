@@ -48,6 +48,7 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
     interface BaseDetailsViewImplUiBinder extends UiBinder<Widget, BaseDetailsViewImpl> { }
     private static BaseDetailsViewImplUiBinder uiBinder = GWT.create(BaseDetailsViewImplUiBinder.class);
 
+    protected static final String FULL_WIDTH = "100%";
     protected static final int DEFAULT_TEXTBOX_SIZE = 255;
 
     @UiField public Label titleLabel;

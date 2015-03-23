@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -25,7 +26,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public abstract class AbstractUserActivity<T extends UserDto, V extends UserView, P extends UserPlace> extends
         AbstractDetailsActivity<T, V, P> {
@@ -60,14 +60,14 @@ public abstract class AbstractUserActivity<T extends UserDto, V extends UserView
         detailsView.clearError();
 
         if (create) {
-            KaaAdmin.getAuthService().checkUserNameOccupied(entity.getUsername(), null, new AsyncCallback<ResultCode>() {
+            KaaAdmin.getAuthService().checkUserNameOccupied(entity.getUsername(), null, new BusyAsyncCallback<ResultCode>() {
                 @Override
-                public void onFailure(Throwable caught) {
+                public void onFailureImpl(Throwable caught) {
                     Utils.handleException(caught, detailsView);
                 }
 
                 @Override
-                public void onSuccess(ResultCode result) {
+                public void onSuccessImpl(ResultCode result) {
                     if (result != ResultCode.OK) {
                         detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
                     }
@@ -84,14 +84,14 @@ public abstract class AbstractUserActivity<T extends UserDto, V extends UserView
 
     private void checkEmail() {
         final Long userId = !create ? Long.valueOf(entity.getExternalUid()) : null;
-        KaaAdmin.getAuthService().checkEmailOccupied(entity.getMail(), userId,new AsyncCallback<ResultCode>() {
+        KaaAdmin.getAuthService().checkEmailOccupied(entity.getMail(), userId,new BusyAsyncCallback<ResultCode>() {
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailureImpl(Throwable caught) {
                 Utils.handleException(caught, detailsView);
             }
 
             @Override
-            public void onSuccess(ResultCode result) {
+            public void onSuccessImpl(ResultCode result) {
                 if (result != ResultCode.OK) {
                     detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
                 }
@@ -104,12 +104,12 @@ public abstract class AbstractUserActivity<T extends UserDto, V extends UserView
 
     private void performSave() {
         editEntity(entity,
-                new AsyncCallback<T>() {
-                    public void onSuccess(T result) {
+                new BusyAsyncCallback<T>() {
+                    public void onSuccessImpl(T result) {
                         goTo(place.getPreviousPlace());
                     }
 
-                    public void onFailure(Throwable caught) {
+                    public void onFailureImpl(Throwable caught) {
                         Utils.handleException(caught, detailsView);
                     }
         });

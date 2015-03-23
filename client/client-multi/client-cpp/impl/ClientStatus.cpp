@@ -22,6 +22,7 @@
 #include <sstream>
 
 #include "kaa/logging/Log.hpp"
+#include "kaa/common/UuidGenerator.hpp"
 
 namespace kaa {
 
@@ -66,10 +67,9 @@ static bimap create_bimap()
 const bimap                 ClientStatus::parameterToToken_ = create_bimap();
 const SequenceNumber        ClientStatus::appSeqNumberDefault_ = {0, 0, 0};
 const bool                  ClientStatus::isRegisteredDefault_ = false;
-const SharedDataBuffer      ClientStatus::endpointHashDefault_;
+const HashDigest            ClientStatus::endpointHashDefault_;
 const DetailedTopicStates   ClientStatus::topicStatesDefault_;
 const AttachedEndpoints     ClientStatus::attachedEndpoints_;
-const std::string           ClientStatus::endpointAccessToken_;
 const bool                  ClientStatus::endpointDefaultAttachStatus_ = false;
 const std::string           ClientStatus::endpointKeyHashDefault_;
 
@@ -179,11 +179,11 @@ void ClientParameter<AttachedEndpoints>::save(std::ostream &os)
 }
 
 template<>
-void ClientParameter<SharedDataBuffer>::save(std::ostream &os)
+void ClientParameter<HashDigest>::save(std::ostream &os)
 {
-    if (value_.second != 0) {
+    if (!value_.empty()) {
         os << attributeName_ << "=";
-        for (auto it = value_.first.get(); it != value_.first.get() + value_.second; ++it) {
+        for (auto it = value_.begin(); it != value_.end(); ++it) {
             os << std::setw(2) << std::setfill('0')  << std::hex << (int)*it;
         }
         os << std::dec << std::setw(1) << std::endl;
@@ -317,13 +317,12 @@ void ClientParameter<AttachedEndpoints>::read(const std::string &strValue)
 }
 
 template<>
-void ClientParameter<SharedDataBuffer>::read(const std::string &strValue)
+void ClientParameter<HashDigest>::read(const std::string &strValue)
 {
-    value_.second = strValue.length() / 2;
-    value_.first.reset(new std::uint8_t[value_.second]);
-
-    for (size_t i = 0; i < value_.second; ++i) {
-        value_.first[i] = std::stoi(strValue.substr(2*i, 2), nullptr, 16);
+    size_t size = strValue.length() / 2;
+    value_ = HashDigest(size);
+    for (size_t i = 0; i < size; ++i) {
+        value_[i] = std::stoi(strValue.substr(2*i, 2), nullptr, 16);
     }
 }
 
@@ -349,7 +348,7 @@ ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), i
     }
     auto endpointhashtoken = parameterToToken_.left.find(ClientParameterT::PROFILEHASH);
     if (endpointhashtoken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> endpointHash(new ClientParameter<SharedDataBuffer>(
+        std::shared_ptr<IPersistentParameter> endpointHash(new ClientParameter<HashDigest>(
                 endpointhashtoken->second, endpointHashDefault_));
         parameters_.insert(std::make_pair(ClientParameterT::PROFILEHASH, endpointHash));
     }
@@ -361,8 +360,8 @@ ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), i
     }
     auto endpointaccesstoken = parameterToToken_.left.find(ClientParameterT::EP_ACCESS_TOKEN);
     if (endpointaccesstoken != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> endpointAccessToken(new ClientParameter<std::string>(
-                endpointaccesstoken->second, endpointAccessToken_));
+        std::shared_ptr<IPersistentParameter> endpointAccessToken(
+                new ClientParameter<std::string>(endpointaccesstoken->second, ""));
         parameters_.insert(std::make_pair(ClientParameterT::EP_ACCESS_TOKEN, endpointAccessToken));
     }
     auto endpointattachstatus = parameterToToken_.left.find(ClientParameterT::EP_ATTACH_STATUS);
@@ -380,7 +379,7 @@ ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), i
 
     auto propertieshash = parameterToToken_.left.find(ClientParameterT::PROPERTIES_HASH);
     if (propertieshash != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> propertiesHash(new ClientParameter<SharedDataBuffer>(
+        std::shared_ptr<IPersistentParameter> propertiesHash(new ClientParameter<HashDigest>(
                 propertieshash->second, endpointHashDefault_/*It's OK*/));
         parameters_.insert(std::make_pair(ClientParameterT::PROPERTIES_HASH, propertiesHash));
     }
@@ -398,16 +397,17 @@ ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), i
     checkConfigVersionForUpdates();
 }
 
-void ClientStatus::checkSDKPropertiesForUpdates() {
-    SharedDataBuffer truePropertiesHash = getPropertiesHash();
-    SharedDataBuffer storedPropertiesHash;
+void ClientStatus::checkSDKPropertiesForUpdates()
+{
+    HashDigest truePropertiesHash = getPropertiesHash();
+    HashDigest storedPropertiesHash;
 
     auto parameter_it = parameters_.find(ClientParameterT::PROPERTIES_HASH);
     if (parameter_it != parameters_.end()) {
-        storedPropertiesHash = boost::any_cast<SharedDataBuffer>(parameter_it->second->getValue());
+        storedPropertiesHash = boost::any_cast<HashDigest>(parameter_it->second->getValue());
     }
 
-    if (!EndpointObjectHash::isEqual(truePropertiesHash, storedPropertiesHash)) {
+    if (truePropertiesHash != storedPropertiesHash) {
         setRegistered(false);
         auto it = parameters_.find(ClientParameterT::PROPERTIES_HASH);
         if (it != parameters_.end()) {
@@ -467,13 +467,13 @@ void ClientStatus::setRegistered(bool isRegisteredP)
     }
 }
 
-std::string ClientStatus::getEndpointAccessToken() const
+std::string ClientStatus::getEndpointAccessToken()
 {
     auto parameter_it = parameters_.find(ClientParameterT::EP_ACCESS_TOKEN);
     if (parameter_it != parameters_.end()) {
         return boost::any_cast<std::string>(parameter_it->second->getValue());
     }
-    return endpointAccessToken_;
+    return refreshEndpointAccessToken();
 }
 
 void ClientStatus::setEndpointAccessToken(const std::string& token)
@@ -482,6 +482,13 @@ void ClientStatus::setEndpointAccessToken(const std::string& token)
     if (parameter_it != parameters_.end()) {
         parameter_it->second->setValue(token);
     }
+}
+
+std::string ClientStatus::refreshEndpointAccessToken()
+{
+    std::string token(UuidGenerator::generateUuid());
+    setEndpointAccessToken(token);
+    return token;
 }
 
 DetailedTopicStates ClientStatus::getTopicStates() const
@@ -518,16 +525,16 @@ void ClientStatus::setAttachedEndpoints(const AttachedEndpoints& endpoints)
     }
 }
 
-SharedDataBuffer ClientStatus::getProfileHash() const
+HashDigest ClientStatus::getProfileHash() const
 {
     auto parameter_it = parameters_.find(ClientParameterT::PROFILEHASH);
     if (parameter_it != parameters_.end()) {
-        return boost::any_cast<SharedDataBuffer>(parameter_it->second->getValue());
+        return boost::any_cast<HashDigest>(parameter_it->second->getValue());
     }
     return endpointHashDefault_;
 }
 
-void ClientStatus::setProfileHash(SharedDataBuffer hash)
+void ClientStatus::setProfileHash(HashDigest hash)
 {
     auto parameter_it = parameters_.find(ClientParameterT::PROFILEHASH);
     if (parameter_it != parameters_.end()) {

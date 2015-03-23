@@ -19,13 +19,11 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_DEFAULT_OPERATION_HTTP_CHANNEL
-
 #include "kaa/channel/impl/AbstractHttpChannel.hpp"
 
 namespace kaa {
 
-class DefaultOperationHttpChannel : public AbstractHttpChannel<ChannelType::HTTP> {
+class DefaultOperationHttpChannel : public AbstractHttpChannel {
 public:
     DefaultOperationHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys) : AbstractHttpChannel(channelManager, clientKeys) { }
     virtual ~DefaultOperationHttpChannel() { }
@@ -34,9 +32,9 @@ public:
     virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const { return SUPPORTED_TYPES; }
 
 private:
-    virtual std::shared_ptr<IHttpRequest> createRequest(AbstractServerInfoPtr server, const std::vector<std::uint8_t>& body)
+    virtual std::shared_ptr<IHttpRequest> createRequest(IPTransportInfoPtr server, const std::vector<std::uint8_t>& body)
     {
-        return getHttpDataProcessor()->createOperationRequest(server->getUrl(), body);
+        return getHttpDataProcessor()->createOperationRequest(server->getURL() + getURLSuffix(), body);
     }
 
     virtual std::string retrieveResponse(const IHttpResponse& response)
@@ -51,13 +49,15 @@ private:
         return ServerType::OPERATIONS;
     }
 
+    virtual std::string getURLSuffix() {
+        return "/EP/Sync";
+    }
+
 private:
     static const std::string CHANNEL_ID;
     static const std::map<TransportType, ChannelDirection> SUPPORTED_TYPES;
 };
 
 }
-
-#endif
 
 #endif /* DEFAULTOPERATIONHTTPCHANNEL_HPP_ */

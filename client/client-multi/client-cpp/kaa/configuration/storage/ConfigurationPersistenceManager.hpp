@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,12 @@
 #ifndef CONFIGURATIONPERSISTENCEMANAGER_HPP_
 #define CONFIGURATIONPERSISTENCEMANAGER_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_CONFIGURATION
-
 #include "kaa/KaaThread.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
 #include "kaa/configuration/IConfigurationProcessor.hpp"
 #include "kaa/configuration/storage/IConfigurationPersistenceManager.hpp"
+#include "kaa/configuration/manager/IConfigurationReceiver.hpp"
+#include "kaa/configuration/IConfigurationHashContainer.hpp"
 
 namespace kaa {
 
@@ -36,15 +34,13 @@ class IKaaClientStateStorage;
  * This class is responsible for persistence of configuration invoking
  * user-defined @link IConfigurationStorage @endlink routines.
  *
- * Receives configuration and data schema updates from
- * @link ConfigurationManager @endlink and @link SchemaProcessor @endlink
- * respectively.
  */
-class ConfigurationPersistenceManager : public IConfigurationPersistenceManager {
+class ConfigurationPersistenceManager : public IConfigurationPersistenceManager,
+                                        public IConfigurationReceiver,
+                                        public IConfigurationHashContainer {
 public:
     ConfigurationPersistenceManager(IKaaClientStateStoragePtr state)
-        : storage_(nullptr)
-        , processor_(nullptr)
+        : processor_(nullptr)
         , ignoreConfigurationUpdate_(false)
         , state_(state)
     {}
@@ -53,17 +49,12 @@ public:
     /**
      * @link IConfigurationPersistenceManager @endlink implementation
      */
-    void setConfigurationStorage(IConfigurationStorage *storage);
+    void setConfigurationStorage(IConfigurationStoragePtr storage);
 
     /**
      * @link IConfigurationReceiver @endlink implementation
      */
-    void onConfigurationUpdated(const ICommonRecord &configuration);
-
-    /**
-     * @link ISchemaUpdatesReceiver @endlink implementation
-     */
-    void onSchemaUpdated(std::shared_ptr<avro::ValidSchema> schema);
+    void onConfigurationUpdated(const KaaRootConfiguration &configuration);
 
     /**
      * @link IConfigurationHashContainer @endlink implementation
@@ -80,21 +71,17 @@ public:
 private:
     void readStoredConfiguration();
 
-    KAA_MUTEX_DECLARE(schemaGuard_);
     KAA_MUTEX_DECLARE(confPersistenceGuard_);
 
-    IConfigurationStorage *                 storage_;
-    IConfigurationProcessor *               processor_;
+    IConfigurationStoragePtr storage_;
+    IConfigurationProcessor* processor_;
 
-    std::shared_ptr<avro::ValidSchema>      schema_;
-    EndpointObjectHash                      configurationHash_;
-    bool                                    ignoreConfigurationUpdate_;
+    EndpointObjectHash configurationHash_;
+    bool_type ignoreConfigurationUpdate_;
 
-    IKaaClientStateStoragePtr               state_;
+    IKaaClientStateStoragePtr state_;
 };
 
 }  // namespace kaa
-
-#endif
 
 #endif /* CONFIGURATIONPERSISTENCEMANAGER_HPP_ */

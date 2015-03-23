@@ -56,7 +56,7 @@ public class DefaultBootstrapDataProcessor implements KaaDataMultiplexer, KaaDat
     public synchronized void processResponse(byte[] response) throws IOException {
         if (transport != null && response != null) {
             SyncResponse list = responseConverter.fromByteArray(response);
-            LOG.trace("Received OperationssServerList response {}", list);
+            LOG.trace("Received OperationsServerList response {}", list);
             transport.onResolveResponse(list);
         }
     }

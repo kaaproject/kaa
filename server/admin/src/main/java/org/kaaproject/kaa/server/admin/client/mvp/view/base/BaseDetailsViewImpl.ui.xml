@@ -87,9 +87,6 @@
                         </gwt:FlowPanel>
                     </gwt:ScrollPanel>
                 </gwt:center>
-                <gwt:south size="70">
-                    <gwt:FlowPanel />
-                </gwt:south>
         </gwt:DockLayoutPanel>
 
 </ui:UiBinder>

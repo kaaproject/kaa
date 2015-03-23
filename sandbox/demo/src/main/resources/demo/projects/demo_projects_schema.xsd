@@ -19,8 +19,6 @@
            xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
 	   jxb:extensionBindingPrefixes="xjc"
            jxb:version="2.0"
- targetNamespace="http://kaaproject.org"
- xmlns:tns= "http://kaaproject.org"
  elementFormDefault="qualified">
 
 <xs:annotation>
@@ -35,14 +33,33 @@
   <xs:restriction base="xs:string">
     <xs:enumeration value="ANDROID"/>
     <xs:enumeration value="JAVA"/>
+    <xs:enumeration value="CPP"/>
+    <xs:enumeration value="C"/>
   </xs:restriction>
 </xs:simpleType>
- 
+
+<xs:simpleType name="feature">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="CONFIGURATION"/>
+    <xs:enumeration value="PROFILING"/>
+    <xs:enumeration value="NOTIFICATION"/>
+    <xs:enumeration value="EVENT"/>
+    <xs:enumeration value="USER_VERIFIER"/>
+    <xs:enumeration value="DATA_COLLECTION"/>
+  </xs:restriction>
+</xs:simpleType>
+
 <xs:complexType name="project">
   <xs:sequence>
     <xs:element name="name" type="xs:string"/>
     <xs:element name="description" type="xs:string"/>
-    <xs:element name="platform" type="tns:platform"/>
+    <xs:element name="iconBase64" type="xs:string"/>
+    <xs:element name="platform" type="platform"/>
+    <xs:element name="features">
+        <xs:simpleType>
+           <xs:list itemType="feature"/>
+        </xs:simpleType>
+    </xs:element>
     <xs:element name="sourceArchive" type="xs:string"/>
     <xs:element name="projectFolder" type="xs:string"/>
     <xs:element name="sdkLibDir" type="xs:string"/>
@@ -55,7 +72,7 @@
 <xs:element name="projectsConfig">
    <xs:complexType>
      <xs:sequence>
-       <xs:element name="project" type="tns:project" minOccurs="1" maxOccurs="unbounded">
+       <xs:element name="project" type="project" minOccurs="1" maxOccurs="unbounded">
 	 <xs:annotation>
            <xs:appinfo>
               <jxb:property name="projects"/>
@@ -65,5 +82,7 @@
      </xs:sequence>
    </xs:complexType>
 </xs:element>
+
+<xs:element name="project" type="project"/>
  
 </xs:schema>

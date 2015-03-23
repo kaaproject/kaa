@@ -19,9 +19,8 @@
 
 #include <list>
 
-#include "kaa/gen/BootstrapGen.hpp"
 #include "kaa/channel/IDataChannel.hpp"
-#include "kaa/channel/server/IServerInfo.hpp"
+#include "kaa/channel/ITransportConnectionInfo.hpp"
 #include "kaa/channel/connectivity/IConnectivityChecker.hpp"
 
 namespace kaa {
@@ -31,7 +30,8 @@ class IIServerInfo;
 /**
  * Channel manager establishes/removes channels' links between client and server.
  */
-class IKaaChannelManager {
+class IKaaChannelManager
+{
 public:
 
     /**
@@ -81,19 +81,6 @@ public:
     virtual std::list<IDataChannelPtr> getChannels() = 0;
 
     /**
-     * Retrieves a list of channels by the specific type (HTTP, HTTP_LP,
-     * BOOTSTRAP and etc.).
-     *
-     * @param type type of the channel.
-     * @return a list of channels.
-     *
-     * @see ChannelType
-     * @see IDataChannel
-     *
-     */
-    virtual std::list<IDataChannelPtr> getChannelsByType(ChannelType type) = 0;
-
-    /**
      * Retrieves the list of channels by the specific transport type.
      *
      * @param type the transport's type.
@@ -120,19 +107,19 @@ public:
      * Reports to Channel Manager in case link with server was not established.
      *
      * @param server the parameters of server that was not connected.
-     * @see IServerInfo
+     * @see ITransportConnectionInfo
      *
      */
-    virtual void onServerFailed(IServerInfoPtr server) = 0;
+    virtual void onServerFailed(ITransportConnectionInfoPtr connectionInfo) = 0;
 
     /**
      * Reports to Channel Manager about the new server.
      *
      * @param newServer the parameters of the new server.
-     * @see IServerInfo
+     * @see ITransportConnectionInfo
      *
      */
-    virtual void onServerUpdated(IServerInfoPtr newServer) = 0;
+    virtual void onTransportConnectionInfoUpdated(ITransportConnectionInfoPtr connectionInfo) = 0;
 
     /**
      * Clears the list of channels.

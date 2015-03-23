@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,16 +24,15 @@ import net.sf.ehcache.Ehcache;
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.thrift.ControlThriftClientProvider;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
-import org.kaaproject.kaa.server.common.thrift.gen.control.FileData;
-import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
-import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -52,20 +51,15 @@ public class CacheServiceImpl implements CacheService {
     private CacheManager cacheManager;
 
     @Override
-    @Cacheable(value = SDK_CACHE, key = "#key")
-    public Sdk getSdk(SdkKey key) throws KaaAdminServiceException {
-        SdkPlatform targetPlatform = toSdkPlatform(key.getTargetPlatform());
-        try {
-            return clientProvider.getClient().generateSdk(targetPlatform,
-                    key.getApplicationId(), key.getProfileSchemaVersion(),
-                    key.getConfigurationSchemaVersion(), 
-                    key.getNotificationSchemaVersion(), 
-                    key.getAefMapIds(), 
-                    key.getLogSchemaVersion(),
-                    key.getDefaultVerifierToken());
-        } catch (TException e) {
-            throw Utils.handleException(e);
-        }
+    @Cacheable(value = SDK_CACHE, key = "#key", unless="#result == null")
+    public FileData getSdk(SdkKey key) {
+        return null;
+    }
+    
+    @Override
+    @CachePut(value = SDK_CACHE, key = "#key")
+    public FileData putSdk(SdkKey key, FileData sdkFile) {
+        return sdkFile;
     }
 
     @Override
@@ -92,7 +86,12 @@ public class CacheServiceImpl implements CacheService {
     @Cacheable(RECORD_LIBRARY_CACHE)
     public FileData getRecordLibrary(RecordKey key) throws KaaAdminServiceException {
         try {
-            return clientProvider.getClient().generateRecordStructureLibrary(key.getApplicationId(), key.getLogSchemaVersion());
+            org.kaaproject.kaa.server.common.thrift.gen.control.FileData 
+                   thriftFileData = clientProvider.getClient().generateRecordStructureLibrary(key.getApplicationId(), key.getLogSchemaVersion());
+            FileData fileData = new FileData();
+            fileData.setFileName(thriftFileData.getFileName());
+            fileData.setFileData(thriftFileData.getData());
+            return fileData;
         } catch (TException e) {
             throw Utils.handleException(e);
         }
@@ -102,24 +101,14 @@ public class CacheServiceImpl implements CacheService {
     @Cacheable(RECORD_SCHEMA_CACHE)
     public FileData getRecordSchema(RecordKey key) throws KaaAdminServiceException {
         try {
-            return clientProvider.getClient().getRecordStructureSchema(key.getApplicationId(), key.getLogSchemaVersion());
+            org.kaaproject.kaa.server.common.thrift.gen.control.FileData 
+                    thriftFileData = clientProvider.getClient().getRecordStructureSchema(key.getApplicationId(), key.getLogSchemaVersion());
+            FileData fileData = new FileData();
+            fileData.setFileName(thriftFileData.getFileName());
+            fileData.setFileData(thriftFileData.getData());
+            return fileData;
         } catch (TException e) {
             throw Utils.handleException(e);
-        }
-    }
-
-    private SdkPlatform toSdkPlatform(org.kaaproject.kaa.common.dto.admin.SdkPlatform sdkPlatform) {
-        switch (sdkPlatform) {
-        case JAVA:
-            return SdkPlatform.JAVA;
-        case ANDROID:
-            return SdkPlatform.ANDROID;
-        case CPP:
-            return SdkPlatform.CPP;
-        case C:
-            return SdkPlatform.C;
-        default:
-            return null;
         }
     }
 

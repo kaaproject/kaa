@@ -21,6 +21,7 @@ include "cli.thrift"
 namespace java org.kaaproject.kaa.server.common.thrift.gen.operations
 namespace cpp kaa
 
+typedef shared.Integer int
 typedef shared.ObjectId id
 
 typedef double probability
@@ -73,7 +74,9 @@ enum EventRouteUpdateType {
 enum EventMessageType {
       ROUTE_UPDATE = 1;
       USER_ROUTE_INFO = 2;
-      EVENT = 3
+      EVENT = 3;
+      ENDPOINT_ROUTE_UPDATE = 4;
+      ENDPOINT_STATE_UPDATE = 5;
 }
 
 struct Notification {
@@ -148,12 +151,39 @@ struct UserRouteInfo {
   4: EventRouteUpdateType updateType
 }
 
-struct EventMessage {
+struct EndpointRouteUpdate {
+  1: tenant_id tenantId
+  2: user_id userId
+  3: RouteAddress routeAddress
+  4: EventRouteUpdateType updateType
+  5: int cfSchemaVersion
+  6: binary ucfHash
+}
+
+struct EndpointStateUpdate {
+  1: tenant_id tenantId
+  2: user_id userId
+  3: application_token applicationToken
+  4: endpoint_id endpointKey
+  5: binary ucfHash
+}
+
+struct Message {
   1: EventMessageType type
   2: shared.Long eventId
   3: Event event
   4: EventRoute route
   5: UserRouteInfo userRoute
+  6: EndpointRouteUpdate endpointRouteUpdate
+  7: EndpointStateUpdate endpointStateUpdate
+}
+
+struct UserConfigurationUpdate {
+  1: tenant_id tenantId
+  2: user_id userId
+  3: application_token applicationToken
+  4: int cfSchemaVersion
+  5: binary ucfHash
 }
 
 service OperationsThriftService extends cli.CliThriftService{
@@ -163,16 +193,19 @@ service OperationsThriftService extends cli.CliThriftService{
 */
   void onNotification(1: Notification notification);
 
-
 /**
 *  Set redirection rule for Operations server
 */
   void setRedirectionRule(1: RedirectionRule redirectionRule);
 
-
 /**
 *  Interface to send unified event messages
 */
-  void sendEventMessage(1: list<EventMessage> messages);
+  void sendMessages(1: list<Message> messages);
+
+/**
+*   Report user configuration update from control to operation servers
+*/
+  void sendUserConfigurationUpdates(1: list<UserConfigurationUpdate> updates);
 
 }

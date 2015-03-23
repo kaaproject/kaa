@@ -23,10 +23,11 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService;
-import org.kaaproject.kaa.server.common.thrift.gen.operations.EventMessage;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.Message;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.common.thrift.util.ThriftExecutor;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.bootstrap.OperationsBootstrapService;
@@ -39,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-// TODO: Auto-generated Javadoc
 /**
  * The implementation of {#link
  * org.kaaproject.kaa.server.common.thrift.gen.operations
@@ -49,7 +49,7 @@ import org.springframework.stereotype.Service;
  * BaseCliThriftService} The only one specific method to Operations Service is
  * {#link #onNotification(Notification notification) onNotification}
  *
- * @author ashvayka
+ * @author Andrew Shvayka
  */
 @Service
 public class OperationsThriftServiceImpl extends BaseCliThriftService implements OperationsThriftService.Iface {
@@ -79,59 +79,7 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     *
-     * @see
-     * org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService
-     * .
-     * Iface#onNotification(org.kaaproject.kaa.server.common.thrift.gen.operations
-     * .Notification)
-     */
-    @Override
-    public void onNotification(Notification notification) throws TException {
-        LOG.debug("Received Notification from control server {}", notification);
-        LOG.debug("Notify cache service..");
-        processCacheNotification(notification);
-        LOG.debug("Notify akka service..");
-        akkaService.onNotification(notification);
-    }
-
-    /**
-     * Process cache notification.
-     *
-     * @param notification the notification
-     */
-    private void processCacheNotification(Notification notification) {
-        ApplicationDto appDto = applicationService.findAppById(notification.getAppId());
-        if (appDto != null) {
-            if (notification.getProfileFilterId() != null) {
-                ProfileFilterDto filterDto = cacheService.getFilter(notification.getProfileFilterId());
-                int version = filterDto.getMajorVersion();
-                cacheService.resetFilters(new AppVersionKey(appDto.getApplicationToken(), version));
-            }
-            if (notification.getGroupId() != null) {
-                cacheService.resetGroup(notification.getGroupId());
-            }
-            if(notification.getAppSeqNumber() != 0){
-                LOG.debug("Going to update application {} with seqNumber {} in thread {}", appDto.getApplicationToken(), notification.getAppSeqNumber(), Thread.currentThread().getId());
-                synchronized (cacheService) {
-                    int currentSeqNumber = cacheService.getAppSeqNumber(appDto.getApplicationToken()).getSeqNumber();
-                    if(currentSeqNumber < notification.getAppSeqNumber()){
-                        cacheService.putAppSeqNumber(appDto.getApplicationToken(), new AppSeqNumber(appDto.getTenantId(), appDto.getId(), appDto.getApplicationToken(), notification.getAppSeqNumber()));
-                        LOG.debug("Update application {} with seqNumber {} in thread {}", appDto.getApplicationToken(), notification.getAppSeqNumber(), Thread.currentThread().getId());
-                    }else{
-                        LOG.debug("Update ignored. application {} already has seqNumber {}", appDto.getApplicationToken(), notification.getAppSeqNumber());
-                    }
-
-                }
-            }
-        } else {
-            LOG.warn("Application with following id is not found ", notification.getAppId());
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService
      * #getServerShortName()
@@ -143,7 +91,7 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService
      * #initServiceCommands()
@@ -152,15 +100,48 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
     protected void initServiceCommands() {
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface#setRedirectionRule(org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule)
+    @Override
+    public void onNotification(Notification notification) throws TException {
+        LOG.debug("Received Notification from control server {}", notification);
+        LOG.debug("Going to notify cache service..");
+        processCacheNotification(notification);
+        LOG.debug("Going to notify akka service..");
+        akkaService.onNotification(notification);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.kaaproject.kaa.server.common.thrift.gen.operations.
+     * OperationsThriftService
+     * .Iface#setRedirectionRule(org.kaaproject.kaa.server
+     * .common.thrift.gen.operations.RedirectionRule)
      */
     @Override
-    public void setRedirectionRule(RedirectionRule redirectionRule)
-            throws TException {
+    public void setRedirectionRule(RedirectionRule redirectionRule) throws TException {
         LOG.debug("Received setRedirectionRule from control Dynamic Load Mgmt service {}", redirectionRule);
         LOG.debug("Notify akka service..");
         akkaService.onRedirectionRule(redirectionRule);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.kaaproject.kaa.server.common.thrift.gen.operations.
+     * OperationsThriftService.Iface#sendEventMessage(java.util.List)
+     */
+    @Override
+    public void sendMessages(List<Message> messages) throws TException {
+        eventService.sendEventMessage(messages);
+    }
+
+    @Override
+    public void sendUserConfigurationUpdates(List<UserConfigurationUpdate> updates) throws TException {
+        for (UserConfigurationUpdate update : updates) {
+            akkaService
+                    .onUserConfigurationUpdate(org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate
+                            .fromThrift(update));
+        }
     }
 
     @Override
@@ -183,16 +164,42 @@ public class OperationsThriftServiceImpl extends BaseCliThriftService implements
         shutdownThread.start();
     }
 
-
-    public void setEventService(EventService eventService) {
-        this.eventService = eventService;
-    }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface#sendEventMessage(java.util.List)
+    /**
+     * Process cache notification.
+     *
+     * @param notification
+     *            the notification
      */
-    @Override
-    public void sendEventMessage(List<EventMessage> messages) throws TException {
-        eventService.sendEventMessage(messages);
+    private void processCacheNotification(Notification notification) {
+        ApplicationDto appDto = applicationService.findAppById(notification.getAppId());
+        if (appDto != null) {
+            if (notification.getProfileFilterId() != null) {
+                ProfileFilterDto filterDto = cacheService.getFilter(notification.getProfileFilterId());
+                int version = filterDto.getMajorVersion();
+                cacheService.resetFilters(new AppVersionKey(appDto.getApplicationToken(), version));
+            }
+            if (notification.getGroupId() != null) {
+                cacheService.resetGroup(notification.getGroupId());
+            }
+            if (notification.getAppSeqNumber() != 0) {
+                LOG.debug("Going to update application {} with seqNumber {} in thread {}", appDto.getApplicationToken(),
+                        notification.getAppSeqNumber(), Thread.currentThread().getId());
+                synchronized (cacheService) {
+                    int currentSeqNumber = cacheService.getAppSeqNumber(appDto.getApplicationToken()).getSeqNumber();
+                    if (currentSeqNumber < notification.getAppSeqNumber()) {
+                        cacheService.putAppSeqNumber(appDto.getApplicationToken(), new AppSeqNumber(appDto.getTenantId(), appDto.getId(),
+                                appDto.getApplicationToken(), notification.getAppSeqNumber()));
+                        LOG.debug("Update application {} with seqNumber {} in thread {}", appDto.getApplicationToken(),
+                                notification.getAppSeqNumber(), Thread.currentThread().getId());
+                    } else {
+                        LOG.debug("Update ignored. application {} already has seqNumber {}", appDto.getApplicationToken(),
+                                notification.getAppSeqNumber());
+                    }
+
+                }
+            }
+        } else {
+            LOG.warn("Application with following id is not found ", notification.getAppId());
+        }
     }
 }

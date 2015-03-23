@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,31 +30,35 @@
 extern "C" {
 # endif
 
-# define BUILD_VERSION                   "${build_version}"
-# define BUILD_COMMIT_HASH               "${build_commit_hash}"
+# define BUILD_VERSION                  "${build_version}"
+# define BUILD_COMMIT_HASH              "${build_commit_hash}"
 
-# define APPLICATION_TOKEN               "${app_token}"
+# define APPLICATION_TOKEN              "${app_token}"
 
-# define CONFIG_SCHEMA_VERSION           ${config_version}
-# define PROFILE_SCHEMA_VERSION          ${profile_version}
-# define SYSTEM_NF_SCHEMA_VERSION        ${system_nf_version}
-# define USER_NF_SCHEMA_VERSION          ${user_nf_version}
-# define LOG_SCHEMA_VERSION              ${log_version}
+# define CONFIG_SCHEMA_VERSION          ${config_version}
+# define PROFILE_SCHEMA_VERSION         ${profile_version}
+# define SYSTEM_NF_SCHEMA_VERSION       ${system_nf_version}
+# define USER_NF_SCHEMA_VERSION         ${user_nf_version}
+# define LOG_SCHEMA_VERSION             ${log_version}
 
-# define KAA_SYNC_TIMEOUT                60000L
+#if (! $user_verifier_token.isEmpty())
+# define DEFAULT_USER_VERIFIER_TOKEN    "${user_verifier_token}"
+#end
+
+# define KAA_SYNC_TIMEOUT               60000L
 
 
 
-typedef struct kaa_events_schema_version_ {
+typedef struct {
     const char *    name;
     uint16_t         version;
-} kaa_events_schema_version;
+} kaa_events_schema_version_t;
 
 #if ($eventFamilies)
 #set ($familyCounter = $eventFamilies.size())
 # define KAA_EVENT_SCHEMA_VERSIONS_SIZE    $familyCounter
 
-static const kaa_events_schema_version KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEMA_VERSIONS_SIZE] = {
+static const kaa_events_schema_version_t KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEMA_VERSIONS_SIZE] = {
 #foreach ($family in $eventFamilies)
 #set ($familyCounter = $familyCounter - 1)
     {
@@ -81,7 +85,7 @@ static const kaa_events_schema_version KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEM
  */
 typedef struct {
     kaa_transport_protocol_id_t    protocol_id;
-    kaa_access_point_t             access_point; /*!< Connection data of Bootstrap servers is Base64-encoded. */
+    kaa_access_point_t             access_point;
 } kaa_bootstrap_server_connection_data_t;
 
 #set ($accessPointCounter = 0)
@@ -100,13 +104,19 @@ static const kaa_bootstrap_server_connection_data_t KAA_BOOTSTRAP_ACCESS_POINTS[
 #set($protocolId = $Integer.toHexString($transport.getId()))
 #foreach ($connectionInfo in $transport.getConnectionInfo())
 #set($accessPointCounter = $accessPointCounter - 1)
-#set($connectionData = $Base64.encodeBase64String($connectionInfo.getConenctionInfo().array()))
+#set($connectionData = $connectionInfo.getConenctionInfo().array())
+#set($connectionDataLength = $connectionData.size())
     {
         { 0x${protocolId}, $connectionInfo.getVersion() },
         {
             0x${accessPointId},
-            $connectionData.length(),
-            "$connectionData"
+            $connectionDataLength,
+            (char []) {
+            #foreach ($b in $connectionData)
+#set($connectionDataLength = $connectionDataLength - 1)
+$b #if($connectionDataLength > 0), #end
+#end
+            }
         }
     }#if($accessPointCounter > 0),
 #end
@@ -114,6 +124,25 @@ static const kaa_bootstrap_server_connection_data_t KAA_BOOTSTRAP_ACCESS_POINTS[
 #end
 #end
 };
+
+
+
+#if ($configurationData && $configurationData.size() != 0)
+#set($configurationDataLength = $configurationData.size())
+# define KAA_CONFIGURATION_DATA_LENGTH    $configurationDataLength
+
+static const char KAA_CONFIGURATION_DATA[KAA_CONFIGURATION_DATA_LENGTH] =
+{
+#foreach ($b in $configurationData)
+#set($configurationDataLength = $configurationDataLength - 1)
+$b #if($configurationDataLength > 0), #end
+#end
+};
+#else
+# define KAA_CONFIGURATION_DATA_LENGTH    0
+
+static const char KAA_CONFIGURATION_DATA[KAA_CONFIGURATION_DATA_LENGTH] = {}; 
+#end
 
 # ifdef __cplusplus
 } // extern "C"

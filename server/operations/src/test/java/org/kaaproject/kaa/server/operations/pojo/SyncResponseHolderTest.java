@@ -43,9 +43,9 @@ public class SyncResponseHolderTest {
         ServerSync response = new ServerSync();
         response.setProfileSync(new ProfileServerSync());
         response.getProfileSync().setResponseStatus(SyncResponseStatus.NO_DELTA);
-        assertFalse(new SyncResponseHolder(response).requireImmediateReply());
+        assertFalse(new SyncContext(response).requireImmediateReply());
         response.getProfileSync().setResponseStatus(SyncResponseStatus.DELTA);
-        assertTrue(new SyncResponseHolder(response).requireImmediateReply());
+        assertTrue(new SyncContext(response).requireImmediateReply());
     }
 
     @Test
@@ -53,9 +53,9 @@ public class SyncResponseHolderTest {
         ServerSync response = new ServerSync();
         response.setConfigurationSync(new ConfigurationServerSync());
         response.getConfigurationSync().setResponseStatus(SyncResponseStatus.NO_DELTA);
-        assertFalse(new SyncResponseHolder(response).requireImmediateReply());
+        assertFalse(new SyncContext(response).requireImmediateReply());
         response.getConfigurationSync().setResponseStatus(SyncResponseStatus.DELTA);
-        assertTrue(new SyncResponseHolder(response).requireImmediateReply());
+        assertTrue(new SyncContext(response).requireImmediateReply());
     }
 
     @Test
@@ -63,20 +63,20 @@ public class SyncResponseHolderTest {
         ServerSync response = new ServerSync();
         response.setNotificationSync(new NotificationServerSync());
         response.getNotificationSync().setResponseStatus(SyncResponseStatus.NO_DELTA);
-        assertFalse(new SyncResponseHolder(response).requireImmediateReply());
+        assertFalse(new SyncContext(response).requireImmediateReply());
         response.getNotificationSync().setResponseStatus(SyncResponseStatus.DELTA);
-        assertTrue(new SyncResponseHolder(response).requireImmediateReply());
+        assertTrue(new SyncContext(response).requireImmediateReply());
     }
 
     @Test
     public void requireReplyTestForEvents(){
         ServerSync response = new ServerSync();
         response.setEventSync(new EventServerSync());
-        assertFalse(new SyncResponseHolder(response).requireImmediateReply());
+        assertFalse(new SyncContext(response).requireImmediateReply());
         response.getEventSync().setEvents(new ArrayList<Event>());
-        assertFalse(new SyncResponseHolder(response).requireImmediateReply());
+        assertFalse(new SyncContext(response).requireImmediateReply());
         response.getEventSync().getEvents().add(new Event());
-        assertTrue(new SyncResponseHolder(response).requireImmediateReply());
+        assertTrue(new SyncContext(response).requireImmediateReply());
     }
 
 
@@ -84,48 +84,48 @@ public class SyncResponseHolderTest {
     public void requireReplyTestForEventListeners(){
         ServerSync response = new ServerSync();
         response.setEventSync(new EventServerSync());
-        assertFalse(new SyncResponseHolder(response).requireImmediateReply());
+        assertFalse(new SyncContext(response).requireImmediateReply());
         response.getEventSync().setEventListenersResponses(new ArrayList<EventListenersResponse>());
-        assertFalse(new SyncResponseHolder(response).requireImmediateReply());
+        assertFalse(new SyncContext(response).requireImmediateReply());
         response.getEventSync().getEventListenersResponses().add(new EventListenersResponse());
-        assertTrue(new SyncResponseHolder(response).requireImmediateReply());
+        assertTrue(new SyncContext(response).requireImmediateReply());
     }
 
     @Test
     public void requireReplyTestForUserAttach(){
         ServerSync response = new ServerSync();
         response.setUserSync(new UserServerSync());
-        assertFalse(new SyncResponseHolder(response).requireImmediateReply());
+        assertFalse(new SyncContext(response).requireImmediateReply());
         response.getUserSync().setUserAttachResponse(new UserAttachResponse());
-        assertTrue(new SyncResponseHolder(response).requireImmediateReply());
+        assertTrue(new SyncContext(response).requireImmediateReply());
     }
 
     @Test
     public void requireReplyTestForEndpointAttach(){
         ServerSync response = new ServerSync();
         response.setUserSync(new UserServerSync());
-        assertFalse(new SyncResponseHolder(response).requireImmediateReply());
+        assertFalse(new SyncContext(response).requireImmediateReply());
         response.getUserSync().setEndpointAttachResponses(new ArrayList<EndpointAttachResponse>());
-        assertFalse(new SyncResponseHolder(response).requireImmediateReply());
+        assertFalse(new SyncContext(response).requireImmediateReply());
         response.getUserSync().getEndpointAttachResponses().add(new EndpointAttachResponse());
-        assertTrue(new SyncResponseHolder(response).requireImmediateReply());
+        assertTrue(new SyncContext(response).requireImmediateReply());
     }
 
     @Test
     public void requireReplyTestForEndpointDetach(){
         ServerSync response = new ServerSync();
         response.setUserSync(new UserServerSync());
-        assertFalse(new SyncResponseHolder(response).requireImmediateReply());
+        assertFalse(new SyncContext(response).requireImmediateReply());
         response.getUserSync().setEndpointDetachResponses(new ArrayList<EndpointDetachResponse>());
-        assertFalse(new SyncResponseHolder(response).requireImmediateReply());
+        assertFalse(new SyncContext(response).requireImmediateReply());
         response.getUserSync().getEndpointDetachResponses().add(new EndpointDetachResponse());
-        assertTrue(new SyncResponseHolder(response).requireImmediateReply());
+        assertTrue(new SyncContext(response).requireImmediateReply());
     }
 
     @Test
     public void requireReplyTestForLogs(){
         ServerSync response = new ServerSync();
         response.setLogSync(new LogServerSync());
-        assertTrue(new SyncResponseHolder(response).requireImmediateReply());
+        assertTrue(new SyncContext(response).requireImmediateReply());
     }
 }

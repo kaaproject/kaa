@@ -44,9 +44,7 @@
 	        android:id="@+id/menuList"
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
-	        android:choiceMode="singleChoice"
-	        android:listSelector="@drawable/abc_list_selector_holo_light"
-	        android:divider="@drawable/abc_list_divider_holo_light"/>
+	        android:choiceMode="singleChoice"/>
     </RelativeLayout>
     
 </RelativeLayout>

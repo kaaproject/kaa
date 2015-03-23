@@ -31,9 +31,12 @@ public class GetDeltaRequest {
     /** The application token. */
     private final String applicationToken;
 
+    /** Supports only configuration resync delta encoded using base schema. */
+    private final boolean resyncOnly;
+
     /** The configuration hash. */
     private final EndpointObjectHash configurationHash;
-    // in case we already have profile this will help to save extra calls to DB
+
     /** The endpoint profile. */
     private EndpointProfileDto endpointProfile;
 
@@ -42,6 +45,10 @@ public class GetDeltaRequest {
 
     /** The fetch schema. */
     private boolean fetchSchema;
+    
+    private boolean userConfigurationChanged;
+    
+    private byte[] userConfigurationHash;
 
     /**
      * Instantiates a new delta request.
@@ -51,8 +58,34 @@ public class GetDeltaRequest {
      * @param sequenceNumber
      *            the sequence number
      */
+    public GetDeltaRequest(String applicationToken, int sequenceNumber, boolean resyncOnly) {
+        this(applicationToken, null, sequenceNumber, resyncOnly);
+    }
+    
+    /**
+     * Instantiates a new delta request.
+     *
+     * @param applicationToken
+     *            the application token
+     * @param sequenceNumber
+     *            the sequence number
+     */
     public GetDeltaRequest(String applicationToken, int sequenceNumber) {
-        this(applicationToken, null, sequenceNumber);
+        this(applicationToken, null, sequenceNumber, false);
+    }
+    
+    /**
+     * Instantiates a new delta request.
+     *
+     * @param applicationToken
+     *            the application token
+     * @param configurationHash
+     *            the configuration hash
+     * @param sequenceNumber
+     *            the sequence number
+     */
+    public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash, int sequenceNumber) {
+        this(applicationToken, configurationHash, sequenceNumber, false, false);
     }
 
     /**
@@ -65,8 +98,8 @@ public class GetDeltaRequest {
      * @param sequenceNumber
      *            the sequence number
      */
-    public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash, int sequenceNumber) {
-        this(applicationToken, configurationHash, sequenceNumber, false);
+    public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash, int sequenceNumber, boolean resyncOnly) {
+        this(applicationToken, configurationHash, sequenceNumber, false, resyncOnly);
     }
 
     /**
@@ -85,13 +118,14 @@ public class GetDeltaRequest {
      * @param fetchSchema
      *            the fetch schema
      */
-    public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash,
-            int sequenceNumber, boolean fetchSchema) {
+    public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash, int sequenceNumber, boolean fetchSchema,
+            boolean resyncOnly) {
         super();
         this.applicationToken = applicationToken;
         this.configurationHash = configurationHash;
         this.sequenceNumber = sequenceNumber;
         this.fetchSchema = fetchSchema;
+        this.resyncOnly = resyncOnly;
     }
 
     /**
@@ -140,6 +174,16 @@ public class GetDeltaRequest {
     }
 
     /**
+     * Checks if this request represent client that is interested in
+     * configuration resyncs based on base schema.
+     *
+     * @return true, if is fetch schema
+     */
+    public boolean isResyncOnly() {
+        return resyncOnly;
+    }
+
+    /**
      * Sets the fetch schema.
      *
      * @param fetchSchema
@@ -167,5 +211,21 @@ public class GetDeltaRequest {
      */
     public boolean isFirstRequest() {
         return getConfigurationHash() == null || getConfigurationHash().getData() == null || getConfigurationHash().getData().length == 0;
+    }
+
+    public void setUserConfigurationChanged(boolean userConfigurationChanged) {
+        this.userConfigurationChanged = userConfigurationChanged;
+    }
+
+    public boolean isUserConfigurationChanged() {
+        return userConfigurationChanged;
+    }
+
+    public byte[] getUserConfigurationHash() {
+        return userConfigurationHash;
+    }
+
+    public void setUserConfigurationHash(byte[] userConfigurationHash) {
+        this.userConfigurationHash = userConfigurationHash;
     }
 }

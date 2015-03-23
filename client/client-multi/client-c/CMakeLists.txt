@@ -19,172 +19,154 @@ cmake_minimum_required(VERSION 2.8.8)
 project (Kaa-c)
 enable_language(C)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/Modules)
+# Path to CMake's scripts.
+set(CMAKE_MODULE_PATH 
+        ${CMAKE_MODULE_PATH} 
+        ${CMAKE_CURRENT_SOURCE_DIR}/Modules
+    )
 
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -std=c1x -Wall")
-#SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_TRACE_MEMORY_ALLOCATIONS")
+#
+# Sets common compilation flags.
+# 
+# NOTE: Platform specific compilation flags should be set 
+# in the corresponding platform CMake script(s).
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
+# Compiler specific flags.
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -undefined dynamic_lookup")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -undefined dynamic_lookup")
 endif()
 
-if (CMAKE_COMPILER_IS_GNUCC)
-# TODO: add switch for Debug/Release versions
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
-if (KAA_COLLECT_COVERAGE)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
-endif ()
+if(CMAKE_COMPILER_IS_GNUCC)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
 
-#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os")
-endif ()
+    if(KAA_DEBUG_ENABLED)
+        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -ggdb")
+    else()
+        set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Os -s")
+    endif()
 
-if (KAA_WITHOUT_EVENTS)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_EVENTS")
+    if(KAA_COLLECT_COVERAGE AND KAA_DEBUG_ENABLED)
+        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} --coverage")
+    endif()
 endif()
 
-if (KAA_WITHOUT_LOGGING)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_LOGGING")
-endif()
+# Creates variable to specify thirdparty libraries.
+set(KAA_THIRDPARTY_LIBRARIES "")
 
-# set max log level
-# TODO: add switch for Debug/Release versions
-if(DEFINED KAA_MAX_LOG_LEVEL)
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL}")
+# Release version is built by default.
+if(KAA_DEBUG_ENABLED)
+    set(CMAKE_BUILD_TYPE DEBUG)
 else()
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_MAX_LOG_LEVEL=6")
+    set(CMAKE_BUILD_TYPE RELEASE)
 endif()
 
-find_package (OpenSSL REQUIRED)
+# Sets the default build platform to POSIX.
+if(NOT DEFINED KAA_PLATFORM)
+  set(KAA_PLATFORM "x86-64")
+endif()
 
-include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src
-)
+#
+# Sets maximum Kaa SDK log level.
+#
+# Logging constants:
+# NONE  - 0
+# FATAL - 1
+# ERROR - 2
+# WARN  - 3
+# INFO  - 4
+# DEBUG - 5
+# TRACE - 6
+if(NOT DEFINED KAA_MAX_LOG_LEVEL)
+    if(KAA_DEBUG_ENABLED)
+        set(KAA_MAX_LOG_LEVEL 6)
+    else()
+        set(KAA_MAX_LOG_LEVEL 4)
+    endif()
+endif()
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL}")
+
+# Disables Kaa library modules.
+message("==================================")
+if(KAA_WITHOUT_EVENTS)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_EVENTS")
+else()
+    message( "EVENTS ENABLED")
+endif()
+
+if(KAA_WITHOUT_LOGGING)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_LOGGING")
+else()
+     message( "LOGGING ENABLED")
+endif()
+
+if(KAA_WITHOUT_CONFIGURATION)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_CONFIGURATION")
+else()
+     message("CONFIGURATION ENABLED")
+endif()
+message("==================================")
+# Sets path(s) to header files.
+set (KAA_SRC_FOLDER "src/kaa")
+include_directories(KAA_INCLUDE_PATHS
+                        ${KAA_INCLUDE_PATHS}
+                        ${CMAKE_CURRENT_SOURCE_DIR}/${KAA_SRC_FOLDER}
+                   )
+
+# Sets path(s) to source files.
 set (KAA_SOURCE_FILES
-                       src/avro_src/io.c
-                       src/avro_src/encoding_binary.c
-                       src/collections/kaa_deque.c
-                       src/collections/kaa_list.c
-                       src/kaa_bootstrap_manager.c
-                       src/kaa_channel_manager.c
-                       src/kaa_common_schema.c
-                       src/kaa_common.c
-                       src/kaa_event.c
-                       src/kaa_logging.c
-                       src/kaa_platform_protocol.c
-                       src/kaa_profile.c
-                       src/kaa_status.c
-                       src/kaa_user.c
-                       src/kaa.c
-                       src/utilities/kaa_log.c
-                       src/utilities/kaa_mem.c
-                       src/kaa_platform_utils.c
-                       src/platform-impl/ext_log_storage_memory.c
-                       src/platform-impl/ext_log_upload_strategy_by_volume.c
-)
+        ${KAA_SOURCE_FILES}
+        ${KAA_SRC_FOLDER}/avro_src/io.c
+        ${KAA_SRC_FOLDER}/avro_src/encoding_binary.c
+        ${KAA_SRC_FOLDER}/collections/kaa_deque.c
+        ${KAA_SRC_FOLDER}/collections/kaa_list.c
+        ${KAA_SRC_FOLDER}/utilities/kaa_log.c
+        ${KAA_SRC_FOLDER}/utilities/kaa_mem.c
+        ${KAA_SRC_FOLDER}/utilities/kaa_buffer.c
+        ${KAA_SRC_FOLDER}/kaa_platform_utils.c
+        ${KAA_SRC_FOLDER}/kaa_platform_protocol.c
+        ${KAA_SRC_FOLDER}/kaa_bootstrap_manager.c
+        ${KAA_SRC_FOLDER}/kaa_channel_manager.c
+        ${KAA_SRC_FOLDER}/kaa_common_schema.c
+        ${KAA_SRC_FOLDER}/kaa_event.c
+        ${KAA_SRC_FOLDER}/kaa_logging.c
+        ${KAA_SRC_FOLDER}/kaa_profile.c
+        ${KAA_SRC_FOLDER}/kaa_configuration_manager.c
+        ${KAA_SRC_FOLDER}/kaa_status.c
+        ${KAA_SRC_FOLDER}/kaa_user.c
+        ${KAA_SRC_FOLDER}/kaa.c
+    )
 
+# Includes auto-generated and platform-dependent Cmake's scripts.
 include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/CMakeGen.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/platform/${KAA_PLATFORM}/CMakeLists.txt)
 
+# Prints build parameters.
+message( "BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+message( "KAA_PLATFORM = ${KAA_PLATFORM}")
+message( "KAA_MAX_LOG_LEVEL = ${KAA_MAX_LOG_LEVEL}")
+
+# Builds Kaa libraries.
 add_library(kaac_o OBJECT ${KAA_SOURCE_FILES})
+add_library(kaac_s STATIC ./${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o>)
+add_library(kaac SHARED ./${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o>)
+target_link_libraries(kaac ${KAA_THIRDPARTY_LIBRARIES})
 
-add_library (kaac SHARED ./src $<TARGET_OBJECTS:kaac_o>)
-
-target_link_libraries(kaac ssl crypto)
-
-add_library (kaac_s STATIC ./src $<TARGET_OBJECTS:kaac_o>)
-
-if (KAA_UNITTESTS_COMPILE)
-
-set (CUNIT_LIB_NAME "")
-find_package (CUnit)
-
-if (CUNIT_FOUND)
-    set (CUNIT_LIB_NAME ${CUNIT_LIBRARIES})
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_TEST_CUNIT_ENABLED")
+# Sets paths Kaa libraries will be installed in.
+if(NOT KAA_INSTALL_PATH)
+	set(KAA_INSTALL_PATH "/usr/local")
 endif()
 
-configure_file (
-                    "${CMAKE_CURRENT_SOURCE_DIR}/sonar-project.properties.in"
-                    "${CMAKE_CURRENT_SOURCE_DIR}/sonar-project.properties"
-)
-
-add_executable  (test_user_extension
-                    test/test_kaa_user.c
-                    test/kaa_test_external.c
-                )
-target_link_libraries(test_user_extension kaac crypto ${CUNIT_LIB_NAME})
-
-add_executable  (test_meta_extension
-                    test/test_meta_extension.c
-                    test/kaa_test_external.c
-                )
-target_link_libraries(test_meta_extension kaac crypto ${CUNIT_LIB_NAME})
-
-add_executable  (test_platform_utils
-                    test/test_platform_utils.c
-                    test/kaa_test_external.c
-                )
-target_link_libraries(test_platform_utils kaac crypto ${CUNIT_LIB_NAME})
-
-add_executable  (test_context
-                    test/test_kaa_context.c
-                    test/kaa_test_external.c
-                )
-target_link_libraries(test_context kaac crypto ${CUNIT_LIB_NAME})
-
-add_executable  (test_event
-                    test/test_kaa_event.c
-                    test/kaa_test_external.c
-                )
-target_link_libraries(test_event kaac crypto ${CUNIT_LIB_NAME})
-
-add_executable  (test_status
-                    test/test_kaa_status.c
-                )
-target_link_libraries(test_status kaac crypto ${CUNIT_LIB_NAME})
-
-add_executable  (test_bootstrap_manager
-                    test/test_kaa_bootstrap_manager.c
-                    test/kaa_test_external.c
-                )
-target_link_libraries(test_bootstrap_manager kaac crypto ${CUNIT_LIB_NAME})
-
-add_executable  (test_profile
-                    src/gen/kaa_profile_gen.c
-                    test/test_kaa_profile.c
-                )
-target_link_libraries(test_profile kaac crypto ${CUNIT_LIB_NAME})
-
-add_executable  (test_common
-                    test/test_kaa_common.c
-                    test/kaa_test_external.c
-                )
-target_link_libraries(test_common kaac crypto ${CUNIT_LIB_NAME})
-
-add_executable  (test_log
-                    src/gen/kaa_logging_gen.c
-                    test/test_kaa_log.c
-                    test/kaa_test_external.c
-                )
-target_link_libraries(test_log kaac crypto ${CUNIT_LIB_NAME})
-
-add_executable  (test_deque
-                    test/test_kaa_deque.c
-                    test/kaa_test_external.c
-                )
-target_link_libraries(test_deque kaac crypto ${CUNIT_LIB_NAME})
-
-add_executable  (test_channel_manager
-                    test/test_kaa_channel_manager.c
-                    test/kaa_test_external.c
-                )
-target_link_libraries(test_channel_manager kaac crypto ${CUNIT_LIB_NAME})
-
-endif ()
-
-install (TARGETS kaac kaac_s
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION lib)
-
-install (DIRECTORY src/ DESTINATION include/kaac
+message("KAA WILL BE INSTALLED TO  ${KAA_INSTALL_PATH} ")
+set(CMAKE_INSTALL_PREFIX ${KAA_INSTALL_PATH} ) 
+install (DIRECTORY ${KAA_SRC_FOLDER}/ DESTINATION ${KAA_INSTALL_PATH}/include/kaa
     FILES_MATCHING PATTERN *.h)
+install (TARGETS kaac kaac_s DESTINATION ${KAA_INSTALL_PATH}/lib)
+
+
+# Builds unit tests.
+if(KAA_UNITTESTS_COMPILE)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/UnitTest.cmake)
+endif()

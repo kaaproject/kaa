@@ -17,19 +17,12 @@
 #ifndef INOTIFICATIONPROCESSOR_HPP_
 #define INOTIFICATIONPROCESSOR_HPP_
 
-#include "kaa/KaaDefaults.hpp"
-
-#ifdef KAA_USE_NOTIFICATIONS
-
 #include <vector>
 
-#include "kaa/gen/EndpointGen.hpp"
+#include "kaa/notification/gen/NotificationDefinitions.hpp"
 #include "kaa/notification/INotificationManager.hpp"
 
 namespace kaa {
-
-typedef std::vector<Topic>          Topics;
-typedef std::vector<Notification>   Notifications;
 
 /**
  *  Interface for listeners of both topic and notification list updates
@@ -52,7 +45,5 @@ public:
 };
 
 } /* namespace kaa */
-
-#endif
 
 #endif /* INOTIFICATIONPROCESSOR_HPP_ */

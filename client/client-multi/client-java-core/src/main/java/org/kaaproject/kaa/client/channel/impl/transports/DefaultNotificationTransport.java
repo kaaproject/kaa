@@ -84,7 +84,6 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
                 LOG.info("Accepted unicast Notifications: {}", acceptedUnicastNotificationIds.size());
                 request.setAcceptedUnicastNotifications(new ArrayList<>(acceptedUnicastNotificationIds));
             }
-
             request.setSubscriptionCommands(sentNotificationCommands);
             request.setTopicStates(getTopicStates());
             return request;

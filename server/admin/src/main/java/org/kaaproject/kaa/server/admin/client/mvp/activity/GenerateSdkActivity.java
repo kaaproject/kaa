@@ -21,6 +21,8 @@ import static org.kaaproject.kaa.server.admin.client.util.Utils.getMaxSchemaVers
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
+import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.admin.SdkKey;
@@ -70,9 +72,11 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkKey, Generat
 
     @Override
     protected void onEntityRetrieved() {
+        BusyPopup.showPopup();
         KaaAdmin.getDataSource().getSchemaVersionsByApplicationId(applicationId, new AsyncCallback<SchemaVersions>() {
             @Override
             public void onFailure(Throwable caught) {
+                BusyPopup.hidePopup();
                 Utils.handleException(caught, detailsView);
             }
 
@@ -81,6 +85,7 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkKey, Generat
                 KaaAdmin.getDataSource().getAefMaps(applicationId, new AsyncCallback<List<AefMapInfoDto>>() {
                     @Override
                     public void onFailure(Throwable caught) {
+                        BusyPopup.hidePopup();
                         Utils.handleException(caught, detailsView);
                     }
 
@@ -90,12 +95,14 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkKey, Generat
                                 new AsyncCallback<List<UserVerifierDto>>() {
                                     @Override
                                     public void onFailure(Throwable caught) {
+                                        BusyPopup.hidePopup();
                                         Utils.handleException(caught, detailsView);
                                     }
 
                                     @Override
                                     public void onSuccess(
                                             List<UserVerifierDto> userVerifiers) {
+                                        BusyPopup.hidePopup();
                                         onInfoRetrieved(schemaVersions, ecfs, userVerifiers);
                                     }
                         });
@@ -155,26 +162,34 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkKey, Generat
                     .getValue().getVerifierToken());
         }
     }
-
+    
     @Override
-    protected void getEntity(String id, AsyncCallback<SdkKey> callback) {
-        callback.onSuccess(null);
+    protected void loadEntity() {
+        onEntityRetrieved();
     }
 
     @Override
-    protected void editEntity(SdkKey entity, final AsyncCallback<SdkKey> callback) {
-        KaaAdmin.getDataSource().generateSdk(entity,new AsyncCallback<String>() {
+    protected void getEntity(String id, AsyncCallback<SdkKey> callback) {}
+
+    
+    @Override
+    protected void doSave(final EventBus eventBus) {
+        onSave();
+        KaaAdmin.getDataSource().generateSdk(entity,new BusyAsyncCallback<String>() {
 
             @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
+            public void onFailureImpl(Throwable caught) {
+                Utils.handleException(caught, detailsView);
             }
 
             @Override
-            public void onSuccess(String key) {
+            public void onSuccessImpl(String key) {
                 detailsView.clearError();
                 ServletHelper.downloadSdk(key);
             }
         });
     }
+    
+    @Override
+    protected void editEntity(SdkKey entity, final AsyncCallback<SdkKey> callback) {}
 }

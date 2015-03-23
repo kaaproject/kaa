@@ -28,11 +28,16 @@ then
     help
 fi
 
-COLLECT_COVERAGE=0
+DEBUG_ENABLED=1
+UNITTESTS_COMPILE=0
 MAX_LOG_LEVEL=6
+COLLECT_COVERAGE=0
 
 function prepare_build {
-    mkdir -p build; cd build; cmake -DKAA_UNITTESTS_COMPILE=1 -DKAA_COLLECT_COVERAGE=$COLLECT_COVERAGE -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL ..; cd ..
+    mkdir -p build;
+    cd build;
+    cmake -DKAA_DEBUG_ENABLED=$DEBUG_ENABLED -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL -DKAA_UNITTESTS_COMPILE=$UNITTESTS_COMPILE -DKAA_COLLECT_COVERAGE=$COLLECT_COVERAGE ..;
+    cd ..
 }
 
 function build {
@@ -162,9 +167,9 @@ do
 case "$cmd" in
     build)
         COLLECT_COVERAGE=0
+        UNITTESTS_COMPILE=0
         prepare_build &&
-        build &&
-        execute_tests
+        build
     ;;
 
     install)
@@ -173,6 +178,7 @@ case "$cmd" in
 
     test)
         COLLECT_COVERAGE=1
+        UNITTESTS_COMPILE=1
         prepare_build &&
         build &&
         execute_tests &&

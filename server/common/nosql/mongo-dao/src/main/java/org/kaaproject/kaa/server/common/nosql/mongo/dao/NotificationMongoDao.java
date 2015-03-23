@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
 import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoNotification;
 import org.slf4j.Logger;
@@ -26,6 +25,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static org.kaaproject.kaa.common.dto.NotificationTypeDto.SYSTEM;
+import static org.kaaproject.kaa.common.dto.NotificationTypeDto.USER;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_SEQ_NUM;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_TOPIC_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_TYPE;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NF_VERSION;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.NOTIFICATION;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -33,11 +40,10 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 public class NotificationMongoDao extends AbstractMongoDao<MongoNotification, String> implements NotificationDao<MongoNotification> {
 
     private static final Logger LOG = LoggerFactory.getLogger(NotificationMongoDao.class);
-    private static final String TOPIC_ID = "topic_id";
 
     @Override
     protected String getCollectionName() {
-        return MongoNotification.COLLECTION_NAME;
+        return NOTIFICATION;
     }
 
     @Override
@@ -54,22 +60,22 @@ public class NotificationMongoDao extends AbstractMongoDao<MongoNotification, St
     @Override
     public List<MongoNotification> findNotificationsByTopicId(String topicId) {
         LOG.debug("Find notifications by topic id [{}]", topicId);
-        return find(query(where(TOPIC_ID).is(topicId)));
+        return find(query(where(NF_TOPIC_ID).is(topicId)));
     }
 
     @Override
     public void removeNotificationsByTopicId(String topicId) {
         LOG.debug("Remove notifications by topic id [{}]", topicId);
-        remove(query(where(TOPIC_ID).is(topicId)));
+        remove(query(where(NF_TOPIC_ID).is(topicId)));
     }
 
     @Override
     public List<MongoNotification> findNotificationsByTopicIdAndVersionAndStartSecNum(String topicId, int seqNumber, int sysNfVersion, int userNfVersion) {
         LOG.debug("Find notifications by topic id [{}], sequence number start [{}], system schema version [{}], user schema version [{}]",
                 topicId, seqNumber, sysNfVersion, userNfVersion);
-        return find(query(where(TOPIC_ID).is(topicId).and(SEQUENCE_NUMBER).gt(seqNumber)
-                .orOperator(where(VERSION).is(sysNfVersion).and(NOTIFICATION_TYPE).is(NotificationTypeDto.SYSTEM),
-                        where(VERSION).is(userNfVersion).and(NOTIFICATION_TYPE).is(NotificationTypeDto.USER))));
+        return find(query(where(NF_TOPIC_ID).is(topicId).and(NF_SEQ_NUM).gt(seqNumber)
+                .orOperator(where(NF_VERSION).is(sysNfVersion).and(NF_TYPE).is(SYSTEM),
+                        where(NF_VERSION).is(userNfVersion).and(NF_TYPE).is(USER))));
     }
 
     @Override

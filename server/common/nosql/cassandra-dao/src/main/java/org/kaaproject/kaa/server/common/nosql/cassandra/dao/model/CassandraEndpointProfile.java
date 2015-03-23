@@ -93,6 +93,8 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     private int profileVersion;
     @Column(name = EP_CONFIG_HASH_PROPERTY)
     private ByteBuffer configurationHash;
+    @Column(name = EP_USER_CONFIG_HASH_PROPERTY)
+    private ByteBuffer userConfigurationHash;
     @Column(name = EP_CONFIGURATION_VERSION_PROPERTY)
     private int configurationVersion;
     @Column(name = EP_NOTIFICATION_VERSION_PROPERTY)
@@ -133,6 +135,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.profileHash = getByteBuffer(dto.getProfileHash());
         this.profileVersion = dto.getProfileVersion();
         this.configurationHash = getByteBuffer(dto.getConfigurationHash());
+        this.userConfigurationHash = getByteBuffer(dto.getUserConfigurationHash());
         this.configurationVersion = dto.getConfigurationVersion();
         this.subscriptions = dto.getSubscriptions();
         this.notificationVersion = dto.getNotificationVersion();
@@ -261,6 +264,14 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.configurationHash = configurationHash;
     }
 
+    public ByteBuffer getUserConfigurationHash() {
+        return userConfigurationHash;
+    }
+
+    public void setUserConfigurationHash(ByteBuffer userConfigurationHash) {
+        this.userConfigurationHash = userConfigurationHash;
+    }
+
     public int getConfigurationVersion() {
         return configurationVersion;
     }
@@ -363,6 +374,8 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         if (cfGroupState != null ? !cfGroupState.equals(that.cfGroupState) : that.cfGroupState != null) return false;
         if (configurationHash != null ? !configurationHash.equals(that.configurationHash) : that.configurationHash != null)
             return false;
+        if (userConfigurationHash != null ? !userConfigurationHash.equals(that.userConfigurationHash) : that.userConfigurationHash != null)
+            return false;
         if (ecfVersionStates != null ? !ecfVersionStates.equals(that.ecfVersionStates) : that.ecfVersionStates != null)
             return false;
         if (endpointProfileKey != null ? !endpointProfileKey.equals(that.endpointProfileKey) : that.endpointProfileKey != null)
@@ -402,6 +415,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         result = 31 * result + (profileHash != null ? profileHash.hashCode() : 0);
         result = 31 * result + profileVersion;
         result = 31 * result + (configurationHash != null ? configurationHash.hashCode() : 0);
+        result = 31 * result + (userConfigurationHash != null ? userConfigurationHash.hashCode() : 0);
         result = 31 * result + configurationVersion;
         result = 31 * result + notificationVersion;
         result = 31 * result + (subscriptions != null ? subscriptions.hashCode() : 0);
@@ -432,6 +446,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
                 ", profileHash=" + profileHash +
                 ", profileVersion=" + profileVersion +
                 ", configurationHash=" + configurationHash +
+                ", userConfigurationHash=" + userConfigurationHash +
                 ", configurationVersion=" + configurationVersion +
                 ", notificationVersion=" + notificationVersion +
                 ", subscriptions=" + subscriptions +
@@ -453,6 +468,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         dto.setCfSequenceNumber(cfSequenceNumber);
         dto.setNfSequenceNumber(nfSequenceNumber);
         dto.setConfigurationHash(getBytes(configurationHash));
+        dto.setUserConfigurationHash(getBytes(userConfigurationHash));
         dto.setConfigurationVersion(configurationVersion);
         dto.setApplicationId(applicationId);
         dto.setEndpointKey(getBytes(endpointProfileKey));

@@ -7,7 +7,7 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class BootstrapSyncRequest extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"BootstrapSyncRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"supportedProtocols\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"ProtocolVersionPair\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"version\",\"type\":\"int\"}],\"direction\":\"out\"}}}],\"direction\":\"out\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"BootstrapSyncRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"requestId\",\"type\":\"int\"},{\"name\":\"supportedProtocols\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"ProtocolVersionPair\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"version\",\"type\":\"int\"}]}}}],\"direction\":\"out\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private int requestId;
    private java.util.List<org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair> supportedProtocols;

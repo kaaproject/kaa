@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.zk;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import java.io.UnsupportedEncodingException;
@@ -31,6 +32,7 @@ import org.apache.curator.RetryPolicy;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.test.TestingCluster;
 import org.apache.curator.test.Timing;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNodeListener;
@@ -90,6 +92,46 @@ public class BootstrapNodeIT {
         }
     }
 
+    @Test
+    public void outdatedRemovalTest() throws Exception {
+        Timing timing = new Timing();
+        TestingCluster cluster = new TestingCluster(3);
+        cluster.start();
+        try {
+            ControlNodeInfo controlNodeInfo = buildControlNodeInfo();
+            BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
+
+            ControlNode controlNode = new ControlNode(controlNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
+            BootstrapNodeListener mockListener = mock(BootstrapNodeListener.class);
+            controlNode.addListener(mockListener);
+            controlNode.start();
+
+            BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
+            bootstrapNode.start();
+            timing.sleepABit();
+
+            verify(mockListener).onNodeAdded(bootstrapNodeInfo);
+
+            BootstrapNodeInfo bootstrapNodeInfoWithGreaterTimeStarted = buildBootstrapNodeInfo();
+            BootstrapNode bootstrapNodeWithGreaterTimeStarted = new BootstrapNode(bootstrapNodeInfoWithGreaterTimeStarted, cluster.getConnectString(), buildDefaultRetryPolicy());
+
+            bootstrapNodeWithGreaterTimeStarted.start();
+            timing.sleepABit();
+            
+            bootstrapNode.close();
+            timing.sleepABit();
+            verify(mockListener, never()).onNodeRemoved(bootstrapNodeInfo);
+            
+            bootstrapNodeWithGreaterTimeStarted.close();
+            timing.sleepABit();
+            verify(mockListener).onNodeRemoved(bootstrapNodeInfoWithGreaterTimeStarted);
+
+            controlNode.close();
+        } finally {
+            cluster.close();
+        }
+    }
+
     private RetryPolicy buildDefaultRetryPolicy() {
         return new ExponentialBackoffRetry(100, 1);
     }
@@ -98,7 +140,7 @@ public class BootstrapNodeIT {
         BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
         ByteBuffer testKeyData = ByteBuffer.wrap(new byte[] { 10, 11, 12, 45, 34, 23, 67, 89, 66, 12 });
         nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, testKeyData));
-
+        nodeInfo.setTimeStarted(System.currentTimeMillis());
         nodeInfo.setTransports(getHttpAndTcpTransportMD());
 
         return nodeInfo;

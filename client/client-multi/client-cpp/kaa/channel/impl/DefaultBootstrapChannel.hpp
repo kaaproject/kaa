@@ -19,13 +19,11 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
-
 #include "kaa/channel/impl/AbstractHttpChannel.hpp"
 
 namespace kaa {
 
-class DefaultBootstrapChannel : public AbstractHttpChannel<ChannelType::HTTP> {
+class DefaultBootstrapChannel : public AbstractHttpChannel {
 public:
     DefaultBootstrapChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys) : AbstractHttpChannel(channelManager, clientKeys) { }
     virtual ~DefaultBootstrapChannel() { }
@@ -34,10 +32,10 @@ public:
     virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const { return SUPPORTED_TYPES; }
 
 private:
-    virtual std::shared_ptr<IHttpRequest> createRequest(AbstractServerInfoPtr server, const std::vector<std::uint8_t>& body)
+    virtual std::shared_ptr<IHttpRequest> createRequest(IPTransportInfoPtr server, const std::vector<std::uint8_t>& body)
     {
         HttpDataProcessor *processor = getHttpDataProcessor();
-        auto request = processor->createBootstrapRequest(server->getUrl(), body);
+        auto request = processor->createBootstrapRequest(server->getURL() + getURLSuffix(), body);
         return request;
     }
 
@@ -50,13 +48,16 @@ private:
         return ServerType::BOOTSTRAP;
     }
 
+protected:
+    virtual std::string getURLSuffix() {
+        return "/BS/Sync";
+    }
+
 private:
     static const std::string CHANNEL_ID;
     static const std::map<TransportType, ChannelDirection> SUPPORTED_TYPES;
 };
 
 }
-
-#endif
 
 #endif /* DEFAULTBOOTSTRAPCHANNEL_HPP_ */

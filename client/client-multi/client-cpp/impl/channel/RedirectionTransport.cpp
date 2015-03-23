@@ -26,7 +26,7 @@ RedirectionTransport::RedirectionTransport(IBootstrapManager &manager)
 
 void RedirectionTransport::onRedirectionResponse(const RedirectSyncResponse& response)
 {
-    manager_.useNextOperationsServerByDnsName(response.dnsName);
+    manager_.useNextOperationsServerByAccessPointId(response.accessPointId);
 }
 
 }  // namespace kaa

@@ -16,26 +16,27 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.CORE_DISPATCHER_NAME;
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.USER_DISPATCHER_NAME;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.operations.service.OperationsService;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.GlobalUserActor;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.LocalUserActor;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionRouteMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserDisconnectMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.GlobalUserAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.RouteInfoMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserRouteInfoMessage;
-import org.kaaproject.kaa.server.operations.service.cache.CacheService;
-import org.kaaproject.kaa.server.operations.service.event.EventService;
-import org.kaaproject.kaa.server.operations.service.logs.LogAppenderService;
-import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
-import org.kaaproject.kaa.server.operations.service.user.EndpointUserService;
 import org.kaaproject.kaa.server.transport.message.SessionControlMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,48 +53,27 @@ public class TenantActor extends UntypedActor {
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(TenantActor.class);
 
-    /** The cache service. */
-    private final CacheService cacheService;
-
-    /** The operations service. */
-    private final OperationsService operationsService;
-
-    /** The notification delta service. */
-    private final NotificationDeltaService notificationDeltaService;
-
-    /** The event service. */
-    private final EventService eventService;
-
-    /** The application service. */
-    private final ApplicationService applicationService;
-
-    /** The log appender service. */
-    private final LogAppenderService logAppenderService;
-    
-    /** The endpoint user service. */
-    private final EndpointUserService endpointUserService;
+    /** The Akka service context */
+    private final AkkaContext context;
 
     /** The applications. */
     private final Map<String, ActorRef> applications;
 
-    /** The applications. */
-    private final Map<String, ActorRef> users;
+    /** The local users. */
+    private final Map<String, ActorRef> localUsers;
+
+    /** The global users. */
+    private final Map<String, ActorRef> globalUsers;
 
     private final String tenantId;
 
-    private TenantActor(CacheService cacheService, OperationsService endpointService, NotificationDeltaService notificationDeltaService,
-            EventService eventService, ApplicationService applicationService, LogAppenderService logAppenderService, EndpointUserService endpointUserService, String tenantId) {
+    private TenantActor(AkkaContext context, String tenantId) {
         super();
-        this.cacheService = cacheService;
-        this.operationsService = endpointService;
-        this.notificationDeltaService = notificationDeltaService;
-        this.applicationService = applicationService;
-        this.logAppenderService = logAppenderService;
-        this.endpointUserService = endpointUserService;
-        this.eventService = eventService;
+        this.context = context;
         this.tenantId = tenantId;
         this.applications = new HashMap<>();
-        this.users = new HashMap<>();
+        this.localUsers = new HashMap<>();
+        this.globalUsers = new HashMap<>();
     }
 
     /**
@@ -104,26 +84,8 @@ public class TenantActor extends UntypedActor {
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
-        /** The cache service. */
-        private final CacheService cacheService;
-
-        /** The operations service. */
-        private final OperationsService operationsService;
-
-        /** The notification delta service. */
-        private final NotificationDeltaService notificationDeltaService;
-
-        /** The event service. */
-        private final EventService eventService;
-
-        /** The application service. */
-        private final ApplicationService applicationService;
-
-        /** The log appender service. */
-        private final LogAppenderService logAppenderService;
-
-        /** The endpoint user service. */
-        private final EndpointUserService endpointUserService;
+        /** The Akka service context */
+        private final AkkaContext context;
 
         private final String tenantId;
 
@@ -136,18 +98,10 @@ public class TenantActor extends UntypedActor {
          *            the notification delta service
          * @param eventService
          */
-        public ActorCreator(CacheService cacheService, OperationsService operationsService,
-                NotificationDeltaService notificationDeltaService, EventService eventService, ApplicationService applicationService,
-                LogAppenderService logAppenderService, EndpointUserService endpointUserService, String tenantId) {
+        public ActorCreator(AkkaContext context, String tenantId) {
             super();
-            this.cacheService = cacheService;
-            this.operationsService = operationsService;
-            this.notificationDeltaService = notificationDeltaService;
-            this.eventService = eventService;
+            this.context = context;
             this.tenantId = tenantId;
-            this.applicationService = applicationService;
-            this.logAppenderService = logAppenderService;
-            this.endpointUserService = endpointUserService;
         }
 
         /*
@@ -157,8 +111,7 @@ public class TenantActor extends UntypedActor {
          */
         @Override
         public TenantActor create() throws Exception {
-            return new TenantActor(cacheService, operationsService, notificationDeltaService, eventService, applicationService,
-                    logAppenderService, endpointUserService, tenantId);
+            return new TenantActor(context, tenantId);
         }
     }
 
@@ -176,6 +129,8 @@ public class TenantActor extends UntypedActor {
         }
         if (message instanceof EndpointAwareMessage) {
             processEndpointAwareMessage((EndpointAwareMessage) message);
+        } else if (message instanceof GlobalUserAwareMessage) {
+            processGlobalUserAwareMessage((GlobalUserAwareMessage) message);
         } else if (message instanceof SessionControlMessage) {
             processSessionControlMessage((SessionControlMessage) message);
         } else if (message instanceof UserAwareMessage) {
@@ -186,6 +141,17 @@ public class TenantActor extends UntypedActor {
             processNotificationMessage((ThriftNotificationMessage) message);
         } else if (message instanceof EndpointUserActionRouteMessage) {
             processEndpointUserActionRouteMessage((EndpointUserActionRouteMessage) message);
+        } else if (message instanceof ClusterUpdateMessage) {
+            processClusterUpdate((ClusterUpdateMessage) message);
+        }
+    }
+
+    private void processClusterUpdate(ClusterUpdateMessage message) {
+        for (ActorRef userActor : globalUsers.values()) {
+            userActor.tell(message, ActorRef.noSender());
+        }
+        for (ActorRef userActor : localUsers.values()) {
+            userActor.tell(message, ActorRef.noSender());
         }
     }
 
@@ -237,7 +203,7 @@ public class TenantActor extends UntypedActor {
         ActorRef userActor;
         if (message instanceof RouteInfoMessage || message instanceof UserRouteInfoMessage) {
             LOG.debug("Find user actor by id: {} for message {}", message.getUserId(), message);
-            userActor = users.get(message.getUserId());
+            userActor = localUsers.get(toLocal(message.getUserId()));
         } else {
             userActor = getOrCreateUserActor(message.getUserId());
         }
@@ -248,12 +214,34 @@ public class TenantActor extends UntypedActor {
         }
     }
 
+    private void processGlobalUserAwareMessage(GlobalUserAwareMessage message) {
+        getOrCreateGlobalUserActor(message.getUserId()).tell(message, self());
+    }
+
     private ActorRef getOrCreateUserActor(String userId) {
-        ActorRef userActor = users.get(userId);
+        String localUserId = toLocal(userId);
+        ActorRef userActor = localUsers.get(localUserId);
         if (userActor == null && userId != null) {
-            userActor = context().actorOf(Props.create(new UserActor.ActorCreator(cacheService, eventService, userId, tenantId)), userId);
-            LOG.debug("Create user actor with id {}", userId);
-            users.put(userId, userActor);
+            userActor = context().actorOf(
+                    Props.create(new LocalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME),
+                    localUserId);
+            LOG.debug("Create local user actor with id {}", userId);
+            localUsers.put(localUserId, userActor);
+            context().watch(userActor);
+        }
+        return userActor;
+    }
+
+    private ActorRef getOrCreateGlobalUserActor(String userId) {
+        String globalUserId = toGlobal(userId);
+        ActorRef userActor = globalUsers.get(globalUserId);
+        if (userActor == null && userId != null) {
+            userActor = context().actorOf(
+                    Props.create(new GlobalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME),
+                    globalUserId);
+            LOG.debug("Create global user actor with id {}", userId);
+            globalUsers.put(globalUserId, userActor);
+            context().watch(userActor);
         }
         return userActor;
     }
@@ -269,8 +257,7 @@ public class TenantActor extends UntypedActor {
         ActorRef applicationActor = applications.get(appToken);
         if (applicationActor == null) {
             applicationActor = context().actorOf(
-                    Props.create(new ApplicationActor.ActorCreator(operationsService, notificationDeltaService, applicationService,
-                            logAppenderService, endpointUserService, appToken)), appToken);
+                    Props.create(new ApplicationActor.ActorCreator(context, appToken)).withDispatcher(CORE_DISPATCHER_NAME), appToken);
             applications.put(appToken, applicationActor);
         }
         return applicationActor;
@@ -289,12 +276,22 @@ public class TenantActor extends UntypedActor {
             String name = localActor.path().name();
             if (applications.remove(name) != null) {
                 LOG.debug("[{}] removed application: {}", tenantId, localActor);
-            } else if (users.remove(name) != null) {
-                LOG.debug("[{}] removed user: {}", tenantId, localActor);
+            } else if (localUsers.remove(name) != null) {
+                LOG.debug("[{}] removed local user: {}", tenantId, localActor);
+            } else if (globalUsers.remove(name) != null) {
+                LOG.debug("[{}] removed global user: {}", tenantId, localActor);
             }
         } else {
             LOG.warn("remove commands for remote actors are not supported yet!");
         }
+    }
+
+    private String toLocal(String name) {
+        return "LOCAL_" + name;
+    }
+
+    private String toGlobal(String name) {
+        return "GLOBAL_" + name;
     }
 
     /*

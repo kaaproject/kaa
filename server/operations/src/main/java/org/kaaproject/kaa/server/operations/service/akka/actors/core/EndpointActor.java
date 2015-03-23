@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.operations.service.OperationsService;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.SyncRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogDeliveryMessage;
@@ -27,6 +27,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.C
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.session.RequestTimeoutMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointStateUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.verification.UserVerificationResponseMessage;
 import org.kaaproject.kaa.server.transport.channel.ChannelAware;
@@ -56,8 +57,8 @@ public class EndpointActor extends UntypedActor {
      * @param operationsService
      *            the operations service
      */
-    public EndpointActor(OperationsService operationsService, String endpointActorKey, String appToken, EndpointObjectHash key) {
-        this.messageProcessor = new EndpointActorMessageProcessor(operationsService, appToken, key, endpointActorKey);
+    public EndpointActor(AkkaContext context, String endpointActorKey, String appToken, EndpointObjectHash key) {
+        this.messageProcessor = new EndpointActorMessageProcessor(context, appToken, key, endpointActorKey);
         this.actorKey = endpointActorKey;
     }
 
@@ -69,8 +70,8 @@ public class EndpointActor extends UntypedActor {
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
-        /** The operations service. */
-        private final OperationsService operationsService;
+        /** The Akka service context */
+        private final AkkaContext context;
 
         private final String actorKey;
 
@@ -86,9 +87,9 @@ public class EndpointActor extends UntypedActor {
          * @param operationsService
          *            the operations service
          */
-        public ActorCreator(OperationsService operationsService, String endpointActorKey, String appToken, EndpointObjectHash key) {
+        public ActorCreator(AkkaContext context, String endpointActorKey, String appToken, EndpointObjectHash key) {
             super();
-            this.operationsService = operationsService;
+            this.context = context;
             this.actorKey = endpointActorKey;
             this.appToken = appToken;
             this.key = key;
@@ -101,7 +102,7 @@ public class EndpointActor extends UntypedActor {
          */
         @Override
         public EndpointActor create() throws Exception {
-            return new EndpointActor(operationsService, actorKey, appToken, key);
+            return new EndpointActor(context, actorKey, appToken, key);
         }
     }
 
@@ -123,6 +124,8 @@ public class EndpointActor extends UntypedActor {
             processEndpointEventReceiveMessage((EndpointEventReceiveMessage) message);
         } else if (message instanceof LogDeliveryMessage) {
             processLogDeliveryMessage((LogDeliveryMessage) message);
+        } else if (message instanceof EndpointStateUpdateMessage) {
+            processStateUpdateMessage((EndpointStateUpdateMessage) message);
         } else if (message instanceof UserVerificationResponseMessage) {
             processUserVerificationMessage((UserVerificationResponseMessage) message);
         } else if (message instanceof SessionDisconnectMessage) {
@@ -147,6 +150,10 @@ public class EndpointActor extends UntypedActor {
         } else {
             LOG.warn("[{}] Received unknown message {}", actorKey, message);
         }
+    }
+
+    private void processStateUpdateMessage(EndpointStateUpdateMessage message) {
+        messageProcessor.processStateUpdate(context(), message);
     }
 
     private void processUserVerificationMessage(UserVerificationResponseMessage message) {

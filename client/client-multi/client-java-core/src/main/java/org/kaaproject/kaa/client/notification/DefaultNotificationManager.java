@@ -17,6 +17,9 @@
 package org.kaaproject.kaa.client.notification;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -25,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.kaaproject.kaa.client.channel.NotificationTransport;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.endpoint.gen.Notification;
 import org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand;
@@ -45,6 +49,8 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
 
     private Map<String, Topic> topics = new HashMap<String, Topic>();
 
+    private final ExecutorContext executorContext;
+    private final NotificationDeserializer deserializer = new NotificationDeserializer();
     private final Set<NotificationListener> mandatoryListeners = new HashSet<NotificationListener>();
     private final Map<String, List<NotificationListener>> optionalListeners = new HashMap<String, List<NotificationListener>>();
     private final Set<NotificationTopicListListener> topicsListeners = new HashSet<NotificationTopicListListener>();
@@ -55,9 +61,10 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
 
     private volatile NotificationTransport transport;
 
-    public DefaultNotificationManager(KaaClientState state, NotificationTransport transport) {
+    public DefaultNotificationManager(KaaClientState state, ExecutorContext executorContext, NotificationTransport transport) {
         this.state = state;
         this.transport = transport;
+        this.executorContext = executorContext;
 
         List<Topic> topicList = state.getTopics();
 
@@ -92,74 +99,6 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
         synchronized (mandatoryListeners) {
             mandatoryListeners.remove(listener);
         }
-    }
-
-    @Deprecated
-    @Override
-    public void updateTopicSubscriptions(Map<String, List<NotificationListenerInfo>> subscribers)
-            throws UnavailableTopicException
-    {
-        if (subscribers == null) {
-            LOG.warn("Failed to update topic subsciptions: null subscribers");
-            throw new IllegalArgumentException("NUll subscribers");
-        }
-
-        List<SubscriptionCommand> subscriptionUpdate = new LinkedList<>();
-
-        for (Map.Entry<String, List<NotificationListenerInfo>> cursor : subscribers.entrySet()) {
-            Topic listenerTopic = findTopicById(cursor.getKey());
-
-            synchronized (optionalListeners) {
-                List<NotificationListener> listeners = optionalListeners.get(cursor.getKey());
-
-                if (cursor.getValue() != null) {
-                    for (NotificationListenerInfo subscriberInfo : cursor.getValue()) {
-                        if (subscriberInfo.getAction() == NotificationListenerInfo.Action.ADD) {
-                            if (listeners == null) {
-                                listeners = new LinkedList<NotificationListener>();
-                                optionalListeners.put(listenerTopic.getId(), listeners);
-                            }
-
-                            if (listeners.isEmpty() && listenerTopic.getSubscriptionType() == SubscriptionType.OPTIONAL) {
-                                subscriptionUpdate.add(new SubscriptionCommand(
-                                        listenerTopic.getId(), SubscriptionCommandType.ADD));
-                            }
-
-                            if (subscriberInfo.getListener() != null && !listeners.contains(subscriberInfo.getListener())) {
-                                listeners.add(subscriberInfo.getListener());
-                            }
-                        } else if (listeners != null) {
-                            listeners.remove(subscriberInfo.getListener());
-
-                            if (listeners.isEmpty() && listenerTopic.getSubscriptionType() == SubscriptionType.OPTIONAL) {
-                                subscriptionUpdate.add(new SubscriptionCommand(
-                                        listenerTopic.getId(), SubscriptionCommandType.REMOVE));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!subscriptionUpdate.isEmpty()) {
-            updateSubscriptionInfo(subscriptionUpdate);
-        }
-
-        if (transport != null) {
-            transport.sync();
-        }
-    }
-
-    @Deprecated
-    @Override
-    public void addMandatoryTopicsListener(NotificationListener listener) {
-        addNotificationListener(listener);
-    }
-
-    @Deprecated
-    @Override
-    public void removeMandatoryTopicsListener(NotificationListener listener) {
-        removeNotificationListener(listener);
     }
 
     @Override
@@ -200,14 +139,11 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     @Override
-    public void subscribeToTopic(String topicId, boolean forceSync)
-            throws UnavailableTopicException
-    {
+    public void subscribeToTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
         Topic topic = findTopicById(topicId);
         if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL) {
             LOG.warn("Failed to subscribe: topic '{}' isn't optional", topicId);
-            throw new UnavailableTopicException(
-                    String.format("Topic '%s' isn't optional", topicId));
+            throw new UnavailableTopicException(String.format("Topic '%s' isn't optional", topicId));
         }
 
         updateSubscriptionInfo(topicId, SubscriptionCommandType.ADD);
@@ -218,21 +154,17 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     @Override
-    public void subscribeToTopics(List<String> topicIds, boolean forceSync)
-            throws UnavailableTopicException
-    {
+    public void subscribeToTopics(List<String> topicIds, boolean forceSync) throws UnavailableTopicException {
         List<SubscriptionCommand> subscriptionUpdate = new LinkedList<>();
 
         for (String id : topicIds) {
             Topic topic = findTopicById(id);
             if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL) {
                 LOG.warn("Failed to subscribe: topic '{}' isn't optional", id);
-                throw new UnavailableTopicException(
-                        String.format("Topic '%s' isn't optional", id));
+                throw new UnavailableTopicException(String.format("Topic '%s' isn't optional", id));
             }
 
-            subscriptionUpdate.add(new SubscriptionCommand(
-                    id, SubscriptionCommandType.ADD));
+            subscriptionUpdate.add(new SubscriptionCommand(id, SubscriptionCommandType.ADD));
         }
 
         updateSubscriptionInfo(subscriptionUpdate);
@@ -243,17 +175,17 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     @Override
-    public void unsubscribeFromTopic(String topicId, boolean forceSync)
-            throws UnavailableTopicException
-    {
+    public void unsubscribeFromTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
         Topic topic = findTopicById(topicId);
         if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL) {
             LOG.warn("Failed to unsubscribe: topic '{}' isn't optional", topicId);
-            throw new UnavailableTopicException(
-                    String.format("Topic '%s' isn't optional", topicId));
+            throw new UnavailableTopicException(String.format("Topic '%s' isn't optional", topicId));
         }
 
-        topicsListeners.remove(topicId);
+        synchronized (topicsListeners) {
+            topicsListeners.remove(topicId);
+        }
+
         updateSubscriptionInfo(topicId, SubscriptionCommandType.REMOVE);
 
         if (forceSync) {
@@ -269,13 +201,14 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
             Topic topic = findTopicById(id);
             if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL) {
                 LOG.warn("Failed to unsubscribe: topic '{}' isn't optional", id);
-                throw new UnavailableTopicException(
-                        String.format("Topic '%s' isn't optional", id));
+                throw new UnavailableTopicException(String.format("Topic '%s' isn't optional", id));
             }
 
-            topicsListeners.remove(id);
-            subscriptionUpdate.add(new SubscriptionCommand(
-                    id, SubscriptionCommandType.REMOVE));
+            synchronized (topicsListeners) {
+                topicsListeners.remove(id);
+            }
+
+            subscriptionUpdate.add(new SubscriptionCommand(id, SubscriptionCommandType.REMOVE));
         }
 
         updateSubscriptionInfo(subscriptionUpdate);
@@ -286,9 +219,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     @Override
-    public void addNotificationListener(String topicId, NotificationListener listener)
-            throws UnavailableTopicException
-    {
+    public void addNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException {
         if (topicId == null || listener == null) {
             LOG.warn("Failed to add listener: id={}, listener={}", topicId, listener);
             throw new IllegalArgumentException("Bad listener data");
@@ -309,9 +240,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     @Override
-    public void removeNotificationListener(String topicId, NotificationListener listener)
-            throws UnavailableTopicException
-    {
+    public void removeNotificationListener(String topicId, NotificationListener listener) throws UnavailableTopicException {
         if (topicId == null || listener == null) {
             LOG.warn("Failed to remove listener: id={}, listener={}", topicId, listener);
             throw new IllegalArgumentException("Bad listener data");
@@ -334,7 +263,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     }
 
     @Override
-    public void topicsListUpdated(List<Topic> list) {
+    public void topicsListUpdated(final List<Topic> list) {
         Map<String, Topic> newTopics = new HashMap<String, Topic>();
 
         synchronized (topics) {
@@ -354,8 +283,13 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
         }
 
         synchronized (topicsListeners) {
-            for (NotificationTopicListListener listener : topicsListeners) {
-                listener.onListUpdated(list);
+            for (final NotificationTopicListListener listener : topicsListeners) {
+                executorContext.getCallbackExecutor().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onListUpdated(list);
+                    }
+                });
             }
         }
     }
@@ -371,23 +305,34 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
                     List<NotificationListener> listeners = optionalListeners.get(topic.getId());
                     if (listeners != null && !listeners.isEmpty()) {
                         hasOwner = true;
-                        for (NotificationListener listener : listeners) {
-                            listener.onNotificationRaw(topic.getId(), notification.getBody());
-                        }
+                        notifyListeners(listeners, topic, notification);
                     }
                 }
 
                 if (!hasOwner) {
                     synchronized (mandatoryListeners) {
-                        for (NotificationListener listener : mandatoryListeners) {
-                            listener.onNotificationRaw(topic.getId(), notification.getBody());
-                        }
+                        notifyListeners(mandatoryListeners, topic, notification);
                     }
                 }
             } catch (UnavailableTopicException e) {
-                LOG.warn("Received notification for an unknown topic (id={})"
-                                                    , notification.getTopicId());
+                LOG.warn("Received notification for an unknown topic (id={})", notification.getTopicId());
             }
+        }
+    }
+
+    private void notifyListeners(Collection<NotificationListener> listeners, final Topic topic, final Notification notification) {
+        final Collection<NotificationListener> listenersCopy = new ArrayList<NotificationListener>(listeners);
+        if (notification.getBody() != null) {
+            executorContext.getCallbackExecutor().submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        deserializer.notify(Collections.unmodifiableCollection(listenersCopy), topic, notification.getBody().array());
+                    } catch (IOException e) {
+                        LOG.error("Failed to process notification for topic {}", topic.getId(), e);
+                    }
+                }
+            });
         }
     }
 
@@ -408,8 +353,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
             Topic topic = topics.get(id);
             if (topic == null) {
                 LOG.warn("Failed to find topic: id {} is unknown", id);
-                throw new UnavailableTopicException(
-                        String.format("Topic id '%s' is unknown", id));
+                throw new UnavailableTopicException(String.format("Topic id '%s' is unknown", id));
             }
 
             return topic;

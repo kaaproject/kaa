@@ -27,6 +27,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
@@ -119,13 +120,13 @@ public class DefaultOperationTcpChannelTest {
         response.setStatus(SyncResponseResultType.SUCCESS);
         tcpChannel.os.write(new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse(responseCreator.toByteArray(response), false, false).getFrame().array());
         tcpChannel.sync(TransportType.USER); // causes call to KaaDataMultiplexer.compileRequest(...) for "KAA_SYNC" messsage
-
-        Mockito.verify(multiplexer, Mockito.times(3)).compileRequest(Mockito.anyMapOf(TransportType.class, ChannelDirection.class));
+        
+        Mockito.verify(multiplexer, Mockito.times(2)).compileRequest(Mockito.anyMapOf(TransportType.class, ChannelDirection.class));
 
         tcpChannel.sync(TransportType.EVENT);
 
-        Mockito.verify(multiplexer, Mockito.times(4)).compileRequest(Mockito.anyMapOf(TransportType.class, ChannelDirection.class));
-        Mockito.verify(tcpChannel.socketMock, Mockito.times(4)).getOutputStream();
+        Mockito.verify(multiplexer, Mockito.times(3)).compileRequest(Mockito.anyMapOf(TransportType.class, ChannelDirection.class));
+        Mockito.verify(tcpChannel.socketMock, Mockito.times(3)).getOutputStream();
 
         Mockito.reset(multiplexer);
         tcpChannel.os.write(new PingResponse().getFrame().array());

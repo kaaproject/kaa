@@ -37,6 +37,7 @@ import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
+import org.kaaproject.kaa.server.hash.ConsistentHashResolver;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
@@ -86,7 +87,7 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
     /** The Akka service. */
     @Autowired
     private AkkaService akkaService;
-    
+
     @Autowired
     private OperationsTransportService transportService;
 
@@ -104,7 +105,7 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.bootstrap.
      * OperationsBootstrapService#getEndpointService()
      */
@@ -115,7 +116,7 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.bootstrap.
      * OperationsBootstrapService#getKeyStoreService()
      */
@@ -126,7 +127,7 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.bootstrap.
      * OperationsBootstrapService#getCacheService()
      */
@@ -146,7 +147,7 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.bootstrap.
      * OperationsBootstrapService#start()
      */
@@ -154,10 +155,8 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
     public void start() {
         operationsService.setPublicKey(keyStoreService.getPublicKey());
 
-        operationsThriftService.setEventService(eventService);
-
         transportService.lookupAndInit();
-        
+
         final CountDownLatch thriftStartupLatch = new CountDownLatch(1);
         final CountDownLatch thriftShutdownLatch = new CountDownLatch(1);
 
@@ -172,12 +171,12 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
         if (getConfig().isZkEnabled()) {
             startZK();
         }
-        
+
         transportService.addListener(new TransportUpdateListener() {
 
             @Override
             public void onTransportsStarted(List<TransportMetaData> mdList) {
-                if(operationsNode != null){
+                if (operationsNode != null) {
                     OperationsNodeInfo info = operationsNode.getNodeInfo();
                     info.setTransports(mdList);
                     try {
@@ -189,7 +188,7 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
             }
 
         });
-        
+
         transportService.start();
 
         try {
@@ -201,13 +200,13 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.kaaproject.kaa.server.operations.service.bootstrap.
      * OperationsBootstrapService#stop()
      */
     @Override
     public void stop() {
-        if(transportService != null){
+        if (transportService != null) {
             transportService.stop();
         }
         if (akkaService != null) {
@@ -249,7 +248,8 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
                 try {
                     OperationsThriftService.Processor<OperationsThriftService.Iface> processor = new OperationsThriftService.Processor<OperationsThriftService.Iface>(
                             operationsThriftService);
-                    TServerTransport serverTransport = new TServerSocket(new InetSocketAddress(getConfig().getThriftHost(), getConfig().getThriftPort()));
+                    TServerTransport serverTransport = new TServerSocket(new InetSocketAddress(getConfig().getThriftHost(), getConfig()
+                            .getThriftPort()));
 
                     TThreadPoolServer.Args args = new Args(serverTransport).processor(processor);
                     args.stopTimeoutVal = 3;
@@ -267,11 +267,11 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
                     thriftShutdownLatch.countDown();
                 } catch (TTransportException e) {
                     LOG.error("TTransportException", e);
-                } finally{
-                    if(thriftStartupLatch.getCount() > 0){
+                } finally {
+                    if (thriftStartupLatch.getCount() > 0) {
                         thriftStartupLatch.countDown();
                     }
-                    if(thriftShutdownLatch.getCount() > 0){
+                    if (thriftShutdownLatch.getCount() > 0) {
                         LOG.info("Thrift Operations Server Stopped.");
                         thriftShutdownLatch.countDown();
                     }
@@ -291,11 +291,13 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
         nodeInfo.setConnectionInfo(new ConnectionInfo(getConfig().getThriftHost(), getConfig().getThriftPort(), keyData));
         nodeInfo.setLoadInfo(new LoadInfo(DEFAULT_LOAD_INDEX));
         nodeInfo.setTransports(new ArrayList<TransportMetaData>());
-        operationsNode = new OperationsNode(nodeInfo, getConfig().getZkHostPortList(), new RetryUntilElapsed(getConfig().getZkMaxRetryTime(), getConfig()
-                .getZkSleepTime()));
+        operationsNode = new OperationsNode(nodeInfo, getConfig().getZkHostPortList(), new RetryUntilElapsed(getConfig()
+                .getZkMaxRetryTime(), getConfig().getZkSleepTime()));
         try {
             operationsNode.start();
             eventService.setZkNode(operationsNode);
+            eventService.setResolver(new ConsistentHashResolver(operationsNode.getCurrentOperationServerNodes(), getConfig()
+                    .getUserHashPartitions()));
         } catch (Exception e) {
             if (getConfig().isZkIgnoreErrors()) {
                 LOG.info("Failed to register operations in ZooKeeper", e);

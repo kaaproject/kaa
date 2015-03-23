@@ -41,7 +41,7 @@ Copyright 2014 CyberVision, Inc.
         <h2.driver.ver>1.4.179</h2.driver.ver>
         <oracle-nosql-client.version>3.0.14</oracle-nosql-client.version>
         <oracle-kvstore.version>3.1.7</oracle-kvstore.version>
-        <gwt.version>2.6.1</gwt.version>
+        <gwt.version>2.7.0</gwt.version>
         <aspectj.version>1.7.4</aspectj.version>
         <twitter.common.thrift.version>0.0.64</twitter.common.thrift.version>
 
@@ -83,6 +83,11 @@ Copyright 2014 CyberVision, Inc.
         <checkstyle.version>2.9.1</checkstyle.version>
         <rat.version>0.10</rat.version>
         <javassist.version>3.18.1-GA</javassist.version>
+        <signpost-core.version>1.2.1.2</signpost-core.version>
+
+        <cassandra.driver.version>2.1.4</cassandra.driver.version>
+        <cassandra.driver.mapping>2.1.4</cassandra.driver.mapping>
+        <cassandra-unit.version>2.0.2.2</cassandra-unit.version>
 
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -91,7 +96,6 @@ Copyright 2014 CyberVision, Inc.
         <sonar.skippedModules>admin,admin-rest-client,client-java-android,gwt-client</sonar.skippedModules>
         <sonar.jacoco.reportPath>${main.dir}/target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>${main.dir}/target/jacoco-it.exec</sonar.jacoco.itReportPath>
-
     </properties>
 
     <modules>
@@ -447,7 +451,10 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/thirdparty/**</exclude>
                         <exclude>**/security.policy</exclude>
                         <exclude>**/*-transport.config</exclude>
+                        <exclude>**/akka.conf</exclude>
                         <exclude>**/*.cql</exclude>
+                        <exclude>**/src/main/sh/bin/jetty.sh</exclude>
+                        <exclude>**/src/main/resources/jetty/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -561,6 +568,24 @@ Copyright 2014 CyberVision, Inc.
                 <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
                 <artifactId>config</artifactId>
                 <classifier>trustful</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
+                <artifactId>config</artifactId>
+                <classifier>facebook</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
+                <artifactId>config</artifactId>
+                <classifier>twitter</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
+                <artifactId>config</artifactId>
+                <classifier>gplus</classifier>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -738,6 +763,11 @@ Copyright 2014 CyberVision, Inc.
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${httpcomponents.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpmime</artifactId>
                 <version>${httpcomponents.version}</version>
             </dependency>
@@ -857,6 +887,11 @@ Copyright 2014 CyberVision, Inc.
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>oauth.signpost</groupId>
+                <artifactId>signpost-core</artifactId>
+                <version>${signpost-core.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

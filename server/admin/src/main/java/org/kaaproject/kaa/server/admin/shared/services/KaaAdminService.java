@@ -23,6 +23,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
@@ -41,12 +42,12 @@ import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
-import org.kaaproject.kaa.server.admin.shared.file.FileData;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
@@ -67,6 +68,8 @@ public interface KaaAdminService extends RemoteService {
     public List<ApplicationDto> getApplications() throws KaaAdminServiceException;
 
     public ApplicationDto getApplication(String applicationId) throws KaaAdminServiceException;
+
+    public ApplicationDto getApplicationByApplicationToken(String applicationToken) throws KaaAdminServiceException;
 
     public ApplicationDto editApplication(ApplicationDto application) throws KaaAdminServiceException;
 
@@ -99,22 +102,42 @@ public interface KaaAdminService extends RemoteService {
     public FileData getSdk(SdkKey key) throws KaaAdminServiceException;
     
     public void flushSdkCache() throws KaaAdminServiceException;
+    
+    public RecordField createSimpleEmptySchemaForm() throws KaaAdminServiceException;
+    
+    public RecordField createCommonEmptySchemaForm() throws KaaAdminServiceException;
+    
+    public RecordField createConfigurationEmptySchemaForm() throws KaaAdminServiceException;
+
+    public RecordField createEcfEmptySchemaForm() throws KaaAdminServiceException;
+    
+    public RecordField generateSimpleSchemaForm(String fileItemName) throws KaaAdminServiceException;
+    
+    public RecordField generateCommonSchemaForm(String fileItemName) throws KaaAdminServiceException;
+    
+    public RecordField generateConfigurationSchemaForm(String fileItemName) throws KaaAdminServiceException;
+
+    public RecordField generateEcfSchemaForm(String fileItemName) throws KaaAdminServiceException;
 
     public List<ProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
     public ProfileSchemaDto getProfileSchema(String profileSchemaId) throws KaaAdminServiceException;
 
-    public ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema, String fileItemName) throws KaaAdminServiceException;
-
     public ProfileSchemaDto editProfileSchema(ProfileSchemaDto profileSchema, byte[] schema) throws KaaAdminServiceException;
+    
+    public ProfileSchemaDto getProfileSchemaForm(String profileSchemaId) throws KaaAdminServiceException;
+
+    public ProfileSchemaDto editProfileSchemaForm(ProfileSchemaDto profileSchema) throws KaaAdminServiceException;
 
     public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
     public ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws KaaAdminServiceException;
 
-    public ConfigurationSchemaDto editConfigurationSchema(ConfigurationSchemaDto configurationSchema, String fileItemName) throws KaaAdminServiceException;
-
     public ConfigurationSchemaDto editConfigurationSchema(ConfigurationSchemaDto configurationSchema, byte[] schema) throws KaaAdminServiceException;
+    
+    public ConfigurationSchemaDto getConfigurationSchemaForm(String configurationSchemaId) throws KaaAdminServiceException;
+
+    public ConfigurationSchemaDto editConfigurationSchemaForm(ConfigurationSchemaDto configurationSchema) throws KaaAdminServiceException;
 
     public List<NotificationSchemaDto> getNotificationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
@@ -124,9 +147,11 @@ public interface KaaAdminService extends RemoteService {
 
     public NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws KaaAdminServiceException;
 
-    public NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema, String fileItemName) throws KaaAdminServiceException;
-
     public NotificationSchemaDto editNotificationSchema(NotificationSchemaDto notificationSchema, byte[] schema) throws KaaAdminServiceException;
+    
+    public NotificationSchemaDto getNotificationSchemaForm(String notificationSchemaId) throws KaaAdminServiceException;
+
+    public NotificationSchemaDto editNotificationSchemaForm(NotificationSchemaDto notificationSchema) throws KaaAdminServiceException;
 
     public List<LogSchemaDto> getLogSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
 
@@ -134,9 +159,11 @@ public interface KaaAdminService extends RemoteService {
 
     public LogSchemaDto getLogSchemaByApplicationTokenAndVersion(String applicationToken, int version) throws KaaAdminServiceException;
 
-    public LogSchemaDto editLogSchema(LogSchemaDto logSchema, String fileItemName) throws KaaAdminServiceException;
-
     public LogSchemaDto editLogSchema(LogSchemaDto profileSchema, byte[] schema) throws KaaAdminServiceException;
+    
+    public LogSchemaDto getLogSchemaForm(String logSchemaId) throws KaaAdminServiceException;
+
+    public LogSchemaDto editLogSchemaForm(LogSchemaDto logSchema) throws KaaAdminServiceException;
 
     public List<EndpointGroupDto> getEndpointGroupsByApplicationId(String applicationId) throws KaaAdminServiceException;
 
@@ -212,7 +239,7 @@ public interface KaaAdminService extends RemoteService {
 
     public EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws KaaAdminServiceException;
 
-    public void addEventClassFamilySchema(String eventClassFamilyId, String fileItemName) throws KaaAdminServiceException;
+    public void addEventClassFamilySchemaForm(String eventClassFamilyId, RecordField schemaForm) throws KaaAdminServiceException;
 
     public void addEventClassFamilySchema(String eventClassFamilyId, byte[] schema) throws KaaAdminServiceException;
 
@@ -272,4 +299,10 @@ public interface KaaAdminService extends RemoteService {
     
     public List<PluginInfoDto> getUserVerifierPluginInfos() throws KaaAdminServiceException;
 
+    public void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException;
+
+    public List<SchemaInfoDto> getUserConfigurationSchemaInfosByApplicationId(String applicationId) throws KaaAdminServiceException;
+
+    public void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration, String applicationId, RecordField configurationData) throws KaaAdminServiceException;
+    
 }

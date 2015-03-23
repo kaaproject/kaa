@@ -17,39 +17,37 @@
 #ifndef LOGRECORD_HPP_
 #define LOGRECORD_HPP_
 
-#ifdef KAA_USE_LOGGING
-
-#include <vector>
+#include <memory>
 #include <cstdint>
 
-#include "kaa/KaaDefaults.hpp"
+#include "kaa/KaaThread.hpp"
+#include "kaa/gen/EndpointGen.hpp"
+#include "kaa/log/ILogCollector.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
-#include "kaa/log/gen/LogGen.hpp"
 
 namespace kaa {
 
 class LogRecord {
 public:
-    LogRecord() {}
-    LogRecord(const SuperRecord & logRecord) {
-        SharedDataBuffer buffer = converter_.toByteArray(logRecord);
-
-        for (size_t i = 0; i < buffer.second; i++) {
-            logData_.push_back(buffer.first[i]);
-        }
+    LogRecord(const KaaUserLogRecord& record)
+    {
+        converter_.toByteArray(record, serializedLog_.data);
     }
-    ~LogRecord() {}
 
-    const std::vector<std::uint8_t>&  getData();
-    size_t                              getSize() const;
+    const std::vector<std::uint8_t>& getData() const { return serializedLog_.data; }
+    size_t getSize() const { return serializedLog_.data.size(); }
+
+    const LogEntry& getLogEntry() { return serializedLog_; }
 
 private:
-    AvroByteArrayConverter<SuperRecord> converter_;
-    std::vector<std::uint8_t> logData_;
+    static kaa_thread_local AvroByteArrayConverter<KaaUserLogRecord> converter_;
+
+private:
+    LogEntry serializedLog_;
 };
 
-}  // namespace kaa
+typedef std::shared_ptr<LogRecord> LogRecordPtr;
 
-#endif
+}  // namespace kaa
 
 #endif /* LOGRECORD_HPP_ */

@@ -24,9 +24,10 @@ import org.kaaproject.avro.ui.gwt.client.AvroUiResources;
 import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
 import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
 import org.kaaproject.kaa.common.dto.SchemaDto;
-import org.kaaproject.kaa.server.admin.client.KaaAdminConstants;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources;
 import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
+import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaTheme;
+import org.kaaproject.kaa.server.admin.client.i18n.KaaAdminConstants;
 import org.kaaproject.kaa.server.admin.client.i18n.KaaAdminMessages;
 import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.MessageDialog;
 import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.UnauthorizedSessionDialog;
@@ -54,6 +55,9 @@ public class Utils {
     public static final AvroUiResources avroUiResources = 
             GWT.create(AvroUiResources.class);
     
+    public static final KaaTheme kaaTheme = 
+            resources.kaaTheme();
+    
     public static final KaaAdminStyle kaaAdminStyle = 
             resources.kaaAdminStyle();
     
@@ -71,6 +75,7 @@ public class Utils {
     private static UnauthorizedSessionDialog unauthorizedSessionDialog;
     
     public static void injectKaaStyles() {
+        kaaTheme.ensureInjected();
         kaaAdminStyle.ensureInjected();
         avroUiStyle.ensureInjected();
     }

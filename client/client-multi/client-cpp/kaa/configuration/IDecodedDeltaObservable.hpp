@@ -19,8 +19,6 @@
 
 #include "kaa/KaaDefaults.hpp"
 
-#ifdef KAA_USE_CONFIGURATION
-
 #include "kaa/configuration/IGenericDeltaReceiver.hpp"
 
 namespace kaa {
@@ -51,7 +49,5 @@ public:
 };
 
 }  // namespace kaa
-
-#endif
 
 #endif /* I_DECODED_DELTA_OBSERVABLE_HPP_ */
