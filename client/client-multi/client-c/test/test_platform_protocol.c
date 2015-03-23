@@ -77,6 +77,7 @@ void test_empty_log_collector_extension_count(void)
     memset(storage, 0, sizeof(mock_storage_context_t));
     memset(strategy, 0, sizeof(mock_strategy_context_t));
     kaa_error_t error_code = kaa_logging_init(kaa_context->log_collector, storage, strategy);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     error_code = kaa_platform_protocol_serialize_client_sync(kaa_context->platfrom_protocol, info, &buffer, &buffer_size);
     free(info);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
