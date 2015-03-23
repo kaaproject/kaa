@@ -125,6 +125,7 @@ public class SendNotificationViewImpl extends BaseDetailsViewImpl implements Sen
     protected boolean validate() {
         boolean result = notificationSchemaInfo.getValue() != null;
         result &= notificationData.validate();
+        result &= expiredAt.getValue().after(new Date());
         return result;
     }
 
