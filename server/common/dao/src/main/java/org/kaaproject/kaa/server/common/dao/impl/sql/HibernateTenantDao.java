@@ -34,20 +34,21 @@ public class HibernateTenantDao extends HibernateAbstractDao<Tenant> implements 
 
     @Override
     public Tenant findByName(String tenantName) {
-        LOG.debug("Find tenant by name [{}]", tenantName);
+        LOG.debug("Searching tenant by name [{}]", tenantName);
         Tenant tenant = findOneByCriterion(Restrictions.eq(NAME_PROPERTY, tenantName));
-        LOG.debug("Found tenant [{}] by name [{}]", tenant, tenantName);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", tenantName, tenant);
+        } else {
+            LOG.debug("[{}] Search result: {}.", tenantName, tenant != null);
+        }
         return tenant;
     }
 
     @Override
     public void removeByName(String tenantName) {
-        LOG.debug("Remove tenant by name [{}]", tenantName);
         Query query = getQuery(DELETE_BY_NAME_HQL);
         int number = query.setString(NAME_PROPERTY, tenantName).executeUpdate();
-        if (number != 0) {
-            LOG.debug("Removed tenant by name [{}]", tenantName);
-        }
+        LOG.debug("Removed {} tenant by name [{}]", number, tenantName);
     }
 
     @Override

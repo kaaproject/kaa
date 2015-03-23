@@ -49,62 +49,77 @@ public class HibernateApplicationEventFamilyMapDao extends HibernateAbstractDao<
     }
 
     @Override
-    public List<ApplicationEventFamilyMap> findByApplicationId(String applicationId) {
-        LOG.debug("Find application event family maps by application id [{}] ", applicationId);
+    public List<ApplicationEventFamilyMap> findByApplicationId(String appId) {
+        LOG.debug("Searching application event family maps by application id [{}] ", appId);
         List<ApplicationEventFamilyMap> applicationEventFamilyMaps = Collections.emptyList();
-        if (isNotBlank(applicationId)) {
-            applicationEventFamilyMaps = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId)));
+        if (isNotBlank(appId)) {
+            applicationEventFamilyMaps = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
         }
-        LOG.info("Found application event family maps {} by tenant id {} ", applicationEventFamilyMaps.size(), applicationId);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found application event family maps {} by tenant id {} ", Arrays.toString(applicationEventFamilyMaps.toArray()), applicationId);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", appId, applicationEventFamilyMaps);
+        } else {
+            LOG.debug("[{}] Search result: {}.", appId, applicationEventFamilyMaps.size());
         }
         return applicationEventFamilyMaps;
     }
 
     @Override
     public List<ApplicationEventFamilyMap> findByIds(List<String> ids) {
-        LOG.debug("Find applicationEventFamilyMaps by ids [{}] ", ids);
         List<ApplicationEventFamilyMap> applicationEventFamilyMaps = Collections.emptyList();
+        String idsArray = "";
         if (ids != null && !ids.isEmpty()) {
+            idsArray = Arrays.toString(ids.toArray());
+            LOG.debug("Searching application event family maps by ids {} ", idsArray);
             applicationEventFamilyMaps = findListByCriterion(Restrictions.in(ID_PROPERTY, toLongIds(ids)));
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("{} Search result: {}.", idsArray, Arrays.toString(applicationEventFamilyMaps.toArray()));
+        } else {
+            LOG.debug("{} Search result: {}.", idsArray, applicationEventFamilyMaps.size());
         }
         return applicationEventFamilyMaps;
     }
 
     @Override
-    public void removeByApplicationId(String applicationId) {
-        LOG.debug("remove applicationEventFamilyMap by application id [{}] ", applicationId);
-        if (isNotBlank(applicationId)) {
+    public void removeByApplicationId(String appId) {
+        if (isNotBlank(appId)) {
             List<ApplicationEventFamilyMap> eventClassFamilies = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId)));
+                    Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
             removeList(eventClassFamilies);
         }
+        LOG.debug("Removed application event family map by application id [{}] ", appId);
     }
 
     @Override
-    public boolean validateApplicationEventFamilyMap(String applicationId,
-            String ecfId, int version) {
-        LOG.debug("Validate application event family map, application id [{}], ecf id [{}], version [{}]", applicationId, ecfId, version);
+    public boolean validateApplicationEventFamilyMap(String appId, String ecfId, int version) {
+        LOG.debug("Validating application event family map by application id [{}], ecf id [{}], version [{}]", appId, ecfId, version);
         Criteria criteria = getCriteria();
         criteria.createAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS);
         criteria.createAlias(ECF_PROPERTY, ECF_ALIAS);
         criteria.add(Restrictions.and(
-                Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId)),
+                Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
                 Restrictions.eq(ECF_REFERENCE, Long.valueOf(ecfId)),
                 Restrictions.eq(VERSION_PROPERTY, version)));
         Long count = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
-        return count == 0;
+        boolean result = count != null ? count == 0 : false;
+        LOG.debug("[{},{},{}] Validation result: {}.", appId, ecfId, version, result);
+        return result;
     }
 
     @Override
     public List<ApplicationEventFamilyMap> findByEcfIdAndVersion(String ecfId, int version) {
-        LOG.debug("Find applicationEventFamilyMap by eventClassFamilyId id [{}] and version {} ", ecfId, version);
+        LOG.debug("Searching application event family maps by event class family id [{}] and version [{}] ", ecfId, version);
         Criteria criteria = getCriteria();
         criteria.createAlias(ECF_PROPERTY, ECF_ALIAS);
         criteria.add(Restrictions.and(
                 Restrictions.eq(ECF_REFERENCE, Long.valueOf(ecfId)),
                 Restrictions.eq(VERSION_PROPERTY, version)));
-        return findListByCriteria(criteria);
+        List<ApplicationEventFamilyMap> maps = findListByCriteria(criteria);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{},{}] Search result: {}.", ecfId, version, Arrays.toString(maps.toArray()));
+        } else {
+            LOG.debug("[{},{}] Search result: {}.", ecfId, version, maps.size());
+        }
+        return maps;
     }
 }

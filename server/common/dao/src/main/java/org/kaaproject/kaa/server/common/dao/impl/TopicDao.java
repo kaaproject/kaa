@@ -54,15 +54,6 @@ public interface TopicDao<T> extends SqlDao<T> {
     List<T> findTopicsByIds(List<String> ids);
 
     /**
-     * Find vacant topics by application id.
-     *
-     * @param appId the application id
-     * @param excludeIds the exclude ids
-     * @return the list of topics
-     */
-    List<T> findVacantTopicsByAppId(String appId, List<String> excludeIds);
-
-    /**
      * Removes the topics by application id.
      *
      * @param appId the application id

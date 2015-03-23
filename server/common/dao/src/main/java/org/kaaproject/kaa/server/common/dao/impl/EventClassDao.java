@@ -37,7 +37,7 @@ public interface EventClassDao<T> extends SqlDao<T> {
     /**
      * Find all Event Classes by Event Class Family id, version and type.
      *
-     * @param id the ecf id
+     * @param ecfId the ecf id
      * @param version the version
      * @param type the type
      * @return the list of event classes

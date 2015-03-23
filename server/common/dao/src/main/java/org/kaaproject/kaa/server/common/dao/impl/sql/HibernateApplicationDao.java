@@ -44,7 +44,7 @@ public class HibernateApplicationDao extends HibernateAbstractDao<Application> i
 
     @Override
     public List<Application> findByTenantId(String tenantId) {
-        LOG.debug("Searching applications by tenant id {}", tenantId);
+        LOG.debug("Searching applications by tenant id [{}]", tenantId);
         List<Application> applications = findListByCriterionWithAlias(TENANT_ENTITY_NAME, TENANT_ALIAS, Restrictions.eq(TENANT_REFERENCE, Long.valueOf(tenantId)));
         if (LOG.isTraceEnabled()) {
             LOG.trace("[{}] Search result: {}.", tenantId, Arrays.toString(applications.toArray()));

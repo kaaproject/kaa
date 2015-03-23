@@ -91,20 +91,4 @@ public class HibernateLogSchemaDao extends HibernateAbstractDao<LogSchema> imple
         return logSchema;
     }
 
-    @Override
-    public List<LogSchema> findVacantSchemasByAppenderId(String appenderId) {
-        LOG.debug("Find vacant log schemas by appender id [{}]", appenderId);
-        List<LogSchema> logSchemas = java.util.Collections.emptyList();
-//        List<LogSchema> logSchemas = findListByCriterionWithAlias(LOG_APPENDER_PROPERTY, LOG_APPENDER_ALIAS,
-//                Restrictions.ne(LOG_APPENDER_REFERENCE, Long.valueOf(appenderId)));
-//
-//
-//        if (isNotBlank(appenderId)) {
-//            logSchemas = findListByCriterionWithAlias(LOG_APPENDER_PROPERTY, LOG_APPENDER_ALIAS, JoinType.LEFT_OUTER_JOIN,
-//                    Restrictions.or(
-//                            Restrictions.ne(LOG_APPENDER_REFERENCE, Long.valueOf(appenderId)),
-//                            Restrictions.isNull(LOG_APPENDER_REFERENCE)));
-//        }
-        return logSchemas;
-    }
 }

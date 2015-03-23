@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,7 +35,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_APPENDER_MAX
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_APPENDER_MIN_LOG_SCHEMA_VERSION;
 
 @Repository
-public class HibernateLogAppenderDao extends HibernateAbstractDao<LogAppender> implements LogAppenderDao<LogAppender>{
+public class HibernateLogAppenderDao extends HibernateAbstractDao<LogAppender> implements LogAppenderDao<LogAppender> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateLogAppenderDao.class);
 
@@ -45,18 +46,23 @@ public class HibernateLogAppenderDao extends HibernateAbstractDao<LogAppender> i
 
     @Override
     public List<LogAppender> findByAppId(String appId) {
+        LOG.debug("Searching log appenders by application id [{}]", appId);
         List<LogAppender> appenders = Collections.emptyList();
-        LOG.debug("Find log appenders by application id {}", appId);
         if (isNotBlank(appId)) {
             appenders = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
                     Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
         }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(appenders.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", appId, appenders.size());
+        }
         return appenders;
     }
-    
+
     @Override
-    public List<LogAppender> findByAppIdAndSchemaVersion(String appId,
-            int schemaVersion) {
+    public List<LogAppender> findByAppIdAndSchemaVersion(String appId, int schemaVersion) {
+        LOG.debug("Searching log appenders by application id [{}] and schema version [{}]", appId, schemaVersion);
         List<LogAppender> appenders = Collections.emptyList();
         if (isNotBlank(appId)) {
             appenders = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
@@ -64,7 +70,12 @@ public class HibernateLogAppenderDao extends HibernateAbstractDao<LogAppender> i
                             Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
                             Restrictions.le(LOG_APPENDER_MIN_LOG_SCHEMA_VERSION, schemaVersion),
                             Restrictions.ge(LOG_APPENDER_MAX_LOG_SCHEMA_VERSION, schemaVersion))
-                    );
+            );
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{},{}] Search result: {}.", appId, schemaVersion, Arrays.toString(appenders.toArray()));
+        } else {
+            LOG.debug("[{},{}] Search result: {}.", appId, schemaVersion, appenders.size());
         }
         return appenders;
     }
