@@ -23,6 +23,7 @@ econais_ec19d_sock.h
 #ifndef ECONAIS_EC19D_SOCK_H_
 #define ECONAIS_EC19D_SOCK_H_
 
+#include <sys/types.h>
 #include <sndc_sock_api.h>
 
 typedef int kaa_fd_t;

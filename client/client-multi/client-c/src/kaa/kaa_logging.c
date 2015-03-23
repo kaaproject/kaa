@@ -20,11 +20,8 @@
 #include <inttypes.h>
 #include <sys/types.h>
 #include "platform/stdio.h"
-<<<<<<< HEAD:client/client-multi/client-c/src/kaa_logging.c
 #include "platform/sock.h"
-=======
 #include "platform/time.h"
->>>>>>> master:client/client-multi/client-c/src/kaa/kaa_logging.c
 #include "platform/ext_sha.h"
 #include "kaa_logging.h"
 #include "collections/kaa_list.h"

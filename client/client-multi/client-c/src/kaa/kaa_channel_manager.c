@@ -16,7 +16,9 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #include "platform/stdio.h"
+#include "platform/sock.h"
 #include <string.h>
 #include "kaa_channel_manager.h"
 
