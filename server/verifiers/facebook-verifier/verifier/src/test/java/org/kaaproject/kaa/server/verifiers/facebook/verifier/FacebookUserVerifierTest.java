@@ -35,6 +35,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import static org.mockito.Mockito.*;
 
@@ -193,7 +194,6 @@ public class FacebookUserVerifierTest extends FacebookUserVerifier {
         verify(callback, Mockito.timeout(1000).atLeastOnce()).onVerificationFailure(any(String.class));
     }
 
-
     @Test
     public void unrecognizedOauthErrorSubcodeTest() {
         verifier = new MyFacebookVerifier(400, " {" +
@@ -256,6 +256,30 @@ public class FacebookUserVerifierTest extends FacebookUserVerifier {
     public void getConfigurationClassTest() {
         verifier = new FacebookUserVerifier();
         Assert.assertEquals(verifier.getConfigurationClass(), FacebookAvroConfig.class);
+    }
+
+    @Test
+    public void errorInDataResponseTest() {
+        String userId = "12456789123456";
+        verifier = new MyFacebookVerifier(200, "{" +
+                "\"data\":{" +
+                "\"app_id\":\"1557997434440423\"," +
+                "\"application\":\"testApp\"," +
+                "\"expires_at\":1422990000," +
+                "\"is_valid\":true," +
+                "\"scopes\":[" +
+                "\"public_profile\"" +
+                "]," +
+                "\"user_id\":134," +
+                "\"error\":{" +
+                "\"message\":\"Message describing the error\"," +
+                "\"code\":111}}}");
+        verifier.init(null, config);
+        verifier.start();
+        UserVerifierCallback callback = mock(UserVerifierCallback.class);
+        verifier.checkAccessToken(userId, "someToken", callback);
+        verify(callback, Mockito.timeout(1000)).onTokenInvalid();
+        verifier.stop();
     }
 
     private static class MyFacebookVerifier extends FacebookUserVerifier {
