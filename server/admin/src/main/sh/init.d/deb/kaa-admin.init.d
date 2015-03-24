@@ -46,6 +46,7 @@ SERVER_HOME=/usr/lib/$NAME
 SERVER_USER=kaa
 SERVER_LOCK_DIR="/var/lock/subsys/"
 SERVER_PID_FILE=${SERVER_RUN_DIR}/${NAME}.pid
+JETTY_PID=$SERVER_PID_FILE
 SERVER_SHUTDOWN_TIMEOUT=${SERVER_SHUTDOWN_TIMEOUT:-60}
 
 LOCKFILE="${SERVER_LOCK_DIR}/${NAME}"
@@ -72,6 +73,9 @@ if [ -f "$DEFAULT" ]; then
     . "$DEFAULT"
 fi
 
+if [ -z $SERVER_LOG_SUFIX ]; then
+    SERVER_LOG_SUFIX=
+fi
 
 # These directories may be tmpfs and may or may not exist
 # depending on the OS (ex: /var/lock/subsys does not exist on debian/ubuntu)
@@ -81,14 +85,17 @@ done
 
 export SERVER_HOME
 export SERVER_LOG_DIR
+export SERVER_LOG_SUFIX
 export JAVA_OPTIONS
+export JETTY_PID
 
 start() {
   [ -x $exec ] || exit $ERROR_PROGRAM_NOT_INSTALLED
 
-  checkstatus
+  checkstatus 0
   status=$?
   if [ "$status" -eq "$STATUS_RUNNING" ]; then
+    checkstatus 1
     exit 0
   fi
 
@@ -97,7 +104,7 @@ start() {
   fi
 
   log_success_msg "Starting $desc ($NAME): "
-  /bin/su -s /bin/bash -c "/bin/bash -c 'echo \$\$ >${SERVER_PID_FILE} && exec ${EXEC_PATH} start >>${SERVER_LOG_DIR}/${NAME}-server.init.log 2>&1' &" $SERVER_USER
+  /bin/su -s /bin/bash -c "/bin/bash -c '${EXEC_PATH} start >>${SERVER_LOG_DIR}/${NAME}-server${SERVER_LOG_SUFIX}.init.log 2>&1' &" $SERVER_USER
   RETVAL=$?
   [ $RETVAL -eq 0 ] && touch $LOCKFILE
   return $RETVAL
@@ -113,7 +120,7 @@ stop() {
 
   SERVER_PID=`cat $SERVER_PID_FILE`
   if [ -n $SERVER_PID ]; then
-    ${EXEC_PATH} stop
+    /bin/su -s /bin/bash -c "${EXEC_PATH} stop >>${SERVER_LOG_DIR}/${NAME}-server${SERVER_LOG_SUFIX}.shutdown.log 2>&1" $SERVER_USER
     for i in `seq 1 ${SERVER_SHUTDOWN_TIMEOUT}` ; do
       kill -0 ${SERVER_PID} &>/dev/null || break
       sleep 1
@@ -130,26 +137,29 @@ restart() {
 }
 
 checkstatus(){
+  log_status=$1
   pidofproc -p $SERVER_PID_FILE java > /dev/null
   status=$?
 
-  case "$status" in
-    $STATUS_RUNNING)
-      log_success_msg "$desc is running"
-      ;;
-    $STATUS_DEAD)
-      log_failure_msg "$desc is dead and pid file exists"
-      ;;
-    $STATUS_DEAD_AND_LOCK)
-      log_failure_msg "$desc is dead and lock file exists"
-      ;;
-    $STATUS_NOT_RUNNING)
-      log_failure_msg "$desc is not running"
-      ;;
-    *)
-      log_failure_msg "$desc status is unknown"
-      ;;
-  esac
+  if [ $log_status -eq 1 ]; then
+    case "$status" in
+      $STATUS_RUNNING)
+        log_success_msg "$desc is running"
+        ;;
+      $STATUS_DEAD)
+        log_failure_msg "$desc is dead and pid file exists"
+        ;;
+      $STATUS_DEAD_AND_LOCK)
+        log_failure_msg "$desc is dead and lock file exists"
+        ;;
+      $STATUS_NOT_RUNNING)
+        log_failure_msg "$desc is not running"
+        ;;
+      *)
+        log_failure_msg "$desc status is unknown"
+        ;;
+    esac
+  fi
   return $status
 }
 
@@ -165,7 +175,7 @@ case "$1" in
     stop
     ;;
   status)
-    checkstatus
+    checkstatus 1
     ;;
   restart)
     restart

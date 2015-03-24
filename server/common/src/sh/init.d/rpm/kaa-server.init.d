@@ -71,6 +71,9 @@ if [ -f "$DEFAULT" ]; then
     . "$DEFAULT"
 fi
 
+if [ -z $SERVER_LOG_SUFIX ]; then
+    SERVER_LOG_SUFIX=
+fi
 
 # These directories may be tmpfs and may or may not exist
 # depending on the OS (ex: /var/lock/subsys does not exist on debian/ubuntu)
@@ -86,9 +89,10 @@ export JAVA_OPTIONS
 start() {
   [ -x $exec ] || exit $ERROR_PROGRAM_NOT_INSTALLED
 
-  checkstatus
+  checkstatus 0
   status=$?
   if [ "$status" -eq "$STATUS_RUNNING" ]; then
+    checkstatus 1    
     exit 0
   fi
 
@@ -97,7 +101,7 @@ start() {
   fi
 
   success && echo "Starting $desc ($NAME): "
-  /bin/su -s /bin/bash -c "/bin/bash -c 'echo \$\$ >${SERVER_PID_FILE} && exec ${EXEC_PATH} start >>${SERVER_LOG_DIR}/${NAME}-server.init.log 2>&1' &" $SERVER_USER
+  /bin/su -s /bin/bash -c "/bin/bash -c 'echo \$\$ >${SERVER_PID_FILE} && exec ${EXEC_PATH} start >>${SERVER_LOG_DIR}/${NAME}-server${SERVER_LOG_SUFIX}.init.log 2>&1' &" $SERVER_USER
   RETVAL=$?
   [ $RETVAL -eq 0 ] && touch $LOCKFILE
   return $RETVAL
@@ -113,7 +117,7 @@ stop() {
 
   SERVER_PID=`cat $SERVER_PID_FILE`
   if [ -n $SERVER_PID ]; then
-    ${EXEC_PATH} stop
+    /bin/su -s /bin/bash -c "${EXEC_PATH} stop >>${SERVER_LOG_DIR}/${NAME}-server${SERVER_LOG_SUFIX}.shutdown.log 2>&1" $SERVER_USER
     for i in `seq 1 ${SERVER_SHUTDOWN_TIMEOUT}` ; do
       kill -0 ${SERVER_PID} &>/dev/null || break
       sleep 1
@@ -124,32 +128,45 @@ stop() {
   return 0
 }
 
+console() {
+  if [ ! -e $SERVER_PID_FILE ]; then
+    failure && echo "$desc is not running"
+    exit 0
+  fi
+
+  /bin/su -s /bin/bash -c "(${EXEC_PATH} console \"$*\" 2>&1) | tee -a ${SERVER_LOG_DIR}/${NAME}-server${SERVER_LOG_SUFIX}.console.log" $SERVER_USER
+
+}      
+
 restart() {
   stop
   start
 }
 
 checkstatus(){
+  log_status=$1
   pidofproc -p $SERVER_PID_FILE java > /dev/null
   status=$?
 
-  case "$status" in
-    $STATUS_RUNNING)
-      success && echo "$desc is running"
-      ;;
-    $STATUS_DEAD)
-      failure && echo "$desc is dead and pid file exists"
-      ;;
-    $STATUS_DEAD_AND_LOCK)
-      failure && echo "$desc is dead and lock file exists"
-      ;;
-    $STATUS_NOT_RUNNING)
-      failure && echo "$desc is not running"
-      ;;
-    *)
-      failure && echo "$desc status is unknown"
-      ;;
-  esac
+  if [ $log_status -eq 1 ]; then
+    case "$status" in
+      $STATUS_RUNNING)
+        success && echo "$desc is running"
+        ;;
+      $STATUS_DEAD)
+        failure && echo "$desc is dead and pid file exists"
+        ;;
+      $STATUS_DEAD_AND_LOCK)
+        failure && echo "$desc is dead and lock file exists"
+        ;;
+      $STATUS_NOT_RUNNING)
+        failure && echo "$desc is not running"
+        ;;
+      *)
+        failure && echo "$desc status is unknown"
+        ;;
+    esac
+  fi
   return $status
 }
 
@@ -165,7 +182,10 @@ case "$1" in
     stop
     ;;
   status)
-    checkstatus
+    checkstatus 1
+    ;;
+  console)
+    console ${@:2}
     ;;
   restart)
     restart
@@ -174,7 +194,7 @@ case "$1" in
     condrestart
     ;;
   *)
-    echo $"Usage: $0 {start|stop|status|restart|try-restart|condrestart}"
+    echo $"Usage: $0 {start|stop|status|console|restart|try-restart|condrestart}"
     exit 1
 esac
 
