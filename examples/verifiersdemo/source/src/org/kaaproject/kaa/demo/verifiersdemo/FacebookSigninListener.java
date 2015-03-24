@@ -32,7 +32,7 @@ public class FacebookSigninListener implements LoginButton.UserInfoChangedCallba
         this.parentActivity = parentActivity;
     }
 
-    // Is called after call()
+    // Is called after call().
     @Override
     public void onUserInfoFetched(GraphUser user) {
         if (user != null && isClicked) {
@@ -47,7 +47,7 @@ public class FacebookSigninListener implements LoginButton.UserInfoChangedCallba
 
             parentActivity.updateUI(userName, userId, accessToken, LoginActivity.AccountType.FACEBOOK);
 
-            // Disconnect user from Facebook (to make Log out button disappear)
+            // Disconnect the user from Facebook (to make the Log out button disappear).
             Session.getActiveSession().closeAndClearTokenInformation();
         }
 
