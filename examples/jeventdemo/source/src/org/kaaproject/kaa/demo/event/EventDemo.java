@@ -40,44 +40,52 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class demonstrates how to send/receive events to/from endpoints via Kaa event subsystem.
+ * A demo application that shows how to send/receive events to/from endpoints using the Kaa event API. 
  */
 public class EventDemo {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventDemo.class);
 
-    // Credentials for attaching user
+    // Credentials for attaching an endpoint to the user.
     private static final String USER_EXTERNAL_ID = "userExternalId";
     private static final String USER_ACCESS_TOKEN = "userAccessToken";
-    // Kaa client
+    
+    // A Kaa client.
     private static KaaClient kaaClient;
 
     public static void main(String[] args) {
         LOG.info("Event demo started");
 
-        // Creating Kaa desktop client instance
+        // Create a Kaa client and add a listener which creates a log record
+        // as soon as the Kaa client is started.  
         kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener() {
             @Override
             public void onStarted() {
                 LOG.info("Kaa client started");
             }
         });
-        // Starting Kaa client
+        
+        // Start the Kaa client and connect it to the Kaa server.
         kaaClient.start();
 
-        // Our demo application uses trustful verifier, so it does not matter
-        // which credentials you would pass to registration manager
+        // Attach the endpoint running the Kaa client to the user by verifying 
+        // credentials sent by the endpoint against the user credentials
+        // stored on the Kaa server.
+        // This demo application uses a trustful verifier, therefore
+        // any credentials sent by the endpoint are accepted as valid. 
         kaaClient.attachUser(USER_EXTERNAL_ID, USER_ACCESS_TOKEN, new UserAttachCallback() {
             @Override
             public void onAttachResult(UserAttachResponse response) {
                 LOG.info("Attach response {}", response.getResult());
 
-                //If our endpoint was successfully attached
+                // Call onUserAttached if the endpoint was successfully attached.
                 if (response.getResult() == SyncResponseResultType.SUCCESS) {
                     onUserAttached();
                 }
-                //If not - release all network connections and application resources.
-                //Shutdown all Kaa client tasks.
+                
+                // Shut down all the Kaa client tasks and release 
+                // all network connections and application resources 
+                // if the endpoint was not attached.
                 else {
                     kaaClient.stop();
                     LOG.info("Event demo stopped");
@@ -91,8 +99,8 @@ public class EventDemo {
             LOG.error("IOException was caught", e);
         }
 
-        //Release all network connections and application resources.
-        //Shutdown all Kaa client tasks.
+        // Shut down all the Kaa client tasks and release
+        // all network connections and application resources.
         kaaClient.stop();
         LOG.info("Kaa client stopped");
 
@@ -106,10 +114,10 @@ public class EventDemo {
         listenerFQNs.add(ThermostatInfoRequest.class.getName());
         listenerFQNs.add(ChangeDegreeRequest.class.getName());
 
-        //And then finding all listener listening to events in FQNs list
+        // Find all the listeners listening to the events from the FQNs list.
         kaaClient.findEventListeners(listenerFQNs, new FindEventListenersCallback() {
 
-            //Doing something with event listeners in case of success
+            // Perform any necessary actions with the obtained event listeners.
             @Override
             public void onEventListenersReceived(List<String> eventListeners) {
                 LOG.info("{} event listeners received", eventListeners.size());
@@ -118,19 +126,21 @@ public class EventDemo {
                 }
             }
 
-            //Or if something gone wrong handling fail
+            // Perform any necessary actions if no listeners have been found
+            // or in case of any other failure.
             @Override
             public void onRequestFailed() {
                 LOG.info("Request failed");
             }
         });
 
-        //Getting event family factory
+        // Obtain the event family factory.
         EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
-        //Getting concrete event family
+       
+        // Obtain the concrete event family.
         ThermostatEventClassFamily tecf = eventFamilyFactory.getThermostatEventClassFamily();
 
-        //Adding event listeners for family factory
+        // Add event listeners to the family factory.
         tecf.addListener(new ThermostatEventClassFamily.Listener() {
 
             @Override
@@ -150,21 +160,23 @@ public class EventDemo {
         });
 
 
-        //Broadcasting ChangeDegreeRequest event
+        // Broadcast the ChangeDegreeRequest event.
         tecf.sendEventToAll(new ChangeDegreeRequest(10));
         LOG.info("ChangeDegreeRequest sent");
 
         TransactionId trxId = eventFamilyFactory.startEventsBlock();
-        // Add events to the block
-        // Adding a broadcasted event to the block
+        
+        // Add a broadcasted event to the block.
         tecf.addEventToBlock(trxId, new ThermostatInfoRequest());
-        // Adding a targeted event to the block
+        
+        // Add a targeted event to the block.
         tecf.addEventToBlock(trxId, new ChangeDegreeRequest(-30), "thermostat_endpoint_id");
 
-        // Send added events in a batch
+        // Send the added events in a batch.
         eventFamilyFactory.submitEventsBlock(trxId);
         LOG.info("Batch of events (ThermostatInfoRequest & ChangeDegreeRequest) sent");
-        // Dismiss the event batch (if the batch was not submitted as shown in the previous line)
+        
+        // Dismiss the event batch (if the batch was not submitted as shown in the previous line).
         // eventFamilyFactory.removeEventsBlock(trxId);
     }
 }
