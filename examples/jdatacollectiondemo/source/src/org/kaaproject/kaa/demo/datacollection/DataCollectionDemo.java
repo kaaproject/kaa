@@ -77,7 +77,7 @@ public class DataCollectionDemo {
             e.printStackTrace();
         }
 
-        // Stop the Kaa client and gracefully free up all the resources which were in use.
+        // Stop the Kaa client and release all the resources which were in use.
         kaaClient.stop();
         LOG.info("Kaa client stopped");
         LOG.info("Data collection demo stopped");
