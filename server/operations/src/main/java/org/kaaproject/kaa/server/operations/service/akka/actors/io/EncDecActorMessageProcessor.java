@@ -15,14 +15,12 @@
  */
 package org.kaaproject.kaa.server.operations.service.akka.actors.io;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Set;
 
-import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -41,6 +39,7 @@ import org.kaaproject.kaa.server.sync.SyncStatus;
 import org.kaaproject.kaa.server.sync.platform.PlatformEncDec;
 import org.kaaproject.kaa.server.sync.platform.PlatformEncDecException;
 import org.kaaproject.kaa.server.sync.platform.PlatformLookup;
+import org.kaaproject.kaa.server.transport.InvalidApplicationTokenException;
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
 import org.kaaproject.kaa.server.transport.message.Message;
@@ -120,11 +119,12 @@ public class EncDecActorMessageProcessor {
     }
 
     public void forward(ActorContext context, SessionAware message) {
-        LOG.debug("Forwarding session aware message: {}", message);
         if (isApplicationTokenValid(message.getSessionInfo().getApplicationToken())) {
+            LOG.debug("Forwarding session aware message: {}", message);
             this.opsActor.tell(message, context.self());
         } else {
-            sendFailureResponseMessage(message);
+            LOG.debug("Session aware message won't be forwarded. Reason: message {}" +
+                    " has invalid application token", message);
         }
     }
 
@@ -173,29 +173,35 @@ public class EncDecActorMessageProcessor {
     }
 
     private void processSignedRequest(ActorContext context, SessionInitMessage message) throws GeneralSecurityException,
-            PlatformEncDecException {
+            PlatformEncDecException, InvalidApplicationTokenException {
         ClientSync request = decodeRequest(message);
         EndpointObjectHash key = getEndpointObjectHash(request);
         SessionInfo session = new SessionInfo(message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
                 message.getChannelType(), crypt.getSessionCipherPair(), key, request.getClientSyncMetaData().getApplicationToken(),
                 message.getKeepAlive(), message.isEncrypted());
         message.onSessionCreated(session);
-        forwardToOpsActor(context, session, request, message);
+        if (isApplicationTokenValid(session.getApplicationToken())) {
+            forwardToOpsActor(context, session, request, message);
+        } else {
+            LOG.info("Invalid application token received");
+            throw new InvalidApplicationTokenException("Invalid application token received");
+        }
     }
 
     private void processSessionRequest(ActorContext context, SessionAwareMessage message) throws GeneralSecurityException,
-            PlatformEncDecException {
+            PlatformEncDecException, InvalidApplicationTokenException {
         ClientSync request = decodeRequest(message);
-        forwardToOpsActor(context, message.getSessionInfo(), request, message);
+        if (isApplicationTokenValid(message.getSessionInfo().getApplicationToken())) {
+            forwardToOpsActor(context, message.getSessionInfo(), request, message);
+        } else {
+            LOG.info("Invalid application token received");
+            throw new InvalidApplicationTokenException("Invalid application token received");
+        }
     }
 
     private void forwardToOpsActor(ActorContext context, SessionInfo session, ClientSync request, Message requestMessage) {
         SyncRequestMessage message = new SyncRequestMessage(session, request, requestMessage, context.self());
-        if (isApplicationTokenValid(message.getAppToken())) {
-            this.opsActor.tell(message, context.self());
-        } else {
-            sendFailureResponseMessage(message);
-        }
+        this.opsActor.tell(message, context.self());
     }
 
     private void processSessionResponse(SessionResponse message) throws GeneralSecurityException, PlatformEncDecException {
@@ -348,18 +354,7 @@ public class EncDecActorMessageProcessor {
     }
 
     private boolean isApplicationTokenValid(String applicationToken) {
-        String tenantId = cacheService.getTenantIdByAppToken(applicationToken);
-        return tenantId != null;
-    }
-
-    private void sendFailureResponseMessage(SyncRequestMessage message) {
-        LOG.debug("Sending failure response...");
-        message.getChannelContext().writeAndFlush(new ConnAck(ConnAck.ReturnCode.REFUSE_BAD_CREDENTIALS));
-    }
-
-    private void sendFailureResponseMessage(SessionAware message) {
-        LOG.debug("Sending failure response...");
-        message.getSessionInfo().getCtx().writeAndFlush(new ConnAck(ConnAck.ReturnCode.REFUSE_BAD_CREDENTIALS));
+        return cacheService.getTenantIdByAppToken(applicationToken) != null;
     }
 
     protected EndpointObjectHash getEndpointObjectHash(ClientSync request) {
