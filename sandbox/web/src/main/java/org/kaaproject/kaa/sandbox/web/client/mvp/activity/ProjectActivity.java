@@ -116,6 +116,7 @@ public class ProjectActivity extends AbstractActivity {
                 view.setTargetPlatform(result.getPlatform());
                 view.setFeatures(result.getFeatures());
                 view.getDescription().setText(result.getDescription());
+                view.getDetails().setHTML(result.getDetails());
             }
         });
     }

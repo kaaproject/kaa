@@ -20,6 +20,19 @@ Copyright 2014-2015 CyberVision, Inc.
     <project id="smarthouse_demo">
         <name>Smart House</name>
         <description>Smart house application on android platform demonstrating event subsystem (IoT)</description>
+        <details>
+    		<![CDATA[
+<h2>Installation instructions:</h2>
+- enter the following command in console:
+<pre>
+$ adb install hello-world.apk
+$ echo
+$ echo
+</pre>
+<h3>Additional info:</h3>
+Goto <a href="http://kaaproject.org">Kaa site</a> for details.
+	        ]]>
+	</details>
         <platform>ANDROID</platform>
         <features>EVENT USER_VERIFIER</features>
         <sourceArchive>android/smarthouse_demo.tar.gz</sourceArchive>
