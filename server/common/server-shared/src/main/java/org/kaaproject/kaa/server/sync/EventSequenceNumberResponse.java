@@ -46,6 +46,23 @@ public class EventSequenceNumberResponse {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EventSequenceNumberResponse that = (EventSequenceNumberResponse) o;
+
+        if (seqNum != that.seqNum) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return seqNum;
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("EventSequenceNumberResponse [seqNum=");

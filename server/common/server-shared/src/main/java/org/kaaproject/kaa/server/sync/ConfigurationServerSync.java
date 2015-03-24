@@ -107,6 +107,32 @@ public class ConfigurationServerSync {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ConfigurationServerSync that = (ConfigurationServerSync) o;
+
+        if (appStateSeqNumber != that.appStateSeqNumber) return false;
+        if (confDeltaBody != null ? !confDeltaBody.equals(that.confDeltaBody) : that.confDeltaBody != null)
+            return false;
+        if (confSchemaBody != null ? !confSchemaBody.equals(that.confSchemaBody) : that.confSchemaBody != null)
+            return false;
+        if (responseStatus != that.responseStatus) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = appStateSeqNumber;
+        result = 31 * result + (responseStatus != null ? responseStatus.hashCode() : 0);
+        result = 31 * result + (confSchemaBody != null ? confSchemaBody.hashCode() : 0);
+        result = 31 * result + (confDeltaBody != null ? confDeltaBody.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("ConfigurationServerSync [appStateSeqNumber=");

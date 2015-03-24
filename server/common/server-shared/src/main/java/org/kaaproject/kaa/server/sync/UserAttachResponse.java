@@ -58,6 +58,28 @@ public class UserAttachResponse {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserAttachResponse that = (UserAttachResponse) o;
+
+        if (errorCode != that.errorCode) return false;
+        if (errorReason != null ? !errorReason.equals(that.errorReason) : that.errorReason != null) return false;
+        if (result != that.result) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result1 = result != null ? result.hashCode() : 0;
+        result1 = 31 * result1 + (errorCode != null ? errorCode.hashCode() : 0);
+        result1 = 31 * result1 + (errorReason != null ? errorReason.hashCode() : 0);
+        return result1;
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("UserAttachResponse [result=");

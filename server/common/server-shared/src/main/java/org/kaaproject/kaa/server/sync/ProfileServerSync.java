@@ -45,6 +45,24 @@ public class ProfileServerSync {
         this.responseStatus = value;
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProfileServerSync that = (ProfileServerSync) o;
+
+        if (responseStatus != that.responseStatus) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return responseStatus != null ? responseStatus.hashCode() : 0;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

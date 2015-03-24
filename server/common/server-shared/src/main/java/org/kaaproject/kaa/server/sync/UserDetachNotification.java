@@ -46,6 +46,24 @@ public class UserDetachNotification {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserDetachNotification that = (UserDetachNotification) o;
+
+        if (endpointAccessToken != null ? !endpointAccessToken.equals(that.endpointAccessToken) : that.endpointAccessToken != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return endpointAccessToken != null ? endpointAccessToken.hashCode() : 0;
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("UserDetachNotification [endpointAccessToken=");
