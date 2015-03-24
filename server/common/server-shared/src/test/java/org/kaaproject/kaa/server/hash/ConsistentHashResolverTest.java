@@ -20,11 +20,18 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
+import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.SortedMap;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class ConsistentHashResolverTest {
 
@@ -43,12 +50,10 @@ public class ConsistentHashResolverTest {
 
     @Test
     public void getNodeForOneItemCircleTest() {
-        ConnectionInfo connectionInfo = new ConnectionInfo("thrift1", 4234, ByteBuffer.allocate(16));
-        OperationsNodeInfo operationsNodeInfo = new OperationsNodeInfo(connectionInfo, null, 523634L, null);
-        List<OperationsNodeInfo> nodes = Arrays.asList(operationsNodeInfo);
-        ConsistentHashResolver consistentHashResolver = new ConsistentHashResolver(nodes, 2);
+        List<OperationsNodeInfo> nodes = createNodeList();
+        ConsistentHashResolver consistentHashResolver = new ConsistentHashResolver(nodes, 1);
         OperationsNodeInfo returnedNode = consistentHashResolver.getNode("userId");
-        Assert.assertEquals(operationsNodeInfo, returnedNode);
+        Assert.assertEquals(nodes.get(0), returnedNode);
     }
 
     @Test
@@ -73,5 +78,23 @@ public class ConsistentHashResolverTest {
         OperationsNodeInfo returnedNode = consistentHashResolver.getNode("a");
         // operations node info 1 should be returned
         Assert.assertEquals(operationsNodeInfo1, returnedNode);
+    }
+
+    @Test
+    public void onNodeRemovedTest() throws NoSuchFieldException {
+        int t = 10;
+        List<OperationsNodeInfo> nodes = createNodeList();
+        ConsistentHashResolver consistentHashResolver = new ConsistentHashResolver(nodes, t);
+        SortedMap circle = mock(SortedMap.class);
+        ReflectionTestUtils.setField(consistentHashResolver, "circle", circle);
+        consistentHashResolver.onNodeUpdated(nodes.get(0));
+        // verify that remove was called t times
+        verify(circle, Mockito.times(t)).remove(any());
+    }
+
+    private List<OperationsNodeInfo> createNodeList() {
+        ConnectionInfo connectionInfo = new ConnectionInfo("thrift1", 4234, ByteBuffer.allocate(16));
+        OperationsNodeInfo operationsNodeInfo = new OperationsNodeInfo(connectionInfo, null, 523634L, null);
+        return Arrays.asList(operationsNodeInfo);
     }
 }
