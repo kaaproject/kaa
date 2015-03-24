@@ -27,9 +27,9 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 /**
- * The Class LoadingImageView.
- * Represents image view with handling image loading state.
- * Depending on image loading state it can display busy progress, image view or loading failed view.
+ * Represents the image view with handling of the image loading state.
+ * Depending on the image loading state, it can display either busy progress, 
+ * the image view or the loading failed view.
  */
 public class LoadingImageView extends RelativeLayout {
 
