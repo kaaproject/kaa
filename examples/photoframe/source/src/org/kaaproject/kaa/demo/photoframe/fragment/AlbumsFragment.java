@@ -30,9 +30,8 @@ import android.view.MenuItem;
 import android.widget.BaseAdapter;
 
 /**
- * The Class AlbumsFragment.
- * Implementation of {@link ListFragment} class. 
- * Represents view with list of remote device albums.
+ * The implementation of the {@link ListFragment} class. 
+ * Represents a view with a list of remote device albums.
  */
 public class AlbumsFragment extends ListFragment {
     
