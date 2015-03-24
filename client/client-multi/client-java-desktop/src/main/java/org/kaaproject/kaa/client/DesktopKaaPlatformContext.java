@@ -21,6 +21,8 @@ import java.security.PublicKey;
 
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.connectivity.PingConnectivityChecker;
+import org.kaaproject.kaa.client.context.ExecutorContext;
+import org.kaaproject.kaa.client.context.SimpleExecutorContext;
 import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
@@ -31,14 +33,20 @@ import org.kaaproject.kaa.client.util.CommonsBase64;
 public class DesktopKaaPlatformContext implements KaaClientPlatformContext {
 
     private final KaaClientProperties properties;
+    private final ExecutorContext executorContext;
     
     public DesktopKaaPlatformContext() {
         this(null);
     }
-
+    
     public DesktopKaaPlatformContext(KaaClientProperties properties) {
+        this(properties, new SimpleExecutorContext());
+    }
+
+    public DesktopKaaPlatformContext(KaaClientProperties properties, ExecutorContext executorContext) {
         super();
         this.properties = properties;
+        this.executorContext = executorContext;
     }
 
     @Override
@@ -66,5 +74,10 @@ public class DesktopKaaPlatformContext implements KaaClientPlatformContext {
     @Override
     public KaaClientProperties getProperties() {
         return properties;
+    }
+    
+    @Override
+    public ExecutorContext getExecutorContext() {
+        return executorContext;
     }
 }

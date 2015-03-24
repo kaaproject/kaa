@@ -1446,7 +1446,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         if (configurationRecord != null) {
             GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(configurationRecord);
             GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
-            body = converter.endcodeToJson(record);
+            body = converter.encodeToJson(record);
         }
         ConfigurationDto result = new ConfigurationDto(configuration);
         result.setBody(body);
@@ -2322,7 +2322,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             endpointUserConfiguration.setAppToken(application.getApplicationToken());
             GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(configurationData);
             GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
-            String body = converter.endcodeToJson(record);
+            String body = converter.encodeToJson(record);
             endpointUserConfiguration.setBody(body);
             clientProvider.getClient().editUserConfiguration(toGenericDataStruct(endpointUserConfiguration));
         } catch (Exception e) {

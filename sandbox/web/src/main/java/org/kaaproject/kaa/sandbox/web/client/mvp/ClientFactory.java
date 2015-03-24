@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.sandbox.web.client.mvp;
 
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.ChangeKaaHostView;
+import org.kaaproject.kaa.sandbox.web.client.mvp.view.FilterView;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.MainView;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.ProjectView;
@@ -30,7 +31,9 @@ public interface ClientFactory {
     
     HeaderView getHeaderView();
     
-    MainView getMainView();
+    FilterView getFilterView();
+    
+    MainView getMainView();    
     
     ProjectView getProjectView();
     

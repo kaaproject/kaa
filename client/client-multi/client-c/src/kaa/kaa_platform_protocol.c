@@ -68,6 +68,7 @@ extern kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self, kaa_p
 
 /** External logging API */
 #ifndef KAA_DISABLE_FEATURE_LOGGING
+extern kaa_error_t kaa_logging_need_logging_resync(kaa_log_collector_t *self, bool *result);
 extern kaa_error_t kaa_logging_request_get_size(kaa_log_collector_t *self, size_t *expected_size);
 extern kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platform_message_writer_t *writer);
 extern kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
@@ -200,7 +201,7 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
     *expected_size += extension_size;
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated meta extension size %u", extension_size);
 
-    for (;!err_code && services_count--;) {
+    while (!err_code && services_count--) {
         switch (services[services_count]) {
         case KAA_SERVICE_BOOTSTRAP: {
             err_code = kaa_channel_manager_bootstrap_request_get_size(self->kaa_context->channel_manager
@@ -320,7 +321,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
                     --total_services_count;
                 }
             } else {
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to read 'need_resync' flag");
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to read profile's 'need_resync' flag");
             }
             break;
         }
@@ -342,9 +343,19 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
         }
         case KAA_SERVICE_LOGGING: {
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-            error_code = kaa_logging_request_serialize(self->kaa_context->log_collector, writer);
-            if (error_code)
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the logging extension");
+            bool need_resync = false;
+            error_code = kaa_logging_need_logging_resync(self->kaa_context->log_collector, &need_resync);
+            if (!error_code) {
+                if (need_resync) {
+                    error_code = kaa_logging_request_serialize(self->kaa_context->log_collector, writer);
+                    if (error_code)
+                         KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the logging extension");
+                } else {
+                    --total_services_count;
+                }
+            } else {
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to read logging's 'need_resync' flag");
+            }
 #else
             --total_services_count;
 #endif

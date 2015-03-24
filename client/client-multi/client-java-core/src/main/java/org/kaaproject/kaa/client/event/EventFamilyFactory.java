@@ -16,26 +16,27 @@
 
 package org.kaaproject.kaa.client.event;
 
-import java.util.HashSet;
-import java.util.Set;
-import org.kaaproject.kaa.client.transact.TransactionId;
-
 import javax.annotation.Generated;
+
+import org.kaaproject.kaa.client.context.ExecutorContext;
+import org.kaaproject.kaa.client.transact.TransactionId;
 
 /**
  * Factory for accessing supported event families.
  * DO NOT edit it, this class is auto-generated.
  *
  * @author Taras Lemkin
+ * @author Andrew Shvayka
  *
  */
 @Generated("EventFamilyFactory.java.template")
 public class EventFamilyFactory {
-    private EventManager eventManager;
-    private final Set<EventFamily> eventFamilies = new HashSet<EventFamily>();
+    private final EventManager eventManager;
+    private final ExecutorContext executorContext;
 
-    public EventFamilyFactory(EventManager eventManager) {
+    public EventFamilyFactory(EventManager eventManager, ExecutorContext executorContext) {
         this.eventManager = eventManager;
+        this.executorContext = executorContext;
     }
 
     public TransactionId startEventsBlock() {

@@ -39,9 +39,9 @@ EndpointRegistrationManager::EndpointRegistrationManager(IKaaClientStateStorageP
 
 void EndpointRegistrationManager::onUserAttach(const UserAttachResponse& response)
 {
-    KAA_MUTEX_LOCKING(userAttachRequestGuard_);
+    KAA_MUTEX_LOCKING("userAttachRequestGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(userAttachRequestLock, userAttachRequestGuard_);
-    KAA_MUTEX_LOCKED(userAttachRequestGuard_);
+    KAA_MUTEX_LOCKED("userAttachRequestGuard_");
 
     if (!userAttachRequest_) {
         KAA_LOG_ERROR(boost::format("Got UserAttachResponse without leading UserAttachRequest. "
@@ -52,9 +52,9 @@ void EndpointRegistrationManager::onUserAttach(const UserAttachResponse& respons
     std::string userExternalId = userAttachRequest_->userExternalId;
     userAttachRequest_.reset();
 
-    KAA_MUTEX_UNLOCKING(userAttachRequestGuard_);
+    KAA_MUTEX_UNLOCKING("userAttachRequestGuard_");
     KAA_UNLOCK(userAttachRequestLock);
-    KAA_MUTEX_UNLOCKED(userAttachRequestGuard_);
+    KAA_MUTEX_UNLOCKED("userAttachRequestGuard_");
 
     if (response.result == SyncResponseResultType::SUCCESS) {
         status_->setEndpointAttachStatus(true);
@@ -78,9 +78,9 @@ void EndpointRegistrationManager::onUserAttach(const UserAttachResponse& respons
 void EndpointRegistrationManager::onEndpointsAttach(const std::vector<EndpointAttachResponse>& attachResponses)
 {
     for (const auto& attachResponse : attachResponses) {
-        KAA_MUTEX_LOCKING(attachEndpointGuard_);
+        KAA_MUTEX_LOCKING("attachEndpointGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(attachEndpointLock, attachEndpointGuard_);
-        KAA_MUTEX_LOCKED(attachEndpointGuard_);
+        KAA_MUTEX_LOCKED("attachEndpointGuard_");
 
         auto requestIt = attachEndpointRequests_.find(attachResponse.requestId);
         if (requestIt != attachEndpointRequests_.end()) {
@@ -119,9 +119,9 @@ void EndpointRegistrationManager::onEndpointsAttach(const std::vector<EndpointAt
 void EndpointRegistrationManager::onEndpointsDetach(const std::vector<EndpointDetachResponse>& detachResponses)
 {
     for (const auto& detachResponse : detachResponses) {
-        KAA_MUTEX_LOCKING(detachEndpointGuard_);
+        KAA_MUTEX_LOCKING("detachEndpointGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(detachEndpointLock, detachEndpointGuard_);
-        KAA_MUTEX_LOCKED(detachEndpointGuard_);
+        KAA_MUTEX_LOCKED("detachEndpointGuard_");
 
         auto requestIt = detachEndpointRequests_.find(detachResponse.requestId);
         if (requestIt != detachEndpointRequests_.end()) {
@@ -188,9 +188,9 @@ void EndpointRegistrationManager::attachEndpoint(const std::string& endpointAcce
 
     std::int32_t requestId = attachRequestId_++;
 
-    KAA_MUTEX_LOCKING(attachEndpointGuard_);
+    KAA_MUTEX_LOCKING("attachEndpointGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(attachEndpointLock, attachEndpointGuard_);
-    KAA_MUTEX_LOCKED(attachEndpointGuard_);
+    KAA_MUTEX_LOCKED("attachEndpointGuard_");
 
     auto requestResult = attachEndpointRequests_.insert(std::make_pair(requestId, endpointAccessToken));
     if (requestResult.second) {
@@ -228,9 +228,9 @@ void EndpointRegistrationManager::detachEndpoint(const std::string& endpointKeyH
 
     std::int32_t requestId = detachRequestId_++;
 
-    KAA_MUTEX_LOCKING(detachEndpointGuard_);
+    KAA_MUTEX_LOCKING("detachEndpointGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(detachEndpointLock, detachEndpointGuard_);
-    KAA_MUTEX_LOCKED(detachEndpointGuard_);
+    KAA_MUTEX_LOCKED("detachEndpointGuard_");
 
     auto result = detachEndpointRequests_.insert(std::make_pair(requestId, endpointKeyHash));
     if (result.second) {
@@ -282,16 +282,16 @@ void EndpointRegistrationManager::attachUser(const std::string& userExternalId
         throw BadCredentials("Bad user credentials");
     }
 
-    KAA_MUTEX_LOCKING(userAttachRequestGuard_);
+    KAA_MUTEX_LOCKING("userAttachRequestGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(userAttachRequestLock, userAttachRequestGuard_);
-    KAA_MUTEX_LOCKED(userAttachRequestGuard_);
+    KAA_MUTEX_LOCKED("userAttachRequestGuard_");
 
     if (!userAttachRequest_) {
         userAttachRequest_.reset(new UserAttachRequest);
 
-        KAA_MUTEX_UNLOCKING(userAttachRequestGuard_);
+        KAA_MUTEX_UNLOCKING("userAttachRequestGuard_");
         KAA_UNLOCK(userAttachRequestLock);
-        KAA_MUTEX_UNLOCKED(userAttachRequestGuard_);
+        KAA_MUTEX_UNLOCKED("userAttachRequestGuard_");
 
         KAA_LOG_INFO(boost::format("Going to attach to user '%1%' by access token: '%2%' (user verifier '%3%')")
                                                             % userExternalId % userAccessToken % userVerifierToken);
@@ -312,25 +312,25 @@ void EndpointRegistrationManager::attachUser(const std::string& userExternalId
 
 std::shared_ptr<UserAttachRequest> EndpointRegistrationManager::getUserAttachRequest()
 {
-    KAA_MUTEX_LOCKING(userAttachRequestGuard_);
+    KAA_MUTEX_LOCKING("userAttachRequestGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(userAttachRequestLock, userAttachRequestGuard_);
-    KAA_MUTEX_LOCKED(userAttachRequestGuard_);
+    KAA_MUTEX_LOCKED("userAttachRequestGuard_");
     return userAttachRequest_;
 }
 
 std::unordered_map<std::int32_t, std::string> EndpointRegistrationManager::getEndpointsToAttach()
 {
-    KAA_MUTEX_LOCKING(attachEndpointGuard_);
+    KAA_MUTEX_LOCKING("attachEndpointGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(attachEndpointLock, attachEndpointGuard_);
-    KAA_MUTEX_LOCKED(attachEndpointGuard_);
+    KAA_MUTEX_LOCKED("attachEndpointGuard_");
     return attachEndpointRequests_;
 }
 
 std::unordered_map<std::int32_t, std::string> EndpointRegistrationManager::getEndpointsToDetach()
 {
-    KAA_MUTEX_LOCKING(detachEndpointGuard_);
+    KAA_MUTEX_LOCKING("detachEndpointGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(detachEndpointLock, detachEndpointGuard_);
-    KAA_MUTEX_LOCKED(detachEndpointGuard_);
+    KAA_MUTEX_LOCKED("detachEndpointGuard_");
     return detachEndpointRequests_;
 }
 

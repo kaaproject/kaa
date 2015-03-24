@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.event.EventFamily;
 import org.kaaproject.kaa.client.event.EventManager;
 import org.kaaproject.kaa.client.transact.TransactionId;
@@ -31,12 +32,14 @@ public class ${event_family_class_name} implements EventFamily {
     private static final Logger LOG = LoggerFactory.getLogger(${event_family_class_name}.class);
 
     private final EventManager eventManager;
+    private final ExecutorContext executorContext;
 
     private final Set<Listener> listeners = new HashSet<>();
 
-    public ${event_family_class_name}(EventManager eventManager) {
+    public ${event_family_class_name}(EventManager eventManager, ExecutorContext executorContext) {
         super();
         this.eventManager = eventManager;
+        this.executorContext = executorContext;
     }
 
     @Override
@@ -49,7 +52,7 @@ public class ${event_family_class_name} implements EventFamily {
     }
 
     @Override
-    public void onGenericEvent(String fqn, byte[] data, String source) {
+    public void onGenericEvent(String fqn, byte[] data, final String source) {
     
         ${event_family_listeners_on_generic_event}
 

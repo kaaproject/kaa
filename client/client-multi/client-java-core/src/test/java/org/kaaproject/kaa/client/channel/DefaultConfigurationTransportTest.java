@@ -36,10 +36,8 @@ public class DefaultConfigurationTransportTest {
 
     @Test(expected = ChannelRuntimeException.class)
     public void testSyncNegative() {
-        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         ConfigurationTransport transport = new DefaultConfigurationTransport();
-        transport.setChannelManager(channelManager);
         transport.setClientState(clientState);
         transport.sync();
     }
@@ -48,15 +46,13 @@ public class DefaultConfigurationTransportTest {
     public void testSync() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
-        KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channelManager.getChannelByTransportType(TransportType.CONFIGURATION)).thenReturn(channel);
 
         ConfigurationTransport transport = new DefaultConfigurationTransport();
         transport.setChannelManager(channelManager);
         transport.setClientState(clientState);
         transport.sync();
 
-        Mockito.verify(channel, Mockito.times(1)).sync(TransportType.CONFIGURATION);
+        Mockito.verify(channelManager, Mockito.times(1)).sync(TransportType.CONFIGURATION);
     }
 
     @Test
@@ -88,8 +84,6 @@ public class DefaultConfigurationTransportTest {
         response.setResponseStatus(SyncResponseStatus.DELTA);
 
         KaaChannelManager channelManagerMock = Mockito.mock(KaaChannelManager.class);
-        KaaDataChannel channelMock = Mockito.mock(KaaDataChannel.class);
-        Mockito.when(channelManagerMock.getChannelByTransportType(TransportType.CONFIGURATION)).thenReturn(channelMock);
 
         ConfigurationTransport transport = new DefaultConfigurationTransport();
         transport.setChannelManager(channelManagerMock);

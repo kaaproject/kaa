@@ -17,9 +17,11 @@
 package org.kaaproject.kaa.sandbox.web.client.mvp;
 
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.ChangeKaaHostView;
+import org.kaaproject.kaa.sandbox.web.client.mvp.view.FilterView;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.MainView;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.ProjectView;
+import org.kaaproject.kaa.sandbox.web.client.mvp.view.filter.FilterViewImpl;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.header.HeaderViewImpl;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.main.MainViewImpl;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.project.ProjectViewImpl;
@@ -35,6 +37,8 @@ public class ClientFactoryImpl implements ClientFactory {
     private final PlaceController placeController = new PlaceController(eventBus);
 
     private final HeaderView headerView = new HeaderViewImpl();
+    
+    private final FilterView filterView = new FilterViewImpl();
     
     private final MainView mainView = new MainViewImpl();
     
@@ -58,6 +62,11 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
+    public FilterView getFilterView() {
+        return filterView;
+    }
+
+    @Override
     public MainView getMainView() {
         return mainView;
     }
@@ -71,5 +80,6 @@ public class ClientFactoryImpl implements ClientFactory {
     public ChangeKaaHostView getChangeKaaHostView() {
         return changeKaaHostView;
     }
+
 
 }

@@ -20,16 +20,13 @@ import java.util.List;
 
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.sandbox.web.client.mvp.event.project.HasProjectActionEventHandlers;
-
-import com.google.gwt.event.dom.client.HasClickHandlers;
+import org.kaaproject.kaa.sandbox.web.client.mvp.event.project.ProjectFilter;
 
 public interface MainView extends BaseView {
 
-    HasClickHandlers getGoToKaaAdminWeb();
-    
-    HasClickHandlers getGoToAvroUiSandboxWeb();
-
     void setProjects(List<Project> projects);
+    
+    void updateProjectFilter(ProjectFilter filter);
     
     HasProjectActionEventHandlers getProjectsActionSource();
 
