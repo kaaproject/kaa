@@ -32,7 +32,7 @@
     <files>
         <file>
             <source>${project.basedir}/resources/logback.xml</source>
-            <outputDirectory>jevent_demo/resources</outputDirectory>
+            <outputDirectory>jevent_demo/JEventDemo/resources</outputDirectory>
         </file>
     </files>
 </assembly>

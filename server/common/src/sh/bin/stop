@@ -22,7 +22,8 @@ function stop()
 	fi
 	
 	echo "Stopping $SERVER_NAME"
-	${SERVER_HOME}/bin/console shutdown
+
+	${SERVER_HOME}/bin/console shutdown >>${SERVER_LOG_DIR}/${NAME}-server${SERVER_LOG_SUFIX}.out
 }
 
 stop

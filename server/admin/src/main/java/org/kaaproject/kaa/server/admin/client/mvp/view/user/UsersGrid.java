@@ -26,7 +26,7 @@ import com.google.gwt.user.cellview.client.DataGrid;
 public class UsersGrid extends AbstractKaaGrid<UserDto, String> {
 
     public UsersGrid() {
-        super(Unit.PX, true);
+        super(Unit.PX, false);
     }
 
     @Override
