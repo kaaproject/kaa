@@ -66,9 +66,7 @@ public class RecordLibraryGenerator {
     public static FileData generateRecordLibrary(int logSchemaVersion, String logSchema) throws Exception {
         final Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logSchema);
 
-        Map<String, Schema> uniqueSchemas = SchemaUtil.getUniqueSchemasMap(new LinkedList<Schema>() {{
-            add(recordWrapperSchema);
-        }});
+        Map<String, Schema> uniqueSchemas = SchemaUtil.getUniqueSchemasMap(Arrays.asList(recordWrapperSchema));
         List<JavaDynamicBean> javaSources = JavaSdkGenerator.generateSchemaSources(recordWrapperSchema, uniqueSchemas);
 
         ByteArrayOutputStream libraryOutput = new ByteArrayOutputStream();
