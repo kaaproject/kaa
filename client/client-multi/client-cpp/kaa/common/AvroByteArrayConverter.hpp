@@ -120,6 +120,10 @@ AvroByteArrayConverter<T>::AvroByteArrayConverter()
 template<typename T>
 T AvroByteArrayConverter<T>::fromByteArray(const std::uint8_t* data, const std::uint32_t& dataSize)
 {
+    if ((data && !dataSize) || (dataSize && !data)) {
+        throw KaaException("invalid data to decode");
+    }
+
     T datum;
     std::unique_ptr<avro::InputStream> in = avro::memoryInputStream(data, dataSize);
 
@@ -132,6 +136,10 @@ T AvroByteArrayConverter<T>::fromByteArray(const std::uint8_t* data, const std::
 template<typename T>
 void AvroByteArrayConverter<T>::fromByteArray(const std::uint8_t* data, const std::uint32_t& dataSize, T& datum)
 {
+    if ((data && !dataSize) || (dataSize && !data)) {
+        throw KaaException("invalid data to decode");
+    }
+
     std::unique_ptr<avro::InputStream> in = avro::memoryInputStream(data, dataSize);
 
     decoder_->init(*in);

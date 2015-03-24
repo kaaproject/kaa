@@ -160,17 +160,17 @@ public class CppEventSourcesGenerator {
                 Matcher matcher = CLASS_NAME_PATTERN.matcher(eventMap.getFqn());
                 String eventClassName = (matcher.find()) ? matcher.group(1) : "";
 
-                if (eventMap.getAction()==ApplicationEventAction.SINK ||
-                        eventMap.getAction()==ApplicationEventAction.BOTH) {
+                if (eventMap.getAction() == ApplicationEventAction.SINK ||
+                        eventMap.getAction() == ApplicationEventAction.BOTH) {
 
-                    if (supportedFqnsList.length()>0) {
+                    if (supportedFqnsList.length() > 0) {
                         supportedFqnsList +=",";
                     }
                     supportedFqnsList += "\"" + eventMap.getFqn() + "\"";
-                    if (eventFamilyListenersOnGenericEvent.length()>0) {
+                    if (eventFamilyListenersOnGenericEvent.length() > 0) {
                         eventFamilyListenersOnGenericEvent += "else ";
                     }
-                    if (eventFamilyListenersNotifyListener.length()>0) {
+                    if (eventFamilyListenersNotifyListener.length() > 0) {
                         eventFamilyListenersNotifyListener += "else ";
                     }
                     eventFamilyListenersOnGenericEvent += eventFamilyOnGenericEvent.
@@ -186,8 +186,8 @@ public class CppEventSourcesGenerator {
                             replaceAll(EVENT_CLASS_NAME_VAR, eventClassName) + "\n";
 
                 }
-                if (eventMap.getAction()==ApplicationEventAction.SOURCE ||
-                        eventMap.getAction()==ApplicationEventAction.BOTH) {
+                if (eventMap.getAction() == ApplicationEventAction.SOURCE ||
+                        eventMap.getAction() == ApplicationEventAction.BOTH) {
                     eventFamilySendEventMethods += eventFamilySendEventMethod.
                             replaceAll(EVENT_FAMILY_CLASS_NAME_VAR, efm.getEcfClassName()).
                             replaceAll(EVENT_CLASS_FQN_VAR, eventMap.getFqn()).
