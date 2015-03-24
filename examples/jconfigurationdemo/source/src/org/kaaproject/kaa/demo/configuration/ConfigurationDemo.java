@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Configuration demo application which demonstrates Kaa configuration API
+ * A demo application that shows how to use the Kaa configuration API.
  */
 public class ConfigurationDemo {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationDemo.class);
@@ -38,10 +38,11 @@ public class ConfigurationDemo {
     public static void main(String[] args) {
         LOG.info("Configuration demo application has started");
 
-        // Kaa desktop context of the application
+        // Create the Kaa desktop context for the application.
         DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext();
 
-        // Create new Kaa client, which listens on Kaa client state changes
+        // Create a Kaa client and add a listener which displays the Kaa client configuration 
+        // as soon as the Kaa client is started. 
         kaaClient = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener() {
             @Override
             public void onStarted() {
@@ -50,10 +51,10 @@ public class ConfigurationDemo {
             }
         });
 
-        // Persist configuration locally to prevent its download in future launches
+        // Persist configuration in a local storage to avoid downloading it each time the Kaa client is started.
         kaaClient.setConfigurationStorage(new SimpleConfigurationStorage(desktopKaaPlatformContext, "saved_config.cfg"));
 
-        // Listen to configuration changes
+        // Add a listener which displays the Kaa client configuration each time it is updated.
         kaaClient.addConfigurationListener(new ConfigurationListener() {
             @Override
             public void onConfigurationUpdate(SampleConfiguration sampleConfiguration) {
@@ -62,7 +63,7 @@ public class ConfigurationDemo {
             }
         });
 
-        // Start Kaa client, which establishes client connection
+        // Start the Kaa client and connect it to the Kaa server.
         kaaClient.start();
 
         try {
@@ -71,7 +72,7 @@ public class ConfigurationDemo {
             LOG.error("IOException was caught", e);
         }
 
-        // Stop Kaa client, which will gracefully close all used resources
+        // Stop the Kaa client and gracefully close all the resources which were in use.
         kaaClient.stop();
 
         LOG.info("Configuration demo application has finished");
