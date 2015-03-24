@@ -52,9 +52,9 @@ public class CEventSourcesGenerator {
     private static final String EVENT_FAMILIES_H_FILE = "kaa_{name}.h";
     private static final String EVENT_FAMILIES_C_PATTERN = "sdk/c/event/kaa_event_families.c.vm";
     private static final String EVENT_FAMILIES_C_FILE = "kaa_{name}.c";
-    private static final String EVENT_C_PATTERN = "sdk/c/event/kaa_event.c.vm";
-    private static final String EVENT_C_FILE = "kaa_event.c";
-
+    private static final String EVENT_FQN_H_FILE = "kaa_fqn_definitions.h";
+    private static final String EVENT_FQN_PATTERN = "sdk/c/event/kaa_fqn_definitions.h.vm";
+    
     private static final VelocityEngine velocityEngine;
     static {
         velocityEngine = new VelocityEngine();
@@ -77,7 +77,7 @@ public class CEventSourcesGenerator {
         VelocityContext context = new VelocityContext();
         context.put("eventFamilies", eventFamilies);
         StringWriter commonWriter = new StringWriter();
-        velocityEngine.getTemplate(EVENT_C_PATTERN).merge(context, commonWriter);
+        velocityEngine.getTemplate(EVENT_FQN_PATTERN).merge(context, commonWriter);
 
         for (EventFamilyMetadata eventFamily : eventFamilies) {
             context.put("StyleUtils", StyleUtils.class);
@@ -145,7 +145,7 @@ public class CEventSourcesGenerator {
             tarEntry = new TarEntryData(entry, data);
             eventSources.add(tarEntry);
 
-            entry = new TarArchiveEntry(KAA_SRC_FOLDER + "/" + EVENT_C_FILE);
+            entry = new TarArchiveEntry(KAA_SRC_FOLDER + "/" + EVENT_FQN_H_FILE);
             data = commonWriter.toString().getBytes();
             entry.setSize(data.length);
             tarEntry = new TarEntryData(entry, data);

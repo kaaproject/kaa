@@ -32,7 +32,7 @@
 # include "utilities/kaa_mem.h"
 # include "utilities/kaa_log.h"
 # include "platform/ext_system_logger.h"
-
+# include "kaa_fqn_definitions.h"
 
 
 
@@ -1132,36 +1132,6 @@ kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_t *self
 
     return KAA_ERR_EVENT_TRX_NOT_FOUND;
 }
-
-
-
-typedef struct {
-    char       *ecf_name;
-    size_t      supported_incoming_fqns_count;
-    char      **supported_incoming_fqns;
-} event_class_family_t;
-
-static const char *TestEventFamilyFQNS[8] = {
-        "org.kaaproject.kaa.example.audio.PlayCommand",
-        "org.kaaproject.kaa.example.audio.RewindCommand",
-        "org.kaaproject.kaa.example.audio.PauseCommand",
-        "org.kaaproject.kaa.example.audio.StopCommand",
-        "org.kaaproject.kaa.example.audio.PlaybackStatus",
-        "org.kaaproject.kaa.example.audio.BatteryChargingStatus",
-        "org.kaaproject.kaa.example.audio.BatteryStatus",
-        "org.kaaproject.kaa.example.audio.StatusEvent"
-};
-
-# define SUPPORTED_EVENT_CLASS_FAMILIES_SIZE 1
-
-static const event_class_family_t SUPPORTED_EVENT_CLASS_FAMILIES[SUPPORTED_EVENT_CLASS_FAMILIES_SIZE] =
-{
-    {
-        /* .ecf_name = */                       "TestEventFamily",
-        /* .supported_incoming_fqns_count = */  8,
-        /* .supported_incoming_fqns = */        (char **)TestEventFamilyFQNS
-    }
-};
 
 const char *kaa_find_class_family_name(const char *fqn)
 {
