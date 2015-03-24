@@ -72,7 +72,7 @@ public class ConfigurationDemo {
             LOG.error("IOException was caught", e);
         }
 
-        // Stop the Kaa client and gracefully free up all the resources which were in use.
+        // Stop the Kaa client and release all the resources which were in use.
         kaaClient.stop();
 
         LOG.info("Configuration demo application has finished");
