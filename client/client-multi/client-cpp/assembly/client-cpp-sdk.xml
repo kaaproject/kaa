@@ -38,8 +38,8 @@
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>avrogen.sh</include>
-                <include>build.sh</include>
                 <include>CMakeLists.txt</include>
+                <include>README</include>
             </includes>
         </fileSet>
     </fileSets>

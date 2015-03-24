@@ -18,7 +18,7 @@ Copyright 2014-2015 CyberVision, Inc.
 
 <projectsConfig>
     <project id="notification_demo">
-        <name>Android notification demo</name>
+        <name>Notification demo</name>
         <description>Application on android platform demonstrating notification subsystem (IoT)</description>
         <platform>ANDROID</platform>
         <features>NOTIFICATION</features>

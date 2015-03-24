@@ -19,6 +19,7 @@ package org.kaaproject.kaa.sandbox.web.client;
 import org.kaaproject.kaa.sandbox.web.client.layout.AppLayout;
 import org.kaaproject.kaa.sandbox.web.client.mvp.ClientFactory;
 import org.kaaproject.kaa.sandbox.web.client.mvp.activity.HeaderActivityMapper;
+import org.kaaproject.kaa.sandbox.web.client.mvp.activity.LeftPanelActivityMapper;
 import org.kaaproject.kaa.sandbox.web.client.mvp.activity.SandboxActivityMapper;
 import org.kaaproject.kaa.sandbox.web.client.mvp.place.MainPlace;
 import org.kaaproject.kaa.sandbox.web.client.mvp.place.SandboxPlaceHistoryMapper;
@@ -62,6 +63,10 @@ public class Sandbox implements EntryPoint {
         ActivityMapper headerActivityMapper = new HeaderActivityMapper(clientFactory);
         ActivityManager headerActivityManager = new ActivityManager(headerActivityMapper, eventBus);
         headerActivityManager.setDisplay(appWidget.getAppHeaderHolder());
+        
+        ActivityMapper leftPanelActivityMapper = new LeftPanelActivityMapper(clientFactory);
+        ActivityManager leftPanelActivityManager = new ActivityManager(leftPanelActivityMapper, eventBus);
+        leftPanelActivityManager.setDisplay(appWidget.getLeftPanel());
 
         ActivityMapper appActivityMapper = new SandboxActivityMapper(clientFactory);
         ActivityManager appActivityManager = new ActivityManager(appActivityMapper, eventBus);

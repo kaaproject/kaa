@@ -64,7 +64,7 @@ public:
     virtual std::map<std::int32_t, std::list<std::string> > getPendingListenerRequests();
     virtual bool hasPendingListenerRequests() const;
 
-    virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListeners* listener);
+    virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListenersPtr listener);
 
     virtual void setTransport(EventTransport *transport);
 
@@ -82,7 +82,7 @@ public:
 private:
     struct EventListenersInfo {
         std::list<std::string> eventFQNs_;
-        IFetchEventListeners* listener_;
+        IFetchEventListenersPtr listener_;
     };
 
     void onEventFromServer(const std::string& eventClassFQN
