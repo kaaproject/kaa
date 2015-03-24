@@ -20,7 +20,7 @@ mkdir -p avro/event
 
 avrogencpp -i avro/endpoint.avsc -o kaa/gen/EndpointGen.hpp -n kaa
 avrogencpp -i avro/profile.avsc -o kaa/gen/ProfileGen.hpp -n kaa
-avrogencpp -i avro/notification.avsc -o kaa/gen/NotificationGen.hpp -n kaa
+avrogencpp -i avro/notification.avsc -o kaa/notification/gen/NotificationGen.hpp -n kaa
 avrogencpp -i avro/log.avsc -o kaa/log/gen/LogGen.hpp -n kaa
 avrogencpp -i avro/configuration.avsc -o kaa/configuration/gen/ConfigurationGen.hpp -n kaa
 

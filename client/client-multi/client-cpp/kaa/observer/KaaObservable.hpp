@@ -90,6 +90,13 @@ public:
         slotsToRemove_.clear();
     }
 
+    bool isEmpty()
+    {
+        KAA_MUTEX_UNIQUE_DECLARE(lock, mainGuard_);
+        KAA_MUTEX_UNIQUE_DECLARE(modLock, modificationGuard_);
+        return slots_.empty() && slotsToAdd_.empty();
+    }
+
 private:
     class CallbackWrapper
     {
