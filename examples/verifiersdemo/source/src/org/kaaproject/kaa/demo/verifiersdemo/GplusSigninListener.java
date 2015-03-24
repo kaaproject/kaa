@@ -93,7 +93,7 @@ public class GplusSigninListener implements GoogleApiClient.ConnectionCallbacks,
             if (mSignInClicked) {
                 
                 // The user has already clicked 'sign-in'. 
-                // Attempt to resolve all errors until the user is signed in, or they cancel.
+                // Attempt to resolve all errors until the user is signed in or the user cancels.
                 mSignInClicked = false;
                 resolveSignInError();
             }
