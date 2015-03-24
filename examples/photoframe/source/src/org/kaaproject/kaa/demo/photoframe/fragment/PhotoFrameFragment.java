@@ -29,10 +29,9 @@ import android.view.View;
 import android.widget.TextView;
 
 /**
- * The Class PhotoFrameFragment.
- * Implementation of {@link Fragment} class. Used as superclass for most application fragments.
+ * The implementation of the {@link Fragment} class. Used as a superclass for most application fragments.
  * Implements common fragment lifecycle functions. Stores references to common application resources.
- * Provides functions to switch between views representing busy progress, error message and content.   
+ * Provides functions for switching between views representing busy progress, an error message, and content.   
  */
 public abstract class PhotoFrameFragment extends Fragment {
 
