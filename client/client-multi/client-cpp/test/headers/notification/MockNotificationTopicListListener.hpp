@@ -14,10 +14,22 @@
  * limitations under the License.
  */
 
-#include "kaa/log/LogRecord.hpp"
+#ifndef MOCKNOTIFICATIONTOPICLISTLISTENER_HPP_
+#define MOCKNOTIFICATIONTOPICLISTLISTENER_HPP_
 
 namespace kaa {
 
+#include "kaa/notification/INotificationTopicListListener.hpp"
 
-}
+class MockNotificationTopicListListener: public INotificationTopicListListener {
+public:
+    virtual void onListUpdated(const Topics& topics) { ++onListUpdated_; topics_ = topics; }
 
+public:
+    std::size_t onListUpdated_ = 0;
+    Topics      topics_;
+};
+
+} /* namespace kaa */
+
+#endif /* MOCKNOTIFICATIONTOPICLISTLISTENER_HPP_ */
