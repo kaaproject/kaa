@@ -23,8 +23,6 @@ import org.kaaproject.kaa.client.channel.LogTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ${log_record_class_package}.${log_record_class};
-
 /**
  * Reference implementation of @see LogCollector
  * 
@@ -38,7 +36,7 @@ public class DefaultLogCollector extends AbstractLogCollector{
     }
 
     @Override
-    public void addLogRecord(final ${log_record_class} record) {
+    public void addLogRecord(final ${log_record_class_package}.${log_record_class} record) {
         executorContext.getApiExecutor().execute(new Runnable() {
             @Override
             public void run() {
