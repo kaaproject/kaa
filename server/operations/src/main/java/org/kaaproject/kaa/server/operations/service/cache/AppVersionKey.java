@@ -104,4 +104,15 @@ public final class AppVersionKey implements Serializable {
     public int getVersion() {
         return version;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("AppVersionKey [applicationToken=");
+        builder.append(applicationToken);
+        builder.append(", version=");
+        builder.append(version);
+        builder.append("]");
+        return builder.toString();
+    }
 }

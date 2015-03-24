@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,188 +20,181 @@
 #include <list>
 #include <string>
 
-#include "kaa/notification/INotificationListener.hpp"
-#include "kaa/notification/INotificationTopicListListener.hpp"
+#include "kaa/notification/gen/NotificationDefinitions.hpp"
 
 namespace kaa {
 
+/*
+ * Forward declaration.
+ */
+class INotificationListener;
+class INotificationTopicListListener;
+
 /**
- * <p>Interface for the notification delivery system.</p>
+ * @brief The public interface to topic subscription and notification delivery subsystems.
  *
- * <p>Responsible for processing received topic/notification updates,
- * subscription to optional topic updates and unsubscription from them.</p>
- *
- * @author Denis Kimcherenko
- *
- * @see AbstractNotificationListener
- * @see NotificationTopicListListener
- * @see NotificationListenerInfo
+ * @see INotificationListener
+ * @see INotificationTopicListListener
  *
  */
 class INotificationManager {
 public:
     /**
-     * <p>Add listener to receive updates of available topics.</p>
+     * @brief Adds the listener which receives updates on the list of available topics.
      *
-     * @param listener The listener to receive updates.
-     * @see NotificationTopicListListener
-     *
-     */
-    virtual void addTopicListListener(INotificationTopicListListenerPtr listener) = 0;
-
-    /**
-     * <p>Remove listener receiving updates of available topics.</p>
-     *
-     * @param listener The listener to receive updates.
-     * @see NotificationTopicListListener
+     * @param[in] listener    The listener which receives updates.
+     * @see INotificationTopicListListener
      *
      */
-    virtual void removeTopicListListener(INotificationTopicListListenerPtr listener) = 0;
+    virtual void addTopicListListener(INotificationTopicListListener& listener) = 0;
 
     /**
-     * <p>Retrieve a list of available topics.</p>
+     * @brief Removes listener which receives updates on the list of available topics.
      *
-     * @return List of available topics
+     * @param[in] listener    The listener which receives updates.
+     * @see INotificationTopicListListener
+     *
+     */
+    virtual void removeTopicListListener(INotificationTopicListListener& listener) = 0;
+
+    /**
+     * @brief Retrieves the list of available topics.
+     *
+     * @return The list of available topics.
      *
      */
     virtual Topics getTopics() = 0;
 
     /**
-     * <p>Add listener to receive all notifications (both for mandatory and
-     * optional topics).</p>
+     * @brief Adds the listener which receives notifications on all available topics.
      *
-     * @param listener The listener to receive notifications.
+     * @param[in] listener    The listener which receives notifications.
      *
-     * @see AbstractNotificationListener
+     * @see INotificationListener
      */
-    virtual void addNotificationListener(INotificationListenerPtr listener) = 0;
+    virtual void addNotificationListener(INotificationListener& listener) = 0;
 
     /**
-     * <p>Add listener to receive notifications relating to the specified topic.</p>
+     * @brief Adds the listener which receives notifications on the specified topic.
      *
-     * <p>Listener(s) for optional topics may be added/removed irrespective to
-     * whether subscription was already or not.</p>
+     * Listener(s) for optional topics may be added/removed irrespective to whether subscription is already done or not.
      *
-     * @param topicId  Id of topic (either mandatory or optional).
-     * @param listener The listener to receive notifications.
+     * @param[in] topicId     The id of the topic (either mandatory or optional).
+     * @param[in] listener    The listener which receives notifications.
      *
-     * @throws UnavailableTopicException Throw if unknown topic id is provided.
+     * @throw UnavailableTopicException Throws if the unknown topic id is provided.
      *
-     * @see AbstractNotificationListener
+     * @see INotificationListener
      */
-    virtual void addNotificationListener(const std::string& topidId, INotificationListenerPtr listener) = 0;
+    virtual void addNotificationListener(const std::string& topidId, INotificationListener& listener) = 0;
 
     /**
-     * <p>Remove listener receiving all notifications (both for mandatory and
-     * optional topics).</p>
+     * @brief Removes the listener which receives notifications on all available topics.
      *
-     * @param listener Listener to receive notifications
+     * @param[in] listener    The listener which receives notifications.
      *
-     * @see AbstractNotificationListener
+     * @see INotificationListener
      */
-    virtual void removeNotificationListener(INotificationListenerPtr listener) = 0;
+    virtual void removeNotificationListener(INotificationListener& listener) = 0;
 
     /**
-     * <p>Remove listener receiving notifications for the specified topic.</p>
+     * @brief Removes the listener which receives notifications on the specified topic.
      *
-     * <p>Listener(s) for optional topics may be added/removed irrespective to
-     * whether subscription was already or not.</p>
+     * Listener(s) for optional topics may be added/removed irrespective to whether subscription is already done or not.
      *
-     * @param topicId Id of topic (either mandatory or optional).
-     * @param listener Listener to receive notifications.
+     * @param[in] topicId     The id of topic (either mandatory or optional).
+     * @param[in] listener    The listener which receives notifications.
      *
-     * @throws UnavailableTopicException Throw if unknown topic id is provided.
+     * @throw UnavailableTopicException Throws if the unknown topic id is provided.
      *
-     * @see AbstractNotificationListener
+     * @see INotificationListener
      */
-    virtual void removeNotificationListener(const std::string& topidId, INotificationListenerPtr listener) = 0;
+    virtual void removeNotificationListener(const std::string& topidId, INotificationListener& listener) = 0;
 
     /**
-     * <p>Subscribe to notifications relating to the specified optional topic.</p>
+     * @brief Subscribes to the specified optional topic to receive notifications on that topic.
      *
-     * @param topicId Id of a optional topic.
-     * @param forceSync Define whether current subscription update should be
-     * accepted immediately (see @link sync() @endlink).
+     * @param[in] topicId      The id of the optional topic.
+     * @param[in] forceSync    Indicates whether the subscription request should be sent immediately to
+     *                         the Operations server. If <i> false </i>, the request postpones to the explicit
+     *                         call of @link sync() @endlink or to the first call of @link subscribeToTopic() @endlink,
+     *                         @link subscribeToTopics() @endlink, @link unsubscribeFromTopic() @endlink or
+     *                         @link unsubscribeFromTopics() @endlink with the <i> true </i> value for the
+     *                         @link forceSync @endlink parameter.
      *
-     * @throws UnavailableTopicException Throw if unknown topic id is provided or
-     * topic isn't optional.
+     * @throw UnavailableTopicException Throws if the unknown topic id is provided or the topic isn't optional.
      *
      * @see sync()
      */
-    virtual void subscribeToTopic(const std::string& id, bool forceSync) = 0;
+    virtual void subscribeToTopic(const std::string& id, bool forceSync = true) = 0;
 
     /**
-     * <p>Subscribe to notifications relating to the specified list of
-     * optional topics.</p>
+     * @brief Subscribes to the specified list of optional topics to receive notifications on those topics.
      *
-     * @param topicIds List of optional topic id.
-     * @param forceSync Define whether current subscription update should be
-     * accepted immediately (see @link sync() @endlink).
+     * @param[in] topicIds     The list of optional topic id-s.
+     * @param[in] forceSync    Indicates whether the subscription request should be sent immediately to
+     *                         the Operations server. If <i> false </i>, the request postpones to the explicit
+     *                         call of @link sync() @endlink or to the first call of @link subscribeToTopic() @endlink,
+     *                         @link subscribeToTopics() @endlink, @link unsubscribeFromTopic() @endlink or
+     *                         @link unsubscribeFromTopics() @endlink with the <i> true </i> value for the
+     *                         @link forceSync @endlink parameter.
      *
-     * @throws UnavailableTopicException Throw if unknown topic id is provided or
-     * topic isn't optional.
+     * @throw UnavailableTopicException Throws if the unknown topic id is provided or the topic isn't optional.
      *
      * @see sync()
      */
-    virtual void subscribeToTopics(const std::list<std::string>& idList, bool forceSync) = 0;
+    virtual void subscribeToTopics(const std::list<std::string>& idList, bool forceSync = true) = 0;
 
     /**
-     * <p>Unsubscribe from notifications relating to the specified optional topic.</p>
+     * @brief Unsubscribes from the specified optional topic to stop receiving notifications on that topic.
      *
-     * <p>All previously added listeners will be removed automatically.</p>
+     * @param[in] topicId      The id of the optional topic.
+     * @param[in] forceSync    Indicates whether the subscription request should be sent immediately to
+     *                         the Operations server or postponed. If <i> false </i>, the request is postponed either
+     *                         to the explicit
+     *                         call of @link sync() @endlink or to the first call of one of the following functions
+     *                         with the @link forceSync @endlink parameter set to <i> true </i>:
+     *                         @link subscribeToTopic() @endlink, @link subscribeToTopics() @endlink,
+     *                         @link unsubscribeFromTopic() @endlink or @link unsubscribeFromTopics() @endlink .
      *
-     * @param topicId Id of a optional topic.
-     * @param forceSync Define whether current subscription update should be
-     * accepted immediately (see @link sync() @endlink).
-     *
-     * @throws UnavailableTopicException Throw if unknown topic id is provided or
-     * topic isn't optional.
+     * @throw UnavailableTopicException Throws if the unknown topic id is provided or the topic isn't optional.
      *
      * @see sync()
      */
-    virtual void unsubscribeFromTopic(const std::string& id, bool forceSync) = 0;
+    virtual void unsubscribeFromTopic(const std::string& id, bool forceSync = true) = 0;
 
     /**
-     * <p>Unsubscribe from notifications relating to the specified list of
-     * optional topics.</p>
+     * @brief Unsubscribes from the specified list of optional topics to stop receiving notifications on those topics.
      *
-     * <p>All previously added listeners will be removed automatically.</p>
+     * @param[in] topicId      The list of optional topic id-s.
+     * @param[in] forceSync    Indicates whether the subscription request should be sent immediately to
+     *                         the Operations server or postponed. If <i> false </i>, the request is postponed either
+     *                         to the explicit
+     *                         call of @link sync() @endlink or to the first call of one of the following functions
+     *                         with the @link forceSync @endlink parameter set to <i> true </i>:
+     *                         @link subscribeToTopic() @endlink, @link subscribeToTopics() @endlink,
+     *                         @link unsubscribeFromTopic() @endlink or @link unsubscribeFromTopics() @endlink .
      *
-     * @param topicIds List of optional topic id.
-     * @param forceSync Define whether current subscription update should be
-     * accepted immediately (see {@link sync() @endlink).
-     *
-     * @throws UnavailableTopicException Throw if unknown topic id is provided or
-     * topic isn't optional.
+     * @throw UnavailableTopicException Throws if the unknown topic id is provided or the topic isn't optional.
      *
      * @see sync()
      */
-    virtual void unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync) = 0;
+    virtual void unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync = true) = 0;
 
     /**
-     * <p>Accept optional subscription changes.</p>
+     * @brief Sends subscription request(s) to the Operations server.
      *
-     * <p>Should be used after all @link subscribeToTopic() @endlink,
-     * @link subscribeToTopics() @endlink, @link unsubscribeFromTopic() @endlink,
-     * @link unsubscribeFromTopics() @endlink calls with parameter
-     * <i>forceSync</i> set to <i>false</i>.</p>
-     *
-     * <p>Use it as a convenient way to make different consequent changes in
-     * the optional subscription:</p>
+     * Use as a convenient way to send several subscription requests at once.
      * @code
-     *  NotificationManager notificationManager = kaaClient.getNotificationManager();
+     * IKaaClient& kaaClient = Kaa::getKaaClient();
      *
-     *  // Make subscription changes
-     *  notificationManager.subscribeToTopics(Arrays.asList(
-     *          "optional_topic1", "optional_topic2", "optional_topic3"), false);
-     *  notificationManager.unsubscribeFromTopic("optional_topic4", false);
+     * // Add listener(s) to receive notifications on topic(s)
      *
-     *  // Add listeners for optional topics (optional)
+     * kaaClient.subscribeToTopics({"optional_topic1_id", "optional_topic2_id"}, false);
+     * kaaClient.unsubscribeFromTopic("optional_topic3_id", false);
      *
-     *  // Commit changes
-     *  notificationManager.sync();
+     * kaaClient.syncTopicSubscriptions();
      * @endcode
-     * </pre>
      */
     virtual void sync() = 0;
 

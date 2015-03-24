@@ -313,7 +313,6 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
             } else {
                 outStream.println("No project configuration found!");
             }
-            
         } catch (Exception e) {
             if (outStream != null) {
                 outStream.println("Unexpected error occurred: " + e.getMessage());

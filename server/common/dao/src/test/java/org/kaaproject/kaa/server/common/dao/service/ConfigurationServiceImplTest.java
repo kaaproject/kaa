@@ -225,7 +225,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
         GenericContainer container = converter.decodeJson(config);
         LOG.debug("JSON {}", container);
         LOG.debug("Converted JSON {} ", new String(converter.encodeToJsonBytes(container)));
-        Assert.assertEquals(converter.endcodeToJson(container), new String(converter.encodeToJsonBytes(container)));
+        Assert.assertEquals(converter.encodeToJson(container), new String(converter.encodeToJsonBytes(container)));
     }
 
     @Test

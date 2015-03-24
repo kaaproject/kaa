@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.client.channel.impl.transports;
 
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
-import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaTransport;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
@@ -29,8 +28,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractKaaTransport implements KaaTransport {
 
     /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(AbstractKaaTransport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaTransport.class);
 
     protected KaaChannelManager channelManager;
 
@@ -46,18 +44,6 @@ public abstract class AbstractKaaTransport implements KaaTransport {
         this.clientState = state;
     }
 
-    private KaaDataChannel getChannel(TransportType type) {
-        KaaDataChannel result = null;
-        if (channelManager != null) {
-            result = channelManager.getChannelByTransportType(type);
-        }
-        if (result == null) {
-            LOG.error("Failed to find channel for transport {}", type);
-            throw new ChannelRuntimeException("Failed to find channel for transport " + type.toString());
-        }
-        return result;
-    }
-
     protected void syncByType(TransportType type) {
         syncByType(type, false);
     }
@@ -67,22 +53,24 @@ public abstract class AbstractKaaTransport implements KaaTransport {
     }
 
     protected void syncByType(TransportType type, boolean ack) {
-        LOG.debug("Lookup channel by type {}", type);
-        KaaDataChannel channel = getChannel(type);
-        LOG.debug("Going to invoke sync method on channel {}", channel);
-        if (channel != null) {
-            if(ack){
-                channel.syncAck(type);
-            }else{
-                channel.sync(type);
-            }
-        }
+        syncByType(type, ack, false);
     }
 
     protected void syncAll(TransportType type) {
-        KaaDataChannel channel = getChannel(type);
-        if (channel != null) {
-            channel.syncAll();
+        syncByType(type, false, true);
+    }
+
+    protected void syncByType(TransportType type, boolean ack, boolean all) {
+        if (channelManager == null) {
+            LOG.error("Channel manager is not set during sync for type {}", type);
+            throw new ChannelRuntimeException("Failed to find channel for transport " + type.toString());
+        }
+        if (ack) {
+            channelManager.syncAck(type);
+        } else if (all) {
+            channelManager.syncAll(type);
+        } else {
+            channelManager.sync(type);
         }
     }
 
@@ -95,14 +83,12 @@ public abstract class AbstractKaaTransport implements KaaTransport {
         syncAckByType(getTransportType());
     }
 
-    protected void syncAck(SyncResponseStatus status){
-        if(status != SyncResponseStatus.NO_DELTA){
+    protected void syncAck(SyncResponseStatus status) {
+        if (status != SyncResponseStatus.NO_DELTA) {
             LOG.info("Sending ack due to response status: {}", status);
             syncAck();
         }
     }
 
-
     abstract protected TransportType getTransportType();
-
 }

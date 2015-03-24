@@ -182,7 +182,7 @@ static kaa_error_t add_channel(kaa_channel_manager_t *self
 {
     KAA_RETURN_IF_NIL2(self, channel, KAA_ERR_BADPARAM);
 
-    kaa_transport_protocol_id_t protocol_id;
+    kaa_transport_protocol_id_t protocol_id = { 0, 0 };
     channel->get_protocol_id(channel->context, &protocol_id);
 
     uint32_t id;
@@ -244,7 +244,7 @@ static kaa_error_t init_channel(kaa_channel_manager_t *self
 
     channel->init(channel->context, &transport_context);
 
-    kaa_transport_protocol_id_t protocol_id;
+    kaa_transport_protocol_id_t protocol_id = { 0, 0 };
     kaa_error_t error_code = channel->get_protocol_id(channel->context, &protocol_id);
 
     if (!error_code) {

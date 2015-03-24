@@ -31,6 +31,8 @@ public interface ProjectView extends BaseView {
     
     void setFeatures(List<Feature> features);
     
+    void setProjectTitle(String title);
+
     Image getApplicationImage();
     
     HasText getDescription();

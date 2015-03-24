@@ -18,7 +18,7 @@ Copyright 2014-2015 CyberVision, Inc.
 
 <projectsConfig>
     <project id="jconfiguration_demo">
-        <name>Java configuration demo</name>
+        <name>Configuration demo</name>
         <description>Application on java platform demonstrating configuration subsystem (IoT)</description>
         <platform>JAVA</platform>
         <features>CONFIGURATION</features>

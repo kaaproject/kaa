@@ -241,7 +241,7 @@ public class OracleNoSqlLogAppenderTest {
             }
 
             @Override
-            public String endcodeToJson(GenericRecord record) {
+            public String encodeToJson(GenericRecord record) {
                 return LOG_DATA;
             }
         };

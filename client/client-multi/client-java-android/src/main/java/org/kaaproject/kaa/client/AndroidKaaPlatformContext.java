@@ -21,6 +21,8 @@ import java.security.PublicKey;
 
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.connectivity.AndroidConnectivityChecker;
+import org.kaaproject.kaa.client.context.ExecutorContext;
+import org.kaaproject.kaa.client.context.SimpleExecutorContext;
 import org.kaaproject.kaa.client.persistence.AndroidInternalPersistentStorage;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
@@ -34,21 +36,25 @@ public class AndroidKaaPlatformContext implements KaaClientPlatformContext {
 
     private final Context context;
     private final KaaClientProperties properties;
-    
+    private final ExecutorContext executorContext;
+
     public AndroidKaaPlatformContext(Context context) {
         this(context, null);
     }
-    
+
     public AndroidKaaPlatformContext(Context context, KaaClientProperties properties) {
+        this(context, properties, new SimpleExecutorContext());
+    }
+
+    public AndroidKaaPlatformContext(Context context, KaaClientProperties properties, ExecutorContext executorContext) {
         super();
         this.context = context;
         this.properties = properties;
+        this.executorContext = executorContext;
     }
 
     @Override
-    public AbstractHttpClient createHttpClient(String url,
-            PrivateKey privateKey, PublicKey publicKey,
-            PublicKey remotePublicKey) {
+    public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
         return new AndroidHttpClient(url, privateKey, publicKey, remotePublicKey);
     }
 
@@ -70,5 +76,10 @@ public class AndroidKaaPlatformContext implements KaaClientPlatformContext {
     @Override
     public KaaClientProperties getProperties() {
         return properties;
+    }
+
+    @Override
+    public ExecutorContext getExecutorContext() {
+        return executorContext;
     }
 }

@@ -16,10 +16,14 @@
 
 package org.kaaproject.kaa.client.channel.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
@@ -32,6 +36,7 @@ import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
+import org.kaaproject.kaa.client.channel.impl.sync.SyncTask;
 import org.kaaproject.kaa.common.TransportType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +53,9 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
 
     private final Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers;
     private final Map<TransportProtocolId, TransportConnectionInfo> lastBSServers = new HashMap<>();
+
+    private final Map<String, BlockingQueue<SyncTask>> syncTaskQueueMap = new ConcurrentHashMap<String, BlockingQueue<SyncTask>>();
+    private final Map<String, SyncWorker> syncWorkers = new HashMap<String, DefaultChannelManager.SyncWorker>();
 
     private ConnectivityChecker connectivityChecker;
     private boolean isShutdown = false;
@@ -97,6 +105,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                 useNewChannelForType(entry.getKey());
             }
         }
+        stopWorker(channel);
         channel.shutdown();
     }
 
@@ -104,6 +113,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         if (!channels.contains(channel)) {
             channel.setConnectivityChecker(connectivityChecker);
             channels.add(channel);
+            startWorker(channel);
             TransportConnectionInfo server;
             if (channel.getServerType() == ServerType.BOOTSTRAP) {
                 server = getCurrentBootstrapServer(channel.getTransportProtocolId());
@@ -190,8 +200,36 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     }
 
     @Override
-    public synchronized KaaDataChannel getChannelByTransportType(TransportType type) {
-        return upChannels.get(type);
+    public TransportConnectionInfo getActiveServer(TransportType type) {
+        KaaDataChannel channel = upChannels.get(type);
+        if (channel == null) {
+            return null;
+        }
+        return channel.getServer();
+    }
+
+    private KaaDataChannel getChannel(TransportType type) {
+        KaaDataChannel result = upChannels.get(type);
+        if (result == null) {
+            LOG.error("Failed to find channel for transport {}", type);
+            throw new ChannelRuntimeException("Failed to find channel for transport " + type.toString());
+        }
+        return result;
+    }
+
+    @Override
+    public void sync(TransportType type) {
+        sync(type, false, false);
+    }
+
+    @Override
+    public void syncAck(TransportType type) {
+        sync(type, true, false);
+    }
+
+    @Override
+    public void syncAll(TransportType type) {
+        sync(type, false, true);
     }
 
     @Override
@@ -341,4 +379,79 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         this.bootstrapDemultiplexer = demultiplexer;
     }
 
+    private void sync(TransportType type, boolean ack, boolean all) {
+        LOG.debug("Lookup channel by type {}", type);
+        KaaDataChannel channel = getChannel(type);
+        BlockingQueue<SyncTask> queue = syncTaskQueueMap.get(channel.getId());
+        if (queue != null) {
+            queue.offer(new SyncTask(type, ack, all));
+        } else {
+            LOG.warn("Can't find queue for channel [{}]", channel.getId());
+        }
+    }
+
+    private void startWorker(KaaDataChannel channel) {
+        stopWorker(channel);
+        SyncWorker worker = new SyncWorker(channel);
+        syncTaskQueueMap.put(channel.getId(), new LinkedBlockingQueue<SyncTask>());
+        syncWorkers.put(channel.getId(), worker);
+        worker.start();
+    }
+
+    private void stopWorker(KaaDataChannel channel) {
+        BlockingQueue<SyncTask> skippedTasks = syncTaskQueueMap.remove(channel.getId());
+        if (skippedTasks != null) {
+            for (SyncTask task : skippedTasks) {
+                LOG.info("Task skipped due to worker shutdown: {}", task);
+            }
+        }
+        SyncWorker worker = syncWorkers.remove(channel);
+        if (worker != null) {
+            LOG.debug("[{}] stopping worker", channel.getId());
+            worker.shutdown();
+        }
+    }
+
+    private class SyncWorker extends Thread {
+        private final KaaDataChannel channel;
+        private volatile boolean stop;
+
+        private SyncWorker(KaaDataChannel channel) {
+            super();
+            this.channel = channel;
+        }
+
+        @Override
+        public void run() {
+            LOG.debug("[{}] Worker started", channel.getId());
+            while (!stop) {
+                try {
+                    BlockingQueue<SyncTask> taskQueue = syncTaskQueueMap.get(channel.getId());
+                    SyncTask task = taskQueue.take();
+                    List<SyncTask> additionalTasks = new ArrayList<SyncTask>();
+                    if (taskQueue.drainTo(additionalTasks) > 0) {
+                        LOG.debug("[{}] Merging task {} with {}", channel.getId(), task, additionalTasks);
+                        task = SyncTask.merge(task, additionalTasks);
+                    }
+                    if (task.isAll()) {
+                        LOG.debug("[{}] Going to invoke syncAll method for types {}", channel.getId(), task.getTypes());
+                        channel.syncAll();
+                    } else if (task.isAckOnly()) {
+                        LOG.debug("[{}] Going to invoke syncAck method for types {}", channel.getId(), task.getTypes());
+                        channel.syncAck(task.getTypes());
+                    } else {
+                        LOG.debug("[{}] Going to invoke sync method", channel.getId());
+                        channel.sync(task.getTypes());
+                    }
+                } catch (InterruptedException e) {
+                    LOG.debug("[{}] Worker is interrupted", channel.getId(), e);
+                }
+            }
+            LOG.debug("[{}] Worker stopped", channel.getId());
+        }
+
+        public void shutdown() {
+            this.stop = true;
+        }
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,35 +17,28 @@
 #ifndef INOTIFICATIONTOPICLISTLISTENER_HPP_
 #define INOTIFICATIONTOPICLISTLISTENER_HPP_
 
-#include <memory>
-#include <vector>
-#include "kaa/gen/EndpointGen.hpp"
+#include "kaa/notification/gen/NotificationDefinitions.hpp"
 
 namespace kaa {
 
-typedef std::vector<Topic> Topics;
-
 /**
- * <p>The listener to receive updates of available topics.</p>
+ * @brief The listener which receives updates on available topics.
  *
  * @author Denis Kimcherenko
- * @see INotificationManager
  *
  */
 class INotificationTopicListListener {
 public:
     /**
-     * <p>Call on each updates of available topic list.</p>
+     * @brief Callback is used when the new list of available topics is received.
      *
-     * @param list The new list of available topics.
-     * @see Topic
+     * @param[in] topics    The new list of available topics.
+     * @see Topics
      */
-    virtual void onListUpdated(const Topics& list) = 0;
+    virtual void onListUpdated(const Topics& topics) = 0;
 
     virtual ~INotificationTopicListListener() {}
 };
-
-typedef std::shared_ptr<INotificationTopicListListener> INotificationTopicListListenerPtr;
 
 } /* namespace kaa */
 

@@ -287,7 +287,7 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
         GenericRecord root = getRootConfiguration();
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(root.getSchema());
         try {
-            return dataFactory.createData(rootSchema, converter.endcodeToJson(root));
+            return dataFactory.createData(rootSchema, converter.encodeToJson(root));
         } catch (RuntimeException e) {
             // NPE is thrown if "null" was written into a field that is not nullable
             // CGE is thrown if value of wrong type was written into a field

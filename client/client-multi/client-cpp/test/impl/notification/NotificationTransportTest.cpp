@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(SubscriptionInfoTest)
 
     SubscriptionCommands expectedCmds = {cmd1, cmd2};
 
-    transport.onSubscriptionChanged(expectedCmds);
+    transport.onSubscriptionChanged(SubscriptionCommands(expectedCmds));
 
     auto request = transport.createNotificationRequest();
     BOOST_CHECK(!request->subscriptionCommands.is_null());
