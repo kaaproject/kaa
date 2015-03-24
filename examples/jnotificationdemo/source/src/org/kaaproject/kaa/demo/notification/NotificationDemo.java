@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Notification demo application, which demonstrates Kaa notifications API
+ * A demo application that shows how to use the Kaa notifications API.
  */
 public class NotificationDemo {
     private static final Logger LOG = LoggerFactory.getLogger(NotificationDemo.class);
@@ -43,11 +43,11 @@ public class NotificationDemo {
         LOG.info("Notification demo application has started");
         kaaClient = Kaa.newClient(new DesktopKaaPlatformContext());
 
-        // Listener, which listens to topic list updates
+        // A listener that listens to the notification topic list updates.
         NotificationTopicListListener topicListListener = new BasicNotificationTopicListListener();
         kaaClient.addTopicListListener(topicListListener);
 
-        // Add notification listener, which listens to all notifications
+        // Add a notification listener that listens to all notifications.
         kaaClient.addNotificationListener(new NotificationListener() {
             @Override
             public void onNotification(String id, SampleNotification sampleNotification) {
@@ -55,32 +55,33 @@ public class NotificationDemo {
             }
         });
 
-        // Start Kaa client
+        // Start the Kaa client and connect it to the Kaa server.
         kaaClient.start();
 
-        // Get available topics
+        // Get available notification topics.
         List<Topic> topicList = kaaClient.getTopics();
 
-        // List available topics
+        // List the obtained notification topics.
         showTopicList(topicList);
 
         try {
-            // wait for some input before exiting
+            
+            // Wait for some input before exiting.
             System.in.read();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        // don't listen to topics anymore
+        // Stop listening to the notification topic list updates.
         kaaClient.removeTopicListListener(topicListListener);
 
-        // Stop Kaa client, gracefully closing all resources
+        // Stop the Kaa client and release all the resources which were in use.
         kaaClient.stop();
         LOG.info("Notification demo application has finished");
     }
 
-    // Listener, which is used to track notification topic list updates
-    // and subscribes a client to each new topic update
+    // A listener that tracks the notification topic list updates
+    // and subscribes the Kaa client to every new topic available.
     private static class BasicNotificationTopicListListener implements NotificationTopicListListener {
         @Override
         public void onListUpdated(List<Topic> list) {
@@ -88,7 +89,8 @@ public class NotificationDemo {
             showTopicList(list);
             try {
                 kaaClient.subscribeToTopics(extractOptionalTopicIds(list), true);
-                // List was updated, try to subscribe to all new optional topics, if any
+                
+                // Try to subscribe to all new optional topics, if any.
             } catch (UnavailableTopicException e) {
                 LOG.debug("Topic is unavailable, can't subscribe: {}", e.getMessage());
             }
