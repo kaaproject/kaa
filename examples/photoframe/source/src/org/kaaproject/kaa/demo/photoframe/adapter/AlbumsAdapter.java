@@ -30,8 +30,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 /**
- * The Class AlbumsAdapter.
- * Implementation of {@link BaseAdapter} class. Used as adapter class for albums list view.
+ * Implementation of the {@link BaseAdapter} class. Used as an adapter class for the album list view.
  * Provides list item views with information about remote device albums.
  */
 public class AlbumsAdapter extends BaseAdapter {
