@@ -36,7 +36,8 @@ public class FacebookSigninListener implements LoginButton.UserInfoChangedCallba
     @Override
     public void onUserInfoFetched(GraphUser user) {
         if (user != null && isClicked) {
-            // get user's access token, id and user name
+          
+            // Get the user's access token, id and user name.
             String accessToken = Session.getActiveSession().getAccessToken();
             String userId = user.getId();
             String userName = user.getFirstName();
