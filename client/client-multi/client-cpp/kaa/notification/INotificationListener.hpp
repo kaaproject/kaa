@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,13 @@
 #define INOTIFICATIONLISTENER_HPP_
 
 #include <string>
-#include <vector>
-#include <memory>
+
+#include "kaa/notification/gen/NotificationDefinitions.hpp"
 
 namespace kaa {
 
 /**
- * The listener of raw notifications' data.
+ * @brief The listener which receives notifications on the specified topic.
  *
  * @author Denis Kimcherenko
  *
@@ -32,19 +32,16 @@ namespace kaa {
 class INotificationListener {
 public:
     /**
-     * Call on each received notification.
+     * @brief Callback is used when the new notification on the specified topic is received.
      *
-     * @param topicId The topic's id to which notification is received.
-     * @param notification The raw notification's data.
+     * @param[in] topicId         The id of the topic on which the notification is received.
+     * @param[in] notification    The notification data.
      *
      */
-    virtual void onNotificationRaw(const std::string& topicId
-                                 , const std::vector<std::uint8_t>& notification) = 0;
+    virtual void onNotification(const std::string& topicId, const KaaNotification& notification) = 0;
 
     virtual ~INotificationListener() {}
 };
-
-typedef std::shared_ptr<INotificationListener> INotificationListenerPtr;
 
 } /* namespace kaa */
 

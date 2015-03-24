@@ -35,7 +35,7 @@ public:
 
     virtual void setClientState(IKaaClientStateStoragePtr status)
     {
-        if (status != nullptr) {
+        if (status) {
             clientStatus_ = status;
         }
     }
