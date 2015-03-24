@@ -40,10 +40,10 @@ public interface TopicDao<T> extends SqlDao<T> {
      * Find topics by application id and type.
      *
      * @param appId the application id
-     * @param typeDto the type dto
+     * @param type  the topic type
      * @return the list of topics
      */
-    List<T> findTopicsByAppIdAndType(String appId, TopicTypeDto typeDto);
+    List<T> findTopicsByAppIdAndType(String appId, TopicTypeDto type);
 
     /**
      * Find topics by ids.
@@ -69,8 +69,12 @@ public interface TopicDao<T> extends SqlDao<T> {
     T getNextSeqNumber(String topicId);
 
     /**
-     * @param groupId
-     * @return
+     * Find vacant topics for endpoint groups.
+     * This method have to return topics which not yet attached to endpoint group with specific id
+     *
+     * @param appId   the application id
+     * @param groupId the group id
+     * @return the list of vacant topics
      */
-    List<Topic> findVacantTopicsByGroupId(String groupId);
+    List<Topic> findVacantTopicsByGroupId(String appId, String groupId);
 }

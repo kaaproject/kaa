@@ -61,12 +61,12 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
 
     protected List<T> findListByCriterion(Criterion criterion) {
         String className = getSimpleClassName();
-        LOG.debug("Find {} entities by criterion [{}] ", className, criterion);
+        LOG.trace("Searching {} entities by criterion [{}] ", className, criterion);
         Criteria criteria = getCriteria();
         criteria.add(criterion);
         List<T> resultList = criteria.list();
-        if (LOG.isDebugEnabled() && resultList != null) {
-            LOG.debug("Found {} entities: [{}] ", className, Arrays.toString(resultList.toArray()));
+        if (resultList == null) {
+            resultList = Collections.emptyList();
         }
         return resultList;
     }
@@ -93,7 +93,7 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
 
     protected List<T> findListByCriterionWithAlias(String path, String alias, JoinType type, Criterion criterion) {
         String className = getSimpleClassName();
-        LOG.debug("Find {} entities by criterion [{}] ", className, criterion);
+        LOG.trace("Searching {} entities by criterion [{}] ", className, criterion);
         Criteria criteria = getCriteria();
         if (type == null) {
             criteria.createAlias(path, alias);
@@ -102,49 +102,43 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         }
         criteria.add(criterion);
         List<T> resultList = criteria.list();
-        if (LOG.isDebugEnabled() && resultList != null) {
-            LOG.debug("Found {} entities: [{}] ", className, Arrays.toString(resultList.toArray()));
+        if (resultList == null) {
+            resultList = Collections.emptyList();
         }
         return resultList;
     }
 
     protected List<T> findListByCriteria(Criteria criteria) {
         String className = getSimpleClassName();
-        LOG.debug("Find {} entities by criteria [{}] ", className, criteria);
+        LOG.trace("Searching {} entities by criteria [{}] ", className, criteria);
         List<T> resultList = criteria.list();
-        if (LOG.isDebugEnabled() && resultList != null) {
-            LOG.debug("Found {} entities: [{}] ", className, Arrays.toString(resultList.toArray()));
+        if (resultList == null) {
+            resultList = Collections.emptyList();
         }
         return resultList;
     }
 
     protected T findOneByCriterion(Criterion criterion) {
         String className = getSimpleClassName();
-        LOG.debug("Find {} entity by criterion [{}] ", className, criterion);
+        LOG.trace("Searching {} entity by criterion [{}] ", className, criterion);
         Criteria criteria = getCriteria();
         criteria.add(criterion);
-        T result = (T) criteria.uniqueResult();
-        LOG.debug("Found {} entity: [{}] ", className, result);
-        return result;
+        return (T) criteria.uniqueResult();
     }
 
     protected T findOneByCriterionWithAlias(String path, String alias, Criterion criterion) {
         String className = getSimpleClassName();
-        LOG.debug("Find {} entity by criterion [{}] ", className, criterion);
+        LOG.trace("Searching {} entity by criterion [{}] ", className, criterion);
         Criteria criteria = getCriteria();
         criteria.createAlias(path, alias);
         criteria.add(criterion);
-        T result = (T) criteria.uniqueResult();
-        LOG.debug("Found {} entity: [{}] ", className, result);
-        return result;
+        return (T) criteria.uniqueResult();
     }
 
     protected T findOneByCriteria(Criteria criteria) {
         String className = getSimpleClassName();
-        LOG.debug("Find {} entity by criteria [{}] ", className, criteria);
-        T result = (T) criteria.uniqueResult();
-        LOG.debug("Found {} entity: [{}] ", className, result);
-        return result;
+        LOG.trace("Searching {} entity by criteria [{}] ", className, criteria);
+        return (T) criteria.uniqueResult();
     }
 
     @Override
@@ -160,32 +154,48 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
     }
 
     public T update(T o) {
+        LOG.trace("Updated {} entity: {} ", getSimpleClassName(), o);
         getSession().update(o);
-        LOG.debug("Saved {} entity: [{}] ", getSimpleClassName(), o);
+        LOG.trace("[{}] Update result: {}", getSimpleClassName(), o != null);
         return o;
     }
 
     @Override
     public T persist(T o) {
+        LOG.debug("Persisting {} entity {}", getEntityClass(), o);
         Session session = getSession();
         session.persist(o);
-        LOG.debug("Saved {} entity: [{}] ", getSimpleClassName(), o);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Persisting result: {}", o);
+        } else {
+            LOG.debug("Persisting result: {}", o != null);
+        }
         return o;
     }
 
     @Override
     public <V> V save(V o, Class<?> clazz) {
+        LOG.debug("Saving {} entity {}", clazz, o);
         Session session = getSession();
         session.saveOrUpdate(o);
-        LOG.debug("Saved {} entity: [{}] ", getSimpleClassName(), o);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Saving result: {}", clazz, o);
+        } else {
+            LOG.debug("[{}] Saving result: {}", clazz, o != null);
+        }
         return o;
     }
 
     @Override
     public List<T> find() {
         List<T> resultList = getCriteria().list();
-        if (LOG.isDebugEnabled() && resultList != null) {
-            LOG.debug("Found {} entities: [{}] ", getSimpleClassName(), Arrays.toString(resultList.toArray()));
+        if (resultList == null) {
+            resultList = Collections.emptyList();
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Search result: {}.", Arrays.toString(resultList.toArray()));
+        } else {
+            LOG.debug("Search result: {}.", resultList.size());
         }
         return resultList;
     }
@@ -199,7 +209,7 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
     public T findById(String id, boolean lazy) {
         T result = null;
         String className = getSimpleClassName();
-        LOG.debug("Find {} entity by id [{}] ", className, id);
+        LOG.debug("Searching {} entity by id [{}] ", className, id);
         if (isNotBlank(id)) {
             Session session = getSession();
             if (lazy) {
@@ -208,15 +218,19 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
                 result = (T) session.get(getEntityClass(), Long.parseLong(id));
             }
         }
-        LOG.debug("Found {} entity: [{}] by id [{}]", className, result, id);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", id, result);
+        } else {
+            LOG.debug("[{}] Search result: {}.", id, result != null);
+        }
         return result;
     }
 
     @Override
     public void removeAll() {
         Session session = getSession();
-        LOG.debug("Remove all {} entities ", getSimpleClassName());
         session.delete(getEntityClass());
+        LOG.debug("Removed all {} entities ", getSimpleClassName());
     }
 
     @Override
@@ -224,7 +238,7 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
         if (isNotBlank(id)) {
             Session session = getSession();
             session.delete(findById(id, true));
-            LOG.debug("Remove {} entity by id [{}]", getSimpleClassName(), id);
+            LOG.debug("Removed {} entity by id [{}]", getSimpleClassName(), id);
         }
     }
 
