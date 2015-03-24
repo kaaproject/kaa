@@ -24,7 +24,7 @@ import org.kaaproject.kaa.demo.smarthouse.device.DeviceInfoResponse;
 import org.kaaproject.kaa.demo.smarthousedemo.command.EndpointCommandKey;
 import org.kaaproject.kaa.demo.smarthousedemo.concurrent.BlockingCallable;
 
-/** Implementation of get device info command.
+/** The implementation of the get device info command.
  */
 public class GetDeviceInfoCommand extends AbstractDeviceCommand<DeviceInfoResponse> {
 
