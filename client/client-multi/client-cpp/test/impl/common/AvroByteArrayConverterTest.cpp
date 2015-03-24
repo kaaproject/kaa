@@ -70,8 +70,10 @@ BOOST_AUTO_TEST_CASE(InvalidDecodingData)
     avro::GenericDatum datum;
     AvroByteArrayConverter<avro::GenericDatum> converter;
 
-    BOOST_CHECK_THROW(converter.fromByteArray(nullptr, 0), KaaException);
-    BOOST_CHECK_THROW(converter.fromByteArray(nullptr, 0, datum), KaaException);
+    BOOST_CHECK_NO_THROW(converter.fromByteArray(nullptr, 0));
+    BOOST_CHECK_THROW(converter.fromByteArray(nullptr, 5), KaaException);
+    const uint8_t *data = reinterpret_cast<const uint8_t *>("1234");
+    BOOST_CHECK_THROW(converter.fromByteArray(data, 0, datum), KaaException);
 }
 
 BOOST_AUTO_TEST_CASE(AvroBinaryEncodingToBuffer)

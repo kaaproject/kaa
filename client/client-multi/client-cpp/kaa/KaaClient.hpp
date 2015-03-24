@@ -103,7 +103,7 @@ public:
     virtual void                                setAttachStatusListener(IAttachStatusListenerPtr listener);
     virtual bool                                isAttachedToUser();
     virtual std::int32_t                        findEventListeners(const std::list<std::string>& eventFQNs
-                                                                  , IFetchEventListeners* listener);
+                                                                  , IFetchEventListenersPtr listener);
 
     virtual IKaaDataMultiplexer&                getBootstrapMultiplexer();
     virtual IKaaDataDemultiplexer&              getBootstrapDemultiplexer();

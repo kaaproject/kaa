@@ -2,5 +2,5 @@
             ns${event_family_class_name} :: ${event_class_name} event;
             AvroByteArrayConverter< ns${event_family_class_name} :: ${event_class_name} > converter;
             converter.fromByteArray(data.data(), data.size(), event);
-            onEvent(event, source);
+            onEvent(event, source, fqn);
         }
