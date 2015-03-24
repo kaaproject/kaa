@@ -187,7 +187,7 @@ void EventManager::onEventListenersReceived(const EventSyncResponse::eventListen
     }
 }
 
-std::int32_t EventManager::findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListeners* listener)
+std::int32_t EventManager::findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListenersPtr listener)
 {
     if (eventFQNs.empty() || !listener) {
         KAA_LOG_WARN("Failed to add event listeners request: bad input data");

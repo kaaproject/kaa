@@ -46,6 +46,9 @@ public class CppEventSourcesGenerator {
     /** The Constant EVENT_FAMILY_ON_GENERIC_EVENT_TEMPLATE. */
     private static final String EVENT_FAMILY_ON_GENERIC_EVENT_TEMPLATE = "sdk/cpp/event/eventFamilyOnGenericEvent.template";
 
+    /** The Constant EVENT_FAMILY_NOTIFY_LISTENER_TEMPLATE. */
+    private static final String EVENT_FAMILY_NOTIFY_LISTENER_TEMPLATE = "sdk/cpp/event/eventFamilyNotifyListener.template";
+
     /** The Constant EVENT_FAMILY_SEND_EVENT_METHODS_TEMPLATE. */
     private static final String EVENT_FAMILY_SEND_EVENT_METHODS_TEMPLATE = "sdk/cpp/event/eventFamilySendEventMethods.template";
 
@@ -74,6 +77,7 @@ public class CppEventSourcesGenerator {
     private static final String EVENT_FAMILY_LISTENER_METHODS_VAR = "\\$\\{event_family_listener_methods\\}";
     private static final String ADD_SUPPORTED_EVENT_CLASS_FQNS_VAR = "\\$\\{add_supported_event_class_fqns\\}";
     private static final String EVENT_FAMILY_LISTENERS_ON_GENERIC_EVENT_VAR = "\\$\\{event_family_listeners_on_generic_event\\}";
+    private static final String EVENT_FAMILY_LISTENERS_NOTIFY_LISTENER_VAR = "\\$\\{event_family_listeners_notify_listener\\}";
     private static final String EVENT_FAMILY_SEND_EVENT_METHODS_VAR = "\\$\\{event_family_send_event_methods\\}";
 
     private static final String EVENT_CLASS_FQN_VAR = "\\$\\{event_class_fqn\\}";
@@ -97,6 +101,7 @@ public class CppEventSourcesGenerator {
     private static String eventFamilyHpp;
     private static String eventFamilyAddSupportedFqn;
     private static String eventFamilyOnGenericEvent;
+    private static String eventFamilyNotifyListener;
     private static String eventFamilySendEventMethod;
     private static String eventFamilyListenerMethod;
     private static String eventFamilyFactoryHpp;
@@ -111,6 +116,7 @@ public class CppEventSourcesGenerator {
             eventFamilyHpp = SdkGenerator.readResource(EVENT_FAMILY_HPP_TEMPLATE);
             eventFamilyAddSupportedFqn = SdkGenerator.readResource(EVENT_FAMILY_ADD_SUPPORTED_FQN_TEMPLATE);
             eventFamilyOnGenericEvent = SdkGenerator.readResource(EVENT_FAMILY_ON_GENERIC_EVENT_TEMPLATE);
+            eventFamilyNotifyListener = SdkGenerator.readResource(EVENT_FAMILY_NOTIFY_LISTENER_TEMPLATE);
             eventFamilySendEventMethod = SdkGenerator.readResource(EVENT_FAMILY_SEND_EVENT_METHODS_TEMPLATE);
             eventFamilyListenerMethod = SdkGenerator.readResource(EVENT_FAMILY_LISTENER_METHOD_TEMPLATE);
             eventFamilyFactoryHpp = SdkGenerator.readResource(EVENT_FAMILY_FACTORY_HPP_TEMPLATE);
@@ -145,6 +151,7 @@ public class CppEventSourcesGenerator {
 
             String supportedFqnsList = "";
             String eventFamilyListenersOnGenericEvent = "";
+            String eventFamilyListenersNotifyListener = "";
             String eventFamilySendEventMethods = "";
             String eventFamilyListenerMethods = "";
 
@@ -163,7 +170,14 @@ public class CppEventSourcesGenerator {
                     if (eventFamilyListenersOnGenericEvent.length()>0) {
                         eventFamilyListenersOnGenericEvent += "else ";
                     }
+                    if (eventFamilyListenersNotifyListener.length()>0) {
+                        eventFamilyListenersNotifyListener += "else ";
+                    }
                     eventFamilyListenersOnGenericEvent += eventFamilyOnGenericEvent.
+                            replaceAll(EVENT_FAMILY_CLASS_NAME_VAR, efm.getEcfClassName()).
+                            replaceAll(EVENT_CLASS_FQN_VAR, eventMap.getFqn()).
+                            replaceAll(EVENT_CLASS_NAME_VAR, eventClassName) + "\n";
+                    eventFamilyListenersNotifyListener += eventFamilyNotifyListener.
                             replaceAll(EVENT_FAMILY_CLASS_NAME_VAR, efm.getEcfClassName()).
                             replaceAll(EVENT_CLASS_FQN_VAR, eventMap.getFqn()).
                             replaceAll(EVENT_CLASS_NAME_VAR, eventClassName) + "\n";
@@ -192,6 +206,7 @@ public class CppEventSourcesGenerator {
                     replaceAll(EVENT_FAMILY_CLASS_NAME_VAR, efm.getEcfClassName()).
                     replaceAll(ADD_SUPPORTED_EVENT_CLASS_FQNS_VAR, addSupportedEventClassFqns).
                     replaceAll(EVENT_FAMILY_LISTENERS_ON_GENERIC_EVENT_VAR, eventFamilyListenersOnGenericEvent).
+                    replaceAll(EVENT_FAMILY_LISTENERS_NOTIFY_LISTENER_VAR, eventFamilyListenersNotifyListener).
                     replaceAll(EVENT_FAMILY_SEND_EVENT_METHODS_VAR, eventFamilySendEventMethods).
                     replaceAll(EVENT_FAMILY_LISTENER_METHODS_VAR, eventFamilyListenerMethods);
 

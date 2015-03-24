@@ -20,9 +20,10 @@
 #include <list>
 #include <string>
 
+#include "kaa/event/IFetchEventListeners.hpp"
+
 namespace kaa {
 
-class IFetchEventListeners;
 
 class IEventListenersResolver {
 public:
@@ -37,7 +38,7 @@ public:
      * @return Request ID of submitted request
      */
     virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs
-            , IFetchEventListeners* listener) = 0;
+            , IFetchEventListenersPtr listener) = 0;
 
     virtual ~IEventListenersResolver() {}
 };

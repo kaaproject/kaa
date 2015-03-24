@@ -121,7 +121,7 @@ public:
     virtual void onAttachSuccess()
     {
         kaaClient_.findEventListeners(std::list<std::string>( { THERMO_REQUEST_FQN, CHANGE_DEGREE_REQUEST_FQN }),
-                                      new ThermoEventListenersCallback(kaaClient_.getEventFamilyFactory()) /* TODO */);
+                                      std::make_shared<ThermoEventListenersCallback>(kaaClient_.getEventFamilyFactory()));
     }
 
     virtual void onAttachFailed(UserAttachErrorCode errorCode, const std::string& reason)
@@ -150,8 +150,9 @@ int main()
      */
     Kaa::start();
 
-    kaaClient.getEventFamilyFactory().getThermostatEventClassFamily().addEventFamilyListener(
-            new ThermoEventClassFamilyListener(kaaClient.getEventFamilyFactory()) /* TODO */);
+    ThermoEventClassFamilyListener thermoListener(kaaClient.getEventFamilyFactory());
+
+    kaaClient.getEventFamilyFactory().getThermostatEventClassFamily().addEventFamilyListener(thermoListener);
     kaaClient.attachUser(KAA_USER_ID, KAA_USER_ACCESS_TOKEN, std::make_shared<UserAttachCallback>(kaaClient));
 
     while (1)

@@ -27,6 +27,7 @@
 #include "kaa/event/registration/IDetachEndpointCallback.hpp"
 #include "kaa/event/registration/IUserAttachCallback.hpp"
 #include "kaa/event/registration/IAttachStatusListener.hpp"
+#include "kaa/event/IFetchEventListeners.hpp"
 #include "kaa/log/ILogCollector.hpp"
 
 
@@ -37,7 +38,6 @@ class IKaaChannelManager;
 class ILogCollector;
 class IKaaDataMultiplexer;
 class IKaaDataDemultiplexer;
-class IFetchEventListeners;
 class IConfigurationReceiver;
 class KeyPair;
 
@@ -333,7 +333,7 @@ public:
      *
      * @return Request ID of submitted request
      */
-    virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListeners* listener) = 0;
+    virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListenersPtr listener) = 0;
     virtual void addLogRecord(const KaaUserLogRecord& record) = 0;
     virtual void setLogStorage(ILogStoragePtr storage) = 0;
     virtual void setLogUploadStrategy(ILogUploadStrategyPtr strategy) = 0;

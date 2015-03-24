@@ -459,7 +459,7 @@ EventFamilyFactory& KaaClient::getEventFamilyFactory()
 #endif
 }
 
-std::int32_t KaaClient::findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListeners* listener) {
+std::int32_t KaaClient::findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListenersPtr listener) {
 #ifdef KAA_USE_EVENTS
     return eventManager_->findEventListeners(eventFQNs, listener);
 #else

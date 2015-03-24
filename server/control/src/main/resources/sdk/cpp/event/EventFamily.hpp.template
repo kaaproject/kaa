@@ -18,13 +18,13 @@
 #define ${event_family_class_name}_HPP_
 
 
-#include <set>
 #include <list>
 #include <string>
 #include <vector>
 #include <sstream>
 
 #include <cstdint>
+#include <boost/any.hpp>
 
 #include "kaa/logging/Log.hpp"
 #include "kaa/gen/EndpointGen.hpp"
@@ -32,6 +32,7 @@
 #include "kaa/event/IEventManager.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/transact/TransactionId.hpp"
+#include "kaa/observer/KaaObservable.hpp"
 
 #include "kaa/event/gen/${event_family_class_name}Gen.hpp"
 
@@ -71,37 +72,36 @@ public:
 
     ${event_family_send_event_methods}
 
-    virtual const FQNList& getSupportedEventClassFQNs() {
+    virtual const FQNList& getSupportedEventClassFQNs()
+    {
         return eventFQNs_;
     }
 
-    void addEventFamilyListener(${event_family_class_name}Listener* listener)
+    void addEventFamilyListener(${event_family_class_name}Listener& listener)
     {
-        if (listener != nullptr) {
-            listeners_.insert(listener);
-        }
+        ${event_family_class_name}Listener *listenerPtr = &listener;
+        listeners_.addCallback(listenerPtr, [listenerPtr](const boost::any& value, const std::string& source, const std::string& fqn) {
+            ${event_family_listeners_notify_listener}
+        });
     }
 
-    void removeEventFamilyListener(${event_family_class_name}Listener* listener)
+    void removeEventFamilyListener(${event_family_class_name}Listener& listener)
     {
-        if (listener != nullptr) {
-            listeners_.erase(listener);
-        }
+        listeners_.removeCallback(&listener);
     }
 
 private:
     template<typename EventType>
-    void onEvent(const EventType& event, const std::string& source)
+    void onEvent(const EventType& event, const std::string& source, const std::string& fqn)
     {
-        for (auto* listener : listeners_) {
-            listener->onEvent(event, source);
-        }
+        boost::any anyEvent(event);
+        listeners_(anyEvent, source, fqn);
     }
 
 private:
     IEventManager&                           eventManager_;
     std::list<std::string>                   eventFQNs_;
-    std::set<${event_family_class_name}Listener*>   listeners_;
+    KaaObservable<void (const boost::any& value, const std::string& source, const std::string& fqn), ${event_family_class_name}Listener*> listeners_;
 };
 
 }
