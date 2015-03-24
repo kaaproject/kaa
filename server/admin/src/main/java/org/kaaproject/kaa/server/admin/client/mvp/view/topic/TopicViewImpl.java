@@ -73,6 +73,9 @@ public class TopicViewImpl extends BaseDetailsViewImpl implements TopicView, Val
         detailsTable.setWidget(2, 0, nameLabel);
         detailsTable.setWidget(2, 1, name);
         name.addInputHandler(this);
+        if(!create) {
+        	name.setEnabled(false);
+        }
 
         mandatory = new CheckBox();
         mandatory.setWidth("100%");
@@ -80,7 +83,10 @@ public class TopicViewImpl extends BaseDetailsViewImpl implements TopicView, Val
         detailsTable.setWidget(3, 0, mandatoryLabel);
         detailsTable.setWidget(3, 1, mandatory);
         mandatory.addValueChangeHandler(this);
-
+        if(!create) {
+        	mandatory.setEnabled(false);
+        }
+        
         description = new SizedTextArea(1024);
         description.setWidth("100%");
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
@@ -88,7 +94,10 @@ public class TopicViewImpl extends BaseDetailsViewImpl implements TopicView, Val
         detailsTable.setWidget(4, 0, descriptionLabel);
         detailsTable.setWidget(4, 1, description);
         description.addInputHandler(this);
-
+        if(!create) {
+        	description.getTextArea().setEnabled(false);
+        }
+        
         detailsTable.getCellFormatter().setVerticalAlignment(4, 0, HasVerticalAlignment.ALIGN_TOP);
 
         sendNotification = new Button(Utils.constants.sendNotification());
