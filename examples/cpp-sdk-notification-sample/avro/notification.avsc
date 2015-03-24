@@ -1,0 +1,11 @@
+{ 
+    "type":"record",
+    "name":"BasicNotification",
+    "namespace":"org.kaaproject.kaa.schema.sample.notification",
+    "fields":[ 
+        { 
+            "name":"message",
+            "type":"string"
+        }
+    ]
+}

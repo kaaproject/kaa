@@ -23,261 +23,394 @@
 #include <utility>
 
 #include "kaa/ClientStatus.hpp"
-#include "headers/gen/EndpointGen.hpp"
 #include "kaa/notification/NotificationTransport.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
-#include "kaa/common/exception/KaaException.hpp"
 #include "kaa/common/exception/UnavailableTopicException.hpp"
-#include "kaa/notification/AbstractNotificationListener.hpp"
+#include "kaa/common/exception/TransportNotFoundException.hpp"
 #include "kaa/notification/NotificationManager.hpp"
-#include "kaa/notification/INotificationTopicListListener.hpp"
 
+#include "headers/MockKaaClientStateStorage.hpp"
 #include "headers/channel/MockChannelManager.hpp"
-#include "headers/channel/MockDataChannel.hpp"
+#include "headers/notification/MockNotificationListener.hpp"
+#include "headers/notification/MockNotificationTopicListListener.hpp"
 
 namespace kaa {
 
-const std::string STATUS_FILE_NAME("test_status.txt");
-
-class SystemNotificationListener : public AbstractNotificationListener<BasicSystemNotification>
+class TestNotificationTransport : public NotificationTransport
 {
 public:
-    SystemNotificationListener(const std::string& topicId) : topicId_(topicId) {}
+    TestNotificationTransport() : NotificationTransport(status_, channelManager_) {}
 
-    virtual void onNotification(const std::string& id, const BasicSystemNotification& notification)
-    {
-        BOOST_CHECK_MESSAGE(topicId_ == id, "Mandatory: received notification for a foreign topic");
-
-        BOOST_CHECK_MESSAGE(notification.notificationBody == "system"
-                , "Mandatory: unexpected notification body. Expected 'system'!!! ");
-
-        BOOST_CHECK_MESSAGE((notification.systemNotificationParam1 == 1 && notification.systemNotificationParam2 == 2)
-                , "Mandatory: unexpected notification param values. Expected 1 and 2!!! ");
+    virtual void setNotificationProcessor(INotificationProcessor* processor) {
+        ++onSetNotificationProcessor_;
+        notificationProcessor_ = processor;
     }
 
-private:
-    const std::string topicId_;
-};
-
-class UserNotificationListener : public AbstractNotificationListener<BasicUserNotification>
-{
 public:
-    UserNotificationListener(const std::string& topicId) : topicId_(topicId) {}
-
-    virtual void onNotification(const std::string& id, const BasicUserNotification& notification)
-    {
-        BOOST_CHECK_MESSAGE(topicId_ == id, "Optional: received notification for a foreign topic");
-
-        BOOST_CHECK_MESSAGE(notification.notificationBody == "user"
-                , "Optional: unexpected notification body. Expected 'system'!!! ");
-
-        BOOST_CHECK_MESSAGE(notification.userNotificationParam == 3
-                , "Optional: unexpected notification param value. Expected 3!!! ");
-    }
+    std::size_t onSetNotificationProcessor_ = 0;
+    INotificationProcessor* notificationProcessor_ = NULL;
 
 private:
-    const std::string topicId_;
-};
-
-class TopicListener : public INotificationTopicListListener {
-public:
-    TopicListener(INotificationManager& manager)
-        : notificationManager_(manager){}
-
-    virtual void onListUpdated(const Topics& newList)
-    {
-        BOOST_CHECK_MESSAGE(newList.size() == 2, "Wring topics number. Expected 2!!!");
-
-        BOOST_CHECK_MESSAGE(newList.front().subscriptionType == SubscriptionType::MANDATORY
-                , "Expected MANDATORY topic!!!");
-        BOOST_CHECK_MESSAGE(newList.back().subscriptionType == SubscriptionType::OPTIONAL
-                , "Expected OPTIONAL topic!!!");
-
-        topics_ = newList;
-        optionalListener_.reset(new UserNotificationListener(newList.back().id));
-
-        notificationManager_.addNotificationListener(newList.back().id, optionalListener_);
-        notificationManager_.subscribeToTopic(newList.back().id, false);
-    }
-
-    ~TopicListener() {
-        if (optionalListener_) {
-            notificationManager_.removeNotificationListener(topics_.back().id, optionalListener_);
-            notificationManager_.unsubscribeFromTopic(topics_.back().id, false);
-        }
-    }
-
-private:
-    Topics topics_;
-    std::shared_ptr<UserNotificationListener> optionalListener_;
-    INotificationManager& notificationManager_;
+    IKaaClientStateStoragePtr    status_;
+    MockChannelManager           channelManager_;
 };
 
 BOOST_AUTO_TEST_SUITE(NotificationTestSuite)
 
-BOOST_AUTO_TEST_CASE(BadSubscriber)
+BOOST_AUTO_TEST_CASE(SyncWithoutTransportTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
-    MockChannelManager channelManager;
-    std::shared_ptr<NotificationTransport> transport(new NotificationTransport(status, channelManager));
-    NotificationManager notificationManager( status);
-    notificationManager.setTransport(transport);
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    NotificationManager notificationManager(status);
 
-    BOOST_CHECK_THROW(notificationManager.addNotificationListener("someId", INotificationListenerPtr()), KaaException);
-
-    INotificationListenerPtr mandatoryListener(new SystemNotificationListener("fake"));
-    BOOST_CHECK_THROW(notificationManager.removeNotificationListener("unknownId", mandatoryListener), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.sync(), TransportNotFoundException);
 }
 
-BOOST_AUTO_TEST_CASE(OptionalSubscription)
+BOOST_AUTO_TEST_CASE(SyncWithTransportTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
-    MockChannelManager channelManager;
-    std::shared_ptr<NotificationTransport> transport(new NotificationTransport(status, channelManager));
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     NotificationManager notificationManager(status);
-    notificationManager.setTransport(transport);
 
-    const std::string topicId1("id1");
-    const std::string topicId2("id2");
+    std::shared_ptr<TestNotificationTransport> notificationTransport(new TestNotificationTransport);
+    notificationManager.setTransport(notificationTransport);
 
-    Topic topic1;
-    topic1.id = topicId1;
-    topic1.subscriptionType = MANDATORY;
-
-    Topic topic2;
-    topic2.id = topicId2;
-    topic2.subscriptionType = OPTIONAL;
-
-    std::vector<Topic> topics = {topic1, topic2};
-    NotificationSyncResponse response;
-    response.availableTopics.set_array(topics);
-
-    transport->onNotificationResponse(response);
-
-    INotificationListenerPtr notificationListener(new UserNotificationListener(topic2.id));
-
-    notificationManager.addNotificationListener(topic2.id, notificationListener);
-    notificationManager.subscribeToTopic(topic2.id, true);
-
-    auto request = transport->createNotificationRequest();
-
-    BOOST_CHECK(!request->subscriptionCommands.is_null());
-    BOOST_CHECK(request->subscriptionCommands.get_array().size() == 1);
-    BOOST_CHECK(request->subscriptionCommands.get_array().front().topicId == topic2.id);
+    BOOST_CHECK_NO_THROW(notificationManager.sync());
+    BOOST_CHECK_EQUAL(notificationTransport->onSetNotificationProcessor_, 1);
+    BOOST_CHECK_EQUAL(notificationTransport->notificationProcessor_, &notificationManager);
 }
 
-BOOST_AUTO_TEST_CASE(NotificationReceiving)
+BOOST_AUTO_TEST_CASE(GetEmptyTopicListTest)
 {
-    /* TEST DATA */
-    Topic manadatoryTopic;
-    manadatoryTopic.id = "aa11";
-    manadatoryTopic.subscriptionType = SubscriptionType::MANDATORY;
-
-    Topic optionalTopic;
-    optionalTopic.id = "bb22";
-    optionalTopic.subscriptionType = SubscriptionType::OPTIONAL;
-
-    Topics topics{manadatoryTopic, optionalTopic};
-
-    SharedDataBuffer encodedData;
-    AvroByteArrayConverter<BasicSystemNotification> systemNotificationContainer;
-    AvroByteArrayConverter<BasicUserNotification> userNotificationContainer;
-
-    BasicSystemNotification sn;
-    sn.notificationBody = "system";
-    sn.systemNotificationParam1 = 1;
-    sn.systemNotificationParam2 = 2;
-
-    encodedData = systemNotificationContainer.toByteArray(sn);
-
-    Notification systemNotification1;
-    systemNotification1.uid.set_null();
-    systemNotification1.topicId = manadatoryTopic.id;
-    systemNotification1.type = NotificationType::SYSTEM;
-    systemNotification1.body = std::vector<uint8_t>(encodedData.first.get()
-                                , encodedData.first.get() + encodedData.second);
-
-    BasicUserNotification un;
-    un.notificationBody = "user";
-    un.userNotificationParam = 3;
-
-    encodedData = userNotificationContainer.toByteArray(un);
-
-    Notification personalNotification1;
-    personalNotification1.uid.set_null();
-    personalNotification1.topicId = optionalTopic.id;
-    personalNotification1.type = NotificationType::CUSTOM;
-    personalNotification1.body = std::vector<uint8_t>(encodedData.first.get()
-            , encodedData.first.get() + encodedData.second);
-
-    Notifications notifications{systemNotification1, personalNotification1};
-
-    NotificationSyncResponse response;
-    response.availableTopics.set_array(topics);
-    response.notifications.set_array(notifications);
-
-    /* TEST */
-    IKaaClientStateStoragePtr status(new ClientStatus("fakePath"));
-    MockChannelManager channelManager;
-    std::shared_ptr<NotificationTransport> transport(new NotificationTransport(status, channelManager));
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
     NotificationManager notificationManager(status);
-    notificationManager.setTransport(transport);
-    INotificationListenerPtr mandatoryListener(new SystemNotificationListener(manadatoryTopic.id));
-    INotificationTopicListListenerPtr topicsListener(new TopicListener(notificationManager));
 
-    notificationManager.addNotificationListener(mandatoryListener);
-    notificationManager.addTopicListListener(topicsListener);
-
-    transport->onNotificationResponse(response);
-
-    notificationManager.removeNotificationListener(mandatoryListener);
-    notificationManager.removeTopicListListener(topicsListener);
+    BOOST_CHECK(notificationManager.getTopics().empty());
 }
 
-BOOST_AUTO_TEST_CASE(TopicsPersistence)
+BOOST_AUTO_TEST_CASE(GetTopicsTest)
 {
-    IKaaClientStateStoragePtr status(new ClientStatus(STATUS_FILE_NAME));
-    MockChannelManager channelManager;
-    std::shared_ptr<NotificationTransport> transport(new NotificationTransport(status, channelManager));
-    NotificationManager notificationManager(status);
-    notificationManager.setTransport(transport);
+    std::srand(std::time(NULL));
+    const std::string STATUS_FILE_PATH = "test_status.txt";
+    IKaaClientStateStoragePtr clientStatus1(new ClientStatus(STATUS_FILE_PATH));
 
-    const std::string topicId1("id1");
-    const std::string topicId2("id2");
+    DetailedTopicStates states;
+    std::size_t topicCount = 1 + rand() % 10;
 
-    Topic topic1;
-    topic1.id = topicId1;
-    topic1.subscriptionType = MANDATORY;
+    std::ostringstream ss;
 
-    Topic topic2;
-    topic2.id = topicId2;
-    topic2.subscriptionType = OPTIONAL;
+    for (std::size_t i = 0; i < topicCount; ++i) {
+        DetailedTopicState topicState;
 
-    std::vector<Topic> topics = {topic1, topic2};
-    NotificationSyncResponse response;
-    response.availableTopics.set_array(topics);
+        ss.str("");
+        ss << "topic_" << i << "_id";
+        topicState.topicId = ss.str();
 
-    transport->onNotificationResponse(response);
+        ss.str("");
+        ss << "topic_" << i << "_name";
+        topicState.topicName = ss.str();
 
-    status->save();
+        topicState.sequenceNumber = std::rand();
+        topicState.subscriptionType = SubscriptionType::OPTIONAL;
 
-    IKaaClientStateStoragePtr newStatus(new ClientStatus(STATUS_FILE_NAME));
-    std::shared_ptr<NotificationTransport> newTransport(new NotificationTransport(newStatus, channelManager));
-    NotificationManager newNotificationManager(newStatus);
-    newNotificationManager.setTransport(newTransport);
-
-    const Topics loadedTopics = newNotificationManager.getTopics();
-
-    for (const auto& expectedTopic : topics) {
-        if (std::find_if(loadedTopics.begin(), loadedTopics.end(),
-                [&expectedTopic] (const Topic& topic) { return (expectedTopic.id == topic.id
-                        && expectedTopic.subscriptionType == topic.subscriptionType); }) == loadedTopics.end())
-        {
-            BOOST_CHECK_MESSAGE(false, "Couldn't find topic " + expectedTopic.id);
-        }
+        states.insert(std::make_pair(topicState.topicId, topicState));
     }
 
-    std::remove(STATUS_FILE_NAME.c_str());
+    clientStatus1->setTopicStates(states);
+    clientStatus1->save();
+    clientStatus1.reset();
+
+    IKaaClientStateStoragePtr clientStatus2(new ClientStatus(STATUS_FILE_PATH));
+    NotificationManager notificationManager(clientStatus2);
+
+    auto topics = notificationManager.getTopics();
+
+    BOOST_CHECK_EQUAL(topics.size(), states.size());
+
+    std::remove(STATUS_FILE_PATH.c_str());
+}
+
+static Topics createTopics(std::size_t topicCount, bool isOptional = true)
+{
+    std::vector<Topic> topics;
+    topics.reserve(topicCount);
+
+    std::ostringstream ss;
+
+    for (std::size_t i = 0; i < topicCount; ++i) {
+        Topic topic;
+
+        ss.str("");
+        ss << "topic_" << i << "_id";
+        topic.id = ss.str();
+
+        ss.str("");
+        ss << "topic_" << i << "_name";
+        topic.name = ss.str();
+
+        topic.subscriptionType = isOptional ? SubscriptionType::OPTIONAL : SubscriptionType::MANDATORY;
+
+        topics.push_back(topic);
+    }
+
+    return topics;
+}
+
+BOOST_AUTO_TEST_CASE(AddRemoveTopicListListenerTest)
+{
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    NotificationManager notificationManager(status);
+
+    MockNotificationTopicListListener topicListListener1;
+    MockNotificationTopicListListener topicListListener2;
+
+    notificationManager.addTopicListListener(topicListListener1);
+    notificationManager.addTopicListListener(topicListListener2);
+
+    std::size_t topicCount1 = 1 + rand() % 10;
+    auto topics1 = createTopics(topicCount1);
+
+    notificationManager.topicsListUpdated(topics1);
+
+    BOOST_CHECK_EQUAL(topicListListener1.onListUpdated_, 1);
+    BOOST_CHECK_EQUAL(topicListListener2.onListUpdated_, 1);
+    BOOST_CHECK_EQUAL(topicListListener1.topics_.size(), topics1.size());
+    BOOST_CHECK_EQUAL(topicListListener2.topics_.size(), topics1.size());
+
+    notificationManager.removeTopicListListener(topicListListener2);
+
+    std::size_t topicCount2 = 1 + rand() % 10;
+    auto topics2 = createTopics(topicCount2);
+
+    notificationManager.topicsListUpdated(topics2);
+
+    BOOST_CHECK_EQUAL(topicListListener1.onListUpdated_, 2);
+    BOOST_CHECK_EQUAL(topicListListener2.onListUpdated_, 1);
+    BOOST_CHECK_EQUAL(topicListListener1.topics_.size(), topics2.size());
+    BOOST_CHECK_EQUAL(topicListListener2.topics_.size(), topics1.size());
+}
+
+static Notification createNotification(const std::string& topicId)
+{
+    KaaNotification originalNotification;
+    AvroByteArrayConverter<KaaNotification> serializer;
+
+    Notification notification;
+    notification.topicId = topicId;
+    notification.seqNumber.set_int(rand());
+    serializer.toByteArray(originalNotification, notification.body);
+    notification.type = NotificationType::CUSTOM;
+    notification.uid.set_null();
+
+    return notification;
+}
+
+static std::vector<Notification> createNotifications(std::size_t notificationCount, const std::string& topicId)
+{
+    std::vector<Notification> notifications;
+    notifications.reserve(notificationCount);
+
+    for (size_t i = 0; i < notificationCount; ++i) {
+        notifications.push_back(createNotification(topicId));
+    }
+
+    return notifications;
+}
+
+BOOST_AUTO_TEST_CASE(AddRemoveGlobalNotificationListenerTest)
+{
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    NotificationManager notificationManager(status);
+
+    MockNotificationListener notificationListener1;
+    MockNotificationListener notificationListener2;
+
+    notificationManager.addNotificationListener(notificationListener1);
+    notificationManager.addNotificationListener(notificationListener2);
+
+    std::size_t topicCount = 1;
+    auto topics = createTopics(topicCount);
+
+    notificationManager.topicsListUpdated(topics);
+
+    std::size_t notificationCount1 = rand() % 10;
+    auto notifications1 = createNotifications(notificationCount1, topics.front().id);
+
+    notificationManager.notificationReceived(notifications1);
+
+    BOOST_CHECK_EQUAL(notificationListener1.onNotification_, notificationCount1);
+    BOOST_CHECK_EQUAL(notificationListener2.onNotification_, notificationCount1);
+
+    std::size_t notificationCount2 = rand() % 10;
+    auto notifications2 = createNotifications(notificationCount2, topics.front().id);
+
+    notificationManager.removeNotificationListener(notificationListener2);
+    notificationManager.notificationReceived(notifications2);
+
+    BOOST_CHECK_EQUAL(notificationListener1.onNotification_, notificationCount2 + notificationCount1);
+    BOOST_CHECK_EQUAL(notificationListener2.onNotification_, notificationCount1);
+}
+
+BOOST_AUTO_TEST_CASE(NotificationListenerForUnknownTopicTest)
+{
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    NotificationManager notificationManager(status);
+    MockNotificationListener topicSpecificNotificationListener;
+
+    std::size_t topicCount = 1 + rand() % 10;
+    auto topics = createTopics(topicCount);
+
+    notificationManager.topicsListUpdated(topics);
+
+    BOOST_CHECK_THROW(notificationManager.addNotificationListener("unknown_topic_id1", topicSpecificNotificationListener)
+                    , UnavailableTopicException);
+
+    BOOST_CHECK_THROW(notificationManager.removeNotificationListener("unknown_topic_id2", topicSpecificNotificationListener)
+                    , UnavailableTopicException);
+}
+
+BOOST_AUTO_TEST_CASE(AddRemoveTopicSpecificNotificationListenerTest)
+{
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    NotificationManager notificationManager(status);
+
+    std::size_t topicCount = 2;
+    auto topics = createTopics(topicCount);
+
+    notificationManager.topicsListUpdated(topics);
+
+    MockNotificationListener globalNotificationListener;
+    MockNotificationListener topicSpecificNotificationListener;
+
+    notificationManager.addNotificationListener(globalNotificationListener);
+    notificationManager.addNotificationListener(topics[1].id, topicSpecificNotificationListener);
+
+    std::size_t topic1NotificationCount1 = rand() % 10;
+    auto topic1Notification1 = createNotifications(topic1NotificationCount1, topics[0].id);
+    notificationManager.notificationReceived(topic1Notification1);
+
+    std::size_t topic2NotificationCount1 = rand() % 10;
+    auto topic2Notification1 = createNotifications(topic2NotificationCount1, topics[1].id);
+    notificationManager.notificationReceived(topic2Notification1);
+
+    BOOST_CHECK_EQUAL(globalNotificationListener.onNotification_, topic1NotificationCount1);
+    BOOST_CHECK_EQUAL(topicSpecificNotificationListener.onNotification_, topic2NotificationCount1);
+
+    notificationManager.removeNotificationListener(topics[1].id, topicSpecificNotificationListener);
+
+    std::size_t topic1NotificationCount2 = rand() % 10;
+    auto topic1Notification2 = createNotifications(topic1NotificationCount2, topics[0].id);
+    notificationManager.notificationReceived(topic1Notification2);
+
+    std::size_t topic2NotificationCount2 = rand() % 10;
+    auto topic2Notification2 = createNotifications(topic2NotificationCount2, topics[1].id);
+    notificationManager.notificationReceived(topic2Notification2);
+
+    BOOST_CHECK_EQUAL(globalNotificationListener.onNotification_, topic1NotificationCount1 + topic1NotificationCount2 + topic2NotificationCount2);
+    BOOST_CHECK_EQUAL(topicSpecificNotificationListener.onNotification_, topic2NotificationCount1);
+}
+
+BOOST_AUTO_TEST_CASE(SubscribeToUnknownTopicTest)
+{
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    NotificationManager notificationManager(status);
+    MockNotificationListener topicSpecificNotificationListener;
+
+    std::size_t topicCount = 1 + rand() % 10;
+    auto topics = createTopics(topicCount);
+
+    notificationManager.topicsListUpdated(topics);
+
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopic("unknown_topic_id"), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopic("unknown_topic_id", false), UnavailableTopicException);
+
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopics({ topics.front().id, "unknown_topic_id2" }), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopics({ topics.front().id, "unknown_topic_id2" }, false), UnavailableTopicException);
+}
+
+BOOST_AUTO_TEST_CASE(UnsubscribeToUnknownTopicTest)
+{
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    NotificationManager notificationManager(status);
+    MockNotificationListener topicSpecificNotificationListener;
+
+    std::size_t topicCount = 1 + rand() % 10;
+    auto topics = createTopics(topicCount);
+
+    notificationManager.topicsListUpdated(topics);
+
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic("unknown_topic_id"), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic("unknown_topic_id", false), UnavailableTopicException);
+
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopics({ topics.front().id, "unknown_topic_id2" }), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopics({ topics.front().id, "unknown_topic_id2" }, false), UnavailableTopicException);
+}
+
+BOOST_AUTO_TEST_CASE(SubscribeToMandatoryTopicTest)
+{
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    NotificationManager notificationManager(status);
+    MockNotificationListener topicSpecificNotificationListener;
+
+    std::size_t topicCount = 1 + rand() % 10;
+    /*
+     * All topics are MANDATORY.
+     */
+    auto topics = createTopics(topicCount, false);
+
+    notificationManager.topicsListUpdated(topics);
+
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopic(topics.front().id), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopic(topics.front().id, false), UnavailableTopicException);
+
+    std::list<std::string> topicIds;
+    for (const auto& topic : topics) {
+        topicIds.push_back(topic.id);
+    }
+
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopics(topicIds), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.subscribeToTopics(topicIds, false), UnavailableTopicException);
+}
+
+BOOST_AUTO_TEST_CASE(UnsubscribeFromMandatoryTopicTest)
+{
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    NotificationManager notificationManager(status);
+    MockNotificationListener topicSpecificNotificationListener;
+
+    std::size_t topicCount = 1 + rand() % 10;
+    /*
+     * All topics are MANDATORY.
+     */
+    auto topics = createTopics(topicCount, false);
+
+    notificationManager.topicsListUpdated(topics);
+
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic(topics.front().id), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopic(topics.front().id, false), UnavailableTopicException);
+
+    std::list<std::string> topicIds;
+    for (const auto& topic : topics) {
+        topicIds.push_back(topic.id);
+    }
+
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopics(topicIds), UnavailableTopicException);
+    BOOST_CHECK_THROW(notificationManager.unsubscribeFromTopics(topicIds, false), UnavailableTopicException);
+}
+
+BOOST_AUTO_TEST_CASE(SubscribeToOptionalTopicTest)
+{
+    IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
+    NotificationManager notificationManager(status);
+    MockNotificationListener topicSpecificNotificationListener;
+    std::shared_ptr<TestNotificationTransport> notificationTransport(new TestNotificationTransport);
+    notificationManager.setTransport(notificationTransport);
+
+    std::size_t topicCount = 1;
+    auto topics = createTopics(topicCount);
+
+    notificationManager.topicsListUpdated(topics);
+
+    BOOST_CHECK_NO_THROW(notificationManager.subscribeToTopic(topics.front().id, false));
+    BOOST_CHECK_NO_THROW(notificationManager.subscribeToTopic(topics.front().id));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
