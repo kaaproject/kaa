@@ -476,6 +476,21 @@ const KeyPair& KaaClient::getClientKeyPair()
     return *clientKeys_;
 }
 
+void KaaClient::setEndpointAccessToken(std::string token)
+{
+    status_->setEndpointAccessToken(token);
+}
+
+std::string KaaClient::refreshEndpointAccessToken()
+{
+    return status_->refreshEndpointAccessToken();
+}
+
+std::string KaaClient::getEndpointAccessToken()
+{
+    return status_->getEndpointAccessToken();
+}
+
 void KaaClient::addLogRecord(const KaaUserLogRecord& record) {
 #ifdef KAA_USE_LOGGING
     return logCollector_->addLogRecord(record);

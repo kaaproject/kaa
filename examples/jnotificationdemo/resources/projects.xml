@@ -18,7 +18,7 @@ Copyright 2014-2015 CyberVision, Inc.
 
 <projectsConfig>
     <project id="jnotification_demo">
-        <name>Notification demo</name>
+        <name>Notificaion demo</name>
         <description>Application on java platform demonstrating notification subsystem (IoT)</description>
         <platform>JAVA</platform>
         <features>NOTIFICATION</features>
