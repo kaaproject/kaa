@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 namespace kaa {
 
@@ -49,6 +50,8 @@ public:
 
     virtual ~IFetchEventListeners() {}
 };
+
+typedef std::shared_ptr<IFetchEventListeners> IFetchEventListenersPtr;
 
 } /* namespace kaa */
 

@@ -65,6 +65,9 @@ public:
 
     virtual IKaaChannelManager&                 getChannelManager();
     virtual const KeyPair&                      getClientKeyPair();
+    virtual void                                setEndpointAccessToken(std::string token);
+    virtual std::string                         refreshEndpointAccessToken();
+    virtual std::string                         getEndpointAccessToken();
     virtual IKaaDataMultiplexer&                getOperationMultiplexer();
     virtual IKaaDataDemultiplexer&              getOperationDemultiplexer();
     virtual EventFamilyFactory&                 getEventFamilyFactory();
@@ -103,7 +106,7 @@ public:
     virtual void                                setAttachStatusListener(IAttachStatusListenerPtr listener);
     virtual bool                                isAttachedToUser();
     virtual std::int32_t                        findEventListeners(const std::list<std::string>& eventFQNs
-                                                                  , IFetchEventListeners* listener);
+                                                                  , IFetchEventListenersPtr listener);
 
     virtual IKaaDataMultiplexer&                getBootstrapMultiplexer();
     virtual IKaaDataDemultiplexer&              getBootstrapDemultiplexer();
