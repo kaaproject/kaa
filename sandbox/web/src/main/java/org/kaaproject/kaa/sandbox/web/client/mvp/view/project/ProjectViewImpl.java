@@ -131,9 +131,9 @@ public class ProjectViewImpl extends BaseViewImpl implements ProjectView {
         appDetailsPanel.setWidget(0, 0, descriptionLabel);
         appDetailsPanel.getFlexCellFormatter().setColSpan(0, 0, 2);
         
-        Label targetPlatformLabel = new Label(Utils.constants.targetPlatform());
-        targetPlatformLabel.addStyleName(Utils.sandboxStyle.contentLabel());
-        appDetailsPanel.setWidget(1, 0, targetPlatformLabel);
+        Label platformLabel = new Label(Utils.constants.platform());
+        platformLabel.addStyleName(Utils.sandboxStyle.contentLabel());
+        appDetailsPanel.setWidget(1, 0, platformLabel);
         appDetailsPanel.getFlexCellFormatter().getElement(1, 0).getStyle().setPaddingTop(15, Unit.PX);
         appDetailsPanel.getFlexCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_MIDDLE);
         
@@ -203,7 +203,7 @@ public class ProjectViewImpl extends BaseViewImpl implements ProjectView {
     }
 
     @Override
-    public void setTargetPlatform(Platform platform) {
+    public void setPlatform(Platform platform) {
         Image image = new Image(Utils.getPlatformIcon(platform));
         image.setTitle(Utils.getPlatformText(platform));
         image.getElement().getStyle().setVerticalAlign(VerticalAlign.MIDDLE);

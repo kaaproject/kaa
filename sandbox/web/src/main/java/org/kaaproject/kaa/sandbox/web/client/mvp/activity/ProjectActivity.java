@@ -113,7 +113,7 @@ public class ProjectActivity extends AbstractActivity {
                     view.getApplicationImage().setResource(Utils.getPlatformIconBig(result.getPlatform()));
                 }
                 view.setProjectTitle(result.getName());
-                view.setTargetPlatform(result.getPlatform());
+                view.setPlatform(result.getPlatform());
                 view.setFeatures(result.getFeatures());
                 view.getDescription().setText(result.getDescription());
                 view.getDetails().setHTML(result.getDetails());

@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.Image;
 
 public interface ProjectView extends BaseView {
 
-    void setTargetPlatform(Platform platform);
+    void setPlatform(Platform platform);
     
     void setFeatures(List<Feature> features);
     
