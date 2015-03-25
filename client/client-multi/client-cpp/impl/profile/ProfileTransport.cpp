@@ -92,8 +92,8 @@ void ProfileTransport::populateEventFamilyVersions(EndpointVersionInfo::eventFam
 
     versions.set_null();
 
-    if (!predefinedVersions.empty() && versionContainer.empty()) {
-        versionContainer.resize(predefinedVersions.size());
+    if (!predefinedVersions.empty()) {
+        versionContainer.reserve(predefinedVersions.size());
 
         for (const auto& version : predefinedVersions) {
             EventClassFamilyVersionInfo info;

@@ -16,22 +16,15 @@
 
 function start()
 {
-	if [ $USER != $SERVER_USER ]; then
-	    echo "This script should be invoked by '$SERVER_USER' user!"
+
+	if [ -z $SERVER_HOME ]; then
+	    echo "This script can't be invoked standalone! Exiting..."
 	    exit 1
 	fi
 
-	if [ -z $SERVER_LOG_DIR ]; then
-	    SERVER_LOG_DIR=/var/log/kaa
-	fi
-	
-	export JAVA_OPTIONS="$JAVA_OPTIONS -Djava.awt.headless=true -Dserver_log_dir=$SERVER_LOG_DIR -Dserver_home_dir=$SERVER_HOME"
-	export JETTY_HOME="${SERVER_HOME}"
-    	export JETTY_RUN="${SERVER_HOME}"
-        
 	echo "Starting $SERVER_NAME..."
 
-	${JETTY_HOME}/bin/jetty.sh start
+	exec ${JETTY_HOME}/bin/jetty.sh start
 	echo "$SERVER_NAME started"
 }
 

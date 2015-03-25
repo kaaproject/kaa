@@ -42,38 +42,26 @@ class NotificationManager : public INotificationManager, public INotificationPro
 public:
     NotificationManager(IKaaClientStateStoragePtr status);
 
-    virtual void topicsListUpdated(const Topics& topics);
-
-    virtual void notificationReceived(const Notifications& notifications);
-
-    virtual void addTopicListListener(INotificationTopicListListenerPtr listener);
-
-    virtual void removeTopicListListener(INotificationTopicListListenerPtr listener);
-
+    virtual void addTopicListListener(INotificationTopicListListener& listener);
+    virtual void removeTopicListListener(INotificationTopicListListener& listener);
     virtual Topics getTopics();
 
-    virtual void addNotificationListener(INotificationListenerPtr listener);
+    virtual void addNotificationListener(INotificationListener& listener);
+    virtual void addNotificationListener(const std::string& topidId, INotificationListener& listener);
+    virtual void removeNotificationListener(INotificationListener& listener);
+    virtual void removeNotificationListener(const std::string& topidId, INotificationListener& listener);
 
-    virtual void addNotificationListener(const std::string& topidId, INotificationListenerPtr listener);
-
-    virtual void removeNotificationListener(INotificationListenerPtr listener);
-
-    virtual void removeNotificationListener(const std::string& topidId, INotificationListenerPtr listener);
-
-    virtual void subscribeToTopic(const std::string& id, bool forceSync);
-
-    virtual void subscribeToTopics(const std::list<std::string>& idList, bool forceSync);
-
-    virtual void unsubscribeFromTopic(const std::string& id, bool forceSync);
-
-    virtual void unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync);
-
+    virtual void subscribeToTopic(const std::string& id, bool forceSync = true);
+    virtual void subscribeToTopics(const std::list<std::string>& idList, bool forceSync = true);
+    virtual void unsubscribeFromTopic(const std::string& id, bool forceSync = true);
+    virtual void unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync = true);
     virtual void sync();
 
-    /**
-     * Provide notification transport to manager.
-     */
-    virtual void setTransport(std::shared_ptr<NotificationTransport> transport);
+    virtual void topicsListUpdated(const Topics& topics);
+    virtual void notificationReceived(const Notifications& notifications);
+
+    void setTransport(std::shared_ptr<NotificationTransport> transport);
+
 private:
     void updateSubscriptionInfo(const std::string& id, SubscriptionCommandType type);
     void updateSubscriptionInfo(const SubscriptionCommands& newSubscriptions);
@@ -81,30 +69,26 @@ private:
     const Topic& findTopic(const std::string& id);
 
     void notifyTopicUpdateSubscribers(const Topics& topics);
-    void notifyMandatoryNotificationSubscribers(const Notification& notification);
-    bool notifyOptionalNotificationSubscribers(const Notification& notification);
+    void notifyMandatoryNotificationSubscribers(const std::string& id, const KaaNotification& notification);
+    bool notifyOptionalNotificationSubscribers(const std::string& id, const KaaNotification& notification);
 
 private:
-    std::shared_ptr<NotificationTransport>                           transport_;
-    IKaaClientStateStoragePtr                                        clientStatus_;
+    std::shared_ptr<NotificationTransport>    transport_;
+    IKaaClientStateStoragePtr                 clientStatus_;
 
-    std::unordered_map<std::string/*Topic ID*/, Topic>               topics_;
-
+    std::unordered_map<std::string/*Topic ID*/, Topic>    topics_;
     KAA_MUTEX_DECLARE(topicsGuard_);
+
+    typedef KaaObservable<void(const std::string& topicId, const KaaNotification& notification)
+                        , INotificationListener*> NotificationObservable;
+    typedef std::shared_ptr<NotificationObservable>    NotificationObservablePtr;
+
+    KaaObservable<void (const Topics& list), INotificationTopicListListener*>    topicListeners_;
+    NotificationObservable                                                       mandatoryListeners_;
+    std::unordered_map<std::string/*Topic ID*/, NotificationObservable>          optionalListeners_;
     KAA_MUTEX_DECLARE(optionalListenersGuard_);
 
-    typedef KaaObservable<
-            void(const std::string& topicId,
-                    const std::vector<std::uint8_t>& notification),
-            INotificationListenerPtr> NotificationObservable;
-
-    typedef std::shared_ptr<NotificationObservable> NotificationObservablePtr;
-
-    KaaObservable<void (const Topics& list), INotificationTopicListListenerPtr> topicListeners_;
-    NotificationObservable                                                     mandatoryListeners_;
-    std::unordered_map<std::string/*Topic ID*/, NotificationObservablePtr>     optionalListeners_;
-
-    SubscriptionCommands                                             subscriptions_;
+    SubscriptionCommands    subscriptions_;
     KAA_MUTEX_DECLARE(subscriptionsGuard_);
 };
 

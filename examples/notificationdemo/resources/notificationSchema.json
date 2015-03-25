@@ -1,15 +1,27 @@
 {
-	"type": "record",
-	"name": "Notification",
-	"namespace": "org.kaaproject.kaa.schema.example",
-	"fields": [
-	{
-		"name": "message",
-		"type": "string"
-	},
-	{
-		"name":"image",
-		"type":"string"
-	}
-	]
+  "type": "record",
+  "name": "Notification",
+  "namespace": "org.kaaproject.kaa.schema.example",
+  "fields": [
+    {
+      "name": "message",
+      "type": [
+        {
+          "type": "string",
+          "avro.java.string": "String"
+        },
+        "null"
+      ]
+    },
+    {
+      "name": "image",
+      "type": [
+        {
+          "type": "string",
+          "avro.java.string": "String"
+        },
+        "null"
+      ]
+    }
+  ]
 }

@@ -47,10 +47,10 @@ public:
 
     virtual void onNotificationResponse(const NotificationSyncResponse& response);
 
-    virtual void onSubscriptionChanged(const SubscriptionCommands& commands);
+    virtual void onSubscriptionChanged(SubscriptionCommands&& commands);
 
     virtual void setNotificationProcessor(INotificationProcessor* processor) {
-        if (processor != nullptr) {
+        if (processor) {
             notificationProcessor_ = processor;
         }
     }
@@ -58,6 +58,7 @@ public:
     virtual void sync() {
         syncByType(type_);
     }
+
 private:
     Notifications getUnicastNotifications(const Notifications & notifications);
     Notifications getMulticastNotifications(const Notifications & notifications);
@@ -65,9 +66,9 @@ private:
 private:
     INotificationProcessor*   notificationProcessor_;
 
-    std::set<std::string>                    acceptedUnicastNotificationIds_;
+    std::set<std::string>                  acceptedUnicastNotificationIds_;
     std::map<std::string, std::int32_t>    notificationSubscriptions_;
-    SubscriptionCommands                     subscriptions_;
+    SubscriptionCommands                   subscriptions_;
 };
 
 } /* namespace kaa */

@@ -25,8 +25,8 @@ import com.google.gwt.user.cellview.client.DataGrid;
 
 public class ApplicationsGrid extends AbstractKaaGrid<ApplicationDto, String> {
 
-    public ApplicationsGrid(Unit unit, boolean editable) {
-        super(unit, editable);
+    public ApplicationsGrid(Unit unit) {
+        super(unit, false);
     }
 
     @Override
