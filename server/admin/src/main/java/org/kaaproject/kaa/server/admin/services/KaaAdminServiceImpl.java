@@ -1556,12 +1556,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             if (isEmpty(topic.getId())) {
                 topic.setCreatedUsername(getCurrentUser().getUsername());
                 checkApplicationId(topic.getApplicationId());
-                for (DataStruct topicDataStruct : clientProvider.getClient().getTopicByAppId(topic.getApplicationId())) {
-                    TopicDto dto = toDto(topicDataStruct);
-                    if(dto.getName().equals(topic.getName())){
-                        throw new IllegalArgumentException("Topic with the same name already present!");
-                    }
-                }
             } else {
                 throw new KaaAdminServiceException("Unable to edit existing topic!", ServiceErrorCode.INVALID_ARGUMENTS);
             }

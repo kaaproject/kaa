@@ -16,14 +16,7 @@
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ENDPOINT_GROUP_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ENDPOINT_GROUPS_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ENDPOINT_GROUP_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TOPIC_TYPE_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +34,7 @@ import org.springframework.stereotype.Repository;
 public class HibernateTopicDao extends HibernateAbstractDao<Topic> implements TopicDao<Topic> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateTopicDao.class);
+    private static final String TOPIC_NAME = "name";
 
     @Override
     public List<Topic> findTopicsByAppId(String appId) {
@@ -62,6 +56,19 @@ public class HibernateTopicDao extends HibernateAbstractDao<Topic> implements To
                     Restrictions.and(
                             Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
                             Restrictions.eq(TOPIC_TYPE_PROPERTY, typeDto)));
+        }
+        return topics;
+    }
+
+    @Override
+    public List<Topic> findTopicsByAppIdAndName(String appId, String topicName) {
+        List<Topic> topics = Collections.emptyList();
+        LOG.debug("Find topics by application id {} and name", appId, topicName);
+        if (isNotBlank(appId) && isNotBlank(topicName)) {
+            topics = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+                    Restrictions.and(
+                            Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
+                            Restrictions.eq(TOPIC_NAME, topicName)));
         }
         return topics;
     }
