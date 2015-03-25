@@ -31,12 +31,12 @@ To run the demo application, do the following:
 Follow https://docs.kaaproject.org/display/KAA/Third-party+components#Third-partycomponents-Kaaendpoint to see the full
 list of third-party dependencies for the Kaa C SDK.
 2. Download and install the Kaa sandbox (https://docs.kaaproject.org/display/KAA/sandbox).
-3. Before generating C SDK, please make sure that you provided SDK with User verifier and following fields for Event class family were specified as follows:
+3. Before generating the C SDK, make sure that you provided the SDK with a user verifier and the following fields for the event class family were specified as follows:
  Name: ThermostatEventClassFamily
  Namespace: org.kaaproject.kaa.schema.sample.event.thermo
  Class name: ThermostatEventClassFamily
- (The Avro log schema required for the demo application is located in the 'avro' directory)
-4. Generate the C SDK using the Kaa sandbox.Put the SDK archive into the 'libs/kaa' directory.
+ (The Avro log schema required for the demo application is located in the 'avro' directory).
+4. Generate the C SDK using the Kaa sandbox. Put the SDK archive into the 'libs/kaa' directory.
 5. Use the build.sh script to build and run the demo application (the 'deploy' option).
 
 ************************************
