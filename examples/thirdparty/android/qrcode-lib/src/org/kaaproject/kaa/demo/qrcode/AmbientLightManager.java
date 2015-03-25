@@ -10,7 +10,8 @@ import android.hardware.SensorManager;
 import android.preference.PreferenceManager;
 
 /**
- * Detects ambient light and switches on the front light when very dark, and off again when sufficiently light.
+ * Detects ambient light and switches on the front light when it is very dark, 
+ * and off again when there is sufficient amount of light.
  *
  */
 final class AmbientLightManager implements SensorEventListener {
