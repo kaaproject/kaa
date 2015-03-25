@@ -100,6 +100,7 @@ import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
+import org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -1555,6 +1556,12 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             if (isEmpty(topic.getId())) {
                 topic.setCreatedUsername(getCurrentUser().getUsername());
                 checkApplicationId(topic.getApplicationId());
+                for (DataStruct topicDataStruct : clientProvider.getClient().getTopicByAppId(topic.getApplicationId())) {
+                    TopicDto dto = toDto(topicDataStruct);
+                    if(dto.getName().equals(topic.getName())){
+                        throw new IllegalArgumentException("Topic with the same name already present!");
+                    }
+                }
             } else {
                 throw new KaaAdminServiceException("Unable to edit existing topic!", ServiceErrorCode.INVALID_ARGUMENTS);
             }
