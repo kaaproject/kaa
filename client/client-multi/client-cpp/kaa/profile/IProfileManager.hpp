@@ -37,7 +37,7 @@ public:
      * @see AbstractProfileContainer
      *
      */
-    virtual void setProfileContainer(ProfileContainerPtr container) = 0;
+    virtual void setProfileContainer(IProfileContainerPtr container) = 0;
 
     /**
      * Notifies server that profile has been updated.

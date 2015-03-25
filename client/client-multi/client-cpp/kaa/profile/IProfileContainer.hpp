@@ -22,7 +22,7 @@
 namespace kaa {
 
 class IProfileContainer;
-typedef std::shared_ptr<IProfileContainer> ProfileContainerPtr;
+typedef std::shared_ptr<IProfileContainer> IProfileContainerPtr;
 
 /**
  * Interface for the profile container.
@@ -38,15 +38,6 @@ public:
      *
      */
     virtual SharedDataBuffer                        getSerializedProfile() = 0;
-
-    /**
-     * Set Kaa profile listener @link IProfileListener @endlink for the container.
-     * DO NOT use this API explicitly. When user sets his implementation
-     * of the profile container, Kaa uses this method to inject its
-     * own listener @link DefaultProfileListener @endlink.
-     *
-     * @param listener Listener that tracks profile updates
-     */
 
     virtual ~IProfileContainer() {}
 };

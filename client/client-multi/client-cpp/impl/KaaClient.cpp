@@ -271,7 +271,7 @@ void KaaClient::setDefaultConfiguration()
 }
 
 
-void KaaClient::setProfileContainer(ProfileContainerPtr container) {
+void KaaClient::setProfileContainer(IProfileContainerPtr container) {
     profileManager_->setProfileContainer(container);
 }
 

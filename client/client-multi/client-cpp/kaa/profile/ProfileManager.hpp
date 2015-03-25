@@ -31,17 +31,19 @@ namespace kaa {
  */
 class ProfileManager : public IProfileManager {
 public:
-    ProfileManager() : ProfileContainer_(ProfileContainerPtr()) { }
+    ProfileManager() : ProfileContainer_(IProfileContainerPtr()) { }
 
     /**
      * Sets profile container implemented by the user
      * @param container user-defined container
      */
-    virtual void setProfileContainer(ProfileContainerPtr container);
+    virtual void setProfileContainer(IProfileContainerPtr container);
 
     /**
-     * Retrieves serialized profile container
-     * @return serialized profile container
+     * Retrieves serialized profile
+     *
+     * @return byte array with serialized profile
+     *
      */
 
     SharedDataBuffer getSerializedProfile()
@@ -49,6 +51,9 @@ public:
         return ProfileContainer_->getSerializedProfile();
     }
 
+    /**
+     * Notifies server that profile has been updated.
+     */
     void updateProfile()
     {
         SharedDataBuffer serializedProfile = getSerializedProfile();
@@ -70,10 +75,10 @@ public:
 
 private:
     IProfileTransportPtr            transport_;
-    ProfileContainerPtr   ProfileContainer_;
+    IProfileContainerPtr   ProfileContainer_;
 };
 
-inline void ProfileManager::setProfileContainer(ProfileContainerPtr container)
+inline void ProfileManager::setProfileContainer(IProfileContainerPtr container)
 {
     if (container) {
         ProfileContainer_ = container;
