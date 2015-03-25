@@ -131,7 +131,7 @@ public class CppSdkGenerator extends SdkGenerator {
 
     private static final String NOTIFICATION_SCHEMA_AVRO_SRC = "avro/notification.avsc";
     private static final String INOTIFICATION_DEFINITIONS_TEMPLATE = "sdk/cpp/notification/NotificationDefinitions.hpp.template";
-    private static final String INOTIFICATION_DEFINITIONS_PATH = "kaa/notification/NotificationDefinitions.hpp";
+    private static final String INOTIFICATION_DEFINITIONS_PATH = "kaa/notification/gen/NotificationDefinitions.hpp";
     private static final String NOTIFICATION_CLASS_NAME_VAR = "%{notification_class_name}";
 
     private static final String CONFIGURATION_SCHEMA_AVRO_SRC = "avro/configuration.avsc";

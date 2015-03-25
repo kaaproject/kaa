@@ -56,6 +56,7 @@
 
         <TextView
             android:id="@+id/popup_notification"
+            android:textColor="#000000"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="20dp"
