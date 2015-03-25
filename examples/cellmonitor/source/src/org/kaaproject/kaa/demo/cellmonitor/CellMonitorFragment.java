@@ -38,11 +38,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 /**
- * The Class CellMonitorFragment.
- * Implementation of {@link Fragment} class.
+ * The implementation of the {@link Fragment} class.
  * Implements common fragment lifecycle functions. Stores references to common application resources.
- * Provides view with information about current GSM cell location, signal strength and phone GPS location.
- * Displays current statistics about sent logs to Kaa cluster.   
+ * Provides a view with the information about current GSM cell location, signal strength and phone GPS location.
+ * Displays current statistics about logs sent to the Kaa cluster.   
  */
 public class CellMonitorFragment extends Fragment {
 
