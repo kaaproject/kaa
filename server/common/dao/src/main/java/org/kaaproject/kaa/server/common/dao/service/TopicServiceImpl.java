@@ -71,7 +71,7 @@ public class TopicServiceImpl implements TopicService {
             LOG.debug("Save new topic.");
             topicDto.setCreatedTime(System.currentTimeMillis());
             List topicsByAppIdAndName = topicDao.findTopicsByAppIdAndName(topicDto.getApplicationId(), topicDto.getName());
-            if(topicsByAppIdAndName.isEmpty()){
+            if(!topicsByAppIdAndName.isEmpty()){
                 throw new IllegalArgumentException("Topic with the same name already present!");
             }
         }
