@@ -63,6 +63,7 @@ public:
     void pause();
     void resume();
 
+    virtual void                                updateProfile();
     virtual IKaaChannelManager&                 getChannelManager();
     virtual const KeyPair&                      getClientKeyPair();
     virtual void                                setEndpointAccessToken(std::string token);

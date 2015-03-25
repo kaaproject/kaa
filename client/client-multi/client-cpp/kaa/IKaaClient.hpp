@@ -61,6 +61,11 @@ public:
     virtual void setProfileContainer(ProfileContainerPtr container) = 0;
 
     /**
+     *  Notyfies server about profile changes
+     */
+    virtual void updateProfile() = 0;
+
+    /**
      * Retrieves Kaa event family factory.
      *
      * @return @link EventFamilyFactory @endlink object.

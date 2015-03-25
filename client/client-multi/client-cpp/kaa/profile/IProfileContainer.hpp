@@ -17,7 +17,6 @@
 #ifndef IPROFILECONTAINER_HPP_
 #define IPROFILECONTAINER_HPP_
 
-#include "kaa/profile/IProfileListener.hpp"
 #include "kaa/common/EndpointObjectHash.hpp"
 
 namespace kaa {
@@ -38,7 +37,7 @@ public:
      * @return byte array with serialized profile
      *
      */
-    virtual SharedDataBuffer getSerializedProfile() = 0;
+    virtual SharedDataBuffer                        getSerializedProfile() = 0;
 
     /**
      * Set Kaa profile listener @link IProfileListener @endlink for the container.
@@ -48,7 +47,6 @@ public:
      *
      * @param listener Listener that tracks profile updates
      */
-    virtual void setProfileListener(ProfileListenerPtr listener) = 0;
 
     virtual ~IProfileContainer() {}
 };

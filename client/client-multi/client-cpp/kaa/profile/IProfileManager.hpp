@@ -20,7 +20,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include "kaa/profile/IProfileContainer.hpp"
-#include "kaa/profile/ISerializedProfileContainer.hpp"
 
 namespace kaa {
 
@@ -41,12 +40,14 @@ public:
     virtual void setProfileContainer(ProfileContainerPtr container) = 0;
 
     /**
-     * Retrieves container responsible for profile serializing
-     *
-     * @return Container which contains the serialized profile
-     *
+     * Notifies server that profile has been updated.
      */
-    virtual ISerializedProfileContainerPtr getSerializedProfileContainer() = 0;
+    virtual void updateProfile() = 0;
+
+    /**
+     * Returns serialized profile
+     */
+    virtual SharedDataBuffer getSerializedProfile() = 0;
 
     virtual ~IProfileManager() {}
 };

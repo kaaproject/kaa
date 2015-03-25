@@ -22,9 +22,6 @@
 #include "kaa/channel/transport/IProfileTransport.hpp"
 #include "kaa/profile/IProfileManager.hpp"
 #include "kaa/profile/IProfileContainer.hpp"
-#include "kaa/profile/ISerializedProfileContainer.hpp"
-#include "kaa/profile/SerializedProfileContainer.hpp"
-#include "kaa/profile/ProfileListener.hpp"
 
 namespace kaa {
 
@@ -34,7 +31,7 @@ namespace kaa {
  */
 class ProfileManager : public IProfileManager {
 public:
-    ProfileManager() : serializedProfileContainer_(std::make_shared<SerializedProfileContainer>()) { }
+    ProfileManager() : ProfileContainer_(ProfileContainerPtr()) { }
 
     /**
      * Sets profile container implemented by the user
@@ -46,9 +43,18 @@ public:
      * Retrieves serialized profile container
      * @return serialized profile container
      */
-    ISerializedProfileContainerPtr getSerializedProfileContainer()
+
+    SharedDataBuffer getSerializedProfile()
     {
-        return ISerializedProfileContainerPtr(serializedProfileContainer_);
+        return ProfileContainer_->getSerializedProfile();
+    }
+
+    void updateProfile()
+    {
+        SharedDataBuffer serializedProfile = getSerializedProfile();
+        if (serializedProfile.first.get() && serializedProfile.second > 0) {
+            transport_->sync();
+        }
     }
 
     /**
@@ -64,16 +70,13 @@ public:
 
 private:
     IProfileTransportPtr            transport_;
-    SerializedProfileContainerPtr   serializedProfileContainer_;
+    ProfileContainerPtr   ProfileContainer_;
 };
 
 inline void ProfileManager::setProfileContainer(ProfileContainerPtr container)
 {
     if (container) {
-        ProfileListenerPtr listener(new ProfileListener(transport_));
-
-        container->setProfileListener(listener);
-        serializedProfileContainer_->setProfileContainer(container);
+        ProfileContainer_ = container;
     }
 }
 

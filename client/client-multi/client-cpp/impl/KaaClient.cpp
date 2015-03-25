@@ -533,4 +533,10 @@ IKaaDataDemultiplexer& KaaClient::getBootstrapDemultiplexer()
     return *syncProcessor_;
 }
 
+void KaaClient::updateProfile()
+{
+   profileManager_->updateProfile();
 }
+}
+
+

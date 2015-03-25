@@ -38,7 +38,7 @@ ProfileSyncRequestPtr ProfileTransport::createProfileRequest()
     ProfileSyncRequestPtr request;
 
     if (clientStatus_ && profileManager_) {
-        auto encodedProfile = profileManager_->getSerializedProfileContainer()->getSerializedProfile();
+        auto encodedProfile = profileManager_->getSerializedProfile();
         HashDigest newHash = EndpointObjectHash(encodedProfile).getHashDigest();
         if (isProfileOutDated(newHash) || !clientStatus_->isRegistered()) {
             clientStatus_->setProfileHash(newHash);
