@@ -203,7 +203,7 @@ public class SmartHouseFragment extends Fragment {
     }
  
     /**
-     * Initialise ViewPager
+     * Initialise ViewPager.
      */
     private void intialiseViewPager(View view) {
  
