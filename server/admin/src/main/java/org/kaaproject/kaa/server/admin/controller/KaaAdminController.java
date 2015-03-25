@@ -282,16 +282,6 @@ public class KaaAdminController {
     }
 
     /**
-     * Delete application by its id.
-     *
-     */
-    @RequestMapping(value="delApplication", method=RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void deleteApplication(@RequestParam(value="applicationId") String applicationId) throws KaaAdminServiceException {
-        kaaAdminService.deleteApplication(applicationId);
-    }
-
-    /**
      * Gets the user profile of current user.
      *
      */
@@ -349,16 +339,6 @@ public class KaaAdminController {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
-    }
-
-    /**
-     * Delete the user by his id.
-     *
-     */
-    @RequestMapping(value="delUser", method=RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void deleteUser(@RequestParam(value="userId") String userId) throws KaaAdminServiceException {
-        kaaAdminService.deleteUser(userId);
     }
 
     /**

@@ -173,6 +173,9 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
         if (processedRecords.containsKey(root.getFullName())) {
             return processedRecords.get(root.getFullName());
         }
+        Schema copySchema = Schema.createRecord(root.getName(), root.getDoc(), root.getNamespace(), root.isError());
+        processedRecords.put(copySchema.getFullName(), copySchema);
+
         boolean addressable = isAddressableValue(root);
         List<Field> fields = root.getFields();
         List<Field> newFields = new ArrayList<Field>(fields.size() + 1);
@@ -225,7 +228,6 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
             // This record supports partial updates, adding "uuid" field
             newFields.add(getUuidField());
         }
-        Schema copySchema = Schema.createRecord(root.getName(), root.getDoc(), root.getNamespace(), root.isError());
         AvroUtils.copyJsonProperties(root, copySchema);
         copySchema.setFields(newFields);
         if (addressable) {
@@ -235,7 +237,6 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
                 addressableRecords.add(copySchema);
             }
         }
-        processedRecords.put(copySchema.getFullName(), copySchema);
         return copySchema;
     }
 

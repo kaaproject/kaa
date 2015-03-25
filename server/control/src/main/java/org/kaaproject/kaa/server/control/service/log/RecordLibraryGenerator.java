@@ -17,8 +17,7 @@
 package org.kaaproject.kaa.server.control.service.log;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -28,6 +27,7 @@ import org.apache.avro.Schema;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.common.thrift.gen.control.FileData;
 import org.kaaproject.kaa.server.control.service.sdk.JavaSdkGenerator;
+import org.kaaproject.kaa.server.control.service.sdk.SchemaUtil;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicBean;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicCompiler;
 import org.slf4j.Logger;
@@ -39,13 +39,19 @@ import org.slf4j.helpers.MessageFormatter;
  */
 public class RecordLibraryGenerator {
 
-    /** The Constant LIBRARY_PREFIX. */
+    /**
+     * The Constant LIBRARY_PREFIX.
+     */
     private static final String LIBRARY_PREFIX = "kaa-record-lib-";
 
-    /** The Constant LIBRARY_NAME_PATTERN. */
+    /**
+     * The Constant LIBRARY_NAME_PATTERN.
+     */
     private static final String LIBRARY_NAME_PATTERN = LIBRARY_PREFIX + "l{}.jar";
 
-    /** The Constant LOG. */
+    /**
+     * The Constant LOG.
+     */
     private static final Logger LOG = LoggerFactory
             .getLogger(RecordLibraryGenerator.class);
 
@@ -53,20 +59,22 @@ public class RecordLibraryGenerator {
      * Generate record library.
      *
      * @param logSchemaVersion the log schema version
-     * @param logSchema the log schema
+     * @param logSchema        the log schema
      * @return the record structure library
      * @throws Exception the exception
      */
     public static FileData generateRecordLibrary(int logSchemaVersion, String logSchema) throws Exception {
-        Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logSchema);
-        List<JavaDynamicBean> javaSources = JavaSdkGenerator.generateSchemaSources(recordWrapperSchema);
+        final Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logSchema);
+
+        Map<String, Schema> uniqueSchemas = SchemaUtil.getUniqueSchemasMap(Arrays.asList(recordWrapperSchema));
+        List<JavaDynamicBean> javaSources = JavaSdkGenerator.generateSchemaSources(recordWrapperSchema, uniqueSchemas);
 
         ByteArrayOutputStream libraryOutput = new ByteArrayOutputStream();
         ZipOutputStream libraryFile = new ZipOutputStream(libraryOutput);
 
         JavaDynamicCompiler dynamicCompiler = new JavaDynamicCompiler();
         dynamicCompiler.init();
-        for(JavaDynamicBean bean : javaSources){
+        for (JavaDynamicBean bean : javaSources) {
             LOG.debug("Compiling bean {} with source: {}", bean.getName(), bean.getCharContent(true));
         }
         Collection<JavaDynamicBean> compiledObjects = dynamicCompiler.compile(javaSources);
@@ -81,7 +89,7 @@ public class RecordLibraryGenerator {
         libraryFile.close();
 
         String libraryFileName = MessageFormatter.arrayFormat(LIBRARY_NAME_PATTERN,
-                                                              new Object[]{logSchemaVersion}).getMessage();
+                new Object[]{logSchemaVersion}).getMessage();
 
         byte[] libraryData = libraryOutput.toByteArray();
 
