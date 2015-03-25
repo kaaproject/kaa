@@ -25,7 +25,7 @@ public class DemoBuildersRegistry {
 
     static {
         //ANDROID DEMOS
-        demoBuilders.add(new NotificationDemoBuilder());
+        demoBuilders.add(new AndroidNotificationDemoBuilder());
         demoBuilders.add(new CellMonitorDemoBuilder());
         demoBuilders.add(new CityGuideDemoBuilder());
         demoBuilders.add(new PhotoFrameDemoBuilder());
@@ -34,10 +34,10 @@ public class DemoBuildersRegistry {
 //      demoBuilders.add(new RobotRunDemoBuilder());
 
         //JAVA DEMOS
-        demoBuilders.add(new JEventDemoBuilder());
-        demoBuilders.add(new JDataCollectionDemoBuider());
-        demoBuilders.add(new JConfigurationDemoBuilder());
-        demoBuilders.add(new JNotificationDemoBuilder());
+        demoBuilders.add(new EventDemoBuilder());
+        demoBuilders.add(new DataCollectionDemoBuider());
+        demoBuilders.add(new ConfigurationDemoBuilder());
+        demoBuilders.add(new NotificationDemoBuilder());
     }
 
     public static List<DemoBuilder> getRegisteredDemoBuilders() {
