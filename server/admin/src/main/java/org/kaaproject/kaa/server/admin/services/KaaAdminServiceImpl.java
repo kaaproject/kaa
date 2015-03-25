@@ -25,7 +25,6 @@ import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.to
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDtoList;
 
 import java.io.IOException;
-<<<<<<< HEAD
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,17 +32,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-=======
 import java.util.*;
->>>>>>> f8d0ad2cce32f6979419e8f044a9f80a848c2daa
 
 import net.iharder.Base64;
 
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
 import org.apache.avro.generic.GenericRecord;
-//import org.codehaus.jackson.map.ObjectMapper;
-//import org.codehaus.jackson.map.SerializationConfig;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
 import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
 import org.kaaproject.avro.ui.shared.RecordField;
