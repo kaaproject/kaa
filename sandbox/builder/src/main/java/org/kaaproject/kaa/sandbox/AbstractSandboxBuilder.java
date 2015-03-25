@@ -425,12 +425,17 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
             throw new RuntimeException("Demo projects count mismatch!");
         }
         for (Project sandboxProject : sandboxProjects) {
-            LOG.info("[{}] Building Demo Project...", sandboxProject.getName());
-            String output = sandboxClient.buildProjectBinary(sandboxProject.getId());
-            LOG.info("[{}] Build output:\n{}", sandboxProject.getName(), output);
-            if (!sandboxClient.isProjectBinaryDataExists(sandboxProject.getId())) {
-                LOG.error("Failed to build demo project '{}'", sandboxProject.getName());
-                throw new RuntimeException("Failed to build demo project '" + sandboxProject.getName() + "'!");
+            if (sandboxProject.getDestBinaryFile() != null && 
+                    sandboxProject.getDestBinaryFile().length()>0) {
+                LOG.info("[{}] Building Demo Project...", sandboxProject.getName());
+                String output = sandboxClient.buildProjectBinary(sandboxProject.getId());
+                LOG.info("[{}] Build output:\n{}", sandboxProject.getName(), output);
+                if (!sandboxClient.isProjectBinaryDataExists(sandboxProject.getId())) {
+                    LOG.error("Failed to build demo project '{}'", sandboxProject.getName());
+                    throw new RuntimeException("Failed to build demo project '" + sandboxProject.getName() + "'!");
+                }
+            } else {
+                LOG.info("[{}] Skipping Demo Project build...", sandboxProject.getName());
             }
         }
         LOG.info("Finished building demo applications!");
