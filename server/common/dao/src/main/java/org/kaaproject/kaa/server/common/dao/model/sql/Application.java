@@ -24,7 +24,6 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import java.io.Serializable;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_APPLICATION_TOKEN;
@@ -32,7 +31,6 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_NAME
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_SEQUENCE_NUMBER;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TABLE_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TENANT_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPTIMISTIC_LOCK_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
@@ -40,10 +38,6 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongI
 public final class Application extends GenericModel<ApplicationDto> implements Serializable {
 
     private static final long serialVersionUID = 3402917989585810543L;
-
-    @Version
-    @Column(name = OPTIMISTIC_LOCK_PROPERTY)
-    private long version = 1L;
 
     @Column(name = APPLICATION_APPLICATION_TOKEN, unique = true)
     private String applicationToken;
@@ -77,14 +71,6 @@ public final class Application extends GenericModel<ApplicationDto> implements S
                 this.tenant = new Tenant(tenantId);
             }
         }
-    }
-
-    public long getVersion() {
-        return version;
-    }
-
-    public void setVersion(long version) {
-        this.version = version;
     }
 
     public String getApplicationToken() {

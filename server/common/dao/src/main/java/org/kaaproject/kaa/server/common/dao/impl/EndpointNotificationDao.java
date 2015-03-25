@@ -28,6 +28,12 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
  */
 public interface EndpointNotificationDao<T extends EndpointNotification> extends Dao<T, String> {
 
+    /**
+     * Save notification object
+     *
+     * @param dto the notification object
+     * @return saved notification object
+     */
     T save(EndpointNotificationDto dto);
 
     /**

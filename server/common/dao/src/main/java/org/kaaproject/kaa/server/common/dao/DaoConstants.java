@@ -87,7 +87,6 @@ public class DaoConstants {
     public static final String APPLICATION_APPLICATION_TOKEN = "application_token";
     public static final String APPLICATION_NAME = NAME;
     public static final String APPLICATION_SEQUENCE_NUMBER = SEQUENCE_NUMBER;
-    public static final String APPLICATION_USER_VERIFIER_NAME = "user_verifier_name";
     public static final String APPLICATION_TENANT_ID = TENANT_ID;
 
     /**
@@ -300,24 +299,6 @@ public class DaoConstants {
     public static final String LOG_APPENDER_MIN_LOG_SCHEMA_VERSION = "min_log_schema_version";
     public static final String LOG_APPENDER_MAX_LOG_SCHEMA_VERSION = "max_log_schema_version";
     public static final String LOG_APPENDER_CONFIRM_DELIVERY = "confirm_delivery";
-
-    /**
-     * File log appender constants.
-     */
-    public static final String FILE_LOG_APPENDER_TABLE_NAME = "file_log_appender";
-    public static final String FILE_LOG_APPENDER_PATH = "file_path";
-
-    /**
-     * Flume log appender constants.
-     */
-    public static final String FLUME_LOG_APPENDER_TABLE_NAME = "flume_log_appender";
-    public static final String FLUME_LOG_APPENDER_HOSTS = "hosts";
-
-    /**
-     * Mongo log appender constants.
-     */
-    public static final String MONGO_LOG_APPENDER_TABLE_NAME = "MONGO_log_appender";
-    public static final String MONGO_LOG_APPENDER_COLLECTION_NAME = "collection_name";
 
     private DaoConstants() {
         throw new UnsupportedOperationException("Not supported");

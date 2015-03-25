@@ -44,6 +44,8 @@ public interface EndpointUserConfigurationDao<T extends EndpointUserConfiguratio
     T findByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion);
 
     /**
+     * Find user configuration by user id
+     *
      * @param userId the endpoint user id
      * @return the list of found endpoint user configurations
      */
