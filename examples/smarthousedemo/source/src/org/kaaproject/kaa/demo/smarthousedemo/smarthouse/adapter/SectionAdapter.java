@@ -69,7 +69,9 @@ public abstract class SectionAdapter extends BaseAdapter {
         int total = 0;
 
         for (Section section : this.sections) {
-            total += section.adapter.getCount() + 1; // add one for header
+            
+            // Add one for the header.
+            total += section.adapter.getCount() + 1; 
         }
 
         return total;
@@ -77,7 +79,9 @@ public abstract class SectionAdapter extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        int total = 1; // one for the header, plus those from sections
+      
+        // One for the header, plus those from the sections.
+        int total = 1; 
 
         for (Section section : this.sections) {
             total += section.adapter.getViewTypeCount();
@@ -88,7 +92,9 @@ public abstract class SectionAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        int typeOffset = TYPE_SECTION_HEADER + 1; // start counting from here
+       
+       // Start counting from here.
+        int typeOffset = TYPE_SECTION_HEADER + 1; 
 
         for (Section section : this.sections) {
             if (position == 0) {
