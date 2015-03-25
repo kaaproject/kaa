@@ -14,6 +14,7 @@ output/**
 target/
 tmp_deb_control/
 tmp_rpm_control/
+tmp_dao_resources/
 tmp_sh/
 .gwt/
 .settings/
