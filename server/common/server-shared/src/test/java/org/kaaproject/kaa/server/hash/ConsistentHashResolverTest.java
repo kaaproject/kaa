@@ -50,7 +50,7 @@ public class ConsistentHashResolverTest {
 
     @Test
     public void getNodeForOneItemCircleTest() {
-        List<OperationsNodeInfo> nodes = createNodeList();
+        List<OperationsNodeInfo> nodes = createNodeListWithOneNode();
         ConsistentHashResolver consistentHashResolver = new ConsistentHashResolver(nodes, 1);
         OperationsNodeInfo returnedNode = consistentHashResolver.getNode("userId");
         Assert.assertEquals(nodes.get(0), returnedNode);
@@ -58,6 +58,41 @@ public class ConsistentHashResolverTest {
 
     @Test
     public void getNodeForMultipleItemsTest() {
+        List<OperationsNodeInfo> nodes = createNodeListWithThreeItems();
+        ConsistentHashResolver consistentHashResolver = new ConsistentHashResolver(nodes, 2);
+        OperationsNodeInfo returnedNode = consistentHashResolver.getNode("aa");
+        // operations node info 1 should be returned
+        Assert.assertEquals(nodes.get(0), returnedNode);
+    }
+
+    @Test
+    public void getNodeForMultipleItemsEmptyTailMap() {
+        List<OperationsNodeInfo> nodes = createNodeListWithThreeItems();
+        ConsistentHashResolver consistentHashResolver = new ConsistentHashResolver(nodes, 2);
+        OperationsNodeInfo returnedNode = consistentHashResolver.getNode("aaaa");
+        // operations node info 3 should be returned
+        Assert.assertEquals(nodes.get(2), returnedNode);
+    }
+
+    @Test
+    public void onNodeRemovedTest() throws NoSuchFieldException {
+        int t = 10;
+        List<OperationsNodeInfo> nodes = createNodeListWithOneNode();
+        ConsistentHashResolver consistentHashResolver = new ConsistentHashResolver(nodes, t);
+        SortedMap circle = mock(SortedMap.class);
+        ReflectionTestUtils.setField(consistentHashResolver, "circle", circle);
+        consistentHashResolver.onNodeUpdated(nodes.get(0));
+        // verify that remove was called t times
+        verify(circle, Mockito.times(t)).remove(any());
+    }
+
+    private List<OperationsNodeInfo> createNodeListWithOneNode() {
+        ConnectionInfo connectionInfo = new ConnectionInfo("thrift1", 4234, ByteBuffer.allocate(16));
+        OperationsNodeInfo operationsNodeInfo = new OperationsNodeInfo(connectionInfo, null, 523634L, null);
+        return Arrays.asList(operationsNodeInfo);
+    }
+
+    private List<OperationsNodeInfo> createNodeListWithThreeItems() {
         ByteBuffer buffer1 = ByteBuffer.allocate(8);
         buffer1.put(0, (byte)98);
         buffer1.put(1, (byte)98);
@@ -73,28 +108,6 @@ public class ConsistentHashResolverTest {
         OperationsNodeInfo operationsNodeInfo1 = new OperationsNodeInfo(connectionInfo1, null, 1231L, null);
         OperationsNodeInfo operationsNodeInfo2 = new OperationsNodeInfo(connectionInfo2, null, 1232L, null);
         OperationsNodeInfo operationsNodeInfo3 = new OperationsNodeInfo(connectionInfo3, null, 1233L, null);
-        List<OperationsNodeInfo> nodes = Arrays.asList(operationsNodeInfo1, operationsNodeInfo2, operationsNodeInfo3);
-        ConsistentHashResolver consistentHashResolver = new ConsistentHashResolver(nodes, 2);
-        OperationsNodeInfo returnedNode = consistentHashResolver.getNode("a");
-        // operations node info 1 should be returned
-        Assert.assertEquals(operationsNodeInfo1, returnedNode);
-    }
-
-    @Test
-    public void onNodeRemovedTest() throws NoSuchFieldException {
-        int t = 10;
-        List<OperationsNodeInfo> nodes = createNodeList();
-        ConsistentHashResolver consistentHashResolver = new ConsistentHashResolver(nodes, t);
-        SortedMap circle = mock(SortedMap.class);
-        ReflectionTestUtils.setField(consistentHashResolver, "circle", circle);
-        consistentHashResolver.onNodeUpdated(nodes.get(0));
-        // verify that remove was called t times
-        verify(circle, Mockito.times(t)).remove(any());
-    }
-
-    private List<OperationsNodeInfo> createNodeList() {
-        ConnectionInfo connectionInfo = new ConnectionInfo("thrift1", 4234, ByteBuffer.allocate(16));
-        OperationsNodeInfo operationsNodeInfo = new OperationsNodeInfo(connectionInfo, null, 523634L, null);
-        return Arrays.asList(operationsNodeInfo);
+        return Arrays.asList(operationsNodeInfo1, operationsNodeInfo2, operationsNodeInfo3);
     }
 }
