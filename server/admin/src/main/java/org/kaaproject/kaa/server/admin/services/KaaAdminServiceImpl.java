@@ -25,6 +25,7 @@ import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.to
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDtoList;
 
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1603,13 +1604,19 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
     
     private void setPluginRawConfigurationFromJson(PluginDto plugin, PluginType type) {
+        LOG.trace("Updating plugin {} configuration using info {}", plugin, pluginsInfo.get(type));
         PluginInfoDto pluginInfo = pluginsInfo.get(type).get(plugin.getPluginClassName());
+        if(pluginInfo == null){
+            LOG.error("Plugin configuration for class name {} is not found", plugin.getPluginClassName());
+            throw new InvalidParameterException("Plugin configuration for class name " + plugin.getPluginClassName() + " is not found");
+        }
         byte[] rawConfiguration = GenericAvroConverter.toRawData(plugin.getJsonConfiguration(), 
                 pluginInfo.getFieldConfiguration().getSchema());
         plugin.setRawConfiguration(rawConfiguration);
     }
     
     private void setPluginFormConfigurationFromRaw(PluginDto plugin, PluginType type) throws IOException {
+        LOG.trace("Updating plugin {} configuration", plugin);
         PluginInfoDto pluginInfo = pluginsInfo.get(type).get(plugin.getPluginClassName());
         byte[] rawConfiguration = plugin.getRawConfiguration();
         GenericAvroConverter<GenericRecord> converter = 

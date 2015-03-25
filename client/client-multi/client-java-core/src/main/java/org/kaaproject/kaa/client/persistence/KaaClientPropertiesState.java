@@ -122,42 +122,31 @@ public class KaaClientPropertiesState implements KaaClientState {
                     LOG.info("SDK properties are up to date");
                 }
 
-                BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(state.getProperty(NF_SUBSCRIPTIONS).getBytes(), null);
-                SpecificDatumReader<TopicSubscriptionInfo> avroReader = new SpecificDatumReader<TopicSubscriptionInfo>(
-                        TopicSubscriptionInfo.class);
-
-                try { // NOSONAR
-                    TopicSubscriptionInfo decodedInfo = null;
-
-                    while (!decoder.isEnd()) {
-                        decodedInfo = avroReader.read(null, decoder);
-                        LOG.debug("Loaded {}", decodedInfo);
-                        nfSubscriptions.put(decodedInfo.getTopicInfo().getId(), decodedInfo);
-                    }
-                } catch (Exception e) {
-                    LOG.error("Unexpected exception occurred while reading information from decoder");
-                }
+                parseNfSubscriptions();
 
                 String attachedEndpointsString = state.getProperty(ATTACHED_ENDPOINTS);
-                String[] splittedEndpointsList = attachedEndpointsString.split(",");
-                for (String attachedEndpoint : splittedEndpointsList) {
-                    if (!attachedEndpoint.isEmpty()) {
-                        String[] splittedValues = attachedEndpoint.split(":");
-                        attachedEndpoints.put(new EndpointAccessToken(splittedValues[0]), new EndpointKeyHash(splittedValues[1]));
+                if(attachedEndpointsString != null){
+                    String[] splittedEndpointsList = attachedEndpointsString.split(",");
+                    for (String attachedEndpoint : splittedEndpointsList) {
+                        if (!attachedEndpoint.isEmpty()) {
+                            String[] splittedValues = attachedEndpoint.split(":");
+                            attachedEndpoints.put(new EndpointAccessToken(splittedValues[0]), new EndpointKeyHash(splittedValues[1]));
+                        }
                     }
                 }
 
                 String eventSeqNumStr = state.getProperty(EVENT_SEQ_NUM);
-                Integer eventSeqNum = 0;
-                try { // NOSONAR
-                    eventSeqNum = Integer.parseInt(eventSeqNumStr);
-                } catch (NumberFormatException e) {
-                    LOG.error("Unexpected exception while parsing event sequence number. Can not parse String: {} to Integer",
-                            eventSeqNumStr);
+                if(eventSeqNumStr != null){
+                    Integer eventSeqNum = 0;
+                    try { // NOSONAR
+                        eventSeqNum = Integer.parseInt(eventSeqNumStr);
+                    } catch (NumberFormatException e) {
+                        LOG.error("Unexpected exception while parsing event sequence number. Can not parse String: {} to Integer",
+                                eventSeqNumStr);
+                    }
+                    eventSequence.set(eventSeqNum);
                 }
-                eventSequence.set(eventSeqNum);
-
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LOG.error("Can't load state file", e);
             } finally {
                 IOUtils.closeQuietly(stream);
@@ -168,6 +157,28 @@ public class KaaClientPropertiesState implements KaaClientState {
         }
 
         checkConfigVersionForUpdates(properties);
+    }
+
+    private void parseNfSubscriptions() {
+        if(state.getProperty(NF_SUBSCRIPTIONS) != null){
+            BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(state.getProperty(NF_SUBSCRIPTIONS).getBytes(), null);
+            SpecificDatumReader<TopicSubscriptionInfo> avroReader = new SpecificDatumReader<TopicSubscriptionInfo>(
+                    TopicSubscriptionInfo.class);
+    
+            try { // NOSONAR
+                TopicSubscriptionInfo decodedInfo = null;
+    
+                while (!decoder.isEnd()) {
+                    decodedInfo = avroReader.read(null, decoder);
+                    LOG.debug("Loaded {}", decodedInfo);
+                    nfSubscriptions.put(decodedInfo.getTopicInfo().getId(), decodedInfo);
+                }
+            } catch (Exception e) {
+                LOG.error("Unexpected exception occurred while reading information from decoder");
+            }
+        }else{
+            LOG.info("No subscription info found in state");
+        }
     }
 
     private void checkConfigVersionForUpdates(KaaClientProperties sdkProperties) {
