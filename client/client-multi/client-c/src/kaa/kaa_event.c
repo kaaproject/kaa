@@ -32,7 +32,7 @@
 # include "utilities/kaa_mem.h"
 # include "utilities/kaa_log.h"
 # include "platform/ext_system_logger.h"
-# include "kaa_fqn_definitions.h"
+# include "gen/kaa_event_fqn_definitions.h"
 
 
 

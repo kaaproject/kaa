@@ -20,8 +20,8 @@
   * events are supported by current SDK.
   */
   
-# ifndef KAA_FQN_DEFINITIONS_
-# define KAA_FQN_DEFINITIONS_
+# ifndef KAA_EVENT_FQN_DEFINITIONS_
+# define KAA_EVENT_FQN_DEFINITIONS_
 
 typedef struct {
     char       *ecf_name;
