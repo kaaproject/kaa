@@ -117,6 +117,8 @@ public class ProjectActivity extends AbstractActivity {
                 view.setFeatures(result.getFeatures());
                 view.getDescription().setText(result.getDescription());
                 view.getDetails().setHTML(result.getDetails());
+                view.setBinaryButtonVisible(result.getDestBinaryFile() != null && 
+                        result.getDestBinaryFile().length() > 0);
             }
         });
     }

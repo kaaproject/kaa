@@ -183,6 +183,8 @@ public class DemoProjectWidget extends VerticalPanel implements
             image.getElement().getStyle().setPaddingRight(4, Unit.PX);
             featuresPanel.add(image);
         }
+        getBinaryButton.setVisible(project.getDestBinaryFile() != null && 
+                project.getDestBinaryFile().length() > 0);
     }
 
     public Project getProject() {

@@ -198,6 +198,11 @@ public class ProjectViewImpl extends BaseViewImpl implements ProjectView {
     }
 
     @Override
+    public void setBinaryButtonVisible(boolean visible) {
+        getBinaryButton.setVisible(visible);
+    }
+
+    @Override
     public void setTargetPlatform(Platform platform) {
         Image image = new Image(Utils.getPlatformIcon(platform));
         image.setTitle(Utils.getPlatformText(platform));
