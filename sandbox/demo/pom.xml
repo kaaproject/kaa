@@ -58,30 +58,6 @@
             <classifier>gplus</classifier>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.examples.robotrun</groupId>
-            <artifactId>robotrun-shared</artifactId>
-            <version>${project.version}</version>
-            <classifier>robotrun-resources</classifier>
-            <type>zip</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.examples.robotrun</groupId>
-            <artifactId>visualization</artifactId>
-            <version>${project.version}</version>
-            <classifier>visualization-src</classifier>
-            <type>tar.gz</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.examples.robotrun.android</groupId>
-            <artifactId>robot-src</artifactId>
-            <version>${project.version}</version>
-            <classifier>robotrun-android-src</classifier>
-            <type>tar.gz</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>smarthousedemo</artifactId>
             <version>${project.version}</version>
@@ -309,20 +285,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
-                    <!--execution>
-            <id>unpack-robotrun-resources</id>
-            <goals>
-                <goal>unpack-dependencies</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-                <outputDirectory>${project.build.directory}/generated-resources/demo/robotrun
-                </outputDirectory>
-                <includeGroupIds>org.kaaproject.kaa.examples.robotrun</includeGroupIds>
-                <includeArtifactIds>robotrun-shared</includeArtifactIds>
-                <excludeTransitive>true</excludeTransitive>
-            </configuration>
-            </execution-->
                     <execution>
                         <id>unpack-smarthouse-resources</id>
                         <goals>
@@ -477,26 +439,6 @@
                         </goals>
                         <configuration>
                             <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.kaaproject.kaa.examples.robotrun</groupId>
-                                    <artifactId>visualization</artifactId>
-                                    <version>${project.version}</version>
-                                    <classifier>visualization-src</classifier>
-                                    <type>tar.gz</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.directory}/demo_projects/java</outputDirectory>
-                                    <destFileName>robotrun_demo.tar.gz</destFileName>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.kaaproject.kaa.examples.robotrun.android</groupId>
-                                    <artifactId>robot-src</artifactId>
-                                    <version>${project.version}</version>
-                                    <classifier>robotrun-android-src</classifier>
-                                    <type>tar.gz</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
-                                    <destFileName>robotrun_demo.tar.gz</destFileName>
-                                </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.examples</groupId>
                                     <artifactId>smarthousedemo</artifactId>
