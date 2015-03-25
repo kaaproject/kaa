@@ -44,7 +44,7 @@ import android.view.MenuItem;
 public class SmartHouseActivity extends ActionBarActivity  {
 
 	/**
-	 * Fragment managing the behaviors, interactions and presentation of the
+	 * A fragment that manages behaviors, interactions and presentation of the
 	 * navigation drawer.
 	 */
 	private SmartHouseDrawerFragment mNavigationDrawerFragment;
@@ -59,7 +59,7 @@ public class SmartHouseActivity extends ActionBarActivity  {
 	 */
 	private CharSequence mTitle;
 	
-    /** Controller based on Kaa client SDK API. Implements sending and handling events. */
+    /** A controller based on the Kaa client SDK API. Implements methods for sending and handling events. */
     private SmartHouseController mSmartHouseController;
     
     private DeviceStore mDeviceStore;
@@ -221,7 +221,7 @@ public class SmartHouseActivity extends ActionBarActivity  {
             .replace(R.id.container, mProgessFragment)
             .commit();
 
-    		/** Initialization of smart house controller instance. */
+    		/** Initialization of a smart house controller instance. */
     		
     		mSmartHouseController.init(new InitCallback());
 	  }
@@ -374,9 +374,9 @@ public class SmartHouseActivity extends ActionBarActivity  {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-//		// Handle action bar item clicks here. The action bar will
-//		// automatically handle clicks on the Home/Up button, so long
-//		// as you specify a parent activity in AndroidManifest.xml.
+//		// Handle action bar item clicks. The action bar 
+//		// automatically handles clicks on the Home/Up button, provided that
+//		// you have specified a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 //		if (id == R.id.action_settings) {
 //			return true;
