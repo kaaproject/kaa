@@ -59,7 +59,7 @@ public class UsersActivity extends AbstractListActivity<UserDto, UsersPlace> {
 
     @Override
     protected void deleteEntity(String id, AsyncCallback<Void> callback) {
-        KaaAdmin.getDataSource().deleteUser(id, callback);
+        callback.onSuccess((Void) null);
     }
 
 }

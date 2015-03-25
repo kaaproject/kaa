@@ -23,6 +23,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -231,7 +232,9 @@ public interface KaaAdminService extends RemoteService {
 
     public void sendNotification(NotificationDto notification, RecordField notificationData) throws KaaAdminServiceException;
     
-    public void sendNotification(NotificationDto notification, byte[] body) throws KaaAdminServiceException;
+    public NotificationDto sendNotification(NotificationDto notification, byte[] body) throws KaaAdminServiceException;
+
+    public EndpointNotificationDto sendUnicastNotification(NotificationDto notification, String clientKeyHash, byte[] body) throws KaaAdminServiceException;
 
     public List<EventClassFamilyDto> getEventClassFamilies() throws KaaAdminServiceException;
 

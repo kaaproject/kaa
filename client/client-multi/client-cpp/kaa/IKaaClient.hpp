@@ -317,7 +317,7 @@ public:
     virtual bool isAttachedToUser() = 0;
 
     /**
-     * Submits an event listeners resolution request
+     * @brief Submits an event listeners resolution request
      *
      * @param eventFQNs     List of event class FQNs which have to be supported by endpoint.
      * @param listener      Result listener {@link IFetchEventListeners}}
@@ -364,11 +364,12 @@ public:
     virtual void setLogUploadStrategy(ILogUploadStrategyPtr strategy) = 0;
 
     /**
-     * Retrieves the Channel Manager
+     * @brief  Retrieves the Channel Manager
      */
     virtual IKaaChannelManager&                 getChannelManager() = 0;
+
     /**
-     * Retrieves the client's public and private key.
+     * @brief Retrieves the client's public and private key.
      *
      * Required in user implementation of an operation data channel.
      * Public key hash (SHA-1) is used by servers as identification number to
@@ -381,28 +382,51 @@ public:
     virtual const KeyPair&                    getClientKeyPair() = 0;
 
     /**
-     * Retrieves Kaa operations data multiplexer
+     * @brief Set new access token for a current endpoint.
+     *
+     * @param[in] token     The new access token.
+     *
+     */
+    virtual void                              setEndpointAccessToken(std::string token) = 0;
+
+    /**
+     * @brief Generate new access token for a current endpoint.
+     *
+     * @return  The new access token.
+     *
+     */
+    virtual std::string                       refreshEndpointAccessToken() = 0;
+
+    /**
+     * @brief Retrieve an access token for a current endpoint.
+     *
+     * @return  The current access token.
+     */
+    virtual std::string                       getEndpointAccessToken() = 0;
+
+    /**
+     * @brief Retrieves Kaa operations data multiplexer
      *
      * @return @link IKaaDataMultiplexer @endlink object
      */
     virtual IKaaDataMultiplexer&              getOperationMultiplexer() = 0;
 
     /**
-     * Retrieves Kaa operations data demultiplexer
+     * @brief Retrieves Kaa operations data demultiplexer
      *
      * @return @link IKaaDataDemultiplexer @endlink object
      */
     virtual IKaaDataDemultiplexer&            getOperationDemultiplexer() = 0;
 
     /**
-     * Retrieves Kaa bootstrap data multiplexer
+     * @brief Retrieves Kaa bootstrap data multiplexer
      *
      * @return @link IKaaDataMultiplexer @endlink object
      */
     virtual IKaaDataMultiplexer&              getBootstrapMultiplexer() = 0;
 
     /**
-     * Retrieves Kaa bootstrap data demultiplexer
+     * @brief Retrieves Kaa bootstrap data demultiplexer
      *
      * @return @link IKaaDataDemultiplexer @endlink object
      */

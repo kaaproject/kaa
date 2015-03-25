@@ -43,6 +43,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -111,6 +112,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.google.common.base.Charsets;
 
 @Service("kaaAdminService")
 public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
@@ -1553,9 +1556,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 topic.setCreatedUsername(getCurrentUser().getUsername());
                 checkApplicationId(topic.getApplicationId());
             } else {
-                TopicDto storedTopic = toDto(clientProvider.getClient().getTopic(topic.getId()));
-                Utils.checkNotNull(storedTopic);
-                checkApplicationId(storedTopic.getApplicationId());
+                throw new KaaAdminServiceException("Unable to edit existing topic!", ServiceErrorCode.INVALID_ARGUMENTS);
             }
             return toDto(clientProvider.getClient().editTopic(toDataStruct(topic)));
         } catch (Exception e) {
@@ -1904,7 +1905,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public void sendNotification(NotificationDto notification, byte[] body)
+    public NotificationDto sendNotification(NotificationDto notification, byte[] body)
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
@@ -1916,11 +1917,33 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             TopicDto topic = toDto(clientProvider.getClient().getTopic(notification.getTopicId()));
             Utils.checkNotNull(topic);
             checkApplicationId(topic.getApplicationId());
-            clientProvider.getClient().editNotification(toDataStruct(notification));
+            return toDto(clientProvider.getClient().editNotification(toDataStruct(notification)));
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
     }
+    
+    @Override
+    public EndpointNotificationDto sendUnicastNotification(
+            NotificationDto notification, String clientKeyHash, byte[] body)
+            throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            notification.setBody(body);
+            checkApplicationId(notification.getApplicationId());
+            TopicDto topic = toDto(clientProvider.getClient().getTopic(notification.getTopicId()));
+            Utils.checkNotNull(topic);
+            checkApplicationId(topic.getApplicationId());
+            EndpointNotificationDto unicastNotification = new EndpointNotificationDto();
+            unicastNotification.setEndpointKeyHash(Base64
+                    .decode(clientKeyHash.getBytes(Charsets.UTF_8)));
+            unicastNotification.setNotificationDto(notification);
+            return toDto(clientProvider.getClient().editUnicastNotification(toDataStruct(unicastNotification)));
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
 
     @Override
     public List<EventClassFamilyDto> getEventClassFamilies()
