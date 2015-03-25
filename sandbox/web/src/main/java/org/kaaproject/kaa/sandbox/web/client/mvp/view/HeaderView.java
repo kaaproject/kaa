@@ -18,10 +18,17 @@ package org.kaaproject.kaa.sandbox.web.client.mvp.view;
 
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.ActionsLabel;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public interface HeaderView extends IsWidget {
 
-    ActionsLabel getSettingsLabel();
+    void setSettingsVisible(boolean visible);
+    
+    ActionsLabel getSettings();
 
+    HasClickHandlers getGoToKaaAdminWeb();
+    
+    HasClickHandlers getGoToAvroUiSandboxWeb();
+    
 }

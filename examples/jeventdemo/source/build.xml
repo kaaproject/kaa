@@ -29,7 +29,7 @@
         <mkdir dir="src/build/jar"/>
         <javac srcdir="src" destdir="src/build/classes" classpathref="classpath"/>
         <jar destfile="build/jar/EventDemo.jar">
-            <fileset file="../resources/logback.xml" />
+            <fileset file="resources/logback.xml" />
             <fileset dir="src/build/classes">
                 <include name="**/*.class"/>
             </fileset>

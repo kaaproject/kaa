@@ -239,7 +239,7 @@ public class MapAggregatorSink extends AbstractSink implements Configurable, Con
         LOG.trace("Updating configuration...");
         configuration.setId(null);
         GenericAvroConverter<GenericRecord> converter = getConverter(configuration.getSchemaId());
-        String body = converter.endcodeToJson(labirynth);
+        String body = converter.encodeToJson(labirynth);
         configuration.setBody(body);
         configuration.setStatus(UpdateStatus.INACTIVE);
         configuration = adminClient.editConfiguration(configuration);

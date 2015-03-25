@@ -92,8 +92,8 @@ NotificationSyncRequestPtr NotificationTransport::createNotificationRequest()
     }
 
     if (!subscriptions_.empty()) {
-        request->subscriptionCommands.set_array(std::vector<SubscriptionCommand>(
-                                    subscriptions_.begin(), subscriptions_.end()));
+        request->subscriptionCommands.set_array(std::vector<SubscriptionCommand>(subscriptions_.begin(),
+                                                                                 subscriptions_.end()));
     } else {
         request->subscriptionCommands.set_null();
     }
@@ -104,9 +104,11 @@ NotificationSyncRequestPtr NotificationTransport::createNotificationRequest()
 void NotificationTransport::onNotificationResponse(const NotificationSyncResponse& response)
 {
     subscriptions_.clear();
+
     if (response.responseStatus == SyncResponseStatus::NO_DELTA) {
         acceptedUnicastNotificationIds_.clear();
     }
+
     clientStatus_->setNotificationSequenceNumber(response.appStateSeqNumber);
 
     DetailedTopicStates detailedStatesContainer = clientStatus_->getTopicStates();
@@ -132,7 +134,7 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
             detailedStatesContainer[topic.id] = dts;
         }
 
-        if (notificationProcessor_ != nullptr) {
+        if (notificationProcessor_) {
             notificationProcessor_->topicsListUpdated(topics);
         }
     }
@@ -172,10 +174,7 @@ void NotificationTransport::onNotificationResponse(const NotificationSyncRespons
             }
         }
 
-        if (notificationProcessor_ != nullptr) {
-            for (const auto &n : newNotifications) {
-                KAA_LOG_DEBUG(boost::format("Passing notification %1%") % LoggingUtils::SingleNotificationToString(n));
-            }
+        if (notificationProcessor_) {
             notificationProcessor_->notificationReceived(newNotifications);
         }
     }
@@ -211,10 +210,10 @@ Notifications NotificationTransport::getMulticastNotifications(const Notificatio
     return result;
 }
 
-void NotificationTransport::onSubscriptionChanged(const SubscriptionCommands& commands)
+void NotificationTransport::onSubscriptionChanged(SubscriptionCommands&& commands)
 {
     if (!commands.empty()) {
-        subscriptions_.insert(subscriptions_.end(), commands.begin(), commands.end());
+        subscriptions_.splice(subscriptions_.end(), commands, commands.begin(), commands.end());
     }
 }
 

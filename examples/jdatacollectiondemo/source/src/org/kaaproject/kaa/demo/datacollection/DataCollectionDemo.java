@@ -23,6 +23,7 @@ import java.util.List;
 import org.kaaproject.kaa.client.DesktopKaaPlatformContext;
 import org.kaaproject.kaa.client.Kaa;
 import org.kaaproject.kaa.client.KaaClient;
+import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
 import org.kaaproject.kaa.client.logging.DefaultLogUploadStrategy;
 import org.kaaproject.kaa.client.logging.LogStorageStatus;
 import org.kaaproject.kaa.client.logging.LogUploadStrategyDecision;
@@ -47,7 +48,17 @@ public class DataCollectionDemo {
     public static void main(String[] args) {
         LOG.info("Data collection demo started");
         // Creating Kaa desktop client instance
-        KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext());
+        KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener() {
+            @Override
+            public void onStarted() {
+                LOG.info("Kaa client started");
+            }
+
+            @Override
+            public void onStopped() {
+                LOG.info("Kaa client stopped");
+            }
+        });
 
 
         //setting custom upload strategy.
@@ -62,7 +73,6 @@ public class DataCollectionDemo {
         });
         // starting Kaa client
         kaaClient.start();
-        LOG.info("Kaa client started");
 
         // sending logs in loop
         for (LogData log : generateLogs(LOGS_TO_SEND_COUNT)) {
@@ -78,7 +88,6 @@ public class DataCollectionDemo {
 
         // stoping client
         kaaClient.stop();
-        LOG.info("Kaa client stopped");
         LOG.info("Data collection demo stopped");
     }
 

@@ -18,7 +18,6 @@
 
 namespace kaa {
 
-kaa_thread_local AvroByteArrayConverter<KaaUserLogRecord> LogRecord::converter_;
 
 }
 

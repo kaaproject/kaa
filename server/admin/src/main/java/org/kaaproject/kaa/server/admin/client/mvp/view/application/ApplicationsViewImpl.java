@@ -31,7 +31,7 @@ public class ApplicationsViewImpl extends BaseListViewImpl<ApplicationDto> {
 
         @Override
         protected AbstractGrid<ApplicationDto, String> createGrid() {
-            return new ApplicationsGrid(Unit.PX, editable);
+            return new ApplicationsGrid(Unit.PX);
         }
 
         @Override
