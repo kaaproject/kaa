@@ -30,9 +30,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 /**
- * The Class CityPagerAdapter.
- * Implementation of {@link FragmentStatePagerAdapter} class. Used as adapter class for city view pager.
- * Provides fragments with places separated by place {@link Category}.
+ * The implementation of the {@link FragmentStatePagerAdapter} class. 
+ * Used as an adapter class for the city view pager.
+ * Provides fragments with places separated by the place {@link Category}.
  */
 public class CityPagerAdapter extends FragmentStatePagerAdapter {
 
