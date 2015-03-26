@@ -20,6 +20,7 @@
 #include <time.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #include "kaa_test.h"
 
