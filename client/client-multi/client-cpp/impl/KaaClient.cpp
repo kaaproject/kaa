@@ -476,7 +476,7 @@ const KeyPair& KaaClient::getClientKeyPair()
     return *clientKeys_;
 }
 
-void KaaClient::setEndpointAccessToken(std::string token)
+void KaaClient::setEndpointAccessToken(const std::string& token)
 {
     status_->setEndpointAccessToken(token);
 }
