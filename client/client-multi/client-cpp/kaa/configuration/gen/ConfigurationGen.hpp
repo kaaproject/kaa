@@ -27,7 +27,7 @@
 #include "avro/Encoder.hh"
 #include "avro/Decoder.hh"
 
-namespace kaa {
+namespace kaa_configuration {
 struct _configuration_avsc_Union__0__ {
 private:
     size_t idx_;
@@ -73,8 +73,8 @@ void _configuration_avsc_Union__0__::set_uuidT(const boost::array<uint8_t, 16>& 
 inline _configuration_avsc_Union__0__::_configuration_avsc_Union__0__() : idx_(0) { }
 }
 namespace avro {
-template<> struct codec_traits<kaa::_configuration_avsc_Union__0__> {
-    static void encode(Encoder& e, kaa::_configuration_avsc_Union__0__ v) {
+template<> struct codec_traits<kaa_configuration::_configuration_avsc_Union__0__> {
+    static void encode(Encoder& e, kaa_configuration::_configuration_avsc_Union__0__ v) {
         e.encodeUnionIndex(v.idx());
         switch (v.idx()) {
         case 0:
@@ -85,7 +85,7 @@ template<> struct codec_traits<kaa::_configuration_avsc_Union__0__> {
             break;
         }
     }
-    static void decode(Decoder& d, kaa::_configuration_avsc_Union__0__& v) {
+    static void decode(Decoder& d, kaa_configuration::_configuration_avsc_Union__0__& v) {
         size_t n = d.decodeUnionIndex();
         if (n >= 2) { throw avro::Exception("Union index too big"); }
         switch (n) {
@@ -104,12 +104,12 @@ template<> struct codec_traits<kaa::_configuration_avsc_Union__0__> {
     }
 };
 
-template<> struct codec_traits<kaa::ConfigurationRootRecord> {
-    static void encode(Encoder& e, const kaa::ConfigurationRootRecord& v) {
+template<> struct codec_traits<kaa_configuration::ConfigurationRootRecord> {
+    static void encode(Encoder& e, const kaa_configuration::ConfigurationRootRecord& v) {
         avro::encode(e, v.data);
         avro::encode(e, v.__uuid);
     }
-    static void decode(Decoder& d, kaa::ConfigurationRootRecord& v) {
+    static void decode(Decoder& d, kaa_configuration::ConfigurationRootRecord& v) {
         avro::decode(d, v.data);
         avro::decode(d, v.__uuid);
     }
