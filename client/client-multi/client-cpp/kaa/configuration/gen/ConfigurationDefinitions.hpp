@@ -21,9 +21,11 @@
 
 namespace kaa {
 
-typedef ConfigurationRootRecord    KaaRootConfiguration;
+/**
+ * @typedef The user-defined configuration root record structure.
+ */
+typedef kaa_configuration::ConfigurationRootRecord    KaaRootConfiguration;
 
 }
-
 
 #endif /* CONFIGURATIONDEFINITIONS_HPP_ */

@@ -471,7 +471,10 @@ std::string ClientStatus::getEndpointAccessToken()
 {
     auto parameter_it = parameters_.find(ClientParameterT::EP_ACCESS_TOKEN);
     if (parameter_it != parameters_.end()) {
-        return boost::any_cast<std::string>(parameter_it->second->getValue());
+        auto token = boost::any_cast<std::string>(parameter_it->second->getValue());
+        if (!token.empty()) {
+            return token;
+        }
     }
     return refreshEndpointAccessToken();
 }

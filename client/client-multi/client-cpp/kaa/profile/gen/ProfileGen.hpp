@@ -17,8 +17,8 @@
  */
 
 
-#ifndef CLIENT_CLIENT_MULTI_CLIENT_CPP_KAA_GEN_NOTIFICATIONGEN_HPP_3229282092__H_
-#define CLIENT_CLIENT_MULTI_CLIENT_CPP_KAA_GEN_NOTIFICATIONGEN_HPP_3229282092__H_
+#ifndef KAA_GEN_PROFILEGEN_HPP_419439815__H_
+#define KAA_GEN_PROFILEGEN_HPP_419439815__H_
 
 
 #include <sstream>
@@ -27,22 +27,18 @@
 #include "avro/Encoder.hh"
 #include "avro/Decoder.hh"
 
-namespace kaa_notification {
-struct BasicNotification {
-    std::string data;
-    BasicNotification() :
-        data(std::string())
+namespace kaa_profile {
+struct Profile {
+    Profile()
         { }
 };
 
 }
 namespace avro {
-template<> struct codec_traits<kaa_notification::BasicNotification> {
-    static void encode(Encoder& e, const kaa_notification::BasicNotification& v) {
-        avro::encode(e, v.data);
+template<> struct codec_traits<kaa_profile::Profile> {
+    static void encode(Encoder& e, const kaa_profile::Profile& v) {
     }
-    static void decode(Decoder& d, kaa_notification::BasicNotification& v) {
-        avro::decode(d, v.data);
+    static void decode(Decoder& d, kaa_profile::Profile& v) {
     }
 };
 

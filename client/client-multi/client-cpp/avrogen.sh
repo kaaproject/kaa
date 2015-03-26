@@ -19,15 +19,15 @@
 mkdir -p avro/event
 
 avrogencpp -i avro/endpoint.avsc -o kaa/gen/EndpointGen.hpp -n kaa
-avrogencpp -i avro/profile.avsc -o kaa/gen/ProfileGen.hpp -n kaa
-avrogencpp -i avro/notification.avsc -o kaa/notification/gen/NotificationGen.hpp -n kaa
-avrogencpp -i avro/log.avsc -o kaa/log/gen/LogGen.hpp -n kaa
-avrogencpp -i avro/configuration.avsc -o kaa/configuration/gen/ConfigurationGen.hpp -n kaa
+avrogencpp -i avro/profile.avsc -o kaa/profile/gen/ProfileGen.hpp -n kaa_profile
+avrogencpp -i avro/notification.avsc -o kaa/notification/gen/NotificationGen.hpp -n kaa_notification
+avrogencpp -i avro/log.avsc -o kaa/log/gen/LogGen.hpp -n kaa_log
+avrogencpp -i avro/configuration.avsc -o kaa/configuration/gen/ConfigurationGen.hpp -n kaa_configuration
 
 # List items must be sepated by space. Empty string is applicable as well.
 EVENT_CLASS_FAMILY_LIST=""
 
 for FAMILY in $EVENT_CLASS_FAMILY_LIST
 do
-    avrogencpp -i avro/event/"$FAMILY".avsc -o kaa/event/gen/"$FAMILY"Gen.hpp -n kaa
+    avrogencpp -i avro/event/"$FAMILY".avsc -o kaa/event/gen/"$FAMILY"Gen.hpp -n ns"$FAMILY"
 done
