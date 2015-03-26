@@ -39,7 +39,7 @@ public class BaseDeviceActivity extends FragmentActivity implements BaseDeviceLi
     
     protected DeviceType deviceType;
     
-    /** Controller based on Kaa client SDK API. Implements sending and handling events. */
+    /** A controller based on the Kaa client SDK API. Implements methods for sending and handling events. */
     private SmartHouseController mSmartHouseController;
     
     private ProgressFragment mProgessFragment;
@@ -79,7 +79,7 @@ public class BaseDeviceActivity extends FragmentActivity implements BaseDeviceLi
         .replace(R.id.container, mProgessFragment)
         .commit();
 
-        /** Initialization of smart house controller instance. */
+        /** Initialization of a smart house controller instance. */
         mSmartHouseController.init(new InitCallback());
         
     }

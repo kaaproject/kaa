@@ -40,9 +40,8 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 /**
- * The Class PhotoFrameActivity.
- * Implementation of {@link ActionBarActivity} class. Manages fragments transition depending on 
- * current application state.
+ * The implementation of the {@link ActionBarActivity} class. 
+ * Manages fragments transition depending on the current application state.
  */
 public class PhotoFrameActivity extends ActionBarActivity {
 
@@ -70,7 +69,7 @@ public class PhotoFrameActivity extends ActionBarActivity {
         }
 
         /*
-         * Notify application about background state.
+         * Notify the application about the background state.
          */
 
         getPhotoFrameApplication().pause();
@@ -85,7 +84,7 @@ public class PhotoFrameActivity extends ActionBarActivity {
         }
 
         /*
-         * Notify application about foreground state.
+         * Notify the application about the foreground state.
          */
 
         getPhotoFrameApplication().resume();

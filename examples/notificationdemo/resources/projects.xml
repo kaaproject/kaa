@@ -20,7 +20,7 @@ Copyright 2014-2015 CyberVision, Inc.
     <project id="notification_demo_java">
         <name>Notification demo</name>
         <description>Application on java platform demonstrating notification subsystem (IoT)</description>
-	<details></details>
+        <details></details>
         <platform>JAVA</platform>
         <features>NOTIFICATION</features>
         <sourceArchive>java/notification_demo.tar.gz</sourceArchive>
@@ -31,7 +31,7 @@ Copyright 2014-2015 CyberVision, Inc.
     <project id="notification_demo_cpp">
         <name>Notification demo</name>
         <description>Application on C++ platform demonstrating notification subsystem (IoT)</description>
-	<details></details>
+        <details></details>
         <platform>CPP</platform>
         <features>NOTIFICATION</features>
         <sourceArchive>cpp/notification_demo.tar.gz</sourceArchive>

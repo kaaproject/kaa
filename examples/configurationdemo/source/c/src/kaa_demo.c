@@ -39,21 +39,21 @@
 
 
 /*
- * Hard-coded Kaa profile body.
+ * A hard-coded Kaa profile body.
  */
 #define KAA_DEMO_PROFILE_ID "sampleid"
 #define KAA_DEMO_OS_VERSION "1.0"
 #define KAA_DEMO_BUILD_INFO "3cbaf67e"
 
 /*
- * Strategy-specific configuration parameters used by Kaa log collection feature.
+ * Strategy-specific configuration parameters used by the Kaa log collection feature.
  */
 #define KAA_DEMO_UPLOAD_COUNT_THRESHOLD     5   /* Count of collected serialized logs needed to initiate log upload */
 
 #define KAA_DEMO_LOG_GENERATION_FREQUENCY    3 /* seconds */
 
 /*
- * Hard-coded Kaa log entry body.
+ * A hard-coded Kaa log entry body.
  */
 #define KAA_DEMO_LOG_TAG     "Log tag"
 #define KAA_DEMO_LOG_MESSAGE "Sample log message"
@@ -106,7 +106,7 @@ extern kaa_error_t ext_log_upload_strategy_by_volume_set_threshold_count(void *s
 
 
 /*
- * Initializes Kaa log collector.
+ * Initializes the Kaa log collector.
  */
 kaa_error_t kaa_log_collector_init()
 {
@@ -155,7 +155,7 @@ kaa_error_t kaa_demo_configuration_receiver(void *context, const kaa_root_config
 }
 
 /*
- * Initializes Kaa SDK.
+ * Initializes the Kaa SDK.
  */
 kaa_error_t kaa_sdk_init()
 {
@@ -220,7 +220,7 @@ kaa_error_t kaa_sdk_init()
 }
 
 /*
- * Kaa demo lifecycle routine.
+ * The Kaa demo lifecycle routine.
  */
 kaa_error_t kaa_demo_init()
 {

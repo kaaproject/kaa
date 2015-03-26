@@ -1,9 +1,8 @@
 {
   "message":{
-    "string":"It is notification of a mandatory topic, which means that you don't need to subscribe to the topic to receive notifications on it."
+    "string":"This is sample notification for mandatory topic. Client automatically receive notifications for manadatory topics."
   },
   "image":{
     "string":"http://www.kaaproject.org/wp-content/uploads/2014/10/WebLogo185x120.png"
-  },
-  "__uuid":null
+  }
 }

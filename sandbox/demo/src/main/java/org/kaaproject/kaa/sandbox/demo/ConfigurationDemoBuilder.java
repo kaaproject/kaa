@@ -23,15 +23,8 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
-import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
-import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
-import org.kaaproject.kaa.server.common.core.configuration.RawData;
-import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
-import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 import org.kaaproject.kaa.server.common.utils.FileUtils;
-import org.kaaproject.kaa.server.verifiers.trustful.config.TrustfulVerifierConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +44,7 @@ public class ConfigurationDemoBuilder extends AbstractDemoBuilder{
         loginTenantAdmin(client);
 
         ApplicationDto configurationApplication = new ApplicationDto();
-        configurationApplication.setName("Configuration");
+        configurationApplication.setName("Configuration demo");
         configurationApplication = client.editApplication(configurationApplication);
 
         sdkKey.setApplicationId(configurationApplication.getId());
@@ -98,20 +91,6 @@ public class ConfigurationDemoBuilder extends AbstractDemoBuilder{
         logger.info("Activating the configuration");
         client.activateConfiguration(baseConfiguration.getId());
         logger.info("Configuration was activated");
-
-        TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();
-        UserVerifierDto trustfulUserVerifier = new UserVerifierDto();
-        trustfulUserVerifier.setApplicationId(configurationApplication.getId());
-        trustfulUserVerifier.setName("Trustful verifier");
-        trustfulUserVerifier.setPluginClassName(trustfulVerifierConfig.getPluginClassName());
-        trustfulUserVerifier.setPluginTypeName(trustfulVerifierConfig.getPluginTypeName());
-        RawSchema rawSchema = new RawSchema(trustfulVerifierConfig.getPluginConfigSchema().toString());
-        DefaultRecordGenerationAlgorithm<RawData> algotithm =
-                new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
-        RawData rawData = algotithm.getRootData();
-        trustfulUserVerifier.setJsonConfiguration(rawData.getRawData());
-        trustfulUserVerifier = client.editUserVerifierDto(trustfulUserVerifier);
-        sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
 
         logger.info("Finished loading 'Configuration demo application' data...");
     }

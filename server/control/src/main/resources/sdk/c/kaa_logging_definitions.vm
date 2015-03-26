@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.common.dao.impl;
+# ifndef KAA_LOGGING_DEFINITIONS_H_
+# define KAA_LOGGING_DEFINITIONS_H_
 
+# include "kaa_logging_gen.h"
+
+# ifdef __cplusplus
+extern "C" {
+# endif
 
 /**
- * The interface Secure User dao.
- * @param <T>  the type parameter
+ * @typedef User-defined log record structure.
  */
-public interface SecureUserDao<T> {
+typedef kaa_logging_${record_name}_t    kaa_user_log_record_t;
 
-    /**
-     * Save User
-     *
-     * @param user the user
-     * @return saved user
-     */
-    T saveUser(T user);
-}
+# define KAA_LOGGING_DESERIALIZE(reader)  kaa_logging_${record_name}_deserialize(reader)
+
+# ifdef __cplusplus
+}      /* extern "C" */
+# endif
+
+# endif /* KAA_LOGGING_DEFINITIONS_H_ */

@@ -27,7 +27,7 @@
 #include "avro/Encoder.hh"
 #include "avro/Decoder.hh"
 
-namespace kaa {
+namespace kaa_log {
 struct SuperRecord {
     std::string logdata;
     SuperRecord() :
@@ -37,11 +37,11 @@ struct SuperRecord {
 
 }
 namespace avro {
-template<> struct codec_traits<kaa::SuperRecord> {
-    static void encode(Encoder& e, const kaa::SuperRecord& v) {
+template<> struct codec_traits<kaa_log::SuperRecord> {
+    static void encode(Encoder& e, const kaa_log::SuperRecord& v) {
         avro::encode(e, v.logdata);
     }
-    static void decode(Decoder& d, kaa::SuperRecord& v) {
+    static void decode(Decoder& d, kaa_log::SuperRecord& v) {
         avro::decode(d, v.logdata);
     }
 };

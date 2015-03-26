@@ -73,10 +73,10 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
 
     private static final String TAG = SmartHouseController.class.getSimpleName();
     
-    /** Default timeout for commands in milliseconds */
+    /** The default timeout for commands in milliseconds. */
     private static final long DEFAULT_TASK_TIMEOUT = 10000;
     
-    /** Android application context */
+    /** The Android application context. */
     private Context context;
     
     private DeviceType deviceType;
@@ -85,29 +85,31 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
     
     private DeviceStore deviceStore;
         
-    /** Reference to Kaa client */
+    /** A reference to the Kaa client */
     private KaaClient client;
     
-    /** Reference to device event class family used to send events */
+    /** A reference to the device event class family used to send events. */
     private DeviceEventClassFamily devices;
 
-    /** Reference to thermo event class family used to send events */
+    /** A reference to the thermo event class family used to send events. */
     private ThermoEventClassFamily thermostats;
     
-    /** Reference to music event class family used to send events */
+    /** A reference to the music event class family used to send events. */
     private MusicEventClassFamily soundSystems;
 
-    /** Flag indicating that Kaa client SDK was initialized */
+    /** A flag indicating that the Kaa client SDK was initialized. */
     private boolean inited = false;
     
-    /** Executor to concurrently process commands with specified timeout */
+    /** An executor that concurrently processes commands with a specified timeout. */
     private TimeoutExecutor executor;
     private final ExecutorService eventExecutor = Executors.newCachedThreadPool();
 
-    /** Current device info. Prepared before Kaa client initialization. */ 
+    /** The current device info. Prepared before the Kaa client initialization. */ 
     private DeviceInfo deviceInfo;
 
-    /** Map to store issued commands. Used to find corresponding command and set result when receiving event */ 
+    /** A map to store issued commands. Used to find a corresponding command 
+     *  and set the result when receiving an event. 
+     */ 
     private Map<EndpointCommandKey, BlockingCallable<?>> commandMap = new HashMap<>();
 
     public SmartHouseController(Context context, 
@@ -121,14 +123,14 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         this.deviceStore = deviceStore;
     }
     
-    /** Execute initialization of Kaa client in background. */
+    /** Execute the initialization of the Kaa client in the background. */
     public void init(CommandCallback<Void> callback) {
         new CommandAsyncTask<Void,Void>(callback) {
             @Override
             protected Void executeCommand(Void... params) throws Throwable {
-                /** Set up device info. */
+                /** Set up the device info. */
                 initData();
-                /** Set up Kaa client SDK */
+                /** Set up the Kaa client SDK. */
                 inited = new StartKaa().execute(executor, DEFAULT_TASK_TIMEOUT*3);
                 if (deviceType == null && userAccount != null && userAccount.length() > 0) {
                     new AttachUserCommand(client, userAccount).execute(executor, DEFAULT_TASK_TIMEOUT);
@@ -139,7 +141,7 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         }.execute();
     }
     
-    /** Set up device info. */
+    /** Set up the device info. */
     private void initData() {
         deviceInfo = new DeviceInfo();
         deviceInfo.setDeviceType(getEventDeviceType());
@@ -163,7 +165,7 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         return null;
     }
     
-    /** Stop Kaa client and release resourceEndpointKeys */
+    /** Stop the Kaa client and release resourceEndpointKeys. */
     public void stop() {
         if (inited) {
             if (client != null) {
@@ -191,7 +193,7 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         }
     }
     
-    /** Check if Kaa client SDK is initialized */
+    /** Check if the Kaa client SDK is initialized. */
     private void checkInited() {
         if (!inited) {
             throw new IllegalStateException("Kaa client SDK is not initialized!");
@@ -222,7 +224,7 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         }
     }
     
-    /** attach endpoint to user command */
+    /** The attach endpoint to user command. */
     public void attachEndpoint(String endpointAccesToken, CommandCallback<String> callback) {
         checkInited();
         new CommandAsyncTask<String,String>(callback) {
@@ -234,7 +236,7 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         }.execute(endpointAccesToken);
     }
     
-    /** deattach endpoint from user command */
+    /** The deattach endpoint from user command. */
     public void deattachEndpoint(String endpointKey, CommandCallback<Boolean> callback) {
         checkInited();
         new CommandAsyncTask<String,Boolean>(callback) {
@@ -249,7 +251,7 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         return client.getEndpointKeyHash();
     }
     
-    /** Get device info by issuing DeviceInfoRequest event to endpoint 
+    /** Get the device info by issuing the DeviceInfoRequest event to the endpoint 
      *  identified by endpontKey.
      */
     public void getDeviceInfo(String endpontKey, CommandCallback<DeviceInfoResponse> callback) {
@@ -264,7 +266,7 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         }.execute(endpontKey);
     }
     
-    /** Implementation of Kaa client SDK set up command */
+    /** The implementation of the Kaa client SDK set up command */
     class StartKaa extends BlockingCallable<Boolean> {
         
         StartKaa() {
@@ -302,8 +304,8 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         }
     }
     
-    /** Handle response. Find associated command by endpointKey and event class 
-     *  then pass response as command result. */
+    /** Handle a response. Find an associated command by endpointKey and an event class, 
+     *  then pass the response as the command result. */
     @SuppressWarnings("unchecked")
     private <T> void onResponse(String endpontKey, T response, Class<T> clazz) {
         EndpointCommandKey key = new EndpointCommandKey(clazz.getName(), endpontKey);
@@ -313,9 +315,9 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         }
     }
     
-    // Send methods
+    // Send methods.
     
-    // Devices
+    // Devices.
     public void discoverDevices() {
         checkInited();
         eventExecutor.submit(new Runnable() {
@@ -365,7 +367,7 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         });
     }
     
-    //Thermostats
+    //Thermostats.
     
     public void changeDegree(final String endpointKeyHash, final int targetDegree) {
         eventExecutor.submit(new Runnable() {
@@ -400,7 +402,7 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         });
     }
     
-   //Sound systems
+   //Sound systems.
     
     public void playUrl(final String endpointKeyHash, final String url) {
         eventExecutor.submit(new Runnable() {
@@ -445,7 +447,7 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         });
     }
     
-    /** Get list of song info by issuing PlayListRequest event to endpoint 
+    /** Get a list of the song info by issuing the PlayListRequest event to the endpoint 
      *  identified by endpontKey.
      */
     public void getPlayList(String endpontKey, CommandCallback<PlayListResponse> callback) {
@@ -493,18 +495,18 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         });
     }
     
-    // Listener methods
+    // Listener methods.
 
-    // Device family
+    // Device family.
     
-    /** Handle device info request from endpoint identified by sourceEndpointKey. 
-     *  Send device info in response. */
+    /** Handle the device info request from the endpoint identified by sourceEndpointKey. 
+     *  Send the device info in the response. */
     @Override
     public void onEvent(DeviceInfoRequest deviceInfoRequest, final String sourceEndpointKey) {
         sendDeviceInfo(sourceEndpointKey);
     }
 
-    /** Handle device info response from endpoint identified by sourceEndpointKey. */
+    /** Handle the device info response from the endpoint identified by sourceEndpointKey. */
     @Override
     public void onEvent(DeviceInfoResponse deviceInfoResponse, String sourceEndpointKey) {
         Log.d("Kaa", "Device info response recieved");
@@ -517,7 +519,7 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         }
     }
 
-    // Thermostat family
+    // Thermostat family.
     
     @Override
     public void onEvent(ThermostatInfoRequest thermostatInfoRequest, String sourceEndpointKey) {
@@ -540,7 +542,7 @@ public class SmartHouseController implements DeviceEventClassFamily.Listener,
         }
     }
 
-    //Music family
+    //Music family.
 
     @Override
     public void onEvent(PlayListRequest playListRequest, String sourceEndpointKey) {

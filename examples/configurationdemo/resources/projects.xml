@@ -20,7 +20,7 @@ Copyright 2014-2015 CyberVision, Inc.
     <project id="configuration_demo_java">
         <name>Configuration demo</name>
         <description>Application on java platform demonstrating configuration subsystem (IoT)</description>
-	<details></details>
+        <details></details>
         <platform>JAVA</platform>
         <features>CONFIGURATION</features>
         <sourceArchive>java/configuration_demo.tar.gz</sourceArchive>
@@ -31,7 +31,7 @@ Copyright 2014-2015 CyberVision, Inc.
     <project id="configuration_demo_c">
         <name>Configuration demo</name>
         <description>Application on C platform demonstrating configuration subsystem (IoT)</description>
-	<details></details>
+        <details></details>
         <platform>C</platform>
         <features>CONFIGURATION</features>
         <sourceArchive>c/configuration_demo.tar.gz</sourceArchive>
@@ -42,7 +42,7 @@ Copyright 2014-2015 CyberVision, Inc.
     <project id="configuration_demo_cpp">
         <name>Configuration demo</name>
         <description>Application on C++ platform demonstrating configuration subsystem (IoT)</description>
-	<details></details>
+        <details></details>
         <platform>CPP</platform>
         <features>CONFIGURATION</features>
         <sourceArchive>cpp/configuration_demo.tar.gz</sourceArchive>

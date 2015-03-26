@@ -33,9 +33,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 /**
- * The Class CitiesFragment.
- * Implementation of {@link CityGuideFragment} class. 
- * Represents view with list of cities.
+ * The implementation of the {@link CityGuideFragment} class. 
+ * Represents a view with a list of cities.
  */
 public class CitiesFragment extends CityGuideFragment {
 

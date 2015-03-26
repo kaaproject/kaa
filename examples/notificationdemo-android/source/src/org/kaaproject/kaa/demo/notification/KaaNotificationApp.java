@@ -47,9 +47,9 @@ import org.kaaproject.kaa.demo.notification.fragment.TopicFragment;
 import org.kaaproject.kaa.schema.example.Notification;
 
 /**
- * The Class KaaNotificationApp.
- * Implementation of base {@link Application} class. Performs initialization of
- * application resources including initialization of Kaa client. Handles Kaa client lifecycle.
+ * Implementation of the base {@link Application} class. Performs initialization of
+ * application resources including initialization of the Kaa client. 
+ * Handles the Kaa client lifecycle.
  */
 public class KaaNotificationApp extends Application {
 
@@ -65,25 +65,27 @@ public class KaaNotificationApp extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = this;
+        
         /*
-		 * Initialize Kaa client using android context.
-		 */
+	* Initialize the Kaa client using the Android context.
+	*/
         mClient = Kaa.newClient(new AndroidKaaPlatformContext(this));
         initPopup();
 
         /*
-         * Initializing notification listener and adding it to Kaa client
+         * Initialize a notification listener and add it to the Kaa client.
          */
         initNotificationListener();
         mClient.addNotificationListener(notificationListener);
 
         /*
-         * Initializing topicList listener and adding it to Kaa client
+         * Initialize a topicList listener and add it to the Kaa client.
          */
         initNotificationTopicListListener();
         mClient.addTopicListListener(topicListListener);
+        
         /*
-         * Start Kaa client workflow.
+         * Start the Kaa client workflow.
          */
         mClient.start();
     }
@@ -105,14 +107,14 @@ public class KaaNotificationApp extends Application {
         super.onTerminate();
 
         /*
-         * Stop Kaa client. Release all network connections and application
-         * resources. Shutdown all Kaa client tasks.
+         * Stop the Kaa client. Release all network connections and application
+         * resources. Shut down all the Kaa client tasks.
          */
         mClient.stop();
     }
 
     /*
-     * This method subscribes Kaa client to voluntary topic
+     * Subscribes the Kaa client to an optional notification topic.
      */
     public void subscribeToTopic(String topicId) {
         try {
@@ -123,9 +125,8 @@ public class KaaNotificationApp extends Application {
         }
     }
 
-
     /*
-     * This method unbscribes Kaa client from voluntary topic
+     * Unsubscribes the Kaa client from an optional notification topic.
      */
     public void unsubscribeFromTopic(String topicId) {
         try {
