@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,22 +28,31 @@ import org.kaaproject.kaa.server.transport.session.SessionInfo;
 /**
  * The Class NettyDecodedResponseMessage.
  */
-public class NettySessionResponseMessage implements SessionResponse{
+public class NettySessionResponseMessage implements SessionResponse {
 
     private final SessionInfo sessionInfo;
     private final ServerSync syncResponse;
-    private final MessageBuilder responseConverter;
+    private final MessageBuilder messageBuilder;
     private final ErrorBuilder errorBuilder;
-
-    public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, MessageBuilder responseConverter, ErrorBuilder errorConverter){
-        this.sessionInfo = sessionInfo;
-        this.syncResponse = syncResponse;
-        this.responseConverter = responseConverter;
-        this.errorBuilder = errorConverter;
+    private final Exception error;
+    
+    public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, MessageBuilder messageBuilder,
+            ErrorBuilder errorBuilder) {
+        this(sessionInfo, syncResponse, null, messageBuilder, errorBuilder);
     }
 
-    public ServerSync getSyncResponse() {
-        return syncResponse;
+    public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, Exception error, MessageBuilder messageBuilder,
+            ErrorBuilder errorBuilder) {
+        this.sessionInfo = sessionInfo;
+        this.syncResponse = syncResponse;
+        this.error = error;
+        this.messageBuilder = messageBuilder;
+        this.errorBuilder = errorBuilder;
+    }
+
+    @Override
+    public Exception getError() {
+        return error;
     }
 
     @Override
@@ -73,7 +82,7 @@ public class NettySessionResponseMessage implements SessionResponse{
 
     @Override
     public MessageBuilder getMessageBuilder() {
-        return responseConverter;
+        return messageBuilder;
     }
 
     @Override

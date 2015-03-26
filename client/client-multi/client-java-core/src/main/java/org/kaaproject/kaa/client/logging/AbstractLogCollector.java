@@ -22,14 +22,17 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
-import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.LogTransport;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.common.TransportType;
+import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode;
 import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus;
 import org.kaaproject.kaa.common.endpoint.gen.LogEntry;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
@@ -45,14 +48,16 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractLogCollector implements LogCollector, LogProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractLogCollector.class);
-    
-    public static final long MAX_BATCH_VOLUME = 512 * 1024; // Framework limitation
-    
+
+    public static final long MAX_BATCH_VOLUME = 512 * 1024; // Framework
+                                                            // limitation
+
     // TODO: reuse this scheduler in other subsystems
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
+    protected final ExecutorContext executorContext;
     private final LogTransport transport;
-    private final Map<Integer, Long> timeoutMap = new LinkedHashMap<>();
+    private final Map<Integer, Long> timeoutMap = new ConcurrentHashMap<>();
     private final KaaChannelManager channelManager;
 
     protected LogStorage storage;
@@ -61,12 +66,13 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     private volatile boolean isUploading = false;
 
-    public AbstractLogCollector(LogTransport transport, KaaChannelManager manager) {
+    public AbstractLogCollector(LogTransport transport, ExecutorContext executorContext, KaaChannelManager manager) {
         this.strategy = new DefaultLogUploadStrategy();
         this.storage = new MemoryLogStorage(strategy.getBatchSize());
         this.controller = new DefaultLogUploadController();
         this.channelManager = manager;
         this.transport = transport;
+        this.executorContext = executorContext;
     }
 
     @Override
@@ -91,8 +97,12 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     public void fillSyncRequest(LogSyncRequest request) {
         LogBlock group = null;
         synchronized (storage) {
-            group = storage.getRecordBlock(strategy.getBatchSize());
             isUploading = false;
+            if (storage.getStatus().getRecordCount() == 0) {
+                LOG.debug("Log storage is empty");
+                return;
+            }
+            group = storage.getRecordBlock(strategy.getBatchSize());
         }
 
         if (group != null) {
@@ -112,7 +122,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                 timeoutMap.put(group.getBlockId(), System.currentTimeMillis() + strategy.getTimeout() * 1000);
             }
         } else {
-            LOG.warn("Log group is null: storage is empty or log group size is too small");
+            LOG.warn("Log group is null: log group size is too small");
         }
     }
 
@@ -124,7 +134,14 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                     storage.removeRecordBlock(response.getRequestId());
                 } else {
                     storage.notifyUploadFailed(response.getRequestId());
-                    strategy.onFailure(controller, response.getErrorCode());
+                    final LogDeliveryErrorCode errorCode = response.getErrorCode();
+                    final LogFailoverCommand controller = this.controller;
+                    executorContext.getCallbackExecutor().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            strategy.onFailure(controller, errorCode);
+                        }
+                    });
                 }
 
                 timeoutMap.remove(response.getRequestId());
@@ -133,7 +150,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
             processUploadDecision(strategy.isUploadNeeded(storage.getStatus()));
         }
     }
-    
+
     @Override
     public void stop() {
         scheduler.shutdown();
@@ -153,7 +170,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         }
     }
 
-    //TODO: fix this. it is now executed only when new log record is added. 
+    // TODO: fix this. it is now executed only when new log record is added.
     protected boolean isDeliveryTimeout() {
         boolean isTimeout = false;
         long currentTime = System.currentTimeMillis();
@@ -173,7 +190,13 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
             }
 
             timeoutMap.clear();
-            strategy.onTimeout(controller);
+            final LogFailoverCommand controller = this.controller;
+            executorContext.getCallbackExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    strategy.onTimeout(controller);
+                }
+            });
         }
 
         return isTimeout;
@@ -186,9 +209,9 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     private class DefaultLogUploadController implements LogFailoverCommand {
         @Override
         public void switchAccessPoint() {
-            KaaDataChannel channel = channelManager.getChannelByTransportType(TransportType.LOGGING);
-            if (channel != null) {
-                channelManager.onServerFailed(channel.getServer());
+            TransportConnectionInfo server = channelManager.getActiveServer(TransportType.LOGGING);
+            if (server != null) {
+                channelManager.onServerFailed(server);
             } else {
                 LOG.warn("Failed to switch Operation server. No channel is used for logging transport");
             }

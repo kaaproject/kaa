@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.nio.ByteBuffer;
 
-public class Notification {
+public final class Notification {
     private String topicId;
     private NotificationType type;
     private String uid;
@@ -122,6 +122,32 @@ public class Notification {
      */
     public void setBody(ByteBuffer value) {
         this.body = value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Notification that = (Notification) o;
+
+        if (body != null ? !body.equals(that.body) : that.body != null) return false;
+        if (seqNumber != null ? !seqNumber.equals(that.seqNumber) : that.seqNumber != null) return false;
+        if (topicId != null ? !topicId.equals(that.topicId) : that.topicId != null) return false;
+        if (type != that.type) return false;
+        if (uid != null ? !uid.equals(that.uid) : that.uid != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = topicId != null ? topicId.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (uid != null ? uid.hashCode() : 0);
+        result = 31 * result + (seqNumber != null ? seqNumber.hashCode() : 0);
+        result = 31 * result + (body != null ? body.hashCode() : 0);
+        return result;
     }
 
     @Override

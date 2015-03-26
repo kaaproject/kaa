@@ -123,7 +123,9 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
             if (logEventDao != null) {
                 logEventDao.close();
             }
-            callbackExecutor.shutdownNow();
+            if (callbackExecutor != null) {
+                callbackExecutor.shutdownNow();
+            }
         }
         LOG.info("Cassandra log appender stoped.");
     }

@@ -306,7 +306,7 @@ const KaaRootConfiguration& KaaClient::getConfiguration() {
     throw KaaException("Failed to subscribe to get configuration. Configuration subsystem is disabled");
 #endif
 }
-void KaaClient::addTopicListListener(INotificationTopicListListenerPtr listener) {
+void KaaClient::addTopicListListener(INotificationTopicListListener& listener) {
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->addTopicListListener(listener);
 #else
@@ -314,7 +314,7 @@ void KaaClient::addTopicListListener(INotificationTopicListListenerPtr listener)
 #endif
 }
 
-void KaaClient::removeTopicListListener(INotificationTopicListListenerPtr listener) {
+void KaaClient::removeTopicListListener(INotificationTopicListListener& listener) {
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->removeTopicListListener(listener);
 #else
@@ -329,14 +329,14 @@ Topics KaaClient::getTopics() {
     throw KaaException("Failed to get topics. Notification subsystem is disabled");
 #endif
 }
-void KaaClient::addNotificationListener(INotificationListenerPtr listener) {
+void KaaClient::addNotificationListener(INotificationListener& listener) {
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->addNotificationListener(listener);
 #else
     throw KaaException("Failed to add notification listener. Notification subsystem is disabled");
 #endif
 }
-void KaaClient::addNotificationListener(const std::string& topidId, INotificationListenerPtr listener) {
+void KaaClient::addNotificationListener(const std::string& topidId, INotificationListener& listener) {
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->addNotificationListener(topidId, listener);
 #else
@@ -344,7 +344,7 @@ void KaaClient::addNotificationListener(const std::string& topidId, INotificatio
 #endif
 }
 
-void KaaClient::removeNotificationListener(INotificationListenerPtr listener) {
+void KaaClient::removeNotificationListener(INotificationListener& listener) {
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->removeNotificationListener(listener);
 #else
@@ -352,7 +352,7 @@ void KaaClient::removeNotificationListener(INotificationListenerPtr listener) {
 #endif
 }
 
-void KaaClient::removeNotificationListener(const std::string& topidId, INotificationListenerPtr listener) {
+void KaaClient::removeNotificationListener(const std::string& topidId, INotificationListener& listener) {
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->removeNotificationListener(topidId, listener);
 #else
@@ -390,7 +390,7 @@ void KaaClient::unsubscribeFromTopics(const std::list<std::string>& idList, bool
     throw KaaException("Failed to unsubscribe to topics. Notification subsystem is disabled");
 #endif
 }
-void KaaClient::syncTopicsList() {
+void KaaClient::syncTopicSubscriptions() {
 #ifdef KAA_USE_NOTIFICATIONS
     notificationManager_->sync();
 #else
@@ -459,7 +459,7 @@ EventFamilyFactory& KaaClient::getEventFamilyFactory()
 #endif
 }
 
-std::int32_t KaaClient::findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListeners* listener) {
+std::int32_t KaaClient::findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListenersPtr listener) {
 #ifdef KAA_USE_EVENTS
     return eventManager_->findEventListeners(eventFQNs, listener);
 #else
@@ -474,6 +474,21 @@ IKaaChannelManager& KaaClient::getChannelManager()
 const KeyPair& KaaClient::getClientKeyPair()
 {
     return *clientKeys_;
+}
+
+void KaaClient::setEndpointAccessToken(const std::string& token)
+{
+    status_->setEndpointAccessToken(token);
+}
+
+std::string KaaClient::refreshEndpointAccessToken()
+{
+    return status_->refreshEndpointAccessToken();
+}
+
+std::string KaaClient::getEndpointAccessToken()
+{
+    return status_->getEndpointAccessToken();
 }
 
 void KaaClient::addLogRecord(const KaaUserLogRecord& record) {

@@ -17,14 +17,15 @@
 #ifndef CONFIGURATIONDEFINITIONS_HPP_
 #define CONFIGURATIONDEFINITIONS_HPP_
 
-
 #include "kaa/configuration/gen/ConfigurationGen.hpp"
 
 namespace kaa {
 
-typedef %{configuration_record_class_name}    KaaRootConfiguration;
+/**
+ * @typedef The user-defined configuration root record structure.
+ */
+typedef kaa_configuration::%{record_class_name}    KaaRootConfiguration;
 
 }
-
 
 #endif /* CONFIGURATIONDEFINITIONS_HPP_ */

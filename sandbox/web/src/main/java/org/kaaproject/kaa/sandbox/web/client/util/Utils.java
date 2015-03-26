@@ -89,22 +89,40 @@ public class Utils {
         return null;
     }
     
-    public static ImageResource getFeatureIcon(Feature feature, boolean down) {
+    public static ImageResource getFeatureIcon(Feature feature) {
         switch (feature) {
             case CONFIGURATION:
-                return down ? resources.configFeatureDown() : resources.configFeature();
+                return resources.configFeature();
             case DATA_COLLECTION:
-                return down ? resources.dataCollectionFeatureDown() : resources.dataCollectionFeature();
+                return resources.dataCollectionFeature();
             case EVENT:
-                return down ? resources.eventFeatureDown() : resources.eventFeature();
+                return resources.eventFeature();
             case NOTIFICATION:
-                return down ? resources.notificationFeatureDown() : resources.notificationFeature();
+                return resources.notificationFeature();
             case PROFILING:
-                return down ? resources.profilingFeatureDown() : resources.profilingFeature();
+                return resources.profilingFeature();
             case USER_VERIFIER:
-                return down ? resources.userVerifierFeatureDown() : resources.userVerifierFeature();
+                return resources.userVerifierFeature();
         }
         return null;
+    }
+    
+    public static String getFeatureBackgroundClass(Feature feature) {
+        switch (feature) {
+        case CONFIGURATION:
+            return sandboxStyle.bgFeatureConfig();
+        case DATA_COLLECTION:
+            return sandboxStyle.bgFeatureDataCollection();
+        case EVENT:
+            return sandboxStyle.bgFeatureEvent();
+        case NOTIFICATION:
+            return sandboxStyle.bgFeatureNotification();
+        case PROFILING:
+            return sandboxStyle.bgFeatureProfiling();
+        case USER_VERIFIER:
+            return sandboxStyle.bgFeatureUserVerifier();
+    }
+    return null;
     }
     
     public static String getPlatformText(Platform platform) {
@@ -122,6 +140,33 @@ public class Utils {
     }
     
     public static ImageResource getPlatformIcon(Platform platform) {
+        switch(platform) {
+            case ANDROID:
+                return resources.androidPlatform();
+            case C:
+                return resources.cPlatform();
+            case CPP:
+                return resources.cppPlatform();
+            case JAVA:
+                return resources.javaPlatform();
+        }
+        return null;
+    }
+    
+    public static ImageResource getFilterPlatformIcon(Platform platform) {
+        switch(platform) {
+            case ANDROID:
+                return resources.androidPlatformFilter();
+            default:
+                return getPlatformIcon(platform);
+        }
+    }
+    
+    public static String getPlatformBackgroundClass(Platform platform) {
+        return sandboxStyle.bgPlatformCommon();
+    }
+    
+    public static ImageResource getPlatformIconBig(Platform platform) {
         switch(platform) {
             case ANDROID:
                 return resources.android();

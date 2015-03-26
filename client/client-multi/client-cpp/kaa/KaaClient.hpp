@@ -65,6 +65,9 @@ public:
 
     virtual IKaaChannelManager&                 getChannelManager();
     virtual const KeyPair&                      getClientKeyPair();
+    virtual void                                setEndpointAccessToken(const std::string& token);
+    virtual std::string                         refreshEndpointAccessToken();
+    virtual std::string                         getEndpointAccessToken();
     virtual IKaaDataMultiplexer&                getOperationMultiplexer();
     virtual IKaaDataDemultiplexer&              getOperationDemultiplexer();
     virtual EventFamilyFactory&                 getEventFamilyFactory();
@@ -73,20 +76,20 @@ public:
     virtual void                                setLogStorage(ILogStoragePtr storage);
     virtual void                                setLogUploadStrategy(ILogUploadStrategyPtr strategy);
     virtual void                                setProfileContainer(ProfileContainerPtr container);
-    virtual void                                addTopicListListener(INotificationTopicListListenerPtr listener);
-    virtual void                                removeTopicListListener(INotificationTopicListListenerPtr listener);
+    virtual void                                addTopicListListener(INotificationTopicListListener& listener);
+    virtual void                                removeTopicListListener(INotificationTopicListListener& listener);
     virtual Topics                              getTopics();
-    virtual void                                addNotificationListener(INotificationListenerPtr listener);
+    virtual void                                addNotificationListener(INotificationListener& listener);
     virtual void                                addNotificationListener(const std::string& topidId,
-                                                                INotificationListenerPtr listener);
-    virtual void                                removeNotificationListener(INotificationListenerPtr listener);
+                                                                        INotificationListener& listener);
+    virtual void                                removeNotificationListener(INotificationListener& listener);
     virtual void                                removeNotificationListener(const std::string& topidId,
-                                                                    INotificationListenerPtr listener);
+                                                                           INotificationListener& listener);
     virtual void                                subscribeToTopic(const std::string& id, bool forceSync);
     virtual void                                subscribeToTopics(const std::list<std::string>& idList, bool forceSync);
     virtual void                                unsubscribeFromTopic(const std::string& id, bool forceSync);
     virtual void                                unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync);
-    virtual void                                syncTopicsList();
+    virtual void                                syncTopicSubscriptions();
     virtual void                                addConfigurationListener(IConfigurationReceiver &receiver);
     virtual void                                removeConfigurationListener(IConfigurationReceiver &receiver);
     virtual const KaaRootConfiguration&         getConfiguration();
@@ -103,13 +106,11 @@ public:
     virtual void                                setAttachStatusListener(IAttachStatusListenerPtr listener);
     virtual bool                                isAttachedToUser();
     virtual std::int32_t                        findEventListeners(const std::list<std::string>& eventFQNs
-                                                                  , IFetchEventListeners* listener);
-
-
-
+                                                                  , IFetchEventListenersPtr listener);
 
     virtual IKaaDataMultiplexer&                getBootstrapMultiplexer();
     virtual IKaaDataDemultiplexer&              getBootstrapDemultiplexer();
+
 private:
     void initKaaConfiguration();
     void initKaaTransport();

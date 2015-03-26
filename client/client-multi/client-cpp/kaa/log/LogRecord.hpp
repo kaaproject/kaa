@@ -31,16 +31,14 @@ class LogRecord {
 public:
     LogRecord(const KaaUserLogRecord& record)
     {
-        converter_.toByteArray(record, serializedLog_.data);
+        AvroByteArrayConverter<KaaUserLogRecord> converter;  // TODO: make converter thread local when it would be possible
+        converter.toByteArray(record, serializedLog_.data);
     }
 
     const std::vector<std::uint8_t>& getData() const { return serializedLog_.data; }
     size_t getSize() const { return serializedLog_.data.size(); }
 
     const LogEntry& getLogEntry() { return serializedLog_; }
-
-private:
-    static kaa_thread_local AvroByteArrayConverter<KaaUserLogRecord> converter_;
 
 private:
     LogEntry serializedLog_;

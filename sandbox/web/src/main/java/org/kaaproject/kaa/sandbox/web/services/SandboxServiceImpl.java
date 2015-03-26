@@ -300,7 +300,7 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
                             if (project.getPlatform()==Platform.ANDROID) {
                                 binaryFileData.setContentType("application/vnd.android.package-archive");
                             } else if (project.getPlatform()==Platform.JAVA) {
-                                binaryFileData.setContentType("application/x-compressed");
+                                binaryFileData.setContentType("application/java-archive");
                             }
                             cacheService.putProjectFile(dataKey, binaryFileData);
                         }
@@ -313,7 +313,6 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
             } else {
                 outStream.println("No project configuration found!");
             }
-            
         } catch (Exception e) {
             if (outStream != null) {
                 outStream.println("Unexpected error occurred: " + e.getMessage());

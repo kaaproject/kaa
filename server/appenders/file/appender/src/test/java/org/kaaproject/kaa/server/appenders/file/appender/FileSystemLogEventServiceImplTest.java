@@ -31,13 +31,14 @@ public class FileSystemLogEventServiceImplTest {
 
     private static final String TEST_FILE = "/test";
     private static final String TEST_TEXT = "test text";
+    private static final String USER_HOME = "user.home";
 
     private FileSystemLogEventService fileSystemLogEventService = new FileSystemLogEventServiceImpl();
 
     @Test
     public void createDirectoryAndRemoveAllTest() throws FileNotFoundException {
-        if (System.getProperty("user.home") != null && new File(System.getProperty("user.home")).exists()) {
-            String tempDir = System.getProperty("user.home") + "/temp_dir_" + System.currentTimeMillis();
+        if (System.getProperty(USER_HOME) != null && new File(System.getProperty(USER_HOME)).exists()) {
+            String tempDir = System.getProperty(USER_HOME) + "/temp_dir_" + System.currentTimeMillis();
             File file = new File(tempDir);
 
             Assert.assertFalse(file.exists());
@@ -58,10 +59,10 @@ public class FileSystemLogEventServiceImplTest {
 
     @Test
     public void createDirectoryAlreadyExistsTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-        if (System.getProperty("user.home") != null && new File(System.getProperty("user.home")).exists()) {
+        if (System.getProperty(USER_HOME) != null && new File(System.getProperty(USER_HOME)).exists()) {
             FileSystemLogEventService logEventService = new FileSystemLogEventServiceImpl();
 
-            String tempDir = System.getProperty("user.home") + "/temp_dir_" + System.currentTimeMillis();
+            String tempDir = System.getProperty(USER_HOME) + "/temp_dir_" + System.currentTimeMillis();
             File file = new File(tempDir);
 
             logEventService.createDirectory(tempDir);

@@ -18,36 +18,72 @@ package org.kaaproject.kaa.sandbox.web.client.mvp.view.header;
 
 import org.kaaproject.kaa.sandbox.web.client.SandboxResources.SandboxStyle;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.HeaderView;
-import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.ActionsLabel;
+import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.HeaderMenuItems;
 import org.kaaproject.kaa.sandbox.web.client.util.Utils;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class HeaderViewImpl extends Composite implements HeaderView {
+public class HeaderViewImpl extends Composite implements HeaderView, ResizeHandler {
 
     interface HeaderViewImplUiBinder extends UiBinder<Widget, HeaderViewImpl> { }
     private static HeaderViewImplUiBinder uiBinder = GWT.create(HeaderViewImplUiBinder.class);
 
-    @UiField HTMLPanel headerTitlePanel;
-    @UiField(provided=true) final ActionsLabel settingsLabel;
+    @UiField Image logoImage;
+    @UiField ResizeLayoutPanel centerResizePanel;
+    @UiField HorizontalPanel centerPanel;
+    @UiField FlowPanel headerTitlePanel;
+    @UiField HeaderMenuItems headerMenuItems;
     @UiField(provided = true) public final SandboxStyle sandboxStyle;
     
     public HeaderViewImpl() {
-        settingsLabel = new ActionsLabel(Utils.constants.settings());
         sandboxStyle = Utils.sandboxStyle;
-        settingsLabel.setStyleName(sandboxStyle.bAppHeaderMenu());
+
         initWidget(uiBinder.createAndBindUi(this));
-        headerTitlePanel.getElement().setInnerHTML(Utils.constants.sandboxHeaderTitle());
+
+        logoImage.setResource(Utils.resources.kaaLogo());
+        logoImage.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+        
+        InlineLabel headerTitle = new InlineLabel(Utils.constants.sandboxHeaderTitle());
+        headerTitlePanel.add(headerTitle);
+        
+        headerMenuItems.setCollapsed(false);
+
+        centerResizePanel.addResizeHandler(this);
+    }
+    
+    @Override
+    public void onResize(ResizeEvent event) {
+        collapseMenuItems(event.getWidth()<800);
+    }
+    
+    private void collapseMenuItems(boolean collapse) {
+        if (headerMenuItems.isCollapsed() != collapse) {            
+            headerMenuItems.setCollapsed(collapse);
+            if (collapse) {
+                centerPanel.setCellWidth(headerMenuItems, "80px");
+                headerTitlePanel.addStyleName(Utils.sandboxStyle.smaller());
+            } else {
+                centerPanel.setCellWidth(headerMenuItems, "600px");
+                headerTitlePanel.removeStyleName(Utils.sandboxStyle.smaller());
+            }
+        }
     }
 
     @Override
-    public ActionsLabel getSettingsLabel() {
-        return settingsLabel;
+    public HeaderMenuItems getHeaderMenuItems() {
+        return headerMenuItems;
     }
 
 }

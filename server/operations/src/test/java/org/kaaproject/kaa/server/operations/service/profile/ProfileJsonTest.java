@@ -31,7 +31,7 @@ public class ProfileJsonTest {
         BasicEndpointProfile bep = new BasicEndpointProfile();
         bep.setProfileBody("test2");
         GenericAvroConverter converter = new GenericAvroConverter(BasicEndpointProfile.SCHEMA$);
-        Assert.assertEquals(expected, converter.endcodeToJson(bep));
+        Assert.assertEquals(expected, converter.encodeToJson(bep));
     }
 
 }

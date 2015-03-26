@@ -151,7 +151,7 @@ public class EndpointActorMessageProcessor {
         } else {
             LOG.debug("[{}] Message ignored due to no channel contexts registered for events", actorKey, message);
             response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.FAILURE);
-            state.setUserRegistrationPending(true);
+            state.setUserRegistrationPending(false);
         }
         tellParent(context, response);
     }
@@ -266,7 +266,7 @@ public class EndpointActorMessageProcessor {
                     state.removeChannel(channel);
                 }
             }
-        } catch (GetDeltaException e) {
+        } catch (Exception e) {
             LOG.error("[{}][{}] processEndpointRequest", endpointKey, actorKey, e);
             sendReply(context, requestMessage, e);
         }
@@ -638,16 +638,16 @@ public class EndpointActorMessageProcessor {
         sendReply(context, request, null, syncResponse);
     }
 
-    private void sendReply(ActorContext context, SyncRequestMessage request, GetDeltaException e) {
+    private void sendReply(ActorContext context, SyncRequestMessage request, Exception e) {
         sendReply(context, request, e, null);
     }
 
-    private void sendReply(ActorContext context, SyncRequestMessage request, GetDeltaException e, ServerSync syncResponse) {
+    private void sendReply(ActorContext context, SyncRequestMessage request, Exception e, ServerSync syncResponse) {
         LOG.debug("[{}] response: {}", actorKey, syncResponse);
 
         ServerSync copy = ServerSync.deepCopy(syncResponse);
 
-        NettySessionResponseMessage response = new NettySessionResponseMessage(request.getSession(), copy, request.getCommand()
+        NettySessionResponseMessage response = new NettySessionResponseMessage(request.getSession(), copy, e, request.getCommand()
                 .getMessageBuilder(), request.getCommand().getErrorBuilder());
 
         tellActor(context, request.getOriginator(), response);

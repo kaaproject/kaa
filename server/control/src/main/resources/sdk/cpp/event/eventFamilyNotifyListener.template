@@ -1,0 +1,4 @@
+        if (fqn == "${event_class_fqn}") {
+            auto event(boost::any_cast<ns${event_family_class_name} :: ${event_class_name}>(value));
+            listenerPtr->onEvent(event, source);
+        }

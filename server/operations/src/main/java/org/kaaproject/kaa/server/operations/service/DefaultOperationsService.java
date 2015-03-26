@@ -30,6 +30,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
@@ -147,6 +148,10 @@ public class DefaultOperationsService implements OperationsService {
 
         if (!Arrays.equals(profile.getProfileHash(), toByteArray(metaData.getProfileHash()))) {
             LOG.debug("[{}] Profile hash mismatch. Profile resync needed", context.getEndpointKey());
+            if(LOG.isTraceEnabled()){
+                LOG.trace("[{}] persisted profile hash is {}", context.getEndpointKey(), MessageEncoderDecoder.bytesToHex(profile.getProfileHash()));
+                LOG.trace("[{}] client profile hash is {}", context.getEndpointKey(),  MessageEncoderDecoder.bytesToHex(toByteArray(metaData.getProfileHash())));
+            }
             context.setStatus(SyncStatus.PROFILE_RESYNC);
         }
 
@@ -555,7 +560,7 @@ public class DefaultOperationsService implements OperationsService {
      */
     private HistoryDelta fetchHistory(String endpointId, int requesHash, String applicationToken, EndpointProfileDto profile,
             HistorySubject subject, int startSeqNumber, int endSeqNumber) {
-        if (isFirstRequest(profile)) {
+        if (isFirstRequest(profile, subject)) {
             LOG.debug("[{}] Profile has no endpoint groups yet. calculating full list", endpointId);
             return historyDeltaService.getDelta(profile, applicationToken, endSeqNumber);
         } else {
@@ -571,8 +576,12 @@ public class DefaultOperationsService implements OperationsService {
      *            the request
      * @return true, if is first request
      */
-    public static boolean isFirstRequest(EndpointProfileDto profile) {
-        return profile.getConfigurationHash() == null || profile.getConfigurationHash().length == 0;
+    public static boolean isFirstRequest(EndpointProfileDto profile, HistorySubject subject) {
+        if(subject == HistorySubject.CONFIGURATION){
+            return profile.getCfGroupStates() == null || profile.getCfGroupStates().size() == 0;
+        }else{
+            return profile.getNfGroupStates() == null || profile.getNfGroupStates().size() == 0;
+        }
     }
 
     /**

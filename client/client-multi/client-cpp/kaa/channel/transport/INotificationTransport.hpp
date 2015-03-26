@@ -70,7 +70,7 @@ public:
      * @see SubscriptionCommand
      * @see SubscriptionCommands
      */
-    virtual void onSubscriptionChanged(const SubscriptionCommands& commands) = 0;
+    virtual void onSubscriptionChanged(SubscriptionCommands&& commands) = 0;
 
     /**
      * Sets the given Notification processor.

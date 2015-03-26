@@ -22,7 +22,7 @@ import java.util.List;
  * @author Andrew Shvayka
  *
  */
-public class BootstrapClientSync {
+public final class BootstrapClientSync {
 
     private final int requestId;
     private final List<ProtocolVersionId> keys;

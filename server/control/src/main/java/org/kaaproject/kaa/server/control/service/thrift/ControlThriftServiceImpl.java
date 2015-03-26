@@ -1802,9 +1802,11 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     @Override
     public DataStruct editUserVerifier(DataStruct userVerifier) throws ControlThriftException, TException {
         UserVerifierDto userVerifierDto = ThriftDtoConverter.<UserVerifierDto> toDto(userVerifier);
+        LOG.info("Adding new user verifier {}", userVerifierDto);
         DataStruct dataStruct = null;
         if (userVerifierDto != null) {
             UserVerifierDto saved = userVerifierService.saveUserVerifier(userVerifierDto);
+            LOG.info("Saved user verifier {}", saved);
             if (saved != null) {
                 Notification thriftNotification = new Notification();
                 thriftNotification.setAppId(saved.getApplicationId());

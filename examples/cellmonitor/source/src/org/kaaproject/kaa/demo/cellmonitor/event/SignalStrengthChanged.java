@@ -17,8 +17,7 @@
 package org.kaaproject.kaa.demo.cellmonitor.event;
 
 /**
- * The Class SignalStrengthChanged.
- * Event class is used to notify UI components after mobile signal strength was changed.
+ * An event class that is used to notify UI components after strength of a mobile signal was changed.
  */
 public class SignalStrengthChanged {
 

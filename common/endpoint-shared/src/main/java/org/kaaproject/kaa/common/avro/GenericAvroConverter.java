@@ -142,7 +142,7 @@ public class GenericAvroConverter<T extends GenericContainer> {
      * @return the string
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public String endcodeToJson(T record) throws IOException{
+    public String encodeToJson(T record) throws IOException{
         return new String(encodeToJsonBytes(record), UTF8);
     }
 
@@ -193,9 +193,9 @@ public class GenericAvroConverter<T extends GenericContainer> {
 
         try {
             GenericContainer record = converter.decodeBinary(rawData);
-            json = converter.endcodeToJson(record);
+            json = converter.encodeToJson(record);
         } catch (IOException e) {
-            LOG.warn("Can't parse profile raw data", e);
+            LOG.warn("Can't parse json data", e);
             throw new RuntimeException(e); //NOSONAR
         }
         return json;

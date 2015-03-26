@@ -35,7 +35,6 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 /**
- * The Class ImageLoader.
  * Used to asynchronously decode {@link Bitmap} from files and show 
  * resulting {@link Bitmap} via {@link LoadingImageView}.
  * Handles {@link Bitmap} caching in {@link MemoryCache} and {@link FileCache}.

@@ -67,7 +67,7 @@ public class VerifiersDemoBuilder extends AbstractDemoBuilder {
         logger.info("Event class family was created");
 
         ApplicationDto verifiersApplication = new ApplicationDto();
-        verifiersApplication.setName("Verifiers");
+        verifiersApplication.setName("User verifiers demo");
         verifiersApplication = client.editApplication(verifiersApplication);
 
         sdkKey.setApplicationId(verifiersApplication.getId());

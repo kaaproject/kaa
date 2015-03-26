@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -66,12 +67,6 @@ public class CppSdkGenerator extends SdkGenerator {
 
     /** The Constant CPP_SDK_NAME_PATTERN. */
     private static final String CPP_SDK_NAME_PATTERN = CPP_SDK_PREFIX + "p{}-c{}-n{}-l{}.tar.gz";
-
-    /** The Constant PROFILE_SCHEMA_AVRO_SRC. */
-    private static final String PROFILE_SCHEMA_AVRO_SRC = "avro/profile.avsc";
-
-    /** The Constant NOTIFICATION_SCHEMA_AVRO_SRC. */
-    private static final String NOTIFICATION_SCHEMA_AVRO_SRC = "avro/notification.avsc";
 
     /** The Constant APPLICATION_TOKEN_VAR. */
     private static final String APPLICATION_TOKEN_VAR = "%{application.token}";
@@ -127,15 +122,23 @@ public class CppSdkGenerator extends SdkGenerator {
     private static final String SDK_DEFAULTS_TEMPLATE = "sdk/cpp/KaaDefaults.cpp.template";
     private static final String SDK_DEFAULTS_PATH = "impl/KaaDefaults.cpp";
 
-    private static final String LOG_RECORD_SCHEMA_AVRO_SRC = "avro/log.avsc";
-    private static final String ILOG_COLLECTOR_TEMPLATE = "sdk/cpp/log/ILogCollector.hpp.template";
-    private static final String ILOG_COLLECTOR_PATH = "kaa/log/ILogCollector.hpp";
-    private static final String LOG_RECORD_CLASS_NAME_VAR = "%{log_record_class_name}";
+    private static final String RECORD_CLASS_NAME_VAR = "%{record_class_name}";
+
+    private static final String PROFILE_SCHEMA_AVRO_SRC = "avro/profile.avsc";
+    private static final String PROFILE_DEFINITIONS_TEMPLATE = "sdk/cpp/profile/ProfileDefinitions.hpp.template";
+    private static final String PROFILE_DEFINITIONS_PATH = "kaa/profile/gen/ProfileDefinitions.hpp";
+
+    private static final String LOG_SCHEMA_AVRO_SRC = "avro/log.avsc";
+    private static final String LOG_DEFINITIONS_TEMPLATE = "sdk/cpp/log/LogDefinitions.hpp.template";
+    private static final String LOG_DEFINITIONS_PATH = "kaa/log/gen/LogDefinitions.hpp";
+
+    private static final String NOTIFICATION_SCHEMA_AVRO_SRC = "avro/notification.avsc";
+    private static final String NOTIFICATION_DEFINITIONS_TEMPLATE = "sdk/cpp/notification/NotificationDefinitions.hpp.template";
+    private static final String NOTIFICATION_DEFINITIONS_PATH = "kaa/notification/gen/NotificationDefinitions.hpp";
 
     private static final String CONFIGURATION_SCHEMA_AVRO_SRC = "avro/configuration.avsc";
     private static final String CONFIGURATION_DEFINITIONS_TEMPLATE = "sdk/cpp/configuration/ConfigurationDefinitions.hpp.template";
     private static final String CONFIGURATION_DEFINITIONS_PATH = "kaa/configuration/gen/ConfigurationDefinitions.hpp";
-    private static final String CONFIGURATION_RECORD_CLASS_NAME_VAR = "%{configuration_record_class_name}";
 
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.control.service.sdk.SdkGenerator#generateSdk(java.lang.String, java.util.List, java.lang.String, int, int, int, java.lang.String, java.lang.String, java.lang.String, byte[], java.util.List)
@@ -187,53 +190,14 @@ public class CppSdkGenerator extends SdkGenerator {
         TarEntryData tarEntry = new TarEntryData(entry, data);
         cppSources.add(tarEntry);
 
-        // create profile schema entry
-        entry = new TarArchiveEntry(PROFILE_SCHEMA_AVRO_SRC);
-        data = profileSchemaBody.getBytes();
-        entry.setSize(data.length);
-        tarEntry = new TarEntryData(entry, data);
-        cppSources.add(tarEntry);
-
-        // create notification schema entry
-        entry = new TarArchiveEntry(NOTIFICATION_SCHEMA_AVRO_SRC);
-        data = notificationSchemaBody.getBytes();
-        entry.setSize(data.length);
-        tarEntry = new TarEntryData(entry, data);
-        cppSources.add(tarEntry);
-
-        if (!StringUtils.isBlank(logSchemaBody)) {
-            entry = new TarArchiveEntry(LOG_RECORD_SCHEMA_AVRO_SRC);
-            data = logSchemaBody.getBytes();
-            entry.setSize(data.length);
-            tarEntry = new TarEntryData(entry, data);
-            cppSources.add(tarEntry);
-
-            Schema logSchema = new Schema.Parser().parse(logSchemaBody);
-            String iLogCollectorHpp = SdkGenerator.readResource(ILOG_COLLECTOR_TEMPLATE);
-            entry = new TarArchiveEntry(ILOG_COLLECTOR_PATH);
-            byte [] iLogCollectorData = replaceVar(iLogCollectorHpp, LOG_RECORD_CLASS_NAME_VAR, logSchema.getName()).getBytes();
-            entry.setSize(iLogCollectorData.length);
-            tarEntry = new TarEntryData(entry, iLogCollectorData);
-            cppSources.add(tarEntry);
-        }
-
-        if (!StringUtils.isBlank(configurationBaseSchema)) {
-            entry = new TarArchiveEntry(CONFIGURATION_SCHEMA_AVRO_SRC);
-            data = configurationBaseSchema.getBytes();
-            entry.setSize(data.length);
-            tarEntry = new TarEntryData(entry, data);
-            cppSources.add(tarEntry);
-
-            Schema configurationSchema = new Schema.Parser().parse(configurationBaseSchema);
-            String configuratioDefinitionsHpp = SdkGenerator.readResource(CONFIGURATION_DEFINITIONS_TEMPLATE);
-            entry = new TarArchiveEntry(CONFIGURATION_DEFINITIONS_PATH);
-            byte [] configuratioDefinitionsData = replaceVar(configuratioDefinitionsHpp,
-                                                             CONFIGURATION_RECORD_CLASS_NAME_VAR,
-                                                             configurationSchema.getName()).getBytes();
-            entry.setSize(configuratioDefinitionsData.length);
-            tarEntry = new TarEntryData(entry, configuratioDefinitionsData);
-            cppSources.add(tarEntry);
-        }
+        cppSources.addAll(processFeatureSchema(profileSchemaBody, PROFILE_SCHEMA_AVRO_SRC,
+                                               PROFILE_DEFINITIONS_TEMPLATE, PROFILE_DEFINITIONS_PATH));
+        cppSources.addAll(processFeatureSchema(notificationSchemaBody, NOTIFICATION_SCHEMA_AVRO_SRC,
+                                               NOTIFICATION_DEFINITIONS_TEMPLATE, NOTIFICATION_DEFINITIONS_PATH));
+        cppSources.addAll(processFeatureSchema(logSchemaBody, LOG_SCHEMA_AVRO_SRC,
+                                               LOG_DEFINITIONS_TEMPLATE, LOG_DEFINITIONS_PATH));
+        cppSources.addAll(processFeatureSchema(configurationBaseSchema, CONFIGURATION_SCHEMA_AVRO_SRC,
+                                               CONFIGURATION_DEFINITIONS_TEMPLATE, CONFIGURATION_DEFINITIONS_PATH));
 
         if (eventFamilies != null && !eventFamilies.isEmpty()) {
             cppSources.addAll(CppEventSourcesGenerator.generateEventSources(eventFamilies));
@@ -284,6 +248,30 @@ public class CppSdkGenerator extends SdkGenerator {
         sdk.setFileName(sdkFileName);
         sdk.setData(sdkData);
         return sdk;
+    }
+
+    private List<TarEntryData> processFeatureSchema(String schemaBody, String schemaPath,
+                                                    String templatePath, String outputPath) throws IOException
+    {
+        List<TarEntryData> cppSources = new LinkedList<>();
+
+        if (!StringUtils.isBlank(schemaBody)) {
+            TarArchiveEntry entry = new TarArchiveEntry(schemaPath);
+            byte[] data = schemaBody.getBytes();
+            entry.setSize(data.length);
+            TarEntryData tarEntry = new TarEntryData(entry, data);
+            cppSources.add(tarEntry);
+
+            Schema schema = new Schema.Parser().parse(schemaBody);
+            String definitionsHpp = SdkGenerator.readResource(templatePath);
+            entry = new TarArchiveEntry(outputPath);
+            byte [] definitionsData = replaceVar(definitionsHpp, RECORD_CLASS_NAME_VAR, schema.getName()).getBytes();
+            entry.setSize(definitionsData.length);
+            tarEntry = new TarEntryData(entry, definitionsData);
+            cppSources.add(tarEntry);
+        }
+
+        return cppSources;
     }
 
     /**

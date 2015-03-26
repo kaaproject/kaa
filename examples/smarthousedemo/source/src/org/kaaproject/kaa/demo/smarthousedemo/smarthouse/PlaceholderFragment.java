@@ -29,7 +29,7 @@ import android.view.ViewGroup;
 
 public class PlaceholderFragment extends Fragment {
     /**
-     * The fragment argument representing the section number for this
+     * The fragment argument that represents the section number for this
      * fragment.
      */
     public static final String ARG_SECTION_NUMBER = "section_number";

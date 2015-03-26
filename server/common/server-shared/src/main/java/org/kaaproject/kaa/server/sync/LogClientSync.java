@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.util.List;
 
-public class LogClientSync {
+public final class LogClientSync {
     private int requestId;
     private List<LogEntry> logEntries;
 

@@ -77,8 +77,8 @@ public class CSdkGenerator extends SdkGenerator {
 
     private static final String KAA_CMAKEGEN         = "listfiles/CMakeGen.cmake";
     private static final String KAA_DEFAULTS_HEADER  = KAA_SRC_FOLDER + "/kaa_defaults.h";
-    private static final String PROFILE_HEADER       = KAA_SRC_FOLDER + "/kaa_profile.h";
-    private static final String LOG_HEADER           = KAA_SRC_FOLDER + "/kaa_logging.h";
+    private static final String LOG_HEADER           = KAA_GEN_SOURCE_DIR + "kaa_logging_definitions.h";
+    private static final String PROFILE_HEADER       = KAA_GEN_SOURCE_DIR + "kaa_profile_definitions.h";
     private static final String CONFIGURATION_HEADER = KAA_GEN_SOURCE_DIR + "kaa_configuration_definitions.h";
 
     private static final String KAA_PROFILE_SOURCE_NAME_PATTERN       = "kaa_profile_gen";
@@ -325,7 +325,7 @@ public class CSdkGenerator extends SdkGenerator {
         Schema schema = new Schema.Parser().parse(profileSchemaBody);
         List<TarEntryData> tarEntries = new LinkedList<>();
 
-        tarEntries.add(createTarEntry(PROFILE_HEADER, processHeaderTemplate("kaa_profile.vm", schema)));
+        tarEntries.add(createTarEntry(PROFILE_HEADER, processHeaderTemplate("kaa_profile_definitions.vm", schema)));
 
         tarEntries.addAll(generateSourcesFromSchema(schema, KAA_PROFILE_SOURCE_NAME_PATTERN, "profile"));
 
@@ -336,7 +336,7 @@ public class CSdkGenerator extends SdkGenerator {
         Schema schema = new Schema.Parser().parse(logSchemaBody);
         List<TarEntryData> tarEntries = new LinkedList<>();
 
-        tarEntries.add(createTarEntry(LOG_HEADER, processHeaderTemplate("kaa_logging.vm", schema)));
+        tarEntries.add(createTarEntry(LOG_HEADER, processHeaderTemplate("kaa_logging_definitions.vm", schema)));
 
         tarEntries.addAll(generateSourcesFromSchema(schema, KAA_LOG_SOURCE_NAME_PATTERN, "logging"));
 
