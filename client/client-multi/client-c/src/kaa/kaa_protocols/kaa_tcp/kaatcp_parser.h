@@ -24,11 +24,6 @@ extern "C" {
 #include "kaatcp_common.h"
 
 
-
-#define KAATCP_PARSER_MAX_MESSAGE_LENGTH    999
-
-
-
 typedef void (*on_connack_message_fn)(void *context, kaatcp_connack_t message);
 typedef void (*on_disconnect_message_fn)(void *context, kaatcp_disconnect_t message);
 typedef void (*on_kaasync_message_fn)(void *context, kaatcp_kaasync_t *message);
