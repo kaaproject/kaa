@@ -233,6 +233,8 @@ kaa_error_t kaa_start(kaa_context_t *kaa_context)
 {
     KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
 
+    KAA_LOG_INFO(kaa_context->logger, KAA_ERR_NONE, "Going to start Kaa endpoint");
+
     kaa_transport_channel_interface_t *bootstrap_channel = kaa_channel_manager_get_transport_channel(
             kaa_context->channel_manager, KAA_SERVICE_BOOTSTRAP);
     if (bootstrap_channel) {
