@@ -15,22 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ECF_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ECF_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ECF_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.EVENT_CLASS_TYPE_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.FQN_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.VERSION_PROPERTY;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
@@ -40,6 +24,22 @@ import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ECF_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ECF_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ECF_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TYPE_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.FQN_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.VERSION_PROPERTY;
 
 @Repository
 public class HibernateEventClassDao extends HibernateAbstractDao<EventClass> implements EventClassDao<EventClass> {
@@ -53,21 +53,22 @@ public class HibernateEventClassDao extends HibernateAbstractDao<EventClass> imp
 
     @Override
     public List<EventClass> findByEcfId(String ecfId) {
-        LOG.debug("Find event classes by ecf id [{}] ", ecfId);
         List<EventClass> eventClasses = Collections.emptyList();
+        LOG.debug("Searching event classes by ecf id [{}] ", ecfId);
         if (isNotBlank(ecfId)) {
             eventClasses = findListByCriterionWithAlias(ECF_PROPERTY, ECF_ALIAS, Restrictions.eq(ECF_REFERENCE, Long.valueOf(ecfId)));
         }
-        LOG.info("Found event classes {} by ecf id {} ", eventClasses.size(), ecfId);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found event classes {} by ecf id {} ", Arrays.toString(eventClasses.toArray()), ecfId);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", ecfId, Arrays.toString(eventClasses.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", ecfId, eventClasses.size());
         }
         return eventClasses;
     }
 
     @Override
     public List<EventClass> findByEcfIdVersionAndType(String ecfId, int version, EventClassType type) {
-        LOG.debug("Find event class by ecf id [{}] version [{}] and type [{}]", ecfId, version, type);
+        LOG.debug("Searching event class by ecf id [{}] version [{}] and type [{}]", ecfId, version, type);
         List<EventClass> eventClasses = Collections.emptyList();
         if (isNotBlank(ecfId)) {
             List<Criterion> predicates = new ArrayList<>();
@@ -79,36 +80,45 @@ public class HibernateEventClassDao extends HibernateAbstractDao<EventClass> imp
             eventClasses = findListByCriterionWithAlias(ECF_PROPERTY, ECF_ALIAS,
                     Restrictions.and(predicates.toArray(new Criterion[]{})));
         }
-        LOG.debug("Found event classes {} by ecf id {}, version {} and type {}", eventClasses, ecfId, version, type);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{},{},{}] Search result: {}.", ecfId, version, type, Arrays.toString(eventClasses.toArray()));
+        } else {
+            LOG.debug("[{},{},{}] Search result: {}.", ecfId, version, type, eventClasses.size());
+        }
         return eventClasses;
     }
 
     @Override
     public void removeByEcfId(String ecfId) {
-        LOG.debug("Remove event class by ecf id [{}] ", ecfId);
         if (isNotBlank(ecfId)) {
             List<EventClass> eventClasses = findListByCriterionWithAlias(ECF_PROPERTY, ECF_ALIAS,
                     Restrictions.eq(ECF_REFERENCE, Long.valueOf(ecfId)));
             removeList(eventClasses);
         }
+        LOG.debug("Removed event class by ecf id [{}] ", ecfId);
     }
 
     @Override
     public List<EventClass> findByTenantIdAndFqn(String tenantId, String fqn) {
-        LOG.debug("Find event classes by tenant id [{}] and fqn [{}]", tenantId, fqn);
-        List<EventClass> eventClass = null;
+        LOG.debug("Searching event classes by tenant id [{}] and fqn [{}]", tenantId, fqn);
+        List<EventClass> eventClasses = Collections.emptyList();
         if (isNotBlank(tenantId)) {
-            eventClass = findListByCriterionWithAlias(TENANT_PROPERTY, TENANT_ALIAS,
+            eventClasses = findListByCriterionWithAlias(TENANT_PROPERTY, TENANT_ALIAS,
                     Restrictions.and(
                             Restrictions.eq(TENANT_REFERENCE, Long.valueOf(tenantId)),
                             Restrictions.eq(FQN_PROPERTY, fqn)));
         }
-        return eventClass;
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{},{}] Search result: {}.", tenantId, fqn, Arrays.toString(eventClasses.toArray()));
+        } else {
+            LOG.debug("[{},{}] Search result: {}.", tenantId, fqn, eventClasses.size());
+        }
+        return eventClasses;
     }
 
     @Override
     public EventClass findByTenantIdAndFqnAndVersion(String tenantId, String fqn, int version) {
-        LOG.debug("Find event classes by tenant id [{}] and fqn [{}]", tenantId, fqn);
+        LOG.debug("Searching event classes by tenant id [{}], fqn [{}] and version [{}]", tenantId, fqn, version);
         EventClass eventClass = null;
         if (isNotBlank(tenantId)) {
             eventClass = findOneByCriterionWithAlias(TENANT_PROPERTY, TENANT_ALIAS,
@@ -116,16 +126,25 @@ public class HibernateEventClassDao extends HibernateAbstractDao<EventClass> imp
                             Restrictions.eq(TENANT_REFERENCE, Long.valueOf(tenantId)),
                             Restrictions.eq(FQN_PROPERTY, fqn),
                             Restrictions.eq(VERSION_PROPERTY, version)
-                            ));
+                    ));
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{},{},{}] Search result: {}.", tenantId, fqn, version, eventClass);
+        } else {
+            LOG.debug("[{},{},{}] Search result: {}.", tenantId, fqn, version, eventClass != null);
         }
         return eventClass;
     }
 
     @Override
     public boolean validateFqns(String tenantId, String ecfId, List<String> fqns) {
-        LOG.debug("Validate FQNs by tenant id [{}], ecf id [{}] and FQNs [{}]", tenantId, ecfId, fqns);
         List<EventClass> eventClasses = Collections.emptyList();
         if (isNotBlank(tenantId) && isNotBlank(ecfId) && fqns != null && !fqns.isEmpty()) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Validating FQNs by tenant id [{}], ecf id [{}] and FQNs [{}]", tenantId, ecfId, Arrays.toString(fqns.toArray()));
+            } else {
+                LOG.debug("Validating FQNs by tenant id [{}], ecf id [{}] and FQNs [{}]", tenantId, ecfId, fqns.size());
+            }
             Criteria criteria = getCriteria();
             criteria.createAlias(TENANT_PROPERTY, TENANT_ALIAS);
             criteria.createAlias(ECF_PROPERTY, ECF_ALIAS);
@@ -135,6 +154,8 @@ public class HibernateEventClassDao extends HibernateAbstractDao<EventClass> imp
                     Restrictions.in(FQN_PROPERTY, fqns)));
             eventClasses = findListByCriteria(criteria);
         }
-        return eventClasses == null || eventClasses.isEmpty();
+        boolean result = eventClasses == null || eventClasses.isEmpty();
+        LOG.debug("[{},{}] Validating result: {}.", tenantId, ecfId, result);
+        return result;
     }
 }

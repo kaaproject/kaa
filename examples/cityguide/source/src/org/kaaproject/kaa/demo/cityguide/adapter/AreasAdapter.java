@@ -30,8 +30,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 /**
- * The Class AreasAdapter.
- * Implementation of {@link BaseAdapter} class. Used as adapter class for areas list view.
+ * The implementation of the {@link BaseAdapter} class. Used as an adapter class for the areas list view.
  * Provides list item views containing name of each area.
  */
 public class AreasAdapter extends BaseAdapter {

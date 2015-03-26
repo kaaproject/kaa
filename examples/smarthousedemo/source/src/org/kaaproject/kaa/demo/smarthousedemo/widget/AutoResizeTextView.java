@@ -33,11 +33,11 @@ public class AutoResizeTextView extends TextView {
         /**
          * 
          * @param suggestedSize
-         *            Size of text to be tested
+         *            The size of the text to be tested.
          * @param availableSpace
-         *            available space in which text must fit
-         * @return an integer < 0 if after applying {@code suggestedSize} to
-         *         text, it takes less space than {@code availableSpace}, > 0
+         *            available space into which the text must fit.
+         * @return an integer < 0 if after applying {@code suggestedSize} to the
+         *         text, it takes less space than {@code availableSpace}; > 0
          *         otherwise
          */
         public int onTestSize(int suggestedSize, RectF availableSpace);
@@ -88,7 +88,8 @@ public class AutoResizeTextView extends TextView {
         mAvailableSpaceRect = new RectF();
         mTextCachedSizes = new SparseIntArray();
         if (mMaxLines == 0) {
-            // no value was assigned during construction
+            
+            // No value was assigned during the construction.
             mMaxLines = NO_LINE_LIMIT;
         }
         mInitiallized = true;
@@ -166,7 +167,7 @@ public class AutoResizeTextView extends TextView {
     }
 
     /**
-     * Set the lower text size limit and invalidate the view
+     * Set the lower text size limit and invalidate the view.
      * 
      * @param minTextSize
      */
@@ -210,7 +211,8 @@ public class AutoResizeTextView extends TextView {
                 StaticLayout layout = new StaticLayout(text, mPaint,
                         mWidthLimit, Alignment.ALIGN_NORMAL, mSpacingMult,
                         mSpacingAdd, true);
-                // return early if we have more lines
+                
+                // Return early if we have more lines.
                 if (getMaxLines() != NO_LINE_LIMIT
                         && layout.getLineCount() > getMaxLines()) {
                     return 1;
@@ -227,23 +229,23 @@ public class AutoResizeTextView extends TextView {
 
             mTextRect.offsetTo(0, 0);
             if (availableSPace.contains(mTextRect)) {
-                // may be too small, don't worry we will find the best match
+                // May be too small, don't worry, we will find the best match.
                 return -1;
             } else {
-                // too big
+                // Too big.
                 return 1;
             }
         }
     };
 
     /**
-     * Enables or disables size caching, enabling it will improve performance
-     * where you are animating a value inside TextView. This stores the font
-     * size against getText().length() Be careful though while enabling it as 0
-     * takes more space than 1 on some fonts and so on.
+     * Enables or disables the size caching. When enabled, improves performance
+     * for animated values in TextView. This stores the font
+     * size into getText().length(). Be careful with this method though, consider that 0
+     * takes more space than 1 in some fonts and so on.
      * 
      * @param enable
-     *            enable font size caching
+     *            enables the font size caching.
      */
     public void enableSizeCache(boolean enable) {
         mEnableSizeCache = enable;
@@ -286,8 +288,8 @@ public class AutoResizeTextView extends TextView {
                 return mid;
             }
         }
-        // make sure to return last best
-        // this is what should always be returned
+        // Make sure to return the last best.
+        // This is what should always be returned.
         return lastBest;
 
     }

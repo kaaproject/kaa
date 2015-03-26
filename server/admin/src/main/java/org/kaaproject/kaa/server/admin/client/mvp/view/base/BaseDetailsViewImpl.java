@@ -109,8 +109,6 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
             detailsTable.getColumnFormatter().setWidth(2, "300px");
         }
 
-        initDetailsTable();
-
         saveButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -121,6 +119,8 @@ public abstract class BaseDetailsViewImpl extends Composite implements InputEven
         saveButton.setVisible(editable);
         requiredFieldsNoteLabel.setVisible(editable);
 
+        initDetailsTable();
+        
         clearError();
     }
 

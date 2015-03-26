@@ -15,14 +15,10 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.USER_AUTHORITY;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.USER_EXTERNAL_UID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.USER_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.USER_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.USER_TENANT_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
-
-import java.io.Serializable;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
+import org.kaaproject.kaa.common.dto.UserDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,11 +28,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import java.io.Serializable;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.UserDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.USER_AUTHORITY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.USER_EXTERNAL_UID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.USER_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.USER_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.USER_TENANT_ID;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
 @Table(name = USER_TABLE_NAME,

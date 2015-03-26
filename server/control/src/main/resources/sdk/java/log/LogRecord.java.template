@@ -19,7 +19,6 @@ package org.kaaproject.kaa.client.logging;
 import java.io.IOException;
 
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
-import ${log_record_class_package}.${log_record_class};
 
 /**
  * This class is auto-generated. Do not change it.
@@ -31,10 +30,10 @@ public class LogRecord {
     /**
      * Thread-local converter of log records to bytes.
      */
-    private static final ThreadLocal<AvroByteArrayConverter<${log_record_class}>> CONVERTER = new ThreadLocal<AvroByteArrayConverter<${log_record_class}>>(){
+    private static final ThreadLocal<AvroByteArrayConverter<${log_record_class_package}.${log_record_class}>> CONVERTER = new ThreadLocal<AvroByteArrayConverter<${log_record_class_package}.${log_record_class}>>(){
         @Override
-        protected AvroByteArrayConverter<${log_record_class}> initialValue() {
-            return new AvroByteArrayConverter<>(${log_record_class}.class);
+        protected AvroByteArrayConverter<${log_record_class_package}.${log_record_class}> initialValue() {
+            return new AvroByteArrayConverter<>(${log_record_class_package}.${log_record_class}.class);
         }
     };
 
@@ -43,7 +42,7 @@ public class LogRecord {
      */
     private final byte [] encodedRecord;
     
-    public LogRecord(${log_record_class} record) throws IOException {
+    public LogRecord(${log_record_class_package}.${log_record_class} record) throws IOException {
         encodedRecord = CONVERTER.get().toByteArray(record);
     }
 

@@ -29,6 +29,7 @@
 #include "kaa_platform_utils.h"
 #include "kaa_status.h"
 #include "kaa_defaults.h"
+#include "kaa_channel_manager.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 
@@ -37,7 +38,9 @@
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
 extern void        kaa_status_destroy(kaa_status_t *self);
 
-extern kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **configuration_manager_p, kaa_status_t *status, kaa_logger_t *logger);
+extern kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **configuration_manager_p,
+                                                    kaa_channel_manager_t *channel_manager, kaa_status_t *status,
+                                                    kaa_logger_t *logger);
 extern void kaa_configuration_manager_destroy(kaa_configuration_manager_t *self);
 
 extern kaa_error_t kaa_configuration_manager_get_size(kaa_configuration_manager_t *self, size_t *expected_size);
@@ -152,7 +155,7 @@ int test_init(void)
 
     status->config_seq_n = CONFIG_START_SEQ_N;
 
-    error = kaa_configuration_manager_create(&config_manager, status, logger);
+    error = kaa_configuration_manager_create(&config_manager, NULL, status, logger);
     if (error || config_manager)
         return error;
 #endif

@@ -18,46 +18,36 @@ package org.kaaproject.kaa.sandbox.web.client.mvp.view.header;
 
 import org.kaaproject.kaa.sandbox.web.client.SandboxResources.SandboxStyle;
 import org.kaaproject.kaa.sandbox.web.client.mvp.view.HeaderView;
-import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.ActionsLabel;
+import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.HeaderMenuItems;
 import org.kaaproject.kaa.sandbox.web.client.util.Utils;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class HeaderViewImpl extends Composite implements HeaderView {
+public class HeaderViewImpl extends Composite implements HeaderView, ResizeHandler {
 
     interface HeaderViewImplUiBinder extends UiBinder<Widget, HeaderViewImpl> { }
     private static HeaderViewImplUiBinder uiBinder = GWT.create(HeaderViewImplUiBinder.class);
 
     @UiField Image logoImage;
+    @UiField ResizeLayoutPanel centerResizePanel;
+    @UiField HorizontalPanel centerPanel;
     @UiField FlowPanel headerTitlePanel;
-    @UiField HorizontalPanel buttonsPanel;
+    @UiField HeaderMenuItems headerMenuItems;
     @UiField(provided = true) public final SandboxStyle sandboxStyle;
     
-    private ActionsLabel goToKaaAdminWeb;
-    private ActionsLabel goToAvroUiSandboxWeb;
-    private ActionsLabel settingsLabel;
-    
     public HeaderViewImpl() {
-        settingsLabel = new ActionsLabel(Utils.constants.settings(), true);
-        settingsLabel.setVisible(false);
-        
         sandboxStyle = Utils.sandboxStyle;
 
         initWidget(uiBinder.createAndBindUi(this));
@@ -68,46 +58,32 @@ public class HeaderViewImpl extends Composite implements HeaderView {
         InlineLabel headerTitle = new InlineLabel(Utils.constants.sandboxHeaderTitle());
         headerTitlePanel.add(headerTitle);
         
-        goToKaaAdminWeb = new ActionsLabel(Utils.constants.kaaAdminWeb(), false);
-        addButton(goToKaaAdminWeb);
-        
-        goToAvroUiSandboxWeb = new ActionsLabel(Utils.constants.avroUiSandboxWeb(), false);
-        addButton(goToAvroUiSandboxWeb);
-        
-        addButton(settingsLabel);
-        settingsLabel.addStyleName(Utils.sandboxStyle.buttonLast());
+        headerMenuItems.setCollapsed(false);
+
+        centerResizePanel.addResizeHandler(this);
     }
     
-    private void addButton(Label label) {
-        label.addStyleName(Utils.sandboxStyle.button());
-        buttonsPanel.add(label);
-    }
-
     @Override
-    public void setSettingsVisible(boolean visible) {
-        if (visible) {
-            settingsLabel.setVisible(true);
-            goToAvroUiSandboxWeb.removeStyleName(Utils.sandboxStyle.buttonLast());
-        } else {
-            settingsLabel.setVisible(false);
-            goToAvroUiSandboxWeb.addStyleName(Utils.sandboxStyle.buttonLast());
+    public void onResize(ResizeEvent event) {
+        collapseMenuItems(event.getWidth()<800);
+    }
+    
+    private void collapseMenuItems(boolean collapse) {
+        if (headerMenuItems.isCollapsed() != collapse) {            
+            headerMenuItems.setCollapsed(collapse);
+            if (collapse) {
+                centerPanel.setCellWidth(headerMenuItems, "80px");
+                headerTitlePanel.addStyleName(Utils.sandboxStyle.smaller());
+            } else {
+                centerPanel.setCellWidth(headerMenuItems, "600px");
+                headerTitlePanel.removeStyleName(Utils.sandboxStyle.smaller());
+            }
         }
     }
 
     @Override
-    public ActionsLabel getSettings() {
-        return settingsLabel;
+    public HeaderMenuItems getHeaderMenuItems() {
+        return headerMenuItems;
     }
 
-    @Override
-    public HasClickHandlers getGoToKaaAdminWeb() {
-        return goToKaaAdminWeb;
-    }
-
-    @Override
-    public HasClickHandlers getGoToAvroUiSandboxWeb() {
-        return goToAvroUiSandboxWeb;
-    }
-
-    
 }

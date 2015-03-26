@@ -31,11 +31,11 @@ namespace kaa {
 /**
  * @typedef The user-defined notification structure.
  */
-typedef BasicNotification KaaNotification;
+typedef kaa_notification::BasicNotification KaaNotification;
 
 typedef std::vector<Topic> Topics;
 typedef std::vector<Notification> Notifications;
 
 }
 
-#endif
+#endif /* NOTIFICATIONDEFINITIONS_HPP_ */

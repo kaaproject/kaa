@@ -29,8 +29,10 @@ public interface SqlDao<T> extends Dao<T, String> {
     T findById(String id, boolean lazy);
 
     /**
-     * @param o
-     * @return
+     * Persist model object
+     *
+     * @param o the model object
+     * @return the persisted object
      */
     T persist(T o);
 }

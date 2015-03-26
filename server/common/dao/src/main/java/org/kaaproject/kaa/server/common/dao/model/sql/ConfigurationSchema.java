@@ -15,12 +15,9 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.CONFIGURATION_SCHEMA_BASE_SCHEMA;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.CONFIGURATION_SCHEMA_OVERRIDE_SCHEMA;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.CONFIGURATION_SCHEMA_PROTOCOL_SCHEMA;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.CONFIGURATION_SCHEMA_TABLE_NAME;
-
-import java.io.Serializable;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -28,10 +25,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import java.io.Serializable;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_SCHEMA_BASE_SCHEMA;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_SCHEMA_OVERRIDE_SCHEMA;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_SCHEMA_PROTOCOL_SCHEMA;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_SCHEMA_TABLE_NAME;
 
 @Entity
 @Table(name = CONFIGURATION_SCHEMA_TABLE_NAME)

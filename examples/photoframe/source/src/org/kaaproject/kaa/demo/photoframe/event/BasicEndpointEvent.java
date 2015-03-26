@@ -18,8 +18,7 @@ package org.kaaproject.kaa.demo.photoframe.event;
 
 
 /**
- * The Class BasicEndpointEvent.
- * Superclass for all events associated with remote endpoints (devices) identified by endpointKey.
+ * A superclass for all events associated with the remote endpoints (devices) identified by endpointKey.
  */
 public class BasicEndpointEvent extends BasicEvent {
 

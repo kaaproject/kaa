@@ -58,7 +58,7 @@ public class ApplicationsActivity extends AbstractListActivity<ApplicationDto, A
 
     @Override
     protected void deleteEntity(String id, AsyncCallback<Void> callback) {
-        KaaAdmin.getDataSource().deleteApplication(id, callback);
+        callback.onSuccess((Void) null);
     }
 
 }

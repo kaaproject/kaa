@@ -44,10 +44,9 @@ import android.provider.MediaStore;
 import de.greenrobot.event.EventBus;
 
 /**
- * The Class PhotoFrameController.
- * Receives Kaa events and user attach/detach callbacks and dispatch them to other 
+ * Receives Kaa events and user attach/detach callbacks, then dispatches them to other 
  * application components via event bus. It is also responsible for fetching albums 
- * from android {@link MediaStore}.
+ * from Android {@link MediaStore}.
  */
 public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener, UserAttachCallback, OnDetachEndpointOperationCallback {
 
@@ -56,7 +55,7 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     private final PhotoFrameEventClassFamily mPhotoFrameEventClassFamily;
     private final KaaClient mClient;
     
-    // Local device information
+    // A local device information.
     private final DeviceInfo mDeviceInfo = new DeviceInfo();
     private final PlayInfo mPlayInfo = new PlayInfo();
     private final Map<String, AlbumInfo> mAlbumsMap = new HashMap<>();
@@ -74,25 +73,25 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
         mClient = client;
         
         /*
-         * Obtain reference to Photo frame event class family class 
-         * which responsive for sending/receiving declared family events
+         * Obtain a reference to the Photo frame event class family class 
+         * which is responsible for sending/receiving the declared family events.
          */
         mPhotoFrameEventClassFamily = client.getEventFamilyFactory().
                                                 getPhotoFrameEventClassFamily();
         
         /*
-         * Register listener to receive photo frame family events
+         * Register a listener to receive the photo frame family events.
          */        
         mPhotoFrameEventClassFamily.addListener(this);
         
         /*
-         * Check if endpoint already attached to verified user. 
+         * Check if the endpoint is already attached to the verified user. 
          */        
         mUserAttached = mClient.isAttachedToUser();
         
         /*
          * Initialize all device information needed to provide response events
-         * on corresponding requests
+         * on corresponding requests.
          */        
         initDeviceInfo();
     }
@@ -155,14 +154,14 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
     
     /*
-     * Attach endpoint to provided user using default configured user verifier
+     * Attach the endpoint to the provided user using the default user verifier.
      */
     public void login(String userExternalId, String userAccessToken) {
         mClient.attachUser(userExternalId, userAccessToken, this);
     }
     
     /*
-     * Detach endpoint from user
+     * Detach the endpoint from the user.
      */
     public void logout() {
         EndpointKeyHash endpointKey = new EndpointKeyHash(mClient.getEndpointKeyHash());
@@ -170,8 +169,8 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
     
     /*
-     * Update current device status reflected in PlayInfoResponse event, 
-     * send event to all user endpoints
+     * Update the current device status reflected in the PlayInfoResponse event, 
+     * send the event to all the user endpoints.
      */
     public void updateStatus(PlayStatus status, String bucketId) {
         AlbumInfo currentAlbumInfo = null;
@@ -186,8 +185,8 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
     
     /*
-     * Notify all user endpoints about device availability and play status
-     * by sending them DeviceInfoResponse and PlayInfoResponse events.
+     * Notify all the user endpoints about the device availability and play status
+     * by sending them the DeviceInfoResponse and PlayInfoResponse events.
      */
     public void notifyRemoteDevices() {
         DeviceInfoResponse deviceInfoResponse = new DeviceInfoResponse();
@@ -199,10 +198,10 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
     
     /*
-     * Discover all available remote user devices (endpoints) 
-     * by sending them DeviceInfoRequest and PlayInfoRequest events.
-     * Each operational device (endpoint) will send reply with DeviceInfoResponse
-     * and PlayInfoResponse events to current endpoint.
+     * Discover all the available remote devices (endpoints) of the user
+     * by sending them the DeviceInfoRequest and PlayInfoRequest events.
+     * Each operational device (endpoint) will send a reply with the DeviceInfoResponse
+     * and PlayInfoResponse events to the current endpoint.
      */
     public void discoverRemoteDevices() {
         mRemoteDevicesMap.clear();
@@ -211,8 +210,8 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
     
     /*
-     * Get information about remote device image albums by
-     * sending AlbumListRequest event to target endpoint using its endpointKey.
+     * Get the information about a remote device image albums by
+     * sending the AlbumListRequest event to the target endpoint using its endpointKey.
      */
     public void requestRemoteDeviceAlbums(String endpointKey) {
         AlbumListRequest albumListRequest = new AlbumListRequest();
@@ -220,16 +219,16 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
     
     /*
-     * Get information about remote device play status by
-     * sending PlayInfoRequest event to target endpoint using its endpointKey.
+     * Get the information about a remote device play status by
+     * sending the PlayInfoRequest event to the target endpoint using its endpointKey.
      */
     public void requestRemoteDeviceStatus(String endpointKey) {
         mPhotoFrameEventClassFamily.sendEvent(new PlayInfoRequest(), endpointKey);
     }
     
     /*
-     * Send command to remote device to play image album with specified bucketId by
-     * sending PlayAlbumRequest event to target endpoint using its endpointKey.
+     * Send a command to a remote device to play the image album with the specified bucketId by
+     * sending the PlayAlbumRequest event to the target endpoint using its endpointKey.
      */
     public void playRemoteDeviceAlbum(String endpointKey, String bucketId) {
         PlayAlbumRequest playAlbumRequest = new PlayAlbumRequest();
@@ -238,8 +237,8 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
     
     /*
-     * Send command to remote device to stop image album playback by
-     * sending PlayAlbumRequest event to target endpoint using its endpointKey.
+     * Send a command to a remote device to stop the image album playback by
+     * sending the PlayAlbumRequest event to target endpoint using its endpointKey.
      */    
     public void stopPlayRemoteDeviceAlbum(String endpointKey) {
         StopRequest stopRequest = new StopRequest();
@@ -247,7 +246,7 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
     
     /*
-     * Receive result of endpoint attach operation. 
+     * Receive the result of the endpoint attach operation. 
      * Notify remote devices about availability in case of success.
      */
     @Override
@@ -265,7 +264,7 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
     
     /*
-     * Receive result of endpoint detach operation. 
+     * Receive the result of the endpoint detach operation. 
      */    
     @Override
     public void onDetach(SyncResponseResultType result) {
@@ -278,8 +277,9 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
     
     /*
-     * Handle DeviceInfoRequest event from remote endpoint identified by endpoint key (sourceEndpoint parameter). 
-     * Reply with current device info by sending DeviceInfoResponse event.
+     * Handle the DeviceInfoRequest event from the remote endpoint 
+     * identified by the endpoint key (sourceEndpoint parameter). 
+     * Reply with the current device info by sending the DeviceInfoResponse event.
      */    
     @Override
     public void onEvent(DeviceInfoRequest deviceInfoRequest, String sourceEndpoint) {
@@ -289,8 +289,8 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
 
     /*
-     * Handle DeviceInfoResponse event from remote endpoint. 
-     * Store remote device info in local devices map.
+     * Handle the DeviceInfoResponse event from the remote endpoint. 
+     * Store the remote device info in the local devices map.
      */  
     @Override
     public void onEvent(DeviceInfoResponse deviceInfoResponse, String sourceEndpoint) {
@@ -302,8 +302,8 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
 
     /*
-     * Handle AlbumListRequest event from remote endpoint. 
-     * Reply with list of image albums located on device by sending AlbumListResponse event.
+     * Handle the AlbumListRequest event from a remote endpoint. 
+     * Reply with a list of the image albums located on the device by sending the AlbumListResponse event.
      */ 
     @Override
     public void onEvent(AlbumListRequest albumListRequest, String sourceEndpoint) {
@@ -314,8 +314,8 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
 
     /*
-     * Handle AlbumListResponse event from remote endpoint. 
-     * Store remote device albums list in local album lists map.
+     * Handle the AlbumListResponse event from a remote endpoint. 
+     * Store a remote device albums list in the local album lists map.
      */
     @Override
     public void onEvent(AlbumListResponse albumListResponse, String sourceEndpoint) {
@@ -324,8 +324,8 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
 
     /*
-     * Handle PlayAlbumRequest event from remote endpoint. 
-     * Notify application to start playback of image album identified by bucketId.
+     * Handle the PlayAlbumRequest event from a remote endpoint. 
+     * Notify the application to start playback of the image album identified by bucketId.
      */
     @Override
     public void onEvent(PlayAlbumRequest playAlbumRequest, String sourceEndpoint) {
@@ -333,8 +333,8 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
 
     /*
-     * Handle StopRequest event from remote endpoint. 
-     * Notify application to stop current image album playback.
+     * Handle the StopRequest event from a remote endpoint. 
+     * Notify the application to stop the current image album playback.
      */
     @Override
     public void onEvent(StopRequest stopRequest, String sourceEndpoint) {
@@ -342,8 +342,8 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
 
     /*
-     * Handle PlayInfoRequest event from remote endpoint. 
-     * Reply with current device play status by sending PlayInfoResponse event.
+     * Handle the PlayInfoRequest event from a remote endpoint. 
+     * Reply with the current device play status by sending the PlayInfoResponse event.
      */
     @Override
     public void onEvent(PlayInfoRequest playInfoRequest, String sourceEndpoint) {
@@ -353,8 +353,8 @@ public class PhotoFrameController implements PhotoFrameEventClassFamily.Listener
     }
 
     /*
-     * Handle PlayInfoResponse event from remote endpoint. 
-     * Store remote device play status info in local play info map.
+     * Handle the PlayInfoResponse event from a remote endpoint. 
+     * Store a remote device play status info in the local play info map.
      */
     @Override
     public void onEvent(PlayInfoResponse playInfoResponse, String sourceEndpoint) {

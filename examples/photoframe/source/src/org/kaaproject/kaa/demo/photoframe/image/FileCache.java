@@ -23,8 +23,7 @@ import org.kaaproject.kaa.demo.photoframe.image.ImageLoader.ImageKey;
 import android.content.Context;
 
 /**
- * The Class FileCache.
- * Used to store image screenails data files in storage cache dir.
+ * Used to store image screennail data files in a storage cache dir.
  */
 public class FileCache {
 

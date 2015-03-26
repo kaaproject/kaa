@@ -42,7 +42,8 @@ public class Thermostat extends View {
 
 	private static final String TAG = Thermostat.class.getSimpleName();
 	private static int INVALID_PROGRESS_VALUE = -1;
-	// The initial rotational offset -90 means we start at 12 o'clock
+	
+	// The initial rotational offset -90 means that we start at 12 o'clock.
 	private final int mAngleOffset = -90;
 	
 	private int mTempMin = 0;
@@ -72,58 +73,58 @@ public class Thermostat extends View {
 	
 
 	/**
-	 * The Maximum value that this Thermostat can be set to
+	 * The maximum value the Thermostat can be set to.
 	 */
 	private int mMax = 100;
 	
 	/**
-	 * The Current value that the Thermostat is set to
+	 * The current value the Thermostat is set to.
 	 */
 	private int mProgress = 0;
 	
 	private int mTargetProgress = 0;
 		
 	/**
-	 * The width of the progress line for this Thermostat
+	 * The width of the progress line for the Thermostat.
 	 */
 	private int mProgressWidth = 100;
 	
 	/**
-	 * The Width of the background arc for the Thermostat 
+	 * The Width of the background arc for the Thermostat. 
 	 */
 	private int mArcWidth = 100;
 	
 	/**
-	 * The Angle to start drawing this Arc from
+	 * The angle to start drawing the arc from.
 	 */
 	private int mStartAngle = 0;
 	
 	/**
-	 * The Angle through which to draw the arc (Max is 360)
+	 * The angle through which to draw the arc (max is 360).
 	 */
 	private int mSweepAngle = 360;
 	
 	/**
-	 * The rotation of the Thermostat- 0 is twelve o'clock
+	 * The rotation of the Thermostat - 0 is twelve o'clock.
 	 */
 	private int mRotation = 0;
 	
 	/**
-	 * Give the Thermostat rounded edges
+	 * Gives the Thermostat rounded edges.
 	 */
 	private boolean mRoundedEdges = false;
 	
 	/**
-	 * Enable touch inside the Thermostat
+	 * Enables the touch inside the Thermostat.
 	 */
 	private boolean mTouchInside = true;
 	
 	/**
-	 * Will the progress increase clockwise or anti-clockwise
+	 * Specifies whether the progress increases clockwise or anti-clockwise.
 	 */
 	private boolean mClockwise = true;
 
-	// Internal variables
+	// Internal variables.
 	private int mArcRadius = 0;
 	private float mProgressSweep = 0;
 	private float mTargetProgressSweep = 0;
@@ -166,12 +167,12 @@ public class Thermostat extends View {
 	public interface OnThermostatChangeListener {
 
 		/**
-		 * Notification that the progress level has changed. Clients can use the
+		 * Notifies that the progress level has changed. Clients can use the
 		 * fromUser parameter to distinguish user-initiated changes from those
 		 * that occurred programmatically.
 		 * 
 		 * @param Thermostat
-		 *            The Thermostat whose progress has changed
+		 *            The Thermostat whose progress has changed.
 		 * @param progress
 		 *            The current progress level. This will be in the range
 		 *            0..max where max was set by
@@ -185,20 +186,20 @@ public class Thermostat extends View {
 		void onTargetProgressChanged(Thermostat Thermostat, int targetProgress, boolean fromUser);
 
 		/**
-		 * Notification that the user has started a touch gesture. Clients may
+		 * Notifies that the user has started a touch gesture. Clients may
 		 * want to use this to disable advancing the seekbar.
 		 * 
 		 * @param Thermostat
-		 *            The Thermostat in which the touch gesture began
+		 *            The Thermostat in which a touch gesture began.
 		 */
 		void onStartTrackingTouch(Thermostat Thermostat);
 
 		/**
-		 * Notification that the user has finished a touch gesture. Clients may
+		 * Notifies that the user has finished a touch gesture. Clients may
 		 * want to use this to re-enable advancing the Thermostat.
 		 * 
 		 * @param Thermostat
-		 *            The Thermostat in which the touch gesture began
+		 *            The Thermostat in which a touch gesture began.
 		 */
 		void onStopTrackingTouch(Thermostat Thermostat);
 	}
@@ -224,7 +225,7 @@ public class Thermostat extends View {
 		final Resources res = getResources();
 		float density = context.getResources().getDisplayMetrics().density;
 
-		// Defaults, may need to link this into theme settings
+		// Defaults, may need to link this into theme settings.
 		mArcColorCold = res.getColor(R.color.thermostat_arc_cold);
 		mArcColor = res.getColor(R.color.thermostat_arc);
 		mArcColorHeat  = res.getColor(R.color.thermostat_arc_heat);
@@ -241,12 +242,14 @@ public class Thermostat extends View {
 		int thumbsColor = res.getColor(android.R.color.holo_blue_light);
 		int thumbsGlowColor = res.getColor(R.color.thermostat_thumbs_glow_color);
 		int controlsColor = res.getColor(R.color.thermostat_controls_color);
-		// Convert progress width to pixels for current density
+		
+		// Convert the progress width to pixels for the current density.
 		mProgressWidth = (int) (mProgressWidth * density);
 		
 		
 		if (attrs != null) {
-			// Attribute initialization
+			
+			// The attribute initialization.
 			final TypedArray a = context.obtainStyledAttributes(attrs,
 					R.styleable.Thermostat, defStyle, 0);
 
@@ -527,7 +530,7 @@ public class Thermostat extends View {
 			canvas.scale(-1, 1, mArcRect.centerX(), mArcRect.centerY() );
 		}
 		
-		// Draw the arcs
+		// Draw the arcs.
 		final int arcStart = mStartAngle + mAngleOffset + mRotation;
 		final int arcSweep = mSweepAngle;
 		
@@ -543,7 +546,7 @@ public class Thermostat extends View {
 		canvas.drawArc(mArcRect, arcStart+mTargetProgressSweep, mProgressSweep-mTargetProgressSweep, false,
 				mProgressPaint);
 			
-	    //draw progress thumb
+	    //Draw the progress thumb.
 		if (mEnableBlur) {
 			canvas.drawArc(mArcRect, arcStart+mProgressSweep-1.5f, 3, false, mProgressThumbPaintGlow);
 		}
@@ -797,9 +800,10 @@ public class Thermostat extends View {
 	private double getTouchDegrees(float xPos, float yPos) {
 		float x = xPos - mTranslateX;
 		float y = yPos - mTranslateY;
-		//invert the x-coord if we are rotating anti-clockwise
+		
+		// Invert the x-coord if rotating anti-clockwise.
 		x= (mClockwise) ? x:-x;
-		// convert to arc Angle
+		// Convert to the arc angle.
 		double angle = Math.toDegrees(Math.atan2(y, x) + (Math.PI / 2)
 				- Math.toRadians(mRotation));
 		if (angle < 0) {
@@ -906,12 +910,12 @@ public class Thermostat extends View {
 	}
 
 	/**
-	 * Sets a listener to receive notifications of changes to the Thermostat's
+	 * Sets a listener to receive notifications of changes to the Thermostat
 	 * progress level. Also provides notifications of when the user starts and
 	 * stops a touch gesture within the Thermostat.
 	 * 
 	 * @param l
-	 *            The seek bar notification listener
+	 *            The seek bar notification listener.
 	 * 
 	 * @see Thermostat.OnSeekBarChangeListener
 	 */
@@ -1011,7 +1015,7 @@ public class Thermostat extends View {
 		if (mTouchInside) {
 			mTouchIgnoreRadius = (float) mArcRadius / 4;
 		} else {
-			// Don't use the exact radius makes interaction too tricky
+			// Don't use the exact radius as it makes interaction too tricky.
 			mTouchIgnoreRadius = mArcRadius;
 		}
 	}

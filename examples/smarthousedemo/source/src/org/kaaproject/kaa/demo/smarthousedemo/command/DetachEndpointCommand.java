@@ -23,7 +23,7 @@ import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 
 import android.util.Log;
 
-/** Implementation of detach endpoint from user command. */
+/** The implementation of the detach endpoint from user command. */
 public class DetachEndpointCommand extends AbstractClientCommand<Boolean> {
 
     private String endpointKeyHash;

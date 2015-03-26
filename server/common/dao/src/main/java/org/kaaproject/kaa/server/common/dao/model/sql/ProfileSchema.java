@@ -15,16 +15,15 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.PROFILE_SCHEMA_TABLE_NAME;
-
-import java.io.Serializable;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.io.Serializable;
+
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_SCHEMA_TABLE_NAME;
 
 @Entity
 @Table(name = PROFILE_SCHEMA_TABLE_NAME)

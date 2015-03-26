@@ -27,6 +27,7 @@
 #include "kaa/event/registration/IDetachEndpointCallback.hpp"
 #include "kaa/event/registration/IUserAttachCallback.hpp"
 #include "kaa/event/registration/IAttachStatusListener.hpp"
+#include "kaa/event/IFetchEventListeners.hpp"
 #include "kaa/log/ILogCollector.hpp"
 
 
@@ -36,7 +37,6 @@ class EventFamilyFactory;;
 class IKaaChannelManager;
 class IKaaDataMultiplexer;
 class IKaaDataDemultiplexer;
-class IFetchEventListeners;
 class IConfigurationReceiver;
 class KeyPair;
 
@@ -146,14 +146,14 @@ public:
      * @param[in] topicId      The id of the optional topic.
      * @param[in] forceSync    Indicates whether the subscription request should be sent immediately to
      *                         the Operations server. If <i> false </i>, the request postpones to the explicit
-     *                         call of @link sync() @endlink or to the first call of @link subscribeToTopic() @endlink,
-     *                         @link subscribeToTopics() @endlink, @link unsubscribeFromTopic() @endlink or
-     *                         @link unsubscribeFromTopics() @endlink with the <i> true </i> value for the
-     *                         @link forceSync @endlink parameter.
+     *                         call of @link syncTopicSubscriptions() @endlink or to the first call of
+     *                         @link subscribeToTopic() @endlink, @link subscribeToTopics() @endlink,
+     *                         @link unsubscribeFromTopic() @endlink or @link unsubscribeFromTopics() @endlink
+     *                         with the <i> true </i> value for the @link forceSync @endlink parameter.
      *
      * @throw UnavailableTopicException Throws if the unknown topic id is provided or the topic isn't optional.
      *
-     * @see sync()
+     * @see syncTopicSubscriptions()
      */
     virtual void subscribeToTopic(const std::string& id, bool forceSync = true) = 0;
 
@@ -163,14 +163,14 @@ public:
      * @param[in] topicIds     The list of optional topic id-s.
      * @param[in] forceSync    Indicates whether the subscription request should be sent immediately to
      *                         the Operations server. If <i> false </i>, the request postpones to the explicit
-     *                         call of @link sync() @endlink or to the first call of @link subscribeToTopic() @endlink,
-     *                         @link subscribeToTopics() @endlink, @link unsubscribeFromTopic() @endlink or
-     *                         @link unsubscribeFromTopics() @endlink with the <i> true </i> value for the
-     *                         @link forceSync @endlink parameter.
+     *                         call of @link syncTopicSubscriptions() @endlink or to the first call of
+     *                         @link subscribeToTopic() @endlink, @link subscribeToTopics() @endlink,
+     *                         @link unsubscribeFromTopic() @endlink or @link unsubscribeFromTopics() @endlink
+     *                         with the <i> true </i> value for the @link forceSync @endlink parameter.
      *
      * @throw UnavailableTopicException Throws if the unknown topic id is provided or the topic isn't optional.
      *
-     * @see sync()
+     * @see syncTopicSubscriptions()
      */
     virtual void subscribeToTopics(const std::list<std::string>& idList, bool forceSync = true) = 0;
 
@@ -179,16 +179,15 @@ public:
      *
      * @param[in] topicId      The id of the optional topic.
      * @param[in] forceSync    Indicates whether the subscription request should be sent immediately to
-     *                         the Operations server or postponed. If <i> false </i>, the request is postponed either
-     *                         to the explicit
-     *                         call of @link sync() @endlink or to the first call of one of the following functions
-     *                         with the @link forceSync @endlink parameter set to <i> true </i>:
+     *                         the Operations server. If <i> false </i>, the request postpones to the explicit
+     *                         call of @link syncTopicSubscriptions() @endlink or to the first call of
      *                         @link subscribeToTopic() @endlink, @link subscribeToTopics() @endlink,
-     *                         @link unsubscribeFromTopic() @endlink or @link unsubscribeFromTopics() @endlink .
+     *                         @link unsubscribeFromTopic() @endlink or @link unsubscribeFromTopics() @endlink
+     *                         with the <i> true </i> value for the @link forceSync @endlink parameter.
      *
      * @throw UnavailableTopicException Throws if the unknown topic id is provided or the topic isn't optional.
      *
-     * @see sync()
+     * @see syncTopicSubscriptions()
      */
     virtual void unsubscribeFromTopic(const std::string& id, bool forceSync = true) = 0;
 
@@ -197,16 +196,15 @@ public:
      *
      * @param[in] topicId      The list of optional topic id-s.
      * @param[in] forceSync    Indicates whether the subscription request should be sent immediately to
-     *                         the Operations server or postponed. If <i> false </i>, the request is postponed either
-     *                         to the explicit
-     *                         call of @link sync() @endlink or to the first call of one of the following functions
-     *                         with the @link forceSync @endlink parameter set to <i> true </i>:
+     *                         the Operations server. If <i> false </i>, the request postpones to the explicit
+     *                         call of @link syncTopicSubscriptions() @endlink or to the first call of
      *                         @link subscribeToTopic() @endlink, @link subscribeToTopics() @endlink,
-     *                         @link unsubscribeFromTopic() @endlink or @link unsubscribeFromTopics() @endlink .
+     *                         @link unsubscribeFromTopic() @endlink or @link unsubscribeFromTopics() @endlink
+     *                         with the <i> true </i> value for the @link forceSync @endlink parameter.
      *
      * @throw UnavailableTopicException Throws if the unknown topic id is provided or the topic isn't optional.
      *
-     * @see sync()
+     * @see syncTopicSubscriptions()
      */
     virtual void unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync = true) = 0;
 
@@ -317,7 +315,7 @@ public:
     virtual bool isAttachedToUser() = 0;
 
     /**
-     * Submits an event listeners resolution request
+     * @brief Submits an event listeners resolution request
      *
      * @param eventFQNs     List of event class FQNs which have to be supported by endpoint.
      * @param listener      Result listener {@link IFetchEventListeners}}
@@ -326,7 +324,7 @@ public:
      *
      * @return Request ID of submitted request
      */
-    virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListeners* listener) = 0;
+    virtual std::int32_t findEventListeners(const std::list<std::string>& eventFQNs, IFetchEventListenersPtr listener) = 0;
 
     /**
      * @brief Adds a new log record to the log storage.
@@ -364,11 +362,12 @@ public:
     virtual void setLogUploadStrategy(ILogUploadStrategyPtr strategy) = 0;
 
     /**
-     * Retrieves the Channel Manager
+     * @brief  Retrieves the Channel Manager
      */
     virtual IKaaChannelManager&                 getChannelManager() = 0;
+
     /**
-     * Retrieves the client's public and private key.
+     * @brief Retrieves the client's public and private key.
      *
      * Required in user implementation of an operation data channel.
      * Public key hash (SHA-1) is used by servers as identification number to
@@ -381,28 +380,51 @@ public:
     virtual const KeyPair&                    getClientKeyPair() = 0;
 
     /**
-     * Retrieves Kaa operations data multiplexer
+     * @brief Set new access token for a current endpoint.
+     *
+     * @param[in] token     The new access token.
+     *
+     */
+    virtual void                              setEndpointAccessToken(std::string token) = 0;
+
+    /**
+     * @brief Generate new access token for a current endpoint.
+     *
+     * @return  The new access token.
+     *
+     */
+    virtual std::string                       refreshEndpointAccessToken() = 0;
+
+    /**
+     * @brief Retrieve an access token for a current endpoint.
+     *
+     * @return  The current access token.
+     */
+    virtual std::string                       getEndpointAccessToken() = 0;
+
+    /**
+     * @brief Retrieves Kaa operations data multiplexer
      *
      * @return @link IKaaDataMultiplexer @endlink object
      */
     virtual IKaaDataMultiplexer&              getOperationMultiplexer() = 0;
 
     /**
-     * Retrieves Kaa operations data demultiplexer
+     * @brief Retrieves Kaa operations data demultiplexer
      *
      * @return @link IKaaDataDemultiplexer @endlink object
      */
     virtual IKaaDataDemultiplexer&            getOperationDemultiplexer() = 0;
 
     /**
-     * Retrieves Kaa bootstrap data multiplexer
+     * @brief Retrieves Kaa bootstrap data multiplexer
      *
      * @return @link IKaaDataMultiplexer @endlink object
      */
     virtual IKaaDataMultiplexer&              getBootstrapMultiplexer() = 0;
 
     /**
-     * Retrieves Kaa bootstrap data demultiplexer
+     * @brief Retrieves Kaa bootstrap data demultiplexer
      *
      * @return @link IKaaDataDemultiplexer @endlink object
      */

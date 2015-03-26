@@ -300,7 +300,7 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
                             if (project.getPlatform()==Platform.ANDROID) {
                                 binaryFileData.setContentType("application/vnd.android.package-archive");
                             } else if (project.getPlatform()==Platform.JAVA) {
-                                binaryFileData.setContentType("application/x-compressed");
+                                binaryFileData.setContentType("application/java-archive");
                             }
                             cacheService.putProjectFile(dataKey, binaryFileData);
                         }
