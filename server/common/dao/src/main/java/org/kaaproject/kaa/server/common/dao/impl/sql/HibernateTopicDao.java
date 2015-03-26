@@ -87,7 +87,7 @@ public class HibernateTopicDao extends HibernateAbstractDao<Topic> implements To
     @Override
     public Topic findTopicByAppIdAndName(String appId, String topicName) {
         Topic topic = null;
-        LOG.debug("Find topics by application id {} and name", appId, topicName);
+        LOG.debug("Find topic by application id [{}] and name [{}]", appId, topicName);
         if (isNotBlank(appId) && isNotBlank(topicName)) {
             topic = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
                     Restrictions.and(
