@@ -131,32 +131,6 @@ public class HibernateTopicDao extends HibernateAbstractDao<Topic> implements To
     }
 
     @Override
-    public Topic save(Topic topic) {
-        LOG.debug("Saving endpoint group {}", topic);
-        if (topic.getId() != null) {
-            Topic existing = findById(String.valueOf(topic.getId()));
-            if (existing != null) {
-                Set<EndpointGroup> existingGroups = existing.getEndpointGroups();
-                if (existingGroups != null && !existingGroups.isEmpty()) {
-                    Set<EndpointGroup> groups = topic.getEndpointGroups();
-                    if (groups != null && !groups.isEmpty()) {
-                        groups.addAll(existingGroups);
-                    } else {
-                        topic.setEndpointGroups(existingGroups);
-                    }
-                }
-            }
-        }
-        topic = super.save(topic);
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Saving result: {}.", topic);
-        } else {
-            LOG.debug("Saving result: {}.", topic != null);
-        }
-        return topic;
-    }
-
-    @Override
     public Topic getNextSeqNumber(String topicId) {
         Topic topic = findById(topicId);
         topic.incrementSeqNumber();
