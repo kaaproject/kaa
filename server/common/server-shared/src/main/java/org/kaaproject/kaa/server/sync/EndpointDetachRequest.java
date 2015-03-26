@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class EndpointDetachRequest {
+public final class EndpointDetachRequest {
     private int requestId;
     private String endpointKeyHash;
 

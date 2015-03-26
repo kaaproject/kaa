@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +33,6 @@ import org.kaaproject.kaa.client.channel.EventTransport;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
-import org.kaaproject.kaa.client.channel.KaaTransport;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.channel.MetaDataTransport;
 import org.kaaproject.kaa.client.channel.NotificationTransport;
@@ -61,6 +59,7 @@ import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
 import org.kaaproject.kaa.client.configuration.base.ConfigurationManager;
 import org.kaaproject.kaa.client.configuration.base.ResyncConfigurationManager;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
+import org.kaaproject.kaa.client.context.TransportContext;
 import org.kaaproject.kaa.client.event.DefaultEventManager;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
@@ -120,6 +119,7 @@ import org.slf4j.LoggerFactory;
  * </p>
  *
  * @author Yaroslav Zeygerman
+ * @author Andrew Shvayka
  *
  * @see KaaClient
  * @see AbstractHttpClient
@@ -146,12 +146,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
     private final DefaultEndpointRegistrationManager endpointRegistrationManager;
 
-    private final DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
-    private final DefaultBootstrapDataProcessor bootstrapDataProcessor = new DefaultBootstrapDataProcessor();
-    private final MetaDataTransport metaDataTransport = new DefaultMetaDataTransport();
     private final KaaInternalChannelManager channelManager;
-
-    private final EndpointObjectHash publicKeyHash;
 
     protected final KaaClientPlatformContext context;
     protected final KaaClientStateListener stateListener;
@@ -176,86 +171,32 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
         kaaClientState = new KaaClientPropertiesState(context.createPersistentStorage(), context.getBase64(), this.properties);
 
-        BootstrapTransport bootstrapTransport = new DefaultBootstrapTransport(this.properties.getApplicationToken());
-        ProfileTransport profileTransport = new DefaultProfileTransport();
-        EventTransport eventTransport = new DefaultEventTransport(kaaClientState);
-        NotificationTransport notificationTransport = new DefaultNotificationTransport();
-        ConfigurationTransport configurationTransport = new DefaultConfigurationTransport();
-        UserTransport userTransport = new DefaultUserTransport();
-        RedirectionTransport redirectionTransport = new DefaultRedirectionTransport();
-        LogTransport logTransport = new DefaultLogTransport();
+        TransportContext transportContext = buildTransportContext(properties, kaaClientState);
 
-        operationsDataProcessor.setConfigurationTransport(configurationTransport);
-        operationsDataProcessor.setEventTransport(eventTransport);
-        operationsDataProcessor.setMetaDataTransport(metaDataTransport);
-        operationsDataProcessor.setNotificationTransport(notificationTransport);
-        operationsDataProcessor.setProfileTransport(profileTransport);
-        operationsDataProcessor.setRedirectionTransport(redirectionTransport);
-        operationsDataProcessor.setUserTransport(userTransport);
-        operationsDataProcessor.setLogTransport(logTransport);
+        channelManager = buildChannelManager(bootstrapServers, transportContext);
 
-        bootstrapDataProcessor.setBootstrapTransport(bootstrapTransport);
-
-        profileManager = new DefaultProfileManager(profileTransport);
-        bootstrapManager = new DefaultBootstrapManager(bootstrapTransport);
-        notificationManager = new DefaultNotificationManager(kaaClientState, context.getExecutorContext(), notificationTransport);
-        eventManager = new DefaultEventManager(kaaClientState, context.getExecutorContext(), eventTransport);
-        eventFamilyFactory = new EventFamilyFactory(eventManager, context.getExecutorContext());
-        endpointRegistrationManager = new DefaultEndpointRegistrationManager(kaaClientState, context.getExecutorContext(), userTransport,
-                profileTransport);
-
-        channelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers);
-        channelManager.setConnectivityChecker(context.createConnectivityChecker());
-
-        logCollector = new DefaultLogCollector(logTransport, context.getExecutorContext(), channelManager);
-
-        KaaDataChannel bootstrapChannel = new DefaultBootstrapChannel(this, kaaClientState);
-        bootstrapChannel.setMultiplexer(bootstrapDataProcessor);
-        bootstrapChannel.setDemultiplexer(bootstrapDataProcessor);
-        channelManager.addChannel(bootstrapChannel);
-
-        KaaDataChannel operationsChannel = new DefaultOperationTcpChannel(kaaClientState, channelManager);
-        operationsChannel.setMultiplexer(operationsDataProcessor);
-        operationsChannel.setDemultiplexer(operationsDataProcessor);
-        channelManager.addChannel(operationsChannel);
-
+        bootstrapManager = buildBootstrapManager(properties, kaaClientState, transportContext);
         bootstrapManager.setChannelManager(channelManager);
+        
+        profileManager = buildProfileManager(properties, kaaClientState, transportContext);
+        notificationManager = buildNotificationManager(properties, kaaClientState, transportContext);
+        eventManager = buildEventManager(properties, kaaClientState, transportContext);
+        endpointRegistrationManager = buildRegistrationManager(properties, kaaClientState, transportContext);
+        logCollector = buildLogCollector(properties, kaaClientState, transportContext);
+        configurationManager = buildConfigurationManager(properties, kaaClientState, transportContext);
 
-        publicKeyHash = EndpointObjectHash.fromSHA1(kaaClientState.getPublicKey().getEncoded());
-        metaDataTransport.setClientProperties(this.properties);
-        metaDataTransport.setClientState(kaaClientState);
-        metaDataTransport.setEndpointPublicKeyhash(publicKeyHash);
-        metaDataTransport.setTimeout(LONG_POLL_TIMEOUT);
-
-        bootstrapTransport.setBootstrapManager(bootstrapManager);
-
-        configurationManager = new ResyncConfigurationManager(properties);
-
-        profileTransport.setProfileManager(profileManager);
-        profileTransport.setClientProperties(this.properties);
-        eventTransport.setEventManager(eventManager);
-        notificationTransport.setNotificationProcessor(notificationManager);
-        configurationTransport.setConfigurationHashContainer(configurationManager.getConfigurationHashContainer());
-        configurationTransport.setConfigurationProcessor(configurationManager.getConfigurationProcessor());
-        // TODO: this should be part of properties and provided by user during
-        // SDK generation
-        configurationTransport.setResyncOnly(true);
-        userTransport.setEndpointRegistrationProcessor(endpointRegistrationManager);
-        redirectionTransport.setBootstrapManager(bootstrapManager);
-        logTransport.setLogProcessor(logCollector);
-        initTransports(Arrays.asList(bootstrapTransport, profileTransport, eventTransport, notificationTransport, configurationTransport,
-                userTransport, logTransport));
-    }
-
-    private void initTransports(List<KaaTransport> transports) {
-        for (KaaTransport transport : transports) {
-            transport.setChannelManager(channelManager);
-            transport.setClientState(kaaClientState);
-        }
-    }
-
-    public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
-        return context.createHttpClient(url, privateKey, publicKey, remotePublicKey);
+        transportContext.getRedirectionTransport().setBootstrapManager(bootstrapManager);
+        transportContext.getBootstrapTransport().setBootstrapManager(bootstrapManager);
+        transportContext.getProfileTransport().setProfileManager(profileManager);
+        transportContext.getEventTransport().setEventManager(eventManager);
+        transportContext.getNotificationTransport().setNotificationProcessor(notificationManager);
+        transportContext.getConfigurationTransport().setConfigurationHashContainer(configurationManager.getConfigurationHashContainer());
+        transportContext.getConfigurationTransport().setConfigurationProcessor(configurationManager.getConfigurationProcessor());
+        transportContext.getUserTransport().setEndpointRegistrationProcessor(endpointRegistrationManager);
+        transportContext.getLogTransport().setLogProcessor(logCollector);
+        transportContext.initTransports(this.channelManager, this.kaaClientState);
+        
+        eventFamilyFactory = new EventFamilyFactory(eventManager, context.getExecutorContext());
     }
 
     @Override
@@ -555,5 +496,129 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     @Override
     public void setDetachedListener(DetachEndpointFromUserCallback listener) {
         endpointRegistrationManager.setDetachedCallback(listener);
+    }
+
+    protected TransportContext buildTransportContext(KaaClientProperties properties, KaaClientState kaaClientState) {
+        BootstrapTransport bootstrapTransport = buildBootstrapTransport(properties, kaaClientState);
+        ProfileTransport profileTransport = buildProfileTransport(properties, kaaClientState);
+        EventTransport eventTransport = buildEventTransport(properties, kaaClientState);
+        NotificationTransport notificationTransport = buildNotificationTransport(properties, kaaClientState);
+        ConfigurationTransport configurationTransport = buildConfigurationTransport(properties, kaaClientState);
+        UserTransport userTransport = buildUserTransport(properties, kaaClientState);
+        RedirectionTransport redirectionTransport = buildRedirectionTransport(properties, kaaClientState);
+        LogTransport logTransport = buildLogTransport(properties, kaaClientState);
+
+        MetaDataTransport mdTransport = new DefaultMetaDataTransport();
+        EndpointObjectHash publicKeyHash = EndpointObjectHash.fromSHA1(kaaClientState.getPublicKey().getEncoded());
+        mdTransport = new DefaultMetaDataTransport();
+        mdTransport.setClientProperties(properties);
+        mdTransport.setClientState(kaaClientState);
+        mdTransport.setEndpointPublicKeyhash(publicKeyHash);
+        mdTransport.setTimeout(LONG_POLL_TIMEOUT);
+
+        return new TransportContext(mdTransport, bootstrapTransport, profileTransport, eventTransport, notificationTransport,
+                configurationTransport, userTransport, redirectionTransport, logTransport);
+    }
+
+    protected KaaInternalChannelManager buildChannelManager(Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers, TransportContext transportContext) {
+        KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers);
+        channelManager.setConnectivityChecker(context.createConnectivityChecker());
+
+        DefaultBootstrapDataProcessor bootstrapDataProcessor = new DefaultBootstrapDataProcessor();
+        bootstrapDataProcessor.setBootstrapTransport(transportContext.getBootstrapTransport());
+
+        DefaultOperationDataProcessor operationsDataProcessor = new DefaultOperationDataProcessor();
+        operationsDataProcessor.setConfigurationTransport(transportContext.getConfigurationTransport());
+        operationsDataProcessor.setEventTransport(transportContext.getEventTransport());
+        operationsDataProcessor.setMetaDataTransport(transportContext.getMdTransport());
+        operationsDataProcessor.setNotificationTransport(transportContext.getNotificationTransport());
+        operationsDataProcessor.setProfileTransport(transportContext.getProfileTransport());
+        operationsDataProcessor.setRedirectionTransport(transportContext.getRedirectionTransport());
+        operationsDataProcessor.setUserTransport(transportContext.getUserTransport());
+        operationsDataProcessor.setLogTransport(transportContext.getLogTransport());
+
+        KaaDataChannel bootstrapChannel = new DefaultBootstrapChannel(this, kaaClientState);
+        bootstrapChannel.setMultiplexer(bootstrapDataProcessor);
+        bootstrapChannel.setDemultiplexer(bootstrapDataProcessor);
+        channelManager.addChannel(bootstrapChannel);
+
+        KaaDataChannel operationsChannel = new DefaultOperationTcpChannel(kaaClientState, channelManager);
+        operationsChannel.setMultiplexer(operationsDataProcessor);
+        operationsChannel.setDemultiplexer(operationsDataProcessor);
+        channelManager.addChannel(operationsChannel);
+
+        return channelManager;
+    }
+    
+
+    protected ResyncConfigurationManager buildConfigurationManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
+        return new ResyncConfigurationManager(properties);
+    }
+
+    protected DefaultLogCollector buildLogCollector(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
+        return new DefaultLogCollector(transportContext.getLogTransport(), context.getExecutorContext(), channelManager);
+    }
+
+    protected DefaultEndpointRegistrationManager buildRegistrationManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
+        return new DefaultEndpointRegistrationManager(kaaClientState, context.getExecutorContext(),
+                transportContext.getUserTransport(), transportContext.getProfileTransport());
+    }
+
+    protected DefaultEventManager buildEventManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
+        return new DefaultEventManager(kaaClientState, context.getExecutorContext(), transportContext.getEventTransport());
+    }
+
+    protected DefaultNotificationManager buildNotificationManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
+        return new DefaultNotificationManager(kaaClientState, context.getExecutorContext(), transportContext.getNotificationTransport());
+    }
+
+    protected DefaultProfileManager buildProfileManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
+        return new DefaultProfileManager(transportContext.getProfileTransport());
+    }
+
+    protected DefaultBootstrapManager buildBootstrapManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
+        return new DefaultBootstrapManager(transportContext.getBootstrapTransport());
+    }
+
+    public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
+        return context.createHttpClient(url, privateKey, publicKey, remotePublicKey);
+    }
+
+    protected BootstrapTransport buildBootstrapTransport(KaaClientProperties properties, KaaClientState kaaClientState) {
+        return new DefaultBootstrapTransport(properties.getApplicationToken());
+    }
+
+    protected ProfileTransport buildProfileTransport(KaaClientProperties properties, KaaClientState kaaClientState) {
+        ProfileTransport transport = new DefaultProfileTransport();
+        transport.setClientProperties(this.properties);
+        return transport;
+    }
+
+    protected ConfigurationTransport buildConfigurationTransport(KaaClientProperties properties, KaaClientState kaaClientState) {
+        ConfigurationTransport transport = new DefaultConfigurationTransport();
+        // TODO: this should be part of properties and provided by user during
+        // SDK generation
+        transport.setResyncOnly(true);
+        return transport;
+    }
+
+    protected NotificationTransport buildNotificationTransport(KaaClientProperties properties, KaaClientState kaaClientState) {
+        return new DefaultNotificationTransport();
+    }
+
+    protected DefaultUserTransport buildUserTransport(KaaClientProperties properties, KaaClientState kaaClientState) {
+        return new DefaultUserTransport();
+    }
+
+    protected EventTransport buildEventTransport(KaaClientProperties properties, KaaClientState kaaClientState) {
+        return new DefaultEventTransport(kaaClientState);
+    }
+
+    protected LogTransport buildLogTransport(KaaClientProperties properties, KaaClientState kaaClientState) {
+        return new DefaultLogTransport();
+    }
+
+    protected RedirectionTransport buildRedirectionTransport(KaaClientProperties properties, KaaClientState kaaClientState) {
+        return new DefaultRedirectionTransport();
     }
 }

@@ -27,7 +27,7 @@
 #include "avro/Encoder.hh"
 #include "avro/Decoder.hh"
 
-namespace kaa {
+namespace kaa_notification {
 struct BasicNotification {
     std::string data;
     BasicNotification() :
@@ -37,11 +37,11 @@ struct BasicNotification {
 
 }
 namespace avro {
-template<> struct codec_traits<kaa::BasicNotification> {
-    static void encode(Encoder& e, const kaa::BasicNotification& v) {
+template<> struct codec_traits<kaa_notification::BasicNotification> {
+    static void encode(Encoder& e, const kaa_notification::BasicNotification& v) {
         avro::encode(e, v.data);
     }
-    static void decode(Decoder& d, kaa::BasicNotification& v) {
+    static void decode(Decoder& d, kaa_notification::BasicNotification& v) {
         avro::decode(d, v.data);
     }
 };

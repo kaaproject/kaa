@@ -146,14 +146,14 @@ public:
      * @param[in] topicId      The id of the optional topic.
      * @param[in] forceSync    Indicates whether the subscription request should be sent immediately to
      *                         the Operations server. If <i> false </i>, the request postpones to the explicit
-     *                         call of @link sync() @endlink or to the first call of @link subscribeToTopic() @endlink,
-     *                         @link subscribeToTopics() @endlink, @link unsubscribeFromTopic() @endlink or
-     *                         @link unsubscribeFromTopics() @endlink with the <i> true </i> value for the
-     *                         @link forceSync @endlink parameter.
+     *                         call of @link syncTopicSubscriptions() @endlink or to the first call of
+     *                         @link subscribeToTopic() @endlink, @link subscribeToTopics() @endlink,
+     *                         @link unsubscribeFromTopic() @endlink or @link unsubscribeFromTopics() @endlink
+     *                         with the <i> true </i> value for the @link forceSync @endlink parameter.
      *
      * @throw UnavailableTopicException Throws if the unknown topic id is provided or the topic isn't optional.
      *
-     * @see sync()
+     * @see syncTopicSubscriptions()
      */
     virtual void subscribeToTopic(const std::string& id, bool forceSync = true) = 0;
 
@@ -163,14 +163,14 @@ public:
      * @param[in] topicIds     The list of optional topic id-s.
      * @param[in] forceSync    Indicates whether the subscription request should be sent immediately to
      *                         the Operations server. If <i> false </i>, the request postpones to the explicit
-     *                         call of @link sync() @endlink or to the first call of @link subscribeToTopic() @endlink,
-     *                         @link subscribeToTopics() @endlink, @link unsubscribeFromTopic() @endlink or
-     *                         @link unsubscribeFromTopics() @endlink with the <i> true </i> value for the
-     *                         @link forceSync @endlink parameter.
+     *                         call of @link syncTopicSubscriptions() @endlink or to the first call of
+     *                         @link subscribeToTopic() @endlink, @link subscribeToTopics() @endlink,
+     *                         @link unsubscribeFromTopic() @endlink or @link unsubscribeFromTopics() @endlink
+     *                         with the <i> true </i> value for the @link forceSync @endlink parameter.
      *
      * @throw UnavailableTopicException Throws if the unknown topic id is provided or the topic isn't optional.
      *
-     * @see sync()
+     * @see syncTopicSubscriptions()
      */
     virtual void subscribeToTopics(const std::list<std::string>& idList, bool forceSync = true) = 0;
 
@@ -179,16 +179,15 @@ public:
      *
      * @param[in] topicId      The id of the optional topic.
      * @param[in] forceSync    Indicates whether the subscription request should be sent immediately to
-     *                         the Operations server or postponed. If <i> false </i>, the request is postponed either
-     *                         to the explicit
-     *                         call of @link sync() @endlink or to the first call of one of the following functions
-     *                         with the @link forceSync @endlink parameter set to <i> true </i>:
+     *                         the Operations server. If <i> false </i>, the request postpones to the explicit
+     *                         call of @link syncTopicSubscriptions() @endlink or to the first call of
      *                         @link subscribeToTopic() @endlink, @link subscribeToTopics() @endlink,
-     *                         @link unsubscribeFromTopic() @endlink or @link unsubscribeFromTopics() @endlink .
+     *                         @link unsubscribeFromTopic() @endlink or @link unsubscribeFromTopics() @endlink
+     *                         with the <i> true </i> value for the @link forceSync @endlink parameter.
      *
      * @throw UnavailableTopicException Throws if the unknown topic id is provided or the topic isn't optional.
      *
-     * @see sync()
+     * @see syncTopicSubscriptions()
      */
     virtual void unsubscribeFromTopic(const std::string& id, bool forceSync = true) = 0;
 
@@ -197,16 +196,15 @@ public:
      *
      * @param[in] topicId      The list of optional topic id-s.
      * @param[in] forceSync    Indicates whether the subscription request should be sent immediately to
-     *                         the Operations server or postponed. If <i> false </i>, the request is postponed either
-     *                         to the explicit
-     *                         call of @link sync() @endlink or to the first call of one of the following functions
-     *                         with the @link forceSync @endlink parameter set to <i> true </i>:
+     *                         the Operations server. If <i> false </i>, the request postpones to the explicit
+     *                         call of @link syncTopicSubscriptions() @endlink or to the first call of
      *                         @link subscribeToTopic() @endlink, @link subscribeToTopics() @endlink,
-     *                         @link unsubscribeFromTopic() @endlink or @link unsubscribeFromTopics() @endlink .
+     *                         @link unsubscribeFromTopic() @endlink or @link unsubscribeFromTopics() @endlink
+     *                         with the <i> true </i> value for the @link forceSync @endlink parameter.
      *
      * @throw UnavailableTopicException Throws if the unknown topic id is provided or the topic isn't optional.
      *
-     * @see sync()
+     * @see syncTopicSubscriptions()
      */
     virtual void unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync = true) = 0;
 
@@ -387,7 +385,7 @@ public:
      * @param[in] token     The new access token.
      *
      */
-    virtual void                              setEndpointAccessToken(std::string token) = 0;
+    virtual void                              setEndpointAccessToken(const std::string& token) = 0;
 
     /**
      * @brief Generate new access token for a current endpoint.

@@ -22,7 +22,7 @@ import java.util.UUID;
  * Class representing unique transaction id for transactions initiated using
  * {@link Transactable}.<br>
  */
-public class TransactionId {
+public final class TransactionId {
     private final String id;
 
     /**
