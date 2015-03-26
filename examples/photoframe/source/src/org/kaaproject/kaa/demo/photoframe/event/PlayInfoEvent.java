@@ -17,8 +17,8 @@
 package org.kaaproject.kaa.demo.photoframe.event;
 
 /**
- * The Class PlayInfoEvent.
- * Event class is used to notify UI components of the receipt of the information about remote device play status.
+ * An event class which is used to notify UI components of 
+ * the receipt of the information about the play status of a remote device.
  */
 public class PlayInfoEvent extends BasicEndpointEvent {
 

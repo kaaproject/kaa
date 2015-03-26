@@ -34,7 +34,7 @@
 
 using namespace kaa;
 
-// Profile container based on AbstractProfileContainer class that is provided by the SDK
+// A profile container thast is based on the AbstractProfileContainer class provided by the SDK.
 class UserProfileContainer : public AbstractProfileContainer<Profile> {
 public:
     UserProfileContainer(const Profile& profile) : profile_(profile) { }
@@ -48,7 +48,7 @@ public:
     {
         profile_ = profile;
 
-        // Update method should be called to notify about changes in the profile.
+        // Notify about changes in the profile.
         updateProfile();
     }
 private:
@@ -79,7 +79,7 @@ int main()
 
     kaaClient.setProfileContainer(std::make_shared<UserProfileContainer>(clientProfile));
 
-    // Setupping configuration subunit
+    // Set up a configuration subunit.
 
     IConfigurationStoragePtr storage(std::make_shared<FileConfigurationStorage>("configuration.bin"));
     kaaClient.setConfigurationStorage(storage);

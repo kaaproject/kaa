@@ -17,8 +17,8 @@
 package org.kaaproject.kaa.demo.photoframe.event;
 
 /**
- * The Class DeviceInfoEvent.
- * Event class is used to notify UI components of the receipt of the information about remote device.
+ * An event class which is used to notify UI components 
+ * of the receipt of the information about a remote device.
  */
 public class DeviceInfoEvent extends BasicEndpointEvent {
 

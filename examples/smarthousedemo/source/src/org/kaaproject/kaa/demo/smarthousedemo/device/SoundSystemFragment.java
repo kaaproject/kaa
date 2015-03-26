@@ -59,7 +59,7 @@ public class SoundSystemFragment extends DeviceFragment implements OnCompletionL
 
     private static final int PROGRESS_UPDATE_DELAY = 1000;
     
-    /** Instance of android media player used for music playback */
+    /** An instance of the Android media player used for music playback. */
     private MediaPlayer player;
     private AudioManager mAudioManager;
     private SettingsContentObserver mSettingsContentObserver;
@@ -354,7 +354,7 @@ public class SoundSystemFragment extends DeviceFragment implements OnCompletionL
         }
     }
     
-    /** Start url playback by android media player */
+    /** Start the url playback by the Android media player. */
     private void playUrl(String url) {
         if (playbackInfo.getSong() == null || !playbackInfo.getSong().getUrl().equals(url)) {
             SongInfo song = mSongMap.get(url);

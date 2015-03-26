@@ -19,8 +19,7 @@ package org.kaaproject.kaa.demo.cellmonitor.event;
 import org.kaaproject.kaa.client.KaaClient;
 
 /**
- * The Class LogSent.
- * Event class is used to notify UI components when {@link KaaClient#addLogRecord(org.kaaproject.kaa.demo.cellmonitor.CellMonitorLog)} 
+ * An event class that is used to notify UI components when {@link KaaClient#addLogRecord(org.kaaproject.kaa.demo.cellmonitor.CellMonitorLog)} 
  * operation was performed.
  */
 public class LogSent {

@@ -29,7 +29,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class DeviceDataSource {
 
-    // Database fields
+    // Database fields.
     private SQLiteDatabase database;
     private DeviceSqlLiteHelper dbHelper;
     private String[] allColumns = { DeviceSqlLiteHelper.COLUMN_ID,
@@ -94,7 +94,8 @@ public class DeviceDataSource {
           devices.add(device);
           cursor.moveToNext();
         }
-        // make sure to close the cursor
+        
+        // Close the cursor.
         cursor.close();
         return devices;
     }

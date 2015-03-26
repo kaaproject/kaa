@@ -30,9 +30,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 /**
- * The Class DevicesAdapter.
- * Implementation of {@link BaseAdapter} class. Used as adapter class for devices list view.
- * Provides list item views with information about remote devices.
+ * The implementation of the {@link BaseAdapter} class. Used as an adapter class for the devices list view.
+ * Provides list item views with the information about remote devices.
  */
 public class DevicesAdapter extends BaseAdapter {
     

@@ -35,10 +35,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * The Class SlideshowFragment.
- * Implementation of {@link Fragment} class. 
- * Represents view pager displaying views with images from album identified by bucketId.
- * Handles image view switching with constant {@link #SLIDESHOW_INTERVAL_MS} interval.
+ * The implementation of the {@link Fragment} class. 
+ * Represents a view pager displaying views with images from the album identified by the bucketId.
+ * Handles the image view switching with the constant {@link #SLIDESHOW_INTERVAL_MS} interval.
  */
 public class SlideshowFragment extends Fragment {
 

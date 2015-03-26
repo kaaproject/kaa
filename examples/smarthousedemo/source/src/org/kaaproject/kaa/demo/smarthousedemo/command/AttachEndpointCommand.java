@@ -26,7 +26,7 @@ import org.kaaproject.kaa.demo.smarthousedemo.exception.CommandException;
 import android.util.Log;
 
 /**
- * Implementation of attach endpoint to user command.
+ * The implementation of the attach endpoint to user command.
  */
 public class AttachEndpointCommand extends AbstractClientCommand<String> {
 

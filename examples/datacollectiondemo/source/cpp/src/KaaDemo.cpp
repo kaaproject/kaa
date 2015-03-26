@@ -34,7 +34,7 @@ int main()
     Kaa::init();
     IKaaClient& kaaClient =  Kaa::getKaaClient();
     /*
-     * Create the log upload strategy and specifies the threshold record count to initiate upload.
+     * Create the log upload strategy and specify the threshold record count to initiate the upload.
      */
     const std::size_t DEFAULT_UPLOAD_COUNT_THRESHOLD = 5;
     std::shared_ptr<DefaultLogUploadStrategy> uploadStrategy(new DefaultLogUploadStrategy(&kaaClient.getChannelManager()));

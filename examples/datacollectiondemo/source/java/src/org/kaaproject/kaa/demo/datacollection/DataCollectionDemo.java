@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class demonstrates Kaa log upload subsystem.
+ * A demo application that shows how to use the Kaa logging API. 
  */
 public class DataCollectionDemo {
 
@@ -48,7 +48,7 @@ public class DataCollectionDemo {
     public static void main(String[] args) {
         LOG.info("Data collection demo started");
         LOG.info("--= Press any key to exit =--");
-        // Creating Kaa desktop client instance
+        //Create a Kaa client with the Kaa desktop context.
         KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener() {
             @Override
             public void onStarted() {
@@ -61,21 +61,21 @@ public class DataCollectionDemo {
             }
         });
 
-
-        //setting custom upload strategy.
-        //default upload strategy sends logs
-        //after some count or some logs size reached
-        //this one sends every log record
+        // Set a custom strategy for uploading logs.
+        // The default strategy uploads logs after either a threshold logs count 
+        // or a threshold logs size has been reached.
+        // The following custom strategy uploads every log record as soon as it is created.
         kaaClient.setLogUploadStrategy(new DefaultLogUploadStrategy() {
             @Override
             public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
                 return status.getRecordCount() >= 1 ? UPLOAD : NOOP;
             }
         });
-        // starting Kaa client
+        
+        // Start the Kaa client and connect it to the Kaa server.
         kaaClient.start();
 
-        // sending logs in loop
+        // Send logs in a loop.
         for (LogData log : generateLogs(LOGS_TO_SEND_COUNT)) {
             kaaClient.addLogRecord(log);
             LOG.info("Log record {} sent", log.toString());
@@ -88,7 +88,7 @@ public class DataCollectionDemo {
             LOG.error("IOException was caught", e);
         }
 
-        // stoping client
+        // Stop the Kaa client and release all the resources which were in use.
         kaaClient.stop();
         LOG.info("Data collection demo stopped");
     }

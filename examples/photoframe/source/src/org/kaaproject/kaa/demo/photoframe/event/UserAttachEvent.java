@@ -17,8 +17,8 @@
 package org.kaaproject.kaa.demo.photoframe.event;
 
 /**
- * The Class UserAttachEvent.
- * Event class is used to notify UI components about completion of endpoint attach operation.
+ * An event class which is used to notify UI components 
+ * of the completion of the endpoint attach operation.
  */
 public class UserAttachEvent extends BasicEvent {
 
