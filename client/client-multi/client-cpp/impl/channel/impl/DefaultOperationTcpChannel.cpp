@@ -114,27 +114,31 @@ void DefaultOperationTcpChannel::onKaaSync(const KaaSyncResponse& message)
     if (!isFirstResponseReceived_) {
         KAA_LOG_INFO(boost::format("Channel \"%1%\". First response received") % getId());
         isFirstResponseReceived_ = true;
-        if (isPendingSyncRequest_) {
+    }
+    if (isPendingSyncRequest_) {
+        ackTypes_.clear();
+        KAA_MUTEX_UNLOCKING("channelGuard_");
+        KAA_UNLOCK(lock);
+        KAA_MUTEX_UNLOCKED("channelGuard_");
+        KAA_LOG_INFO(boost::format("Channel \"%1%\". Pending request detected. Starting SYNC...") % getId());
+        syncAll();
+    } else if (!ackTypes_.empty()) {
+        KAA_LOG_INFO(boost::format("Channel \"%1%\". Have %2% acknowledgment requests. Starting SYNC...")
+                % getId() % ackTypes_.size());
+
+        auto ackTypesCopy = ackTypes_;
+        ackTypes_.clear();
+
+        if (ackTypesCopy.size() > 1) {
             KAA_MUTEX_UNLOCKING("channelGuard_");
             KAA_UNLOCK(lock);
             KAA_MUTEX_UNLOCKED("channelGuard_");
-            KAA_LOG_INFO(boost::format("Channel \"%1%\". Pending request detected. Starting SYNC...") % getId());
             syncAll();
-        } else if (!ackTypes_.empty()) {
-            KAA_LOG_INFO(boost::format("Channel \"%1%\". Have %2% acknowledgment requests. Starting SYNC...")
-                    % getId() % ackTypes_.size());
-            if (ackTypes_.size() > 1) {
-                KAA_MUTEX_UNLOCKING("channelGuard_");
-                KAA_UNLOCK(lock);
-                KAA_MUTEX_UNLOCKED("channelGuard_");
-                syncAll();
-            } else {
-                KAA_MUTEX_UNLOCKING("channelGuard_");
-                KAA_UNLOCK(lock);
-                KAA_MUTEX_UNLOCKED("channelGuard_");
-                sync(*ackTypes_.begin());
-            }
-            ackTypes_.clear();
+        } else {
+            KAA_MUTEX_UNLOCKING("channelGuard_");
+            KAA_UNLOCK(lock);
+            KAA_MUTEX_UNLOCKED("channelGuard_");
+            sync(*ackTypesCopy.begin());
         }
     }
 }
