@@ -145,27 +145,4 @@ public abstract class DaoUtil {
         }
         return data;
     }
-
-    /**
-     * This method convert <code>User</code> object
-     * to <code>TenantAdminDto</code> object
-     *
-     * @param user the <code>User</code> object
-     * @return converted <code>TenantAdminDto</code> object
-     */
-    public static TenantAdminDto convertUserToTenantAdmin(User user) {
-        TenantAdminDto admin = null;
-        if (user != null) {
-            admin = new TenantAdminDto();
-            Tenant tenant = user.getTenant();
-            if (tenant != null) {
-                admin.setId(String.valueOf(tenant.getId()));
-                admin.setName(tenant.getName());
-            }
-            admin.setUserId(String.valueOf(user.getId()));
-            admin.setUsername(user.getUsername());
-            admin.setExternalUid(user.getExternalUid());
-        }
-        return admin;
-    }
 }

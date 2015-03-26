@@ -16,6 +16,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <cstdlib>
+
 #include "kaa/common/EndpointObjectHash.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 
@@ -80,7 +82,7 @@ BOOST_AUTO_TEST_CASE(EmptyHash)
     BOOST_CHECK(hash != empty);
 }
 
-void createInvalidHashObject() { EndpointObjectHash hash(nullptr, 0); }
+void createInvalidHashObject() { EndpointObjectHash hash(nullptr, 1 + std::rand()); }
 
 BOOST_AUTO_TEST_CASE(InvalidData)
 {

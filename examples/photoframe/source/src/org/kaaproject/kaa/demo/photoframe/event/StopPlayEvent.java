@@ -17,8 +17,8 @@
 package org.kaaproject.kaa.demo.photoframe.event;
 
 /**
- * The Class StopPlayEvent.
- * Event class is used to notify UI components about received command to stop album playback.
+ * An event class which is used to notify UI components 
+ * of a received command to stop the album playback.
  */
 public class StopPlayEvent {
 

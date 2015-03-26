@@ -43,6 +43,10 @@ public interface SandboxResources extends ClientBundle {
     @NotStrict
     @Source(SandboxStyle.DEFAULT_CSS)
     SandboxStyle sandboxStyle();
+    
+    @ImageOptions(width = 77, height = 50)
+    @Source("images/kaa_logo.png")
+    ImageResource kaaLogo();
 
     @ImageOptions(width = 128, height = 128)
     @Source("images/android.png")
@@ -56,56 +60,52 @@ public interface SandboxResources extends ClientBundle {
     @Source("images/c.png")
     ImageResource c();
 
-    @ImageOptions(width = 128, height = 128)
+    @ImageOptions(width = 114, height = 128)
     @Source("images/cpp.png")
     ImageResource cpp();
     
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/config_feature.png")
     ImageResource configFeature();
-
-    @ImageOptions(width = 24, height = 24)
-    @Source("images/config_feature_down.png")
-    ImageResource configFeatureDown();
-
-    @ImageOptions(width = 24, height = 24)
+    
+    @ImageOptions(width = 32, height = 28)
     @Source("images/profiling_feature.png")
     ImageResource profilingFeature();
 
-    @ImageOptions(width = 24, height = 24)
-    @Source("images/profiling_feature_down.png")
-    ImageResource profilingFeatureDown();
-    
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/notification_feature.png")
     ImageResource notificationFeature();
-
-    @ImageOptions(width = 24, height = 24)
-    @Source("images/notification_feature_down.png")
-    ImageResource notificationFeatureDown();
     
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/event_feature.png")
     ImageResource eventFeature();
 
-    @ImageOptions(width = 24, height = 24)
-    @Source("images/event_feature_down.png")
-    ImageResource eventFeatureDown();
-    
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/user_verifier_feature.png")
     ImageResource userVerifierFeature();
 
-    @ImageOptions(width = 24, height = 24)
-    @Source("images/user_verifier_feature_down.png")
-    ImageResource userVerifierFeatureDown();
-    
-    @ImageOptions(width = 24, height = 24)
+    @ImageOptions(width = 32, height = 28)
     @Source("images/data_collection_feature.png")
     ImageResource dataCollectionFeature();
 
+    @ImageOptions(width = 28, height = 28)
+    @Source("images/android_platform.png")
+    ImageResource androidPlatform();
+
     @ImageOptions(width = 24, height = 24)
-    @Source("images/data_collection_feature_down.png")
-    ImageResource dataCollectionFeatureDown();
-    
+    @Source("images/android_platform.png")
+    ImageResource androidPlatformFilter();
+
+    @ImageOptions(width = 28, height = 28)
+    @Source("images/java_platform.png")
+    ImageResource javaPlatform();
+
+    @ImageOptions(width = 24, height = 24)
+    @Source("images/c_platform.png")
+    ImageResource cPlatform();
+
+    @ImageOptions(width = 25, height = 28)
+    @Source("images/cpp_platform.png")
+    ImageResource cppPlatform();
+
 }

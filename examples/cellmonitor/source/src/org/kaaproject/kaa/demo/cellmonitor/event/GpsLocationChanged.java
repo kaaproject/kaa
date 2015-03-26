@@ -17,8 +17,7 @@
 package org.kaaproject.kaa.demo.cellmonitor.event;
 
 /**
- * The Class GpsLocationChanged.
- * Event class is used to notify UI components after phone GPS location was changed.
+ * An event class that is used to notify UI components after a phone GPS location was changed.
  */
 public class GpsLocationChanged {
 

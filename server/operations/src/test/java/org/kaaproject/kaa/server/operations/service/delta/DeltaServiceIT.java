@@ -155,7 +155,7 @@ public class DeltaServiceIT {
     public void beforeTest() throws IOException, DeltaCalculatorException {
         String dataSchema = OperationsServiceIT.getResourceAsString(OperationsServiceIT.DATA_SCHEMA_LOCATION);
         PROFILE_BYTES = avroConverter.encode(ENDPOINT_PROFILE);
-        PROFILE_JSON = avroConverter.endcodeToJson(ENDPOINT_PROFILE);
+        PROFILE_JSON = avroConverter.encodeToJson(ENDPOINT_PROFILE);
 
         tenant = new TenantDto();
         tenant.setName(CUSTOMER_ID);

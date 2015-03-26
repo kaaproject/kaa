@@ -98,6 +98,7 @@ void test_create_limited_storage()
 
     error_code = ext_limited_log_storage_create(&storage, logger, 100, ALLOWED_PERCENTAGE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    ext_log_storage_destroy(storage);
 
     error_code = ext_limited_log_storage_create(&storage, logger, 100, ALL_LOGS_PERCENTAGE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);

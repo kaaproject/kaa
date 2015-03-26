@@ -39,7 +39,7 @@ public abstract class HomeSectionAdapter<T> extends ArrayAdapter<T> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
 
-        //TODO: is there another way to verify that it is view of appropriate type ?
+        //TODO: is there another way to verify that this  is the view of an appropriate type?
         if(row == null || !(row instanceof RelativeLayout)) {
             LayoutInflater inflater = ((Activity) getContext()).getLayoutInflater();
             row = inflater.inflate(R.layout.home_list_item, parent, false);

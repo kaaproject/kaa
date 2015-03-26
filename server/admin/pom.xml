@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014 CyberVision, Inc.
+  Copyright 2014-2015 CyberVision, Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -59,17 +59,15 @@
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-codeserver</artifactId>
-            <scope>runtime</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.jdramaix</groupId>
             <artifactId>gwtchosen</artifactId>
-            <version>${gwtchosen.version}</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.gwtquery</groupId>
             <artifactId>gwtquery</artifactId>
-            <version>${gwtquery.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -453,7 +451,6 @@
                             <goal>css</goal>
                         </goals>
                         <configuration>
-                            <generateDirectory>${basedir}/src/main/java</generateDirectory>
                         </configuration>                        
                     </execution>
                 </executions>
@@ -690,25 +687,6 @@
                                         </versionRange>
                                         <goals>
                                             <goal>process</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore></ignore>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>
-                                            org.codehaus.mojo
-                                        </groupId>
-                                        <artifactId>
-                                            gwt-maven-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [2.6.1,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>i18n</goal>
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>

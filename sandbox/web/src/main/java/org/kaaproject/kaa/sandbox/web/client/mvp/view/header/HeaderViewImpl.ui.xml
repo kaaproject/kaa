@@ -21,24 +21,22 @@
     
         <ui:with field='sandboxStyle' type='org.kaaproject.kaa.sandbox.web.client.SandboxResources.SandboxStyle'/>  
     
-        <ui:style>
-            .rightPadding { padding-right: 20px; }
-        </ui:style>
-    
-        <gwt:HorizontalPanel height="100%" width="100%">
-            <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-                <gwt:HorizontalPanel height="100%">
-		            <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-		                <gwt:HTMLPanel ui:field="headerTitlePanel" styleName="{sandboxStyle.bAppHeaderTitle}" width="100%" height="100%"/>
-		            </gwt:cell>
-                </gwt:HorizontalPanel>
-            </gwt:cell>
-            <gwt:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
-                <gwt:HorizontalPanel height="100%" addStyleNames='{style.rightPadding}'>
-                    <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-                        <kaa:ActionsLabel ui:field="settingsLabel" visible="false"/>
-                    </gwt:cell>
-                </gwt:HorizontalPanel>                              
-            </gwt:cell>	    	
-        </gwt:HorizontalPanel>
+        <gwt:DockLayoutPanel unit="PX" height="100%" width="100%" addStyleNames="{sandboxStyle.appHeaderPanel}">
+            <gwt:west size="100">
+                <gwt:Image ui:field="logoImage"/>
+            </gwt:west>
+            <gwt:center>
+               <gwt:ResizeLayoutPanel ui:field="centerResizePanel" width="100%">
+                   <gwt:HorizontalPanel ui:field="centerPanel" width="100%">
+                       <gwt:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+                           <gwt:FlowPanel ui:field="headerTitlePanel" styleName="{sandboxStyle.title}" />    
+                       </gwt:cell>
+                       <gwt:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE" width="600px" >                         
+                           <kaa:HeaderMenuItems ui:field="headerMenuItems" />
+                       </gwt:cell> 
+                   </gwt:HorizontalPanel>
+               </gwt:ResizeLayoutPanel>
+            </gwt:center>
+        </gwt:DockLayoutPanel>
+
 </ui:UiBinder>

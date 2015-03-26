@@ -34,17 +34,17 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_TOPICS_ENDPOINT_GROUP_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_TOPICS_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.ENDPOINT_GROUP_TOPICS_TOPIC_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TOPIC_APPLICATION_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TOPIC_CREATED_TIME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TOPIC_CREATED_USERNAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TOPIC_DESCRIPTION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TOPIC_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TOPIC_SEQUENCE_NUMBER;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TOPIC_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TOPIC_TYPE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_TOPICS_ENDPOINT_GROUP_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_TOPICS_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_TOPICS_TOPIC_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_CREATED_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_CREATED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_DESCRIPTION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_SEQUENCE_NUMBER;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_TYPE;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity

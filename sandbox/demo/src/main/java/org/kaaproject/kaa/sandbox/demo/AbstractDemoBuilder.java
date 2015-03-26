@@ -15,20 +15,18 @@
  */
 package org.kaaproject.kaa.sandbox.demo;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import net.iharder.Base64;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
@@ -42,8 +40,6 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.sandbox.demo.projects.Feature;
-import org.kaaproject.kaa.sandbox.demo.projects.Platform;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.sandbox.demo.projects.ProjectsConfig;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
@@ -82,6 +78,8 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
     private static final String TENANT_DEVELOPER_PASSWORD_VAR = "\\$\\{tenant_developer_password\\}";
     
     private static final String PROJECTS_XML = "projects.xml";
+    
+    private static final String ICON_PNG = "icon.png";
 
     private static boolean usersCreated = false;
     
@@ -161,11 +159,23 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
         logger.info("Demo application build finished.");
         try {
             for (Project projectConfig : projectConfigs) {
-                if (projectConfig.getPlatform()==Platform.ANDROID) {
+                String iconBase64 = loadIconBase64(projectConfig.getId());
+                projectConfig.setIconBase64(iconBase64);
+                switch (projectConfig.getPlatform()) {
+                case ANDROID:
                     sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
-                }
-                else if (projectConfig.getPlatform()==Platform.JAVA) {
+                    break;
+                case C:
+                    sdkKey.setTargetPlatform(SdkPlatform.C);
+                    break;
+                case CPP:
+                    sdkKey.setTargetPlatform(SdkPlatform.CPP);
+                    break;
+                case JAVA:
                     sdkKey.setTargetPlatform(SdkPlatform.JAVA);
+                    break;
+                default:
+                    break;
                 }
                 projectConfig.setSdkKeyBase64(Base64.encodeObject(sdkKey, Base64.URL_SAFE));
             }
@@ -234,6 +244,19 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
         InputStream is = getClass().getClassLoader().getResourceAsStream(getResourcePath(PROJECTS_XML));
         ProjectsConfig projectsConfig = (ProjectsConfig)unmarshaller.unmarshal(is);
         return projectsConfig.getProjects();
+    }
+    
+    private String loadIconBase64(String projectId) throws IOException {
+        String base64 = null;
+        InputStream is = getClass().getClassLoader().getResourceAsStream(getResourcePath(projectId + "/" + ICON_PNG));
+        if (is == null) {
+            is = getClass().getClassLoader().getResourceAsStream(getResourcePath(ICON_PNG));
+        }
+        if (is != null) {
+            byte[] data = IOUtils.toByteArray(is);
+            base64 = Base64.encodeBytes(data);
+        }
+        return base64;
     }
 
     protected void loginKaaAdmin(AdminClient client) throws Exception {

@@ -17,8 +17,8 @@
 package org.kaaproject.kaa.demo.photoframe.event;
 
 /**
- * The Class UserDetachEvent.
- * Event class is used to notify UI components about completion of endpoint detach operation.
+ * An event class which is used to notify UI components 
+ * of the completion of the endpoint detach operation.
  */
 public class UserDetachEvent extends BasicEvent {
 

@@ -24,10 +24,10 @@ import org.kaaproject.kaa.demo.smarthousedemo.exception.CommandException;
 
 import android.util.Log;
 
-/** Implementation of attach to user command. */
+/** The implementation of the attach to user command. */
 public class AttachUserCommand extends AbstractClientCommand<Boolean> {
 
-    /** Default user account access token */
+    /** The default user account access token. */
     private static final String USER_ACCESS_TOKEN = "dummy_acess_token";
     
     private String userAccount;

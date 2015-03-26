@@ -15,17 +15,10 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.SCHEMA_APPLICATION_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.SCHEMA_CREATED_TIME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.SCHEMA_CREATED_USERNAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.SCHEMA_DESCRIPTION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.SCHEMA_ENDPOINT_COUNT;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.SCHEMA_MAJOR_VERSION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.SCHEMA_MINOR_VERSION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.SCHEMA_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.SCHEMA_SCHEMA;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.SCHEMA_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
+import org.kaaproject.kaa.common.dto.SchemaDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,10 +30,17 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
-import org.kaaproject.kaa.common.dto.SchemaDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_CREATED_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_CREATED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_DESCRIPTION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_ENDPOINT_COUNT;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_MAJOR_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_MINOR_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_SCHEMA;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SCHEMA_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
 @Table(name = SCHEMA_TABLE_NAME)

@@ -27,6 +27,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.kaaproject.kaa.client.channel.EventTransport;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.transact.TransactionId;
 import org.kaaproject.kaa.common.endpoint.gen.Event;
@@ -52,18 +53,17 @@ public class DefaultEventManager implements EventManager {
     private final Map<Integer, EventListenersRequestBinding> eventListenersRequests = new HashMap<Integer, EventListenersRequestBinding>();
     private final EventTransport transport;
     private final KaaClientState state;
+    private final ExecutorContext executorContext;
 
     private Boolean isEngaged = false;
     private final Map<TransactionId, List<Event>> transactions = new HashMap<>();
-
 
     private class EventListenersRequestBinding {
         private final FindEventListenersCallback listener;
         private final EventListenersRequest request;
         private Boolean sent;
 
-        public EventListenersRequestBinding(FindEventListenersCallback listener,
-                                            EventListenersRequest request) {
+        public EventListenersRequestBinding(FindEventListenersCallback listener, EventListenersRequest request) {
             this.listener = listener;
             this.request = request;
             this.sent = false;
@@ -86,17 +86,17 @@ public class DefaultEventManager implements EventManager {
         }
     }
 
-    public DefaultEventManager(KaaClientState state, EventTransport transport) {
+    public DefaultEventManager(KaaClientState state, ExecutorContext executorContext, EventTransport transport) {
         this.state = state;
         this.transport = transport;
+        this.executorContext = executorContext;
     }
 
     @Override
     public void fillEventListenersSyncRequest(EventSyncRequest request) {
         if (!eventListenersRequests.isEmpty()) {
-            LOG.debug("There are {} unresolved eventListenersResolution request{}"
-                    , eventListenersRequests.size()
-                    , (eventListenersRequests.size() == 1 ? "" : "s")); //NOSONAR
+            LOG.debug("There are {} unresolved eventListenersResolution request{}", eventListenersRequests.size(),
+                    (eventListenersRequests.size() == 1 ? "" : "s")); // NOSONAR
             List<EventListenersRequest> requests = new ArrayList<EventListenersRequest>();
             for (Map.Entry<Integer, EventListenersRequestBinding> entry : eventListenersRequests.entrySet()) {
                 if (!entry.getValue().isSent()) {
@@ -123,8 +123,7 @@ public class DefaultEventManager implements EventManager {
     @Override
     public void produceEvent(String eventFqn, byte[] data, String target, TransactionId trxId) {
         if (trxId == null) {
-            LOG.info("Producing event [eventClassFQN: {}, target: {}]"
-                    , eventFqn, (target != null ? target : "broadcast")); //NOSONAR
+            LOG.info("Producing event [eventClassFQN: {}, target: {}]", eventFqn, (target != null ? target : "broadcast")); // NOSONAR
             synchronized (eventsGuard) {
                 currentEvents.add(new Event(state.getAndIncrementEventSeqNum(), eventFqn, ByteBuffer.wrap(data), null, target));
             }
@@ -132,8 +131,8 @@ public class DefaultEventManager implements EventManager {
                 transport.sync();
             }
         } else {
-            LOG.info("Adding event [eventClassFQN: {}, target: {}] to transaction {}"
-                    , eventFqn, (target != null ? target : "broadcast"), trxId); //NOSONAR
+            LOG.info("Adding event [eventClassFQN: {}, target: {}] to transaction {}", eventFqn, (target != null ? target : "broadcast"),
+                    trxId); // NOSONAR
             synchronized (trxGuard) {
                 List<Event> events = transactions.get(trxId);
                 if (events != null) {
@@ -151,26 +150,29 @@ public class DefaultEventManager implements EventManager {
     }
 
     @Override
-    public void onGenericEvent(String eventFqn, byte[] data, String source) {
+    public void onGenericEvent(final String eventFqn, final byte[] data, final String source) {
         LOG.info("Received event [eventClassFQN: {}]", eventFqn);
-        for (EventFamily family : registeredEventFamilies) {
+        for (final EventFamily family : registeredEventFamilies) {
             LOG.info("Lookup event fqn {} in family {}", eventFqn, family);
             if (family.getSupportedEventFQNs().contains(eventFqn)) {
                 LOG.info("Event fqn {} found in family {}", eventFqn, family);
-                family.onGenericEvent(eventFqn, data, source);
+                executorContext.getCallbackExecutor().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        family.onGenericEvent(eventFqn, data, source);
+                    }
+                });
             }
         }
     }
 
     @Override
-    public int findEventListeners(List<String> eventClassFQNs,
-                                  FindEventListenersCallback listener) {
+    public int findEventListeners(List<String> eventClassFQNs, FindEventListenersCallback listener) {
         int requestId = new Random().nextInt();
         EventListenersRequest request = new EventListenersRequest(requestId, eventClassFQNs);
         EventListenersRequestBinding bind = new EventListenersRequestBinding(listener, request);
         eventListenersRequests.put(requestId, bind);
-        LOG.debug("Adding event listener resolution request. Request ID: {}"
-                , requestId);
+        LOG.debug("Adding event listener resolution request. Request ID: {}", requestId);
         if (!isEngaged) {
             transport.sync();
         }
@@ -178,8 +180,7 @@ public class DefaultEventManager implements EventManager {
     }
 
     @Override
-    public void eventListenersResponseReceived(
-            List<EventListenersResponse> response) {
+    public void eventListenersResponseReceived(List<EventListenersResponse> response) {
         for (EventListenersResponse singleResponse : response) {
             LOG.debug("Received event listener resolution response: {}", response);
             EventListenersRequestBinding bind = eventListenersRequests.remove(singleResponse.getRequestId());
@@ -197,17 +198,17 @@ public class DefaultEventManager implements EventManager {
     public List<Event> pollPendingEvents() {
         return getPendingEvents(true);
     }
-    
+
     @Override
     public List<Event> peekPendingEvents() {
         return getPendingEvents(false);
     }
-    
+
     private List<Event> getPendingEvents(boolean clear) {
         List<Event> pendingEvents = new ArrayList<Event>();
         synchronized (eventsGuard) {
             pendingEvents.addAll(currentEvents);
-            if(clear){
+            if (clear) {
                 currentEvents.clear();
             }
         }

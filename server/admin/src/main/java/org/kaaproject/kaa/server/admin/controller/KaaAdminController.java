@@ -28,6 +28,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -281,16 +282,6 @@ public class KaaAdminController {
     }
 
     /**
-     * Delete application by its id.
-     *
-     */
-    @RequestMapping(value="delApplication", method=RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void deleteApplication(@RequestParam(value="applicationId") String applicationId) throws KaaAdminServiceException {
-        kaaAdminService.deleteApplication(applicationId);
-    }
-
-    /**
      * Gets the user profile of current user.
      *
      */
@@ -348,16 +339,6 @@ public class KaaAdminController {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
-    }
-
-    /**
-     * Delete the user by his id.
-     *
-     */
-    @RequestMapping(value="delUser", method=RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void deleteUser(@RequestParam(value="userId") String userId) throws KaaAdminServiceException {
-        kaaAdminService.deleteUser(userId);
     }
 
     /**
@@ -963,12 +944,26 @@ public class KaaAdminController {
      *
      */
     @RequestMapping(value="sendNotification", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
-    @ResponseStatus(value = HttpStatus.OK)
-    public void sendNotification(
+    @ResponseBody
+    public NotificationDto sendNotification(
             @RequestPart("notification") NotificationDto notification,
             @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
         byte[] data = getFileContent(file);
-        kaaAdminService.sendNotification(notification, data);
+        return kaaAdminService.sendNotification(notification, data);
+    }
+    
+    /**
+     * Send unicast notification, with information from specific file, to the client identified by clientKeyHash.
+     *
+     */
+    @RequestMapping(value="sendUnicastNotification", method=RequestMethod.POST, consumes = { "multipart/mixed", "multipart/form-data" })
+    @ResponseBody
+    public EndpointNotificationDto sendUnicastNotification(
+            @RequestPart("notification") NotificationDto notification,
+            @RequestPart("clientKeyHash") String clientKeyHash,
+            @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
+        byte[] data = getFileContent(file);
+        return kaaAdminService.sendUnicastNotification(notification, clientKeyHash, data);
     }
 
     /**
@@ -1089,7 +1084,7 @@ public class KaaAdminController {
      */
     @RequestMapping(value="userConfiguration", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
-    public void editEndpointGroup(@RequestBody EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException {
+    public void editUserConfiguration(@RequestBody EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException {
         kaaAdminService.editUserConfiguration(endpointUserConfiguration);
     }
 

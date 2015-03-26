@@ -17,12 +17,14 @@
 package org.kaaproject.kaa.client.channel;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.common.TransportType;
 
 /**
- * Channel is responsible for sending/receiving data to/from the endpoint server.
+ * Channel is responsible for sending/receiving data to/from the endpoint
+ * server.
  *
  * @author Yaroslav Zeygerman
  *
@@ -32,11 +34,22 @@ public interface KaaDataChannel {
     /**
      * Updates the channel's state of the specific service.
      *
-     * @param type transport type of the service.
+     * @param type
+     *            transport type of the service.
      * @see TransportType
      *
      */
     void sync(TransportType type);
+
+    /**
+     * Updates the channel's state of the specific service.
+     *
+     * @param type
+     *            transport types to sync.
+     * @see TransportType
+     *
+     */
+    void sync(Set<TransportType> types);
 
     /**
      * Updates the channel's state of all supported services.
@@ -44,17 +57,30 @@ public interface KaaDataChannel {
     void syncAll();
 
     /**
-     * Notifies channel about successful acknowledgment of the sync only in case of smth change.
+     * Notifies channel about successful acknowledgment of the sync only in case
+     * of smth change.
      *
-     * @param type transport type of the service.
+     * @param type
+     *            transport type of the service.
      * @see TransportType
      *
      */
     void syncAck(TransportType type);
 
     /**
-     * Retrieves the channel's id.
-     * It should be unique in existing channels scope.
+     * Notifies channel about successful acknowledgment of the sync only in case
+     * of smth change.
+     *
+     * @param type
+     *            transport type to ack.
+     * @see TransportType
+     *
+     */
+    void syncAck(Set<TransportType> type);
+
+    /**
+     * Retrieves the channel's id. It should be unique in existing channels
+     * scope.
      *
      * @return the channel's id.
      *
@@ -82,7 +108,8 @@ public interface KaaDataChannel {
     /**
      * Sets the response demultiplexer for this channel.
      *
-     * @param demultiplexer demultiplexer instance to be set.
+     * @param demultiplexer
+     *            demultiplexer instance to be set.
      * @see KaaDataDemultiplexer
      *
      */
@@ -91,7 +118,8 @@ public interface KaaDataChannel {
     /**
      * Sets the request multiplexer for this channel.
      *
-     * @param multiplexer multiplexer instance to be set.
+     * @param multiplexer
+     *            multiplexer instance to be set.
      * @see KaaDataMultiplexer
      *
      */
@@ -100,7 +128,8 @@ public interface KaaDataChannel {
     /**
      * Sets the server's parameters for the current channel.
      *
-     * @param server server's parameters.
+     * @param server
+     *            server's parameters.
      * @see TransportConnectionInfo
      *
      */
@@ -118,14 +147,16 @@ public interface KaaDataChannel {
     /**
      * Sets connectivity checker to the current channel.
      *
-     * @param checker platform-dependent connectivity checker.
+     * @param checker
+     *            platform-dependent connectivity checker.
      * @see ConnectivityChecker
      *
      */
     void setConnectivityChecker(ConnectivityChecker checker);
 
     /**
-     * Retrieves the map of transport types and their directions supported by this channel.
+     * Retrieves the map of transport types and their directions supported by
+     * this channel.
      *
      * @return the map of transport types.
      * @see TransportType
@@ -135,19 +166,22 @@ public interface KaaDataChannel {
     Map<TransportType, ChannelDirection> getSupportedTransportTypes();
 
     /**
-     * Shuts down the channel instance. All connections and threads should be terminated. The instance can no longer be used.
+     * Shuts down the channel instance. All connections and threads should be
+     * terminated. The instance can no longer be used.
      *
      */
     void shutdown();
 
     /**
-     * Pauses the channel's workflow. The channel should stop all network activity.
+     * Pauses the channel's workflow. The channel should stop all network
+     * activity.
      *
      */
     void pause();
 
     /**
-     * Resumes the channel's workflow. The channel should restore previous connection.
+     * Resumes the channel's workflow. The channel should restore previous
+     * connection.
      *
      */
     void resume();

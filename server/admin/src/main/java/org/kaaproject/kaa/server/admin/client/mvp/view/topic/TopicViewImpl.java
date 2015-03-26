@@ -80,7 +80,7 @@ public class TopicViewImpl extends BaseDetailsViewImpl implements TopicView, Val
         detailsTable.setWidget(3, 0, mandatoryLabel);
         detailsTable.setWidget(3, 1, mandatory);
         mandatory.addValueChangeHandler(this);
-
+        
         description = new SizedTextArea(1024);
         description.setWidth("100%");
         description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
@@ -88,12 +88,19 @@ public class TopicViewImpl extends BaseDetailsViewImpl implements TopicView, Val
         detailsTable.setWidget(4, 0, descriptionLabel);
         detailsTable.setWidget(4, 1, description);
         description.addInputHandler(this);
-
+        
         detailsTable.getCellFormatter().setVerticalAlignment(4, 0, HasVerticalAlignment.ALIGN_TOP);
 
         sendNotification = new Button(Utils.constants.sendNotification());
         detailsTable.setWidget(5, 0, sendNotification);
         sendNotification.setVisible(!create);
+
+        if (!create) {
+            saveButton.setVisible(false);
+            name.setEnabled(false);
+            mandatory.setEnabled(false);
+            description.getTextArea().setEnabled(false);
+        }
 
         name.setFocus(true);
     }

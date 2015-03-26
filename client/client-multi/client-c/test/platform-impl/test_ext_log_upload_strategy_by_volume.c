@@ -364,15 +364,13 @@ void test_on_timeout_log_channel_not_found()
     error_code = ext_log_upload_strategy_on_timeout(strategy);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
-    kaa_transport_channel_interface_t log_channel;
-    memset(&log_channel, 0, sizeof(kaa_transport_channel_interface_t));
-    log_channel.context = NULL;
-    log_channel.get_protocol_id = &test_get_protocol_id;
-    log_channel.get_supported_services = &test_get_supported_services;
-    log_channel.sync_handler = &test_sync_handler;
-    log_channel.destroy = NULL;
-    log_channel.init = &test_init_channel;
-    log_channel.set_access_point =&test_set_access_point;
+    kaa_transport_channel_interface_t log_channel = { NULL
+                                                    , NULL
+                                                    , &test_sync_handler
+                                                    , &test_init_channel
+                                                    , &test_set_access_point
+                                                    , &test_get_protocol_id
+                                                    , &test_get_supported_services };
 
     error_code = kaa_channel_manager_add_transport_channel(channel_manager, &log_channel, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);

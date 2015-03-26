@@ -23,12 +23,19 @@ import java.nio.ByteBuffer;
 
 /**
  * The interface Endpoint configuration dao.
- * @param <T>  the type parameter
+ *
+ * @param <T> the type parameter
  */
 public interface EndpointConfigurationDao<T extends EndpointConfiguration> extends Dao<T, ByteBuffer> {
 
+    /**
+     * Save endpoint configuration
+     *
+     * @param dto endpoint configuration
+     * @return saved endpoint configuration
+     */
     T save(EndpointConfigurationDto dto);
-    
+
     /**
      * Find endpoint configuration by hash.
      *

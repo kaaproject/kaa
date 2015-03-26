@@ -53,6 +53,8 @@
   <xs:sequence>
     <xs:element name="name" type="xs:string"/>
     <xs:element name="description" type="xs:string"/>
+    <xs:element name="details" type="xs:string"/> 
+    <xs:element name="iconBase64" type="xs:string"/>
     <xs:element name="platform" type="platform"/>
     <xs:element name="features">
         <xs:simpleType>

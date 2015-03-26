@@ -31,7 +31,7 @@ public class DeviceSqlLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "devices.db";
     private static final int DATABASE_VERSION = 1;
  
-    // Database creation sql statement
+    // The database creation sql statement.
     private static final String DATABASE_CREATE = "create table "
         + TABLE_DEVICES + "(" + 
             COLUMN_ID + " integer primary key autoincrement, " + 

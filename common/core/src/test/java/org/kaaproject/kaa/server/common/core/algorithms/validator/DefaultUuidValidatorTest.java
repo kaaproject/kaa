@@ -72,7 +72,7 @@ public class DefaultUuidValidatorTest {
         record.put(CommonConstants.UUID_FIELD, uuid);
 
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(avroSchema);
-        String configurationBody = converter.endcodeToJson(record);
+        String configurationBody = converter.encodeToJson(record);
 
         DefaultUuidValidator uuidGenerator = new DefaultUuidValidator(configuraionSchema, new BaseDataFactory());
         KaaData processedConfigurationBody = uuidGenerator.validateUuidFields(new BaseData(configuraionSchema, configurationBody), null);
@@ -98,8 +98,8 @@ public class DefaultUuidValidatorTest {
         recordOld.put(CommonConstants.UUID_FIELD, uuidOld);
 
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(avroSchema);
-        String configurationBodyNew = converter.endcodeToJson(recordNew);
-        String configurationBodyOld = converter.endcodeToJson(recordOld);
+        String configurationBodyNew = converter.encodeToJson(recordNew);
+        String configurationBodyOld = converter.encodeToJson(recordOld);
 
         DefaultUuidValidator uuidGenerator = new DefaultUuidValidator(configuraionSchema, new BaseDataFactory());
         KaaData processedConfigurationBody = uuidGenerator.validateUuidFields(recordNew, recordOld);
@@ -149,8 +149,8 @@ public class DefaultUuidValidatorTest {
         rootOld.put(CommonConstants.UUID_FIELD, AvroUtils.generateUuidObject());
 
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(avroSchema);
-        String configurationBodyNew = converter.endcodeToJson(rootNew);
-        String configurationBodyOld = converter.endcodeToJson(rootOld);
+        String configurationBodyNew = converter.encodeToJson(rootNew);
+        String configurationBodyOld = converter.encodeToJson(rootOld);
 
         DefaultUuidValidator uuidGenerator = new DefaultUuidValidator(configuraionSchema, new BaseDataFactory());
         KaaData processedConfigurationBody = uuidGenerator.validateUuidFields(rootNew, rootOld);
@@ -207,8 +207,8 @@ public class DefaultUuidValidatorTest {
         rootOld.put(CommonConstants.UUID_FIELD, uuidNew2);
 
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(avroSchema);
-        String configurationBodyNew = converter.endcodeToJson(rootNew);
-        String configurationBodyOld = converter.endcodeToJson(rootOld);
+        String configurationBodyNew = converter.encodeToJson(rootNew);
+        String configurationBodyOld = converter.encodeToJson(rootOld);
 
         DefaultUuidValidator uuidGenerator = new DefaultUuidValidator(configuraionSchema, new BaseDataFactory());
         KaaData processedConfigurationBody = uuidGenerator.validateUuidFields(rootNew, rootOld);
@@ -262,8 +262,8 @@ public class DefaultUuidValidatorTest {
         rootOld.put(CommonConstants.UUID_FIELD, AvroUtils.generateUuidObject());
 
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(avroSchema);
-        String configurationBodyNew = converter.endcodeToJson(rootNew);
-        String configurationBodyOld = converter.endcodeToJson(rootOld);
+        String configurationBodyNew = converter.encodeToJson(rootNew);
+        String configurationBodyOld = converter.encodeToJson(rootOld);
 
         DefaultUuidValidator uuidGenerator = new DefaultUuidValidator(configuraionSchema, new BaseDataFactory());
         KaaData processedConfigurationBody = uuidGenerator.validateUuidFields(rootNew, rootOld);
@@ -302,8 +302,8 @@ public class DefaultUuidValidatorTest {
         rootOld.put(CommonConstants.UUID_FIELD, AvroUtils.generateUuidObject());
 
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(avroSchema);
-        String configurationBodyNew = converter.endcodeToJson(rootNew);
-        String configurationBodyOld = converter.endcodeToJson(rootOld);
+        String configurationBodyNew = converter.encodeToJson(rootNew);
+        String configurationBodyOld = converter.encodeToJson(rootOld);
 
         DefaultUuidValidator uuidGenerator = new DefaultUuidValidator(configuraionSchema, new BaseDataFactory());
         KaaData processedConfigurationBody = uuidGenerator.validateUuidFields(rootNew, rootOld);
@@ -331,7 +331,7 @@ public class DefaultUuidValidatorTest {
         rootNew.put("recordField", recordNew1);
 
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(avroSchema);
-        String configurationBodyNew = converter.endcodeToJson(rootNew);
+        String configurationBodyNew = converter.encodeToJson(rootNew);
 
         DefaultUuidValidator uuidGenerator = new DefaultUuidValidator(configuraionSchema, new BaseDataFactory());
         KaaData processedConfigurationBody = uuidGenerator.validateUuidFields(rootNew, null);

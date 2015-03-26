@@ -371,8 +371,10 @@
                                 <delete dir="tmp_deb_control" />
                                 <delete dir="tmp_rpm_control" />
                                 <delete dir="tmp_sh" />
+                                <delete dir="tmp_dao_resources" />
                                 <mkdir dir="tmp_deb_control" />
                                 <mkdir dir="tmp_rpm_control" />
+                                <mkdir dir="tmp_dao_resources" />
                                 <mkdir dir="tmp_sh" />
                                 <copy todir="tmp_deb_control"
                                     overwrite="true" flatten="true">
@@ -526,17 +528,8 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>${db.context}</src>
-                                    <type>file</type>
-                                    <mapper>
-                                        <type>perm</type>
-                                        <filemode>755</filemode>
-                                        <prefix>/usr/lib/${script.server.name}/conf</prefix>
-                                    </mapper>
-                                </data>
-                                <data>
-                                    <src>${db.property}</src>
-                                    <type>file</type>
+                                    <src>${project.basedir}/tmp_dao_resources</src>
+                                    <type>directory</type>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>
@@ -669,10 +662,7 @@
                                             <location>../common/dao/src/main/resources/dao.properties</location>
                                         </source>
                                         <source>
-                                            <location>${db.context}</location>
-                                        </source>
-                                        <source>
-                                            <location>${db.property}</location>
+                                            <location>tmp_dao_resources</location>
                                         </source>
                                     </sources>
                                 </mapping>
@@ -755,10 +745,6 @@
         </profile>
         <profile>
             <id>mongo-dao</id>
-            <properties>
-                <db.context>../common/nosql/mongo-dao/src/main/resources/common-dao-mongodb-context.xml</db.context>
-                <db.property>../common/nosql/mongo-dao/src/main/resources/common-dao-mongodb.properties</db.property>
-            </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -769,13 +755,34 @@
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>prepare-mongo-dao-resources</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <copy file="../common/nosql/mongo-dao/src/main/resources/common-dao-mongodb-context.xml" 
+                                        todir="tmp_dao_resources" overwrite="true" flatten="true"/>
+                                        <copy file="../common/nosql/mongo-dao/src/main/resources/common-dao-mongodb.properties" 
+                                        todir="tmp_dao_resources" overwrite="true" flatten="true"/>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>cassandra-dao</id>
-            <properties>
-                <db.context>../common/nosql/cassandra-dao/src/main/resources/common-dao-cassandra-context.xml</db.context>
-                <db.property>../common/nosql/cassandra-dao/src/main/resources/common-dao-cassandra.properties</db.property>
-            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
@@ -783,6 +790,31 @@
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>prepare-cassandra-dao-resources</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <copy file="../common/nosql/cassandra-dao/src/main/resources/common-dao-cassandra-context.xml" 
+                                        todir="tmp_dao_resources" overwrite="true" flatten="true"/>
+                                        <copy file="../common/nosql/cassandra-dao/src/main/resources/common-dao-cassandra.properties" 
+                                        todir="tmp_dao_resources" overwrite="true" flatten="true"/>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>

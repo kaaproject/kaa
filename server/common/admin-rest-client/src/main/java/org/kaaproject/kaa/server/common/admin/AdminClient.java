@@ -153,14 +153,22 @@ public class AdminClient {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("endpointGroupId", endpointGroup.getId());
         params.add("topicId", topic.getId());
-        restTemplate.postForObject(url + "addTopicToEpGroup", params, EndpointGroupDto.class);
+        restTemplate.postForObject(url + "addTopicToEpGroup", params, Void.class);
     }
 
-    public void sendNotification(NotificationDto notification, String notificationResource) throws Exception {
+    public NotificationDto sendNotification(NotificationDto notification, String notificationResource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("notification", notification);
         params.add("file", getFileResource(notificationResource));
-        restTemplate.postForObject(url + "sendNotification", params, NotificationDto.class);
+        return restTemplate.postForObject(url + "sendNotification", params, NotificationDto.class);
+    }
+    
+    public EndpointNotificationDto sendUnicastNotification(NotificationDto notification, String clientKeyHash, String notificationResource) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("notification", notification);
+        params.add("clientKeyHash", clientKeyHash);
+        params.add("file", getFileResource(notificationResource));
+        return restTemplate.postForObject(url + "sendUnicastNotification", params, EndpointNotificationDto.class);
     }
 
     public ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws Exception {
@@ -203,16 +211,20 @@ public class AdminClient {
         return restTemplate.postForObject(url + "configuration", configuration, ConfigurationDto.class);
     }
     
-    public void activateConfiguration(String configurationId) throws Exception {
-        restTemplate.postForLocation(url + "activateConfiguration", configurationId);
+    public ConfigurationDto activateConfiguration(String configurationId) throws Exception {
+        return restTemplate.postForObject(url + "activateConfiguration", configurationId, ConfigurationDto.class);
+    }
+    
+    public void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration) throws Exception {
+        restTemplate.postForLocation(url + "userConfiguration", endpointUserConfiguration);
     }
     
     public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws Exception {
         return restTemplate.postForObject(url + "profileFilter", profileFilter, ProfileFilterDto.class);
     }
     
-    public void activateProfileFilter(String profileFilterId) throws Exception {
-        restTemplate.postForLocation(url + "activateProfileFilter", profileFilterId);
+    public ProfileFilterDto activateProfileFilter(String profileFilterId) throws Exception {
+        return restTemplate.postForObject(url + "activateProfileFilter", profileFilterId, ProfileFilterDto.class);
     }
     
     public UserDto editUser(UserDto user) throws Exception {

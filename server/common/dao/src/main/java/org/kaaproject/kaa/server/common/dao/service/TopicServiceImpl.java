@@ -16,11 +16,13 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -103,7 +105,18 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public List<TopicDto> findVacantTopicsByEndpointGroupId(String endpointGroupId) {
         validateId(endpointGroupId, "Can't find vacant topics. Invalid endpoint group id " + endpointGroupId);
-        return convertDtoList(topicDao.findVacantTopicsByGroupId(endpointGroupId));
+        List<TopicDto> topics = Collections.emptyList();
+        EndpointGroup endpointGroup = endpointGroupDao.findById(endpointGroupId);
+        String applicationId = null;
+        if (endpointGroup != null) {
+            applicationId = endpointGroup.getApplicationId();
+        }
+        if (isNotBlank(applicationId)) {
+            topics = convertDtoList(topicDao.findVacantTopicsByGroupId(applicationId, endpointGroupId));
+        } else {
+            LOG.warn("Can't get application id from endpoint group.");
+        }
+        return topics;
     }
 
     @Override

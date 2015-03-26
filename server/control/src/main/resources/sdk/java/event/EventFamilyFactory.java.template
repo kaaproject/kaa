@@ -16,17 +16,19 @@
 
 package org.kaaproject.kaa.client.event;
 
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.transact.TransactionId;
 
 ${event_family_factory_imports}
 
 public class EventFamilyFactory {
-
-    EventManager eventManager;
-
-    public EventFamilyFactory(EventManager eventManager) {
+    private final EventManager eventManager;
+    private final ExecutorContext executorContext;
+    
+    public EventFamilyFactory(EventManager eventManager, ExecutorContext executorContext) {
         super();
         this.eventManager = eventManager;
+        this.executorContext = executorContext;
     }
     
     public TransactionId startEventsBlock() {

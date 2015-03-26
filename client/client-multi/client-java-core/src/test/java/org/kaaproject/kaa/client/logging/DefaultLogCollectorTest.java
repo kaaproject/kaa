@@ -21,11 +21,19 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.AbstractExecutorService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
@@ -35,178 +43,219 @@ import org.mockito.Mockito;
 
 public class DefaultLogCollectorTest {
 
+    private static ExecutorContext executorContext;
+    private static ExecutorService executor;
+
+    @BeforeClass
+    public static void beforeSuite() {
+        executorContext = Mockito.mock(ExecutorContext.class);
+        executor = Executors.newSingleThreadExecutor();
+        Mockito.when(executorContext.getApiExecutor()).thenReturn(new AbstractExecutorService() {
+
+            @Override
+            public void execute(Runnable command) {
+                command.run();
+            }
+
+            @Override
+            public List<Runnable> shutdownNow() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public void shutdown() {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public boolean isTerminated() {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            @Override
+            public boolean isShutdown() {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            @Override
+            public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+                // TODO Auto-generated method stub
+                return false;
+            }
+        });
+        Mockito.when(executorContext.getCallbackExecutor()).thenReturn(executor);
+    }
+
+    @AfterClass
+    public static void afterSuite() {
+        executor.shutdown();
+    }
+
     @Test
     public void testDefaultUploadConfiguration() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
-        AbstractLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
+
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
         DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy();
         strategy.setCountThreshold(5);
         logCollector.setStrategy(strategy);
 
-        try {
-            Log record = new Log();
+        Log record = new Log();
 
-            logCollector.addLogRecord(record);
-            logCollector.addLogRecord(record);
-            logCollector.addLogRecord(record);
-            logCollector.addLogRecord(record);
-            
-            verify(transport, times(0)).sync();
-            
-            logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
 
-            verify(transport, times(1)).sync();
-        } catch (Exception e) {
-            Assert.assertTrue("Exception: " + e.toString(), false);
-        }
+        verify(transport, times(0)).sync();
+
+        logCollector.addLogRecord(record);
+
+        verify(transport, Mockito.timeout(1000).times(1)).sync();
+
     }
 
     @Test
     public void testStorageStatusAffect() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
-        AbstractLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
         LogStorage storage = Mockito.mock(LogStorage.class);
         logCollector.setStorage(storage);
-        try {
-            Log record = new Log();
+        Log record = new Log();
 
-            Mockito.when(storage.getStatus()).thenReturn(new LogStorageStatus() {
-                
-                @Override
-                public long getRecordCount() {
-                    return 1;
-                }
-                
-                @Override
-                public long getConsumedVolume() {
-                    return 1;
-                }
-            });
-            
-            logCollector.addLogRecord(record);
-            
-            verify(transport, times(0)).sync();
-            
-            Mockito.when(storage.getStatus()).thenReturn(new LogStorageStatus() {
-                
-                @Override
-                public long getRecordCount() {
-                    return 1;
-                }
-                
-                @Override
-                public long getConsumedVolume() {
-                    return 1024*1024;
-                }
-            });
-            
-            logCollector.addLogRecord(record);
+        Mockito.when(storage.getStatus()).thenReturn(new LogStorageStatus() {
 
-            verify(transport, times(1)).sync();
-        } catch (Exception e) {
-            Assert.assertTrue("Exception: " + e.toString(), false);
-        }
+            @Override
+            public long getRecordCount() {
+                return 1;
+            }
+
+            @Override
+            public long getConsumedVolume() {
+                return 1;
+            }
+        });
+
+        logCollector.addLogRecord(record);
+
+        verify(transport, times(0)).sync();
+
+        Mockito.when(storage.getStatus()).thenReturn(new LogStorageStatus() {
+
+            @Override
+            public long getRecordCount() {
+                return 1;
+            }
+
+            @Override
+            public long getConsumedVolume() {
+                return 1024 * 1024;
+            }
+        });
+
+        logCollector.addLogRecord(record);
+
+        verify(transport, Mockito.timeout(1000).times(1)).sync();
     }
 
     @Test
-    public void testLogUploadRequestAndSuccessResponse() {
+    public void testLogUploadRequestAndSuccessResponse() throws Exception {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
-        AbstractLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
+
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
         DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy();
         logCollector.setStrategy(strategy);
         LogStorage storage = Mockito.mock(LogStorage.class);
         logCollector.setStorage(storage);
-        
-        try {
-            Log record = new Log();
-            Mockito.when(storage.getStatus()).thenReturn(new LogStorageStatus() {
-                @Override
-                public long getRecordCount() {
-                    return 1;
-                }
-                
-                @Override
-                public long getConsumedVolume() {
-                    return 1;
-                }
-            });
-            
-            logCollector.addLogRecord(record);
-            logCollector.addLogRecord(record);
-            logCollector.addLogRecord(record);
-            logCollector.addLogRecord(record);
-            logCollector.addLogRecord(record);
-            Mockito.when(storage.getStatus()).thenReturn(new LogStorageStatus() {
-                
-                @Override
-                public long getRecordCount() {
-                    return 1;
-                }
-                
-                @Override
-                public long getConsumedVolume() {
-                    return 1024*1024;
-                }
-            });
-            logCollector.addLogRecord(record);
-            
-            Mockito.when(storage.getRecordBlock(Mockito.anyLong())).thenReturn(new LogBlock(1, Arrays.asList(new LogRecord(record), new LogRecord(record), new LogRecord(record))));
 
-            LogSyncRequest request1 = new LogSyncRequest();
-            logCollector.fillSyncRequest(request1);
+        Log record = new Log();
+        Mockito.when(storage.getStatus()).thenReturn(new LogStorageStatus() {
+            @Override
+            public long getRecordCount() {
+                return 1;
+            }
 
-            Assert.assertEquals(3, request1.getLogEntries().size());
+            @Override
+            public long getConsumedVolume() {
+                return 1;
+            }
+        });
 
-            LogSyncResponse uploadResponse = new LogSyncResponse();
-            LogDeliveryStatus status = new LogDeliveryStatus(request1.getRequestId(), SyncResponseResultType.SUCCESS, null);
-            uploadResponse.setDeliveryStatuses(Collections.singletonList(status));
-            logCollector.onLogResponse(uploadResponse);
-            verify(transport, times(2)).sync();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        Mockito.when(storage.getStatus()).thenReturn(new LogStorageStatus() {
+
+            @Override
+            public long getRecordCount() {
+                return 1;
+            }
+
+            @Override
+            public long getConsumedVolume() {
+                return 1024 * 1024;
+            }
+        });
+        logCollector.addLogRecord(record);
+
+        Mockito.when(storage.getRecordBlock(Mockito.anyLong())).thenReturn(
+                new LogBlock(1, Arrays.asList(new LogRecord(record), new LogRecord(record), new LogRecord(record))));
+
+        LogSyncRequest request1 = new LogSyncRequest();
+        logCollector.fillSyncRequest(request1);
+
+        Assert.assertEquals(3, request1.getLogEntries().size());
+
+        LogSyncResponse uploadResponse = new LogSyncResponse();
+        LogDeliveryStatus status = new LogDeliveryStatus(request1.getRequestId(), SyncResponseResultType.SUCCESS, null);
+        uploadResponse.setDeliveryStatuses(Collections.singletonList(status));
+        logCollector.onLogResponse(uploadResponse);
+        verify(transport, Mockito.timeout(1000).times(2)).sync();
     }
 
     @Test
-    public void testTimeout() {
+    public void testTimeout() throws Exception {
         long timeout = 2; // in seconds
 
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
-        AbstractLogCollector logCollector = new DefaultLogCollector(transport, channelManager);
+
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
 
         DefaultLogUploadStrategy tmp = new DefaultLogUploadStrategy();
         tmp.setTimeout(1);
         LogUploadStrategy strategy = Mockito.spy(tmp);
         logCollector.setStrategy(strategy);
 
-        try {
-            Log record = new Log();
+        Log record = new Log();
 
-            logCollector.addLogRecord(record);
-            logCollector.addLogRecord(record);
-            logCollector.addLogRecord(record);
-            logCollector.addLogRecord(record);
-            logCollector.addLogRecord(record);
-            logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
 
-            Mockito.verify(strategy, Mockito.times(0)).onTimeout(Mockito.any(LogFailoverCommand.class));
+        Mockito.verify(strategy, Mockito.times(0)).onTimeout(Mockito.any(LogFailoverCommand.class));
 
-            LogSyncRequest request1 = Mockito.mock(LogSyncRequest.class);
-            logCollector.fillSyncRequest(request1);
+        LogSyncRequest request1 = Mockito.mock(LogSyncRequest.class);
+        logCollector.fillSyncRequest(request1);
 
-            Thread.sleep(timeout / 2 * 1000);
-            Mockito.verify(strategy, Mockito.times(0)).onTimeout(Mockito.any(LogFailoverCommand.class));
-            Thread.sleep(timeout / 2 * 1000);
+        Thread.sleep(timeout / 2 * 1000);
+        Mockito.verify(strategy, Mockito.times(0)).onTimeout(Mockito.any(LogFailoverCommand.class));
+        Thread.sleep(timeout / 2 * 1000);
 
-            logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
 
-            Mockito.verify(strategy, Mockito.times(1)).onTimeout(Mockito.any(LogFailoverCommand.class));
-        } catch (Exception e) {
-            Assert.assertTrue("Exception: " + e.toString(), false);
-        }
+        Mockito.verify(strategy, Mockito.timeout(1000).times(1)).onTimeout(Mockito.any(LogFailoverCommand.class));
     }
 }

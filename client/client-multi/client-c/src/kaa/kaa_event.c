@@ -32,7 +32,7 @@
 # include "utilities/kaa_mem.h"
 # include "utilities/kaa_log.h"
 # include "platform/ext_system_logger.h"
-
+# include "gen/kaa_event_fqn_definitions.h"
 
 
 
@@ -811,6 +811,7 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
         extension_length -= sizeof(uint32_t);
 
         if (self->sequence_number_status != KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED) {
+            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Event sequence number synchronize response received");
             self->sequence_number_status = KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED;
 
             if (self->event_sequence_number != event_sequence_number) {
@@ -1024,7 +1025,7 @@ kaa_error_t kaa_event_finish_transaction(kaa_event_manager_t *self, kaa_event_bl
                 KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Events batch with id %zu has %zu events", trx_id, kaa_list_get_size(trx->events));
             }
             if (trx->events && kaa_list_get_size(trx->events) > 0) {
-                kaa_lists_merge(self->pending_events, trx->events);
+                self->pending_events = kaa_lists_merge(self->pending_events, trx->events);
                 need_sync = true;
                 trx->events = NULL;
             }
@@ -1131,36 +1132,6 @@ kaa_error_t kaa_event_manager_add_event_to_transaction(kaa_event_manager_t *self
 
     return KAA_ERR_EVENT_TRX_NOT_FOUND;
 }
-
-
-
-typedef struct {
-    char       *ecf_name;
-    size_t      supported_incoming_fqns_count;
-    char      **supported_incoming_fqns;
-} event_class_family_t;
-
-static const char *TestEventFamilyFQNS[8] = {
-        "org.kaaproject.kaa.example.audio.PlayCommand",
-        "org.kaaproject.kaa.example.audio.RewindCommand",
-        "org.kaaproject.kaa.example.audio.PauseCommand",
-        "org.kaaproject.kaa.example.audio.StopCommand",
-        "org.kaaproject.kaa.example.audio.PlaybackStatus",
-        "org.kaaproject.kaa.example.audio.BatteryChargingStatus",
-        "org.kaaproject.kaa.example.audio.BatteryStatus",
-        "org.kaaproject.kaa.example.audio.StatusEvent"
-};
-
-# define SUPPORTED_EVENT_CLASS_FAMILIES_SIZE 1
-
-static const event_class_family_t SUPPORTED_EVENT_CLASS_FAMILIES[SUPPORTED_EVENT_CLASS_FAMILIES_SIZE] =
-{
-    {
-        /* .ecf_name = */                       "TestEventFamily",
-        /* .supported_incoming_fqns_count = */  8,
-        /* .supported_incoming_fqns = */        (char **)TestEventFamilyFQNS
-    }
-};
 
 const char *kaa_find_class_family_name(const char *fqn)
 {

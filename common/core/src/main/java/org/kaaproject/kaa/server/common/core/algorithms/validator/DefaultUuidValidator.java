@@ -219,7 +219,7 @@ public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implem
         }
         validateRecord(currentRecord, previousRecord, previousRecord);
         if(currentRecord != null) {
-            config = converter.endcodeToJson(currentRecord);
+            config = converter.encodeToJson(currentRecord);
         }
         LOG.trace("Generated uuid fields for records {}", currentRecord);
         return dataFactory.createData(schema, config);
@@ -235,7 +235,7 @@ public class DefaultUuidValidator<U extends KaaSchema, T extends KaaData> implem
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema.getRawSchema());
         validateRecord(configurationToValidate, previousConfiguration, previousConfiguration);
         if(configurationToValidate != null) {
-            config = converter.endcodeToJson(configurationToValidate);
+            config = converter.encodeToJson(configurationToValidate);
         }
         LOG.trace("Generated uuid fields for records {}", configurationToValidate);
         return dataFactory.createData(schema, config);

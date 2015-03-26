@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,21 +63,54 @@ public:
     void pause();
     void resume();
 
-    virtual IProfileManager&                    getProfileManager();
-    virtual IConfigurationPersistenceManager&   getConfigurationPersistenceManager();
-    virtual IConfigurationManager&              getConfigurationManager();
-    virtual INotificationManager&               getNotificationManager();
-    virtual IEndpointRegistrationManager&       getEndpointRegistrationManager();
-    virtual EventFamilyFactory&                 getEventFamilyFactory();
-    virtual IEventListenersResolver&            getEventListenersResolver();
     virtual IKaaChannelManager&                 getChannelManager();
     virtual const KeyPair&                      getClientKeyPair();
-    virtual ILogCollector&                      getLogCollector();
+    virtual void                                setEndpointAccessToken(std::string token);
+    virtual std::string                         refreshEndpointAccessToken();
+    virtual std::string                         getEndpointAccessToken();
     virtual IKaaDataMultiplexer&                getOperationMultiplexer();
     virtual IKaaDataDemultiplexer&              getOperationDemultiplexer();
+    virtual EventFamilyFactory&                 getEventFamilyFactory();
+
+    virtual void                                addLogRecord(const KaaUserLogRecord& record);
+    virtual void                                setLogStorage(ILogStoragePtr storage);
+    virtual void                                setLogUploadStrategy(ILogUploadStrategyPtr strategy);
+    virtual void                                setProfileContainer(ProfileContainerPtr container);
+    virtual void                                addTopicListListener(INotificationTopicListListener& listener);
+    virtual void                                removeTopicListListener(INotificationTopicListListener& listener);
+    virtual Topics                              getTopics();
+    virtual void                                addNotificationListener(INotificationListener& listener);
+    virtual void                                addNotificationListener(const std::string& topidId,
+                                                                        INotificationListener& listener);
+    virtual void                                removeNotificationListener(INotificationListener& listener);
+    virtual void                                removeNotificationListener(const std::string& topidId,
+                                                                           INotificationListener& listener);
+    virtual void                                subscribeToTopic(const std::string& id, bool forceSync);
+    virtual void                                subscribeToTopics(const std::list<std::string>& idList, bool forceSync);
+    virtual void                                unsubscribeFromTopic(const std::string& id, bool forceSync);
+    virtual void                                unsubscribeFromTopics(const std::list<std::string>& idList, bool forceSync);
+    virtual void                                syncTopicSubscriptions();
+    virtual void                                addConfigurationListener(IConfigurationReceiver &receiver);
+    virtual void                                removeConfigurationListener(IConfigurationReceiver &receiver);
+    virtual const KaaRootConfiguration&         getConfiguration();
+    virtual void                                setConfigurationStorage(IConfigurationStoragePtr storage);
+    virtual void                                attachEndpoint(const std::string&  endpointAccessToken
+                                                , IAttachEndpointCallbackPtr listener = IAttachEndpointCallbackPtr{});
+    virtual void                                detachEndpoint(const std::string&  endpointKeyHash
+                                                , IDetachEndpointCallbackPtr listener = IDetachEndpointCallbackPtr{});
+    virtual void                                attachUser(const std::string& userExternalId, const std::string& userAccessToken
+                                                          , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr{});
+    virtual void                                attachUser(const std::string& userExternalId, const std::string& userAccessToken
+                                                          , const std::string& userVerifierToken
+                                                          , IUserAttachCallbackPtr listener = IUserAttachCallbackPtr{});
+    virtual void                                setAttachStatusListener(IAttachStatusListenerPtr listener);
+    virtual bool                                isAttachedToUser();
+    virtual std::int32_t                        findEventListeners(const std::list<std::string>& eventFQNs
+                                                                  , IFetchEventListenersPtr listener);
 
     virtual IKaaDataMultiplexer&                getBootstrapMultiplexer();
     virtual IKaaDataDemultiplexer&              getBootstrapDemultiplexer();
+
 private:
     void initKaaConfiguration();
     void initKaaTransport();

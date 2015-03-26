@@ -17,7 +17,6 @@ package org.kaaproject.kaa.server.common.dao.model.sql;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 
@@ -25,7 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.NOTIFICATION_SCHEMA_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.NOTIFICATION_SCHEMA_TABLE_NAME;
 
 @Entity
 @Table(name = NOTIFICATION_SCHEMA_TABLE_NAME)

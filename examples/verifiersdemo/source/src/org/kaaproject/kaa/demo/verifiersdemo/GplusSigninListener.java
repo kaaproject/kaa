@@ -68,7 +68,7 @@ public class GplusSigninListener implements GoogleApiClient.ConnectionCallbacks,
         Log.i(TAG, "Connection was suspended");
     }
 
-    // When google+ sign-in button is clicked
+    // When the Google+ sign-in button is clicked.
     @Override
     public void onClick(View v) {
         mSignInClicked = true;
@@ -86,13 +86,14 @@ public class GplusSigninListener implements GoogleApiClient.ConnectionCallbacks,
     public void onConnectionFailed(ConnectionResult result) {
         Log.i(TAG, "Connection failed");
         if (!mIntentInProgress) {
-            // Store the ConnectionResult so that we can use it later when the user clicks
-            // 'sign-in'.
+           
+            // Store ConnectionResult to use it later when the user clicks 'sign-in'.
             mConnectionResult = result;
 
             if (mSignInClicked) {
-                // The user has already clicked 'sign-in' so we attempt to resolve all
-                // errors until the user is signed in, or they cancel.
+                
+                // The user has already clicked 'sign-in'. 
+                // Attempt to resolve all errors until the user is signed in or the user cancels.
                 mSignInClicked = false;
                 resolveSignInError();
             }
@@ -127,8 +128,9 @@ public class GplusSigninListener implements GoogleApiClient.ConnectionCallbacks,
                 parentActivity.startIntentSenderForResult(mConnectionResult.getResolution().getIntentSender(),
                         RC_SIGN_IN, null, 0, 0, 0);
             } catch (IntentSender.SendIntentException e) {
-                // The intent was canceled before it was sent.  Return to the default
-                // state and attempt to connect to get an updated ConnectionResult.
+               
+                // The intent was canceled before it was sent. Return to the default
+                // state and attempt to connect to get the updated ConnectionResult.
                 mIntentInProgress = false;
                 client.connect();
             }
@@ -149,13 +151,14 @@ public class GplusSigninListener implements GoogleApiClient.ConnectionCallbacks,
 
         @Override
         protected Void doInBackground(Void... params) {
-            // no need to invoke getTokenInBackground in onConnected()
+                
+            // No need to invoke getTokenInBackground in onConnected().
             mSignInClicked = false;
             try {
-                // get user email, for getting user's access token
+                // Get the user's email.
                 String email = Plus.AccountApi.getAccountName(client);
 
-                // get user's access token, id and name
+                // Get the user's access token, id and name.
                 String accessToken = GoogleAuthUtil.getToken(activity, email, SCOPE);
                 String userId = Plus.PeopleApi.getCurrentPerson(client).getId();
                 String userName = Plus.PeopleApi.getCurrentPerson(client).getName().getGivenName();

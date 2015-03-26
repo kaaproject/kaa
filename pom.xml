@@ -41,7 +41,7 @@ Copyright 2014 CyberVision, Inc.
         <h2.driver.ver>1.4.179</h2.driver.ver>
         <oracle-nosql-client.version>3.0.14</oracle-nosql-client.version>
         <oracle-kvstore.version>3.1.7</oracle-kvstore.version>
-        <gwt.version>2.6.1</gwt.version>
+        <gwt.version>2.7.0</gwt.version>
         <gwtchosen.version>1.2.0</gwtchosen.version>
         <gwtquery.version>1.4.2</gwtquery.version>
         <aspectj.version>1.7.4</aspectj.version>
@@ -470,6 +470,7 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/gen/**/*.java</exclude>
                         <exclude>**/*.avsc</exclude>
                         <exclude>**/*.iml</exclude>
+                        <exclude>**/.idea/**</exclude>
                         <exclude>**/*.readme</exclude>
                         <exclude>**/appcompat-v7/**</exclude>
                         <exclude>**/support-v4/**</exclude>
@@ -479,10 +480,6 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/*-transport.config</exclude>
                         <exclude>**/akka.conf</exclude>
                         <exclude>**/*.cql</exclude>
-                        <exclude>**/client/i18n/*Constants.java</exclude>
-                        <exclude>**/client/i18n/*Messages.java</exclude>
-                        <exclude>**/client/KaaAdminTheme.java</exclude>
-                        <exclude>**/client/SandboxTheme.java</exclude>
                         <exclude>**/src/main/sh/bin/jetty.sh</exclude>
                         <exclude>**/src/main/resources/jetty/**</exclude>
                     </excludes>

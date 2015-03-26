@@ -28,8 +28,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 /**
- * The Class MemoryCache.
- * Used to store image {@link Bitmap} in memory.
+ * Used to store image {@link Bitmap} into the memory.
  */
 public class MemoryCache {
 

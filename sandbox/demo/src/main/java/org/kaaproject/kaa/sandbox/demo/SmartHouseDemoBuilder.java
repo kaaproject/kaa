@@ -70,7 +70,7 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
         client.addEventClassFamilySchema(musicEventClassFamily.getId(), getResourcePath("musicEventClassFamily.json"));
         
         ApplicationDto smartHouseApplication = new ApplicationDto();
-        smartHouseApplication.setName("Smart House");
+        smartHouseApplication.setName("Smart house");
         smartHouseApplication = client.editApplication(smartHouseApplication);
                
         sdkKey.setApplicationId(smartHouseApplication.getId());

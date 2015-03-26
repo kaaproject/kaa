@@ -28,8 +28,6 @@
 extern "C" {
 #endif
 
-#ifndef KAA_DISABLE_FEATURE_EVENTS
-
 #include <stddef.h>
 #include "kaa_error.h"
 #include "platform/ext_event_listeners_callback.h"
@@ -102,8 +100,6 @@ kaa_error_t kaa_event_remove_transaction(kaa_event_manager_t *self, kaa_event_bl
  */
 
 const char *kaa_find_class_family_name(const char *fqn);
-
-#endif
 
 #ifdef __cplusplus
 } // extern "C"

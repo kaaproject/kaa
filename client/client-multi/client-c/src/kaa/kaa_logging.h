@@ -24,20 +24,14 @@
 # ifndef KAA_LOGGING_H_
 # define KAA_LOGGING_H_
 
-# ifndef KAA_DISABLE_FEATURE_LOGGING
 
-# include "gen/kaa_logging_gen.h"
+# include "gen/kaa_logging_definitions.h"
 # include "platform/ext_log_storage.h"
 # include "platform/ext_log_upload_strategy.h"
 
 # ifdef __cplusplus
 extern "C" {
 # endif
-
-/**
- * Log records structure generated based on the specified data schema.
- */
-typedef kaa_test_log_record_t    kaa_user_log_record_t;
 
 
 
@@ -78,7 +72,5 @@ kaa_error_t kaa_logging_add_record(kaa_log_collector_t *self, kaa_user_log_recor
 # ifdef __cplusplus
 }      /* extern "C" */
 # endif
-
-# endif /* KAA_DISABLE_FEATURE_LOGGING */
 
 # endif /* KAA_LOGGING_H_ */

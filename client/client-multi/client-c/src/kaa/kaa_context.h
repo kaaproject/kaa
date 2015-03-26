@@ -60,33 +60,21 @@ typedef struct kaa_channel_manager_t    kaa_channel_manager_t;
     typedef struct kaa_user_manager_t       kaa_user_manager_t;
 #endif
 
-
-#ifndef KAA_DISABLE_FEATURE_EVENTS
-
 #ifndef KAA_EVENT_MANAGER_T
 # define KAA_EVENT_MANAGER_T
     typedef struct kaa_event_manager_t      kaa_event_manager_t;
 #endif
-
-#endif
-
-#ifndef KAA_DISABLE_FEATURE_LOGGING
 
 #ifndef KAA_LOG_COLLECTOR_T
 # define KAA_LOG_COLLECTOR_T
     typedef struct kaa_log_collector        kaa_log_collector_t;
 #endif
 
-#endif
-
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
-
 #ifndef KAA_CONFIGURATION_MANAGER_T
 # define KAA_CONFIGURATION_MANAGER_T
     typedef struct kaa_configuration_manager kaa_configuration_manager_t;
 #endif
 
-#endif
 
 #ifndef KAA_LOGGER_T
 # define KAA_LOGGER_T
@@ -105,15 +93,9 @@ typedef struct {
     kaa_channel_manager_t       *channel_manager;        /**< See @link kaa_channel_manager.h @endlink. */
     kaa_profile_manager_t       *profile_manager;        /**< See @link kaa_profile.h @endlink. */
     kaa_user_manager_t          *user_manager;           /**< See @link kaa_user.h @endlink. */
-#ifndef KAA_DISABLE_FEATURE_EVENTS
     kaa_event_manager_t         *event_manager;          /**< See @link kaa_event.h @endlink. */
-#endif
-#ifndef KAA_DISABLE_FEATURE_LOGGING
     kaa_log_collector_t         *log_collector;          /**< See @link kaa_logging.h @endlink. */
-#endif
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
     kaa_configuration_manager_t *configuration_manager;  /**< See @link kaa_configuration_manager.h @endlink. */
-#endif
     kaa_logger_t               *logger;                  /**< See @link kaa_log.h @endlink. */
 } kaa_context_t;
 
