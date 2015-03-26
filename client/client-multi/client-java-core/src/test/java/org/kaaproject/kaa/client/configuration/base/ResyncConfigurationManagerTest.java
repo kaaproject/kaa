@@ -86,4 +86,27 @@ public class ResyncConfigurationManagerTest {
         Assert.assertNotNull(manager.getConfigurationHashContainer());
         Assert.assertNotNull(manager.getConfigurationHashContainer().getConfigurationHash());
     }
+    
+    @Test
+    public void testConfigurationListeners() throws IOException {
+        KaaClientProperties properties = Mockito.mock(KaaClientProperties.class);
+        ConfigurationStorage storage = Mockito.mock(ConfigurationStorage.class);
+
+        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties);
+        manager.setConfigurationStorage(storage);
+
+        Mockito.when(storage.loadConfiguration()).thenReturn(ByteBuffer.wrap(configurationData));
+        
+        ConfigurationListener listener = Mockito.mock(ConfigurationListener.class);
+        manager.addListener(listener);
+        
+        manager.getConfigurationProcessor().processConfigurationData(ByteBuffer.wrap(configurationData), true);
+        Mockito.verify(listener).onConfigurationUpdate(new Configuration());
+        
+        Mockito.reset(listener);
+        manager.removeListener(listener);
+        manager.getConfigurationProcessor().processConfigurationData(ByteBuffer.wrap(configurationData), true);
+        Mockito.verify(listener, Mockito.timeout(1000).never()).onConfigurationUpdate(new Configuration());
+
+    }
 }

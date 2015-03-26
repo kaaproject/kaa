@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,22 +28,31 @@ import org.kaaproject.kaa.server.transport.session.SessionInfo;
 /**
  * The Class NettyDecodedResponseMessage.
  */
-public class NettySessionResponseMessage implements SessionResponse{
+public class NettySessionResponseMessage implements SessionResponse {
 
     private final SessionInfo sessionInfo;
     private final ServerSync syncResponse;
     private final MessageBuilder responseConverter;
     private final ErrorBuilder errorConverter;
+    private final Exception error;
+    
+    public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, MessageBuilder responseConverter,
+            ErrorBuilder errorConverter) {
+        this(sessionInfo, syncResponse, null, responseConverter, errorConverter);
+    }
 
-    public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, MessageBuilder responseConverter, ErrorBuilder errorConverter){
+    public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, Exception error, MessageBuilder responseConverter,
+            ErrorBuilder errorConverter) {
         this.sessionInfo = sessionInfo;
         this.syncResponse = syncResponse;
+        this.error = error;
         this.responseConverter = responseConverter;
         this.errorConverter = errorConverter;
     }
 
-    public ServerSync getSyncResponse() {
-        return syncResponse;
+    @Override
+    public Exception getError() {
+        return error;
     }
 
     @Override
