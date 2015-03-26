@@ -22,7 +22,7 @@
 #include <kaa/IKaaClient.hpp>
 
 #include <kaa/profile/AbstractProfileContainer.hpp>
-#include <kaa/gen/ProfileGen.hpp>
+#include <kaa/profile/gen/ProfileGen.hpp>
 
 #include <kaa/configuration/storage/IConfigurationPersistenceManager.hpp>
 #include <kaa/configuration/manager/IConfigurationReceiver.hpp>
@@ -33,63 +33,49 @@
 #include <stdio.h>
 
 using namespace kaa;
-
 // A profile container thast is based on the AbstractProfileContainer class provided by the SDK.
-class UserProfileContainer : public AbstractProfileContainer<Profile> {
+class UserProfileContainer : public AbstractProfileContainer<kaa_profile::Profile> {
 public:
-    UserProfileContainer(const Profile& profile) : profile_(profile) { }
+     UserProfileContainer(const kaa_profile::Profile& profile) : profile_(profile) { }
 
-    virtual Profile getProfile()
-    {
-        return profile_;
-    }
-
-    void changeProfile(const Profile& profile)
-    {
-        profile_ = profile;
-    }
+     virtual kaa_profile::Profile getProfile()
+     {
+         return profile_;
+     }
 private:
-    Profile profile_;
+     kaa_profile::Profile profile_;
 };
 
 class UserConfigurationReceiver : public IConfigurationReceiver {
 public:
-
-    virtual void onConfigurationUpdated(const KaaRootConfiguration &configuration)
-    {
-        KAA_LOG_TRACE(boost::format("Configuration received: %1%") % (configuration.message.is_null() ? "null" : configuration.message.get_string()));
-    }
-
+  void displayConfiguration(const KaaRootConfiguration &configuration)
+  {
+      if (!configuration.AddressList.is_null()) {
+          KAA_LOG_TRACE("Configuration body:");
+          auto links = configuration.AddressList.get_array();
+          for(auto& e : links) {
+              KAA_LOG_TRACE(boost::format("%1% - %2%") % (e.label) % (e.url));
+          }
+      }
+  }
+  virtual void onConfigurationUpdated(const KaaRootConfiguration &configuration)
+  {
+      KAA_LOG_TRACE("Configuration was updated");
+      displayConfiguration(configuration);
+  }
 };
+
 
 int main()
 {
     Kaa::init();
-
+    KAA_LOG_TRACE("Configuration demo started")
     IKaaClient& kaaClient = Kaa::getKaaClient();
-
-    Profile clientProfile;
-    clientProfile.build = "Client build";
-    clientProfile.id = "Client ID";
-    clientProfile.os = OS::Linux;
-    clientProfile.os_version = "Client OS Version";
-
-    auto profileContainerPtr = std::make_shared<UserProfileContainer>(clientProfile);
-    kaaClient.setProfileContainer(profileContainerPtr);
-    kaaClient.updateProfile();
-
-    // Changing profile
-    clientProfile.build = "Another client's build";
-    clientProfile.id = "Another ID";
-    clientProfile.os = OS::Android;
-    clientProfile.os_version = "Another client's OS version";
-    profileContainerPtr.changeProfile(clientProfile);
-
-    // Update method should be called to notify about changes in the profile.
-    kaaClient.updateProfile();
-
+    KAA_LOG_TRACE("Configuration demo started");
+    kaa_profile::Profile clientProfile{};
+    kaaClient.setProfileContainer(std::make_shared<UserProfileContainer>(clientProfile));
     // Set up a configuration subunit
-    IConfigurationStoragePtr storage(std::make_shared<FileConfigurationStorage>("configuration.bin"));
+    IConfigurationStoragePtr storage(std::make_shared<FileConfigurationStorage>("saved_config.cfg"));
     kaaClient.setConfigurationStorage(storage);
     UserConfigurationReceiver receiver;
     kaaClient.addConfigurationListener(receiver);
@@ -100,6 +86,6 @@ int main()
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
     Kaa::stop();
-
+    KAA_LOG_TRACE("Configuration demo stopped")
     return 0;
 }
