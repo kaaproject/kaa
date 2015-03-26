@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 #include <memory>
 #include <thread>
 
 #include <kaa/Kaa.hpp>
 #include <kaa/IKaaClient.hpp>
 
-#include <kaa/profile/AbstractProfileContainer.hpp>
-#include <kaa/gen/ProfileGen.hpp>
+#include <kaa/profile/DefaultProfileContainer.hpp>
 
 #include <kaa/configuration/storage/IConfigurationPersistenceManager.hpp>
 #include <kaa/configuration/manager/IConfigurationReceiver.hpp>
@@ -34,62 +31,36 @@
 
 using namespace kaa;
 
-// A profile container thast is based on the AbstractProfileContainer class provided by the SDK.
-class UserProfileContainer : public AbstractProfileContainer<Profile> {
-public:
-    UserProfileContainer(const Profile& profile) : profile_(profile) { }
-
-    virtual Profile getProfile()
-    {
-        return profile_;
-    }
-
-    void changeProfile(const Profile& profile)
-    {
-        profile_ = profile;
-    }
-private:
-    Profile profile_;
-};
-
 class UserConfigurationReceiver : public IConfigurationReceiver {
 public:
-
+    void displayConfiguration(const KaaRootConfiguration &configuration)
+    {
+        if (!configuration.AddressList.is_null()) {
+            std::cout<<"Configuration body:\n";
+            auto links = configuration.AddressList.get_array();
+            for(auto& e : links) {
+              std::cout<<e.label<<" - "<<e.url<<std::endl;
+            }
+        }
+    }
     virtual void onConfigurationUpdated(const KaaRootConfiguration &configuration)
     {
-        KAA_LOG_TRACE(boost::format("Configuration received: %1%") % (configuration.message.is_null() ? "null" : configuration.message.get_string()));
+        std::cout<<"Configuration was updated\n";
+        displayConfiguration(configuration);
     }
-
 };
+
 
 int main()
 {
     Kaa::init();
-
+    std::cout<<"Configuration demo started"<<std::endl;
     IKaaClient& kaaClient = Kaa::getKaaClient();
-
-    Profile clientProfile;
-    clientProfile.build = "Client build";
-    clientProfile.id = "Client ID";
-    clientProfile.os = OS::Linux;
-    clientProfile.os_version = "Client OS Version";
-
-    auto profileContainerPtr = std::make_shared<UserProfileContainer>(clientProfile);
-    kaaClient.setProfileContainer(profileContainerPtr);
+    // Set up default profile container
+    kaaClient.setProfileContainer(std::make_shared<DefaultProfileContainer>());
     kaaClient.updateProfile();
-
-    // Changing profile
-    clientProfile.build = "Another client's build";
-    clientProfile.id = "Another ID";
-    clientProfile.os = OS::Android;
-    clientProfile.os_version = "Another client's OS version";
-    profileContainerPtr.changeProfile(clientProfile);
-
-    // Update method should be called to notify about changes in the profile.
-    kaaClient.updateProfile();
-
     // Set up a configuration subunit
-    IConfigurationStoragePtr storage(std::make_shared<FileConfigurationStorage>("configuration.bin"));
+    IConfigurationStoragePtr storage(std::make_shared<FileConfigurationStorage>("saved_config.cfg"));
     kaaClient.setConfigurationStorage(storage);
     UserConfigurationReceiver receiver;
     kaaClient.addConfigurationListener(receiver);
@@ -98,8 +69,7 @@ int main()
 
     for (int i = 0; i < 100; ++i)
         std::this_thread::sleep_for(std::chrono::seconds(1));
-
     Kaa::stop();
-
+    std::cout<<"Configuration demo stopped"<<std::endl;
     return 0;
 }

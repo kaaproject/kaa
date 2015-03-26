@@ -36,7 +36,8 @@
 #define KAA_LOG_LEVEL_TRACE       6
 #define KAA_LOG_LEVEL_FINE_TRACE  7
 
-#define KAA_LOG_LEVEL  KAA_LOG_LEVEL_FINE_TRACE
+#define KAA_LOG_LEVEL  KAA_MAX_LOG_LEVEL
+
 
 namespace kaa {
 
