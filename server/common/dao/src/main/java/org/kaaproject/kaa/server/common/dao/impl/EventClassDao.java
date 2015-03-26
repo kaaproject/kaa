@@ -22,7 +22,8 @@ import org.kaaproject.kaa.common.dto.event.EventClassType;
 
 /**
  * The interface for Event Class Dao.
- * @param <T>  the type parameter
+ *
+ * @param <T> the type parameter
  */
 public interface EventClassDao<T> extends SqlDao<T> {
 
@@ -37,9 +38,9 @@ public interface EventClassDao<T> extends SqlDao<T> {
     /**
      * Find all Event Classes by Event Class Family id, version and type.
      *
-     * @param id the ecf id
+     * @param ecfId   the ecf id
      * @param version the version
-     * @param type the type
+     * @param type    the type
      * @return the list of event classes
      */
     List<T> findByEcfIdVersionAndType(String ecfId, int version, EventClassType type);
@@ -55,8 +56,8 @@ public interface EventClassDao<T> extends SqlDao<T> {
      * Find Event Class by Tenant id and FQN.
      *
      * @param tenantId the tenant id
-     * @param fqn the FQN
-     * @return the Event Class
+     * @param fqn      the FQN
+     * @return the list of found event classes
      */
     List<T> findByTenantIdAndFqn(String tenantId, String fqn);
 
@@ -64,17 +65,17 @@ public interface EventClassDao<T> extends SqlDao<T> {
      * Validate list of FQNs for uniqueness within the tenant.
      *
      * @param tenantId the tenant id
-     * @param ecfId the event class family id
-     * @param fqns the list of FQNs
+     * @param ecfId    the event class family id
+     * @param fqns     the list of FQNs
      * @return true if FQNs are unique otherwise false
      */
     boolean validateFqns(String tenantId, String ecfId, List<String> fqns);
 
     /**
-     * @param tenantId
-     * @param fqn
-     * @param version
-     * @return
+     * @param tenantId the tenant id
+     * @param fqn      the FQN
+     * @param version  the version
+     * @return the found event classes
      */
     T findByTenantIdAndFqnAndVersion(String tenantId, String fqn, int version);
 

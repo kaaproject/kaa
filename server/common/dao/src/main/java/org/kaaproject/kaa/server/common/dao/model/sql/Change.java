@@ -15,26 +15,25 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.CHANGE_CONFIGURATION_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.CHANGE_CONFIGURATION_VERSION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.CHANGE_ENDPOINT_GROUP_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.CHANGE_PROFILE_FILTER_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.CHANGE_PROFILE_FILTER_VERSION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.CHANGE_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.CHANGE_TOPIC_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.CHANGE_TYPE;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
-
-import java.io.Serializable;
+import org.kaaproject.kaa.common.dto.ChangeDto;
+import org.kaaproject.kaa.common.dto.ChangeType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
+import java.io.Serializable;
 
-import org.kaaproject.kaa.common.dto.ChangeDto;
-import org.kaaproject.kaa.common.dto.ChangeType;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CHANGE_CONFIGURATION_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CHANGE_CONFIGURATION_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CHANGE_ENDPOINT_GROUP_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CHANGE_PROFILE_FILTER_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CHANGE_PROFILE_FILTER_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CHANGE_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CHANGE_TOPIC_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CHANGE_TYPE;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
 @Table(name = CHANGE_TABLE_NAME)

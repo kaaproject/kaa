@@ -37,6 +37,7 @@ public class ConfigurationDemo {
 
     public static void main(String[] args) {
         LOG.info("Configuration demo application has started");
+        LOG.info("--= Press any key to exit =--");
 
         // Kaa desktop context of the application
         DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext();

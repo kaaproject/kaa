@@ -20,7 +20,7 @@ Copyright 2014-2015 CyberVision, Inc.
     <project id="event_demo_java">
         <name>Event demo</name>
         <description>Application on java platform demonstrating event subsystem (IoT)</description>
-	<details></details>
+        <details></details>
         <platform>JAVA</platform>
         <features>EVENT</features>
         <sourceArchive>java/event_demo.tar.gz</sourceArchive>
@@ -31,7 +31,7 @@ Copyright 2014-2015 CyberVision, Inc.
     <project id="event_demo_c">
         <name>Event demo</name>
         <description>Application on C platform demonstrating event subsystem (IoT)</description>
-	<details></details>
+        <details></details>
         <platform>C</platform>
         <features>EVENT</features>
         <sourceArchive>c/event_demo.tar.gz</sourceArchive>
@@ -42,7 +42,7 @@ Copyright 2014-2015 CyberVision, Inc.
     <project id="event_demo_cpp">
         <name>Event demo</name>
         <description>Application on C++ platform demonstrating event subsystem (IoT)</description>
-	<details></details>
+        <details></details>
         <platform>CPP</platform>
         <features>EVENT</features>
         <sourceArchive>cpp/event_demo.tar.gz</sourceArchive>

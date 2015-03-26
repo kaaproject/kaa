@@ -328,6 +328,9 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             for (KaaDataChannel channel : channels) {
                 channel.shutdown();
             }
+            for(SyncWorker worker: syncWorkers.values()){
+                worker.shutdown();
+            }
         }
     }
 
@@ -452,6 +455,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
 
         public void shutdown() {
             this.stop = true;
+            this.interrupt();
         }
     }
 }

@@ -25,13 +25,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.MAJOR_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.NOTIFICATION_SCHEMA_TYPE_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.MAJOR_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.NOTIFICATION_SCHEMA_TYPE_PROPERTY;
 
 @Repository
 public class HibernateNotificationSchemaDao extends HibernateAbstractDao<NotificationSchema> implements NotificationSchemaDao<NotificationSchema> {
@@ -45,35 +46,45 @@ public class HibernateNotificationSchemaDao extends HibernateAbstractDao<Notific
 
     @Override
     public List<NotificationSchema> findNotificationSchemasByAppId(String appId) {
-        LOG.debug("Find notification schemas by application id {} ", appId);
+        LOG.debug("Searching notification schemas by application id [{}]", appId);
         List<NotificationSchema> schemas = Collections.emptyList();
         if (isNotBlank(appId)) {
             schemas = findListByCriterion(Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(schemas.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", appId, schemas.size());
         }
         return schemas;
     }
 
     @Override
     public void removeNotificationSchemasByAppId(String appId) {
-        LOG.debug("Remove notification schemas by application id {} ", appId);
         removeList(findNotificationSchemasByAppId(appId));
+        LOG.debug("Removed notification schemas by application id [{}]", appId);
     }
 
     @Override
     public List<NotificationSchema> findNotificationSchemasByAppIdAndType(String appId, NotificationTypeDto type) {
-        LOG.debug("Find notification schema by application id {} type {}", appId, type);
+        LOG.debug("Searching notification schema by application id {} type {}", appId, type);
         List<NotificationSchema> schemas = Collections.emptyList();
         if (isNotBlank(appId)) {
             schemas = findListByCriterion(Restrictions.and(
                     Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
                     Restrictions.eq(NOTIFICATION_SCHEMA_TYPE_PROPERTY, type)));
         }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{},{}] Search result: {}.", appId, type, Arrays.toString(schemas.toArray()));
+        } else {
+            LOG.debug("[{},{}] Search result: {}.", appId, type, schemas.size());
+        }
         return schemas;
     }
 
     @Override
     public NotificationSchema findNotificationSchemasByAppIdAndTypeAndVersion(String appId, NotificationTypeDto type, int majorVersion) {
-        LOG.debug("Find notification schema by application id {} type {} version {}", appId, type, majorVersion);
+        LOG.debug("Searching notification schema by application id [{}] type [{}] version [{}]", appId, type, majorVersion);
         NotificationSchema schema = null;
         if (isNotBlank(appId)) {
             schema = findOneByCriterion(Restrictions.and(
@@ -81,12 +92,17 @@ public class HibernateNotificationSchemaDao extends HibernateAbstractDao<Notific
                     Restrictions.eq(NOTIFICATION_SCHEMA_TYPE_PROPERTY, type),
                     Restrictions.eq(MAJOR_VERSION_PROPERTY, majorVersion)));
         }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{},{},{}] Search result: {}.", appId, type, majorVersion, schema);
+        } else {
+            LOG.debug("[{},{},{}] Search result: {}.", appId, type, majorVersion, schema != null);
+        }
         return schema;
     }
 
     @Override
     public NotificationSchema findLatestNotificationSchemaByAppId(String appId, NotificationTypeDto type) {
-        LOG.debug("Find latest notification schema by application id {} type {}", appId, type);
+        LOG.debug("Searching latest notification schema by application id [{}] type [{}]", appId, type);
         NotificationSchema latestSchema = null;
         if (isNotBlank(appId)) {
             Criteria criteria = getCriteria().add(Restrictions.and(
@@ -94,6 +110,11 @@ public class HibernateNotificationSchemaDao extends HibernateAbstractDao<Notific
                     Restrictions.eq(NOTIFICATION_SCHEMA_TYPE_PROPERTY, type)
             )).addOrder(Order.desc(MAJOR_VERSION_PROPERTY)).setMaxResults(FIRST);
             latestSchema = findOneByCriteria(criteria);
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{},{}] Search result: {}.", appId, type, latestSchema);
+        } else {
+            LOG.debug("[{},{}] Search result: {}.", appId, type, latestSchema != null);
         }
         return latestSchema;
     }

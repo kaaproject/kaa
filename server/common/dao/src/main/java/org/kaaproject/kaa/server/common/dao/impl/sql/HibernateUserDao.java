@@ -15,14 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.AUTHORITY_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.EXTERNAL_UID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TENANT_REFERENCE;
-
-import java.util.List;
-
 import org.hibernate.criterion.Restrictions;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.server.common.dao.impl.UserDao;
@@ -31,6 +23,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.AUTHORITY_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EXTERNAL_UID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_REFERENCE;
+
 @Repository
 public class HibernateUserDao extends HibernateAbstractDao<User> implements UserDao<User> {
 
@@ -38,41 +39,50 @@ public class HibernateUserDao extends HibernateAbstractDao<User> implements User
 
     @Override
     public User findByExternalUid(String externalUid) {
-        LOG.debug("Find user by external uid [{}]", externalUid);
+        LOG.debug("Searching user by external uid [{}]", externalUid);
         return findOneByCriterion(Restrictions.eq(EXTERNAL_UID_PROPERTY, externalUid));
     }
 
     @Override
     public List<User> findByTenantIdAndAuthority(String id, String authority) {
-        LOG.debug("Find users by tenant id [{}] and authority [{}]", id, authority);
-        return findListByCriterionWithAlias(TENANT_PROPERTY, TENANT_ALIAS, Restrictions.and(
+        LOG.debug("Searching users by tenant id [{}] and authority [{}]", id, authority);
+        List<User> users = findListByCriterionWithAlias(TENANT_PROPERTY, TENANT_ALIAS, Restrictions.and(
                 Restrictions.eq(TENANT_REFERENCE, Long.valueOf(id)),
                 Restrictions.eq(AUTHORITY_PROPERTY, KaaAuthorityDto.parse(authority))));
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{},{}] Search result: {}.", id, authority, Arrays.toString(users.toArray()));
+        } else {
+            LOG.debug("[{},{}] Search result: {}.", id, authority, users.size());
+        }
+        return users;
     }
 
     @Override
     public List<User> findByTenantIdAndAuthorities(String id, String... authorities) {
-        if (LOG.isDebugEnabled()) {
-            String authoritiesString = "";
-            for (int i = 0; i < authorities.length; i++) {
-                if (i > 0) {
-                    authoritiesString += ", ";
-                }
-                authoritiesString += authorities[i];
+        if (authorities != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Searching user by tenant id [{}] and authorities [{}]", id, Arrays.toString(authorities));
+            } else {
+                LOG.debug("Searching user by tenant id [{}] and authorities [{}]", id, authorities.length);
             }
-            LOG.debug("Find user by tenant id [{}] and authorities [{}]", id, authoritiesString);
         }
-        return findListByCriterionWithAlias(TENANT_PROPERTY, TENANT_ALIAS, Restrictions.and(
+        List<User> users = findListByCriterionWithAlias(TENANT_PROPERTY, TENANT_ALIAS, Restrictions.and(
                 Restrictions.eq(TENANT_REFERENCE, Long.valueOf(id)),
                 Restrictions.in(AUTHORITY_PROPERTY, KaaAuthorityDto.parseList(authorities))));
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", id, Arrays.toString(users.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", id, users.size());
+        }
+        return users;
     }
 
     @Override
     public void removeByTenantId(String tenantId) {
-        LOG.debug("Remove users by tenant id [{}] ", tenantId);
         List<User> users = findListByCriterionWithAlias(TENANT_PROPERTY, TENANT_ALIAS,
                 Restrictions.eq(TENANT_REFERENCE, Long.valueOf(tenantId)));
         removeList(users);
+        LOG.debug("Removed users by tenant id [{}] ", tenantId);
     }
 
     @Override

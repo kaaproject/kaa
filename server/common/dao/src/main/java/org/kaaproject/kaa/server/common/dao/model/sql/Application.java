@@ -15,26 +15,23 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_APPLICATION_TOKEN;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_LOG_APPENDERS_NAMES;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_SEQUENCE_NUMBER;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_TENANT_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.PUBLIC_KEY_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
-
-import java.io.Serializable;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_APPLICATION_TOKEN;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_SEQUENCE_NUMBER;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TENANT_ID;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
 @Table(name = APPLICATION_TABLE_NAME)
@@ -56,12 +53,6 @@ public final class Application extends GenericModel<ApplicationDto> implements S
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Tenant tenant;
 
-    @Column(name = PUBLIC_KEY_NAME, length = 1024)
-    private String publicKey;
-    
-    @Column(name = APPLICATION_LOG_APPENDERS_NAMES)
-    private String logAppendersNames;
-
     public Application() {
     }
 
@@ -79,8 +70,6 @@ public final class Application extends GenericModel<ApplicationDto> implements S
             if (tenantId != null) {
                 this.tenant = new Tenant(tenantId);
             }
-            this.publicKey = dto.getPublicKey();
-            this.logAppendersNames = dto.getLogAppendersNames();
         }
     }
 
@@ -120,26 +109,10 @@ public final class Application extends GenericModel<ApplicationDto> implements S
         return ++sequenceNumber;
     }
 
-    public String getLogAppendersNames() {
-        return logAppendersNames;
-    }
-
-    public void setLogAppendersNames(String logAppendersNames) {
-        this.logAppendersNames = logAppendersNames;
-    }
-    
-    public String getPublicKey() {
-        return publicKey;
-    }
-
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
-    }
-
     @Override
     public String toString() {
         return "Application [id=" + id + ", applicationToken=" + applicationToken + ", name=" + name + ", sequenceNumber=" + sequenceNumber
-                + ", tenant=" + tenant + ", publicKey=" + publicKey + ", logAppendersNames=" + logAppendersNames + "]";
+                + ", tenant=" + tenant + "]";
     }
 
     @Override
@@ -151,8 +124,6 @@ public final class Application extends GenericModel<ApplicationDto> implements S
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + sequenceNumber;
         result = prime * result + ((tenant == null) ? 0 : tenant.hashCode());
-        result = prime * result + ((publicKey == null) ? 0 : publicKey.hashCode());
-        result = prime * result + ((logAppendersNames == null) ? 0 : logAppendersNames.hashCode());
         return result;
     }
 
@@ -199,20 +170,6 @@ public final class Application extends GenericModel<ApplicationDto> implements S
         } else if (!tenant.equals(other.tenant)) {
             return false;
         }
-        if (publicKey == null) {
-            if (other.publicKey != null) {
-                return false;
-            }
-        } else if (!publicKey.equals(other.publicKey)) {
-            return false;
-        }
-        if (logAppendersNames == null) {
-            if (other.logAppendersNames != null) {
-                return false;
-            }
-        } else if (!logAppendersNames.equals(other.logAppendersNames)) {
-            return false;
-        }
         return true;
     }
 
@@ -231,8 +188,6 @@ public final class Application extends GenericModel<ApplicationDto> implements S
         if (tenant != null) {
             dto.setTenantId(tenant.getStringId());
         }
-        dto.setPublicKey(publicKey);
-        dto.setLogAppendersNames(logAppendersNames);
         return dto;
     }
 }

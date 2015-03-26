@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.common.dao.impl;
+# ifndef KAA_LOGGING_DEFINITIONS_H_
+# define KAA_LOGGING_DEFINITIONS_H_
 
-import java.util.List;
+# include "kaa_logging_gen.h"
 
-public interface LogAppenderDao<T> extends SqlDao<T> {
+# ifdef __cplusplus
+extern "C" {
+# endif
 
-    /**
-     *
-     * @param appId
-     * @return
-     */
-    List<T> findByAppId(String appId);
+/**
+ * @typedef User-defined log record structure.
+ */
+typedef kaa_test_log_record_t    kaa_user_log_record_t;
 
-    /**
-     * Find log appenders by application id and schema version
-     *
-     * @param appId the application id
-     * @param schemaVersion the log schema version
-     * @return the list of log appenders
-     */
-    List<T> findByAppIdAndSchemaVersion(String appId, int schemaVersion);
+# define KAA_LOGGING_DESERIALIZE(reader)  kaa_test_log_record_deserialize(reader)
 
-}
+# ifdef __cplusplus
+}      /* extern "C" */
+# endif
+
+# endif /* KAA_LOGGING_DEFINITIONS_H_ */

@@ -25,18 +25,13 @@
 # define KAA_LOGGING_H_
 
 
-# include "gen/kaa_logging_gen.h"
+# include "gen/kaa_logging_definitions.h"
 # include "platform/ext_log_storage.h"
 # include "platform/ext_log_upload_strategy.h"
 
 # ifdef __cplusplus
 extern "C" {
 # endif
-
-/**
- * Log records structure generated based on the specified data schema.
- */
-typedef kaa_test_log_record_t    kaa_user_log_record_t;
 
 
 

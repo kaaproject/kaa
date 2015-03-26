@@ -444,6 +444,7 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/gen/**/*.java</exclude>
                         <exclude>**/*.avsc</exclude>
                         <exclude>**/*.iml</exclude>
+                        <exclude>**/.idea/**</exclude>
                         <exclude>**/*.readme</exclude>
                         <exclude>**/appcompat-v7/**</exclude>
                         <exclude>**/support-v4/**</exclude>
