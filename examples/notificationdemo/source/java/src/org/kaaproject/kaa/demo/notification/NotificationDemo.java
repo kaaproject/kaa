@@ -40,7 +40,7 @@ public class NotificationDemo {
     private static KaaClient kaaClient;
 
     public static void main(String[] args) {
-        LOG.info("Notification demo application has started");
+        LOG.info("Notification demo started");
         LOG.info("--= Press any key to exit =--");
         kaaClient = Kaa.newClient(new DesktopKaaPlatformContext());
 
@@ -79,7 +79,7 @@ public class NotificationDemo {
 
         // Stop the Kaa client and release all the resources which were in use.
         kaaClient.stop();
-        LOG.info("Notification demo application has finished");
+        LOG.info("Notification demo stopped");
     }
 
     // A listener that tracks the notification topic list updates
@@ -97,7 +97,7 @@ public class NotificationDemo {
                 }
                 kaaClient.subscribeToTopics(optionalTopics, true);
             } catch (UnavailableTopicException e) {
-                LOG.debug("Topic is unavailable, can't subscribe: {}", e.getMessage());
+                LOG.error("Topic is unavailable, can't subscribe: {}", e.getMessage());
             }
         }
     }

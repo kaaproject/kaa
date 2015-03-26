@@ -36,7 +36,7 @@ public class ConfigurationDemo {
     private static KaaClient kaaClient;
 
     public static void main(String[] args) {
-        LOG.info("Configuration demo application has started");
+        LOG.info("Configuration demo started");
         LOG.info("--= Press any key to exit =--");
 
         // Create the Kaa desktop context for the application.
@@ -76,7 +76,7 @@ public class ConfigurationDemo {
         // Stop the Kaa client and release all the resources which were in use.
         kaaClient.stop();
 
-        LOG.info("Configuration demo application has finished");
+        LOG.info("Configuration demo stopped");
     }
 
     private static void displayConfiguration() {
