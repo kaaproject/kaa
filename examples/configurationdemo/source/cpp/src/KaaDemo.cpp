@@ -46,10 +46,7 @@ public:
 
     void changeProfile(const Profile& profile)
     {
-        profile_ = profile;
-
-        // Update method should be called to notify about changes in the profile.
-        updateProfile();
+        profile_ = profile;;
     }
 private:
     Profile profile_;
@@ -78,9 +75,15 @@ int main()
     clientProfile.os_version = "Client OS Version";
 
     kaaClient.setProfileContainer(std::make_shared<UserProfileContainer>(clientProfile));
-
+    kaaClient.updateProfile();
+    // Changing profile
+    clientProfile.build = "Another client's build";
+    clientProfile.id = "Another ID";
+    clientProfile.os = OS::Android;
+    clientProfile.os_version = "Another client's OS version";
+    // Update method should be called to notify about changes in the profile.
+    kaaClient.updateProfile();
     // Setupping configuration subunit
-
     IConfigurationStoragePtr storage(std::make_shared<FileConfigurationStorage>("configuration.bin"));
     kaaClient.setConfigurationStorage(storage);
     UserConfigurationReceiver receiver;

@@ -60,8 +60,6 @@
             }
             virtual void changeProfile(const Profile &profile) {
                 profile_ = profile;
-                // Update method should be called to notify about changes in the profile.
-                updateProfile();
             }
         private:
             Profile profile_;
@@ -70,14 +68,16 @@
         void init(){
             //Create client for Kaa SDK
             Kaa::init();
-            IKaaClient &client = Kaa::getKaaClient();
+            IKaaClient &kaaClient = Kaa::getKaaClient();
             //Sample profile
             Profile profile;
             profile.data = "some useful data";
             //Create instance of profile container
             ProfileContainerPtr container(new BasicProfileContainer(profile));
-            //Set simple profile container to profile manager.
-            client.getProfileManager().setProfileContainer(container);
+            //Set simple profile container.
+            kaaClient.setProfileContainer(container);
+            // Update method should be called to notify about changes in the profile.
+            kaaClient.updateProfile();
             //Starts Kaa
             Kaa::start();
         }
