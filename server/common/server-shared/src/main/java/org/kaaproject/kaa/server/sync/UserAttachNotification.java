@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class UserAttachNotification {
+public final class UserAttachNotification {
     private String userExternalId;
     private String endpointAccessToken;
 

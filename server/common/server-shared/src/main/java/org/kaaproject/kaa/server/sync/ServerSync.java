@@ -25,7 +25,7 @@ import org.kaaproject.kaa.server.sync.bootstrap.BootstrapServerSync;
  * @author Andrew Shvayka
  *
  */
-public class ServerSync {
+public final class ServerSync {
 
     private int requestId;
     private SyncStatus status;

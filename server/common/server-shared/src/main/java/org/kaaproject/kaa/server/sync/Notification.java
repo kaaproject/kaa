@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.nio.ByteBuffer;
 
-public class Notification {
+public final class Notification {
     private String topicId;
     private NotificationType type;
     private String uid;

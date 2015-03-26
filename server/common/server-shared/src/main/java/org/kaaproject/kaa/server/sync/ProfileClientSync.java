@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.nio.ByteBuffer;
 
-public class ProfileClientSync {
+public final class ProfileClientSync {
     private ByteBuffer endpointPublicKey;
     private ByteBuffer profileBody;
     private EndpointVersionInfo versionInfo;

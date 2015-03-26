@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class Topic {
+public final class Topic {
     private String id;
     private String name;
     private SubscriptionType subscriptionType;

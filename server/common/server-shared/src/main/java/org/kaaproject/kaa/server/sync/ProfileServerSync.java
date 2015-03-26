@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class ProfileServerSync {
+public final class ProfileServerSync {
     private SyncResponseStatus responseStatus;
 
     public ProfileServerSync() {

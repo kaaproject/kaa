@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.util.List;
 
-public class NotificationServerSync {
+public final class NotificationServerSync {
     private int appStateSeqNumber;
     private SyncResponseStatus responseStatus;
     private List<Notification> notifications;

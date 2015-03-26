@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class UserAttachRequest {
+public final class UserAttachRequest {
     private String userVerifierId;
     private String userExternalId;
     private String userAccessToken;

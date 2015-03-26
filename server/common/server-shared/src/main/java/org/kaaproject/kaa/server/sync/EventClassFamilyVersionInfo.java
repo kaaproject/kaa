@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class EventClassFamilyVersionInfo {
+public final class EventClassFamilyVersionInfo {
     private String name;
     private int version;
 

@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class UserDetachNotification {
+public final class UserDetachNotification {
     private String endpointAccessToken;
 
     public UserDetachNotification() {
