@@ -41,7 +41,6 @@ public class KaaTcpEncoder extends ChannelOutboundHandlerAdapter {
         if (!(msg instanceof MqttFrame)) {
             LOG.warn("Message is not a {}", MqttFrame.class.getSimpleName());
             super.write(ctx, msg, promise);
-            return;
         } else {
             MqttFrame frame = (MqttFrame) msg;
             byte[] data = frame.getFrame().array();
