@@ -16,7 +16,14 @@
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.*;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ENDPOINT_GROUP_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ENDPOINT_GROUPS_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ENDPOINT_GROUP_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.TOPIC_TYPE_PROPERTY;
 
 import java.util.Collections;
 import java.util.List;
@@ -61,16 +68,16 @@ public class HibernateTopicDao extends HibernateAbstractDao<Topic> implements To
     }
 
     @Override
-    public List<Topic> findTopicsByAppIdAndName(String appId, String topicName) {
-        List<Topic> topics = Collections.emptyList();
+    public Topic findTopicByAppIdAndName(String appId, String topicName) {
+        Topic topic = null;
         LOG.debug("Find topics by application id {} and name", appId, topicName);
         if (isNotBlank(appId) && isNotBlank(topicName)) {
-            topics = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+            topic = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
                     Restrictions.and(
                             Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
                             Restrictions.eq(TOPIC_NAME, topicName)));
         }
-        return topics;
+        return topic;
     }
 
     @Override

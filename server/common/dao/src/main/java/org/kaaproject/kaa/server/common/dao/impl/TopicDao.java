@@ -50,9 +50,9 @@ public interface TopicDao<T> extends SqlDao<T> {
      *
      * @param appId the application id
      * @param topicName the topic name
-     * @return the list of topics
+     * @return topic by application
      */
-    List<T> findTopicsByAppIdAndName(String appId, String topicName);
+    T findTopicByAppIdAndName(String appId, String topicName);
 
     /**
      * Find topics by ids.
