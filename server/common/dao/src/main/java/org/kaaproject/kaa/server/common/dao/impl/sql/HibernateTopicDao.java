@@ -95,7 +95,7 @@ public class HibernateTopicDao extends HibernateAbstractDao<Topic> implements To
                             Restrictions.eq(TOPIC_NAME, topicName)));
         }
         if (LOG.isTraceEnabled()) {
-            LOG.trace("[{},{}] Search result: {}.", appId, topicName, topic);
+            LOG.trace("[{},{}] Search result: {}.", appId, topicName, topic != null);
         } else {
             LOG.debug("[{},{}] Search result: {}.", appId, topicName, topic != null);
         }
