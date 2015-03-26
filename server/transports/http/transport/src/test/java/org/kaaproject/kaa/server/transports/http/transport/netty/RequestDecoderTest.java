@@ -19,10 +19,7 @@ package org.kaaproject.kaa.server.transports.http.transport.netty;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderResult;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpObject;
-import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.*;
 import io.netty.util.Attribute;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -34,9 +31,7 @@ import org.kaaproject.kaa.server.common.server.CommandFactory;
 import java.util.UUID;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class RequestDecoderTest {
     private static RequestDecoder requestDecoder;
@@ -65,32 +60,41 @@ public class RequestDecoderTest {
 
     @Test(expected = BadRequestException.class)
     public void noSuccessResult() throws Exception {
-        HttpObject httpObject = createHttpRequestMock(null, false);
+        HttpObject httpObject = createHttpRequestMock(null, false, HttpRequest.class);
         requestDecoder.channelRead0(null, httpObject);
     }
 
     @Test
     public void httpPostRequestTest() throws Exception {
-        HttpRequest request = createHttpRequestMock(HttpMethod.POST, true);
+        HttpObject request = createHttpRequestMock(HttpMethod.POST, true, HttpRequest.class);
         requestDecoder.channelRead0(channelHandlerContext, request);
         verify(channelHandlerContext).fireChannelRead(any(Object.class));
     }
 
     @Test(expected = BadRequestException.class)
     public void invalidMethodRequestTest() throws Exception {
-        HttpRequest request = createHttpRequestMock(HttpMethod.GET, true);
+        HttpObject request = createHttpRequestMock(HttpMethod.GET, true, HttpRequest.class);
         requestDecoder.channelRead0(channelHandlerContext, request);
     }
 
-    private HttpRequest createHttpRequestMock(HttpMethod httpMethod, boolean isSuccessfulResult) {
+    @Test
+    public void nonHttpRequestObjectTest() throws Exception {
+        HttpObject request = createHttpRequestMock(HttpMethod.POST, true, HttpObject.class);
+        requestDecoder.channelRead0(channelHandlerContext, request);
+        verify(channelHandlerContext, never()).fireChannelRead(any(Object.class));
+    }
+
+    private HttpObject createHttpRequestMock(HttpMethod httpMethod, boolean isSuccessfulResult, Class requestClazz) {
         DecoderResult result = mock(DecoderResult.class);
         when(result.isSuccess()).thenReturn(isSuccessfulResult);
-        HttpRequest httpRequest = mock(HttpRequest.class);
+        HttpObject httpRequest = (HttpObject) mock(requestClazz);
         when(httpRequest.getDecoderResult()).thenReturn(result);
-        when(httpRequest.getMethod()).thenReturn(httpMethod);
         HttpHeaders headers = mock(HttpHeaders.class);
         when(headers.toString()).thenReturn("Some header");
-        when(httpRequest.headers()).thenReturn(headers);
+        if (requestClazz.equals(HttpRequest.class)) {
+            when(((HttpRequest) httpRequest).getMethod()).thenReturn(httpMethod);
+            when(((HttpRequest) httpRequest).headers()).thenReturn(headers);
+        }
         return httpRequest;
     }
 }
