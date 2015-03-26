@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class EndpointDetachResponse {
+public final class EndpointDetachResponse {
     private int requestId;
     private SyncStatus result;
 

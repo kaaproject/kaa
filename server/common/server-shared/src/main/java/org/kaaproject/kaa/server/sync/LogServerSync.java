@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.sync;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LogServerSync {
+public final class LogServerSync {
     private List<LogDeliveryStatus> deliveryStatuses;
 
     public LogServerSync() {

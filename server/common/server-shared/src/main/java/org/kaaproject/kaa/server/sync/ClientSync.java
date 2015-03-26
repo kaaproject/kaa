@@ -20,7 +20,7 @@ import org.kaaproject.kaa.server.sync.bootstrap.BootstrapClientSync;
 /**
  * The Class ClientSync represents sync information sent from client to server.
  */
-public class ClientSync {
+public final class ClientSync {
 
     /** The request id. */
     private int requestId;
