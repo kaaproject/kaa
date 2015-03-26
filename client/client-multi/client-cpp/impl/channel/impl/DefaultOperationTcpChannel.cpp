@@ -129,15 +129,13 @@ void DefaultOperationTcpChannel::onKaaSync(const KaaSyncResponse& message)
         auto ackTypesCopy = ackTypes_;
         ackTypes_.clear();
 
+        KAA_MUTEX_UNLOCKING("channelGuard_");
+        KAA_UNLOCK(lock);
+        KAA_MUTEX_UNLOCKED("channelGuard_");
+
         if (ackTypesCopy.size() > 1) {
-            KAA_MUTEX_UNLOCKING("channelGuard_");
-            KAA_UNLOCK(lock);
-            KAA_MUTEX_UNLOCKED("channelGuard_");
             syncAll();
         } else {
-            KAA_MUTEX_UNLOCKING("channelGuard_");
-            KAA_UNLOCK(lock);
-            KAA_MUTEX_UNLOCKED("channelGuard_");
             sync(*ackTypesCopy.begin());
         }
     }
