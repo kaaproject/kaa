@@ -15,10 +15,10 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
-import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.hibernate.criterion.Restrictions.and;
@@ -44,12 +43,12 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_A
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_REFERENCE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_TYPE_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_NAME;
 
 @Repository
 public class HibernateTopicDao extends HibernateAbstractDao<Topic> implements TopicDao<Topic> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateTopicDao.class);
-    private static final String TOPIC_NAME = "name";
 
     @Override
     public List<Topic> findTopicsByAppId(String appId) {
