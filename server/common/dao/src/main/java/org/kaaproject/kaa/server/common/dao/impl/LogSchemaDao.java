@@ -57,11 +57,4 @@ public interface LogSchemaDao<T> extends SqlDao<T> {
      */
     T findLatestLogSchemaByAppId(String applicationId);
 
-    /**
-     * Find vacant schemas by appender id.
-     *
-     * @param appenderId
-     * @return the list of vacant schemas
-     */
-    List<T> findVacantSchemasByAppenderId(String appenderId);
 }

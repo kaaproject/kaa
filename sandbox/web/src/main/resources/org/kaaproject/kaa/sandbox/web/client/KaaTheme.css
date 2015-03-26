@@ -2,6 +2,7 @@
 @def selectionColor #0088CC;
 @def horizontalMenuSelectedColor #0088CC;
 @def commonFontSize 14px;
+@def commonFontFamily "Open Sans";
 
 th {
     white-space: normal !important;    
@@ -26,13 +27,13 @@ body {
 }
 
 body, table td, select, button {
-    font-family: Arial,sans-serif;
+    font-family: commonFontFamily;
     font-size: commonFontSize;
     line-height: 1.42857;
 }
 
 pre {
-    font-family: "courier new",courier;
+    font-family: commonFontFamily;
     font-size: 12px;
 }
 
@@ -55,7 +56,7 @@ button::-moz-focus-inner
 	color: #FFFFFF;
 	cursor: pointer;
 	display: inline-block;
-	font-family: Arial;
+	font-family: commonFontFamily;
 	font-size: 16px;
 	font-variant: normal;
 	font-weight: normal;
@@ -98,9 +99,11 @@ button::-moz-focus-inner
 }
 
 .gwt-MenuBar .gwt-MenuItem, .gwt-MenuItemLabel, .gwt-MenuItemContainer {
-	font-family: Arial;
-    font-size: 14px;
-    line-height: 1.42857;
+	font-family: commonFontFamily;
+    font-size: 16px;
+    line-height: 35px;
+    font-weight: bold;
+    color: #666;
 }
 
 .gwt-MenuBar .gwt-MenuItem, .gwt-MenuItemContainer {
@@ -120,7 +123,7 @@ button::-moz-focus-inner
 .gwt-MenuBar-horizontal .gwt-MenuItem, .gwt-MenuItemLabel, .gwt-MenuItemContainer {
     color: #FFFFFF;
     vertical-align: middle;
-    font-family: Arial,sans-serif;
+    font-family: commonFontFamily;
     font-size: 14px;
     line-height: 1;
     padding: 10px 10px;

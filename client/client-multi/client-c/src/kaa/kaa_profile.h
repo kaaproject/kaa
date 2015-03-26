@@ -31,14 +31,7 @@ extern "C" {
 # include <stdbool.h>
 # include "kaa_error.h"
 # include "kaa_common.h"
-# include "gen/kaa_profile_gen.h"
-
-
-
-/**
- * User defined endpoint profile structure
- */
-typedef kaa_profile_basic_endpoint_profile_test_t kaa_profile_t;
+# include "gen/kaa_profile_definitions.h"
 
 
 

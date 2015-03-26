@@ -1,0 +1,5 @@
+{
+  "message":{
+    "string":"This is sample notification for mandatory topic. Client automatically receive notifications for manadatory topics. More details here: https://docs.kaaproject.org/display/KAA/Using+notifications"
+  }
+}

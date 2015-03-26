@@ -15,14 +15,10 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.EVENT_CLASS_EVENT_CLASS_FAMILY_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.EVENT_CLASS_FQN;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.EVENT_CLASS_SCHEMA;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.EVENT_CLASS_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.EVENT_CLASS_TENANT_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.EVENT_CLASS_TYPE;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.EVENT_CLASS_VERSION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.event.EventClassDto;
+import org.kaaproject.kaa.common.dto.event.EventClassType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,10 +29,14 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.event.EventClassDto;
-import org.kaaproject.kaa.common.dto.event.EventClassType;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_EVENT_CLASS_FAMILY_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FQN;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_SCHEMA;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TENANT_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TYPE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_VERSION;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
 @Table(name = EVENT_CLASS_TABLE_NAME)

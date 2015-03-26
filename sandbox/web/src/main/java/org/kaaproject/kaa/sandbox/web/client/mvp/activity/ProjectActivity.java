@@ -110,12 +110,15 @@ public class ProjectActivity extends AbstractActivity {
                 if (result.getIconBase64() != null && result.getIconBase64().length() > 0) {
                     view.getApplicationImage().setUrl("data:image/png;base64,"+result.getIconBase64());
                 } else {
-                    view.getApplicationImage().setResource(Utils.getPlatformIcon(result.getPlatform()));
+                    view.getApplicationImage().setResource(Utils.getPlatformIconBig(result.getPlatform()));
                 }
-                view.setTitle(result.getName());
-                view.setTargetPlatform(result.getPlatform());
+                view.setProjectTitle(result.getName());
+                view.setPlatform(result.getPlatform());
                 view.setFeatures(result.getFeatures());
                 view.getDescription().setText(result.getDescription());
+                view.getDetails().setHTML(result.getDetails());
+                view.setBinaryButtonVisible(result.getDestBinaryFile() != null && 
+                        result.getDestBinaryFile().length() > 0);
             }
         });
     }

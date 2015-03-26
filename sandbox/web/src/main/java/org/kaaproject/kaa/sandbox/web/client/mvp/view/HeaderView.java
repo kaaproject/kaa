@@ -16,12 +16,12 @@
 
 package org.kaaproject.kaa.sandbox.web.client.mvp.view;
 
-import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.ActionsLabel;
+import org.kaaproject.kaa.sandbox.web.client.mvp.view.widget.HeaderMenuItems;
 
 import com.google.gwt.user.client.ui.IsWidget;
 
 public interface HeaderView extends IsWidget {
 
-    ActionsLabel getSettingsLabel();
+    HeaderMenuItems getHeaderMenuItems();
 
 }

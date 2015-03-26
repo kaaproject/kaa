@@ -1,0 +1,5 @@
+{
+  "message":{
+    "string":"This is sample notification for optional topic. Client should subscribe to optional topics in order to receive notifications. This application subscribes to optional topics automatically."
+  }
+}

@@ -35,3 +35,23 @@ function homeDir()
 export SERVER_HOME="$( homeDir )"
 export LIB=$SERVER_HOME/lib
 export CONF=$SERVER_HOME/conf
+
+if [ -z $SERVER_LOG_DIR ]; then
+    SERVER_LOG_DIR=/var/log/kaa
+fi
+
+export SERVER_LOG_DIR
+	
+if [ -z $SERVER_LOG_SUFIX ]; then
+    SERVER_LOG_SUFIX=
+fi	
+
+export SERVER_LOG_SUFIX
+
+JAVA_OPTIONS="$JAVA_OPTIONS -Djava.awt.headless=true -Dfile.encoding=UTF8 -Dserver_log_dir=$SERVER_LOG_DIR -Dserver_log_sufix=$SERVER_LOG_SUFIX -Dserver_home_dir=$SERVER_HOME"
+        
+export JAVA_OPTIONS
+
+export JETTY_HOME="${SERVER_HOME}"
+export JETTY_RUN="${SERVER_HOME}"
+        

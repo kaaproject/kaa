@@ -1,0 +1,9 @@
+{
+  "message":{
+    "string":"This is sample notification for optional topic."
+  },
+  "image":{
+    "string":"http://www.kaaproject.org/wp-content/uploads/2014/10/WebLogo185x120.png"
+  },
+  "__uuid":null
+}

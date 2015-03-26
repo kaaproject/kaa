@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.sandbox.web.client.mvp.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.sandbox.web.client.Sandbox;
 import org.kaaproject.kaa.sandbox.web.client.mvp.ClientFactory;
@@ -29,7 +26,6 @@ import org.kaaproject.kaa.sandbox.web.client.util.Utils;
 
 import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
@@ -38,8 +34,6 @@ public class HeaderActivity extends AbstractActivity {
     private final Place place;
     private final ClientFactory clientFactory;
     private final HeaderView headerView;
-
-    protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
 
     public HeaderActivity(Place place, ClientFactory clientFactory) {
         this.place = place;
@@ -55,27 +49,36 @@ public class HeaderActivity extends AbstractActivity {
 
     @Override
     public void onStop() {
-        for (HandlerRegistration registration : registrations) {
-            registration.removeHandler();
-        }
-        registrations.clear();
-        headerView.getSettingsLabel().clearItems();
+        
     }
 
     private void bind(final HeaderView headerView, final EventBus eventBus) {
-        headerView.getSettingsLabel().setVisible(false);
+        
+        headerView.getHeaderMenuItems().reset();
+        
+        headerView.getHeaderMenuItems().addMenuItem(Utils.constants.kaaAdminWeb(), new ActionMenuItemListener() {
+            @Override
+            public void onMenuItemSelected() {
+                gotoKaaAdminWeb();
+            }
+        });
+
+        headerView.getHeaderMenuItems().addMenuItem(Utils.constants.avroUiSandboxWeb(), new ActionMenuItemListener() {
+            @Override
+            public void onMenuItemSelected() {
+                gotoAvroUiSandboxWeb();
+            }
+        });
         
         Sandbox.getSandboxService().changeKaaHostEnabled(new BusyAsyncCallback<Boolean>() {
             @Override
             public void onFailureImpl(Throwable caught) {
-                headerView.getSettingsLabel().setVisible(false);
             }
 
             @Override
             public void onSuccessImpl(Boolean enabled) {
-                headerView.getSettingsLabel().setVisible(enabled);
                 if (enabled) {
-                    headerView.getSettingsLabel().addMenuItem(Utils.constants.changeKaaHost(), new ActionMenuItemListener() {
+                    headerView.getHeaderMenuItems().addMenuItem(Utils.constants.changeKaaHost(), new ActionMenuItemListener() {
                         @Override
                         public void onMenuItemSelected() {
                             clientFactory.getPlaceController().goTo(new ChangeKaaHostPlace(place));
@@ -83,8 +86,15 @@ public class HeaderActivity extends AbstractActivity {
                     });
                 }
             }
-        });
-        
+        });        
+    }
+    
+    private void gotoKaaAdminWeb() {
+        Sandbox.redirectToModule("kaaAdmin");
+    }
+    
+    private void gotoAvroUiSandboxWeb() {
+        Sandbox.redirectToModule("avroUiSandbox");
     }
 
 }

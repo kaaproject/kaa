@@ -40,7 +40,6 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.sandbox.demo.projects.Platform;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
 import org.kaaproject.kaa.sandbox.demo.projects.ProjectsConfig;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
@@ -157,16 +156,26 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
         createUsers(client);
         buildDemoApplicationImpl(client);
         projectConfigs = loadProjectConfigs();
-        String iconBase64 = loadIconBase64();
         logger.info("Demo application build finished.");
         try {
             for (Project projectConfig : projectConfigs) {
+                String iconBase64 = loadIconBase64(projectConfig.getId());
                 projectConfig.setIconBase64(iconBase64);
-                if (projectConfig.getPlatform()==Platform.ANDROID) {
+                switch (projectConfig.getPlatform()) {
+                case ANDROID:
                     sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
-                }
-                else if (projectConfig.getPlatform()==Platform.JAVA) {
+                    break;
+                case C:
+                    sdkKey.setTargetPlatform(SdkPlatform.C);
+                    break;
+                case CPP:
+                    sdkKey.setTargetPlatform(SdkPlatform.CPP);
+                    break;
+                case JAVA:
                     sdkKey.setTargetPlatform(SdkPlatform.JAVA);
+                    break;
+                default:
+                    break;
                 }
                 projectConfig.setSdkKeyBase64(Base64.encodeObject(sdkKey, Base64.URL_SAFE));
             }
@@ -237,9 +246,12 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
         return projectsConfig.getProjects();
     }
     
-    private String loadIconBase64() throws IOException {
+    private String loadIconBase64(String projectId) throws IOException {
         String base64 = null;
-        InputStream is = getClass().getClassLoader().getResourceAsStream(getResourcePath(ICON_PNG));
+        InputStream is = getClass().getClassLoader().getResourceAsStream(getResourcePath(projectId + "/" + ICON_PNG));
+        if (is == null) {
+            is = getClass().getClassLoader().getResourceAsStream(getResourcePath(ICON_PNG));
+        }
         if (is != null) {
             byte[] data = IOUtils.toByteArray(is);
             base64 = Base64.encodeBytes(data);

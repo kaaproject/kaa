@@ -15,16 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.MAJOR_VERSION_PROPERTY;
-
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -34,30 +24,51 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.MAJOR_VERSION_PROPERTY;
+
 @Repository
 public class HibernateProfileSchemaDao extends HibernateAbstractDao<ProfileSchema> implements ProfileSchemaDao<ProfileSchema> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateProfileSchemaDao.class);
 
     @Override
-    public List<ProfileSchema> findByApplicationId(String applicationId) {
-        List<ProfileSchema> schemas = null;
-        LOG.debug("Find profile schemas by application id {} ", applicationId);
-        if (isNotBlank(applicationId)) {
+    public List<ProfileSchema> findByApplicationId(String appId) {
+        List<ProfileSchema> schemas = Collections.emptyList();
+        LOG.debug("Searching profile schemas by application id [{}] ", appId);
+        if (isNotBlank(appId)) {
             schemas = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId)));
+                    Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(schemas.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", appId, schemas.size());
         }
         return schemas;
     }
 
     @Override
     public ProfileSchema findByAppIdAndVersion(String appId, int version) {
+        LOG.debug("Searching profile schema by application id [{}] and version [{}]", appId, version);
         ProfileSchema schema = null;
-        LOG.debug("Find profile schema by application id {} and major version {}", appId, version);
         if (isNotBlank(appId)) {
             schema = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.and(
                     Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
                     Restrictions.eq(MAJOR_VERSION_PROPERTY, version)));
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{},{}] Search result: {}.", appId, version, schema);
+        } else {
+            LOG.debug("[{},{}] Search result: {}.", appId, version, schema != null);
         }
         return schema;
     }
@@ -65,28 +76,39 @@ public class HibernateProfileSchemaDao extends HibernateAbstractDao<ProfileSchem
     @Override
     public ProfileSchema findLatestByAppId(String appId) {
         ProfileSchema latestSchema = null;
-        LOG.debug("Find latest profile schema by application id {} ", appId);
+        LOG.debug("Searching latest profile schema by application id [{}] ", appId);
         if (isNotBlank(appId)) {
             Criteria criteria = getCriteria().createAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS)
                     .add(Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)))
                     .addOrder(Order.desc(MAJOR_VERSION_PROPERTY)).setMaxResults(FIRST);
             latestSchema = findOneByCriteria(criteria);
         }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", appId, latestSchema);
+        } else {
+            LOG.debug("[{}] Search result: {}.", appId, latestSchema != null);
+        }
         return latestSchema;
     }
 
     @Override
-    public List<ProfileSchema> findVacantSchemas(String applicationId, List<String> usedSchemaIds) {
-        LOG.debug("Find vacant schemas, application id [{}], used schema ids [{}] ", applicationId, usedSchemaIds);
-        if (isNotBlank(applicationId)) {
+    public List<ProfileSchema> findVacantSchemas(String appId, List<String> usedSchemaIds) {
+        LOG.debug("Searching vacant schemas by application id [{}] and used schema ids [{}] ", appId, usedSchemaIds);
+        List<ProfileSchema> schemas = Collections.emptyList();
+        if (isNotBlank(appId)) {
             Criteria criteria = getCriteria().createAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS)
-                    .add(Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId)));
+                    .add(Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
             if (usedSchemaIds != null && !usedSchemaIds.isEmpty()) {
                 criteria.add(Restrictions.not(Restrictions.in(ID_PROPERTY, toLongIds(usedSchemaIds))));
             }
-            return findListByCriteria(criteria);
+            schemas = findListByCriteria(criteria);
         }
-        return Collections.emptyList();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(schemas.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", appId, schemas.size());
+        }
+        return schemas;
     }
 
     @Override

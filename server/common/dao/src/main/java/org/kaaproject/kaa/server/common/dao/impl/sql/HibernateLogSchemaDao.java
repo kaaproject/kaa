@@ -15,15 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.MAJOR_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.MINOR_VERSION_PROPERTY;
-
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
@@ -33,6 +24,15 @@ import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.MAJOR_VERSION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.MINOR_VERSION_PROPERTY;
 
 @Repository
 public class HibernateLogSchemaDao extends HibernateAbstractDao<LogSchema> implements LogSchemaDao<LogSchema> {
@@ -91,20 +91,4 @@ public class HibernateLogSchemaDao extends HibernateAbstractDao<LogSchema> imple
         return logSchema;
     }
 
-    @Override
-    public List<LogSchema> findVacantSchemasByAppenderId(String appenderId) {
-        LOG.debug("Find vacant log schemas by appender id [{}]", appenderId);
-        List<LogSchema> logSchemas = java.util.Collections.emptyList();
-//        List<LogSchema> logSchemas = findListByCriterionWithAlias(LOG_APPENDER_PROPERTY, LOG_APPENDER_ALIAS,
-//                Restrictions.ne(LOG_APPENDER_REFERENCE, Long.valueOf(appenderId)));
-//
-//
-//        if (isNotBlank(appenderId)) {
-//            logSchemas = findListByCriterionWithAlias(LOG_APPENDER_PROPERTY, LOG_APPENDER_ALIAS, JoinType.LEFT_OUTER_JOIN,
-//                    Restrictions.or(
-//                            Restrictions.ne(LOG_APPENDER_REFERENCE, Long.valueOf(appenderId)),
-//                            Restrictions.isNull(LOG_APPENDER_REFERENCE)));
-//        }
-        return logSchemas;
-    }
 }
