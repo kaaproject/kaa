@@ -15,16 +15,9 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.CONFIGURATION_CONFIGURATION_BODY;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.CONFIGURATION_CONFIGURATION_SCHEMA_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.CONFIGURATION_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.binaryToString;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.stringToBinary;
-
-import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.util.Arrays;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.ConfigurationDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,10 +25,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_CONFIGURATION_BODY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_CONFIGURATION_SCHEMA_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.binaryToString;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.stringToBinary;
 
 @Entity
 @Table(name = CONFIGURATION_TABLE_NAME)

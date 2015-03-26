@@ -15,11 +15,10 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_EVENT_MAP_ACTION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_EVENT_MAP_EVENT_CLASS_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_EVENT_MAP_FQN;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.APPLICATION_EVENT_MAP_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,10 +28,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
-import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_EVENT_MAP_ACTION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_EVENT_MAP_EVENT_CLASS_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_EVENT_MAP_FQN;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_EVENT_MAP_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
 @Table(name = APPLICATION_EVENT_MAP_TABLE_NAME)

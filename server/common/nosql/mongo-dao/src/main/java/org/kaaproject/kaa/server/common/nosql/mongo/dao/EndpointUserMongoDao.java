@@ -33,6 +33,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Repository
 public class EndpointUserMongoDao extends AbstractMongoDao<MongoEndpointUser, String> implements EndpointUserDao<MongoEndpointUser> {
+
     private static final Logger LOG = LoggerFactory.getLogger(EndpointUserMongoDao.class);
 
     @Override

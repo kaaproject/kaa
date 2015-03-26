@@ -15,16 +15,6 @@
  */
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.ID_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.impl.sql.HibernateDaoConstants.MAJOR_VERSION_PROPERTY;
-
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -34,18 +24,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.MAJOR_VERSION_PROPERTY;
+
 @Repository
 public class HibernateConfigurationSchemaDao extends HibernateAbstractDao<ConfigurationSchema> implements ConfigurationSchemaDao<ConfigurationSchema> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateConfigurationSchemaDao.class);
 
     @Override
-    public List<ConfigurationSchema> findByApplicationId(String applicationId) {
-        List<ConfigurationSchema> schemas = null;
-        LOG.debug("Find configuration schemas by application id {} ", applicationId);
-        if (isNotBlank(applicationId)) {
+    public List<ConfigurationSchema> findByApplicationId(String appId) {
+        List<ConfigurationSchema> schemas = Collections.emptyList();
+        LOG.debug("Searching configuration schemas by application id [{}] ", appId);
+        if (isNotBlank(appId)) {
             schemas = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId)));
+                    Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(schemas.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", appId, schemas.size());
         }
         return schemas;
     }
@@ -53,7 +59,7 @@ public class HibernateConfigurationSchemaDao extends HibernateAbstractDao<Config
     @Override
     public ConfigurationSchema findLatestByApplicationId(String appId) {
         ConfigurationSchema latestSchema = null;
-        LOG.debug("Find latest configuration schema by application id {} ", appId);
+        LOG.debug("Searching latest configuration schema by application id [{}] ", appId);
         if (isNotBlank(appId)) {
             Criteria criteria = getCriteria().createAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS)
                     .add(Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)))
@@ -61,26 +67,35 @@ public class HibernateConfigurationSchemaDao extends HibernateAbstractDao<Config
                     .setMaxResults(FIRST);
             latestSchema = findOneByCriteria(criteria);
         }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", appId, latestSchema);
+        } else {
+            LOG.debug("[{}] Search result: {}.", appId, latestSchema != null);
+        }
         return latestSchema;
     }
 
     @Override
     public ConfigurationSchema findByAppIdAndVersion(String appId, int version) {
         ConfigurationSchema schema = null;
-        LOG.debug("Find configuration schema by application id {} and major version {}", appId, version);
+        LOG.debug("Searching configuration schema by application id [{}] and version [{}]", appId, version);
         if (isNotBlank(appId)) {
             schema = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
                     Restrictions.and(
                             Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
                             Restrictions.eq(MAJOR_VERSION_PROPERTY, version)));
         }
-        LOG.debug("Found configuration {} by application id {} and major version {}", schema, appId, version);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{},{}] Search result: {}.", appId, version, schema);
+        } else {
+            LOG.debug("[{},{}] Search result: {}.", appId, version, schema != null);
+        }
         return schema;
     }
 
     @Override
     public List<ConfigurationSchema> findVacantSchemas(String appId, List<String> usedSchemaIds) {
-        LOG.debug("Find vacant schemas, application id [{}] ", appId);
+        LOG.debug("Searching vacant schemas by application id [{}] ", appId);
         List<ConfigurationSchema> schemas = Collections.emptyList();
         if (isNotBlank(appId)) {
             List<Long> lids = toLongIds(usedSchemaIds);
@@ -93,6 +108,11 @@ public class HibernateConfigurationSchemaDao extends HibernateAbstractDao<Config
                                 Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
                                 Restrictions.not(Restrictions.in(ID_PROPERTY, lids))));
             }
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(schemas.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", appId, schemas.size());
         }
         return schemas;
     }
