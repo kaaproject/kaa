@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.sandbox.demo;
 
-import org.kaaproject.kaa.common.dto.*;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import java.util.Date;
+import java.util.List;
+
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
+import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
@@ -28,36 +37,30 @@ import org.kaaproject.kaa.server.verifiers.trustful.config.TrustfulVerifierConfi
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.List;
-
 public class NotificationDemoBuilder extends AbstractDemoBuilder {
-
-    private static final Logger logger = LoggerFactory.getLogger(NotificationDemoBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationDemoBuilder.class);
     private static final int NOTIFICATION_VERSION = 1;
     private static final Date NOTIFICATION_EXPIRE_DATE = new Date(1900000000000L);
 
-    protected NotificationDemoBuilder() {
+    public NotificationDemoBuilder() {
         super("demo/notification");
     }
 
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
 
-        logger.info("Loading 'Android Notification Demo Application' data...");
+        logger.info("Loading 'Notification demo application' data...");
 
         loginTenantAdmin(client);
 
         ApplicationDto notificationApplication = new ApplicationDto();
-        notificationApplication.setName("Android notification");
+        notificationApplication.setName("Notification");
         notificationApplication = client.editApplication(notificationApplication);
 
         sdkKey.setApplicationId(notificationApplication.getId());
         sdkKey.setProfileSchemaVersion(1);
         sdkKey.setConfigurationSchemaVersion(1);
         sdkKey.setLogSchemaVersion(1);
-        sdkKey.setNotificationSchemaVersion(1);
-        sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
 
         loginTenantDeveloper(client);
 
@@ -65,8 +68,8 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder {
         NotificationSchemaDto notificationSchemaDto = new NotificationSchemaDto();
         notificationSchemaDto.setApplicationId(notificationApplication.getId());
         notificationSchemaDto.setName("Notification schema");
-        notificationSchemaDto.setDescription("Notification schema describing incoming notifications");
-        notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, getResourcePath("notificationSchema.json"));
+        notificationSchemaDto.setDescription("Notification schema of a sample notification");
+        notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, getResourcePath("notification_schema.avsc"));
         sdkKey.setNotificationSchemaVersion(notificationSchemaDto.getMajorVersion());
         logger.info("Notification schema was created.");
 
@@ -98,7 +101,7 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder {
         }
 
         if (baseEndpointGroup == null) {
-            throw new RuntimeException("Can't get default endpoint group for Java configuration demo application!");
+            throw new RuntimeException("Can't get default endpoint group for notification demo application!");
         }
 
         logger.info("Base endpoint group was successfully gotten");
@@ -134,7 +137,6 @@ public class NotificationDemoBuilder extends AbstractDemoBuilder {
         trustfulUserVerifier = client.editUserVerifierDto(trustfulUserVerifier);
         sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
 
-        logger.info("Finished loading 'Android Notification Demo Application' data.");
+        logger.info("Finished loading 'Notification demo application' data...");
     }
-
 }

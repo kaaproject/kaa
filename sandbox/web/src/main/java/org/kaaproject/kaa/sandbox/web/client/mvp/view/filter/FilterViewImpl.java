@@ -101,7 +101,7 @@ public class FilterViewImpl extends LeftPanelWidget implements FilterView, Value
     private class DemoProjectsFeatureFilter extends FilterPanel {
 
         public DemoProjectsFeatureFilter() {
-            super(Utils.constants.features());
+            super(Utils.constants.featuresFilter());
             setWidth("100%");
             for (Feature feature : Feature.values()) {
                 addItem(Utils.getFeatureIcon(feature), Utils.getFeatureBackgroundClass(feature), Utils.getFeatureText(feature));
@@ -113,7 +113,7 @@ public class FilterViewImpl extends LeftPanelWidget implements FilterView, Value
     private class DemoProjectsPlatformFilter extends FilterPanel {
 
         public DemoProjectsPlatformFilter() {
-            super(Utils.constants.platforms());
+            super(Utils.constants.platformsFilter());
             setWidth("100%");
             for (Platform platform : Platform.values()) {
                 addItem(Utils.getFilterPlatformIcon(platform), Utils.getPlatformBackgroundClass(platform), Utils.getPlatformText(platform));

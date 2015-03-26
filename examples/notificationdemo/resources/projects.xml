@@ -17,14 +17,26 @@ Copyright 2014-2015 CyberVision, Inc.
 -->
 
 <projectsConfig>
-    <project id="notification_demo">
+    <project id="notification_demo_java">
         <name>Notification demo</name>
-        <description>Application on android platform demonstrating notification subsystem (IoT)</description>
-        <platform>ANDROID</platform>
+        <description>Application on java platform demonstrating notification subsystem (IoT)</description>
+	<details></details>
+        <platform>JAVA</platform>
         <features>NOTIFICATION</features>
-        <sourceArchive>android/notification_demo.tar.gz</sourceArchive>
-        <projectFolder>notification_demo/NotificationDemo</projectFolder>
-        <sdkLibDir>notification_demo/NotificationDemo/libs</sdkLibDir>
-        <destBinaryFile>notification_demo/NotificationDemo/bin/KaaNotificationDemo-debug.apk</destBinaryFile>
+        <sourceArchive>java/notification_demo.tar.gz</sourceArchive>
+        <projectFolder>JNotificationDemo</projectFolder>
+        <sdkLibDir>JNotificationDemo/lib</sdkLibDir>
+        <destBinaryFile>JNotificationDemo/build/jar/NotificationDemo.jar</destBinaryFile>
+    </project>
+    <project id="notification_demo_cpp">
+        <name>Notification demo</name>
+        <description>Application on C++ platform demonstrating notification subsystem (IoT)</description>
+	<details></details>
+        <platform>CPP</platform>
+        <features>NOTIFICATION</features>
+        <sourceArchive>cpp/notification_demo.tar.gz</sourceArchive>
+        <projectFolder>CppNotificationDemo</projectFolder>
+        <sdkLibDir>CppNotificationDemo/libs/kaa</sdkLibDir>
+        <destBinaryFile></destBinaryFile>
     </project>
 </projectsConfig>
