@@ -41,6 +41,7 @@ public class NotificationDemo {
 
     public static void main(String[] args) {
         LOG.info("Notification demo application has started");
+        LOG.info("--= Press any key to exit =--");
         kaaClient = Kaa.newClient(new DesktopKaaPlatformContext());
 
         // Listener, which listens to topic list updates
@@ -51,7 +52,8 @@ public class NotificationDemo {
         kaaClient.addNotificationListener(new NotificationListener() {
             @Override
             public void onNotification(String id, SampleNotification sampleNotification) {
-                LOG.info("Notification of topic id [{}], received: {}", id, sampleNotification.getMessage());
+                LOG.info("Notification for topic id [{}] received.", id);
+                LOG.info("Notification body: {}", sampleNotification.getMessage());
             }
         });
 
@@ -68,7 +70,7 @@ public class NotificationDemo {
             // wait for some input before exiting
             System.in.read();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("IOException was caught", e);
         }
 
         // don't listen to topics anymore
@@ -87,8 +89,12 @@ public class NotificationDemo {
             LOG.info("Topic list was updated:");
             showTopicList(list);
             try {
-                kaaClient.subscribeToTopics(extractOptionalTopicIds(list), true);
                 // List was updated, try to subscribe to all new optional topics, if any
+                List<String> optionalTopics = extractOptionalTopicIds(list);
+                for(String optionalTopicId : optionalTopics){
+                    LOG.info("Subscribing to optional topic {}", optionalTopicId);
+                }
+                kaaClient.subscribeToTopics(optionalTopics, true);
             } catch (UnavailableTopicException e) {
                 LOG.debug("Topic is unavailable, can't subscribe: {}", e.getMessage());
             }
@@ -110,8 +116,7 @@ public class NotificationDemo {
             LOG.info("Topic list is empty");
         } else {
             for (Topic topic : topics) {
-                LOG.info("Topic id: {}, name: {}, type: {}",
-                        topic.getId(), topic.getName(), topic.getSubscriptionType());
+                LOG.info("Topic id: {}, name: {}, type: {}", topic.getId(), topic.getName(), topic.getSubscriptionType());
             }
         }
     }

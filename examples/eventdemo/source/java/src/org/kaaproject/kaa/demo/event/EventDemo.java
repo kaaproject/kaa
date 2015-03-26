@@ -36,6 +36,7 @@ import org.kaaproject.kaa.schema.sample.event.thermo.ChangeDegreeRequest;
 import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatEventClassFamily;
 import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoRequest;
 import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoResponse;
+import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,13 +48,14 @@ public class EventDemo {
     private static final Logger LOG = LoggerFactory.getLogger(EventDemo.class);
 
     // Credentials for attaching user
-    private static final String USER_EXTERNAL_ID = "userExternalId";
-    private static final String USER_ACCESS_TOKEN = "userAccessToken";
+    private static final String USER_EXTERNAL_ID = "user@email.com";
+    private static final String USER_ACCESS_TOKEN = "token";
     // Kaa client
     private static KaaClient kaaClient;
 
     public static void main(String[] args) {
         LOG.info("Event demo started");
+        LOG.info("--= Press any key to exit =--");
 
         // Creating Kaa desktop client instance
         kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener() {
@@ -92,6 +94,7 @@ public class EventDemo {
         });
 
         try {
+         // wait for some input before exiting
             System.in.read();
         } catch (IOException e) {
             LOG.error("IOException was caught", e);
@@ -116,6 +119,10 @@ public class EventDemo {
         //Getting concrete event family
         final ThermostatEventClassFamily tecf = eventFamilyFactory.getThermostatEventClassFamily();
 
+        //Broadcasting ChangeDegreeRequest event
+        tecf.sendEventToAll(new ChangeDegreeRequest(10));
+        LOG.info("Broadcast ChangeDegreeRequest sent");
+
         //Adding event listeners for family factory
         tecf.addListener(new ThermostatEventClassFamily.Listener() {
 
@@ -132,7 +139,7 @@ public class EventDemo {
             @Override
             public void onEvent(ThermostatInfoRequest thermostatInfoRequest, String senderId) {
                 LOG.info("ThermostatInfoRequest event received! sender: {}", senderId);
-                tecf.sendEvent(new ThermostatInfoResponse(), senderId);
+                tecf.sendEvent(new ThermostatInfoResponse(new ThermostatInfo(20, 10, true)), senderId);
             }
         });
 
@@ -144,24 +151,18 @@ public class EventDemo {
             public void onEventListenersReceived(List<String> eventListeners) {
                 LOG.info("{} event listeners received", eventListeners.size());
                 for (String listener : eventListeners) {
-                    LOG.info("listener: {}", listener);
+                    TransactionId trxId = eventFamilyFactory.startEventsBlock();
+                    // Add events to the block
+                    // Adding a targeted events to the block
+                    tecf.addEventToBlock(trxId, new ThermostatInfoRequest(), listener);
+                    tecf.addEventToBlock(trxId, new ChangeDegreeRequest(-30), listener);
+
+                    // Send added events in a batch
+                    eventFamilyFactory.submitEventsBlock(trxId);
+                    LOG.info("ThermostatInfoRequest & ChangeDegreeRequest sent to endpoint with id {}", listener);
+                    // Dismiss the event batch (if the batch was not submitted as shown in the previous line)
+                    // eventFamilyFactory.removeEventsBlock(trxId);
                 }
-                //Broadcasting ChangeDegreeRequest event
-                tecf.sendEventToAll(new ChangeDegreeRequest(10));
-                LOG.info("Broadcast ChangeDegreeRequest sent");
-
-                TransactionId trxId = eventFamilyFactory.startEventsBlock();
-                // Add events to the block
-                // Adding a broadcasted event to the block
-                tecf.addEventToBlock(trxId, new ThermostatInfoRequest());
-                // Adding a targeted event to the block
-                tecf.addEventToBlock(trxId, new ChangeDegreeRequest(-30), eventListeners.get(0));
-
-                // Send added events in a batch
-                eventFamilyFactory.submitEventsBlock(trxId);
-                LOG.info("Batch of events sent: broadcast ThermostatInfoRequest & ChangeDegreeRequest to endpoint with id {}", eventListeners.get(0));
-                // Dismiss the event batch (if the batch was not submitted as shown in the previous line)
-                // eventFamilyFactory.removeEventsBlock(trxId);
             }
 
             //Or if something gone wrong handling fail

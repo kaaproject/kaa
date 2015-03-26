@@ -56,7 +56,7 @@ public class AndroidNotificationDemoBuilder extends AbstractDemoBuilder {
         loginTenantAdmin(client);
 
         ApplicationDto notificationApplication = new ApplicationDto();
-        notificationApplication.setName("Android notification");
+        notificationApplication.setName("Android notification demo");
         notificationApplication = client.editApplication(notificationApplication);
 
         sdkKey.setApplicationId(notificationApplication.getId());
@@ -126,20 +126,6 @@ public class AndroidNotificationDemoBuilder extends AbstractDemoBuilder {
         mandatoryNotification.setExpiredAt(NOTIFICATION_EXPIRE_DATE);
         mandatoryNotification.setTopicId(mandatoryTopic.getId());
         client.sendNotification(mandatoryNotification, getResourcePath("mandatory_notification.json"));
-
-        TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();
-        UserVerifierDto trustfulUserVerifier = new UserVerifierDto();
-        trustfulUserVerifier.setApplicationId(notificationApplication.getId());
-        trustfulUserVerifier.setName("Trustful verifier");
-        trustfulUserVerifier.setPluginClassName(trustfulVerifierConfig.getPluginClassName());
-        trustfulUserVerifier.setPluginTypeName(trustfulVerifierConfig.getPluginTypeName());
-        RawSchema rawSchema = new RawSchema(trustfulVerifierConfig.getPluginConfigSchema().toString());
-        DefaultRecordGenerationAlgorithm<RawData> algotithm =
-                new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
-        RawData rawData = algotithm.getRootData();
-        trustfulUserVerifier.setJsonConfiguration(rawData.getRawData());
-        trustfulUserVerifier = client.editUserVerifierDto(trustfulUserVerifier);
-        sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
 
         logger.info("Finished loading 'Android Notification Demo Application' data.");
     }

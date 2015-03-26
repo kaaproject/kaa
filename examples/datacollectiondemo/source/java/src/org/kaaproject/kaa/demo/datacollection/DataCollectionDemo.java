@@ -47,6 +47,7 @@ public class DataCollectionDemo {
 
     public static void main(String[] args) {
         LOG.info("Data collection demo started");
+        LOG.info("--= Press any key to exit =--");
         // Creating Kaa desktop client instance
         KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener() {
             @Override
@@ -81,9 +82,10 @@ public class DataCollectionDemo {
         }
 
         try {
+         // wait for some input before exiting
             System.in.read();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("IOException was caught", e);
         }
 
         // stoping client
