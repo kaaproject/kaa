@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.nio.ByteBuffer;
 
-public class ConfigurationClientSync {
+public final class ConfigurationClientSync {
     private int appStateSeqNumber;
     private ByteBuffer configurationHash;
     private boolean resyncOnly;

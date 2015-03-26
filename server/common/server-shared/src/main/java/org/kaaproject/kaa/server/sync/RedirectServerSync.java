@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class RedirectServerSync {
+public final class RedirectServerSync {
     private int accessPointId;
 
     public RedirectServerSync() {

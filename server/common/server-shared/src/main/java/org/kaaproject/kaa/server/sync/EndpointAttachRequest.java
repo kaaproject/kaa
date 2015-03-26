@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class EndpointAttachRequest {
+public final class EndpointAttachRequest {
     private int requestId;
     private String endpointAccessToken;
 

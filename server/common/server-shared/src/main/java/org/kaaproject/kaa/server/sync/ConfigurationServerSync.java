@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.nio.ByteBuffer;
 
-public class ConfigurationServerSync {
+public final class ConfigurationServerSync {
 
     private int appStateSeqNumber;
     private SyncResponseStatus responseStatus;

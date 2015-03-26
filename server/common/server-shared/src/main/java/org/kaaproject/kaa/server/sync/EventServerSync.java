@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.util.List;
 
-public class EventServerSync {
+public final class EventServerSync {
     private EventSequenceNumberResponse eventSequenceNumberResponse;
     private List<EventListenersResponse> eventListenersResponses;
     private List<Event> events;

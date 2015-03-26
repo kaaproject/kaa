@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.util.List;
 
-public class UserServerSync {
+public final class UserServerSync {
     private UserAttachResponse userAttachResponse;
     private UserAttachNotification userAttachNotification;
     private UserDetachNotification userDetachNotification;

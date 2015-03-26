@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class EventSequenceNumberResponse {
+public final class EventSequenceNumberResponse {
     private int seqNum;
 
     public EventSequenceNumberResponse() {

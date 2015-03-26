@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class LogDeliveryStatus {
+public final class LogDeliveryStatus {
     
     private int requestId;
     private SyncStatus result;

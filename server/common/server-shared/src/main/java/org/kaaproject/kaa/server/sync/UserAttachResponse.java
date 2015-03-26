@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class UserAttachResponse {
+public final class UserAttachResponse {
     private SyncStatus result;
     private UserVerifierErrorCode errorCode;
     private String errorReason;

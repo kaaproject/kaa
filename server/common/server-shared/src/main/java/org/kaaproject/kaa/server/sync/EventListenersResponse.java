@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.util.List;
 
-public class EventListenersResponse {
+public final class EventListenersResponse {
     private int requestId;
     private List<String> listeners;
     private SyncStatus result;
