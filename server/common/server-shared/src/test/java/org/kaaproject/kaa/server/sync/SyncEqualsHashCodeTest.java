@@ -17,6 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
@@ -42,7 +43,15 @@ public class SyncEqualsHashCodeTest {
 
     @Test
     public void clientSyncMetaDataEqualsHashCodeTest() {
-        EqualsVerifier.forClass(ClientSyncMetaData.class).suppress(Warning.NONFINAL_FIELDS).verify();
+        ClientSyncMetaData clientSyncMetaData1 =  new ClientSyncMetaData("token1", null, null, 10L);
+        ClientSyncMetaData clientSyncMetaData2 =  new ClientSyncMetaData("token1", null, null, 10L);
+        ClientSyncMetaData clientSyncMetaData3 = new ClientSyncMetaData("token3", null, null, 12L);
+        Assert.assertEquals(clientSyncMetaData1, clientSyncMetaData1);
+        Assert.assertNotEquals(clientSyncMetaData1, clientSyncMetaData3);
+        Assert.assertNotEquals(clientSyncMetaData1, null);
+        Assert.assertNotEquals(null, clientSyncMetaData1);
+        Assert.assertEquals(clientSyncMetaData1, clientSyncMetaData2);
+        Assert.assertNotEquals(clientSyncMetaData1, new Object());
     }
 
     @Test
@@ -122,7 +131,14 @@ public class SyncEqualsHashCodeTest {
 
     @Test
     public void profileClientSyncEqualsHashCodeTest() {
-        EqualsVerifier.forClass(ProfileClientSync.class).suppress(Warning.NONFINAL_FIELDS).verify();
+        ProfileClientSync profileClientSync1 = new ProfileClientSync(null, null, null, "token1");
+        ProfileClientSync profileClientSync2 = new ProfileClientSync(null, null, null, "token1");
+        ProfileClientSync profileClientSync3 = new ProfileClientSync(null, null, null, "token3");
+        Assert.assertEquals(profileClientSync1, profileClientSync1);
+        Assert.assertNotEquals(profileClientSync1, null);
+        Assert.assertEquals(profileClientSync1, profileClientSync2);
+        Assert.assertNotEquals(profileClientSync1, profileClientSync3);
+        Assert.assertNotEquals(profileClientSync1, new Object());
     }
 
     @Test

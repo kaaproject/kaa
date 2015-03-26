@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.nio.ByteBuffer;
 
-public final class ClientSyncMetaData {
+public class ClientSyncMetaData {
     private String applicationToken;
     private ByteBuffer endpointPublicKeyHash;
     private ByteBuffer profileHash;
