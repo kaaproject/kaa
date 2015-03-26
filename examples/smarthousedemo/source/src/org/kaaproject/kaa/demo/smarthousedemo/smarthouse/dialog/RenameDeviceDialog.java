@@ -37,7 +37,7 @@ public class RenameDeviceDialog  {
         final EditText deviceNameInput = (EditText) renameDeviceView
                 .findViewById(R.id.deviceNameInput);
         
-        // set dialog message
+        // Set the dialog message.
         alertDialogBuilder
             .setCancelable(false)
             .setPositiveButton(R.string.ok,

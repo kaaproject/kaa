@@ -45,7 +45,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 /**
- * Fragment used for managing interactions for and presentation of a navigation
+ * The fragment is used for managing interactions for and presentation of a navigation
  * drawer. See the <a href=
  * "https://developer.android.com/design/patterns/navigation-drawer.html#Interaction"
  * > design guidelines</a> for a complete explanation of the behaviors
@@ -66,7 +66,7 @@ public class SmartHouseDrawerFragment extends Fragment {
     private SmartHouseActivity mMainActivity;
 
     /**
-     * Helper component that ties the action bar to the navigation drawer.
+     * A helper component that ties the action bar up with the navigation drawer.
      */
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -86,9 +86,9 @@ public class SmartHouseDrawerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Read in the flag indicating whether or not the user has demonstrated
-        // awareness of the
-        // drawer. See PREF_USER_LEARNED_DRAWER for details.
+        // Read in the flag indicating whether or not the user 
+        // has demonstrated awareness of the drawer. 
+        // See PREF_USER_LEARNED_DRAWER for details.
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(getActivity());
 
@@ -104,7 +104,8 @@ public class SmartHouseDrawerFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Indicate that this fragment would like to influence the set of
+        
+        // Indicate that this fragment intends to affect the set of
         // actions in the action bar.
         setHasOptionsMenu(true);
     }
@@ -222,13 +223,13 @@ public class SmartHouseDrawerFragment extends Fragment {
     }
 
     /**
-     * Users of this fragment must call this method to set up the navigation
+     * The users of this fragment must call this method to set up the navigation
      * drawer interactions.
      * 
      * @param fragmentId
-     *            The android:id of this fragment in its activity's layout.
+     *            The android:id of this fragment in its activity layout.
      * @param drawerLayout
-     *            The DrawerLayout containing this fragment's UI.
+     *            The DrawerLayout containing the UI of this fragment.
      */
     public void setUp(int fragmentId, DrawerLayout drawerLayout, String username) {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
@@ -236,17 +237,18 @@ public class SmartHouseDrawerFragment extends Fragment {
 
         mUsernameView.setText(username);
         
-        // set a custom shadow that overlays the main content when the drawer
-        // opens
+        // Set a custom shadow that overlays the main content when the drawer
+        // opens.
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
                 GravityCompat.START);
-        // set up the drawer's list view with items and click listener
+       
+        // Set up the list view with items for the drawer and click listener.
 
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
-        // ActionBarDrawerToggle ties together the the proper interactions
+        // ActionBarDrawerToggle ties together proper interactions
         // between the navigation drawer and the action bar app icon.
         mDrawerToggle = new ActionBarDrawerToggle(getActivity(), /*
                                                                   * host
@@ -285,7 +287,7 @@ public class SmartHouseDrawerFragment extends Fragment {
             }
         };
 
-        // Defer code dependent on restoration of previous instance state.
+        // Defer code dependent on restoration of the previous instance state.
         mDrawerLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -340,7 +342,8 @@ public class SmartHouseDrawerFragment extends Fragment {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        // Forward the new configuration the drawer toggle component.
+        
+        // Forward the new configuration of the drawer toggle component.
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
@@ -372,8 +375,8 @@ public class SmartHouseDrawerFragment extends Fragment {
     }
 
     /**
-     * Per the navigation drawer design guidelines, updates the action bar to
-     * show the global app 'context', rather than just what's in the current
+     * As per the navigation drawer design guidelines, updates the action bar to
+     * show the global app 'context' rather than just what is on the current
      * screen.
      */
     private void showGlobalContextActionBar() {

@@ -17,8 +17,7 @@
 package org.kaaproject.kaa.demo.photoframe.event;
 
 /**
- * The Class AlbumListEvent.
- * Event class is used to notify UI components of the receipt of the albums list from remote device.
+ * An event class which is used to notify UI components of the receipt of the albums list from a remote device.
  */
 public class AlbumListEvent extends BasicEndpointEvent {
 

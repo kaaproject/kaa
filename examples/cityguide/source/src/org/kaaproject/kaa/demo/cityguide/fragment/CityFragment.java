@@ -33,9 +33,8 @@ import android.view.ViewGroup;
 import com.viewpagerindicator.TabPageIndicator;
 
 /**
- * The Class CityFragment.
- * Implementation of {@link CityGuideFragment} class. 
- * Represents tabs with list views of city places separated by place {@link Category}.
+ * The implementation of the {@link CityGuideFragment} class. 
+ * Represents tabs with list views of city places separated by the place {@link Category}.
  */
 public class CityFragment extends CityGuideFragment {
 

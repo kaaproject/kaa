@@ -25,9 +25,8 @@ import android.os.Bundle;
 import android.widget.BaseAdapter;
 
 /**
- * The Class DevicesFragment.
- * Implementation of {@link ListFragment} class. 
- * Represents view with list of remote devices.
+ * The implementation of the {@link ListFragment} class. 
+ * Represents a view with a list of remote devices.
  */
 public class DevicesFragment extends ListFragment {
     

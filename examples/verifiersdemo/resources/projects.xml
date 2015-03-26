@@ -18,7 +18,7 @@ Copyright 2014-2015 CyberVision, Inc.
 
 <projectsConfig>
     <project id="verifiers_demo">
-        <name>Verifiers demo</name>
+        <name>User verifiers demo</name>
         <description>Verifiers application on android platform demonstrating user verification system(IoT)</description>
         <platform>ANDROID</platform>
         <features>EVENT USER_VERIFIER</features>

@@ -27,7 +27,7 @@ import org.kaaproject.kaa.demo.smarthousedemo.exception.CommandException;
 
 import android.util.Log;
 
-/** Implementation of get list of endpoint keys command.
+/** The implementation of the get list of endpoint keys command.
  */
 public class GetEndpointKeyListCommand extends AbstractClientCommand<List<String>> {
 

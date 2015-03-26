@@ -30,9 +30,8 @@ import android.app.Application;
 import de.greenrobot.event.EventBus;
 
 /**
- * The Class PhotoFrameApplication.
- * Implementation of base {@link Application} class. Performs initialization of 
- * application resources including initialization of Kaa client. Handles Kaa client lifecycle.
+ * The implementation of the base {@link Application} class. Performs initialization of the
+ * application resources including initialization of the Kaa client. Handles the Kaa client lifecycle.
  */
 public class PhotoFrameApplication extends Application {
 
@@ -53,7 +52,7 @@ public class PhotoFrameApplication extends Application {
         mImageLoader = new ImageLoader(this);
         
         /*
-         * Initialize Kaa client using android context.
+         * Initialize the Kaa client using the Android context.
          */
         KaaClientPlatformContext kaaClientContext = new AndroidKaaPlatformContext(
                 this);
@@ -61,7 +60,7 @@ public class PhotoFrameApplication extends Application {
                 new SimpleKaaClientStateListener() {
 
                     /*
-                     * Implement onStarted callback to get notified when Kaa
+                     * Implement the onStarted callback to get notified when the Kaa
                      * client is operational.
                      */
                     @Override
@@ -72,8 +71,8 @@ public class PhotoFrameApplication extends Application {
                     }
 
                     /*
-                     * Implement onResume callback to notify remote devices about 
-                     * local device availability.
+                     * Implement the onResume callback to notify remote devices  
+                     * of a local device availability.
                      */
                     @Override
                     public void onResume() {
@@ -87,7 +86,7 @@ public class PhotoFrameApplication extends Application {
         mController = new PhotoFrameController(this, mEventBus, mClient);
         
         /*
-         * Start Kaa client workflow.
+         * Start the Kaa client workflow.
          */
         mClient.start();
     }
@@ -95,8 +94,8 @@ public class PhotoFrameApplication extends Application {
     public void pause() {
 
         /*
-         * Suspend Kaa client. Release all network connections and application
-         * resources. Suspend all Kaa client tasks.
+         * Suspend the Kaa client. Release all network connections and application
+         * resources. Suspend all the Kaa client tasks.
          */
         mClient.pause();
     }
@@ -104,8 +103,8 @@ public class PhotoFrameApplication extends Application {
     public void resume() {
 
         /*
-         * Resume Kaa client. Restore Kaa client workflow. Resume all Kaa client
-         * tasks.
+         * Resume the Kaa client. Restore the Kaa client workflow. 
+         * Resume all the Kaa client tasks.
          */
         mClient.resume();
     }
@@ -115,8 +114,8 @@ public class PhotoFrameApplication extends Application {
         super.onTerminate();
 
         /*
-         * Stop Kaa client. Release all network connections and application
-         * resources. Shutdown all Kaa client tasks.
+         * Stop the Kaa client. Release all network connections and application
+         * resources. Shut down all the Kaa client tasks.
          */
         mClient.stop();
         mKaaStarted = false;
