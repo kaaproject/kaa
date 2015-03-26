@@ -52,7 +52,7 @@ extern "C" {
 
 #ifndef KAA_MAX_LOG_LEVEL
 /** Use KAA_LOG_TRACE as the max log level by default */
-#define KAA_MAX_LOG_LEVEL   KAA_LOG_LEVEL_NONE
+#define KAA_MAX_LOG_LEVEL   KAA_LOG_LEVEL_TRACE
 #endif
 
 #define KAA_LOG_LEVEL_FATAL_ENABLED     (KAA_MAX_LOG_LEVEL >= KAA_LOG_LEVEL_FATAL)
