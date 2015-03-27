@@ -49,7 +49,6 @@ public:
     }
     virtual void onConfigurationUpdated(const KaaRootConfiguration &configuration)
     {
-        cout << "Configuration was updated" << endl;
         displayConfiguration(configuration);
     }
 };
@@ -58,7 +57,7 @@ int main()
 {
     Kaa::init();
     cout << "Configuration demo started" << endl;
-    cout << "--= Press any key to exit =--" << endl;
+    cout << "--= Press Enter to exit =--" << endl;
     IKaaClient& kaaClient = Kaa::getKaaClient();
     // Set up default profile container
     kaaClient.setProfileContainer(std::make_shared<DefaultProfileContainer>());
@@ -70,7 +69,7 @@ int main()
     kaaClient.addConfigurationListener(receiver);
     Kaa::start();
     std::cin.get();
-    // Waiting for enter key pressed before exiting.
+    // Waiting for Enter key pressed before exiting.
     Kaa::stop();
     cout << "Configuration demo stopped" << endl;
     return 0;
