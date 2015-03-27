@@ -27,8 +27,8 @@
 #define KAA_LOG_H_
 
 #include "../kaa_error.h"
+#include "../platform/defaults.h"
 
-#define KAA_MAX_LOG_MESSAGE_LENGTH  256
 
 #ifdef __cplusplus
 extern "C" {

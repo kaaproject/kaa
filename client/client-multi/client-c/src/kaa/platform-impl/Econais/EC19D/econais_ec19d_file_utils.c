@@ -28,29 +28,23 @@ int econais_ec19d_binary_file_read(const char *file_name, char **buffer, size_t 
 
     *buffer = NULL;
     *buffer_size = 0;
-    *needs_deallocation = true;
+    *needs_deallocation = false;
 
     sndc_file_ref_t status_file = sndc_file_open(file_name, DE_FRDONLY);
-
-    if (!status_file) {
-        return -1;
-    }
+    KAA_RETURN_IF_NIL(status_file, -1);
 
     sndc_file_seek(status_file, 0, SEEK_END);
     *buffer_size = sndc_file_tell(status_file);
     *buffer = (char*)sndc_mem_calloc(*buffer_size, sizeof(char));
+    KAA_RETURN_IF_NIL(*buffer, -1);
 
-    if (*buffer == NULL) {
-        return -1;
-    }
 
-    *needs_deallocation = true;
     sndc_file_seek(status_file, 0, SEEK_SET);
     if (sndc_file_read(status_file, *buffer, *buffer_size) == 0) {
         sndc_mem_free(*buffer);
         return -1;
     }
-
+    *needs_deallocation = true;
     sndc_file_close(status_file);
     return 0;
 }
@@ -61,9 +55,9 @@ int econais_ec19d_binary_file_store(const char *file_name, const char *buffer, s
     sndc_file_ref_t status_file = sndc_file_open(file_name, DE_FCREATE|DE_FWRONLY|DE_FTRUNC);
 
     if (status_file) {
-        sndc_file_write(status_file, (void*)buffer, buffer_size);
+        int i = sndc_file_write(status_file, (void*)buffer, buffer_size);
         sndc_file_close(status_file);
-        return 0;
+        return 0 ? (i >= 0) : -1;
     }
     return -1;
 }

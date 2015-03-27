@@ -29,7 +29,8 @@
 #include "../../../kaa_error.h"
 #include "../../../kaa_common.h"
 
-#define START_BASE_PORT 51000
+#define START_BASE_PORT 49500
+#define PORT_RANG 10000
 /* Auxilaury function to get socket error status,
  * which is a socket level option, so set_sock_option is used */
 static kaa_error_t get_sock_error(kaa_fd_t sockid, int *sockerror)
@@ -124,7 +125,7 @@ kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd
         bind_sockaddr.sin_len = sizeof(bind_sockaddr);
         bind_sockaddr.sin_addr.s_addr = SNDC_INADDR_ANY;
 
-        uint16_t bind_port = START_BASE_PORT + sndc_sys_getRandom() % 10000;
+        uint16_t bind_port = START_BASE_PORT + sndc_sys_getRandom() % PORT_RANG;
         bind_sockaddr.sin_port = sndc_htons(bind_port);
 
         status = sndc_sock_bind(sock, (struct sndc_sockaddr*) &bind_sockaddr, sizeof(bind_sockaddr));
@@ -141,8 +142,6 @@ kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd
         ext_tcp_utils_tcp_socket_close(sock);
         return KAA_ERR_SOCKET_ERROR;
     }
-
-    status = 0;
 
     status = sndc_sock_connect(sock, destination, destination_size);
 
