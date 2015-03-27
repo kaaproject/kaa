@@ -16,6 +16,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
+#include <stdint.h>
 #include <time.h>
 #include <unistd.h>
 #include "platform/ext_sha.h"
@@ -33,6 +35,7 @@
 #include "kaa_status.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
+#include "platform/sock.h"
 #include "platform/ext_log_storage.h"
 #include "platform/ext_log_upload_strategy.h"
 

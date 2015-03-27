@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
+/*
+@file defaults.h
+ Created on: Mar 26, 2015
+     Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
+*/
 
-#ifndef ECONAIS_EC19D_TIME_H_
-#define ECONAIS_EC19D_TIME_H_
+#ifndef DEFAULTS_H_
+#define DEFAULTS_H_
 
-typedef uint32_t kaa_time_t;
+#ifdef ECONAIS_PLATFORM
+#include "../platform-impl/Econais/EC19D/econais_ec19d_defaults.h"
+#else
+#include "../platform-impl/posix/posix_defaults.h"
+#endif
 
-kaa_time_t ext_get_systime();
 
-#define KAA_TIME() ext_get_systime()
-
-#endif /* ECONAIS_EC19D_TIME_H_ */
+#endif /* DEFAULTS_H_ */

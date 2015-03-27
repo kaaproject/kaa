@@ -39,7 +39,7 @@ void ext_write_log(FILE * sink, const char * buffer, size_t message_size);
  *
  * @return  time_t      Time in seconds.
  */
-time_t ext_get_systime();
+//time_t ext_get_systime();
 
 /**
  * @brief Put formated LOG prefix in buffer.
