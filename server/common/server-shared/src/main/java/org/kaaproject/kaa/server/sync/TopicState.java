@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class TopicState {
+public final class TopicState {
     private String topicId;
     private int seqNumber;
 

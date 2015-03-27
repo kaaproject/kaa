@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class SubscriptionCommand {
+public final class SubscriptionCommand {
     private String topicId;
     private SubscriptionCommandType command;
 

@@ -17,101 +17,128 @@ package org.kaaproject.kaa.server.sync;
 
 import java.util.List;
 
-public class NotificationServerSync {
-   private int appStateSeqNumber;
-   private SyncResponseStatus responseStatus;
-   private List<Notification> notifications;
-   private List<Topic> availableTopics;
+public final class NotificationServerSync {
+    private int appStateSeqNumber;
+    private SyncResponseStatus responseStatus;
+    private List<Notification> notifications;
+    private List<Topic> availableTopics;
 
-  /**
-   * Default constructor.  Note that this does not initialize fields
-   * to their default values from the schema.  If that is desired then
-   * one should use {@link \#newBuilder()}. 
-   */
-  public NotificationServerSync() {}
+    /**
+     * Default constructor.  Note that this does not initialize fields
+     * to their default values from the schema.  If that is desired then
+     * one should use {@link \#newBuilder()}.
+     */
+    public NotificationServerSync() {}
 
-  /**
-   * All-args constructor.
-   */
-  public NotificationServerSync(java.lang.Integer appStateSeqNumber, SyncResponseStatus responseStatus, List<Notification> notifications, List<Topic> availableTopics) {
-    this.appStateSeqNumber = appStateSeqNumber;
-    this.responseStatus = responseStatus;
-    this.notifications = notifications;
-    this.availableTopics = availableTopics;
-  }
+    /**
+     * All-args constructor.
+     */
+    public NotificationServerSync(java.lang.Integer appStateSeqNumber, SyncResponseStatus responseStatus,
+                                  List<Notification> notifications, List<Topic> availableTopics) {
+        this.appStateSeqNumber = appStateSeqNumber;
+        this.responseStatus = responseStatus;
+        this.notifications = notifications;
+        this.availableTopics = availableTopics;
+    }
 
-  /**
-   * Gets the value of the 'appStateSeqNumber' field.
-   */
-  public java.lang.Integer getAppStateSeqNumber() {
-    return appStateSeqNumber;
-  }
+    /**
+     * Gets the value of the 'appStateSeqNumber' field.
+     */
+    public java.lang.Integer getAppStateSeqNumber() {
+        return appStateSeqNumber;
+    }
 
-  /**
-   * Sets the value of the 'appStateSeqNumber' field.
-   * @param value the value to set.
-   */
-  public void setAppStateSeqNumber(java.lang.Integer value) {
-    this.appStateSeqNumber = value;
-  }
+    /**
+     * Sets the value of the 'appStateSeqNumber' field.
+     * @param value the value to set.
+     */
+    public void setAppStateSeqNumber(java.lang.Integer value) {
+        this.appStateSeqNumber = value;
+    }
 
-  /**
-   * Gets the value of the 'responseStatus' field.
-   */
-  public SyncResponseStatus getResponseStatus() {
-    return responseStatus;
-  }
+    /**
+     * Gets the value of the 'responseStatus' field.
+     */
+    public SyncResponseStatus getResponseStatus() {
+        return responseStatus;
+    }
 
-  /**
-   * Sets the value of the 'responseStatus' field.
-   * @param value the value to set.
-   */
-  public void setResponseStatus(SyncResponseStatus value) {
-    this.responseStatus = value;
-  }
+    /**
+     * Sets the value of the 'responseStatus' field.
+     * @param value the value to set.
+     */
+    public void setResponseStatus(SyncResponseStatus value) {
+        this.responseStatus = value;
+    }
 
-  /**
-   * Gets the value of the 'notifications' field.
-   */
-  public List<Notification> getNotifications() {
-    return notifications;
-  }
+    /**
+     * Gets the value of the 'notifications' field.
+     */
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
 
-  /**
-   * Sets the value of the 'notifications' field.
-   * @param value the value to set.
-   */
-  public void setNotifications(List<Notification> value) {
-    this.notifications = value;
-  }
+    /**
+     * Sets the value of the 'notifications' field.
+     * @param value the value to set.
+     */
+    public void setNotifications(List<Notification> value) {
+        this.notifications = value;
+    }
 
-  /**
-   * Gets the value of the 'availableTopics' field.
-   */
-  public List<Topic> getAvailableTopics() {
-    return availableTopics;
-  }
+    /**
+     * Gets the value of the 'availableTopics' field.
+     */
+    public List<Topic> getAvailableTopics() {
+        return availableTopics;
+    }
 
-  /**
-   * Sets the value of the 'availableTopics' field.
-   * @param value the value to set.
-   */
-  public void setAvailableTopics(List<Topic> value) {
-    this.availableTopics = value;
-  }
+    /**
+     * Sets the value of the 'availableTopics' field.
+     * @param value the value to set.
+     */
+    public void setAvailableTopics(List<Topic> value) {
+        this.availableTopics = value;
+    }
 
-@Override
-public String toString() {
-    StringBuilder builder = new StringBuilder();
-    builder.append("NotificationServerSync [appStateSeqNumber=");
-    builder.append(appStateSeqNumber);
-    builder.append(", responseStatus=");
-    builder.append(responseStatus);
-    builder.append(", notifications=");
-    builder.append(notifications);
-    builder.append(", availableTopics=");
-    builder.append(availableTopics);
-    builder.append("]");
-    return builder.toString();
-}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        NotificationServerSync that = (NotificationServerSync) o;
+
+        if (appStateSeqNumber != that.appStateSeqNumber) return false;
+        if (availableTopics != null ? !availableTopics.equals(that.availableTopics) : that.availableTopics != null)
+            return false;
+        if (notifications != null ? !notifications.equals(that.notifications) : that.notifications != null)
+            return false;
+        if (responseStatus != that.responseStatus) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = appStateSeqNumber;
+        result = 31 * result + (responseStatus != null ? responseStatus.hashCode() : 0);
+        result = 31 * result + (notifications != null ? notifications.hashCode() : 0);
+        result = 31 * result + (availableTopics != null ? availableTopics.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("NotificationServerSync [appStateSeqNumber=");
+        builder.append(appStateSeqNumber);
+        builder.append(", responseStatus=");
+        builder.append(responseStatus);
+        builder.append(", notifications=");
+        builder.append(notifications);
+        builder.append(", availableTopics=");
+        builder.append(availableTopics);
+        builder.append("]");
+        return builder.toString();
+    }
 }

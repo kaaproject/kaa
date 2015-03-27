@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.sync;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-public class NotificationClientSync {
+public final class NotificationClientSync {
     private int appStateSeqNumber;
     private ByteBuffer topicListHash;
     private List<TopicState> topicStates;

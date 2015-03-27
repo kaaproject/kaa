@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.nio.ByteBuffer;
 
-public class Event {
+public final class Event {
     private int seqNum;
     private String eventClassFQN;
     private ByteBuffer eventData;
