@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-#ifndef CLIENT_CLIENT_MULTI_CLIENT_CPP_KAA_PROFILE_DEFAULTPROFILECONTAINER_HPP_
-#define CLIENT_CLIENT_MULTI_CLIENT_CPP_KAA_PROFILE_DEFAULTPROFILECONTAINER_HPP_
+#ifndef DEFAULTPROFILECONTAINER_HPP_
+#define DEFAULTPROFILECONTAINER_HPP_
 
 #include <kaa/profile/AbstractProfileContainer.hpp>
-#include <kaa/profile/gen/ProfileGen.hpp>
 #include <kaa/profile/gen/ProfileDefinitions.hpp>
 
 using namespace kaa;
@@ -28,10 +27,16 @@ public:
     DefaultProfileContainer() : profile_(KaaProfile()) { }
     DefaultProfileContainer(const KaaProfile& profile) : profile_(profile) { }
 
-    virtual KaaProfile getProfile()
+    KaaProfile getProfile()
     {
         return profile_;
     }
+
+    void setProfile(const KaaProfile& profile)
+    {
+        profile_= profile;
+    }
+
 private:
     KaaProfile profile_;
 };

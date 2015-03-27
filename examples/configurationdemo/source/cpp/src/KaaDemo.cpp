@@ -34,21 +34,23 @@ using namespace kaa;
 using std::cout;
 using std::endl;
 
+const char savedConfig[] = "saved_config.cfg";
+
 class UserConfigurationReceiver : public IConfigurationReceiver {
 public:
     void displayConfiguration(const KaaRootConfiguration &configuration)
     {
         if (!configuration.AddressList.is_null()) {
-            cout<<"Configuration body:\n";
+            cout << "Configuration body:" << endl;
             auto links = configuration.AddressList.get_array();
             for(auto& e : links) {
-                cout<<e.label<<" - "<<e.url<<endl;
+                cout << e.label << " - " << e.url << endl;
             }
         }
     }
     virtual void onConfigurationUpdated(const KaaRootConfiguration &configuration)
     {
-        cout<<"Configuration was updated\n";
+        cout << "Configuration was updated" << endl;
         displayConfiguration(configuration);
     }
 };
@@ -56,13 +58,13 @@ public:
 int main()
 {
     Kaa::init();
-    cout<<"Configuration demo started"<<endl;
+    cout << "Configuration demo started" << endl;
     IKaaClient& kaaClient = Kaa::getKaaClient();
     // Set up default profile container
     kaaClient.setProfileContainer(std::make_shared<DefaultProfileContainer>());
     kaaClient.updateProfile();
     // Set up a configuration subunit
-    IConfigurationStoragePtr storage(std::make_shared<FileConfigurationStorage>("saved_config.cfg"));
+    IConfigurationStoragePtr storage(std::make_shared<FileConfigurationStorage>(savedConfig));
     kaaClient.setConfigurationStorage(storage);
     UserConfigurationReceiver receiver;
     kaaClient.addConfigurationListener(receiver);
@@ -71,6 +73,6 @@ int main()
     for (int i = 0; i < 100; ++i)
         std::this_thread::sleep_for(std::chrono::seconds(1));
     Kaa::stop();
-    cout<<"Configuration demo stopped"<<endl;
+    cout << "Configuration demo stopped" << endl;
     return 0;
 }

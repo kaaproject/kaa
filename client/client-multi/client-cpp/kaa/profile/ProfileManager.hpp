@@ -31,7 +31,7 @@ namespace kaa {
  */
 class ProfileManager : public IProfileManager {
 public:
-    ProfileManager() : ProfileContainer_(IProfileContainerPtr()) { }
+    ProfileManager() : profileContainer_(IProfileContainerPtr()) { }
 
     /**
      * Sets profile container implemented by the user
@@ -48,7 +48,7 @@ public:
 
     SharedDataBuffer getSerializedProfile()
     {
-        return ProfileContainer_->getSerializedProfile();
+        return profileContainer_->getSerializedProfile();
     }
 
     /**
@@ -75,13 +75,13 @@ public:
 
 private:
     IProfileTransportPtr            transport_;
-    IProfileContainerPtr   ProfileContainer_;
+    IProfileContainerPtr   profileContainer_;
 };
 
 inline void ProfileManager::setProfileContainer(IProfileContainerPtr container)
 {
     if (container) {
-        ProfileContainer_ = container;
+        profileContainer_ = container;
     }
 }
 
