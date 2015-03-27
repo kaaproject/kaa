@@ -57,6 +57,7 @@ function build_thirdparty {
         cmake -DKAA_DEBUG_ENABLED=1 \
               -DKAA_WITHOUT_CONFIGURATION=1 \
               -DKAA_WITHOUT_LOGGING=1 \
+              -DKAA_MAX_LOG_LEVEL=3 \
               ..
     fi
 

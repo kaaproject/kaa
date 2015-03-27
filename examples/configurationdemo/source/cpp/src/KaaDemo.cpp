@@ -18,8 +18,6 @@
 #include <kaa/Kaa.hpp>
 #include <kaa/IKaaClient.hpp>
 
-#include <kaa/profile/DefaultProfileContainer.hpp>
-
 #include <kaa/configuration/storage/IConfigurationPersistenceManager.hpp>
 #include <kaa/configuration/manager/IConfigurationReceiver.hpp>
 #include <kaa/configuration/storage/FileConfigurationStorage.hpp>
@@ -59,10 +57,7 @@ int main()
     cout << "Configuration demo started" << endl;
     cout << "--= Press Enter to exit =--" << endl;
     IKaaClient& kaaClient = Kaa::getKaaClient();
-    // Set up default profile container
-    kaaClient.setProfileContainer(std::make_shared<DefaultProfileContainer>());
-    kaaClient.updateProfile();
-    // Set up a configuration subunit
+    // Set up a configuration subsystem.
     IConfigurationStoragePtr storage(std::make_shared<FileConfigurationStorage>(savedConfig));
     kaaClient.setConfigurationStorage(storage);
     UserConfigurationReceiver receiver;
