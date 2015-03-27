@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.appenders.file.appender;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.util.Arrays;
@@ -88,6 +89,15 @@ public class FileSystemLogAppenderTest {
         } finally {
             appender.close();
         }
+    }
+
+    @Test
+    public void appendToClosedAppenderTest() {
+        FileSystemLogAppender appender = new FileSystemLogAppender();
+        LogDeliveryCallback listener = mock(LogDeliveryCallback.class);
+        ReflectionTestUtils.setField(appender, "closed", true);
+        appender.doAppend(null, null, listener);
+        verify(listener).onInternalError();
     }
 
     @Test
