@@ -19,7 +19,27 @@ Copyright 2014-2015 CyberVision, Inc.
 <projectsConfig>
     <project id="cellmonitor_demo">
         <name>Cell monitor</name>
-        <description>Cell monitor application on android platform demonstrating data collection feature</description>
+        <description>Android app demonstrating the Kaa data collection functionality</description>
+        <details>
+            <![CDATA[
+This simple Android app illustrates time-series data collection using cell tower parameters (operator code, name, cell ID, signal strength, etc.), and the phone GPS location.
+
+<h2>Installation</h2>
+Download the .apk to your Android device by clicking the "Binary" button on the left. Make sure that the device permits installing apps from "Unknown sources". Open the downloaded apk and follow the on-screen instructions.
+
+<h2>Playing around</h2>
+Make sure that the Kaa sandbox is up and running. Opening the "Cell monitor demo" will show an activity with the latest data that the app would send over to the Kaa sandbox server.<br/><br/>
+
+Navigate to the Kaa server administrative interface by clicking on the "Administrative console" link from the Sandbox screen. Log in as a tenant developer (devuser / devuser123), and go to to the "Cell monitor" application, then select "Schemas", "Log". Choose the latest schema version to inspect the schema of the data collected from the app.<br/><br/>
+
+In this sample app the data is collected into a MongoDB instance. To review the configuration of the active log appender, browse to the "Log appenders" section under "Cell monitor" application, and choose "Cell monitor log appender" from the table.
+
+<h2>What's next?</h2>
+Get the source code by clicking the "Source" button on the left and start hacking!<br/><br/>
+
+For more background on Kaa Data Collection subsystem please refer to the corresponding <a href="https://docs.kaaproject.org/display/KAA/Collecting+data+from+endpoints">programming guide</a> and <a href="https://docs.kaaproject.org/display/KAA/Logging">design reference</a> sections.
+            ]]>
+        </details>
         <platform>ANDROID</platform>
         <features>DATA_COLLECTION</features>
         <sourceArchive>android/cellmonitor_demo.tar.gz</sourceArchive>
