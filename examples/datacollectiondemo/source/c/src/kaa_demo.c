@@ -48,39 +48,25 @@
 /*
  * Strategy-specific configuration parameters used by Kaa log collection feature.
  */
-#define KAA_DEMO_UPLOAD_COUNT_THRESHOLD     5   /* Count of collected serialized logs needed to initiate log upload */
-
-#define KAA_DEMO_LOG_GENERATION_FREQUENCY    3 /* seconds */
+#define KAA_DEMO_UPLOAD_COUNT_THRESHOLD      1 /* Count of collected logs needed to initiate log upload */
+#define KAA_DEMO_LOG_GENERATION_FREQUENCY    1 /* In seconds */
+#define KAA_DEMO_LOGS_TO_SEND                5
 
 /*
  * Hard-coded Kaa log entry body.
  */
-#define KAA_DEMO_LOG_TAG     "Log tag"
-#define KAA_DEMO_LOG_MESSAGE "Sample log message"
-
-/*
- * Kaa status and public key storage file names.
- */
-#define KAA_KEY_STORAGE       "key.txt"
-#define KAA_STATUS_STORAGE    "status.conf"
+#define KAA_DEMO_LOG_TAG     "TAG"
+#define KAA_DEMO_LOG_MESSAGE "MESSAGE_"
 
 
 
 static kaa_context_t *kaa_context_ = NULL;
 
-static kaa_profile_t *kaa_default_profile = NULL;
-
-static char *kaa_public_key           = NULL;
-static uint32_t kaa_public_key_length = 0;
-
 static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
 static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
 
 static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
-                                             , KAA_SERVICE_USER
-                                             , KAA_SERVICE_EVENT
-                                             , KAA_SERVICE_LOGGING
-                                             , KAA_SERVICE_CONFIGURATION };
+                                             , KAA_SERVICE_LOGGING};
 static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
 
 static kaa_transport_channel_interface_t bootstrap_channel;
@@ -89,9 +75,7 @@ static kaa_transport_channel_interface_t operations_channel;
 static void *log_storage_context         = NULL;
 static void *log_upload_strategy_context = NULL;
 
-static bool is_shutdown = false;
-
-
+static size_t log_record_counter = 0;
 
 /* forward declarations */
 
@@ -135,32 +119,11 @@ kaa_error_t kaa_log_collector_init()
     return error_code;
 }
 
-
-void kaa_demo_print_configuration_message(const kaa_root_configuration_t *configuration)
-{
-    if (configuration->message->type == KAA_CONFIGURATION_UNION_STRING_OR_NULL_BRANCH_1) {
-        KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Current configuration: null");
-    } else {
-        kaa_string_t *message = (kaa_string_t *) configuration->message->data;
-        KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Current configuration: %s", message->data);
-    }
-}
-
-kaa_error_t kaa_demo_configuration_receiver(void *context, const kaa_root_configuration_t *configuration)
-{
-    (void) context;
-    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Received configuration data");
-    kaa_demo_print_configuration_message(configuration);
-    return KAA_ERR_NONE;
-}
-
 /*
  * Initializes Kaa SDK.
  */
 kaa_error_t kaa_sdk_init()
 {
-    printf("Initializing Kaa SDK...\n");
-
     kaa_error_t error_code = kaa_init(&kaa_context_);
     if (error_code) {
         printf("Error during kaa context creation %d", error_code);
@@ -169,21 +132,9 @@ kaa_error_t kaa_sdk_init()
 
     error_code = kaa_log_collector_init();
     if (error_code) {
-        KAA_LOG_ERROR(kaa_context_->logger, error_code,
-                        "Failed to init Kaa log collector %d", error_code);
+        KAA_LOG_ERROR(kaa_context_->logger, error_code, "Failed to init Kaa log collector %d", error_code);
         return error_code;
     }
-
-    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Creating endpoint profile");
-
-    kaa_default_profile = kaa_profile_profile_create();
-    kaa_default_profile->id = kaa_string_move_create(KAA_DEMO_PROFILE_ID, NULL);
-    kaa_default_profile->os = ENUM_OS_Linux;
-    kaa_default_profile->os_version = kaa_string_move_create(KAA_DEMO_OS_VERSION, NULL);
-    kaa_default_profile->build = kaa_string_move_create(KAA_DEMO_BUILD_INFO, NULL);
-
-    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Setting profile");
-    kaa_profile_manager_update_profile(kaa_context_->profile_manager, kaa_default_profile);
 
     KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Adding transport channels");
 
@@ -209,12 +160,6 @@ kaa_error_t kaa_sdk_init()
                                                          , NULL);
     KAA_RETURN_IF_ERR(error_code);
 
-    kaa_configuration_root_receiver_t receiver = { NULL, &kaa_demo_configuration_receiver };
-    error_code = kaa_configuration_manager_set_root_receiver(kaa_context_->configuration_manager, &receiver);
-    KAA_RETURN_IF_ERR(error_code);
-
-    kaa_demo_print_configuration_message(kaa_configuration_manager_get_configuration(kaa_context_->configuration_manager));
-
     KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa SDK started");
     return KAA_ERR_NONE;
 }
@@ -224,7 +169,6 @@ kaa_error_t kaa_sdk_init()
  */
 kaa_error_t kaa_demo_init()
 {
-    printf("%s", "Initializing Kaa driver...");
     kaa_error_t error_code = kaa_sdk_init();
     if (error_code) {
         printf("Failed to init Kaa SDK. Error code : %d", error_code);
@@ -235,31 +179,30 @@ kaa_error_t kaa_demo_init()
 
 void kaa_demo_destroy()
 {
-    printf("%s", "Destroying Kaa driver...");
-
     kaa_tcp_channel_disconnect(&operations_channel);
-
-    if (kaa_default_profile) {
-        kaa_default_profile->destroy(kaa_default_profile);
-    }
     kaa_deinit(kaa_context_);
-    if (kaa_public_key) {
-        free(kaa_public_key);
-        kaa_public_key_length = 0;
-    }
 }
 
 void kaa_demo_add_log_record()
 {
+    ++log_record_counter;
+
+    printf("Going to add %zuth log record\n", log_record_counter);
+
     kaa_user_log_record_t *log_record = kaa_logging_log_data_create();
     if (!log_record) {
         KAA_LOG_ERROR(kaa_context_->logger, KAA_ERR_NOT_INITIALIZED, "Failed to allocate log record");
         return;
     }
 
-    log_record->level = (kaa_logging_level_t)(rand() % 6);
+    log_record->level = ENUM_LEVEL_INFO;
     log_record->tag = kaa_string_move_create(KAA_DEMO_LOG_TAG, NULL);
-    log_record->message = kaa_string_move_create(KAA_DEMO_LOG_MESSAGE, NULL);
+
+    size_t log_message_buffer_size = strlen(KAA_DEMO_LOG_MESSAGE) + sizeof(log_record_counter);
+    char log_message_buffer[log_message_buffer_size];
+    snprintf(log_message_buffer, log_message_buffer_size, "%s%zu", KAA_DEMO_LOG_MESSAGE, log_record_counter);
+
+    log_record->message = kaa_string_copy_create(log_message_buffer);
 
     kaa_error_t error_code = kaa_logging_add_record(kaa_context_->log_collector, log_record);
     if (error_code)
@@ -275,8 +218,6 @@ int kaa_demo_event_loop()
         KAA_LOG_FATAL(kaa_context_->logger, error_code,"Failed to start Kaa workflow");
         return -1;
     }
-
-    kaa_demo_add_log_record();
 
     uint16_t select_timeout;
     error_code = kaa_tcp_channel_get_max_timeout(&operations_channel, &select_timeout);
@@ -294,7 +235,7 @@ int kaa_demo_event_loop()
     struct timeval select_tv = { 0, 0 };
     int max_fd = 0;
 
-    while (!is_shutdown) {
+    while (log_record_counter < KAA_DEMO_LOGS_TO_SEND) {
         FD_ZERO(&read_fds);
         FD_ZERO(&write_fds);
         FD_ZERO(&except_fds);
@@ -366,18 +307,18 @@ int kaa_demo_event_loop()
 
 int main(/*int argc, char *argv[]*/)
 {
+    printf("Data collection demo started\n");
+
     kaa_error_t error_code = kaa_demo_init();
     if (error_code) {
         printf("Failed to initialize Kaa demo. Error code: %d\n", error_code);
         return error_code;
     }
 
-    KAA_LOG_INFO(kaa_context_->logger, KAA_ERR_NONE, "Kaa demo started");
-
     int rval = kaa_demo_event_loop();
     kaa_demo_destroy();
 
-    printf("Kaa demo stopped\n");
+    printf("Data collection demo stopped\n");
 
     return rval;
 }
