@@ -50,6 +50,8 @@ public abstract class HibernateAbstractTest {
     public static final Random RANDOM = new Random();
 
     @Autowired
+    protected LogAppenderDao<LogAppender> appenderDao;
+    @Autowired
     protected UserDao<User> userDao;
     @Autowired
     protected UserVerifierDao<UserVerifier> verifierDao;
@@ -204,7 +206,7 @@ public abstract class HibernateAbstractTest {
                 Configuration dto = new Configuration();
                 dto.setId(null);
                 dto.setStatus(status != null ? status : UpdateStatus.INACTIVE);
-                dto.setConfigurationBody(new byte[] { 0, 2, 3, 4, });
+                dto.setConfigurationBody(new byte[]{0, 2, 3, 4,});
                 dto.setConfigurationSchema(schema);
                 dto.setSequenceNumber(i);
                 dto.setMajorVersion(i + 1);
@@ -324,6 +326,17 @@ public abstract class HibernateAbstractTest {
         }
         verifier.setVerifierToken(verifierToken);
         return verifierDao.save(verifier);
+    }
+
+    protected LogAppender generateLogAppender(Application app){
+        LogAppender appender = new LogAppender();
+        if (app == null) {
+            app = generateApplication(null);
+        }
+        appender.setApplication(app);
+        appender.setMinLogSchemaVersion(1);
+        appender.setMaxLogSchemaVersion(2);
+        return appenderDao.save(appender);
     }
 
     protected List<EventClassFamily> generateEventClassFamily(Tenant tenant, int count) {
