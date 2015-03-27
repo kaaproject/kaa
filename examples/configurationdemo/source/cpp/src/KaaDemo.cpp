@@ -30,22 +30,24 @@
 #include <stdio.h>
 
 using namespace kaa;
+using std::cout;
+using std::endl;
 
 class UserConfigurationReceiver : public IConfigurationReceiver {
 public:
     void displayConfiguration(const KaaRootConfiguration &configuration)
     {
         if (!configuration.AddressList.is_null()) {
-            std::cout<<"Configuration body:\n";
+            cout<<"Configuration body:\n";
             auto links = configuration.AddressList.get_array();
             for(auto& e : links) {
-              std::cout<<e.label<<" - "<<e.url<<std::endl;
+                cout<<e.label<<" - "<<e.url<<endl;
             }
         }
     }
     virtual void onConfigurationUpdated(const KaaRootConfiguration &configuration)
     {
-        std::cout<<"Configuration was updated\n";
+        cout<<"Configuration was updated\n";
         displayConfiguration(configuration);
     }
 };
@@ -54,7 +56,7 @@ public:
 int main()
 {
     Kaa::init();
-    std::cout<<"Configuration demo started"<<std::endl;
+    cout<<"Configuration demo started"<<endl;
     IKaaClient& kaaClient = Kaa::getKaaClient();
     // Set up default profile container
     kaaClient.setProfileContainer(std::make_shared<DefaultProfileContainer>());
@@ -70,6 +72,6 @@ int main()
     for (int i = 0; i < 100; ++i)
         std::this_thread::sleep_for(std::chrono::seconds(1));
     Kaa::stop();
-    std::cout<<"Configuration demo stopped"<<std::endl;
+    cout<<"Configuration demo stopped"<<endl;
     return 0;
 }

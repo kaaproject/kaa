@@ -16,9 +16,11 @@
 
 #ifndef CLIENT_CLIENT_MULTI_CLIENT_CPP_KAA_PROFILE_DEFAULTPROFILECONTAINER_HPP_
 #define CLIENT_CLIENT_MULTI_CLIENT_CPP_KAA_PROFILE_DEFAULTPROFILECONTAINER_HPP_
+
 #include <kaa/profile/AbstractProfileContainer.hpp>
 #include <kaa/profile/gen/ProfileGen.hpp>
 #include <kaa/profile/gen/ProfileDefinitions.hpp>
+
 using namespace kaa;
 
 class DefaultProfileContainer : public AbstractProfileContainer< KaaProfile > {
