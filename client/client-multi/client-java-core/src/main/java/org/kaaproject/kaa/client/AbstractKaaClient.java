@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,6 +88,7 @@ import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.profile.DefaultProfileManager;
 import org.kaaproject.kaa.client.profile.ProfileContainer;
+import org.kaaproject.kaa.client.profile.ProfileManager;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
@@ -136,7 +137,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     protected final AbstractLogCollector logCollector;
 
     private final DefaultNotificationManager notificationManager;
-    private final DefaultProfileManager profileManager;
+    private final ProfileManager profileManager;
 
     private final KaaClientProperties properties;
     private final KaaClientState kaaClientState;
@@ -573,11 +574,11 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         return new DefaultNotificationManager(kaaClientState, context.getExecutorContext(), transportContext.getNotificationTransport());
     }
 
-    protected DefaultProfileManager buildProfileManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
+    protected ProfileManager buildProfileManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
         return new DefaultProfileManager(transportContext.getProfileTransport());
     }
 
-    protected DefaultBootstrapManager buildBootstrapManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
+    protected BootstrapManager buildBootstrapManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
         return new DefaultBootstrapManager(transportContext.getBootstrapTransport());
     }
 
