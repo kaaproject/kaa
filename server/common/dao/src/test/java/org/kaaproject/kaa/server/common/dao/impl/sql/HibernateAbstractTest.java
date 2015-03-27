@@ -36,41 +36,9 @@ import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationType;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
-import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
-import org.kaaproject.kaa.server.common.dao.impl.ApplicationEventFamilyMapDao;
-import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
-import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
-import org.kaaproject.kaa.server.common.dao.impl.EventClassDao;
-import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
-import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
-import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
-import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
-import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
-import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
-import org.kaaproject.kaa.server.common.dao.impl.UserDao;
-import org.kaaproject.kaa.server.common.dao.model.sql.Application;
-import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
-import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventMap;
-import org.kaaproject.kaa.server.common.dao.model.sql.Change;
-import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
-import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
-import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
-import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
-import org.kaaproject.kaa.server.common.dao.model.sql.EventSchemaVersion;
-import org.kaaproject.kaa.server.common.dao.model.sql.History;
-import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
-import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
-import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
-import org.kaaproject.kaa.server.common.dao.model.sql.User;
+import org.kaaproject.kaa.server.common.dao.impl.*;
+import org.kaaproject.kaa.server.common.dao.model.sql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +51,8 @@ public abstract class HibernateAbstractTest {
 
     @Autowired
     protected UserDao<User> userDao;
+    @Autowired
+    protected UserVerifierDao<UserVerifier> verifierDao;
     @Autowired
     protected TenantDao<Tenant> tenantDao;
     @Autowired
@@ -340,6 +310,20 @@ public abstract class HibernateAbstractTest {
         }
         topic.setType(type);
         return topicDao.save(topic);
+    }
+
+    protected UserVerifier generateUserVerifier(Application app, String verifierToken){
+        UserVerifier verifier = new UserVerifier();
+        verifier.setName("GENERATED test Verifier");
+        if (app == null) {
+            app = generateApplication(null);
+        }
+        verifier.setApplication(app);
+        if (verifierToken == null) {
+            verifierToken = "token";
+        }
+        verifier.setVerifierToken(verifierToken);
+        return verifierDao.save(verifier);
     }
 
     protected List<EventClassFamily> generateEventClassFamily(Tenant tenant, int count) {
