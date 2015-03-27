@@ -48,9 +48,8 @@ static std::list<std::string> extractOptionalTopicIds(const Topics& topics) {
     return topicIds;
 }
 
-/*
- * The listener which receives notifications on topics.
- */
+
+// The listener which receives notifications on topics.
 class BasicNotificationListener : public INotificationListener {
 public:
     virtual void onNotification(const std::string& topicId, const KaaNotification& notification)
@@ -61,9 +60,8 @@ public:
     }
 };
 
-/*
- * The listener which receives the list of available topics.
- */
+// A listener that tracks the notification topic list updates
+// and subscribes the Kaa client to every new topic available.
 class BasicNotificationTopicListListener : public INotificationTopicListListener {
 public:
     BasicNotificationTopicListListener(IKaaClient& kaaClient) : kaaClient_(kaaClient) {}
@@ -92,51 +90,35 @@ private:
 int main()
 {
     std::cout << "Notification demo started" << std::endl;
+    std::cout << "--= Press Enter to exit =--" << std::endl;
 
-    /*
-     * Initialize the Kaa endpoint.
-     */
+    // Initialize the Kaa endpoint.
     Kaa::init();
     IKaaClient& kaaClient =  Kaa::getKaaClient();
 
-    /*
-     * Create the listener which receives the list of available topics.
-     */
+    // Add the listener which receives the list of available topics.
     std::unique_ptr<INotificationTopicListListener> topicListListener(new BasicNotificationTopicListListener(kaaClient));
-
-    /*
-     * Creates the listener which receives notifications on all available topics.
-     */
-    std::unique_ptr<INotificationListener> commonNotificationListener(new BasicNotificationListener);
-
-    /*
-     * Add listeners.
-     */
     kaaClient.addTopicListListener(*topicListListener);
+
+    // Add the listener which receives notifications on all topics.
+    std::unique_ptr<INotificationListener> commonNotificationListener(new BasicNotificationListener);
     kaaClient.addNotificationListener(*commonNotificationListener);
 
-    /*
-     * Start the Kaa client and connect it to the Kaa server.
-     */
+    // Start the Kaa client and connect it to the Kaa server.
     Kaa::start();
 
-    /*
-     * Retrieve the list of available topics.
-     */
+    // Get available notification topics.
     auto availableTopics = kaaClient.getTopics();
+
+    // List the obtained notification topics.
     showTopicList(availableTopics);
 
-    std::cout << "--= Press any key to exit =--" << std::endl;
     std::cin.get();
 
-    /*
-     * Stop listening to the notification topic list updates.
-     */
+    // Remove the listener which receives the list of available topics.
     kaaClient.removeTopicListListener(*topicListListener);
 
-    /*
-     * Stop the Kaa client and release all the resources which were in use.
-     */
+    // Stop the Kaa client and release all the resources which were in use.
     Kaa::stop();
     std::cout << "Notification demo stopped" << std::endl;
 
