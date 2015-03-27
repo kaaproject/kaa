@@ -58,7 +58,7 @@ int main()
 {
     Kaa::init();
     cout << "Configuration demo started" << endl;
-    cout << "--= Press any key to exit =--"<<endl;
+    cout << "--= Press any key to exit =--" << endl;
     IKaaClient& kaaClient = Kaa::getKaaClient();
     // Set up default profile container
     kaaClient.setProfileContainer(std::make_shared<DefaultProfileContainer>());
