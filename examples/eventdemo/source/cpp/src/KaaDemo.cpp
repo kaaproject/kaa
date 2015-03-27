@@ -18,6 +18,7 @@
 #include <memory>
 #include <thread>
 #include <cstdint>
+#include <iostream>
 
 #include <kaa/Kaa.hpp>
 #include <kaa/event/registration/IUserAttachCallback.hpp>
@@ -36,7 +37,7 @@ public:
 
     virtual void onEvent(const nsThermostatEventClassFamily::ThermostatInfoRequest& event, const std::string& source)
     {
-        KAA_LOG_TRACE("Kaa Demo ThermostatInfoRequest event received!");
+        std::cout << "Kaa Demo ThermostatInfoRequest event received!" << std::endl;
 
         nsThermostatEventClassFamily::ThermostatInfo info;
         info.degree.set_int(-5);
@@ -51,27 +52,27 @@ public:
 
     virtual void onEvent(const nsThermostatEventClassFamily::ThermostatInfoResponse& event, const std::string& source)
     {
-        KAA_LOG_TRACE("Kaa Demo ThermostatInfoResponse event received!");
+        std::cout << "Kaa Demo ThermostatInfoResponse event received!" << std::endl;
 
         if (!event.thermostatInfo.is_null()) {
             nsThermostatEventClassFamily::ThermostatInfo info = event.thermostatInfo.get_ThermostatInfo();
             if (!info.degree.is_null()) {
-                KAA_LOG_TRACE(boost::format("Kaa Demo degree=%1%") % info.degree.get_int());
+                std::cout << "Kaa Demo degree=" << info.degree.get_int() << std::endl;
             }
             if (!info.targetDegree.is_null()) {
-                KAA_LOG_TRACE(boost::format("Kaa Demo targetDegree=%1%") % info.targetDegree.get_int());
+                std::cout << "Kaa Demo targetDegree=" << info.targetDegree.get_int() << std::endl;
             }
             if (!info.isSetManually.is_null()) {
-                KAA_LOG_TRACE(boost::format("Kaa Demo isSetManually=%1%") % info.isSetManually.get_bool());
+                std::cout << "Kaa Demo isSetManually=" << info.isSetManually.get_bool() << std::endl;
             }
         }
     }
 
     virtual void onEvent(const nsThermostatEventClassFamily::ChangeDegreeRequest& event, const std::string& source)
     {
-        KAA_LOG_TRACE("Kaa Demo ChangeDegreeRequest event received!");
+        std::cout << "Kaa Demo ChangeDegreeRequest event received!" << std::endl;
         if (!event.degree.is_null()) {
-            KAA_LOG_TRACE(boost::format("Kaa Demo changing degree to %1%") % event.degree.get_int());
+            std::cout << "Kaa Demo changing degree to " << event.degree.get_int() << std::endl;
         }
     }
 
@@ -87,7 +88,7 @@ public:
 
     virtual void onEventListenersReceived(const std::vector<std::string>& eventListeners)
     {
-        KAA_LOG_TRACE(boost::format("Kaa Demo found %1% event listeners") % eventListeners.size());
+        std::cout << "Kaa Demo found " << eventListeners.size() << " event listeners" << std::endl;
 
         ThermostatEventClassFamily& family = eventFactory_.getThermostatEventClassFamily();
 
@@ -105,7 +106,7 @@ public:
 
     virtual void onRequestFailed()
     {
-        KAA_LOG_TRACE("Kaa Demo event listeners not found");
+        std::cout << "Kaa Demo event listeners not found" << std::endl;
     }
 
 private:
@@ -126,7 +127,7 @@ public:
 
     virtual void onAttachFailed(UserAttachErrorCode errorCode, const std::string& reason)
     {
-        KAA_LOG_TRACE(boost::format("Kaa Demo attach failed (%1%): %2%") % errorCode % reason);
+        std::cout << "Kaa Demo attach failed (" << (int) errorCode << "): " << reason << std::endl;
     }
 
 private:
