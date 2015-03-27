@@ -172,10 +172,11 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         kaaClientState = new KaaClientPropertiesState(context.createPersistentStorage(), context.getBase64(), this.properties);
 
         TransportContext transportContext = buildTransportContext(properties, kaaClientState);
-
-        channelManager = buildChannelManager(bootstrapServers, transportContext);
-
+        
         bootstrapManager = buildBootstrapManager(properties, kaaClientState, transportContext);
+
+        channelManager = buildChannelManager(bootstrapManager, bootstrapServers, transportContext);
+
         bootstrapManager.setChannelManager(channelManager);
         
         profileManager = buildProfileManager(properties, kaaClientState, transportContext);
@@ -520,7 +521,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 configurationTransport, userTransport, redirectionTransport, logTransport);
     }
 
-    protected KaaInternalChannelManager buildChannelManager(Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers, TransportContext transportContext) {
+    protected KaaInternalChannelManager buildChannelManager(BootstrapManager bootstrapManager, Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers, TransportContext transportContext) {
         KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers);
         channelManager.setConnectivityChecker(context.createConnectivityChecker());
 
