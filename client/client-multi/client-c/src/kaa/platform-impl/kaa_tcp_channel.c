@@ -442,10 +442,6 @@ kaa_error_t kaa_tcp_channel_init(void *context, kaa_transport_context_t *transpo
     return KAA_ERR_NONE;
 }
 
-void debug_func_ap(kaa_tcp_channel_t *channel, uint32_t k){
-    KAA_LOG_TRACE(channel->logger, KAA_ERR_NONE, "Kaa");
-}
-
 /*
  * Set access point to Kaa TCP channel.
  */
@@ -1095,7 +1091,6 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     char *buffer = NULL;
     size_t buffer_size = 0;
     error_code = kaa_buffer_allocate_space(self->out_buffer, &buffer, &buffer_size);
-
     KAA_RETURN_IF_ERR(error_code);
 
     kaa_serialize_info_t serialize_info;
