@@ -38,7 +38,6 @@
 
 #define KAA_LOG_LEVEL  KAA_MAX_LOG_LEVEL
 
-
 namespace kaa {
 
 /**
