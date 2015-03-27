@@ -111,7 +111,7 @@ public class EncDecActorMessageProcessor {
     void encodeAndReply(SessionResponse message) {
         try {
             sessionResponseMeter.mark();
-            if(message.getError() != null){
+            if(message.getError() == null){
                 processSessionResponse(message);
             }else{
                 processErrors(message.getChannelContext(), message.getErrorConverter(), message.getError());
