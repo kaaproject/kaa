@@ -75,7 +75,7 @@ public:
 
 private:
     IProfileTransportPtr            transport_;
-    IProfileContainerPtr   profileContainer_;
+    IProfileContainerPtr     profileContainer_;
 };
 
 inline void ProfileManager::setProfileContainer(IProfileContainerPtr container)
