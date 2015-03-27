@@ -33,10 +33,11 @@ PROJECT_HOME=$(pwd)
 BUILD_DIR="build"
 LIBS_PATH="libs"
 KAA_LIB_PATH="$LIBS_PATH/kaa"
+KAA_LIB_HEADER_PATH="$KAA_LIB_PATH/src"
 KAA_SDK_TAR="kaa-client*.tar.gz"
 
 function build_thirdparty {
-    if [ ! -d "$KAA_LIB_PATH/kaa" ]
+    if [ ! -d "$KAA_LIB_HEADER_PATH" ]
     then
         KAA_SDK_TAR_NAME=$(find $PROJECT_HOME -iname $KAA_SDK_TAR)
 
@@ -56,6 +57,7 @@ function build_thirdparty {
         mkdir -p $BUILD_DIR && cd $BUILD_DIR &&
         cmake -DKAA_DEBUG_ENABLED=1 \
               -DKAA_WITHOUT_EVENTS=1 \
+              -DKAA_MAX_LOG_LEVEL=3 \
               ..
     fi
 
