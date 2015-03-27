@@ -22,6 +22,7 @@
 #include "kaa/channel/transport/IProfileTransport.hpp"
 #include "kaa/profile/IProfileManager.hpp"
 #include "kaa/profile/IProfileContainer.hpp"
+#include "kaa/profile/DefaultProfileContainer.hpp"
 
 namespace kaa {
 
@@ -31,7 +32,7 @@ namespace kaa {
  */
 class ProfileManager : public IProfileManager {
 public:
-    ProfileManager() : profileContainer_(IProfileContainerPtr()) { }
+    ProfileManager() : profileContainer_(std::make_shared<DefaultProfileContainer>()) { }
 
     /**
      * Sets profile container implemented by the user
@@ -45,7 +46,6 @@ public:
      * @return byte array with serialized profile
      *
      */
-
     SharedDataBuffer getSerializedProfile()
     {
         return profileContainer_->getSerializedProfile();
