@@ -15,7 +15,6 @@
  */
 #include <memory>
 #include <thread>
-
 #include <kaa/Kaa.hpp>
 #include <kaa/IKaaClient.hpp>
 
@@ -59,6 +58,7 @@ int main()
 {
     Kaa::init();
     cout << "Configuration demo started" << endl;
+    cout << "--= Press any key to exit =--"<<endl;
     IKaaClient& kaaClient = Kaa::getKaaClient();
     // Set up default profile container
     kaaClient.setProfileContainer(std::make_shared<DefaultProfileContainer>());
@@ -69,9 +69,8 @@ int main()
     UserConfigurationReceiver receiver;
     kaaClient.addConfigurationListener(receiver);
     Kaa::start();
-
-    for (int i = 0; i < 100; ++i)
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::cin.get();
+    // Waiting for enter key pressed before exiting.
     Kaa::stop();
     cout << "Configuration demo stopped" << endl;
     return 0;
