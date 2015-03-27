@@ -195,7 +195,7 @@ public class GenericAvroConverter<T extends GenericContainer> {
             GenericContainer record = converter.decodeBinary(rawData);
             json = converter.encodeToJson(record);
         } catch (IOException e) {
-            LOG.warn("Can't parse profile raw data", e);
+            LOG.warn("Can't parse json data", e);
             throw new RuntimeException(e); //NOSONAR
         }
         return json;

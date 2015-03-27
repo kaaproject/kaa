@@ -65,7 +65,7 @@ public:
 
     virtual IKaaChannelManager&                 getChannelManager();
     virtual const KeyPair&                      getClientKeyPair();
-    virtual void                                setEndpointAccessToken(std::string token);
+    virtual void                                setEndpointAccessToken(const std::string& token);
     virtual std::string                         refreshEndpointAccessToken();
     virtual std::string                         getEndpointAccessToken();
     virtual IKaaDataMultiplexer&                getOperationMultiplexer();

@@ -560,7 +560,7 @@ public class DefaultOperationsService implements OperationsService {
      */
     private HistoryDelta fetchHistory(String endpointId, int requesHash, String applicationToken, EndpointProfileDto profile,
             HistorySubject subject, int startSeqNumber, int endSeqNumber) {
-        if (isFirstRequest(profile)) {
+        if (isFirstRequest(profile, subject)) {
             LOG.debug("[{}] Profile has no endpoint groups yet. calculating full list", endpointId);
             return historyDeltaService.getDelta(profile, applicationToken, endSeqNumber);
         } else {
@@ -576,8 +576,12 @@ public class DefaultOperationsService implements OperationsService {
      *            the request
      * @return true, if is first request
      */
-    public static boolean isFirstRequest(EndpointProfileDto profile) {
-        return profile.getConfigurationHash() == null || profile.getConfigurationHash().length == 0;
+    public static boolean isFirstRequest(EndpointProfileDto profile, HistorySubject subject) {
+        if(subject == HistorySubject.CONFIGURATION){
+            return profile.getCfGroupStates() == null || profile.getCfGroupStates().size() == 0;
+        }else{
+            return profile.getNfGroupStates() == null || profile.getNfGroupStates().size() == 0;
+        }
     }
 
     /**
