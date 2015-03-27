@@ -209,7 +209,6 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/security/KeyUtils.cpp
         impl/security/RsaEncoderDecoder.cpp
         impl/common/EndpointObjectHash.cpp
-        impl/profile/ProfileListener.cpp
         impl/profile/ProfileTransport.cpp
         impl/bootstrap/BootstrapManager.cpp
         impl/bootstrap/BootstrapTransport.cpp

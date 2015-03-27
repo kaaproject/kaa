@@ -58,7 +58,12 @@ public:
      * @see AbstractProfileContainer
      *
      */
-    virtual void setProfileContainer(ProfileContainerPtr container) = 0;
+    virtual void setProfileContainer(IProfileContainerPtr container) = 0;
+
+    /**
+     *  Notyfies server about profile changes
+     */
+    virtual void updateProfile() = 0;
 
     /**
      * Retrieves Kaa event family factory.
