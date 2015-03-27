@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
+#include "../../platform/defaults.h"
 
 #define KAATCP_PROTOCOL_NAME_MAX_SIZE 10
 

@@ -19,8 +19,21 @@ import java.util.List;
 
 public interface UserVerifierDao<T> extends Dao<T, String> {
 
+    /**
+     * Find user verifiers by application id
+     *
+     * @param appId the application id
+     * @return the list of user verifiers
+     */
     List<T> findByAppId(String appId);
-    
+
+    /**
+     * Find user verifier by application id and verifier token
+     *
+     * @param appId         the application id
+     * @param verifierToken the verifier token
+     * @return the found user verifier
+     */
     T findByAppIdAndVerifierToken(String appId, String verifierToken);
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.common.dao.impl;
+/*
+@file posix_defaults.h
+ Created on: Mar 26, 2015
+     Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
+*/
 
+#ifndef POSIX_DEFAULTS_H_
+#define POSIX_DEFAULTS_H_
 
-/**
- * The interface Secure User dao.
- * @param <T>  the type parameter
- */
-public interface SecureUserDao<T> {
+#define KAA_TCP_CHANNEL_IN_BUFFER_SIZE      2048
+#define KAA_TCP_CHANNEL_OUT_BUFFER_SIZE     8192
 
-    /**
-     * Save User
-     *
-     * @param user the user
-     * @return saved user
-     */
-    T saveUser(T user);
-}
+#define KAA_TCP_CHANNEL_KEEPALIVE           300
+
+#define KAATCP_PARSER_MAX_MESSAGE_LENGTH    4096
+
+#define KAA_MAX_LOG_MESSAGE_LENGTH          512
+
+#endif /* POSIX_DEFAULTS_H_ */

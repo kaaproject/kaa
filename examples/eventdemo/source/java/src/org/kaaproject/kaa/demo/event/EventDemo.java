@@ -36,26 +36,29 @@ import org.kaaproject.kaa.schema.sample.event.thermo.ChangeDegreeRequest;
 import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatEventClassFamily;
 import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoRequest;
 import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfoResponse;
+import org.kaaproject.kaa.schema.sample.event.thermo.ThermostatInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class demonstrates how to send/receive events to/from endpoints via Kaa event subsystem.
+ * A demo application that shows how to send/receive events to/from endpoints using the Kaa event API. 
  */
 public class EventDemo {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventDemo.class);
 
-    // Credentials for attaching user
-    private static final String USER_EXTERNAL_ID = "userExternalId";
-    private static final String USER_ACCESS_TOKEN = "userAccessToken";
-    // Kaa client
+    //Credentials for attaching an endpoint to the user.
+    private static final String USER_EXTERNAL_ID = "user@email.com";
+    private static final String USER_ACCESS_TOKEN = "token";
+    // A Kaa client.
     private static KaaClient kaaClient;
 
     public static void main(String[] args) {
         LOG.info("Event demo started");
+        LOG.info("--= Press any key to exit =--");
 
-        // Creating Kaa desktop client instance
+        // Create a Kaa client and add a listener which creates a log record
+        // as soon as the Kaa client is started.  
         kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener() {
             @Override
             public void onStarted() {
@@ -68,22 +71,27 @@ public class EventDemo {
             }
         });
 
-        // Starting Kaa client
+        //Start the Kaa client and connect it to the Kaa server.
         kaaClient.start();
 
-        // Our demo application uses trustful verifier, so it does not matter
-        // which credentials you would pass to registration manager
+        // Attach the endpoint running the Kaa client to the user by verifying 
+        // credentials sent by the endpoint against the user credentials
+        // stored on the Kaa server.
+        // This demo application uses a trustful verifier, therefore
+        // any credentials sent by the endpoint are accepted as valid. 
         kaaClient.attachUser(USER_EXTERNAL_ID, USER_ACCESS_TOKEN, new UserAttachCallback() {
             @Override
             public void onAttachResult(UserAttachResponse response) {
                 LOG.info("Attach response {}", response.getResult());
 
-                //If our endpoint was successfully attached
+                // Call onUserAttached if the endpoint was successfully attached.
                 if (response.getResult() == SyncResponseResultType.SUCCESS) {
                     onUserAttached();
                 }
-                //If not - release all network connections and application resources.
-                //Shutdown all Kaa client tasks.
+                
+                // Shut down all the Kaa client tasks and release 
+                // all network connections and application resources 
+                // if the endpoint was not attached.
                 else {
                     kaaClient.stop();
                     LOG.info("Event demo stopped");
@@ -92,13 +100,14 @@ public class EventDemo {
         });
 
         try {
+         // wait for some input before exiting
             System.in.read();
         } catch (IOException e) {
             LOG.error("IOException was caught", e);
         }
 
-        //Release all network connections and application resources.
-        //Shutdown all Kaa client tasks.
+        // Shut down all the Kaa client tasks and release
+        // all network connections and application resources.
         kaaClient.stop();
 
         LOG.info("Event demo stopped");
@@ -111,12 +120,16 @@ public class EventDemo {
         listenerFQNs.add(ThermostatInfoRequest.class.getName());
         listenerFQNs.add(ChangeDegreeRequest.class.getName());
 
-        //Getting event family factory
+        //Obtain the event family factory.
         final EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
-        //Getting concrete event family
+        //Obtain the concrete event family.
         final ThermostatEventClassFamily tecf = eventFamilyFactory.getThermostatEventClassFamily();
 
-        //Adding event listeners for family factory
+        // Broadcast the ChangeDegreeRequest event.
+        tecf.sendEventToAll(new ChangeDegreeRequest(10));
+        LOG.info("Broadcast ChangeDegreeRequest sent");
+
+        // Add event listeners to the family factory.
         tecf.addListener(new ThermostatEventClassFamily.Listener() {
 
             @Override
@@ -132,44 +145,36 @@ public class EventDemo {
             @Override
             public void onEvent(ThermostatInfoRequest thermostatInfoRequest, String senderId) {
                 LOG.info("ThermostatInfoRequest event received! sender: {}", senderId);
-                tecf.sendEvent(new ThermostatInfoResponse(), senderId);
+                tecf.sendEvent(new ThermostatInfoResponse(new ThermostatInfo(20, 10, true)), senderId);
             }
         });
 
-        //Finding all listeners listening to events in FQNs list
+        //Find all the listeners listening to the events from the FQNs list.
         kaaClient.findEventListeners(listenerFQNs, new FindEventListenersCallback() {
 
-            //Sending some events in case of success
+            // Perform any necessary actions with the obtained event listeners.
             @Override
             public void onEventListenersReceived(List<String> eventListeners) {
                 LOG.info("{} event listeners received", eventListeners.size());
                 for (String listener : eventListeners) {
-                    LOG.info("listener: {}", listener);
+                    TransactionId trxId = eventFamilyFactory.startEventsBlock();
+                    // Add a targeted events to the block.
+                    tecf.addEventToBlock(trxId, new ThermostatInfoRequest(), listener);
+                    tecf.addEventToBlock(trxId, new ChangeDegreeRequest(-30), listener);
+
+                    // Send the added events in a batch.
+                    eventFamilyFactory.submitEventsBlock(trxId);
+                    LOG.info("ThermostatInfoRequest & ChangeDegreeRequest sent to endpoint with id {}", listener);
+                    // Dismiss the event batch (if the batch was not submitted as shown in the previous line).
+                    // eventFamilyFactory.removeEventsBlock(trxId);
                 }
-                //Broadcasting ChangeDegreeRequest event
-                tecf.sendEventToAll(new ChangeDegreeRequest(10));
-                LOG.info("Broadcast ChangeDegreeRequest sent");
-
-                TransactionId trxId = eventFamilyFactory.startEventsBlock();
-                // Add events to the block
-                // Adding a broadcasted event to the block
-                tecf.addEventToBlock(trxId, new ThermostatInfoRequest());
-                // Adding a targeted event to the block
-                tecf.addEventToBlock(trxId, new ChangeDegreeRequest(-30), eventListeners.get(0));
-
-                // Send added events in a batch
-                eventFamilyFactory.submitEventsBlock(trxId);
-                LOG.info("Batch of events sent: broadcast ThermostatInfoRequest & ChangeDegreeRequest to endpoint with id {}", eventListeners.get(0));
-                // Dismiss the event batch (if the batch was not submitted as shown in the previous line)
-                // eventFamilyFactory.removeEventsBlock(trxId);
             }
 
-            //Or if something gone wrong handling fail
+            // Perform any necessary actions in case of failure.
             @Override
             public void onRequestFailed() {
                 LOG.info("Request failed");
             }
         });
-
     }
 }

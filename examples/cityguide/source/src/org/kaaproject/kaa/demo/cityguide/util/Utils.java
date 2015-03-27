@@ -36,9 +36,8 @@ import android.net.Uri;
 import android.util.Log;
 
 /**
- * The Class Utils.
- * An utility class which provides static functions to handle show on map requests,
- * copy streams and query data from city guide configuration object.
+ * A utility class that provides static functions to handle the show on map requests,
+ * copy streams and query data from the city guide configuration object.
  */
 public class Utils {
     

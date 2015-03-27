@@ -92,7 +92,6 @@ public class DefaultLogAppenderServiceTest {
         ApplicationDto dto = new ApplicationDto();
         dto.setApplicationToken(APPLICATION_TOKEN);
         dto.setTenantId(TENANT_ID);
-        dto.setLogAppendersNames(null);
 
         when(applicationService.findAppById(APPLICATION_ID)).thenReturn(dto);
 
@@ -106,7 +105,6 @@ public class DefaultLogAppenderServiceTest {
         ApplicationDto dto = new ApplicationDto();
         dto.setApplicationToken(APPLICATION_TOKEN);
         dto.setTenantId(TENANT_ID);
-        dto.setLogAppendersNames(APPENDER_NAME);
 
         when(logAppendersService.findAllAppendersByAppId(APPLICATION_ID)).thenReturn(Arrays.asList(new LogAppenderDto()));
         when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenReturn(mongoDBLogAppender);
@@ -122,7 +120,6 @@ public class DefaultLogAppenderServiceTest {
         ApplicationDto dto = new ApplicationDto();
         dto.setApplicationToken(APPLICATION_TOKEN);
         dto.setTenantId(TENANT_ID);
-        dto.setLogAppendersNames(APPENDER_NAME);
 
         when(logAppendersService.findAllAppendersByAppId(APPLICATION_ID)).thenReturn(Arrays.asList(new LogAppenderDto()));
         when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenThrow(new IllegalArgumentException());
@@ -144,7 +141,6 @@ public class DefaultLogAppenderServiceTest {
         ApplicationDto dto = new ApplicationDto();
         dto.setApplicationToken(APPLICATION_TOKEN);
         dto.setTenantId(TENANT_ID);
-        dto.setLogAppendersNames(APPENDER_NAME);
 
         when(logAppendersService.findLogAppenderById(APPENDER_ID)).thenReturn(new LogAppenderDto());
         when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenReturn(mongoDBLogAppender);
@@ -160,7 +156,6 @@ public class DefaultLogAppenderServiceTest {
         ApplicationDto dto = new ApplicationDto();
         dto.setApplicationToken(APPLICATION_TOKEN);
         dto.setTenantId(TENANT_ID);
-        dto.setLogAppendersNames(APPENDER_NAME);
 
         when(logAppendersService.findLogAppenderById(APPENDER_ID)).thenReturn(new LogAppenderDto());
         when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenThrow(new IllegalArgumentException());

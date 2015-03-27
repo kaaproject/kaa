@@ -23,8 +23,7 @@ import org.kaaproject.kaa.demo.cityguide.image.ImageLoader.ImageKey;
 import android.content.Context;
 
 /**
- * The Class FileCache.
- * Used to store image screenails or thumbnails data files in storage cache dir.
+ * Used to store image screenails or thumbnails data files in the storage cache dir.
  */
 public class FileCache {
 

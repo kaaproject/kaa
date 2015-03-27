@@ -16,14 +16,8 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_CONFIRM_DELIVERY;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_MAX_LOG_SCHEMA_VERSION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_MIN_LOG_SCHEMA_VERSION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.LOG_APPENDER_TABLE_NAME;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -34,9 +28,14 @@ import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
-import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_APPENDER_CONFIRM_DELIVERY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_APPENDER_MAX_LOG_SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_APPENDER_MIN_LOG_SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_APPENDER_TABLE_NAME;
 
 @Entity
 @Table(name = LOG_APPENDER_TABLE_NAME)

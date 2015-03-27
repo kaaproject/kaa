@@ -33,9 +33,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 /**
- * The Class PlacesAdapter.
- * Implementation of {@link BaseAdapter} class. Used as adapter class for places list view.
- * Provides list item views containing photo, name and description of each place.
+ * The implementation of the {@link BaseAdapter} class. Used as an adapter class for the places list view.
+ * Provides list item views containing a photo, name and description of each place.
  */
 public class PlacesAdapter extends BaseAdapter {
 

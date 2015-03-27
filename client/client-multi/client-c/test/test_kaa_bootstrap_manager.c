@@ -20,6 +20,7 @@
 #include <time.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #include "kaa_test.h"
 
@@ -33,6 +34,7 @@
 #include "kaa_platform_protocol.h"
 #include "kaa_platform_utils.h"
 #include "platform/ext_transport_channel.h"
+#include "platform/sock.h"
 
 
 

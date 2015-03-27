@@ -35,9 +35,14 @@ public class SessionInfoTest {
         SessionInfo info1 = new SessionInfo(uuid1, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, 0, false);
         SessionInfo info2 = new SessionInfo(uuid1, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, 0, false);
         SessionInfo info3 = new SessionInfo(uuid2, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, 0, false);
+        SessionInfo info4 = new SessionInfo(null, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, 0, false);
         Assert.assertEquals(info1, info2);
         Assert.assertEquals(info1.hashCode(), info2.hashCode());
         Assert.assertNotEquals(info1, info3);
         Assert.assertNotEquals(info1.hashCode(), info3.hashCode());
+        Assert.assertEquals(info1, info1);
+        Assert.assertNotEquals(info1, null);
+        Assert.assertNotEquals(info1, new Object());
+        Assert.assertNotEquals(info4, info1);
     }
 }

@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.operations.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -29,15 +30,15 @@ import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
-import org.kaaproject.kaa.server.operations.pojo.SyncContext;
+import org.kaaproject.kaa.server.operations.service.cache.HistorySubject;
 import org.kaaproject.kaa.server.operations.service.delta.DeltaServiceIT;
 import org.kaaproject.kaa.server.operations.service.notification.NotificationDeltaService;
-import org.kaaproject.kaa.server.sync.ClientSync;
 import org.kaaproject.kaa.server.sync.Notification;
 import org.kaaproject.kaa.server.sync.NotificationServerSync;
 import org.kaaproject.kaa.server.sync.NotificationType;
@@ -184,9 +185,17 @@ public class OperationsServiceTest {
     @Test
     public void isFirstRequestTest(){
         EndpointProfileDto profile = new EndpointProfileDto();
-        assertTrue(DefaultOperationsService.isFirstRequest(profile));
+        assertTrue(DefaultOperationsService.isFirstRequest(profile, HistorySubject.CONFIGURATION));
         profile.setConfigurationHash(new byte[0]);
-        assertTrue(DefaultOperationsService.isFirstRequest(profile));
+        assertTrue(DefaultOperationsService.isFirstRequest(profile, HistorySubject.CONFIGURATION));
+        
+        profile.setCfGroupStates(Collections.singletonList(new EndpointGroupStateDto()));
+        assertFalse(DefaultOperationsService.isFirstRequest(profile, HistorySubject.CONFIGURATION));
+        assertTrue(DefaultOperationsService.isFirstRequest(profile, HistorySubject.NOTIFICATION));
+        
+        profile.setNfGroupStates(Collections.singletonList(new EndpointGroupStateDto()));
+        assertFalse(DefaultOperationsService.isFirstRequest(profile, HistorySubject.CONFIGURATION));
+        assertFalse(DefaultOperationsService.isFirstRequest(profile, HistorySubject.NOTIFICATION));
     }
 
     //TODO: adjust to current logic

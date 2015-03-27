@@ -11,7 +11,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 /**
- * A class which deals with reading, parsing, and setting the camera parameters which are used to
+ * A class that deals with reading, parsing, and setting the camera parameters that are used to
  * configure the camera hardware.
  */
 final class CameraConfigurationManager {
@@ -27,7 +27,7 @@ final class CameraConfigurationManager {
   }
 
   /**
-   * Reads, one time, values from the camera that are needed by the app.
+   * Reads (only once) the values from the camera that are needed by the app.
    */
   void initFromCameraParameters(Camera camera) {
     Camera.Parameters parameters = camera.getParameters();

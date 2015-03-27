@@ -17,7 +17,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <sys/types.h>
 #include "platform/stdio.h"
+#include "platform/sock.h"
 #include "kaa_defaults.h"
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"

@@ -31,10 +31,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 /**
- * The Class SlideshowPageAdapter.
- * Implementation of {@link PagerAdapter} class. Used as adapter class for images slideshow view.
- * Provides image views with screenails fetched via cursor from {@link MediaStore} 
- * for requested album identified by bucketId.
+ * The implementation of the {@link PagerAdapter} class. Used as an adapter class for the images slideshow view.
+ * Provides image views with the screennails fetched via the cursor from {@link MediaStore} 
+ * for the requested album identified by bucketId.
  */
 public class SlideshowPageAdapter extends PagerAdapter {
 

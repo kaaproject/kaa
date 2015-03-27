@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,20 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.common.dao.impl;
+/*
+@file defaults.h
+ Created on: Mar 26, 2015
+     Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
+*/
+
+#ifndef DEFAULTS_H_
+#define DEFAULTS_H_
+
+#ifdef ECONAIS_PLATFORM
+#include "../platform-impl/Econais/EC19D/econais_ec19d_defaults.h"
+#else
+#include "../platform-impl/posix/posix_defaults.h"
+#endif
 
 
-/**
- * The interface Secure Role dao.
- * @param <T>  the type parameter
- */
-public interface SecureRoleDao<T> {
-
-    /**
-     * Returns name of current DB
-     *
-     * @return name of current DB
-     */
-    String getDBName();
-
-    /**
-     * Save Role to database
-     *
-     * @param role the role of user
-     * @return saved role
-     */
-    T saveRole(T role);
-}
+#endif /* DEFAULTS_H_ */

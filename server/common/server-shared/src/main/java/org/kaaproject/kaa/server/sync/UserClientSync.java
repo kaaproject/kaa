@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.util.List;
 
-public class UserClientSync {
+public final class UserClientSync {
     private UserAttachRequest userAttachRequest;
     private List<EndpointAttachRequest> endpointAttachRequests;
     private List<EndpointDetachRequest> endpointDetachRequests;

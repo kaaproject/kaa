@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.demo.smarthousedemo.command;
 
-/** Callback to handle command execution status */
+/** A callback which handles a command execution status. */
 public interface CommandCallback<V> {
     
     void onCommandFailure(Throwable t);

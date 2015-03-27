@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.util.List;
 
-public class EventListenersResponse {
+public final class EventListenersResponse {
     private int requestId;
     private List<String> listeners;
     private SyncStatus result;
@@ -84,5 +84,27 @@ public class EventListenersResponse {
      */
     public void setResult(SyncStatus value) {
         this.result = value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EventListenersResponse that = (EventListenersResponse) o;
+
+        if (requestId != that.requestId) return false;
+        if (listeners != null ? !listeners.equals(that.listeners) : that.listeners != null) return false;
+        if (result != that.result) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result1 = requestId;
+        result1 = 31 * result1 + (listeners != null ? listeners.hashCode() : 0);
+        result1 = 31 * result1 + (result != null ? result.hashCode() : 0);
+        return result1;
     }
 }

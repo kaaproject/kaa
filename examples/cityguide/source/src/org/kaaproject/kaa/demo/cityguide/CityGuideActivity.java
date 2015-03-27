@@ -29,10 +29,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 /**
- * The Class CityGuideActivity.
- * Implementation of {@link ActionBarActivity} class. Notifies application about activity lifecycle changes.
- * Implements 'Set location' menu command to display {@link SetLocationDialog} and notify application 
- * with new location.    
+ * The implementation of the {@link ActionBarActivity} class. 
+ * Notifies the application of the activity lifecycle changes.
+ * Implements the 'Set location' menu command to display {@link SetLocationDialog} and notify the application 
+ * of the new location.    
  */
 public class CityGuideActivity extends ActionBarActivity implements
         SetLocationCallback {
@@ -52,7 +52,7 @@ public class CityGuideActivity extends ActionBarActivity implements
         super.onPause();
 
         /*
-         * Notify application about background state.
+         * Notify the application of the background state.
          */
 
         getCityGuideApplication().pause();
@@ -63,7 +63,7 @@ public class CityGuideActivity extends ActionBarActivity implements
         super.onResume();
 
         /*
-         * Notify application about foreground state.
+         * Notify the application of the foreground state.
          */
 
         getCityGuideApplication().resume();

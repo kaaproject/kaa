@@ -16,11 +16,15 @@
 
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
 
-#include "kaa_configuration_manager.h"
 
 #include <stdbool.h>
-
+#include <inttypes.h>
+#include <stdint.h>
+#include <sys/types.h>
 #include "platform/stdio.h"
+#include "platform/sock.h"
+#include "kaa_configuration_manager.h"
+
 #include "platform/ext_sha.h"
 #include "platform/ext_configuration_persistence.h"
 #include "collections/kaa_list.h"
@@ -29,6 +33,7 @@
 #include "kaa_defaults.h"
 #include "kaa_platform_utils.h"
 #include "kaa_platform_common.h"
+#include "kaa_channel_manager.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "avro_src/avro/io.h"
@@ -41,10 +46,15 @@
 
 #define KAA_CONFIGURATION_BODY_PRESENT           0x02
 
+extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self, kaa_service_t service_type);
+
+static kaa_service_t configuration_sync_services[1] = { KAA_SERVICE_CONFIGURATION };
+
 struct kaa_configuration_manager {
     kaa_digest                           configuration_hash;
     kaa_configuration_root_receiver_t    root_receiver;
     kaa_root_configuration_t            *root_record;
+    kaa_channel_manager_t               *channel_manager;
     kaa_status_t                        *status;
     kaa_logger_t                        *logger;
 };
@@ -62,12 +72,13 @@ static kaa_root_configuration_t *kaa_configuration_manager_deserialize(char *buf
 }
 
 
-kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **configuration_manager_p, kaa_status_t *status, kaa_logger_t *logger)
+kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **configuration_manager_p, kaa_channel_manager_t *channel_manager, kaa_status_t *status, kaa_logger_t *logger)
 {
     KAA_RETURN_IF_NIL3(configuration_manager_p, status, logger, KAA_ERR_BADPARAM);
     kaa_configuration_manager_t *manager = (kaa_configuration_manager_t *) KAA_MALLOC(sizeof(kaa_configuration_manager_t));
     KAA_RETURN_IF_NIL(manager, KAA_ERR_NOMEM);
 
+    manager->channel_manager = channel_manager;
     manager->status = status;
     manager->logger = logger;
     manager->root_receiver = (kaa_configuration_root_receiver_t) { NULL, NULL };
@@ -197,6 +208,11 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
 #endif
             if (self->root_receiver.on_configuration_updated)
                 self->root_receiver.on_configuration_updated(self->root_receiver.context, self->root_record);
+
+            kaa_transport_channel_interface_t *channel =
+                    kaa_channel_manager_get_transport_channel(self->channel_manager, configuration_sync_services[0]);
+            if (channel)
+                channel->sync_handler(channel->context, configuration_sync_services, 1);
         }
     }
     return KAA_ERR_NONE;

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+# include <stdint.h>
 # include "kaa_${event_family_name}.h"
 
 # include "../avro_src/avro/io.h"

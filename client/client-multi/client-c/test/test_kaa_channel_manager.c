@@ -35,7 +35,7 @@
 #include "platform/ext_transport_channel.h"
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
-
+#include "platform/sock.h"
 
 
 extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p

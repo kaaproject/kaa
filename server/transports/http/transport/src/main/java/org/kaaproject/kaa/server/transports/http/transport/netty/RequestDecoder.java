@@ -50,18 +50,6 @@ public class RequestDecoder extends SimpleChannelInboundHandler<HttpObject> {
         this.commandFactory = commandFactory;
     }
 
-    /**
-     * channelReadCompete
-     *
-     * @param ctx
-     *            ChannelHandlerContext
-     * @throws Exception
-     *             exception on error
-     */
-    public void channelReadCompete(ChannelHandlerContext ctx) throws Exception { // NOSONAR
-        ctx.flush();
-    }
-
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HttpObject httpObject) throws Exception {
 

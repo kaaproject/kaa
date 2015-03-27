@@ -16,16 +16,14 @@
 package org.kaaproject.kaa.sandbox.demo;
 
 
+import java.util.Arrays;
+
 import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
-import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
-import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
-import org.kaaproject.kaa.server.common.core.configuration.RawData;
-import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
-import org.kaaproject.kaa.server.common.core.schema.RawSchema;
-import org.kaaproject.kaa.server.verifiers.trustful.config.TrustfulVerifierConfig;
+import org.kaaproject.kaa.server.common.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,11 +43,11 @@ public class DataCollectionDemoBuider extends AbstractDemoBuilder {
 
         loginTenantAdmin(client);
 
-        ApplicationDto notificationApplication = new ApplicationDto();
-        notificationApplication.setName("Data collection");
-        notificationApplication = client.editApplication(notificationApplication);
+        ApplicationDto dataCollectionApplication = new ApplicationDto();
+        dataCollectionApplication.setName("Data collection demo");
+        dataCollectionApplication = client.editApplication(dataCollectionApplication);
 
-        sdkKey.setApplicationId(notificationApplication.getId());
+        sdkKey.setApplicationId(dataCollectionApplication.getId());
         sdkKey.setProfileSchemaVersion(1);
         sdkKey.setConfigurationSchemaVersion(1);
         sdkKey.setNotificationSchemaVersion(1);
@@ -57,25 +55,28 @@ public class DataCollectionDemoBuider extends AbstractDemoBuilder {
         loginTenantDeveloper(client);
 
         LogSchemaDto logSchemaDto = new LogSchemaDto();
-        logSchemaDto.setApplicationId(notificationApplication.getId());
+        logSchemaDto.setApplicationId(dataCollectionApplication.getId());
         logSchemaDto.setName("Log schema");
         logSchemaDto.setDescription("Log schema describing incoming logs");
         logSchemaDto = client.createLogSchema(logSchemaDto, getResourcePath("logSchema.json"));
         sdkKey.setLogSchemaVersion(logSchemaDto.getMajorVersion());
 
-        TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();
-        UserVerifierDto trustfulUserVerifier = new UserVerifierDto();
-        trustfulUserVerifier.setApplicationId(notificationApplication.getId());
-        trustfulUserVerifier.setName("Trustful verifier");
-        trustfulUserVerifier.setPluginClassName(trustfulVerifierConfig.getPluginClassName());
-        trustfulUserVerifier.setPluginTypeName(trustfulVerifierConfig.getPluginTypeName());
-        RawSchema rawSchema = new RawSchema(trustfulVerifierConfig.getPluginConfigSchema().toString());
-        DefaultRecordGenerationAlgorithm<RawData> algotithm =
-                new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
-        RawData rawData = algotithm.getRootData();
-        trustfulUserVerifier.setJsonConfiguration(rawData.getRawData());
-        trustfulUserVerifier = client.editUserVerifierDto(trustfulUserVerifier);
-        sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
+        LogAppenderDto dataCollectionLogAppender = new LogAppenderDto();
+        dataCollectionLogAppender.setName("Data collection log appender");
+        dataCollectionLogAppender.setDescription("Log appender used to deliver log records from data collection application to local mongo db instance");
+        dataCollectionLogAppender.setApplicationId(dataCollectionApplication.getId());
+        dataCollectionLogAppender.setApplicationToken(dataCollectionApplication.getApplicationToken());
+        dataCollectionLogAppender.setTenantId(dataCollectionApplication.getTenantId());
+        dataCollectionLogAppender.setMinLogSchemaVersion(1);
+        dataCollectionLogAppender.setMaxLogSchemaVersion(Integer.MAX_VALUE);
+        dataCollectionLogAppender.setConfirmDelivery(true);
+        dataCollectionLogAppender.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.KEYHASH, 
+                LogHeaderStructureDto.TIMESTAMP, LogHeaderStructureDto.TOKEN, LogHeaderStructureDto.VERSION));
+        dataCollectionLogAppender.setPluginTypeName("Mongo");
+        dataCollectionLogAppender.setPluginClassName("org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender");
+        dataCollectionLogAppender.setJsonConfiguration(FileUtils.readResource(getResourcePath("mongo_appender.json")));
+        dataCollectionLogAppender = client.editLogAppenderDto(dataCollectionLogAppender);
+
 
 
         logger.info("Finished loading 'Data Collection Demo Application' data.");

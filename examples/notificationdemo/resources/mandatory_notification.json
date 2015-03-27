@@ -1,6 +1,5 @@
 {
   "message":{
-    "string":"It is notification of a mandatory topic, which means that you don't need to subscribe to the topic to receive notifications on it."
-  },
-  "__uuid":null
+    "string":"This is sample notification for mandatory topic. Client automatically receive notifications for manadatory topics. More details here: https://docs.kaaproject.org/display/KAA/Using+notifications"
+  }
 }
