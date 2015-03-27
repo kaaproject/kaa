@@ -35,7 +35,7 @@ Make sure that the Kaa sandbox is up and running. Starting the "Configuration de
 
 Now it's time to test things out: navigate to the Kaa server administrative interface by clicking on the "Administrative console" link from the Sandbox screen. Log in as a tenant developer (devuser / devuser123), and navigate to the "Configuration demo" application, then select "Endpoint groups". From here you can <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide#AdministrationUIguide-Addingendpointgroups">manage endpoint groups</a> and <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide#AdministrationUIguide-Addconfigurationtoendpointgroup">update endpoint configuration</a>. Do not forget to activate updated configuration - otherwise the endpoint will not be able to see it. Make sure you have tried updating configuration for endpoint group "All" and received it on your device!<br/><br/>
 
-Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">admin UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">Rest API</a>.
+Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">Administrative UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">REST API</a>.
 
 <h2>What's next?</h2>
 Get the source code by clicking the "Source" button on the left and start hacking!<br/><br/>
@@ -65,7 +65,7 @@ Make sure that the Kaa sandbox is up and running. Starting the "Configuration de
 
 Now it's time to test things out: navigate to the Kaa server administrative interface by clicking on the "Administrative console" link from the Sandbox screen. Log in as a tenant developer (devuser / devuser123), and navigate to the "Configuration demo" application, then select "Endpoint groups". From here you can <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide#AdministrationUIguide-Addingendpointgroups">manage endpoint groups</a> and <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide#AdministrationUIguide-Addconfigurationtoendpointgroup">update endpoint configuration</a>. Do not forget to activate updated configuration - otherwise the endpoint will not be able to see it. Make sure you have tried updating configuration for endpoint group "All" and received it on your device!<br/><br/>
 
-Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">admin UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">Rest API</a>.
+Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">Administrative UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">REST API</a>.
 
 <h2>What's next?</h2>
 
@@ -94,7 +94,7 @@ Make sure that the Kaa sandbox is up and running. Starting the "Configuration de
 
 Now it's time to test things out: navigate to the Kaa server administrative interface by clicking on the "Administrative console" link from the Sandbox screen. Log in as a tenant developer (devuser / devuser123), and navigate to the "Configuration demo" application, then select "Endpoint groups". From here you can <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide#AdministrationUIguide-Addingendpointgroups">manage endpoint groups</a> and <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide#AdministrationUIguide-Addconfigurationtoendpointgroup">update endpoint configuration</a>. Do not forget to activate updated configuration - otherwise the endpoint will not be able to see it. Make sure you have tried updating configuration for endpoint group "All" and received it on your device!<br/><br/>
 
-Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">admin UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">Rest API</a>.
+Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">Administrative UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">REST API</a>.
 
 <h2>What's next?</h2>
 

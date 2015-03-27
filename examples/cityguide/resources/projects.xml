@@ -40,6 +40,8 @@ Group "all" configuration defines the list of available for selection areas and 
 
 "North America/Atlanta" and "Europe/Amsterdam" groups apply to the endpoints which have the corresponding area and city in the profile. (It also applies to endpoints with unset profile). Observe the corresponding profile filters in the group details screen. The configuration associated with these two groups defines the contents displayed for the areas of interest in these locations. Feel free to open the configuration data for schema version 2 and browse the configuration body. You are also welcome to <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide#AdministrationUIguide-Addconfigurationtoendpointgroup">make your changes to the configuration</a> and see how the updates get propagated to your Android device.
 
+Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">Administrative UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">REST API</a>.
+
 <h2>What's next?</h2>
 Get the source code by clicking the "Source" button on the left and start hacking!<br/><br/>
 

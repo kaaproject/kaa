@@ -19,7 +19,27 @@ Copyright 2014-2015 CyberVision, Inc.
 <projectsConfig>
     <project id="photoframe_demo">
         <name>Photo frame</name>
-        <description>Photo frame application on android platform demonstrating event API</description>
+        <description>Photo frame Android app demonstrates Kaa event subsystem capabilities</description>
+		<details>
+            <![CDATA[
+This simple app demonstrates Kaa event subsystem capabilities on Android platform.
+
+<h2>Installation</h2>
+Download the .apk to your Android device by clicking the "Binary" button on the left. Make sure that the device permits installing apps from "Unknown sources". Open the downloaded apk and follow the on-screen instructions.
+
+<h2>Playing around</h2>
+Make sure that the Kaa sandbox is up and running. You will need to install this application on two devices at least and login with same user name. Any password will be accepted since <a href="https://docs.kaaproject.org/display/KAA/Attaching+endpoints+to+users#Attachingendpointstousers-Trustfuluserverifier">trustful user verifier</a> is used for demonstration purposes.<br/><br/>
+
+Each endpoint scans its photo library and sends metadata about the albums to other endpoints using Kaa events subsystem. Every endpoint can select one of the photo albums in order to triger slideshow on the target endpoint.<br/><br/>
+
+Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">Administrative UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">REST API</a>.
+
+<h2>What's next?</h2>
+Get the source code by clicking the "Source" button on the left and start hacking!<br/><br/>
+
+For more background on Kaa Event subsystem please refer to the corresponding <a href="https://docs.kaaproject.org/display/KAA/Messaging+across+endpoints">programming guide</a> and <a href="https://docs.kaaproject.org/display/KAA/Events">design reference</a> sections.
+            ]]>
+		</details>
         <platform>ANDROID</platform>
         <features>EVENT USER_VERIFIER</features>
         <sourceArchive>android/photoframe_demo.tar.gz</sourceArchive>
