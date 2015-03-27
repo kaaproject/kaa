@@ -44,7 +44,7 @@ public class HibernateTopicDaoTest extends HibernateAbstractTest {
 
     @Test
     public void testFindTopicsByAppId() {
-        Topic topic = generateTopic(null, null);
+        Topic topic = generateTopic(null, null, null);
         Application app = topic.getApplication();
         List<Topic> found = topicDao.findTopicsByAppId(app.getId().toString());
         Assert.assertEquals(1, found.size());
@@ -53,7 +53,7 @@ public class HibernateTopicDaoTest extends HibernateAbstractTest {
 
     @Test
     public void testFindTopicsByAppIdAndType() {
-        Topic topic = generateTopic(null, TopicTypeDto.OPTIONAL);
+        Topic topic = generateTopic(null, TopicTypeDto.OPTIONAL, null);
         Application app = topic.getApplication();
         List<Topic> found = topicDao.findTopicsByAppIdAndType(app.getId().toString(), TopicTypeDto.OPTIONAL);
         Assert.assertEquals(1, found.size());
@@ -62,7 +62,7 @@ public class HibernateTopicDaoTest extends HibernateAbstractTest {
 
     @Test
     public void testFindTopicByAppIdAndName() {
-        Topic topic = generateTopic(null, TopicTypeDto.OPTIONAL);
+        Topic topic = generateTopic(null, TopicTypeDto.OPTIONAL, null);
         Application app = topic.getApplication();
         Topic found = topicDao.findTopicByAppIdAndName(app.getId().toString(), topic.getName());
         Assert.assertEquals(topic, found);
@@ -70,9 +70,9 @@ public class HibernateTopicDaoTest extends HibernateAbstractTest {
 
     @Test
     public void testFindTopicsByIds() {
-        Topic first = generateTopic(null, null);
+        Topic first = generateTopic(null, null, "first");
         Application app = first.getApplication();
-        Topic second = generateTopic(app, null);
+        Topic second = generateTopic(app, null, "second");
         List<Topic> expected = new ArrayList<>();
         expected.add(first);
         expected.add(second);
@@ -82,7 +82,7 @@ public class HibernateTopicDaoTest extends HibernateAbstractTest {
 
     @Test
     public void testRemoveTopicsByAppId() {
-        Topic topic = generateTopic(null, null);
+        Topic topic = generateTopic(null, null, null);
         Application app = topic.getApplication();
         topicDao.removeTopicsByAppId(app.getId().toString());
         Topic found = topicDao.findById(topic.getId().toString());
@@ -91,7 +91,7 @@ public class HibernateTopicDaoTest extends HibernateAbstractTest {
 
     @Test
     public void testUpdateSeqNumber() {
-        Topic topic = generateTopic(null, null);
+        Topic topic = generateTopic(null, null, null);
         int seqNum = topic.getSequenceNumber();
         Topic updated = topicDao.getNextSeqNumber(topic.getId().toString());
         Assert.assertNotNull(updated);
@@ -102,7 +102,7 @@ public class HibernateTopicDaoTest extends HibernateAbstractTest {
 
     @Test
     public void testSaveTopic() {
-        Topic topic = generateTopic(null, null);
+        Topic topic = generateTopic(null, null, null);
         EndpointGroup endpointGroup = generateEndpointGroup(topic.getApplication(), null);
 
         topic.setName("Updated...");
@@ -114,15 +114,15 @@ public class HibernateTopicDaoTest extends HibernateAbstractTest {
 
     @Test
     public void testFindVacantTopicsByGroupId() {
-        Topic first = generateTopic(null, null);
+        Topic first = generateTopic(null, null, "first");
         Application app = first.getApplication();
-        Topic second = generateTopic(app, null);
+        Topic second = generateTopic(app, null, "second");
         Set<Topic> firstTopics = new HashSet<>();
         firstTopics.add(first);
         firstTopics.add(second);
 
-        Topic third = generateTopic(app, null);
-        Topic fourth = generateTopic(app, null);
+        Topic third = generateTopic(app, null, "third");
+        Topic fourth = generateTopic(app, null, "fourth");
         Set<Topic> secondTopics = new HashSet<>();
         secondTopics.add(third);
         secondTopics.add(fourth);
