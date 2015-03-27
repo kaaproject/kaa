@@ -24,6 +24,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
+import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -84,5 +85,32 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
     public void saveUserConfigurationTest() throws IOException {
         EndpointUserConfigurationDto configurationDto = generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
         Assert.assertNotNull(configurationDto);
+    }
+
+    @Test
+    public void userConfigNullTest() {
+        EndpointUserConfigurationDto result = userConfigurationService.saveUserConfiguration(null);
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void userConfigNotNullTest() throws IOException {
+        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        EndpointUserConfigurationDto result = userConfigurationService.saveUserConfiguration(configurationDto);
+        Assert.assertEquals(configurationDto, result);
+    }
+
+    @Test(expected = IncorrectParameterException.class)
+    public void serConfigBlankTest() {
+        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfiguration(null, null, null, null);
+        EndpointUserConfigurationDto result = userConfigurationService.saveUserConfiguration(null);
+    }
+
+    @Test(expected = IncorrectParameterException.class)
+    public void schemaDtoNullTest() throws IOException {
+        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
+        configurationDto.setAppToken(null);
+        EndpointUserConfigurationDto result = userConfigurationService.saveUserConfiguration(configurationDto);
+        Assert.assertEquals(configurationDto, result);
     }
 }
