@@ -33,6 +33,13 @@ Make sure that the Kaa sandbox is up and running. Opening the "Cell monitor demo
 Navigate to the Kaa server administrative interface by clicking on the "Administrative console" link from the Sandbox screen. Log in as a tenant developer (devuser / devuser123), and go to to the "Cell monitor" application, then select "Schemas", "Log". Choose the latest schema version to inspect the schema of the data collected from the app.<br/><br/>
 
 In this sample app the data is collected into a MongoDB instance. To review the configuration of the active log appender, browse to the "Log appenders" section under "Cell monitor" application, and choose "Cell monitor log appender" from the table.
+You can explore collected data by querying sandbox Mongo DB instance:
+<pre>
+$ mongo kaa
+db.logs_$your_application_token.find()
+</pre>
+
+You can copy application token from main application page on Admin UI.<br/><br/>
 
 <h2>What's next?</h2>
 Get the source code by clicking the "Source" button on the left and start hacking!<br/><br/>
