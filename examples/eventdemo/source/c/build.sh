@@ -33,10 +33,11 @@ PROJECT_HOME=$(pwd)
 BUILD_DIR="build"
 LIBS_PATH="libs"
 KAA_LIB_PATH="$LIBS_PATH/kaa"
+KAA_LIB_HEADER_PATH="$KAA_LIB_PATH/src"
 KAA_SDK_TAR="kaa-client*.tar.gz"
 
 function build_thirdparty {
-    if [ ! -d "$KAA_LIB_PATH/kaa" ]
+    if [ ! -d "$KAA_LIB_HEADER_PATH" ]
     then
         KAA_SDK_TAR_NAME=$(find $PROJECT_HOME -iname $KAA_SDK_TAR)
 

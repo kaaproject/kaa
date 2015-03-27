@@ -881,7 +881,7 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
                     KAA_LOG_ERROR(self->logger, error, "Failed to read event listener response in Event server sync message");
                     return error;
                 }
-                event_listeners_responses_count = KAA_HTONS(event_listeners_responses_count);
+                event_listeners_responses_count = KAA_NTOHS(event_listeners_responses_count);
                 while (event_listeners_responses_count--) {
                     error = kaa_event_read_listeners_response(self, reader);
                     if (error) {
