@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.util.List;
 
-public class EventListenersRequest {
+public final class EventListenersRequest {
     private int requestId;
     private List<String> eventClassFQNs;
 

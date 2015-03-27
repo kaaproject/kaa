@@ -25,7 +25,7 @@ import org.kaaproject.kaa.server.sync.bootstrap.BootstrapServerSync;
  * @author Andrew Shvayka
  *
  */
-public class ServerSync {
+public final class ServerSync {
 
     private int requestId;
     private SyncStatus status;
@@ -333,6 +333,45 @@ public class ServerSync {
             copy.setUserDetachNotification(new UserDetachNotification(source.getUserDetachNotification().getEndpointAccessToken()));
         }
         return copy;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ServerSync that = (ServerSync) o;
+
+        if (requestId != that.requestId) return false;
+        if (bootstrapSync != null ? !bootstrapSync.equals(that.bootstrapSync) : that.bootstrapSync != null)
+            return false;
+        if (configurationSync != null ? !configurationSync.equals(that.configurationSync) : that.configurationSync != null)
+            return false;
+        if (eventSync != null ? !eventSync.equals(that.eventSync) : that.eventSync != null) return false;
+        if (logSync != null ? !logSync.equals(that.logSync) : that.logSync != null) return false;
+        if (notificationSync != null ? !notificationSync.equals(that.notificationSync) : that.notificationSync != null)
+            return false;
+        if (profileSync != null ? !profileSync.equals(that.profileSync) : that.profileSync != null) return false;
+        if (redirectSync != null ? !redirectSync.equals(that.redirectSync) : that.redirectSync != null) return false;
+        if (status != that.status) return false;
+        if (userSync != null ? !userSync.equals(that.userSync) : that.userSync != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = requestId;
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (bootstrapSync != null ? bootstrapSync.hashCode() : 0);
+        result = 31 * result + (profileSync != null ? profileSync.hashCode() : 0);
+        result = 31 * result + (configurationSync != null ? configurationSync.hashCode() : 0);
+        result = 31 * result + (notificationSync != null ? notificationSync.hashCode() : 0);
+        result = 31 * result + (userSync != null ? userSync.hashCode() : 0);
+        result = 31 * result + (eventSync != null ? eventSync.hashCode() : 0);
+        result = 31 * result + (redirectSync != null ? redirectSync.hashCode() : 0);
+        result = 31 * result + (logSync != null ? logSync.hashCode() : 0);
+        return result;
     }
 
     @Override

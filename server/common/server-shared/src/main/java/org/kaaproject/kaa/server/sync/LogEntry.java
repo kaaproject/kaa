@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.nio.ByteBuffer;
 
-public class LogEntry {
+public final class LogEntry {
     private ByteBuffer data;
 
     public LogEntry() {

@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class ProfileServerSync {
+public final class ProfileServerSync {
     private SyncResponseStatus responseStatus;
 
     public ProfileServerSync() {
@@ -43,6 +43,24 @@ public class ProfileServerSync {
      */
     public void setResponseStatus(SyncResponseStatus value) {
         this.responseStatus = value;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProfileServerSync that = (ProfileServerSync) o;
+
+        if (responseStatus != that.responseStatus) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return responseStatus != null ? responseStatus.hashCode() : 0;
     }
 
     @Override
