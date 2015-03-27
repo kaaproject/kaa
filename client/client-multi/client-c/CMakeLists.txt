@@ -88,18 +88,24 @@ endif()
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL}")
 
-# Disables Kaa library modules.
 message("==================================")
+# Prints build parameters.
+message("BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+message("KAA_PLATFORM = ${KAA_PLATFORM}")
+message("KAA_MAX_LOG_LEVEL = ${KAA_MAX_LOG_LEVEL}")
+message("==================================")
+
+# Disables Kaa library modules.
 if(KAA_WITHOUT_EVENTS)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_EVENTS")
 else()
-    message( "EVENTS ENABLED")
+    message("EVENTS ENABLED")
 endif()
 
 if(KAA_WITHOUT_LOGGING)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_LOGGING")
 else()
-     message( "LOGGING ENABLED")
+     message("LOGGING ENABLED")
 endif()
 
 if(KAA_WITHOUT_CONFIGURATION)
@@ -142,11 +148,6 @@ set (KAA_SOURCE_FILES
 # Includes auto-generated and platform-dependent Cmake's scripts.
 include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/CMakeGen.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/platform/${KAA_PLATFORM}/CMakeLists.txt)
-
-# Prints build parameters.
-message( "BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
-message( "KAA_PLATFORM = ${KAA_PLATFORM}")
-message( "KAA_MAX_LOG_LEVEL = ${KAA_MAX_LOG_LEVEL}")
 
 # Builds Kaa libraries.
 add_library(kaac_o OBJECT ${KAA_SOURCE_FILES})
