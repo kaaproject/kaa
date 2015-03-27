@@ -42,8 +42,8 @@ public:
         if (!configuration.AddressList.is_null()) {
             cout << "Configuration body:" << endl;
             auto links = configuration.AddressList.get_array();
-            for(auto& e : links) {
-                cout << e.label << " - " << e.url << endl;
+            for (auto& e : links) {
+                 cout << e.label << " - " << e.url << endl;
             }
         }
     }
@@ -68,8 +68,8 @@ int main()
     UserConfigurationReceiver receiver;
     kaaClient.addConfigurationListener(receiver);
     Kaa::start();
-    std::cin.get();
     // Waiting for Enter key pressed before exiting.
+    std::cin.get();
     Kaa::stop();
     cout << "Configuration demo stopped" << endl;
     return 0;
