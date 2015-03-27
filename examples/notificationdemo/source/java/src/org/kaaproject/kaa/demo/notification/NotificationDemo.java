@@ -87,7 +87,7 @@ public class NotificationDemo {
     private static class BasicNotificationTopicListListener implements NotificationTopicListListener {
         @Override
         public void onListUpdated(List<Topic> list) {
-            LOG.info("Topic list was updated:");
+            LOG.info("Topic list was updated");
             showTopicList(list);
             try {
                 //Try to subscribe to all new optional topics, if any.
