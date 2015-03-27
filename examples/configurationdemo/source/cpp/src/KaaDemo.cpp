@@ -30,6 +30,7 @@
 #include <stdio.h>
 
 using namespace kaa;
+
 using std::cout;
 using std::endl;
 
@@ -52,7 +53,6 @@ public:
     }
 };
 
-
 int main()
 {
     Kaa::init();
@@ -66,7 +66,6 @@ int main()
     kaaClient.setConfigurationStorage(storage);
     UserConfigurationReceiver receiver;
     kaaClient.addConfigurationListener(receiver);
-
     Kaa::start();
 
     for (int i = 0; i < 100; ++i)
