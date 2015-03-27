@@ -34,7 +34,7 @@
 #include "platform/ext_status.h"
 #include "platform/ext_sha.h"
 #include "platform/ext_key_utils.h"
-
+#include "platform/sock.h"
 
 
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);

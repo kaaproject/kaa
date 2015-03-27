@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
+/*
+@file econais_ec19d_defaults.h
+ Created on: Mar 26, 2015
+     Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
+*/
 
-#ifndef ECONAIS_EC19D_TIME_H_
-#define ECONAIS_EC19D_TIME_H_
+#ifndef ECONAIS_EC19D_DEFAULTS_H_
+#define ECONAIS_EC19D_DEFAULTS_H_
 
-typedef uint32_t kaa_time_t;
+#define KAA_TCP_CHANNEL_IN_BUFFER_SIZE      246
+#define KAA_TCP_CHANNEL_OUT_BUFFER_SIZE     1015
 
-kaa_time_t ext_get_systime();
+#define KAA_TCP_CHANNEL_KEEPALIVE           300
 
-#define KAA_TIME() ext_get_systime()
+#define KAATCP_PARSER_MAX_MESSAGE_LENGTH    999
 
-#endif /* ECONAIS_EC19D_TIME_H_ */
+#define KAA_MAX_LOG_MESSAGE_LENGTH          247
+
+#endif /* ECONAIS_EC19D_DEFAULTS_H_ */

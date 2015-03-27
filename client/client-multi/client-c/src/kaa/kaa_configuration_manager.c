@@ -16,11 +16,15 @@
 
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
 
-#include "kaa_configuration_manager.h"
 
 #include <stdbool.h>
-
+#include <inttypes.h>
+#include <stdint.h>
+#include <sys/types.h>
 #include "platform/stdio.h"
+#include "platform/sock.h"
+#include "kaa_configuration_manager.h"
+
 #include "platform/ext_sha.h"
 #include "platform/ext_configuration_persistence.h"
 #include "collections/kaa_list.h"
@@ -41,6 +45,8 @@
 
 
 #define KAA_CONFIGURATION_BODY_PRESENT           0x02
+
+extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self, kaa_service_t service_type);
 
 static kaa_service_t configuration_sync_services[1] = { KAA_SERVICE_CONFIGURATION };
 

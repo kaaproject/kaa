@@ -32,7 +32,7 @@
 #include "utilities/kaa_log.h"
 #include "utilities/kaa_mem.h"
 #include "platform/ext_sha.h"
-
+#include "platform/sock.h"
 
 
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
