@@ -51,7 +51,7 @@ int main()
     const std::size_t LOGS_TO_SEND_COUNT = 5;
 
     std::cout << "Data collection demo started" << std::endl;
-    std::cout << "--= Press any key to exit =--" << std::endl;
+    std::cout << "--= Press Enter to exit =--" << std::endl;
 
     //Create a Kaa client with the Kaa desktop context.
     Kaa::init();
@@ -77,7 +77,7 @@ int main()
         kaaClient.addLogRecord(logRecord);
     }
 
-    // Wait for some input before exiting.
+    // Wait for the Enter key before exiting.
     std::cin.get();
 
     // Stop the Kaa client and release all the resources which were in use.
