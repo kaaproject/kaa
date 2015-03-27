@@ -55,15 +55,12 @@ void kaa_demo_print_configuration_message(const kaa_root_configuration_t *config
     if (configuration->address_list->type == KAA_CONFIGURATION_UNION_ARRAY_LINK_OR_NULL_BRANCH_0) {
         printf("Configuration body:\n");
         kaa_list_t *list_of_links = (kaa_list_t*) configuration->address_list->data;
-        size_t size_of_list = kaa_list_get_size(list_of_links);
         kaa_configuration_link_t* current_link = NULL;
-        while (size_of_list--)
+        while (list_of_links)
         {
             current_link = (kaa_configuration_link_t*) kaa_list_get_data(list_of_links);
             printf("%s - %s\n", current_link->label->data,current_link->url->data);
-            if (size_of_list) {
-                list_of_links = kaa_list_next(list_of_links);
-            }
+            list_of_links = kaa_list_next(list_of_links);
         }
     } else {
         printf("Configuration body: null\n");
@@ -233,7 +230,6 @@ void kaa_demo_destroy()
 {
     kaa_tcp_channel_disconnect(&operations_channel);
     kaa_deinit(kaa_context_);
-    printf("Configuration demo stopped\n");
 }
 
 int main(/*int argc, char *argv[]*/)
@@ -246,6 +242,7 @@ int main(/*int argc, char *argv[]*/)
     }
     int rval = kaa_demo_event_loop();
     kaa_demo_destroy();
+    printf("Configuration demo stopped\n");
     return rval;
 }
 
