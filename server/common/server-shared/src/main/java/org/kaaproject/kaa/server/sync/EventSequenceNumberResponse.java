@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class EventSequenceNumberResponse {
+public final class EventSequenceNumberResponse {
     private int seqNum;
 
     public EventSequenceNumberResponse() {
@@ -43,6 +43,23 @@ public class EventSequenceNumberResponse {
      */
     public void setSeqNum(Integer value) {
         this.seqNum = value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EventSequenceNumberResponse that = (EventSequenceNumberResponse) o;
+
+        if (seqNum != that.seqNum) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return seqNum;
     }
 
     @Override

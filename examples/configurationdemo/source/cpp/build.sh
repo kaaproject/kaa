@@ -28,29 +28,64 @@ then
     help
 fi
 
+APP_NAME="sample_cpp_logging_client"
+PROJECT_HOME=$(pwd)
+BUILD_DIR="build"
 LIBS_PATH="libs"
 KAA_LIB_PATH="$LIBS_PATH/kaa"
-BUILD_DIR="build"
-PROJECT_HOME=$(pwd)
-APP_NAME="sample_cpp_client"
+KAA_SDK_TAR="kaa-client*.tar.gz"
 
-function prepare_build {
-    mkdir -p build;
-    cd $KAA_LIB_PATH; ./build.sh build; cd $BUILD_DIR; cp libkaa* "$PROJECT_HOME/$BUILD_DIR/"; cd $PROJECT_HOME
-    cd $BUILD_DIR && cmake -DAPP_NAME=$APP_NAME .. && cd $PROJECT_HOME
+function build_thirdparty {
+    if [ ! -d "$KAA_LIB_PATH/kaa" ]
+    then
+        KAA_SDK_TAR_NAME=$(find $PROJECT_HOME -iname $KAA_SDK_TAR)
+
+        if [ -z "$KAA_SDK_TAR_NAME" ]
+        then
+            echo "Please, put the generated C++ SDK tarball into the libs/kaa folder and re-run the script."
+            exit 1
+        fi
+
+        mkdir -p $KAA_LIB_PATH &&
+        tar -zxf $KAA_SDK_TAR_NAME -C $KAA_LIB_PATH
+    fi
+
+    if [ ! -d "$KAA_LIB_PATH/$BUILD_DIR" ]
+    then
+        cd $KAA_LIB_PATH &&
+        chmod 755 ./avrogen.sh &&
+        ./avrogen.sh && 
+        mkdir -p $BUILD_DIR && cd $BUILD_DIR &&
+        cmake -DKAA_DEBUG_ENABLED=1 \
+              -DKAA_WITHOUT_EVENTS=1 \
+              -DKAA_WITHOUT_LOGGING=1 \
+              -DKAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL=1 \
+              -DKAA_WITHOUT_OPERATION_HTTP_CHANNEL=1 \
+              -DKAA_MAX_LOG_LEVEL=0 \
+              ..
+    fi
+
+    cd "$PROJECT_HOME/$KAA_LIB_PATH/$BUILD_DIR"
+    make -j4 &&
+    cd $PROJECT_HOME
 }
 
-function build {
-    cd $BUILD_DIR && make && cd $PROJECT_HOME
+function build_app {
+    cd $PROJECT_HOME &&
+    mkdir -p "$PROJECT_HOME/$BUILD_DIR" &&
+    cp "$KAA_LIB_PATH/$BUILD_DIR/"libkaa* "$PROJECT_HOME/$BUILD_DIR/" &&
+    cd $BUILD_DIR &&
+    cmake -DAPP_NAME=$APP_NAME ..
+    make
 }
 
 function clean {
     rm -rf "$KAA_LIB_PATH/$BUILD_DIR"
-    rm -rf $BUILD_DIR
+    rm -rf "$PROJECT_HOME/$BUILD_DIR"
 }
 
 function run {
-    cd $PROJECT_HOME/$BUILD_DIR
+    cd "$PROJECT_HOME/$BUILD_DIR"
     ./$APP_NAME
 }
 
@@ -59,8 +94,8 @@ do
 
 case "$cmd" in
     build)
-        prepare_build &&
-        build
+        build_thirdparty &&
+        build_app
     ;;
 
     run)
@@ -69,8 +104,8 @@ case "$cmd" in
 
     deploy)
         clean
-        prepare_build
-        build
+        build_thirdparty
+        build_app
         run
         ;;
 

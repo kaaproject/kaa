@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class EndpointAttachResponse {
+public final class EndpointAttachResponse {
     private int requestId;
     private String endpointKeyHash;
     private SyncStatus result;

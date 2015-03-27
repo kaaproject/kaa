@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.sync;
 
-public class UserAttachNotification {
+public final class UserAttachNotification {
     private String userExternalId;
     private String endpointAccessToken;
 
@@ -62,6 +62,28 @@ public class UserAttachNotification {
      */
     public void setEndpointAccessToken(String value) {
         this.endpointAccessToken = value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserAttachNotification that = (UserAttachNotification) o;
+
+        if (endpointAccessToken != null ? !endpointAccessToken.equals(that.endpointAccessToken) : that.endpointAccessToken != null)
+            return false;
+        if (userExternalId != null ? !userExternalId.equals(that.userExternalId) : that.userExternalId != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = userExternalId != null ? userExternalId.hashCode() : 0;
+        result = 31 * result + (endpointAccessToken != null ? endpointAccessToken.hashCode() : 0);
+        return result;
     }
 
     @Override

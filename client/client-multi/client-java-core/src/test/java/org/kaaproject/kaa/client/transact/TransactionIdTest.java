@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,14 @@
  * limitations under the License.
  */
 
-#include "kaa/profile/ProfileListener.hpp"
+package org.kaaproject.kaa.client.transact;
 
-#include <cstdint>
-#include <exception>
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.Test;
 
-#include "kaa/common/EndpointObjectHash.hpp"
-
-namespace kaa {
-
-ProfileListener::ProfileListener(IProfileTransportPtr transport)
-{
-    transport_ = std::dynamic_pointer_cast<ProfileTransport, IProfileTransport>(transport);
-}
-
-
-void ProfileListener::onProfileUpdated(SharedDataBuffer serializedProfile)
-{
-    if (serializedProfile.first.get() && serializedProfile.second > 0) {
-        transport_->sync();
+public class TransactionIdTest {
+    @Test
+    public void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(TransactionId.class).verify();
     }
 }
-
-} /* namespace kaa */

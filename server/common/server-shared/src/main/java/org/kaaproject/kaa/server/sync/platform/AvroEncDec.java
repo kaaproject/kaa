@@ -601,6 +601,7 @@ public class AvroEncDec implements PlatformEncDec {
             for (org.kaaproject.kaa.common.endpoint.gen.TopicState state : source.getTopicStates()) {
                 states.add(new TopicState(state.getTopicId(), state.getSeqNumber()));
             }
+            sync.setTopicStates(states);
         }
         return sync;
     }

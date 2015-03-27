@@ -58,7 +58,12 @@ public:
      * @see AbstractProfileContainer
      *
      */
-    virtual void setProfileContainer(ProfileContainerPtr container) = 0;
+    virtual void setProfileContainer(IProfileContainerPtr container) = 0;
+
+    /**
+     *  Notyfies server about profile changes
+     */
+    virtual void updateProfile() = 0;
 
     /**
      * Retrieves Kaa event family factory.
@@ -385,7 +390,7 @@ public:
      * @param[in] token     The new access token.
      *
      */
-    virtual void                              setEndpointAccessToken(std::string token) = 0;
+    virtual void                              setEndpointAccessToken(const std::string& token) = 0;
 
     /**
      * @brief Generate new access token for a current endpoint.
