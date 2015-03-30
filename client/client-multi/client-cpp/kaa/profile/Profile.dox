@@ -47,23 +47,10 @@
     Below is an example of a profile container for C++:
     @code
         #include "kaa/Kaa.hpp"
-        #include "kaa/gen/ProfileDefinitions" // auto-generated header
-        #include "kaa/profile/AbstractProfileContainer.hpp"
-         
+        #include "kaa/profile/DefaultProfileContainer.hpp"
+
         using namespace kaa;
-        // Profile container based on AbstractProfileContainer class that is provided by the sdk
-        class BasicProfileContainer : public AbstractProfileContainer<KaaProfile> {
-        public:
-            BasicProfileContainer(const KaaProfile &profile) : profile_(profile) { }
-            virtual KaaProfile getProfile() {
-                return profile_;
-            }
-            virtual void changeProfile(const KaaProfile &profile) {
-                profile_ = profile;
-            }
-        private:
-            KaaProfile profile_;
-        };
+
         // Kaa client initialization based on BasicProfileContainer
         void init(){
             //Create client for Kaa SDK
@@ -73,7 +60,7 @@
             KaaProfile profile;
             profile.data = "some useful data";
             //Create instance of profile container
-            ProfileContainerPtr container(new BasicProfileContainer(profile));
+            ProfileContainerPtr container(new DefaultProfileContainer(profile));
             //Set simple profile container.
             kaaClient.setProfileContainer(container);
             // Update method should be called to notify about changes in the profile.

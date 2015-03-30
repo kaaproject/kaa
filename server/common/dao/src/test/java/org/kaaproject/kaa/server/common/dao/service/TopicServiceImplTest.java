@@ -42,6 +42,15 @@ public class TopicServiceImplTest extends AbstractTest {
         clearDBData();
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void saveTopicTest(){
+        ApplicationDto app = generateApplication();
+        TopicDto topic1 = generateTopic(app.getId(), TopicTypeDto.MANDATORY);
+        topicService.saveTopic(topic1);
+        TopicDto topic2 = generateTopic(app.getId(), TopicTypeDto.OPTIONAL);
+        topicService.saveTopic(topic2);
+    }
+
     @Test
     public void findTopicByIdTest() {
         TopicDto topic = generateTopic(null, null);

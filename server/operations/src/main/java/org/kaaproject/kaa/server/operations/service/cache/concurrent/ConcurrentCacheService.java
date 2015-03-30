@@ -625,14 +625,14 @@ public class ConcurrentCacheService implements CacheService {
     @Override
     @Cacheable("tenantIds")
     public String getTenantIdByAppToken(String key) {
-        // TODO Auto-generated method stub
+        // TODO: throw exception instead of returning null
         return tenantIdMemorizer.compute(key, new Computable<String, String>() {
 
             @Override
             public String compute(String key) {
                 LOG.debug("Fetching result for token id");
                 ApplicationDto appDto = applicationService.findAppByApplicationToken(key);
-                return appDto.getTenantId();
+                return appDto != null ? appDto.getTenantId() : null;
             }
 
         });

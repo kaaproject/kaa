@@ -32,22 +32,22 @@ public class NettySessionResponseMessage implements SessionResponse {
 
     private final SessionInfo sessionInfo;
     private final ServerSync syncResponse;
-    private final MessageBuilder responseConverter;
-    private final ErrorBuilder errorConverter;
+    private final MessageBuilder messageBuilder;
+    private final ErrorBuilder errorBuilder;
     private final Exception error;
     
-    public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, MessageBuilder responseConverter,
-            ErrorBuilder errorConverter) {
-        this(sessionInfo, syncResponse, null, responseConverter, errorConverter);
+    public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, MessageBuilder messageBuilder,
+            ErrorBuilder errorBuilder) {
+        this(sessionInfo, syncResponse, null, messageBuilder, errorBuilder);
     }
 
-    public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, Exception error, MessageBuilder responseConverter,
-            ErrorBuilder errorConverter) {
+    public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, Exception error, MessageBuilder messageBuilder,
+            ErrorBuilder errorBuilder) {
         this.sessionInfo = sessionInfo;
         this.syncResponse = syncResponse;
         this.error = error;
-        this.responseConverter = responseConverter;
-        this.errorConverter = errorConverter;
+        this.messageBuilder = messageBuilder;
+        this.errorBuilder = errorBuilder;
     }
 
     @Override
@@ -56,8 +56,8 @@ public class NettySessionResponseMessage implements SessionResponse {
     }
 
     @Override
-    public ErrorBuilder getErrorConverter() {
-        return errorConverter;
+    public ErrorBuilder getErrorBuilder() {
+        return errorBuilder;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class NettySessionResponseMessage implements SessionResponse {
 
     @Override
     public MessageBuilder getMessageBuilder() {
-        return responseConverter;
+        return messageBuilder;
     }
 
     @Override
