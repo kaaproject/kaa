@@ -71,7 +71,7 @@ Copyright 2014 CyberVision, Inc.
         <equalsverifier.version>1.4.1</equalsverifier.version>
         <jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
         <jline.version>2.11</jline.version>
-        <avro-ui.version>0.1.1-SNAPSHOT</avro-ui.version>
+        <avro-ui.version>0.1.1</avro-ui.version>
 
         <slf4j.version>1.7.7</slf4j.version>
         <logback.version>1.1.2</logback.version>
