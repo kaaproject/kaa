@@ -556,8 +556,8 @@ public class ControlServerCliIT {
         ControlApiCliThriftClient cli = new ControlApiCliThriftClient();
         String applicationId = editApplicationCli(cli, null, "testApplication", null, "testTenant", false);
 
-        String topicId = editTopicCli(cli, null, applicationId, null, null, SubscriptionType.MANDATORY, true);
-        topicId = editTopicCli(cli, null, applicationId, null, null, SubscriptionType.MANDATORY, false);
+        String topicId = editTopicCli(cli, null, applicationId, "topic1", null, null, SubscriptionType.MANDATORY, true);
+        topicId = editTopicCli(cli, null, applicationId, "topic2", null, null, SubscriptionType.MANDATORY, false);
         Assert.assertFalse(strIsEmpty(topicId));
 //        Assert.assertEquals(LENGTH_OF_ID_IN_MONGODB, topicId.length());
         editTopicCli(cli, topicId, applicationId, null, null, SubscriptionType.MANDATORY, false);
@@ -1654,7 +1654,7 @@ public class ControlServerCliIT {
         String output = cliOut.toString("UTF-8");
         Assert.assertTrue(output.trim().startsWith("Configuration Activated."));
     }
-
+    
     /**
      * Edits/Creates the endpoint group from cli.
      *
@@ -1667,6 +1667,21 @@ public class ControlServerCliIT {
      * @throws UnsupportedEncodingException the unsupported encoding exception
      */
     private String editTopicCli(ControlApiCliThriftClient cli, String topicId, String applicationId, String applicationName, String tenantName, SubscriptionType subscriptionType, boolean createOut) throws UnsupportedEncodingException {
+        return editTopicCli(cli, topicId, applicationId, null, applicationName, tenantName, subscriptionType, createOut);
+    }
+
+    /**
+     * Edits/Creates the endpoint group from cli.
+     *
+     * @param cli the control cli client
+     * @param topicId the topic id
+     * @param applicationId the application Id
+     * @param subscriptionType the subscription type
+     * @param createOut create output file with object id
+     * @return the endpointGroupId
+     * @throws UnsupportedEncodingException the unsupported encoding exception
+     */
+    private String editTopicCli(ControlApiCliThriftClient cli, String topicId, String applicationId, String topicName, String applicationName, String tenantName, SubscriptionType subscriptionType, boolean createOut) throws UnsupportedEncodingException {
         cliOut.reset();
         boolean create = strIsEmpty(topicId);
         int result = -1;
@@ -1675,14 +1690,20 @@ public class ControlServerCliIT {
                 applicationId = editApplicationCli(cli, null, applicationName, null, tenantName, false);
                 cliOut.reset();
             }
-            String cmdLine = "createTopic -n testTopic -a " + applicationId + " -t " + subscriptionType.name();
+            if(topicName == null){
+                topicName = "testTopic";
+            }
+            String cmdLine = "createTopic -n " + topicName + " -a " + applicationId + " -t " + subscriptionType.name();
             if (createOut) {
                 cmdLine += " -o dummy.out";
             }
             result = cli.processLine(cmdLine);
         }
         else {
-            result = cli.processLine("editTopic -n testTopic2 -i " + topicId);
+            if(topicName == null){
+                topicName = "testTopic2";
+            }
+            result = cli.processLine("editTopic -n " + topicName + " -i " + topicId);
         }
         Assert.assertEquals(result, 0);
         String output = cliOut.toString("UTF-8");
