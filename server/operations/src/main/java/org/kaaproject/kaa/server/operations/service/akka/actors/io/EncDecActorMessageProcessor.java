@@ -198,7 +198,7 @@ public class EncDecActorMessageProcessor {
         if (isApplicationTokenValid(message.getSessionInfo().getApplicationToken())) {
             forwardToOpsActor(context, message.getSessionInfo(), request, message);
         } else {
-            LOG.info("Invalid application token received");
+            LOG.info("Invalid application token received: {}", message.getSessionInfo().getApplicationToken());
             throw new InvalidApplicationTokenException("Invalid application token received");
         }
     }
