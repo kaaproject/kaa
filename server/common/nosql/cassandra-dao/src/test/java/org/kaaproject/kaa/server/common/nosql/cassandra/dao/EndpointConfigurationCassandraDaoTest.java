@@ -33,9 +33,34 @@ import java.util.List;
 public class EndpointConfigurationCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
+    public void testFindById() throws Exception {
+        List<CassandraEndpointConfiguration> configs = generateConfiguration(3);
+        CassandraEndpointConfiguration expected = configs.get(0);
+        CassandraEndpointConfiguration found = endpointConfigurationDao.findById(expected.getConfigurationHash());
+        Assert.assertEquals(expected, found);
+    }
+
+    @Test
+    public void testFindByIdNullKey() throws Exception {
+        List<CassandraEndpointConfiguration> configs = generateConfiguration(3);
+        CassandraEndpointConfiguration expected = configs.get(0);
+        CassandraEndpointConfiguration found = endpointConfigurationDao.findById(null);
+        Assert.assertNull(found);
+    }
+
+    @Test
     public void testFindByHash() throws Exception {
         List<CassandraEndpointConfiguration> configs = generateConfiguration(3);
         CassandraEndpointConfiguration expected = configs.get(0);
+        CassandraEndpointConfiguration found = endpointConfigurationDao.findByHash(expected.getConfigurationHash().array());
+        Assert.assertEquals(expected, found);
+    }
+
+    @Test
+    public void testRemoveByIdNullKey() throws Exception {
+        List<CassandraEndpointConfiguration> configs = generateConfiguration(3);
+        CassandraEndpointConfiguration expected = configs.get(0);
+        endpointConfigurationDao.removeById(null);
         CassandraEndpointConfiguration found = endpointConfigurationDao.findByHash(expected.getConfigurationHash().array());
         Assert.assertEquals(expected, found);
     }
@@ -45,6 +70,15 @@ public class EndpointConfigurationCassandraDaoTest extends AbstractCassandraTest
         List<CassandraEndpointConfiguration> configs = generateConfiguration(3);
         CassandraEndpointConfiguration expected = configs.get(0);
         endpointConfigurationDao.removeByHash(expected.getConfigurationHash().array());
+        CassandraEndpointConfiguration found = endpointConfigurationDao.findByHash(expected.getConfigurationHash().array());
+        Assert.assertNull(found);
+    }
+
+    @Test
+    public void testRemoveById() throws Exception {
+        List<CassandraEndpointConfiguration> configs = generateConfiguration(3);
+        CassandraEndpointConfiguration expected = configs.get(0);
+        endpointConfigurationDao.removeById(expected.getConfigurationHash());
         CassandraEndpointConfiguration found = endpointConfigurationDao.findByHash(expected.getConfigurationHash().array());
         Assert.assertNull(found);
     }

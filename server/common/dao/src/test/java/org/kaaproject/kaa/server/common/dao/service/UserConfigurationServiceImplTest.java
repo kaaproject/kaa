@@ -101,7 +101,7 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
     }
 
     @Test(expected = IncorrectParameterException.class)
-    public void serConfigBlankTest() {
+    public void saveUserConfigBlankTest() {
         EndpointUserConfigurationDto configurationDto = generateEndpointUserConfiguration(null, null, null, null);
         EndpointUserConfigurationDto result = userConfigurationService.saveUserConfiguration(null);
     }
