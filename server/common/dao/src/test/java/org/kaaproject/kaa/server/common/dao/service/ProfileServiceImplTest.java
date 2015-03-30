@@ -414,4 +414,44 @@ public class ProfileServiceImplTest extends AbstractTest {
         profileService.saveProfileSchema(profileSchema);
     }
 
+    @Test(expected = IncorrectParameterException.class)
+    public void validateFilterNullDtoTest() throws Throwable {
+        ProfileServiceImpl profileServiceImpl = new ProfileServiceImpl();
+        Method validateMethod = profileServiceImpl.getClass().getDeclaredMethod("validateFilter", ProfileFilterDto.class);
+        validateMethod.setAccessible(true);
+        try{
+            validateMethod.invoke(profileServiceImpl, new ProfileFilterDto[]{null});
+        }catch (InvocationTargetException e){
+            throw e.getCause();
+        }
+    }
+
+    @Test(expected = IncorrectParameterException.class)
+    public void validateFilterBlankSchemaIdTest() throws Throwable {
+        ProfileServiceImpl profileServiceImpl = new ProfileServiceImpl();
+        Method validateMethod = profileServiceImpl.getClass().getDeclaredMethod("validateFilter", ProfileFilterDto.class);
+        validateMethod.setAccessible(true);
+        ProfileFilterDto filterDto = new ProfileFilterDto();
+        filterDto.setSchemaId("");
+        try{
+            validateMethod.invoke(profileServiceImpl, filterDto);
+        }catch (InvocationTargetException e){
+            throw e.getCause();
+        }
+    }
+
+    @Test(expected = IncorrectParameterException.class)
+    public void validateFilterBlankEndpoinGroupIdTest() throws Throwable {
+        ProfileServiceImpl profileServiceImpl = new ProfileServiceImpl();
+        Method validateMethod = profileServiceImpl.getClass().getDeclaredMethod("validateFilter", ProfileFilterDto.class);
+        validateMethod.setAccessible(true);
+        ProfileFilterDto filterDto = new ProfileFilterDto();
+        filterDto.setEndpointGroupId("");
+        try{
+            validateMethod.invoke(profileServiceImpl, filterDto);
+        }catch (InvocationTargetException e){
+            throw e.getCause();
+        }
+    }
+
 }
