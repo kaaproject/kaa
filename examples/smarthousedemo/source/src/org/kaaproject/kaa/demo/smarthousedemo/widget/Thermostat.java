@@ -816,9 +816,9 @@ public class Thermostat extends View {
 	private int getProgressForAngle(double angle) {
 		int touchProgress = (int) Math.round(valuePerDegree() * angle);
 
-		touchProgress = (touchProgress < 0) ? INVALID_PROGRESS_VALUE
+		touchProgress = (touchProgress < 0) ? 0
 				: touchProgress;
-		touchProgress = (touchProgress > mMax) ? INVALID_PROGRESS_VALUE
+		touchProgress = (touchProgress > mMax) ? mMax
 				: touchProgress;
 		return touchProgress;
 	}
