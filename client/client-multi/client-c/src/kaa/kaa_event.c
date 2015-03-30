@@ -681,15 +681,24 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
 
 static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader)
 {
-    KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
+
+    kaa_error_t error = KAA_ERR_NONE;
+    char *event_fqn = NULL;
+    uint8_t* event_source = NULL;
+    char *event_data = NULL;
+
+    if (!(self) || !(reader)) {
+        error = KAA_ERR_BADPARAM;
+        goto end;
+    }
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Event received");
 
     uint16_t event_options = 0;
-    kaa_error_t error = kaa_platform_message_read(reader, &event_options, sizeof(uint16_t));
+    error = kaa_platform_message_read(reader, &event_options, sizeof(uint16_t));
     if (error) {
         KAA_LOG_ERROR(self->logger, error, "Failed to read event options field");
-        return error;
+        goto end;
     }
     event_options = KAA_NTOHS(event_options);
 
@@ -697,7 +706,7 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
     error = kaa_platform_message_read(reader, &event_class_fqn_length, sizeof(uint16_t));
     if (error) {
         KAA_LOG_ERROR(self->logger, error, "Failed to read event class fqn length field");
-        return error;
+        goto end;
     }
     event_class_fqn_length = KAA_NTOHS(event_class_fqn_length);
 
@@ -706,30 +715,45 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         error = kaa_platform_message_read(reader, &event_data_size, sizeof(uint32_t));
         if (error) {
             KAA_LOG_ERROR(self->logger, error, "Failed to read event data size field");
-            return error;
+            goto end;
         }
         event_data_size = KAA_NTOHL(event_data_size);
     }
 
-    kaa_endpoint_id event_source;
+    event_source = (uint8_t *)KAA_MALLOC(KAA_ENDPOINT_ID_LENGTH);
+    if (!(event_source)) {
+        error = KAA_ERR_NOMEM;
+        goto end;
+    }
+
     error = kaa_platform_message_read(reader, event_source, KAA_ENDPOINT_ID_LENGTH);
+
     if (error) {
         KAA_LOG_ERROR(self->logger, error, "Failed to read event source endpoint id field");
-        return error;
+        goto end;
     }
 
     bool is_enough = kaa_platform_message_is_buffer_large_enough(reader, kaa_aligned_size_get(event_class_fqn_length));
+
     if (!is_enough) {
         KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Buffer size is less than event class fqn length value");
-        return KAA_ERR_READ_FAILED;
+        error = KAA_ERR_READ_FAILED;
+        goto end;
     }
-    char event_fqn[event_class_fqn_length + 1];
+    event_fqn = (char *)KAA_MALLOC(event_class_fqn_length + 1);
+    if (!(event_fqn)) {
+        error = KAA_ERR_NOMEM;
+        goto end;
+    }
+
     error = kaa_platform_message_read_aligned(reader, event_fqn, event_class_fqn_length);
+
     if (error) {
         KAA_LOG_ERROR(self->logger, error, "Failed to read event class fqn field");
-        return error;
+        goto end;
     }
     event_fqn[event_class_fqn_length] = '\0';
+
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Processing event with FQN=\"%s\"", event_fqn);
 
     kaa_event_callback_t callback = find_event_callback(self->event_callbacks, event_fqn);
@@ -737,25 +761,46 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         callback = self->global_event_callback;
 
     if (event_options & KAA_EVENT_OPTION_EVENT_HAS_DATA) {
+
         is_enough = kaa_platform_message_is_buffer_large_enough(reader, kaa_aligned_size_get(event_data_size));
+
         if (!is_enough) {
             KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Buffer size is less than event data size value");
-            return KAA_ERR_READ_FAILED;
+            error = KAA_ERR_READ_FAILED;
+            goto end;
         }
 
-        char event_data[event_data_size];
+        event_data = (char *)KAA_MALLOC(event_data_size);
+        if (!(event_data)) {
+            error = KAA_ERR_NOMEM;
+            goto end;
+        }
+
         error = kaa_platform_message_read_aligned(reader, event_data, event_data_size * sizeof(uint8_t));
+
         if (error) {
             KAA_LOG_ERROR(self->logger, error, "Failed to read event data field");
-            return error;
+            goto end;
         }
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Successfully retrieved event data size=%u", event_data_size);
         if (callback)
-           (*callback)(event_fqn, event_data, event_data_size, event_source);
+            (*callback)(event_fqn, event_data, event_data_size, event_source);
     } else if (callback) {
-       (*callback)(event_fqn, NULL, 0, event_source);
+        (*callback)(event_fqn, NULL, 0, event_source);
     }
-    return KAA_ERR_NONE;
+
+end:
+
+    if (event_data) {
+        KAA_FREE(event_data);
+    }
+    if (event_fqn) {
+        KAA_FREE(event_fqn);
+    }
+    if (event_source) {
+        KAA_FREE(event_source);
+    }
+    return error;
 }
 
 static kaa_error_t kaa_event_read_listeners_response(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader)

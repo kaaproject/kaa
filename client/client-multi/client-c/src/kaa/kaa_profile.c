@@ -240,6 +240,7 @@ static kaa_error_t kaa_version_info_serialize(kaa_platform_message_writer_t *wri
         error_code = kaa_platform_message_write(writer, &field_number_with_reserved, sizeof(uint16_t));
         KAA_RETURN_IF_ERR(error_code);
 
+        network_order_schema_version = 0;
         network_order_schema_version = KAA_HTONS(schema_versions[i]);
         error_code = kaa_platform_message_write(writer, &network_order_schema_version, sizeof(uint16_t));
         KAA_RETURN_IF_ERR(error_code);
