@@ -53,6 +53,7 @@ import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
 import org.kaaproject.kaa.server.common.dao.impl.UserDao;
 import org.kaaproject.kaa.server.common.dao.impl.UserVerifierDao;
+import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventMap;
@@ -72,6 +73,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.kaaproject.kaa.server.common.dao.model.sql.User;
 import org.kaaproject.kaa.server.common.dao.model.sql.UserVerifier;
+import org.kaaproject.kaa.server.common.dao.model.sql.LogAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,8 +118,6 @@ public abstract class HibernateAbstractTest {
     protected LogSchemaDao<LogSchema> logSchemaDao;
     @Autowired
     protected NotificationSchemaDao<NotificationSchema> notificationSchemaDao;
-    @Autowired
-    protected UserVerifierDao<UserVerifier> verifierDao;
 
     protected Tenant generateTenant() {
         LOG.debug("Generate tenant...");
@@ -506,20 +506,6 @@ public abstract class HibernateAbstractTest {
             LOG.error("Can't generate configs {}", e);
         }
         return null;
-    }
-
-    protected UserVerifier generateUserVerifier(Application app, String verifierToken) {
-        UserVerifier verifier = new UserVerifier();
-        verifier.setName("GENERATED test Verifier" + UUID.randomUUID().toString());
-        if (app == null) {
-            app = generateApplication(null);
-        }
-        verifier.setApplication(app);
-        if (verifierToken == null) {
-            verifierToken = "token";
-        }
-        verifier.setVerifierToken(verifierToken);
-        return verifierDao.save(verifier);
     }
 
 }

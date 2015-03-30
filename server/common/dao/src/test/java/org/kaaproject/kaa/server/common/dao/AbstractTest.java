@@ -70,6 +70,7 @@ import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
 import org.kaaproject.kaa.server.common.core.configuration.BaseDataFactory;
 import org.kaaproject.kaa.server.common.core.configuration.OverrideDataFactory;
@@ -125,6 +126,8 @@ public class AbstractTest {
     protected TopicService topicService;
     @Autowired
     protected UserService userService;
+    @Autowired
+    protected UserVerifierService verifierService;
     @Autowired
     protected UserConfigurationService userConfigurationService;
     @Autowired
@@ -447,6 +450,21 @@ public class AbstractTest {
         tenant.setExternalUid(UUID.randomUUID().toString());
         tenant = userService.saveTenantAdmin(tenant);
         return tenant;
+    }
+
+
+    protected UserVerifierDto generateUserVerifier(String appId, String verifierToken){
+        UserVerifierDto verifier = new UserVerifierDto();
+        verifier.setName("GENERATED test Verifier");
+        if (isBlank(appId)) {
+            appId = generateApplication().getId();
+        }
+        verifier.setApplicationId(appId);
+        if (verifierToken == null) {
+            verifierToken = "token";
+        }
+        verifier.setVerifierToken(verifierToken);
+        return verifierService.saveUserVerifier(verifier);
     }
 
     protected List<UserDto> generateUsers(String tenantId, KaaAuthorityDto authority, int count) {
