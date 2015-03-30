@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -121,6 +123,18 @@ public class ProfileServiceImplTest extends AbstractTest {
         Assert.assertNotNull(profileFilterDto);
         Assert.assertEquals(UpdateStatus.ACTIVE, profileFilterDto.getStatus());
         Assert.assertNotEquals(filterDto.getSequenceNumber(), profileFilterDto.getSequenceNumber());
+    }
+
+    @Test(expected = UpdateStatusConflictException.class)
+    public void activateProfileFilterActiveStatusTest() {
+        List<ProfileFilterDto> filters = generateFilter(null, null, 1, true);
+        ProfileFilterDto filterDto = filters.get(0);
+        ChangeProfileFilterNotification activated = profileService.activateProfileFilter(filterDto.getId(), null);
+    }
+
+    @Test(expected = IncorrectParameterException.class)
+    public void activateProfileFilterNoProfileFilterTest() {
+        ChangeProfileFilterNotification activated = profileService.activateProfileFilter("13232", null);
     }
 
     @Test
