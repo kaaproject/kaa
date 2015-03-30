@@ -317,10 +317,12 @@ public class LoginActivity extends FragmentActivity {
                                     Log.i(TAG, "Event listeners received: " + eventListeners);
                                 }
                             });
+                            // Remove old listener to avoid duplication of messages.
                             if (listener != null) {
                                 vdecf.removeListener(listener);
                             }
                             listener = new KaaEventListener();
+                            vdecf.addListener(listener);
                         } else {
                             String failureString = userAttachResponse.getErrorReason() == null ?
                                     userAttachResponse.getErrorCode().toString() :
