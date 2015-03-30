@@ -17,30 +17,30 @@
 #ifndef IPROFILECONTAINER_HPP_
 #define IPROFILECONTAINER_HPP_
 
-#include "kaa/common/EndpointObjectHash.hpp"
+#include <memory>
+
+#include "kaa/profile/gen/ProfileDefinitions.hpp"
 
 namespace kaa {
 
-class IProfileContainer;
-typedef std::shared_ptr<IProfileContainer> IProfileContainerPtr;
-
 /**
- * Interface for the profile container.
- * User-defined version should be inherited from @link AbstractProfileContainer @endlink
+ * @brief The interface for the profile container.
  */
 class IProfileContainer {
 public:
 
     /**
-     * Retrieves serialized profile
+     * @brief Retrieves the filled-in profile instance.
      *
-     * @return byte array with serialized profile
+     * @return profile instance.
      *
      */
-    virtual SharedDataBuffer                        getSerializedProfile() = 0;
+    virtual KaaProfile getProfile() = 0;
 
     virtual ~IProfileContainer() {}
 };
+
+typedef std::shared_ptr<IProfileContainer> IProfileContainerPtr;
 
 } /* namespace kaa */
 

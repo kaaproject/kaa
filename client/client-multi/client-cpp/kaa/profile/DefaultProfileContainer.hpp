@@ -17,12 +17,11 @@
 #ifndef DEFAULTPROFILECONTAINER_HPP_
 #define DEFAULTPROFILECONTAINER_HPP_
 
-#include <kaa/profile/AbstractProfileContainer.hpp>
 #include <kaa/profile/gen/ProfileDefinitions.hpp>
 
 using namespace kaa;
 
-class DefaultProfileContainer : public AbstractProfileContainer< KaaProfile > {
+class DefaultProfileContainer : public IProfileContainer {
 public:
     DefaultProfileContainer() : profile_(KaaProfile()) { }
     DefaultProfileContainer(const KaaProfile& profile) : profile_(profile) { }
@@ -41,4 +40,4 @@ private:
     KaaProfile profile_;
 };
 
-#endif /* CLIENT_CLIENT_MULTI_CLIENT_CPP_KAA_PROFILE_DEFAULTPROFILECONTAINER_HPP_ */
+#endif /* DEFAULTPROFILECONTAINER_HPP_ */
