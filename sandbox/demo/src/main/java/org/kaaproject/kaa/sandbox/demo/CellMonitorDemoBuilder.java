@@ -58,7 +58,7 @@ public class CellMonitorDemoBuilder extends AbstractDemoBuilder {
         
         LogSchemaDto logSchema = new LogSchemaDto();
         logSchema.setApplicationId(cellMonitorApplication.getId());
-        logSchema.setName("Cell monitor configuration schema");
+        logSchema.setName("Cell monitor log schema");
         logSchema.setDescription("Log schema describing cell monitor record with information about current cell location, signal strength and phone gps location.");
         logSchema = client.createLogSchema(logSchema, getResourcePath("cell_monitor_log.avsc"));
         sdkKey.setLogSchemaVersion(logSchema.getMajorVersion());

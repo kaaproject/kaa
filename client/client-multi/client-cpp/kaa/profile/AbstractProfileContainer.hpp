@@ -19,7 +19,6 @@
 
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/common/EndpointObjectHash.hpp"
-#include "kaa/profile/IProfileListener.hpp"
 #include "kaa/profile/IProfileContainer.hpp"
 
 namespace kaa {
@@ -44,18 +43,6 @@ public:
         return avroConverter_.toByteArray(getProfile());
     }
 
-
-    /**
-     * Sets new profile listener.
-     * DO NOT use this API explicitly.
-     * @see IProfileContainer
-     *
-     * @param listener New profile listener.
-     */
-    virtual void setProfileListener(ProfileListenerPtr listener) {
-        profileListener_ = listener;
-    }
-
     /**
      * Retrieves user-defined profile object. Should be implemented by the user.
      *
@@ -64,20 +51,8 @@ public:
      */
     virtual T getProfile() = 0;
 
-protected:
-
-    /**
-     * Updates profile. Call this method when you finish to update your profile.
-     */
-    void updateProfile() {
-        if (profileListener_) {
-            profileListener_->onProfileUpdated(getSerializedProfile());
-        }
-    }
-
 private:
     AvroByteArrayConverter<T>   avroConverter_;
-    ProfileListenerPtr          profileListener_;
 };
 
 } /* namespace kaa */

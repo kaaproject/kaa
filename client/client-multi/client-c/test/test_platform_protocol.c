@@ -18,6 +18,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <stdint.h>
 #include "platform/ext_sha.h"
 
 #include "kaa_logging.h"

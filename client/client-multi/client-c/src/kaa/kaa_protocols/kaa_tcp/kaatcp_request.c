@@ -16,6 +16,8 @@
 
 #include <string.h>
 #include <stddef.h>
+#include <stdint.h>
+#include <sys/types.h>
 
 #include "kaatcp_request.h"
 

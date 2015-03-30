@@ -271,7 +271,7 @@ void KaaClient::setDefaultConfiguration()
 }
 
 
-void KaaClient::setProfileContainer(ProfileContainerPtr container) {
+void KaaClient::setProfileContainer(IProfileContainerPtr container) {
     profileManager_->setProfileContainer(container);
 }
 
@@ -533,4 +533,10 @@ IKaaDataDemultiplexer& KaaClient::getBootstrapDemultiplexer()
     return *syncProcessor_;
 }
 
+void KaaClient::updateProfile()
+{
+   profileManager_->updateProfile();
 }
+}
+
+

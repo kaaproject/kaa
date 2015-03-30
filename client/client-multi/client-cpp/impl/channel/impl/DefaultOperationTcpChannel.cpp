@@ -116,6 +116,7 @@ void DefaultOperationTcpChannel::onKaaSync(const KaaSyncResponse& message)
         isFirstResponseReceived_ = true;
     }
     if (isPendingSyncRequest_) {
+        isPendingSyncRequest_ = false;
         ackTypes_.clear();
         KAA_MUTEX_UNLOCKING("channelGuard_");
         KAA_UNLOCK(lock);

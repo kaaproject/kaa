@@ -42,14 +42,6 @@
 
 
 
-
-/*
- * Kaa status and public key storage file names.
- */
-#define KAA_KEY_STORAGE       "key.txt"
-#define KAA_STATUS_STORAGE    "status.conf"
-
-
 #define KAA_USER_ID            "user@email.com"
 #define KAA_USER_ACCESS_TOKEN  "token"
 
@@ -60,17 +52,12 @@
 
 static kaa_context_t *kaa_context_ = NULL;
 
-static char *kaa_public_key           = NULL;
-static uint32_t kaa_public_key_length = 0;
-
 static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
 static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
 
 static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
                                              , KAA_SERVICE_USER
-                                             , KAA_SERVICE_EVENT
-                                             , KAA_SERVICE_LOGGING
-                                             , KAA_SERVICE_CONFIGURATION };
+                                             , KAA_SERVICE_EVENT};
 static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
 
 static kaa_transport_channel_interface_t bootstrap_channel;
@@ -81,7 +68,7 @@ static bool is_shutdown = false;
 
 void kaa_on_thermostat_info_request(void *context, kaa_thermostat_event_class_family_thermostat_info_request_t *event, kaa_endpoint_id_p source)
 {
-    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa Demo ThermostatInfoRequest event received!");
+    printf("ThermostatInfoRequest event received!\n");
     kaa_thermostat_event_class_family_thermostat_info_response_t *response =
             kaa_thermostat_event_class_family_thermostat_info_response_create();
 
@@ -115,22 +102,22 @@ void kaa_on_thermostat_info_request(void *context, kaa_thermostat_event_class_fa
 
 void kaa_on_thermostat_info_response(void *context, kaa_thermostat_event_class_family_thermostat_info_response_t *event, kaa_endpoint_id_p source)
 {
-    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa Demo ThermostatInfoResponse event received!");
+    printf("ThermostatInfoResponse event received!\n");
     if (event->thermostat_info->type == KAA_THERMOSTAT_EVENT_CLASS_FAMILY_UNION_THERMOSTAT_INFO_OR_NULL_BRANCH_0) {
         kaa_thermostat_event_class_family_thermostat_info_t *info =
                 (kaa_thermostat_event_class_family_thermostat_info_t *) event->thermostat_info->data;
 
         if (info->degree->type == KAA_THERMOSTAT_EVENT_CLASS_FAMILY_UNION_INT_OR_NULL_BRANCH_0) {
             int32_t *degree = (int32_t *) info->degree->data;
-            KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa Demo degree=%d", *degree);
+            printf("Degree=%d\n", *degree);
         }
         if (info->target_degree->type == KAA_THERMOSTAT_EVENT_CLASS_FAMILY_UNION_INT_OR_NULL_BRANCH_0) {
             int32_t *target_degree = (int32_t *) info->target_degree->data;
-            KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa Demo target_degree=%d", *target_degree);
+            printf("Target degree=%d\n", *target_degree);
         }
         if (info->is_set_manually->type == KAA_THERMOSTAT_EVENT_CLASS_FAMILY_UNION_BOOLEAN_OR_NULL_BRANCH_0) {
             int8_t *is_set_manually = (int8_t *) info->is_set_manually->data;
-            KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa Demo is_set_manually=%s", (*is_set_manually) ? "true" : "false");
+            printf("Is_set_manually=%s\n", (*is_set_manually) ? "true" : "false");
         }
     }
 
@@ -139,10 +126,10 @@ void kaa_on_thermostat_info_response(void *context, kaa_thermostat_event_class_f
 
 void kaa_on_change_degree_request(void *context, kaa_thermostat_event_class_family_change_degree_request_t *event, kaa_endpoint_id_p source)
 {
-    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa Demo ChangeDegreeRequest event received!");
+    printf("ChangeDegreeRequest event received!\n");
     if (event->degree->type == KAA_THERMOSTAT_EVENT_CLASS_FAMILY_UNION_INT_OR_NULL_BRANCH_0) {
         int32_t *degree = (int32_t *) event->degree->data;
-        KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa Demo changing degree to %d", *degree);
+        printf("Change temperature by %d degrees\n", *degree);
     }
     event->destroy(event);
 }
@@ -150,7 +137,7 @@ void kaa_on_change_degree_request(void *context, kaa_thermostat_event_class_fami
 
 kaa_error_t kaa_on_event_listeners(void *context, const kaa_endpoint_id listeners[], size_t listeners_count)
 {
-    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa Demo found %u event listeners", listeners_count);
+    printf("%zu event listeners received\n", listeners_count);
 
     // Creating Change degree request
     kaa_thermostat_event_class_family_change_degree_request_t *change_degree_request =
@@ -191,28 +178,28 @@ kaa_error_t kaa_on_event_listeners(void *context, const kaa_endpoint_id listener
 
 kaa_error_t kaa_on_event_listeners_failed(void *context)
 {
-    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa Demo event listeners not found");
+    printf("Kaa Demo event listeners not found\n");
     return KAA_ERR_NONE;
 }
 
 
 kaa_error_t kaa_on_attached(void *context, const char *user_external_id, const char *endpoint_access_token)
 {
-    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa Demo attached to user %s, access token %s", user_external_id, endpoint_access_token);
+    printf("Kaa Demo attached to user %s, access token %s\n", user_external_id, endpoint_access_token);
     return KAA_ERR_NONE;
 }
 
 
 kaa_error_t kaa_on_detached(void *context, const char *endpoint_access_token)
 {
-    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa Demo detached from user access token %s", endpoint_access_token);
+    printf("Kaa Demo detached from user access token %s\n", endpoint_access_token);
     return KAA_ERR_NONE;
 }
 
 
 kaa_error_t kaa_on_attach_success(void *context)
 {
-    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa Demo attach success");
+    printf("Kaa Demo attach success\n");
 
     const char *fqns[] = { THERMO_REQUEST_FQN, CHANGE_DEGREE_REQUEST_FQN };
     kaa_event_listeners_callback_t listeners_callback = { NULL, &kaa_on_event_listeners, &kaa_on_event_listeners_failed };
@@ -227,7 +214,8 @@ kaa_error_t kaa_on_attach_success(void *context)
 
 kaa_error_t kaa_on_attach_failed(void *context, user_verifier_error_code_t error_code, const char *reason)
 {
-    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa Demo attach failed");
+    printf("Kaa Demo attach failed\n");
+    is_shutdown = true;
     return KAA_ERR_NONE;
 }
 
@@ -241,11 +229,9 @@ kaa_error_t kaa_sdk_init()
 
     kaa_error_t error_code = kaa_init(&kaa_context_);
     if (error_code) {
-        printf("Error during kaa context creation %d", error_code);
+        printf("Error during kaa context creation %d\n", error_code);
         return error_code;
     }
-
-    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Adding transport channels");
 
     error_code = kaa_tcp_channel_create(&operations_channel
                                       , kaa_context_->logger
@@ -293,7 +279,6 @@ kaa_error_t kaa_sdk_init()
                                                                                                          , NULL);
     KAA_RETURN_IF_ERR(error_code);
 
-    KAA_LOG_TRACE(kaa_context_->logger, KAA_ERR_NONE, "Kaa SDK started");
     return KAA_ERR_NONE;
 }
 
@@ -302,10 +287,9 @@ kaa_error_t kaa_sdk_init()
  */
 kaa_error_t kaa_demo_init()
 {
-    printf("%s", "Initializing Kaa driver...");
     kaa_error_t error_code = kaa_sdk_init();
     if (error_code) {
-        printf("Failed to init Kaa SDK. Error code : %d", error_code);
+        printf("Failed to init Kaa SDK. Error code : %d\n", error_code);
         return error_code;
     }
     return KAA_ERR_NONE;
@@ -313,29 +297,22 @@ kaa_error_t kaa_demo_init()
 
 void kaa_demo_destroy()
 {
-    printf("%s", "Destroying Kaa driver...");
-
     kaa_tcp_channel_disconnect(&operations_channel);
-
     kaa_deinit(kaa_context_);
-    if (kaa_public_key) {
-        free(kaa_public_key);
-        kaa_public_key_length = 0;
-    }
 }
 
 int kaa_demo_event_loop()
 {
     kaa_error_t error_code = kaa_start(kaa_context_);
     if (error_code) {
-        KAA_LOG_FATAL(kaa_context_->logger, error_code,"Failed to start Kaa workflow");
+        printf("Failed to start Kaa workflow\n");
         return -1;
     }
 
     uint16_t select_timeout;
     error_code = kaa_tcp_channel_get_max_timeout(&operations_channel, &select_timeout);
     if (error_code) {
-        KAA_LOG_FATAL(kaa_context_->logger, error_code,"Failed to get Operations channel keepalive timeout");
+        printf("Failed to get Operations channel keepalive timeout\n");
         return -1;
     }
 
@@ -419,18 +396,18 @@ int kaa_demo_event_loop()
 
 int main(/*int argc, char *argv[]*/)
 {
+    printf("Event demo started\n");
+
     kaa_error_t error_code = kaa_demo_init();
     if (error_code) {
         printf("Failed to initialize Kaa demo. Error code: %d\n", error_code);
         return error_code;
     }
 
-    KAA_LOG_INFO(kaa_context_->logger, KAA_ERR_NONE, "Kaa demo started");
-
     int rval = kaa_demo_event_loop();
     kaa_demo_destroy();
 
-    printf("Kaa demo stopped\n");
+    printf("Event demo stopped\n");
 
     return rval;
 }

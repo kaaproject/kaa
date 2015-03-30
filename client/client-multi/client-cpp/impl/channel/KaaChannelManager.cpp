@@ -115,8 +115,13 @@ bool KaaChannelManager::addChannelToList(IDataChannelPtr channel)
                         % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
             channel->setServer(connectionInfo);
         } else {
-            KAA_LOG_WARN(boost::format("Failed to find server for channel \"%1%\" %2%")
-                        % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+            if (channel->getServerType() == ServerType::BOOTSTRAP) {
+                KAA_LOG_WARN(boost::format("Failed to find bootstrap server for channel \"%1%\" %2%")
+                            % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+            } else {
+                KAA_LOG_INFO(boost::format("Failed to find operations server for channel \"%1%\" %2%")
+                            % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+            }
         }
     }
 

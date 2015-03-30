@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,20 @@
  * limitations under the License.
  */
 
-#include "kaa/profile/ProfileListener.hpp"
+/*
+@file defaults.h
+ Created on: Mar 26, 2015
+     Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
+*/
 
-#include <cstdint>
-#include <exception>
+#ifndef DEFAULTS_H_
+#define DEFAULTS_H_
 
-#include "kaa/common/EndpointObjectHash.hpp"
-
-namespace kaa {
-
-ProfileListener::ProfileListener(IProfileTransportPtr transport)
-{
-    transport_ = std::dynamic_pointer_cast<ProfileTransport, IProfileTransport>(transport);
-}
+#ifdef ECONAIS_PLATFORM
+#include "../platform-impl/Econais/EC19D/econais_ec19d_defaults.h"
+#else
+#include "../platform-impl/posix/posix_defaults.h"
+#endif
 
 
-void ProfileListener::onProfileUpdated(SharedDataBuffer serializedProfile)
-{
-    if (serializedProfile.first.get() && serializedProfile.second > 0) {
-        transport_->sync();
-    }
-}
-
-} /* namespace kaa */
+#endif /* DEFAULTS_H_ */

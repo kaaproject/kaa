@@ -295,7 +295,8 @@ public class DaoConstants {
      * User verifier constants.
      */
     public static final String USER_VERIFIER_TABLE_NAME = "user_verifier";
-    public static final String USER_VERIFIER_TOKEN = "verifierToken";
+    public static final String USER_VERIFIER_TOKEN = "verifier_token";
+    public static final String USER_VERIFIER_TOKEN_PROPERTY = "verifierToken";
 
     /**
      * Log schema constants.

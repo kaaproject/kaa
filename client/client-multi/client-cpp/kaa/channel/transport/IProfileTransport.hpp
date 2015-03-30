@@ -64,7 +64,13 @@ public:
      * @see ProfileManager
      *
      */
+
     virtual void setProfileManager(IProfileManager* manager) = 0;
+
+    /**
+     * Sends the update request to the server.
+     */
+    virtual void sync() = 0;
 
     virtual ~IProfileTransport() {}
 };

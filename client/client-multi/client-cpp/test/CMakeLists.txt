@@ -67,7 +67,6 @@ set ( KAA_TEST_SOURCES
         ../impl/security/KeyUtils.cpp
         ../impl/security/RsaEncoderDecoder.cpp
         ../impl/common/EndpointObjectHash.cpp
-        ../impl/profile/ProfileListener.cpp
         ../impl/profile/ProfileTransport.cpp
         ../impl/transport/HttpDataProcessor.cpp
         ../impl/bootstrap/BootstrapManager.cpp

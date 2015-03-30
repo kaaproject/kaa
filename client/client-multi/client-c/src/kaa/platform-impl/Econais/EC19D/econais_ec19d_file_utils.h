@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,28 @@
  * limitations under the License.
  */
 
+/*
+@file econais_ec19d_file_utils.h
+*/
 
-#ifndef ECONAIS_EC19D_TIME_H_
-#define ECONAIS_EC19D_TIME_H_
+#ifndef ECONAIS_EC19D_FILE_UTILS_H_
+#define ECONAIS_EC19D_FILE_UTILS_H_
 
-typedef uint32_t kaa_time_t;
+#include <stddef.h>
+#include <stdbool.h>
 
-kaa_time_t ext_get_systime();
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#define KAA_TIME() ext_get_systime()
+int econais_ec19d_binary_file_read(const char *file_name, char **buffer, size_t *buffer_size, bool *needs_deallocation);
 
-#endif /* ECONAIS_EC19D_TIME_H_ */
+
+int econais_ec19d_binary_file_store(const char *file_name, const char *buffer, size_t buffer_size);
+
+
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
+
+#endif /* ECONAIS_EC19D_FILE_UTILS_H_ */

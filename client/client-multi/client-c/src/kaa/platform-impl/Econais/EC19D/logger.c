@@ -16,22 +16,23 @@
 
 #include <sndc_sdk_api.h>
 
+#include "econais_ec19d_time.h"
 #include "../../../platform/ext_system_logger.h"
 
 
 
-void ext_write_log(FILE * sink, const char * buffer, size_t message_size)
-{
-    if (!buffer) {
-        return;
-    }
-    sndc_printf(buffer);
-}
+//void cext_write_log(FILE * sink, const char * buffer, size_t message_size)
+//{
+//    if (!buffer) {
+//        return;
+//    }
+//    sndc_printf(buffer);
+//}
 
-time_t ext_get_systime()
-{
-    return (time_t) sndc_sys_getTimestamp_msec();
-}
+//time_t ext_get_systime()
+//{
+//    return (time_t) sndc_sys_getTimestamp_msec();
+//}
 
 int ext_format_sprintf(char * buffer, size_t buffer_size, const char * format,
         const char * log_level_name, const char * truncated_name, int lineno,

@@ -31,7 +31,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.USER_VERIFIER_TOKEN;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.USER_VERIFIER_TOKEN_PROPERTY;
 
 @Repository
 public class HibernateUserVerifierDao extends HibernateAbstractDao<UserVerifier> implements UserVerifierDao<UserVerifier> {
@@ -69,7 +69,7 @@ public class HibernateUserVerifierDao extends HibernateAbstractDao<UserVerifier>
             verifier = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
                     Restrictions.and(
                             Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
-                            Restrictions.eq(USER_VERIFIER_TOKEN, verifierToken))
+                            Restrictions.eq(USER_VERIFIER_TOKEN_PROPERTY, verifierToken))
             );
         }
         if (LOG.isTraceEnabled()) {

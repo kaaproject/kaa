@@ -102,6 +102,7 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
                     % LoggingUtils::ProfileSyncRequestToString(request.profileSyncRequest));
                 break;
             case TransportType::CONFIGURATION:
+#ifdef KAA_USE_CONFIGURATION
                 if (configurationTransport_) {
                     auto ptr = configurationTransport_->createConfigurationRequest();
                     if (ptr) {
@@ -112,10 +113,12 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
                 } else {
                     KAA_LOG_WARN("Configuration transport was not specified.");
                 }
+#endif
                 KAA_LOG_DEBUG(boost::format("Compiled ConfigurationSyncRequest: %1%")
                    % LoggingUtils::ConfigurationSyncRequestToString(request.configurationSyncRequest));
                 break;
             case TransportType::NOTIFICATION:
+#ifdef KAA_USE_NOTIFICATIONS
                 if (notificationTransport_) {
                     if (isDownDirection) {
                         request.notificationSyncRequest.set_NotificationSyncRequest(*notificationTransport_->createEmptyNotificationRequest());
@@ -130,10 +133,12 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
                 } else {
                     KAA_LOG_WARN("Notification transport was not specified.");
                 }
+#endif
                 KAA_LOG_DEBUG(boost::format("Compiled NotificationSyncRequest: %1%")
                    % LoggingUtils::NotificationSyncRequestToString(request.notificationSyncRequest));
                 break;
             case TransportType::USER:
+#ifdef KAA_USE_EVENTS
                 if (isDownDirection) {
                     UserSyncRequest user;
                     user.endpointAttachRequests.set_null();
@@ -150,10 +155,12 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
                 } else {
                     KAA_LOG_WARN("User transport was not specified.");
                 }
+#endif
                 KAA_LOG_DEBUG(boost::format("Compiled UserSyncRequest: %1%")
                     % LoggingUtils::UserSyncRequestToString(request.userSyncRequest));
                 break;
             case TransportType::EVENT:
+#ifdef KAA_USE_EVENTS
                 if (isDownDirection) {
                     EventSyncRequest event;
                     event.eventListenersRequests.set_null();
@@ -169,10 +176,12 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
                 } else {
                     KAA_LOG_WARN("Event transport was not specified.");
                 }
+#endif
                 KAA_LOG_DEBUG(boost::format("Compiled EventSyncRequest: %1%")
                     % LoggingUtils::EventSyncRequestToString(request.eventSyncRequest));
                 break;
             case TransportType::LOGGING:
+#ifdef KAA_USE_LOGGING
                 if (isDownDirection) {
                     LogSyncRequest log;
                     log.logEntries.set_null();
@@ -188,6 +197,7 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
                 } else {
                     KAA_LOG_WARN("Log upload transport was not specified.");
                 }
+#endif
                 KAA_LOG_DEBUG(boost::format("Compiled LogSyncRequest: %1%")
                     % LoggingUtils::LogSyncRequestToString(request.logSyncRequest));
                 break;
@@ -205,13 +215,13 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
 void SyncDataProcessor::processResponse(const std::vector<std::uint8_t> &response)
 {
     SyncResponse syncResponse = responseConverter_.fromByteArray(response.data(), response.size());
-    std::int32_t requestId = syncResponse.requestId;
     KAA_LOG_INFO(boost::format("Got SyncResponse: requestId: %1%, result: %2%")
-        % requestId % LoggingUtils::SyncResponseResultTypeToString(syncResponse.status));
+        % syncResponse.requestId % LoggingUtils::SyncResponseResultTypeToString(syncResponse.status));
+
+    KAA_LOG_DEBUG(boost::format("Got BootstrapSyncResponse: %1%")
+        % LoggingUtils::BootstrapSyncResponseToString(syncResponse.bootstrapSyncResponse));
 
     if (!syncResponse.bootstrapSyncResponse.is_null()) {
-        KAA_LOG_DEBUG(boost::format("Got BootstrapSyncResponse: %1%")
-            % LoggingUtils::BootstrapSyncResponseToString(syncResponse.bootstrapSyncResponse));
         if (bootstrapTransport_) {
             bootstrapTransport_->onBootstrapResponse(syncResponse.bootstrapSyncResponse.get_BootstrapSyncResponse());
         } else {
@@ -219,9 +229,10 @@ void SyncDataProcessor::processResponse(const std::vector<std::uint8_t> &respons
         }
     }
 
+    KAA_LOG_DEBUG(boost::format("Got ProfileSyncResponse: %1%")
+        % LoggingUtils::ProfileSyncResponseToString(syncResponse.profileSyncResponse));
+
     if (!syncResponse.profileSyncResponse.is_null()) {
-        KAA_LOG_DEBUG(boost::format("Got ProfileSyncResponse: %1%")
-            % LoggingUtils::ProfileSyncResponseToString(syncResponse.profileSyncResponse));
         if (profileTransport_) {
             profileTransport_->onProfileResponse(syncResponse.profileSyncResponse.get_ProfileSyncResponse());
         } else {
@@ -235,60 +246,76 @@ void SyncDataProcessor::processResponse(const std::vector<std::uint8_t> &respons
         }
     }
 
+    KAA_LOG_DEBUG(boost::format("Got ConfigurationSyncResponse: %1%")
+            % LoggingUtils::ConfigurationSyncResponseToString(syncResponse.configurationSyncResponse));
+
+#ifdef KAA_USE_CONFIGURATION
     if (!syncResponse.configurationSyncResponse.is_null()) {
-        KAA_LOG_DEBUG(boost::format("Got ConfigurationSyncResponse: %1%")
-                % LoggingUtils::ConfigurationSyncResponseToString(syncResponse.configurationSyncResponse));
         if (configurationTransport_) {
             configurationTransport_->onConfigurationResponse(syncResponse.configurationSyncResponse.get_ConfigurationSyncResponse());
         } else {
             KAA_LOG_ERROR("Got configuration sync response, but configuration transport was not set!");
         }
     }
+#endif
 
+    KAA_LOG_DEBUG(boost::format("Got EventSyncResponse: %1%")
+            % LoggingUtils::EventSyncResponseToString(syncResponse.eventSyncResponse));
+
+#ifdef KAA_USE_EVENTS
     if (eventTransport_) {
-        eventTransport_->onSyncResponseId(requestId);
+        eventTransport_->onSyncResponseId(syncResponse.requestId);
         if (!syncResponse.eventSyncResponse.is_null()) {
-            KAA_LOG_DEBUG(boost::format("Got EventSyncResponse: %1%")
-                    % LoggingUtils::EventSyncResponseToString(syncResponse.eventSyncResponse));
                 eventTransport_->onEventResponse(syncResponse.eventSyncResponse.get_EventSyncResponse());
         }
     } else {
         KAA_LOG_ERROR("Event transport was not set!");
     }
+#endif
 
+    KAA_LOG_DEBUG(boost::format("Got NotificationSyncResponse: %1%")
+            % LoggingUtils::NotificationSyncResponseToString(syncResponse.notificationSyncResponse));
+
+#ifdef KAA_USE_NOTIFICATIONS
     if (!syncResponse.notificationSyncResponse.is_null()) {
-        KAA_LOG_DEBUG(boost::format("Got NotificationSyncResponse: %1%")
-                % LoggingUtils::NotificationSyncResponseToString(syncResponse.notificationSyncResponse));
         if (notificationTransport_) {
             notificationTransport_->onNotificationResponse(syncResponse.notificationSyncResponse.get_NotificationSyncResponse());
         } else {
             KAA_LOG_ERROR("Got notification sync response, but notification transport was not set!");
         }
     }
+#endif
 
+    KAA_LOG_DEBUG(boost::format("Got UserSyncResponse: %1%")
+            % LoggingUtils::UserSyncResponseToString(syncResponse.userSyncResponse));
+
+#ifdef KAA_USE_EVENTS
     if (!syncResponse.userSyncResponse.is_null()) {
-        KAA_LOG_DEBUG(boost::format("Got UserSyncResponse: %1%")
-                % LoggingUtils::UserSyncResponseToString(syncResponse.userSyncResponse));
         if (userTransport_) {
             userTransport_->onUserResponse(syncResponse.userSyncResponse.get_UserSyncResponse());
         } else {
             KAA_LOG_ERROR("Got user sync response, but user transport was not set!");
         }
     }
+#endif
 
+    KAA_LOG_DEBUG(boost::format("Got LogSyncResponse: %1%")
+            % LoggingUtils::LogSyncResponseToString(syncResponse.logSyncResponse));
+
+#ifdef KAA_USE_LOGGING
     if (!syncResponse.logSyncResponse.is_null()) {
-        KAA_LOG_DEBUG(boost::format("Got LogSyncResponse: %1%")
-                % LoggingUtils::LogSyncResponseToString(syncResponse.logSyncResponse));
         if (loggingTransport_) {
             loggingTransport_->onLogSyncResponse(syncResponse.logSyncResponse.get_LogSyncResponse());
         } else {
             KAA_LOG_ERROR("Got log upload sync response, but logging transport was not set!");
         }
     }
+#endif
+
+    KAA_LOG_DEBUG(boost::format("Got RedirectSyncResponse: %1%")
+            % LoggingUtils::RedirectSyncResponseToString(syncResponse.redirectSyncResponse));
 
     if (!syncResponse.redirectSyncResponse.is_null()) {
-        KAA_LOG_DEBUG(boost::format("Got RedirectSyncResponse: %1%")
-                % LoggingUtils::RedirectSyncResponseToString(syncResponse.redirectSyncResponse));
         if (redirectionTransport_) {
             redirectionTransport_->onRedirectionResponse(syncResponse.redirectSyncResponse.get_RedirectSyncResponse());
         } else {
