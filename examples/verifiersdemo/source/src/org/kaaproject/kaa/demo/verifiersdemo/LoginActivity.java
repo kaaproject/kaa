@@ -294,9 +294,6 @@ public class LoginActivity extends FragmentActivity {
 
                         if (userAttachResponse.getResult() == SyncResponseResultType.SUCCESS) {
                             Log.i(TAG, "Successful Kaa verification");
-                            
-                            // Detach the endpoint from the user.
-                            logout();
                             Log.i(TAG, userAttachResponse.toString());
                             curUserInfo = "Successful Kaa verification";
                             buttonEnabled = true;

@@ -768,6 +768,9 @@ static kaa_error_t kaa_event_read_listeners_response(kaa_event_manager_t *self, 
     uint32_t listeners_count =  KAA_NTOHL(*(uint32_t *) reader->current);
     reader->current += sizeof(uint32_t);
 
+    KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Received %u event listener(s) on %u request"
+                                                                , listeners_count, request_id);
+
     kaa_list_t *request_node = kaa_list_find_next(self->event_listeners_requests, &find_listeners_request_by_id, &request_id);
     if (request_node) {
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Found event listeners callback with request id %u", request_id);
@@ -785,7 +788,7 @@ static kaa_error_t kaa_event_read_listeners_response(kaa_event_manager_t *self, 
         }
         kaa_list_remove_at(&self->event_listeners_requests, request_node, &destroy_event_listener_request);
     } else {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_NOT_FOUND, "Failed to find event listeners callback with request id %u", request_id);
+        KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Failed to find event listeners callback with request id %u", request_id);
     }
     reader->current += listeners_count * KAA_ENDPOINT_ID_LENGTH;
     return KAA_ERR_NONE;
@@ -842,8 +845,10 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
         self->events_awaiting_response.request_id = (size_t) -1;
     }
 
-    if (extension_length > 0) {
+    while (extension_length > 0) {
         uint8_t field_id = 0;
+        const char *field_id_pos = reader->current;
+
         kaa_error_t error = kaa_platform_message_read(reader, &field_id, sizeof(uint8_t)); //read field id
         if (error) {
             KAA_LOG_ERROR(self->logger, error, "Failed to read field id in Event server sync message");
@@ -881,7 +886,11 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
                     KAA_LOG_ERROR(self->logger, error, "Failed to read event listener response in Event server sync message");
                     return error;
                 }
+
                 event_listeners_responses_count = KAA_NTOHS(event_listeners_responses_count);
+                KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Received %u event listeners response(s)"
+                                                                    , event_listeners_responses_count);
+
                 while (event_listeners_responses_count--) {
                     error = kaa_event_read_listeners_response(self, reader);
                     if (error) {
@@ -896,6 +905,7 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
                 return KAA_ERR_BADDATA;
         }
 
+        extension_length -= (reader->current - field_id_pos);
     }
 
     return KAA_ERR_NONE;
