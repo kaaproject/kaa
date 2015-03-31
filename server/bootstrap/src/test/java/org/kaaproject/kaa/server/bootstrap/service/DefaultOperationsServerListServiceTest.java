@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -33,6 +34,7 @@ import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
 import org.kaaproject.kaa.server.sync.bootstrap.ProtocolConnectionData;
 import org.kaaproject.kaa.server.sync.bootstrap.ProtocolVersionId;
 import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 
@@ -41,7 +43,7 @@ import org.mockito.Mockito;
  */
 public class DefaultOperationsServerListServiceTest {
 
-    OperationsServerListService service;
+    DefaultOperationsServerListService service;
 
     @Before
     public void before() {
@@ -95,5 +97,42 @@ public class DefaultOperationsServerListServiceTest {
         Set<ProtocolConnectionData> result = service.filter(Arrays.asList(new ProtocolVersionId(2, 42), new ProtocolVersionId(1, 73)));
         Assert.assertNotNull(result);
         Assert.assertEquals(0, result.size());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void filterInterrupted() throws InterruptedException {
+        DefaultOperationsServerListService.Memorizer memorizer = Mockito.mock(DefaultOperationsServerListService.Memorizer.class);
+        Mockito.doThrow(new InterruptedException()).when(memorizer).compute(Mockito.any(Object.class));
+        ReflectionTestUtils.setField(service, "cache", memorizer);
+        service.filter(Collections.EMPTY_LIST);
+    }
+
+    @Test
+    public void testOnNodeAddedAndUpdated() {
+        OperationsNodeInfo nodeInfo = Mockito.mock(OperationsNodeInfo.class);
+        ConnectionInfo connectionInfo = Mockito.mock(ConnectionInfo.class);
+        Mockito.when(nodeInfo.getConnectionInfo()).thenReturn(connectionInfo);
+        Map<String, OperationsNodeInfo> opsMap = Mockito.mock(Map.class);
+        ReflectionTestUtils.setField(service, "opsMap", opsMap);
+        DefaultOperationsServerListService.Memorizer memorizer = Mockito.mock(DefaultOperationsServerListService.Memorizer.class);
+        ReflectionTestUtils.setField(service, "cache", memorizer);
+        service.onNodeUpdated(nodeInfo);
+        service.onNodeAdded(nodeInfo);
+        Mockito.verify(opsMap, Mockito.times(2)).put(Mockito.anyString(), Mockito.eq(nodeInfo));
+        Mockito.verify(memorizer, Mockito.times(2)).clear();
+    }
+
+    @Test
+    public void testOnNodeRemoved() {
+        OperationsNodeInfo nodeInfo = Mockito.mock(OperationsNodeInfo.class);
+        ConnectionInfo connectionInfo = Mockito.mock(ConnectionInfo.class);
+        Mockito.when(nodeInfo.getConnectionInfo()).thenReturn(connectionInfo);
+        Map<String, OperationsNodeInfo> opsMap = Mockito.mock(Map.class);
+        ReflectionTestUtils.setField(service, "opsMap", opsMap);
+        DefaultOperationsServerListService.Memorizer memorizer = Mockito.mock(DefaultOperationsServerListService.Memorizer.class);
+        ReflectionTestUtils.setField(service, "cache", memorizer);
+        service.onNodeRemoved(nodeInfo);
+        Mockito.verify(opsMap, Mockito.only()).remove(Mockito.anyString());
+        Mockito.verify(memorizer, Mockito.only()).clear();
     }
 }

@@ -18,12 +18,14 @@ package org.kaaproject.kaa.server.transports.http.transport;
 
 import java.util.UUID;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.message.MessageHandler;
 import org.kaaproject.kaa.server.transports.http.transport.commands.AbstractHttpSyncCommand;
 import org.kaaproject.kaa.server.transports.http.transport.messages.NettyHttpSyncMessage;
 import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class HttpHandlerTest {
 
@@ -36,5 +38,15 @@ public class HttpHandlerTest {
         HttpHandler handler = new HttpHandler(uuid, messageHandler);
         handler.channelRead0(null, commandMock);
         Mockito.verify(messageHandler).process(Mockito.any(NettyHttpSyncMessage.class));
+    }
+
+    @Test
+    public void buildTest() {
+        HttpHandler httpHandler = new HttpHandler(null, null);
+        Assert.assertNull(httpHandler.build(new Exception("Some exception")));
+        AbstractHttpSyncCommand commandMock = Mockito.mock(AbstractHttpSyncCommand.class);
+        ReflectionTestUtils.setField(httpHandler, "command", commandMock);
+        Assert.assertArrayEquals(new Object[]{commandMock}, httpHandler.build(null, null, false));
+        Assert.assertArrayEquals(new Object[]{commandMock}, httpHandler.build(null, false));
     }
 }
