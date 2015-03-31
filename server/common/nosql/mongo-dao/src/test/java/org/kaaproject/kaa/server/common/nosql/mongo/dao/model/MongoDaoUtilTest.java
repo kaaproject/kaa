@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +36,16 @@ public class MongoDaoUtilTest {
     public void convertToModelListEmptyArgsListTest() {
         List<EndpointGroupState> list = MongoDaoUtil.convertDtoToModelList(Collections.<EndpointGroupStateDto>emptyList());
         Assert.assertNull(list);
+    }
+
+    @Test
+    public void convertToModelListNullListTest(){
+        Assert.assertNull(MongoDaoUtil.convertToModelList(null));
+    }
+
+    @Test
+    public void convertToModelListEmptyListTest(){
+        Assert.assertNull(MongoDaoUtil.convertToModelList(Collections.<NotificationDto>emptyList()));
     }
 
 }

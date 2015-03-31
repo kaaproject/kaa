@@ -21,37 +21,29 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-public class UserConfigurationUpdateTest {
+public class UserConfigurationUpdateMessageTest {
 
     @Test
-    public void testUserConfigurationUpdate() {
+    public void testUserConfigurationUpdateMessage() {
         String tenantId = "tid";
         String userId = "uid";
         String applicationToken = "token";
         byte[] hash = "hash".getBytes();
         int schemaVersion = 1;
 
-        StringBuilder builder = new StringBuilder();
-        builder.append("UserConfigurationUpdate [tenantId=");
-        builder.append(tenantId);
-        builder.append(", userId=");
-        builder.append(userId);
-        builder.append(", applicationToken=");
-        builder.append(applicationToken);
-        builder.append(", schemaVersion=");
-        builder.append(schemaVersion);
-        builder.append(", hash=");
-        builder.append(Arrays.toString(hash));
-        builder.append("]");
-
         UserConfigurationUpdate update = new UserConfigurationUpdate(tenantId, userId, applicationToken, schemaVersion, hash);
 
-        Assert.assertEquals(tenantId, update.getTenantId());
-        Assert.assertEquals(userId, update.getUserId());
-        Assert.assertEquals(applicationToken, update.getApplicationToken());
-        Assert.assertEquals(hash, update.getHash());
-        Assert.assertEquals(applicationToken, update.getApplicationToken());
-        Assert.assertEquals(builder.toString(), update.toString());
+        StringBuilder builder = new StringBuilder();
+        builder.append("UserConfigurationUpdateMessage [update=");
+        builder.append(update);
+        builder.append("]");
+
+        UserConfigurationUpdateMessage updateMessage = new UserConfigurationUpdateMessage(update);
+
+        Assert.assertEquals(tenantId, updateMessage.getTenantId());
+        Assert.assertEquals(userId, updateMessage.getUserId());
+        Assert.assertEquals(update, updateMessage.getUpdate());
+        Assert.assertEquals(builder.toString(), updateMessage.toString());
 
     }
 
