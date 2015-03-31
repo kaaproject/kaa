@@ -220,7 +220,7 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
         for (V e : messages) {
             if (!messageQueue.offer(e, 1, TimeUnit.MINUTES)) {
                 LOG.error("NeighborConnection [{}] event messages queue is full more than 1 minute. Operation impossible.", getId());
-                throw new InterruptedException("Event messages queue is full more than 10 minutes");
+                throw new InterruptedException("Event messages queue is full more than 1 minute");
             }
         }
     }
