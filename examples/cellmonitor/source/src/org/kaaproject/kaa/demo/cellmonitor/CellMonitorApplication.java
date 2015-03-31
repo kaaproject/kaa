@@ -55,7 +55,7 @@ import de.greenrobot.event.EventBus;
  * Sends cell monitor log records to the Kaa cluster via the Kaa client.
  */
 public class CellMonitorApplication extends Application {
-    
+
     private static final Logger LOG = LoggerFactory
             .getLogger(CellMonitorApplication.class);
 
@@ -66,27 +66,27 @@ public class CellMonitorApplication extends Application {
     private CellMonitorPhoneStateListener mCellMonitorPhoneStateListener;
     private CellLocation mCellLocation;
     private SignalStrength mSignalStrength;
-    
+
     private LocationManager mLocationManager;
     private GpsLocationListener mGpsLocationListener;
     private Location mGpsLocation;
-    
+
     private int mSentLogCount = 0;
     private long mLastLogTime = 0;
-    
+
     private KaaClient mClient;
     private boolean mKaaStarted = false;
-    
+
     @Override
     public void onCreate() {
         super.onCreate();
         mEventBus = new EventBus();
         mTelephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         mCellMonitorPhoneStateListener = new CellMonitorPhoneStateListener();
-        
+
         mLocationManager = (LocationManager)  getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
-        String bestProvider = mLocationManager.getBestProvider(criteria, false);        
+        String bestProvider = mLocationManager.getBestProvider(criteria, false);
         mGpsLocation = mLocationManager.getLastKnownLocation(bestProvider);
         mGpsLocationListener = new GpsLocationListener();
         
@@ -98,44 +98,44 @@ public class CellMonitorApplication extends Application {
         mClient = Kaa.newClient(kaaClientContext,
                 new SimpleKaaClientStateListener() {
 
-            /*
-             * Implement the onStarted callback to get notified as soon as 
-             * the Kaa client is operational. 
-             */
-            @Override
-            public void onStarted() {
-                mKaaStarted = true;
-                LOG.info("Kaa client started");
-            }
-        });
+                    /*
+                     * Implement the onStarted callback to get notified as soon as
+                     * the Kaa client is operational.
+                     */
+                    @Override
+                    public void onStarted() {
+                        mKaaStarted = true;
+                        LOG.info("Kaa client started");
+                    }
+                });
         
         /*
          * Define a log upload strategy used by the Kaa client for logs delivery.
          */
         mClient.setLogUploadStrategy(new LogUploadStrategy() {
-            
+
             @Override
             public void onTimeout(LogFailoverCommand logFailoverCommand) {
                 LOG.error("Unable to send logs within defined timeout!");
             }
-            
+
             @Override
             public void onFailure(LogFailoverCommand logFailoverCommand, LogDeliveryErrorCode logDeliveryErrorCode) {
                 LOG.error("Unable to send logs, error code: " + logDeliveryErrorCode);
                 logFailoverCommand.retryLogUpload(10);
             }
-            
+
             @Override
             public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus logStorageStatus) {
-                return logStorageStatus.getRecordCount() > 0 ? 
+                return logStorageStatus.getRecordCount() > 0 ?
                         LogUploadStrategyDecision.UPLOAD : LogUploadStrategyDecision.NOOP;
             }
-            
+
             @Override
             public int getTimeout() {
                 return 100;
             }
-            
+
             @Override
             public long getBatchSize() {
                 return 8 * 1024;
@@ -146,9 +146,9 @@ public class CellMonitorApplication extends Application {
          * Start the Kaa client workflow.
          */
         mClient.start();
-        
+
     }
-    
+
     public void pause() {
         mTelephonyManager.listen(mCellMonitorPhoneStateListener,
                 PhoneStateListener.LISTEN_NONE);
@@ -160,13 +160,13 @@ public class CellMonitorApplication extends Application {
          */
         mClient.pause();
     }
-    
+
     public void resume() {
         mTelephonyManager.listen(mCellMonitorPhoneStateListener,
                 PhoneStateListener.LISTEN_CELL_LOCATION
                         | PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
         Criteria criteria = new Criteria();
-        String bestProvider = mLocationManager.getBestProvider(criteria, false);        
+        String bestProvider = mLocationManager.getBestProvider(criteria, false);
         mLocationManager.requestLocationUpdates(bestProvider, 0, 0, mGpsLocationListener);
         
         /*
@@ -175,7 +175,7 @@ public class CellMonitorApplication extends Application {
          */
         mClient.resume();
     }
-    
+
     @Override
     public void onTerminate() {
         super.onTerminate();
@@ -187,10 +187,10 @@ public class CellMonitorApplication extends Application {
         mClient.stop();
         mKaaStarted = false;
     }
-    
+
     private void sendLog() {
         if (mKaaStarted) {
-            
+
             mSentLogCount++;
             mLastLogTime = System.currentTimeMillis();
 
@@ -199,32 +199,39 @@ public class CellMonitorApplication extends Application {
              */
             CellMonitorLog cellMonitorLog = new CellMonitorLog();
             cellMonitorLog.setLogTime(mLastLogTime);
-            cellMonitorLog.setNetworkOperatorCode(Integer.valueOf(mTelephonyManager.getNetworkOperator()));
+            String networkOperator = mTelephonyManager.getNetworkOperator();
+            if (networkOperator == null || networkOperator.isEmpty()) {
+                cellMonitorLog.setNetworkOperatorCode(UNDEFINED);
+            } else {
+                cellMonitorLog.setNetworkOperatorCode(Integer.valueOf(mTelephonyManager.getNetworkOperator()));
+            }
             cellMonitorLog.setNetworkOperatorName(mTelephonyManager.getNetworkOperatorName());
-            
+
             int cid = UNDEFINED;
             int lac = UNDEFINED;
-            
+
             if (mCellLocation != null && mCellLocation instanceof GsmCellLocation) {
                 GsmCellLocation gsmCellLocation = (GsmCellLocation)mCellLocation;
                 cid = gsmCellLocation.getCid();
                 lac = gsmCellLocation.getLac();
             }
-            
+
             cellMonitorLog.setGsmCellId(cid);
             cellMonitorLog.setGsmLac(lac);
-            
+
             int gsmSignalStrength = UNDEFINED;
-            
+
             if (mSignalStrength != null) {
                 gsmSignalStrength = mSignalStrength.getGsmSignalStrength();
             }
             cellMonitorLog.setSignalStrength(gsmSignalStrength);
-            
+
             org.kaaproject.kaa.demo.cellmonitor.Location phoneLocation =
                     new org.kaaproject.kaa.demo.cellmonitor.Location();
-            phoneLocation.setLatitude(mGpsLocation.getLatitude());
-            phoneLocation.setLongitude(mGpsLocation.getLongitude());
+            if (mGpsLocation != null) {
+                phoneLocation.setLatitude(mGpsLocation.getLatitude());
+                phoneLocation.setLongitude(mGpsLocation.getLongitude());
+            }
             cellMonitorLog.setPhoneGpsLocation(phoneLocation);
             
             /*
@@ -232,7 +239,7 @@ public class CellMonitorApplication extends Application {
              * the log record according to the defined log upload strategy. 
              */
             mClient.addLogRecord(cellMonitorLog);
-            
+
             mEventBus.post(new LogSent());
         }
     }
@@ -252,21 +259,21 @@ public class CellMonitorApplication extends Application {
     public SignalStrength getSignalStrength() {
         return mSignalStrength;
     }
-    
+
     public Location getGpsLocation() {
         return mGpsLocation;
     }
-    
+
     public int getSentLogCount() {
         return mSentLogCount;
     }
-    
+
     public long getLastLogTime() {
         return mLastLogTime;
-    } 
+    }
 
     private class CellMonitorPhoneStateListener extends PhoneStateListener {
-        
+
         @Override
         public void onCellLocationChanged(CellLocation location) {
             super.onCellLocationChanged(location);
@@ -285,7 +292,7 @@ public class CellMonitorApplication extends Application {
             LOG.info("Signal strength changed!");
         }
     };
-    
+
     private class GpsLocationListener implements LocationListener {
 
         @Override
@@ -304,6 +311,6 @@ public class CellMonitorApplication extends Application {
 
         @Override
         public void onProviderDisabled(String provider) {}
-        
+
     }
 }

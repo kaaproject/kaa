@@ -335,9 +335,13 @@ public abstract class HibernateAbstractTest {
         return filters;
     }
 
-    protected Topic generateTopic(Application app, TopicTypeDto type) {
+    protected Topic generateTopic(Application app, TopicTypeDto type, String topicName) {
         Topic topic = new Topic();
-        topic.setName("GENERATED test Topic");
+        if(topicName != null && !topicName.isEmpty()){
+            topic.setName(topicName);
+        } else {
+            topic.setName("Generated Topic name");
+        }
         if (app == null) {
             app = generateApplication(null);
         }

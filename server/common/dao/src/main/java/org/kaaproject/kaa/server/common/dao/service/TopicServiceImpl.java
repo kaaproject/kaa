@@ -72,6 +72,10 @@ public class TopicServiceImpl implements TopicService {
         if (StringUtils.isBlank(topicDto.getId())) {
             LOG.debug("Save new topic.");
             topicDto.setCreatedTime(System.currentTimeMillis());
+            Topic topic = topicDao.findTopicByAppIdAndName(topicDto.getApplicationId(), topicDto.getName());
+            if(topic != null){
+                throw new IllegalArgumentException("Topic with the same name already present!");
+            }
         }
         return getDto(topicDao.save(new Topic(topicDto)));
     }

@@ -14,30 +14,24 @@
  * limitations under the License.
  */
 
-#ifndef DEFAULTPROFILECONTAINER_HPP_
-#define DEFAULTPROFILECONTAINER_HPP_
+package org.kaaproject.kaa.server.transport;
 
-#include <kaa/profile/gen/ProfileDefinitions.hpp>
+/**
+ * Class that represents exception that is thrown when client makes request
+ * and uses invalid application token
+ *
+ */
+public class InvalidApplicationTokenException extends Exception {
 
-using namespace kaa;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -6241500436883054355L;
 
-class DefaultProfileContainer : public IProfileContainer {
-public:
-    DefaultProfileContainer() : profile_(KaaProfile()) { }
-    DefaultProfileContainer(const KaaProfile& profile) : profile_(profile) { }
-
-    KaaProfile getProfile()
-    {
-        return profile_;
+    /**
+     * Instantiates a new invalid application token exception
+     *
+     * @param message the message
+     */
+    public InvalidApplicationTokenException(String message) {
+        super(message);
     }
-
-    void setProfile(const KaaProfile& profile)
-    {
-        profile_= profile;
-    }
-
-private:
-    KaaProfile profile_;
-};
-
-#endif /* DEFAULTPROFILECONTAINER_HPP_ */
+}

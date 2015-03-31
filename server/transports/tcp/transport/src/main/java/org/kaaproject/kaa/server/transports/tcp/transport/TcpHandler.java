@@ -36,6 +36,7 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MessageType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
 import org.kaaproject.kaa.server.common.server.NettyChannelContext;
+import org.kaaproject.kaa.server.transport.InvalidApplicationTokenException;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
 import org.kaaproject.kaa.server.transport.message.MessageBuilder;
@@ -66,7 +67,8 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
         @Override
         public Object[] build(Exception e) {
             Object[] responses = new Object[1];
-            if (e instanceof GeneralSecurityException || e instanceof IOException || e instanceof IllegalArgumentException) {
+            if (e instanceof GeneralSecurityException || e instanceof IOException ||
+                    e instanceof IllegalArgumentException || e instanceof InvalidApplicationTokenException) {
                 responses[0] = new ConnAck(ReturnCode.REFUSE_BAD_CREDENTIALS);
             } else {
                 responses[0] = new ConnAck(ReturnCode.REFUSE_SERVER_UNAVAILABLE);
@@ -95,7 +97,8 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
         @Override
         public Object[] build(Exception e) {
             Object[] responses = new Object[1];
-            if (e instanceof GeneralSecurityException || e instanceof IOException || e instanceof IllegalArgumentException) {
+            if (e instanceof GeneralSecurityException || e instanceof IOException ||
+                    e instanceof IllegalArgumentException || e instanceof InvalidApplicationTokenException) {
                 responses[0] = new Disconnect(DisconnectReason.BAD_REQUEST);
             } else {
                 responses[0] = new Disconnect(DisconnectReason.INTERNAL_ERROR);
