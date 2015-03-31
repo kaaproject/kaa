@@ -1,0 +1,20 @@
+digraph "/var/lib/jenkins/workspace/kaa_stable/client/client-multi/client-c/src/kaa/platform/defaults.h"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/platform\l/defaults.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/kaa\l_protocols/kaa_tcp/kaatcp_common.h",height=0.2,width=0.4,color="black",URL="$kaatcp__common_8h.html"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/kaa\l_protocols/kaa_tcp/kaatcp_parser.h",height=0.2,width=0.4,color="black",URL="$kaatcp__parser_8h.html"];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/kaa\l_protocols/kaa_tcp/kaatcp.h",height=0.2,width=0.4,color="black",URL="$kaatcp_8h.html"];
+  Node2 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/kaa\l_protocols/kaa_tcp/kaatcp_request.h",height=0.2,width=0.4,color="black",URL="$kaatcp__request_8h.html"];
+  Node5 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/platform\l-impl/kaa_tcp_channel.h",height=0.2,width=0.4,color="black",URL="$kaa__tcp__channel_8h.html"];
+  Node1 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/utilities\l/kaa_log.h",height=0.2,width=0.4,color="black",URL="$kaa__log_8h.html",tooltip="Simple logger for Kaa C Endpoint. "];
+}

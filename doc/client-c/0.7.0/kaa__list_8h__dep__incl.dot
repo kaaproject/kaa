@@ -1,0 +1,33 @@
+digraph "/var/lib/jenkins/workspace/kaa_stable/client/client-multi/client-c/src/kaa/collections/kaa_list.h"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/collections\l/kaa_list.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/kaa\l_common_schema.h",height=0.2,width=0.4,color="black",URL="$kaa__common__schema_8h.html"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/gen\l/kaa_configuration_gen.h",height=0.2,width=0.4,color="black",URL="$kaa__configuration__gen_8h.html"];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/gen\l/kaa_configuration_definitions.h",height=0.2,width=0.4,color="black",URL="$kaa__configuration__definitions_8h.html"];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/kaa\l_configuration_manager.h",height=0.2,width=0.4,color="black",URL="$kaa__configuration__manager_8h.html"];
+  Node4 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/platform\l/ext_configuration_receiver.h",height=0.2,width=0.4,color="black",URL="$ext__configuration__receiver_8h.html",tooltip="External interface for receiving configuration updates used by Kaa Configuration subsystem. Should be implemented to automatically receive configuration updates. "];
+  Node6 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/gen\l/kaa_logging_gen.h",height=0.2,width=0.4,color="black",URL="$kaa__logging__gen_8h.html"];
+  Node7 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node8 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/gen\l/kaa_logging_definitions.h",height=0.2,width=0.4,color="black",URL="$kaa__logging__definitions_8h.html"];
+  Node8 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node9 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/kaa\l_logging.h",height=0.2,width=0.4,color="black",URL="$kaa__logging_8h.html",tooltip="Kaa data logging subsystem API. "];
+  Node2 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node10 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/gen\l/kaa_profile_gen.h",height=0.2,width=0.4,color="black",URL="$kaa__profile__gen_8h.html"];
+  Node10 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node11 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/gen\l/kaa_profile_definitions.h",height=0.2,width=0.4,color="black",URL="$kaa__profile__definitions_8h.html"];
+  Node11 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node12 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/kaa\l_profile.h",height=0.2,width=0.4,color="black",URL="$kaa__profile_8h.html",tooltip="Kaa profile reporting API. "];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node1 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node1 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+}

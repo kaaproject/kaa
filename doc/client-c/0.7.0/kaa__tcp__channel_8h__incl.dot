@@ -1,0 +1,40 @@
+digraph "/var/lib/jenkins/workspace/kaa_stable/client/client-multi/client-c/src/kaa/platform-impl/kaa_tcp_channel.h"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="/var/lib/jenkins/workspace\l/kaa_stable/client/client\l-multi/client-c/src/kaa/platform\l-impl/kaa_tcp_channel.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="../kaa_error.h",height=0.2,width=0.4,color="black",URL="$kaa__error_8h.html",tooltip="Kaa error codes. "];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="../platform/ext_transport\l_channel.h",height=0.2,width=0.4,color="black",URL="$ext__transport__channel_8h.html"];
+  Node3 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="../kaa_common.h",height=0.2,width=0.4,color="black",URL="$kaa__common_8h.html",tooltip="Common C EP SDK definitions and small utilities. "];
+  Node4 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="../kaa_platform_protocol.h",height=0.2,width=0.4,color="black",URL="$kaa__platform__protocol_8h.html",tooltip="Kaa binary platform level protocol implementation (org.kaaproject.protocol.platform.binary). "];
+  Node5 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node6 [label="kaa_context.h",height=0.2,width=0.4,color="black",URL="$kaa__context_8h.html",tooltip="Kaa endpoint context definition. "];
+  Node5 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 [label="../kaa_bootstrap_manager.h",height=0.2,width=0.4,color="black",URL="$kaa__bootstrap__manager_8h.html"];
+  Node7 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node7 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node1 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node8 [label="../platform/defaults.h",height=0.2,width=0.4,color="black",URL="$defaults_8h.html"];
+  Node8 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node9 [label="../platform-impl/posix\l/posix_defaults.h",height=0.2,width=0.4,color="black",URL="$posix__defaults_8h.html"];
+  Node1 -> Node10 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node10 [label="../platform/ext_tcp\l_utils.h",height=0.2,width=0.4,color="black",URL="$ext__tcp__utils_8h.html",tooltip="External interface for socket manipulations used by Kaa transport channel implementations. "];
+  Node10 -> Node11 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node11 [label="sock.h",height=0.2,width=0.4,color="black",URL="$sock_8h.html"];
+  Node11 -> Node12 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node12 [label="../platform-impl/posix\l/posix_sock.h",height=0.2,width=0.4,color="black",URL="$posix__sock_8h.html"];
+  Node12 -> Node13 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node13 [label="sys/socket.h",height=0.2,width=0.4,color="grey75"];
+  Node12 -> Node14 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node14 [label="arpa/inet.h",height=0.2,width=0.4,color="grey75"];
+  Node10 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+}

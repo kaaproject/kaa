@@ -1,0 +1,27 @@
+var dir_08cd018e1ae44a7fd9aa444acd113371 =
+[
+    [ "avro_src", "dir_65752619d29c699bd93c033aa352cab5.html", "dir_65752619d29c699bd93c033aa352cab5" ],
+    [ "collections", "dir_352e82af4ec8416fe4f0fd61f7fe986d.html", "dir_352e82af4ec8416fe4f0fd61f7fe986d" ],
+    [ "gen", "dir_b26671fb3b75f7ef4ea1d849b4b26a6e.html", "dir_b26671fb3b75f7ef4ea1d849b4b26a6e" ],
+    [ "kaa_protocols", "dir_4603be62ce24dc00475ac2c0c13b75e2.html", "dir_4603be62ce24dc00475ac2c0c13b75e2" ],
+    [ "platform", "dir_e23d472d76342075ad9c73af932db45b.html", "dir_e23d472d76342075ad9c73af932db45b" ],
+    [ "platform-impl", "dir_ac945a678f77578aa2e77d1814e34588.html", "dir_ac945a678f77578aa2e77d1814e34588" ],
+    [ "utilities", "dir_e190c9e23f0b5219f1f36d51e38975d6.html", "dir_e190c9e23f0b5219f1f36d51e38975d6" ],
+    [ "kaa.h", "kaa_8h.html", "kaa_8h" ],
+    [ "kaa_bootstrap_manager.h", "kaa__bootstrap__manager_8h.html", "kaa__bootstrap__manager_8h" ],
+    [ "kaa_channel_manager.h", "kaa__channel__manager_8h.html", "kaa__channel__manager_8h" ],
+    [ "kaa_common.h", "kaa__common_8h.html", "kaa__common_8h" ],
+    [ "kaa_common_schema.h", "kaa__common__schema_8h.html", "kaa__common__schema_8h" ],
+    [ "kaa_configuration_manager.h", "kaa__configuration__manager_8h.html", "kaa__configuration__manager_8h" ],
+    [ "kaa_context.h", "kaa__context_8h.html", "kaa__context_8h" ],
+    [ "kaa_defaults.h", "kaa__defaults_8h.html", "kaa__defaults_8h" ],
+    [ "kaa_error.h", "kaa__error_8h.html", "kaa__error_8h" ],
+    [ "kaa_event.h", "kaa__event_8h.html", "kaa__event_8h" ],
+    [ "kaa_logging.h", "kaa__logging_8h.html", "kaa__logging_8h" ],
+    [ "kaa_platform_common.h", "kaa__platform__common_8h.html", "kaa__platform__common_8h" ],
+    [ "kaa_platform_protocol.h", "kaa__platform__protocol_8h.html", "kaa__platform__protocol_8h" ],
+    [ "kaa_platform_utils.h", "kaa__platform__utils_8h.html", "kaa__platform__utils_8h" ],
+    [ "kaa_profile.h", "kaa__profile_8h.html", "kaa__profile_8h" ],
+    [ "kaa_status.h", "kaa__status_8h.html", "kaa__status_8h" ],
+    [ "kaa_user.h", "kaa__user_8h.html", "kaa__user_8h" ]
+];
