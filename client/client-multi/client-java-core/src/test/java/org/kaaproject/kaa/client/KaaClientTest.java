@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.client.bootstrap.DefaultBootstrapManager;
 import org.kaaproject.kaa.client.channel.GenericTransportInfo;
+import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
@@ -36,6 +37,8 @@ import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.context.SimpleExecutorContext;
 import org.kaaproject.kaa.client.context.TransportContext;
 import org.kaaproject.kaa.client.exceptions.KaaException;
+import org.kaaproject.kaa.client.exceptions.KaaRuntimeException;
+import org.kaaproject.kaa.client.logging.AbstractLogCollector;
 import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
@@ -46,6 +49,7 @@ import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class KaaClientTest {
 
@@ -139,4 +143,40 @@ public class KaaClientTest {
         return connectionInfo;
     }
 
+    @Test
+    public void failureOnStartTest() throws TransportException {
+        Mockito.doThrow(new KaaRuntimeException(new Exception("cause"))).when(bsManagerMock).receiveOperationsServerList();
+        client.start();
+        Mockito.verify(stateListener, Mockito.timeout(1000)).onStartFailure(Mockito.any(KaaException.class));
+    }
+
+    @Test
+    public void failureOnStopTest() {
+        client.start();
+        AbstractLogCollector logCollector = Mockito.mock(AbstractLogCollector.class);
+        Mockito.doThrow(new RuntimeException()).when(logCollector).stop();
+        ReflectionTestUtils.setField(client, "logCollector", logCollector);
+        client.stop();
+        Mockito.verify(stateListener, Mockito.timeout(1000)).onStopFailure(Mockito.any(KaaException.class));
+    }
+
+    @Test
+    public void failureOnPauseTest() {
+        client.start();
+        KaaClientState clientState = Mockito.mock(KaaClientState.class);
+        Mockito.doThrow(new RuntimeException()).when(clientState).persist();
+        ReflectionTestUtils.setField(client, "kaaClientState", clientState);
+        client.pause();
+        Mockito.verify(stateListener, Mockito.timeout(1000)).onPauseFailure(Mockito.any(KaaException.class));
+    }
+
+    @Test
+    public void failureOnResumeTest() {
+        client.start();
+        KaaInternalChannelManager channelManager = Mockito.mock(KaaInternalChannelManager.class);
+        Mockito.doThrow(new RuntimeException()).when(channelManager).resume();
+        ReflectionTestUtils.setField(client, "channelManager", channelManager);
+        client.resume();
+        Mockito.verify(stateListener, Mockito.timeout(1000)).onResumeFailure(Mockito.any(KaaException.class));
+    }
 }
