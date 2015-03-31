@@ -19,10 +19,11 @@
 
 #include <memory>
 
-#include "kaa/channel/transport/IProfileTransport.hpp"
 #include "kaa/profile/IProfileManager.hpp"
 #include "kaa/profile/IProfileContainer.hpp"
 #include "kaa/profile/DefaultProfileContainer.hpp"
+#include "kaa/common/AvroByteArrayConverter.hpp"
+#include "kaa/channel/transport/IProfileTransport.hpp"
 
 namespace kaa {
 
@@ -48,7 +49,8 @@ public:
      */
     SharedDataBuffer getSerializedProfile()
     {
-        return profileContainer_->getSerializedProfile();
+        AvroByteArrayConverter<KaaProfile> avroConverter;
+        return avroConverter.toByteArray(profileContainer_->getProfile());
     }
 
     /**

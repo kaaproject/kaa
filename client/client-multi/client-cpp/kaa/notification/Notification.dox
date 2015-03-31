@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,28 +19,24 @@
 
     \section brief Brief description
 
-    The Kaa Notifications subsystem enables messages delivery from the 
-    Kaa cluster to endpoints (EP). It is based on auto-generated classes
-    according to the topic's notification schema used during SDK generation.
+    The Kaa Notifications subsystem enables messages delivery from the Kaa cluster to endpoints (EP). 
+    It is based on auto-generated classes according to the topic's notification schema used during SDK generation.
 
-    Notification topics can be mandatory or optional. Mandatory topic
-    notifications are delivered in an enforced manner. Optional topics require
-    subscription. It is the responsibility of the client code to register
-    the topic update listener and subscribe to optional topics.
+    Notification topics can be mandatory or optional. Mandatory topic notifications are delivered in an enforced manner.
+    Optional topics require subscription. 
+
+    <b>It is the responsibility of the client code to register the topic update listener and subscribe to 
+    optional topics.</b>
 
     \section topics Topics - usage examples
 
-    \subsection available_topics Access to available topics
+    \subsection available_topics Get available topics
+
     @code
         using namespace kaa;
 
-        /*
-         * Kaa initialization
-         */
-
         IKaaClient& kaaClient = Kaa::getKaaClient();
-        INotificationManager& notificationManager = kaaClient.getNotificationManager();
-        const auto& topics = notificationManager.getTopics();
+        const auto& topics = kaaClient.getTopics();
 
         for (const auto it : topics) {
             std::cout << "Id: " << it.first << ", name: " << it.second.name
@@ -49,38 +45,34 @@
         }
     @endcode
 
-    \subsection updates_of_available_topics Updates of available topics
-    If there is need to receive updates of available topic, do following:
+    \subsection updates_of_available_topics Updates on available topics
+
+    To receive updates on available topics, do the following:
     @code
         #include "kaa/notification/INotificationTopicListListener.hpp"
 
         class BasicTopicUpdateListener : public INotificationTopicListListener {
         public:
-            // Will be called on each update of the topic list 
+            // Callback is used when the new list of available topics is received. 
             virtual void onListUpdated(const Topics& newList) {
-                for (const auto topic : newList) {
+                for (const auto& topic : newList) {
                     std::cout << "Id: " << topic.id << ", name: " << topic.name
-                              << ", type: " << LoggingUtils::TopicSubscriptionTypeToString(
-                                      topic.subscriptionType) << std::endl;
+                              << ", type: " << LoggingUtils::TopicSubscriptionTypeToString(topic.subscriptionType) << std::endl;
                 }
             }
         };
         ...
-        // Create and subscribe listener to receive topic list updates
-        INotificationTopicListListenerPtr topicUpdateListener(new BasicTopicUpdateListener);
-        notificationManager.addTopicListListener(topicUpdateListener);
+        // Add listener to receive updates on available topics.
+        std::unique_ptr<BasicTopicUpdateListener> topicUpdateListener(new BasicTopicUpdateListener);
+        kaaClient.addTopicListListener(*topicUpdateListener);
         ...
-        // Remove topic update listener
-        notificationManager.removeTopicListListener(topicUpdateListener);
+        // Remove the topic listener.
+        kaaClient.removeTopicListListener(*topicUpdateListener);
     @endcode
 
     \section notifications Notifications - usage examples 
 
-    In order to receive notifications, both mandatory or optional, at least one
-    listener should be added. A particular listener may be added for a specified
-    topic as well.
-
-    Assume, notification schema has the following form:
+    Assume, the notification schema has the following form:
     @code{.json}
         {
             "type": "record",
@@ -95,8 +87,7 @@
         }
     @endcode
 
-    After calling avrogen.sh script Avro C++ compiler will be generated
-    appropriate code and put it into NotificationGen.hpp header.
+    After calling avrogen.sh script Avro C++ compiler will be generated appropriate code and put it into NotificationGen.hpp header.
     So auto-generated notification class will be like:
     @code
         struct BasicNotification {
@@ -104,98 +95,89 @@
         };
     @endcode
 
-    As mentioned earlier, there is two kind of topics - mandatory and optional.
-    Further it will be discussed dealing with both of them.
+    \subsection global_listeners General topic's notification listener(s)
 
-    \subsection global_listeners Topic notification listener(s)
-
-    In order to receive notifications from all available topics (both mandatory 
-    and subscribed optional), do following:
+    To receive notifications both on mandatory or on optional topics, do the following:
     @code
-        #include "kaa/gen/NotificationGen.hpp" // auto-generated header
-        #include "kaa/notification/AbstractNotificationListener.hpp"
+        #include "kaa/notification/INotificationListener.hpp"
 
-        class BasicNotificationListener : public AbstractNotificationListener<BasicNotification> {
-            virtual void onNotification(const std::string& id, const BasicNotification& notification) {
+        class BasicNotificationListener : public INotificationListener {
+        public:
+            virtual void onNotification(const std::string& id, const KaaNotification& notification) {
                 std::cout << "Received notification with body: " << notification.body << std::endl;
             }
         };
         ...
-        INotificationListenerPtr globalNotificationListener(new BasicNotificationListener);
-        
-        // Add listener
-        notificationManager.addNotificationListener(globalNotificationListener);
-        
+        std::unique_ptr<BasicNotificationListener> generalNotificationListener(new BasicNotificationListener);
+
+        // Add the general listener.
+        kaaClient.addNotificationListener(*generalNotificationListener);
         ...
-        
-        // Remove listener
-        notificationManager.removeNotificationListener(globalNotificationListener);
+        // Remove the general listener.
+        kaaClient.removeNotificationListener(*generalNotificationListener);
     @endcode
 
-    \subsection specific_listener Topic specific listener(s)
+    \subsection specific_listener Topic specific notification listener(s)
 
-    To add listener(s) for a specified topic, do following:
+    To receive notifications on the specified topic, do the following:
     @code
-        #include "kaa/gen/NotificationGen.hpp" // auto-generated header
-        #include "kaa/notification/AbstractNotificationListener.hpp"
+        #include "kaa/notification/INotificationListener.hpp"
 
-        class WheatherNotificationListener : public AbstractNotificationListener<BasicNotification> {
-            virtual void onNotification(const std::string& id, const BasicNotification& notification) {
+        class WeatherNotificationListener : public INotificationListener {
+        public:
+            virtual void onNotification(const std::string& id, const KaaNotification& notification) {
                 std::cout << "What's weather: " << notification.body << std::endl;
             }
         };
 
-        class NewsNotificationListener : public AbstractNotificationListener<BasicNotification> {
-            virtual void onNotification(const std::string& id, const BasicNotification& notification) {
+        class NewsNotificationListener : public INotificationListener {
+        public:
+            virtual void onNotification(const std::string& id, const KaaNotification& notification) {
                 std::cout << "What's news: " << notification.body << std::endl;
             }
         };
 
         // Add specific listeners both for news and weather topics
-        INotificationListenerPtr weatherTopicListener(new WheatherNotificationListener);
-        INotificationListenerPtr newsTopicListener(new NewsNotificationListener);
+        std::unique_ptr<WeatherNotificationListener> weatherTopicListener(new WeatherNotificationListener);
+        std::unique_ptr<NewsNotificationListener> newsTopicListener(new NewsNotificationListener);
 
         // Add listener
-        notificationManager.addNotificationListener("wheather_topic_id", weatherTopicListener);
-        notificationManager.addNotificationListener("news_topic_id", newsTopicListener);
-
+        kaaClient.addNotificationListener("weather_topic_id", *weatherTopicListener);
+        kaaClient.addNotificationListener("news_topic_id", *newsTopicListener);
         ...
-
         // Remove listener
-        notificationManager.removeNotificationListener("wheather_topic_id", weatherTopicListener);
-        notificationManager.removeNotificationListener("news_topic_id", newsTopicListener);
+        kaaClient.removeNotificationListener("weather_topic_id", *weatherTopicListener);
+        kaaClient.removeNotificationListener("news_topic_id", *newsTopicListener);
     @endcode
 
-    \subsection optional_topics Optional topic (un)subscription
+    \subsection optional_topics Subscription to optional topics
 
-    To receive notifications relating to some optional topic, firstly you
-    should to subscribe to this topic:
+    To receive notifications on the optional topic, do the following:
     @code
-        notificationManager.subscribeToTopic("optional_topic_id", true);
-    @endcode
-    
-    Unsubscription:
-    @code
-        notificationManager.unsubscribeFromTopic("optional_topic_id", true);
+        kaaClient.subscribeToTopic("optional_topic_id");
     @endcode
 
-    There is a similar stuff to deal with a group of optional topics -
+    To stop receiving notifications on the optional topic, do the following:
+    @code
+        kaaClient.unsubscribeFromTopic("optional_topic_id");
+    @endcode
+
+    There are similar routines to deal with the group of optional topics:
     @link kaa::INotificationManager::subscribeToTopics() @endlink and
-    @link kaa::INotificationManager#unsubscribeFromTopics() @endlink .
-    
-    \subsection subscription_performance Performance
-    
-    To increase Kaa performance in case of several subsequent subscription
-    changes and avoid possible race conditions, we recommend to use following
-    approach:
+    @link kaa::INotificationManager::unsubscribeFromTopics() @endlink .
+
+    \subsection subscription_postponing Subscription postponing
+
+    There is an ability to postpone subscription requests. <b>It is a convenient way to do several subscription changes.</b><br>
+    Consider the example:
     @code
-    // Make subscription changes with parameter forceSync set to false
-    notificationManager.subscribeToTopics({"optional_topic1", "optional_topic2", "optional_topic3"}, false);
-    notificationManager.unsubscribeFromTopic("optional_topic4", false);
+    // Do subscription changes with the false value for the forceSync parameter.
+    kaaClient.subscribeToTopics({"optional_topic1", "optional_topic2", "optional_topic3"}, false);
+    kaaClient.unsubscribeFromTopic("optional_topic4", false);
 
-    // Add listener(s) (optional)
+    // Add notification listener(s) (optional).
 
-    // Commit changes
-    notificationManager.sync();
+    // Send subscription requests.
+    kaaClient.syncTopicSubscriptions();
   @endcode
 */
