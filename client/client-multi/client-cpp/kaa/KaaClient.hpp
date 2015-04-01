@@ -63,8 +63,12 @@ public:
     void pause();
     void resume();
 
+    virtual void                                updateProfile();
     virtual IKaaChannelManager&                 getChannelManager();
     virtual const KeyPair&                      getClientKeyPair();
+    virtual void                                setEndpointAccessToken(const std::string& token);
+    virtual std::string                         refreshEndpointAccessToken();
+    virtual std::string                         getEndpointAccessToken();
     virtual IKaaDataMultiplexer&                getOperationMultiplexer();
     virtual IKaaDataDemultiplexer&              getOperationDemultiplexer();
     virtual EventFamilyFactory&                 getEventFamilyFactory();
@@ -72,7 +76,7 @@ public:
     virtual void                                addLogRecord(const KaaUserLogRecord& record);
     virtual void                                setLogStorage(ILogStoragePtr storage);
     virtual void                                setLogUploadStrategy(ILogUploadStrategyPtr strategy);
-    virtual void                                setProfileContainer(ProfileContainerPtr container);
+    virtual void                                setProfileContainer(IProfileContainerPtr container);
     virtual void                                addTopicListListener(INotificationTopicListListener& listener);
     virtual void                                removeTopicListListener(INotificationTopicListListener& listener);
     virtual Topics                              getTopics();

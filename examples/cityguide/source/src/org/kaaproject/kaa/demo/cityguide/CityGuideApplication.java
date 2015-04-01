@@ -35,11 +35,10 @@ import android.app.Application;
 import de.greenrobot.event.EventBus;
 
 /**
- * The Class CityGuideApplication.
- * Implementation of base {@link Application} class. Performs initialization of 
- * application resources including initialization of Kaa client. Handles Kaa client lifecycle.
- * Stores reference to actual endpoint configuration. Receives configuration updates from Kaa cluster.
- * Manages endpoint profile object, notifies Kaa cluster about profile updates.
+ * The implementation of the base {@link Application} class. Performs initialization of 
+ * the application resources including initialization of the Kaa client. Handles the Kaa client lifecycle.
+ * Stores a reference to the actual endpoint configuration. Receives configuration updates from the Kaa cluster.
+ * Manages the endpoint profile object, notifies the Kaa cluster of the profile updates.
  */
 public class CityGuideApplication extends Application {
 
@@ -61,13 +60,13 @@ public class CityGuideApplication extends Application {
         mImageLoader = new ImageLoader(this);
 
         /*
-         * Create empty city guide profile object based on user defined profile
+         * Create an empty city guide profile object based on the user-defined profile
          * schema.
          */
         mProfile = new CityGuideProfile();
 
         /*
-         * Initialize Kaa client using android context.
+         * Initialize the Kaa client using the Android context.
          */
         KaaClientPlatformContext kaaClientContext = new AndroidKaaPlatformContext(
                 this);
@@ -75,10 +74,10 @@ public class CityGuideApplication extends Application {
                 new SimpleKaaClientStateListener() {
 
                     /*
-                     * Implement onStarted callback to get notified when Kaa
-                     * client is operational. Obtain city guide configuration
-                     * from Kaa. Notify UI components about Kaa started to start
-                     * using configuration.
+                     * Implement the onStarted callback to get notified as soon as the Kaa
+                     * client is operational. Obtain the city guide configuration
+                     * from Kaa. Notify UI components when Kaa is started to start
+                     * using the configuration.
                      */
                     @Override
                     public void onStarted() {
@@ -90,15 +89,15 @@ public class CityGuideApplication extends Application {
                 });
 
         /*
-         * Set configuration storage file to persist configuration.
+         * Set a configuration storage file to persist configuration.
          */
         mClient.setConfigurationStorage(new SimpleConfigurationStorage(
                 kaaClientContext, "cityGuideConfig.data"));
 
         /*
-         * Set configuration listener to get notified about configuration
-         * updates from Kaa cluster. Update configuration object and notify UI
-         * components to start using updated configuration.
+         * Set a configuration listener to get notified about configuration
+         * updates from the Kaa cluster. Update configuration object and notify UI
+         * components to start using the updated configuration.
          */
         mClient.addConfigurationListener(new ConfigurationListener() {
             @Override
@@ -110,7 +109,7 @@ public class CityGuideApplication extends Application {
         });
 
         /*
-         * Set profile container used by Kaa client to get actual profile
+         * Set a profile container used by the Kaa client to obtain the actual profile
          * object.
          */
         mClient.setProfileContainer(new ProfileContainer() {
@@ -121,7 +120,7 @@ public class CityGuideApplication extends Application {
         });
 
         /*
-         * Start Kaa client workflow.
+         * Start the Kaa client workflow.
          */
         mClient.start();
     }
@@ -129,8 +128,8 @@ public class CityGuideApplication extends Application {
     public void pause() {
 
         /*
-         * Suspend Kaa client. Release all network connections and application
-         * resources. Suspend all Kaa client tasks.
+         * Suspend the Kaa client. Release all network connections and application
+         * resources. Suspend all the Kaa client tasks.
          */
         mClient.pause();
     }
@@ -138,8 +137,8 @@ public class CityGuideApplication extends Application {
     public void resume() {
 
         /*
-         * Resume Kaa client. Restore Kaa client workflow. Resume all Kaa client
-         * tasks.
+         * Resume the Kaa client. Restore the Kaa client workflow. 
+         * Resume all the Kaa client tasks.
          */
         mClient.resume();
     }
@@ -149,8 +148,8 @@ public class CityGuideApplication extends Application {
         super.onTerminate();
 
         /*
-         * Stop Kaa client. Release all network connections and application
-         * resources. Shutdown all Kaa client tasks.
+         * Stop the Kaa client. Release all network connections and application
+         * resources. Shut down all the Kaa client tasks.
          */
         mClient.stop();
         mKaaStarted = false;
@@ -159,8 +158,8 @@ public class CityGuideApplication extends Application {
     public void updateLocation(String area, String city) {
 
         /*
-         * Update city guide profile object and notify Kaa client about profile
-         * update.
+         * Update the city guide profile object and 
+         * notify the Kaa client about the profile update.
          */
         mProfile.setArea(area);
         mProfile.setCity(city);

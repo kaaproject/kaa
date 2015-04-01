@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<!--
+Copyright 2014-2015 CyberVision, Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<projectsConfig>
+    <project id="datacollection_demo_java">
+        <name>Data collection demo</name>
+        <description>Kaa data collection subsystem demo app based on Java SDK</description>
+	    <details><![CDATA[
+This simple app demonstrates Kaa data collection subsystem capabilities on Java SDK.
+
+<h2>Installation</h2>
+Download the jar file to your device by clicking the "Binary" button on the left. Make sure that the you have Java installed on your device. Run application using following command in console:
+<pre>
+$ java -jar DataCollectionDemo.jar
+</pre>
+
+<h2>Playing around</h2>
+Make sure that the Kaa sandbox is up and running. Starting the "Data collection demo" app, you will trigger delivery of five log messages to Kaa cluster. Kaa cluster will write this messages to local MongoDB database using <a href="https://docs.kaaproject.org/display/KAA/Log+appenders#Logappenders-MongoDBlogappender">MongoDB appender</a>.
+You can explore collected data by querying sandbox MongoDB instance:
+<pre>
+$ mongo kaa
+db.logs_$your_application_token$.find()
+</pre>
+
+Where $your_application_token$ is the application token you can copy from the main application page of the Administrative UI.<br/><br/>
+
+Now it's time to test things out: navigate to the Kaa server administrative interface by clicking on the "Administrative console" link from the Sandbox screen. Log in as a tenant developer (devuser / devuser123), and navigate to the "Data collection demo" application, then select "Log appenders". From here you can <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide#AdministrationUIguide-Logappenders">manage log appenders</a>. Do not forget to activate updated configuration - otherwise the endpoint will not be able to see it. Make sure you have tried creating Flume or Cassandra log appenders!<br/><br/>
+
+Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">Administrative UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">REST API</a>.
+
+<h2>What's next?</h2>
+Get the source code by clicking the "Source" button on the left and start hacking!<br/><br/>
+
+For more background on Kaa data collection subsystem please refer to the corresponding <a href="https://docs.kaaproject.org/display/KAA/Collecting+data+from+endpoints">programming guide</a> and <a href="https://docs.kaaproject.org/display/KAA/Logging">design reference</a> sections.
+            ]]></details>
+        <platform>JAVA</platform>
+        <features>DATA_COLLECTION</features>
+        <sourceArchive>java/datacollection_demo.tar.gz</sourceArchive>
+        <projectFolder>JDataCollectionDemo</projectFolder>
+        <sdkLibDir>JDataCollectionDemo/lib</sdkLibDir>
+        <destBinaryFile>JDataCollectionDemo/build/jar/DataCollectionDemo.jar</destBinaryFile>
+    </project>
+    <project id="datacollection_demo_c">
+        <name>Data collection demo</name>
+        <description>Kaa data collection subsystem demo app based on C SDK</description>
+	    <details><![CDATA[
+This simple app demonstrates Kaa data collection subsystem capabilities on C SDK.
+
+<h2>Installation</h2>
+Download the source code by clicking the "Source" button on the left. Build the source code using endpoint build and integration <a href="https://docs.kaaproject.org/display/KAA/Endpoint+build+and+integration+instructions#Endpointbuildandintegrationinstructions-BuildingCendpointSDK">instructions</a>.
+
+<h2>Playing around</h2>
+Make sure that the Kaa sandbox is up and running. Starting the "Data collection demo" app, you will trigger delivery of five log messages to Kaa cluster. Kaa cluster will write this messages to local MongoDB database using <a href="https://docs.kaaproject.org/display/KAA/Log+appenders#Logappenders-MongoDBlogappender">MongoDB appender</a>.
+You can explore collected data by querying sandbox MongoDB instance:
+<pre>
+$ mongo kaa
+db.logs_$your_application_token$.find()
+</pre>
+
+Where $your_application_token$ is the application token you can copy from the main application page of the Administrative UI.<br/><br/>
+
+Now it's time to test things out: navigate to the Kaa server administrative interface by clicking on the "Administrative console" link from the Sandbox screen. Log in as a tenant developer (devuser / devuser123), and navigate to the "Data collection demo" application, then select "Log appenders". From here you can <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide#AdministrationUIguide-Logappenders">manage log appenders</a>. Do not forget to activate updated configuration - otherwise the endpoint will not be able to see it. Make sure you have tried creating Flume or Cassandra log appenders!<br/><br/>
+
+Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">Administrative UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">REST API</a>.
+
+<h2>What's next?</h2>
+Get the source code by clicking the "Source" button on the left and start hacking!<br/><br/>
+
+For more background on Kaa data collection subsystem please refer to the corresponding <a href="https://docs.kaaproject.org/display/KAA/Collecting+data+from+endpoints">programming guide</a> and <a href="https://docs.kaaproject.org/display/KAA/Logging">design reference</a> sections.
+            ]]></details>
+        <platform>C</platform>
+        <features>DATA_COLLECTION</features>
+        <sourceArchive>c/datacollection_demo.tar.gz</sourceArchive>
+        <projectFolder>CDataCollectionDemo</projectFolder>
+        <sdkLibDir>CDataCollectionDemo/libs/kaa</sdkLibDir>
+        <destBinaryFile></destBinaryFile>
+    </project>
+    <project id="datacollection_demo_cpp">
+        <name>Data collection demo</name>
+        <description>Kaa data collection subsystem demo app based on C++ SDK</description>
+	    <details><![CDATA[
+This simple app demonstrates Kaa data collection subsystem capabilities on C++ SDK.
+
+<h2>Installation</h2>
+Download the source code by clicking the "Source" button on the left. Build the source code using endpoint build and integration <a href="https://docs.kaaproject.org/display/KAA/Endpoint+build+and+integration+instructions#Endpointbuildandintegrationinstructions-BuildingC++endpointSDK">instructions</a>.
+
+<h2>Playing around</h2>
+Make sure that the Kaa sandbox is up and running. Starting the "Data collection demo" app, you will trigger delivery of five log messages to Kaa cluster. Kaa cluster will write this messages to local MongoDB database using <a href="https://docs.kaaproject.org/display/KAA/Log+appenders#Logappenders-MongoDBlogappender">MongoDB appender</a>.
+You can explore collected data by querying sandbox MongoDB instance:
+<pre>
+$ mongo kaa
+db.logs_$your_application_token$.find()
+</pre>
+
+Where $your_application_token$ is the application token you can copy from the main application page of the Administrative UI.<br/><br/>
+
+Now it's time to test things out: navigate to the Kaa server administrative interface by clicking on the "Administrative console" link from the Sandbox screen. Log in as a tenant developer (devuser / devuser123), and navigate to the "Data collection demo" application, then select "Log appenders". From here you can <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide#AdministrationUIguide-Logappenders">manage log appenders</a>. Do not forget to activate updated configuration - otherwise the endpoint will not be able to see it. Make sure you have tried creating Flume or Cassandra log appenders!<br/><br/>
+
+Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">Administrative UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">REST API</a>.
+
+<h2>What's next?</h2>
+Get the source code by clicking the "Source" button on the left and start hacking!<br/><br/>
+
+For more background on Kaa data collection subsystem please refer to the corresponding <a href="https://docs.kaaproject.org/display/KAA/Collecting+data+from+endpoints">programming guide</a> and <a href="https://docs.kaaproject.org/display/KAA/Logging">design reference</a> sections.
+            ]]></details>
+        <platform>CPP</platform>
+        <features>DATA_COLLECTION</features>
+        <sourceArchive>cpp/datacollection_demo.tar.gz</sourceArchive>
+        <projectFolder>CppDataCollectionDemo</projectFolder>
+        <sdkLibDir>CppDataCollectionDemo/libs/kaa</sdkLibDir>
+        <destBinaryFile></destBinaryFile>
+    </project>
+</projectsConfig>

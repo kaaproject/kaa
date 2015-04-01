@@ -16,18 +16,17 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.USER_VERIFIER_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.USER_VERIFIER_TOKEN;
-
-import java.io.Serializable;
+import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import java.io.Serializable;
 
-import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.USER_VERIFIER_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.USER_VERIFIER_TOKEN;
 
 @Entity
 @Table(name = USER_VERIFIER_TABLE_NAME)

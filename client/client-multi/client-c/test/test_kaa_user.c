@@ -32,6 +32,7 @@
 #include "kaa_platform_utils.h"
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
+#include "platform/sock.h"
 
 
 

@@ -16,15 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getStringFromFile;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlObject;
-
-import java.util.List;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.kaaproject.kaa.common.Constants;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -57,13 +48,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getStringFromFile;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlObject;
+
 @Service
 @Transactional
 public class ApplicationServiceImpl implements ApplicationService {
-
-    public static final String DUMMY_ENDPOINT_USER_VERIFIER = "dummyEndpointUserVerifier";
-    public static final String MONGODB_ENDPOINT_LOG_APPENDER = "mongoDBLogAppender";
-    public static final String FILESYSTEM_ENDPOINT_LOG_APPENDER = "fileSystemLogAppender";
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationServiceImpl.class);
 
@@ -164,10 +160,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
             String appToken = RandomStringUtils.randomNumeric(Constants.APP_TOKEN_SIZE);
             applicationDto.setApplicationToken(appToken);
-
-            if(applicationDto.getLogAppendersNames() == null || applicationDto.getLogAppendersNames().isEmpty()){
-                applicationDto.setLogAppendersNames(MONGODB_ENDPOINT_LOG_APPENDER + "," + FILESYSTEM_ENDPOINT_LOG_APPENDER);
-            }
 
             Application application = new Application(applicationDto);
             appDto = getDto(applicationDao.save(application));

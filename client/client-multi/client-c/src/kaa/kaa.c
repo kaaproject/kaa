@@ -65,7 +65,8 @@ extern void kaa_log_collector_destroy(kaa_log_collector_t *self);
 
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
 extern kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **configuration_manager_p,
-                                                    kaa_status_t *status, kaa_logger_t *logger);
+                                                    kaa_channel_manager_t *channel_manager, kaa_status_t *status,
+                                                    kaa_logger_t *logger);
 extern void kaa_configuration_manager_destroy(kaa_configuration_manager_t *self);
 #endif
 
@@ -134,7 +135,7 @@ static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *l
 
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
     if (!error)
-        error = kaa_configuration_manager_create(&((*context_p)->configuration_manager),
+        error = kaa_configuration_manager_create(&((*context_p)->configuration_manager), (*context_p)->channel_manager,
                                                  (*context_p)->status->status_instance, (*context_p)->logger);
 #else
     (*context_p)->configuration_manager = NULL;
@@ -232,6 +233,8 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
 kaa_error_t kaa_start(kaa_context_t *kaa_context)
 {
     KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
+
+    KAA_LOG_INFO(kaa_context->logger, KAA_ERR_NONE, "Going to start Kaa endpoint");
 
     kaa_transport_channel_interface_t *bootstrap_channel = kaa_channel_manager_get_transport_channel(
             kaa_context->channel_manager, KAA_SERVICE_BOOTSTRAP);

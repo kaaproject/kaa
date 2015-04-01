@@ -15,17 +15,16 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TENANT_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.TENANT_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
-
-import java.io.Serializable;
+import org.kaaproject.kaa.common.dto.TenantDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.io.Serializable;
 
-import org.kaaproject.kaa.common.dto.TenantDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
 @Table(name = TENANT_TABLE_NAME)

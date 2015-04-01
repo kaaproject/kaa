@@ -31,7 +31,7 @@
 #include "kaa_status.h"
 #include "kaa_channel_manager.h"
 #include "kaa_platform_utils.h"
-
+#include "platform/sock.h"
 
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
 extern void        kaa_status_destroy(kaa_status_t *self);

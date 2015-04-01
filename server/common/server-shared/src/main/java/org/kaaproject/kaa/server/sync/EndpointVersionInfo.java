@@ -17,7 +17,7 @@ package org.kaaproject.kaa.server.sync;
 
 import java.util.List;
 
-public class EndpointVersionInfo {
+public final class EndpointVersionInfo {
     private int configVersion;
     private int profileVersion;
     private int systemNfVersion;

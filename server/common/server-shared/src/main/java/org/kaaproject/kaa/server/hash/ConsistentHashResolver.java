@@ -67,6 +67,9 @@ public class ConsistentHashResolver implements OperationsServerResolver {
 
     @Override
     public OperationsNodeInfo getNode(String user) {
+        if (user == null) {
+            throw new RuntimeException("user id is null");
+        }
         return getNearest(hash(user));
     }
 

@@ -18,7 +18,6 @@ package org.kaaproject.kaa.client.logging;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -97,8 +96,12 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     public void fillSyncRequest(LogSyncRequest request) {
         LogBlock group = null;
         synchronized (storage) {
-            group = storage.getRecordBlock(strategy.getBatchSize());
             isUploading = false;
+            if (storage.getStatus().getRecordCount() == 0) {
+                LOG.debug("Log storage is empty");
+                return;
+            }
+            group = storage.getRecordBlock(strategy.getBatchSize());
         }
 
         if (group != null) {
@@ -118,7 +121,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                 timeoutMap.put(group.getBlockId(), System.currentTimeMillis() + strategy.getTimeout() * 1000);
             }
         } else {
-            LOG.warn("Log group is null: storage is empty or log group size is too small");
+            LOG.warn("Log group is null: log group size is too small");
         }
     }
 

@@ -35,7 +35,7 @@ kaa_error_t kaa_buffer_create_buffer(kaa_buffer_t **buffer_p, size_t buffer_size
     kaa_buffer_t *buffer = (kaa_buffer_t *) KAA_MALLOC(sizeof(kaa_buffer_t));
     KAA_RETURN_IF_NIL(buffer, KAA_ERR_NOMEM);
 
-    buffer->begin = (char *) KAA_MALLOC(buffer_size * sizeof(char));
+    buffer->begin = (char *) KAA_CALLOC(buffer_size , sizeof(char));
     if (!buffer->begin) {
         KAA_FREE(buffer);
         return KAA_ERR_NOMEM;

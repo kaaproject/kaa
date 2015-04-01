@@ -39,44 +39,44 @@
 namespace kaa {
 
 #if KAA_LOG_LEVEL > KAA_LOG_LEVEL_NONE
-void kaa_log(const ILogger & logger, LogLevel level, const char *message, const char *file, size_t lineno);
-void kaa_log(const ILogger & logger, LogLevel level, const std::string &message, const char *file, size_t lineno);
-void kaa_log(const ILogger & logger, LogLevel level, const boost::format& message, const char *file, size_t lineno);
+void kaa_log_message(const ILogger & logger, LogLevel level, const char *message, const char *file, size_t lineno);
+void kaa_log_message(const ILogger & logger, LogLevel level, const std::string &message, const char *file, size_t lineno);
+void kaa_log_message(const ILogger & logger, LogLevel level, const boost::format& message, const char *file, size_t lineno);
 
 #endif
 
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_FINE_TRACE
-    #define KAA_LOG_FTRACE(message) kaa_log(LoggerFactory::getLogger(), LogLevel::TRACE,      (message), __LOGFILE, __LINE__);
+    #define KAA_LOG_FTRACE(message) kaa_log_message(LoggerFactory::getLogger(), LogLevel::TRACE,      (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_FTRACE(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_TRACE
-    #define KAA_LOG_TRACE(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::TRACE,      (message), __LOGFILE, __LINE__);
+    #define KAA_LOG_TRACE(message)  kaa_log_message(LoggerFactory::getLogger(), LogLevel::TRACE,      (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_TRACE(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_DEBUG
-    #define KAA_LOG_DEBUG(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::DEBUG,      (message), __LOGFILE, __LINE__);
+    #define KAA_LOG_DEBUG(message)  kaa_log_message(LoggerFactory::getLogger(), LogLevel::DEBUG,      (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_DEBUG(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_INFO
-    #define KAA_LOG_INFO(message)   kaa_log(LoggerFactory::getLogger(), LogLevel::INFO,       (message), __LOGFILE, __LINE__);
+    #define KAA_LOG_INFO(message)   kaa_log_message(LoggerFactory::getLogger(), LogLevel::INFO,       (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_INFO(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_WARNING
-    #define KAA_LOG_WARN(message)   kaa_log(LoggerFactory::getLogger(), LogLevel::WARNING,    (message), __LOGFILE, __LINE__);
+    #define KAA_LOG_WARN(message)   kaa_log_message(LoggerFactory::getLogger(), LogLevel::WARNING,    (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_WARN(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_ERROR
-    #define KAA_LOG_ERROR(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::ERROR,      (message), __LOGFILE, __LINE__);
+    #define KAA_LOG_ERROR(message)  kaa_log_message(LoggerFactory::getLogger(), LogLevel::ERROR,      (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_ERROR(message)
 #endif
 #if KAA_LOG_LEVEL >= KAA_LOG_LEVEL_FATAL
-    #define KAA_LOG_FATAL(message)  kaa_log(LoggerFactory::getLogger(), LogLevel::FATAL,      (message), __LOGFILE, __LINE__);
+    #define KAA_LOG_FATAL(message)  kaa_log_message(LoggerFactory::getLogger(), LogLevel::FATAL,      (message), __LOGFILE, __LINE__);
 #else
     #define KAA_LOG_FATAL(message)
 #endif
@@ -90,12 +90,12 @@ public:
         , file_(file)
         , line_(line)
         , lock_(m, boost::defer_lock_t()) {
-        kaa_log(LoggerFactory::getLogger(), LogLevel::DEBUG, (boost::format("Locking %1% mutex") % name_).str(), file_, line_);
+        kaa_log_message(LoggerFactory::getLogger(), LogLevel::DEBUG, (boost::format("Locking %1% mutex") % name_).str(), file_, line_);
         lock_.lock();
-        kaa_log(LoggerFactory::getLogger(), LogLevel::DEBUG, (boost::format("Locked %1% mutex") % name_).str(), file_, line_);
+        kaa_log_message(LoggerFactory::getLogger(), LogLevel::DEBUG, (boost::format("Locked %1% mutex") % name_).str(), file_, line_);
     }
     ~MutexScopedLockLogger() {
-        kaa_log(LoggerFactory::getLogger(), LogLevel::DEBUG, (boost::format("Unlocking %1% mutex") % name_).str(), file_, line_);
+        kaa_log_message(LoggerFactory::getLogger(), LogLevel::DEBUG, (boost::format("Unlocking %1% mutex") % name_).str(), file_, line_);
     }
 private:
     const char *name_;

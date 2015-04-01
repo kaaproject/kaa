@@ -18,10 +18,30 @@ Copyright 2014-2015 CyberVision, Inc.
 
 <projectsConfig>
     <project id="verifiers_demo">
-        <name>Verifiers demo</name>
-        <description>Verifiers application on android platform demonstrating user verification system(IoT)</description>
+        <name>User verifiers demo</name>
+        <description>Kaa user verifiers demo app for Android</description>
+        <details>
+            <![CDATA[
+This simple app demonstrates Kaa <a href="https://docs.kaaproject.org/display/KAA/Attaching+endpoints+to+users">user verification flow</a>. on Android platform.
+
+<h2>Installation</h2>
+Download the .apk to your Android device by clicking the "Binary" button on the left. Make sure that the device permits installing apps from "Unknown sources". Open the downloaded apk and follow the on-screen instructions.
+
+<h2>Playing around</h2>
+Make sure that the Kaa sandbox is up and running. Opening the "User verifiers demo" app, you will see a list of supported <a href="https://docs.kaaproject.org/display/KAA/Attaching+endpoints+to+users#Attachingendpointstousers-Userverifiers">user vierifiers</a>. Once authorized with Facebook, Google or Twitter verifier user can send test messages to other deivces using event susbsystem.
+
+Now it's time to test things out: install this app to different device and login with same account. Once logged in you will be able to exchange messages between those devices. Please note that this demo is not an attempt to implement yet another "chat application". It is rather a PoC of a way to connect and exchange messages between devices that belong to same user.
+
+Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">Administrative UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">REST API</a>.
+
+<h2>What's next?</h2>
+Get the source code by clicking the "Source" button on the left and start hacking!<br/><br/>
+
+For more background on user verification refer to the corresponding <a href="https://docs.kaaproject.org/display/KAA/Attaching+endpoints+to+users#Attachingendpointstousers-Userverifiers">design reference</a> section. It is also possible to implement custom user verifier using <a href="https://docs.kaaproject.org/display/KAA/Creating+custom+user+verifier">programming guide</a>.
+            ]]>
+        </details>
         <platform>ANDROID</platform>
-        <features>USER_VERIFIER</features>
+        <features>EVENT USER_VERIFIER</features>
         <sourceArchive>android/verifiers_demo.tar.gz</sourceArchive>
         <projectFolder>verifiers_demo/VerifiersDemo</projectFolder>
         <sdkLibDir>verifiers_demo/VerifiersDemo/libs</sdkLibDir>

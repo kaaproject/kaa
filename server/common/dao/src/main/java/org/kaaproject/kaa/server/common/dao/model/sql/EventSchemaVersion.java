@@ -15,19 +15,19 @@
  */
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.EVENT_SCHEMA_VERSION_CREATED_TIME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.EVENT_SCHEMA_VERSION_CREATED_USERNAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.EVENT_SCHEMA_VERSION_SCHEMA;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.EVENT_SCHEMA_VERSION_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.EVENT_SCHEMA_VERSION_VERSION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_SCHEMA_VERSION_CREATED_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_SCHEMA_VERSION_CREATED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_SCHEMA_VERSION_SCHEMA;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_SCHEMA_VERSION_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_SCHEMA_VERSION_VERSION;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
 @Table(name = EVENT_SCHEMA_VERSION_TABLE_NAME)

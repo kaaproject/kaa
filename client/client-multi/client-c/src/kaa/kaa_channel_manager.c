@@ -16,7 +16,9 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #include "platform/stdio.h"
+#include "platform/sock.h"
 #include <string.h>
 #include "kaa_channel_manager.h"
 
@@ -273,8 +275,13 @@ static kaa_error_t init_channel(kaa_channel_manager_t *self
                                 , access_point->id, id, protocol_id.id, protocol_id.version);
             channel->set_access_point(channel->context, access_point);
         } else {
-            KAA_LOG_WARN(self->kaa_context->logger, KAA_ERR_NOT_FOUND, "Could not find access point for channel [0x%08X] "
-                                "(protocol: id=0x%08X, version=%u)", id, protocol_id.id, protocol_id.version);
+            if (is_bootstrap_channel) {
+                KAA_LOG_WARN(self->kaa_context->logger, KAA_ERR_NOT_FOUND, "Could not find access point for bootstrap channel [0x%08X] "
+                                    "(protocol: id=0x%08X, version=%u)", id, protocol_id.id, protocol_id.version);
+            } else {
+                KAA_LOG_INFO(self->kaa_context->logger, KAA_ERR_NOT_FOUND, "Could not find access point for operations channel [0x%08X] "
+                                    "(protocol: id=0x%08X, version=%u)", id, protocol_id.id, protocol_id.version);
+            }
         }
     }
 

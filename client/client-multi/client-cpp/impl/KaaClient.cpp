@@ -271,7 +271,7 @@ void KaaClient::setDefaultConfiguration()
 }
 
 
-void KaaClient::setProfileContainer(ProfileContainerPtr container) {
+void KaaClient::setProfileContainer(IProfileContainerPtr container) {
     profileManager_->setProfileContainer(container);
 }
 
@@ -476,6 +476,21 @@ const KeyPair& KaaClient::getClientKeyPair()
     return *clientKeys_;
 }
 
+void KaaClient::setEndpointAccessToken(const std::string& token)
+{
+    status_->setEndpointAccessToken(token);
+}
+
+std::string KaaClient::refreshEndpointAccessToken()
+{
+    return status_->refreshEndpointAccessToken();
+}
+
+std::string KaaClient::getEndpointAccessToken()
+{
+    return status_->getEndpointAccessToken();
+}
+
 void KaaClient::addLogRecord(const KaaUserLogRecord& record) {
 #ifdef KAA_USE_LOGGING
     return logCollector_->addLogRecord(record);
@@ -518,4 +533,10 @@ IKaaDataDemultiplexer& KaaClient::getBootstrapDemultiplexer()
     return *syncProcessor_;
 }
 
+void KaaClient::updateProfile()
+{
+   profileManager_->updateProfile();
 }
+}
+
+

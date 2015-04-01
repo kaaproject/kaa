@@ -22,7 +22,7 @@ import java.util.Set;
  * @author Andrew Shvayka
  *
  */
-public class BootstrapServerSync {
+public final class BootstrapServerSync {
     private final int requestId;
     private final Set<ProtocolConnectionData> protocolList;
 

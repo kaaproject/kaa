@@ -24,7 +24,7 @@ import org.kaaproject.kaa.demo.smarthouse.music.PlayListResponse;
 import org.kaaproject.kaa.demo.smarthousedemo.command.EndpointCommandKey;
 import org.kaaproject.kaa.demo.smarthousedemo.concurrent.BlockingCallable;
 
-/** Implementation of get list of song info command.
+/** The implementation of the get list of song info command.
  */
 public class GetPlayListCommand extends AbstractPlayerCommand<PlayListResponse> {
 

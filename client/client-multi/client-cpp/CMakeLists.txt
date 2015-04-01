@@ -80,11 +80,12 @@ endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL}")
 
-
 # Disables Kaa library modules.
-message( "==================================")
+message("==================================")
+message("KAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL}")
+
 if ( NOT KAA_WITHOUT_EVENTS )
-    message( "EVENTS ENABLED")
+    message("EVENTS ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_EVENTS")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/event/registration/EndpointRegistrationManager.cpp
@@ -95,7 +96,7 @@ if ( NOT KAA_WITHOUT_EVENTS )
 endif()
 
 if ( NOT KAA_WITHOUT_NOTIFICATIONS ) 
-    message( "NOTIFICATIONS ENABLED")
+    message("NOTIFICATIONS ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_NOTIFICATIONS")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/notification/NotificationManager.cpp
@@ -105,7 +106,7 @@ if ( NOT KAA_WITHOUT_NOTIFICATIONS )
 endif()
 
 if ( NOT KAA_WITHOUT_CONFIGURATION )
-    message( "CONFIGURATION ENABLED")
+    message("CONFIGURATION ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_CONFIGURATION")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/configuration/ConfigurationProcessor.cpp
@@ -118,7 +119,7 @@ endif()
 
 
 if ( NOT KAA_WITHOUT_LOGGING )
-    message( "LOGGING ENABLED")
+    message("LOGGING ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_LOGGING")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/log/LoggingTransport.cpp
@@ -130,7 +131,7 @@ if ( NOT KAA_WITHOUT_LOGGING )
 endif()
 
 if ( NOT KAA_WITHOUT_OPERATION_TCP_CHANNEL )
-    message( "OPERATION_TCP_CHANNEL ENABLED")
+    message("OPERATION_TCP_CHANNEL ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_TCP_CHANNEL")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/channel/impl/DefaultOperationTcpChannel.cpp
@@ -138,7 +139,7 @@ if ( NOT KAA_WITHOUT_OPERATION_TCP_CHANNEL )
 endif()
 
 if ( NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL )
-    message( "OPERATION_LONG_POLL_CHANNEL ENABLED")
+    message("OPERATION_LONG_POLL_CHANNEL ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_LONG_POLL_CHANNEL")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/channel/impl/DefaultOperationLongPollChannel.cpp
@@ -146,7 +147,7 @@ if ( NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL )
 endif()
 
 if ( NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL )
-    message( "OPERATION_HTTP_CHANNEL ENABLED")
+    message("OPERATION_HTTP_CHANNEL ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_OPERATION_HTTP_CHANNEL")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/channel/impl/DefaultOperationHttpChannel.cpp
@@ -154,7 +155,7 @@ if ( NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL )
 endif()
 
 if ( NOT KAA_WITHOUT_BOOTSTRAP_HTTP_CHANNEL )
-    message( "BOOTSTRAP_HTTP_CHANNEL ENABLED")
+    message("BOOTSTRAP_HTTP_CHANNEL ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/channel/impl/DefaultBootstrapChannel.cpp
@@ -162,13 +163,13 @@ if ( NOT KAA_WITHOUT_BOOTSTRAP_HTTP_CHANNEL )
 endif()
 
 if ( NOT KAA_WITHOUT_CONNECTIVITY_CHECKER )
-    message( "CONNECTIVITY_CHECKER ENABLED")
+    message("CONNECTIVITY_CHECKER ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_CONNECTIVITY_CHECKER")
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/channel/connectivity/IPConnectivityChecker.cpp
     )
 endif()
-message( "==================================")
+message("==================================")
 if ( NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL OR NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL OR NOT KAA_WITHOUT_BOOTSTRAP_HTTP_CHANNEL )
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/http/HttpUrl.cpp
@@ -209,7 +210,6 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/security/KeyUtils.cpp
         impl/security/RsaEncoderDecoder.cpp
         impl/common/EndpointObjectHash.cpp
-        impl/profile/ProfileListener.cpp
         impl/profile/ProfileTransport.cpp
         impl/bootstrap/BootstrapManager.cpp
         impl/bootstrap/BootstrapTransport.cpp

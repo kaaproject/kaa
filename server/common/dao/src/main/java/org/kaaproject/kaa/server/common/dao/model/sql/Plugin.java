@@ -16,19 +16,9 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.PLUGIN_APPLICATION_ID;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.PLUGIN_CLASS_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.PLUGIN_CREATED_TIME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.PLUGIN_CREATED_USERNAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.PLUGIN_DESCRIPTION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.PLUGIN_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.PLUGIN_RAW_CONFIGURATION;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.PLUGIN_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelConstants.PLUGIN_TYPE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
-
-import java.io.Serializable;
-import java.util.Arrays;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,10 +28,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.Arrays;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.plugin.PluginDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CLASS_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CREATED_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CREATED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_DESCRIPTION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_RAW_CONFIGURATION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_TYPE_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
 @Table(name = PLUGIN_TABLE_NAME)

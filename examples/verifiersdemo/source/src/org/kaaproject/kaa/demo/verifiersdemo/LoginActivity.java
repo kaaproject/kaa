@@ -58,6 +58,7 @@ import org.kaaproject.kaa.demo.verifiersdemo.VerifiersDemoEventClassFamily;
 import io.fabric.sdk.android.Fabric;
 
 public class LoginActivity extends FragmentActivity {
+  
     // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
     private static final String TWITTER_KEY = "01Y9gbsMeGPetye1w9kkNvNMi";
     private static final String TWITTER_SECRET = "g4Pwh51o7SQlhd3RL6inNF3VxixBURAJDZc494uSISF7yOyJjc";
@@ -68,57 +69,57 @@ public class LoginActivity extends FragmentActivity {
     private static final String USER_INFO = "userInfo";
     private static final String EVENT_MESSAGES = "eventMessages";
 
-    // these values are used to describe current connection status on UI
+    // These values are used to describe current connection status on UI.
     private static CharSequence curUserName;
     private static CharSequence curUserId;
     private static CharSequence curUserInfo;
     private static CharSequence eventMessagesText;
 
-    // text views, where connection status is shown
+    // Text view fields where a connection status is shown.
     private TextView greetingTextView;
     private TextView idTextView;
     private TextView infoTextView;
 
-    // text edit for event message input
+    // A text edit field for the event message input.
     private EditText msgEdit;
 
-    // text edit for all events messages
+    // A text edit field for all event messages.
     private EditText eventMessagesEdit;
 
-    // either event is sent or it is received
+    // Either an event is sent or received
     public enum EventStatus {RCVD, SENT};
 
-    // buttons used to connect to corresponding social networks
+    // Buttons used to connect to corresponding social networks.
     private SignInButton googleButton;
     private LoginButton facebookButton;
     private TwitterLoginButton twitterButton;
     private Button sendEventButton;
     private boolean buttonEnabled;
 
-    // classes, handling each button's specific actions
+    // Classes which handle specific actions of each button.
     private GplusSigninListener gplusSigninListener;
     private FacebookSigninListener facebookSigninListener;
     private TwitterSigninListener twitterSigninListener;
 
-    // Google API client, which is used to establish connection with Google
-    // and access its API
+    // A Google API client which is used to establish a connection with Google
+    // and access its API.
     private static GoogleApiClient mGoogleApiClient;
 
-    // Facebook UI helper class, used for managing login UI
+    // A Facebook UI helper class which is used for managing the login UI.
     private static UiLifecycleHelper uiHelper;
 
-    // Is used to attach to Kaa server, manage events or configurations
+    // Is used to connect the Kaa client to the Kaa server, manage events and configurations.
     private static KaaClient kaaClient;
 
     private static VerifiersDemoEventClassFamily vdecf;
 
-    // Events listener
+    // An event listener.
     private static KaaEventListener listener;
 
     public enum AccountType {GOOGLE, FACEBOOK, TWITTER};
 
-    // Configuration, which consists of three default Kaa verifiers tokens:
-    // for Google, Facebook and Twitter (Kaa Configuration is used)
+    // Configuration which consists of the three default Kaa verifiers tokens:
+    // for Google, Facebook and Twitter (Kaa Configuration is used).
     private static KaaVerifiersTokens verifiersTokens;
 
     @Override
@@ -134,7 +135,7 @@ public class LoginActivity extends FragmentActivity {
         msgEdit = (EditText) findViewById(R.id.msgBox);
         eventMessagesEdit = (EditText) findViewById(R.id.eventMessages);
 
-        // Resume saved state (i.e. after screen rotation), if any
+        // Resume the saved state (for example, after the screen rotation), if any.
         if (savedInstanceState != null) {
             curUserName = savedInstanceState.getCharSequence(USER_NAME);
             curUserId = savedInstanceState.getCharSequence(USER_ID);
@@ -143,32 +144,32 @@ public class LoginActivity extends FragmentActivity {
             updateViews();
         }
 
-        // Twitter authConfig for Twitter credentials verification
+        // Create a Twitter authConfig for Twitter credentials verification.
         TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
 
-        // Register application with the help of Fabric plug-in for managing Twitter 
-        // apps (and library dependencies) register application
+        // Register the application with the help of Fabric plug-in for managing Twitter 
+        // apps (and library dependencies).
         Fabric.with(this, new Twitter(authConfig));
 
-        // Create Twitter button
+        // Create the Twitter button.
         twitterButton = (TwitterLoginButton) findViewById(R.id.twitter_sign_in_button);
 
-        // Enable button, even if a user is signed-in
+        // Enable the Twitter button, even if the user is signed in.
         twitterButton.setEnabled(true);
         twitterSigninListener = new TwitterSigninListener(this);
 
-        // Attach listeners needed to keep track of connection
+        // Attach listeners needed to keep track of the connection.
         twitterButton.setCallback(twitterSigninListener);
         twitterButton.setOnClickListener(twitterSigninListener);
 
-        // create listeners class for Google+
+        // Create a listeners class for Google+.
         gplusSigninListener = new GplusSigninListener(this);
 
         googleButton = (SignInButton) findViewById(R.id.gplus_sign_in_button);
         googleButton.setSize(SignInButton.SIZE_WIDE);
         googleButton.setOnClickListener(gplusSigninListener);
 
-        // Google API client, which is capable of making requests for tokens, user info etc.
+        // Create the Google API client which is capable of making requests for tokens, user info etc.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(gplusSigninListener)
                 .addOnConnectionFailedListener(gplusSigninListener)
@@ -177,12 +178,13 @@ public class LoginActivity extends FragmentActivity {
                 .build();
         gplusSigninListener.setClient(mGoogleApiClient);
 
-        // create listeners class for Facebook
+        // Create a listeners class for Facebook.
         facebookSigninListener = new FacebookSigninListener(this);
         facebookButton = (LoginButton) findViewById(R.id.facebook_sign_in_button);
 
         facebookButton.setUserInfoChangedCallback(facebookSigninListener);
-        // UI helper is used for managing Facebook's log in UI
+        
+        // Create the UI helper for managing the Facebook login UI.
         uiHelper = new UiLifecycleHelper(this, facebookSigninListener);
         uiHelper.onCreate(savedInstanceState);
 
@@ -199,8 +201,8 @@ public class LoginActivity extends FragmentActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // call corresponding onActivityResult methods for Facebook, Twitter and Google
-        // respectively
+       
+        // Call corresponding onActivityResult methods for Facebook, Twitter and Google.
         uiHelper.onActivityResult(requestCode, resultCode, data);
         twitterButton.onActivityResult(requestCode, resultCode, data);
         gplusSigninListener.onActivityResult(requestCode, resultCode, data);
@@ -228,7 +230,8 @@ public class LoginActivity extends FragmentActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        // Save current state of the UI (for Facebook)
+        
+        // Save the current state of the UI (for Facebook).
         uiHelper.onSaveInstanceState(outState);
         outState.putCharSequence(USER_NAME, greetingTextView.getText());
         outState.putCharSequence(USER_ID, idTextView.getText());
@@ -276,7 +279,7 @@ public class LoginActivity extends FragmentActivity {
                 break;
         }
 
-        // Update  userName and userId shown on UI
+        // Update userName and userId shown on UI.
         curUserName = userName;
         curUserId = userId;
         curUserInfo = "Waiting for Kaa response...";
@@ -291,8 +294,6 @@ public class LoginActivity extends FragmentActivity {
 
                         if (userAttachResponse.getResult() == SyncResponseResultType.SUCCESS) {
                             Log.i(TAG, "Successful Kaa verification");
-                            // Detach endpoint from user
-                            logout();
                             Log.i(TAG, userAttachResponse.toString());
                             curUserInfo = "Successful Kaa verification";
                             buttonEnabled = true;
@@ -313,10 +314,12 @@ public class LoginActivity extends FragmentActivity {
                                     Log.i(TAG, "Event listeners received: " + eventListeners);
                                 }
                             });
+                            // Remove old listener to avoid duplication of messages.
                             if (listener != null) {
                                 vdecf.removeListener(listener);
                             }
                             listener = new KaaEventListener();
+                            vdecf.addListener(listener);
                         } else {
                             String failureString = userAttachResponse.getErrorReason() == null ?
                                     userAttachResponse.getErrorCode().toString() :
@@ -330,7 +333,7 @@ public class LoginActivity extends FragmentActivity {
                 });
     }
 
-    // update text views, edits and send button state
+    // Update text view fields, text edit fields and the Send button state.
     private void updateViews() {
         this.runOnUiThread(new Runnable() {
             @Override
@@ -346,7 +349,7 @@ public class LoginActivity extends FragmentActivity {
         });
     }
 
-    // when Send button is clicked
+    // When the Send button is clicked.
     private class SendEventButtonClickListener implements OnClickListener {
         @Override
         public void onClick(View v) {
@@ -375,7 +378,7 @@ public class LoginActivity extends FragmentActivity {
         });
     }
 
-    // class, which is used to handle events
+    // A class which is used to handle events.
     private class KaaEventListener implements VerifiersDemoEventClassFamily.Listener {
         @Override
         public void onEvent(MessageEvent messageEvent, String sourceEndpoint) {
@@ -384,7 +387,7 @@ public class LoginActivity extends FragmentActivity {
         }
     }
 
-    // detach connected to Kaa user
+    // Detach the endpoint from the user.
     private void logout() {
         EndpointKeyHash endpointKey = new EndpointKeyHash(kaaClient.getEndpointKeyHash());
         kaaClient.detachEndpoint(endpointKey, new OnDetachEndpointOperationCallback() {

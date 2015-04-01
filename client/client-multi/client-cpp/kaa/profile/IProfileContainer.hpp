@@ -17,13 +17,12 @@
 #ifndef IPROFILECONTAINER_HPP_
 #define IPROFILECONTAINER_HPP_
 
-#include "kaa/profile/IProfileListener.hpp"
 #include "kaa/common/EndpointObjectHash.hpp"
 
 namespace kaa {
 
 class IProfileContainer;
-typedef std::shared_ptr<IProfileContainer> ProfileContainerPtr;
+typedef std::shared_ptr<IProfileContainer> IProfileContainerPtr;
 
 /**
  * Interface for the profile container.
@@ -38,17 +37,7 @@ public:
      * @return byte array with serialized profile
      *
      */
-    virtual SharedDataBuffer getSerializedProfile() = 0;
-
-    /**
-     * Set Kaa profile listener @link IProfileListener @endlink for the container.
-     * DO NOT use this API explicitly. When user sets his implementation
-     * of the profile container, Kaa uses this method to inject its
-     * own listener @link DefaultProfileListener @endlink.
-     *
-     * @param listener Listener that tracks profile updates
-     */
-    virtual void setProfileListener(ProfileListenerPtr listener) = 0;
+    virtual SharedDataBuffer                        getSerializedProfile() = 0;
 
     virtual ~IProfileContainer() {}
 };

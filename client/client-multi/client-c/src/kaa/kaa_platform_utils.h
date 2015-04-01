@@ -22,8 +22,6 @@
 #include "kaa_error.h"
 #include "kaa_platform_common.h"
 
-#include "platform/sock.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif

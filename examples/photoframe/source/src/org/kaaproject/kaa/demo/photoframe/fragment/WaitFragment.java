@@ -25,9 +25,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * The Class WaitFragment.
- * Implementation of {@link PhotoFrameFragment} class. 
- * Used to display busy progress view.
+ * The implementation of the {@link PhotoFrameFragment} class. 
+ * Used to display the busy progress view.
  */
 public class WaitFragment extends PhotoFrameFragment {
     

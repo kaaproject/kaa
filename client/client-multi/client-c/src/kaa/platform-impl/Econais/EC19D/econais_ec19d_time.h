@@ -18,10 +18,10 @@
 #ifndef ECONAIS_EC19D_TIME_H_
 #define ECONAIS_EC19D_TIME_H_
 
-#include <sndc_sys_api.h>
-
 typedef uint32_t kaa_time_t;
 
-#define KAA_TIME() (kaa_time_t)sndc_sys_getTimestamp_msec()
+kaa_time_t ext_get_systime();
+
+#define KAA_TIME() ext_get_systime()
 
 #endif /* ECONAIS_EC19D_TIME_H_ */

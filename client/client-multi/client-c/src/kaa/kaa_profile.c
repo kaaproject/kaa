@@ -15,7 +15,10 @@
  */
 #include <string.h>
 #include <stdbool.h>
+#include <inttypes.h>
+#include <sys/types.h>
 #include "platform/stdio.h"
+#include "platform/sock.h"
 #include "avro_src/avro/io.h"
 #include "platform/ext_sha.h"
 #include "platform/ext_key_utils.h"

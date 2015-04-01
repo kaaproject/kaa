@@ -48,12 +48,11 @@ import android.telephony.gsm.GsmCellLocation;
 import de.greenrobot.event.EventBus;
 
 /**
- * The Class CellMonitorApplication.
- * Implementation of base {@link Application} class. Performs initialization of 
- * application resources including initialization of Kaa client. Handles Kaa client lifecycle.
- * Implements and registers listener to monitor mobile cell location and signal strength.
- * Implements and registers listener to monitor phone gps location.
- * Sends cell monitor log records to Kaa cluster via Kaa client.
+ * The implementation of the base {@link Application} class. Performs initialization of the
+ * application resources including initialization of the Kaa client. Handles the Kaa client lifecycle.
+ * Implements and registers a listener to monitor a mobile cell location and the signal strength.
+ * Implements and registers a listener to monitor a phone gps location.
+ * Sends cell monitor log records to the Kaa cluster via the Kaa client.
  */
 public class CellMonitorApplication extends Application {
     
@@ -92,7 +91,7 @@ public class CellMonitorApplication extends Application {
         mGpsLocationListener = new GpsLocationListener();
         
         /*
-         * Initialize Kaa client using android context.
+         * Initialize the Kaa client using the Android context.
          */
         KaaClientPlatformContext kaaClientContext = new AndroidKaaPlatformContext(
                 this);
@@ -100,8 +99,8 @@ public class CellMonitorApplication extends Application {
                 new SimpleKaaClientStateListener() {
 
             /*
-             * Implement onStarted callback to get notified when Kaa
-             * client is operational. 
+             * Implement the onStarted callback to get notified as soon as 
+             * the Kaa client is operational. 
              */
             @Override
             public void onStarted() {
@@ -111,7 +110,7 @@ public class CellMonitorApplication extends Application {
         });
         
         /*
-         * Define log upload strategy used by Kaa client for logs delivery
+         * Define a log upload strategy used by the Kaa client for logs delivery.
          */
         mClient.setLogUploadStrategy(new LogUploadStrategy() {
             
@@ -144,7 +143,7 @@ public class CellMonitorApplication extends Application {
         });
         
         /*
-         * Start Kaa client workflow.
+         * Start the Kaa client workflow.
          */
         mClient.start();
         
@@ -156,8 +155,8 @@ public class CellMonitorApplication extends Application {
         mLocationManager.removeUpdates(mGpsLocationListener);
         
         /*
-         * Suspend Kaa client. Release all network connections and application
-         * resources. Suspend all Kaa client tasks.
+         * Suspend the Kaa client. Release all network connections and application
+         * resources. Suspend all the Kaa client tasks.
          */
         mClient.pause();
     }
@@ -171,7 +170,7 @@ public class CellMonitorApplication extends Application {
         mLocationManager.requestLocationUpdates(bestProvider, 0, 0, mGpsLocationListener);
         
         /*
-         * Resume Kaa client. Restore Kaa client workflow. Resume all Kaa client
+         * Resume the Kaa client. Restore the Kaa client workflow. Resume all the Kaa client
          * tasks.
          */
         mClient.resume();
@@ -182,8 +181,8 @@ public class CellMonitorApplication extends Application {
         super.onTerminate();
 
         /*
-         * Stop Kaa client. Release all network connections and application
-         * resources. Shutdown all Kaa client tasks.
+         * Stop the Kaa client. Release all network connections and application
+         * resources. Shut down all the Kaa client tasks.
          */
         mClient.stop();
         mKaaStarted = false;
@@ -196,7 +195,7 @@ public class CellMonitorApplication extends Application {
             mLastLogTime = System.currentTimeMillis();
 
             /*
-             * Create instance of cell monitor log record and populate with latest values
+             * Create an instance of a cell monitor log record and populate it with the latest values.
              */
             CellMonitorLog cellMonitorLog = new CellMonitorLog();
             cellMonitorLog.setLogTime(mLastLogTime);
@@ -229,8 +228,8 @@ public class CellMonitorApplication extends Application {
             cellMonitorLog.setPhoneGpsLocation(phoneLocation);
             
             /*
-             * Pass cell monitor log record to Kaa client. Kaa client will upload
-             * log record according to defined log upload strategy. 
+             * Pass a cell monitor log record to the Kaa client. The Kaa client will upload 
+             * the log record according to the defined log upload strategy. 
              */
             mClient.addLogRecord(cellMonitorLog);
             

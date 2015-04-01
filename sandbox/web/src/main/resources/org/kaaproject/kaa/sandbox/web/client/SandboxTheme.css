@@ -42,6 +42,7 @@
 
 .appHeaderPanel {
     box-shadow: inset 8px 0px 8px -8px rgba(0,0,0,0.5);
+    white-space: nowrap;
 }
 
 .appHeaderPanel .title {
@@ -52,6 +53,10 @@
     text-align: center;
     line-height: 60px;
     display: inline-block;
+}
+
+.appHeaderPanel .title.smaller {
+	font-size: 26px; 
 }
 
 .appHeaderPanel .buttons {
@@ -82,6 +87,18 @@
 
 .appHeaderPanel .buttons .button span {
     display: inline-block;
+    vertical-align: middle;
+}
+
+.appHeaderPanel .buttons .toggle {
+    cursor: pointer;
+    color: #666666;
+    text-decoration: none;
+}
+
+.appHeaderPanel .buttons .toggle::before {
+    content: '\f0c9';
+    font: 30px fontawesome;
     vertical-align: middle;
 }
 
@@ -439,4 +456,26 @@
 
 .bgPlatformCommon {
     background-color: #46A8BA;
+}
+
+.projectDetails {
+    color: #666;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.projectDetails h2 {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.projectDetails h3 {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.projectDetails pre {
+	border: solid 1px #CCC;
+	font-size: 12px;
+	padding: 8px;
 }

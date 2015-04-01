@@ -33,7 +33,7 @@ public class TwitterSigninListener extends Callback<TwitterSession> implements V
         this.parentActivity = parentActivity;
     }
 
-    // Is called after onClick()
+    // Is called after onClick().
     @Override
     public void success(Result<TwitterSession> twitterSessionResult) {
         Log.i(TAG, twitterSessionResult.toString());

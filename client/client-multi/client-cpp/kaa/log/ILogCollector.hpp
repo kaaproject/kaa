@@ -17,7 +17,7 @@
 #ifndef ILOGCOLLECTOR_HPP_
 #define ILOGCOLLECTOR_HPP_
 
-#include "kaa/log/gen/LogGen.hpp"
+#include "kaa/log/gen/LogDefinitions.hpp"
 #include "kaa/log/ILogStorage.hpp"
 #include "kaa/log/ILogUploadStrategy.hpp"
 
@@ -32,11 +32,6 @@ namespace kaa {
  * Forward declaration.
  */
 struct LogSyncResponse;
-
-/**
- * @typedef The user-defined log record structure.
- */
-typedef SuperRecord KaaUserLogRecord;
 
 /**
  * @brief The public interface to the Kaa log collecting subsystem.

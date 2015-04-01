@@ -15,6 +15,8 @@
  */
 
 #include <stdbool.h>
+#include <sys/types.h>
+#include <stdint.h>
 #include "kaa_test.h"
 
 #include <stddef.h>

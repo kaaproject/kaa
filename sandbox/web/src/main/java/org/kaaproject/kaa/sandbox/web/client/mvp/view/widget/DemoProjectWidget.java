@@ -175,12 +175,16 @@ public class DemoProjectWidget extends VerticalPanel implements
         projectTitle.setText(project.getName());
         projectTitle.setTitle(project.getName());
         Image platformImage = new Image(Utils.getPlatformIcon(project.getPlatform()));
+        platformImage.setTitle(Utils.getPlatformText(project.getPlatform()));
         platformPanel.add(platformImage);
         for (Feature feature : project.getFeatures()) {
             Image image = new Image(Utils.getFeatureIcon(feature));
+            image.setTitle(Utils.getFeatureText(feature));
             image.getElement().getStyle().setPaddingRight(4, Unit.PX);
             featuresPanel.add(image);
         }
+        getBinaryButton.setVisible(project.getDestBinaryFile() != null && 
+                project.getDestBinaryFile().length() > 0);
     }
 
     public Project getProject() {

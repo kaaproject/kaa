@@ -20,8 +20,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
 /**
- * The Class CellMonitorActivity.
- * Implementation of {@link ActionBarActivity} class. Notifies application about activity lifecycle changes.
+ * The implementation of {@link ActionBarActivity} class. Notifies the application of the activity lifecycle changes.
  */
 public class CellMonitorActivity extends ActionBarActivity {
 
@@ -40,7 +39,7 @@ public class CellMonitorActivity extends ActionBarActivity {
         super.onPause();
 
         /*
-         * Notify application about background state.
+         * Notify the application of the background state.
          */
 
         getCellMonitorApplication().pause();
@@ -51,7 +50,7 @@ public class CellMonitorActivity extends ActionBarActivity {
         super.onResume();
 
         /*
-         * Notify application about foreground state.
+         * Notify the application of the foreground state.
          */
 
         getCellMonitorApplication().resume();

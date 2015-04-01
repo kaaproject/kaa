@@ -71,7 +71,9 @@ public class ActionsLabel extends Label {
         DOM.insertChild(getElement(), textElement, 0);
         
         if (hasPopup) {
-            textElement.addClassName(Utils.sandboxStyle.caret());
+            if (text != null && text.length() > 0) {
+                textElement.addClassName(Utils.sandboxStyle.caret());
+            }
             actionsPopup = new PopupPanel(true, false);
             actionsPopup.addStyleName(Utils.sandboxStyle.actionPopup());
             actionsPopup.setWidget(menu);
