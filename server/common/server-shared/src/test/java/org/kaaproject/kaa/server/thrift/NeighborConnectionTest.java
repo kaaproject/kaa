@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.thrift;
 
 import org.apache.thrift.TException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
@@ -70,5 +71,25 @@ public class NeighborConnectionTest {
         ExecutorService executorSpy = spy((ExecutorService) ReflectionTestUtils.getField(neighborConnection, "executor"));
         ReflectionTestUtils.setField(neighborConnection, "executor", executorSpy);
         return executorSpy;
+    }
+
+    @Test
+    public void equalsHashCodeTest() {
+        ConnectionInfo connectionInfo1 = new ConnectionInfo("thriftHost1", 9991, null);
+        ConnectionInfo connectionInfo2 = new ConnectionInfo("thriftHost1", 9991, null);
+        ConnectionInfo connectionInfo3 = new ConnectionInfo("thriftHost1", 9993, null);
+
+        NeighborConnection<NeighborTemplate<Event>, Event> neighborConnection1 = new NeighborConnection<>(connectionInfo1, 10, null);
+        NeighborConnection<NeighborTemplate<Event>, Event> neighborConnection2 = new NeighborConnection<>(connectionInfo2, 8, null);
+        NeighborConnection<NeighborTemplate<Event>, Event> neighborConnection3 = new NeighborConnection<>(connectionInfo3, 7, null);
+
+        Assert.assertEquals(neighborConnection1.hashCode(), neighborConnection2.hashCode());
+        Assert.assertNotEquals(neighborConnection1.hashCode(), neighborConnection3.hashCode());
+
+        Assert.assertEquals(neighborConnection1, neighborConnection1);
+        Assert.assertNotEquals(neighborConnection1, null);
+        Assert.assertNotEquals(neighborConnection1, new Object());
+        Assert.assertEquals(neighborConnection1, neighborConnection2);
+        Assert.assertNotEquals(neighborConnection1, neighborConnection3);
     }
 }
