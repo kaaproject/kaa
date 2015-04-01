@@ -25,7 +25,6 @@ import org.kaaproject.kaa.server.transport.message.MessageHandler;
 import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -44,7 +43,6 @@ public class BootstrapTransportServiceTest {
     @Before
     public void before() throws NoSuchProviderException, NoSuchAlgorithmException, NoSuchPaddingException {
         keyPairGenerator = KeyPairGenerator.getInstance(RSA);
-        Cipher.getInstance("RSA/ECB/PKCS1Padding");
     }
 
     @Test
