@@ -17,6 +17,8 @@ package org.kaaproject.kaa.server.transports.tcp.transport.commands;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 
 public class KaaTcpCommandTest {
 
@@ -27,6 +29,21 @@ public class KaaTcpCommandTest {
         KaaTcpCommand command = (KaaTcpCommand)commandFactory.createCommandProcessor();
         Assert.assertNotNull(command);
         Assert.assertEquals(KaaTcpCommand.KAA_TCP, command.getName());
+    }
+
+
+    @Test
+    public void testGetSet(){
+        int id = 1;
+        long syncTime = 1;
+        MqttFrame mqttFrame = new Connect();
+        KaaTcpCommand kaaTcpCommand = new KaaTcpCommand();
+        kaaTcpCommand.setCommandId(id);
+        kaaTcpCommand.setResponse(mqttFrame);
+        kaaTcpCommand.setSyncTime(syncTime);
+        Assert.assertEquals(id, kaaTcpCommand.getCommandId());
+        Assert.assertEquals(mqttFrame, kaaTcpCommand.getResponse());
+        Assert.assertEquals(syncTime, kaaTcpCommand.getSyncTime());
     }
 
 }
