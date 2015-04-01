@@ -47,6 +47,7 @@ public class HttpHandlerTest {
         AbstractHttpSyncCommand commandMock = Mockito.mock(AbstractHttpSyncCommand.class);
         ReflectionTestUtils.setField(httpHandler, "command", commandMock);
         Assert.assertArrayEquals(new Object[]{commandMock}, httpHandler.build(null, null, false));
+        Assert.assertArrayEquals(new Object[]{commandMock}, httpHandler.build(null, new byte[1], false));
         Assert.assertArrayEquals(new Object[]{commandMock}, httpHandler.build(null, false));
     }
 }
