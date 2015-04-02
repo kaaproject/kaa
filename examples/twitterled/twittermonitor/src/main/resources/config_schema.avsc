@@ -1,0 +1,110 @@
+{
+  "type" : "record",
+  "name" : "TwitterMonitorConfiguration",
+  "namespace" : "org.kaaproject.kaa.demo.twitterled.monitor",
+  "fields" : [ {
+    "name" : "twitterClientConfiguration",
+    "type" : {
+      "type" : "record",
+      "name" : "TwitterClientConfiguration",
+      "fields" : [ {
+        "name" : "consumerKey",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Consumer key"
+      }, {
+        "name" : "consumerSecret",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Consumer secret"
+      }, {
+        "name" : "token",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Token"
+      }, {
+        "name" : "tokenSecret",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Token secret"
+      }, {
+        "name" : "filters",
+        "type" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "avro.java.string" : "String"
+          }
+        },
+        "displayName" : "Filters",
+        "minRowCount" : 1
+      } ],
+      "displayName" : "Twitter Client Configuration"
+    },
+    "displayName" : "Twitter configuration",
+    "displayPrompt" : ""
+  }, {
+    "name" : "kaaClientConfiguration",
+    "type" : {
+      "type" : "record",
+      "name" : "KaaClientConfiguration",
+      "fields" : [ {
+        "name" : "host",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Rest API host"
+      }, {
+        "name" : "port",
+        "type" : "int",
+        "displayName" : "Rest API port"
+      }, {
+        "name" : "login",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Rest  API login",
+        "by_default" : "devuser"
+      }, {
+        "name" : "password",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Rest API password",
+        "by_default" : "devuser123"
+      }, {
+        "name" : "appToken",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Application token"
+      }, {
+        "name" : "topicName",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Topic name",
+        "by_default" : "Led board topic"
+      }, {
+        "name" : "nfSchemaVersion",
+        "type" : "int",
+        "displayName" : "Notification schema version"
+      } ]
+    },
+    "displayName" : "Kaa configuration"
+  } ],
+  "displayName" : "Twitter monitor configuration"
+}

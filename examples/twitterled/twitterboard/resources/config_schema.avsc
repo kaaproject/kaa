@@ -1,0 +1,26 @@
+{
+  "type" : "record",
+  "name" : "TwitterBoardConfiguration",
+  "namespace" : "org.kaaproject.kaa.demo.twitterled.board",
+  "fields" : [ {
+    "name" : "defaultMessage",
+    "type" : {
+      "type" : "string",
+      "avro.java.string" : "String"
+    },
+    "displayName" : "Default message",
+    "displayPrompt" : "",
+    "by_default" : "Twitter led board demo powered by Kaa"
+  }, {
+    "name" : "scrollSpeed",
+    "type" : "int",
+    "displayName" : "Text scroll speed",
+    "by_default" : 120
+  }, {
+    "name" : "repeatCount",
+    "type" : "int",
+    "displayName" : "Repeat count",
+    "by_default" : 3
+  } ],
+  "displayName" : "Twitter board configuration"
+}
