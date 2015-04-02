@@ -62,6 +62,8 @@ import java.util.Set;
 
 public class AvroEncDecTest {
 
+    private static final String CONVER_METHOD = "convert";
+
     @Test
     public void encodeTest() throws PlatformEncDecException {
         AvroEncDec encDec = new AvroEncDec();
@@ -110,7 +112,7 @@ public class AvroEncDecTest {
     @Test
     public void convertSyncStatusTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", org.kaaproject.kaa.server.sync.SyncStatus.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, org.kaaproject.kaa.server.sync.SyncStatus.class);
         method.setAccessible(true);
         org.kaaproject.kaa.server.sync.SyncStatus syncStatus = null;
         Assert.assertNull(method.invoke(avroEncDec, syncStatus));
@@ -124,7 +126,7 @@ public class AvroEncDecTest {
     @Test
     public void convertBootstrapServerSyncTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", BootstrapServerSync.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, BootstrapServerSync.class);
         method.setAccessible(true);
         BootstrapServerSync serverSync = null;
         Assert.assertNull(method.invoke(avroEncDec, serverSync));
@@ -136,7 +138,7 @@ public class AvroEncDecTest {
     @Test
     public void convertProtocolConnectionDataSetTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", Set.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, Set.class);
         method.setAccessible(true);
         Set set = null;
         Assert.assertEquals(Collections.emptyList(), method.invoke(avroEncDec, set));
@@ -146,7 +148,7 @@ public class AvroEncDecTest {
     @Test
     public void convertRedirectServerSyncTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", RedirectServerSync.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, RedirectServerSync.class);
         method.setAccessible(true);
         RedirectServerSync serverSync = null;
         Assert.assertNull(method.invoke(avroEncDec, serverSync));
@@ -156,7 +158,7 @@ public class AvroEncDecTest {
     @Test
     public void convertProfileServerSyncTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", ProfileServerSync.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, ProfileServerSync.class);
         method.setAccessible(true);
         ProfileServerSync serverSync = null;
         Assert.assertNull(method.invoke(avroEncDec, serverSync));
@@ -166,7 +168,7 @@ public class AvroEncDecTest {
     @Test
     public void convertSyncResponseStatusTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", org.kaaproject.kaa.server.sync.SyncResponseStatus.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, org.kaaproject.kaa.server.sync.SyncResponseStatus.class);
         method.setAccessible(true);
         org.kaaproject.kaa.server.sync.SyncResponseStatus responseStatus = null;
         Assert.assertNull(method.invoke(avroEncDec, responseStatus));
@@ -178,7 +180,7 @@ public class AvroEncDecTest {
     @Test
     public void convertConfigurationServerSyncTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", ConfigurationServerSync.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, ConfigurationServerSync.class);
         method.setAccessible(true);
         ConfigurationServerSync serverSync = null;
         Assert.assertNull(method.invoke(avroEncDec, serverSync));
@@ -188,7 +190,7 @@ public class AvroEncDecTest {
     @Test
     public void convertNotificationServerSyncTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", NotificationServerSync.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, NotificationServerSync.class);
         method.setAccessible(true);
         NotificationServerSync serverSync = null;
         Assert.assertNull(method.invoke(avroEncDec, serverSync));
@@ -198,7 +200,7 @@ public class AvroEncDecTest {
     @Test
     public void convertEventServerSyncTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", EventServerSync.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, EventServerSync.class);
         method.setAccessible(true);
         EventServerSync serverSync = null;
         Assert.assertNull(method.invoke(avroEncDec, serverSync));
@@ -208,7 +210,7 @@ public class AvroEncDecTest {
     @Test
     public void convertUserServerSyncTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", UserServerSync.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, UserServerSync.class);
         method.setAccessible(true);
         UserServerSync serverSync = null;
         Assert.assertNull(method.invoke(avroEncDec, serverSync));
@@ -218,7 +220,7 @@ public class AvroEncDecTest {
     @Test
     public void convertUserVerifierErrorCodeTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", UserVerifierErrorCode.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, UserVerifierErrorCode.class);
         method.setAccessible(true);
         UserVerifierErrorCode errorCode = null;
         Assert.assertNull(method.invoke(avroEncDec, errorCode));
@@ -234,7 +236,7 @@ public class AvroEncDecTest {
     @Test
     public void convertNotificationTypeTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", org.kaaproject.kaa.server.sync.NotificationType.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, org.kaaproject.kaa.server.sync.NotificationType.class);
         method.setAccessible(true);
         org.kaaproject.kaa.server.sync.NotificationType notificationType = null;
         Assert.assertNull(method.invoke(avroEncDec, notificationType));
@@ -245,7 +247,7 @@ public class AvroEncDecTest {
     @Test
     public void convertUserAttachResponseTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", org.kaaproject.kaa.server.sync.UserAttachResponse.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, org.kaaproject.kaa.server.sync.UserAttachResponse.class);
         method.setAccessible(true);
         org.kaaproject.kaa.server.sync.UserAttachResponse failure = new org.kaaproject.kaa.server.sync.UserAttachResponse(SyncStatus.FAILURE, null, null);
         Assert.assertEquals(new UserAttachResponse(SyncResponseResultType.FAILURE, null, null), method.invoke(avroEncDec, failure));
@@ -257,7 +259,7 @@ public class AvroEncDecTest {
     @Test
     public void convertSubscriptionTypeTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", org.kaaproject.kaa.server.sync.SubscriptionType.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, org.kaaproject.kaa.server.sync.SubscriptionType.class);
         method.setAccessible(true);
         org.kaaproject.kaa.server.sync.SubscriptionType subscriptionType = null;
         Assert.assertNull(method.invoke(avroEncDec, subscriptionType));
@@ -268,7 +270,7 @@ public class AvroEncDecTest {
     @Test
     public void convertLogServerSyncTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", LogServerSync.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, LogServerSync.class);
         method.setAccessible(true);
         LogServerSync serverSync = null;
         Assert.assertNull(method.invoke(avroEncDec, serverSync));
@@ -278,7 +280,7 @@ public class AvroEncDecTest {
     @Test
     public void convertLogDeliveryStatusTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", LogDeliveryStatus.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, LogDeliveryStatus.class);
         method.setAccessible(true);
         LogDeliveryStatus deliveryStatus = null;
         Assert.assertNull(method.invoke(avroEncDec, deliveryStatus));
@@ -288,7 +290,7 @@ public class AvroEncDecTest {
     @Test
     public void convertLogDeliveryErrorCodeTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", org.kaaproject.kaa.server.sync.LogDeliveryErrorCode.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, org.kaaproject.kaa.server.sync.LogDeliveryErrorCode.class);
         method.setAccessible(true);
         org.kaaproject.kaa.server.sync.LogDeliveryErrorCode deliveryErrorCode = null;
         Assert.assertNull(method.invoke(avroEncDec, deliveryErrorCode));
@@ -301,7 +303,7 @@ public class AvroEncDecTest {
     @Test
     public void convertSyncRequestMetaDataTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", SyncRequestMetaData.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, SyncRequestMetaData.class);
         method.setAccessible(true);
         SyncRequestMetaData requestMetaData = null;
         Assert.assertNull(method.invoke(avroEncDec, requestMetaData));
@@ -311,7 +313,7 @@ public class AvroEncDecTest {
     @Test
     public void convertBootstrapSyncRequestTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", BootstrapSyncRequest.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, BootstrapSyncRequest.class);
         method.setAccessible(true);
         BootstrapSyncRequest syncRequest = null;
         Assert.assertNull(method.invoke(avroEncDec, syncRequest));
@@ -321,7 +323,7 @@ public class AvroEncDecTest {
     @Test
     public void convertProtocolVersionPairListTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", List.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, List.class);
         method.setAccessible(true);
         List list = null;
         Assert.assertEquals(Collections.emptyList(), method.invoke(avroEncDec, list));
@@ -331,7 +333,7 @@ public class AvroEncDecTest {
     @Test
     public void convertProfileSyncRequestTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", ProfileSyncRequest.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, ProfileSyncRequest.class);
         method.setAccessible(true);
         ProfileSyncRequest syncRequest = null;
         Assert.assertNull(method.invoke(avroEncDec, syncRequest));
@@ -341,7 +343,7 @@ public class AvroEncDecTest {
     @Test
     public void convertEndpointVersionInfoTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo.class);
         method.setAccessible(true);
         org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo versionInfo = null;
         Assert.assertNull(method.invoke(avroEncDec, versionInfo));
@@ -351,7 +353,7 @@ public class AvroEncDecTest {
     @Test
     public void convertConfigurationSyncRequestTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", ConfigurationSyncRequest.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, ConfigurationSyncRequest.class);
         method.setAccessible(true);
         ConfigurationSyncRequest syncRequest = null;
         Assert.assertNull(method.invoke(avroEncDec, syncRequest));
@@ -362,7 +364,7 @@ public class AvroEncDecTest {
     @Test
     public void convertNotificationSyncRequestTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", NotificationSyncRequest.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, NotificationSyncRequest.class);
         method.setAccessible(true);
         NotificationSyncRequest syncRequest = null;
         Assert.assertNull(method.invoke(avroEncDec, syncRequest));
@@ -372,7 +374,7 @@ public class AvroEncDecTest {
     @Test
     public void convertEventSyncRequestTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", EventSyncRequest.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, EventSyncRequest.class);
         method.setAccessible(true);
         EventSyncRequest syncRequest = null;
         Assert.assertNull(method.invoke(avroEncDec, syncRequest));
@@ -382,7 +384,7 @@ public class AvroEncDecTest {
     @Test
     public void convertLogSyncRequestTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", LogSyncRequest.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, LogSyncRequest.class);
         method.setAccessible(true);
         LogSyncRequest syncRequest = null;
         Assert.assertNull(method.invoke(avroEncDec, syncRequest));
@@ -392,7 +394,7 @@ public class AvroEncDecTest {
     @Test
     public void convertUserSyncRequestTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
-        Method method = AvroEncDec.class.getDeclaredMethod("convert", UserSyncRequest.class);
+        Method method = AvroEncDec.class.getDeclaredMethod(CONVER_METHOD, UserSyncRequest.class);
         method.setAccessible(true);
         UserSyncRequest syncRequest = null;
         Assert.assertNull(method.invoke(avroEncDec, syncRequest));

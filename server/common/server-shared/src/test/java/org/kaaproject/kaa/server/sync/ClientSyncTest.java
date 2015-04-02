@@ -47,5 +47,6 @@ public class ClientSyncTest {
         when(clientSyncMetaData.getProfileHash()).thenReturn(null);
         ClientSync clientSync = new ClientSync(0, clientSyncMetaData, profileClientSync, null, null, null, null, null);
         Assert.assertEquals(clientSync.isValid(), false);
+        Assert.assertNotNull(new ClientSyncMetaData().toString());
     }
 }

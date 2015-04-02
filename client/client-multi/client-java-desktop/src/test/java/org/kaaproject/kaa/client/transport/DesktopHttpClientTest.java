@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.LinkedHashMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -63,13 +66,27 @@ public class DesktopHttpClientTest {
 
     @Test
     public void executeValidHttpRequest() throws Exception {
-        byte[] inputData = new byte[] {100, 101, 102};
+        byte[] inputData = new byte[]{100, 101, 102};
         DesktopHttpClient client = new DesktopHttpClient(URL, privateKey, publicKey, remotePublicKey);
         CloseableHttpClient httpClientMock = mockForHttpClient(OK, true, inputData);
         ReflectionTestUtils.setField(client, HTTP_CLIENT_FIELD_NAME, httpClientMock);
         byte[] body = client.executeHttpRequest(URL, entities, false);
         Assert.assertArrayEquals(inputData, body);
         verify(httpResponse).close();
+    }
+
+    @Test
+    public void canAbortTest() throws Throwable {
+        DesktopHttpClient client = new DesktopHttpClient(URL, privateKey, publicKey, remotePublicKey);
+        ReflectionTestUtils.setField(client, HTTP_METHOD_FIELD_NAME, null);
+        Assert.assertFalse(client.canAbort());
+        HttpPost method = new HttpPost();
+        method.abort();
+        ReflectionTestUtils.setField(client, HTTP_METHOD_FIELD_NAME, method);
+        Assert.assertFalse(client.canAbort());
+        method = new HttpPost();
+        ReflectionTestUtils.setField(client, HTTP_METHOD_FIELD_NAME, method);
+        Assert.assertTrue(client.canAbort());
     }
 
     @Test(expected = IOException.class)

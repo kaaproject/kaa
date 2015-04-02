@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.transports.http.transport.commands;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
@@ -26,12 +27,12 @@ import org.kaaproject.kaa.server.transports.http.transport.commands.LongSyncComm
 import org.kaaproject.kaa.server.transports.http.transport.commands.LongSyncCommandFactory;
 import org.kaaproject.kaa.server.transports.http.transport.commands.SyncCommand;
 import org.kaaproject.kaa.server.transports.http.transport.commands.SyncCommandFactory;
+import org.kaaproject.kaa.server.transports.http.transport.netty.AbstractCommand;
 
 public class SyncCommandTest {
 
-
     @Test
-    public void testSyncCommand(){
+    public void testSyncCommand() throws Exception {
         SyncCommandFactory commandFactory = new SyncCommandFactory();
         SyncCommand command = (SyncCommand)commandFactory.createCommandProcessor();
         command.setResponseBody("responseBody".getBytes());
@@ -39,6 +40,9 @@ public class SyncCommandTest {
         Assert.assertNotNull(response);
         Assert.assertEquals(RESPONSE_CONTENT_TYPE, response.headers().get(CONTENT_TYPE));
         Assert.assertEquals(ChannelType.SYNC, command.getChannelType());
+        Assert.assertEquals("", command.getName());
+        Assert.assertEquals("", AbstractCommand.getCommandName());
+        command.call();
     }
 
     @Test
