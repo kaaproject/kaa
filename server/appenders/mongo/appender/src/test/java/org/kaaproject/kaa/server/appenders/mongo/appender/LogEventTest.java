@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.appenders.mongo.appender;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,5 +37,15 @@ public class LogEventTest {
         DBObject dbEvent = logEvent.getEvent();
         Assert.assertEquals(HEADER_VALUE, dBHeader.get(KEY));
         Assert.assertEquals(EVENT_VALUE, dbEvent.get(KEY));
+    }
+
+    @Test
+    public void getSetTest() {
+        LogEvent logEvent = new LogEvent();
+        DBObject dbObject = new BasicDBObject(10);
+        logEvent.setEvent(dbObject);
+        logEvent.setHeader(dbObject);
+        Assert.assertEquals(dbObject, logEvent.getEvent());
+        Assert.assertEquals(dbObject, logEvent.getHeader());
     }
 }

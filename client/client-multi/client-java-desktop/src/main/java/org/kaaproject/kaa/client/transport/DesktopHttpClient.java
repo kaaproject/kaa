@@ -113,14 +113,6 @@ public class DesktopHttpClient extends AbstractHttpClient {
                     signature = new byte[0];
                 }
 
-                // LOG.debug("Remote Public Key: {}" +
-                // messageEncDec.getRemotePublicKey().getEncoded().length);
-                // LOG.debug(MessageEncoderDecoder.bytesToHex(messageEncDec.getRemotePublicKey().getEncoded()));
-                // LOG.debug("Signature size: {}" + signature.length);
-                // LOG.debug(MessageEncoderDecoder.bytesToHex(signature));
-                // LOG.debug("Body size: {}" + body.length);
-                // LOG.debug(MessageEncoderDecoder.bytesToHex(body));
-
                 return verifyResponse(body, signature);
             } else {
                 return body;

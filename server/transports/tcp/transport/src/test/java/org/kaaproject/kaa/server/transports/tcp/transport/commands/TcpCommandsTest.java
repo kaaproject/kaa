@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,21 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
+import org.kaaproject.kaa.server.transports.tcp.transport.messages.NettyTcpConnectMessage;
+import org.kaaproject.kaa.server.transports.tcp.transport.messages.NettyTcpSyncMessage;
 
-public class KaaTcpCommandTest {
-
-
+public class TcpCommandsTest {
     @Test
-    public void testKaaTcpCommand(){
+    public void kaaTcpCommandTest() {
         KaaTcpCommandFactory commandFactory = new KaaTcpCommandFactory();
         KaaTcpCommand command = (KaaTcpCommand)commandFactory.createCommandProcessor();
         Assert.assertNotNull(command);
         Assert.assertEquals(KaaTcpCommand.KAA_TCP, command.getName());
     }
 
-
     @Test
-    public void testGetSet(){
+    public void kaaTcpCommandGetSetTest() {
         int id = 1;
         long syncTime = 1;
         MqttFrame mqttFrame = new Connect();
@@ -46,4 +46,24 @@ public class KaaTcpCommandTest {
         Assert.assertEquals(syncTime, kaaTcpCommand.getSyncTime());
     }
 
+    @Test
+    public void kaaTcpCommandFactoryGetSetTest() {
+        KaaTcpCommandFactory kaaTcpCommandFactory = new KaaTcpCommandFactory();
+        Assert.assertEquals(KaaTcpCommand.KAA_TCP, kaaTcpCommandFactory.getCommandName());
+    }
+
+    @Test
+    public void nettyKaaTcpSyncMessageGetSetTest() {
+        Connect connect = new Connect(10, 10, new byte[10], null, null);
+        NettyTcpConnectMessage nettyTcpConnectMessage = new NettyTcpConnectMessage(null, null, connect, null, null, null, null);
+        Assert.assertEquals(connect.isEncrypted(), nettyTcpConnectMessage.isEncrypted());
+        Assert.assertEquals(connect.getKeepAlive(), nettyTcpConnectMessage.getKeepAlive());
+    }
+
+    @Test
+    public void nettyTcpSyncMessageGetSetTest() {
+        SyncRequest command = new SyncRequest(null, true, true);
+        NettyTcpSyncMessage nettyTcpSyncMessage = new NettyTcpSyncMessage(command, null, null, null);
+        Assert.assertEquals(command.isEncrypted(), nettyTcpSyncMessage.isEncrypted());
+    }
 }

@@ -112,7 +112,15 @@ public class FlumeLogAppenderTest {
         TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
         appender.doAppend(eventPack, callback);
         Assert.assertTrue(callback.success);
+    }
 
+    @Test
+    public void appendWhenClosedTest() {
+        appender.close();
+        LogEventPack eventPack = new LogEventPack();
+        TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
+        appender.doAppend(eventPack, callback);
+        Assert.assertTrue(callback.internallError);
     }
 
     @Test

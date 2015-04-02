@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
-public class MongoModelConstants {
+public class MongoModelConstants {  // NOSONAR
 
     /**
      * Generic constants.
