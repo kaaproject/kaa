@@ -61,6 +61,7 @@ typedef enum {
     KAA_SERVICE_EVENT = 3,
     KAA_SERVICE_LOGGING = 4,
     KAA_SERVICE_CONFIGURATION = 5,
+    KAA_SERVICE_NOTIFICATION = 6,
 } kaa_service_t;
 
 /**
