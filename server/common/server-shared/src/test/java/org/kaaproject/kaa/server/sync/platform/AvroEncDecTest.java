@@ -1,25 +1,3 @@
-package org.kaaproject.kaa.server.sync.platform;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode;
-import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationType;
-import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest;
-import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
-import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
-import org.kaaproject.kaa.common.endpoint.gen.UserAttachErrorCode;
-import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
-import org.kaaproject.kaa.server.sync.ConfigurationServerSync;
-import org.kaaproject.kaa.server.sync.Event;
-import org.kaaproject.kaa.server.sync.LogDeliveryStatus;
-import org.kaaproject.kaa.server.sync.NotificationServerSync;
 /*
  * Copyright 2015 CyberVision, Inc.
  *
@@ -36,20 +14,77 @@ import org.kaaproject.kaa.server.sync.NotificationServerSync;
  * limitations under the License.
  */
 
+package org.kaaproject.kaa.server.sync.platform;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.kaaproject.kaa.common.Constants;
+import org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
+import org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode;
+import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.NotificationType;
+import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
+import org.kaaproject.kaa.common.endpoint.gen.SyncRequest;
+import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
+import org.kaaproject.kaa.common.endpoint.gen.SyncResponseStatus;
+import org.kaaproject.kaa.common.endpoint.gen.UserAttachErrorCode;
+import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
+import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
+import org.kaaproject.kaa.server.sync.ClientSync;
+import org.kaaproject.kaa.server.sync.ConfigurationServerSync;
+import org.kaaproject.kaa.server.sync.Event;
+import org.kaaproject.kaa.server.sync.EventServerSync;
+import org.kaaproject.kaa.server.sync.LogDeliveryStatus;
+import org.kaaproject.kaa.server.sync.LogServerSync;
+import org.kaaproject.kaa.server.sync.NotificationServerSync;
 import org.kaaproject.kaa.server.sync.ProfileServerSync;
 import org.kaaproject.kaa.server.sync.RedirectServerSync;
+import org.kaaproject.kaa.server.sync.ServerSync;
 import org.kaaproject.kaa.server.sync.SyncStatus;
+import org.kaaproject.kaa.server.sync.UserServerSync;
 import org.kaaproject.kaa.server.sync.UserVerifierErrorCode;
 import org.kaaproject.kaa.server.sync.bootstrap.BootstrapServerSync;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 public class AvroEncDecTest {
 
+    @Test
+    public void encodeTest() throws PlatformEncDecException {
+        AvroEncDec encDec = new AvroEncDec();
+        Assert.assertNull(encDec.encode(null));
+        encDec.encode(new ServerSync());
+    }
+
+    @Test
+    public void getIdTest() {
+        Assert.assertEquals(Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, new AvroEncDec().getId());
+    }
+
+    @Test
+    public void convertSyncRequestTest() {
+        ClientSync clientSync = new ClientSync();
+        Assert.assertEquals(clientSync, AvroEncDec.convert(new SyncRequest()));
+    }
+
+    @Test
+    public void convertServerSyncTest() {
+        SyncResponse syncResponse = new SyncResponse();
+        Assert.assertEquals(syncResponse, AvroEncDec.convert(new ServerSync()));
+    }
 
     @Test
     public void convertNullTest() {
@@ -61,7 +96,9 @@ public class AvroEncDecTest {
     public void convertEventTest() {
         Event event = new Event();
         org.kaaproject.kaa.common.endpoint.gen.Event genEvent = new org.kaaproject.kaa.common.endpoint.gen.Event(event.getSeqNum(), event.getEventClassFQN(), event.getEventData(), event.getSource(), event.getTarget());
-        Assert.assertEquals(genEvent, AvroEncDec.convert(event));
+        org.kaaproject.kaa.common.endpoint.gen.Event nullGenEvent = null;
+        Assert.assertEquals(event, AvroEncDec.convert(genEvent));
+        Assert.assertNull(AvroEncDec.convert(nullGenEvent));
     }
 
     @Test(expected = PlatformEncDecException.class)
@@ -92,6 +129,8 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         BootstrapServerSync serverSync = null;
         Assert.assertNull(method.invoke(avroEncDec, serverSync));
+        BootstrapServerSync bootstrapServerSync = new BootstrapServerSync(1, Collections.EMPTY_SET);
+        method.invoke(avroEncDec, bootstrapServerSync);
     }
 
 
@@ -102,6 +141,7 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         Set set = null;
         Assert.assertEquals(Collections.emptyList(), method.invoke(avroEncDec, set));
+        method.invoke(avroEncDec, new HashSet<>());
     }
 
     @Test
@@ -111,6 +151,7 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         RedirectServerSync serverSync = null;
         Assert.assertNull(method.invoke(avroEncDec, serverSync));
+        method.invoke(avroEncDec, new RedirectServerSync());
     }
 
     @Test
@@ -120,6 +161,7 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         ProfileServerSync serverSync = null;
         Assert.assertNull(method.invoke(avroEncDec, serverSync));
+        method.invoke(avroEncDec, new ProfileServerSync());
     }
 
     @Test
@@ -141,6 +183,7 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         ConfigurationServerSync serverSync = null;
         Assert.assertNull(method.invoke(avroEncDec, serverSync));
+        method.invoke(avroEncDec, new ConfigurationServerSync());
     }
 
     @Test
@@ -150,6 +193,27 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         NotificationServerSync serverSync = null;
         Assert.assertNull(method.invoke(avroEncDec, serverSync));
+        method.invoke(avroEncDec, new NotificationServerSync());
+    }
+
+    @Test
+    public void convertEventServerSyncTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        AvroEncDec avroEncDec = new AvroEncDec();
+        Method method = AvroEncDec.class.getDeclaredMethod("convert", EventServerSync.class);
+        method.setAccessible(true);
+        EventServerSync serverSync = null;
+        Assert.assertNull(method.invoke(avroEncDec, serverSync));
+        method.invoke(avroEncDec, new EventServerSync());
+    }
+
+    @Test
+    public void convertUserServerSyncTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        AvroEncDec avroEncDec = new AvroEncDec();
+        Method method = AvroEncDec.class.getDeclaredMethod("convert", UserServerSync.class);
+        method.setAccessible(true);
+        UserServerSync serverSync = null;
+        Assert.assertNull(method.invoke(avroEncDec, serverSync));
+        method.invoke(avroEncDec, new UserServerSync());
     }
 
     @Test
@@ -180,6 +244,18 @@ public class AvroEncDecTest {
     }
 
     @Test
+    public void convertUserAttachResponseTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        AvroEncDec avroEncDec = new AvroEncDec();
+        Method method = AvroEncDec.class.getDeclaredMethod("convert", org.kaaproject.kaa.server.sync.UserAttachResponse.class);
+        method.setAccessible(true);
+        org.kaaproject.kaa.server.sync.UserAttachResponse failure = new org.kaaproject.kaa.server.sync.UserAttachResponse(SyncStatus.FAILURE, null, null);
+        Assert.assertEquals(new UserAttachResponse(SyncResponseResultType.FAILURE, null, null), method.invoke(avroEncDec, failure));
+        org.kaaproject.kaa.server.sync.UserAttachResponse success = new org.kaaproject.kaa.server.sync.UserAttachResponse(SyncStatus.SUCCESS, null, null);
+        Assert.assertEquals(new UserAttachResponse(SyncResponseResultType.SUCCESS, null, null), method.invoke(avroEncDec, success));
+
+    }
+
+    @Test
     public void convertSubscriptionTypeTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
         Method method = AvroEncDec.class.getDeclaredMethod("convert", org.kaaproject.kaa.server.sync.SubscriptionType.class);
@@ -191,12 +267,23 @@ public class AvroEncDecTest {
     }
 
     @Test
+    public void convertLogServerSyncTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        AvroEncDec avroEncDec = new AvroEncDec();
+        Method method = AvroEncDec.class.getDeclaredMethod("convert", LogServerSync.class);
+        method.setAccessible(true);
+        LogServerSync serverSync = null;
+        Assert.assertNull(method.invoke(avroEncDec, serverSync));
+        method.invoke(avroEncDec, new LogServerSync());
+    }
+
+    @Test
     public void convertLogDeliveryStatusTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         AvroEncDec avroEncDec = new AvroEncDec();
         Method method = AvroEncDec.class.getDeclaredMethod("convert", LogDeliveryStatus.class);
         method.setAccessible(true);
         LogDeliveryStatus deliveryStatus = null;
         Assert.assertNull(method.invoke(avroEncDec, deliveryStatus));
+        method.invoke(avroEncDec, new LogDeliveryStatus(1, SyncStatus.SUCCESS, null));
     }
 
     @Test
@@ -219,6 +306,7 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         SyncRequestMetaData requestMetaData = null;
         Assert.assertNull(method.invoke(avroEncDec, requestMetaData));
+        method.invoke(avroEncDec, new SyncRequestMetaData());
     }
 
     @Test
@@ -228,6 +316,7 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         BootstrapSyncRequest syncRequest = null;
         Assert.assertNull(method.invoke(avroEncDec, syncRequest));
+        method.invoke(avroEncDec, new BootstrapSyncRequest());
     }
 
     @Test
@@ -237,6 +326,7 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         List list = null;
         Assert.assertEquals(Collections.emptyList(), method.invoke(avroEncDec, list));
+        method.invoke(avroEncDec, new LinkedList<>());
     }
 
     @Test
@@ -246,6 +336,7 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         ProfileSyncRequest syncRequest = null;
         Assert.assertNull(method.invoke(avroEncDec, syncRequest));
+        method.invoke(avroEncDec, new ProfileSyncRequest());
     }
 
     @Test
@@ -255,6 +346,7 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo versionInfo = null;
         Assert.assertNull(method.invoke(avroEncDec, versionInfo));
+        method.invoke(avroEncDec, new EndpointVersionInfo());
     }
 
     @Test
@@ -264,6 +356,7 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         ConfigurationSyncRequest syncRequest = null;
         Assert.assertNull(method.invoke(avroEncDec, syncRequest));
+        method.invoke(avroEncDec, new ConfigurationSyncRequest());
     }
 
 
@@ -274,6 +367,7 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         NotificationSyncRequest syncRequest = null;
         Assert.assertNull(method.invoke(avroEncDec, syncRequest));
+        method.invoke(avroEncDec, new NotificationSyncRequest());
     }
 
     @Test
@@ -283,6 +377,7 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         EventSyncRequest syncRequest = null;
         Assert.assertNull(method.invoke(avroEncDec, syncRequest));
+        method.invoke(avroEncDec, new EventSyncRequest());
     }
 
     @Test
@@ -292,6 +387,7 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         LogSyncRequest syncRequest = null;
         Assert.assertNull(method.invoke(avroEncDec, syncRequest));
+        method.invoke(avroEncDec, new LogSyncRequest());
     }
 
     @Test
@@ -301,6 +397,7 @@ public class AvroEncDecTest {
         method.setAccessible(true);
         UserSyncRequest syncRequest = null;
         Assert.assertNull(method.invoke(avroEncDec, syncRequest));
+        method.invoke(avroEncDec, new UserSyncRequest());
     }
 
 

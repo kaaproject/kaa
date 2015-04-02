@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.client.bootstrap.DefaultBootstrapManager;
@@ -33,15 +34,21 @@ import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
+import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
+import org.kaaproject.kaa.client.configuration.delta.DefaultDeltaType;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.context.SimpleExecutorContext;
 import org.kaaproject.kaa.client.context.TransportContext;
 import org.kaaproject.kaa.client.exceptions.KaaException;
+import org.kaaproject.kaa.client.exceptions.KaaInvalidConfigurationException;
 import org.kaaproject.kaa.client.exceptions.KaaRuntimeException;
+import org.kaaproject.kaa.client.exceptions.KaaUnsupportedPlatformException;
 import org.kaaproject.kaa.client.logging.AbstractLogCollector;
 import org.kaaproject.kaa.client.persistence.KaaClientPropertiesState;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
+import org.kaaproject.kaa.client.profile.ProfileRuntimeException;
+import org.kaaproject.kaa.client.schema.SchemaRuntimeException;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.client.util.CommonsBase64;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
@@ -83,7 +90,7 @@ public class KaaClientTest {
         client = new AbstractKaaClient(platformContext, stateListener) {
             @Override
             protected DefaultBootstrapManager buildBootstrapManager(KaaClientProperties properties, KaaClientState kaaClientState,
-                    TransportContext transportContext) {
+                                                                    TransportContext transportContext) {
                 return bsManagerMock;
             }
         };
@@ -178,5 +185,18 @@ public class KaaClientTest {
         ReflectionTestUtils.setField(client, "channelManager", channelManager);
         client.resume();
         Mockito.verify(stateListener, Mockito.timeout(1000)).onResumeFailure(Mockito.any(KaaException.class));
+    }
+
+    @Test
+    public void exceptionCreationTest() {
+        KaaUnsupportedPlatformException kaaUnsupportedPlatformException = new KaaUnsupportedPlatformException(new Exception());
+        ProfileRuntimeException profileRuntimeException = new ProfileRuntimeException("");
+        SchemaRuntimeException schemaRuntimeException1 = new SchemaRuntimeException();
+        SchemaRuntimeException schemaRuntimeException2 = new SchemaRuntimeException("");
+        KaaInvalidConfigurationException invalidConfigurationException = new KaaInvalidConfigurationException(new Exception());
+        ChannelRuntimeException channelRuntimeException1 = new ChannelRuntimeException();
+        ChannelRuntimeException channelRuntimeException2 = new ChannelRuntimeException(new Exception());
+        ChannelRuntimeException channelRuntimeException3 = new ChannelRuntimeException("", new Exception());
+        ChannelRuntimeException channelRuntimeException4 = new ChannelRuntimeException("", new Exception(), true, true);
     }
 }
