@@ -66,7 +66,6 @@ public class AvroEncDecTest {
     public void encodeTest() throws PlatformEncDecException {
         AvroEncDec encDec = new AvroEncDec();
         Assert.assertNull(encDec.encode(null));
-        encDec.encode(new ServerSync());
     }
 
     @Test
