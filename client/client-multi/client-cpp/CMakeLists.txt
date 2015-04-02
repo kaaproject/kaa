@@ -36,7 +36,7 @@ else()
    execute_process(COMMAND chmod +x ./${AVROGEN}
                    COMMAND "./${AVROGEN}" 
                    WORKING_DIRECTORY ${WORKDIR}
-          )
+                  )
 endif()
 
 #
