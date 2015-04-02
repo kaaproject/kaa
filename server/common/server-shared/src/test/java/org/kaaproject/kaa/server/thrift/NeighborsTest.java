@@ -54,5 +54,6 @@ public class NeighborsTest {
         neighbors.sendMessages(connectionInfo1, messagesSpy);
         verify(messagesSpy, timeout(1000)).iterator();
         verify(eventQueue, timeout(1000)).offer(eq(e), anyLong(), any(TimeUnit.class));
+        neighbors.shutdown();
     }
 }

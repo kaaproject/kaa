@@ -20,8 +20,17 @@ import org.junit.Test;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
+import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
+import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.transport.channel.ChannelContext;
+import org.kaaproject.kaa.server.transport.channel.ChannelType;
+import org.kaaproject.kaa.server.transport.session.SessionInfo;
 import org.kaaproject.kaa.server.transports.tcp.transport.messages.NettyTcpConnectMessage;
 import org.kaaproject.kaa.server.transports.tcp.transport.messages.NettyTcpSyncMessage;
+
+import java.util.UUID;
+
+import static org.mockito.Mockito.mock;
 
 public class TcpCommandsTest {
     @Test
@@ -62,8 +71,10 @@ public class TcpCommandsTest {
 
     @Test
     public void nettyTcpSyncMessageGetSetTest() {
-        SyncRequest command = new SyncRequest(null, true, true);
-        NettyTcpSyncMessage nettyTcpSyncMessage = new NettyTcpSyncMessage(command, null, null, null);
+        SyncRequest command = new SyncRequest(new byte[10], true, true);
+        SessionInfo sessionInfo = new SessionInfo(UUID.randomUUID(), 10, mock(ChannelContext.class), ChannelType.ASYNC,
+                mock(MessageEncoderDecoder.CipherPair.class), EndpointObjectHash.fromString("hash"), "token", 100, true);
+        NettyTcpSyncMessage nettyTcpSyncMessage = new NettyTcpSyncMessage(command, sessionInfo, null, null);
         Assert.assertEquals(command.isEncrypted(), nettyTcpSyncMessage.isEncrypted());
     }
 }
