@@ -685,7 +685,6 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
     kaa_error_t error = KAA_ERR_NONE;
     char *event_fqn = NULL;
     uint8_t* event_source = NULL;
-    char *event_data = NULL;
 
     if (!(self) || !(reader)) {
         error = KAA_ERR_BADPARAM;
@@ -761,26 +760,11 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         callback = self->global_event_callback;
 
     if (event_options & KAA_EVENT_OPTION_EVENT_HAS_DATA) {
-
-        is_enough = kaa_platform_message_is_buffer_large_enough(reader, kaa_aligned_size_get(event_data_size));
-
-        if (!is_enough) {
-            KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Buffer size is less than event data size value");
-            error = KAA_ERR_READ_FAILED;
-            goto end;
-        }
-
-        event_data = (char *)KAA_MALLOC(event_data_size);
-        if (!(event_data)) {
-            error = KAA_ERR_NOMEM;
-            goto end;
-        }
-
-        error = kaa_platform_message_read_aligned(reader, event_data, event_data_size * sizeof(uint8_t));
-
+        const char* event_data = reader->current;
+        kaa_error_t error = kaa_platform_message_skip(reader, kaa_aligned_size_get(event_data_size));
         if (error) {
-            KAA_LOG_ERROR(self->logger, error, "Failed to read event data field");
-            goto end;
+             KAA_LOG_ERROR(self->logger, error, "Failed to read event data, size %u", event_data_size);
+             goto end;
         }
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Successfully retrieved event data size=%u", event_data_size);
         if (callback)
@@ -791,9 +775,6 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
 
 end:
 
-    if (event_data) {
-        KAA_FREE(event_data);
-    }
     if (event_fqn) {
         KAA_FREE(event_fqn);
     }
