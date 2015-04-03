@@ -22,6 +22,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.verifier.UserVerifierCallback;
@@ -147,6 +148,12 @@ public class TwitterUserVerifierTest extends TwitterUserVerifier {
         UserVerifierCallback callback = mock(UserVerifierCallback.class);
         verifier.checkAccessToken("id", "token secret", callback);
         Mockito.verify(callback, Mockito.timeout(1000)).onInternalError(any(String.class));
+    }
+
+    @Test
+    public void getConfigurationClassTest() throws IOException {
+        verifier = new TwitterUserVerifier();
+        Assert.assertEquals(verifier.getConfigurationClass(), TwitterAvroConfig.class);
     }
 
     private static class MyTwitterVerifier extends TwitterUserVerifier {
