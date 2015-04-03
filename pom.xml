@@ -92,12 +92,7 @@ Copyright 2014 CyberVision, Inc.
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-        <sonar.exclusions>
-            file:**/gen/**,
-            file:**/verifiers/*/config/**,
-            file:**/appenders/*/config/**,
-            file:**/kaa/schema/base/**
-        </sonar.exclusions>
+        <sonar.exclusions>**/gen/**/*, **/verifiers/**/config/**/*, **/appenders/**/config/**/*, **/kaa/schema/base/**/*</sonar.exclusions>
         <sonar.skippedModules>admin,admin-rest-client,client-java-android,gwt-client</sonar.skippedModules>
         <sonar.jacoco.reportPath>${main.dir}/target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>${main.dir}/target/jacoco-it.exec</sonar.jacoco.itReportPath>
