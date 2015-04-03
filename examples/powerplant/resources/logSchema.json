@@ -1,0 +1,28 @@
+{
+    "type":"record",
+    "name":"SampleCollection",
+    "namespace":"org.kaaproject.kaa.examples.powerplant",
+    "fields":[
+        {
+            "name":"samples",
+            "type":{
+                "type":"array",
+                "items":{
+                    "type":"record",
+                    "name":"Sample",
+                    "namespace":"org.kaaproject.kaa.examples.powerplant",
+                    "fields":[
+                        {
+                            "name":"panelId",
+                            "type":"long"
+                        },
+                        {
+                            "name":"voltage",
+                            "type":"double"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
