@@ -74,5 +74,6 @@ public class SessionInfoTest {
         Assert.assertEquals(appToken, info.getApplicationToken());
         Assert.assertEquals(keepAlive, info.getKeepAlive());
         Assert.assertEquals(isEncrypted, info.isEncrypted());
+        Assert.assertNotNull(info.toString());
     }
 }

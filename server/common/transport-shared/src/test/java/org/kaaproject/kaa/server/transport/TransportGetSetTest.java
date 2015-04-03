@@ -75,6 +75,7 @@ public class TransportGetSetTest {
         TransportMetaData transportMetaData = new TransportMetaData(1, 10, new byte[2]);
         transportMetaData.setConnectionInfo(version, connectionInfo);
         Assert.assertArrayEquals(connectionInfo, transportMetaData.getConnectionInfo(2));
+        Assert.assertNotNull(new TransportMetaData(1,1,new byte[1]).toString());
     }
 
     @Test
@@ -88,5 +89,11 @@ public class TransportGetSetTest {
         ChannelType async = ChannelType.ASYNC;
         Assert.assertTrue(async.isAsync());
         Assert.assertFalse(async.isLongPoll());
+    }
+
+    @Test
+    public void exceptionTest(){
+        Assert.assertNotNull(new InvalidApplicationTokenException("msg"));
+        Assert.assertNotNull(new TransportLifecycleException(new Exception()));
     }
 }
