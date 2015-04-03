@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.operations.service.akka.messages.core.logs;
+package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
-import org.junit.Assert;
-import org.junit.Test;
+public class ApplicationUserVerifierActorTest {
 
-public class LogDeliveryMessageTest {
 
-    @Test
-    public void logDeliveryMessageTest() {
-        Integer requestId = 1;
-        LogDeliveryMessage deliveryMessage = new LogDeliveryMessage(requestId, true, null);
-        Assert.assertEquals(requestId, deliveryMessage.getRequestId());
-        Assert.assertNotNull(new LogDeliveryMessage(requestId,true));
-    }
 
 }

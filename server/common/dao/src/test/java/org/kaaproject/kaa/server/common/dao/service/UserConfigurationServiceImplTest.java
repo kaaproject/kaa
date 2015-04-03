@@ -89,7 +89,8 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
 
     @Test
     public void userConfigNullTest() {
-        EndpointUserConfigurationDto result = userConfigurationService.saveUserConfiguration(null);
+        EndpointUserConfigurationDto dto = null;
+        EndpointUserConfigurationDto result = userConfigurationService.saveUserConfiguration(dto);
         Assert.assertNull(result);
     }
 
@@ -102,14 +103,13 @@ public class UserConfigurationServiceImplTest extends AbstractTest {
 
     @Test(expected = IncorrectParameterException.class)
     public void saveUserConfigBlankTest() {
-        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfiguration(null, null, null, null);
-        EndpointUserConfigurationDto result = userConfigurationService.saveUserConfiguration(null);
+        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfiguration(null, null, null, "");
+        userConfigurationService.saveUserConfiguration(configurationDto);
     }
 
     @Test(expected = IncorrectParameterException.class)
-    public void schemaDtoNullTest() throws IOException {
-        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON));
-        configurationDto.setAppToken(null);
+    public void appDtoNullTest() throws IOException {
+        EndpointUserConfigurationDto configurationDto = generateEndpointUserConfiguration(null, null, null, readSchemaFileAsString(OVERRIDE_USER_DATA_JSON),true);
         EndpointUserConfigurationDto result = userConfigurationService.saveUserConfiguration(configurationDto);
         Assert.assertEquals(configurationDto, result);
     }
