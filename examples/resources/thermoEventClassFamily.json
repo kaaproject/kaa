@@ -1,0 +1,31 @@
+[
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.thermo",
+ "type": "record",
+ "classType": "object",
+ "name": "ThermostatInfo",
+ "fields": [
+    {"name": "degree", "type": ["int", "null"]},
+    {"name": "targetDegree", "type": ["int", "null"]},
+    {"name": "isSetManually", "type": ["boolean", "null"]}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.thermo",
+ "type": "record",
+ "classType": "event",
+ "name": "ThermostatStatusUpdate",
+ "fields": [
+    {"name": "thermostatInfo", "type": ["org.kaaproject.kaa.demo.iotworld.thermo.ThermostatInfo", "null"]}
+  ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.thermo",
+ "type": "record",
+ "classType": "event",
+ "name": "ChangeDegreeRequest",
+ "fields": [
+     {"name": "degree", "type": ["int", "null"]}
+ ]
+}
+]

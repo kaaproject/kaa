@@ -1,0 +1,29 @@
+[
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.watering",
+ "type": "record",
+ "classType": "event",
+ "name": "WateringControlRequest",
+ "fields": []
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.watering",
+ "type": "record",
+ "classType": "object",
+ "name": "WateringStatus",
+ "fields": [
+	{"name": "lastWateringTime", "type": "long"},
+	{"name": "spentWater", "type": "int"}
+	{"name": "remainingWater", "type": "int"}
+ ]
+}
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.light",
+ "type": "record",
+ "classType": "event",
+ "name": "WateringStatusUpdate",
+ "fields": [
+	{"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.watering.WateringStatus"}
+ ]
+}
+]

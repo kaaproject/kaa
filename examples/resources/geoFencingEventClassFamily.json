@@ -1,0 +1,51 @@
+[
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.geo",
+ "type": "record",
+ "classType": "event",
+ "name": "GeoFencingStatusRequest",
+ "fields": []
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.geo",
+ "type": "enum"  ,
+ "classType": "object",
+ "name": "GeoFencingStatus",
+ "symbols" : ["ON", "OFF", "AUTO"]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.geo",
+ "type": "enum"  ,
+ "classType": "object",
+ "name": "GeoFencingPosition",
+ "symbols" : ["AWAY", "NEAR", "HOME"]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.geo",
+ "type": "record",
+ "classType": "event",
+ "name": "GeoFencingStatusResponse",
+ "fields": [
+	{"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.geo.GeoFencingStatus"},
+	{"name": "position", "type": "org.kaaproject.kaa.demo.iotworld.geo.GeoFencingPosition"}
+  ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.geo",
+ "type": "record",
+ "classType": "event",
+ "name": "GeoFencingStatusUpdate",
+ "fields": [
+	{"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.geo.GeoFencingStatus"},
+  ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.geo",
+ "type": "record",
+ "classType": "event",
+ "name": "GeoFencingPositionUpdate",
+ "fields": [
+	{"name": "position", "type": "org.kaaproject.kaa.demo.iotworld.geo.GeoFencingPosition"},
+  ]
+}
+]
