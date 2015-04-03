@@ -26,9 +26,9 @@ extern "C" {
 /**
  * @typedef User-defined endpoint profile structure.
  */
-typedef kaa_profile_${record_name}_t kaa_profile_t;
+typedef ${namespace}_${record_name}_t kaa_profile_t;
 
-# define KAA_PROFILE_DESERIALIZE(reader)  kaa_profile_${record_name}_deserialize(reader)
+# define KAA_PROFILE_DESERIALIZE(reader)  ${namespace}_${record_name}_deserialize(reader)
 
 # ifdef __cplusplus
 }      /* extern "C" */
