@@ -20,24 +20,30 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
-public class BootstrapGetSetTest {
-    @Test
-    public void protocolVersionIdGetTest() {
-        int protocolId = 10;
-        int version = 100;
-        ProtocolVersionId protocolVersionId = new ProtocolVersionId(protocolId, version);
-        Assert.assertEquals(protocolId, protocolVersionId.getProtocolId());
-        Assert.assertEquals(version, protocolVersionId.getVersion());
-    }
+public class BootstrapSyncTest {
 
     @Test
-    public void bootstrapServerSyncGetSetTest() {
+    public void bootstrapServerSyncTest() {
         int requestId = 10;
         Set<ProtocolConnectionData> protocolList = Collections.EMPTY_SET;
         BootstrapServerSync bootstrapServerSync = new BootstrapServerSync(requestId, protocolList);
         Assert.assertEquals(requestId, bootstrapServerSync.getRequestId());
         Assert.assertEquals(protocolList, bootstrapServerSync.getProtocolList());
     }
+
+    @Test
+    public void bootstrapClientSyncTest() {
+        int requestId = 10;
+        List<ProtocolVersionId> protocolVersionIds = Collections.emptyList();
+        BootstrapClientSync clientSync = new BootstrapClientSync(requestId, protocolVersionIds);
+        Assert.assertEquals(requestId, clientSync.getRequestId());
+        Assert.assertEquals(protocolVersionIds, clientSync.getKeys());
+        Assert.assertNotNull(clientSync.toString());
+    }
+
+
 }

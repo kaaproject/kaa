@@ -42,6 +42,7 @@ public class UserVerificationResponseMessageTest {
         Assert.assertTrue(success.isSuccess());
         Assert.assertNull(success.getErrorCode());
         Assert.assertNull(success.getFailureReason());
+        Assert.assertNotNull(success.toString());
     }
 
 }

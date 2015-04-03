@@ -42,7 +42,7 @@ public class EndpointStateUpdateMessageTest {
         Assert.assertEquals(tenantId, message.getTenantId());
         Assert.assertEquals(userId, update.getUserId());
         Assert.assertEquals(builder.toString(), message.toString());
-
+        Assert.assertEquals(update, message.getUpdate());
+        Assert.assertEquals(userId, message.getUserId());
     }
-
 }

@@ -15,7 +15,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.kaaproject.kaa.server.bootstrap.service.security;
 
@@ -31,7 +31,6 @@ import org.junit.Test;
 
 /**
  * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
- *
  */
 public class FileKeyStoreServiceTest {
 
@@ -40,7 +39,7 @@ public class FileKeyStoreServiceTest {
     private static final String PUBLIC_KEY_LOCATION = "publicKey";
     private static final String PRIVATE_KEY_PATH = SERVER_HOME_DIR + "/" + PRIVATE_KEY_LOCATION;
     private static final String PUBLIC_KEY_PATH = SERVER_HOME_DIR + "/" + PUBLIC_KEY_LOCATION;
-    
+
     /**
      * @throws java.lang.Exception
      */
@@ -76,18 +75,18 @@ public class FileKeyStoreServiceTest {
         if (pub.exists()) {
             pub.delete();
         }
-        
+
         ks.loadKeys();
-        
+
         if (!pri.exists() || !pri.canRead()) {
             fail("Private key file create failed.");
         }
         if (!pub.exists() || !pub.canRead()) {
             fail("Public key file create failed.");
         }
-        
+
         //Test load incorrect files.
-        
+
         if (pub.exists()) {
             pub.delete();
             FileWriter pubfw;
@@ -102,9 +101,9 @@ public class FileKeyStoreServiceTest {
         try {
             ks.loadKeys();
         } catch (Exception e) {
-            assertNotNull(e.toString(),e);
+            assertNotNull(e.toString(), e);
         }
-        
+
         if (pri.exists()) {
             pri.delete();
             FileWriter prifw;
@@ -119,10 +118,10 @@ public class FileKeyStoreServiceTest {
         try {
             ks.loadKeys();
         } catch (Exception e) {
-            assertNotNull(e.toString(),e);
+            assertNotNull(e.toString(), e);
         }
-        
-        
+
+
     }
 
     /**
@@ -138,7 +137,7 @@ public class FileKeyStoreServiceTest {
         if (pub.exists()) {
             pub.delete();
         }
-        
+
         FileKeyStoreService ks = new FileKeyStoreService();
         assertNotNull(ks);
         ks.setPrivateKeyLocation(PRIVATE_KEY_LOCATION);
@@ -166,6 +165,45 @@ public class FileKeyStoreServiceTest {
         ks.setPublicKeyLocation(PUBLIC_KEY_LOCATION);
         ks.loadKeys();
         assertNotNull(ks.getPublicKey());
+    }
+
+
+    @Test(expected = RuntimeException.class)
+    public void testIncorrectPublicKey() throws IOException {
+        FileKeyStoreService ks = new FileKeyStoreService();
+        assertNotNull(ks);
+        ks.setPublicKeyLocation(PUBLIC_KEY_LOCATION);
+
+        File pub = new File(PUBLIC_KEY_PATH);
+        if (pub.exists()) {
+            pub.delete();
+        }
+
+        FileWriter pubfw;
+        pubfw = new FileWriter(pub);
+        pubfw.write("ascasdca42314*&^*$@^#5$^&sdcasdc");
+        pubfw.close();
+
+        ks.loadKeys();
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testIncorrectPrivateKey() throws IOException {
+        FileKeyStoreService ks = new FileKeyStoreService();
+        assertNotNull(ks);
+        ks.setPrivateKeyLocation(PRIVATE_KEY_LOCATION);
+
+        File pub = new File(PRIVATE_KEY_PATH);
+        if (pub.exists()) {
+            pub.delete();
+        }
+
+        FileWriter privfw;
+        privfw = new FileWriter(pub);
+        privfw.write("ascasdca42314*&^*$@^#5$^&sdcasdc");
+        privfw.close();
+
+        ks.loadKeys();
     }
 
 }
