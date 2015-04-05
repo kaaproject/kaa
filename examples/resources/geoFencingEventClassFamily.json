@@ -36,7 +36,7 @@
  "classType": "event",
  "name": "GeoFencingStatusUpdate",
  "fields": [
-	{"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.geo.GeoFencingStatus"},
+	{"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.geo.GeoFencingStatus"}
   ]
 },
 {
@@ -45,7 +45,7 @@
  "classType": "event",
  "name": "GeoFencingPositionUpdate",
  "fields": [
-	{"name": "position", "type": "org.kaaproject.kaa.demo.iotworld.geo.GeoFencingPosition"},
+	{"name": "position", "type": "org.kaaproject.kaa.demo.iotworld.geo.GeoFencingPosition"}
   ]
 }
 ]

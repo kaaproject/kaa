@@ -13,10 +13,10 @@
  "name": "WateringStatus",
  "fields": [
 	{"name": "lastWateringTime", "type": "long"},
-	{"name": "spentWater", "type": "int"}
+	{"name": "spentWater", "type": "int"},
 	{"name": "remainingWater", "type": "int"}
  ]
-}
+},
 {
  "namespace": "org.kaaproject.kaa.demo.iotworld.light",
  "type": "record",

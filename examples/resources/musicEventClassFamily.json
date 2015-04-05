@@ -14,7 +14,7 @@
  "fields": [
     {"name": "artist", "type": ["string", "null"]},
     {"name": "album", "type": ["string", "null"]},
-	{"name": "cover", "type": ["bytes", "null"]},
+	{"name": "cover", "type": ["bytes", "null"]}
  ]
 },
 {
@@ -37,7 +37,7 @@
  "classType": "event",
  "name": "PlayListResponse",
  "fields": [
-    {"name": "albums", "type": [{"type": "array", "items": "org.kaaproject.kaa.demo.iotworld.music.AlbumInfo"}, "null"]}
+    {"name": "albums", "type": [{"type": "array", "items": "org.kaaproject.kaa.demo.iotworld.music.AlbumInfo"}, "null"]},
 	{"name": "songs", "type": [{"type": "array", "items": "org.kaaproject.kaa.demo.iotworld.music.SongInfo"}, "null"]}
   ]
 },

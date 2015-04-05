@@ -15,7 +15,7 @@
     {"name": "id", "type": "string"},
     {"name": "title", "type": "string"},
     {"name": "size", "type": "int"},
-	{"name": "thumbnail", "type": "bytes"},
+	{"name": "thumbnail", "type": "bytes"}
  ]
 },
 {
