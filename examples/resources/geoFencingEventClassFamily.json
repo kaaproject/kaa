@@ -10,8 +10,8 @@
  "namespace": "org.kaaproject.kaa.demo.iotworld.geo",
  "type": "enum"  ,
  "classType": "object",
- "name": "GeoFencingStatus",
- "symbols" : ["ON", "OFF", "AUTO"]
+ "name": "OperationMode",
+ "symbols" : ["ON", "OFF", "GEOFENCING"]
 },
 {
  "namespace": "org.kaaproject.kaa.demo.iotworld.geo",
@@ -26,7 +26,7 @@
  "classType": "event",
  "name": "GeoFencingStatusResponse",
  "fields": [
-	{"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.geo.GeoFencingStatus"},
+	{"name": "mode", "type": "org.kaaproject.kaa.demo.iotworld.geo.OperationMode"},
 	{"name": "position", "type": "org.kaaproject.kaa.demo.iotworld.geo.GeoFencingPosition"}
   ]
 },
@@ -34,9 +34,9 @@
  "namespace": "org.kaaproject.kaa.demo.iotworld.geo",
  "type": "record",
  "classType": "event",
- "name": "GeoFencingStatusUpdate",
+ "name": "OperationModeUpdate",
  "fields": [
-	{"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.geo.GeoFencingStatus"}
+	{"name": "mode", "type": "org.kaaproject.kaa.demo.iotworld.geo.OperationMode"}
   ]
 },
 {
