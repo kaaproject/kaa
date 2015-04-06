@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
 import org.kaaproject.kaa.server.control.service.sdk.event.EventFamilyMetadata;
@@ -44,37 +45,30 @@ public abstract class SdkGenerator {
      *
      * @param buildVersion the build version
      * @param bootstrapNodes the bootstrap nodes
-     * @param appToken the app token
-     * @param profileSchemaVersion the profile schema version
-     * @param configurationSchemaVersion the configuration schema version
-     * @param notificationSchemaVersion the notification schema version
-     * @param logSchemaVersion the log schema version
+     * @param sdkToken the sdk token
+     * @param sdkProperties the sdk properties
      * @param profileSchemaBody the profile schema body
      * @param notificationSchemaBody the notification schema body
      * @param configurationProtocolSchemaBody the configuration protocol schema body
+     * @param configurationBaseSchemaBody the configuration base schema body
      * @param defaultConfigurationData the default configuration data
      * @param eventFamilies the event families meta information
      * @param logSchemaBody the log schema body
-     * @param defaultVerifierToken the default user verifier token
      *
      * @return the sdk
      * @throws Exception the exception
      */
     public abstract Sdk generateSdk(String buildVersion, 
-            List<BootstrapNodeInfo> bootstrapNodes, 
-            String appToken, 
-            int profileSchemaVersion, 
-            int configurationSchemaVersion,
-            int notificationSchemaVersion, 
-            int logSchemaVersion, 
-            String profileSchemaBody, 
+            List<BootstrapNodeInfo> bootstrapNodes,
+            String sdkToken,
+            SdkPropertiesDto sdkProperties,
+            String profileSchemaBody,
             String notificationSchemaBody, 
             String configurationProtocolSchemaBody,
             String configurationBaseSchemaBody,
             byte[] defaultConfigurationData, 
             List<EventFamilyMetadata> eventFamilies, 
-            String logSchemaBody,
-            String defaultVerifierToken) throws Exception; //NOSONAR
+            String logSchemaBody) throws Exception; //NOSONAR
 
     /**
      * Read file.

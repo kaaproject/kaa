@@ -44,6 +44,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.kaaproject.kaa.avro.avrogenc.Compiler;
 import org.kaaproject.kaa.avro.avrogenc.StyleUtils;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
@@ -105,17 +106,22 @@ public class CSdkGenerator extends SdkGenerator {
      */
     @Override
     public Sdk generateSdk(String buildVersion,
-                           List<BootstrapNodeInfo> bootstrapNodes, String appToken,
-                           int profileSchemaVersion, int configurationSchemaVersion,
-                           int notificationSchemaVersion, int logSchemaVersion,
+                           List<BootstrapNodeInfo> bootstrapNodes, String sdkToken,
+                           SdkPropertiesDto sdkProperties,
                            String profileSchemaBody,
                            String notificationSchemaBody,
                            String configurationProtocolSchemaBody,
                            String configurationBaseSchemaBody,
                            byte[] defaultConfigurationData,
                            List<EventFamilyMetadata> eventFamilies,
-                           String logSchemaBody,
-                           String defaultVerifierToken) throws Exception {
+                           String logSchemaBody) throws Exception {
+
+        String appToken = sdkProperties.getApplicationToken();
+        Integer configurationSchemaVersion = sdkProperties.getConfigurationSchemaVersion();
+        Integer profileSchemaVersion = sdkProperties.getProfileSchemaVersion();
+        Integer notificationSchemaVersion = sdkProperties.getNotificationSchemaVersion();
+        Integer logSchemaVersion = sdkProperties.getLogSchemaVersion();
+        String defaultVerifierToken = sdkProperties.getDefaultVerifierToken();
 
         String sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + C_SDK_DIR + "/" + C_SDK_PREFIX + buildVersion + ".tar.gz";
 
@@ -161,6 +167,7 @@ public class CSdkGenerator extends SdkGenerator {
         while ((e = templateArchive.getNextEntry()) != null) {
             if (!e.isDirectory()) {
                 if (e.getName().equals(KAA_DEFAULTS_HEADER)) {
+                    // TODO: eliminate schema versions and substitute them for a single sdkToken
                     byte[] kaaDefaultsData = generateKaaDefaults(bootstrapNodes, appToken,
                                                                  configurationSchemaVersion, profileSchemaVersion,
                                                                  notificationSchemaVersion, logSchemaVersion,
@@ -273,7 +280,6 @@ public class CSdkGenerator extends SdkGenerator {
     /**
      * Generate client properties.
      *
-     * @param kaaDefaultsStream the kaa defaults stream
      * @param bootstrapNodes the bootstrap nodes
      * @param appToken the app token
      * @param configurationSchemaVersion the configuration schema version

@@ -34,9 +34,10 @@ import org.apache.avro.compiler.specific.SpecificCompiler.FieldVisibility;
 import org.apache.avro.generic.GenericData.StringType;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
-import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
 import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
@@ -136,6 +137,11 @@ public class JavaSdkGenerator extends SdkGenerator {
      * The Constant LOGS_VERSION_PROPERTY.
      */
     private static final String LOGS_VERSION_PROPERTY = "logs_version";
+
+    /**
+     * The Constant SDK_TOKEN_PROPERTY
+     */
+    private static final String SDK_TOKEN_PROPERTY = "sdk_token";
 
     /**
      * The Constant CONFIG_DATA_DEFAULT_PROPERTY.
@@ -368,11 +374,17 @@ public class JavaSdkGenerator extends SdkGenerator {
      * java.util.List)
      */
     @Override
-    public Sdk generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, String appToken, int profileSchemaVersion,
-                           int configurationSchemaVersion, int notificationSchemaVersion, int logSchemaVersion, String profileSchemaBody,
-                           String notificationSchemaBody, String configurationProtocolSchemaBody, String configurationSchemaBody,
-                           byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies, String logSchemaBody, String defaultVerifierToken)
+    public Sdk generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, String sdkToken, SdkPropertiesDto sdkProperties,
+                           String profileSchemaBody, String notificationSchemaBody, String configurationProtocolSchemaBody,
+                           String configurationSchemaBody, byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies,
+                           String logSchemaBody)
             throws Exception {
+
+        Integer configurationSchemaVersion = sdkProperties.getConfigurationSchemaVersion();
+        Integer profileSchemaVersion = sdkProperties.getProfileSchemaVersion();
+        Integer notificationSchemaVersion = sdkProperties.getNotificationSchemaVersion();
+        Integer logSchemaVersion = sdkProperties.getLogSchemaVersion();
+        String defaultVerifierToken = sdkProperties.getDefaultVerifierToken();
 
         Schema configurationSchema = new Schema.Parser().parse(configurationSchemaBody);
         Schema profileSchema = new Schema.Parser().parse(profileSchemaBody);
@@ -414,8 +426,7 @@ public class JavaSdkGenerator extends SdkGenerator {
 
         ZipEntry clientPropertiesEntry = templateArhive.getEntry(CLIENT_PROPERTIES);
         byte[] clientPropertiesData = generateClientProperties(templateArhive.getInputStream(clientPropertiesEntry), bootstrapNodes,
-                appToken, configurationSchemaVersion, profileSchemaVersion, notificationSchemaVersion, logSchemaVersion,
-                configurationProtocolSchemaBody, defaultConfigurationData, eventFamilies);
+                sdkToken, configurationProtocolSchemaBody, defaultConfigurationData, eventFamilies);
 
         replacementData.put(CLIENT_PROPERTIES, new ZipEntryData(new ZipEntry(CLIENT_PROPERTIES), clientPropertiesData));
 
@@ -702,20 +713,15 @@ public class JavaSdkGenerator extends SdkGenerator {
      *
      * @param clientPropertiesStream          the client properties stream
      * @param bootstrapNodes                  the bootstrap nodes
-     * @param appToken                        the app token
-     * @param configurationSchemaVersion      the configuration schema version
-     * @param profileSchemaVersion            the profile schema version
-     * @param notificationSchemaVersion       the notification schema version
-     * @param logSchemaVersion                the log schema version
      * @param configurationProtocolSchemaBody the configuration protocol schema body
      * @param defaultConfigurationData        the default configuration data
      * @param eventFamilies                   the event families meta information
      * @return the byte[]
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    private byte[] generateClientProperties(InputStream clientPropertiesStream, List<BootstrapNodeInfo> bootstrapNodes, String appToken,
-                                            int configurationSchemaVersion, int profileSchemaVersion, int notificationSchemaVersion, int logSchemaVersion,
-                                            String configurationProtocolSchemaBody, byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies)
+    private byte[] generateClientProperties(InputStream clientPropertiesStream, List<BootstrapNodeInfo> bootstrapNodes,
+                                            String sdkToken, String configurationProtocolSchemaBody,
+                                            byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies)
             throws IOException {
 
         Properties clientProperties = new Properties();
@@ -758,11 +764,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         clientProperties.put(BUILD_VERSION, Version.PROJECT_VERSION);
         clientProperties.put(BUILD_COMMIT_HASH, Version.COMMIT_HASH);
         clientProperties.put(BOOTSTRAP_SERVERS_PROPERTY, bootstrapServers);
-        clientProperties.put(APP_TOKEN_PROPERTY, appToken);
-        clientProperties.put(CONFIG_VERSION_PROPERTY, "" + configurationSchemaVersion);
-        clientProperties.put(PROFILE_VERSION_PROPERTY, "" + profileSchemaVersion);
-        clientProperties.put(NOTIFICATION_VERSION_PROPERTY, "" + notificationSchemaVersion);
-        clientProperties.put(LOGS_VERSION_PROPERTY, "" + logSchemaVersion);
+        clientProperties.put(SDK_TOKEN_PROPERTY, sdkToken);
         clientProperties.put(CONFIG_SCHEMA_DEFAULT_PROPERTY, configurationProtocolSchemaBody);
         clientProperties.put(CONFIG_DATA_DEFAULT_PROPERTY, Base64.encodeBase64String(defaultConfigurationData));
         clientProperties.put(EVENT_CLASS_FAMILY_VERSION_PROPERTY, ecfs);

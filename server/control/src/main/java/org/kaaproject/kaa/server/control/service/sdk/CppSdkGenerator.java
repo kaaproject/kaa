@@ -37,6 +37,7 @@ import org.apache.commons.compress.compressors.CompressorOutputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
@@ -145,17 +146,22 @@ public class CppSdkGenerator extends SdkGenerator {
      */
     @Override
     public Sdk generateSdk(String buildVersion,
-            List<BootstrapNodeInfo> bootstrapNodes, String appToken,
-            int profileSchemaVersion, int configurationSchemaVersion,
-            int notificationSchemaVersion, int logSchemaVersion,
+            List<BootstrapNodeInfo> bootstrapNodes, String sdkToken,
+            SdkPropertiesDto sdkProperties,
             String profileSchemaBody,
             String notificationSchemaBody,
             String configurationProtocolSchemaBody,
             String configurationBaseSchema,
             byte[] defaultConfigurationData,
             List<EventFamilyMetadata> eventFamilies,
-            String logSchemaBody,
-            String defaultVerifierToken) throws Exception {
+            String logSchemaBody) throws Exception {
+
+        String appToken = sdkProperties.getApplicationToken();
+        Integer configurationSchemaVersion = sdkProperties.getConfigurationSchemaVersion();
+        Integer profileSchemaVersion = sdkProperties.getProfileSchemaVersion();
+        Integer notificationSchemaVersion = sdkProperties.getNotificationSchemaVersion();
+        Integer logSchemaVersion = sdkProperties.getLogSchemaVersion();
+        String defaultVerifierToken = sdkProperties.getDefaultVerifierToken();
 
         String sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + CPP_SDK_DIR + "/" + CPP_SDK_PREFIX + buildVersion + ".tar.gz";
 
@@ -177,6 +183,7 @@ public class CppSdkGenerator extends SdkGenerator {
 
         List<TarEntryData> cppSources = new ArrayList<>();
 
+        // TODO: remove all version fields and add single sdkToken field
         // create entry for default properties
         TarArchiveEntry entry = new TarArchiveEntry(SDK_DEFAULTS_PATH);
         byte[] data = generateKaaDefaults(bootstrapNodes, appToken,
@@ -277,7 +284,6 @@ public class CppSdkGenerator extends SdkGenerator {
     /**
      * Generate client properties.
      *
-     * @param kaaDefaultsStream the kaa defaults stream
      * @param bootstrapNodes the bootstrap nodes
      * @param appToken the app token
      * @param configurationSchemaVersion the configuration schema version
