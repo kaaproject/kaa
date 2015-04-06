@@ -26,14 +26,7 @@ import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
-import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
-import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
-import org.kaaproject.kaa.server.common.core.configuration.RawData;
-import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
-import org.kaaproject.kaa.server.common.core.schema.RawSchema;
-import org.kaaproject.kaa.server.verifiers.trustful.config.TrustfulVerifierConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,12 +52,12 @@ public class AndroidNotificationDemoBuilder extends AbstractDemoBuilder {
         notificationApplication.setName("Android notification demo");
         notificationApplication = client.editApplication(notificationApplication);
 
-        sdkKey.setApplicationId(notificationApplication.getId());
-        sdkKey.setProfileSchemaVersion(1);
-        sdkKey.setConfigurationSchemaVersion(1);
-        sdkKey.setLogSchemaVersion(1);
-        sdkKey.setNotificationSchemaVersion(1);
-        sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
+        sdkPropertiesDto.setApplicationId(notificationApplication.getId());
+        sdkPropertiesDto.setProfileSchemaVersion(1);
+        sdkPropertiesDto.setConfigurationSchemaVersion(1);
+        sdkPropertiesDto.setLogSchemaVersion(1);
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
+        sdkPropertiesDto.setTargetPlatform(SdkPlatform.ANDROID);
 
         loginTenantDeveloper(client);
 
@@ -74,7 +67,7 @@ public class AndroidNotificationDemoBuilder extends AbstractDemoBuilder {
         notificationSchemaDto.setName("Notification schema");
         notificationSchemaDto.setDescription("Notification schema describing incoming notifications");
         notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, getResourcePath("notificationSchema.json"));
-        sdkKey.setNotificationSchemaVersion(notificationSchemaDto.getMajorVersion());
+        sdkPropertiesDto.setNotificationSchemaVersion(notificationSchemaDto.getMajorVersion());
         logger.info("Notification schema was created.");
 
         TopicDto optionalTopic = new TopicDto();

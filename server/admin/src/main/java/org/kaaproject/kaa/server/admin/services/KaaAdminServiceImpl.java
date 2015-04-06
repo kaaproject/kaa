@@ -64,7 +64,7 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -514,7 +514,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public String generateSdk(SdkKey key) throws KaaAdminServiceException {
+    public String generateSdk(SdkPropertiesDto key) throws KaaAdminServiceException {
         try {
             doGenerateSdk(key);
             return Base64.encodeObject(key, Base64.URL_SAFE);
@@ -524,7 +524,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public FileData getSdk(SdkKey key) throws KaaAdminServiceException {
+    public FileData getSdk(SdkPropertiesDto key) throws KaaAdminServiceException {
         try {
             return doGenerateSdk(key);
         } catch (Exception e) {
@@ -532,20 +532,13 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
-    private FileData doGenerateSdk(SdkKey key) throws KaaAdminServiceException {
+    private FileData doGenerateSdk(SdkPropertiesDto key) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             checkApplicationId(key.getApplicationId());
             FileData sdkFile = cacheService.getSdk(key);
             if (sdkFile == null) {
-                SdkPlatform targetPlatform = toSdkPlatform(key.getTargetPlatform());
-                Sdk sdk = clientProvider.getClient().generateSdk(targetPlatform,
-                        key.getApplicationId(), key.getProfileSchemaVersion(),
-                        key.getConfigurationSchemaVersion(),
-                        key.getNotificationSchemaVersion(),
-                        key.getAefMapIds(),
-                        key.getLogSchemaVersion(),
-                        key.getDefaultVerifierToken());
+                Sdk sdk = clientProvider.getClient().generateSdk(toDataStruct(key));
                 sdkFile = new FileData();
                 sdkFile.setFileName(sdk.getFileName());
                 sdkFile.setContentType(key.getTargetPlatform().getContentType());
@@ -558,28 +551,13 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
-    private SdkPlatform toSdkPlatform(org.kaaproject.kaa.common.dto.admin.SdkPlatform sdkPlatform) {
-        switch (sdkPlatform) {
-            case JAVA:
-                return SdkPlatform.JAVA;
-            case ANDROID:
-                return SdkPlatform.ANDROID;
-            case CPP:
-                return SdkPlatform.CPP;
-            case C:
-                return SdkPlatform.C;
-            default:
-                return null;
-        }
-    }
-
     @Override
     public void flushSdkCache() throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             List<ApplicationDto> applications = getApplications();
             for (ApplicationDto application : applications) {
-                for (SdkKey key : cacheService.getCachedSdkKeys(application.getId())) {
+                for (SdkPropertiesDto key : cacheService.getCachedSdkKeys(application.getId())) {
                     cacheService.flushSdk(key);
                 }
             }

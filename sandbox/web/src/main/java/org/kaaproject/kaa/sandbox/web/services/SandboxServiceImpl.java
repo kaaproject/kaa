@@ -48,7 +48,7 @@ import org.atmosphere.gwt20.server.GwtRpcInterceptor;
 import org.atmosphere.interceptor.AtmosphereResourceLifecycleInterceptor;
 import org.atmosphere.interceptor.IdleResourceInterceptor;
 import org.atmosphere.interceptor.SuspendTrackerInterceptor;
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.sandbox.demo.projects.Platform;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
@@ -240,9 +240,9 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
             Project project = projectsMap.get(projectId);
             if (project != null) {
                 String sdkKeyBase64 = project.getSdkKeyBase64();
-                SdkKey sdkKey = (SdkKey)Base64.decodeToObject(sdkKeyBase64, Base64.URL_SAFE, null);
+                SdkPropertiesDto sdkPropertiesDto = (SdkPropertiesDto)Base64.decodeToObject(sdkKeyBase64, Base64.URL_SAFE, null);
                 outStream.println("Getting SDK for requested project...");
-                FileData sdkFileData = cacheService.getSdk(sdkKey);
+                FileData sdkFileData = cacheService.getSdk(sdkPropertiesDto);
                 if (sdkFileData != null) {
                     outStream.println("Successfuly got SDK.");
                     File rootDir = createTempDirectory("demo-project");

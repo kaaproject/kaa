@@ -73,12 +73,12 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
         smartHouseApplication.setName("Smart house");
         smartHouseApplication = client.editApplication(smartHouseApplication);
                
-        sdkKey.setApplicationId(smartHouseApplication.getId());
-        sdkKey.setProfileSchemaVersion(1);
-        sdkKey.setConfigurationSchemaVersion(1);
-        sdkKey.setNotificationSchemaVersion(1);
-        sdkKey.setLogSchemaVersion(1);
-        sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
+        sdkPropertiesDto.setApplicationId(smartHouseApplication.getId());
+        sdkPropertiesDto.setProfileSchemaVersion(1);
+        sdkPropertiesDto.setConfigurationSchemaVersion(1);
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
+        sdkPropertiesDto.setLogSchemaVersion(1);
+        sdkPropertiesDto.setTargetPlatform(SdkPlatform.ANDROID);
         
         loginTenantDeveloper(client);
         
@@ -90,7 +90,7 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
         aefMapIds.add(deviceAefMap.getId());
         aefMapIds.add(thermoAefMap.getId());
         aefMapIds.add(musicAefMap.getId());
-        sdkKey.setAefMapIds(aefMapIds);
+        sdkPropertiesDto.setAefMapIds(aefMapIds);
         
         TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();        
         UserVerifierDto trustfulUserVerifier = new UserVerifierDto();
@@ -104,7 +104,7 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
         RawData rawData = algotithm.getRootData();
         trustfulUserVerifier.setJsonConfiguration(rawData.getRawData());        
         trustfulUserVerifier = client.editUserVerifierDto(trustfulUserVerifier);
-        sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
+        sdkPropertiesDto.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
         
         logger.info("Finished loading 'Smart House Demo Application' data.");
     }

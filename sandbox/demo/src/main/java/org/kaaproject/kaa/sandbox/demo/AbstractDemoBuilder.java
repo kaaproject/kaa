@@ -30,7 +30,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
@@ -93,7 +93,7 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
     public static String tenantDeveloperPassword = DEFAULT_TENANT_DEVELOPER_PASSWORD;
     
     private final String resourcesPath;
-    protected final SdkKey sdkKey;
+    protected final SdkPropertiesDto sdkPropertiesDto;
     private List<Project> projectConfigs;
     
     public static void updateCredentialsFromArgs(String[] args) {
@@ -147,7 +147,7 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
 
     protected AbstractDemoBuilder(String resourcesPath) {
         this.resourcesPath = resourcesPath;
-        this.sdkKey = new SdkKey();
+        this.sdkPropertiesDto = new SdkPropertiesDto();
     }
     
     @Override
@@ -163,21 +163,21 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
                 projectConfig.setIconBase64(iconBase64);
                 switch (projectConfig.getPlatform()) {
                 case ANDROID:
-                    sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
+                    sdkPropertiesDto.setTargetPlatform(SdkPlatform.ANDROID);
                     break;
                 case C:
-                    sdkKey.setTargetPlatform(SdkPlatform.C);
+                    sdkPropertiesDto.setTargetPlatform(SdkPlatform.C);
                     break;
                 case CPP:
-                    sdkKey.setTargetPlatform(SdkPlatform.CPP);
+                    sdkPropertiesDto.setTargetPlatform(SdkPlatform.CPP);
                     break;
                 case JAVA:
-                    sdkKey.setTargetPlatform(SdkPlatform.JAVA);
+                    sdkPropertiesDto.setTargetPlatform(SdkPlatform.JAVA);
                     break;
                 default:
                     break;
                 }
-                projectConfig.setSdkKeyBase64(Base64.encodeObject(sdkKey, Base64.URL_SAFE));
+                projectConfig.setSdkKeyBase64(Base64.encodeObject(sdkPropertiesDto, Base64.URL_SAFE));
             }
         } catch (IOException e) {
             logger.error("Unable to generate sdk key", e);

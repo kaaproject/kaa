@@ -25,7 +25,7 @@ import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -39,7 +39,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
-public class GenerateSdkActivity extends AbstractDetailsActivity<SdkKey, GenerateSdkView, GenerateSdkPlace> {
+public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDto, GenerateSdkView, GenerateSdkPlace> {
 
     private String applicationId;
 
@@ -64,10 +64,10 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkKey, Generat
     }
 
     @Override
-    protected SdkKey newEntity() {
-        SdkKey sdkKey = new SdkKey();
-        sdkKey.setApplicationId(applicationId);
-        return sdkKey;
+    protected SdkPropertiesDto newEntity() {
+        SdkPropertiesDto sdkPropertiesDto = new SdkPropertiesDto();
+        sdkPropertiesDto.setApplicationId(applicationId);
+        return sdkPropertiesDto;
     }
 
     @Override
@@ -169,7 +169,7 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkKey, Generat
     }
 
     @Override
-    protected void getEntity(String id, AsyncCallback<SdkKey> callback) {}
+    protected void getEntity(String id, AsyncCallback<SdkPropertiesDto> callback) {}
 
     
     @Override
@@ -191,5 +191,5 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkKey, Generat
     }
     
     @Override
-    protected void editEntity(SdkKey entity, final AsyncCallback<SdkKey> callback) {}
+    protected void editEntity(SdkPropertiesDto entity, final AsyncCallback<SdkPropertiesDto> callback) {}
 }

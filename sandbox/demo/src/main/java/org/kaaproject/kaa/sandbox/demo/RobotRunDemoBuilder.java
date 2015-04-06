@@ -54,9 +54,9 @@ public class RobotRunDemoBuilder extends AbstractDemoBuilder {
         robotRunApplication.setName("Robot Run");
         robotRunApplication = client.editApplication(robotRunApplication);
         
-        sdkKey.setApplicationId(robotRunApplication.getId());
-        sdkKey.setProfileSchemaVersion(1);
-        sdkKey.setNotificationSchemaVersion(1);
+        sdkPropertiesDto.setApplicationId(robotRunApplication.getId());
+        sdkPropertiesDto.setProfileSchemaVersion(1);
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
 
         loginTenantDeveloper(client);
         
@@ -65,21 +65,21 @@ public class RobotRunDemoBuilder extends AbstractDemoBuilder {
         configurationSchema.setName("Labirynth schema");
         configurationSchema.setDescription("Configuration schema describing labirynth");
         configurationSchema = client.createConfigurationSchema(configurationSchema, getResourcePath("configSchema.json"));
-        sdkKey.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
+        sdkPropertiesDto.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
         
         LogSchemaDto logSchema = new LogSchemaDto();
         logSchema.setApplicationId(robotRunApplication.getId());
         logSchema.setName("Cell log schema");
         logSchema.setDescription("Log schema describing information about discovered cell");
         logSchema = client.createLogSchema(logSchema, getResourcePath("logSchema.json"));
-        sdkKey.setLogSchemaVersion(logSchema.getMajorVersion());
+        sdkPropertiesDto.setLogSchemaVersion(logSchema.getMajorVersion());
         
         ApplicationEventFamilyMapDto robotRunAefMap = mapEventClassFamily(client, robotRunApplication, robotRunEventClassFamily);
 
         List<String> aefMapIds = new ArrayList<>();
         aefMapIds.add(robotRunAefMap.getId());
 
-        sdkKey.setAefMapIds(aefMapIds);
+        sdkPropertiesDto.setAefMapIds(aefMapIds);
         
         logger.info("Finished loading 'Robot Run Demo Application' data.");
 

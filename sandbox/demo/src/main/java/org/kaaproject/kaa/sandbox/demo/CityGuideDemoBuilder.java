@@ -51,10 +51,10 @@ public class CityGuideDemoBuilder extends AbstractDemoBuilder {
         cityGuideApplication.setName("City guide");
         cityGuideApplication = client.editApplication(cityGuideApplication);
         
-        sdkKey.setApplicationId(cityGuideApplication.getId());
-        sdkKey.setNotificationSchemaVersion(1);
-        sdkKey.setLogSchemaVersion(1);
-        sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
+        sdkPropertiesDto.setApplicationId(cityGuideApplication.getId());
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
+        sdkPropertiesDto.setLogSchemaVersion(1);
+        sdkPropertiesDto.setTargetPlatform(SdkPlatform.ANDROID);
         
         loginTenantDeveloper(client);
         
@@ -63,14 +63,14 @@ public class CityGuideDemoBuilder extends AbstractDemoBuilder {
         configurationSchema.setName("City guide configuration schema");
         configurationSchema.setDescription("Configuration schema describing cities and places used by city guide application");
         configurationSchema = client.createConfigurationSchema(configurationSchema, getResourcePath("city_guide.avsc"));
-        sdkKey.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
+        sdkPropertiesDto.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
         
         ProfileSchemaDto profileSchema = new ProfileSchemaDto();
         profileSchema.setApplicationId(cityGuideApplication.getId());
         profileSchema.setName("City guide profile schema");
         profileSchema.setDescription("Profile schema describing city guide application profile");
         profileSchema = client.createProfileSchema(profileSchema, getResourcePath("city_guide_profile.avsc"));
-        sdkKey.setProfileSchemaVersion(profileSchema.getMajorVersion());
+        sdkPropertiesDto.setProfileSchemaVersion(profileSchema.getMajorVersion());
         
         EndpointGroupDto baseEndpointGroup = null;
         List<EndpointGroupDto> endpointGroups = client.getEndpointGroups(cityGuideApplication.getId());
