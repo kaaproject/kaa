@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-#ifndef CLIENT_CLIENT_MULTI_CLIENT_C_SRC_KAA_KAA_NOTIFICATION_H_
-#define CLIENT_CLIENT_MULTI_CLIENT_C_SRC_KAA_KAA_NOTIFICATION_H_
+#ifndef KAA_KAA_NOTIFICATION_H_
+#define KAA_KAA_NOTIFICATION_H_
 #include "kaa_error.h"
 #include "kaa_platform_common.h"
 #include "utilities/kaa_mem.h"
+#include "stdbool.h"
+#include <stdint.h>
+#include "kaa_channel_manager.h"
+#include "kaa_status.h"
+#include "kaa_common.h"
+#include "collections/kaa_list.h"
 
 #ifndef KAA_NOTIFICATION_DEFINITIONS
     #define KAA_NOTIFICATION_DEFINETIONS
@@ -43,10 +49,19 @@ typedef struct kaa_notification_manager_t       kaa_notification_manager_t;
 #ifndef KAA_NOTIFICATOIN_T
     #define KAA_NOTIFICATION_T
     typedef struct kaa_notification_t kaa_notification_t;
-    typedef void (*callback_t)(const char *topic_id,kaa_notification_t *notification);
+    typedef void (*callback_t)(uint32_t *topic_id,kaa_notification_t *notification);
 #endif
 
-kaa_error_t add_notification_listener(kaa_notification_listener_t *listener);
+#ifndef KAA_OPTIOINAL_NOTIFICATOIN_WRAPPER_T
+    #define KAA_OPTIOINAL_NOTIFICATOIN_WRAPPER_T
+    typedef struct kaa_optional_notification_listeners_wrapper_t kaa_optional_notification_listeners_wrapper_t;
+#endif
+
+#ifndef KAA_NOTIFICATION_TOPIC_T
+    #define KAA_NOTIFICATION_TOPIC_T
+    typedef struct kaa_topic_t kaa_topic_t;
+#endif
+
 
 kaa_error_t kaa_notification_manager_get_size(kaa_notification_manager_t *self, size_t *expected_size);
 
@@ -56,6 +71,15 @@ kaa_error_t kaa_notification_manager_create(kaa_notification_manager_t **self, k
 
 kaa_error_t kaa_notification_listener_create(kaa_notification_listener_t **listener, callback_t callback);
 
-kaa_error_t kaa_add_notification_listener(kaa_notification_manager_t* self, kaa_notification_listener_t* listener);
+kaa_error_t kaa_add_notification_listener(kaa_notification_manager_t *self, kaa_notification_listener_t *listener, uint32_t *listener_id);
 
-#endif /* CLIENT_CLIENT_MULTI_CLIENT_C_SRC_KAA_KAA_NOTIFICATION_H_ */
+kaa_error_t kaa_add_optional_notification_listener(kaa_notification_manager_t *self, kaa_notification_listener_t *listener
+                                                 , uint32_t *topic_id,uint32_t *listener_id);
+
+kaa_error_t kaa_remove_notification_listener(kaa_notification_manager_t *self, uint32_t *id);
+
+kaa_error_t kaa_remove_optional_notification_listener(kaa_notification_manager_t *self, uint32_t *topic_id, uint32_t *listener_id);
+
+
+
+#endif /* KAA_KAA_NOTIFICATION_H_ */
