@@ -23,8 +23,8 @@
 extern "C" {
 # endif
 
-typedef kaa_configuration_${record_name}_t kaa_root_configuration_t;
-# define KAA_CONFIGURATION_DESERIALIZE(reader)  kaa_configuration_${record_name}_deserialize(reader)
+typedef ${namespace}_${record_name}_t kaa_root_configuration_t;
+# define KAA_CONFIGURATION_DESERIALIZE(reader)  ${namespace}_${record_name}_deserialize(reader)
 
 # ifdef __cplusplus
 }      /* extern "C" */
