@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.common.dao;
 
-import org.kaaproject.kaa.common.dto.SdkKeyDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 
 /**
  * The interface for SdkKey service.
@@ -24,19 +24,19 @@ import org.kaaproject.kaa.common.dto.SdkKeyDto;
 public interface SdkKeyService {
 
     /**
-     * Find sdk key by its token
+     * Find sdk properties by theirs token
      * @param token token of an SDK
-     * @return the sdk key dto object
+     * @return the sdk properties dto object
      */
-    SdkKeyDto findSdkKeyByToken(String token);
+    SdkPropertiesDto findSdkKeyByToken(String token);
 
     /**
-     * Save sdk key. If sdk key object has id, then sdk key
+     * Save sdk properties. If sdk properties object has id, then sdk key
      * will be updated, otherwise it will be inserted as a
      * new object.
      *
-     * @param sdkKeyDto the application dto
+     * @param sdkPropertiesDto the sdk properties dto
      * @return the saved application dto object
      */
-    SdkKeyDto saveSdkKey(SdkKeyDto sdkKeyDto);
+    SdkPropertiesDto saveSdkKey(SdkPropertiesDto sdkPropertiesDto);
 }

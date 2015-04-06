@@ -32,14 +32,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class HibernateSdkKeyDaoTest extends HibernateAbstractTest {
     @Test
     public void saveSdkTokenTest() {
-        SdkKey sdkKey = generateSdkToken(null, null, null);
+        SdkKey sdkKey = generateSdkKey(null, null, null);
         Assert.assertNotNull(sdkKey.getId());
     }
 
     @Test
     public void findSdkKeyByTokenTest() {
         String token = "someSdkToken";
-        SdkKey sdkKeyToPersist = generateSdkToken(null, token, new byte[] {10, 2, 3, 4, 2, 3, 3, 4, 100, 3, 4});
+        SdkKey sdkKeyToPersist = generateSdkKey(null, token, new byte[]{10, 2, 3, 4, 2, 3, 3, 4, 100, 3, 4});
         SdkKey sdkKeyLoaded = sdkKeyDao.findSdkKeyByToken(token);
         Assert.assertEquals(sdkKeyToPersist, sdkKeyLoaded);
     }

@@ -16,9 +16,11 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.SdkKeyDto;
+import org.kaaproject.kaa.common.dto.DtoByteMarshaller;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,22 +28,24 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-import static java.lang.Long.getLong;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.*;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
 @Table(name = SDK_TOKEN_TABLE_NAME)
-public final class SdkKey extends GenericModel<SdkKeyDto> implements Serializable {
+public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Serializable {
 
     private static final long serialVersionUID = -5963289882951330950L;
+    private static final String HASH_ALGORITHM = "SHA";
 
-    @Column(name = SDK_TOKEN_SDK_KEY)
+    @Column(name = SDK_TOKEN_TOKEN)
     private String token;
 
-    @Column(name = SDK_TOKEN_RAW_DATA)
+    @Column(name = SDK_TOKEN_RAW_DATA, length = 1000)
     private byte[] data;
 
     @ManyToOne
@@ -56,13 +60,19 @@ public final class SdkKey extends GenericModel<SdkKeyDto> implements Serializabl
         this.id = id;
     }
 
-    public SdkKey(SdkKeyDto dto) {
+    public SdkKey(SdkPropertiesDto dto) {
         if (dto != null) {
-            this.id = getLong(dto.getId());
-            this.token = dto.getToken();
-            this.data = dto.getData();
-            Long appId = getLongId(dto.getApplicationId());
-            this.application = appId != null ? new Application(appId) : null;
+            try {
+                this.id = getLongId(dto.getId());
+                this.data = DtoByteMarshaller.toBytes(dto);
+                MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
+                digest.update(this.data);
+                this.token = Base64.encodeBase64String(digest.digest());
+                Long appId = getLongId(dto.getApplicationId());
+                this.application = appId != null ? new Application(appId) : null;
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -91,20 +101,13 @@ public final class SdkKey extends GenericModel<SdkKeyDto> implements Serializabl
     }
 
     @Override
-    protected SdkKeyDto createDto() {
-        return new SdkKeyDto();
+    protected SdkPropertiesDto createDto() {
+        return new SdkPropertiesDto();
     }
 
     @Override
-    public SdkKeyDto toDto() {
-        SdkKeyDto dto = createDto();
-        dto.setId(getStringId());
-        dto.setToken(token);
-        dto.setData(data);
-        if (application != null) {
-            dto.setApplicationId(application.getStringId());
-        }
-        return dto;
+    public SdkPropertiesDto toDto() {
+        return DtoByteMarshaller.fromBytes(data);
     }
 
     @Override

@@ -322,7 +322,7 @@ public class DaoConstants {
      */
     public static final String SDK_TOKEN_TABLE_NAME = "sdk_token";
     public static final String SDK_TOKEN_APPLICATION_ID = "application_id";
-    public static final String SDK_TOKEN_SDK_KEY = "sdk_key";
+    public static final String SDK_TOKEN_TOKEN = "token";
     public static final String SDK_TOKEN_RAW_DATA = "raw_data";
 
 

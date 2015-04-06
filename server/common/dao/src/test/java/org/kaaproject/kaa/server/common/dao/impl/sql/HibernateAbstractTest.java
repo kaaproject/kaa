@@ -501,7 +501,7 @@ public abstract class HibernateAbstractTest {
         return verifierDao.save(verifier);
     }
 
-    protected SdkKey generateSdkToken(Application app, String token, byte[] key) {
+    protected SdkKey generateSdkKey(Application app, String token, byte[] key) {
         SdkKey sdkKey = new SdkKey();
         if (app == null) {
             app = generateApplication(null);

@@ -17,11 +17,37 @@
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class SdkKeyTest {
     @Test
     public void hashCodeEqualsTest() {
         EqualsVerifier.forClass(SdkKey.class).verify();
+    }
+
+    @Test
+    public void constructorTest() {
+        SdkPropertiesDto sdkPropertiesDto1 = generateSdkPropertiesDto("1234");
+        SdkPropertiesDto sdkPropertiesDto2 = generateSdkPropertiesDto("1234");
+        SdkPropertiesDto sdkPropertiesDto3 = generateSdkPropertiesDto("1235");
+        SdkKey sdkKey1 = new SdkKey(sdkPropertiesDto1);
+        SdkKey sdkKey2 = new SdkKey(sdkPropertiesDto2);
+        SdkKey sdkKey3 = new SdkKey(sdkPropertiesDto3);
+        Assert.assertEquals(sdkKey1.toDto(), sdkKey2.toDto());
+        Assert.assertEquals(sdkKey1.getToken(), sdkKey2.getToken());
+        Assert.assertNotEquals(sdkKey1.toDto(), sdkKey3.toDto());
+        Assert.assertNotEquals(sdkKey1.getToken(), sdkKey3.getToken());
+    }
+
+    private SdkPropertiesDto generateSdkPropertiesDto(String appId) {
+        List<String> aefMapIdsList = new ArrayList<>(Arrays.asList("firstId", "secondId", "thirdId"));
+        return new SdkPropertiesDto(appId, 2, 3, 4, 5, SdkPlatform.ANDROID, aefMapIdsList, "someVerifierToken", "someApplicationToken");
     }
 }
