@@ -18,16 +18,16 @@ Copyright 2014-2015 CyberVision, Inc.
 
 <projectsConfig>
     <project id="powerplant_cpp">
-        <name>Power plant demo</name>
-        <description>Power plant demo app based on C++ SDK</description>
+        <name>Solar power plant demo</name>
+        <description>Solar power plant demo app based on C++ SDK</description>
 	    <details><![CDATA[
-This simple app demonstrates Kaa data collection subsystem capabilities on C++ SDK.
+This simple app demonstrates Kaa data collection subsystem and data distributing subsystem capabilities on C++ SDK.
 
 <h2>Installation</h2>
 Download the source code by clicking the "Source" button on the left. Build the source code using endpoint build and integration <a href="https://docs.kaaproject.org/display/KAA/Endpoint+build+and+integration+instructions#Endpointbuildandintegrationinstructions-BuildingC++endpointSDK">instructions</a>.
 
 <h2>Playing around</h2>
-Make sure that the Kaa sandbox is up and running. Starting the "Data collection demo" app, you will trigger delivery of five log messages to Kaa cluster. Kaa cluster will write this messages to local MongoDB database using <a href="https://docs.kaaproject.org/display/KAA/Log+appenders#Logappenders-MongoDBlogappender">MongoDB appender</a>.
+Make sure that the Kaa sandbox is up and running. Starting the "Power plant demo" app, you will trigger delivery of five log messages to Kaa cluster. Kaa cluster will write this messages to local MongoDB database using <a href="https://docs.kaaproject.org/display/KAA/Log+appenders#Logappenders-MongoDBlogappender">MongoDB appender</a>.
 You can explore collected data by querying sandbox MongoDB instance:
 <pre>
 $ mongo kaa
@@ -48,8 +48,8 @@ For more background on Kaa data collection subsystem please refer to the corresp
         <platform>CPP</platform>
         <features>DATA_COLLECTION</features>
         <sourceArchive>cpp/powerplant.tar.gz</sourceArchive>
-        <projectFolder>PowerPlant</projectFolder>
-        <sdkLibDir>PowerPlant/libs/kaa</sdkLibDir>
+        <projectFolder>SolarPowerPlant</projectFolder>
+        <sdkLibDir>SolarPowerPlant/libs/kaa</sdkLibDir>
         <destBinaryFile></destBinaryFile>
     </project>
 </projectsConfig>

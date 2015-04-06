@@ -24,66 +24,58 @@
 #include <kaa/log/ILogStorageStatus.hpp>
 #include <kaa/log/DefaultLogUploadStrategy.hpp>
 
+#include <kaa/configuration/storage/IConfigurationPersistenceManager.hpp>
+#include <kaa/configuration/manager/IConfigurationReceiver.hpp>
+#include <kaa/configuration/storage/FileConfigurationStorage.hpp>
+
 using namespace kaa;
 
-// The default strategy uploads logs after either a threshold logs count
-// or a threshold logs size has been reached.
-// The following custom strategy uploads every log record as soon as it is created.
-class LogUploadStrategy : public DefaultLogUploadStrategy {
-public:
-    LogUploadStrategy(IKaaChannelManagerPtr manager)
-        : DefaultLogUploadStrategy(manager) {}
+bool isShutdown = false;
+std::uint32_t threshold_log_count = 1;
+const char savedConfig[] = "saved_config.cfg";
 
-    virtual LogUploadStrategyDecision isUploadNeeded(ILogStorageStatus& status)
+class UserConfigurationReceiver : public IConfigurationReceiver {
+public:
+    void displayConfiguration(const KaaRootConfiguration &configuration)
     {
-        if (status.getRecordsCount() >= 1) {
-            return LogUploadStrategyDecision::UPLOAD;
+        if (!configuration.AddressList.is_null()) {
+            cout << "Configuration body:" << endl;
+            auto links = configuration.AddressList.get_array();
+            for (auto& e : links) {
+                 cout << e.label << " - " << e.url << endl;
+            }
         }
-        return LogUploadStrategyDecision::NOOP;
+    }
+    virtual void onConfigurationUpdated(const KaaRootConfiguration &configuration)
+    {
+        displayConfiguration(configuration);
     }
 };
 
-/*
- * A demo application that shows how to use the Kaa logging API.
- */
 int main()
 {
-    const std::size_t LOGS_TO_SEND_COUNT = 5;
-
-    std::cout << "Data collection demo started" << std::endl;
-    std::cout << "--= Press Enter to exit =--" << std::endl;
-
-    //Create a Kaa client with the Kaa desktop context.
     Kaa::init();
     IKaaClient& kaaClient =  Kaa::getKaaClient();
 
-    // Set a custom strategy for uploading logs.
-    kaaClient.setLogUploadStrategy(std::make_shared<LogUploadStrategy>(&kaaClient.getChannelManager()));
+    auto logUploadStrategy = std::make_shared<DefaultLogUploadStrategy>(&kaaClient.getChannelManager());
+    logUploadStrategy->setCountThreshold(threshold_log_count);
+    kaaClient.setLogUploadStrategy(logUploadStrategy);
 
-    // Start the Kaa client and connect it to the Kaa server.
+    auto configurationStorage = std::make_shared<FileConfigurationStorage>(savedConfig);
+    kaaClient.setConfigurationStorage(configurationStorage);
+    UserConfigurationReceiver receiver;
+    kaaClient.addConfigurationListener(receiver);
+
     Kaa::start();
 
-
-    // Send LOGS_TO_SEND_COUNT logs in a loop.
-    size_t logNumber = 0;
-    while (logNumber++ < LOGS_TO_SEND_COUNT) {
+    while (!isShutdown) {
         KaaUserLogRecord logRecord;
-        logRecord.level = kaa_log::Level::INFO;
-        logRecord.tag = "TAG";
-        logRecord.message = "MESSAGE_" + std::to_string(logNumber);
-
-        std::cout << "Going to send " << logNumber << "th record" << std::endl;
 
         kaaClient.addLogRecord(logRecord);
     }
 
-    // Wait for the Enter key before exiting.
-    std::cin.get();
-
     // Stop the Kaa client and release all the resources which were in use.
     Kaa::stop();
-
-    std::cout << "Data collection demo stopped" << std::endl;
 
     return 0;
 }

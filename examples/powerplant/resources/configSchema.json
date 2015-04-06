@@ -1,0 +1,27 @@
+{
+    "type":"record",
+    "name":"ReportConfiguration",
+    "namespace":"org.kaaproject.kaa.examples.powerplant",
+    "fields":[
+        {
+            "name":"enableReporting",
+            "type":"boolean",
+            "doc":"Defines if the voltage reporting is enabled. Reporting includes measurement and delivery phases."
+        },
+        {
+            "name":"panelCount",
+            "type":"int",
+            "doc":"Defines the number of solar panels to be requested (from 0 to 6)"
+        },
+        {
+            "name":"samplingFrequency",
+            "type":"int",
+            "doc":"Defines how frequently voltage report should be formed (in milliseconds). It means how often each solar panel will be requested for the level of the generated voltage."
+        },
+        {
+            "name":"reportingFrequency",
+            "type":"int",
+            "doc":"Defines how often voltage reports will be sent (the number of voltage reports)."
+        }
+    ]
+}
