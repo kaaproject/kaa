@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.List;
 
 
 @Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
-public class UserVerifierServiceImplTets extends AbstractTest {
+public class UserVerifierServiceImplTest extends AbstractTest {
 
     @Before
     public void beforeTest() throws Exception {
@@ -37,7 +37,6 @@ public class UserVerifierServiceImplTets extends AbstractTest {
     @Test
     public void findUserVerifiersByAppIdTest(){
         UserVerifierDto verifierDto1 = generateUserVerifier(null, null);
-        UserVerifierDto verifierDto2 = generateUserVerifier(null, null);
         List<UserVerifierDto> found = verifierService.findUserVerifiersByAppId(verifierDto1.getApplicationId());
         Assert.assertEquals(2, found.size());
     }

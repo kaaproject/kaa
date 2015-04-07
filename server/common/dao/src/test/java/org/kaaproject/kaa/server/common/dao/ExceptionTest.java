@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.client.configuration.delta;
+package org.kaaproject.kaa.server.common.dao;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kaaproject.kaa.server.common.dao.exception.UpdateStatusConflictException;
+import org.kaaproject.kaa.server.common.dao.schema.EventSchemaException;
 
-public class DefaultDeltaTypeTest {
+public class ExceptionTest {
 
     @Test
-    public void defaultDeltaTypeTest(){
-        Assert.assertTrue(new DefaultDeltaType().isDefault());
+    public void exceptionsTest() {
+        String message = "msg";
+        Assert.assertNotNull(new UpdateStatusConflictException(message));
+        Assert.assertNotNull(new EventSchemaException(message));
+        Assert.assertNotNull(new EventSchemaException(message, new Exception()));
     }
 
 }
