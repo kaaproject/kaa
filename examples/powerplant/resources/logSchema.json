@@ -9,7 +9,7 @@
                 "type":"array",
                 "items":{
                     "type":"record",
-                    "name":"Sample",
+                    "name":"VoltageSample",
                     "namespace":"org.kaaproject.kaa.examples.powerplant",
                     "fields":[
                         {

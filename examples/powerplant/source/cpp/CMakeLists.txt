@@ -33,18 +33,23 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
                     ${CMAKE_CURRENT_SOURCE_DIR}/libs/kaa
                    )
 
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build
+                 ${CMAKE_CURRENT_SOURCE_DIR}/libs/kaa/build
+                 )
 
-set (SAMPLE_SOURCE_FILES
+set (DEMO_SOURCE_FILES
             src/KaaDemo.cpp
+            src/PowerPlantController.cpp
+            src/ReportingManager.cpp
+            src/SolarPanel.cpp
 )
 
-add_executable(${APP_NAME} ${SAMPLE_SOURCE_FILES})
+add_executable(${APP_NAME} ${DEMO_SOURCE_FILES})
 
 if (CMAKE_COMPILER_IS_GNUCXX)
-    target_link_libraries(${APP_NAME} kaacpp_s botan-1.10 boost_log boost_system avrocpp pthread)
+    target_link_libraries(${APP_NAME} kaacpp_s botan-1.10 boost_log boost_system avrocpp pthread mraa)
 endif()
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    target_link_libraries(${APP_NAME} kaacpp_s botan-1.10 boost_log-mt boost_system-mt avrocpp)
+    target_link_libraries(${APP_NAME} kaacpp_s botan-1.10 boost_log-mt boost_system-mt avrocpp mraa)
 endif()

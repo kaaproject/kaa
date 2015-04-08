@@ -18,8 +18,8 @@ Copyright 2014-2015 CyberVision, Inc.
 
 <projectsConfig>
     <project id="powerplant_cpp">
-        <name>Solar power plant demo</name>
-        <description>Solar power plant demo app based on C++ SDK</description>
+        <name>Power plant demo</name>
+        <description>Power plant demo app based on C++ SDK</description>
 	    <details><![CDATA[
 This simple app demonstrates Kaa data collection subsystem and data distributing subsystem capabilities on C++ SDK.
 
@@ -48,8 +48,8 @@ For more background on Kaa data collection subsystem please refer to the corresp
         <platform>CPP</platform>
         <features>DATA_COLLECTION</features>
         <sourceArchive>cpp/powerplant.tar.gz</sourceArchive>
-        <projectFolder>SolarPowerPlant</projectFolder>
-        <sdkLibDir>SolarPowerPlant/libs/kaa</sdkLibDir>
+        <projectFolder>PowerPlant</projectFolder>
+        <sdkLibDir>PowerPlant/libs/kaa</sdkLibDir>
         <destBinaryFile></destBinaryFile>
     </project>
 </projectsConfig>

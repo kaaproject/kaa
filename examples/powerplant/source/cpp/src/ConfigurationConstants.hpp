@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-#include <stdexcept>
+#ifndef CONFIGURATIONCONSTANTS_HPP_
+#define CONFIGURATIONCONSTANTS_HPP_
 
-#include "PowerPlantController.hpp"
+namespace power_plant {
 
-int main()
-{
-    std::cout << "Going to start power plant demo application..." << std::endl;
+#define POWER_PLANT_MAX_SOLAR_PANEL_COUNT   6
+#define POWER_PLANT_SAMPLING_FREQUENCY      1000
+#define POWER_PLANT_REPORTING_FREQUENCY     1
+#define POWER_PLANT_CONFIGURATION_FILE      "power_plant.cfg"
 
-    try {
-        power_plant::PowerPlantController controller;
-        controller.run();
+} /* namespace power_plant */
 
-        std::cout << "Power plant demo application stopped" << std::endl;
-    } catch (std::exception& e) {
-        std::cerr << "Power plant demo application stopped in unexpected way: " << e.what() << std::endl;
-    }
-
-    return 0;
-}
+#endif /* CONFIGURATIONCONSTANTS_HPP_ */

@@ -14,22 +14,31 @@
  * limitations under the License.
  */
 
-#include <stdexcept>
+#ifndef SOLARPANEL_HPP_
+#define SOLARPANEL_HPP_
 
-#include "PowerPlantController.hpp"
+#include <memory>
 
-int main()
-{
-    std::cout << "Going to start power plant demo application..." << std::endl;
+#include <mraa.hpp>
 
-    try {
-        power_plant::PowerPlantController controller;
-        controller.run();
+#include <kaa/log/gen/LogDefinitions.hpp>
 
-        std::cout << "Power plant demo application stopped" << std::endl;
-    } catch (std::exception& e) {
-        std::cerr << "Power plant demo application stopped in unexpected way: " << e.what() << std::endl;
-    }
+namespace power_plant {
 
-    return 0;
-}
+class SolarPanel {
+public:
+    SolarPanel(std::size_t panelId);
+
+    kaa_log::VoltageSample getVoltageSample();
+
+private:
+    static const double ADC_FACTOR;
+
+private:
+    std::int32_t                  panelId_;
+    std::shared_ptr<mraa::Aio>    panelConnection_;
+};
+
+} /* namespace power_plant */
+
+#endif /* SOLARPANEL_HPP_ */

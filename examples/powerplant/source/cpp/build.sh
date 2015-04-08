@@ -60,7 +60,6 @@ function build_thirdparty {
         mkdir -p $BUILD_DIR && cd $BUILD_DIR &&
         cmake -DKAA_DEBUG_ENABLED=1 \
               -DKAA_WITHOUT_EVENTS=1 \
-              -DKAA_WITHOUT_CONFIGURATION=1 \
               -DKAA_WITHOUT_NOTIFICATIONS=1 \
               -DKAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL=1 \
               -DKAA_WITHOUT_OPERATION_HTTP_CHANNEL=1 \
