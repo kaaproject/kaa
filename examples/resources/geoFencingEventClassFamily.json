@@ -8,7 +8,7 @@
 },
 {
  "namespace": "org.kaaproject.kaa.demo.iotworld.geo",
- "type": "enum"  ,
+ "type": "enum",
  "classType": "object",
  "name": "OperationMode",
  "symbols" : ["ON", "OFF", "GEOFENCING"]
@@ -34,7 +34,7 @@
  "namespace": "org.kaaproject.kaa.demo.iotworld.geo",
  "type": "record",
  "classType": "event",
- "name": "OperationModeUpdate",
+ "name": "OperationModeUpdateRequest",
  "fields": [
 	{"name": "mode", "type": "org.kaaproject.kaa.demo.iotworld.geo.OperationMode"}
   ]

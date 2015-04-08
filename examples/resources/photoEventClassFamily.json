@@ -15,7 +15,7 @@
     {"name": "id", "type": "string"},
     {"name": "title", "type": "string"},
     {"name": "size", "type": "int"},
-	{"name": "thumbnail", "type": "bytes"}
+    {"name": "thumbnail", "type": "bytes"}
  ]
 },
 {
@@ -24,7 +24,7 @@
  "classType": "event",
  "name": "PhotoAlbumsResponse",
  "fields": [
-    {"name": "albums", "type": [{"type": "array", "items": "org.kaaproject.kaa.demo.iotworld.photo.PhotoAlbumInfo"}, "null"]}
+    {"name": "albums", "type": {"type": "array", "items": "org.kaaproject.kaa.demo.iotworld.photo.PhotoAlbumInfo"} }
   ]
 },
 {
@@ -53,7 +53,7 @@
  "classType": "event",
  "name": "StartSlideShowRequest",
  "fields": [
-     {"name": "albumId", "type": ["string", "null"]}
+     {"name": "albumId", "type": "string" }
  ]
 },
 {
@@ -71,7 +71,7 @@
  "fields": [
      {"name": "albumId", "type": ["string","null"]},
      {"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.photo.SlideShowStatus"},
-	 {"name": "thumbnail", "type": "bytes"}
+     {"name": "thumbnail", "type": "bytes"}
  ]
 }
 ]
