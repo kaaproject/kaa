@@ -214,6 +214,7 @@ static void kaa_notification_manager_destroy(kaa_notification_manager_t **self)
     if ((*self)->topics) {
         kaa_list_destroy((*self)->topics, &kaa_topic_deallocator);
     }
+    KAA_FREE(*self);
 }
 
 kaa_error_t kaa_add_notification_listener(kaa_notification_manager_t *self, kaa_notification_listener_t *listener, uint32_t* listener_id)
