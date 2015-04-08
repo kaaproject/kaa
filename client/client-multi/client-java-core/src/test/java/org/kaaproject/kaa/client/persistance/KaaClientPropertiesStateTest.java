@@ -57,7 +57,7 @@ public class KaaClientPropertiesStateTest {
         props.setProperty(KaaClientProperties.PROFILE_VERSION, "1");
         props.setProperty(KaaClientProperties.SYSTEM_NT_VERSION, "1");
         props.setProperty(KaaClientProperties.USER_NT_VERSION, "1");
-        props.setProperty(KaaClientProperties.APPLICATION_TOKEN, "123456");
+        props.setProperty(KaaClientProperties.SDK_TOKEN, "123456");
         return props;
     }
 

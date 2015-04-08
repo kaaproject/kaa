@@ -256,7 +256,7 @@
  "name": "SyncRequestMetaData",
  "direction": "out",
  "fields": [
-     {"name": "applicationToken", "type": "string"},
+     {"name": "sdkToken", "type": "string"},
      {"name": "endpointPublicKeyHash",  "type": ["bytes", "null"]},
      {"name": "profileHash",  "type": ["bytes", "null"]},
      {"name": "timeout",  "type": ["long", "null"]}

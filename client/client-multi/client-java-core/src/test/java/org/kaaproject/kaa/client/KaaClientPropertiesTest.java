@@ -103,7 +103,7 @@ public class KaaClientPropertiesTest {
     public void testGetApplicationToken() throws IOException {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
         KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
-        assertEquals("098155062149502", properties.getApplicationToken());
+        assertEquals("098155062149502", properties.getSdkToken());
     }
 
     @Test

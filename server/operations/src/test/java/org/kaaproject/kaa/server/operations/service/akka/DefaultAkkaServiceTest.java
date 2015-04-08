@@ -400,7 +400,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest request = new SyncRequest();
         request.setRequestId(REQUEST_ID);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setApplicationToken(APP_TOKEN);
+        md.setSdkToken(APP_TOKEN);
         md.setEndpointPublicKeyHash(clientPublicKeyHash);
         md.setProfileHash(clientPublicKeyHash);
         request.setSyncRequestMetaData(md);
@@ -435,7 +435,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest request = new SyncRequest();
         request.setRequestId(REQUEST_ID);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setApplicationToken(APP_TOKEN);
+        md.setSdkToken(APP_TOKEN);
         md.setEndpointPublicKeyHash(clientPublicKeyHash);
         md.setProfileHash(clientPublicKeyHash);
         request.setSyncRequestMetaData(md);
@@ -470,7 +470,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest request = new SyncRequest();
         request.setRequestId(REQUEST_ID);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setApplicationToken(APP_TOKEN);
+        md.setSdkToken(APP_TOKEN);
         md.setEndpointPublicKeyHash(clientPublicKeyHash);
         md.setProfileHash(clientPublicKeyHash);
         request.setSyncRequestMetaData(md);
@@ -502,7 +502,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest request = new SyncRequest();
         request.setRequestId(REQUEST_ID);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setApplicationToken(APP_TOKEN);
+        md.setSdkToken(APP_TOKEN);
         md.setEndpointPublicKeyHash(clientPublicKeyHash);
         md.setProfileHash(clientPublicKeyHash);
         request.setSyncRequestMetaData(md);
@@ -537,7 +537,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest request = new SyncRequest();
         request.setRequestId(REQUEST_ID);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setApplicationToken(APP_TOKEN);
+        md.setSdkToken(APP_TOKEN);
         md.setEndpointPublicKeyHash(clientPublicKeyHash);
         md.setProfileHash(clientPublicKeyHash);
         md.setTimeout(1000l);
@@ -914,7 +914,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest sourceRequest = new SyncRequest();
         sourceRequest.setRequestId(REQUEST_ID);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setApplicationToken(APP_TOKEN);
+        md.setSdkToken(APP_TOKEN);
         md.setEndpointPublicKeyHash(clientPublicKeyHash);
         md.setProfileHash(clientPublicKeyHash);
         md.setTimeout(TIMEOUT * 1L);
@@ -932,7 +932,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest targetRequest = new SyncRequest();
         targetRequest.setRequestId(REQUEST_ID);
         md = new SyncRequestMetaData();
-        md.setApplicationToken(APP_TOKEN);
+        md.setSdkToken(APP_TOKEN);
         md.setEndpointPublicKeyHash(targetPublicKeyHash);
         md.setProfileHash(targetPublicKeyHash);
         md.setTimeout(TIMEOUT * 1L);
@@ -1204,7 +1204,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest request = new SyncRequest();
         request.setRequestId(REQUEST_ID);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setApplicationToken(APP_TOKEN);
+        md.setSdkToken(APP_TOKEN);
         md.setEndpointPublicKeyHash(clientPublicKeyHash);
         md.setProfileHash(clientPublicKeyHash);
         md.setTimeout(1000l);
@@ -1539,7 +1539,7 @@ public class DefaultAkkaServiceTest {
 
     private SyncRequestMetaData buildSyncRequestMetaData(ByteBuffer keyHash) {
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setApplicationToken(APP_TOKEN);
+        md.setSdkToken(APP_TOKEN);
         md.setEndpointPublicKeyHash(keyHash);
         md.setProfileHash(keyHash);
         md.setTimeout(2l * TIMEOUT);

@@ -62,11 +62,11 @@ public class KaaClientProperties extends Properties {
     public static final String PROFILE_VERSION = "profile_version";
     public static final String SYSTEM_NT_VERSION = "system_nt_version";
     public static final String USER_NT_VERSION = "user_nt_version";
-    public static final String APPLICATION_TOKEN = "application_token";
     public static final String CONFIG_DATA_DEFAULT = "config.data.default";
     public static final String CONFIG_SCHEMA_DEFAULT = "config.schema.default";
     public static final String EVENT_CLASS_FAMILY_VERSION = "event_cf_version";
     public static final String LOG_SCHEMA_VERSION = "logs_version";
+    public static final String SDK_TOKEN = "sdk_token";
 
     private static final String PROPERTIES_HASH_ALGORITHM = "SHA";
 
@@ -109,11 +109,11 @@ public class KaaClientProperties extends Properties {
                 updateDigest(digest, PROFILE_VERSION);
                 updateDigest(digest, SYSTEM_NT_VERSION);
                 updateDigest(digest, USER_NT_VERSION);
-                updateDigest(digest, APPLICATION_TOKEN);
                 updateDigest(digest, CONFIG_DATA_DEFAULT);
                 updateDigest(digest, CONFIG_SCHEMA_DEFAULT);
                 updateDigest(digest, EVENT_CLASS_FAMILY_VERSION);
                 updateDigest(digest, LOG_SCHEMA_VERSION);
+                updateDigest(digest, SDK_TOKEN);
 
                 propertiesHash = digest.digest();
             } catch (NoSuchAlgorithmException e) {
@@ -169,8 +169,8 @@ public class KaaClientProperties extends Properties {
         return parseBootstrapServers(getProperty(KaaClientProperties.BOOTSTRAP_SERVERS));
     }
 
-    public String getApplicationToken() {
-        return getProperty(KaaClientProperties.APPLICATION_TOKEN);
+    public String getSdkToken() {
+        return getProperty(KaaClientProperties.SDK_TOKEN);
     }
 
     public Integer getPollDelay() {
