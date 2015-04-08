@@ -37,6 +37,7 @@ import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
+import org.kaaproject.kaa.server.common.dao.SdkKeyService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFqnVersion;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableKey;
@@ -185,6 +186,14 @@ public interface CacheService {
     String getTenantIdByAppToken(String appToken);
 
     /**
+     * Gets the application token by the sdk token
+     *
+     * @param sdkToken the sdk token
+     * @return application token for the specified sdk token
+     */
+    String getAppTokenBySdkToken(String sdkToken);
+
+    /**
      * Gets the Event Class Family Id by Event Class FQN
      *
      * @param fqn of one of the events that belong to target Event Class Family
@@ -243,6 +252,13 @@ public interface CacheService {
      * @param endpointService the new endpoint service
      */
     void setEndpointService(EndpointService endpointService);
+
+    /**
+     * Setter for test purposes only
+     *
+     * @param sdkKeyService the new sdk key service
+     */
+    void setSdkKeyService(SdkKeyService sdkKeyService);
 
     /**
      * Cache invalidate method.

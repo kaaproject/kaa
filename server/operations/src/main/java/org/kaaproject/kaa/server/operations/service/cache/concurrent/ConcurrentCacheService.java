@@ -41,6 +41,7 @@ import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
@@ -55,6 +56,7 @@ import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
+import org.kaaproject.kaa.server.common.dao.SdkKeyService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
@@ -119,6 +121,9 @@ public class ConcurrentCacheService implements CacheService {
     @Autowired
     private ApplicationEventMapService applicationEventMapService;
 
+    @Autowired
+    private SdkKeyService sdkKeyService;
+
     /** The app seq number memorizer. */
     private final CacheTemporaryMemorizer<String, AppSeqNumber> appSeqNumberMemorizer = new CacheTemporaryMemorizer<>();
 
@@ -157,6 +162,9 @@ public class ConcurrentCacheService implements CacheService {
 
     /** The endpoint key memorizer. */
     private final CacheTemporaryMemorizer<String, String> tenantIdMemorizer = new CacheTemporaryMemorizer<>();
+
+    /** The application token memorizer. */
+    private final CacheTemporaryMemorizer<String, String> appTokenMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The endpoint groups memorizer. */
     private final CacheTemporaryMemorizer<String, EndpointGroupDto> groupsMemorizer = new CacheTemporaryMemorizer<String, EndpointGroupDto>();
@@ -638,13 +646,29 @@ public class ConcurrentCacheService implements CacheService {
         });
     }
 
+    @Override
+    @Cacheable("appTokens")
+    public String getAppTokenBySdkToken(String key) {
+        // TODO: throw an exception instead of returning null
+        return appTokenMemorizer.compute(key, new Computable<String, String>() {
+
+            @Override
+            public String compute(String key) {
+                LOG.debug("Fetching result for sdk token to retrieve application token");
+                SdkPropertiesDto sdkPropertiesDto = sdkKeyService.findSdkKeyByToken(key);
+                return sdkPropertiesDto != null ? sdkPropertiesDto.getApplicationToken() : null;
+            }
+
+        });
+    }
+
     /*
-     * (non-Javadoc)
-     *
-     * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
-     * setEndpointKey(org.kaaproject.kaa.common.hash.EndpointObjectHash,
-     * java.security.PublicKey)
-     */
+         * (non-Javadoc)
+         *
+         * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
+         * setEndpointKey(org.kaaproject.kaa.common.hash.EndpointObjectHash,
+         * java.security.PublicKey)
+         */
     @Override
     public void setEndpointKey(EndpointObjectHash key, PublicKey endpointKey) {
         putEndpointKey(key, endpointKey);
@@ -845,6 +869,11 @@ public class ConcurrentCacheService implements CacheService {
     @Override
     public void setApplicationEventMapService(ApplicationEventMapService applicationEventMapService) {
         this.applicationEventMapService = applicationEventMapService;
+    }
+
+    @Override
+    public void setSdkKeyService(SdkKeyService sdkKeyService) {
+        this.sdkKeyService = sdkKeyService;
     }
 
     /**

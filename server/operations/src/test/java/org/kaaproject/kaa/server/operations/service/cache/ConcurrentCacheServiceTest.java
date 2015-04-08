@@ -17,12 +17,7 @@
 package org.kaaproject.kaa.server.operations.service.cache;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.atMost;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.security.GeneralSecurityException;
 import java.security.KeyPairGenerator;
@@ -48,6 +43,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
@@ -61,6 +57,7 @@ import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
+import org.kaaproject.kaa.server.common.dao.SdkKeyService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.cache.concurrent.ConcurrentCacheService;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFamilyVersion;
@@ -108,6 +105,7 @@ public class ConcurrentCacheServiceTest {
 
     private static final String TEST_APP_ID = "testAppId";
     private static final String TEST_APP_TOKEN = "testApp";
+    private static final String TEST_SDK_TOKEN = "testSdkToken";
     private static final String APP_ID = "testAppId";
     private static final int TEST_APP_SEQ_NUMBER = 42;
     private static final int TEST_APP_SEQ_NUMBER_NEW = 46;
@@ -143,6 +141,7 @@ public class ConcurrentCacheServiceTest {
     private EndpointService endpointService;
     private EventClassService eventClassService;
     private ApplicationEventMapService applicationEventMapService;
+    private SdkKeyService sdkKeyService;
 
     @Before
     public void prepare() throws GeneralSecurityException {
@@ -157,6 +156,17 @@ public class ConcurrentCacheServiceTest {
             public ApplicationDto answer(InvocationOnMock invocation) {
                 sleepABit();
                 return appDto;
+            }
+        });
+
+        final SdkPropertiesDto sdkProperties = new SdkPropertiesDto();
+        sdkProperties.setApplicationToken(TEST_APP_TOKEN);
+        sdkProperties.setApplicationId(APP_ID);
+        when(sdkKeyService.findSdkKeyByToken(TEST_SDK_TOKEN)).then(new Answer<SdkPropertiesDto>() {
+            @Override
+            public SdkPropertiesDto answer(InvocationOnMock invocationOnMock) throws Throwable {
+                sleepABit();
+                return sdkProperties;
             }
         });
 
@@ -355,6 +365,16 @@ public class ConcurrentCacheServiceTest {
         assertEquals(CF1_ID, cacheService.getConfIdByKey(TEST_CONF_ID_KEY));
         verify(configurationService, times(0)).findConfigurationsByEndpointGroupId(ENDPOINT_GROUP1_ID);
         reset(configurationService);
+    }
+
+    @Test
+    public void testGetAppTokenBySdkToken() {
+        assertEquals(TEST_APP_TOKEN, cacheService.getAppTokenBySdkToken(TEST_SDK_TOKEN));
+        verify(sdkKeyService, times(1)).findSdkKeyByToken(TEST_SDK_TOKEN);
+        reset(sdkKeyService);
+
+        assertEquals(TEST_APP_TOKEN, cacheService.getAppTokenBySdkToken(TEST_SDK_TOKEN));
+        verify(sdkKeyService, never()).findSdkKeyByToken(TEST_SDK_TOKEN);
     }
 
     @Test
@@ -619,6 +639,7 @@ public class ConcurrentCacheServiceTest {
         endpointService = mock(EndpointService.class);
         eventClassService = mock(EventClassService.class);
         applicationEventMapService = mock(ApplicationEventMapService.class);
+        sdkKeyService = mock(SdkKeyService.class);
 
         ReflectionTestUtils.invokeMethod(cacheService, "setApplicationService", appService);
         ReflectionTestUtils.invokeMethod(cacheService, "setConfigurationService", configurationService);
@@ -627,6 +648,7 @@ public class ConcurrentCacheServiceTest {
         ReflectionTestUtils.invokeMethod(cacheService, "setEndpointService", endpointService);
         ReflectionTestUtils.invokeMethod(cacheService, "setEventClassService", eventClassService);
         ReflectionTestUtils.invokeMethod(cacheService, "setApplicationEventMapService", applicationEventMapService);
+        ReflectionTestUtils.invokeMethod(cacheService, "setSdkKeyService", sdkKeyService);
     }
 
     private HistoryDto buildNotMatchingHistoryDto(ChangeType changeType) {
