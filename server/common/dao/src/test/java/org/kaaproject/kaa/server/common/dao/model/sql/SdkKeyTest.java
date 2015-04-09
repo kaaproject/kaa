@@ -27,6 +27,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SdkKeyTest {
+    private final int SDK_TOKEN_LENGTH = 28;
+
     @Test
     public void hashCodeEqualsTest() {
         EqualsVerifier.forClass(SdkKey.class).verify();
@@ -44,6 +46,7 @@ public class SdkKeyTest {
         Assert.assertEquals(sdkKey1.getToken(), sdkKey2.getToken());
         Assert.assertNotEquals(sdkKey1.toDto(), sdkKey3.toDto());
         Assert.assertNotEquals(sdkKey1.getToken(), sdkKey3.getToken());
+        Assert.assertEquals(SDK_TOKEN_LENGTH, sdkKey1.getToken().length());
     }
 
     private SdkPropertiesDto generateSdkPropertiesDto(String appId) {

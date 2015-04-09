@@ -108,7 +108,7 @@ public class BinaryEncDec implements PlatformEncDec {
     private static final byte USER_SYNC_ENDPOINT_ID_OPTION = 0x01;
     private static final short EVENT_DATA_IS_EMPTY_OPTION = (short) 0x02;
     private static final int CLIENT_EVENT_DATA_IS_PRESENT_OPTION = 0x02;
-    private static final int CLIENT_META_SYNC_APP_TOKEN_OPTION = 0x08;
+    private static final int CLIENT_META_SYNC_SDK_TOKEN_OPTION = 0x08;
     private static final int CLIENT_META_SYNC_PROFILE_HASH_OPTION = 0x04;
     private static final int CLIENT_META_SYNC_KEY_HASH_OPTION = 0x02;
     private static final int CLIENT_META_SYNC_TIMEOUT_OPTION = 0x01;
@@ -586,8 +586,8 @@ public class BinaryEncDec implements PlatformEncDec {
         if (hasOption(options, CLIENT_META_SYNC_PROFILE_HASH_OPTION)) {
             md.setProfileHash(getNewByteBuffer(buf, PROFILE_HASH_SIZE));
         }
-        if (hasOption(options, CLIENT_META_SYNC_APP_TOKEN_OPTION)) {
-            md.setApplicationToken(getUTF8String(buf, Constants.APP_TOKEN_SIZE));
+        if (hasOption(options, CLIENT_META_SYNC_SDK_TOKEN_OPTION)) {
+            md.setSdkToken(getUTF8String(buf, Constants.SDK_TOKEN_SIZE));
         }
         sync.setClientSyncMetaData(md);
     }

@@ -221,7 +221,7 @@ public class BinaryEncDecTest {
     }
 
     private byte[] getValidMetaData() {
-        ByteBuffer buf = ByteBuffer.wrap(new byte[8 + SHA_1_LENGTH + SHA_1_LENGTH + 20]);
+        ByteBuffer buf = ByteBuffer.wrap(new byte[8 + SHA_1_LENGTH + SHA_1_LENGTH + 28]);
         buf.putInt(1);
         buf.putInt(60);
         byte[] keyHash = new byte[SHA_1_LENGTH];
@@ -230,7 +230,7 @@ public class BinaryEncDecTest {
         byte[] profileHash = new byte[SHA_1_LENGTH];
         profileHash[MAGIC_INDEX] = MAGIC_NUMBER + 1;
         buf.put(profileHash);
-        buf.put("12345678900987654321".getBytes(Charset.forName("UTF-8")));
+        buf.put("12345678900987654321abcdEFGH".getBytes(Charset.forName("UTF-8")));
         return concat(buildExtensionHeader(BinaryEncDec.META_DATA_EXTENSION_ID, 0, 0, 0x0F, buf.array().length), buf.array());
     }
 

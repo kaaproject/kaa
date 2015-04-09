@@ -40,7 +40,7 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongI
 public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Serializable {
 
     private static final long serialVersionUID = -5963289882951330950L;
-    private static final String HASH_ALGORITHM = "SHA";
+    private static final String HASH_ALGORITHM = "SHA1";
 
     @Column(name = SDK_TOKEN_TOKEN)
     private String token;
