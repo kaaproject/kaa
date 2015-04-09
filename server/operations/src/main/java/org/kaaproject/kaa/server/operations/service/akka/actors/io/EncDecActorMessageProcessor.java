@@ -20,9 +20,7 @@ import java.security.PublicKey;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
-import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -44,7 +42,6 @@ import org.kaaproject.kaa.server.sync.platform.PlatformEncDecException;
 import org.kaaproject.kaa.server.sync.platform.PlatformLookup;
 import org.kaaproject.kaa.server.transport.InvalidApplicationTokenException;
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
-import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
 import org.kaaproject.kaa.server.transport.message.Message;
 import org.kaaproject.kaa.server.transport.message.MessageBuilder;
@@ -362,22 +359,6 @@ public class EncDecActorMessageProcessor {
 
     private void addAppTokenToClientSyncMetaData(ClientSyncMetaData clientSyncMetaData) {
         clientSyncMetaData.setApplicationToken(getAppToken(clientSyncMetaData.getSdkToken()));
-    }
-
-    private SessionInfo addAppTokenToSessionInfo(SessionInfo sessionInfo) {
-        String sdkToken = sessionInfo.getSdkToken();
-        return new SessionInfo (
-                sessionInfo.getUuid(),
-                sessionInfo.getPlatformId(),
-                sessionInfo.getCtx(),
-                sessionInfo.getChannelType(),
-                sessionInfo.getCipherPair(),
-                sessionInfo.getKey(),
-                getAppToken(sdkToken),
-                sdkToken,
-                sessionInfo.getKeepAlive(),
-                sessionInfo.isEncrypted()
-        );
     }
 
     private String getSdkToken(ClientSync request) {
