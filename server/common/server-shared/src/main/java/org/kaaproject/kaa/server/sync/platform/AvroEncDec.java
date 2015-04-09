@@ -507,7 +507,7 @@ public class AvroEncDec implements PlatformEncDec {
         if (source == null) {
             return null;
         }
-        return new ClientSyncMetaData(source.getSdkToken(), source.getEndpointPublicKeyHash(), source.getProfileHash(),
+        return new ClientSyncMetaData(null, source.getSdkToken(), source.getEndpointPublicKeyHash(), source.getProfileHash(),
                 source.getTimeout());
     }
 

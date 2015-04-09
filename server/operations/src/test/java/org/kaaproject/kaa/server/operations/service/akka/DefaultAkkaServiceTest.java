@@ -136,6 +136,7 @@ public class DefaultAkkaServiceTest {
     private static final String TENANT_ID = "TENANT_ID";
     private static final String USER_ID = "USER_ID";
     private static final String APP_TOKEN = "APP_TOKEN";
+    private static final String SDK_TOKEN = "SDK_TOKEN";
     private static final String APP_ID = "APP_ID";
     private static final String PROFILE_BODY = "ProfileBody";
 
@@ -216,6 +217,7 @@ public class DefaultAkkaServiceTest {
         targetPublicKeyHash = ByteBuffer.wrap(SHA1HashUtils.hashToBytes(targetPair.getPublic().getEncoded()));
 
         Mockito.when(cacheService.getTenantIdByAppToken(APP_TOKEN)).thenReturn(TENANT_ID);
+        Mockito.when(cacheService.getAppTokenBySdkToken(SDK_TOKEN)).thenReturn(APP_TOKEN);
         Mockito.when(cacheService.getEndpointKey(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()))).thenReturn(
                 clientPair.getPublic());
         Mockito.when(cacheService.getEndpointKey(EndpointObjectHash.fromBytes(targetPublicKeyHash.array()))).thenReturn(
@@ -383,7 +385,7 @@ public class DefaultAkkaServiceTest {
 
         SessionInfo sessionInfo = new SessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID,
                 Mockito.mock(ChannelContext.class), ChannelType.ASYNC, Mockito.mock(CipherPair.class), EndpointObjectHash.fromSHA1("test"),
-                "applicationToken", 100, true);
+                "applicationToken", "sdkToken", 100, true);
         Mockito.when(message.getChannelContext()).thenReturn(Mockito.mock(ChannelContext.class));
         Mockito.when(message.getErrorBuilder()).thenReturn(errorBuilder);
         Mockito.when(message.getSessionInfo()).thenReturn(sessionInfo);
@@ -400,7 +402,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest request = new SyncRequest();
         request.setRequestId(REQUEST_ID);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setSdkToken(APP_TOKEN);
+        md.setSdkToken(SDK_TOKEN);
         md.setEndpointPublicKeyHash(clientPublicKeyHash);
         md.setProfileHash(clientPublicKeyHash);
         request.setSyncRequestMetaData(md);
@@ -435,7 +437,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest request = new SyncRequest();
         request.setRequestId(REQUEST_ID);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setSdkToken(APP_TOKEN);
+        md.setSdkToken(SDK_TOKEN);
         md.setEndpointPublicKeyHash(clientPublicKeyHash);
         md.setProfileHash(clientPublicKeyHash);
         request.setSyncRequestMetaData(md);
@@ -470,7 +472,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest request = new SyncRequest();
         request.setRequestId(REQUEST_ID);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setSdkToken(APP_TOKEN);
+        md.setSdkToken(SDK_TOKEN);
         md.setEndpointPublicKeyHash(clientPublicKeyHash);
         md.setProfileHash(clientPublicKeyHash);
         request.setSyncRequestMetaData(md);
@@ -502,7 +504,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest request = new SyncRequest();
         request.setRequestId(REQUEST_ID);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setSdkToken(APP_TOKEN);
+        md.setSdkToken(SDK_TOKEN);
         md.setEndpointPublicKeyHash(clientPublicKeyHash);
         md.setProfileHash(clientPublicKeyHash);
         request.setSyncRequestMetaData(md);
@@ -537,7 +539,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest request = new SyncRequest();
         request.setRequestId(REQUEST_ID);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setSdkToken(APP_TOKEN);
+        md.setSdkToken(SDK_TOKEN);
         md.setEndpointPublicKeyHash(clientPublicKeyHash);
         md.setProfileHash(clientPublicKeyHash);
         md.setTimeout(1000l);
@@ -577,6 +579,9 @@ public class DefaultAkkaServiceTest {
 
     private void whenSync(ClientSync request, SyncContext response) throws GetDeltaException {
         SyncContext context = new SyncContext(new ServerSync());
+        if (request.getClientSyncMetaData() != null) {
+            request.getClientSyncMetaData().setApplicationToken(APP_TOKEN);
+        }
         context.setRequestHash(request.hashCode());
 
         Mockito.when(operationsService.syncProfile(context, request.getProfileSync())).thenReturn(response);
@@ -802,8 +807,8 @@ public class DefaultAkkaServiceTest {
         final org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest kaaSync = new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest(
                 crypt.encodeData(requestConverter.toByteArray(request)), false, true);
         final SessionInfo session = new SessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, channelContextMock,
-                ChannelType.ASYNC, crypt.getSessionCipherPair(), EndpointObjectHash.fromBytes(clientPublicKey.array()), APP_TOKEN, 100,
-                true);
+                ChannelType.ASYNC, crypt.getSessionCipherPair(), EndpointObjectHash.fromBytes(clientPublicKey.array()), APP_TOKEN,
+                SDK_TOKEN, 100, true);
 
         SessionAwareMessage message = new SessionAwareMessage() {
 
@@ -914,7 +919,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest sourceRequest = new SyncRequest();
         sourceRequest.setRequestId(REQUEST_ID);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setSdkToken(APP_TOKEN);
+        md.setSdkToken(SDK_TOKEN);
         md.setEndpointPublicKeyHash(clientPublicKeyHash);
         md.setProfileHash(clientPublicKeyHash);
         md.setTimeout(TIMEOUT * 1L);
@@ -932,7 +937,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest targetRequest = new SyncRequest();
         targetRequest.setRequestId(REQUEST_ID);
         md = new SyncRequestMetaData();
-        md.setSdkToken(APP_TOKEN);
+        md.setSdkToken(SDK_TOKEN);
         md.setEndpointPublicKeyHash(targetPublicKeyHash);
         md.setProfileHash(targetPublicKeyHash);
         md.setTimeout(TIMEOUT * 1L);
@@ -1204,7 +1209,7 @@ public class DefaultAkkaServiceTest {
         SyncRequest request = new SyncRequest();
         request.setRequestId(REQUEST_ID);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setSdkToken(APP_TOKEN);
+        md.setSdkToken(SDK_TOKEN);
         md.setEndpointPublicKeyHash(clientPublicKeyHash);
         md.setProfileHash(clientPublicKeyHash);
         md.setTimeout(1000l);
@@ -1539,7 +1544,7 @@ public class DefaultAkkaServiceTest {
 
     private SyncRequestMetaData buildSyncRequestMetaData(ByteBuffer keyHash) {
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setSdkToken(APP_TOKEN);
+        md.setSdkToken(SDK_TOKEN);
         md.setEndpointPublicKeyHash(keyHash);
         md.setProfileHash(keyHash);
         md.setTimeout(2l * TIMEOUT);

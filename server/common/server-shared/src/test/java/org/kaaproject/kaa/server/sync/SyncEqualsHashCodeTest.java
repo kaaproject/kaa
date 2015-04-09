@@ -43,9 +43,9 @@ public class SyncEqualsHashCodeTest {
 
     @Test
     public void clientSyncMetaDataEqualsHashCodeTest() {
-        ClientSyncMetaData clientSyncMetaData1 =  new ClientSyncMetaData("token1", null, null, 10L);
-        ClientSyncMetaData clientSyncMetaData2 =  new ClientSyncMetaData("token1", null, null, 10L);
-        ClientSyncMetaData clientSyncMetaData3 = new ClientSyncMetaData("token3", null, null, 12L);
+        ClientSyncMetaData clientSyncMetaData1 =  new ClientSyncMetaData("token1", null, null, null, 10L);
+        ClientSyncMetaData clientSyncMetaData2 =  new ClientSyncMetaData("token1", null, null, null, 10L);
+        ClientSyncMetaData clientSyncMetaData3 = new ClientSyncMetaData("token3", null, null, null, 12L);
         Assert.assertEquals(clientSyncMetaData1, clientSyncMetaData1);
         Assert.assertNotEquals(clientSyncMetaData1, clientSyncMetaData3);
         Assert.assertNotEquals(clientSyncMetaData1, null);

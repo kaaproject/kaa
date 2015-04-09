@@ -20,7 +20,9 @@ import java.security.PublicKey;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
+import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -33,6 +35,7 @@ import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.metrics.MeterClient;
 import org.kaaproject.kaa.server.operations.service.metrics.MetricsService;
 import org.kaaproject.kaa.server.sync.ClientSync;
+import org.kaaproject.kaa.server.sync.ClientSyncMetaData;
 import org.kaaproject.kaa.server.sync.RedirectServerSync;
 import org.kaaproject.kaa.server.sync.ServerSync;
 import org.kaaproject.kaa.server.sync.SyncStatus;
@@ -41,6 +44,7 @@ import org.kaaproject.kaa.server.sync.platform.PlatformEncDecException;
 import org.kaaproject.kaa.server.sync.platform.PlatformLookup;
 import org.kaaproject.kaa.server.transport.InvalidApplicationTokenException;
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
+import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
 import org.kaaproject.kaa.server.transport.message.Message;
 import org.kaaproject.kaa.server.transport.message.MessageBuilder;
@@ -137,11 +141,11 @@ public class EncDecActorMessageProcessor {
             redirectMeter.mark();
             ClientSync request = decodeRequest(message);
             ServerSync response = buildRedirectionResponse(redirection, request);
-
             EndpointObjectHash key = getEndpointObjectHash(request);
-            String appToken = getAppToken(request);
+            String sdkToken = getSdkToken(request);
+            String appToken = getAppToken(sdkToken);
             SessionInfo sessionInfo = new SessionInfo(message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
-                    message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, message.getKeepAlive(), message.isEncrypted());
+                    message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, sdkToken, message.getKeepAlive(), message.isEncrypted());
             SessionResponse responseMessage = new NettySessionResponseMessage(sessionInfo, response, message.getMessageBuilder(),
                     message.getErrorBuilder());
             LOG.debug("Redirect Response: {}", response);
@@ -153,10 +157,10 @@ public class EncDecActorMessageProcessor {
 
     void redirect(RedirectionRule redirection, SessionAwareMessage message) {
         try {
+            LOG.trace("Redirecting {} SessionAwareMessage", message);
             redirectMeter.mark();
             ClientSync request = decodeRequest(message);
             ServerSync response = buildRedirectionResponse(redirection, request);
-
             SessionInfo sessionInfo = message.getSessionInfo();
             SessionResponse responseMessage = new NettySessionResponseMessage(sessionInfo, response, message.getMessageBuilder(),
                         message.getErrorBuilder());
@@ -180,8 +184,10 @@ public class EncDecActorMessageProcessor {
             PlatformEncDecException, InvalidApplicationTokenException {
         ClientSync request = decodeRequest(message);
         EndpointObjectHash key = getEndpointObjectHash(request);
+        String sdkToken = getSdkToken(request);
+        String appToken = getAppToken(sdkToken);
         SessionInfo session = new SessionInfo(message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
-                message.getChannelType(), crypt.getSessionCipherPair(), key, request.getClientSyncMetaData().getApplicationToken(),
+                message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, sdkToken,
                 message.getKeepAlive(), message.isEncrypted());
         message.onSessionCreated(session);
         if (isApplicationTokenValid(session.getApplicationToken())) {
@@ -236,9 +242,10 @@ public class EncDecActorMessageProcessor {
         } else if (supportUnencryptedConnection) {
             syncRequest = decodeUnencryptedRequest(message);
         } else {
-            LOG.warn("Received unencripted init message, but unencrypted connection forbidden by configuration.");
+            LOG.warn("Received unencrypted init message, but unencrypted connection forbidden by configuration.");
             throw new GeneralSecurityException("Unencrypted connection forbidden by configuration.");
         }
+        addAppTokenToClientSyncMetaData(syncRequest.getClientSyncMetaData());
         return syncRequest;
     }
 
@@ -353,8 +360,32 @@ public class EncDecActorMessageProcessor {
         }
     }
 
-    private String getAppToken(ClientSync request) {
-        return request.getClientSyncMetaData().getApplicationToken();
+    private void addAppTokenToClientSyncMetaData(ClientSyncMetaData clientSyncMetaData) {
+        clientSyncMetaData.setApplicationToken(getAppToken(clientSyncMetaData.getSdkToken()));
+    }
+
+    private SessionInfo addAppTokenToSessionInfo(SessionInfo sessionInfo) {
+        String sdkToken = sessionInfo.getSdkToken();
+        return new SessionInfo (
+                sessionInfo.getUuid(),
+                sessionInfo.getPlatformId(),
+                sessionInfo.getCtx(),
+                sessionInfo.getChannelType(),
+                sessionInfo.getCipherPair(),
+                sessionInfo.getKey(),
+                getAppToken(sdkToken),
+                sdkToken,
+                sessionInfo.getKeepAlive(),
+                sessionInfo.isEncrypted()
+        );
+    }
+
+    private String getSdkToken(ClientSync request) {
+        return request.getClientSyncMetaData().getSdkToken();
+    }
+
+    private String getAppToken(String sdkToken) {
+        return cacheService.getAppTokenBySdkToken(sdkToken);
     }
 
     private boolean isApplicationTokenValid(String applicationToken) {
