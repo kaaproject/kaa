@@ -169,21 +169,15 @@ static void start_client(void)
 
 void switch_lights(int allow_red, int allow_yellow, int allow_green, int disallow_red, int disallow_yellow, int disallow_green)
 {
-    int i = 0;
-    for (; i < 3; ++i) {
-        sndc_io_write(disallow_green, 0);
-        sndc_thrd_delay(200 * SNDC_MILLISECOND);
-        sndc_io_write(disallow_green, 1);
-        sndc_thrd_delay(200 * SNDC_MILLISECOND);
-    }
     sndc_io_write(disallow_green, 0);
 
     sndc_io_write(disallow_yellow, 1);
-    sndc_thrd_delay(800 * SNDC_MILLISECOND);
+    sndc_thrd_delay(4000 * SNDC_MILLISECOND);
     sndc_io_write(disallow_yellow, 0);
 
     sndc_io_write(disallow_red, 1);
 
+    sndc_thrd_delay(1000 * SNDC_MILLISECOND);
     sndc_io_write(allow_red, 0);
     sndc_io_write(allow_yellow, 0);
     sndc_io_write(allow_green, 1);
@@ -237,17 +231,19 @@ static void APP_main()
    kaa_on_configuration_updated(NULL, root_config);
 
    //set SW2 button as key input
-   sndc_io_ctrl(BUTTON,
-                IO_PIN_FUNC_PULL_UP,
-                IO_PIN_DRIVE_DEFAULT,
-                IO_PIN_SLEW_RATE_DEFAULT);
-   sndc_io_setMode(BUTTON, IO_MODE_KEY);
+   //sndc_io_ctrl(BUTTON,
+   //             IO_PIN_FUNC_PULL_UP,
+   //             IO_PIN_DRIVE_DEFAULT,
+   //             IO_PIN_SLEW_RATE_DEFAULT);
+   //sndc_io_setMode(BUTTON, IO_MODE_KEY);
    
-   sndc_device_config = sndc_config_get();
+   //sndc_device_config = sndc_config_get();
 
    /* clean all profiles */
-   sndc_profile_eraseAll();
-   sndc_printf("Press SW2 to start test. \n");
+   //sndc_profile_eraseAll();
+   //sndc_printf("Press SW2 to start test. \n");
+
+   start_client();
 
    //infinite thread loop, button press is monitored by system events
    while(1)
