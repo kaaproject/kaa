@@ -1,6 +1,6 @@
 {
     "enableReporting":true,
-    "panelCount":4,
+    "panelCount":6,
     "samplingFrequency":1000,
     "reportingFrequency":1,
     "__uuid":null

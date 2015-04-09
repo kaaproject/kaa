@@ -19,10 +19,15 @@
 
 namespace power_plant {
 
+#define POWER_PLANT_ENABLED_REPORTING       true
 #define POWER_PLANT_MAX_SOLAR_PANEL_COUNT   6
 #define POWER_PLANT_SAMPLING_FREQUENCY      1000
 #define POWER_PLANT_REPORTING_FREQUENCY     1
+
 #define POWER_PLANT_CONFIGURATION_FILE      "power_plant.cfg"
+#define POWER_PLANT_ADC_FACTOR              0.004566667
+
+#define POWER_PLANT_DEBUG_LOGGING           0
 
 } /* namespace power_plant */
 

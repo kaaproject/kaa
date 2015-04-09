@@ -32,9 +32,6 @@ public:
     kaa_log::VoltageSample getVoltageSample();
 
 private:
-    static const double ADC_FACTOR;
-
-private:
     std::int32_t                  panelId_;
     std::shared_ptr<mraa::Aio>    panelConnection_;
 };

@@ -20,6 +20,7 @@
 #include <vector>
 #include <memory>
 #include <mutex>
+#include <condition_variable>
 
 #include <kaa/IKaaClient.hpp>
 #include <kaa/configuration/gen/ConfigurationDefinitions.hpp>
@@ -38,6 +39,8 @@ public:
     void run();
 
 private:
+    kaa::KaaRootConfiguration getConfiguration();
+
     virtual void onConfigurationUpdated(const kaa::KaaRootConfiguration &configuration);
     void displayConfiguration(const kaa::KaaRootConfiguration &configuration);
     bool validateConfiguration(kaa::KaaRootConfiguration &configuration);
@@ -51,6 +54,7 @@ private:
 
     kaa::KaaRootConfiguration configuration_;
     std::mutex configurationGuard_;
+    std::condition_variable onEnabledReporting_;
 };
 
 } /* namespace power_plant */

@@ -24,8 +24,6 @@
 
 namespace power_plant {
 
-const double SolarPanel::ADC_FACTOR = 0.004566667;
-
 SolarPanel::SolarPanel(std::size_t panelId)
     : panelId_(panelId)
 {
@@ -42,14 +40,15 @@ kaa_log::VoltageSample SolarPanel::getVoltageSample()
 
     sample.panelId = panelId_;
     sample.timestamp = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    sample.voltage = panelConnection_->read() * ADC_FACTOR;
-    sample.voltage = std::rand() * ADC_FACTOR;
+    sample.voltage = panelConnection_->read() * POWER_PLANT_ADC_FACTOR;
 
+#if POWER_PLANT_DEBUG_LOGGING
     std::cout << "{";
     std::cout << "panelId:" << sample.panelId << ", ";
     std::cout << "timestamp:" << sample.timestamp << ", ";
     std::cout << "voltage:" << sample.voltage;
     std::cout << "}" << std::endl;
+#endif
 
     return sample;
 }

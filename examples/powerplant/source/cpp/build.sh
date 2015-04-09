@@ -68,17 +68,15 @@ function build_thirdparty {
     fi
 
     cd "$PROJECT_HOME/$KAA_LIB_PATH/$BUILD_DIR"
-    make -j4 &&
+    make -j2 &&
     cd $PROJECT_HOME
 }
 
 function build_app {
-    cd $PROJECT_HOME &&
     mkdir -p "$PROJECT_HOME/$BUILD_DIR" &&
-    cp "$KAA_LIB_PATH/$BUILD_DIR/"libkaa* "$PROJECT_HOME/$BUILD_DIR/" &&
-    cd $BUILD_DIR &&
+    cd "$PROJECT_HOME/$BUILD_DIR" &&
     cmake -DAPP_NAME=$APP_NAME ..
-    make
+    make -j2
 }
 
 function clean {
