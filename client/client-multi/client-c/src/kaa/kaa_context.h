@@ -75,6 +75,10 @@ typedef struct kaa_channel_manager_t    kaa_channel_manager_t;
     typedef struct kaa_configuration_manager kaa_configuration_manager_t;
 #endif
 
+#ifndef KAA_NOTIFICATION_MANAGER_T
+    #define KAA_NOTIFICATION_MANAGER_T
+typedef struct kaa_notification_manager_t       kaa_notification_manager_t;
+#endif
 
 #ifndef KAA_LOGGER_T
 # define KAA_LOGGER_T
@@ -96,7 +100,8 @@ typedef struct {
     kaa_event_manager_t         *event_manager;          /**< See @link kaa_event.h @endlink. */
     kaa_log_collector_t         *log_collector;          /**< See @link kaa_logging.h @endlink. */
     kaa_configuration_manager_t *configuration_manager;  /**< See @link kaa_configuration_manager.h @endlink. */
-    kaa_logger_t               *logger;                  /**< See @link kaa_log.h @endlink. */
+    kaa_logger_t                *logger;                 /**< See @link kaa_log.h @endlink. */
+    kaa_notification_manager_t  *notification_manager;   /**< See @link kaa_notification.h @endlink. */
 } kaa_context_t;
 
 #ifdef __cplusplus
