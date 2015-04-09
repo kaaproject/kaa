@@ -22,7 +22,12 @@
 extern "C" {
 #endif
 
-typedef void (*on_notification_callback)(void *context, const uint32_t *topic_id,const kaa_notification_t *notification);
+typedef enum {
+    MANDATORY = 0x00,
+    OPTIONAL  = 0x01
+} kaa_topic_subscription_type_t;
+
+typedef void (*on_notification_callback)(void *context, const uint32_t *topic_id, const kaa_notification_t *notification);
 typedef struct {
     on_notification_callback  callback;
     void* context;
@@ -30,12 +35,12 @@ typedef struct {
 
 typedef struct {
     uint32_t id;
-    uint16_t subscription_type; // + reserved
+    kaa_topic_subscription_type_t subscription_type; // + reserved
     uint16_t name_length;
     char* name;
 } kaa_topic_t;
 
-typedef void (*on_topic_list_callback)(void *context, const kaa_list_t* topics);
+typedef void (*on_topic_list_callback)(void *context, const kaa_list_t *topics);
 typedef struct {
     on_topic_list_callback callback;
     void *context;
