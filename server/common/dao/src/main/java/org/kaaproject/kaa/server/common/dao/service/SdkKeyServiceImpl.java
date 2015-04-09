@@ -65,8 +65,15 @@ public class SdkKeyServiceImpl implements SdkKeyService {
                     throw new IncorrectParameterException("Can't add two sdk keys with the same token values: " + sdkKeyToSave.getToken());
                 }
                 return savedSdkPropertiesDto;
+            } else {
+                SdkKey sdkKeyToSave = new SdkKey(sdkPropertiesDto);
+                SdkKey checkSdkKey = sdkKeyDao.findSdkKeyByToken(sdkKeyToSave.getToken());
+                if (checkSdkKey == null) {
+                    savedSdkPropertiesDto = getDto(sdkKeyDao.save(new SdkKey(sdkPropertiesDto)));
+                } else {
+                    savedSdkPropertiesDto = getDto(checkSdkKey);
+                }
             }
-            savedSdkPropertiesDto = getDto(sdkKeyDao.save(new SdkKey(sdkPropertiesDto)));
         }
         return savedSdkPropertiesDto;
     }

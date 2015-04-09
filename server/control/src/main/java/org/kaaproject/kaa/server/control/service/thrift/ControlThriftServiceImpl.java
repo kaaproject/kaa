@@ -1025,8 +1025,8 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
             }
 
             sdkPropertiesDto.setApplicationToken(appToken);
+            sdkPropertiesDto = sdkKeyService.saveSdkKey(sdkPropertiesDto);
             String sdkToken = new SdkKey(sdkPropertiesDto).getToken();
-            sdkKeyService.saveSdkKey(sdkPropertiesDto);
 
             SdkGenerator generator = SdkGeneratorFactory.createSdkGenerator(sdkPropertiesDto.getTargetPlatform());
             return generator.generateSdk(Version.PROJECT_VERSION, controlZKService.getCurrentBootstrapNodes(), sdkToken,

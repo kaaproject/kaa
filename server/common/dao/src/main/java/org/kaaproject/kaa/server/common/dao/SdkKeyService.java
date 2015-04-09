@@ -32,8 +32,9 @@ public interface SdkKeyService {
 
     /**
      * Save sdk properties. If sdk properties object has id, then sdk key
-     * will be updated, otherwise it will be inserted as a
-     * new object.
+     * will be updated, otherwise if there is no other sdk key object
+     * with the same token, it will be inserted as a new sdk key object,
+     * if there is, nothing will be saved, existent object will be returned
      *
      * @param sdkPropertiesDto the sdk properties dto
      * @return the saved application dto object
