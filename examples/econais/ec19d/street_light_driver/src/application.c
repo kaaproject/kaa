@@ -159,53 +159,36 @@ static void start_client(void)
 
 /* -------------------------------------------------------------------------*/
 
-#define MAIN_ROAD_RED_LIGHT          IO_GPIO_1
-#define MAIN_ROAD_YELLOW_LIGHT       IO_GPIO_2
-#define MAIN_ROAD_GREEN_LIGHT        IO_GPIO_3
-
-#define SECONDARY_ROAD_RED_LIGHT     IO_GPIO_4
-#define SECONDARY_ROAD_YELLOW_LIGHT  IO_GPIO_5
-#define SECONDARY_ROAD_GREEN_LIGHT   IO_GPIO_6
-
-void switch_lights(int allow_red, int allow_yellow, int allow_green, int disallow_red, int disallow_yellow, int disallow_green)
-{
-    sndc_io_write(disallow_green, 0);
-
-    sndc_io_write(disallow_yellow, 1);
-    sndc_thrd_delay(4000 * SNDC_MILLISECOND);
-    sndc_io_write(disallow_yellow, 0);
-
-    sndc_io_write(disallow_red, 1);
-
-    sndc_thrd_delay(1000 * SNDC_MILLISECOND);
-    sndc_io_write(allow_red, 0);
-    sndc_io_write(allow_yellow, 0);
-    sndc_io_write(allow_green, 1);
-}
+#define LIGHT_ZONES_COUNT    6
+static const int light_zones[] = { IO_GPIO_1, IO_GPIO_2, IO_GPIO_3, IO_GPIO_4, IO_GPIO_5, IO_GPIO_6 };
 
 kaa_error_t kaa_on_configuration_updated(void *context, const kaa_root_configuration_t *configuration)
 {
+    int i = 0;
+    for(; i < LIGHT_ZONES_COUNT; ++i) {
+        sndc_io_write(light_zones[i], 0);
+    }
     sndc_printf("Configuration updated\n");
-    switch (configuration->main_road_state) {
-    case ENUM_MAIN_ROAD_STATE_ALLOW:
-        switch_lights(MAIN_ROAD_RED_LIGHT, MAIN_ROAD_YELLOW_LIGHT, MAIN_ROAD_GREEN_LIGHT, SECONDARY_ROAD_RED_LIGHT, SECONDARY_ROAD_YELLOW_LIGHT, SECONDARY_ROAD_GREEN_LIGHT);
-        break;
-    case ENUM_MAIN_ROAD_STATE_DISALLOW:
-        switch_lights(SECONDARY_ROAD_RED_LIGHT, SECONDARY_ROAD_YELLOW_LIGHT, SECONDARY_ROAD_GREEN_LIGHT, MAIN_ROAD_RED_LIGHT, MAIN_ROAD_YELLOW_LIGHT, MAIN_ROAD_GREEN_LIGHT);
-        break;
-    }    
+    kaa_list_t *it = configuration->light_zones;
+    while (it) {
+        kaa_configuration_light_zone_t *zone = (kaa_configuration_light_zone_t *) kaa_list_get_data(it);
+        if (zone->zone_id >= 0 && zone->zone_id < LIGHT_ZONES_COUNT) {
+            switch (zone->zone_status) {
+            case ENUM_ZONE_STATUS_ENABLE:
+                sndc_io_write(light_zones[zone->zone_id], 1);
+                break;
+            case ENUM_ZONE_STATUS_DISABLE:
+                sndc_io_write(light_zones[zone->zone_id], 0);
+                break;
+            }
+        }
+        it = kaa_list_next(it);
+    }
     return KAA_ERR_NONE;
 }
 
 static void APP_main()
 {
-   sndc_io_setMode(MAIN_ROAD_RED_LIGHT, IO_MODE_OUTPUT);
-   sndc_io_setMode(MAIN_ROAD_YELLOW_LIGHT, IO_MODE_OUTPUT);
-   sndc_io_setMode(MAIN_ROAD_GREEN_LIGHT, IO_MODE_OUTPUT);
-   sndc_io_setMode(SECONDARY_ROAD_RED_LIGHT, IO_MODE_OUTPUT);
-   sndc_io_setMode(SECONDARY_ROAD_YELLOW_LIGHT, IO_MODE_OUTPUT);
-   sndc_io_setMode(SECONDARY_ROAD_GREEN_LIGHT, IO_MODE_OUTPUT);
-
    ip_connected = false;
    kaa_started = false;
 
@@ -219,6 +202,23 @@ static void APP_main()
            return;
        }
    }
+
+   kaa_list_t *zones = NULL;
+   int i = 0;
+   for(; i < LIGHT_ZONES_COUNT; ++i) {
+       sndc_io_setMode(light_zones[i], IO_MODE_OUTPUT);
+       int32_t *zone_id = (int32_t *) KAA_MALLOC(sizeof(int32_t));
+       *zone_id = i;
+       if (zones) {
+           zones = kaa_list_push_front(zones, zone_id);
+       } else {
+           zones = kaa_list_create(zone_id);
+       }
+   }
+   kaa_profile_street_lights_profile_t *profile = kaa_profile_street_lights_profile_create();
+   profile->light_zones = zones;
+   kaa_profile_manager_update_profile(kaa_client_get_context(kaa_client)->profile_manager, profile);
+   profile->destroy(profile);
 
    /**
     * Configuration example, below is how to configure and read default configuration values
