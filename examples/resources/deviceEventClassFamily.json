@@ -12,8 +12,8 @@
  "classType": "object",
  "name": "DeviceInfo",
  "fields": [
-    {"name": "model", "type": ["string", "null"]},
-    {"name": "manufacturer", "type": ["string", "null"]}
+    {"name": "name", "type": "string" },
+    {"name": "model", "type": "string" }
  ]
 },
 {
@@ -22,7 +22,7 @@
  "classType": "event",
  "name": "DeviceInfoResponse",
  "fields": [
-	{"name": "deviceInfo", "type": ["org.kaaproject.kaa.demo.iotworld.device.DeviceInfo", "null"]}
+	{"name": "deviceInfo", "type": "org.kaaproject.kaa.demo.iotworld.device.DeviceInfo" }
   ]
 },
 {
@@ -31,5 +31,14 @@
  "classType": "event",
  "name": "DeviceStatusSubscriptionRequest",
  "fields": []
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.device",
+ "type": "record",
+ "classType": "event",
+ "name": "DeviceChangeNameRequest",
+ "fields": [
+    {"name": "name", "type": "string"}
+ ]
 }
 ]

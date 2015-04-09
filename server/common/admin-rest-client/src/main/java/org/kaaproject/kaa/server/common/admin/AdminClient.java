@@ -157,9 +157,17 @@ public class AdminClient {
     }
 
     public NotificationDto sendNotification(NotificationDto notification, String notificationResource) throws Exception {
+        return sendNotification(notification, getFileResource(notificationResource));
+    }
+    
+    public NotificationDto sendNotification(NotificationDto notification, String notificationResourceName, String notificationResourceBody) throws Exception {
+        return sendNotification(notification, getStringResource(notificationResourceName, notificationResourceBody));
+    }
+    
+    private NotificationDto sendNotification(NotificationDto notification, ByteArrayResource resource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("notification", notification);
-        params.add("file", getFileResource(notificationResource));
+        params.add("file", resource);
         return restTemplate.postForObject(url + "sendNotification", params, NotificationDto.class);
     }
     
@@ -175,6 +183,24 @@ public class AdminClient {
         return restTemplate.getForObject(url + "configurationSchema/"+configurationSchemaId, ConfigurationSchemaDto.class);
     }
     
+    public List<ConfigurationSchemaDto> getConfigurationSchemas(String applicationId) throws Exception {
+        ParameterizedTypeReference<List<ConfigurationSchemaDto>> typeRef = new ParameterizedTypeReference<List<ConfigurationSchemaDto>>() {};
+        ResponseEntity<List<ConfigurationSchemaDto>> entity = restTemplate.exchange(url + "configurationSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public List<NotificationSchemaDto> getNotificationSchemas(String applicationId) throws Exception {
+        ParameterizedTypeReference<List<NotificationSchemaDto>> typeRef = new ParameterizedTypeReference<List<NotificationSchemaDto>>() {};
+        ResponseEntity<List<NotificationSchemaDto>> entity = restTemplate.exchange(url + "notificationSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+    
+    public List<TopicDto> getTopics(String applicationId) throws Exception {
+        ParameterizedTypeReference<List<TopicDto>> typeRef = new ParameterizedTypeReference<List<TopicDto>>() {};
+        ResponseEntity<List<TopicDto>> entity = restTemplate.exchange(url + "topics/"+applicationId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public ProfileSchemaDto createProfileSchema(ProfileSchemaDto profileSchema, String schemaResource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("profileSchema", profileSchema);
@@ -441,5 +467,14 @@ public class AdminClient {
         return bar;
     }
     
-    
+    private static ByteArrayResource getStringResource(final String resourceName, final String resourceBody) throws IOException {
+        byte[] data = resourceBody.getBytes("UTF-8");
+        ByteArrayResource bar = new ByteArrayResource(data) {
+            @Override
+            public String getFilename() {
+                return resourceName;
+            }
+        };
+        return bar;
+    }
 }

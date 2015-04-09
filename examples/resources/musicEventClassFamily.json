@@ -10,25 +10,25 @@
  "namespace": "org.kaaproject.kaa.demo.iotworld.music",
  "type": "record",
  "classType": "object",
- "name": "AlbumInfo",
+ "name": "SongInfo",
  "fields": [
-    {"name": "artist", "type": ["string", "null"]},
-    {"name": "album", "type": ["string", "null"]},
-	{"name": "cover", "type": ["bytes", "null"]}
+    {"name": "title", "type": "string" },
+    {"name": "url", "type": "string" },
+    {"name": "duration", "type": "int" },
+    {"name": "albumId", "type": "string" }
  ]
 },
 {
  "namespace": "org.kaaproject.kaa.demo.iotworld.music",
  "type": "record",
  "classType": "object",
- "name": "SongInfo",
+ "name": "AlbumInfo",
  "fields": [
-    {"name": "title", "type": ["string", "null"]},
-    {"name": "artist", "type": ["string", "null"]},
-    {"name": "url", "type": ["string", "null"]},
-    {"name": "displayName", "type": ["string", "null"]},
-    {"name": "duration", "type": ["int", "null"]},
-    {"name": "album", "type": ["string", "null"]}
+    {"name": "title", "type": "string" },
+    {"name": "artist", "type": "string" },
+    {"name": "albumId", "type": "string" },
+    {"name": "cover", "type": "bytes" },
+    {"name": "songs", "type": {"type": "array", "items": "org.kaaproject.kaa.demo.iotworld.music.SongInfo"} }
  ]
 },
 {
@@ -37,8 +37,7 @@
  "classType": "event",
  "name": "PlayListResponse",
  "fields": [
-    {"name": "albums", "type": [{"type": "array", "items": "org.kaaproject.kaa.demo.iotworld.music.AlbumInfo"}, "null"]},
-	{"name": "songs", "type": [{"type": "array", "items": "org.kaaproject.kaa.demo.iotworld.music.SongInfo"}, "null"]}
+    {"name": "albums", "type": {"type": "array", "items": "org.kaaproject.kaa.demo.iotworld.music.AlbumInfo"} }
   ]
 },
 {
@@ -70,7 +69,7 @@
  "classType": "event",
  "name": "ChangeVolumeRequest",
  "fields": [
-     {"name": "volume", "type": ["int", "null"]}
+     {"name": "volume", "type": "int" }
  ]
 },
 {
@@ -79,7 +78,7 @@
  "classType": "event",
  "name": "SeekRequest",
  "fields": [
-     {"name": "time", "type": ["int", "null"]}
+     {"name": "time", "type": "int" }
  ]
 },
 {
@@ -96,12 +95,12 @@
  "name": "PlaybackInfo",
  "fields": [
     {"name": "song", "type": ["org.kaaproject.kaa.demo.iotworld.music.SongInfo", "null"]},
-    {"name": "time", "type": ["int", "null"]},
-    {"name": "volume", "type": ["int", "null"]},
-    {"name": "maxVolume", "type": ["int", "null"]},
-    {"name": "timeSetOnDevice", "type": ["boolean", "null"]},
-    {"name": "volumeSetOnDevice", "type": ["boolean", "null"]},
-    {"name": "status", "type": ["org.kaaproject.kaa.demo.iotworld.music.PlaybackStatus", "null"]}
+    {"name": "time", "type": "int" },
+    {"name": "volume", "type": "int" },
+    {"name": "maxVolume", "type": "int" },
+    {"name": "ignoreTimeUpdate", "type": "boolean" },
+    {"name": "ignoreVolumeUpdate", "type": "boolean" },
+    {"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.music.PlaybackStatus" }
  ]
 },
 {
@@ -110,7 +109,7 @@
  "classType": "event",
  "name": "PlaybackStatusUpdate",
  "fields": [
-    {"name": "playbackInfo", "type": ["org.kaaproject.kaa.demo.iotworld.music.PlaybackInfo", "null"]}
+    {"name": "playbackInfo", "type": "org.kaaproject.kaa.demo.iotworld.music.PlaybackInfo" }
  ]
 }
 ]

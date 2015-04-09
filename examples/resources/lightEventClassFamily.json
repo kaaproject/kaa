@@ -19,17 +19,20 @@
 {
  "namespace": "org.kaaproject.kaa.demo.iotworld.light",
  "type": "record",
- "classType": "event",
+ "classType": "object",
  "name": "BulbInfo",
  "fields": [
 	{"name": "bulbId", "type": "string"},
+	{"name": "brightness", "type": "int"},
+	{"name": "maxBrightness", "type": "int"},
+	{"name": "ignoreBrightnessUpdate", "type": "int"},
 	{"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.light.BulbStatus"}
  ]
 },
 {
  "namespace": "org.kaaproject.kaa.demo.iotworld.light",
  "type": "record",
- "classType": "object",
+ "classType": "event",
  "name": "BulbListStatusUpdate",
  "fields": [
     {"name": "bulbs", "type": [{"type": "array", "items": "org.kaaproject.kaa.demo.iotworld.light.BulbInfo"}, "null"]}
@@ -42,7 +45,8 @@
  "name": "BulbControlRequest",
  "fields": [
 	{"name": "bulbId", "type": "string"},
-	{"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.light.BulbStatus"}
+	{"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.light.BulbStatus"},
+	{"name": "brightness", "type": "int"}
  ]
 }
 ]

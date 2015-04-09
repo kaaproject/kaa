@@ -60,7 +60,7 @@ struct kaa_configuration_manager {
 };
 
 
-static kaa_root_configuration_t *kaa_configuration_manager_deserialize(char *buffer, size_t buffer_size)
+static kaa_root_configuration_t *kaa_configuration_manager_deserialize(const char *buffer, size_t buffer_size)
 {
     KAA_RETURN_IF_NIL2(buffer, buffer_size, NULL);
 
@@ -184,13 +184,13 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
         if (extension_options & KAA_CONFIGURATION_BODY_PRESENT) {
             uint32_t body_size = KAA_NTOHL(*((uint32_t *) reader->current));
             reader->current += sizeof(uint32_t);
-
-            char body[body_size];
-            kaa_error_t error_code = kaa_platform_message_read_aligned(reader, body, body_size);
-            if (error_code) {
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to read configuration body, size %u", body_size);
-                return KAA_ERR_READ_FAILED;
+            const char* body = reader->current;
+            kaa_error_t error = kaa_platform_message_skip(reader, kaa_aligned_size_get(body_size));
+            if (error) {
+                 KAA_LOG_ERROR(self->logger, error, "Failed to read configuration body, size %u", body_size);
+                 return error;
             }
+
 #if KAA_CONFIGURATION_DELTA_SUPPORT
 
 #else

@@ -164,6 +164,22 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>powerplant</artifactId>
+            <version>${project.version}</version>
+            <classifier>powerplant-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>powerplant</artifactId>
+            <version>${project.version}</version>
+            <classifier>powerplant-src-cpp</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>eventdemo</artifactId>
             <version>${project.version}</version>
             <classifier>event-resources</classifier>
@@ -474,6 +490,21 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>unpack-powerplant-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/powerplant
+                            </outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>powerplant</includeArtifactIds>
+                            <includeClassifiers>powerplant-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>unpack-verifiers-resources</id>
                         <goals>
                             <goal>unpack-dependencies</goal>
@@ -574,6 +605,16 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/cpp</outputDirectory>
                                     <destFileName>event_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>powerplant</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>powerplant-src-cpp</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/cpp</outputDirectory>
+                                    <destFileName>powerplant.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.examples</groupId>

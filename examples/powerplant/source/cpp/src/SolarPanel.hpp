@@ -14,24 +14,28 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.shared;
+#ifndef SOLARPANEL_HPP_
+#define SOLARPANEL_HPP_
 
-/*
- * This code is automatically generated. In order to change content of this class edit Version.template file 
- */
+#include <memory>
 
-/**
- * The Class Version provides access to useful project version information.
- * This information is populated during pre-compilation phase.
- */
-public final class Version {
+#include <mraa.hpp>
 
-    /** The Constant PROJECT_VERSION. */
-    public static final String PROJECT_VERSION = "0.7.1-SNAPSHOT";
+#include <kaa/log/gen/LogDefinitions.hpp>
 
-    /**
-     * Instantiates a new version.
-     */
-    private Version(){
-    }
-}
+namespace power_plant {
+
+class SolarPanel {
+public:
+    SolarPanel(std::size_t panelId);
+
+    kaa_log::VoltageSample getVoltageSample();
+
+private:
+    std::int32_t                  panelId_;
+    std::shared_ptr<mraa::Aio>    panelConnection_;
+};
+
+} /* namespace power_plant */
+
+#endif /* SOLARPANEL_HPP_ */
