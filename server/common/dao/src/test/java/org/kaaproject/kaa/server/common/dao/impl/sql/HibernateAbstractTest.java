@@ -512,7 +512,7 @@ public abstract class HibernateAbstractTest {
         }
         sdkKey.setToken(token);
         if (key == null) {
-            key = new byte[] {1, 2, 3, 4, 5};;
+            key = new byte[] {1, 2, 3, 4, 5};
         }
         sdkKey.setData(key);
         return sdkKeyDao.save(sdkKey);
