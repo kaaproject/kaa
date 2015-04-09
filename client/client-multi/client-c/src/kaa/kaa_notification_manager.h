@@ -19,12 +19,13 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+#include "stdbool.h"
+#include "kaa_status.h"
+#include "platform/sock.h"
 #include "kaa_error.h"
 #include "kaa_platform_common.h"
 #include "utilities/kaa_mem.h"
-#include "stdbool.h"
 #include "kaa_channel_manager.h"
-#include "kaa_status.h"
 #include "kaa_common.h"
 #include "utilities/kaa_log.h"
 #include "kaa_platform_utils.h"
@@ -39,11 +40,11 @@ kaa_error_t kaa_calculate_notification_listener_id(kaa_notification_listener_t *
 kaa_error_t kaa_add_notification_listener(kaa_notification_manager_t *self, kaa_notification_listener_t *listener, uint32_t *listener_id);
 
 kaa_error_t kaa_add_optional_notification_listener(kaa_notification_manager_t *self, kaa_notification_listener_t *listener
-                                                 , uint32_t *topic_id,uint32_t *listener_id);
+                                                 , uint64_t *topic_id,uint32_t *listener_id);
 
 kaa_error_t kaa_remove_notification_listener(kaa_notification_manager_t *self, uint32_t *listener_id);
 
-kaa_error_t kaa_remove_optional_notification_listener(kaa_notification_manager_t *self, uint32_t *topic_id, uint32_t *listener_id);
+kaa_error_t kaa_remove_optional_notification_listener(kaa_notification_manager_t *self, uint64_t *topic_id, uint32_t *listener_id);
 
 kaa_error_t kaa_add_topic_list_listener(kaa_notification_manager_t *self, kaa_topic_listener_t *listener, uint32_t *topic_listener_id);
 
@@ -51,11 +52,11 @@ kaa_error_t kaa_remove_topic_list_listener(kaa_notification_manager_t *self, uin
 
 kaa_error_t kaa_get_topics(kaa_notification_manager_t *self, kaa_list_t *topics);
 
-kaa_error_t kaa_subscribe_to_topic(kaa_notification_manager_t *self, uint32_t *topic_id, bool force_sync);
+kaa_error_t kaa_subscribe_to_topic(kaa_notification_manager_t *self, uint64_t *topic_id, bool force_sync);
 
 kaa_error_t kaa_subscribe_to_topics(kaa_notification_manager_t *self, kaa_list_t *topic_ids, bool force_sync);
 
-kaa_error_t kaa_unsubscribe_from_topic(kaa_notification_manager_t *self, uint32_t *topic_id, bool force_sync);
+kaa_error_t kaa_unsubscribe_from_topic(kaa_notification_manager_t *self, uint64_t *topic_id, bool force_sync);
 
 kaa_error_t kaa_unsubscribe_from_topics(kaa_notification_manager_t *self, kaa_list_t *topic_ids, bool force_sync);
 

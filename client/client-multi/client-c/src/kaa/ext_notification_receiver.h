@@ -27,6 +27,11 @@ typedef enum {
     OPTIONAL  = 0x01
 } kaa_topic_subscription_type_t;
 
+typedef enum {
+    SYSTEM = 0x0,
+    CUSTOM = 0x1
+} kaa_notification_type;
+
 typedef void (*on_notification_callback)(void *context, const uint32_t *topic_id, const kaa_notification_t *notification);
 typedef struct {
     on_notification_callback  callback;
@@ -34,7 +39,7 @@ typedef struct {
 } kaa_notification_listener_t;
 
 typedef struct {
-    uint32_t id;
+    uint64_t id;
     kaa_topic_subscription_type_t subscription_type; // + reserved
     uint16_t name_length;
     char* name;
