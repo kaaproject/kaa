@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.shared;
+#ifndef CONFIGURATIONCONSTANTS_HPP_
+#define CONFIGURATIONCONSTANTS_HPP_
 
-/*
- * This code is automatically generated. In order to change content of this class edit Version.template file 
- */
+namespace power_plant {
 
-/**
- * The Class Version provides access to useful project version information.
- * This information is populated during pre-compilation phase.
- */
-public final class Version {
+#define POWER_PLANT_ENABLED_REPORTING       true
+#define POWER_PLANT_MAX_SOLAR_PANEL_COUNT   6
+#define POWER_PLANT_SAMPLING_FREQUENCY      1000
+#define POWER_PLANT_REPORTING_FREQUENCY     1
 
-    /** The Constant PROJECT_VERSION. */
-    public static final String PROJECT_VERSION = "0.7.1-SNAPSHOT";
+#define POWER_PLANT_CONFIGURATION_FILE      "power_plant.cfg"
+#define POWER_PLANT_ADC_FACTOR              0.004566667
 
-    /**
-     * Instantiates a new version.
-     */
-    private Version(){
-    }
-}
+#define POWER_PLANT_DEBUG_LOGGING           0
+
+} /* namespace power_plant */
+
+#endif /* CONFIGURATIONCONSTANTS_HPP_ */

@@ -1,0 +1,30 @@
+{
+   "mongoServers":[
+      {
+         "host":"localhost",
+         "port":27017
+      }
+   ],
+   "mongoCredentials":[
+
+   ],
+   "dbName":"kaa_power_plant",
+   "connectionsPerHost":{
+      "int":30
+   },
+   "maxWaitTime":{
+      "int":120000
+   },
+   "connectionTimeout":{
+      "int":5000
+   },
+   "socketTimeout":{
+      "int":0
+   },
+   "socketKeepalive":{
+      "boolean":false
+   },
+   "autoConnectRetry":{
+      "boolean":true
+   }
+}

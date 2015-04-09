@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.admin.shared;
+#include <stdexcept>
 
-/*
- * This code is automatically generated. In order to change content of this class edit Version.template file 
- */
+#include "PowerPlantController.hpp"
 
-/**
- * The Class Version provides access to useful project version information.
- * This information is populated during pre-compilation phase.
- */
-public final class Version {
+int main()
+{
+    std::cout << "Going to start power plant demo application..." << std::endl;
 
-    /** The Constant PROJECT_VERSION. */
-    public static final String PROJECT_VERSION = "0.7.1-SNAPSHOT";
+    try {
+        power_plant::PowerPlantController controller;
+        controller.run();
 
-    /**
-     * Instantiates a new version.
-     */
-    private Version(){
+        std::cout << "Power plant demo application stopped" << std::endl;
+    } catch (std::exception& e) {
+        std::cerr << "Power plant demo application stopped in unexpected way: " << e.what() << std::endl;
     }
+
+    return 0;
 }

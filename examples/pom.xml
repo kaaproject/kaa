@@ -45,6 +45,8 @@
         <module>notificationdemo-android</module>
         <module>photoframe</module>
         <module>verifiersdemo</module>
+        <module>powerplant</module>
+        <module>powerplant-dashboard</module>
     </modules>
 
     <dependencyManagement>
