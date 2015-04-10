@@ -64,7 +64,9 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
         if (dto != null) {
             try {
                 this.id = getLongId(dto.getId());
+                dto.setId(null);                // dto's id doesn't have to influence sdk token value
                 this.data = DtoByteMarshaller.toBytes(dto);
+                dto.setId(this.id == null ? null : String.valueOf(this.id));
                 MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
                 digest.update(this.data);
                 this.token = Base64.encodeBase64String(digest.digest());
