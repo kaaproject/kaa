@@ -60,6 +60,7 @@ public class EventDemoBuilder extends AbstractDemoBuilder {
         eventApplication = client.editApplication(eventApplication);
 
         sdkPropertiesDto.setApplicationId(eventApplication.getId());
+        sdkPropertiesDto.setApplicationToken(eventApplication.getApplicationToken());
         sdkPropertiesDto.setProfileSchemaVersion(1);
         sdkPropertiesDto.setConfigurationSchemaVersion(1);
         sdkPropertiesDto.setNotificationSchemaVersion(1);

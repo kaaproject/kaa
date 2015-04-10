@@ -53,6 +53,7 @@ public class AndroidNotificationDemoBuilder extends AbstractDemoBuilder {
         notificationApplication = client.editApplication(notificationApplication);
 
         sdkPropertiesDto.setApplicationId(notificationApplication.getId());
+        sdkPropertiesDto.setApplicationToken(notificationApplication.getApplicationToken());
         sdkPropertiesDto.setProfileSchemaVersion(1);
         sdkPropertiesDto.setConfigurationSchemaVersion(1);
         sdkPropertiesDto.setLogSchemaVersion(1);

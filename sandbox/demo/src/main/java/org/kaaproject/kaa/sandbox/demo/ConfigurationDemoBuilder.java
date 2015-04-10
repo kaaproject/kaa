@@ -48,6 +48,7 @@ public class ConfigurationDemoBuilder extends AbstractDemoBuilder{
         configurationApplication = client.editApplication(configurationApplication);
 
         sdkPropertiesDto.setApplicationId(configurationApplication.getId());
+        sdkPropertiesDto.setApplicationToken(configurationApplication.getApplicationToken());
         sdkPropertiesDto.setProfileSchemaVersion(1);
         sdkPropertiesDto.setNotificationSchemaVersion(1);
         sdkPropertiesDto.setLogSchemaVersion(1);

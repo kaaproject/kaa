@@ -71,6 +71,7 @@ public class VerifiersDemoBuilder extends AbstractDemoBuilder {
         verifiersApplication = client.editApplication(verifiersApplication);
 
         sdkPropertiesDto.setApplicationId(verifiersApplication.getId());
+        sdkPropertiesDto.setApplicationToken(verifiersApplication.getApplicationToken());
         sdkPropertiesDto.setProfileSchemaVersion(1);
         sdkPropertiesDto.setNotificationSchemaVersion(1);
         sdkPropertiesDto.setLogSchemaVersion(1);

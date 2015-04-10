@@ -48,6 +48,7 @@ public class DataCollectionDemoBuider extends AbstractDemoBuilder {
         dataCollectionApplication = client.editApplication(dataCollectionApplication);
 
         sdkPropertiesDto.setApplicationId(dataCollectionApplication.getId());
+        sdkPropertiesDto.setApplicationToken(dataCollectionApplication.getApplicationToken());
         sdkPropertiesDto.setProfileSchemaVersion(1);
         sdkPropertiesDto.setConfigurationSchemaVersion(1);
         sdkPropertiesDto.setNotificationSchemaVersion(1);

@@ -60,6 +60,7 @@ public class PhotoFrameDemoBuilder extends AbstractDemoBuilder {
         photoFrameApplication = client.editApplication(photoFrameApplication);
 
         sdkPropertiesDto.setApplicationId(photoFrameApplication.getId());
+        sdkPropertiesDto.setApplicationToken(photoFrameApplication.getApplicationToken());
         sdkPropertiesDto.setProfileSchemaVersion(1);
         sdkPropertiesDto.setConfigurationSchemaVersion(1);
         sdkPropertiesDto.setNotificationSchemaVersion(1);

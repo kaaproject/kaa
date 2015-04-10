@@ -52,6 +52,7 @@ public class CityGuideDemoBuilder extends AbstractDemoBuilder {
         cityGuideApplication = client.editApplication(cityGuideApplication);
         
         sdkPropertiesDto.setApplicationId(cityGuideApplication.getId());
+        sdkPropertiesDto.setApplicationToken(cityGuideApplication.getApplicationToken());
         sdkPropertiesDto.setNotificationSchemaVersion(1);
         sdkPropertiesDto.setLogSchemaVersion(1);
         sdkPropertiesDto.setTargetPlatform(SdkPlatform.ANDROID);

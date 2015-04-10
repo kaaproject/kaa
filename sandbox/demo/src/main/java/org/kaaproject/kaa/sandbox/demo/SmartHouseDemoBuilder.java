@@ -74,6 +74,7 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
         smartHouseApplication = client.editApplication(smartHouseApplication);
                
         sdkPropertiesDto.setApplicationId(smartHouseApplication.getId());
+        sdkPropertiesDto.setApplicationToken(smartHouseApplication.getApplicationToken());
         sdkPropertiesDto.setProfileSchemaVersion(1);
         sdkPropertiesDto.setConfigurationSchemaVersion(1);
         sdkPropertiesDto.setNotificationSchemaVersion(1);

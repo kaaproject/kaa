@@ -55,6 +55,7 @@ public class RobotRunDemoBuilder extends AbstractDemoBuilder {
         robotRunApplication = client.editApplication(robotRunApplication);
         
         sdkPropertiesDto.setApplicationId(robotRunApplication.getId());
+        sdkPropertiesDto.setApplicationToken(robotRunApplication.getApplicationToken());
         sdkPropertiesDto.setProfileSchemaVersion(1);
         sdkPropertiesDto.setNotificationSchemaVersion(1);
 

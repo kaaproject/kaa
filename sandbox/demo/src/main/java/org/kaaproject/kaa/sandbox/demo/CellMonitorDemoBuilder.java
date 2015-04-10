@@ -49,6 +49,7 @@ public class CellMonitorDemoBuilder extends AbstractDemoBuilder {
         cellMonitorApplication = client.editApplication(cellMonitorApplication);
         
         sdkPropertiesDto.setApplicationId(cellMonitorApplication.getId());
+        sdkPropertiesDto.setApplicationToken(cellMonitorApplication.getApplicationToken());
         sdkPropertiesDto.setNotificationSchemaVersion(1);
         sdkPropertiesDto.setConfigurationSchemaVersion(1);
         sdkPropertiesDto.setProfileSchemaVersion(1);
