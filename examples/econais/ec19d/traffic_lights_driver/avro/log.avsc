@@ -1,0 +1,15 @@
+{
+    "name": "TrafficLightsLog",
+    "namespace": "org.kaaproject.demo.iotworld.lights.traffic",
+    "type": "record",
+    "fields": [
+        {
+            "name": "eventType",
+            "type": {
+                "type": "enum",
+                "name": "EventType",
+                "symbols": [ "BUTTON" ]
+            }
+        }
+    ]
+}
