@@ -26,6 +26,8 @@
 #ifndef KAA_CLIENT_H_
 #define KAA_CLIENT_H_
 
+#include "kaa/gen/kaa_logging_definitions.h"
+
 typedef struct {
         unsigned long max_update_time;
 } kaa_client_props_t;
@@ -100,11 +102,11 @@ kaa_context_t* kaa_client_get_context(kaa_client_t *kaa_client);
  * sources from Kaa UI.
  *
  * @param[in]       kaa_context     Pointer to an Kaa client.
- * @param[in]       record          Pointer to char* log record. (Null terminated)
+ * @param[in]       record          Pointer to a log record.
  *
  * @return Error code..
  */
-//kaa_error_t kaa_client_log_record(kaa_client_t *kaa_client, const char *record);
+kaa_error_t kaa_client_log_record(kaa_client_t *kaa_client, const kaa_user_log_record_t *record);
 
 /**
  * @brief Update configuration received from Kaa framework

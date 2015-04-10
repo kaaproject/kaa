@@ -28,31 +28,56 @@
 
 
 
-
-kaa_logging_log_t *kaa_logging_log_create()
+static void kaa_logging_traffic_lights_log_serialize(avro_writer_t writer, void *data)
 {
-    kaa_logging_log_t *record = 
-            (kaa_logging_log_t *)KAA_CALLOC(1, sizeof(kaa_logging_log_t));
+    if (data) {
+        kaa_logging_traffic_lights_log_t *record = (kaa_logging_traffic_lights_log_t *)data;
+
+        kaa_enum_serialize(writer, &record->event_type);
+    }
+}
+
+static size_t kaa_logging_traffic_lights_log_get_size(void *data)
+{
+    if (data) {
+        size_t record_size = 0;
+        kaa_logging_traffic_lights_log_t *record = (kaa_logging_traffic_lights_log_t *)data;
+
+        record_size += kaa_enum_get_size(&record->event_type);
+
+        return record_size;
+    }
+
+    return 0;
+}
+
+kaa_logging_traffic_lights_log_t *kaa_logging_traffic_lights_log_create()
+{
+    kaa_logging_traffic_lights_log_t *record = 
+            (kaa_logging_traffic_lights_log_t *)KAA_CALLOC(1, sizeof(kaa_logging_traffic_lights_log_t));
 
     if (record) {
-        record->serialize = kaa_null_serialize;
-        record->get_size = kaa_null_get_size;
+        record->serialize = kaa_logging_traffic_lights_log_serialize;
+        record->get_size = kaa_logging_traffic_lights_log_get_size;
         record->destroy = kaa_data_destroy;
     }
 
     return record;
 }
 
-kaa_logging_log_t *kaa_logging_log_deserialize(avro_reader_t reader)
+kaa_logging_traffic_lights_log_t *kaa_logging_traffic_lights_log_deserialize(avro_reader_t reader)
 {
-    kaa_logging_log_t *record = 
-            (kaa_logging_log_t *)KAA_MALLOC(sizeof(kaa_logging_log_t));
+    kaa_logging_traffic_lights_log_t *record = 
+            (kaa_logging_traffic_lights_log_t *)KAA_MALLOC(sizeof(kaa_logging_traffic_lights_log_t));
 
     if (record) {
-        record->serialize = kaa_null_serialize;
-        record->get_size = kaa_null_get_size;
+        record->serialize = kaa_logging_traffic_lights_log_serialize;
+        record->get_size = kaa_logging_traffic_lights_log_get_size;
         record->destroy = kaa_data_destroy;
 
+        int64_t event_type_value;
+        avro_binary_encoding.read_long(reader, &event_type_value);
+        record->event_type = event_type_value;
     }
 
     return record;

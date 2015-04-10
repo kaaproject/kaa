@@ -630,6 +630,29 @@ void thread_run_fn(uintptr_t arg)
 }
 
 
+kaa_error_t kaa_client_log_record(kaa_client_t *kaa_client, const kaa_user_log_record_t *record)
+{
+    if (!kaa_client || !record) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    //Wait until thread sleep in select()
+    sndc_sem_wait(&kaa_client->logging_semophore);
+
+    kaa_error_t error_code = kaa_logging_add_record(kaa_client->kaa_context->log_collector, record);
+    if (error_code) {
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger,
+                error_code,
+                "Failed to add log record");
+    }
+
+    KAA_LOG_DEBUG(kaa_client->kaa_context->logger,
+                    KAA_ERR_NONE,
+                    "Kaa record %s logged", record);
+
+
+    return KAA_ERR_NONE;
+}
 
 
 /*
