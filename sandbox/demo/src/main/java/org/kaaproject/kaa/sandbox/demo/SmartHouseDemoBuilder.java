@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -79,8 +78,7 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
         sdkPropertiesDto.setConfigurationSchemaVersion(1);
         sdkPropertiesDto.setNotificationSchemaVersion(1);
         sdkPropertiesDto.setLogSchemaVersion(1);
-        sdkPropertiesDto.setTargetPlatform(SdkPlatform.ANDROID);
-        
+
         loginTenantDeveloper(client);
         
         ApplicationEventFamilyMapDto deviceAefMap = mapEventClassFamily(client, smartHouseApplication, deviceEventClassFamily);

@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.sandbox.demo;
 
 import org.kaaproject.kaa.common.dto.*;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -75,7 +74,6 @@ public class VerifiersDemoBuilder extends AbstractDemoBuilder {
         sdkPropertiesDto.setProfileSchemaVersion(1);
         sdkPropertiesDto.setNotificationSchemaVersion(1);
         sdkPropertiesDto.setLogSchemaVersion(1);
-        sdkPropertiesDto.setTargetPlatform(SdkPlatform.ANDROID);
 
         loginTenantDeveloper(client);
 

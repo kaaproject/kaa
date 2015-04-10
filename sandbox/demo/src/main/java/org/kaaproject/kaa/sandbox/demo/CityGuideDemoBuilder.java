@@ -25,7 +25,6 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.kaaproject.kaa.server.common.utils.FileUtils;
 import org.slf4j.Logger;
@@ -55,8 +54,7 @@ public class CityGuideDemoBuilder extends AbstractDemoBuilder {
         sdkPropertiesDto.setApplicationToken(cityGuideApplication.getApplicationToken());
         sdkPropertiesDto.setNotificationSchemaVersion(1);
         sdkPropertiesDto.setLogSchemaVersion(1);
-        sdkPropertiesDto.setTargetPlatform(SdkPlatform.ANDROID);
-        
+
         loginTenantDeveloper(client);
         
         ConfigurationSchemaDto configurationSchema = new ConfigurationSchemaDto();

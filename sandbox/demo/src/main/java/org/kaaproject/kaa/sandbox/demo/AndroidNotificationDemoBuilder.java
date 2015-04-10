@@ -25,7 +25,6 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +57,6 @@ public class AndroidNotificationDemoBuilder extends AbstractDemoBuilder {
         sdkPropertiesDto.setConfigurationSchemaVersion(1);
         sdkPropertiesDto.setLogSchemaVersion(1);
         sdkPropertiesDto.setNotificationSchemaVersion(1);
-        sdkPropertiesDto.setTargetPlatform(SdkPlatform.ANDROID);
 
         loginTenantDeveloper(client);
 

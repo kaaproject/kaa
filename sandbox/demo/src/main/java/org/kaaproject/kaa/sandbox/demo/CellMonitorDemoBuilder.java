@@ -19,7 +19,6 @@ package org.kaaproject.kaa.sandbox.demo;
 import java.util.Arrays;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -53,8 +52,7 @@ public class CellMonitorDemoBuilder extends AbstractDemoBuilder {
         sdkPropertiesDto.setNotificationSchemaVersion(1);
         sdkPropertiesDto.setConfigurationSchemaVersion(1);
         sdkPropertiesDto.setProfileSchemaVersion(1);
-        sdkPropertiesDto.setTargetPlatform(SdkPlatform.ANDROID);
-        
+
         loginTenantDeveloper(client);
         
         LogSchemaDto logSchema = new LogSchemaDto();
