@@ -195,7 +195,7 @@ static void APP_main()
    kaa_error_t kaa_error = KAA_ERR_NONE;
    { //Used to limit kaa_props visibility, it creates on stack and release once is used
        kaa_client_props_t kaa_props;
-       kaa_props.max_update_time = 10;
+       kaa_props.max_update_time = 2;
        kaa_error = kaa_client_create(&kaa_client, &kaa_props);
        if (kaa_error) {
            sndc_printf("Error %d initializing Kaa client \n",kaa_error);

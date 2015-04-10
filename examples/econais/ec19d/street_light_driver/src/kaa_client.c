@@ -22,6 +22,9 @@
 #include <sndc_file_api.h>
 #include <stdbool.h>
 typedef long long int64_t;
+
+#define TRACE_DELAY -1
+
 #include "kaa/kaa_error.h"
 #include "kaa/kaa_common.h"
 #include "kaa/kaa.h"
@@ -40,8 +43,6 @@ typedef long long int64_t;
 #include "kaa/platform-impl/Econais/EC19D/econais_ec19d_file_utils.h"
 
 #include "kaa/kaa_context.h"
-
-#define TRACE_DELAY 150
 
 #define KAA_CLIENT_T
 

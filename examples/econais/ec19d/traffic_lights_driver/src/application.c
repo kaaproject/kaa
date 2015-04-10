@@ -221,7 +221,7 @@ static void APP_main()
    kaa_error_t kaa_error = KAA_ERR_NONE;
    { //Used to limit kaa_props visibility, it creates on stack and release once is used
        kaa_client_props_t kaa_props;
-       kaa_props.max_update_time = 10;
+       kaa_props.max_update_time = 2;
        kaa_error = kaa_client_create(&kaa_client, &kaa_props);
        if (kaa_error) {
            sndc_printf("Error %d initializing Kaa client \n",kaa_error);
@@ -344,10 +344,13 @@ static bool_t APP_handle_msg(sndc_appmsg_msg_t* msg)
       }
       case SNDC_APPMSG_IO_EVENT:
       {
-         kaa_logging_traffic_lights_log_t *record = kaa_logging_traffic_lights_log_create();
-         record->event_type = ENUM_EVENT_TYPE_BUTTON;
-         kaa_client_log_record(kaa_client, record);
-         record->destroy(record);
+         sndc_appmsg_ioEvent_t *io_event = (sndc_appmsg_ioEvent_t *)msg->par;
+         if (io_event->level) {
+             kaa_logging_traffic_lights_log_t *record = kaa_logging_traffic_lights_log_create();
+             record->event_type = ENUM_EVENT_TYPE_BUTTON;
+             kaa_client_log_record(kaa_client, record);
+             record->destroy(record);
+         }
          break;
       }
       

@@ -1,6 +1,6 @@
 {
     "name": "TrafficLightsLog",
-    "namespace": "org.kaaproject.demo.iotworld.lights.traffic",
+    "namespace": "org.kaaproject.kaa.demo.iotworld.lights.traffic",
     "type": "record",
     "fields": [
         {
