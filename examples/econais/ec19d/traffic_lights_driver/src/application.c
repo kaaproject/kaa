@@ -28,6 +28,8 @@ typedef long long int64_t;
 #include "kaa/platform/ext_tcp_utils.h"
 #include "kaa/utilities/kaa_log.h"
 #include "kaa/utilities/kaa_mem.h"
+
+#include "kaa/gen/kaa_logging_definitions.h"
 #include "kaa_client.h"
 
 

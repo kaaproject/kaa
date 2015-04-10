@@ -26,8 +26,6 @@
 #ifndef KAA_CLIENT_H_
 #define KAA_CLIENT_H_
 
-#include "kaa/gen/kaa_logging_definitions.h"
-
 typedef struct {
         unsigned long max_update_time;
 } kaa_client_props_t;
