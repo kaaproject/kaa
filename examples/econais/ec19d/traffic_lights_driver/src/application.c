@@ -183,17 +183,22 @@ void switch_lights(int allow_red, int allow_yellow, int allow_green, int disallo
     sndc_io_write(allow_green, 1);
 }
 
+static kaa_configuration_main_road_state_t main_road_state = ENUM_MAIN_ROAD_STATE_DISALLOW;
+
 kaa_error_t kaa_on_configuration_updated(void *context, const kaa_root_configuration_t *configuration)
 {
     sndc_printf("Configuration updated\n");
-    switch (configuration->main_road_state) {
-    case ENUM_MAIN_ROAD_STATE_ALLOW:
-        switch_lights(MAIN_ROAD_RED_LIGHT, MAIN_ROAD_YELLOW_LIGHT, MAIN_ROAD_GREEN_LIGHT, SECONDARY_ROAD_RED_LIGHT, SECONDARY_ROAD_YELLOW_LIGHT, SECONDARY_ROAD_GREEN_LIGHT);
-        break;
-    case ENUM_MAIN_ROAD_STATE_DISALLOW:
-        switch_lights(SECONDARY_ROAD_RED_LIGHT, SECONDARY_ROAD_YELLOW_LIGHT, SECONDARY_ROAD_GREEN_LIGHT, MAIN_ROAD_RED_LIGHT, MAIN_ROAD_YELLOW_LIGHT, MAIN_ROAD_GREEN_LIGHT);
-        break;
-    }    
+    if (main_road_state != configuration->main_road_state) {
+        switch (configuration->main_road_state) {
+        case ENUM_MAIN_ROAD_STATE_ALLOW:
+            switch_lights(MAIN_ROAD_RED_LIGHT, MAIN_ROAD_YELLOW_LIGHT, MAIN_ROAD_GREEN_LIGHT, SECONDARY_ROAD_RED_LIGHT, SECONDARY_ROAD_YELLOW_LIGHT, SECONDARY_ROAD_GREEN_LIGHT);
+            break;
+        case ENUM_MAIN_ROAD_STATE_DISALLOW:
+            switch_lights(SECONDARY_ROAD_RED_LIGHT, SECONDARY_ROAD_YELLOW_LIGHT, SECONDARY_ROAD_GREEN_LIGHT, MAIN_ROAD_RED_LIGHT, MAIN_ROAD_YELLOW_LIGHT, MAIN_ROAD_GREEN_LIGHT);
+            break;
+        }
+        main_road_state = configuration->main_road_state;
+    }
     return KAA_ERR_NONE;
 }
 
@@ -205,6 +210,8 @@ static void APP_main()
    sndc_io_setMode(SECONDARY_ROAD_RED_LIGHT, IO_MODE_OUTPUT);
    sndc_io_setMode(SECONDARY_ROAD_YELLOW_LIGHT, IO_MODE_OUTPUT);
    sndc_io_setMode(SECONDARY_ROAD_GREEN_LIGHT, IO_MODE_OUTPUT);
+
+   switch_lights(SECONDARY_ROAD_RED_LIGHT, SECONDARY_ROAD_YELLOW_LIGHT, SECONDARY_ROAD_GREEN_LIGHT, MAIN_ROAD_RED_LIGHT, MAIN_ROAD_YELLOW_LIGHT, MAIN_ROAD_GREEN_LIGHT);
 
    ip_connected = false;
    kaa_started = false;
