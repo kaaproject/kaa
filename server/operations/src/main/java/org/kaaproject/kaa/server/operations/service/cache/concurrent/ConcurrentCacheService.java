@@ -654,9 +654,11 @@ public class ConcurrentCacheService implements CacheService {
 
             @Override
             public String compute(String key) {
-                LOG.debug("Fetching result for sdk token to retrieve application token");
+                LOG.debug("Fetching result for sdk token: {} to retrieve application token", key);
                 SdkPropertiesDto sdkPropertiesDto = sdkKeyService.findSdkKeyByToken(key);
-                return sdkPropertiesDto != null ? sdkPropertiesDto.getApplicationToken() : null;
+                String appToken = sdkPropertiesDto != null? sdkPropertiesDto.getApplicationToken() : null;
+                LOG.trace("Resolved application token: {}", appToken);
+                return appToken;
             }
 
         });
