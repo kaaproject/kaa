@@ -185,8 +185,7 @@ public class KaaClientPropertiesState implements KaaClientState {
         int configVersionFromProperties = sdkProperties.getVersionInfo().getConfigVersion();
         String loadedConfigVersionStr = state.getProperty(CONFIGURATION_VERSION);
 
-        isConfigVersionUpdated = (loadedConfigVersionStr != null ? (configVersionFromProperties != Integer.parseInt(loadedConfigVersionStr))
-                : false);
+        isConfigVersionUpdated = (loadedConfigVersionStr != null && (configVersionFromProperties != Integer.parseInt(loadedConfigVersionStr)));
 
         if (isConfigVersionUpdated || (loadedConfigVersionStr == null)) {
             state.setProperty(CONFIGURATION_VERSION, Integer.toString(configVersionFromProperties));
