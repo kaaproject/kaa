@@ -608,30 +608,12 @@ public class BinaryEncDec implements PlatformEncDec {
         int payloadLimitPosition = buf.position() + payloadLength;
         ProfileClientSync profileSync = new ProfileClientSync();
         profileSync.setProfileBody(getNewByteBuffer(buf, buf.getInt()));
-        profileSync.setVersionInfo(new EndpointVersionInfo());
+        profileSync.setSdkToken(getUTF8String(buf, Constants.SDK_TOKEN_SIZE));
         while (buf.position() < payloadLimitPosition) {
             byte fieldId = buf.get();
             // reading unused reserved field
             buf.get();
             switch (fieldId) {
-            case CONF_SCHEMA_VERSION_FIELD_ID:
-                profileSync.getVersionInfo().setConfigVersion(getIntFromUnsignedShort(buf));
-                break;
-            case PROFILE_SCHEMA_VERSION_FIELD_ID:
-                profileSync.getVersionInfo().setProfileVersion(getIntFromUnsignedShort(buf));
-                break;
-            case SYSTEM_NOTIFICATION_SCHEMA_VERSION_FIELD_ID:
-                profileSync.getVersionInfo().setSystemNfVersion(getIntFromUnsignedShort(buf));
-                break;
-            case USER_NOTIFICATION_SCHEMA_VERSION_FIELD_ID:
-                profileSync.getVersionInfo().setUserNfVersion(getIntFromUnsignedShort(buf));
-                break;
-            case LOG_SCHEMA_VERSION_FIELD_ID:
-                profileSync.getVersionInfo().setLogSchemaVersion(getIntFromUnsignedShort(buf));
-                break;
-            case EVENT_FAMILY_VERSIONS_COUNT_FIELD_ID:
-                profileSync.getVersionInfo().setEventFamilyVersions(parseEventFamilyVersionList(buf, getIntFromUnsignedShort(buf)));
-                break;
             case PUBLIC_KEY_FIELD_ID:
                 profileSync.setEndpointPublicKey(getNewByteBuffer(buf, getIntFromUnsignedShort(buf)));
                 break;

@@ -84,7 +84,7 @@ public class DefaultProfileTransportTest {
 
         transport.createProfileRequest();
         Mockito.verify(clientState, Mockito.times(1)).getEndpointAccessToken();
-        Mockito.verify(properties, Mockito.times(1)).getVersionInfo();
+        Mockito.verify(properties, Mockito.times(1)).getSdkToken();
         Mockito.verify(profileManager, Mockito.times(1)).getSerializedProfile();
     }
 

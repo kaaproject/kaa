@@ -24,6 +24,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
@@ -71,15 +74,20 @@ public class ProfileServiceTest {
 
     @Test
     public void testPopulateVersionStates() {
-        EventClassFamilyVersionInfo ecf1 = new EventClassFamilyVersionInfo("ecf1", 7);
-        EventClassFamilyVersionInfo ecf2 = new EventClassFamilyVersionInfo("ecf2", 8);
-        EndpointVersionInfo evInfo = new EndpointVersionInfo(1, 2, 3, 4, Arrays.asList(ecf1, ecf2), 5);
         EndpointProfileDto dtoMock = Mockito.mock(EndpointProfileDto.class);
+
+        SdkPropertiesDto sdkProperties = new SdkPropertiesDto(null, 1, 2, 3, 4, SdkPlatform.JAVA, Collections.EMPTY_LIST, null, null);
+
+        ApplicationEventFamilyMapDto applicationEventFamilyMap = new ApplicationEventFamilyMapDto();
+        applicationEventFamilyMap.setVersion(7);
+        applicationEventFamilyMap.setEcfName("ecf1");
+        Mockito.when(cacheService.getApplicationEventFamilyMapsByIds(sdkProperties.getAefMapIds())).
+                thenReturn(Arrays.asList(applicationEventFamilyMap));
 
         EventClassFamilyIdKey key = new EventClassFamilyIdKey("tenantId", "ecf1");
         Mockito.when(cacheService.getEventClassFamilyIdByName(key)).thenReturn("ecf1Id");
 
-        testService.populateVersionStates("tenantId", dtoMock, evInfo);
+        testService.populateVersionStates("tenantId", dtoMock, sdkProperties);
 
         EventClassFamilyVersionStateDto ecfVersionStateDto = new EventClassFamilyVersionStateDto();
         ecfVersionStateDto.setEcfId("ecf1Id");

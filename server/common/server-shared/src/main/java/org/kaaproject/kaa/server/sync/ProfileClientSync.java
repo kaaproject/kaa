@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 public class ProfileClientSync {
     private ByteBuffer endpointPublicKey;
     private ByteBuffer profileBody;
-    private EndpointVersionInfo versionInfo;
+    private String sdkToken;
     private String endpointAccessToken;
 
     public ProfileClientSync() {
@@ -29,11 +29,11 @@ public class ProfileClientSync {
     /**
      * All-args constructor.
      */
-    public ProfileClientSync(ByteBuffer endpointPublicKey, ByteBuffer profileBody, EndpointVersionInfo versionInfo,
+    public ProfileClientSync(ByteBuffer endpointPublicKey, ByteBuffer profileBody, String sdkToken,
             String endpointAccessToken) {
         this.endpointPublicKey = endpointPublicKey;
         this.profileBody = profileBody;
-        this.versionInfo = versionInfo;
+        this.sdkToken = sdkToken;
         this.endpointAccessToken = endpointAccessToken;
     }
 
@@ -72,20 +72,20 @@ public class ProfileClientSync {
     }
 
     /**
-     * Gets the value of the 'versionInfo' field.
+     * Gets the value of the 'sdkToken' field.
      */
-    public EndpointVersionInfo getVersionInfo() {
-        return versionInfo;
+    public String getSdkToken() {
+        return sdkToken;
     }
 
     /**
-     * Sets the value of the 'versionInfo' field.
+     * Sets the value of the 'sdkToken' field.
      * 
      * @param value
      *            the value to set.
      */
-    public void setVersionInfo(EndpointVersionInfo value) {
-        this.versionInfo = value;
+    public void setSdkToken(String value) {
+        this.sdkToken = value;
     }
 
     /**
@@ -112,7 +112,7 @@ public class ProfileClientSync {
         result = prime * result + ((endpointAccessToken == null) ? 0 : endpointAccessToken.hashCode());
         result = prime * result + ((endpointPublicKey == null) ? 0 : endpointPublicKey.hashCode());
         result = prime * result + ((profileBody == null) ? 0 : profileBody.hashCode());
-        result = prime * result + ((versionInfo == null) ? 0 : versionInfo.hashCode());
+        result = prime * result + ((sdkToken == null) ? 0 : sdkToken.hashCode());
         return result;
     }
 
@@ -149,11 +149,11 @@ public class ProfileClientSync {
         } else if (!profileBody.equals(other.profileBody)) {
             return false;
         }
-        if (versionInfo == null) {
-            if (other.versionInfo != null) {
+        if (sdkToken == null) {
+            if (other.sdkToken != null) {
                 return false;
             }
-        } else if (!versionInfo.equals(other.versionInfo)) {
+        } else if (!sdkToken.equals(other.sdkToken)) {
             return false;
         }
         return true;
@@ -166,8 +166,8 @@ public class ProfileClientSync {
         builder.append(endpointPublicKey);
         builder.append(", profileBody=");
         builder.append(profileBody);
-        builder.append(", versionInfo=");
-        builder.append(versionInfo);
+        builder.append(", sdkToken=");
+        builder.append(sdkToken);
         builder.append(", endpointAccessToken=");
         builder.append(endpointAccessToken);
         builder.append("]");

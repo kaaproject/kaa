@@ -39,8 +39,8 @@ public class RegisterProfileRequest {
     /** The profile. */
     private final byte[] profile;
 
-    /** The conf schema version. */
-    private final EndpointVersionInfo versionInfo;
+    /** The sdk token. */
+    private final String sdkToken;
 
     private final String accessToken;
 
@@ -49,11 +49,11 @@ public class RegisterProfileRequest {
      *
      * @param appToken            the app token
      * @param endpointKey            the endpoint key
-     * @param versionInfo the version info
+     * @param sdkToken          the sdk token
      * @param profile            the profile body
      */
-    public RegisterProfileRequest(String appToken, byte[] endpointKey, EndpointVersionInfo versionInfo, byte[] profile) {
-        this(appToken, endpointKey, versionInfo, profile, null);
+    public RegisterProfileRequest(String appToken, byte[] endpointKey, String sdkToken, byte[] profile) {
+        this(appToken, endpointKey, sdkToken, profile, null);
     }
 
     /**
@@ -61,14 +61,14 @@ public class RegisterProfileRequest {
      *
      * @param appToken            the app token
      * @param endpointKey            the endpoint key
-     * @param versionInfo the version info
+     * @param sdkToken the version info
      * @param profile            the profile body
      */
-    public RegisterProfileRequest(String appToken, byte[] endpointKey, EndpointVersionInfo versionInfo, byte[] profile, String accessToken) {
+    public RegisterProfileRequest(String appToken, byte[] endpointKey, String sdkToken, byte[] profile, String accessToken) {
         super();
         this.appToken = appToken;
         this.endpointKey = Arrays.copyOf(endpointKey, endpointKey.length);
-        this.versionInfo = versionInfo;
+        this.sdkToken = sdkToken;
         this.profile = Arrays.copyOf(profile, profile.length);
         this.accessToken = accessToken;
     }
@@ -101,12 +101,12 @@ public class RegisterProfileRequest {
     }
 
     /**
-     * Gets the version info.
+     * Gets the sdk token.
      *
-     * @return the version info
+     * @return the sdk token
      */
-    public EndpointVersionInfo getVersionInfo() {
-        return versionInfo;
+    public String getSdkToken() {
+        return sdkToken;
     }
 
     /**

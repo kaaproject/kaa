@@ -145,9 +145,7 @@ public class ProfileServiceIT extends AbstractTest {
     public void registerProfileServiceTest() throws IOException {
         byte[] profile = baseAvroConverter.encode(ENDPOINT_PROFILE);
         RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN,
-                ENDPOINT_KEY.getBytes(),
-                new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
-                profile);
+                ENDPOINT_KEY.getBytes(), "SDK_TOKEN", profile);
         EndpointProfileDto dto = profileService.registerProfile(request);
         Assert.assertNotNull(dto);
         Assert.assertNotNull(dto.getId());
@@ -162,9 +160,7 @@ public class ProfileServiceIT extends AbstractTest {
     public void updateProfileServiceTest() throws IOException {
         byte[] profile = baseAvroConverter.encode(ENDPOINT_PROFILE);
         RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN,
-                ENDPOINT_KEY.getBytes(),
-                new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
-                profile);
+                ENDPOINT_KEY.getBytes(), "SDK_TOKEN", profile);
 
         EndpointProfileDto oldDto = profileService.registerProfile(request);
 
@@ -173,7 +169,7 @@ public class ProfileServiceIT extends AbstractTest {
                 EndpointObjectHash.fromSHA1(ENDPOINT_KEY.getBytes()),
                 null,
                 newProfile,
-                new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, NEW_PROFILE_SCHEMA_VERSION, 1, 1, null, 1));
+                "SDK_TOKEN");
         EndpointProfileDto newDto = profileService.updateProfile(updateRequest);
 
         Assert.assertNotNull(newDto);

@@ -410,7 +410,7 @@ public class DefaultAkkaServiceTest {
         ProfileSyncRequest profileSync = new ProfileSyncRequest();
         profileSync.setEndpointPublicKey(clientPublicKey);
         profileSync.setProfileBody(ByteBuffer.wrap(PROFILE_BODY.getBytes()));
-        profileSync.setVersionInfo(new EndpointVersionInfo(1, 2, 3, 4, null, 5));
+        profileSync.setSdkToken(SDK_TOKEN);
         request.setProfileSyncRequest(profileSync);
 
         whenSync(simpleResponse);
@@ -444,7 +444,7 @@ public class DefaultAkkaServiceTest {
 
         ProfileSyncRequest profileSync = new ProfileSyncRequest();
         profileSync.setProfileBody(ByteBuffer.wrap(PROFILE_BODY.getBytes()));
-        profileSync.setVersionInfo(new EndpointVersionInfo(1, 2, 3, 4, null, 5));
+        profileSync.setSdkToken(SDK_TOKEN);
         request.setProfileSyncRequest(profileSync);
 
         Mockito.when(cacheService.getEndpointKey(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()))).thenReturn(
