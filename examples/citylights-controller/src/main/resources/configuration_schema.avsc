@@ -1,0 +1,121 @@
+{
+  "type" : "record",
+  "name" : "CityLightsConfiguration",
+  "namespace" : "org.kaaproject.kaa.demo.iotworld.citylights",
+  "fields" : [ {
+    "name" : "streetLightsConfiguration",
+    "type" : {
+      "type" : "array",
+      "items" : {
+        "type" : "record",
+        "name" : "StreetLightsConfiguration",
+        "fields" : [ {
+          "name" : "zoneId",
+          "type" : "int",
+          "displayName" : "Zone ID",
+          "displayPrompt" : ""
+        }, {
+          "name" : "tags",
+          "type" : {
+            "type" : "array",
+            "items" : "bytes"
+          },
+          "displayName" : "RFID tags",
+          "displayPrompt" : "",
+          "minRowCount" : 1
+        } ],
+        "displayName" : "Street lights configuration"
+      }
+    },
+    "displayName" : "Street lights configuration",
+    "minRowCount" : 1
+  }, {
+    "name" : "trafficLightsConfiguration",
+    "type" : {
+      "type" : "record",
+      "name" : "TrafficLightsConfiguration",
+      "fields" : [ {
+        "name" : "mainRoadAllowTags",
+        "type" : {
+          "type" : "array",
+          "items" : "bytes"
+        },
+        "displayName" : "Main road allow tags"
+      }, {
+        "name" : "allowStateDuration",
+        "type" : "int",
+        "displayName" : "Allow duration",
+		"by_default" : 30
+      }, {
+        "name" : "disallowStateDuration",
+        "type" : "int",
+        "displayName" : "Disallow duration",
+		"by_default" : 15
+      }, {
+        "name" : "pedestrianWalkDuration",
+        "type" : "int",
+        "displayName" : "Walk duration",
+		"by_default" : 20
+      } ]
+    },
+    "displayName" : "Traffic lights configuration"
+  }, {
+    "name" : "kaaClientConfiguration",
+    "type" : {
+      "type" : "record",
+      "name" : "KaaClientConfiguration",
+      "fields" : [ {
+        "name" : "host",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Rest API host"
+      }, {
+        "name" : "port",
+        "type" : "int",
+        "displayName" : "Rest API port"
+      }, {
+        "name" : "login",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Rest  API login",
+        "by_default" : "devuser"
+      }, {
+        "name" : "password",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Rest API password",
+        "by_default" : "devuser123"
+      }, {
+        "name" : "trafficLightsAppToken",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Traffic lights application token"
+      }, {
+        "name" : "trafficLightsCfSchemaVersion",
+        "type" : "int",
+        "displayName" : "Traffic lights configuration schema version"
+      }, {
+        "name" : "streetLightsAppToken",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Street lights application token"
+      }, {
+        "name" : "streetLightsCfSchemaVersion",
+        "type" : "int",
+        "displayName" : "Street lights configuration schema version"
+      } ]
+    },
+    "displayName" : "Kaa configuration"
+  }  ],
+  "displayName" : "City lights configuration"
+}
