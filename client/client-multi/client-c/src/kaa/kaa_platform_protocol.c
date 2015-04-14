@@ -82,6 +82,12 @@ extern kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration
 extern kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
 #endif
 
+/** External notification API */
+#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
+extern kaa_error_t kaa_notification_manager_get_size(kaa_notification_manager_t * self, size_t *expected_size);
+extern kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_length);
+#endif
+
 /** External status API */
 extern kaa_error_t kaa_status_save(kaa_status_t *self);
 
@@ -513,6 +519,14 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
                                                     , reader
                                                     , extension_options
                                                     , extension_length);
+            break;
+        }
+#endif
+#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
+        case KAA_NOTIFICATION_EXTENSION_TYPE: {
+            error_code = kaa_notification_manager_handle_server_sync(self->kaa_context->notification_manager
+                                                   , reader
+                                                   , extension_length);
             break;
         }
 #endif

@@ -17,8 +17,8 @@
 #ifndef KAA_KAA_NOTIFICATION_H_
 #define KAA_KAA_NOTIFICATION_H_
 #include <stddef.h>
-#include <stdint.h>
 #include <stdio.h>
+#include "utilities/kaa_htonll.h"
 #include "stdbool.h"
 #include "kaa_status.h"
 #include "platform/sock.h"

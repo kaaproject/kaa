@@ -173,8 +173,8 @@ public class BinaryEncDec implements PlatformEncDec {
     private static final byte NF_SUBSCRIPTION_REMOVE_FIELD_ID = 3;
 
     // Notification server sync fields
-    private static final byte NF_NOTIFICATIONS_FIELD_ID = 0;
-    private static final byte NF_TOPICS_FIELD_ID = 1;
+    private static final byte NF_NOTIFICATIONS_FIELD_ID = 1;
+    private static final byte NF_TOPICS_FIELD_ID = 0;
 
     /*
      * (non-Javadoc)
@@ -419,6 +419,18 @@ public class BinaryEncDec implements PlatformEncDec {
         int extPosition = buf.position();
 
         buf.putInt(notificationSync.getAppStateSeqNumber());
+        if (notificationSync.getAvailableTopics() != null) {
+            buf.put(NF_TOPICS_FIELD_ID);
+            buf.put(NOTHING);
+            buf.putShort((short) notificationSync.getAvailableTopics().size());
+            for (Topic t : notificationSync.getAvailableTopics()) {
+                buf.putLong(Long.parseLong(t.getId()));
+                buf.putShort(t.getSubscriptionType() == SubscriptionType.MANDATORY ? MANDATORY : OPTIONAL);
+                buf.put(NOTHING);
+                buf.put((byte) t.getName().getBytes(UTF8).length);
+                putUTF(buf, t.getName());
+            }
+        }
         if (notificationSync.getNotifications() != null) {
             buf.put(NF_NOTIFICATIONS_FIELD_ID);
             buf.put(NOTHING);
@@ -433,18 +445,6 @@ public class BinaryEncDec implements PlatformEncDec {
                 buf.putLong(topicId);
                 putUTF(buf, nf.getUid());
                 put(buf, nf.getBody().array());
-            }
-        }
-        if (notificationSync.getAvailableTopics() != null) {
-            buf.put(NF_TOPICS_FIELD_ID);
-            buf.put(NOTHING);
-            buf.putShort((short) notificationSync.getAvailableTopics().size());
-            for (Topic t : notificationSync.getAvailableTopics()) {
-                buf.putLong(Long.parseLong(t.getId()));
-                buf.putShort(t.getSubscriptionType() == SubscriptionType.MANDATORY ? MANDATORY : OPTIONAL);
-                buf.put(NOTHING);
-                buf.put((byte) t.getName().getBytes(UTF8).length);
-                putUTF(buf, t.getName());
             }
         }
 

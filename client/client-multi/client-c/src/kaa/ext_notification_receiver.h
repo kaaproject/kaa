@@ -32,7 +32,7 @@ typedef enum {
     CUSTOM = 0x1
 } kaa_notification_type;
 
-typedef void (*on_notification_callback)(void *context, const uint32_t *topic_id, const kaa_notification_t *notification);
+typedef void (*on_notification_callback)(void *context, const uint64_t *topic_id, const kaa_notification_t *notification);
 typedef struct {
     on_notification_callback  callback;
     void* context;
@@ -45,7 +45,7 @@ typedef struct {
     char* name;
 } kaa_topic_t;
 
-typedef void (*on_topic_list_callback)(void *context, const kaa_list_t *topics);
+typedef void (*on_topic_list_callback)(void *context, kaa_list_t *topics);
 typedef struct {
     on_topic_list_callback callback;
     void *context;

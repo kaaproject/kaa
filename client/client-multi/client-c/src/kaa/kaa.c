@@ -82,6 +82,13 @@ struct kaa_status_holder_t {
     kaa_status_t *status_instance;
 };
 
+#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
+extern kaa_error_t kaa_notification_manager_create(kaa_notification_manager_t **self, kaa_status_t *status
+                                          , kaa_channel_manager_t *channel_manager
+                                          , kaa_logger_t *logger);
+extern void kaa_notification_manager_destroy(kaa_notification_manager_t *self);
+#endif
+
 /* Forward declaration */
 static kaa_error_t kaa_context_destroy(kaa_context_t *context);
 
@@ -141,6 +148,14 @@ static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *l
     (*context_p)->configuration_manager = NULL;
 #endif
 
+#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
+    if (!error)
+        error = kaa_notification_manager_create(&((*context_p)->notification_manager), (*context_p)->status->status_instance,
+                                                (*context_p)->channel_manager, (*context_p)->logger);
+#else
+    (*context_p)->notification_manager = NULL;
+#endif
+
     if (!error)
         error = kaa_user_manager_create(&((*context_p)->user_manager), (*context_p)->status->status_instance,
                                         (*context_p)->channel_manager, (*context_p)->logger);
@@ -171,6 +186,9 @@ static kaa_error_t kaa_context_destroy(kaa_context_t *context)
 #endif
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
     kaa_configuration_manager_destroy(context->configuration_manager);
+#endif
+#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
+    kaa_notification_manager_destroy(context->notification_manager);
 #endif
     kaa_platform_protocol_destroy(context->platfrom_protocol);
     KAA_FREE(context);
