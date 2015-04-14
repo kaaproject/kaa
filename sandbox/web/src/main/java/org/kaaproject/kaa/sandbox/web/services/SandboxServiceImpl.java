@@ -241,6 +241,7 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
             if (project != null) {
                 String sdkKeyBase64 = project.getSdkKeyBase64();
                 SdkPropertiesDto sdkPropertiesDto = (SdkPropertiesDto)Base64.decodeToObject(sdkKeyBase64, Base64.URL_SAFE, null);
+                outStream.println("SDK properties for project build: " + sdkPropertiesDto.toString());
                 outStream.println("Getting SDK for requested project...");
                 FileData sdkFileData = cacheService.getSdk(sdkPropertiesDto);
                 if (sdkFileData != null) {

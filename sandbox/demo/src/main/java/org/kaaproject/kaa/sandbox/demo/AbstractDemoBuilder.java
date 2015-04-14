@@ -178,6 +178,7 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
                     break;
                 }
                 projectConfig.setSdkKeyBase64(Base64.encodeObject(sdkPropertiesDto, Base64.URL_SAFE));
+                logger.info("Resulting sdk properties: {}", sdkPropertiesDto);
             }
         } catch (IOException e) {
             logger.error("Unable to generate sdk key", e);
