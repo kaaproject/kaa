@@ -242,7 +242,6 @@ public class EncDecActorMessageProcessor {
             LOG.warn("Received unencrypted init message, but unencrypted connection forbidden by configuration.");
             throw new GeneralSecurityException("Unencrypted connection forbidden by configuration.");
         }
-        addAppTokenToClientSyncMetaData(syncRequest.getClientSyncMetaData());
         return syncRequest;
     }
 
@@ -312,7 +311,9 @@ public class EncDecActorMessageProcessor {
     private ClientSync decodePlatformLevelData(Integer platformID, byte[] requestRaw) throws PlatformEncDecException {
         PlatformEncDec encDec = platformEncDecMap.get(platformID);
         if (encDec != null) {
-            return platformEncDecMap.get(platformID).decode(requestRaw);
+            ClientSync syncRequest = platformEncDecMap.get(platformID).decode(requestRaw);
+            addAppTokenToClientSyncMetaData(syncRequest.getClientSyncMetaData());
+            return syncRequest;
         } else {
             throw new PlatformEncDecException(MessageFormat.format("Decoder for platform protocol [{0}] is not defined", platformID));
         }
