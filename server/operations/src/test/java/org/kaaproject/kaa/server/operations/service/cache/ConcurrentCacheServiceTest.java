@@ -107,12 +107,14 @@ public class ConcurrentCacheServiceTest {
     private static final String TEST_APP_TOKEN = "testApp";
     private static final String TEST_SDK_TOKEN = "testSdkToken";
     private static final String APP_ID = "testAppId";
+    private static final String DEFAULT_VERIFIER_TOKEN = "defaultVerifierToken";
     private static final int TEST_APP_SEQ_NUMBER = 42;
     private static final int TEST_APP_SEQ_NUMBER_NEW = 46;
 
     private static final EndpointConfigurationDto CF1 = new EndpointConfigurationDto();
     private static final ConfigurationSchemaDto CF1_SCHEMA = new ConfigurationSchemaDto();
     private static final ProfileSchemaDto PF1_SCHEMA = new ProfileSchemaDto();
+    private static final SdkPropertiesDto SDK_PROPERTIES = new SdkPropertiesDto();
     private static final ProfileFilterDto TEST_PROFILE_FILTER = new ProfileFilterDto();
     private static final List<ProfileFilterDto> TEST_PROFILE_FILTER_LIST = Collections.singletonList(TEST_PROFILE_FILTER);
 
@@ -128,6 +130,10 @@ public class ConcurrentCacheServiceTest {
 
     private static final AppVersionKey CF_SCHEMA_KEY = new AppVersionKey(TEST_APP_TOKEN, CONF1_SCHEMA_VERSION);
     private static final AppVersionKey PF_SCHEMA_KEY = new AppVersionKey(TEST_APP_TOKEN, PROFILE1_SCHEMA_VERSION);
+
+    private static final List<String> AEFMAP_IDS = Arrays.asList("id1");
+    private static final ApplicationEventFamilyMapDto APPLICATION_EVENT_FAMILY_MAP_DTO = new ApplicationEventFamilyMapDto();
+    private static final List<ApplicationEventFamilyMapDto> AEFM_LIST = Arrays.asList(APPLICATION_EVENT_FAMILY_MAP_DTO);
 
     private PublicKey publicKey;
     private EndpointObjectHash publicKeyHash;
@@ -159,14 +165,14 @@ public class ConcurrentCacheServiceTest {
             }
         });
 
-        final SdkPropertiesDto sdkProperties = new SdkPropertiesDto();
-        sdkProperties.setApplicationToken(TEST_APP_TOKEN);
-        sdkProperties.setApplicationId(APP_ID);
+        SDK_PROPERTIES.setApplicationToken(TEST_APP_TOKEN);
+        SDK_PROPERTIES.setApplicationId(APP_ID);
+        SDK_PROPERTIES.setDefaultVerifierToken(DEFAULT_VERIFIER_TOKEN);
         when(sdkKeyService.findSdkKeyByToken(TEST_SDK_TOKEN)).then(new Answer<SdkPropertiesDto>() {
             @Override
             public SdkPropertiesDto answer(InvocationOnMock invocationOnMock) throws Throwable {
                 sleepABit();
-                return sdkProperties;
+                return SDK_PROPERTIES;
             }
         });
 
@@ -327,6 +333,9 @@ public class ConcurrentCacheServiceTest {
             }
         });
 
+        APPLICATION_EVENT_FAMILY_MAP_DTO.setEcfName("someName");
+        when(applicationEventMapService.findApplicationEventFamilyMapsByIds(AEFMAP_IDS)).thenReturn(AEFM_LIST);
+
         when(appService.findAppById(APP_ID)).thenReturn(appDto);
     }
 
@@ -375,6 +384,7 @@ public class ConcurrentCacheServiceTest {
 
         assertEquals(TEST_APP_TOKEN, cacheService.getAppTokenBySdkToken(TEST_SDK_TOKEN));
         verify(sdkKeyService, never()).findSdkKeyByToken(TEST_SDK_TOKEN);
+        reset(sdkKeyService);
     }
 
     @Test
@@ -533,6 +543,28 @@ public class ConcurrentCacheServiceTest {
         assertEquals(PF1_SCHEMA, cacheService.getProfileSchemaByAppAndVersion(PF_SCHEMA_KEY));
         verify(profileService, times(0)).findProfileSchemaByAppIdAndVersion(APP_ID, PF_SCHEMA_KEY.getVersion());
         reset(profileService);
+    }
+
+    @Test
+    public void testGetSdkProperties() {
+        assertEquals(SDK_PROPERTIES, cacheService.getSdkPropertiesBySdkToken(TEST_SDK_TOKEN));
+        verify(sdkKeyService, times(1)).findSdkKeyByToken(TEST_SDK_TOKEN);
+        reset(sdkKeyService);
+
+        assertEquals(SDK_PROPERTIES, cacheService.getSdkPropertiesBySdkToken(TEST_SDK_TOKEN));
+        verify(sdkKeyService, times(0)).findSdkKeyByToken(TEST_SDK_TOKEN);
+        reset(sdkKeyService);
+    }
+
+    @Test
+    public void testGetApplicationEventFamilyMapsByIds() {
+        assertEquals(AEFM_LIST, cacheService.getApplicationEventFamilyMapsByIds(AEFMAP_IDS));
+        verify(applicationEventMapService, times(1)).findApplicationEventFamilyMapsByIds(AEFMAP_IDS);
+        reset(applicationEventMapService);
+
+        assertEquals(AEFM_LIST, cacheService.getApplicationEventFamilyMapsByIds(AEFMAP_IDS));
+        verify(applicationEventMapService, times(0)).findApplicationEventFamilyMapsByIds(AEFMAP_IDS);
+        reset(applicationEventMapService);
     }
 
     @Test

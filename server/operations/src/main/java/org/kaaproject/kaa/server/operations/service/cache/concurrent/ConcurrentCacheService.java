@@ -136,6 +136,9 @@ public class ConcurrentCacheService implements CacheService {
     /** The filter lists memorizer. */
     private final CacheTemporaryMemorizer<AppVersionKey, List<ProfileFilterDto>> filterListsMemorizer = new CacheTemporaryMemorizer<>();
 
+    /** The application event family maps memorizer. */
+    private final CacheTemporaryMemorizer<List<String>, List<ApplicationEventFamilyMapDto>> aefmMemorizer = new CacheTemporaryMemorizer<>();
+
     /** The filters memorizer. */
     private final CacheTemporaryMemorizer<String, ProfileFilterDto> filtersMemorizer = new CacheTemporaryMemorizer<>();
 
@@ -147,6 +150,9 @@ public class ConcurrentCacheService implements CacheService {
 
     /** The pf schema memorizer. */
     private final CacheTemporaryMemorizer<AppVersionKey, ProfileSchemaDto> pfSchemaMemorizer = new CacheTemporaryMemorizer<>();
+
+    /** The sdk properties memorized. */
+    private final CacheTemporaryMemorizer<String, SdkPropertiesDto> sdkPropsMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The endpoint key memorizer. */
     private final CacheTemporaryMemorizer<EndpointObjectHash, PublicKey> endpointKeyMemorizer = new CacheTemporaryMemorizer<>();
@@ -317,6 +323,26 @@ public class ConcurrentCacheService implements CacheService {
     @Override
     @CachePut(value = "history", key = "#key")
     public List<HistoryDto> putHistory(HistoryKey key, List<HistoryDto> value) {
+        return value;
+    }
+
+    @Override
+    @Cacheable("applicationEFMs")
+    public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByIds(List<String> key) {
+        return aefmMemorizer.compute(key, new Computable<List<String>, List<ApplicationEventFamilyMapDto>>() {
+            @Override
+            public List<ApplicationEventFamilyMapDto> compute(List<String> key) {
+                LOG.debug("Fetching result for getApplicationEventFamilyMapsByIds");
+                List<ApplicationEventFamilyMapDto> value = applicationEventMapService.findApplicationEventFamilyMapsByIds(key);
+                putApplicationEventFamilyMaps(key, value);
+                return value;
+            }
+        });
+    }
+
+    @Override
+    @CachePut(value = "applicationEFMs", key = "#key")
+    public List<ApplicationEventFamilyMapDto> putApplicationEventFamilyMaps(List<String> key, List<ApplicationEventFamilyMapDto> value) {
         return value;
     }
 
@@ -517,12 +543,25 @@ public class ConcurrentCacheService implements CacheService {
         return value;
     }
 
+
+    @Override
+    @Cacheable("sdkProperties")
+    public SdkPropertiesDto getSdkPropertiesBySdkToken(String key) {
+        return sdkPropsMemorizer.compute(key, new Computable<String, SdkPropertiesDto>() {
+            @Override
+            public SdkPropertiesDto compute(String key) {
+                LOG.debug("Fetching result for getSdkPropertiesBySdkToken");
+                return sdkKeyService.findSdkKeyByToken(key);
+            }
+        });
+    }
+
     /*
-     * (non-Javadoc)
-     *
-     * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
-     * getEndpointKey(org.kaaproject.kaa.common.hash.EndpointObjectHash)
-     */
+             * (non-Javadoc)
+             *
+             * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
+             * getEndpointKey(org.kaaproject.kaa.common.hash.EndpointObjectHash)
+             */
     @Override
     @Cacheable("endpointKeys")
     public PublicKey getEndpointKey(EndpointObjectHash key) {

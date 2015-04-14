@@ -28,6 +28,8 @@ import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
@@ -125,6 +127,11 @@ public class ESTestCacheService implements CacheService {
     @Override
     public ProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key) {
         // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public SdkPropertiesDto getSdkPropertiesBySdkToken(String key) {
         return null;
     }
 
@@ -399,6 +406,16 @@ public class ESTestCacheService implements CacheService {
 
     @Override
     public String getAppTokenBySdkToken(String sdkToken) {
+        return null;
+    }
+
+    @Override
+    public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByIds(List<String> key) {
+        return null;
+    }
+
+    @Override
+    public List<ApplicationEventFamilyMapDto> putApplicationEventFamilyMaps(List<String> key, List<ApplicationEventFamilyMapDto> value) {
         return null;
     }
 }
