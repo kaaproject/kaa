@@ -25,15 +25,31 @@ extern "C" {
 # endif
 
 
+
+typedef enum {
+    ENUM_EVENT_TYPE_BUTTON,
+} kaa_logging_event_type_t;
+
+#ifdef GENC_ENUM_DEFINE_ALIASES
+#define BUTTON ENUM_EVENT_TYPE_BUTTON
+# endif // GENC_ENUM_DEFINE_ALIASES
+
+#ifdef GENC_ENUM_STRING_LITERALS
+const char* KAA_LOGGING_EVENT_TYPE_SYMBOLS[1] = {
+    "BUTTON"};
+# endif // GENC_ENUM_STRING_LITERALS
+
+
 typedef struct {
+    kaa_logging_event_type_t event_type;
 
     serialize_fn serialize;
     get_size_fn  get_size;
     destroy_fn   destroy;
-} kaa_logging_log_t;
+} kaa_logging_traffic_lights_log_t;
 
-kaa_logging_log_t *kaa_logging_log_create();
-kaa_logging_log_t *kaa_logging_log_deserialize(avro_reader_t reader);
+kaa_logging_traffic_lights_log_t *kaa_logging_traffic_lights_log_create();
+kaa_logging_traffic_lights_log_t *kaa_logging_traffic_lights_log_deserialize(avro_reader_t reader);
 
 #ifdef __cplusplus
 }      /* extern "C" */

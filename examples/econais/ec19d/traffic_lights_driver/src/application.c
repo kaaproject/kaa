@@ -28,6 +28,8 @@ typedef long long int64_t;
 #include "kaa/platform/ext_tcp_utils.h"
 #include "kaa/utilities/kaa_log.h"
 #include "kaa/utilities/kaa_mem.h"
+
+#include "kaa/gen/kaa_logging_definitions.h"
 #include "kaa_client.h"
 
 
@@ -219,7 +221,7 @@ static void APP_main()
    kaa_error_t kaa_error = KAA_ERR_NONE;
    { //Used to limit kaa_props visibility, it creates on stack and release once is used
        kaa_client_props_t kaa_props;
-       kaa_props.max_update_time = 10;
+       kaa_props.max_update_time = 2;
        kaa_error = kaa_client_create(&kaa_client, &kaa_props);
        if (kaa_error) {
            sndc_printf("Error %d initializing Kaa client \n",kaa_error);
@@ -237,18 +239,17 @@ static void APP_main()
    const kaa_root_configuration_t *root_config = kaa_configuration_manager_get_configuration(kaa_client_get_context(kaa_client)->configuration_manager);
    kaa_on_configuration_updated(NULL, root_config);
 
-   //set SW2 button as key input
-   //sndc_io_ctrl(BUTTON,
-   //             IO_PIN_FUNC_PULL_UP,
-   //             IO_PIN_DRIVE_DEFAULT,
-   //             IO_PIN_SLEW_RATE_DEFAULT);
-   //sndc_io_setMode(BUTTON, IO_MODE_KEY);
+   // set SW2 button as key input
+   sndc_io_ctrl(BUTTON,
+                IO_PIN_FUNC_PULL_UP,
+                IO_PIN_DRIVE_DEFAULT,
+                IO_PIN_SLEW_RATE_DEFAULT);
+   sndc_io_setMode(BUTTON, IO_MODE_KEY);
    
-   //sndc_device_config = sndc_config_get();
+   sndc_device_config = sndc_config_get();
 
    /* clean all profiles */
-   //sndc_profile_eraseAll();
-   //sndc_printf("Press SW2 to start test. \n");
+   sndc_profile_eraseAll();
 
    start_client();
 
@@ -343,16 +344,12 @@ static bool_t APP_handle_msg(sndc_appmsg_msg_t* msg)
       }
       case SNDC_APPMSG_IO_EVENT:
       {
-         sndc_printf("SNDC_APPMSG_IO_EVENT\n");
          sndc_appmsg_ioEvent_t *io_event = (sndc_appmsg_ioEvent_t *)msg->par;
-         if (testDone) {
-             sndc_printf("SNDC_APPMSG_IO_EVENT level %d, pinMask %d\n", io_event->level, io_event->pin_mask);
-             //Logging example, it just log button pressing.
-             //kaa_client_log_record(kaa_client, "Button pressed");
-         } else {
-             testDone  = true;
-             sndc_printf("Button pressed. \n");
-             start_client();
+         if (io_event->level) {
+             kaa_logging_traffic_lights_log_t *record = kaa_logging_traffic_lights_log_create();
+             record->event_type = ENUM_EVENT_TYPE_BUTTON;
+             kaa_client_log_record(kaa_client, record);
+             record->destroy(record);
          }
          break;
       }
