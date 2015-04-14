@@ -270,7 +270,7 @@
  "fields": [
      {"name": "endpointPublicKey", "type": ["bytes", "null"]},
      {"name": "profileBody", "type": "bytes"},
-     {"name": "versionInfo", "type": "org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo"},
+     {"name": "sdkToken", "type": "string"},
      {"name": "endpointAccessToken", "type": ["string", "null"]}
  ]
 },
