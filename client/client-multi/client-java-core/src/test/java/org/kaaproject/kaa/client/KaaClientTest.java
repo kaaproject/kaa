@@ -71,7 +71,6 @@ public class KaaClientTest {
 
         Mockito.when(clientProperties.getBootstrapServers()).thenReturn(buildDummyConnectionInfo());
         Mockito.when(clientProperties.getPropertiesHash()).thenReturn("test".getBytes());
-        Mockito.when(clientProperties.getVersionInfo()).thenReturn(Mockito.mock(EndpointVersionInfo.class));
 
         initStorageMock(storage);
 

@@ -34,54 +34,6 @@ import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.EventClassFamilyVersionInfo;
 
 public class KaaClientPropertiesTest {
-
-    @Test
-    public void testGetSupportedConfigVersion() throws IOException {
-        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
-        assertEquals(1, properties.getSupportedConfigVersion());
-    }
-
-    @Test
-    public void testGetSupportedProfileVersion() throws IOException {
-        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
-        assertEquals(1, properties.getSupportedProfileVersion());
-    }
-
-    @Test
-    public void testGetSupportedSystemNTVersion() throws IOException {
-        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
-        assertEquals(1, properties.getSupportedSystemNTVersion());
-    }
-
-    @Test
-    public void testGetSupportedUserNTVersion() throws IOException {
-        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
-        assertEquals(1, properties.getSupportedUserNTVersion());
-    }
-
-    @Test
-    public void testGetLogSchemaVersion() throws IOException {
-        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
-        assertEquals(1, properties.getLogSchemaVersion());
-    }
-
-    @Test
-    public void testGetVersionInfo() throws IOException {
-        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
-        EndpointVersionInfo versionInfo = properties.getVersionInfo();
-        assertEquals(1, versionInfo.getConfigVersion().intValue());
-        assertEquals(1, versionInfo.getProfileVersion().intValue());
-        assertEquals(1, versionInfo.getSystemNfVersion().intValue());
-        assertEquals(1, versionInfo.getUserNfVersion().intValue());
-        assertEquals(1, versionInfo.getLogSchemaVersion().intValue());
-    }
-
     @Test
     public void testGetBootstrapServers() throws Exception {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
@@ -125,18 +77,6 @@ public class KaaClientPropertiesTest {
         System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
         KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
         assertEquals(TimeUnit.SECONDS, properties.getPollUnit());
-    }
-
-    @Test
-    public void testGetEventFamilyVersions() throws IOException {
-        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClientProperties properties = new KaaClientProperties(CommonsBase64.getInstance());
-        List<EventClassFamilyVersionInfo> infos = properties.getEventFamilyVersions();
-        assertEquals(2, infos.size());
-        assertEquals(1, infos.get(0).getVersion().intValue());
-        assertEquals("test_event_family", infos.get(0).getName());
-        assertEquals(2, infos.get(1).getVersion().intValue());
-        assertEquals("test_event_family2", infos.get(1).getName());
     }
 
     @Test

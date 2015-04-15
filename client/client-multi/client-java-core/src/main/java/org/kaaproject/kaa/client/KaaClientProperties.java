@@ -34,7 +34,6 @@ import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.util.Base64;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.EventClassFamilyVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
@@ -58,14 +57,8 @@ public class KaaClientProperties extends Properties {
     public static final String TRANSPORT_POLL_PERIOD = "transport.poll.period";
     public static final String TRANSPORT_POLL_UNIT = "transport.poll.unit";
     public static final String BOOTSTRAP_SERVERS = "transport.bootstrap.servers";
-    public static final String CONFIG_VERSION = "config_version";
-    public static final String PROFILE_VERSION = "profile_version";
-    public static final String SYSTEM_NT_VERSION = "system_nt_version";
-    public static final String USER_NT_VERSION = "user_nt_version";
     public static final String CONFIG_DATA_DEFAULT = "config.data.default";
     public static final String CONFIG_SCHEMA_DEFAULT = "config.schema.default";
-    public static final String EVENT_CLASS_FAMILY_VERSION = "event_cf_version";
-    public static final String LOG_SCHEMA_VERSION = "logs_version";
     public static final String SDK_TOKEN = "sdk_token";
 
     private static final String PROPERTIES_HASH_ALGORITHM = "SHA";
@@ -105,14 +98,8 @@ public class KaaClientProperties extends Properties {
                 updateDigest(digest, TRANSPORT_POLL_PERIOD);
                 updateDigest(digest, TRANSPORT_POLL_UNIT);
                 updateDigest(digest, BOOTSTRAP_SERVERS);
-                updateDigest(digest, CONFIG_VERSION);
-                updateDigest(digest, PROFILE_VERSION);
-                updateDigest(digest, SYSTEM_NT_VERSION);
-                updateDigest(digest, USER_NT_VERSION);
                 updateDigest(digest, CONFIG_DATA_DEFAULT);
                 updateDigest(digest, CONFIG_SCHEMA_DEFAULT);
-                updateDigest(digest, EVENT_CLASS_FAMILY_VERSION);
-                updateDigest(digest, LOG_SCHEMA_VERSION);
                 updateDigest(digest, SDK_TOKEN);
 
                 propertiesHash = digest.digest();
@@ -139,31 +126,6 @@ public class KaaClientProperties extends Properties {
         return getProperty(BUILD_COMMIT_HASH);
     }
 
-    public int getSupportedConfigVersion() {
-        return Integer.parseInt(getProperty(KaaClientProperties.CONFIG_VERSION));
-    }
-
-    public int getSupportedProfileVersion() {
-        return Integer.parseInt(getProperty(KaaClientProperties.PROFILE_VERSION));
-    }
-
-    public int getSupportedSystemNTVersion() {
-        return Integer.parseInt(getProperty(KaaClientProperties.SYSTEM_NT_VERSION));
-    }
-
-    public int getSupportedUserNTVersion() {
-        return Integer.parseInt(getProperty(KaaClientProperties.USER_NT_VERSION));
-    }
-
-    public int getLogSchemaVersion() {
-        return Integer.parseInt(getProperty(KaaClientProperties.LOG_SCHEMA_VERSION));
-    }
-
-    public EndpointVersionInfo getVersionInfo() {
-        return new EndpointVersionInfo(getSupportedConfigVersion(), getSupportedProfileVersion(), getSupportedSystemNTVersion(),
-                getSupportedUserNTVersion(), getEventFamilyVersions(), getLogSchemaVersion());
-    }
-
     public Map<TransportProtocolId, List<TransportConnectionInfo>> getBootstrapServers() throws InvalidKeySpecException,
             NoSuchAlgorithmException {
         return parseBootstrapServers(getProperty(KaaClientProperties.BOOTSTRAP_SERVERS));
@@ -183,10 +145,6 @@ public class KaaClientProperties extends Properties {
 
     public TimeUnit getPollUnit() {
         return TimeUnit.valueOf(getProperty(KaaClientProperties.TRANSPORT_POLL_UNIT));
-    }
-
-    public List<EventClassFamilyVersionInfo> getEventFamilyVersions() {
-        return parseEventClassFamilyVersions(getProperty(KaaClientProperties.EVENT_CLASS_FAMILY_VERSION));
     }
 
     private Map<TransportProtocolId, List<TransportConnectionInfo>> parseBootstrapServers(String serversStr)
