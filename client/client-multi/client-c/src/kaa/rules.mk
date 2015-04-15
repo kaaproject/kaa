@@ -17,18 +17,20 @@ CFLAGS_$(d) := $(WIRISH_INCLUDES) $(LIBMAPLE_INCLUDES)
 CFLAGS += -DSTM32_LEAF_PLATFORM
 
 # Local rules and targets
-cSRCS_$(d) :=  utilities/kaa_log.c        \
-			   utilities/kaa_buffer.c        \
-			   utilities/kaa_base64.c        \
-               platform-impl/stm32/leafMapleMini/logger.c          \
+cSRCS_$(d) :=  utilities/kaa_log.c \
+               utilities/kaa_buffer.c \
+               utilities/kaa_base64.c \
+               platform-impl/stm32/leafMapleMini/logger.c \
                platform-impl/stm32/leafMapleMini/esp8266/esp8266.c \
                platform-impl/stm32/leafMapleMini/esp8266/kaa_client.c \
                platform-impl/ext_log_storage_memory.c \
                platform-impl/ext_log_upload_strategy_by_volume.c \
-               kaa_protocols/kaa_tcp/kaatcp_parser.c				\
-               kaa_protocols/kaa_tcp/kaatcp_request.c				\
+               platform-impl/sha1.c \
+               platform-impl/sha.c \
+               kaa_protocols/kaa_tcp/kaatcp_parser.c \
+               kaa_protocols/kaa_tcp/kaatcp_request.c \
                avro_src/encoding_binary.c \
-               avro_src/io.c	\
+               avro_src/io.c \
                collections/kaa_deque.c \
                collections/kaa_list.c \
                gen/kaa_configuration_gen.c \
