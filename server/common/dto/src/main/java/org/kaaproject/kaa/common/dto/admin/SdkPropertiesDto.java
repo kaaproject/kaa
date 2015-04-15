@@ -184,6 +184,22 @@ public class SdkPropertiesDto implements HasId, Serializable {
     }
 
     @Override
+    public String toString() {
+        return "SdkPropertiesDto{" +
+                "id='" + id + '\'' +
+                ", applicationId='" + applicationId + '\'' +
+                ", configurationSchemaVersion=" + configurationSchemaVersion +
+                ", profileSchemaVersion=" + profileSchemaVersion +
+                ", notificationSchemaVersion=" + notificationSchemaVersion +
+                ", logSchemaVersion=" + logSchemaVersion +
+                ", targetPlatform=" + targetPlatform +
+                ", aefMapIds=" + aefMapIds +
+                ", defaultVerifierToken='" + defaultVerifierToken + '\'' +
+                ", applicationToken='" + applicationToken + '\'' +
+                '}';
+    }
+
+    @Override
     public String getId() {
         return id;
     }
