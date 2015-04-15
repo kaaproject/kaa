@@ -56,9 +56,9 @@ public class RegisterProfileRequest {
     /**
      * Instantiates a new register profile request.
      *
-     * @param appToken            the app token
-     * @param endpointKey            the endpoint key
-     * @param sdkToken the version info
+     * @param appToken           the app token
+     * @param endpointKey        the endpoint key
+     * @param sdkToken           the sdk token
      * @param profile            the profile body
      */
     public RegisterProfileRequest(String appToken, byte[] endpointKey, String sdkToken, byte[] profile, String accessToken) {
