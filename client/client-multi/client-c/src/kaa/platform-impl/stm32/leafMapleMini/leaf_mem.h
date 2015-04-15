@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-#ifndef SOCK_H_
-#define SOCK_H_
+#ifndef LEAF_MEM_H_
+#define LEAF_MEM_H_
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_sock.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_sock.h"
-#else
-#include "../platform-impl/posix/posix_sock.h"
-#endif //#ifdef STM32_LEAF_PLATFORM
+#include <stdlib.h>
 
-#endif //ifdef ECONAIS_PLATFORM
+#ifndef __KAA_MALLOC
+#define __KAA_MALLOC(S)           malloc(S)
+#endif
 
-#endif /* SOCK_H_ */
+#ifndef __KAA_CALLOC
+#define __KAA_CALLOC(N,S)         calloc(N, S)
+#endif
 
+#ifndef __KAA_FREE
+#define __KAA_FREE(P)             free(P)
+#endif
+
+#endif /* LEAF_MEM_H_ */

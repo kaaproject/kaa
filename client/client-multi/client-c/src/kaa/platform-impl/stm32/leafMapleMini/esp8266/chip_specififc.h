@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,31 @@
  * limitations under the License.
  */
 
-#ifndef SOCK_H_
-#define SOCK_H_
+/*
+ * chip_specififc.h
+ *
+ *  Created on: Mar 19, 2015
+ *      Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
+ */
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_sock.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_sock.h"
-#else
-#include "../platform-impl/posix/posix_sock.h"
-#endif //#ifdef STM32_LEAF_PLATFORM
+#ifndef LIBRARIES_ESP8266_CHIP_SPECIFIFC_H_
+#define LIBRARIES_ESP8266_CHIP_SPECIFIFC_H_
 
-#endif //ifdef ECONAIS_PLATFORM
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#endif /* SOCK_H_ */
+uint32_t get_sys_max(uint32_t s1, uint32_t s2);
 
+time_t get_sys_milis();
+
+void debug(const char* format, ...);
+
+void ledOn();
+
+void ledOff();
+
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
+#endif /* LIBRARIES_ESP8266_CHIP_SPECIFIFC_H_ */
