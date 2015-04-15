@@ -50,7 +50,7 @@ kaa_error_t kaa_add_topic_list_listener(kaa_notification_manager_t *self, kaa_to
 
 kaa_error_t kaa_remove_topic_list_listener(kaa_notification_manager_t *self, uint32_t *topic_listener_id);
 
-kaa_error_t kaa_get_topics(kaa_notification_manager_t *self, kaa_list_t *topics);
+kaa_error_t kaa_get_topics(kaa_notification_manager_t *self, kaa_list_t **topics);
 
 kaa_error_t kaa_subscribe_to_topic(kaa_notification_manager_t *self, uint64_t *topic_id, bool force_sync);
 

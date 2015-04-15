@@ -512,7 +512,9 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     public void putUTF(GrowingByteBuffer buf, String str) {
-        put(buf, str.getBytes(UTF8));
+        if (str != null) {
+            put(buf, str.getBytes(UTF8));
+        }
     }
 
     private void put(GrowingByteBuffer buf, byte[] data) {

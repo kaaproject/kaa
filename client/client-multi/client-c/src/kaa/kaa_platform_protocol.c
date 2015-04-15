@@ -84,7 +84,7 @@ extern kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuratio
 
 /** External notification API */
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
-extern kaa_error_t kaa_notification_manager_get_size(kaa_notification_manager_t * self, size_t *expected_size);
+extern kaa_error_t kaa_notification_manager_get_size(kaa_notification_manager_t *self, size_t *expected_size);
 extern kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_length);
 #endif
 
@@ -263,6 +263,15 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
                                                 , &extension_size);
             if (!err_code)
                 KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated configuration extension size %u", extension_size);
+            break;
+        }
+#endif
+#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+        case KAA_SERVICE_NOTIFICATION: {
+            err_code = kaa_notification_manager_get_size(self->kaa_context->notification_manager
+                                                , &extension_size);
+            if (!err_code)
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated notification extension size %u", extension_size);
             break;
         }
 #endif
