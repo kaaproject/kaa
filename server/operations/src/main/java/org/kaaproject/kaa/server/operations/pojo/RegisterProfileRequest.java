@@ -18,9 +18,6 @@ package org.kaaproject.kaa.server.operations.pojo;
 
 import java.util.Arrays;
 
-import org.kaaproject.kaa.server.sync.EndpointVersionInfo;
-
-
 /**
  * The Class for modeling request of profile registration. It is used to
  * communicate with

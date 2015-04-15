@@ -32,9 +32,7 @@ import org.kaaproject.kaa.server.sync.EndpointAttachRequest;
 import org.kaaproject.kaa.server.sync.EndpointAttachResponse;
 import org.kaaproject.kaa.server.sync.EndpointDetachRequest;
 import org.kaaproject.kaa.server.sync.EndpointDetachResponse;
-import org.kaaproject.kaa.server.sync.EndpointVersionInfo;
 import org.kaaproject.kaa.server.sync.Event;
-import org.kaaproject.kaa.server.sync.EventClassFamilyVersionInfo;
 import org.kaaproject.kaa.server.sync.EventClientSync;
 import org.kaaproject.kaa.server.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.sync.EventListenersResponse;
@@ -835,15 +833,6 @@ public class BinaryEncDec implements PlatformEncDec {
         String userAccessToken = getUTF8String(buf, tokenLength);
         String userVerifierToken = getUTF8String(buf, verifierTokenLength);
         return new UserAttachRequest(userVerifierToken, userExternalId, userAccessToken);
-    }
-
-    private static List<EventClassFamilyVersionInfo> parseEventFamilyVersionList(ByteBuffer buf, int count) {
-        List<EventClassFamilyVersionInfo> result = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            int version = getIntFromUnsignedShort(buf);
-            result.add(new EventClassFamilyVersionInfo(getUTF8String(buf), version));
-        }
-        return result;
     }
 
     private static int getIntFromUnsignedShort(ByteBuffer buf) {

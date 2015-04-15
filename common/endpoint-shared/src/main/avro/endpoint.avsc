@@ -1,28 +1,5 @@
 [
-{
- "namespace": "org.kaaproject.kaa.common.endpoint.gen",
- "type": "record",
- "name": "EventClassFamilyVersionInfo",
- "direction": "out",
- "fields": [
-     {"name": "name", "type": "string"},
-     {"name": "version", "type": "int"}
- ]
-},
-{
- "namespace": "org.kaaproject.kaa.common.endpoint.gen",
- "type": "record",
- "name": "EndpointVersionInfo",
- "direction": "out",
- "fields": [
-     {"name": "configVersion", "type": "int"},
-     {"name": "profileVersion", "type": "int", "default": 1},
-     {"name": "systemNfVersion", "type": "int", "default": 0},
-     {"name": "userNfVersion", "type": "int", "default": 0},
-     {"name": "eventFamilyVersions", "type": [{"type": "array", "items":"org.kaaproject.kaa.common.endpoint.gen.EventClassFamilyVersionInfo"}, "null"]},
-     {"name": "logSchemaVersion", "type": "int", "default": 0}
- ]
-},
+
 {
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "record",

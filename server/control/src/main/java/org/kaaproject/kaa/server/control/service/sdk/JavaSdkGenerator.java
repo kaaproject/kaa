@@ -154,11 +154,6 @@ public class JavaSdkGenerator extends SdkGenerator {
     private static final String CONFIG_SCHEMA_DEFAULT_PROPERTY = "config.schema.default";
 
     /**
-     * The Constant EVENT_CLASS_FAMILY_VERSION_PROPERTY.
-     */
-    private static final String EVENT_CLASS_FAMILY_VERSION_PROPERTY = "event_cf_version";
-
-    /**
      * The Constant KAA_CLIENT_SOURCE_TEMPLATE.
      */
     private static final String KAA_CLIENT_SOURCE_TEMPLATE = "sdk/java/KaaClient.java.template";
@@ -426,7 +421,7 @@ public class JavaSdkGenerator extends SdkGenerator {
 
         ZipEntry clientPropertiesEntry = templateArhive.getEntry(CLIENT_PROPERTIES);
         byte[] clientPropertiesData = generateClientProperties(templateArhive.getInputStream(clientPropertiesEntry), bootstrapNodes,
-                sdkToken, configurationProtocolSchemaBody, defaultConfigurationData, eventFamilies);
+                sdkToken, configurationProtocolSchemaBody, defaultConfigurationData);
 
         replacementData.put(CLIENT_PROPERTIES, new ZipEntryData(new ZipEntry(CLIENT_PROPERTIES), clientPropertiesData));
 
@@ -715,13 +710,12 @@ public class JavaSdkGenerator extends SdkGenerator {
      * @param bootstrapNodes                  the bootstrap nodes
      * @param configurationProtocolSchemaBody the configuration protocol schema body
      * @param defaultConfigurationData        the default configuration data
-     * @param eventFamilies                   the event families meta information
      * @return the byte[]
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private byte[] generateClientProperties(InputStream clientPropertiesStream, List<BootstrapNodeInfo> bootstrapNodes,
                                             String sdkToken, String configurationProtocolSchemaBody,
-                                            byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies)
+                                            byte[] defaultConfigurationData)
             throws IOException {
 
         Properties clientProperties = new Properties();
@@ -751,23 +745,12 @@ public class JavaSdkGenerator extends SdkGenerator {
             }
         }
 
-        String ecfs = "";
-        if (eventFamilies != null) {
-            for (int i = 0; i < eventFamilies.size(); i++) {
-                if (i > 0) {
-                    ecfs += ";";
-                }
-                ecfs += eventFamilies.get(i).getEcfName() + SEPARATOR + eventFamilies.get(i).getVersion();
-            }
-        }
-
         clientProperties.put(BUILD_VERSION, Version.PROJECT_VERSION);
         clientProperties.put(BUILD_COMMIT_HASH, Version.COMMIT_HASH);
         clientProperties.put(BOOTSTRAP_SERVERS_PROPERTY, bootstrapServers);
         clientProperties.put(SDK_TOKEN_PROPERTY, sdkToken);
         clientProperties.put(CONFIG_SCHEMA_DEFAULT_PROPERTY, configurationProtocolSchemaBody);
         clientProperties.put(CONFIG_DATA_DEFAULT_PROPERTY, Base64.encodeBase64String(defaultConfigurationData));
-        clientProperties.put(EVENT_CLASS_FAMILY_VERSION_PROPERTY, ecfs);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 

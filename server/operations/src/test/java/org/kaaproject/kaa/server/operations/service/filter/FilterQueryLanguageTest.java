@@ -26,8 +26,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kaaproject.kaa.common.endpoint.gen.ExtendedEndpointProfile;
-import org.kaaproject.kaa.server.operations.service.filter.DefaultFilter;
-import org.kaaproject.kaa.server.operations.service.filter.Filter;
 
 public class FilterQueryLanguageTest {
 

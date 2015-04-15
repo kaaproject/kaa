@@ -37,11 +37,6 @@ public class SyncEqualsHashCodeTest {
     }
 
     @Test
-    public void eventClassFamilyVersionInfoEqualsHashCodeTest() {
-        EqualsVerifier.forClass(EventClassFamilyVersionInfo.class).suppress(Warning.NONFINAL_FIELDS).verify();
-    }
-
-    @Test
     public void clientSyncMetaDataEqualsHashCodeTest() {
         ClientSyncMetaData clientSyncMetaData1 =  new ClientSyncMetaData("token1", null, null, null, 10L);
         ClientSyncMetaData clientSyncMetaData2 =  new ClientSyncMetaData("token1", null, null, null, 10L);
@@ -144,11 +139,6 @@ public class SyncEqualsHashCodeTest {
     @Test
     public void clientSyncEqualsHashCodeTest() {
         EqualsVerifier.forClass(ClientSync.class).suppress(Warning.NONFINAL_FIELDS).verify();
-    }
-
-    @Test
-    public void endpointVersionInfoEqualsHashCodeTest() {
-        EqualsVerifier.forClass(EndpointVersionInfo.class).suppress(Warning.NONFINAL_FIELDS).verify();
     }
 
     @Test

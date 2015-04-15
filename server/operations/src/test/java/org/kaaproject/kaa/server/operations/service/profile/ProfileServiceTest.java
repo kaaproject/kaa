@@ -31,8 +31,6 @@ import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFamilyIdKey;
-import org.kaaproject.kaa.server.sync.EndpointVersionInfo;
-import org.kaaproject.kaa.server.sync.EventClassFamilyVersionInfo;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;

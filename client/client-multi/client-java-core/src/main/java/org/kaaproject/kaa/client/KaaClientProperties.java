@@ -34,7 +34,6 @@ import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.util.Base64;
-import org.kaaproject.kaa.common.endpoint.gen.EventClassFamilyVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
 import org.slf4j.Logger;
@@ -170,24 +169,6 @@ public class KaaClientProperties extends Properties {
             }
         }
         return servers;
-    }
-
-    private List<EventClassFamilyVersionInfo> parseEventClassFamilyVersions(String eventFamiliesInfo) {
-        List<EventClassFamilyVersionInfo> result = new ArrayList<EventClassFamilyVersionInfo>();
-        if (eventFamiliesInfo != null) {
-            String[] eventFamilyInfoSplit = eventFamiliesInfo.split(";");
-            for (String efInfo : eventFamilyInfoSplit) {
-                if (efInfo != null && !efInfo.trim().isEmpty()) {
-                    String[] eventFamilyInfo = efInfo.split(":");
-                    if (eventFamilyInfo.length == 2) {
-                        String name = eventFamilyInfo[0];
-                        int version = Integer.parseInt(eventFamilyInfo[1]);
-                        result.add(new EventClassFamilyVersionInfo(name, version));
-                    }
-                }
-            }
-        }
-        return result;
     }
 
     public byte[] getDefaultConfigData() {

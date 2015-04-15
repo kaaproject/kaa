@@ -66,9 +66,7 @@ import org.kaaproject.kaa.server.sync.ConfigurationClientSync;
 import org.kaaproject.kaa.server.sync.ConfigurationServerSync;
 import org.kaaproject.kaa.server.sync.EndpointAttachRequest;
 import org.kaaproject.kaa.server.sync.EndpointDetachRequest;
-import org.kaaproject.kaa.server.sync.EndpointVersionInfo;
 import org.kaaproject.kaa.server.sync.Event;
-import org.kaaproject.kaa.server.sync.EventClassFamilyVersionInfo;
 import org.kaaproject.kaa.server.sync.EventClientSync;
 import org.kaaproject.kaa.server.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.sync.EventServerSync;
@@ -539,26 +537,6 @@ public class AvroEncDec implements PlatformEncDec {
         sync.setProfileBody(source.getProfileBody());
         sync.setSdkToken(source.getSdkToken());
         return sync;
-    }
-
-    private static EndpointVersionInfo convert(org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo source) {
-        if (source == null) {
-            return null;
-        }
-        EndpointVersionInfo dest = new EndpointVersionInfo();
-        dest.setConfigVersion(source.getConfigVersion());
-        dest.setLogSchemaVersion(source.getLogSchemaVersion());
-        dest.setProfileVersion(source.getProfileVersion());
-        dest.setSystemNfVersion(source.getSystemNfVersion());
-        dest.setUserNfVersion(source.getUserNfVersion());
-        if (source.getEventFamilyVersions() != null) {
-            List<EventClassFamilyVersionInfo> ecfVersions = new ArrayList<>(source.getEventFamilyVersions().size());
-            for (org.kaaproject.kaa.common.endpoint.gen.EventClassFamilyVersionInfo ecfVersion : source.getEventFamilyVersions()) {
-                ecfVersions.add(new EventClassFamilyVersionInfo(ecfVersion.getName(), ecfVersion.getVersion()));
-            }
-            dest.setEventFamilyVersions(ecfVersions);
-        }
-        return dest;
     }
 
     private static ConfigurationClientSync convert(ConfigurationSyncRequest source) {

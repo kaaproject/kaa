@@ -30,8 +30,6 @@ import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.util.CommonsBase64;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
-import org.kaaproject.kaa.common.endpoint.gen.EventClassFamilyVersionInfo;
 
 public class KaaClientPropertiesTest {
     @Test

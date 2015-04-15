@@ -31,6 +31,7 @@ import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.*;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
@@ -65,8 +66,15 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
             try {
                 this.id = getLongId(dto.getId());
                 dto.setId(null);                // dto's id doesn't have to influence sdk token value
+                List<String> aefMapIds = dto.getAefMapIds();
+                // result token value for empty list and for null field should be identical
+                if (aefMapIds != null && aefMapIds.isEmpty()) {
+                    dto.setAefMapIds(null);
+                }
                 this.data = DtoByteMarshaller.toBytes(dto);
+                dto.setAefMapIds(aefMapIds);
                 dto.setId(this.id == null ? null : String.valueOf(this.id));
+
                 MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
                 digest.update(this.data);
                 this.token = Base64.encodeBase64String(digest.digest());
