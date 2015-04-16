@@ -678,6 +678,24 @@ Copyright 2014 CyberVision, Inc.
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
+                <artifactId>verifier</artifactId>
+                <classifier>twitter</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
+                <artifactId>verifier</artifactId>
+                <classifier>facebook</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
+                <artifactId>verifier</artifactId>
+                <classifier>gplus</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
                 <artifactId>config</artifactId>
                 <classifier>trustful</classifier>
@@ -974,6 +992,11 @@ Copyright 2014 CyberVision, Inc.
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpmime</artifactId>
+                <version>${httpcomponents.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
                 <version>${httpcomponents.version}</version>
             </dependency>
             <dependency>

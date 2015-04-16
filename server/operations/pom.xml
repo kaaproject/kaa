@@ -92,11 +92,6 @@
             <classifier>tcp</classifier>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
-            <artifactId>verifier</artifactId>
-            <classifier>trustful</classifier>
-        </dependency>
-        <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>log-shared</artifactId>
         </dependency>
@@ -233,28 +228,24 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
             <artifactId>verifier</artifactId>
-            <version>${project.version}</version>
             <classifier>trustful</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
             <artifactId>verifier</artifactId>
-            <version>${project.version}</version>
             <classifier>gplus</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
             <artifactId>verifier</artifactId>
-            <version>${project.version}</version>
             <classifier>facebook</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
             <artifactId>verifier</artifactId>
-            <version>${project.version}</version>
             <classifier>twitter</classifier>
             <scope>runtime</scope>
         </dependency>
