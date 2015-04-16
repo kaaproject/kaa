@@ -128,6 +128,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     @Override
     public synchronized void onLogResponse(LogSyncResponse logSyncResponse) throws IOException {
         if (logSyncResponse.getDeliveryStatuses() != null) {
+            boolean isAlreadyScheduled = false;
             for (LogDeliveryStatus response : logSyncResponse.getDeliveryStatuses()) {
                 if (response.getResult() == SyncResponseResultType.SUCCESS) {
                     storage.removeRecordBlock(response.getRequestId());
@@ -141,12 +142,15 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                             strategy.onFailure(controller, errorCode);
                         }
                     });
+                    isAlreadyScheduled = true;
                 }
 
                 timeoutMap.remove(response.getRequestId());
             }
 
-            processUploadDecision(strategy.isUploadNeeded(storage.getStatus()));
+            if (!isAlreadyScheduled) {
+                processUploadDecision(strategy.isUploadNeeded(storage.getStatus()));
+            }
         }
     }
 
