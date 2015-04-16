@@ -69,7 +69,6 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         this.channelManager = manager;
         this.transport = transport;
         this.executorContext = executorContext;
-        scheduleAtFixedRateLogUpload();
     }
 
     @Override
@@ -229,7 +228,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         }
     }
 
-    private void scheduleAtFixedRateLogUpload() {
+    public final void scheduleAtFixedRateLogUpload() {
         executorContext.getScheduledExecutor().scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
