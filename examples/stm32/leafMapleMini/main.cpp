@@ -86,29 +86,31 @@ void process(void *context)
 
 void loop() {
 
-    debug("Starting Kaa client, to stop press \'S\'\r\n");
-    if (kaa_client) {
-        kaa_error_t error = kaa_client_start(kaa_client, process, (void*)kaa_client, 10);
-        if (error) {
-            debug("Error running Kaa client, code %d\r\n", error);
-        }
-        debug("Switching to COM mode with ESP8266\r\n");
-    }
+	if (kaa_client) {
+		debug("Starting Kaa client, to stop press \'S\'\r\n");
+		kaa_error_t error = kaa_client_start(kaa_client, process, (void*)kaa_client, 10);
+		if (error) {
+			debug("Error running Kaa client, code %d\r\n", error);
+		}
+		kaa_client_destroy(kaa_client);
+		kaa_client = NULL;
+		debug("Switching to COM mode with ESP8266\r\n");
+	}
 
-    uint8 l = 0;
-    if (esp8266_serial_available(esp8266_serial)) {
-        SerialUSB.write(esp8266_serial_read(esp8266_serial));
-    }
-    if (SerialUSB.available()) {
-        l = SerialUSB.read();
-        if (l == '\n') {
-            esp8266_serial_write(esp8266_serial, "\r");
-        }
-        esp8266_serial_write_byte(esp8266_serial, l);
-        if (l == '\r') {
-            esp8266_serial_write(esp8266_serial, "\n");;
-        }
-    }
+	uint8 l = 0;
+	if (esp8266_serial_available(esp8266_serial)) {
+		SerialUSB.write(esp8266_serial_read(esp8266_serial));
+	}
+	if (SerialUSB.available()) {
+		l = SerialUSB.read();
+		if (l == '\n') {
+			esp8266_serial_write(esp8266_serial, "\r");
+		}
+		esp8266_serial_write_byte(esp8266_serial, l);
+		if (l == '\r') {
+			esp8266_serial_write(esp8266_serial, "\n");;
+		}
+	}
 }
 
 // Force init to be called *first*, i.e. before static object allocation.
@@ -228,6 +230,19 @@ void ledOff()
     digitalWrite(BOARD_LED_PIN, LOW);
 }
 
+void esp8266_reset()
+{
+	//Enable Chip Select signal;
+	digitalWrite(CH_PD, LOW);
+	delay(200);
+	digitalWrite(CH_PD, HIGH);
+	//reset chip
+	digitalWrite(ESP8266_RST, LOW);
+	delay(1000);
+	digitalWrite(ESP8266_RST, HIGH);
+	delay(2000);
+}
+
 void debug(const char* format, ...)
 {
     va_list args;
@@ -262,15 +277,8 @@ void esp8266_serial_init(esp8266_serial_t **serial, HardwareSerial *hw_serial, u
         return;
     }
 
-    //Enable Chip Select signal;
-    digitalWrite(CH_PD, LOW);
-    delay(1000);
-    digitalWrite(CH_PD, HIGH);
-    //reset chip
-    digitalWrite(ESP8266_RST, LOW);
-    delay(1000);
-    digitalWrite(ESP8266_RST, HIGH);
-    delay(2000);
+    esp8266_reset();
+
     self->hw_serial = hw_serial;
     hw_serial->begin(baud_rate);
     *serial = self;

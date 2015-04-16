@@ -1331,7 +1331,7 @@ void status_command_complete(void *context
 			}
 		}
 	} else {
-		debug("STATUS CHECK ERR\r\n");
+		debug("STATUS CHECK ERR: timeout %d\r\n", timeout_expired);
 		if (timeout_expired)
 			controler->command_state = ESP8266_COMMAND_RESPONCE_TIMEOUT;
 		else

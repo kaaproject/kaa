@@ -38,6 +38,8 @@ void ledOn();
 
 void ledOff();
 
+void esp8266_reset();
+
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif

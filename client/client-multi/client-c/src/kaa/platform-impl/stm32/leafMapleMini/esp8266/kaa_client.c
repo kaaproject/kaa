@@ -68,6 +68,8 @@ struct kaa_client_t {
 	void *external_process_context;
 	time_t external_process_max_delay;
 	time_t external_process_last_call;
+    const char *wifi_ssid;
+    const char *wifi_pswd;
 };
 
 
@@ -78,12 +80,32 @@ kaa_error_t kaa_client_state_process(kaa_client_t *kaa_client)
 	KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 
 	kaa_error_t error_code = KAA_ERR_NONE;
-
+	esp8266_error_t esp8266_error;
 	switch (kaa_client->connection_state) {
 		case KAA_CLIENT_ESP8266_STATE_UNINITED:
-
+			esp8266_error = esp8266_init(kaa_client->controler);
+			if (esp8266_error == ESP8266_ERR_NONE) {
+				kaa_client->connection_state = KAA_CLIENT_ESP8266_STATE_INIT_OK;
+				KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "ESP8266 initialized successfully");
+			} else {
+				KAA_LOG_ERROR(kaa_client->kaa_context->logger, KAA_ERR_NONE, "ESP8266 initialization failed: %d", esp8266_error);
+				esp8266_reset();
+			}
+			break;
+		case KAA_CLIENT_ESP8266_STATE_INIT_OK:
+			esp8266_error = esp8266_connect_wifi(kaa_client->controler, kaa_client->wifi_ssid, kaa_client->wifi_pswd);
+			if (esp8266_error == ESP8266_ERR_NONE) {
+				kaa_client->connection_state = KAA_CLIENT_WIFI_STATE_CONNECTED;
+				KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "ESP8266 WiFi to %s network connected", kaa_client->wifi_ssid);
+			} else {
+				KAA_LOG_ERROR(kaa_client->kaa_context->logger, KAA_ERR_NONE, "ESP8266 connect to WiFi %s failed: %d", kaa_client->wifi_ssid, esp8266_error);
+				kaa_client->connection_state = KAA_CLIENT_WIFI_STATE_UNCONNECTED;
+			}
+			break;
+		case KAA_CLIENT_WIFI_STATE_CONNECTED:
 			break;
 		default:
+			kaa_client->connection_state = KAA_CLIENT_ESP8266_STATE_UNINITED;
 			break;
 	}
 
@@ -114,6 +136,10 @@ kaa_error_t kaa_client_create(kaa_client_t **kaa_client, kaa_client_props_t *pro
 	}
 
 	KAA_LOG_INFO(self->kaa_context->logger, KAA_ERR_NONE, "Kaa framework initialized.");
+
+	self->wifi_ssid = props->wifi_ssid;
+	self->wifi_pswd = props->wifi_pswd;
+	self->operate = true;
 
 	*kaa_client = self;
 
@@ -213,6 +239,8 @@ kaa_error_t kaa_client_esp8266_error(kaa_client_t *kaa_client)
 
 	kaa_error_t error_code = KAA_ERR_NONE;
 
+	KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "ESP8266 Error found, reset.... and restart.");
+	kaa_client->connection_state = KAA_CLIENT_ESP8266_STATE_UNINITED;
 
 	return error_code;
 }
