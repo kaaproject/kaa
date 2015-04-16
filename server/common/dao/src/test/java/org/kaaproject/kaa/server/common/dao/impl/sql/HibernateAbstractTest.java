@@ -53,6 +53,7 @@ import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
 import org.kaaproject.kaa.server.common.dao.impl.UserDao;
+import org.kaaproject.kaa.server.common.dao.impl.UserVerifierDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventMap;
@@ -71,6 +72,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.kaaproject.kaa.server.common.dao.model.sql.User;
+import org.kaaproject.kaa.server.common.dao.model.sql.UserVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +113,8 @@ public abstract class HibernateAbstractTest {
     protected LogSchemaDao<LogSchema> logSchemaDao;
     @Autowired
     protected NotificationSchemaDao<NotificationSchema> notificationSchemaDao;
+    @Autowired
+    protected UserVerifierDao<UserVerifier> verifierDao;
 
     protected Tenant generateTenant() {
         LOG.debug("Generate tenant...");
@@ -214,7 +218,7 @@ public abstract class HibernateAbstractTest {
             }
         } catch (IOException e) {
             LOG.error("Can't generate configuration schemas {}", e);
-            Assert.fail("Can't generate configuration schemas."+e.getMessage());
+            Assert.fail("Can't generate configuration schemas." + e.getMessage());
         }
         return schemas;
     }
@@ -234,7 +238,7 @@ public abstract class HibernateAbstractTest {
                 Configuration dto = new Configuration();
                 dto.setId(null);
                 dto.setStatus(status != null ? status : UpdateStatus.INACTIVE);
-                dto.setConfigurationBody(new byte[] { 0, 2, 3, 4, });
+                dto.setConfigurationBody(new byte[]{0, 2, 3, 4,});
                 dto.setConfigurationSchema(schema);
                 dto.setSequenceNumber(i);
                 dto.setMajorVersion(i + 1);
@@ -328,9 +332,13 @@ public abstract class HibernateAbstractTest {
         return filters;
     }
 
-    protected Topic generateTopic(Application app, TopicTypeDto type) {
+    protected Topic generateTopic(Application app, TopicTypeDto type, String topicName) {
         Topic topic = new Topic();
-        topic.setName("GENERATED test Topic");
+        if(topicName != null && !topicName.isEmpty()){
+            topic.setName(topicName);
+        } else {
+            topic.setName("Generated Topic name");
+        }
         if (app == null) {
             app = generateApplication(null);
         }
@@ -474,6 +482,20 @@ public abstract class HibernateAbstractTest {
             LOG.error("Can't generate configs {}", e);
         }
         return null;
+    }
+
+    protected UserVerifier generateUserVerifier(Application app, String verifierToken) {
+        UserVerifier verifier = new UserVerifier();
+        verifier.setName("GENERATED test Verifier" + UUID.randomUUID().toString());
+        if (app == null) {
+            app = generateApplication(null);
+        }
+        verifier.setApplication(app);
+        if (verifierToken == null) {
+            verifierToken = "token";
+        }
+        verifier.setVerifierToken(verifierToken);
+        return verifierDao.save(verifier);
     }
 
 }

@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(checkDefaults)
     BOOST_CHECK_EQUAL(cs.isRegistered(), false);
     BOOST_CHECK_EQUAL(cs.getProfileHash().empty(), true);
     BOOST_CHECK_EQUAL(cs.getAttachedEndpoints().size(), 0);
-    BOOST_CHECK_EQUAL(cs.getEndpointAccessToken().empty(), true);
+    BOOST_CHECK_EQUAL(cs.getEndpointAccessToken().empty(), false);
     BOOST_CHECK_EQUAL(cs.getEndpointAttachStatus(), false);
 
     cleanfile();
@@ -114,8 +114,6 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
 
     cs.setAttachedEndpoints(attachedEndpoints);
 
-    std::string endpointAccessToken;
-
     bool isAttached = true;
     cs.setEndpointAttachStatus(isAttached);
 
@@ -141,8 +139,6 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     AttachedEndpoints restoredAttachedEndpoints = cs.getAttachedEndpoints();
     BOOST_CHECK_EQUAL(restoredAttachedEndpoints[token1], hash1);
     BOOST_CHECK_EQUAL(restoredAttachedEndpoints[token2], hash2);
-
-    BOOST_CHECK_EQUAL(cs_restored.getEndpointAccessToken(), endpointAccessToken);
 
     BOOST_CHECK_EQUAL(cs_restored.getEndpointAttachStatus(), isAttached);
     BOOST_CHECK_EQUAL(cs_restored.getEndpointKeyHash(), endpointKeyHash);

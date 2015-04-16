@@ -29,6 +29,6 @@ public interface SessionResponse extends ChannelAware, PlatformAware{
     Exception getError();
     SessionInfo getSessionInfo();
     MessageBuilder getMessageBuilder();
-    ErrorBuilder getErrorConverter();
+    ErrorBuilder getErrorBuilder();
 
 }

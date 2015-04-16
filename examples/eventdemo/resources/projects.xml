@@ -19,8 +19,31 @@ Copyright 2014-2015 CyberVision, Inc.
 <projectsConfig>
     <project id="event_demo_java">
         <name>Event demo</name>
-        <description>Application on java platform demonstrating event subsystem (IoT)</description>
-        <details></details>
+        <description>Kaa event subsystem demo app based on Java SDK</description>
+        <details>
+            <![CDATA[
+This simple app demonstrates Kaa event subsystem capabilities on Java SDK.
+
+<h2>Installation</h2>
+Download the jar file to your device by clicking the "Binary" button on the left. Make sure that the you have Java installed on your device. Run application using following command in console:
+<pre>
+$ java -jar EventDemo.jar
+</pre>
+
+<h2>Playing around</h2>
+Make sure that the Kaa sandbox is up and running. Starting the "Event demo" app, you will send event to all endpoints attached to same user. User login and password are hardcoded and <a href="https://docs.kaaproject.org/display/KAA/Attaching+endpoints+to+users#Attachingendpointstousers-Trustfuluserverifier">Trustful user verifier</a> is used for demonstration purposes.<br/><br/>
+
+Now it's time to test things out: start second application instance. By default application store state information in same folder where it is started. So, you should start new application instance from different folder in order to avoid conflicts between applications. Once started you will see that applications instances exchange events. You can also start "Event demo" application for different platforms in order ensure that events are delivered across platforms.
+<br/><br/>
+
+Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">Administrative UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">REST API</a>.
+
+<h2>What's next?</h2>
+Get the source code by clicking the "Source" button on the left and start hacking!<br/><br/>
+
+For more background on Kaa Event subsystem please refer to the corresponding <a href="https://docs.kaaproject.org/display/KAA/Messaging+across+endpoints">programming guide</a> and <a href="https://docs.kaaproject.org/display/KAA/Events">design reference</a> sections.
+            ]]>
+		</details>
         <platform>JAVA</platform>
         <features>EVENT</features>
         <sourceArchive>java/event_demo.tar.gz</sourceArchive>
@@ -30,8 +53,27 @@ Copyright 2014-2015 CyberVision, Inc.
     </project>
     <project id="event_demo_c">
         <name>Event demo</name>
-        <description>Application on C platform demonstrating event subsystem (IoT)</description>
-        <details></details>
+        <description>Kaa event subsystem demo app based on C SDK</description>
+        <details>
+            <![CDATA[
+This simple app demonstrates Kaa event subsystem capabilities on C SDK.
+
+<h2>Installation</h2>
+Download the source code by clicking the "Source" button on the left. Build the source code using endpoint build and integration <a href="https://docs.kaaproject.org/display/KAA/Endpoint+build+and+integration+instructions#Endpointbuildandintegrationinstructions-BuildingCendpointSDK">instructions</a>.
+
+<h2>Playing around</h2>
+Make sure that the Kaa sandbox is up and running. Starting the "Event demo" app, you will send event to all endpoints attached to same user. User login and password are hardcoded and <a href="https://docs.kaaproject.org/display/KAA/Attaching+endpoints+to+users#Attachingendpointstousers-Trustfuluserverifier">Trustful user verifier</a> is used for demonstration purposes.<br/><br/>
+
+Now it's time to test things out: start second application instance. By default application store state information in same folder where it is started. So, you should start new application instance from different folder in order to avoid conflicts between applications. Once started you will see that applications instances exchange events. You can also start "Event demo" application for different platforms in order ensure that events are delivered across platforms.
+<br/><br/>
+
+Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">Administrative UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">REST API</a>.
+
+<h2>What's next?</h2>
+
+For more background on Kaa Event subsystem please refer to the corresponding <a href="https://docs.kaaproject.org/display/KAA/Messaging+across+endpoints">programming guide</a> and <a href="https://docs.kaaproject.org/display/KAA/Events">design reference</a> sections.
+            ]]>
+		</details>
         <platform>C</platform>
         <features>EVENT</features>
         <sourceArchive>c/event_demo.tar.gz</sourceArchive>
@@ -41,8 +83,27 @@ Copyright 2014-2015 CyberVision, Inc.
     </project>
     <project id="event_demo_cpp">
         <name>Event demo</name>
-        <description>Application on C++ platform demonstrating event subsystem (IoT)</description>
-        <details></details>
+        <description>Kaa event subsystem demo app based on C++ SDK</description>
+        <details>
+            <![CDATA[
+This simple app demonstrates Kaa event subsystem subsystem capabilities on C SDK.
+
+<h2>Installation</h2>
+Download the source code by clicking the "Source" button on the left. Build the source code using endpoint build and integration <a href="https://docs.kaaproject.org/display/KAA/Endpoint+build+and+integration+instructions#Endpointbuildandintegrationinstructions-BuildingC++endpointSDK">instructions</a>.
+
+<h2>Playing around</h2>
+Make sure that the Kaa sandbox is up and running. Starting the "Event demo" app, you will send event to all endpoints attached to same user. User login and password are hardcoded and <a href="https://docs.kaaproject.org/display/KAA/Attaching+endpoints+to+users#Attachingendpointstousers-Trustfuluserverifier">Trustful user verifier</a> is used for demonstration purposes.<br/><br/>
+
+Now it's time to test things out: start second application instance. By default application store state information in same folder where it is started. So, you should start new application instance from different folder in order to avoid conflicts between applications. Once started you will see that applications instances exchange events. You can also start "Event demo" application for different platforms in order ensure that events are delivered across platforms.
+<br/><br/>
+
+Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">Administrative UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">REST API</a>.
+
+<h2>What's next?</h2>
+
+For more background on Kaa Event subsystem please refer to the corresponding <a href="https://docs.kaaproject.org/display/KAA/Messaging+across+endpoints">programming guide</a> and <a href="https://docs.kaaproject.org/display/KAA/Events">design reference</a> sections.
+            ]]>
+		</details>
         <platform>CPP</platform>
         <features>EVENT</features>
         <sourceArchive>cpp/event_demo.tar.gz</sourceArchive>

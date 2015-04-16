@@ -39,6 +39,7 @@ import org.kaaproject.kaa.server.sync.SyncStatus;
 import org.kaaproject.kaa.server.sync.platform.PlatformEncDec;
 import org.kaaproject.kaa.server.sync.platform.PlatformEncDecException;
 import org.kaaproject.kaa.server.sync.platform.PlatformLookup;
+import org.kaaproject.kaa.server.transport.InvalidApplicationTokenException;
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
 import org.kaaproject.kaa.server.transport.message.Message;
@@ -111,19 +112,24 @@ public class EncDecActorMessageProcessor {
     void encodeAndReply(SessionResponse message) {
         try {
             sessionResponseMeter.mark();
-            if(message.getError() != null){
+            if(message.getError() == null){
                 processSessionResponse(message);
             }else{
-                processErrors(message.getChannelContext(), message.getErrorConverter(), message.getError());
+                processErrors(message.getChannelContext(), message.getErrorBuilder(), message.getError());
             }
         } catch (Exception e) {
-            processErrors(message.getChannelContext(), message.getErrorConverter(), e);
+            processErrors(message.getChannelContext(), message.getErrorBuilder(), e);
         }
     }
 
     public void forward(ActorContext context, SessionAware message) {
-        LOG.debug("Forwarding session aware message: {}", message);
-        this.opsActor.tell(message, context.self());
+        if (isApplicationTokenValid(message.getSessionInfo().getApplicationToken())) {
+            LOG.debug("Forwarding session aware message: {}", message);
+            this.opsActor.tell(message, context.self());
+        } else {
+            LOG.debug("Session aware message won't be forwarded. Reason: message {}" +
+                    " has invalid application token", message);
+        }
     }
 
     void redirect(RedirectionRule redirection, SessionInitMessage message) {
@@ -153,7 +159,7 @@ public class EncDecActorMessageProcessor {
 
             SessionInfo sessionInfo = message.getSessionInfo();
             SessionResponse responseMessage = new NettySessionResponseMessage(sessionInfo, response, message.getMessageBuilder(),
-                    message.getErrorBuilder());
+                        message.getErrorBuilder());
             LOG.debug("Redirect Response: {}", response);
             processSessionResponse(responseMessage);
         } catch (Exception e) {
@@ -171,20 +177,30 @@ public class EncDecActorMessageProcessor {
     }
 
     private void processSignedRequest(ActorContext context, SessionInitMessage message) throws GeneralSecurityException,
-            PlatformEncDecException {
+            PlatformEncDecException, InvalidApplicationTokenException {
         ClientSync request = decodeRequest(message);
         EndpointObjectHash key = getEndpointObjectHash(request);
         SessionInfo session = new SessionInfo(message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
                 message.getChannelType(), crypt.getSessionCipherPair(), key, request.getClientSyncMetaData().getApplicationToken(),
                 message.getKeepAlive(), message.isEncrypted());
         message.onSessionCreated(session);
-        forwardToOpsActor(context, session, request, message);
+        if (isApplicationTokenValid(session.getApplicationToken())) {
+            forwardToOpsActor(context, session, request, message);
+        } else {
+            LOG.info("Invalid application token received: {}", session.getApplicationToken());
+            throw new InvalidApplicationTokenException("Invalid application token received");
+        }
     }
 
     private void processSessionRequest(ActorContext context, SessionAwareMessage message) throws GeneralSecurityException,
-            PlatformEncDecException {
+            PlatformEncDecException, InvalidApplicationTokenException {
         ClientSync request = decodeRequest(message);
-        forwardToOpsActor(context, message.getSessionInfo(), request, message);
+        if (isApplicationTokenValid(message.getSessionInfo().getApplicationToken())) {
+            forwardToOpsActor(context, message.getSessionInfo(), request, message);
+        } else {
+            LOG.info("Invalid application token received: {}", message.getSessionInfo().getApplicationToken());
+            throw new InvalidApplicationTokenException("Invalid application token received");
+        }
     }
 
     private void forwardToOpsActor(ActorContext context, SessionInfo session, ClientSync request, Message requestMessage) {
@@ -339,6 +355,10 @@ public class EncDecActorMessageProcessor {
 
     private String getAppToken(ClientSync request) {
         return request.getClientSyncMetaData().getApplicationToken();
+    }
+
+    private boolean isApplicationTokenValid(String applicationToken) {
+        return cacheService.getTenantIdByAppToken(applicationToken) != null;
     }
 
     protected EndpointObjectHash getEndpointObjectHash(ClientSync request) {

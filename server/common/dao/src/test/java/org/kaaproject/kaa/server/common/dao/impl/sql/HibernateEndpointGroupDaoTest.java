@@ -52,9 +52,9 @@ public class HibernateEndpointGroupDaoTest extends HibernateAbstractTest {
 
     @Test
     public void removeTopicFromEndpointGroup() {
-        Topic first = generateTopic(null, null);
-        Topic second = generateTopic(first.getApplication(), null);
-        Topic third = generateTopic(first.getApplication(), null);
+        Topic first = generateTopic(null, null, "first");
+        Topic second = generateTopic(first.getApplication(), null, "second");
+        Topic third = generateTopic(first.getApplication(), null, "third");
         Set<Topic> topics = new HashSet<>();
         topics.add(first);
         topics.add(second);
@@ -70,7 +70,7 @@ public class HibernateEndpointGroupDaoTest extends HibernateAbstractTest {
 
     @Test
     public void findEndpointGroupsByTopicIdAndAppId() throws InterruptedException {
-        Topic topic = generateTopic(null, null);
+        Topic topic = generateTopic(null, null, null);
         Set<Topic> topics = new HashSet<>();
         topics.add(topic);
         EndpointGroup endpointGroup = generateEndpointGroup(topic.getApplication(), topics);
@@ -82,9 +82,9 @@ public class HibernateEndpointGroupDaoTest extends HibernateAbstractTest {
 
     @Test
     public void addTopicToEndpointGroup() {
-        Topic first = generateTopic(null, null);
-        Topic second = generateTopic(first.getApplication(), null);
-        Topic third = generateTopic(first.getApplication(), null);
+        Topic first = generateTopic(null, null, "first");
+        Topic second = generateTopic(first.getApplication(), null, "second");
+        Topic third = generateTopic(first.getApplication(), null, "third");
         Set<Topic> topics = new HashSet<>();
         topics.add(first);
         topics.add(second);
@@ -99,8 +99,8 @@ public class HibernateEndpointGroupDaoTest extends HibernateAbstractTest {
 
     @Test
     public void removeEndpointGroupTest() {
-        Topic first = generateTopic(null, null);
-        Topic second = generateTopic(first.getApplication(), null);
+        Topic first = generateTopic(null, null, "first");
+        Topic second = generateTopic(first.getApplication(), null, "second");
         Set<Topic> topicsOne = new HashSet<>();
         topicsOne.add(first);
         Set<Topic> topicsTwo = new HashSet<>();

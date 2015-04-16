@@ -24,7 +24,7 @@
 
 #include "../platform/platform.h"
 
-#include <time.h>
+#include "../platform/time.h"
 #include <stdbool.h>
 
 #include "../platform/ext_log_upload_strategy.h"
@@ -205,7 +205,7 @@ ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const vo
     ext_log_upload_strategy_t *self = (ext_log_upload_strategy_t *)context;
 
     if (self->upload_retry_ts) {
-        if (time(NULL) >= self->upload_retry_ts) {
+        if (KAA_TIME() >= self->upload_retry_ts) {
             // force upload after retry timeout has elapsed
             self->upload_retry_ts = 0;
             decision = UPLOAD;
@@ -273,7 +273,7 @@ kaa_error_t ext_log_upload_strategy_on_failure(void *context, logging_delivery_e
     case APPENDER_INTERNAL_ERROR:
     case REMOTE_CONNECTION_ERROR:
     case REMOTE_INTERNAL_ERROR:
-        self->upload_retry_ts = time(NULL) + self->upload_retry_period;
+        self->upload_retry_ts = KAA_TIME() + self->upload_retry_period;
         break;
     default:
         break;

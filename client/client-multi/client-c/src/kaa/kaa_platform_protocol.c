@@ -20,6 +20,7 @@
 #include <string.h>
 #include "platform/stdio.h"
 #include "platform/ext_sha.h"
+#include "platform/sock.h"
 #include "kaa_status.h"
 #include "kaa_platform_protocol.h"
 #include "utilities/kaa_mem.h"

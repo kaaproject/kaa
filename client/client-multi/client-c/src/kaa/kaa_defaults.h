@@ -23,7 +23,6 @@
  *
  */
 
-# include <stdint.h>
 # include "kaa_common.h"
 
 # ifdef __cplusplus

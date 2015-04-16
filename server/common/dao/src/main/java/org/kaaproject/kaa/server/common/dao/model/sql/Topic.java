@@ -20,35 +20,20 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_TOPICS_ENDPOINT_GROUP_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_TOPICS_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_TOPICS_TOPIC_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_APPLICATION_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_CREATED_TIME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_CREATED_USERNAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_DESCRIPTION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.*;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_APPLICATION_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_SEQUENCE_NUMBER;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.TOPIC_TYPE;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
-@Table(name = TOPIC_TABLE_NAME)
+@Table(name = TOPIC_TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(columnNames = {TOPIC_NAME, ENDPOINT_GROUP_APPLICATION_ID})
+})
 public final class Topic extends GenericModel<TopicDto> implements Serializable {
 
     private static final long serialVersionUID = -5617352698933455002L;

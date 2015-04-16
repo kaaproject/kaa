@@ -25,8 +25,6 @@ extern "C" {
 
 #ifdef _WIN32
   #include <avro/msinttypes.h>
-#else
-  #include <inttypes.h>
 #endif
 
 // Defines for printing size_t.

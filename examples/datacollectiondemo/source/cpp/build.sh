@@ -28,21 +28,23 @@ then
     help
 fi
 
-APP_NAME="sample_cpp_logging_client"
+APP_NAME="demo_client"
 PROJECT_HOME=$(pwd)
 BUILD_DIR="build"
 LIBS_PATH="libs"
 KAA_LIB_PATH="$LIBS_PATH/kaa"
+KAA_C_LIB_HEADER_PATH="$KAA_LIB_PATH/src"
+KAA_CPP_LIB_HEADER_PATH="$KAA_LIB_PATH/kaa"
 KAA_SDK_TAR="kaa-client*.tar.gz"
 
 function build_thirdparty {
-    if [ ! -d "$KAA_LIB_PATH/kaa" ]
+    if [[ ! -d "$KAA_C_LIB_HEADER_PATH" &&  ! -d "$KAA_CPP_LIB_HEADER_PATH" ]]
     then
         KAA_SDK_TAR_NAME=$(find $PROJECT_HOME -iname $KAA_SDK_TAR)
 
         if [ -z "$KAA_SDK_TAR_NAME" ]
         then
-            echo "Please, put the generated C++ SDK tarball into the libs/kaa folder and re-run the script."
+            echo "Please, put the generated C/C++ SDK tarball into the libs/kaa folder and re-run the script."
             exit 1
         fi
 
@@ -62,6 +64,7 @@ function build_thirdparty {
               -DKAA_WITHOUT_NOTIFICATIONS=1 \
               -DKAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL=1 \
               -DKAA_WITHOUT_OPERATION_HTTP_CHANNEL=1 \
+              -DKAA_MAX_LOG_LEVEL=3 \
               ..
     fi
 

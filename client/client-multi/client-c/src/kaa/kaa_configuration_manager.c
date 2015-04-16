@@ -16,11 +16,15 @@
 
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
 
-#include "kaa_configuration_manager.h"
 
 #include <stdbool.h>
-
+#include <inttypes.h>
+#include <stdint.h>
+#include <sys/types.h>
 #include "platform/stdio.h"
+#include "platform/sock.h"
+#include "kaa_configuration_manager.h"
+
 #include "platform/ext_sha.h"
 #include "platform/ext_configuration_persistence.h"
 #include "collections/kaa_list.h"
@@ -42,6 +46,8 @@
 
 #define KAA_CONFIGURATION_BODY_PRESENT           0x02
 
+extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self, kaa_service_t service_type);
+
 static kaa_service_t configuration_sync_services[1] = { KAA_SERVICE_CONFIGURATION };
 
 struct kaa_configuration_manager {
@@ -54,7 +60,7 @@ struct kaa_configuration_manager {
 };
 
 
-static kaa_root_configuration_t *kaa_configuration_manager_deserialize(char *buffer, size_t buffer_size)
+static kaa_root_configuration_t *kaa_configuration_manager_deserialize(const char *buffer, size_t buffer_size)
 {
     KAA_RETURN_IF_NIL2(buffer, buffer_size, NULL);
 
@@ -178,13 +184,13 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
         if (extension_options & KAA_CONFIGURATION_BODY_PRESENT) {
             uint32_t body_size = KAA_NTOHL(*((uint32_t *) reader->current));
             reader->current += sizeof(uint32_t);
-
-            char body[body_size];
-            kaa_error_t error_code = kaa_platform_message_read_aligned(reader, body, body_size);
-            if (error_code) {
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to read configuration body, size %u", body_size);
-                return KAA_ERR_READ_FAILED;
+            const char* body = reader->current;
+            kaa_error_t error = kaa_platform_message_skip(reader, kaa_aligned_size_get(body_size));
+            if (error) {
+                 KAA_LOG_ERROR(self->logger, error, "Failed to read configuration body, size %u", body_size);
+                 return error;
             }
+
 #if KAA_CONFIGURATION_DELTA_SUPPORT
 
 #else

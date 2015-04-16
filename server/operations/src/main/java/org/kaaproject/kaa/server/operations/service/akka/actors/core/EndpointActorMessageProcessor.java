@@ -400,16 +400,16 @@ public class EndpointActorMessageProcessor {
     }
 
     private void processEvents(ActorContext context, ClientSync request, SyncContext responseHolder) {
-        if (state.isValidForEvents()) {
-            if (request.getEventSync() != null) {
-                EventClientSync eventRequest = request.getEventSync();
-                processSeqNumber(eventRequest, responseHolder);
+        if (request.getEventSync() != null) {
+            EventClientSync eventRequest = request.getEventSync();
+            processSeqNumber(eventRequest, responseHolder);
+            if (state.isValidForEvents()) {
                 sendEventsIfPresent(context, eventRequest);
+            } else {
+                LOG.debug(
+                        "[{}][{}] Endpoint profile is not valid for send/receive events. Either no assigned user or no event families in sdk",
+                        endpointKey, actorKey);
             }
-        } else {
-            LOG.debug(
-                    "[{}][{}] Endpoint profile is not valid for send/receive events. Either no assigned user or no event families in sdk",
-                    endpointKey, actorKey);
         }
     }
 
@@ -831,7 +831,7 @@ public class EndpointActorMessageProcessor {
     protected void tellParent(ActorContext context, Object response) {
         context.parent().tell(response, context.self());
     }
-    
+
     protected void tellActor(ActorContext context, ActorRef target, Object message) {
         target.tell(message, context.self());
     }

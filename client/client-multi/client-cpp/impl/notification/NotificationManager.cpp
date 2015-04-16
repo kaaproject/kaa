@@ -212,7 +212,7 @@ void NotificationManager::subscribeToTopics(const std::list<std::string>& idList
     updateSubscriptionInfo(subscriptions);
 
     if (forceSync) {
-        KAA_LOG_INFO(boost::format("Going to subscribe to topics '%1%'") % iss.str());
+        KAA_LOG_INFO(boost::format("Going to subscribe to topics %1%") % iss.str());
         sync();
     } else {
         KAA_LOG_INFO(boost::format("Subscription to topics '%1%' is postponed till sync") % iss.str());
@@ -257,7 +257,7 @@ void NotificationManager::unsubscribeFromTopics(const std::list<std::string>& id
     updateSubscriptionInfo(subscriptions);
 
     if (forceSync) {
-        KAA_LOG_INFO(boost::format("Going to unsubscribe from topics '%1%'") % iss.str());
+        KAA_LOG_INFO(boost::format("Going to unsubscribe from topics %1%") % iss.str());
         sync();
     } else {
         KAA_LOG_INFO(boost::format("Unsubscription from topics '%1%' is postponed till sync") % iss.str());

@@ -20,7 +20,9 @@
 # include <stdint.h>
 # include <string.h>
 # include <stdarg.h>
+# include <sys/types.h>
 # include "platform/stdio.h"
+# include "platform/sock.h"
 # include "platform/ext_sha.h"
 # include "kaa_event.h"
 # include "kaa_status.h"
@@ -112,6 +114,8 @@ struct kaa_event_manager_t {
     kaa_logger_t                *logger;
 
     uint16_t                     event_listeners_request_id;
+
+    kaa_endpoint_id_p            event_source;
 };
 
 static kaa_service_t event_sync_services[1] = { KAA_SERVICE_EVENT };
@@ -273,6 +277,10 @@ kaa_error_t kaa_event_manager_create(kaa_event_manager_t **event_manager_p
     (*event_manager_p)->status = status;
     (*event_manager_p)->channel_manager = channel_manager;
     (*event_manager_p)->logger = logger;
+
+    (*event_manager_p)->event_source = (kaa_endpoint_id_p)KAA_MALLOC(sizeof(kaa_endpoint_id));
+    KAA_RETURN_IF_NIL((*event_manager_p)->event_source, KAA_ERR_NOMEM);
+
     return KAA_ERR_NONE;
 }
 
@@ -283,6 +291,9 @@ void kaa_event_manager_destroy(kaa_event_manager_t *self)
         kaa_list_destroy(self->pending_events, &kaa_event_destroy);
         kaa_list_destroy(self->event_callbacks, &kaa_event_destroy_callback_pair);
         kaa_list_destroy(self->transactions, &destroy_transaction);
+        if (self->event_source) {
+            KAA_FREE((void*)self->event_source);
+        }
         KAA_FREE(self);
     }
 }
@@ -679,6 +690,7 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
 
 static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_message_reader_t *reader)
 {
+
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Event received");
@@ -709,25 +721,32 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         event_data_size = KAA_NTOHL(event_data_size);
     }
 
-    kaa_endpoint_id event_source;
-    error = kaa_platform_message_read(reader, event_source, KAA_ENDPOINT_ID_LENGTH);
+    error = kaa_platform_message_read(reader, (void*)self->event_source, sizeof(kaa_endpoint_id));
+
     if (error) {
         KAA_LOG_ERROR(self->logger, error, "Failed to read event source endpoint id field");
         return error;
     }
 
     bool is_enough = kaa_platform_message_is_buffer_large_enough(reader, kaa_aligned_size_get(event_class_fqn_length));
+
     if (!is_enough) {
         KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Buffer size is less than event class fqn length value");
         return KAA_ERR_READ_FAILED;
     }
-    char event_fqn[event_class_fqn_length + 1];
+    char* event_fqn = (char *)KAA_MALLOC(event_class_fqn_length + 1);
+
+    KAA_RETURN_IF_NIL(event_fqn, KAA_ERR_NOMEM);
+
     error = kaa_platform_message_read_aligned(reader, event_fqn, event_class_fqn_length);
+
     if (error) {
         KAA_LOG_ERROR(self->logger, error, "Failed to read event class fqn field");
+        KAA_FREE(event_fqn);
         return error;
     }
     event_fqn[event_class_fqn_length] = '\0';
+
     KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Processing event with FQN=\"%s\"", event_fqn);
 
     kaa_event_callback_t callback = find_event_callback(self->event_callbacks, event_fqn);
@@ -735,24 +754,20 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
         callback = self->global_event_callback;
 
     if (event_options & KAA_EVENT_OPTION_EVENT_HAS_DATA) {
-        is_enough = kaa_platform_message_is_buffer_large_enough(reader, kaa_aligned_size_get(event_data_size));
-        if (!is_enough) {
-            KAA_LOG_ERROR(self->logger, KAA_ERR_READ_FAILED, "Buffer size is less than event data size value");
-            return KAA_ERR_READ_FAILED;
-        }
-
-        char event_data[event_data_size];
-        error = kaa_platform_message_read_aligned(reader, event_data, event_data_size * sizeof(uint8_t));
+        const char* event_data = reader->current;
+        kaa_error_t error = kaa_platform_message_skip(reader, kaa_aligned_size_get(event_data_size));
         if (error) {
-            KAA_LOG_ERROR(self->logger, error, "Failed to read event data field");
-            return error;
+             KAA_LOG_ERROR(self->logger, error, "Failed to read event data, size %u", event_data_size);
+             KAA_FREE(event_fqn);
+             return error;
         }
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Successfully retrieved event data size=%u", event_data_size);
         if (callback)
-           (*callback)(event_fqn, event_data, event_data_size, event_source);
+            (*callback)(event_fqn, event_data, event_data_size, self->event_source);
     } else if (callback) {
-       (*callback)(event_fqn, NULL, 0, event_source);
+        (*callback)(event_fqn, NULL, 0, self->event_source);
     }
+    KAA_FREE(event_fqn);
     return KAA_ERR_NONE;
 }
 
@@ -765,6 +780,9 @@ static kaa_error_t kaa_event_read_listeners_response(kaa_event_manager_t *self, 
 
     uint32_t listeners_count =  KAA_NTOHL(*(uint32_t *) reader->current);
     reader->current += sizeof(uint32_t);
+
+    KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Received %u event listener(s) on %u request"
+                                                                , listeners_count, request_id);
 
     kaa_list_t *request_node = kaa_list_find_next(self->event_listeners_requests, &find_listeners_request_by_id, &request_id);
     if (request_node) {
@@ -783,7 +801,7 @@ static kaa_error_t kaa_event_read_listeners_response(kaa_event_manager_t *self, 
         }
         kaa_list_remove_at(&self->event_listeners_requests, request_node, &destroy_event_listener_request);
     } else {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_NOT_FOUND, "Failed to find event listeners callback with request id %u", request_id);
+        KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Failed to find event listeners callback with request id %u", request_id);
     }
     reader->current += listeners_count * KAA_ENDPOINT_ID_LENGTH;
     return KAA_ERR_NONE;
@@ -840,8 +858,10 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
         self->events_awaiting_response.request_id = (size_t) -1;
     }
 
-    if (extension_length > 0) {
+    while (extension_length > 0) {
         uint8_t field_id = 0;
+        const char *field_id_pos = reader->current;
+
         kaa_error_t error = kaa_platform_message_read(reader, &field_id, sizeof(uint8_t)); //read field id
         if (error) {
             KAA_LOG_ERROR(self->logger, error, "Failed to read field id in Event server sync message");
@@ -879,7 +899,11 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
                     KAA_LOG_ERROR(self->logger, error, "Failed to read event listener response in Event server sync message");
                     return error;
                 }
-                event_listeners_responses_count = KAA_HTONS(event_listeners_responses_count);
+
+                event_listeners_responses_count = KAA_NTOHS(event_listeners_responses_count);
+                KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Received %u event listeners response(s)"
+                                                                    , event_listeners_responses_count);
+
                 while (event_listeners_responses_count--) {
                     error = kaa_event_read_listeners_response(self, reader);
                     if (error) {
@@ -894,6 +918,7 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
                 return KAA_ERR_BADDATA;
         }
 
+        extension_length -= (reader->current - field_id_pos);
     }
 
     return KAA_ERR_NONE;

@@ -47,37 +47,24 @@
     Below is an example of a profile container for C++:
     @code
         #include "kaa/Kaa.hpp"
-        #include "kaa/gen/ProfileGen.hpp" // auto-generated header
-        #include "kaa/profile/AbstractProfileContainer.hpp"
-         
+        #include "kaa/profile/DefaultProfileContainer.hpp"
+
         using namespace kaa;
-        // Profile container based on AbstractProfileContainer class that is provided by the sdk
-        class BasicProfileContainer : public AbstractProfileContainer<Profile> {
-        public:
-            BasicProfileContainer(const Profile &profile) : profile_(profile) { }
-            virtual Profile getProfile() {
-                return profile_;
-            }
-            virtual void changeProfile(const Profile &profile) {
-                profile_ = profile;
-                // Update method should be called to notify about changes in the profile.
-                updateProfile();
-            }
-        private:
-            Profile profile_;
-        };
+
         // Kaa client initialization based on BasicProfileContainer
         void init(){
             //Create client for Kaa SDK
             Kaa::init();
-            IKaaClient &client = Kaa::getKaaClient();
+            IKaaClient &kaaClient = Kaa::getKaaClient();
             //Sample profile
-            Profile profile;
+            KaaProfile profile;
             profile.data = "some useful data";
             //Create instance of profile container
-            ProfileContainerPtr container(new BasicProfileContainer(profile));
-            //Set simple profile container to profile manager.
-            client.getProfileManager().setProfileContainer(container);
+            ProfileContainerPtr container(new DefaultProfileContainer(profile));
+            //Set simple profile container.
+            kaaClient.setProfileContainer(container);
+            // Update method should be called to notify about changes in the profile.
+            kaaClient.updateProfile();
             //Starts Kaa
             Kaa::start();
         }
