@@ -38,9 +38,29 @@ typedef unsigned int uint32;
 #include "esp8266.h"
 #include "chip_specififc.h"
 #include "../../../../platform/kaa_client.h"
+#include "../../../../platform/ext_sha.h"
 #include "../../../../platform/ext_transport_channel.h"
 
 #define DEFAULT_ESP8266_CONTROLER_BUFFER_SIZE 512
+
+#define KAA_DEMO_UPLOAD_COUNT_THRESHOLD 1 /* Count of collected serialized logs needed to initiate log upload */
+#define KAA_DEMO_LOG_GENERATION_FREQUENCY 3 /* seconds */
+
+static kaa_digest kaa_public_key_hash;
+
+static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
+static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
+/*
+* Define services which should be used.
+* Don't define unused services, it may cause an error.
+*/
+static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
+, KAA_SERVICE_CONFIGURATION
+, KAA_SERVICE_USER
+, KAA_SERVICE_EVENT
+, KAA_SERVICE_LOGGING};
+static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
+
 
 typedef enum {
     KAA_CLIENT_ESP8266_STATE_UNINITED = 0,
@@ -67,9 +87,13 @@ struct kaa_client_t {
     time_t external_process_last_call;
     const char *wifi_ssid;
     const char *wifi_pswd;
+    void *log_storage_context;
+    void *log_upload_strategy_context;
 };
 
 kaa_error_t kaa_client_esp8266_error(kaa_client_t *kaa_client);
+kaa_error_t kaa_init_security_stuff(const char *kaa_public_key, const size_t kaa_public_key_length);
+kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client);
 
 kaa_error_t kaa_client_state_process(kaa_client_t *kaa_client) {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
@@ -131,6 +155,13 @@ kaa_error_t kaa_client_create(kaa_client_t **kaa_client,
         return KAA_ERR_BADDATA;
     }
 
+    error_code = kaa_init_security_stuff(props->kaa_public_key, props->kaa_public_key_length);
+    if (error_code) {
+        debug("Error generate SHA1 diges form Public Key, error %d", error_code);
+        kaa_client_destroy(self);
+        return error_code;
+    }
+
     error_code = kaa_init(&self->kaa_context);
     if (error_code) {
         debug("Error during Kaa context creation %d\n", error_code);
@@ -144,6 +175,15 @@ kaa_error_t kaa_client_create(kaa_client_t **kaa_client,
     self->wifi_ssid = props->wifi_ssid;
     self->wifi_pswd = props->wifi_pswd;
     self->operate = true;
+
+    error_code = kaa_log_collector_init(self);
+    if (error_code) {
+        KAA_LOG_ERROR(self->kaa_context->logger, error_code, "Failed to init Kaa log collector %d", error_code);
+        kaa_client_destroy(self);
+        return error_code;
+    }
+
+    KAA_LOG_INFO(self->kaa_context->logger, KAA_ERR_NONE, "Kaa log collector initialized.");
 
     *kaa_client = self;
 
@@ -205,6 +245,11 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
         }
 
         if (kaa_client->connection_state == KAA_CLIENT_WIFI_STATE_CONNECTED) {
+            if ((get_sys_milis() / 500) % 2) {
+                ledOn();
+            } else {
+                ledOff();
+            }
             error_code = esp8266_process(kaa_client->controler,
                     kaa_client->external_process_max_delay);
             if (error_code) {
@@ -245,5 +290,60 @@ kaa_error_t kaa_client_esp8266_error(kaa_client_t *kaa_client) {
             "ESP8266 Error found, reset.... and restart.");
     kaa_client->connection_state = KAA_CLIENT_ESP8266_STATE_UNINITED;
 
+    ledOff();
+
+    return error_code;
+}
+
+kaa_error_t kaa_init_security_stuff(const char *kaa_public_key, const size_t kaa_public_key_length)
+{
+    KAA_RETURN_IF_NIL2(kaa_public_key, kaa_public_key_length, KAA_ERR_BADPARAM);
+    ext_calculate_sha_hash(kaa_public_key, kaa_public_key_length, kaa_public_key_hash);
+    debug("SHA calculated\r\n");
+    return KAA_ERR_NONE;
+}
+
+/*
+* Initializes Kaa log collector.
+*/
+kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
+{
+    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM)
+    kaa_error_t error_code = ext_unlimited_log_storage_create(
+                &kaa_client->log_storage_context,
+                kaa_client->kaa_context->logger);
+
+    if (error_code) {
+       KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Failed to create log storage");
+       return error_code;
+    }
+
+    error_code = ext_log_upload_strategy_by_volume_create(&kaa_client->log_upload_strategy_context
+                                                                , kaa_client->kaa_context->channel_manager
+                                                                , kaa_client->kaa_context->bootstrap_manager);
+    if (error_code) {
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Failed to create log upload strategy");
+        return error_code;
+    }
+
+    error_code = ext_log_upload_strategy_by_volume_set_threshold_count(kaa_client->log_upload_strategy_context
+                                                , KAA_DEMO_UPLOAD_COUNT_THRESHOLD);
+    if (error_code) {
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger,
+                                                error_code,
+                                                "Failed to create log upload strategy by volume set threshold count to %d",
+                                                KAA_DEMO_UPLOAD_COUNT_THRESHOLD);
+        return error_code;
+    }
+
+    error_code = kaa_logging_init(kaa_client->kaa_context->log_collector
+                                                , kaa_client->log_storage_context
+                                                , kaa_client->log_upload_strategy_context);
+    if (error_code) {
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code,"Failed to logging init");
+        return error_code;
+    }
+
+    KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Log collector init complete");
     return error_code;
 }

@@ -29,6 +29,8 @@ typedef struct {
     esp8266_serial_t *serial;
     const char *wifi_ssid;
     const char *wifi_pswd;
+    char *kaa_public_key;
+    size_t kaa_public_key_length;
 } kaa_client_props_t;
 
 #endif /* LEAF_KAA_CLIENT_PROPERIES_H_ */

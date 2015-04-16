@@ -64,6 +64,8 @@ void setup() {
     props.serial = esp8266_serial;
     props.wifi_ssid = SSID;
     props.wifi_pswd = PWD;
+    bool need_deallocation;
+    ext_get_endpoint_public_key(&props.kaa_public_key, &props.kaa_public_key_length, &need_deallocation);
     kaa_error_t error = kaa_client_create(&kaa_client, &props);
     if (error) {
         debug("Error initialising Kaa client, error code %d\r\n", error);
