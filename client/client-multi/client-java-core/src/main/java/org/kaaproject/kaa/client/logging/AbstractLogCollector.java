@@ -51,8 +51,9 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     public static final long MAX_BATCH_VOLUME = 512 * 1024; // Framework
                                                             // limitation
 
-    // TODO: reuse this scheduler in other subsystems
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final static long INITIAL_DELAY = 60L;
+    private final static long PERIOD = 60L;
 
     protected final ExecutorContext executorContext;
     private final LogTransport transport;
@@ -72,6 +73,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         this.channelManager = manager;
         this.transport = transport;
         this.executorContext = executorContext;
+        scheduleAtFixedRateLogUpload();
     }
 
     @Override
@@ -169,7 +171,6 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         }
     }
 
-    // TODO: fix this. it is now executed only when new log record is added.
     protected boolean isDeliveryTimeout() {
         boolean isTimeout = false;
         long currentTime = System.currentTimeMillis();
@@ -230,5 +231,16 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                 }
             }, delay, TimeUnit.SECONDS);
         }
+    }
+
+    private void scheduleAtFixedRateLogUpload() {
+        scheduler.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                if (!isDeliveryTimeout()) {
+                    uploadIfNeeded();
+                }
+            }
+        }, INITIAL_DELAY, PERIOD, TimeUnit.SECONDS);
     }
 }
