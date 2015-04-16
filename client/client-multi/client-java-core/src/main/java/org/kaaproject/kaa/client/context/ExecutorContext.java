@@ -16,6 +16,7 @@
 package org.kaaproject.kaa.client.context;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.kaaproject.kaa.client.KaaClient;
 
@@ -45,7 +46,7 @@ public interface ExecutorContext {
     /**
      * Executes lifecycle events/commands of Kaa client
      * 
-     * @return
+     * @return the lifecycle executor
      */
     ExecutorService getLifeCycleExecutor();
 
@@ -53,14 +54,21 @@ public interface ExecutorContext {
      * Executes user API calls to SDK client. For example, serializing of log
      * records before submit to transport
      * 
-     * @return
+     * @return the life cycle executor
      */
     ExecutorService getApiExecutor();
 
     /**
      * Executes callback methods provided by SDK client user.
      * 
-     * @return
+     * @return the API executor
      */
     ExecutorService getCallbackExecutor();
+
+    /**
+     * Executes scheduled tasks(periodically if needed) as log upload
+     *
+     * @return the scheduled executor
+     */
+    ScheduledExecutorService getScheduledExecutor();
 }

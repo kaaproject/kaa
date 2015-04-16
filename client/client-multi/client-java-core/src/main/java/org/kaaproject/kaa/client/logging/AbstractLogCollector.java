@@ -22,8 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
@@ -50,8 +48,6 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     public static final long MAX_BATCH_VOLUME = 512 * 1024; // Framework
                                                             // limitation
-
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final static long INITIAL_DELAY = 60L;
     private final static long PERIOD = 60L;
 
@@ -154,7 +150,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     @Override
     public void stop() {
-        scheduler.shutdown();
+
     }
 
     private void processUploadDecision(LogUploadStrategyDecision decision) {
@@ -224,7 +220,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
         @Override
         public void retryLogUpload(int delay) {
-            scheduler.schedule(new Runnable() {
+            executorContext.getScheduledExecutor().schedule(new Runnable() {
                 @Override
                 public void run() {
                     uploadIfNeeded();
@@ -234,7 +230,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     }
 
     private void scheduleAtFixedRateLogUpload() {
-        scheduler.scheduleAtFixedRate(new Runnable() {
+        executorContext.getScheduledExecutor().scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 if (!isDeliveryTimeout()) {
