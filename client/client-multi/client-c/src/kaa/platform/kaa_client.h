@@ -21,7 +21,7 @@
  *
  * Created on: Apr 15, 2015
  *    Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
-*/
+ */
 
 #ifndef KAA_PLATFORM_KAA_CLIENT_H_
 #define KAA_PLATFORM_KAA_CLIENT_H_
@@ -30,15 +30,10 @@
 extern "C" {
 #endif
 
-typedef struct {
-        unsigned long max_update_time;
-        esp8266_serial_t *serial;
-        const char *wifi_ssid;
-        const char *wifi_pswd;
-} kaa_client_props_t;
+#include "kaa_client_properies.h"
 
 struct kaa_client_t;
-typedef struct kaa_client_t  kaa_client_t;
+typedef struct kaa_client_t kaa_client_t;
 
 typedef void (*external_process_fn)(void *context);
 
@@ -52,7 +47,8 @@ typedef void (*external_process_fn)(void *context);
  *
  * @return Error code.
  */
-kaa_error_t kaa_client_create(kaa_client_t **kaa_client, kaa_client_props_t *props);
+kaa_error_t kaa_client_create(kaa_client_t **kaa_client,
+        kaa_client_props_t *props);
 
 /**
  * @brief De-initializes and destroys Kaa client
@@ -77,7 +73,9 @@ void kaa_client_destroy(kaa_client_t *kaa_client);
  *
  * @return Error code.
  */
-kaa_error_t kaa_client_start(kaa_client_t *kaa_client, external_process_fn external_process, void *external_process_context, time_t max_delay);
+kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
+        external_process_fn external_process, void *external_process_context,
+        time_t max_delay);
 
 /**
  * @brief Stop Kaa client.
@@ -99,8 +97,7 @@ kaa_error_t kaa_client_stop(kaa_client_t *kaa_client);
  */
 kaa_context_t* kaa_client_get_context(kaa_client_t *kaa_client);
 
-
 #ifdef __cplusplus
-}      /* extern "C" */
+} /* extern "C" */
 #endif
 #endif /* KAA_PLATFORM_KAA_CLIENT_H_ */
