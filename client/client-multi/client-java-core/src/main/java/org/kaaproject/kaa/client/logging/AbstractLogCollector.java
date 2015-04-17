@@ -49,7 +49,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     public static final long MAX_BATCH_VOLUME = 512 * 1024; // Framework
                                                             // limitation
     private final static long INITIAL_DELAY = 60L;
-    private final static long PERIOD = 60L;
+    private final static long PERIOD = 5 * 60L;
 
     protected final ExecutorContext executorContext;
     private final LogTransport transport;
