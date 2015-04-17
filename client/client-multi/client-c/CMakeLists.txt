@@ -113,6 +113,13 @@ if(KAA_WITHOUT_CONFIGURATION)
 else()
      message("CONFIGURATION ENABLED")
 endif()
+
+if(KAA_WITHOUT_NOTIFICATION)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_DISABLE_FEATURE_NOTIFICATION")
+else()
+     message("NOTIFICATION ENABLED")
+endif()
+
 message("==================================")
 # Sets path(s) to header files.
 set (KAA_SRC_FOLDER "src/kaa")
@@ -145,7 +152,7 @@ set (KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/kaa.c
         ${KAA_SRC_FOLDER}/gen/kaa_notification_gen.c
         ${KAA_SRC_FOLDER}/kaa_notification_manager.c
-        ${KAA_SRC_FOLDER}/utilities/kaa_htonll.c
+        ${KAA_SRC_FOLDER}/platform-impl/kaa_htonll.c
     )
 
 # Includes auto-generated and platform-dependent Cmake's scripts.

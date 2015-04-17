@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
@@ -30,6 +29,7 @@
 #include "kaa_event.h"
 #include "kaa_profile.h"
 #include "kaa_logging.h"
+#include "kaa_notification_manager.h"
 #include "kaa_user.h"
 
 #include "kaa_platform_common.h"
@@ -85,6 +85,7 @@ extern kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuratio
 /** External notification API */
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
 extern kaa_error_t kaa_notification_manager_get_size(kaa_notification_manager_t *self, size_t *expected_size);
+extern kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_t *self, kaa_platform_message_writer_t *writer);
 extern kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_length);
 #endif
 
@@ -266,7 +267,7 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
             break;
         }
 #endif
-#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
         case KAA_SERVICE_NOTIFICATION: {
             err_code = kaa_notification_manager_get_size(self->kaa_context->notification_manager
                                                 , &extension_size);
@@ -380,6 +381,16 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
         case KAA_SERVICE_CONFIGURATION: {
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
             error_code = kaa_configuration_manager_request_serialize(self->kaa_context->configuration_manager, writer);
+            if (error_code)
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the configuration extension");
+#else
+            --total_services_count;
+#endif
+            break;
+        }
+        case KAA_SERVICE_NOTIFICATION: {
+#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
+            error_code = kaa_notification_manager_request_serialize(self->kaa_context->notification_manager, writer);
             if (error_code)
                 KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the configuration extension");
 #else
