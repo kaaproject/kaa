@@ -64,17 +64,12 @@ size_t buffer_size = 0;
 int test_init()
 {
     err = KAA_ERR_NONE;
+
     err = kaa_init(&context);
     if (err) {
-        KAA_LOG_INFO(logger, err, "Failed to initialize Kaa.");
         return err;
     }
-    err = kaa_log_create(&logger, 200,KAA_MAX_LOG_LEVEL,NULL);
-    if (err) {
-        KAA_LOG_INFO(logger, err, "Failed to initialize logger.");
-        return err;
-    }
-
+    KAA_TRACE_IN(context->logger);
     listener.callback = &on_notification;
     listener.context = NULL;
     listener_2.callback = &on_notification;
@@ -95,9 +90,6 @@ int test_deinit()
     if (context) {
         kaa_deinit(context);
     }
-    if (logger) {
-        kaa_log_destroy(logger);
-    }
     if (buffer_pointer) {
         KAA_FREE(buffer_pointer);
     }
@@ -107,6 +99,7 @@ int test_deinit()
 
 void test_deserializing()
 {
+    KAA_TRACE_IN(context->logger);
     kaa_notification_t *notification = kaa_notification_notification_create();
     const char *message = "Hello World!!!\n";
     notification->message = kaa_string_copy_create(message);
@@ -175,6 +168,7 @@ void test_deserializing()
 
 void test_notification_listeners_adding_and_removing()
 {
+    KAA_TRACE_IN(context->logger);
     err = kaa_add_notification_listener(context->notification_manager, &listener, &id);
     ASSERT_NULL(err);
 
@@ -217,6 +211,7 @@ void test_notification_listeners_adding_and_removing()
 
 void test_topic_list_listeners_adding_and_removing()
 {
+    KAA_TRACE_IN(context->logger);
     err = kaa_get_topics(context->notification_manager, &topics);
 
     err = kaa_add_topic_list_listener(context->notification_manager, &topic_listener, &id);
@@ -240,9 +235,10 @@ void test_topic_list_listeners_adding_and_removing()
 
 void test_retrieving_topic_list()
 {
+    KAA_TRACE_IN(context->logger);
     err = kaa_get_topics(context->notification_manager,&topics);
-
     ASSERT_NULL(err);
+
     size_t topics_size = kaa_list_get_size(topics);
     ASSERT_EQUAL(topics_size, 1);
 }
@@ -250,6 +246,8 @@ void test_retrieving_topic_list()
 
 void test_serializing()
 {
+    KAA_TRACE_IN(context->logger);
+
     kaa_serialize_info_t *info = (kaa_serialize_info_t *) KAA_MALLOC(sizeof(kaa_serialize_info_t));
 
     kaa_service_t service[] = { KAA_SERVICE_NOTIFICATION };
@@ -265,8 +263,11 @@ void test_serializing()
 }
 void test_subscriptions()
 {
+    KAA_TRACE_IN(context->logger);
+
     err = kaa_subscribe_to_topic(context->notification_manager, &topic_id, false);
     ASSERT_NULL(err);
+
     err = kaa_unsubscribe_from_topic(context->notification_manager, &topic_id, false);
     ASSERT_NULL(err);
 }
