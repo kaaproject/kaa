@@ -511,9 +511,8 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         RedirectionTransport redirectionTransport = buildRedirectionTransport(properties, kaaClientState);
         LogTransport logTransport = buildLogTransport(properties, kaaClientState);
 
-        MetaDataTransport mdTransport = new DefaultMetaDataTransport();
         EndpointObjectHash publicKeyHash = EndpointObjectHash.fromSHA1(kaaClientState.getPublicKey().getEncoded());
-        mdTransport = new DefaultMetaDataTransport();
+        MetaDataTransport mdTransport = new DefaultMetaDataTransport();
         mdTransport.setClientProperties(properties);
         mdTransport.setClientState(kaaClientState);
         mdTransport.setEndpointPublicKeyhash(publicKeyHash);
