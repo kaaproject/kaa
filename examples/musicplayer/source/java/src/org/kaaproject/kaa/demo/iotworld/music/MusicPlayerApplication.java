@@ -10,6 +10,8 @@ import org.kaaproject.kaa.client.Kaa;
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
+import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
+import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
 import org.kaaproject.kaa.demo.iotworld.DeviceEventClassFamily;
 import org.kaaproject.kaa.demo.iotworld.GeoFencingEventClassFamily;
 import org.kaaproject.kaa.demo.iotworld.MusicEventClassFamily;
@@ -43,10 +45,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, MusicEventClassFamily.Listener,
-        GeoFencingEventClassFamily.Listener, EndOfMediaListener{
+        GeoFencingEventClassFamily.Listener, EndOfMediaListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(MusicPlayerApplication.class);
-    
+
+    private static final String DEFAULT_USER_NAME = "kaa";
+
     private static final String STATE_FILE_NAME = "player.state";
 
     private static final String DEFAULT_DEVICE_NAME = "Raspbery Pi 2 Music Player";
@@ -100,9 +104,16 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
         this.accessCode = accessCode;
         this.rootPath = rootPath;
         this.library = new MediaLibrary(rootPath);
-        this.client = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener(){
+        this.client = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener() {
             @Override
-            public void onStarted(){
+            public void onStarted() {
+                client.attachUser(DEFAULT_USER_NAME, "", new UserAttachCallback() {
+
+                    @Override
+                    public void onAttachResult(UserAttachResponse arg0) {
+                        LOG.info("Endpoint attached to default user: {}", DEFAULT_USER_NAME);
+                    }
+                });
                 LOG.info("Kaa client started");
                 statusUpdateThread = new StatusUpdateThread();
                 statusUpdateThread.start();
@@ -125,7 +136,7 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
         LOG.info("Loaded music player state from file: {}", state.getFileName());
 
         state.setOperationMode(OperationMode.ON);
-        
+
         handleStateUpdate();
 
         client.setEndpointAccessToken(accessCode);
@@ -136,7 +147,7 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
 
         LOG.info("Going to start kaa client");
         client.start();
-        
+
         library.getPlayList();
     }
 
@@ -253,7 +264,8 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
     }
 
     private void handleStateUpdate() {
-        LOG.info("Processing state update. Operation mode {} and geo fencing position {}", state.getOperationMode(), state.getGeoFencingPosition());
+        LOG.info("Processing state update. Operation mode {} and geo fencing position {}", state.getOperationMode(),
+                state.getGeoFencingPosition());
         if (state.getOperationMode() == OperationMode.OFF) {
             pausePlayback();
         } else if (isPlaybackAllowed()) {
@@ -262,28 +274,27 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
     }
 
     private void resumePlayback() {
-        if(player == null){
-            if(state.getSongId() == null || library.getSong(state.getSongId()) == null){
-                state.setSongId(library.getNext(state.getSongId()));
+        if (player == null) {
+            if (state.getSongId() == null || library.getSong(state.getSongId()) == null) {
+                state.setSongId(library.getNext(null));
             }
             player = resetPlayer(state.getSongId());
         }
-        if(player != null && player.getStatus() != PlaybackStatus.PLAYING){
+        if (player != null && player.getStatus() != PlaybackStatus.PLAYING) {
             player.play();
         }
     }
 
     private void pausePlayback() {
-        if(player != null && player.getStatus() == PlaybackStatus.PLAYING){
+        if (player != null && player.getStatus() == PlaybackStatus.PLAYING) {
             player.pause();
         }
     }
-    
 
     @Override
     public void onEndOfMedia() {
         LOG.info("Playback of song {} completed", state.getSongId());
-        if(isPlaybackAllowed()){
+        if (isPlaybackAllowed()) {
             String nextSongId = library.getNext(state.getSongId());
             LOG.info("Next song {}", nextSongId);
             resetPlayer(nextSongId);
@@ -291,9 +302,10 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
             state.setSongId(nextSongId);
         }
     }
-    
+
     private boolean isPlaybackAllowed() {
-        return state.getOperationMode() == OperationMode.ON || (state.getOperationMode() == OperationMode.GEOFENCING && state.getGeoFencingPosition() == GeoFencingPosition.HOME);
+        return state.getOperationMode() == OperationMode.ON
+                || (state.getOperationMode() == OperationMode.GEOFENCING && state.getGeoFencingPosition() == GeoFencingPosition.HOME);
     }
 
     private synchronized Mp3Player resetPlayer(String songId) {
@@ -306,7 +318,7 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
             player.clearEndOfMediaListener();
             player.stop();
         }
-        
+
         player = new Mp3Player(song.getFilename());
         player.setEndOfMediaListener(this);
         return player;
