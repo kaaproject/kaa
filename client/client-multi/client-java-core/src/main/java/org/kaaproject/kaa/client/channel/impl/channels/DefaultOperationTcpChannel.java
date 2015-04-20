@@ -116,8 +116,13 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         @Override
         public void onMessage(ConnAck message) {
             LOG.info("ConnAck ({}) message received for channel [{}]", message.getReturnCode(), getId());
+
             if (message.getReturnCode() != ReturnCode.ACCEPTED) {
                 LOG.error("Connection for channel [{}] was rejected: {}", getId(), message.getReturnCode());
+                if (message.getReturnCode() == ReturnCode.REFUSE_BAD_CREDENTIALS) {
+                    LOG.info("Cleaning client state");
+                    state.clean();
+                }
                 onServerFailed();
             }
         }
@@ -541,6 +546,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                 executor = createExecutor();
             }
             executor.submit(openConnectionTask);
+
         }
     }
 

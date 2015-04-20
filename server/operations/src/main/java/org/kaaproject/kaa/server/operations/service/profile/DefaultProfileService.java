@@ -16,6 +16,11 @@
 
 package org.kaaproject.kaa.server.operations.service.profile;
 
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,6 +126,8 @@ public class DefaultProfileService implements ProfileService {
             dto.setNfSequenceNumber(0);
             dto.setChangedFlag(Boolean.FALSE);
 
+            cacheService.setEndpointKey(keyHash, generateEndpointKey(dto.getEndpointKey()));
+
             return endpointService.saveEndpointProfile(dto);
         } else {
             return updateProfile(new UpdateProfileRequest(request.getAppToken(), keyHash, request.getAccessToken(), request.getProfile(),
@@ -208,5 +215,15 @@ public class DefaultProfileService implements ProfileService {
         LOG.trace("Profile json : {} ", profileJson);
 
         return profileJson;
+    }
+
+    private PublicKey generateEndpointKey(byte[] endpointKey) {
+        try {
+            X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(endpointKey);
+            KeyFactory keyFact = KeyFactory.getInstance("RSA");
+            return keyFact.generatePublic(x509KeySpec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
