@@ -210,7 +210,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <name>kaa-${artifactId}</name>
+                            <name>kaa-${project.artifactId}</name>
                             <copyright>Kaaproject</copyright>
                             <distribution>development</distribution>
                             <group>Applications/Kaa</group>

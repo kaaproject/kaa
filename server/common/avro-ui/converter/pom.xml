@@ -18,15 +18,15 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.kaaproject.kaa.server.transports</groupId>
-        <version>0.7.1-SNAPSHOT</version>
-        <artifactId>http</artifactId>
+        <groupId>org.kaaproject.kaa.server.common</groupId>
+        <version>0.6.3-SNAPSHOT</version>
+        <artifactId>avro-ui</artifactId>
     </parent>
-    <groupId>org.kaaproject.kaa.server.transports.http</groupId>
-    <artifactId>transport</artifactId>
+    <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+    <artifactId>converter</artifactId>
     <packaging>jar</packaging>
 
-    <name>Kaa HTTP Transports Implementation</name>
+    <name>Kaa Avro UI Data Converter</name>
     <url>http://kaaproject.org</url>
 
     <properties>
@@ -36,21 +36,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>transport-shared</artifactId>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>netty-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.server.transports.http</groupId>
-            <artifactId>config</artifactId>
-            <classifier>http</classifier>
-        </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
+            <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+            <artifactId>shared</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -58,9 +49,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <scope>test</scope>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
         </dependency>
     </dependencies>
 
@@ -69,10 +59,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <classifier>http</classifier>
-                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+
 </project>

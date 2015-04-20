@@ -44,7 +44,7 @@ public class IPParameters {
     
     /**
      * HostName setter.
-     * @param String hostName 
+     * @param hostName
      */
     public void setHostName(String hostName) {
         this.hostName = hostName;
@@ -52,7 +52,7 @@ public class IPParameters {
     
     /**
      * Port setter.
-     * @param int port
+     * @param port
      */
     public void setPort(int port) {
         this.port = port;
