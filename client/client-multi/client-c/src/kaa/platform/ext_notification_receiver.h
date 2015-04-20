@@ -16,7 +16,7 @@
 #ifndef KAA_NOTIFICATION_RECEIVER
 #define KAA_NOTIFICATION_RECEIVER
 
-#include "gen/kaa_notification_definitions.h"
+#include "../gen/kaa_notification_definitions.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,12 +27,16 @@ typedef enum {
     OPTIONAL  = 0x01
 } kaa_topic_subscription_type_t;
 
-typedef enum {
-    SYSTEM = 0x0,
-    CUSTOM = 0x1
-} kaa_notification_type;
-
+/**
+ * @brief Pointer to the function that should be called when notification received.
+ *
+ * @param[in] context    pointer to any user's data.
+ * @param[in] topic_id   pointer to notification's topic id.
+ * @param[in] notification   pointer to received notification.
+ *
+ */
 typedef void (*on_notification_callback)(void *context, const uint64_t *topic_id, const kaa_notification_t *notification);
+
 typedef struct {
     on_notification_callback  callback;
     void* context;
@@ -40,12 +44,20 @@ typedef struct {
 
 typedef struct {
     uint64_t id;
-    kaa_topic_subscription_type_t subscription_type; // + reserved
+    kaa_topic_subscription_type_t subscription_type;
     uint16_t name_length;
     char* name;
 } kaa_topic_t;
 
+/**
+ * @brief Pointer to the function that should be called when notification received.
+ *
+ * @param[in] context    pointer to any user's data.
+ * @param[in] topics     pointer to topic list.
+ *
+ */
 typedef void (*on_topic_list_callback)(void *context, kaa_list_t *topics);
+
 typedef struct {
     on_topic_list_callback callback;
     void *context;

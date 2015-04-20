@@ -15,169 +15,34 @@
 #
 
 ************************************
-PREREQUISITES
+PREFACE
 ************************************
 
-Before building the C endpoint SDK, ensure the following components 
-are installed:
-
-1. C compiler supporting the C99 standard
-2. cmake 2.8.8 or later
-
-To build the Kaa SDK for the x86-64 platform, ensure that OpenSSL libraries
-(ssl and crypto) are installed.
+This demo application illustrates the Kaa event feature using the Kaa C SDK.
+To read more about the logging feature, visit https://docs.kaaproject.org/display/KAA/Events.
 
 ************************************
-INSTALL
+INSTALLATION
 ************************************
 
-To build the C endpoint SDK, do the following:
+To run the demo application, do the following:
 
-1. Download and untar the Kaa C SDK archive.
-2. Run the following commands:
-
-    mkdir build
-    cd build
-
-For x86-64:
-    cmake ..
-    make
-    make install
-
-For iOS:
-    cmake -DKAA_PLATFORM=ios -DCMAKE_TOOLCHAIN_FILE=../toolchains/iOS.cmake -GXcode ..
-    xcodebuild
+1. Install third-party libraries to build the Kaa C SDK.
+Follow https://docs.kaaproject.org/display/KAA/Third-party+components#Third-partycomponents-Kaaendpoint to see the full
+list of third-party dependencies for the Kaa C SDK.
+2. Download and install the Kaa sandbox (https://docs.kaaproject.org/display/KAA/sandbox).
+3. Before generating the C SDK, make sure that you provided the SDK with a user verifier and the following fields for the event class family were specified as follows:
+ Name: ThermostatEventClassFamily
+ Namespace: org.kaaproject.kaa.schema.sample.event.thermo
+ Class name: ThermostatEventClassFamily
+ (The Avro event schema required for the demo application is located in the 'avro' directory).
+4. Generate the C SDK using the Kaa sandbox. Put the SDK archive into the 'libs/kaa' directory.
+5. Use the build.sh script to build and run the demo application (the 'deploy' option).
 
 ************************************
-GENERAL CONFIGURATION
+ABOUT
 ************************************
 
-To configure the C endpoint SDK build, you can optionally specify
-the following parameters for the cmake command:
-------------------------------------
-KAA_INSTALL_PATH - specify the directory for Kaa to be installed.
+If you are interested in the Kaa IoT framework and want to read more about it, visit our official site
+http://www.kaaproject.org/. The documentation can be found at https://docs.kaaproject.org/display/KAA/Kaa+IoT+Platform+Home.
 
-Accepted:
-'/path/to/some/directory'
-
-Default:
-'/usr/local'
-------------------------------------
-KAA_DEBUG_ENABLED=[0|1] - build type.
-
-Values:
-0 - the release type
-1 - the debug type
-
-Default:
-0
-------------------------------------
-KAA_MAX_LOG_LEVEL - maximum log level used by the Kaa SDK.
-
-Values:
-0 - NONE (no logs)
-1 - FATAL
-2 - ERROR
-3 - WARN
-4 - INFO
-5 - DEBUG
-6 - TRACE
-
-Default:
-4 - if KAA_DEBUG_ENABLED=0
-6 - if KAA_DEBUG_ENABLED=1
-------------------------------------
-KAA_WITHOUT_<MODULE> - Kaa module to be omitted during the build.
-
-Values:
-EVENTS
-LOGGING
-CONFIGURATION
-
-Default:
-All modules are present in the build.
-------------------------------------
-KAA_PLATFORM - SDK target platform.
-
-Values:
-x86-64
-ios
-
-Default:
-x86-64
-
-Before running the cmake command with the KAA_PLATFORM parameter 
-for a platform other than x86-64, do the following:
-
-1. Create a folder in $KAA_HOME/listfiles/platform/ and name it
-   using [a-zA-z_-] symbols. You will be able to use the folder name
-   as a value for the KAA_PLATFORM parameter.
-
-2. Put the CMakeLists.txt file into the created folder. This file may contain
-   specific compilation/linking flags, platform-dependent source files,
-   third-party library dependencies, that is all information necessary
-   for building the C endpoint SDK for this platform.
-
-3. Optionally, specify the following parameters in the CMakeLists.txt file:
-
-    KAA_INCLUDE_PATHS        - full path(s) to folder(s) containing additional 
-                               header files
-    KAA_SOURCE_FILES         - full path(s) to additional source files
-    KAA_THIRDPARTY_LIBRARIES - third-party libraries (the name of the library,
-                               for example, ssl, crypto)
-
-    In the CMakeLists.txt file:
-
-    set(KAA_INCLUDE_PATHS
-        ${KAA_INCLUDE_PATHS}
-        path_to_folder_1_with_header_files
-        path_to_folder_2_with_header_files
-    )
-    set(KAA_SOURCE_FILES
-        ${KAA_SOURCE_FILES}
-        path_to_source_file_1
-        path_to_source_file_2
-    )
-    set(KAA_THIRDPARTY_LIBRARIES
-        ${KAA_THIRDPARTY_LIBRARIES}
-        some_library_1
-        some_library_2
-    )
-
-************************************
-PLATFORM-SPECIFIC CONFIGURATION
-************************************
-
-To configure platform-specific options, you can optionally specify
-the following parameters for the cmake command:
-
-------------------------------------
-IOS_PLATFORM - applicable for the iOS build (KAA_PLATFORM=ios). It specifies the target iOS platform
-               (armv7/arm64 - for mobile devices, i386 - for the simulator).
-
-Values:
-OS - build for the mobile device (armv7/arm64)
-SIMULATOR - build for the simulator (i386)
-
-Default:
-OS
-
-************************************
-BUILD EXAMPLE
-************************************
-
-The following example illustrates the build procedure for the debug x86-64 build with the INFO log level disabled,
-EVENTS feature and specified path to the folder Kaa will be installed in:
-
-    mkdir build
-    cd build
-    cmake -DKAA_INSTALL_PATH='/home/username/kaa' -DKAA_DEBUG_ENABLED=1 -DKAA_MAX_LOG_LEVEL=4 -DKAA_WITHOUT_EVENTS=1 ..
-    make
-    make install
-
-
-To build the C SDK for the iOS simulator with maximum log level:
-   mkdir build
-   cd build
-   cmake -DKAA_PLATFORM=ios -DCMAKE_TOOLCHAIN_FILE=../toolchains/iOS.cmake -DIOS_PLATFORM=SIMULATOR -DKAA_MAX_LOG_LEVEL=6  -GXcode ..
-   xcodebuild

@@ -28,7 +28,7 @@
 #include "kaa_common.h"
 #include "utilities/kaa_log.h"
 #include "kaa_platform_utils.h"
-#include "ext_notification_receiver.h"
+#include "platform/ext_notification_receiver.h"
 
 
 kaa_error_t kaa_calculate_topic_listener_id(kaa_topic_listener_t *listener, uint32_t *listener_id);

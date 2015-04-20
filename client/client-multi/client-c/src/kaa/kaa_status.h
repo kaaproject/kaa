@@ -23,7 +23,13 @@ extern "C" {
 
 #include "kaa_error.h"
 #include "kaa_common.h"
+#include "collections/kaa_list.h"
 #include "platform/ext_sha.h"
+
+typedef struct {
+    uint64_t topic_id;
+    uint32_t sqn_number;
+} kaa_topic_state_t;
 
 #ifndef KAA_STATUS_T
 # define KAA_STATUS_T
@@ -38,6 +44,7 @@ typedef struct
     kaa_digest      endpoint_public_key_hash;
     kaa_digest      profile_hash;
 
+    kaa_list_t      *topic_states;
     char *          endpoint_access_token;
 } kaa_status_t;
 

@@ -84,8 +84,8 @@ struct kaa_status_holder_t {
 
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
 extern kaa_error_t kaa_notification_manager_create(kaa_notification_manager_t **self, kaa_status_t *status
-                                          , kaa_channel_manager_t *channel_manager
-                                          , kaa_logger_t *logger);
+                                                 , kaa_channel_manager_t *channel_manager
+                                                 , kaa_logger_t *logger);
 extern void kaa_notification_manager_destroy(kaa_notification_manager_t *self);
 #endif
 

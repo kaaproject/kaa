@@ -173,8 +173,8 @@ public class BinaryEncDec implements PlatformEncDec {
     private static final byte NF_SUBSCRIPTION_REMOVE_FIELD_ID = 3;
 
     // Notification server sync fields
-    private static final byte NF_NOTIFICATIONS_FIELD_ID = 1;
     private static final byte NF_TOPICS_FIELD_ID = 0;
+    private static final byte NF_NOTIFICATIONS_FIELD_ID = 1;
 
     /*
      * (non-Javadoc)
