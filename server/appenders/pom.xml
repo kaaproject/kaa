@@ -37,6 +37,7 @@
         <module>file</module>
         <module>mongo</module>
         <module>flume</module>
+        <module>rest</module>
     </modules>
     <profiles>
         <profile>

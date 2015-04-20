@@ -32,7 +32,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.dir>${basedir}/../..</main.dir>
-        <mongo-driver.version>2.11.4</mongo-driver.version>
     </properties>
 
     <modules>
@@ -51,7 +50,6 @@
         <module>transport-shared</module>
         <module>verifier-shared</module>
     </modules>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -66,5 +64,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 </project>
