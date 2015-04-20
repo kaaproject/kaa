@@ -15,23 +15,21 @@
  */
 
 /*
-@file defaults.h
+@file leaf_defaults.h
  Created on: Mar 26, 2015
      Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
 */
 
-#ifndef DEFAULTS_H_
-#define DEFAULTS_H_
+#ifndef LEAF_DEFAULTS_H_
+#define LEAF_DEFAULTS_H_
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_defaults.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_defaults.h"
-#else
-#include "../platform-impl/posix/posix_defaults.h"
-#endif //#ifdef STM32_LEAF_PLATFORM
+#define KAA_TCP_CHANNEL_IN_BUFFER_SIZE      246
+#define KAA_TCP_CHANNEL_OUT_BUFFER_SIZE     1015
 
-#endif //ifdef ECONAIS_PLATFORM
+#define KAA_TCP_CHANNEL_KEEPALIVE           300
 
-#endif /* DEFAULTS_H_ */
+#define KAATCP_PARSER_MAX_MESSAGE_LENGTH    999
+
+#define KAA_MAX_LOG_MESSAGE_LENGTH          247
+
+#endif /* LEAF_DEFAULTS_H_ */

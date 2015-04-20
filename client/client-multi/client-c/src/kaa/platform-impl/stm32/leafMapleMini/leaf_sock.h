@@ -54,18 +54,29 @@ struct leaf_sockaddr_in {
 typedef struct leaf_sockaddr kaa_sockaddr_t;
 typedef struct leaf_sockaddr_in kaa_sockaddr_storage_t;
 
-kaa_uint16_t htons(kaa_uint16_t value);
-kaa_uint16_t ntohs(kaa_uint16_t value);
+//kaa_uint16_t htons(kaa_uint16_t value);
+//kaa_uint16_t ntohs(kaa_uint16_t value);
+//
+//uint32_t htonl(uint32_t value);
+//uint32_t ntohl(uint32_t value);
+//
+//#define KAA_HTONS(hostshort)    htons((hostshort))
+//#define KAA_HTONL(hostlong)     htonl((hostlong))
+//
+//#define KAA_NTOHS(netshort)     ntohs((netshort))
+//#define KAA_NTOHL(netlong)      ntohl((netlong))
 
-uint32_t htonl(uint32_t value);
-uint32_t ntohl(uint32_t value);
+#define KAA_HTONS(n) (((((unsigned short)(n) & 0xFF)) << 8) | (((unsigned short)(n) & 0xFF00) >> 8))
+#define KAA_NTOHS(n) (((((unsigned short)(n) & 0xFF)) << 8) | (((unsigned short)(n) & 0xFF00) >> 8))
 
-#define KAA_HTONS(hostshort)    htons((hostshort))
-#define KAA_HTONL(hostlong)     htonl((hostlong))
+#define KAA_HTONL(n) (((((unsigned long)(n) & 0xFF)) << 24) | \
+                  ((((unsigned long)(n) & 0xFF00)) << 8) | \
+                  ((((unsigned long)(n) & 0xFF0000)) >> 8) | \
+                  ((((unsigned long)(n) & 0xFF000000)) >> 24))
 
-#define KAA_NTOHS(netshort)     ntohs((netshort))
-#define KAA_NTOHL(netlong)      ntohl((netlong))
-
-
+#define KAA_NTOHL(n) (((((unsigned long)(n) & 0xFF)) << 24) | \
+                  ((((unsigned long)(n) & 0xFF00)) << 8) | \
+                  ((((unsigned long)(n) & 0xFF0000)) >> 8) | \
+                  ((((unsigned long)(n) & 0xFF000000)) >> 24))
 
 #endif /* LEAF_SOCK_H_ */

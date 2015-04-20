@@ -22,7 +22,8 @@ cSRCS_$(d) :=  utilities/kaa_log.c \
                utilities/kaa_base64.c \
                platform-impl/stm32/leafMapleMini/logger.c \
                platform-impl/stm32/leafMapleMini/esp8266/esp8266.c \
-               platform-impl/stm32/leafMapleMini/esp8266/kaa_client.c \
+               platform-impl/stm32/leafMapleMini/esp8266/esp8266_kaa_client.c \
+               platform-impl/stm32/leafMapleMini/esp8266/esp8266_kaa_tcp_channel.c  \
                platform-impl/ext_log_storage_memory.c \
                platform-impl/ext_log_upload_strategy_by_volume.c \
                platform-impl/sha1.c \
