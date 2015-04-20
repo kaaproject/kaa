@@ -56,7 +56,6 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>flume</classifier>
         </dependency>
         <dependency>

@@ -42,7 +42,6 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.oracle-nosql</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>oracle-nosql</classifier>
         </dependency>
         <dependency>

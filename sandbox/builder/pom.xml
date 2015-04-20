@@ -78,6 +78,14 @@
             <artifactId>ant-jsch</artifactId>
             <version>1.9.4</version>
         </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
