@@ -66,14 +66,14 @@ public class PowerPlantDemoBuilder extends AbstractDemoBuilder {
 
         LogSchemaDto logSchemaDto = new LogSchemaDto();
         logSchemaDto.setApplicationId(powerPlantApplication.getId());
-        logSchemaDto.setName("Log schema");
+        logSchemaDto.setName("Power plant log schema");
         logSchemaDto.setDescription("Log schema describes incoming voltage reports");
         logSchemaDto = client.createLogSchema(logSchemaDto, getResourcePath("logSchema.json"));
         sdkKey.setLogSchemaVersion(logSchemaDto.getMajorVersion());
 
         LogAppenderDto powerPlantLogAppender = new LogAppenderDto();
         powerPlantLogAppender.setName("Power plant log appender");
-        powerPlantLogAppender.setDescription("Log appender used to deliver voltage reports from power plant application to local mongo db instance");
+        powerPlantLogAppender.setDescription("Log appender used to deliver voltage reports from power plant application to the REST server");
         powerPlantLogAppender.setApplicationId(powerPlantApplication.getId());
         powerPlantLogAppender.setApplicationToken(powerPlantApplication.getApplicationToken());
         powerPlantLogAppender.setTenantId(powerPlantApplication.getTenantId());
@@ -82,9 +82,9 @@ public class PowerPlantDemoBuilder extends AbstractDemoBuilder {
         powerPlantLogAppender.setConfirmDelivery(true);
         powerPlantLogAppender.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.KEYHASH,
                 LogHeaderStructureDto.TIMESTAMP, LogHeaderStructureDto.TOKEN, LogHeaderStructureDto.VERSION));
-        powerPlantLogAppender.setPluginTypeName("Mongo");
-        powerPlantLogAppender.setPluginClassName("org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender");
-        powerPlantLogAppender.setJsonConfiguration(FileUtils.readResource(getResourcePath("mongoAppender.json")));
+        powerPlantLogAppender.setPluginTypeName("REST");
+        powerPlantLogAppender.setPluginClassName("org.kaaproject.kaa.server.appenders.rest.appender.RestLogAppender");
+        powerPlantLogAppender.setJsonConfiguration(FileUtils.readResource(getResourcePath("restAppender.json")));
         powerPlantLogAppender = client.editLogAppenderDto(powerPlantLogAppender);
 
         /*
@@ -95,7 +95,7 @@ public class PowerPlantDemoBuilder extends AbstractDemoBuilder {
 
         ConfigurationSchemaDto configurationSchema = new ConfigurationSchemaDto();
         configurationSchema.setApplicationId(powerPlantApplication.getId());
-        configurationSchema.setName("ConfigurationDemo schema");
+        configurationSchema.setName("Power plant configuration schema");
         configurationSchema.setDescription("Default configuration schema for the power plant application");
         configurationSchema = client.createConfigurationSchema(configurationSchema, getResourcePath("configSchema.json"));
 
