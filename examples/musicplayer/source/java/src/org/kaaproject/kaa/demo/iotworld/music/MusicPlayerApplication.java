@@ -26,16 +26,6 @@ import org.kaaproject.kaa.demo.iotworld.geo.GeoFencingStatusRequest;
 import org.kaaproject.kaa.demo.iotworld.geo.GeoFencingStatusResponse;
 import org.kaaproject.kaa.demo.iotworld.geo.OperationMode;
 import org.kaaproject.kaa.demo.iotworld.geo.OperationModeUpdateRequest;
-import org.kaaproject.kaa.demo.iotworld.music.ChangeVolumeRequest;
-import org.kaaproject.kaa.demo.iotworld.music.PauseRequest;
-import org.kaaproject.kaa.demo.iotworld.music.PlayListRequest;
-import org.kaaproject.kaa.demo.iotworld.music.PlayListResponse;
-import org.kaaproject.kaa.demo.iotworld.music.PlayRequest;
-import org.kaaproject.kaa.demo.iotworld.music.PlaybackInfo;
-import org.kaaproject.kaa.demo.iotworld.music.PlaybackStatus;
-import org.kaaproject.kaa.demo.iotworld.music.PlaybackStatusUpdate;
-import org.kaaproject.kaa.demo.iotworld.music.SeekRequest;
-import org.kaaproject.kaa.demo.iotworld.music.StopRequest;
 import org.kaaproject.kaa.demo.iotworld.music.library.KaaMp3File;
 import org.kaaproject.kaa.demo.iotworld.music.library.MediaLibrary;
 import org.kaaproject.kaa.demo.iotworld.music.player.EndOfMediaListener;
@@ -75,10 +65,10 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
     private final MusicPlayerState state;
 
     private volatile Mp3Player player;
-
     private volatile StatusUpdateThread statusUpdateThread;
-
     private volatile String deviceName = DEFAULT_DEVICE_NAME;
+
+    private volatile PlaybackStatus pendingStatus = PlaybackStatus.STOPPED;
 
     /**
      * @param args
@@ -135,10 +125,6 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
         state.load();
         LOG.info("Loaded music player state from file: {}", state.getFileName());
 
-        state.setOperationMode(OperationMode.ON);
-
-        handleStateUpdate();
-
         client.setEndpointAccessToken(accessCode);
 
         deviceECF.addListener(this);
@@ -147,8 +133,6 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
 
         LOG.info("Going to start kaa client");
         client.start();
-
-        library.getPlayList();
     }
 
     private void stop() {
@@ -179,8 +163,13 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
     public void onEvent(PlayRequest event, String originator) {
         LOG.info("Receieved play event {} from {}", event, originator);
         String songId = event.getUrl();
-        player = resetPlayer(songId);
-        player.play();
+        if (player == null || !(player.getStatus() == PlaybackStatus.PAUSED && player.getFilePath().equals(songId))) {
+            player = resetPlayer(songId);
+        }
+        pendingStatus = PlaybackStatus.PLAYING;
+        if (isPlaybackAllowed()) {
+            player.play();
+        }
         state.setSongId(songId);
         sendPlaybackResponse(originator);
     }
@@ -188,6 +177,7 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
     @Override
     public void onEvent(PauseRequest event, String originator) {
         LOG.info("Receieved pause event {} from {}", event, originator);
+        pendingStatus = PlaybackStatus.PAUSED;
         player.pause();
         sendPlaybackResponse(originator);
     }
@@ -195,6 +185,7 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
     @Override
     public void onEvent(StopRequest event, String originator) {
         LOG.info("Receieved stop event {} from {}", event, originator);
+        pendingStatus = PlaybackStatus.STOPPED;
         player.stop();
         state.setSongId(null);
         sendPlaybackResponse(originator);
@@ -217,7 +208,7 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
             return;
         }
         player.setVolume(event.getVolume());
-        sendPlaybackResponse(originator);
+        sendPlaybackResponse(originator, false, true);
     }
 
     @Override
@@ -227,7 +218,7 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
             return;
         }
         player.seek(event.getTime());
-        sendPlaybackResponse(originator);
+        sendPlaybackResponse(originator, true, false);
     }
 
     @Override
@@ -269,7 +260,9 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
         if (state.getOperationMode() == OperationMode.OFF) {
             pausePlayback();
         } else if (isPlaybackAllowed()) {
-            resumePlayback();
+            if(pendingStatus == PlaybackStatus.PLAYING){
+                resumePlayback();
+            }
         }
     }
 
@@ -325,6 +318,10 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
     }
 
     private void sendPlaybackResponse(String originator) {
+        sendPlaybackResponse(originator, false, false);
+    }
+
+    private void sendPlaybackResponse(String originator, boolean ignoreOriginatorTimeUpdate, boolean ignoreOriginatorVolumeUpdate) {
         if (player == null) {
             return;
         }
@@ -335,14 +332,23 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
 
         PlaybackInfo response = new PlaybackInfo();
         response.setSong(song.getSongInfo());
-        response.setStatus(player.getStatus());
+        if(isPlaybackAllowed()){;
+            response.setStatus(player.getStatus());
+        }else{
+            response.setStatus(pendingStatus);
+        }
         response.setTime(player.getTime());
         response.setVolume(player.getVolume());
         response.setMaxVolume(player.getMaxVolume());
-        response.setIgnoreTimeUpdate(false);
-        response.setIgnoreVolumeUpdate(false);
 
         for (String listener : state.getListeners()) {
+            if (listener.equals(originator)) {
+                response.setIgnoreTimeUpdate(ignoreOriginatorTimeUpdate);
+                response.setIgnoreVolumeUpdate(ignoreOriginatorVolumeUpdate);
+            } else {
+                response.setIgnoreTimeUpdate(false);
+                response.setIgnoreVolumeUpdate(false);
+            }
             musicECF.sendEvent(new PlaybackStatusUpdate(response), listener);
         }
     }

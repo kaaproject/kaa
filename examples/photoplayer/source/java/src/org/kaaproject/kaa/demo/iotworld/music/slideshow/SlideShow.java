@@ -26,7 +26,7 @@ public class SlideShow implements PreviewGenerationListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(PhotoPlayerApplication.class);
 
-    private static final long IMAGE_TIMEOUT = 3000;
+    private static final long IMAGE_TIMEOUT = 5000;
     private static final long IMAGE_FADE = 500;
 
     private final SlideShowFrame frame;
@@ -129,7 +129,7 @@ public class SlideShow implements PreviewGenerationListener {
             while (!stopped) {
                 try {
                     LOG.info("Scheduling preview generation for next slide: {}", getNextIndex());
-                    changeAlpha((int) (panel.alpha * 100.0f), 100, ALPHA_STEP, IMAGE_FADE, currentImage, nextImage);
+//                    changeAlpha((int) (panel.alpha * 100.0f), 100, ALPHA_STEP, IMAGE_FADE, currentImage, nextImage);
 
                     buildPreview(getNextIndex(), SlideShow.this);
 
@@ -140,7 +140,7 @@ public class SlideShow implements PreviewGenerationListener {
                         Thread.sleep(WAIT_FOR_PREVIEW_SLEEP_TIME);
                     }
 
-                    changeAlpha((int) (panel.alpha * 100), 0, -ALPHA_STEP, IMAGE_FADE, currentImage, nextImage);
+//                    changeAlpha((int) (panel.alpha * 100), 0, -ALPHA_STEP, IMAGE_FADE, currentImage, nextImage);
 
                     currentIndex = getNextIndex();
                     currentImage = nextImage;
@@ -207,7 +207,7 @@ public class SlideShow implements PreviewGenerationListener {
 
         private static final long serialVersionUID = -6643896730166128279L;
 
-        private volatile float alpha = 0.0f;
+        private volatile float alpha = 1.0f;
         private volatile BufferedImage current;
         private volatile BufferedImage next;
 
