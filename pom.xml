@@ -611,6 +611,18 @@ Copyright 2014 CyberVision, Inc.
                 <classifier>flume</classifier>
             </dependency>
             <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.rest</groupId>
+                <artifactId>config</artifactId>
+                <version>${project.version}</version>
+                <classifier>rest</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.rest</groupId>
+                <artifactId>appender</artifactId>
+                <version>${project.version}</version>
+                <classifier>rest</classifier>
+            </dependency>
+            <dependency>
                 <groupId>org.kaaproject.kaa.common</groupId>
                 <artifactId>core</artifactId>
                 <version>${project.version}</version>

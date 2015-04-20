@@ -226,6 +226,12 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.server.appenders.rest</groupId>
+            <artifactId>appender</artifactId>
+            <classifier>rest</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
             <artifactId>verifier</artifactId>
             <classifier>trustful</classifier>
