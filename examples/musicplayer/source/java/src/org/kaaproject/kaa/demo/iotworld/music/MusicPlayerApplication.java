@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.kaaproject.kaa.client.DesktopKaaPlatformContext;
 import org.kaaproject.kaa.client.Kaa;
@@ -69,6 +71,7 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
     private volatile String deviceName = DEFAULT_DEVICE_NAME;
 
     private volatile PlaybackStatus pendingStatus = PlaybackStatus.STOPPED;
+    private Map<String, PlaybackStatusUpdate> lastUpdates = new ConcurrentHashMap<String, PlaybackStatusUpdate>();
 
     /**
      * @param args
@@ -195,6 +198,7 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
     public void onEvent(DeviceStatusSubscriptionRequest event, String originator) {
         LOG.info("Receieved playback info request {} from {}", event, originator);
         state.addStatusListener(originator);
+        lastUpdates.remove(originator);
         if (player == null) {
             return;
         }
@@ -260,7 +264,7 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
         if (state.getOperationMode() == OperationMode.OFF) {
             pausePlayback();
         } else if (isPlaybackAllowed()) {
-            if(pendingStatus == PlaybackStatus.PLAYING){
+            if (pendingStatus == PlaybackStatus.PLAYING) {
                 resumePlayback();
             }
         }
@@ -332,9 +336,10 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
 
         PlaybackInfo response = new PlaybackInfo();
         response.setSong(song.getSongInfo());
-        if(isPlaybackAllowed()){;
+        if (isPlaybackAllowed()) {
+            ;
             response.setStatus(player.getStatus());
-        }else{
+        } else {
             response.setStatus(pendingStatus);
         }
         response.setTime(player.getTime());
@@ -349,7 +354,15 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
                 response.setIgnoreTimeUpdate(false);
                 response.setIgnoreVolumeUpdate(false);
             }
-            musicECF.sendEvent(new PlaybackStatusUpdate(response), listener);
+            PlaybackStatusUpdate newUpdate = new PlaybackStatusUpdate(response);
+            PlaybackStatusUpdate lastUpdate = lastUpdates.get(listener);
+            if (lastUpdate == null || !lastUpdate.equals(newUpdate)) {
+                LOG.debug("[{}] Sending new update {}", listener, newUpdate);
+                musicECF.sendEvent(newUpdate, listener);
+            } else {
+                LOG.debug("[{}] Skipping update {}", listener, newUpdate);
+            }
+            lastUpdates.put(listener, newUpdate);
         }
     }
 

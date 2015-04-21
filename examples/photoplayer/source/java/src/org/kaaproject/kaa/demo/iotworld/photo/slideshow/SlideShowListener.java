@@ -1,10 +1,8 @@
-package org.kaaproject.kaa.demo.iotworld.music.slideshow;
+package org.kaaproject.kaa.demo.iotworld.photo.slideshow;
 
 public interface SlideShowListener {
 
     void onInitCompleted();
-    
-    void onSlideshowEnded();
 
     void onSlideshowUpdated();
 

@@ -1,4 +1,4 @@
-package org.kaaproject.kaa.demo.iotworld.music.slideshow;
+package org.kaaproject.kaa.demo.iotworld.photo.slideshow;
 
 import java.awt.Color;
 

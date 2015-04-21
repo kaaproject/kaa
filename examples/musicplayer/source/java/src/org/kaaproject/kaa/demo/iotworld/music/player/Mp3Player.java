@@ -6,7 +6,6 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.Line;
-import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 
 import maryb.player.Player;
@@ -118,8 +117,6 @@ public class Mp3Player {
         Mixer.Info[] mixers = AudioSystem.getMixerInfo();
 
         for (Mixer.Info mixerInfo : mixers) {
-//            if (!mixerInfo.getName().equals("Java Sound Audio Engine"))
-//                continue;
 
             Mixer mixer = AudioSystem.getMixer(mixerInfo);
             Line.Info[] lines = mixer.getTargetLineInfo();

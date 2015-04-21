@@ -1,4 +1,4 @@
-package org.kaaproject.kaa.demo.iotworld.music.storage;
+package org.kaaproject.kaa.demo.iotworld.photo.storage;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.kaaproject.kaa.demo.iotworld.geo.GeoFencingPosition;
 import org.kaaproject.kaa.demo.iotworld.geo.OperationMode;
-import org.kaaproject.kaa.demo.iotworld.music.PhotoPlayerApplication;
+import org.kaaproject.kaa.demo.iotworld.photo.PhotoPlayerApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package org.kaaproject.kaa.demo.iotworld.music.library;
+package org.kaaproject.kaa.demo.iotworld.photo.library;
 
 import java.util.Collections;
 import java.util.List;

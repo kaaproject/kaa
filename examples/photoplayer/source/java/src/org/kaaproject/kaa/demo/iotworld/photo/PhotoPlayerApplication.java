@@ -1,4 +1,4 @@
-package org.kaaproject.kaa.demo.iotworld.music;
+package org.kaaproject.kaa.demo.iotworld.photo;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
@@ -27,17 +27,11 @@ import org.kaaproject.kaa.demo.iotworld.geo.GeoFencingStatusRequest;
 import org.kaaproject.kaa.demo.iotworld.geo.GeoFencingStatusResponse;
 import org.kaaproject.kaa.demo.iotworld.geo.OperationMode;
 import org.kaaproject.kaa.demo.iotworld.geo.OperationModeUpdateRequest;
-import org.kaaproject.kaa.demo.iotworld.music.library.PhotoLibrary;
-import org.kaaproject.kaa.demo.iotworld.music.slideshow.SlideShow;
-import org.kaaproject.kaa.demo.iotworld.music.slideshow.SlideShowFrame;
-import org.kaaproject.kaa.demo.iotworld.music.slideshow.SlideShowListener;
-import org.kaaproject.kaa.demo.iotworld.music.storage.PhotoPlayerState;
-import org.kaaproject.kaa.demo.iotworld.photo.PhotoAlbumsRequest;
-import org.kaaproject.kaa.demo.iotworld.photo.PhotoAlbumsResponse;
-import org.kaaproject.kaa.demo.iotworld.photo.PhotoUploadRequest;
-import org.kaaproject.kaa.demo.iotworld.photo.SlideShowStatus;
-import org.kaaproject.kaa.demo.iotworld.photo.StartSlideShowRequest;
-import org.kaaproject.kaa.demo.iotworld.photo.StopSlideShowRequest;
+import org.kaaproject.kaa.demo.iotworld.photo.library.PhotoLibrary;
+import org.kaaproject.kaa.demo.iotworld.photo.slideshow.SlideShow;
+import org.kaaproject.kaa.demo.iotworld.photo.slideshow.SlideShowFrame;
+import org.kaaproject.kaa.demo.iotworld.photo.slideshow.SlideShowListener;
+import org.kaaproject.kaa.demo.iotworld.photo.storage.PhotoPlayerState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +68,8 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
     private volatile String deviceName = DEFAULT_DEVICE_NAME;
 
     private volatile SlideShow player;
+
+    private volatile SlideShowStatus pendingStatus = SlideShowStatus.PAUSED;
 
     /**
      * @param args
@@ -118,7 +114,7 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
         this.photoECF = factory.getPhotoEventClassFamily();
         this.geoECF = factory.getGeoFencingEventClassFamily();
         this.state = new PhotoPlayerState(STATE_FILE_NAME);
-        
+
         frame = new SlideShowFrame();
         frame.validate();
         GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(frame);
@@ -151,7 +147,7 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
         LOG.info("Going to stop kaa client");
         client.stop();
         if (player != null) {
-            player.stop();
+            player.pause();
         }
     }
 
@@ -182,23 +178,33 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
 
     @Override
     public void onEvent(PhotoUploadRequest event, String originator) {
-        LOG.info("Receieved upload request {} from {}", event, originator);
-        library.upload(event);
-        photoECF.sendEvent(new PhotoAlbumsResponse(library.buildAlbumInfoList()), originator);
+        LOG.info("Receieved upload request {} from {}", event.getName(), originator);
+        try {
+            String uploadedAlbumId = library.upload(event);
+            player = resetSlideshow(uploadedAlbumId, true);
+            player.init();
+            photoECF.sendEvent(new PhotoAlbumsResponse(library.buildAlbumInfoList()), originator);
+        } catch (Exception e) {
+            LOG.error("Failed to process photo uplaod", e);
+        }
     }
 
     @Override
     public void onEvent(StartSlideShowRequest event, String originator) {
         LOG.info("Receieved start slideshow request {} from {}", event, originator);
+        pendingStatus = SlideShowStatus.PLAYING;
         resetSlideshow(event.getAlbumId());
-        player.init();
+        if (isPlaybackAllowed()) {
+            player.init();
+        }
     }
 
     @Override
-    public void onEvent(StopSlideShowRequest event, String originator) {
+    public void onEvent(PauseSlideShowRequest event, String originator) {
         LOG.info("Receieved stop slideshow request {} from {}", event, originator);
-        if (player != null && player.getStatus() != SlideShowStatus.STOPPED) {
-            player.stop();
+        pendingStatus = SlideShowStatus.PAUSED;
+        if (player != null && player.getStatus() != SlideShowStatus.PAUSED) {
+            player.pause();
         }
     }
 
@@ -239,9 +245,11 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
         LOG.info("Processing state update. Operation mode {} and geo fencing position {}", state.getOperationMode(),
                 state.getGeoFencingPosition());
         if (state.getOperationMode() == OperationMode.OFF) {
-            stopPlayback();
+            pausePlayback();
         } else if (isPlaybackAllowed()) {
-            resumePlayback();
+            if (pendingStatus == SlideShowStatus.PLAYING) {
+                resumePlayback();
+            }
         }
     }
 
@@ -257,17 +265,21 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
         }
     }
 
-    private void stopPlayback() {
+    private void pausePlayback() {
         if (player != null && player.getStatus() == SlideShowStatus.PLAYING) {
-            player.stop();
+            player.pause();
         }
     }
 
     private SlideShow resetSlideshow(String albumId) {
+        return resetSlideshow(albumId, false);
+    }
+
+    private SlideShow resetSlideshow(String albumId, boolean lastPhoto) {
         if (player != null) {
             player.stop();
         }
-        player = new SlideShow(frame, library.getAlbum(albumId), this);
+        player = new SlideShow(frame, library.getAlbum(albumId), lastPhoto, this);
         return player;
     }
 
@@ -276,27 +288,30 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
                 || (state.getOperationMode() == OperationMode.GEOFENCING && state.getGeoFencingPosition() == GeoFencingPosition.HOME);
     }
 
+    private void sendPlaybackResponse() {
+        sendPlaybackResponse(null);
+    }
+
     private void sendPlaybackResponse(String originator) {
-        // if (player == null) {
-        // return;
-        // }
-        // if (originator != null) {
-        // state.addStatusListener(originator);
-        // }
-        // KaaMp3File song = library.getSong(player.getFilePath());
-        //
-        // PlaybackInfo response = new PlaybackInfo();
-        // response.setSong(song.getSongInfo());
-        // response.setStatus(player.getStatus());
-        // response.setTime(player.getTime());
-        // response.setVolume(player.getVolume());
-        // response.setMaxVolume(player.getMaxVolume());
-        // response.setIgnoreTimeUpdate(false);
-        // response.setIgnoreVolumeUpdate(false);
-        //
-        // for (String listener : state.getListeners()) {
-        // musicECF.sendEvent(new PlaybackStatusUpdate(response), listener);
-        // }
+        if (originator != null) {
+            state.addStatusListener(originator);
+        }
+
+        PhotoFrameStatusUpdate update = new PhotoFrameStatusUpdate();
+        if (player != null) {
+            update.setAlbumId(player.getAlbumId());
+            if (isPlaybackAllowed()) {
+                update.setStatus(player.getStatus());
+            } else {
+                update.setStatus(pendingStatus);
+            }
+            update.setPhotoNumber(player.getPhotoNumber());
+            update.setThumbnail(player.getThumbnail());
+        }
+
+        for (String listener : state.getListeners()) {
+            photoECF.sendEvent(update, listener);
+        }
     }
 
     private static Path getRootPath(String[] args) {
@@ -329,15 +344,8 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
     }
 
     @Override
-    public void onSlideshowEnded() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void onSlideshowUpdated() {
-        // TODO Auto-generated method stub
-
+        sendPlaybackResponse();
     }
 
     @Override

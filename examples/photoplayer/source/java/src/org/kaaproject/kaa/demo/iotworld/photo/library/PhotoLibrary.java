@@ -1,9 +1,8 @@
-package org.kaaproject.kaa.demo.iotworld.music.library;
+package org.kaaproject.kaa.demo.iotworld.photo.library;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -24,8 +23,8 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import org.kaaproject.kaa.demo.iotworld.music.PhotoPlayerApplication;
 import org.kaaproject.kaa.demo.iotworld.photo.PhotoAlbumInfo;
+import org.kaaproject.kaa.demo.iotworld.photo.PhotoPlayerApplication;
 import org.kaaproject.kaa.demo.iotworld.photo.PhotoUploadRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +35,7 @@ public class PhotoLibrary {
 
     private static final int MAX_PHOTOS_IN_THUMBNAIL = 1;
     private static final String UPLOADS_ALBUM_NAME = "Uploads";
-    private static final int THUMBNAIL_WIDTH = 128;
-    private static final int THUMBNAIL_HEIGHT = 128;
+    public static final int THUMBNAIL_SIZE = 256;
 
     private static final String[] SUPPORTED_EXTENSIONS = { ".jpg", ".jpeg", ".png" };
     private final Path rootPath;
@@ -135,7 +133,7 @@ public class PhotoLibrary {
         return albums;
     }
 
-    public void upload(PhotoUploadRequest event) {
+    public String upload(PhotoUploadRequest event) {
         String uploadAlbumPath = rootPath + File.separator + UPLOADS_ALBUM_NAME;
         File uploadAlbumFile = new File(uploadAlbumPath);
         if (!uploadAlbumFile.exists()) {
@@ -151,12 +149,13 @@ public class PhotoLibrary {
             os.write(toByteArray(event.getBody()));
         } catch (IOException e) {
             LOG.error("Failed to write new file", e);
-            return;
+            throw new RuntimeException(e);
         }
         PhotoAlbum album = scanFile(Paths.get(photoFile.toURI()));
         if(album.getPhotos().size() <= MAX_PHOTOS_IN_THUMBNAIL){
             generateThumbnail(album);
         }
+        return album.getAlbumId();
     }
     
     private void generateThumbnails(Collection<PhotoAlbum> albums) {
@@ -181,15 +180,25 @@ public class PhotoLibrary {
     }
     
     private ByteBuffer toThumbnailData(String photo) throws IOException {
-        Image image = Toolkit.getDefaultToolkit().getImage(photo);
-        BufferedImage bufferedThumbnail = new BufferedImage(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, Image.SCALE_SMOOTH);
+        BufferedImage image = ImageIO.read(new File(photo));
+        return toThumbnailData(image);
+    }
+
+    public static ByteBuffer toThumbnailData(BufferedImage image) throws IOException {
+        float size = Math.min(image.getWidth(), image.getHeight());
+        
+        float scale = size / THUMBNAIL_SIZE;
+        
+        int thumbnailWidth = (int)(image.getWidth() / scale);
+        int thumbnailHeight = (int)(image.getHeight() / scale);
+        BufferedImage bufferedThumbnail = new BufferedImage(thumbnailWidth, thumbnailHeight, Image.SCALE_SMOOTH);
         
         Graphics2D g2 = bufferedThumbnail.createGraphics();
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2.drawImage(image, 0, 0, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, null);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g2.drawImage(image, 0, 0, thumbnailWidth, thumbnailHeight, null);
         g2.dispose();
         ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
-        ImageIO.write(bufferedThumbnail, "png", byteArrayOut);
+        ImageIO.write(bufferedThumbnail, "jpeg", byteArrayOut);
         return ByteBuffer.wrap(byteArrayOut.toByteArray());
     }
 

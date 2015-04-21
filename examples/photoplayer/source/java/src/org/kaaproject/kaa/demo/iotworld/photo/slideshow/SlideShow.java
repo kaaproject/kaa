@@ -1,4 +1,4 @@
-package org.kaaproject.kaa.demo.iotworld.music.slideshow;
+package org.kaaproject.kaa.demo.iotworld.photo.slideshow;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -10,15 +10,17 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-import org.kaaproject.kaa.demo.iotworld.music.PhotoPlayerApplication;
-import org.kaaproject.kaa.demo.iotworld.music.library.PhotoAlbum;
+import org.kaaproject.kaa.demo.iotworld.photo.PhotoPlayerApplication;
 import org.kaaproject.kaa.demo.iotworld.photo.SlideShowStatus;
+import org.kaaproject.kaa.demo.iotworld.photo.library.PhotoAlbum;
+import org.kaaproject.kaa.demo.iotworld.photo.library.PhotoLibrary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,31 +34,46 @@ public class SlideShow implements PreviewGenerationListener {
     private final SlideShowFrame frame;
     private final SlideShowListener listener;
     private final PhotoAlbum album;
-    private final int width;
-    private final int height;
+    private final SlideShowThread thread;
 
-    private volatile BufferedImage currentImage;
+    private volatile BufferedImage currentImage;   
+    private volatile ByteBuffer currentImageThumbnail;
     private volatile BufferedImage nextImage;
+    private volatile ByteBuffer nextImageThumbnail;
     private volatile boolean initialized;
     private volatile int currentIndex;
+    private volatile SlideShowStatus status;
 
     private final ExecutorService pool = Executors.newSingleThreadExecutor();
 
-    public SlideShow(SlideShowFrame frame, PhotoAlbum album, SlideShowListener listener) {
+    public SlideShow(SlideShowFrame frame, PhotoAlbum album, boolean lastOne, SlideShowListener listener) {
         super();
         this.frame = frame;
         this.album = album;
-        this.width = frame.getWidth();
-        this.height = frame.getHeight();
         this.listener = listener;
+        this.thread = new SlideShowThread();
+        if(lastOne){
+            currentIndex = album.getPhotos().size() - 1;
+        }
+    }
+    
+    public void play() {
+        status = SlideShowStatus.PLAYING;
+        thread.play();
     }
 
+    public void pause() {
+        status = SlideShowStatus.PAUSED;
+        thread.pause();
+    }
+    
     public void stop() {
-        // TODO Auto-generated method stub
+        thread.stopped = true;
+        thread.interrupt();
     }
 
     public void init() {
-        buildPreview(0, this);
+        buildPreview(currentIndex, this);
     }
 
     private void buildPreview(final int pos, final PreviewGenerationListener listener) {
@@ -70,41 +87,54 @@ public class SlideShow implements PreviewGenerationListener {
 
                     BufferedImage image = ImageIO.read(photoFile);
 
-                    final BufferedImage preview = new BufferedImage(frame.getWidth(), frame.getHeight(), Image.SCALE_SMOOTH);
-                    Graphics2D g2 = preview.createGraphics();
-                    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                    g2.drawImage(image, 0, 0, width, height, null);
-                    g2.dispose();
+                    final BufferedImage preview = scale(image, frame.getWidth(), frame.getHeight());
 
-                    listener.onPreviewGenerated(pos, preview);
+                    listener.onPreviewGenerated(pos, preview, PhotoLibrary.toThumbnailData(image));
                     LOG.info("Generated preview for photo: {}", photo);
                 } catch (Exception e) {
                     listener.onPreviewGenerationFailed(e);
                 }
             }
+
+            private BufferedImage scale(BufferedImage image, int width, int height) {
+                final BufferedImage preview = new BufferedImage(width, height, Image.SCALE_SMOOTH);
+                Graphics2D g2 = preview.createGraphics();
+                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                g2.drawImage(image, 0, 0, width, height, null);
+                g2.dispose();
+                return preview;
+            }
         });
     }
 
-    public void play() {
-        SlideShowThread thread = new SlideShowThread();
-        thread.start();
+    public String getAlbumId() {
+        return album.getAlbumId();
+    }
+    
+    public SlideShowStatus getStatus() {
+        return status;
     }
 
-    public SlideShowStatus getStatus() {
-        // TODO Auto-generated method stub
-        return null;
+    public Integer getPhotoNumber() {
+        return currentIndex + 1;
+    }
+
+    public ByteBuffer getThumbnail() {
+        return currentImageThumbnail;
     }
 
     @Override
-    public void onPreviewGenerated(int index, BufferedImage preview) {
-        if (index == 0 && !initialized) {
-            initialized = true;
-            listener.onInitCompleted();
-        }
+    public void onPreviewGenerated(int index, BufferedImage preview, ByteBuffer thumbnail) {
         if (currentIndex == index) {
             currentImage = preview;
+            currentImageThumbnail = thumbnail;
         } else {
             nextImage = preview;
+            nextImageThumbnail = thumbnail;
+        }
+        if (index == currentIndex && !initialized) {
+            initialized = true;
+            listener.onInitCompleted();
         }
     }
 
@@ -118,7 +148,22 @@ public class SlideShow implements PreviewGenerationListener {
         private static final int ALPHA_STEP = 20;
         private static final int WAIT_FOR_PREVIEW_SLEEP_TIME = 50;
         private SlideShowPanel panel;
+        private volatile boolean started;
+        private volatile boolean paused;
         private volatile boolean stopped;
+
+        public void play() {
+            paused = false;
+            if(!started){
+                started = true;
+                start();
+            }
+        }
+
+        public void pause() {
+            paused = true;
+            listener.onSlideshowUpdated();
+        }
 
         @Override
         public void run() {
@@ -126,11 +171,20 @@ public class SlideShow implements PreviewGenerationListener {
             panel.setBackground(frame.getBackground());
             panel.setSize(frame.getWidth(), frame.getHeight());
             frame.add(panel);
+            listener.onSlideshowUpdated();
             while (!stopped) {
                 try {
+                    if(paused){
+                        Thread.sleep(100);
+                        continue;
+                    }
                     LOG.info("Scheduling preview generation for next slide: {}", getNextIndex());
+//                    RASPBERRY PI is not powerful enough to show this effect smoothly
 //                    changeAlpha((int) (panel.alpha * 100.0f), 100, ALPHA_STEP, IMAGE_FADE, currentImage, nextImage);
 
+                    repaint(panel, 1.0f, currentImage, nextImage);
+                    listener.onSlideshowUpdated();
+                    
                     buildPreview(getNextIndex(), SlideShow.this);
 
                     Thread.sleep(IMAGE_TIMEOUT);
@@ -140,12 +194,14 @@ public class SlideShow implements PreviewGenerationListener {
                         Thread.sleep(WAIT_FOR_PREVIEW_SLEEP_TIME);
                     }
 
+//                    RASPBERRY PI is not powerful enough to show this effect smoothly
 //                    changeAlpha((int) (panel.alpha * 100), 0, -ALPHA_STEP, IMAGE_FADE, currentImage, nextImage);
 
                     currentIndex = getNextIndex();
                     currentImage = nextImage;
+                    currentImageThumbnail = nextImageThumbnail;
                     nextImage = null;
-                    repaint(panel, 1.0f, currentImage, nextImage);
+//                    repaint(panel, 1.0f, currentImage, nextImage);
                 } catch (InterruptedException e) {
                     LOG.warn("Slideshow thread interrupted", e);
                 }
@@ -187,7 +243,6 @@ public class SlideShow implements PreviewGenerationListener {
         private void repaint(final SlideShowPanel panel, final float alpha, final BufferedImage current, final BufferedImage next) {
             try {
                 EventQueue.invokeAndWait(new Runnable() {
-
                     @Override
                     public void run() {
                         panel.setCurrent(current);
@@ -249,5 +304,4 @@ public class SlideShow implements PreviewGenerationListener {
             g2d.dispose();
         }
     }
-
 }
