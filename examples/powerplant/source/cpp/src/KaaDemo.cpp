@@ -16,10 +16,24 @@
 
 #include <stdexcept>
 
+#include "ConfigurationConstants.hpp"
+
+#if POWER_PLANT_STARTUP_WORKAROUND
+#include <chrono>
+#include <thread>
+#endif
+
 #include "PowerPlantController.hpp"
+
 
 int main()
 {
+#if POWER_PLANT_STARTUP_WORKAROUND
+    size_t startup_sleep_timeout = 10;
+    std::cout << "Going to sleep " << startup_sleep_timeout << " seconds before start..." << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(startup_sleep_timeout));
+#endif
+
     std::cout << "Going to start power plant demo application..." << std::endl;
 
     try {
