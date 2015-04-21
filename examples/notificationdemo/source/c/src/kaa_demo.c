@@ -28,7 +28,7 @@
 #include <kaa/kaa_context.h>
 #include <kaa/kaa_channel_manager.h>
 #include <kaa/kaa_configuration_manager.h>
-#include <kaa/notification_manager.h>
+#include <kaa/kaa_notification_manager.h>
 #include <kaa/kaa_user.h>
 #include <kaa/kaa_defaults.h>
 
@@ -42,17 +42,13 @@
 
 
 
-#define KAA_USER_ID            "user@email.com"
-#define KAA_USER_ACCESS_TOKEN  "token"
-
 static kaa_context_t *kaa_context_ = NULL;
 
 static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
 static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
 
-static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
-                                             , KAA_SERVICE_USER
-                                             , KAA_SERVICE_NOTIFICATION };
+static kaa_service_t OPERATIONS_SERVICES[] = {KAA_SERVICE_PROFILE, KAA_SERVICE_NOTIFICATION};
+
 static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
 
 static kaa_transport_channel_interface_t bootstrap_channel;
@@ -66,8 +62,10 @@ static bool is_shutdown = false;
 
 void on_notification(void *context, uint64_t *topic_id, kaa_notification_t *notification)
 {
-    printf("Notification for topic id '%u' received\n", topic_id);
-    printf("Notification body: %s\n", notification->message->data);
+    kaa_string_t *message = (kaa_string_t *)notification->message->data;
+    printf("Notification for topic id '%ul' received\n", *topic_id);
+    printf("Notification body: %s\n", message->data);
+    //is_shutdown = true;
 }
 
 void show_topics(kaa_list_t *topics)
@@ -79,11 +77,11 @@ void show_topics(kaa_list_t *topics)
     kaa_topic_t *topic = NULL;
     while (topics) {
         topic = (kaa_topic_t *)kaa_list_get_data(topics);
-        printf("Topic: id '%u', name %s, type ", topic->id, topic->name);
+        printf("Topic: id '%u', name: %s, type: ", topic->id, topic->name);
         if (topic->subscription_type == MANDATORY) {
-            printf("mandatory\n");
+            printf("MANDATORY\n");
         } else {
-            printf("optional\n");
+            printf("OPTIONAL\n");
         }
         topics = kaa_list_next(topics);
     }
@@ -98,15 +96,19 @@ void on_list_uploaded(void *context, kaa_list_t *topics)
     kaa_context_t *kaa_context = (kaa_context_t *)context;
     kaa_topic_t *topic = NULL;
     while (topics) {
-        topic = (kaa_topic_t *)kaa_list_get_data(topics);
+        topic = (kaa_topic_t *) kaa_list_get_data(topics);
         if (topic->subscription_type == OPTIONAL) {
-            printf("Subscribing to optional topic '%u'", topic->id);
+            printf("Subscribing to optional topic '%u'\n", topic->id);
             err = kaa_subscribe_to_topic(kaa_context->notification_manager, &topic->id, false);
             if (err) {
                 printf("Failed to subscribe.\n");
             }
         }
         topics = kaa_list_next(topics);
+    }
+    err = kaa_sync_topic_subscriptions(kaa_context->notification_manager);
+    if (err) {
+        printf("Failed to sync subscriptions\n");
     }
 }
 /*
@@ -144,20 +146,12 @@ kaa_error_t kaa_sdk_init()
                                                          , NULL);
     KAA_RETURN_IF_ERR(error_code);
 
-    kaa_attachment_status_listeners_t listeners = { NULL, &kaa_on_attached, &kaa_on_detached, &kaa_on_attach_success, &kaa_on_attach_failed };
-    error_code = kaa_user_manager_set_attachment_listeners(kaa_context_->user_manager, &listeners);
-    KAA_RETURN_IF_ERR(error_code);
 
-    error_code = kaa_user_manager_default_attach_to_user(kaa_context_->user_manager
-                                                       , KAA_USER_ID
-                                                       , KAA_USER_ACCESS_TOKEN);
-    KAA_RETURN_IF_ERR(error_code);
+    notification_listener.callback = &on_notification;
+    notification_listener.context = kaa_context_;
 
-    notification_listener->callback = &on_notification;
-    notification_listener->context = kaa_context_;
-
-    topic_listener->callback = &on_list_uploaded;
-    topic_listener->context = kaa_context_;
+    topic_listener.callback = &on_list_uploaded;
+    topic_listener.context = kaa_context_;
 
     return KAA_ERR_NONE;
 }
@@ -286,8 +280,14 @@ int main(/*int argc, char *argv[]*/)
 
     uint32_t topic_listener_id = 0;
     uint32_t notification_listener_id = 0;
-    kaa_add_topic_list_listener(kaa_context_->notification_manager, &topic_listener, &topic_listener_id);
-    kaa_add_notification_listener(kaa_context_->notification_manager, &notification_listener, &notification_listener_id);
+    error_code = kaa_add_topic_list_listener(kaa_context_->notification_manager, &topic_listener, &topic_listener_id);
+    if (error_code) {
+        return error_code;
+    }
+    error_code = kaa_add_notification_listener(kaa_context_->notification_manager, &notification_listener, &notification_listener_id);
+    if (error_code) {
+        return error_code;
+    }
     int rval = kaa_demo_event_loop();
     kaa_list_t * topics = NULL;
     kaa_error_t err = kaa_get_topics(kaa_context_->notification_manager ,&topics);

@@ -115,6 +115,7 @@ void kaa_status_destroy(kaa_status_t *self)
 {
     if (self) {
         KAA_FREE(self->endpoint_access_token);
+        kaa_list_destroy(self->topic_states, NULL);
         KAA_FREE(self);
     }
 }
