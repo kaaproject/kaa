@@ -303,6 +303,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                 readTaskFuture.cancel(true);
                 readTaskFuture = null;
             }
+
             try {
                 sendDisconnect();
             } catch (IOException e) {

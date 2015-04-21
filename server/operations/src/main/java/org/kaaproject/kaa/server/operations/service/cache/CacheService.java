@@ -206,8 +206,10 @@ public interface CacheService {
      *
      * @param hash the hash
      * @param endpointKey the endpoint key
+     *
+     * @return cached endpoint key
      */
-    void setEndpointKey(EndpointObjectHash hash, PublicKey endpointKey);
+    PublicKey putEndpointKey(EndpointObjectHash hash, PublicKey endpointKey);
 
     /**
      * Setter for test purpose only.

@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.operations.service.cache;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -132,7 +133,9 @@ public class ConcurrentCacheServiceTest {
     private static final AppVersionKey PF_SCHEMA_KEY = new AppVersionKey(TEST_APP_TOKEN, PROFILE1_SCHEMA_VERSION);
 
     private PublicKey publicKey;
+    private PublicKey publicKey2;
     private EndpointObjectHash publicKeyHash;
+    private EndpointObjectHash publicKeyHash2;
 
     @Autowired
     private CacheService cacheService;
@@ -243,6 +246,10 @@ public class ConcurrentCacheServiceTest {
         publicKey = keyGen.genKeyPair().getPublic();
         byte[] key = publicKey.getEncoded();
         publicKeyHash = EndpointObjectHash.fromSHA1(key);
+
+        publicKey2 = keyGen.genKeyPair().getPublic();
+        byte[] key2 = publicKey2.getEncoded();
+        publicKeyHash2 = EndpointObjectHash.fromSHA1(key2);
 
         final EndpointProfileDto ep = new EndpointProfileDto();
         ep.setEndpointKey(key);
@@ -538,6 +545,31 @@ public class ConcurrentCacheServiceTest {
 
         assertEquals(publicKey, cacheService.getEndpointKey(publicKeyHash));
         verify(endpointService, times(0)).findEndpointProfileByKeyHash(publicKeyHash.getData());
+        reset(endpointService);
+
+        assertNull(cacheService.getEndpointKey(publicKeyHash2));
+        verify(endpointService, times(1)).findEndpointProfileByKeyHash(publicKeyHash2.getData());
+        reset(endpointService);
+
+
+        final EndpointProfileDto ep2 = new EndpointProfileDto();
+        ep2.setEndpointKey(publicKey2.getEncoded());
+
+        when(endpointService.findEndpointProfileByKeyHash(publicKeyHash2.getData())).then(new Answer<EndpointProfileDto>() {
+            @Override
+            public EndpointProfileDto answer(InvocationOnMock invocation) throws Throwable {
+                sleepABit();
+                return ep2;
+            }
+        });
+
+        assertNull(cacheService.getEndpointKey(publicKeyHash2));
+        verify(endpointService, times(0)).findEndpointProfileByKeyHash(publicKeyHash2.getData());
+        reset(endpointService);
+
+        cacheService.putEndpointKey(publicKeyHash2, publicKey2);
+        assertEquals(publicKey2, cacheService.getEndpointKey(publicKeyHash2));
+        verify(endpointService, times(0)).findEndpointProfileByKeyHash(publicKeyHash2.getData());
         reset(endpointService);
     }
 

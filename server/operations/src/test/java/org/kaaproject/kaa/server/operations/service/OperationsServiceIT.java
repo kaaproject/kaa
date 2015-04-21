@@ -24,7 +24,9 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -141,8 +143,8 @@ public class OperationsServiceIT extends AbstractTest {
     private static final BasicEndpointProfile ENDPOINT_PROFILE = new BasicEndpointProfile("dummy profile 1");
     private static final BasicEndpointProfile NEW_ENDPOINT_PROFILE = new BasicEndpointProfile("dummy profile 2");
     private static final BasicEndpointProfile FAKE_ENDPOINT_PROFILE = new BasicEndpointProfile("dummy profile 3");
-    private static final byte[] ENDPOINT_KEY = "Endpoint Super Secret Public Key".getBytes(UTF_8);
-    private static final byte[] ENDPOINT_KEY2 = "Endpoint Super Secret Public Key 2".getBytes(UTF_8);
+    private static final byte[] ENDPOINT_KEY = getRandEndpointKey();
+    private static final byte[] ENDPOINT_KEY2 = getRandEndpointKey();
 
     public static final String NEW_COMPLEX_CONFIG = "service/delta/complexFieldsDeltaNew.json";
 
@@ -227,7 +229,6 @@ public class OperationsServiceIT extends AbstractTest {
     @Before
     public void beforeTest() throws IOException, NoSuchAlgorithmException, SQLException {
         clearDBData();
-
         keyPair = KeyUtil.generateKeyPair();
         operationsService.setPublicKey(keyPair.getPublic());
 
@@ -863,5 +864,14 @@ public class OperationsServiceIT extends AbstractTest {
         context.setStatus(SyncStatus.SUCCESS);
         context.setMetaData(request.getClientSyncMetaData());
         return context;
+    }
+
+    private static byte[] getRandEndpointKey() {
+        try {
+            return KeyPairGenerator.getInstance("RSA", "SunRsaSign").generateKeyPair().getPublic().getEncoded();
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

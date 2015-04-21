@@ -187,9 +187,9 @@ public class ESTestCacheService implements CacheService {
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#setEndpointKey(org.kaaproject.kaa.common.hash.EndpointObjectHash, java.security.PublicKey)
      */
     @Override
-    public void setEndpointKey(EndpointObjectHash hash, PublicKey endpointKey) {
+    public PublicKey putEndpointKey(EndpointObjectHash hash, PublicKey endpointKey) {
         // TODO Auto-generated method stub
-
+        return null;
     }
 
     /* (non-Javadoc)

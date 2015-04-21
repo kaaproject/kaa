@@ -126,7 +126,7 @@ public class DefaultProfileService implements ProfileService {
             dto.setNfSequenceNumber(0);
             dto.setChangedFlag(Boolean.FALSE);
 
-            cacheService.setEndpointKey(keyHash, generateEndpointKey(dto.getEndpointKey()));
+            cacheService.putEndpointKey(keyHash, generateEndpointKey(dto.getEndpointKey()));
 
             return endpointService.saveEndpointProfile(dto);
         } else {
