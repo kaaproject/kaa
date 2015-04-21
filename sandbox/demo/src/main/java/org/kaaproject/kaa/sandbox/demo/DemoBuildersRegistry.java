@@ -38,6 +38,8 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new DataCollectionDemoBuider());
         demoBuilders.add(new ConfigurationDemoBuilder());
         demoBuilders.add(new NotificationDemoBuilder());
+
+        demoBuilders.add(new VehicleTelemetryDemoBuider());
     }
 
     public static List<DemoBuilder> getRegisteredDemoBuilders() {
