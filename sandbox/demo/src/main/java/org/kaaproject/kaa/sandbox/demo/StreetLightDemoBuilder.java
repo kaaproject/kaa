@@ -17,7 +17,7 @@ public class StreetLightDemoBuilder extends AbstractDemoBuilder {
     private static final int LIGHT_ZONE_COUNT = 4;
 
     protected StreetLightDemoBuilder() {
-        super("demo/street_light");
+        super("demo/streetlight");
     }
 
     @Override

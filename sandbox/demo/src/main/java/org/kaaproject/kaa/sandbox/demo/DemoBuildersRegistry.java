@@ -39,6 +39,8 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new NotificationDemoBuilder());
 
         demoBuilders.add(new PowerPlantDemoBuilder());
+        demoBuilders.add(new TrafficLightsDemoBuilder());
+        demoBuilders.add(new StreetLightDemoBuilder());
     }
 
     public static List<DemoBuilder> getRegisteredDemoBuilders() {
