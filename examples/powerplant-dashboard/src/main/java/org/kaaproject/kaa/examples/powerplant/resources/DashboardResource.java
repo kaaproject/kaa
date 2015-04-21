@@ -43,10 +43,14 @@ public class DashboardResource {
         voltageSamplesMap.putIfAbsent(2, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
         voltageSamplesMap.putIfAbsent(3, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
         voltageSamplesMap.putIfAbsent(4, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
-        voltageSamplesMap.get(1).add(new DataPoint(1, 5.2, time));
-        voltageSamplesMap.get(2).add(new DataPoint(2, 3.7, time));
-        voltageSamplesMap.get(3).add(new DataPoint(3, 2.2, time));
-        voltageSamplesMap.get(4).add(new DataPoint(4, 4.1, time));
+        voltageSamplesMap.putIfAbsent(5, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
+        voltageSamplesMap.putIfAbsent(6, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
+        voltageSamplesMap.get(1).add(new DataPoint(1, 5.2f, time));
+        voltageSamplesMap.get(2).add(new DataPoint(2, 3.7f, time));
+        voltageSamplesMap.get(3).add(new DataPoint(3, 2.2f, time));
+        voltageSamplesMap.get(4).add(new DataPoint(4, 4.1f, time));
+        voltageSamplesMap.get(5).add(new DataPoint(5, 4.1f, time));
+        voltageSamplesMap.get(6).add(new DataPoint(6, 4.1f, time));
     }
 
     @GET
@@ -58,7 +62,7 @@ public class DashboardResource {
         List<DataPoint> result = new ArrayList<DataPoint>();
         for (Integer key : keyList) {
             LOG.trace("Filtering {} samples using ts {}", key, time);
-            SortedSet<DataPoint> samples = voltageSamplesMap.get(key).tailSet(new DataPoint(key, 0.0, time));
+            SortedSet<DataPoint> samples = voltageSamplesMap.get(key).tailSet(new DataPoint(key, 0.0f, time));
             result.addAll(samples);
         }
 
@@ -119,7 +123,7 @@ public class DashboardResource {
     }
 
     private static DataPoint convert(VoltageSample sample) {
-        return new DataPoint(sample.getPanelId(), sample.getVoltage(), sample.getTimestamp());
+        return new DataPoint(sample.getPanelId(), sample.getVoltage().floatValue(), sample.getTimestamp());
     }
 
     private static final DatumReader<VoltageReport> datumReader = new SpecificDatumReader<VoltageReport>(VoltageReport.SCHEMA$);
