@@ -38,19 +38,19 @@ public class DashboardResource {
 
     // TODO: remove this hardcode data;
     static {
-        long time = new Date().getTime();
+        long time = 0l;
         voltageSamplesMap.putIfAbsent(1, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
         voltageSamplesMap.putIfAbsent(2, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
         voltageSamplesMap.putIfAbsent(3, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
         voltageSamplesMap.putIfAbsent(4, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
-        voltageSamplesMap.putIfAbsent(5, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
-        voltageSamplesMap.putIfAbsent(6, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
+//        voltageSamplesMap.putIfAbsent(5, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
+//        voltageSamplesMap.putIfAbsent(6, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
         voltageSamplesMap.get(1).add(new DataPoint(1, 5.2f, time));
         voltageSamplesMap.get(2).add(new DataPoint(2, 3.7f, time));
         voltageSamplesMap.get(3).add(new DataPoint(3, 2.2f, time));
         voltageSamplesMap.get(4).add(new DataPoint(4, 4.1f, time));
-        voltageSamplesMap.get(5).add(new DataPoint(5, 4.1f, time));
-        voltageSamplesMap.get(6).add(new DataPoint(6, 4.1f, time));
+//        voltageSamplesMap.get(5).add(new DataPoint(5, 4.1f, time));
+//        voltageSamplesMap.get(6).add(new DataPoint(6, 4.1f, time));
     }
 
     @GET
@@ -97,7 +97,7 @@ public class DashboardResource {
             return Response.status(Status.BAD_REQUEST).build();
         }
 
-        long ts = new Date().getTime();
+        long ts = System.currentTimeMillis();
         for (VoltageSample sample : report.getSamples()) {
             LOG.trace("processing {}", sample);
             sample.setTimestamp(ts);

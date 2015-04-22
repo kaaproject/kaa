@@ -63,7 +63,7 @@ public class DashboardFragment extends Fragment {
 
     private static final String TAG = DashboardFragment.class.getSimpleName();
 
-    public static final int NUM_PANELS = 6;
+    public static final int NUM_PANELS = 4;
     public static final float MIN_VOLTAGE = 0.0f;
     public static final float MAX_VOLTAGE = 6.0f;
 
@@ -77,7 +77,7 @@ public class DashboardFragment extends Fragment {
     private static final int INTERVAL_FOR_HORIZONTAL_AXIS = 10;
 
     private static final int UPDATE_CHECK_PERIOD = 100;
-    private static final int UPDATE_PERIOD = 1000;
+    private static final int UPDATE_PERIOD = 200;
     private static final int POINTS_COUNT = 150;
     private static final int PAST_POINTS_COUNT = 3;
     private static final int FUTURE_POINTS_COUNT = 3;
@@ -111,8 +111,8 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
-        endpoint = new FakeDataEndpoint();
-//        endpoint = new RestDataEndpoint();
+//        endpoint = new FakeDataEndpoint();
+        endpoint = new RestDataEndpoint();
 
         
         Thread updateThread = new Thread(new Runnable() {
@@ -122,7 +122,7 @@ public class DashboardFragment extends Fragment {
                 
                 Log.i(TAG, "generating history data ");
                 
-                final List<DataReport> reports = endpoint.getHistoryData(System.currentTimeMillis() - POINTS_COUNT * 1000);
+                final List<DataReport> reports = endpoint.getHistoryData(0);
 
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
@@ -134,6 +134,12 @@ public class DashboardFragment extends Fragment {
                         Log.i(TAG, "populated pie chart with data ");
                     }
                 });
+                
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
                 
                 DataReport previousReport = reports.get(reports.size() - 1);
                 long previousUpdate = 0l;
@@ -249,9 +255,9 @@ public class DashboardFragment extends Fragment {
     }
 
     private void updateLabels(float plantVoltage, float gridVoltage) {
-        plantValueView.setText(String.format(PIE_CHART_VALUE_FORMAT, plantVoltage) + " Kw");
-        gridValueView.setText(String.format(PIE_CHART_VALUE_FORMAT, gridVoltage) + " Kw");
-        totalValueView.setText(String.format(PIE_CHART_VALUE_FORMAT, plantVoltage + gridVoltage) + " Kw");
+        plantValueView.setText(String.format(PIE_CHART_VALUE_FORMAT, plantVoltage) + " kW");
+        gridValueView.setText(String.format(PIE_CHART_VALUE_FORMAT, gridVoltage) + " kW");
+        totalValueView.setText(String.format(PIE_CHART_VALUE_FORMAT, plantVoltage + gridVoltage) + " kW");
     }
 
     private void prepareLineChart(View rootView, List<DataReport> data) {
