@@ -19,6 +19,7 @@
 #include <stddef.h>
 #include "../kaa_common.h"
 #include "../platform/ext_sha.h"
+#include "../platform/sock.h"
 #include <string.h>
 
 
@@ -28,7 +29,6 @@ kaa_error_t ext_calculate_sha_hash(const char *data, size_t data_size, kaa_diges
     KAA_RETURN_IF_NIL(digest, KAA_ERR_BADPARAM);
 
     SHA1Context sha;
-
     SHA1Reset(&sha);
     SHA1Input(&sha, (const unsigned char *) data, data_size);
     SHA1Result(&sha);

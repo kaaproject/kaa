@@ -34,7 +34,7 @@ typedef unsigned int uint32;
 
 #define AT_RST_TIMEOUT 5000
 #define AT_CWLAP_TIMEOUT 15000
-#define AT_CWJAP_TIMEOUT 15000
+#define AT_CWJAP_TIMEOUT 30000
 #define AT_CONN_TIMEOUT 10000
 #define AT_GENERIC_TIMEOUT 1000
 #define AT_CIPSEND_TIMEOUT 5000
@@ -49,6 +49,7 @@ typedef unsigned int uint32;
 
 #define SIZEOF_COMMAND(command) (sizeof(command)-1)
 
+/* __FLASH__ define used to pack constant string into flash memory */
 #define __attr_flash __attribute__((section (".USER_FLASH")))
 #define __FLASH__ __attr_flash
 
@@ -73,7 +74,7 @@ static const char AT_UNLINKED[]                 __FLASH__ = "OK\r\nUnlink";
 static const char AT_LINK_IS_NOT[]              __FLASH__ = "link is not";
 static const char AT_CIPSEND[]                  __FLASH__ = "AT+CIPSEND";
 static const char AT_CIPSEND_TERM               __FLASH__ = '>';
-static const char AT_SEND_CONFIRM[]             __FLASH__ = "SEND OK";
+static const char AT_SEND_CONFIRM[]             __FLASH__ = " \r\nSEND OK";
 static const char AT_SEND_IPD[]                 __FLASH__ = "+IPD";
 static const char AT_SEND_IPD_OK[]              __FLASH__ = "\r\nOK\r\n\r\n";
 static const char AT_SEND_IPD_OK_UNLINK[]       __FLASH__ = "OK\r\nUnlink";
@@ -431,21 +432,6 @@ esp8266_error_t esp8266_process(esp8266_t *controler, time_t limit_timeout_milis
 				controler->ipd_counter = 0;
 				controler->ipd_start = 0;
 				controler->ipd = ESP8266_IPD_WAIT_FINISH;
-
-				//Wait "OK" or "OK\r\nUnlink" if connection was dropped.
-//				//Set command
-//				controler->current_command.command = (char *)AT_SEND_IPD;
-//				controler->current_command.callback_context = controler;
-//				controler->current_command.command_callback = ipd_command_complete;
-//				controler->current_command.command_start_milis = get_sys_milis();
-//				controler->current_command.error = (char *)AT_SEND_IPD_OK_UNLINK;
-//				controler->current_command.error_size = SIZEOF_COMMAND(AT_SEND_IPD_OK_UNLINK);
-//				controler->current_command.error_alternative = (char *)AT_ERROR;
-//				controler->current_command.error_alternative_size = SIZEOF_COMMAND(AT_ERROR);
-//				controler->current_command.success = (char *)AT_SEND_IPD_OK;
-//				controler->current_command.success_size = SIZEOF_COMMAND(AT_SEND_IPD_OK);
-//				controler->current_command.timeout_milis = AT_IPD_TIMEOUT;
-//				controler->current_command.index = -1;
 			}
 		} else if (controler->ipd == ESP8266_IPD_WAIT_FINISH) {
 			if (controler->rx_pointer >= SIZEOF_COMMAND(AT_SEND_IPD_OK)) {
@@ -453,21 +439,6 @@ esp8266_error_t esp8266_process(esp8266_t *controler, time_t limit_timeout_milis
 				if (sh >= 0 && strncmp(controler->rx_buffer+sh, AT_SEND_IPD_OK, SIZEOF_COMMAND(AT_SEND_IPD_OK)) == 0) {
 
 					ipd_command_complete(controler,true,false,AT_SEND_IPD,0,0);
-//					controler->tmp_array_used++;
-//					print_msg("I: ");
-//					print_numb(controler->tmp_array_used);
-//					println();
-//					if (controler->tmp_array_used == 8) {
-//						print_msg("FIN IPD: ");
-//						print_numb(controler->rx_pointer);
-//						println();
-//						print_buffer(controler->rx_buffer, controler->rx_pointer);
-//						int k = 0;
-//						for (;k<controler->rx_pointer;k++) {
-//							print_byte(controler->rx_buffer[k]);
-//						}
-//						println();
-//					}
 				}
 				sh = controler->rx_pointer - SIZEOF_COMMAND(AT_SEND_IPD_OK_UNLINK);
 				if (sh >= 0 && strncmp(controler->rx_buffer+sh, AT_SEND_IPD_OK_UNLINK, SIZEOF_COMMAND(AT_SEND_IPD_OK_UNLINK)) == 0) {
@@ -490,10 +461,6 @@ esp8266_error_t esp8266_process(esp8266_t *controler, time_t limit_timeout_milis
 				controler->rx_pointer = 0;
 				//debug("IPD start\r\n");
 			}
-//			if (find_chars(controler->rx_buffer, controler->rx_pointer, AT_SEND_IPD, SIZEOF_COMMAND(AT_SEND_IPD), &position)) {
-//				controler->ipd = ESP8266_IPD_WAIT_CH;
-//				controler->ipd_start = 0;
-//			}
 		} else if (controler->ipd == ESP8266_IPD_START) {
 			if (controler->rx_pointer >= 4) {
 				debug("PROTO ERROR\r\n");
@@ -517,9 +484,6 @@ esp8266_error_t esp8266_process(esp8266_t *controler, time_t limit_timeout_milis
 					controler->ipd = ESP8266_IPD_UNDEF;
 				}
 			}
-//			if (controler->ipd == ESP8266_IPD_WAIT_SIZE) {
-//				print_msg("CH: ");
-//			}
 		} else if (controler->ipd == ESP8266_IPD_WAIT_SIZE) {
 			//Channel number is read, and now rx_pointer - 1 points to ',' before size
 			//Store pointer and read until ':', then transform to digits.
@@ -537,11 +501,6 @@ esp8266_error_t esp8266_process(esp8266_t *controler, time_t limit_timeout_milis
 				controler->ipd = ESP8266_IPD_READ_BYTES;
 				controler->rx_pointer = 0;
 				controler->ipd_start = 0;
-//				if (controler->ipd_counter != 1460) {
-//					print_msg("IPD:");
-//					print_numb(controler->ipd_counter);
-//					println();
-//				}
 			}
 		}
 
@@ -766,10 +725,6 @@ void scan_command_complete(void *context
 
 	controler->ap_list = (esp8266_wifi_ap_t*)calloc(controler->tmp_array_used, sizeof(esp8266_wifi_ap_t));
 
-//	print_msg("SCAN: ap: ");
-//	print_numb(controler->tmp_array_used);
-//	println();
-
 	int i,j=0;
 	for (i = 0; i < controler->tmp_array_used; i++) {
 		if(fill_wifi_ap(controler, &controler->ap_list[j], controler->tmp_array[i])) {
@@ -967,7 +922,6 @@ esp8266_error_t esp8266_connect_wifi(esp8266_t *controler, const char *ssid, con
 			return esp8266_mux_mod(controler, true);
 			break;
 		case ESP8266_COMMAND_RESPONCE_TIMEOUT:
-
 			return ESP8266_ERR_COMMAND_TIMEOUT;
 			break;
 		default:
@@ -1208,7 +1162,7 @@ esp8266_error_t esp8266_send_tcp(esp8266_t *controler, int id, const uint8* buff
 	uint8_t l = 0;
 	int position = -1;
 	bool buff_write = false;
-	int i = 0;
+
 	while(get_sys_milis() - start < AT_CIPSEND_TIMEOUT) {
 		if (esp8266_serial_available(controler->esp8266_serial)) {
 			l = esp8266_serial_read(controler->esp8266_serial);
@@ -1217,23 +1171,31 @@ esp8266_error_t esp8266_send_tcp(esp8266_t *controler, int id, const uint8* buff
 					//Write buffer
 					esp8266_serial_write_buffer(controler->esp8266_serial, buffer, size);
 					buff_write = true;
-					//controler->rx_pointer = 0;
+					controler->rx_pointer = 0;
 				}
 			} else {
 				//Wait send confirm
 				controler->rx_buffer[controler->rx_pointer++] = l;
-				i++;
-				if (find_chars(controler->rx_buffer,
-						controler->rx_pointer,
-						AT_SEND_CONFIRM, SIZEOF_COMMAND(AT_SEND_CONFIRM)
-						, &position)) {
-					//Send confirmed
-					controler->rx_pointer = 0;
-					controler->last_status_check = get_sys_milis();
-					return ESP8266_ERR_NONE;
+				if (controler->rx_pointer > SIZEOF_COMMAND(AT_SEND_CONFIRM)) {
+				    if (strncmp(controler->rx_buffer, AT_SEND_CONFIRM, SIZEOF_COMMAND(AT_SEND_CONFIRM)) == 0) {
+				        //Send confirmed
+				        controler->rx_pointer = 0;
+                        controler->last_status_check = get_sys_milis();
+                        return ESP8266_ERR_NONE;
+				    } else {
+				        //Send Failed
+				        controler->rx_buffer[controler->rx_pointer] = '\0';
+//				        debug("\r\nSEND(%d) %s\r\n", controler->rx_pointer, controler->rx_buffer);
+//				        int i=0;
+//				        for(;i<controler->rx_pointer;i++) {
+//				            debug("0x%02X,", controler->rx_buffer[i]);
+//				        }
+//				        debug("\r\nEnd\r\n");
+				        controler->rx_pointer = 0;
+				        controler->last_status_check = get_sys_milis();
+				        return ESP8266_ERR_TCP_SEND_FAILED;
+				    }
 				}
-				if (i >= SIZEOF_COMMAND(AT_SEND_CONFIRM) + 20)
-					break;
 			}
 		}
 	}
@@ -1290,12 +1252,8 @@ void status_command_complete(void *context
 
 	esp8266_t *controler = (esp8266_t *)context;
 
-	//print_msg("STATUS CHECK D1\r\n");
-
 	if (result) {
 		controler->command_state = ESP8266_COMMAND_RESPONCE_OK;
-//		print_buffer(controler->rx_buffer, SIZEOF_COMMAND(AT_STATUS_N)+1);
-//		println();
 		if (strncmp(controler->rx_buffer, AT_STATUS_N, SIZEOF_COMMAND(AT_STATUS_N)) == 0) {
 			//Response starts from STATUS:
 			/*
@@ -1304,17 +1262,7 @@ void status_command_complete(void *context
 			 * 	5 - WiFi Disconnected
 			 * 	4 - WiFi Connected, but now one connection opened
 			 */
-		    debug("STATUS CHECK - %c\r\n", controler->rx_buffer[SIZEOF_COMMAND(AT_STATUS_N)]);
 			if (controler->rx_buffer[SIZEOF_COMMAND(AT_STATUS_N)] == '3') {
-
-//			    char *msg = calloc(1, end_offset+1);
-//			    if (msg) {
-//			        memcpy(msg, controler->rx_buffer, end_offset);
-//			        debug("%s\r\n", msg);
-//
-//			        free(msg);
-//			    }
-
 				/*
 				 * STATUS:3
 				 * +CIPSTATUS:0,"TCP","62.149.25.228",80,0
@@ -1334,7 +1282,7 @@ void status_command_complete(void *context
 					offset += SIZEOF_COMMAND(AT_STATUS_CON);
 					in = indexOf(controler->rx_buffer+offset, end_offset, AT_STATUS_CON, SIZEOF_COMMAND(AT_STATUS_CON));
 				}
-				//debug("Status %d\r\n", controler->tmp_array_used);
+
 				if (controler->tmp_array_used > 0) {
 					//Drop all connections not listed in status
 					int i=0;
@@ -1354,20 +1302,14 @@ void status_command_complete(void *context
 					}
 
 				} else {
-				    //debug("No one connection by status\r\n");
 					esp8266_drop_all_connection(controler);
 				}
 			} else {
 				//If status not 3, close all opened connections
-//				print_msg(":STATUS CHECK: ");
-//				print_char(controler->rx_buffer[SIZEOF_COMMAND(AT_STATUS_N)]);
-//				println();
-			    //debug("Status not 3\r\n");
 				esp8266_drop_all_connection(controler);
 			}
 		}
 	} else {
-		debug("STATUS CHECK ERR: timeout %d\r\n", timeout_expired);
 		if (timeout_expired)
 			controler->command_state = ESP8266_COMMAND_RESPONCE_TIMEOUT;
 		else
@@ -1388,8 +1330,6 @@ esp8266_error_t esp8266_check_status(esp8266_t *controler)
 		return ESP8266_ERR_NONE;
 	}
 
-
-	debug("Check status\r\n");
 
 	esp8266_error_t error = esp8266_send_command(controler ,
 							status_command_complete ,

@@ -32,4 +32,5 @@
 
 #define KAA_MAX_LOG_MESSAGE_LENGTH          254
 
+
 #endif /* LEAF_DEFAULTS_H_ */

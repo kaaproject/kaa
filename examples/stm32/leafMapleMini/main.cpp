@@ -19,6 +19,7 @@
 #include "libraries/kaa/platform-impl/stm32/leafMapleMini/esp8266/chip_specififc.h"
 #include "libraries/kaa/platform/kaa_client.h"
 #include "libraries/kaa/kaa_profile.h"
+#include "libraries/kaa/platform/defaults.h"
 
 #include "kaa_public_key.h"
 
@@ -58,7 +59,7 @@ void setup() {
 
     systick_enable();
 
-    esp8266_serial_init(&esp8266_serial, &Serial3, 38400);
+    esp8266_serial_init(&esp8266_serial, &Serial3, 115200);
     if (!esp8266_serial) {
         debug("Serial Initialization failed, no memory\r\n");
         return;
@@ -108,7 +109,7 @@ void loop() {
 		if (error) {
 			debug("Error running Kaa client, code %d\r\n", error);
 		}
-		kaa_client_destroy(kaa_client);
+		//kaa_client_destroy(kaa_client);
 		kaa_client = NULL;
 		debug("Switching to COM mode with ESP8266\r\n");
 	}

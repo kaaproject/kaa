@@ -102,6 +102,7 @@ struct kaa_client_t {
     void *log_storage_context;
     void *log_upload_strategy_context;
     uint32_t blink_timeout;
+    uint8   blink_prev;
 };
 
 kaa_error_t kaa_client_esp8266_error(kaa_client_t *kaa_client);
@@ -122,7 +123,6 @@ void esp8266_tcp_receive_fn(void *context
     kaa_client_t *kaa_client = (kaa_client_t *)context;
     kaa_error_t error;
 
-    debug("IPD receive func run...%d bytes\r\n", receive_size);
     if (buffer) {
 
         if (receive_size > 0) {
@@ -150,17 +150,6 @@ void esp8266_tcp_receive_fn(void *context
    }
 }
 
-int memtest() {
-    int s = 1024;
-    while(1) {
-        uint8 *b = malloc(s);
-        if (b == NULL) {
-            return s;
-        }
-        free(b);
-        s += 512;
-    }
-}
 
 kaa_error_t kaa_client_state_process(kaa_client_t *kaa_client) {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
@@ -181,6 +170,7 @@ kaa_error_t kaa_client_state_process(kaa_client_t *kaa_client) {
         }
         break;
     case KAA_CLIENT_ESP8266_STATE_INIT_OK:
+        ledOn();
         esp8266_error = esp8266_connect_wifi(kaa_client->controler,
                 kaa_client->wifi_ssid, kaa_client->wifi_pswd);
         if (esp8266_error == ESP8266_ERR_NONE) {
@@ -194,6 +184,7 @@ kaa_error_t kaa_client_state_process(kaa_client_t *kaa_client) {
                     kaa_client->wifi_ssid, esp8266_error);
             kaa_client->connection_state = KAA_CLIENT_WIFI_STATE_UNCONNECTED;
         }
+        ledOff();
         break;
     case KAA_CLIENT_WIFI_STATE_CONNECTED:
         break;
@@ -211,8 +202,7 @@ kaa_error_t kaa_client_create(kaa_client_t **kaa_client,
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
-    int s1 = memtest();
-    debug("Mem limit %d\r\n", s1);
+
 
     kaa_client_t *self = calloc(1, sizeof(kaa_client_t));
     KAA_RETURN_IF_NIL(self, KAA_ERR_NOMEM);
@@ -310,13 +300,120 @@ kaa_error_t configuration_update(void *context, const kaa_root_configuration_t *
     return KAA_ERR_NONE;
 }
 
+
+kaa_error_t kaa_client_process_channel_connected(kaa_client_t *kaa_client) {
+    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
+
+    kaa_error_t error_code = KAA_ERR_NONE;
+    esp8266_error_t esp_error = ESP8266_ERR_NONE;
+
+
+    error_code = kaa_tcp_channel_check_keepalive(&kaa_client->channel);
+    if (error_code) {
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger,
+                error_code, "Kaa tcp channel error check keepalive");
+    }
+
+    int tmp = (get_sys_milis() / kaa_client->blink_timeout) % 2;
+    if (kaa_client->blink_prev != (uint8)tmp) {
+        kaa_client->blink_prev = (uint8)tmp;
+        if (kaa_client->blink_prev) {
+            ledOn();
+            if (kaa_client->boostrap_complete) {
+                KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE,
+                                                "Process Bootstrap channel, state connected");
+            } else {
+                KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE,
+                                                "Process Operation channel, state connected");
+            }
+        } else
+            ledOff();
+    }
+
+
+    uint8 * buffer = NULL;
+    size_t buffer_size = 0;
+    error_code = kaa_tcp_channel_get_buffer_for_send(&kaa_client->channel, &buffer, &buffer_size);
+    if (error_code) {
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger,
+                error_code, "Kaa tcp channel get buffer for send failed");
+        kaa_client_channel_error(kaa_client);
+    }
+    if (buffer_size > 0) {
+        esp_error = esp8266_send_tcp(kaa_client->controler, kaa_client->channel_fd, buffer, buffer_size);
+        if (esp_error) {
+            KAA_LOG_ERROR(kaa_client->kaa_context->logger,
+                    KAA_ERR_NONE, "ESP8266 send tcp failed, code: %d", esp_error);
+            kaa_client_channel_error(kaa_client);
+        } else {
+            KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE,
+                    "Channel(0x%08X) sending %lu bytes", kaa_client->channel_id, buffer_size);
+            error_code = kaa_tcp_channel_free_send_buffer(&kaa_client->channel, buffer_size);
+            if (error_code) {
+                KAA_LOG_ERROR(kaa_client->kaa_context->logger,
+                                    error_code, "Kaa tcp channel error free buffer");
+            }
+        }
+    }
+    if (kaa_tcp_channel_connection_is_ready_to_terminate(&kaa_client->channel)) {
+        esp_error = esp8266_disconnect_tcp(kaa_client->controler, kaa_client->channel_fd);
+        if (esp_error) {
+            KAA_LOG_ERROR(kaa_client->kaa_context->logger,
+                    KAA_ERR_NONE, "ESP8266 send tcp failed, code: %d", esp_error);
+        }
+        KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE,
+                    "Channel(0x%08X) connection terminated", kaa_client->channel_id);
+
+        error_code = kaa_client_channel_error(kaa_client);
+        if (error_code) {
+            KAA_LOG_ERROR(kaa_client->kaa_context->logger,
+                                error_code, "Kaa tcp channel error");
+        }
+    }
+
+
+    return error_code;
+}
+
+kaa_error_t kaa_client_process_channel_disconnected(kaa_client_t *kaa_client) {
+    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
+
+    kaa_error_t error_code = KAA_ERR_NONE;
+    esp8266_error_t esp_error = ESP8266_ERR_NONE;
+
+    char *hostname = NULL;
+    size_t hostname_size = 0;
+    uint16_t port = 0;
+    error_code = kaa_tcp_channel_get_access_point(&kaa_client->channel, &hostname, &hostname_size, &port);
+    if (error_code) {
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger,
+                error_code, "Kaa tcp channel get access point failed");
+        kaa_client_channel_error(kaa_client);
+    }
+    if (hostname && hostname_size && port) {
+        esp_error = esp8266_connect_tcp(kaa_client->controler,
+                hostname, hostname_size, port, &kaa_client->channel_fd);
+        if (esp_error) {
+            KAA_LOG_ERROR(kaa_client->kaa_context->logger,
+                    KAA_ERR_NONE, "ESP8266 connect tcp failed, code: %d", esp_error);
+            kaa_client_channel_error(kaa_client);
+        } else {
+            KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE,
+                        "Channel(0x%08X) connected to  port %d, fd=%d", kaa_client->channel_id,
+                        port, kaa_client->channel_fd);
+            kaa_client->channel_state = KAA_CLIENT_CHANNEL_STATE_CONNECTED;
+            error_code = kaa_tcp_channel_connected(&kaa_client->channel);
+        }
+    }
+
+
+    return error_code;
+}
+
 kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
         external_process_fn external_process, void *external_process_context,
         time_t max_delay) {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
-
-    int s = memtest();
-    debug("Mem limit %s\r\n", s);
 
     kaa_error_t error_code = KAA_ERR_NONE;
     esp8266_error_t esp_error = ESP8266_ERR_NONE;
@@ -328,11 +425,6 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
 
     KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Starting Kaa client...");
 
-//    error_code  = kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_BOOTSTRAP);
-//    if (error_code) {
-//        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Kaa client Boostrap channel initialization failed.");
-//        return error_code;
-//    }
     const kaa_configuration_root_receiver_t config_receiver = { kaa_client, configuration_update };
     error_code = kaa_configuration_manager_set_root_receiver(kaa_client->kaa_context->configuration_manager, &config_receiver);
     if (error_code) {
@@ -370,88 +462,10 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
             //Check Kaa channel is ready to transmit something
             if (kaa_client->channel_id > 0) {
                 if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED) {
-                    char *hostname = NULL;
-                    size_t hostname_size = 0;
-                    uint16_t port = 0;
-                    error_code = kaa_tcp_channel_get_access_point(&kaa_client->channel, &hostname, &hostname_size, &port);
-                    if (error_code) {
-                        KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-                                error_code, "Kaa tcp channel get access point failed");
-                        kaa_client_channel_error(kaa_client);
-                    }
-                    if (hostname && hostname_size && port) {
-                        esp_error = esp8266_connect_tcp(kaa_client->controler,
-                                hostname, hostname_size, port, &kaa_client->channel_fd);
-                        if (esp_error) {
-                            KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-                                    KAA_ERR_NONE, "ESP8266 connect tcp failed, code: %d", esp_error);
-                            kaa_client_channel_error(kaa_client);
-                        } else {
-                            KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE,
-                                        "Channel(0x%08X) connected to  port %d, fd=%d", kaa_client->channel_id,
-                                        port, kaa_client->channel_fd);
-                            kaa_client->channel_state = KAA_CLIENT_CHANNEL_STATE_CONNECTED;
-                            error_code = kaa_tcp_channel_connected(&kaa_client->channel);
-                        }
-                    }
+                    error_code = kaa_client_process_channel_disconnected(kaa_client);
                 } else  if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_CONNECTED) {
-                    error_code = kaa_tcp_channel_check_keepalive(&kaa_client->channel);
-                    if (error_code) {
-                        KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-                                error_code, "Kaa tcp channel error check keepalive");
-                    }
-                    tmp = (get_sys_milis() / kaa_client->blink_timeout) % 2;
-                    if (tmp != send_c) {
-                        send_c = tmp;
-                        if(send_c) {
-                            ledOn();
-                            buffer = NULL;
-                            buffer_size = 0;
-                            error_code = kaa_tcp_channel_get_buffer_for_send(&kaa_client->channel, &buffer, &buffer_size);
-                            if (error_code) {
-                                KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-                                        error_code, "Kaa tcp channel get buffer for send failed");
-                                kaa_client_channel_error(kaa_client);
-                            }
-                            if (buffer_size > 0) {
-                                esp_error = esp8266_send_tcp(kaa_client->controler, kaa_client->channel_fd, buffer, buffer_size);
-                                if (esp_error) {
-                                    KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-                                            KAA_ERR_NONE, "ESP8266 send tcp failed, code: %d", esp_error);
-                                    kaa_client_channel_error(kaa_client);
-                                } else {
-                                    KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE,
-                                            "Channel(0x%08X) sending %lu bytes", kaa_client->channel_id, buffer_size);
-                                    error_code = kaa_tcp_channel_free_send_buffer(&kaa_client->channel, buffer_size);
-                                    if (error_code) {
-                                        KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-                                                            error_code, "Kaa tcp channel error free buffer");
-                                    }
-                                }
-                            }
-                            if (kaa_tcp_channel_connection_is_ready_to_terminate(&kaa_client->channel)) {
-                                esp_error = esp8266_disconnect_tcp(kaa_client->controler, kaa_client->channel_fd);
-                                if (esp_error) {
-                                    KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-                                            KAA_ERR_NONE, "ESP8266 send tcp failed, code: %d", esp_error);
-                                }
-                                KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE,
-                                            "Channel(0x%08X) connection terminated", kaa_client->channel_id);
+                    error_code = kaa_client_process_channel_connected(kaa_client);
 
-                                error_code = kaa_client_channel_error(kaa_client);
-                                if (error_code) {
-                                    KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-                                                        error_code, "Kaa tcp channel error");
-                                }
-                            }
-                        } else {
-                            ledOff();
-                            //Test free memory
-                            int s = memtest();
-
-                            KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Nothing to send, t=%d, m=%d", kaa_client->blink_timeout, s);
-                        }
-                    }
                 }
             } else {
                 //No initialized channels
@@ -467,9 +481,7 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
                     kaa_client->boostrap_complete = true;
                     kaa_client_deinit_channel(kaa_client);
 
-                    debug("Debug 1111\r\n");
                     kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_BOOTSTRAP);
-                    debug("Debug 1112\r\n");
                 }
 
             }
@@ -561,17 +573,14 @@ kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel
                 "Error initializing channel %d", channel_type);
         return error_code;
     }
-    debug("Debug 1121\r\n");
     error_code = kaa_tcp_channel_set_keepalive_timeout(&kaa_client->channel, 120);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code,
                 "Error set keepalive");
     }
-    debug("Debug 1122\r\n");
     error_code = kaa_channel_manager_add_transport_channel(kaa_client->kaa_context->channel_manager,
                                             &kaa_client->channel,
                                             &kaa_client->channel_id);
-    debug("Debug 1123\r\n");
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code,
                 "Error register channel %d as transport", channel_type);
@@ -584,7 +593,7 @@ kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel
     char *hostname = NULL;
     size_t hostname_size = 0;
     uint16_t port = 0;
-    debug("Debug 1124\r\n");
+
     error_code = kaa_tcp_channel_get_access_point(&kaa_client->channel, &hostname, &hostname_size, &port);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger,
@@ -597,7 +606,7 @@ kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel
 
         free(n_hostname);
     }
-    debug("Debug 1125\r\n");
+
     return error_code;
 }
 
