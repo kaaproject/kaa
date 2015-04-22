@@ -235,6 +235,10 @@ kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_
             *(uint32_t *)writer->current = KAA_HTONL(uid->length);
             writer->current += sizeof(uint32_t);
             err = kaa_platform_message_write_aligned(writer, uid->data, uid->length);
+            if (err) {
+                KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Filed to serialize uids.");
+                return KAA_ERR_BADDATA;
+            }
             uid_node = kaa_list_next(uid_node);
         }
     }
@@ -291,6 +295,23 @@ kaa_error_t kaa_notification_manager_create(kaa_notification_manager_t **self, k
     return KAA_ERR_NONE;
 }
 
+
+void kaa_uids_destroy(void *data)
+{
+   KAA_RETURN_IF_NIL(data,);
+   kaa_notifications_uid_t *uid = (kaa_notifications_uid_t *)data;
+   KAA_FREE(uid->data);
+   KAA_FREE(uid);
+}
+
+void kaa_topics_destroy(void *data)
+{
+    KAA_RETURN_IF_NIL(data,);
+   kaa_topic_t *topic = (kaa_topic_t *)data;
+   KAA_FREE(topic->name);
+   KAA_FREE(data);
+}
+
 void kaa_notification_manager_destroy(kaa_notification_manager_t *self)
 {
     KAA_RETURN_IF_NIL(self,);
@@ -315,19 +336,16 @@ void kaa_notification_manager_destroy(kaa_notification_manager_t *self)
         }
         kaa_list_destroy(self->optional_listeners, &kaa_data_destroy);
     }
+    if (self->uids) {
+        kaa_list_destroy(self->uids, &kaa_uids_destroy);
+    }
     if (self->topics) {
-        kaa_list_destroy(self->topics, &kaa_data_destroy);
+        kaa_list_destroy(self->topics, &kaa_topics_destroy);
     }
 
     KAA_FREE(self);
 }
 
-void kaa_uids_destroy(void *data)
-{
-   kaa_notifications_uid_t *uid = (kaa_notifications_uid_t *)data;
-   KAA_FREE(uid->data);
-   KAA_FREE(uid);
-}
 kaa_error_t kaa_add_notification_listener(kaa_notification_manager_t *self, kaa_notification_listener_t *listener, uint32_t* listener_id)
 {
     KAA_RETURN_IF_NIL2(self, listener, KAA_ERR_BADPARAM);
@@ -772,7 +790,7 @@ kaa_error_t kaa_topic_list_updated(kaa_notification_manager_t *self, kaa_list_t 
     while (topic_node && self->topics) {
         topic = (kaa_topic_t *) kaa_list_get_data(topic_node);
         KAA_RETURN_IF_NIL(topic, KAA_ERR_NOMEM);
-        kaa_list_remove_first(&self->topics, &kaa_find_topic_by_id, &topic->id, &kaa_data_destroy);
+        kaa_list_remove_first(&self->topics, &kaa_find_topic_by_id, &topic->id, &kaa_topics_destroy);
         topic_node = kaa_list_next(topic_node);
     }
     if (kaa_list_get_size(self->topics)) {
@@ -790,7 +808,7 @@ kaa_error_t kaa_topic_list_updated(kaa_notification_manager_t *self, kaa_list_t 
         }
     }
     if (self->topics) {
-        kaa_list_destroy(self->topics, &kaa_data_destroy);
+        kaa_list_destroy(self->topics, &kaa_topics_destroy);
     }
     self->topics = topics;
     return kaa_notify_topic_update_subscribers(self, topics);
@@ -966,11 +984,11 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
                    reader->current += sizeof(uint16_t);
                    extension_length -= sizeof(uint16_t);
                    topic->name = (char *) KAA_MALLOC(topic->name_length + 1);
-                   memset(topic->name, 0, topic->name_length + 1);
                    if (!topic->name) {
                        KAA_FREE(topic);
                        return KAA_ERR_NOMEM;
                    }
+                   memset(topic->name, 0, topic->name_length + 1);
                    err = kaa_platform_message_read_aligned(reader, topic->name, topic->name_length);
                    if (err) {
                        KAA_LOG_WARN(self->logger, KAA_ERR_BADDATA, "Failed to read topic's name");

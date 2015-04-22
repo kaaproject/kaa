@@ -161,6 +161,7 @@ void test_deserializing()
     avro_writer_t avro_writer = avro_writer_memory(unserialized_buffer, notification->get_size(notification));
     notification->serialize(avro_writer, notification);
     err = kaa_platform_protocol_process_server_sync(context->platfrom_protocol, buffer_pointer, size);
+    avro_writer_free(avro_writer);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     notification->destroy(notification);
