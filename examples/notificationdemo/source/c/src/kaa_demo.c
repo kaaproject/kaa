@@ -62,10 +62,17 @@ static bool is_shutdown = false;
 
 void on_notification(void *context, uint64_t *topic_id, kaa_notification_t *notification)
 {
-    kaa_string_t *message = (kaa_string_t *)notification->message->data;
-    printf("Notification for topic id '%ul' received\n", *topic_id);
-    printf("Notification body: %s\n", message->data);
-    //is_shutdown = true;
+    static short notifications_received = 2;
+    if (notification->message->type == KAA_NOTIFICATION_UNION_STRING_OR_NULL_BRANCH_0) {
+        kaa_string_t *message = (kaa_string_t *)notification->message->data;
+        printf("Notification for topic id '%lu' received\n", *topic_id);
+        printf("Notification body: %s\n", message->data);
+        if (!--notifications_received) {
+            is_shutdown = true;
+        }
+    } else {
+        printf("Error:Received null\n");
+    }
 }
 
 void show_topics(kaa_list_t *topics)
@@ -77,7 +84,7 @@ void show_topics(kaa_list_t *topics)
     kaa_topic_t *topic = NULL;
     while (topics) {
         topic = (kaa_topic_t *)kaa_list_get_data(topics);
-        printf("Topic: id '%u', name: %s, type: ", topic->id, topic->name);
+        printf("Topic: id '%lu', name: %s, type: ", topic->id, topic->name);
         if (topic->subscription_type == MANDATORY) {
             printf("MANDATORY\n");
         } else {
@@ -98,7 +105,7 @@ void on_list_uploaded(void *context, kaa_list_t *topics)
     while (topics) {
         topic = (kaa_topic_t *) kaa_list_get_data(topics);
         if (topic->subscription_type == OPTIONAL) {
-            printf("Subscribing to optional topic '%u'\n", topic->id);
+            printf("Subscribing to optional topic '%lu'\n", topic->id);
             err = kaa_subscribe_to_topic(kaa_context->notification_manager, &topic->id, false);
             if (err) {
                 printf("Failed to subscribe.\n");
@@ -294,6 +301,7 @@ int main(/*int argc, char *argv[]*/)
     if (!err) {
         show_topics(topics);
     }
+
     kaa_demo_destroy();
 
     printf("Notification demo stopped\n");

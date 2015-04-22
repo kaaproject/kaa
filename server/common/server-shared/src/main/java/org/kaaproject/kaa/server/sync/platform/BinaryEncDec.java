@@ -717,7 +717,6 @@ public class BinaryEncDec implements PlatformEncDec {
         int payloadLimitPosition = buf.position() + payloadLength;
         NotificationClientSync nfSync = new NotificationClientSync();
         nfSync.setAppStateSeqNumber(buf.getInt());
-        LOG.trace("WE ARE IN NOTIFICATIONS");
         while (buf.position() < payloadLimitPosition) {
             byte fieldId = buf.get();
             // reading unused reserved field
@@ -737,7 +736,6 @@ public class BinaryEncDec implements PlatformEncDec {
                 break;
             }
         }
-        LOG.trace("WE ARE OUT NOTIFICATIONS");
         if (hasOption(options, CLIENT_METASYNC_NOTIFICATION_HAS_TOPIC_LIST_HASH)) {
             nfSync.setTopicListHash(getNewByteBuffer(buf, TOPIC_LIST_HASH_SIZE));
         }

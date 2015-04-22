@@ -35,7 +35,7 @@ typedef enum {
  * @param[in] notification   pointer to received notification.
  *
  */
-typedef void (*on_notification_callback)(void *context, const uint64_t *topic_id, const kaa_notification_t *notification);
+typedef void (*on_notification_callback)(void *context, uint64_t *topic_id, kaa_notification_t *notification);
 
 typedef struct {
     on_notification_callback  callback;
