@@ -54,18 +54,16 @@ public class Utils {
         return result;
     }
 
-    static Set<String> toTags(List<ByteBuffer> buffers) {
-        Set<String> result = new HashSet<>(buffers.size());
-        for (ByteBuffer buf : buffers) {
-            result.add(toTag(buf));
+    static Set<String> toTags(List<Long> tags) {
+        Set<String> result = new HashSet<>(tags.size());
+        for (Long tag : tags) {
+            result.add(toTag(tag));
         }
         return result;
     }
 
-    static String toTag(ByteBuffer buf) {
-        byte[] data = CommonsBase64.getInstance().encodeBase64(toByteArray(buf));
-        String tag = new String(data, UTF8);
-        return tag;
+    static String toTag(Long tag) {
+        return String.valueOf(tag);
     }
 
 }

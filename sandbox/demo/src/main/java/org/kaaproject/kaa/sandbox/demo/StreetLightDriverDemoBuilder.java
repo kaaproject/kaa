@@ -10,20 +10,20 @@ import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StreetLightDemoBuilder extends AbstractDemoBuilder {
+public class StreetLightDriverDemoBuilder extends AbstractDemoBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(StreetLightDemoBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(StreetLightDriverDemoBuilder.class);
 
     private static final int LIGHT_ZONE_COUNT = 4;
 
-    protected StreetLightDemoBuilder() {
+    protected StreetLightDriverDemoBuilder() {
         super("demo/streetlight");
     }
 
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
 
-        logger.info("Loading 'Street Light demo application' data...");
+        logger.info("Loading 'Street light driver demo application' data...");
 
         loginTenantAdmin(client);
 
@@ -43,7 +43,7 @@ public class StreetLightDemoBuilder extends AbstractDemoBuilder {
         ProfileSchemaDto profileSchemaDto = new ProfileSchemaDto();
         profileSchemaDto.setApplicationId(streetLightApplication.getId());
         profileSchemaDto.setName("StreetLightsProfile schema");
-        profileSchemaDto.setDescription("Street Light profile schema");
+        profileSchemaDto.setDescription("Street light driver profile schema");
         profileSchemaDto = client.createProfileSchema(profileSchemaDto, getResourcePath("profile.avsc"));
         logger.info("Profile schema version: {}", profileSchemaDto.getMajorVersion());
         sdkKey.setProfileSchemaVersion(profileSchemaDto.getMajorVersion());
@@ -82,7 +82,7 @@ public class StreetLightDemoBuilder extends AbstractDemoBuilder {
             logger.info("Created and activated Profile filter for Light Zone {}", i);
         }
 
-        logger.info("Finished loading 'Street Light demo application' data...");
+        logger.info("Finished loading 'Street light driver demo application' data...");
     }
 
 }

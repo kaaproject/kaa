@@ -18,7 +18,7 @@
           "name" : "tags",
           "type" : {
             "type" : "array",
-            "items" : "bytes"
+            "items" : "long"
           },
           "displayName" : "RFID tags",
           "displayPrompt" : "",
@@ -38,7 +38,7 @@
         "name" : "mainRoadAllowTags",
         "type" : {
           "type" : "array",
-          "items" : "bytes"
+          "items" : "long"
         },
         "displayName" : "Main road allow tags"
       }, {

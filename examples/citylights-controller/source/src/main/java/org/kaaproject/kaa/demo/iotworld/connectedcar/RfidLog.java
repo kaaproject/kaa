@@ -7,9 +7,9 @@ package org.kaaproject.kaa.demo.iotworld.connectedcar;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class RfidLog extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"RfidLog\",\"namespace\":\"org.kaaproject.kaa.demo.iotworld.connectedcar\",\"fields\":[{\"name\":\"tag\",\"type\":\"bytes\"}],\"displayName\":\"Log that contain scanned RFID tag\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"RfidLog\",\"namespace\":\"org.kaaproject.kaa.demo.iotworld.connectedcar\",\"fields\":[{\"name\":\"tag\",\"type\":\"long\"}],\"displayName\":\"Log that contain scanned RFID tag\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-   private java.nio.ByteBuffer tag;
+   private long tag;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -21,7 +21,7 @@ public class RfidLog extends org.apache.avro.specific.SpecificRecordBase impleme
   /**
    * All-args constructor.
    */
-  public RfidLog(java.nio.ByteBuffer tag) {
+  public RfidLog(java.lang.Long tag) {
     this.tag = tag;
   }
 
@@ -37,7 +37,7 @@ public class RfidLog extends org.apache.avro.specific.SpecificRecordBase impleme
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: tag = (java.nio.ByteBuffer)value$; break;
+    case 0: tag = (java.lang.Long)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -45,7 +45,7 @@ public class RfidLog extends org.apache.avro.specific.SpecificRecordBase impleme
   /**
    * Gets the value of the 'tag' field.
    */
-  public java.nio.ByteBuffer getTag() {
+  public java.lang.Long getTag() {
     return tag;
   }
 
@@ -53,7 +53,7 @@ public class RfidLog extends org.apache.avro.specific.SpecificRecordBase impleme
    * Sets the value of the 'tag' field.
    * @param value the value to set.
    */
-  public void setTag(java.nio.ByteBuffer value) {
+  public void setTag(java.lang.Long value) {
     this.tag = value;
   }
 
@@ -78,7 +78,7 @@ public class RfidLog extends org.apache.avro.specific.SpecificRecordBase impleme
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<RfidLog>
     implements org.apache.avro.data.RecordBuilder<RfidLog> {
 
-    private java.nio.ByteBuffer tag;
+    private long tag;
 
     /** Creates a new Builder */
     private Builder() {
@@ -104,12 +104,12 @@ public class RfidLog extends org.apache.avro.specific.SpecificRecordBase impleme
     }
 
     /** Gets the value of the 'tag' field */
-    public java.nio.ByteBuffer getTag() {
+    public java.lang.Long getTag() {
       return tag;
     }
     
     /** Sets the value of the 'tag' field */
-    public org.kaaproject.kaa.demo.iotworld.connectedcar.RfidLog.Builder setTag(java.nio.ByteBuffer value) {
+    public org.kaaproject.kaa.demo.iotworld.connectedcar.RfidLog.Builder setTag(long value) {
       validate(fields()[0], value);
       this.tag = value;
       fieldSetFlags()[0] = true;
@@ -123,7 +123,6 @@ public class RfidLog extends org.apache.avro.specific.SpecificRecordBase impleme
     
     /** Clears the value of the 'tag' field */
     public org.kaaproject.kaa.demo.iotworld.connectedcar.RfidLog.Builder clearTag() {
-      tag = null;
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -132,7 +131,7 @@ public class RfidLog extends org.apache.avro.specific.SpecificRecordBase impleme
     public RfidLog build() {
       try {
         RfidLog record = new RfidLog();
-        record.tag = fieldSetFlags()[0] ? this.tag : (java.nio.ByteBuffer) defaultValue(fields()[0]);
+        record.tag = fieldSetFlags()[0] ? this.tag : (java.lang.Long) defaultValue(fields()[0]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

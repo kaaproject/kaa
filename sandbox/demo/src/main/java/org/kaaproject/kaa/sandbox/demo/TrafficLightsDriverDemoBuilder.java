@@ -12,23 +12,23 @@ import org.kaaproject.kaa.server.common.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TrafficLightsDemoBuilder extends AbstractDemoBuilder {
+public class TrafficLightsDriverDemoBuilder extends AbstractDemoBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(TrafficLightsDemoBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(TrafficLightsDriverDemoBuilder.class);
 
-    protected TrafficLightsDemoBuilder() {
+    protected TrafficLightsDriverDemoBuilder() {
         super("demo/trafficlights");
     }
 
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
 
-        logger.info("Loading 'Traffic Lights demo application' data...");
+        logger.info("Loading 'Traffic Lights driver demo application' data...");
 
         loginTenantAdmin(client);
 
         ApplicationDto trafficLightsApplication = new ApplicationDto();
-        trafficLightsApplication.setName("Traffic Lights demo");
+        trafficLightsApplication.setName("Traffic lights driver demo");
         trafficLightsApplication = client.editApplication(trafficLightsApplication);
 
         sdkKey.setApplicationId(trafficLightsApplication.getId());
@@ -43,7 +43,7 @@ public class TrafficLightsDemoBuilder extends AbstractDemoBuilder {
         LogSchemaDto logSchemaDto = new LogSchemaDto();
         logSchemaDto.setApplicationId(trafficLightsApplication.getId());
         logSchemaDto.setName("TrafficLightsLog schema");
-        logSchemaDto.setDescription("Traffic Lights log schema");
+        logSchemaDto.setDescription("Traffic Lights driver log schema");
         logSchemaDto = client.createLogSchema(logSchemaDto, getResourcePath("log.avsc"));
         logger.info("Log schema version: {}", logSchemaDto.getMajorVersion());
         sdkKey.setLogSchemaVersion(logSchemaDto.getMajorVersion());
@@ -75,7 +75,7 @@ public class TrafficLightsDemoBuilder extends AbstractDemoBuilder {
         sdkKey.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
         logger.info("Configuration schema was created");
 
-        logger.info("Finished loading 'Traffic Lights demo application' data...");
+        logger.info("Finished loading 'Traffic lights driver demo application' data...");
     }
 
 

@@ -3,7 +3,7 @@
   "name":"RfidLog",
   "namespace":"org.kaaproject.kaa.demo.iotworld.connectedcar",
   "fields":[ 
-    {"name":"tag", "type":"bytes"}
+    {"name":"tag", "type":"long"}
   ],
   "displayName":"Log that contain scanned RFID tag"
 }
