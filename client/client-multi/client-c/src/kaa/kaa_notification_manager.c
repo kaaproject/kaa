@@ -224,6 +224,7 @@ kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_
         }
     }
     if (self->uids) {
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing uids.");
         *(uint8_t *)writer->current = (uint8_t)UID_ID;
         writer->current += sizeof(uint16_t);
         *(uint16_t *)writer->current = KAA_HTONS(kaa_list_get_size(self->uids));
@@ -244,26 +245,32 @@ kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_
     }
 
     if (self->subscriptions) {
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing subscriptions.");
         *(uint8_t *)writer->current = (uint8_t)SUBSCRIPTION_ID;
         writer->current += sizeof(uint16_t);
-        *(uint16_t *)writer->current = KAA_HTONS(kaa_list_get_size(self->subscriptions));
+        *(uint16_t *)writer->current = KAA_HTONS((uint16_t)kaa_list_get_size(self->subscriptions));
         writer->current += sizeof(uint16_t);
         kaa_list_t *subscription_node = self->subscriptions;
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize %d subscriptions.", kaa_list_get_size(subscription_node));
         while (subscription_node) {
             *(uint64_t *)writer->current = KAA_HTONLL(*(uint64_t *)kaa_list_get_data(subscription_node));
+            writer->current += sizeof(uint64_t);
             subscription_node = kaa_list_next(subscription_node);
         }
     }
 
     if (self->unsubscriptions) {
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing unsubscriptions.");
         *(uint8_t *)writer->current = (uint8_t)UNSUBSCRIPTION_ID;
         writer->current += sizeof(uint16_t);
-        *(uint16_t *)writer->current = KAA_HTONS(kaa_list_get_size(self->unsubscriptions));
+        *(uint16_t *)writer->current = KAA_HTONS((uint16_t)kaa_list_get_size(self->unsubscriptions));
         writer->current += sizeof(uint16_t);
-        kaa_list_t *subscription_node = self->unsubscriptions;
-        while (subscription_node) {
-            *(uint64_t *)writer->current = KAA_HTONLL(*(uint64_t *)kaa_list_get_data(subscription_node));
-            subscription_node = kaa_list_next(subscription_node);
+        kaa_list_t *unsubscription_node = self->unsubscriptions;
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize %d subscriptions.", kaa_list_get_size(unsubscription_node));
+        while (unsubscription_node) {
+            *(uint64_t *)writer->current = KAA_HTONLL(*(uint64_t *)kaa_list_get_data(unsubscription_node));
+            writer->current += sizeof(uint64_t);
+            unsubscription_node = kaa_list_next(unsubscription_node);
         }
     }
     return KAA_ERR_NONE;
@@ -300,14 +307,16 @@ void kaa_uids_destroy(void *data)
 {
    KAA_RETURN_IF_NIL(data,);
    kaa_notifications_uid_t *uid = (kaa_notifications_uid_t *)data;
+   KAA_RETURN_IF_NIL(uid->data,);
    KAA_FREE(uid->data);
    KAA_FREE(uid);
 }
 
 void kaa_topics_destroy(void *data)
 {
-    KAA_RETURN_IF_NIL(data,);
+   KAA_RETURN_IF_NIL(data,);
    kaa_topic_t *topic = (kaa_topic_t *)data;
+   KAA_RETURN_IF_NIL(topic->name,);
    KAA_FREE(topic->name);
    KAA_FREE(data);
 }
@@ -889,7 +898,7 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
                             kaa_notifications_uid_t *uid = (kaa_notifications_uid_t *) KAA_MALLOC(sizeof(kaa_notifications_uid_t));
                             KAA_RETURN_IF_NIL(uid, KAA_ERR_NOMEM);
                             uid->length = uid_length;
-                            uid->data = KAA_MALLOC(sizeof(uid_length));
+                            uid->data = KAA_MALLOC(uid_length);
                             if (!uid->data) {
                                 KAA_FREE(uid);
                                 return KAA_ERR_NOMEM;
@@ -992,6 +1001,9 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
                    err = kaa_platform_message_read_aligned(reader, topic->name, topic->name_length);
                    if (err) {
                        KAA_LOG_WARN(self->logger, KAA_ERR_BADDATA, "Failed to read topic's name");
+                       KAA_FREE(topic->name);
+                       KAA_FREE(topic);
+                       return err;
                    }
                    extension_length -= kaa_aligned_size_get(topic->name_length);
 
