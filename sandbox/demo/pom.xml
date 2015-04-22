@@ -558,7 +558,7 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/generated-resources/demo/trafficlights</outputDirectory>
                             <includeGroupIds>org.kaaproject.kaa.examples.econais.ec19d</includeGroupIds>
-                            <includeArtifactIds>trafficligths-driver</includeArtifactIds>
+                            <includeArtifactIds>trafficlights-driver</includeArtifactIds>
                             <includeClassifiers>trafficlights-resources</includeClassifiers>
                             <excludeTransitive>true</excludeTransitive>
                         </configuration>
