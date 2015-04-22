@@ -45,6 +45,7 @@
         <module>notificationdemo-android</module>
         <module>photoframe</module>
         <module>verifiersdemo</module>
+        <module>vehicletelemetry</module>
     </modules>
 
     <dependencyManagement>
