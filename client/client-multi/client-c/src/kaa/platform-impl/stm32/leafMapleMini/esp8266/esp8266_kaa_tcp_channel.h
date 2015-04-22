@@ -55,6 +55,8 @@ bool kaa_tcp_channel_connection_is_ready_to_terminate(kaa_transport_channel_inte
 
 kaa_error_t kaa_tcp_channel_set_keepalive_timeout(kaa_transport_channel_interface_t *self, uint16_t keepalive);
 
+kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *self);
+
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif

@@ -17,6 +17,9 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdarg.h>
+#include <string.h>
+#include <stdlib.h>
+
 #include "../../../platform/ext_system_logger.h"
 //#include <wirish/wirish.h>
 
@@ -59,5 +62,26 @@ int ext_snpintf(char * buffer, size_t buffer_size, const char * format, ...)
 int ext_logger_sprintf(char * buffer, size_t buffer_size, const char * format,
         va_list args)
 {
-    return vsnprintf(buffer, buffer_size, format, args);
+    //Leaf Mape vsrpintf don't support %zu, need to change %zu to %lu
+    char *n_format = strdup(format);
+    int i=0;
+    size_t f_size = strlen(n_format);
+    while(i < f_size) {
+        if (n_format[i] == '%') {
+            //Got % check if next is 'z'
+            i++;
+            if (n_format[i] == 'z') {
+                //Change it to 'l'
+                n_format[i] = 'l';
+            }
+        }
+        i++;
+    }
+
+
+    int n = vsnprintf(buffer, buffer_size, n_format, args);
+
+    free(n_format);
+
+    return n;
 }

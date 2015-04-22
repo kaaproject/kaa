@@ -18,6 +18,7 @@
 #include "libraries/kaa/platform-impl/stm32/leafMapleMini/esp8266/esp8266_serial.h"
 #include "libraries/kaa/platform-impl/stm32/leafMapleMini/esp8266/chip_specififc.h"
 #include "libraries/kaa/platform/kaa_client.h"
+#include "libraries/kaa/kaa_profile.h"
 
 #include "kaa_public_key.h"
 
@@ -25,7 +26,7 @@
 #define CH_PD 22
 #define ESP8266_RST 20
 
-#define RX_BUFFER_SIZE 512 //1460
+#define RX_BUFFER_SIZE 256 //1460
 
 #define TRACE_DELAY 100
 
@@ -42,7 +43,8 @@ static esp8266_serial_t *esp8266_serial;
 static kaa_client_t *kaa_client;
 
 
-#define DBG_SIZE 512
+
+#define DBG_SIZE 256
 static char dbg_array[DBG_SIZE];
 
 
@@ -71,6 +73,16 @@ void setup() {
     kaa_error_t error = kaa_client_create(&kaa_client, &props);
     if (error) {
         debug("Error initialising Kaa client, error code %d\r\n", error);
+        return;
+    }
+
+    kaa_profile_profile_t *profile = kaa_profile_profile_create();
+    profile->platform = kaa_string_copy_create("LeafMapleMini");
+    error = kaa_profile_manager_update_profile(
+            kaa_client_get_context(kaa_client)->profile_manager
+            , profile);
+    if (error) {
+        debug("Error initialising Kaa profile, error code %d\r\n", error);
         return;
     }
 }
@@ -239,9 +251,9 @@ void esp8266_reset()
 	digitalWrite(CH_PD, HIGH);
 	//reset chip
 	digitalWrite(ESP8266_RST, LOW);
-	delay(1000);
+	delay(500);
 	digitalWrite(ESP8266_RST, HIGH);
-	delay(2000);
+	delay(1000);
 }
 
 void debug(const char* format, ...)

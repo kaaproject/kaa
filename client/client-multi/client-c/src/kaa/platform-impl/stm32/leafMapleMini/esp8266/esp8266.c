@@ -32,16 +32,16 @@ typedef unsigned int uint32;
 #include "esp8266.h"
 #include "chip_specififc.h"
 
-#define AT_RST_TIMEOUT 20000
-#define AT_CWLAP_TIMEOUT 30000
-#define AT_CWJAP_TIMEOUT 30000
+#define AT_RST_TIMEOUT 5000
+#define AT_CWLAP_TIMEOUT 15000
+#define AT_CWJAP_TIMEOUT 15000
 #define AT_CONN_TIMEOUT 10000
 #define AT_GENERIC_TIMEOUT 1000
 #define AT_CIPSEND_TIMEOUT 5000
 #define AT_IPD_TIMEOUT 5000
 
 #define TMP_ARRAY_SIZE 16
-#define COMM_BUFFER_SIZE 120
+#define COMM_BUFFER_SIZE 64
 
 #define TCP_CONNECTION_LIMIT 5
 
@@ -49,34 +49,37 @@ typedef unsigned int uint32;
 
 #define SIZEOF_COMMAND(command) (sizeof(command)-1)
 
-static const char AT_RST[] = "AT+RST";
-static const char AT_RST_SUCCESS[] = "ready";
-static const char AT_CWLAP[] = "AT+CWLAP";
-static const char AT_CWLAP_RESP_LINE_START[] = "+CWLAP:";
-static const char AT_SUCCESS_OK[] = "\r\nOK";
-static const char AT_SUCCESS_OK1[] = "OK";
-static const char AT_ERROR[] = "\r\nERROR";
-static const char AT_FAIL[] = "\r\nFAIL";
-static const char AT_ECHO_ON[] = "ATE1";
-static const char AT_ECHO_OFF[] = "ATE0";
-static const char AT_CIPMUX[] = "AT+CIPMUX";
-static const char AT_CWJAP[] = "AT+CWJAP";
-static const char AT_CWQAP[] = "AT+CWQAP";
-static const char AT_CIPSTART[] = "AT+CIPSTART";
-static const char AT_OK_LINKED[] = "Linked";
-static const char AT_DNS_FAIL[] = "DNS Fail";
-static const char AT_CIPCLOSE[] = "AT+CIPCLOSE";
-static const char AT_UNLINKED[] = "OK\r\nUnlink";
-static const char AT_LINK_IS_NOT[] = "link is not";
-static const char AT_CIPSEND[] = "AT+CIPSEND";
-static const char AT_CIPSEND_TERM = '>';
-static const char AT_SEND_CONFIRM[] = "SEND OK";
-static const char AT_SEND_IPD[] = "+IPD";
-static const char AT_SEND_IPD_OK[] = "\r\nOK\r\n\r\n";
-static const char AT_SEND_IPD_OK_UNLINK[] = "OK\r\nUnlink";
-static const char AT_CIPSTATUS[] = "AT+CIPSTATUS";
-static const char AT_STATUS_N[] = "STATUS:";
-static const char AT_STATUS_CON[] = "+CIPSTATUS:";
+#define __attr_flash __attribute__((section (".USER_FLASH")))
+#define __FLASH__ __attr_flash
+
+static const char AT_RST[]                      __FLASH__ = "AT+RST";
+static const char AT_RST_SUCCESS[]              __FLASH__ = "ready";
+static const char AT_CWLAP[]                    __FLASH__ = "AT+CWLAP";
+static const char AT_CWLAP_RESP_LINE_START[]    __FLASH__ = "+CWLAP:";
+static const char AT_SUCCESS_OK[]               __FLASH__ = "\r\nOK";
+static const char AT_SUCCESS_OK1[]              __FLASH__ = "OK";
+static const char AT_ERROR[]                    __FLASH__ = "\r\nERROR";
+static const char AT_FAIL[]                     __FLASH__ = "\r\nFAIL";
+static const char AT_ECHO_ON[]                  __FLASH__ = "ATE1";
+static const char AT_ECHO_OFF[]                 __FLASH__ = "ATE0";
+static const char AT_CIPMUX[]                   __FLASH__ = "AT+CIPMUX";
+static const char AT_CWJAP[]                    __FLASH__ = "AT+CWJAP";
+static const char AT_CWQAP[]                    __FLASH__ = "AT+CWQAP";
+static const char AT_CIPSTART[]                 __FLASH__ = "AT+CIPSTART";
+static const char AT_OK_LINKED[]                __FLASH__ = "Linked";
+static const char AT_DNS_FAIL[]                 __FLASH__ = "DNS Fail";
+static const char AT_CIPCLOSE[]                 __FLASH__ = "AT+CIPCLOSE";
+static const char AT_UNLINKED[]                 __FLASH__ = "OK\r\nUnlink";
+static const char AT_LINK_IS_NOT[]              __FLASH__ = "link is not";
+static const char AT_CIPSEND[]                  __FLASH__ = "AT+CIPSEND";
+static const char AT_CIPSEND_TERM               __FLASH__ = '>';
+static const char AT_SEND_CONFIRM[]             __FLASH__ = "SEND OK";
+static const char AT_SEND_IPD[]                 __FLASH__ = "+IPD";
+static const char AT_SEND_IPD_OK[]              __FLASH__ = "\r\nOK\r\n\r\n";
+static const char AT_SEND_IPD_OK_UNLINK[]       __FLASH__ = "OK\r\nUnlink";
+static const char AT_CIPSTATUS[]                __FLASH__ = "AT+CIPSTATUS";
+static const char AT_STATUS_N[]                 __FLASH__ = "STATUS:";
+static const char AT_STATUS_CON[]               __FLASH__ = "+CIPSTATUS:";
 
 
 typedef struct {
@@ -265,7 +268,7 @@ esp8266_error_t esp8266_create(esp8266_t **controler, esp8266_serial_t *hw_seria
 	}
 
 	self->status_check_timeout = DEFAULT_STATUS_CHECK_TIMEOUT;
-	self->status_check_timeout = get_sys_milis();
+	self->last_status_check = get_sys_milis();
 
 	*controler = self;
 	return ESP8266_ERR_NONE;
@@ -413,8 +416,9 @@ esp8266_error_t esp8266_process(esp8266_t *controler, time_t limit_timeout_milis
 			controler->ipd_counter--;
 			if (controler->ipd_counter <= 0) {
 				//Push received buffer
+			    //debug("IPD Finish\r\n");
 				if (controler->receive_callback) {
-					controler->receive_callback((void*)controler,
+					controler->receive_callback(controler->receive_context,
 							controler->ipd_conn,
 							(controler->rx_buffer + controler->ipd_start),
 							(controler->rx_pointer - controler->ipd_start));
@@ -447,6 +451,7 @@ esp8266_error_t esp8266_process(esp8266_t *controler, time_t limit_timeout_milis
 			if (controler->rx_pointer >= SIZEOF_COMMAND(AT_SEND_IPD_OK)) {
 				int sh = controler->rx_pointer - SIZEOF_COMMAND(AT_SEND_IPD_OK);
 				if (sh >= 0 && strncmp(controler->rx_buffer+sh, AT_SEND_IPD_OK, SIZEOF_COMMAND(AT_SEND_IPD_OK)) == 0) {
+
 					ipd_command_complete(controler,true,false,AT_SEND_IPD,0,0);
 //					controler->tmp_array_used++;
 //					print_msg("I: ");
@@ -483,6 +488,7 @@ esp8266_error_t esp8266_process(esp8266_t *controler, time_t limit_timeout_milis
 			if (read_byte == '+') {
 				controler->ipd = ESP8266_IPD_START;
 				controler->rx_pointer = 0;
+				//debug("IPD start\r\n");
 			}
 //			if (find_chars(controler->rx_buffer, controler->rx_pointer, AT_SEND_IPD, SIZEOF_COMMAND(AT_SEND_IPD), &position)) {
 //				controler->ipd = ESP8266_IPD_WAIT_CH;
@@ -543,7 +549,7 @@ esp8266_error_t esp8266_process(esp8266_t *controler, time_t limit_timeout_milis
 			if (controler->ipd == ESP8266_IPD_READ_BYTES) {
 				//Push existing bytes, and start from begin
 				if (controler->receive_callback) {
-					controler->receive_callback((void*)controler,
+					controler->receive_callback(controler->receive_context,
 							controler->ipd_conn,
 							(controler->rx_buffer + controler->ipd_start),
 							(controler->rx_pointer - controler->ipd_start));
@@ -1070,8 +1076,17 @@ esp8266_error_t esp8266_connect_tcp(esp8266_t *controler, const char* hostname, 
 
 	controler->tcp_id[w_id] = ESP8266_TCP_CONN_CONNECTING;
 
-	int n = snprintf(controler->com_buffer, COMM_BUFFER_SIZE, "%s=%d\"TCP\",\"%s\",%d", AT_CIPSTART,w_id,hostname,port);
+	char *hostname_str = calloc(1,hostname_size+1);
+	if (!hostname_str)
+	    return ESP8266_ERR_NOMEM;
+
+	memcpy(hostname_str, hostname, hostname_size);
+
+	int n = snprintf(controler->com_buffer, COMM_BUFFER_SIZE, "%s=%d\"TCP\",\"%s\",%d", AT_CIPSTART,w_id,hostname_str,port);
 	controler->com_buffer[n+1] = 0;
+
+	free(hostname_str);
+	hostname_str = NULL;
 
 	esp8266_error_t error = esp8266_send_command_al(controler,
 								tcp_connect_command_complete,
@@ -1214,7 +1229,7 @@ esp8266_error_t esp8266_send_tcp(esp8266_t *controler, int id, const uint8* buff
 						, &position)) {
 					//Send confirmed
 					controler->rx_pointer = 0;
-
+					controler->last_status_check = get_sys_milis();
 					return ESP8266_ERR_NONE;
 				}
 				if (i >= SIZEOF_COMMAND(AT_SEND_CONFIRM) + 20)
@@ -1289,12 +1304,21 @@ void status_command_complete(void *context
 			 * 	5 - WiFi Disconnected
 			 * 	4 - WiFi Connected, but now one connection opened
 			 */
+		    debug("STATUS CHECK - %c\r\n", controler->rx_buffer[SIZEOF_COMMAND(AT_STATUS_N)]);
 			if (controler->rx_buffer[SIZEOF_COMMAND(AT_STATUS_N)] == '3') {
+
+//			    char *msg = calloc(1, end_offset+1);
+//			    if (msg) {
+//			        memcpy(msg, controler->rx_buffer, end_offset);
+//			        debug("%s\r\n", msg);
+//
+//			        free(msg);
+//			    }
+
 				/*
 				 * STATUS:3
 				 * +CIPSTATUS:0,"TCP","62.149.25.228",80,0
 				 */
-				debug("STATUS CHECK - 3\r\n");
 				int i=0;
 				controler->tmp_array_used = 0;
 				size_t offset = 0;
@@ -1303,22 +1327,34 @@ void status_command_complete(void *context
 					offset += in;
 					uint8 ch = controler->rx_buffer[offset+SIZEOF_COMMAND(AT_STATUS_CON)];
 					int id = get_channel(ch);
-					if (id > 0 && id < TCP_CONNECTION_LIMIT) {
+					if (id >= 0 && id < TCP_CONNECTION_LIMIT) {
 						controler->tmp_array[i] = id;
 						controler->tmp_array_used++;
 					}
 					offset += SIZEOF_COMMAND(AT_STATUS_CON);
 					in = indexOf(controler->rx_buffer+offset, end_offset, AT_STATUS_CON, SIZEOF_COMMAND(AT_STATUS_CON));
 				}
+				//debug("Status %d\r\n", controler->tmp_array_used);
 				if (controler->tmp_array_used > 0) {
 					//Drop all connections not listed in status
 					int i=0;
-					for(;i<controler->tmp_array_used;i++) {
-						if (controler->tcp_id[controler->tmp_array[i]] != ESP8266_TCP_CONN_UNUSED) {
-							esp8266_drop_connection(controler, controler->tmp_array[i]);
-						}
+					int j=0;
+					bool con_found;
+					for(;i<TCP_CONNECTION_LIMIT;i++) {
+					    con_found = false;
+					    for(j=0;j<controler->tmp_array_used;j++) {
+					        if (controler->tmp_array[j] == i) {
+					            con_found = true;
+					            break;
+					        }
+					    }
+					    if (!con_found && controler->tcp_id[i] != ESP8266_TCP_CONN_UNUSED) {
+					        esp8266_drop_connection(controler, controler->tmp_array[i]);
+					    }
 					}
+
 				} else {
+				    //debug("No one connection by status\r\n");
 					esp8266_drop_all_connection(controler);
 				}
 			} else {
@@ -1326,7 +1362,7 @@ void status_command_complete(void *context
 //				print_msg(":STATUS CHECK: ");
 //				print_char(controler->rx_buffer[SIZEOF_COMMAND(AT_STATUS_N)]);
 //				println();
-
+			    //debug("Status not 3\r\n");
 				esp8266_drop_all_connection(controler);
 			}
 		}
@@ -1353,7 +1389,7 @@ esp8266_error_t esp8266_check_status(esp8266_t *controler)
 	}
 
 
-
+	debug("Check status\r\n");
 
 	esp8266_error_t error = esp8266_send_command(controler ,
 							status_command_complete ,
@@ -1373,8 +1409,6 @@ esp8266_error_t esp8266_check_status(esp8266_t *controler)
 		error = esp8266_process(controler, AT_GENERIC_TIMEOUT);
 		ESP8266_RETURN_IF_ERR(error);
 	}
-
-	controler->last_status_check = get_sys_milis();
 
 	switch (controler->command_state) {
 		case ESP8266_COMMAND_RESPONCE_OK:
