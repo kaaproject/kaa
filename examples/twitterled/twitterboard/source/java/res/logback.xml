@@ -37,6 +37,6 @@
         <appender-ref ref="fileLogAppender"/>
     </root>
 
-    <logger name="org.kaaproject.kaa.demo" level="INFO"/>
+    <logger name="org.kaaproject.kaa" level="INFO"/>
 
 </configuration>

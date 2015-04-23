@@ -12,10 +12,15 @@
     "displayPrompt" : "",
     "by_default" : "Twitter led board demo powered by Kaa"
   }, {
+    "name" : "queueSize",
+    "type" : "int",
+    "displayName" : "Queue size",
+    "by_default" : 0
+  }, {
     "name" : "scrollSpeed",
     "type" : "int",
     "displayName" : "Text scroll speed",
-    "by_default" : 120
+    "by_default" : 30
   }, {
     "name" : "repeatCount",
     "type" : "int",
@@ -32,25 +37,25 @@
     "type" : "string",
     "avro.java.string" : "String",
     "displayName" : "Text color",
-    "by_default" : "0xFFFFFF"
+    "by_default" : "0x505050"
   }, {
     "name" : "keywordsColor",
     "type" : "string",
     "avro.java.string" : "String",
     "displayName" : "Keywords color",
-    "by_default" : "0xFF0000"
+    "by_default" : "0x5F0000"
   }, {
     "name" : "hashTagsColor",
     "type" : "string",
     "avro.java.string" : "String",
     "displayName" : "#tags color",
-    "by_default" : "0x0000FF"
+    "by_default" : "0x00005F"
   }, {
     "name" : "atTagsColor",
     "type" : "string",
     "avro.java.string" : "String",
     "displayName" : "@tags color",
-    "by_default" : "0x0000FF"
+    "by_default" : "0x005F00"
   } ],
   "displayName" : "Twitter board configuration"
 }

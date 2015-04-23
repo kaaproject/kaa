@@ -26,15 +26,32 @@ public class PPMFactory {
     private static final int MATRIX_HEIGHT = 16;
     private static final byte PPM_SEPARATOR = 0x20;
     private static final byte PPM_NEWLINE = 0x0A;
+    private static FontMetrics fontMetrics;
 
     public static void main(String[] args) throws Exception {
         List<TwitterMessageToken> tokens = new ArrayList<BoardController.TwitterMessageToken>();
         tokens.add(new TwitterMessageToken("@ashvayka", Color.RED.getRGB()));
-        tokens.add(new TwitterMessageToken("Trip YoyDSoyo", Color.GREEN.getRGB()));
+        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
+        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
+        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
+        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
+        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
+        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
+        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
+        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
+        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
+        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
+        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
+        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
         tokens.add(new TwitterMessageToken("!!!", Color.BLUE.getRGB()));
-
+        
+        
+        getFontMetrics();
+        
+        long time = System.currentTimeMillis();
         int width = createAndSave("h:\\ppm\\new.ppm", tokens, Color.BLACK.getRGB());
-        System.out.println(width);
+        long delta = System.currentTimeMillis() - time;
+        System.out.println(delta);
     }
 
     public static int createAndSave(String filePath, List<TwitterMessageToken> tokens, int background) throws Exception {
@@ -44,7 +61,7 @@ public class PPMFactory {
             TwitterMessageToken token = tokens.get(i);
             String space;
             if (i == tokens.size() - 1) {
-                space = "   ";
+                space = "                        ";
             } else {
                 space = " ";
             }
@@ -53,29 +70,38 @@ public class PPMFactory {
             images.add(image);
             width += image.getWidth();
         }
+        
         byte[] data = toRawPPMBytes(images, width, background);
+        
         Files.write(Paths.get(new File(filePath).toURI()), data);
+
+
         return width;
+    }
+    
+    private static FontMetrics getFontMetrics() throws Exception{
+        if(fontMetrics == null){
+            InputStream is = PPMFactory.class.getClassLoader().getResourceAsStream(FONT_FILE_NAME);
+            Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+            font = font.deriveFont(FONT_SIZE);
+            BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = img.createGraphics();
+            g2d.setFont(font);
+            fontMetrics = g2d.getFontMetrics();
+        }
+        return fontMetrics;
     }
 
     private static BufferedImage toScaledImage(TwitterMessageToken token, int background) throws Exception {
-        InputStream is = PPMFactory.class.getClassLoader().getResourceAsStream(FONT_FILE_NAME);
-        Font font = Font.createFont(Font.TRUETYPE_FONT, is);
-        font = font.deriveFont(FONT_SIZE);
-
-        BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = img.createGraphics();
-
-        g2d.setFont(font);
-        FontMetrics fm = g2d.getFontMetrics();
+        FontMetrics fm = getFontMetrics();
+        
         int width = fm.stringWidth(token.getToken());
         int height = fm.getHeight();
-        g2d.dispose();
 
-        img = new BufferedImage(width, (int) (height * 0.80f), BufferedImage.TYPE_INT_ARGB);
-        g2d = img.createGraphics();
+        BufferedImage img = new BufferedImage(width, (int) (height * 0.80f), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = img.createGraphics();
         applyHints(g2d);
-        g2d.setFont(font);
+        g2d.setFont(fm.getFont());
         fm = g2d.getFontMetrics();
         g2d.setBackground(new Color(background));
         g2d.setColor(new Color(token.getColor()));
