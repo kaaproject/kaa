@@ -40,6 +40,8 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new NotificationDemoBuilder());
 
         demoBuilders.add(new VehicleTelemetryDemoBuider());
+        demoBuilders.add(new TwitterBoardDemoBuilder());
+        demoBuilders.add(new TwitterMonitorDemoBuilder());
     }
 
     public static List<DemoBuilder> getRegisteredDemoBuilders() {
