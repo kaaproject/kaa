@@ -1,0 +1,78 @@
+[
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.photo",
+ "type": "record",
+ "classType": "event",
+ "name": "PhotoAlbumsRequest",
+ "fields": []
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.photo",
+ "type": "record",
+ "classType": "object",
+ "name": "PhotoAlbumInfo",
+ "fields": [
+    {"name": "id", "type": "string"},
+    {"name": "title", "type": "string"},
+    {"name": "size", "type": "int"},
+    {"name": "thumbnail", "type": "bytes"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.photo",
+ "type": "record",
+ "classType": "event",
+ "name": "PhotoAlbumsResponse",
+ "fields": [
+    {"name": "albums", "type": {"type": "array", "items": "org.kaaproject.kaa.demo.iotworld.photo.PhotoAlbumInfo"} }
+  ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.photo",
+ "type": "record",
+ "classType": "event",
+ "name": "PhotoUploadRequest",
+ "fields": [
+     {"name": "name", "type": "string"},
+     {"name": "body", "type": "bytes"}
+ ]
+},
+{
+  "type":"enum",
+  "name":"SlideShowStatus",
+  "namespace":"org.kaaproject.kaa.demo.iotworld.photo",
+  "symbols":[
+	 "PLAYING",
+	 "PAUSED"
+  ],
+  "classType":"object"
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.photo",
+ "type": "record",
+ "classType": "event",
+ "name": "StartSlideShowRequest",
+ "fields": [
+     {"name": "albumId", "type": "string" }
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.photo",
+ "type": "record",
+ "classType": "event",
+ "name": "PauseSlideShowRequest",
+ "fields": []
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.photo",
+ "type": "record",
+ "classType": "event",
+ "name": "PhotoFrameStatusUpdate",
+ "fields": [
+     {"name": "albumId", "type": ["string","null"]},
+     {"name": "status", "type": ["org.kaaproject.kaa.demo.iotworld.photo.SlideShowStatus", "null"]},
+     {"name": "photoNumber", "type": ["int", "null"]},
+     {"name": "thumbnail", "type": ["bytes","null"]}
+ ]
+}
+]

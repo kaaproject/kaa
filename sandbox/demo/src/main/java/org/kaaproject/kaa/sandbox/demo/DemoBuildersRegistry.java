@@ -33,11 +33,17 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new VerifiersDemoBuilder());
 //      demoBuilders.add(new RobotRunDemoBuilder());
 
-        //JAVA DEMOS
         demoBuilders.add(new EventDemoBuilder());
         demoBuilders.add(new DataCollectionDemoBuider());
         demoBuilders.add(new ConfigurationDemoBuilder());
         demoBuilders.add(new NotificationDemoBuilder());
+
+        demoBuilders.add(new PowerPlantDemoBuilder());
+        demoBuilders.add(new TrafficLightsDriverDemoBuilder());
+        demoBuilders.add(new StreetLightDriverDemoBuilder());
+        demoBuilders.add(new CityLightsControllerDemoBuilder());
+
+        demoBuilders.add(new VehicleTelemetryDemoBuider());
     }
 
     public static List<DemoBuilder> getRegisteredDemoBuilders() {
