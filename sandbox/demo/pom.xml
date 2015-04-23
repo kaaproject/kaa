@@ -172,9 +172,25 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>vehicletelemetry</artifactId>
+            <version>${project.version}</version>
+            <classifier>vehicletelemetry-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>powerplant</artifactId>
             <version>${project.version}</version>
             <classifier>powerplant-src-cpp</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>vehicletelemetry</artifactId>
+            <version>${project.version}</version>
+            <classifier>vehicletelemetry-src-cpp</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
         </dependency>
@@ -475,6 +491,21 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>unpack-vehicletelemetry-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/vehicletelemetry
+                            </outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>vehicletelemetry</includeArtifactIds>
+                            <includeClassifiers>vehicletelemetry-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>unpack-event-resources</id>
                         <goals>
                             <goal>unpack-dependencies</goal>
@@ -575,6 +606,16 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/cpp</outputDirectory>
                                     <destFileName>datacollection_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>vehicletelemetry</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>vehicletelemetry-src-cpp</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/cpp</outputDirectory>
+                                    <destFileName>vehicletelemetry_demo.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.examples</groupId>

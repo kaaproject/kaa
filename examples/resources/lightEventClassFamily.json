@@ -25,7 +25,7 @@
 	{"name": "bulbId", "type": "string"},
 	{"name": "brightness", "type": "int"},
 	{"name": "maxBrightness", "type": "int"},
-	{"name": "ignoreBrightnessUpdate", "type": "int"},
+	{"name": "ignoreBrightnessUpdate", "type": "boolean"},
 	{"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.light.BulbStatus"}
  ]
 },
