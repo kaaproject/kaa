@@ -185,7 +185,7 @@
             <classifier>powerplant-resources</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
-	    </dependency>
+        </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>powerplant</artifactId>
