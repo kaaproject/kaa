@@ -20,6 +20,12 @@
 #include "libraries/kaa/platform/kaa_client.h"
 #include "libraries/kaa/kaa_profile.h"
 #include "libraries/kaa/platform/defaults.h"
+#include "libraries/kaa/kaa_common_schema.h"
+#include "libraries/kaa/kaa_logging.h"
+#include "libraries/kaa/kaa_configuration_manager.h"
+#include "libraries/kaa/platform/mem.h"
+#include "libraries/kaa/gen/kaa_geo_fencing_event_class_family.h"
+#include "libraries/kaa/kaa_user.h"
 
 #include "kaa_public_key.h"
 
@@ -33,25 +39,46 @@
 
 #define ESP_SERIAL Serial1
 
+#define RFID_READER         Serial2
+#define RFID_BAUD_RATE      9600
+#define RFID_LENGTH         8
+#define RFID_READ_DELAY     100 // Delay before reading RFID (in msec)
+
+#define RFID_LEFT_GUARD     2
+#define RFID_RIGHT_GUARD    3
+#define RFID_SKIP_LEFT      2
+#define RFID_SKIP_RIGHT     2
+#define RFID_MAX_NUMBER     0xFFFFFFFF
+
 #define SSID "Econais"
 #define PWD "Cha5hk123"
 
-void esp8266_serial_init(esp8266_serial_t **serial, HardwareSerial *hw_serial, uint32_t baud_rate);
+#define KAA_USER_ID            "kaa"
+#define KAA_USER_ACCESS_TOKEN  "token"
+
+typedef int64_t rfid_t;
+
 
 
 static esp8266_serial_t *esp8266_serial;
-
 static kaa_client_t *kaa_client;
 
-
+#define UNKNOWN_GEOFENCING_ZONE_ID    -1
+static int current_zone_id = UNKNOWN_GEOFENCING_ZONE_ID;
 
 #define DBG_SIZE 256
 static char dbg_array[DBG_SIZE];
 
+static rfid_t last_detected_rfid = RFID_MAX_NUMBER;
 
 
-void setup() {
 
+void esp8266_serial_init(esp8266_serial_t **serial, HardwareSerial *hw_serial, uint32_t baud_rate);
+
+
+
+void setup()
+{
     pinMode(CH_PD, OUTPUT);
     pinMode(ESP8266_RST, OUTPUT);
     pinMode(BOARD_BUTTON_PIN, INPUT);
@@ -65,6 +92,8 @@ void setup() {
         return;
     }
 
+    RFID_READER.begin(RFID_BAUD_RATE);
+
     kaa_client_props_t props;
     props.serial = esp8266_serial;
     props.wifi_ssid = SSID;
@@ -73,7 +102,7 @@ void setup() {
     ext_get_endpoint_public_key(&props.kaa_public_key, &props.kaa_public_key_length, &need_deallocation);
     kaa_error_t error = kaa_client_create(&kaa_client, &props);
     if (error) {
-        debug("Error initialising Kaa client, error code %d\r\n", error);
+        debug("Failed to init Kaa client, error code %d\r\n", error);
         return;
     }
 
@@ -83,8 +112,155 @@ void setup() {
             kaa_client_get_context(kaa_client)->profile_manager
             , profile);
     if (error) {
-        debug("Error initialising Kaa profile, error code %d\r\n", error);
+        debug("Failed to update Kaa profile, error code %d\r\n", error);
         return;
+    }
+
+    error = kaa_user_manager_default_attach_to_user(kaa_client_get_context(kaa_client)->user_manager
+                                                  , KAA_USER_ID
+                                                  , KAA_USER_ACCESS_TOKEN);
+    if (error) {
+        debug("Failed to attach to user '%s', error code %d\r\n", KAA_USER_ID, error);
+        return;
+    }
+}
+
+void sendRFIDLog(rfid_t rfid)
+{
+    kaa_context_t *kaa_context = kaa_client_get_context(kaa_client);
+
+    kaa_user_log_record_t *log_record = kaa_logging_rfid_log_create();
+    if (log_record) {
+        log_record->tag = rfid;
+
+        kaa_error_t error = kaa_logging_add_record(kaa_context->log_collector, log_record);
+        if (error) {
+            debug("Failed to add log record, code %d\r\n", error);
+        } else {
+            debug("Log record sent");
+        }
+        log_record->destroy(log_record);
+    } else {
+        debug("Failed to allocate log record\r\n");
+    }
+}
+
+void notifyOfNewFencingZone(int zone_id)
+{
+    if (zone_id != UNKNOWN_GEOFENCING_ZONE_ID && current_zone_id != zone_id) {
+        current_zone_id = zone_id;
+        kaa_geo_fencing_event_class_family_geo_fencing_position_t position;
+
+        switch (zone_id) {
+        case ENUM_GEO_FENCING_ZONE_ID_HOME:
+            position = ENUM_GEO_FENCING_POSITION_HOME;
+            break;
+        case ENUM_GEO_FENCING_ZONE_ID_NEAR:
+            position = ENUM_GEO_FENCING_POSITION_NEAR;
+            break;
+        case ENUM_GEO_FENCING_ZONE_ID_AWAY:
+            position = ENUM_GEO_FENCING_POSITION_AWAY;
+            break;
+        default:
+            debug("Unknown zone");
+            return;
+        }
+
+        kaa_geo_fencing_event_class_family_geo_fencing_position_update_t *position_update =
+                          kaa_geo_fencing_event_class_family_geo_fencing_position_update_create();
+        if (position_update) {
+            position_update->position = position;
+
+            kaa_context_t *kaa_context = kaa_client_get_context(kaa_client);
+            kaa_error_t error = kaa_event_manager_send_kaa_geo_fencing_event_class_family_geo_fencing_position_update(
+                                                                        kaa_context->event_manager, position_update, NULL);
+            if (error) {
+                debug("Failed to send 'Position Update' event, code %d\r\n", error);
+            }
+
+            position_update->destroy(position_update);
+        } else {
+            debug("Failed to allocate position update event\r\n");
+        }
+    }
+}
+
+void checkFencingPosition(rfid_t rfid)
+{
+    kaa_context_t *kaa_context = kaa_client_get_context(kaa_client);
+    const kaa_root_configuration_t *configuration = kaa_configuration_manager_get_configuration(kaa_context->configuration_manager);
+
+    if (configuration) {
+        int new_zone_id = UNKNOWN_GEOFENCING_ZONE_ID;
+
+        kaa_list_t *zones_it = configuration->zones;
+        while (zones_it && (new_zone_id != UNKNOWN_GEOFENCING_ZONE_ID)) {
+            kaa_configuration_geo_fencing_zone_t *zone = (kaa_configuration_geo_fencing_zone_t *)kaa_list_get_data(zones_it);
+            if (current_zone_id != zone->id) {
+                kaa_list_t *zone_tag_it = zone->tags;
+                while (zone_tag_it && (new_zone_id != UNKNOWN_GEOFENCING_ZONE_ID)) {
+                    int64_t *tag = (int64_t *)kaa_list_get_data(zone_tag_it);
+                    if (*tag == rfid) {
+                        new_zone_id = zone->id;
+                    }
+                    zone_tag_it = kaa_list_next(zone_tag_it);
+                }
+            }
+            zones_it = kaa_list_next(zones_it);
+        }
+
+        if (new_zone_id != UNKNOWN_GEOFENCING_ZONE_ID) {
+            debug("New zone detected, id=%d", new_zone_id);
+            notifyOfNewFencingZone(new_zone_id);
+        }
+    } else {
+        debug("Skip check fencing position: configuration is null\r\n");
+    }
+}
+
+#define SKIP_BYTES(device, bytes_number) \
+                 {  \
+                      size_t counter = (bytes_number); \
+                      while (counter-- > 0 ) { device.read(); } \
+                 }
+
+void readRFID()
+{
+    if (RFID_READER.available() > 0) {
+        char buffer[RFID_LENGTH + 1];
+        buffer[RFID_LENGTH] = '\0';
+
+        delay(RFID_READ_DELAY);
+
+        if (RFID_READER.read() == RFID_LEFT_GUARD) {
+            SKIP_BYTES(RFID_READER, RFID_SKIP_LEFT);
+
+            for (int i = 0; i < RFID_LENGTH ; ++i) {
+                buffer[i] = RFID_READER.read();
+            }
+
+            SKIP_BYTES(RFID_READER, RFID_SKIP_RIGHT);
+
+            if (RFID_READER.read() == RFID_RIGHT_GUARD) {
+                RFID_READER.flush();
+                rfid_t rfid = strtoull(buffer, NULL, 16);
+
+                SerialUSB.print("Scanned ");
+                SerialUSB.println(rfid);
+
+                if (rfid != last_detected_rfid) {
+                    last_detected_rfid = rfid;
+
+                    SerialUSB.print("Detected new ");
+                    SerialUSB.println(last_detected_rfid);
+
+                    sendRFIDLog(rfid);
+                    checkFencingPosition(rfid);
+                }
+            } else {
+                RFID_READER.flush();
+            }
+        }
     }
 }
 
@@ -99,35 +275,39 @@ void process(void *context)
                 kaa_client_stop(kaa_client);
         }
     }
+
+    readRFID();
 }
 
-void loop() {
+void loop()
+{
+    if (kaa_client) {
+        debug("Starting Kaa client, to stop press \'S\'\r\n");
+        kaa_error_t error = kaa_client_start(kaa_client, process, (void*)kaa_client, 10);
+        if (error) {
+            debug("Error running Kaa client, code %d\r\n", error);
+        }
+        //kaa_client_destroy(kaa_client);
+        kaa_client = NULL;
+        debug("Switching to COM mode with ESP8266\r\n");
+    }
 
-	if (kaa_client) {
-		debug("Starting Kaa client, to stop press \'S\'\r\n");
-		kaa_error_t error = kaa_client_start(kaa_client, process, (void*)kaa_client, 10);
-		if (error) {
-			debug("Error running Kaa client, code %d\r\n", error);
-		}
-		//kaa_client_destroy(kaa_client);
-		kaa_client = NULL;
-		debug("Switching to COM mode with ESP8266\r\n");
-	}
+    uint8 l = 0;
+    if (esp8266_serial_available(esp8266_serial)) {
+        SerialUSB.write(esp8266_serial_read(esp8266_serial));
+    }
+    if (SerialUSB.available()) {
+        l = SerialUSB.read();
+        if (l == '\n') {
+            esp8266_serial_write(esp8266_serial, "\r");
+        }
+        esp8266_serial_write_byte(esp8266_serial, l);
+        if (l == '\r') {
+            esp8266_serial_write(esp8266_serial, "\n");;
+        }
+    }
 
-	uint8 l = 0;
-	if (esp8266_serial_available(esp8266_serial)) {
-		SerialUSB.write(esp8266_serial_read(esp8266_serial));
-	}
-	if (SerialUSB.available()) {
-		l = SerialUSB.read();
-		if (l == '\n') {
-			esp8266_serial_write(esp8266_serial, "\r");
-		}
-		esp8266_serial_write_byte(esp8266_serial, l);
-		if (l == '\r') {
-			esp8266_serial_write(esp8266_serial, "\n");;
-		}
-	}
+//    readRFID();
 }
 
 // Force init to be called *first*, i.e. before static object allocation.
@@ -246,15 +426,15 @@ void ledOff()
 
 void esp8266_reset()
 {
-	//Enable Chip Select signal;
-	digitalWrite(CH_PD, LOW);
-	delay(200);
-	digitalWrite(CH_PD, HIGH);
-	//reset chip
-	digitalWrite(ESP8266_RST, LOW);
-	delay(500);
-	digitalWrite(ESP8266_RST, HIGH);
-	delay(1000);
+    //Enable Chip Select signal;
+    digitalWrite(CH_PD, LOW);
+    delay(200);
+    digitalWrite(CH_PD, HIGH);
+    //reset chip
+    digitalWrite(ESP8266_RST, LOW);
+    delay(500);
+    digitalWrite(ESP8266_RST, HIGH);
+    delay(1000);
 }
 
 void debug(const char* format, ...)

@@ -1,0 +1,11 @@
+{
+    "type":"record",
+    "name":"Profile",
+    "namespace":"org.kaaproject.kaa.demo.iotworld.connectedcar",
+    "fields":[
+        {
+            "name":"platform",
+            "type":"string"
+        }
+    ]
+}

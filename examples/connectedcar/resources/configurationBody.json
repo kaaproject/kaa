@@ -1,0 +1,26 @@
+{
+    "zones":[
+        {
+            "id":"HOME",
+            "tags":[
+                4611604
+            ],
+            "__uuid":null
+        },
+        {
+            "id":"NEAR",
+            "tags":[
+                4544311
+            ],
+            "__uuid":null
+        },
+        {
+            "id":"AWAY",
+            "tags":[
+                1295020
+            ],
+            "__uuid":null
+        }
+    ],
+    "__uuid":null
+}
