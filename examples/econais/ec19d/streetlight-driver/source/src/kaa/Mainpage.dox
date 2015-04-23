@@ -1,0 +1,162 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
+/*!
+ \mainpage Kaa client C SDK
+ \section contents Table of contents
+ <ul>
+    <li>\link quickstart Quick start \endlink</li>
+    <li>\link programminguide Programming guide \endlink</li>
+    <li>\link demo Demo application \endlink</li>
+ </ul>
+
+ \section quickstart Quick start
+
+ \subsection building Building Kaa C SDK
+    To build the Kaa C SDK, do the following:<br>
+    @code
+        $ mkdir build
+        $ cd build
+        $ cmake ..
+        $ make
+        $ make install
+    @endcode
+
+    Specific build options are described in <a href='../../../README'>README</a> and 
+    \htmlonly 
+    <a onclick='window.open("https://docs.kaaproject.org/display/KAA/Endpoint+platforms+integration")'>in the official online documentation.</a>
+    \endhtmlonly  
+
+ \subsection linkage Link Kaa library to your project
+
+    If you use GNU Compiler, add the linker flag <i>-lkaac</i> to link against a dynamic 
+    library or <i>-lkaac_s</i> to link against a static library.
+
+ \subsection init_kaa Initializing Kaa library
+
+    <b>Before building a user application with the Kaa library, the developer must implement the following functions in the user-space code:</b>
+    <ul>
+        <li>@link ext_get_endpoint_public_key @endlink - generate 256-bytes RSA public key</li>
+        <li>@link ext_status_store @endlink - persist the Kaa SDK state</li>
+        <li>@link ext_status_read @endlink - restore the persisted the Kaa SDK state</li>
+    </ul>
+
+    <b>Next, the \c kaa_context_t instance should be created:</b>
+    @code
+        #include "kaa.h"
+        #include "kaa_error.h"
+        #include "kaa_common.h"
+        #include "kaa_context.h"
+
+        kaa_context_t *kaa_context = NULL;
+
+        kaa_error_t error_code = kaa_init(&kaa_context);
+        KAA_RETURN_IF_ERR(error_code);
+
+        /*
+         * Some useful work.
+         */
+
+        kaa_deinit(kaa_context);
+    @endcode
+
+    <b>To communicate with Kaa servers, at least one transport channel must be added for both Bootstrap server and Operations server.</b><br>
+    You may use the reference implementation (\link kaa_tcp_channel_create \endlink) or provide your own channel 
+    (for more details see \c kaa_transport_channel_interface_t):
+    @code
+        #include <kaa_channel_manager.h>
+        #include <platform/ext_transport_channel.h>
+        #include <platform-impl/kaa_tcp_channel.h>
+
+        kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
+
+        const size_t BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
+
+        kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
+                                               , KAA_SERVICE_USER
+                                               , KAA_SERVICE_EVENT
+                                               , KAA_SERVICE_LOGGING };
+
+        const size_t OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
+
+        kaa_transport_channel_interface_t *bootstrap_channel;
+        kaa_transport_channel_interface_t *operations_channel;
+
+        error_code = kaa_tcp_channel_create(&operations_channel
+                                          , kaa_context->logger
+                                          , OPERATIONS_SERVICES
+                                          , OPERATIONS_SERVICES_COUNT);
+        KAA_RETURN_IF_ERR(error_code);
+
+        error_code = kaa_tcp_channel_create(&bootstrap_channel
+                                          , kaa_context->logger
+                                          , BOOTSTRAP_SERVICE
+                                          , BOOTSTRAP_SERVICE_COUNT);
+        KAA_RETURN_IF_ERR(error_code);
+
+        error_code = kaa_channel_manager_add_transport_channel(kaa_context->channel_manager
+                                                             , bootstrap_channel
+                                                             , NULL);
+        KAA_RETURN_IF_ERR(error_code);
+
+        error_code = kaa_channel_manager_add_transport_channel(kaa_context->channel_manager
+                                                             , operations_channel
+                                                             , NULL);
+        KAA_RETURN_IF_ERR(error_code);
+    @endcode
+
+    <b>NOTE:</b> To use the log collection feature, go through
+    \htmlonly 
+    <a onclick='window.open("https://docs.kaaproject.org/display/KAA/Collecting+data+from+endpoints#Collectingdatafromendpoints-Coding")'>additional initialization steps.</a>
+    \endhtmlonly
+
+    <b>To finish the Kaa C SDK initialization, execute the following command:</b>
+    @code
+        kaa_error_t error_code = kaa_start(kaa_context);
+        KAA_RETURN_IF_ERR(error_code);
+    @endcode
+
+ \section programminguide Programming guide
+
+    For more information about functions supported by the Kaa C SDK, see our 
+    \htmlonly 
+    <a onclick='window.open("https://docs.kaaproject.org/display/KAA/Programming+guide")'>Programming guide:</a> 
+    \endhtmlonly
+    <ul>
+        <li>
+            \htmlonly 
+            <a onclick='window.open("https://docs.kaaproject.org/display/KAA/Collecting+endpoint+profiles")'>Collecting endpoint profiles</a> 
+            \endhtmlonly
+        </li>
+        <li>
+            \htmlonly 
+            <a onclick='window.open("https://docs.kaaproject.org/display/KAA/Messaging+across+endpoints")'>Messaging across endpoints</a> 
+            \endhtmlonly
+        </li>
+        <li>
+            \htmlonly 
+            <a onclick='window.open("https://docs.kaaproject.org/display/KAA/Collecting+data+from+endpoints")'>Collecting data from endpoints</a> 
+            \endhtmlonly
+        </li>
+    </ul>
+
+ \section demo Demo application
+
+    To better familiarize yourself with Kaa C SDK, you may look at our demo application.<br>
+    Find the demo source code in the 'example' directory located in the root of the Kaa project.<br>
+    <br>
+
+ */

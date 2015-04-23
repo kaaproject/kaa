@@ -39,6 +39,10 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new NotificationDemoBuilder());
 
         demoBuilders.add(new PowerPlantDemoBuilder());
+        demoBuilders.add(new TrafficLightsDriverDemoBuilder());
+        demoBuilders.add(new StreetLightDriverDemoBuilder());
+        demoBuilders.add(new CityLightsControllerDemoBuilder());
+
         demoBuilders.add(new VehicleTelemetryDemoBuider());
     }
 
