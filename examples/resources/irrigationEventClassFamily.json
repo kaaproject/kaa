@@ -1,24 +1,24 @@
 [
   {
-    "namespace":"org.kaaproject.kaa.demo.iotworld.watering",
+    "namespace":"org.kaaproject.kaa.demo.iotworld.irrigation",
     "type":"record",
     "classType":"event",
-    "name":"WateringControlRequest",
+    "name":"IrrigationControlRequest",
     "fields":[
       {
-        "name":"wateringIntervalSec",
+        "name":"irrigationIntervalSec",
         "type":"int"
       }
     ]
   },
   {
-    "namespace":"org.kaaproject.kaa.demo.iotworld.watering",
+    "namespace":"org.kaaproject.kaa.demo.iotworld.irrigation",
     "type":"record",
     "classType":"object",
-    "name":"WateringStatus",
+    "name":"IrrigationStatus",
     "fields":[
       {
-        "name":"timeToNextWateringMs",
+        "name":"timeToNextIrrigationMs",
         "type":"long"
       },
       {
@@ -30,32 +30,32 @@
         "type":"int"
       },
       {
-        "name":"isWatering",
+        "name":"isIrrigation",
         "type":"boolean"
       },
       {
-        "name":"wateringIntervalSec",
+        "name":"irrigationIntervalSec",
         "type":"int"
       }
     ]
   },
   {
-    "namespace":"org.kaaproject.kaa.demo.iotworld.watering",
+    "namespace":"org.kaaproject.kaa.demo.iotworld.irrigation",
     "type":"record",
     "classType":"event",
-    "name":"WateringStatusUpdate",
+    "name":"IrrigationStatusUpdate",
     "fields":[
       {
         "name":"status",
-        "type":"org.kaaproject.kaa.demo.iotworld.watering.WateringStatus"
+        "type":"org.kaaproject.kaa.demo.iotworld.irrigation.IrrigationStatus"
       }
     ]
   },
   {
-    "namespace":"org.kaaproject.kaa.demo.iotworld.watering",
+    "namespace":"org.kaaproject.kaa.demo.iotworld.irrigation",
     "type":"record",
     "classType":"event",
-    "name":"StartWateringRequest",
+    "name":"StartIrrigationRequest",
     "fields":[]
   }
 ]

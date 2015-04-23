@@ -42,6 +42,8 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new TrafficLightsDriverDemoBuilder());
         demoBuilders.add(new StreetLightDriverDemoBuilder());
         demoBuilders.add(new CityLightsControllerDemoBuilder());
+
+        demoBuilders.add(new VehicleTelemetryDemoBuider());
     }
 
     public static List<DemoBuilder> getRegisteredDemoBuilders() {

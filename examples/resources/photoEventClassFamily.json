@@ -43,7 +43,7 @@
   "namespace":"org.kaaproject.kaa.demo.iotworld.photo",
   "symbols":[
 	 "PLAYING",
-	 "STOPPED"
+	 "PAUSED"
   ],
   "classType":"object"
 },
@@ -60,7 +60,7 @@
  "namespace": "org.kaaproject.kaa.demo.iotworld.photo",
  "type": "record",
  "classType": "event",
- "name": "StopSlideShowRequest",
+ "name": "PauseSlideShowRequest",
  "fields": []
 },
 {
@@ -70,8 +70,9 @@
  "name": "PhotoFrameStatusUpdate",
  "fields": [
      {"name": "albumId", "type": ["string","null"]},
-     {"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.photo.SlideShowStatus"},
-     {"name": "thumbnail", "type": "bytes"}
+     {"name": "status", "type": ["org.kaaproject.kaa.demo.iotworld.photo.SlideShowStatus", "null"]},
+     {"name": "photoNumber", "type": ["int", "null"]},
+     {"name": "thumbnail", "type": ["bytes","null"]}
  ]
 }
 ]

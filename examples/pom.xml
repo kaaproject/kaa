@@ -49,6 +49,7 @@
         <module>powerplant-dashboard</module>
         <module>econais</module>
         <module>citylights-controller</module>
+        <module>vehicletelemetry</module>
     </modules>
 
     <dependencyManagement>
