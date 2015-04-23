@@ -1,0 +1,21 @@
+{
+    "name": "StreetLightsConfiguration",
+    "namespace": "org.kaaproject.kaa.demo.iotworld.lights.street",
+    "type": "record",
+    "fields": [
+        {
+            "name": "lightZones",
+            "type": {
+                "type": "array",
+                "items": {
+                    "name": "LightZone",
+                    "type": "record",
+                    "fields": [
+                        { "name": "zoneId", "type": "int" },
+                        { "name": "zoneStatus", "type": { "type": "enum", "name": "ZoneStatus", "symbols": ["ENABLE", "DISABLE"] } }
+                    ]
+                }
+            }
+        }
+    ]
+}
