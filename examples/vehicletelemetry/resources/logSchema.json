@@ -1,0 +1,75 @@
+{
+  "type" : "record",
+  "name" : "vehicleTracking",
+  "namespace" : "org.kaaproject.kaa.demo.vehicletelemetry",
+  "fields" : [ {
+    "name" : "gyroX",
+    "type" : "double"
+  }, {
+    "name" : "gyroY",
+    "type" : "double"
+  }, {
+    "name" : "gyroZ",
+    "type" : "double"
+  }, {
+    "name" : "accX",
+    "type" : "double"
+  }, {
+    "name" : "accY",
+    "type" : "double"
+  }, {
+    "name" : "accZ",
+    "type" : "double"
+  }, {
+    "name" : "comX",
+    "type" : "double"
+  }, {
+    "name" : "comY",
+    "type" : "double"
+  }, {
+    "name" : "comZ",
+    "type" : "double"
+  }, {
+    "name" : "satellite_fix",
+    "type" : "double"
+  }, {
+    "name" : "satellite",
+    "type" : "double"
+  }, {
+    "name" : "vehicle_speed",
+    "type" : "double"
+  }, {
+    "name" : "engine_speed",
+    "type" : "double"
+  }, {
+    "name" : "vehicleHeading",
+    "type" : "double"
+  }, {
+    "name" : "compassHeading",
+    "type" : "double"
+  }, {
+    "name" : "consumption",
+    "type" : "double"
+  }, {
+    "name" : "latitude",
+    "type" : "double"
+  }, {
+    "name" : "longitude",
+    "type" : "double"
+  }, {
+    "name" : "vehicle_id",
+    "type" : {
+      "type" : "string",
+      "avro.java.string" : "String"
+    }
+  }, {
+    "name" : "hash_code",
+    "type" : {
+      "type" : "string",
+      "avro.java.string" : "String"
+    }
+  }, {
+    "name" : "time",
+    "type" : "long"
+  } ]
+}

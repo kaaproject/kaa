@@ -46,6 +46,7 @@
         <module>photoframe</module>
         <module>verifiersdemo</module>
         <module>twitterled</module>
+        <module>vehicletelemetry</module>
     </modules>
 
     <dependencyManagement>
