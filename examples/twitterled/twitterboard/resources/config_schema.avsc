@@ -21,6 +21,36 @@
     "type" : "int",
     "displayName" : "Repeat count",
     "by_default" : 3
+  }, {
+    "name" : "backgroundColor",
+    "type" : "string",
+    "avro.java.string" : "String",
+    "displayName" : "Background color",
+    "by_default" : "0x000000"
+  }, {
+    "name" : "textColor",
+    "type" : "string",
+    "avro.java.string" : "String",
+    "displayName" : "Text color",
+    "by_default" : "0xFFFFFF"
+  }, {
+    "name" : "keywordsColor",
+    "type" : "string",
+    "avro.java.string" : "String",
+    "displayName" : "Keywords color",
+    "by_default" : "0xFF0000"
+  }, {
+    "name" : "hashTagsColor",
+    "type" : "string",
+    "avro.java.string" : "String",
+    "displayName" : "#tags color",
+    "by_default" : "0x0000FF"
+  }, {
+    "name" : "atTagsColor",
+    "type" : "string",
+    "avro.java.string" : "String",
+    "displayName" : "@tags color",
+    "by_default" : "0x0000FF"
   } ],
   "displayName" : "Twitter board configuration"
 }

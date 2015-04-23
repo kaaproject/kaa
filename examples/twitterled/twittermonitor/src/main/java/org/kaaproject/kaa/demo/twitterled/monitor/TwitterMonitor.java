@@ -19,6 +19,7 @@ import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import twitter4j.JSONArray;
 import twitter4j.JSONObject;
 import twitter4j.Status;
 import twitter4j.UserStreamAdapter;
@@ -112,7 +113,12 @@ public class TwitterMonitor implements ConfigurationListener {
                         String body = null;
                         try {
                             JSONObject object = new JSONObject();
+                            JSONArray keywords = new JSONArray();
+                            for(String keyword : config.getTwitterClientConfiguration().getFilters()){
+                                keywords.put(keyword);
+                            }
                             object.put("message", status.getText());
+                            object.put("keywords", keywords);
                             object.put("author", status.getUser().getName());
                             body = object.toString();
                             adminClient.sendNotification(notification, "notification", body);
@@ -191,6 +197,7 @@ public class TwitterMonitor implements ConfigurationListener {
 
         Hosts hosebirdHosts = new HttpHosts(Constants.STREAM_HOST);
         StatusesFilterEndpoint hosebirdEndpoint = new StatusesFilterEndpoint();
+        
         hosebirdEndpoint.trackTerms(configuration.getFilters());
 
         Authentication hosebirdAuth = new OAuth1(configuration.getConsumerKey(), configuration.getConsumerSecret(),

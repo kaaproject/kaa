@@ -17,6 +17,17 @@
     },
     "displayName" : "Author",
     "by_default" : ""
-  } ],
+  }, {
+        "name" : "keywords",
+        "type" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "avro.java.string" : "String"
+          }
+        },
+        "displayName" : "Keywords",
+        "minRowCount" : 1
+   } ],
   "displayName" : "Twitter board notification"
 }
