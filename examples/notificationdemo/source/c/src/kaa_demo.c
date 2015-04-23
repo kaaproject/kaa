@@ -296,11 +296,6 @@ int main(/*int argc, char *argv[]*/)
         return error_code;
     }
     int rval = kaa_demo_event_loop();
-    kaa_list_t * topics = NULL;
-    kaa_error_t err = kaa_get_topics(kaa_context_->notification_manager ,&topics);
-    if (!err) {
-        show_topics(topics);
-    }
 
     kaa_demo_destroy();
 

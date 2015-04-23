@@ -715,6 +715,9 @@ public class BinaryEncDec implements PlatformEncDec {
 
     private void  parseNotificationClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
         int payloadLimitPosition = buf.position() + payloadLength;
+        if (hasOption(options, CLIENT_METASYNC_NOTIFICATION_HAS_TOPIC_LIST_HASH)) {
+            payloadLimitPosition -= TOPIC_LIST_HASH_SIZE;
+        }
         NotificationClientSync nfSync = new NotificationClientSync();
         nfSync.setAppStateSeqNumber(buf.getInt());
         while (buf.position() < payloadLimitPosition) {

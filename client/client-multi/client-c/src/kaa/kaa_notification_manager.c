@@ -605,7 +605,7 @@ static kaa_error_t kaa_notify_mandatory_notification_subscribers(kaa_notificatio
     return KAA_ERR_NONE;
 }
 
-static kaa_error_t kaa_notify_optional_notification_subscribers(kaa_notification_manager_t *self, uint64_t *topic_id, const kaa_notification_t *notification)
+static kaa_error_t kaa_notify_optional_notification_subscribers(kaa_notification_manager_t *self, uint64_t *topic_id, kaa_notification_t *notification)
 {
     KAA_RETURN_IF_NIL3(self, topic_id, notification, KAA_ERR_BADPARAM);
     kaa_list_t *opt_listeners_node = kaa_list_find_next(self->optional_listeners, &kaa_find_optional_notification_listener_by_id, topic_id);
@@ -886,7 +886,7 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
                         topic_id =  KAA_NTOHLL(*((uint64_t *) reader->current));
                         reader->current += sizeof(uint64_t);
                         extension_length -= sizeof(uint64_t);
-                        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Topic id is %u", topic_id);
+                        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Topic id is %lu", topic_id);
                         err = kaa_find_topic(self, &topic_found, &topic_id);
                         if (err) {
                             reader->current += kaa_aligned_size_get(uid_length);
@@ -973,7 +973,7 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
             case TOPICS: {
                 KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received topics");
                 uint16_t topic_count = KAA_NTOHS(*((uint16_t *) reader->current));
-                KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Topic count is %lu", topic_count);
+                KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Topic count is %u", topic_count);
                 reader->current += sizeof(uint16_t);
                 extension_length -= sizeof(uint16_t);
                 kaa_list_t *topics = NULL;
