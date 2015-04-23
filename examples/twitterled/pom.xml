@@ -35,6 +35,7 @@
 	
 	<modules>
 		<module>twittermonitor</module>
+        <module>twitterboard</module>
 	</modules>
 
 </project>

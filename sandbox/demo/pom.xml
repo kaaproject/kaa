@@ -298,6 +298,38 @@
             <type>tar.gz</type>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.twitterled</groupId>
+            <artifactId>twitterboard</artifactId>
+            <version>${project.version}</version>
+            <classifier>twitterboard-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.twitterled</groupId>
+            <artifactId>twitterboard</artifactId>
+            <version>${project.version}</version>
+            <classifier>twitterboard-src-java</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.twitterled</groupId>
+            <artifactId>twittermonitor</artifactId>
+            <version>${project.version}</version>
+            <classifier>twittermonitor-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.twitterled</groupId>
+            <artifactId>twittermonitor</artifactId>
+            <version>${project.version}</version>
+            <classifier>twittermonitor-src-java</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -519,6 +551,34 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>unpack-twitterboard-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/twitterboard</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples.twitterled</includeGroupIds>
+                            <includeArtifactIds>twitterboard</includeArtifactIds>
+                            <includeClassifiers>twitterboard-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-twittermonitor-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/twittermonitor</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples.twitterled</includeGroupIds>
+                            <includeArtifactIds>twittermonitor</includeArtifactIds>
+                            <includeClassifiers>twittermonitor-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>copy</id>
                         <phase>prepare-package</phase>
                         <goals>
@@ -705,6 +765,26 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
                                     <destFileName>verifiers_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples.twitterled</groupId>
+                                    <artifactId>twitterboard</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>twitterboard-src-java</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/java</outputDirectory>
+                                    <destFileName>twitterboard.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples.twitterled</groupId>
+                                    <artifactId>twittermonitor</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>twittermonitor-src-java</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/java</outputDirectory>
+                                    <destFileName>twittermonitor.tar.gz</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>

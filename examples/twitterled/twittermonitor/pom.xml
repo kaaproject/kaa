@@ -24,7 +24,6 @@
     </parent>
     <groupId>org.kaaproject.kaa.examples.twitterled</groupId>
     <artifactId>twittermonitor</artifactId>
-    <packaging>jar</packaging>
 
     <name>Kaa twitts monitor</name>
     <url>http://kaaproject.org</url>
@@ -32,58 +31,57 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.dir>${basedir}/../../..</main.dir>
+        <hbc.twitter.version>2.2.0</hbc.twitter.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.twitter</groupId>
             <artifactId>hbc-core</artifactId>
-            <version>2.2.0</version>
+            <version>${hbc.twitter.version}</version>
         </dependency>
         <dependency>
             <groupId>com.twitter</groupId>
             <artifactId>hbc-twitter4j</artifactId>
-            <version>2.2.0</version>
+            <version>${hbc.twitter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>admin-rest-client</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>attach-sources</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>source/java/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>${project.basedir}/assembly/src-java.xml</descriptor>
+                        <descriptor>${project.basedir}/assembly/resources.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>
