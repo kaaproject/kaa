@@ -32,6 +32,7 @@
 #define TRACE_DELAY 100
 
 #define ESP_SERIAL Serial1
+#define ESP_SERIAL_BAUD_RATE 115200
 
 #define SSID "Econais"
 #define PWD "Cha5hk123"
@@ -42,7 +43,6 @@ void esp8266_serial_init(esp8266_serial_t **serial, HardwareSerial *hw_serial, u
 static esp8266_serial_t *esp8266_serial;
 
 static kaa_client_t *kaa_client;
-
 
 
 #define DBG_SIZE 256
@@ -59,7 +59,8 @@ void setup() {
 
     systick_enable();
 
-    esp8266_serial_init(&esp8266_serial, &Serial3, 115200);
+
+    esp8266_serial_init(&esp8266_serial, &Serial3, ESP_SERIAL_BAUD_RATE);
     if (!esp8266_serial) {
         debug("Serial Initialization failed, no memory\r\n");
         return;

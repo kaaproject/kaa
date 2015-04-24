@@ -556,16 +556,16 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
         error_code = kaa_tcp_channel_ping(tcp_channel);
     }
 
-    //TODO seems as not working in ESP8266
-//    if (tcp_channel->keepalive.last_sent_keepalive > tcp_channel->keepalive.last_receive_keepalive) {
-//        interval = tcp_channel->keepalive.last_sent_keepalive - tcp_channel->keepalive.last_receive_keepalive;
-//        if (interval > (tcp_channel->keepalive.keepalive_interval * 2)) {
-//            KAA_LOG_INFO(tcp_channel->logger, KAA_ERR_NONE
-//                    , "Kaa TCP channel [0x%08X] checking keepalive, ping timeout %d, going to drop connection..."
-//                    , tcp_channel->access_point.id, interval);
-//            tcp_channel->channel_state = KAA_TCP_CHANNEL_DISCONNECTING;
-//        }
-//    }
+
+    if (tcp_channel->keepalive.last_sent_keepalive > tcp_channel->keepalive.last_receive_keepalive) {
+        interval = tcp_channel->keepalive.last_sent_keepalive - tcp_channel->keepalive.last_receive_keepalive;
+        if (interval > (tcp_channel->keepalive.keepalive_interval * 2)) {
+            KAA_LOG_INFO(tcp_channel->logger, KAA_ERR_NONE
+                    , "Kaa TCP channel [0x%08X] checking keepalive, ping timeout %d, going to drop connection..."
+                    , tcp_channel->access_point.id, interval);
+            tcp_channel->channel_state = KAA_TCP_CHANNEL_DISCONNECTING;
+        }
+    }
 
 
     return error_code;
@@ -1318,17 +1318,17 @@ bool kaa_tcp_channel_connection_is_ready_to_terminate(kaa_transport_channel_inte
     KAA_RETURN_IF_NIL2(self, self->context, false);
 
     if (((kaa_tcp_channel_t *)(self->context))->channel_state == KAA_TCP_CHANNEL_DISCONNECTING) {
-        KAA_LOG_TRACE(((kaa_tcp_channel_t *)(self->context))->logger, KAA_ERR_NONE
-                                                        , "Kaa TCP channel [0x%08X] disconnecting..."
-                                                        , ((kaa_tcp_channel_t *)(self->context))->access_point.id);
+//        KAA_LOG_TRACE(((kaa_tcp_channel_t *)(self->context))->logger, KAA_ERR_NONE
+//                                                        , "Kaa TCP channel [0x%08X] disconnecting..."
+//                                                        , ((kaa_tcp_channel_t *)(self->context))->access_point.id);
         //Check if buffer is empty, close socket.
         char *buf = NULL;
         size_t buf_size = 0;
         kaa_error_t error_code = kaa_buffer_get_unprocessed_space(((kaa_tcp_channel_t *)(self->context))->out_buffer, &buf, &buf_size);
         if (error_code || buf_size) {
-            KAA_LOG_TRACE(((kaa_tcp_channel_t *)(self->context))->logger, error_code
-                , "Kaa TCP channel [0x%08X] out buffer not empty %d bytes remains to transmit, continue disconnecting..."
-                , ((kaa_tcp_channel_t *)(self->context))->access_point.id, buf_size);
+//            KAA_LOG_TRACE(((kaa_tcp_channel_t *)(self->context))->logger, error_code
+//                , "Kaa TCP channel [0x%08X] out buffer not empty %d bytes remains to transmit, continue disconnecting..."
+//                , ((kaa_tcp_channel_t *)(self->context))->access_point.id, buf_size);
             return false;
         } else {
             return true;

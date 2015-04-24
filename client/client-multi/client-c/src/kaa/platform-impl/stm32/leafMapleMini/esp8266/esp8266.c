@@ -76,8 +76,7 @@ static const char AT_CIPSEND[]                  __FLASH__ = "AT+CIPSEND";
 static const char AT_CIPSEND_TERM               __FLASH__ = '>';
 static const char AT_SEND_CONFIRM[]             __FLASH__ = " \r\nSEND OK";
 static const char AT_SEND_IPD[]                 __FLASH__ = "+IPD";
-static const char AT_SEND_IPD_OK[]              __FLASH__ = "\r\nOK\r\n\r\n";
-static const char AT_SEND_IPD_OK_UNLINK[]       __FLASH__ = "OK\r\nUnlink";
+static const char AT_SEND_IPD_OK[]              __FLASH__ = "\r\nOK\r\n";
 static const char AT_CIPSTATUS[]                __FLASH__ = "AT+CIPSTATUS";
 static const char AT_STATUS_N[]                 __FLASH__ = "STATUS:";
 static const char AT_STATUS_CON[]               __FLASH__ = "+CIPSTATUS:";
@@ -187,6 +186,19 @@ int get_next_tcp_id(esp8266_t *controler)
 		}
 	}
 	return -1;
+}
+
+bool is_have_active_connections(esp8266_t *controler)
+{
+    ESP8266_RETURN_IF_NIL(controler, false);
+
+    int id = 0;
+    for (; id < TCP_CONNECTION_LIMIT; id++) {
+        if (controler->tcp_id[id] == ESP8266_TCP_CONN_CONNECTED) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void clear_current_command(esp8266_t *controler)
@@ -312,6 +324,9 @@ esp8266_error_t esp8266_send_command_al(esp8266_t *controler,
 		return ESP8266_ERR_COMMAND_BUSY;
 	}
 
+	if (controler->ipd != ESP8266_IPD_UNDEF)
+	    return ESP8266_ERR_COMMAND_BUSY;
+
 	controler->current_command.command = (char *)command;
 	controler->current_command.callback_context = callback_context;
 	controler->current_command.command_callback = command_callback;
@@ -349,29 +364,6 @@ esp8266_error_t esp8266_send_command(esp8266_t *controler,
 }
 
 
-void ipd_command_complete(void *context
-								, const bool result
-								, const bool timeout_expired
-								, const char* command
-								, int end_offset
-								, time_t comand_complete_milis)
-{
-	if (!context)
-		return;
-
-	esp8266_t *controler = (esp8266_t *)context;
-
-	if (result) {
-		controler->command_state = ESP8266_COMMAND_RESPONCE_OK;
-	} else {
-		if (timeout_expired)
-			controler->command_state = ESP8266_COMMAND_RESPONCE_TIMEOUT;
-		else
-			controler->command_state = ESP8266_COMMAND_RESPONCE_FAIL;
-	}
-	controler->ipd = ESP8266_IPD_UNDEF;
-	controler->last_status_check = get_sys_milis();
-}
 
 
 #define CHECK_SEQUENCE(sequence, sequence_size, command_result) \
@@ -394,6 +386,112 @@ void ipd_command_complete(void *context
 			} \
 		}
 
+esp8266_error_t esp8266_ipd_process(esp8266_t *controler, uint8 read_byte)
+{
+    ESP8266_RETURN_IF_NIL(controler, ESP8266_ERR_BAD_PARAM);
+
+    switch (controler->ipd) {
+        case ESP8266_IPD_UNDEF:
+            if (is_have_active_connections(controler)) {
+                if (read_byte == AT_SEND_IPD[0]) {
+                    controler->ipd = ESP8266_IPD_START;
+                    controler->ipd_start = controler->rx_pointer - 1;
+                }
+            }
+            break;
+        case ESP8266_IPD_START:
+            if ((controler->rx_pointer - controler->ipd_start) >= SIZEOF_COMMAND(AT_SEND_IPD)) {
+                if (strncmp(controler->rx_buffer + controler->ipd_start, AT_SEND_IPD, SIZEOF_COMMAND(AT_SEND_IPD)) == 0) {
+                    controler->ipd = ESP8266_IPD_WAIT_CH;
+                    controler->rx_pointer = 0;
+                } else {
+                    controler->rx_buffer[controler->rx_pointer] = '\0';
+                    debug("IPD PROTO ERROR:%d:%d:%s:\r\n",
+                            controler->rx_pointer,
+                            controler->ipd_start,
+                            controler->rx_buffer + controler->ipd_start);
+                    controler->ipd = ESP8266_IPD_UNDEF;
+                }
+
+            }
+            break;
+        case ESP8266_IPD_WAIT_CH:
+            //Found in rx_buffer +IPD and position point to '+', rx_pointer point to unread next to 'D'
+            //Format +IPD,CH,SIZE: CH - one number from 0 to 4
+            if (read_byte == ',') {
+                //wait next char
+            } else {
+                controler->ipd_conn = get_channel(read_byte);
+                if (controler->ipd_conn >= 0 && controler->ipd_conn < TCP_CONNECTION_LIMIT) {
+                    controler->ipd = ESP8266_IPD_WAIT_SIZE;
+                    controler->ipd_start = 0;
+                } else {
+                    //Proto error
+                    controler->ipd = ESP8266_IPD_UNDEF;
+                    return ESP8266_ERR_IPD_PROTO;
+                }
+            }
+            break;
+        case ESP8266_IPD_WAIT_SIZE:
+            //Channel number is read, and now rx_pointer - 1 points to ',' before size
+            //Store pointer and read until ':', then transform to digits.
+            if (controler->ipd_start == 0)
+                controler->ipd_start = controler->rx_pointer;
+            if (read_byte == ':') {
+                //Now buffer between controler->ipd_start and controler->rx_pointer-1 contains size
+                int l = controler->rx_pointer - controler->ipd_start;
+                memcpy(controler->com_buffer,
+                        controler->rx_buffer + controler->ipd_start,
+                        l);
+
+                controler->com_buffer[l] = '\0';
+                controler->ipd_counter = atoi(controler->com_buffer);
+                if (controler->ipd_counter > 0) {
+                    controler->ipd = ESP8266_IPD_READ_BYTES;
+                    controler->rx_pointer = 0;
+                    controler->ipd_start = 0;
+                } else {
+                    //Proro error
+                    controler->ipd = ESP8266_IPD_UNDEF;
+                    return ESP8266_ERR_IPD_PROTO;
+                }
+            }
+            break;
+        case ESP8266_IPD_READ_BYTES:
+            controler->ipd_counter--;
+            if (controler->ipd_counter <= 0) {
+                //Push received buffer
+                if (controler->receive_callback) {
+                    controler->receive_callback(controler->receive_context,
+                            controler->ipd_conn,
+                            (controler->rx_buffer + controler->ipd_start),
+                            (controler->rx_pointer - controler->ipd_start));
+                }
+                //reset rx_pointer
+                controler->rx_pointer = 0;
+                //switch off ipd
+                controler->ipd_counter = 0;
+                controler->ipd_start = 0;
+                controler->ipd = ESP8266_IPD_WAIT_FINISH;
+            }
+            break;
+        case ESP8266_IPD_WAIT_FINISH:
+            if (controler->rx_pointer >= SIZEOF_COMMAND(AT_SEND_IPD_OK)) {
+                if (strncmp(controler->rx_buffer, AT_SEND_IPD_OK, SIZEOF_COMMAND(AT_SEND_IPD_OK)) == 0) {
+                    controler->ipd = ESP8266_IPD_UNDEF;
+                    controler->last_status_check = get_sys_milis();
+                    controler->rx_pointer = 0;
+                } else {
+                    controler->ipd = ESP8266_IPD_UNDEF;
+                    return ESP8266_ERR_IPD_PROTO;
+                }
+            }
+            break;
+    }
+    return ESP8266_ERR_NONE;
+}
+
+
 esp8266_error_t esp8266_process(esp8266_t *controler, time_t limit_timeout_milis)
 {
 	ESP8266_RETURN_IF_NIL(controler, ESP8266_ERR_BAD_PARAM);
@@ -412,97 +510,111 @@ esp8266_error_t esp8266_process(esp8266_t *controler, time_t limit_timeout_milis
 	while (esp8266_serial_available(controler->esp8266_serial)) {
 		read_byte = esp8266_serial_read(controler->esp8266_serial);
 		controler->rx_buffer[controler->rx_pointer++] = read_byte;
-		if (controler->ipd == ESP8266_IPD_READ_BYTES) {
 
-			controler->ipd_counter--;
-			if (controler->ipd_counter <= 0) {
-				//Push received buffer
-			    //debug("IPD Finish\r\n");
-				if (controler->receive_callback) {
-					controler->receive_callback(controler->receive_context,
-							controler->ipd_conn,
-							(controler->rx_buffer + controler->ipd_start),
-							(controler->rx_pointer - controler->ipd_start));
-				}
-				//reset rx_pointer
-				controler->rx_pointer = 0;
-				//switch off ipd
-				controler->ipd = false;
-				//controler->ipd_conn = -1;
-				controler->ipd_counter = 0;
-				controler->ipd_start = 0;
-				controler->ipd = ESP8266_IPD_WAIT_FINISH;
-			}
-		} else if (controler->ipd == ESP8266_IPD_WAIT_FINISH) {
-			if (controler->rx_pointer >= SIZEOF_COMMAND(AT_SEND_IPD_OK)) {
-				int sh = controler->rx_pointer - SIZEOF_COMMAND(AT_SEND_IPD_OK);
-				if (sh >= 0 && strncmp(controler->rx_buffer+sh, AT_SEND_IPD_OK, SIZEOF_COMMAND(AT_SEND_IPD_OK)) == 0) {
 
-					ipd_command_complete(controler,true,false,AT_SEND_IPD,0,0);
-				}
-				sh = controler->rx_pointer - SIZEOF_COMMAND(AT_SEND_IPD_OK_UNLINK);
-				if (sh >= 0 && strncmp(controler->rx_buffer+sh, AT_SEND_IPD_OK_UNLINK, SIZEOF_COMMAND(AT_SEND_IPD_OK_UNLINK)) == 0) {
-					ipd_command_complete(controler,true,false,AT_SEND_IPD,0,0);
-					if (controler->receive_callback) {
-						controler->receive_callback(controler->receive_context,controler->ipd_conn,0,-1); //Indicate connection close
-					}
-				}
+		if (controler->ipd == ESP8266_IPD_UNDEF
+		        && controler->current_command.command) {
+            CHECK_SEQUENCE(controler->current_command.success, controler->current_command.success_size, true);
+            CHECK_SEQUENCE(controler->current_command.error, controler->current_command.error_size, false);
+            CHECK_SEQUENCE(controler->current_command.error_alternative, controler->current_command.error_alternative_size, false);
+        } else {
+            e = esp8266_ipd_process(controler, read_byte);
+            if (e)
+                return e;
+        }
 
-			}
-
-		} else if (controler->current_command.command) {
-			CHECK_SEQUENCE(controler->current_command.success, controler->current_command.success_size, true);
-			CHECK_SEQUENCE(controler->current_command.error, controler->current_command.error_size, false);
-			CHECK_SEQUENCE(controler->current_command.error_alternative, controler->current_command.error_alternative_size, false);
-		} else if (controler->ipd == ESP8266_IPD_UNDEF) {
-			//Check if IPD received
-			if (read_byte == '+') {
-				controler->ipd = ESP8266_IPD_START;
-				controler->rx_pointer = 0;
-				//debug("IPD start\r\n");
-			}
-		} else if (controler->ipd == ESP8266_IPD_START) {
-			if (controler->rx_pointer >= 4) {
-				debug("PROTO ERROR\r\n");
-				controler->ipd = ESP8266_IPD_UNDEF;
-			}
-			if (read_byte == 'D') {
-				controler->ipd = ESP8266_IPD_WAIT_CH;
-			}
-		} else if (controler->ipd == ESP8266_IPD_WAIT_CH) {
-			//Found in rx_buffer +IPD and position point to '+', rx_pointer point to unread next to 'D'
-			//Format +IPD,CH,SIZE: CH - one number from 0 to 4
-			if (read_byte == ',') {
-				//wait next char
-			} else {
-				controler->ipd_conn = get_channel(read_byte);
-				if (controler->ipd_conn >= 0 && controler->ipd_conn < TCP_CONNECTION_LIMIT) {
-					controler->ipd = ESP8266_IPD_WAIT_SIZE;
-				} else {
-					//Proto error
-					debug("PROTO ERROR 1, %d : \'%c\'\r\n", controler->ipd_conn, read_byte);
-					controler->ipd = ESP8266_IPD_UNDEF;
-				}
-			}
-		} else if (controler->ipd == ESP8266_IPD_WAIT_SIZE) {
-			//Channel number is read, and now rx_pointer - 1 points to ',' before size
-			//Store pointer and read until ':', then transform to digits.
-			if (controler->ipd_start == 0)
-				controler->ipd_start = controler->rx_pointer;
-			if (read_byte == ':') {
-				//Now buffer between controler->ipd_start and controler->rx_pointer-1 contains size
-				int l = controler->rx_pointer - controler->ipd_start;
-				memcpy(controler->com_buffer,
-						controler->rx_buffer + controler->ipd_start,
-						l);
-
-				controler->com_buffer[l] = '\0';
-				controler->ipd_counter = atoi(controler->com_buffer);
-				controler->ipd = ESP8266_IPD_READ_BYTES;
-				controler->rx_pointer = 0;
-				controler->ipd_start = 0;
-			}
-		}
+//
+//		if (controler->ipd == ESP8266_IPD_READ_BYTES) {
+//
+//			controler->ipd_counter--;
+//			if (controler->ipd_counter <= 0) {
+//				//Push received buffer
+//			    //debug("IPD Finish\r\n");
+//				if (controler->receive_callback) {
+//					controler->receive_callback(controler->receive_context,
+//							controler->ipd_conn,
+//							(controler->rx_buffer + controler->ipd_start),
+//							(controler->rx_pointer - controler->ipd_start));
+//				}
+//				//reset rx_pointer
+//				controler->rx_pointer = 0;
+//				//switch off ipd
+//				controler->ipd = false;
+//				//controler->ipd_conn = -1;
+//				controler->ipd_counter = 0;
+//				controler->ipd_start = 0;
+//				controler->ipd = ESP8266_IPD_WAIT_FINISH;
+//			}
+//		} else if (controler->ipd == ESP8266_IPD_WAIT_FINISH) {
+//			if (controler->rx_pointer >= SIZEOF_COMMAND(AT_SEND_IPD_OK)) {
+//				int sh = controler->rx_pointer - SIZEOF_COMMAND(AT_SEND_IPD_OK);
+//				if (sh >= 0 && strncmp(controler->rx_buffer+sh, AT_SEND_IPD_OK, SIZEOF_COMMAND(AT_SEND_IPD_OK)) == 0) {
+//
+//					ipd_command_complete(controler,true,false,AT_SEND_IPD,0,0);
+//				}
+//				sh = controler->rx_pointer - SIZEOF_COMMAND(AT_SEND_IPD_OK_UNLINK);
+//				if (sh >= 0 && strncmp(controler->rx_buffer+sh, AT_SEND_IPD_OK_UNLINK, SIZEOF_COMMAND(AT_SEND_IPD_OK_UNLINK)) == 0) {
+//					ipd_command_complete(controler,true,false,AT_SEND_IPD,0,0);
+//					if (controler->receive_callback) {
+//						controler->receive_callback(controler->receive_context,controler->ipd_conn,0,-1); //Indicate connection close
+//					}
+//				}
+//
+//			}
+//
+//		} else if (controler->current_command.command) {
+//			CHECK_SEQUENCE(controler->current_command.success, controler->current_command.success_size, true);
+//			CHECK_SEQUENCE(controler->current_command.error, controler->current_command.error_size, false);
+//			CHECK_SEQUENCE(controler->current_command.error_alternative, controler->current_command.error_alternative_size, false);
+//		} else if (controler->ipd == ESP8266_IPD_UNDEF) {
+//			//Check if IPD received
+//			if (read_byte == '+') {
+//				controler->ipd = ESP8266_IPD_START;
+//				controler->rx_pointer = 0;
+//				//debug("IPD start\r\n");
+//			}
+//		} else if (controler->ipd == ESP8266_IPD_START) {
+//			if (controler->rx_pointer >= 4) {
+//				debug("PROTO ERROR\r\n");
+//				controler->ipd = ESP8266_IPD_UNDEF;
+//			}
+//			if (read_byte == 'D') {
+//				controler->ipd = ESP8266_IPD_WAIT_CH;
+//			}
+//		} else if (controler->ipd == ESP8266_IPD_WAIT_CH) {
+//			//Found in rx_buffer +IPD and position point to '+', rx_pointer point to unread next to 'D'
+//			//Format +IPD,CH,SIZE: CH - one number from 0 to 4
+//			if (read_byte == ',') {
+//				//wait next char
+//			} else {
+//				controler->ipd_conn = get_channel(read_byte);
+//				if (controler->ipd_conn >= 0 && controler->ipd_conn < TCP_CONNECTION_LIMIT) {
+//					controler->ipd = ESP8266_IPD_WAIT_SIZE;
+//				} else {
+//					//Proto error
+//					debug("PROTO ERROR 1, %d : \'%c\'\r\n", controler->ipd_conn, read_byte);
+//					controler->ipd = ESP8266_IPD_UNDEF;
+//				}
+//			}
+//		} else if (controler->ipd == ESP8266_IPD_WAIT_SIZE) {
+//			//Channel number is read, and now rx_pointer - 1 points to ',' before size
+//			//Store pointer and read until ':', then transform to digits.
+//			if (controler->ipd_start == 0)
+//				controler->ipd_start = controler->rx_pointer;
+//			if (read_byte == ':') {
+//				//Now buffer between controler->ipd_start and controler->rx_pointer-1 contains size
+//				int l = controler->rx_pointer - controler->ipd_start;
+//				memcpy(controler->com_buffer,
+//						controler->rx_buffer + controler->ipd_start,
+//						l);
+//
+//				controler->com_buffer[l] = '\0';
+//				controler->ipd_counter = atoi(controler->com_buffer);
+//				controler->ipd = ESP8266_IPD_READ_BYTES;
+//				controler->rx_pointer = 0;
+//				controler->ipd_start = 0;
+//			}
+//		}
 
 		if (controler->rx_pointer >= controler->rx_buffer_size) {
 			if (controler->ipd == ESP8266_IPD_READ_BYTES) {
@@ -1151,6 +1263,13 @@ esp8266_error_t esp8266_send_tcp(esp8266_t *controler, int id, const uint8* buff
 	if (size > TCP_SEND_MAX_BUFFER)
 		return ESP8266_ERR_TCP_SEND_BUFFER_TO_BIG;
 
+	if (controler->ipd != ESP8266_IPD_UNDEF)
+	    return ESP8266_ERR_COMMAND_BUSY;
+
+	if (controler->current_command.command) {
+        return ESP8266_ERR_COMMAND_BUSY;
+    }
+
 	int n = snprintf(controler->com_buffer, COMM_BUFFER_SIZE, "%s=%d,%d", AT_CIPSEND,id,size);
 	controler->com_buffer[n+1] = 0;
 
@@ -1184,13 +1303,6 @@ esp8266_error_t esp8266_send_tcp(esp8266_t *controler, int id, const uint8* buff
                         return ESP8266_ERR_NONE;
 				    } else {
 				        //Send Failed
-				        controler->rx_buffer[controler->rx_pointer] = '\0';
-//				        debug("\r\nSEND(%d) %s\r\n", controler->rx_pointer, controler->rx_buffer);
-//				        int i=0;
-//				        for(;i<controler->rx_pointer;i++) {
-//				            debug("0x%02X,", controler->rx_buffer[i]);
-//				        }
-//				        debug("\r\nEnd\r\n");
 				        controler->rx_pointer = 0;
 				        controler->last_status_check = get_sys_milis();
 				        return ESP8266_ERR_TCP_SEND_FAILED;
@@ -1329,7 +1441,6 @@ esp8266_error_t esp8266_check_status(esp8266_t *controler)
 	if ((get_sys_milis() - controler->last_status_check) < controler->status_check_timeout) {
 		return ESP8266_ERR_NONE;
 	}
-
 
 	esp8266_error_t error = esp8266_send_command(controler ,
 							status_command_complete ,
