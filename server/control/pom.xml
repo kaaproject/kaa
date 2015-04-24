@@ -312,7 +312,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>

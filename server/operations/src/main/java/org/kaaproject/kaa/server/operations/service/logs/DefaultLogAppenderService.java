@@ -93,7 +93,7 @@ public class DefaultLogAppenderService implements LogAppenderService {
         try {
             logAppender = logAppenderResolver.getAppender(appender);
         } catch (Exception e) {
-            LOG.warn("Can't initialize log appender [{}]", appender);
+            LOG.warn("Can't initialize log appender [{}]", appender, e);
         }
         return logAppender;
     }
