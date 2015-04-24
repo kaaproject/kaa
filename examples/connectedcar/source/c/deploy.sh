@@ -29,11 +29,6 @@ KAA_C_LIB_HEADER_PATH="$KAA_LIB_PATH/src"
 KAA_CPP_LIB_HEADER_PATH="$KAA_LIB_PATH/kaa"
 KAA_SDK_TAR="kaa-client*.tar.gz"
 
-function help {
-    echo "Choose one of the following: {build|run|deploy|clean}"
-    exit 1
-}
-
 function renameOld {
     mv "$MAPPLE_HOME_VAR/$MAIN_SOURCE_NAME" "$MAPPLE_HOME_VAR/$MAIN_SOURCE_NAME.$PREV_SUFFIX"
     mv "$MAPPLE_HOME_VAR/$MAKEFILE_NAME" "$MAPPLE_HOME_VAR/$MAKEFILE_NAME.$PREV_SUFFIX"
@@ -50,7 +45,7 @@ function unpackSources {
 
         if [ -z "$KAA_SDK_TAR_NAME" ]
         then
-            echo "Please, put the generated C/C++ SDK tarball into the libs/kaa folder and re-run the script."
+            echo "Please, put the generated C SDK tarball into the libs/kaa folder and re-run the script."
             exit 1
         fi
 
