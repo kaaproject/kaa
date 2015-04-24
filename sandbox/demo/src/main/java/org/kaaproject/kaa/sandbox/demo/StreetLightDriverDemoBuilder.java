@@ -84,37 +84,38 @@ public class StreetLightDriverDemoBuilder extends AbstractDemoBuilder {
             logger.info("Activating Profile filter for Light Zone {}", i);
             client.activateProfileFilter(filter.getId());
             logger.info("Created and activated Profile filter for Light Zone {}", i);
-        }
 
-        EndpointGroupDto baseEndpointGroup = null;
-        List<EndpointGroupDto> endpointGroups = client.getEndpointGroups(streetLightApplication.getId());
-        if (endpointGroups.size() == 1 && endpointGroups.get(0).getWeight() == 0) {
-            baseEndpointGroup = endpointGroups.get(0);
+            ConfigurationDto baseGroupConfiguration = new ConfigurationDto();
+            baseGroupConfiguration.setApplicationId(streetLightApplication.getId());
+            baseGroupConfiguration.setEndpointGroupId(group.getId());
+            baseGroupConfiguration.setSchemaId(configurationSchema.getId());
+            baseGroupConfiguration.setMajorVersion(configurationSchema.getMajorVersion());
+            baseGroupConfiguration.setMinorVersion(configurationSchema.getMinorVersion());
+            baseGroupConfiguration.setDescription("Base street light driver configuration");
+            String body = getConfigurationBodyForEndpointGroup(i);
+            logger.info("Configuration body: [{}]", body);
+            baseGroupConfiguration.setBody(body);
+            baseGroupConfiguration.setStatus(UpdateStatus.INACTIVE);
+            logger.info("Editing the configuration...");
+            baseGroupConfiguration = client.editConfiguration(baseGroupConfiguration);
+            logger.info("Configuration was successfully edited");
+            logger.info("Activating the configuration");
+            client.activateConfiguration(baseGroupConfiguration.getId());
+            logger.info("Configuration was activated");
         }
-
-        if (baseEndpointGroup == null) {
-            throw new RuntimeException("Can't get default endpoint group for street lights driver application!");
-        }
-
-        ConfigurationDto baseConfiguration = new ConfigurationDto();
-        baseConfiguration.setApplicationId(streetLightApplication.getId());
-        baseConfiguration.setEndpointGroupId(baseEndpointGroup.getId());
-        baseConfiguration.setSchemaId(configurationSchema.getId());
-        baseConfiguration.setMajorVersion(configurationSchema.getMajorVersion());
-        baseConfiguration.setMinorVersion(configurationSchema.getMinorVersion());
-        baseConfiguration.setDescription("Base street light driver configuration");
-        String body = FileUtils.readResource(getResourcePath("config_data.json"));
-        logger.info("Configuration body: [{}]", body);
-        baseConfiguration.setBody(body);
-        baseConfiguration.setStatus(UpdateStatus.INACTIVE);
-        logger.info("Editing the configuration...");
-        baseConfiguration = client.editConfiguration(baseConfiguration);
-        logger.info("Configuration was successfully edited");
-        logger.info("Activating the configuration");
-        client.activateConfiguration(baseConfiguration.getId());
-        logger.info("Configuration was activated");
 
         logger.info("Finished loading 'Street light driver application' data...");
+    }
+
+    private String getConfigurationBodyForEndpointGroup(int zoneId) {
+        return "{\n" +
+                "  \"lightZones\" : [ {\n" +
+                "    \"zoneId\" : " + zoneId + ",\n" +
+                "    \"zoneStatus\" : \"DISABLE\",\n" +
+                "    \"__uuid\":null\n" +
+                "  }],\n" +
+                "  \"__uuid\":null\n" +
+                "}\n";
     }
 
 }
