@@ -366,6 +366,14 @@
             <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>connectedcar</artifactId>
             <version>${project.version}</version>
+            <classifier>connectedcar-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>connectedcar</artifactId>
+            <version>${project.version}</version>
             <classifier>connectedcar-src-c</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
