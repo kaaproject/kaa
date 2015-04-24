@@ -16,18 +16,30 @@
 
 package org.kaaproject.kaa.sandbox.demo;
 
-import org.kaaproject.kaa.common.dto.*;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.TopicTypeDto;
+import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
 import org.kaaproject.kaa.server.common.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 public class TwitterBoardDemoBuilder extends AbstractDemoBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(TwitterBoardDemoBuilder.class);
 
+    private static final String KAA_CLIENT_CONFIG = "kaaClientConfiguration";
+    private static final String TOPIC_NAME = "topicName";
+    private static final String LED_BOARD_TOPIC = "Led board topic";
 
     public TwitterBoardDemoBuilder() {
         super("demo/twitterboard");
@@ -77,6 +89,25 @@ public class TwitterBoardDemoBuilder extends AbstractDemoBuilder {
         if (baseEndpointGroup == null) {
             throw new RuntimeException("Can't get default endpoint group twitter board application!");
         }
+
+        TopicDto mandatoryTopic = new TopicDto();
+        mandatoryTopic.setApplicationId(twitterBoardApplication.getId());
+        String twitterMonitorBody = FileUtils.readResource(getResourcePath("TwitterMonitor/config_data.json"));
+        logger.info("Configuration body of Twitter monitor: [{}]", twitterMonitorBody);
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> configBody = objectMapper.readValue(twitterMonitorBody, Map.class);
+        logger.info("Getting config body of Twitter monitor: [{}]", configBody);
+        Map<String, Object> kaaClientConfig = (Map<String, Object>) configBody.get(KAA_CLIENT_CONFIG);
+        logger.info("Getting kaaClientConfig of Twitter monitor: [{}]", kaaClientConfig);
+        String topicName = (String) kaaClientConfig.get(TOPIC_NAME);
+        logger.info("Got topic name: {}", topicName);
+        mandatoryTopic.setName(topicName);
+        mandatoryTopic.setType(TopicTypeDto.MANDATORY);
+        mandatoryTopic.setDescription("Twitter led topic");
+        logger.info("Creating mandatory topic: {}", mandatoryTopic);
+        mandatoryTopic = client.createTopic(mandatoryTopic);
+        client.addTopicToEndpointGroup(baseEndpointGroup, mandatoryTopic);
+        logger.info("Mandatory topic {} was created", mandatoryTopic);
 
         ConfigurationDto baseConfiguration = new ConfigurationDto();
         baseConfiguration.setApplicationId(twitterBoardApplication.getId());

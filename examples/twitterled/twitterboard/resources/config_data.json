@@ -1,5 +1,5 @@
 {
-  "defaultMessage": "Tweet #KaaIoT to get on this board!",
+  "defaultMessage": "Tweet #KaaIoT or @KaaIot to get on this board!",
   "queueSize": 0,
   "scrollSpeed": 15,
   "repeatCount": 2,
@@ -10,4 +10,3 @@
   "atTagsColor": "0x005F00",
   "__uuid": null
 }
-

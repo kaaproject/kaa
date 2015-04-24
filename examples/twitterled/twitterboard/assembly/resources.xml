@@ -29,4 +29,10 @@
             <outputDirectory></outputDirectory>
         </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>${project.basedir}/../twittermonitor/resources/config_data.json</source>
+            <outputDirectory>TwitterMonitor</outputDirectory>
+        </file>
+    </files>
 </assembly>

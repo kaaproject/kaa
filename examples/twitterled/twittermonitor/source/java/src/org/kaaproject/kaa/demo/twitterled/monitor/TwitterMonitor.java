@@ -104,63 +104,75 @@ public class TwitterMonitor implements ConfigurationListener {
         @Override
         public void run() {
             LOG.info("Starting twitter monitor thread");
-            BlockingQueue<String> msgQueue = new LinkedBlockingQueue<String>(MESSAGE_QUEUE_SIZE);
-            try {
-                final AdminClient adminClient = buildAdminClient(config.getKaaClientConfiguration());
-
-                final ApplicationDto app = filterApplications(adminClient, config.getKaaClientConfiguration());
-
-                final NotificationSchemaDto nfSchema = fetchNotificationSchema(adminClient, app, config.getKaaClientConfiguration());
-
-                final TopicDto topic = fetchNotificationTopic(adminClient, app, config.getKaaClientConfiguration());
-
-                UserStreamListener listener = new UserStreamAdapter() {
-                    
-                    @Override
-                    public void onStatus(Status status) {
-                        LOG.info("Status \n message.text -> {} \n message.user -> {}", status.getText(), status.getUser().getName());
-                        NotificationDto notification = new NotificationDto();
-                        notification.setApplicationId(app.getId());
-                        notification.setSchemaId(nfSchema.getId());
-                        notification.setTopicId(topic.getId());
-                        notification.setVersion(nfSchema.getMajorVersion());
-                        notification.setType(NotificationTypeDto.USER);
-                        notification.setExpiredAt(new Date(System.currentTimeMillis() + 60000));
-                        String body = null;
-                        try {
-                            JSONObject object = new JSONObject();
-                            JSONArray keywords = new JSONArray();
-                            for(String keyword : config.getTwitterClientConfiguration().getFilters()){
-                                keywords.put(keyword);
-                            }
-                            object.put("message", status.getText());
-                            object.put("keywords", keywords);
-                            object.put("author", status.getUser().getName());
-                            body = object.toString();
-                            adminClient.sendNotification(notification, "notification", body);
-                        } catch (Exception e) {
-                            LOG.warn("Failed to send notification : {}", body, e);
-                        }
-                    }
-                };
-
-                Twitter4jUserstreamClient twitterClient = new Twitter4jUserstreamClient(buildTwitterClient(msgQueue,
-                        config.getTwitterClientConfiguration()), msgQueue, Arrays.asList(listener), Executors.newSingleThreadExecutor());
-
-                twitterClient.connect();
-                twitterClient.process();
-                while (!stopped) {
+            while (!stopped) {
+                try {
+                    monitorUpdates();
+                } catch (Exception e) {
+                    LOG.error("Exception during twitter monitoring", e);
                     try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        LOG.info("Worker thread interrupted", e);
+                        Thread.sleep(1000L);
+                    } catch (InterruptedException ie) {
+                        LOG.error("Interrupted during recovery timeout", ie);
                     }
                 }
-                twitterClient.stop();
-                LOG.info("Twitter monitor thread stopped");
-            } catch (Exception e) {
-                LOG.error("Exception during twitter monitor", e);
             }
+        }
+
+        private void monitorUpdates() throws Exception {
+            BlockingQueue<String> msgQueue = new LinkedBlockingQueue<String>(MESSAGE_QUEUE_SIZE);
+
+            final AdminClient adminClient = buildAdminClient(config.getKaaClientConfiguration());
+
+            final ApplicationDto app = filterApplications(adminClient, config.getKaaClientConfiguration());
+
+            final NotificationSchemaDto nfSchema = fetchNotificationSchema(adminClient, app, config.getKaaClientConfiguration());
+
+            final TopicDto topic = fetchNotificationTopic(adminClient, app, config.getKaaClientConfiguration());
+
+            UserStreamListener listener = new UserStreamAdapter() {
+
+                @Override
+                public void onStatus(Status status) {
+                    LOG.info("Status \n message.text -> {} \n message.user -> {}", status.getText(), status.getUser().getName());
+                    NotificationDto notification = new NotificationDto();
+                    notification.setApplicationId(app.getId());
+                    notification.setSchemaId(nfSchema.getId());
+                    notification.setTopicId(topic.getId());
+                    notification.setVersion(nfSchema.getMajorVersion());
+                    notification.setType(NotificationTypeDto.USER);
+                    notification.setExpiredAt(new Date(System.currentTimeMillis() + 60000));
+                    String body = null;
+                    try {
+                        JSONObject object = new JSONObject();
+                        JSONArray keywords = new JSONArray();
+                        for (String keyword : config.getTwitterClientConfiguration().getFilters()) {
+                            keywords.put(keyword);
+                        }
+                        object.put("message", status.getText());
+                        object.put("keywords", keywords);
+                        object.put("author", status.getUser().getName());
+                        body = object.toString();
+                        adminClient.sendNotification(notification, "notification", body);
+                    } catch (Exception e) {
+                        LOG.warn("Failed to send notification : {}", body, e);
+                    }
+                }
+            };
+
+            Twitter4jUserstreamClient twitterClient = new Twitter4jUserstreamClient(buildTwitterClient(msgQueue,
+                    config.getTwitterClientConfiguration()), msgQueue, Arrays.asList(listener), Executors.newSingleThreadExecutor());
+
+            twitterClient.connect();
+            twitterClient.process();
+            while (!stopped) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    LOG.info("Worker thread interrupted", e);
+                }
+            }
+            twitterClient.stop();
+            LOG.info("Twitter monitor thread stopped");
         }
 
         public void shutdown() {
@@ -188,7 +200,7 @@ public class TwitterMonitor implements ConfigurationListener {
                 return schemaDto;
             }
         }
-        throw new IllegalArgumentException("Notification shema with version " + schemaVersion + " not found");
+        throw new IllegalArgumentException("Notification schema with version " + schemaVersion + " not found");
     }
 
     private static TopicDto fetchNotificationTopic(AdminClient adminClient, ApplicationDto appDto,
