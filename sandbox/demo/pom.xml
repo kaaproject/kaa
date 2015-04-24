@@ -180,6 +180,70 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>powerplant</artifactId>
+            <version>${project.version}</version>
+            <classifier>powerplant-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>powerplant</artifactId>
+            <version>${project.version}</version>
+            <classifier>powerplant-src-cpp</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>citylighs-controller</artifactId>
+            <version>${project.version}</version>
+            <classifier>citylightscontroller-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>citylighs-controller</artifactId>
+            <version>${project.version}</version>
+            <classifier>citylightscontroller-src-java</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.econais.ec19d</groupId>
+            <artifactId>streetlight-driver</artifactId>
+            <version>${project.version}</version>
+            <classifier>streetlight-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.econais.ec19d</groupId>
+            <artifactId>streetlight-driver</artifactId>
+            <version>${project.version}</version>
+            <classifier>streetlight-src-c</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.econais.ec19d</groupId>
+            <artifactId>trafficlights-driver</artifactId>
+            <version>${project.version}</version>
+            <classifier>trafficlights-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.econais.ec19d</groupId>
+            <artifactId>trafficlights-driver</artifactId>
+            <version>${project.version}</version>
+            <classifier>trafficlights-src-c</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>eventdemo</artifactId>
             <version>${project.version}</version>
             <classifier>event-resources</classifier>
@@ -505,6 +569,62 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>unpack-powerplant-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/powerplant</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>powerplant</includeArtifactIds>
+                            <includeClassifiers>powerplant-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-citylightscontroller-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/citylightscontroller</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>citylighs-controller</includeArtifactIds>
+                            <includeClassifiers>citylightscontroller-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-streetlight-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/streetlight</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples.econais.ec19d</includeGroupIds>
+                            <includeArtifactIds>streetlight-driver</includeArtifactIds>
+                            <includeClassifiers>streetlight-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-trafficlights-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/trafficlights</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples.econais.ec19d</includeGroupIds>
+                            <includeArtifactIds>trafficlights-driver</includeArtifactIds>
+                            <includeClassifiers>trafficlights-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>unpack-verifiers-resources</id>
                         <goals>
                             <goal>unpack-dependencies</goal>
@@ -615,6 +735,46 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/cpp</outputDirectory>
                                     <destFileName>event_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>powerplant</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>powerplant-src-cpp</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/cpp</outputDirectory>
+                                    <destFileName>powerplant.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>citylighs-controller</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>citylightscontroller-src-java</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/java</outputDirectory>
+                                    <destFileName>citylightscontroller.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples.econais.ec19d</groupId>
+                                    <artifactId>streetlight-driver</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>streetlight-src-c</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/c</outputDirectory>
+                                    <destFileName>streetlight.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples.econais.ec19d</groupId>
+                                    <artifactId>trafficlights-driver</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>trafficlights-src-c</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/c</outputDirectory>
+                                    <destFileName>trafficlights.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.examples</groupId>

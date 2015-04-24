@@ -45,6 +45,10 @@
         <module>notificationdemo-android</module>
         <module>photoframe</module>
         <module>verifiersdemo</module>
+        <module>powerplant</module>
+        <module>powerplant-dashboard</module>
+        <module>econais</module>
+        <module>citylights-controller</module>
         <module>vehicletelemetry</module>
     </modules>
 

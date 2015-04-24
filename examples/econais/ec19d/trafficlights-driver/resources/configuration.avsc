@@ -1,0 +1,15 @@
+{
+    "name": "TrafficLightsConfiguration",
+    "namespace": "org.kaaproject.kaa.demo.iotworld.lights.traffic",
+    "type": "record",
+    "fields": [
+        {
+            "name": "mainRoadState",
+            "type": {
+                "type": "enum",
+                "name": "MainRoadState",
+                "symbols": [ "ALLOW", "DISALLOW" ]
+            }
+        }
+    ]
+}
