@@ -67,6 +67,13 @@
  "namespace": "org.kaaproject.kaa.demo.iotworld.photo",
  "type": "record",
  "classType": "event",
+ "name": "DeleteUploadedPhotosRequest",
+ "fields": []
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.photo",
+ "type": "record",
+ "classType": "event",
  "name": "PhotoFrameStatusUpdate",
  "fields": [
      {"name": "albumId", "type": ["string","null"]},
