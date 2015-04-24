@@ -482,9 +482,6 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/*.cql</exclude>
                         <exclude>**/src/main/sh/bin/jetty.sh</exclude>
                         <exclude>**/src/main/resources/jetty/**</exclude>
-			<!-- SHA implementation from RFC 3174 -->
-			<exclude>**/sha1.c</exclude>
-			<exclude>**/sha1.h</exclude>
                     </excludes>
                 </configuration>
             </plugin>
