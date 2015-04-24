@@ -143,7 +143,7 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
                 if (boxRunning()) {
                     stopBox();
                 }
-                unloadBox();
+//                unloadBox();
             }
         }
     }
