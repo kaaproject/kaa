@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -157,28 +158,39 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
         buildDemoApplicationImpl(client);
         projectConfigs = loadProjectConfigs();
         logger.info("Demo application build finished.");
+        for (Project projectConfig : projectConfigs) {
+            String iconBase64 = loadIconBase64(projectConfig.getId());
+            projectConfig.setIconBase64(iconBase64);
+            setProjectSdkKey(projectConfig);
+        }
+    }
+    
+    private void setProjectSdkKey(Project projectConfig) {
+        SdkKey sdkKey = null;
+        if (isMiltiApplcationProject()) {
+            Map<String, SdkKey> projectsSdkMap = getProjectsSdkMap();
+            sdkKey = projectsSdkMap.get(projectConfig.getId());
+        } else {
+            sdkKey = this.sdkKey;
+        }
+        switch (projectConfig.getPlatform()) {
+            case ANDROID:
+                sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
+                break;
+            case C:
+                sdkKey.setTargetPlatform(SdkPlatform.C);
+                break;
+            case CPP:
+                sdkKey.setTargetPlatform(SdkPlatform.CPP);
+                break;
+            case JAVA:
+                sdkKey.setTargetPlatform(SdkPlatform.JAVA);
+                break;
+            default:
+                break;
+        }
         try {
-            for (Project projectConfig : projectConfigs) {
-                String iconBase64 = loadIconBase64(projectConfig.getId());
-                projectConfig.setIconBase64(iconBase64);
-                switch (projectConfig.getPlatform()) {
-                case ANDROID:
-                    sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
-                    break;
-                case C:
-                    sdkKey.setTargetPlatform(SdkPlatform.C);
-                    break;
-                case CPP:
-                    sdkKey.setTargetPlatform(SdkPlatform.CPP);
-                    break;
-                case JAVA:
-                    sdkKey.setTargetPlatform(SdkPlatform.JAVA);
-                    break;
-                default:
-                    break;
-                }
-                projectConfig.setSdkKeyBase64(Base64.encodeObject(sdkKey, Base64.URL_SAFE));
-            }
+            projectConfig.setSdkKeyBase64(Base64.encodeObject(sdkKey, Base64.URL_SAFE));
         } catch (IOException e) {
             logger.error("Unable to generate sdk key", e);
         }
@@ -193,6 +205,14 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
     
     protected String getResourcePath(String resource) {
         return resourcesPath + "/" + resource;
+    }
+    
+    protected boolean isMiltiApplcationProject() {
+        return false;
+    }
+    
+    protected Map<String, SdkKey> getProjectsSdkMap() {
+        return null;
     }
     
     private void createUsers(AdminClient client) throws Exception {

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+      <item type="id" name="ctx_menu_refresh_device" />
+      <item type="id" name="ctx_menu_rename_device" />
+      <item type="id" name="ctx_menu_detach_device" />
+</resources>
