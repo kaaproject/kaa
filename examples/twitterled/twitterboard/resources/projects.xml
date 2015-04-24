@@ -27,7 +27,7 @@ TODO
 <h2>Installation</h2>
 Download the jar file to your device by clicking the "Binary" button on the left. Make sure that the you have Java installed on your device. Run application using following command in console:
 <pre>
-$ java -jar TwitterMonitor.jar
+$ java -jar TwitterBoard.jar
 </pre>
 
 <h2>Playing around</h2>
