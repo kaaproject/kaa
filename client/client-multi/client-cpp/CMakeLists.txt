@@ -25,7 +25,7 @@ set(CMAKE_MODULE_PATH
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Modules
     )
 
-#Checks whether avrogen.sh exist
+#Checks whether avrogen.sh exists
 set (AVROGEN "avrogen.sh")
 set (WORKDIR ${CMAKE_CURRENT_SOURCE_DIR})
 message("==================================")

@@ -15,7 +15,7 @@
 #
 
 #!/bin/bash
-if ! which avrogencpp>>/dev/null ; then
+if (!(which avrogencpp>>/dev/null)); then
    echo "Error: Avrogen hasn't been installed"
    exit
 fi
