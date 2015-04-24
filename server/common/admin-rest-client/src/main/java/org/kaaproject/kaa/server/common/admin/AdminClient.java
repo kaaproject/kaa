@@ -66,43 +66,43 @@ import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
 public class AdminClient {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(AdminClient.class);
-    
+
     private RestTemplate restTemplate;
-    
+
     private String url;
-    
+
     public AdminClient(String host, int port) {
         restTemplate = new RestTemplate();
         ClientHttpRequestFactory requestFactory = new HttpComponentsRequestFactoryBasicAuth(new HttpHost(host, port, "http"));
         restTemplate.setRequestFactory(requestFactory);
         url = "http://"+host+":"+port + "/kaaAdmin/rest/api/";
     }
-    
+
     public AuthResultDto checkAuth() throws Exception {
         return restTemplate.getForObject(url + "auth/checkAuth", AuthResultDto.class);
     }
-    
+
     public void createKaaAdmin(String username, String password) throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
         params.add("username", username);
         params.add("password", password);
         restTemplate.postForObject(url + "auth/createKaaAdmin", params, Void.class);
     }
-    
+
     public void login(String username, String password) {
         HttpComponentsRequestFactoryBasicAuth requestFactory =
                 (HttpComponentsRequestFactoryBasicAuth) restTemplate.getRequestFactory();
         requestFactory.setCredentials(username, password);
     }
-    
+
     public void clearCredentials() {
         HttpComponentsRequestFactoryBasicAuth requestFactory =
                 (HttpComponentsRequestFactoryBasicAuth) restTemplate.getRequestFactory();
         requestFactory.getCredentialsProvider().clear();
     }
-    
+
     public ResultCode changePassword(String username, String oldPassword, String newPassword) throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
         params.add("username", username);
@@ -110,27 +110,27 @@ public class AdminClient {
         params.add("newPassword", newPassword);
         return restTemplate.postForObject(url + "auth/changePassword", params, ResultCode.class);
     }
-    
+
     public TenantUserDto editTenant(TenantUserDto tenant) throws Exception {
         return restTemplate.postForObject(url + "tenant", tenant, TenantUserDto.class);
     }
-    
+
     public List<TenantUserDto> getTenants() throws Exception {
         ParameterizedTypeReference<List<TenantUserDto>> typeRef = new ParameterizedTypeReference<List<TenantUserDto>>() {};
         ResponseEntity<List<TenantUserDto>> entity = restTemplate.exchange(url + "tenants", HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public ApplicationDto editApplication(ApplicationDto application) throws Exception {
         return restTemplate.postForObject(url + "application", application, ApplicationDto.class);
     }
-    
+
     public List<ApplicationDto> getApplications() throws Exception {
         ParameterizedTypeReference<List<ApplicationDto>> typeRef = new ParameterizedTypeReference<List<ApplicationDto>>() {};
         ResponseEntity<List<ApplicationDto>> entity = restTemplate.exchange(url + "applications", HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public ConfigurationSchemaDto createConfigurationSchema(ConfigurationSchemaDto configurationSchema, String schemaResource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("configurationSchema", configurationSchema);
@@ -157,12 +157,20 @@ public class AdminClient {
     }
 
     public NotificationDto sendNotification(NotificationDto notification, String notificationResource) throws Exception {
+        return sendNotification(notification, getFileResource(notificationResource));
+    }
+
+    public NotificationDto sendNotification(NotificationDto notification, String notificationResourceName, String notificationResourceBody) throws Exception {
+        return sendNotification(notification, getStringResource(notificationResourceName, notificationResourceBody));
+    }
+
+    private NotificationDto sendNotification(NotificationDto notification, ByteArrayResource resource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("notification", notification);
-        params.add("file", getFileResource(notificationResource));
+        params.add("file", resource);
         return restTemplate.postForObject(url + "sendNotification", params, NotificationDto.class);
     }
-    
+
     public EndpointNotificationDto sendUnicastNotification(NotificationDto notification, String clientKeyHash, String notificationResource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("notification", notification);
@@ -172,71 +180,89 @@ public class AdminClient {
     }
 
     public ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws Exception {
-        return restTemplate.getForObject(url + "configurationSchema/"+configurationSchemaId, ConfigurationSchemaDto.class);
+        return restTemplate.getForObject(url + "configurationSchema/" + configurationSchemaId, ConfigurationSchemaDto.class);
     }
-    
+
+    public List<ConfigurationSchemaDto> getConfigurationSchemas(String applicationId) throws Exception {
+        ParameterizedTypeReference<List<ConfigurationSchemaDto>> typeRef = new ParameterizedTypeReference<List<ConfigurationSchemaDto>>() {};
+        ResponseEntity<List<ConfigurationSchemaDto>> entity = restTemplate.exchange(url + "configurationSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public List<NotificationSchemaDto> getNotificationSchemas(String applicationId) throws Exception {
+        ParameterizedTypeReference<List<NotificationSchemaDto>> typeRef = new ParameterizedTypeReference<List<NotificationSchemaDto>>() {};
+        ResponseEntity<List<NotificationSchemaDto>> entity = restTemplate.exchange(url + "notificationSchemas/"+applicationId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public List<TopicDto> getTopics(String applicationId) throws Exception {
+        ParameterizedTypeReference<List<TopicDto>> typeRef = new ParameterizedTypeReference<List<TopicDto>>() {};
+        ResponseEntity<List<TopicDto>> entity = restTemplate.exchange(url + "topics/"+applicationId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public ProfileSchemaDto createProfileSchema(ProfileSchemaDto profileSchema, String schemaResource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("profileSchema", profileSchema);
         params.add("file", getFileResource(schemaResource));
         return restTemplate.postForObject(url + "profileSchema", params, ProfileSchemaDto.class);
     }
-    
+
     public LogSchemaDto createLogSchema(LogSchemaDto logSchema, String schemaResource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("logSchema", logSchema);
         params.add("file", getFileResource(schemaResource));
         return restTemplate.postForObject(url + "logSchema", params, LogSchemaDto.class);
     }
-    
+
     public EndpointGroupDto editEndpointGroup(EndpointGroupDto endpointGroup) throws Exception {
         return restTemplate.postForObject(url + "endpointGroup", endpointGroup, EndpointGroupDto.class);
     }
-    
+
     public List<EndpointGroupDto> getEndpointGroups(String applicationId) throws Exception {
         ParameterizedTypeReference<List<EndpointGroupDto>> typeRef = new ParameterizedTypeReference<List<EndpointGroupDto>>() {};
         ResponseEntity<List<EndpointGroupDto>> entity = restTemplate.exchange(url + "endpointGroups/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public List<ConfigurationRecordDto> getConfigurationRecords(String endpointGroupId, boolean includeDeprecated) throws Exception {
         ParameterizedTypeReference<List<ConfigurationRecordDto>> typeRef = new ParameterizedTypeReference<List<ConfigurationRecordDto>>() {};
-        ResponseEntity<List<ConfigurationRecordDto>> entity = restTemplate.exchange(url + 
-                "configurationRecords?endpointGroupId={endpointGroupId}&includeDeprecated={includeDeprecated}", 
+        ResponseEntity<List<ConfigurationRecordDto>> entity = restTemplate.exchange(url +
+                        "configurationRecords?endpointGroupId={endpointGroupId}&includeDeprecated={includeDeprecated}",
                 HttpMethod.GET, null, typeRef, endpointGroupId, includeDeprecated);
         return entity.getBody();
     }
-    
+
     public ConfigurationDto editConfiguration(ConfigurationDto configuration) throws Exception {
         return restTemplate.postForObject(url + "configuration", configuration, ConfigurationDto.class);
     }
-    
+
     public ConfigurationDto activateConfiguration(String configurationId) throws Exception {
         return restTemplate.postForObject(url + "activateConfiguration", configurationId, ConfigurationDto.class);
     }
-    
+
     public void editUserConfiguration(EndpointUserConfigurationDto endpointUserConfiguration) throws Exception {
         restTemplate.postForLocation(url + "userConfiguration", endpointUserConfiguration);
     }
-    
+
     public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws Exception {
         return restTemplate.postForObject(url + "profileFilter", profileFilter, ProfileFilterDto.class);
     }
-    
+
     public ProfileFilterDto activateProfileFilter(String profileFilterId) throws Exception {
         return restTemplate.postForObject(url + "activateProfileFilter", profileFilterId, ProfileFilterDto.class);
     }
-    
+
     public UserDto editUser(UserDto user) throws Exception {
         return restTemplate.postForObject(url + "user", user, UserDto.class);
     }
-    
+
     public List<UserDto> getUsers() throws Exception {
         ParameterizedTypeReference<List<UserDto>> typeRef = new ParameterizedTypeReference<List<UserDto>>() {};
         ResponseEntity<List<UserDto>> entity = restTemplate.exchange(url + "users", HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public LogSchemaDto getLogSchemaByApplicationTokenAndSchemaVersion(String applicationToken, int schemaVersion) throws Exception {
         ParameterizedTypeReference<LogSchemaDto> typeRef = new ParameterizedTypeReference<LogSchemaDto>() {};
         ResponseEntity<LogSchemaDto> entity = restTemplate.exchange(url + "logSchema/"+applicationToken+"/"+schemaVersion, HttpMethod.GET, null, typeRef);
@@ -246,40 +272,40 @@ public class AdminClient {
     public EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws Exception {
         return restTemplate.postForObject(url + "eventClassFamily", eventClassFamily, EventClassFamilyDto.class);
     }
-    
+
     public void addEventClassFamilySchema(String eventClassFamilyId, String schemaResource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("eventClassFamilyId", eventClassFamilyId);
         params.add("file", getFileResource(schemaResource));
         restTemplate.postForLocation(url + "addEventClassFamilySchema", params);
     }
-    
+
     public List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId,
-            int version,
-            EventClassType type) throws Exception {
+                                                                       int version,
+                                                                       EventClassType type) throws Exception {
         ParameterizedTypeReference<List<EventClassDto>> typeRef = new ParameterizedTypeReference<List<EventClassDto>>() {};
-        ResponseEntity<List<EventClassDto>> entity = 
+        ResponseEntity<List<EventClassDto>> entity =
                 restTemplate.exchange(
-                        url + "eventClasses?eventClassFamilyId={eventClassFamilyId}&version={version}&type={type}", 
+                        url + "eventClasses?eventClassFamilyId={eventClassFamilyId}&version={version}&type={type}",
                         HttpMethod.GET, null, typeRef, eventClassFamilyId, version, type);
         return entity.getBody();
     }
-    
+
     public ApplicationEventFamilyMapDto editApplicationEventFamilyMap(ApplicationEventFamilyMapDto applicationEventFamilyMap) throws Exception {
         return restTemplate.postForObject(url + "applicationEventMap", applicationEventFamilyMap, ApplicationEventFamilyMapDto.class);
     }
-    
+
     public LogAppenderDto editLogAppenderDto(LogAppenderDto logAppenderDto) throws Exception {
         return restTemplate.postForObject(url + "logAppender", logAppenderDto, LogAppenderDto.class);
     }
-    
+
     public UserVerifierDto editUserVerifierDto(UserVerifierDto userVerifierDto) throws Exception {
         return restTemplate.postForObject(url + "userVerifier", userVerifierDto, UserVerifierDto.class);
     }
-    
+
     public void downloadSdk(SdkKey key, String destination) throws Exception {
         FileResponseExtractor extractor = new FileResponseExtractor( new File(destination));
-        final List<MediaType> mediaTypes = Arrays.asList(MediaType.APPLICATION_JSON, 
+        final List<MediaType> mediaTypes = Arrays.asList(MediaType.APPLICATION_JSON,
                 MediaType.valueOf("application/*+json"));
         final HttpEntity<SdkKey> requestEntity = new HttpEntity<>(key);
         RequestCallback request = new RequestCallback() {
@@ -287,7 +313,7 @@ public class AdminClient {
             @Override
             public void doWithRequest(ClientHttpRequest httpRequest)
                     throws IOException {
-                
+
                 httpRequest.getHeaders().setAccept(mediaTypes);
                 Object requestBody = requestEntity.getBody();
                 Class<?> requestType = requestBody.getClass();
@@ -309,10 +335,10 @@ public class AdminClient {
         restTemplate.execute(url + "sdk", HttpMethod.POST, request, extractor);
         logger.info("Downloaded sdk to file '{}'", extractor.getDestFile());
     }
-    
+
     public FileData downloadSdk(SdkKey key) throws Exception {
         FileDataResponseExtractor extractor = new FileDataResponseExtractor();
-        final List<MediaType> mediaTypes = Arrays.asList(MediaType.APPLICATION_JSON, 
+        final List<MediaType> mediaTypes = Arrays.asList(MediaType.APPLICATION_JSON,
                 MediaType.valueOf("application/*+json"));
         final HttpEntity<SdkKey> requestEntity = new HttpEntity<>(key);
         RequestCallback request = new RequestCallback() {
@@ -320,7 +346,7 @@ public class AdminClient {
             @Override
             public void doWithRequest(ClientHttpRequest httpRequest)
                     throws IOException {
-                
+
                 httpRequest.getHeaders().setAccept(mediaTypes);
                 Object requestBody = requestEntity.getBody();
                 Class<?> requestType = requestBody.getClass();
@@ -342,28 +368,28 @@ public class AdminClient {
         FileData data = restTemplate.execute(url + "sdk", HttpMethod.POST, request, extractor);
         return data;
     }
-    
+
     public void flushSdkCache() throws Exception {
         restTemplate.postForLocation(url + "flushSdkCache", null);
     }
-    
+
     private static final Pattern fileNamePattern = Pattern.compile("^(.+?)filename=\"(.+?)\"");
-    
+
     private static class FileResponseExtractor implements ResponseExtractor<Object>
     {
-        
+
         private final File destDir;
         private File destFile;
-     
+
         private FileResponseExtractor ( File destDir )
         {
             this.destDir = destDir;
         }
-        
+
         public File getDestFile() {
             return destFile;
         }
-     
+
         @Override
         public Object extractData ( ClientHttpResponse response ) throws IOException
         {
@@ -379,24 +405,24 @@ public class AdminClient {
                 fileName = "downloaded-" + System.currentTimeMillis();
             }
             destFile = new File(destDir, fileName);
-            
+
             InputStream  is = response.getBody();
             OutputStream os = new BufferedOutputStream( new FileOutputStream(destFile));
-     
+
             IOUtils.copyLarge( is, os );
             IOUtils.closeQuietly( is );
             IOUtils.closeQuietly( os );
-     
+
             return null;
         }
     }
-    
+
     private static class FileDataResponseExtractor implements ResponseExtractor<FileData>
     {
-        
+
         private FileDataResponseExtractor ()
         {}
-        
+
         @Override
         public FileData extractData ( ClientHttpResponse response ) throws IOException
         {
@@ -411,12 +437,12 @@ public class AdminClient {
             if (StringUtils.isBlank(fileName)) {
                 fileName = "downloaded-" + System.currentTimeMillis();
             }
-            
-            
+
+
             InputStream  is = response.getBody();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             OutputStream os = new BufferedOutputStream( baos);
-     
+
             IOUtils.copyLarge( is, os );
             IOUtils.closeQuietly( is );
             IOUtils.closeQuietly( os );
@@ -440,6 +466,15 @@ public class AdminClient {
         };
         return bar;
     }
-    
-    
+
+    private static ByteArrayResource getStringResource(final String resourceName, final String resourceBody) throws IOException {
+        byte[] data = resourceBody.getBytes("UTF-8");
+        ByteArrayResource bar = new ByteArrayResource(data) {
+            @Override
+            public String getFilename() {
+                return resourceName;
+            }
+        };
+        return bar;
+    }
 }
