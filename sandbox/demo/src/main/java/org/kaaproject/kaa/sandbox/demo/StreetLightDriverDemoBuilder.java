@@ -1,14 +1,18 @@
 package org.kaaproject.kaa.sandbox.demo;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
+import org.kaaproject.kaa.server.common.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class StreetLightDriverDemoBuilder extends AbstractDemoBuilder {
 
@@ -23,12 +27,12 @@ public class StreetLightDriverDemoBuilder extends AbstractDemoBuilder {
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
 
-        logger.info("Loading 'Street light driver demo application' data...");
+        logger.info("Loading 'Street lights driver application' data...");
 
         loginTenantAdmin(client);
 
         ApplicationDto streetLightApplication = new ApplicationDto();
-        streetLightApplication.setName("Street Light demo");
+        streetLightApplication.setName("Street light driver");
         streetLightApplication = client.editApplication(streetLightApplication);
 
         sdkKey.setApplicationId(streetLightApplication.getId());
@@ -42,7 +46,7 @@ public class StreetLightDriverDemoBuilder extends AbstractDemoBuilder {
         logger.info("Creating profile schema...");
         ProfileSchemaDto profileSchemaDto = new ProfileSchemaDto();
         profileSchemaDto.setApplicationId(streetLightApplication.getId());
-        profileSchemaDto.setName("StreetLightsProfile schema");
+        profileSchemaDto.setName("StreetLightsDriverProfile schema");
         profileSchemaDto.setDescription("Street light driver profile schema");
         profileSchemaDto = client.createProfileSchema(profileSchemaDto, getResourcePath("profile.avsc"));
         logger.info("Profile schema version: {}", profileSchemaDto.getMajorVersion());
@@ -82,7 +86,35 @@ public class StreetLightDriverDemoBuilder extends AbstractDemoBuilder {
             logger.info("Created and activated Profile filter for Light Zone {}", i);
         }
 
-        logger.info("Finished loading 'Street light driver demo application' data...");
+        EndpointGroupDto baseEndpointGroup = null;
+        List<EndpointGroupDto> endpointGroups = client.getEndpointGroups(streetLightApplication.getId());
+        if (endpointGroups.size() == 1 && endpointGroups.get(0).getWeight() == 0) {
+            baseEndpointGroup = endpointGroups.get(0);
+        }
+
+        if (baseEndpointGroup == null) {
+            throw new RuntimeException("Can't get default endpoint group for street lights driver application!");
+        }
+
+        ConfigurationDto baseConfiguration = new ConfigurationDto();
+        baseConfiguration.setApplicationId(streetLightApplication.getId());
+        baseConfiguration.setEndpointGroupId(baseEndpointGroup.getId());
+        baseConfiguration.setSchemaId(configurationSchema.getId());
+        baseConfiguration.setMajorVersion(configurationSchema.getMajorVersion());
+        baseConfiguration.setMinorVersion(configurationSchema.getMinorVersion());
+        baseConfiguration.setDescription("Base street light driver configuration");
+        String body = FileUtils.readResource(getResourcePath("config_data.json"));
+        logger.info("Configuration body: [{}]", body);
+        baseConfiguration.setBody(body);
+        baseConfiguration.setStatus(UpdateStatus.INACTIVE);
+        logger.info("Editing the configuration...");
+        baseConfiguration = client.editConfiguration(baseConfiguration);
+        logger.info("Configuration was successfully edited");
+        logger.info("Activating the configuration");
+        client.activateConfiguration(baseConfiguration.getId());
+        logger.info("Configuration was activated");
+
+        logger.info("Finished loading 'Street light driver application' data...");
     }
 
 }

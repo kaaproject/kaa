@@ -1,0 +1,16 @@
+{
+  "lightZones" : [ {
+    "zoneId" : 0,
+    "zoneStatus" : "DISABLE"
+  }, {
+    "zoneId" : 1,
+    "zoneStatus" : "DISABLE"
+  }, {
+    "zoneId" : 2,
+    "zoneStatus" : "DISABLE"
+  }, {
+    "zoneId" : 3,
+    "zoneStatus" : "DISABLE"
+  } ],
+  "__uuid":null
+}
