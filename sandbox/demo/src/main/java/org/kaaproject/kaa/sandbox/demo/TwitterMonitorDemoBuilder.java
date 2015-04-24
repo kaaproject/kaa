@@ -107,7 +107,7 @@ public class TwitterMonitorDemoBuilder extends AbstractDemoBuilder {
         logger.info("All available notification schemas for twitter board application: [{}]", notificationSchemas);
         NotificationSchemaDto twitterBoardNotificationSchema = getTwitterBoardNotificationSchema(notificationSchemas);
         Integer twitterBoardNfSchemaVersion = twitterBoardNotificationSchema.getMajorVersion();
-        logger.info("Twitter board app token was gotten: {}", twitterBoardNfSchemaVersion);
+        logger.info("Twitter board schema version was gotten: {}", twitterBoardNfSchemaVersion);
         kaaClientConfig.put(APP_TOKEN, twitterBoardAppToken);
         kaaClientConfig.put(NF_SCHEMA_VERSION, twitterBoardNfSchemaVersion);
         body = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(configBody);

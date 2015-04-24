@@ -46,12 +46,12 @@ public class PowerPlantDemoBuilder extends AbstractDemoBuilder {
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
 
-        logger.info("Loading 'Power Plant Demo Application' data...");
+        logger.info("Loading 'Power plant demo application' data...");
 
         loginTenantAdmin(client);
 
         ApplicationDto powerPlantApplication = new ApplicationDto();
-        powerPlantApplication.setName("Power plant demo");
+        powerPlantApplication.setName("Power plant");
         powerPlantApplication = client.editApplication(powerPlantApplication);
 
         sdkKey.setApplicationId(powerPlantApplication.getId());
@@ -95,7 +95,7 @@ public class PowerPlantDemoBuilder extends AbstractDemoBuilder {
 
         ConfigurationSchemaDto configurationSchema = new ConfigurationSchemaDto();
         configurationSchema.setApplicationId(powerPlantApplication.getId());
-        configurationSchema.setName("ConfigurationDemo schema");
+        configurationSchema.setName("PowerPlantConfigSchema");
         configurationSchema.setDescription("Default configuration schema for the power plant application");
         configurationSchema = client.createConfigurationSchema(configurationSchema, getResourcePath("configSchema.json"));
 
@@ -119,7 +119,7 @@ public class PowerPlantDemoBuilder extends AbstractDemoBuilder {
         baseConfiguration.setSchemaId(configurationSchema.getId());
         baseConfiguration.setMajorVersion(configurationSchema.getMajorVersion());
         baseConfiguration.setMinorVersion(configurationSchema.getMinorVersion());
-        baseConfiguration.setDescription("Base power plant demo configuration");
+        baseConfiguration.setDescription("Base power plant configuration");
         String body = FileUtils.readResource(getResourcePath("configData.json"));
         logger.info("Configuration body: [{}]", body);
         baseConfiguration.setBody(body);
@@ -130,7 +130,7 @@ public class PowerPlantDemoBuilder extends AbstractDemoBuilder {
         client.activateConfiguration(baseConfiguration.getId());
         logger.info("Configuration was activated");
 
-        logger.info("Finished loading 'Power plant Demo Application' data.");
+        logger.info("Finished loading 'Power plant application' data.");
     }
 
 }

@@ -104,7 +104,7 @@ public class StreetLightDriverDemoBuilder extends AbstractDemoBuilder {
             logger.info("Configuration was activated");
         }
 
-        logger.info("Finished loading 'Street light driver application' data...");
+        logger.info("Finished loading 'Street lights driver application' data...");
     }
 
     private String getConfigurationBodyForEndpointGroup(int zoneId) {

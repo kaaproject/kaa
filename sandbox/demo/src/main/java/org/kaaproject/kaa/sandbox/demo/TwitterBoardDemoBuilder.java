@@ -39,7 +39,6 @@ public class TwitterBoardDemoBuilder extends AbstractDemoBuilder {
 
     private static final String KAA_CLIENT_CONFIG = "kaaClientConfiguration";
     private static final String TOPIC_NAME = "topicName";
-    private static final String LED_BOARD_TOPIC = "Led board topic";
 
     public TwitterBoardDemoBuilder() {
         super("demo/twitterboard");

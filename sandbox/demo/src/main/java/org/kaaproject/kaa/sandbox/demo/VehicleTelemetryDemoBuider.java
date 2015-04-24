@@ -40,12 +40,12 @@ public class VehicleTelemetryDemoBuider extends AbstractDemoBuilder {
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
 
-        logger.info("Loading 'Vehicle Telemetry Demo Application' data...");
+        logger.info("Loading 'Vehicle telemetry application' data...");
 
         loginTenantAdmin(client);
 
         ApplicationDto vehicleTelemetryApplication = new ApplicationDto();
-        vehicleTelemetryApplication.setName("Vehicle telemetry demo");
+        vehicleTelemetryApplication.setName("Vehicle telemetry");
         vehicleTelemetryApplication = client.editApplication(vehicleTelemetryApplication);
 
         sdkKey.setApplicationId(vehicleTelemetryApplication.getId());
@@ -86,7 +86,7 @@ public class VehicleTelemetryDemoBuider extends AbstractDemoBuilder {
 
 
 
-        logger.info("Finished loading 'Data Collection Demo Application' data.");
+        logger.info("Finished loading 'Vehicle telemetry application' data.");
     }
 
 }
