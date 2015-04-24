@@ -1,14 +1,18 @@
 package org.kaaproject.kaa.sandbox.demo;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
+import org.kaaproject.kaa.server.common.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class StreetLightDriverDemoBuilder extends AbstractDemoBuilder {
 
@@ -23,12 +27,12 @@ public class StreetLightDriverDemoBuilder extends AbstractDemoBuilder {
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
 
-        logger.info("Loading 'Street light driver demo application' data...");
+        logger.info("Loading 'Street lights driver application' data...");
 
         loginTenantAdmin(client);
 
         ApplicationDto streetLightApplication = new ApplicationDto();
-        streetLightApplication.setName("Street Light demo");
+        streetLightApplication.setName("Street light driver");
         streetLightApplication = client.editApplication(streetLightApplication);
 
         sdkKey.setApplicationId(streetLightApplication.getId());
@@ -42,7 +46,7 @@ public class StreetLightDriverDemoBuilder extends AbstractDemoBuilder {
         logger.info("Creating profile schema...");
         ProfileSchemaDto profileSchemaDto = new ProfileSchemaDto();
         profileSchemaDto.setApplicationId(streetLightApplication.getId());
-        profileSchemaDto.setName("StreetLightsProfile schema");
+        profileSchemaDto.setName("StreetLightsDriverProfile schema");
         profileSchemaDto.setDescription("Street light driver profile schema");
         profileSchemaDto = client.createProfileSchema(profileSchemaDto, getResourcePath("profile.avsc"));
         logger.info("Profile schema version: {}", profileSchemaDto.getMajorVersion());
@@ -80,9 +84,38 @@ public class StreetLightDriverDemoBuilder extends AbstractDemoBuilder {
             logger.info("Activating Profile filter for Light Zone {}", i);
             client.activateProfileFilter(filter.getId());
             logger.info("Created and activated Profile filter for Light Zone {}", i);
+
+            ConfigurationDto baseGroupConfiguration = new ConfigurationDto();
+            baseGroupConfiguration.setApplicationId(streetLightApplication.getId());
+            baseGroupConfiguration.setEndpointGroupId(group.getId());
+            baseGroupConfiguration.setSchemaId(configurationSchema.getId());
+            baseGroupConfiguration.setMajorVersion(configurationSchema.getMajorVersion());
+            baseGroupConfiguration.setMinorVersion(configurationSchema.getMinorVersion());
+            baseGroupConfiguration.setDescription("Base street light driver configuration");
+            String body = getConfigurationBodyForEndpointGroup(i);
+            logger.info("Configuration body: [{}]", body);
+            baseGroupConfiguration.setBody(body);
+            baseGroupConfiguration.setStatus(UpdateStatus.INACTIVE);
+            logger.info("Editing the configuration...");
+            baseGroupConfiguration = client.editConfiguration(baseGroupConfiguration);
+            logger.info("Configuration was successfully edited");
+            logger.info("Activating the configuration");
+            client.activateConfiguration(baseGroupConfiguration.getId());
+            logger.info("Configuration was activated");
         }
 
-        logger.info("Finished loading 'Street light driver demo application' data...");
+        logger.info("Finished loading 'Street light driver application' data...");
+    }
+
+    private String getConfigurationBodyForEndpointGroup(int zoneId) {
+        return "{\n" +
+                "  \"lightZones\" : [ {\n" +
+                "    \"zoneId\" : " + zoneId + ",\n" +
+                "    \"zoneStatus\" : \"DISABLE\",\n" +
+                "    \"__uuid\":null\n" +
+                "  }],\n" +
+                "  \"__uuid\":null\n" +
+                "}\n";
     }
 
 }
