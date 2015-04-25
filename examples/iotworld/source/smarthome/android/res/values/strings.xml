@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Smart Home</string>
+    
+    <string name="please_wait">Please wait...</string>
+    <string name="please_login">Please login</string>
+    <string name="username_email">Username/Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="logOut">Log out</string>
+    <string name="unexpected_error">Unexpected error occurred!</string>
+    <string name="refresh">Refresh</string>
+    <string name="no_devices">No devices</string>
+    
+    <string name="my_home">My home</string>
+    
+    <string name="nav_home">My home</string>
+    <string name="nav_climate">Climate</string>
+    <string name="nav_music">Music</string>
+    <string name="nav_photos">Photos</string>
+    <string name="nav_lightning">Lightning</string>
+    <string name="nav_irrigation">Irrigation</string>
+    <string name="nav_signout">Sign out</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    
+    <string name="unknown">Unknown</string>
+
+    <string name="no_device_info">No information available</string>
+    
+    <string name="connect">Connect</string>
+    
+    <string-array name="geofencing_status">
+        <item>Auto</item>
+        <item>Off</item>
+        <item>On</item>
+    </string-array>
+    
+    <string name="geofencing">Geofencing</string>
+    
+    <string name="current_temperature">Current</string>
+    <string name="target_temperature">Target</string>
+    <string name="cooling">Cooling</string>
+    <string name="heating">Heating</string>
+    <string name="idle">Idle</string>    
+    <string name="degree_text">%1$s°F</string>
+    <string name="climate_device_temperature_text">Temperature %1$d/%2$d° F</string>
+    
+    <string name="no_track_selected">No track selected</string>
+    <string name="albums">Albums</string>
+    <string name="no_albums">No albums</string>
+    <string name="no_tracks">No tracks</string>
+    
+    <string name="track">Track</string>
+    <string name="time">Time</string>
+    
+    <string name="track_count_text">%1$s tracks</string>
+    
+    <string name="volume">Volume</string>
+    
+    <string name="no_album_selected">No album selected</string>
+    
+    <string name="photos_count_text">%1$s photos</string>
+    <string name="photo_number_text">Photo %1$s of %2$s</string>
+    
+    <string-array name="slideshow_status">
+        <item>Paused</item>
+        <item>Playing</item>
+    </string-array>
+    
+    <string name="no_photo_albums">No photo albums</string>
+    
+    <string name="upload_photo">Upload photo</string>
+    
+    <string name="upload_photo_caps">UPLOAD PHOTO</string>
+
+    <string name="delete_uploaded_photos">Delete uploaded photos</string>
+    
+    <string name="no_bulbs">No bulbs</string>
+    
+    <string-array name="irrigation_status">
+        <item>Idle</item>
+        <item>Irrigation in progress</item>
+    </string-array>
+    
+    <string name="irrigation_scheduled_text">Irrigation scheduled in %1$s</string>
+    
+    <string name="water_spent_this_month_text">%1$s l used this month</string>
+    
+    <string name="irrigation_interval_text">Interval %1$s</string>
+    
+    <string name="left_till_next_irrigation">Left till next irrigation</string>
+    
+    <string name="left_in_the_tank">Left in the tank</string>
+    
+    <string name="spent_this_month">Spent this month</string>
+    
+    <string name="irrigate_now">Irrigate now</string>
+    
+    <string name="irrigate_now_caps">IRRIGATE NOW</string>
+    
+    <string name="actions_for_device_title">Actions for \"%1$s\"</string>
+    <string name="device_actions">Device actions</string>
+    <string name="rename">Rename</string>
+    <string name="detach">Disconnect</string>
+    
+    <string name="rename_device">Rename device</string>
+    
+    <string name="cancel">Cancel</string>
+    
+    <string name="msg_device_qr_code_status">Place a qr code of device inside the viewfinder rectangle to scan it.</string>
+    
+    
+</resources>

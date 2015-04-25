@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="true">
+          <shape android:shape="oval">
+              <solid android:color="@color/irrigation_seek_color_activated" />
+              <size  android:width="24dp"
+                     android:height="24dp"/>
+          </shape>
+    </item>
+
+    <item android:state_focused="true">
+          <shape android:shape="oval">
+              <solid android:color="@color/irrigation_seek_color_activated" />
+              <size  android:width="24dp"
+                     android:height="24dp"/>
+               <stroke android:color="@android:color/transparent"
+                     android:width="5dp"/>
+          </shape>
+    </item>
+
+    <item android:state_selected="true">
+          <shape android:shape="oval">
+              <solid android:color="@color/irrigation_seek_color_activated" />
+              <size  android:width="24dp"
+                     android:height="24dp"/>
+               <stroke android:color="@android:color/transparent"
+                     android:width="5dp"/>
+          </shape>
+    </item>
+
+    <item>
+          <shape android:shape="oval">
+              <solid android:color="@color/irrigation_seek_color_activated" />
+              <size  android:width="24dp"
+                     android:height="24dp"/>
+               <stroke android:color="@android:color/transparent"
+                     android:width="5dp"/>
+          </shape>
+    </item>
+        
+</selector>

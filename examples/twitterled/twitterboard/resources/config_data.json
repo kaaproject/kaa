@@ -1,0 +1,12 @@
+{
+  "defaultMessage": "Tweet #KaaIoT or @KaaIot to get on this board!",
+  "queueSize": 0,
+  "scrollSpeed": 15,
+  "repeatCount": 2,
+  "backgroundColor": "0x000000",
+  "textColor": "0x606060",
+  "keywordsColor": "0xFAAF42",
+  "hashTagsColor": "0x00005F",
+  "atTagsColor": "0x005F00",
+  "__uuid": null
+}

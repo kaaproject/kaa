@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!-- Drop Shadow Stack -->
+    <item>
+        <shape android:shape="oval" >
+            <padding
+                android:bottom="1dp"
+                android:left="1dp"
+                android:right="1dp"
+                android:top="1dp" />
+            <solid android:color="#00000000" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval" >
+            <padding
+                android:bottom="1dp"
+                android:left="1dp"
+                android:right="1dp"
+                android:top="1dp" />
+            <solid android:color="#10000000" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval" >
+            <padding
+                android:bottom="1dp"
+                android:left="1dp"
+                android:right="1dp"
+                android:top="1dp" />
+
+            <solid android:color="#20000000" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval" >
+            <padding
+                android:bottom="1dp"
+                android:left="1dp"
+                android:right="1dp"
+                android:top="1dp" />
+
+            <solid android:color="#30000000" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval" >
+            <padding
+                android:bottom="1dp"
+                android:left="1dp"
+                android:right="1dp"
+                android:top="1dp" />
+            <solid android:color="#50000000" />
+        </shape>
+    </item>
+    <!-- CONTENT LAYER -->
+    <item>
+        <selector>
+            <item android:state_checked="false">
+                <shape android:shape="oval" >
+                    <solid android:color="@color/bulb_switch_color_disabled" />
+                    <size
+                        android:height="20dp"
+                        android:width="20dp" />
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="oval" >
+                    <solid android:color="@color/bulb_seek_color_activated" />
+                    <size
+                        android:height="20dp"
+                        android:width="20dp" />
+                </shape>
+            </item>
+        </selector>
+    </item>
+
+</layer-list>

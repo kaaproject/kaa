@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" 
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/action_upload_photo"
+        android:icon="@drawable/ic_upload"
+        android:title="@string/upload_photo"
+        android:orderInCategory="199"
+        app:showAsAction="ifRoom"
+        app:actionLayout="@layout/upload_button"
+        />
+    <item
+        android:id="@+id/delete_uploaded_photos"
+        app:showAsAction="never"
+        android:title="@string/delete_uploaded_photos"
+        android:orderInCategory="198"/>
+</menu>

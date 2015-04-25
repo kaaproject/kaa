@@ -1,0 +1,9 @@
+<resources>
+    <dimen name="list_horizontal_margin">10dp</dimen>
+    <dimen name="list_vertical_margin">10dp</dimen>
+    
+    <dimen name="geofencing_spinner_width">100dp</dimen>
+    
+    <dimen name="track_duration_width">150dp</dimen>
+
+</resources>
