@@ -90,12 +90,10 @@ public class StreetLightDriverDemoBuilder extends AbstractDemoBuilder {
             baseGroupConfiguration.setEndpointGroupId(group.getId());
             baseGroupConfiguration.setSchemaId(configurationSchema.getId());
             baseGroupConfiguration.setMajorVersion(configurationSchema.getMajorVersion());
-            baseGroupConfiguration.setMinorVersion(configurationSchema.getMinorVersion());
             baseGroupConfiguration.setDescription("Base street light driver configuration");
             String body = getConfigurationBodyForEndpointGroup(i);
             logger.info("Configuration body: [{}]", body);
             baseGroupConfiguration.setBody(body);
-            baseGroupConfiguration.setStatus(UpdateStatus.INACTIVE);
             logger.info("Editing the configuration...");
             baseGroupConfiguration = client.editConfiguration(baseGroupConfiguration);
             logger.info("Configuration was successfully edited");
@@ -109,12 +107,18 @@ public class StreetLightDriverDemoBuilder extends AbstractDemoBuilder {
 
     private String getConfigurationBodyForEndpointGroup(int zoneId) {
         return "{\n" +
-                "  \"lightZones\" : [ {\n" +
-                "    \"zoneId\" : " + zoneId + ",\n" +
-                "    \"zoneStatus\" : \"DISABLE\",\n" +
-                "    \"__uuid\":null\n" +
-                "  }],\n" +
-                "  \"__uuid\":null\n" +
+                "  \"lightZones\": \n" +
+                "    { \"array\": \n" +
+                "      [\n" +
+                "        {\"zoneId\":\n" +
+                "          { \"int\": " + zoneId + " },\n" +
+                "          \"zoneStatus\": \n" +
+                "            { \"org.kaaproject.kaa.demo.iotworld.lights.street.ZoneStatus\" :\"DISABLE\"},\n" +
+                "          \"__uuid\": null\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
+                "  \"__uuid\": null\n" +
                 "}\n";
     }
 
