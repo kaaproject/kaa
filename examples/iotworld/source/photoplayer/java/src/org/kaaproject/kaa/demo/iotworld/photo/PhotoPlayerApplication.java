@@ -209,6 +209,11 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
     }
 
     @Override
+    public void onEvent(DeleteUploadedPhotosRequest event, String originator) {
+        LOG.info("Receieved delete uploaded photos request {} from {}", event, originator);
+    }
+
+    @Override
     public void onEvent(GeoFencingStatusRequest event, String originator) {
         LOG.info("Receieved geo fencing status request {} from {}", event, originator);
         GeoFencingStatusResponse response = new GeoFencingStatusResponse(state.getOperationMode(), state.getGeoFencingPosition());
