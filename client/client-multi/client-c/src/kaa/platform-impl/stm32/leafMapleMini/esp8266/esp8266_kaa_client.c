@@ -289,7 +289,6 @@ kaa_error_t configuration_update(void *context, const kaa_root_configuration_t *
 {
     KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
     KAA_LOG_INFO(((kaa_client_t *)context)->kaa_context->logger, KAA_ERR_NONE, "New configuration received");
-    ((kaa_client_t *)context)->blink_timeout = 1 + rand() % 3;
     return KAA_ERR_NONE;
 }
 

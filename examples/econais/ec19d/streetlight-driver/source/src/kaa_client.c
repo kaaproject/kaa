@@ -32,7 +32,6 @@ typedef long long int64_t;
 #include "kaa/platform/ext_sha.h"
 #include "kaa/platform/ext_transport_channel.h"
 #include "kaa/platform/ext_system_logger.h"
-#include "kaa/platform/time.h"
 #include "kaa/platform-impl/kaa_tcp_channel.h"
 #include "kaa/kaa_bootstrap_manager.h"
 #include "kaa/kaa_channel_manager.h"

@@ -18,6 +18,7 @@
 #define EXT_SYSTEM_LOGGER_H_
 
 #include "../kaa_error.h"
+#include "../platform/time.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,7 +40,7 @@ void ext_write_log(FILE * sink, const char * buffer, size_t message_size);
  *
  * @return  time_t      Time in seconds.
  */
-time_t ext_get_systime();
+kaa_time_t ext_get_systime();
 
 /**
  * @brief Put formated LOG prefix in buffer.
