@@ -19,14 +19,17 @@ import org.slf4j.LoggerFactory;
 
 public class PhotoPlayerState {
 
+    private static final Logger LOG = LoggerFactory.getLogger(PhotoPlayerApplication.class);
+
     private static final String ALBUM_ID_PROP_NAME = "album.id";
     private static final String GEO_FENCING_PROP_NAME = "geofencing.position";
     private static final String OPERATION_MODE_PROP_NAME = "operation.mode";
     private static final String LISTENERS_PROP_NAME = "listeners";
     private static final String LISTENERS_PROP_DEFAULT = "";
     private static final String LISTENERS_PROP_DELIMITER = ",";
-
-    private static final Logger LOG = LoggerFactory.getLogger(PhotoPlayerApplication.class);
+    
+    private static final String DEVICE_PROP_NAME = "device.name"; 
+    private static final String DEFAULT_DEVICE_NAME = "Raspbery Pi 2 Photo Player";
 
     private final String fileName;
     private final Properties properties;
@@ -105,6 +108,15 @@ public class PhotoPlayerState {
         if(listeners.add(originator)){
             persist();
         }
+    }
+    
+    public String getDeviceName() {
+        return properties.getProperty(DEVICE_PROP_NAME, DEFAULT_DEVICE_NAME);
+    }
+
+    public void setDeviceName(String deviceName) {
+        properties.setProperty(DEVICE_PROP_NAME, deviceName);
+        persist();
     }
 
     public Set<String> getListeners() {

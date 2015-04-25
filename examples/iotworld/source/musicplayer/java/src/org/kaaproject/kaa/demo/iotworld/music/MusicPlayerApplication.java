@@ -45,8 +45,6 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
 
     private static final String STATE_FILE_NAME = "player.state";
 
-    private static final String DEFAULT_DEVICE_NAME = "Raspbery Pi 2 Music Player";
-
     private static final int UPDATE_INTERVAL = 1000;
 
     private static final String DEFAULT_DIR = "E:\\music\\";
@@ -68,7 +66,6 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
 
     private volatile Mp3Player player;
     private volatile StatusUpdateThread statusUpdateThread;
-    private volatile String deviceName = DEFAULT_DEVICE_NAME;
 
     private volatile PlaybackStatus pendingStatus = PlaybackStatus.STOPPED;
     private Map<String, PlaybackStatusUpdate> lastUpdates = new ConcurrentHashMap<String, PlaybackStatusUpdate>();
@@ -147,13 +144,13 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
     @Override
     public void onEvent(DeviceInfoRequest event, String originator) {
         LOG.info("Receieved info request {}", event);
-        deviceECF.sendEvent(new DeviceInfoResponse(new DeviceInfo(deviceName, "UK")), originator);
+        deviceECF.sendEvent(new DeviceInfoResponse(new DeviceInfo(state.getDeviceName(), "UK")), originator);
     }
 
     @Override
     public void onEvent(DeviceChangeNameRequest event, String originator) {
-        deviceName = event.getName();
-        deviceECF.sendEventToAll(new DeviceInfoResponse(new DeviceInfo(deviceName, "UK")));
+        state.setDeviceName(event.getName());
+        deviceECF.sendEventToAll(new DeviceInfoResponse(new DeviceInfo(state.getDeviceName(), "UK")));
     }
 
     @Override

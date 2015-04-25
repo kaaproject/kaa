@@ -134,7 +134,7 @@ public class PhotoLibrary {
     }
 
     public String upload(PhotoUploadRequest event) {
-        String uploadAlbumPath = rootPath + File.separator + UPLOADS_ALBUM_NAME;
+        String uploadAlbumPath = getUploadsAlbumId();
         File uploadAlbumFile = new File(uploadAlbumPath);
         if (!uploadAlbumFile.exists()) {
             LOG.info("Creating upload album");
@@ -156,6 +156,10 @@ public class PhotoLibrary {
             generateThumbnail(album);
         }
         return album.getAlbumId();
+    }
+
+    public String getUploadsAlbumId() {
+        return rootPath + File.separator + UPLOADS_ALBUM_NAME;
     }
     
     private void generateThumbnails(Collection<PhotoAlbum> albums) {
@@ -210,5 +214,19 @@ public class PhotoLibrary {
 
     public PhotoAlbum getAlbum(String albumId) {
         return albums.get(albumId);
+    }
+
+    public void deleteUploadsAlbum() {
+        String uploadDirPath = getUploadsAlbumId();
+        File uploadDir = new File(uploadDirPath);
+        for(File child : uploadDir.listFiles()){
+            if(!child.delete()){
+                LOG.warn("Failed to delete {} {}", child.getAbsolutePath(), child.isDirectory() ? "dir" : "file");
+            }
+        }
+        if(!uploadDir.delete()){
+            LOG.warn("Failed to delete {}", uploadDir.getAbsolutePath());
+        }
+        albums.remove(uploadDirPath);
     }
 }

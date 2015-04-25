@@ -25,6 +25,10 @@ public class MusicPlayerState {
     private static final String LISTENERS_PROP_NAME = "listeners";
     private static final String LISTENERS_PROP_DEFAULT = "";
     private static final String LISTENERS_PROP_DELIMITER = ",";
+    
+    private static final String DEVICE_PROP_NAME = "device.name"; 
+    private static final String DEFAULT_DEVICE_NAME = "Raspbery Pi 2 Photo Player";
+
 
     private static final Logger LOG = LoggerFactory.getLogger(MusicPlayerApplication.class);
 
@@ -105,6 +109,15 @@ public class MusicPlayerState {
         if(listeners.add(originator)){
             persist();
         }
+    }
+    
+    public String getDeviceName() {
+        return properties.getProperty(DEVICE_PROP_NAME, DEFAULT_DEVICE_NAME);
+    }
+
+    public void setDeviceName(String deviceName) {
+        properties.setProperty(DEVICE_PROP_NAME, deviceName);
+        persist();
     }
 
     public Set<String> getListeners() {

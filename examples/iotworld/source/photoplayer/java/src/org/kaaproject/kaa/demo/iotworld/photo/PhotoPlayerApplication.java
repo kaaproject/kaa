@@ -44,8 +44,6 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
 
     private static final String STATE_FILE_NAME = "player.state";
 
-    private static final String DEFAULT_DEVICE_NAME = "Raspbery Pi 2 Photo Player";
-
     private static final String DEFAULT_DIR = "H:\\photos\\";
 
     private static final String DEFAULT_ACCESS_CODE = "DUMMY_ACCESS_CODE";
@@ -64,8 +62,6 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
     private final PhotoPlayerState state;
 
     private final SlideShowFrame frame;
-
-    private volatile String deviceName = DEFAULT_DEVICE_NAME;
 
     private volatile SlideShow player;
 
@@ -154,13 +150,13 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
     @Override
     public void onEvent(DeviceInfoRequest event, String originator) {
         LOG.info("Receieved info request {}", event);
-        deviceECF.sendEvent(new DeviceInfoResponse(new DeviceInfo(deviceName, "UK")), originator);
+        deviceECF.sendEvent(new DeviceInfoResponse(new DeviceInfo(state.getDeviceName(), "UK")), originator);
     }
 
     @Override
     public void onEvent(DeviceChangeNameRequest event, String originator) {
-        deviceName = event.getName();
-        deviceECF.sendEventToAll(new DeviceInfoResponse(new DeviceInfo(deviceName, "UK")));
+        state.setDeviceName(event.getName());
+        deviceECF.sendEventToAll(new DeviceInfoResponse(new DeviceInfo(state.getDeviceName(), "UK")));
     }
 
     @Override
@@ -211,6 +207,11 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
     @Override
     public void onEvent(DeleteUploadedPhotosRequest event, String originator) {
         LOG.info("Receieved delete uploaded photos request {} from {}", event, originator);
+        if(player != null && player.getAlbumId().equals(library.getUploadsAlbumId())){
+            player.stop();
+        }
+        library.deleteUploadsAlbum();
+        photoECF.sendEvent(new PhotoAlbumsResponse(library.buildAlbumInfoList()), originator);
     }
 
     @Override

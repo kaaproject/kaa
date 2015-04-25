@@ -43,6 +43,8 @@ public class SlideShow implements PreviewGenerationListener {
     private volatile boolean initialized;
     private volatile int currentIndex;
     private volatile SlideShowStatus status;
+    
+    private volatile SlideShowPanel panel;
 
     private final ExecutorService pool = Executors.newSingleThreadExecutor();
 
@@ -68,6 +70,9 @@ public class SlideShow implements PreviewGenerationListener {
     }
     
     public void stop() {
+        if(panel != null){
+            frame.remove(panel);
+        }
         thread.stopped = true;
         thread.interrupt();
     }
@@ -147,7 +152,6 @@ public class SlideShow implements PreviewGenerationListener {
 
         private static final int ALPHA_STEP = 20;
         private static final int WAIT_FOR_PREVIEW_SLEEP_TIME = 50;
-        private SlideShowPanel panel;
         private volatile boolean started;
         private volatile boolean paused;
         private volatile boolean stopped;
@@ -217,7 +221,7 @@ public class SlideShow implements PreviewGenerationListener {
         }
 
         private void changeAlpha(int from, int to, int step, long duration, final BufferedImage current, final BufferedImage next) throws InterruptedException {
-            final SlideShowPanel panel = this.panel;
+            final SlideShowPanel panel = SlideShow.this.panel;
             if (to == from) {
                 return;
             }
