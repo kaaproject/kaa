@@ -1,5 +1,6 @@
 package org.kaaproject.kaa.sandbox.demo;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
@@ -11,10 +12,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 public class CityLightsControllerDemoBuilder extends AbstractDemoBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(CityLightsControllerDemoBuilder.class);
+
+    private static final String KAA_CLIENT_CONFIG = "kaaClientConfiguration";
+    private static final String TRAFFIC_LIGHTS_APPLICATION_NAME = "Traffic lights driver";
+    private static final String STREET_LIGHT_APPLICATION_NAME = "Street light driver";
+    private static final String TRAFFIC_LIGHTS_APP_TOKEN_PROPERTY = "trafficLightsAppToken";
+    private static final String STREET_LIGHT_APP_TOKEN_PROPERTY = "streetLightsAppToken";
 
     public CityLightsControllerDemoBuilder() {
         super("demo/citylightscontroller");
@@ -23,7 +31,7 @@ public class CityLightsControllerDemoBuilder extends AbstractDemoBuilder {
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
 
-        logger.info("Loading 'Configuration demo application' data...");
+        logger.info("Loading 'City lights controller application' data...");
 
         loginTenantAdmin(client);
 
@@ -40,8 +48,8 @@ public class CityLightsControllerDemoBuilder extends AbstractDemoBuilder {
         logger.info("Creating configuration schema...");
         ConfigurationSchemaDto configurationSchema = new ConfigurationSchemaDto();
         configurationSchema.setApplicationId(cityLightsDemoApplication.getId());
-        configurationSchema.setName("City lights controller demo schema");
-        configurationSchema.setDescription("Default configuration schema for the city lights controller demo application");
+        configurationSchema.setName("City lights controller schema");
+        configurationSchema.setDescription("Default configuration schema for the city lights controller application");
         configurationSchema = client.createConfigurationSchema(configurationSchema, getResourcePath("config_schema.avsc"));
         logger.info("Configuration schema version: {}", configurationSchema.getMajorVersion());
         sdkKey.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
@@ -54,7 +62,7 @@ public class CityLightsControllerDemoBuilder extends AbstractDemoBuilder {
         }
 
         if (baseEndpointGroup == null) {
-            throw new RuntimeException("Can't get default endpoint group for the city lights controller demo application!");
+            throw new RuntimeException("Can't get default endpoint group for the city lights controller application!");
         }
 
         ConfigurationDto baseConfiguration = new ConfigurationDto();
@@ -63,9 +71,34 @@ public class CityLightsControllerDemoBuilder extends AbstractDemoBuilder {
         baseConfiguration.setSchemaId(configurationSchema.getId());
         baseConfiguration.setMajorVersion(configurationSchema.getMajorVersion());
         baseConfiguration.setMinorVersion(configurationSchema.getMinorVersion());
-        baseConfiguration.setDescription("Base city lights controller demo configuration");
+        baseConfiguration.setDescription("Base city lights controller configuration");
         String body = FileUtils.readResource(getResourcePath("config_data.json"));
         logger.info("Configuration body: [{}]", body);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> configBody = objectMapper.readValue(body, Map.class);
+        logger.info("Getting config body: [{}]", configBody);
+        Map<String, Object> kaaClientConfig = (Map<String, Object>) configBody.get(KAA_CLIENT_CONFIG);
+        logger.info("Getting kaaClientConfig: [{}]", kaaClientConfig);
+        logger.info("Getting traffic lights and traffic lights app tokens...");
+        List<ApplicationDto> applications = client.getApplications();
+        logger.info("All available applications: [{}]", applications);
+        ApplicationDto trafficLightsApplication = getApplicationWithName(applications, TRAFFIC_LIGHTS_APPLICATION_NAME);
+        if (trafficLightsApplication == null) {
+            logger.error(formErrorLogMessage(TRAFFIC_LIGHTS_APPLICATION_NAME));
+            throw new RuntimeException("Can't get '" + TRAFFIC_LIGHTS_APPLICATION_NAME + "' application!");
+        }
+        logger.info(TRAFFIC_LIGHTS_APPLICATION_NAME + " application was found: {}", trafficLightsApplication);
+        ApplicationDto streetLightApplication = getApplicationWithName(applications, STREET_LIGHT_APPLICATION_NAME);
+        if (streetLightApplication == null) {
+            logger.error(formErrorLogMessage(STREET_LIGHT_APPLICATION_NAME));
+            throw new RuntimeException("Can't get '" + STREET_LIGHT_APPLICATION_NAME + "' application!");
+        }
+        logger.info(STREET_LIGHT_APPLICATION_NAME + " application was found: {}", streetLightApplication);
+        kaaClientConfig.put(TRAFFIC_LIGHTS_APP_TOKEN_PROPERTY, trafficLightsApplication.getApplicationToken());
+        kaaClientConfig.put(STREET_LIGHT_APP_TOKEN_PROPERTY, streetLightApplication.getApplicationToken());
+        body = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(configBody);
+        logger.info("Configuration body after altering: [{}]", body);
         baseConfiguration.setBody(body);
         baseConfiguration.setStatus(UpdateStatus.INACTIVE);
         logger.info("Editing the configuration...");
@@ -75,6 +108,22 @@ public class CityLightsControllerDemoBuilder extends AbstractDemoBuilder {
         client.activateConfiguration(baseConfiguration.getId());
         logger.info("Configuration was activated");
 
-        logger.info("Finished loading 'City lights controller demo application' data...");
+        logger.info("Finished loading 'City lights controller application' data...");
+    }
+
+    private ApplicationDto getApplicationWithName(List<ApplicationDto> applications, String name) {
+        for (ApplicationDto application : applications) {
+            if (name.equalsIgnoreCase(application.getName())) {
+                return application;
+            }
+        }
+        return null;
+    }
+
+    private String formErrorLogMessage(String applicationName) {
+        return  "No application with name as '" + applicationName +
+                "' was found. Possible reasons: " +
+                "1. You haven't added '" + applicationName + " application' to DemoBuildersRegistry; " +
+                "2. City lights controller build is registered before " + applicationName + ".";
     }
 }

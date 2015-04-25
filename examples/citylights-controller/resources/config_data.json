@@ -1,23 +1,23 @@
 {
   "streetLightsConfiguration" : [ {
     "zoneId" : 0,
-    "tags" : [ 42, 43, 44, 45, 46, 47 ],
+    "tags" : [ 6609455 ],
     "__uuid":null
   }, {
     "zoneId" : 1,
-    "tags" : [ 51, 52, 53, 54 ],
+    "tags" : [ 6606552 ],
     "__uuid":null
   }, {
     "zoneId" : 2,
-    "tags" : [ 61, 62, 63, 64 ],
+    "tags" : [ 6606305 ],
     "__uuid":null
   }, {
     "zoneId" : 3,
-    "tags" : [ 70, 71, 72, 73 ],
+    "tags" : [ 6505594 ],
     "__uuid":null
   } ],
   "trafficLightsConfiguration" : {
-    "mainRoadAllowTags" : [ 42, 43, 44 ],
+    "mainRoadAllowTags" : [ 6454533, 6505593 ],
     "allowStateDuration" : 30,
     "disallowStateDuration" : 15,
     "pedestrianWalkDuration" : 20,
@@ -25,7 +25,7 @@
   },
   "kaaClientConfiguration" : {
     "host" : "localhost",
-    "port" : 10001,
+    "port" : 8080,
     "login" : "devuser",
     "password" : "devuser123",
     "trafficLightsAppToken" : "change_me",

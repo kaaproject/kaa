@@ -28,7 +28,7 @@ public class TrafficLightsDriverDemoBuilder extends AbstractDemoBuilder {
         loginTenantAdmin(client);
 
         ApplicationDto trafficLightsApplication = new ApplicationDto();
-        trafficLightsApplication.setName("Traffic lights driver demo");
+        trafficLightsApplication.setName("Traffic lights driver");
         trafficLightsApplication = client.editApplication(trafficLightsApplication);
 
         sdkKey.setApplicationId(trafficLightsApplication.getId());
