@@ -28,7 +28,7 @@ public class StreetLightDriverDemoBuilder extends AbstractDemoBuilder {
         loginTenantAdmin(client);
 
         ApplicationDto streetLightApplication = new ApplicationDto();
-        streetLightApplication.setName("Street Light demo");
+        streetLightApplication.setName("Street light driver");
         streetLightApplication = client.editApplication(streetLightApplication);
 
         sdkKey.setApplicationId(streetLightApplication.getId());

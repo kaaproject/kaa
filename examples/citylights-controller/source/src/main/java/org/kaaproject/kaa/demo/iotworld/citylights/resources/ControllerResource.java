@@ -79,7 +79,7 @@ public class ControllerResource {
         return Response.noContent().build();
     }
 
-    private synchronized void processRfidLog(RfidLog log) {
+    private static synchronized void processRfidLog(RfidLog log) {
         String tag = toTag(log.getTag());
         LOG.info("processing tag: {}", tag);
         CityLightsConfiguration configuration = kaaClient.getConfiguration();
@@ -90,7 +90,7 @@ public class ControllerResource {
         processStreetLights(tag, configuration);
     }
 
-    private synchronized void processTrafficLog(TrafficLightsLog log) {
+    private static synchronized void processTrafficLog(TrafficLightsLog log) {
         LOG.info("processing traffic lights log: {}", log);
         if (log.getEventType() != EventType.BUTTON) {
             LOG.warn("unsupported event type {}", log.getEventType());
@@ -99,7 +99,7 @@ public class ControllerResource {
         processPedestrianWalkRequest();
     }
 
-    private void processTraficLights(String tag, CityLightsConfiguration configuration) {
+    private static void processTraficLights(String tag, CityLightsConfiguration configuration) {
         TrafficLightsConfiguration trafficConfig = configuration.getTrafficLightsConfiguration();
         Set<String> allowTags = toTags(trafficConfig.getMainRoadAllowTags());
         if (allowTags.contains(tag)) {
@@ -128,7 +128,7 @@ public class ControllerResource {
         }
     }
 
-    private void processPedestrianWalkRequest() {
+    private static void processPedestrianWalkRequest() {
         LOG.info("processing pedestrian walk request");
         final CityLightsConfiguration configuration = kaaClient.getConfiguration();
         trafficState.setPedestrianPending(true);
@@ -169,7 +169,7 @@ public class ControllerResource {
         }
     }
 
-    private void processStreetLights(String tag, CityLightsConfiguration configuration) {
+    private static void processStreetLights(String tag, CityLightsConfiguration configuration) {
         List<StreetLightsConfiguration> streetLightsConfigList = configuration.getStreetLightsConfiguration();
         if (streetState.getZoneId() == null) {
             for (StreetLightsConfiguration streetLightsConfig : streetLightsConfigList) {
@@ -238,7 +238,7 @@ public class ControllerResource {
         }
     }
 
-    private boolean isValid(CityLightsConfiguration configuration) {
+    private static boolean isValid(CityLightsConfiguration configuration) {
         // simple validation of configuration
         return !configuration.getKaaClientConfiguration().getHost().isEmpty();
     }
