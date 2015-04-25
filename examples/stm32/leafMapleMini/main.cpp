@@ -38,6 +38,7 @@
 #define TRACE_DELAY 100
 
 #define ESP_SERIAL Serial1
+#define ESP_SERIAL_BAUD_RATE 115200
 
 #define RFID_READER         Serial2
 #define RFID_BAUD_RATE      9600
@@ -86,7 +87,8 @@ void setup()
 
     systick_enable();
 
-    esp8266_serial_init(&esp8266_serial, &Serial3, 115200);
+
+    esp8266_serial_init(&esp8266_serial, &Serial3, ESP_SERIAL_BAUD_RATE);
     if (!esp8266_serial) {
         debug("Serial Initialization failed, no memory\r\n");
         return;

@@ -330,8 +330,11 @@ kaa_error_t kaa_client_process_channel_connected(kaa_client_t *kaa_client)
     if (buffer_size > 0) {
         esp_error = esp8266_send_tcp(kaa_client->controler, kaa_client->channel_fd, buffer, buffer_size);
         if (esp_error) {
-            KAA_LOG_ERROR(kaa_client->kaa_context->logger, KAA_ERR_NONE, "ESP8266 send tcp failed, code: %d", esp_error);
-            kaa_client_channel_error(kaa_client);
+            if (esp_error != ESP8266_ERR_COMMAND_BUSY) {
+                KAA_LOG_ERROR(kaa_client->kaa_context->logger,
+                        KAA_ERR_NONE, "ESP8266 send tcp failed, code: %d", esp_error);
+                kaa_client_channel_error(kaa_client);
+            }
         } else {
             KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE,
                     "Channel(0x%08X) sending %lu bytes", kaa_client->channel_id, buffer_size);
