@@ -1,13 +1,13 @@
 {
     "host" : "localhost",
-    "port" : 10001,
+    "port" : 10009,
     "ssl" : false,
     "verifySslCert" : false,
     "username" : null,
     "password" : null,
     "connectionPoolSize" : 1,
     "header" : false,
-    "path" : "/data",
+    "path" : "/api/data/car",
     "method" : "PUT",
     "mimeType" : "TEXT"
 }
