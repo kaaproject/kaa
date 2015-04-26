@@ -23,7 +23,7 @@
     <artifactId>connectedcar</artifactId>
     <packaging>pom</packaging>
 
-    <name>Kaa configuration demo</name>
+    <name>Kaa connected car demo</name>
     <url>http://kaaproject.org</url>
 
     <properties>
