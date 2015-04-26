@@ -28,7 +28,60 @@
 
     <properties>
         <main.dir>${basedir}/../..</main.dir>
+        <pi4j.version>1.1-SNAPSHOT</pi4j.version>
+        <slf4j.version>1.7.7</slf4j.version>
+        <logback.version>1.1.2</logback.version>
+        <spark-core.version>1.1.1</spark-core.version>
+        <zxing.version>3.2.0</zxing.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-core</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>${zxing.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>${zxing.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sparkjava</groupId>
+            <artifactId>spark-core</artifactId>
+            <version>${spark-core.version}</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -40,6 +93,7 @@
                         <descriptor>${project.basedir}/assembly/smarthome-src-android.xml</descriptor>
                         <descriptor>${project.basedir}/assembly/musicplayer-src-java.xml</descriptor>
                         <descriptor>${project.basedir}/assembly/photoplayer-src-java.xml</descriptor>
+                        <descriptor>${project.basedir}/assembly/irrigation-src-android.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
