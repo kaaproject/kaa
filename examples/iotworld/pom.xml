@@ -104,7 +104,7 @@
                         <descriptor>${project.basedir}/assembly/smarthome-src-android.xml</descriptor>
                         <descriptor>${project.basedir}/assembly/musicplayer-src-java.xml</descriptor>
                         <descriptor>${project.basedir}/assembly/photoplayer-src-java.xml</descriptor>
-                        <descriptor>${project.basedir}/assembly/irrigation-src-android.xml</descriptor>
+                        <descriptor>${project.basedir}/assembly/irrigation-src-java.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
