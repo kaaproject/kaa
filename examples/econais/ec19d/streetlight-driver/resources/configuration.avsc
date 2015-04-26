@@ -15,7 +15,8 @@
                         { "name": "zoneStatus", "type": { "type": "enum", "name": "ZoneStatus", "symbols": ["ENABLE", "DISABLE"] } }
                     ]
                 }
-            }
+            },
+            "overrideStrategy":"append"
         }
     ]
 }

@@ -274,6 +274,18 @@ public class AdminClient {
         return restTemplate.postForObject(url + "eventClassFamily", eventClassFamily, EventClassFamilyDto.class);
     }
 
+    public EventClassFamilyDto getEventClassFamily(String familyName) {
+        ParameterizedTypeReference<List<EventClassFamilyDto>> typeRef = new ParameterizedTypeReference<List<EventClassFamilyDto>>() {};
+        ResponseEntity<List<EventClassFamilyDto>> entity = restTemplate.exchange(url + "eventClassFamilies", HttpMethod.GET, null, typeRef);
+        List<EventClassFamilyDto> familyList = entity.getBody();
+        for(EventClassFamilyDto family : familyList){
+            if(family.getClassName().equals(familyName)){
+                return family;
+            }
+        }
+        throw new RuntimeException("Family with name " + familyName + " not found!");
+    }
+
     public void addEventClassFamilySchema(String eventClassFamilyId, String schemaResource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("eventClassFamilyId", eventClassFamilyId);

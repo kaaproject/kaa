@@ -52,6 +52,7 @@
         <module>citylights-controller</module>
         <module>twitterled</module>
         <module>vehicletelemetry</module>
+        <module>connectedcar</module>
     </modules>
 
     <dependencyManagement>

@@ -395,6 +395,22 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>connectedcar</artifactId>
+            <version>${project.version}</version>
+            <classifier>connectedcar-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>connectedcar</artifactId>
+            <version>${project.version}</version>
+            <classifier>connectedcar-src-c</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.kaaproject.kaa.examples.twitterled</groupId>
             <artifactId>twitterboard</artifactId>
             <version>${project.version}</version>
@@ -567,11 +583,23 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/generated-resources/demo/datacollection
-                            </outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/datacollection</outputDirectory>
                             <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
                             <includeArtifactIds>datacollectiondemo</includeArtifactIds>
                             <includeClassifiers>datacollection-resources</includeClassifiers>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-connectedcar-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/connectedcar</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>connectedcar</includeArtifactIds>
+                            <includeClassifiers>connectedcar-resources</includeClassifiers>
                         </configuration>
                     </execution>
                     <execution>
@@ -842,6 +870,16 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/cpp</outputDirectory>
                                     <destFileName>vehicletelemetry_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>connectedcar</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>connectedcar-src-c</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/c</outputDirectory>
+                                    <destFileName>connectedcar_demo.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.examples</groupId>
