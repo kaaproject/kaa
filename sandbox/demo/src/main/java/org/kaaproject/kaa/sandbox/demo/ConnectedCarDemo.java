@@ -60,13 +60,7 @@ public class ConnectedCarDemo extends AbstractDemoBuilder {
         /*
          * Configure the event feature.
          */
-
-        EventClassFamilyDto geoFencingEventClassFamily = new EventClassFamilyDto();
-        geoFencingEventClassFamily.setName("Geo Fencing Event Class Family");
-        geoFencingEventClassFamily.setNamespace("org.kaaproject.kaa.demo.iotworld.geo");
-        geoFencingEventClassFamily.setClassName("GeoFencingEventClassFamily");
-        geoFencingEventClassFamily = client.editEventClassFamily(geoFencingEventClassFamily);
-        client.addEventClassFamilySchema(geoFencingEventClassFamily.getId(), getResourcePath("geoFencingEventClassFamily.json"));
+        EventClassFamilyDto geoFencingEventClassFamily = client.getEventClassFamily("GeoFencingEventClassFamily");
 
         ApplicationDto connectedCarApplication = new ApplicationDto();
         connectedCarApplication.setName("Connected Car demo");
