@@ -29,6 +29,7 @@
         <mkdir dir="src/build/jar"/>
         <javac srcdir="src" destdir="src/build/classes" classpathref="classpath"/>
         <jar destfile="build/jar/MusicPlayer.jar">
+            <fileset file="res/album.png" />
             <fileset file="res/logback.xml" />
             <fileset dir="src/build/classes">
                 <include name="**/*.class"/>
