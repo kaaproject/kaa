@@ -31,6 +31,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.dir>${basedir}/../../..</main.dir>
+        <!-- DO NOT TOUCH THIS PROPERTY AND ITS USAGE-->
+        <android.httpclient.version>4.0.1</android.httpclient.version>
+        <android.commons.codec.version>1.2</android.commons.codec.version>
     </properties>
 
     <dependencies>
@@ -56,21 +59,25 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
+            <version>${android.httpclient.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
+            <version>${android.httpclient.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
+            <version>${android.httpclient.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-        </dependency>        
+            <version>${android.commons.codec.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-android</artifactId>

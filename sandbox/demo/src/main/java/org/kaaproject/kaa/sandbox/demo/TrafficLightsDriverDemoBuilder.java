@@ -23,12 +23,12 @@ public class TrafficLightsDriverDemoBuilder extends AbstractDemoBuilder {
     @Override
     protected void buildDemoApplicationImpl(AdminClient client) throws Exception {
 
-        logger.info("Loading 'Traffic Lights driver demo application' data...");
+        logger.info("Loading 'Traffic Lights driver application' data...");
 
         loginTenantAdmin(client);
 
         ApplicationDto trafficLightsApplication = new ApplicationDto();
-        trafficLightsApplication.setName("Traffic lights driver demo");
+        trafficLightsApplication.setName("Traffic lights driver");
         trafficLightsApplication = client.editApplication(trafficLightsApplication);
 
         sdkKey.setApplicationId(trafficLightsApplication.getId());
@@ -75,7 +75,7 @@ public class TrafficLightsDriverDemoBuilder extends AbstractDemoBuilder {
         sdkKey.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
         logger.info("Configuration schema was created");
 
-        logger.info("Finished loading 'Traffic lights driver demo application' data...");
+        logger.info("Finished loading 'Traffic lights driver application' data...");
     }
 
 

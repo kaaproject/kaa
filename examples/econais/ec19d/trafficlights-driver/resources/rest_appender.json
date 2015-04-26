@@ -7,7 +7,7 @@
   "password" : null,
   "connectionPoolSize" : 1,
   "header" : false,
-  "path" : "http://localhost:10001/api",
+  "path" : "/api/data/pedestrian",
   "method" : "PUT",
   "mimeType" : "TEXT"
 }

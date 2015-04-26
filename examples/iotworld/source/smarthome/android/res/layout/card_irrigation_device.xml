@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include layout="@layout/card_device_title"
+         android:id="@+id/deviceCardTitle"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_alignParentTop="true"
+         android:layout_alignParentLeft="true"
+         android:layout_alignParentStart="true"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/deviceCardTitle">
+        <include layout="@layout/card_device_no_info"
+             android:id="@+id/deviceNoInfoLayout"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:gravity="center"
+             android:layout_gravity="center_vertical"/>
+        <RelativeLayout 
+            android:id="@+id/deviceDetailsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/irrigationStatusTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="24sp"
+                android:layout_alignParentTop="true"/>
+            <TextView
+                android:id="@+id/irrigationScheduleTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/irrigationStatusTextView"/>   
+            <TextView
+                android:id="@+id/spentThisMonthView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"/>                              
+        </RelativeLayout>
+    </FrameLayout>
+</RelativeLayout>
