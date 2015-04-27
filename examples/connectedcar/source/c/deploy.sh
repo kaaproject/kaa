@@ -56,7 +56,7 @@ function unpackSources {
 
 function copySources {
     mkdir -p "$MAPPLE_HOME_VAR/libraries/"
-    ln -s $(readlink -f $KAA_C_LIB_HEADER_PATH/kaa) $(readlink -f $MAPPLE_HOME_VAR/libraries/kaa)
+    ln -sf $(readlink -f $KAA_C_LIB_HEADER_PATH/kaa) $(readlink -f $MAPPLE_HOME_VAR/libraries/kaa)
 
     cp $MAIN_SOURCE_NAME "$MAPPLE_HOME_VAR/$MAIN_SOURCE_NAME"
     cp $MAKEFILE_NAME "$MAPPLE_HOME_VAR/$MAKEFILE_NAME"
