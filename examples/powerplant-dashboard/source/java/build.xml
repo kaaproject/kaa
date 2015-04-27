@@ -28,14 +28,14 @@
         <mkdir dir="src/build/classes"/>
         <mkdir dir="src/build/jar"/>
         <javac srcdir="src" destdir="src/build/classes" classpathref="classpath"/>
-        <jar destfile="build/jar/TwitterMonitor.jar">
+        <jar destfile="build/jar/PowerplantDashboard.jar">
             <fileset file="res/logback.xml"/>
             <fileset dir="src/build/classes">
                 <include name="**/*.class"/>
             </fileset>
             <manifest>
                 <attribute name="Main-Class"
-                           value="org.kaaproject.kaa.demo.twitterled.monitor.TwitterMonitor"/>
+                           value="org.kaaproject.kaa.examples.powerplant.DashboardApplication"/>
             </manifest>
             <zipgroupfileset includes="*.jar" dir="lib"/>
         </jar>
