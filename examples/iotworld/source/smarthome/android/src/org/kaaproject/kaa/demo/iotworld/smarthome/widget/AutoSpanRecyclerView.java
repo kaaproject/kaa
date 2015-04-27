@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kaaproject.kaa.demo.iotworld.smarthome.widget;
 
 import org.kaaproject.kaa.demo.iotworld.smarthome.fragment.card.SpacesItemDecoration;
@@ -30,18 +45,24 @@ public class AutoSpanRecyclerView extends RecyclerView {
 
     private int mOrientation;
     private int mGridMinSpans;
+    private int mItemWidthResId;
     private int mItemWidth;
     private LayoutRequester mLayoutRequester = new LayoutRequester();
     private SpacesItemDecoration mItemDecoration;
 
-    public void setGridLayoutManager( int orientation, int minSpans, int itemWidth, int spacing ) {
+    public void setGridLayoutManager( int orientation, int minSpans, int itemWidthResId, int spacing ) {
         GridLayoutManager layoutManager = new GridLayoutManager( getContext(), minSpans, orientation, false );
         mOrientation = orientation;
         mGridMinSpans = minSpans;
-        mItemWidth = itemWidth;
+        mItemWidthResId = itemWidthResId;
+        updateDimensions();
         setLayoutManager( layoutManager );
         mItemDecoration = new SpacesItemDecoration(spacing);
         addItemDecoration(mItemDecoration);
+    }
+    
+    private void updateDimensions() {
+        mItemWidth = getResources().getDimensionPixelSize(mItemWidthResId);
     }
     
     public void setOnItemClickListener (OnItemClickListener listener) {
@@ -80,6 +101,7 @@ public class AutoSpanRecyclerView extends RecyclerView {
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        updateDimensions();
         GridLayoutManager layoutManager = new GridLayoutManager( getContext(), mGridMinSpans, mOrientation, false );
         setLayoutManager( layoutManager );
     }
@@ -103,7 +125,7 @@ public class AutoSpanRecyclerView extends RecyclerView {
         if( layoutManager instanceof GridLayoutManager ) {
             final GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
             int recyclerViewWidth = getMeasuredWidth();
-            int spanCount = Math.max( mGridMinSpans, recyclerViewWidth / mItemWidth );
+            int spanCount = Math.max( mGridMinSpans, (int)((float)(recyclerViewWidth) / (float)(mItemWidth)) );
             gridLayoutManager.setSpanCount( spanCount );
             post( mLayoutRequester );
         }

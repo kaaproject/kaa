@@ -1,5 +1,21 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kaaproject.kaa.demo.iotworld.smarthome.fragment.device.lightning;
 
+import org.kaaproject.kaa.demo.iotworld.geo.OperationMode;
 import org.kaaproject.kaa.demo.iotworld.light.BulbInfo;
 import org.kaaproject.kaa.demo.iotworld.light.BulbStatus;
 import org.kaaproject.kaa.demo.iotworld.smarthome.R;
@@ -42,7 +58,8 @@ public class BulbsListAdapter extends RecyclerView.Adapter<BulbsListAdapter.View
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         BulbInfo bulb = mDevice.getBulbs().get(position);
-        holder.bind(position, bulb);
+        holder.bind(position, bulb, mDevice.getOperationMode() != null && 
+                mDevice.getOperationMode() != OperationMode.OFF);
     }
 
     @Override
@@ -61,6 +78,7 @@ public class BulbsListAdapter extends RecyclerView.Adapter<BulbsListAdapter.View
         private TextView bulbTitleView;
         private ImageView brightnessView;
         private SeekBar brightnessControlView;
+        private SeekBar brightnessControlDisabledView;
         private SwitchCompat bulbSwitchView;
         
         public ViewHolder(View itemView) {
@@ -69,10 +87,12 @@ public class BulbsListAdapter extends RecyclerView.Adapter<BulbsListAdapter.View
             bulbTitleView = (TextView) itemView.findViewById(R.id.bulbTitleView);
             brightnessView = (ImageView) itemView.findViewById(R.id.brightnessView);
             brightnessControlView = (SeekBar) itemView.findViewById(R.id.brightnessControlView);
+            brightnessControlDisabledView = (SeekBar) itemView.findViewById(R.id.brightnessControlDisabledView);
             bulbSwitchView = (SwitchCompat) itemView.findViewById(R.id.bulbSwitchView);
+            brightnessControlDisabledView.setEnabled(false);
         }
         
-        public void bind(int position, BulbInfo bulb) {
+        public void bind(int position, BulbInfo bulb, boolean controlsEnabled) {
             boolean enabled = bulb.getStatus()==BulbStatus.ON;
             bulbView.setEnabled(enabled);
             bulbTitleView.setText((position+1)+". " + bulb.getBulbId());
@@ -80,13 +100,23 @@ public class BulbsListAdapter extends RecyclerView.Adapter<BulbsListAdapter.View
             brightnessView.setEnabled(enabled);
             brightnessControlView.setTag(bulb.getBulbId());
             brightnessControlView.setMax(bulb.getMaxBrightness());
+            brightnessControlDisabledView.setMax(bulb.getMaxBrightness());
             if (!bulb.getIgnoreBrightnessUpdate()) {
                 brightnessControlView.setProgress(bulb.getBrightness());
+                brightnessControlDisabledView.setProgress(bulb.getBrightness());
             }
-            brightnessControlView.setEnabled(!enabled);
-            brightnessControlView.setEnabled(enabled);
             bulbSwitchView.setTag(bulb.getBulbId());
             bulbSwitchView.setChecked(enabled);
+            bulbSwitchView.setClickable(controlsEnabled);
+            brightnessControlView.setEnabled(!enabled);
+            brightnessControlView.setEnabled(enabled);
+            if (controlsEnabled || !enabled) {
+                brightnessControlView.setVisibility(View.VISIBLE);
+                brightnessControlDisabledView.setVisibility(View.GONE);
+            } else {
+                brightnessControlView.setVisibility(View.GONE);
+                brightnessControlDisabledView.setVisibility(View.VISIBLE);
+            }
         }
     }
     

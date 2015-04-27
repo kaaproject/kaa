@@ -1,8 +1,24 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kaaproject.kaa.demo.iotworld.smarthome.widget;
 
 import org.kaaproject.kaa.demo.iotworld.smarthome.R;
 import org.kaaproject.kaa.demo.iotworld.smarthome.util.FontUtils;
 import org.kaaproject.kaa.demo.iotworld.smarthome.util.FontUtils.FontType;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
@@ -495,6 +511,7 @@ public class Thermostat extends View {
         
     }
     
+    @SuppressLint("DefaultLocale")
     @Override
     protected void onDraw(Canvas canvas) {      
         
@@ -673,6 +690,9 @@ public class Thermostat extends View {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (!isEnabled()) {
+            return true;
+        }
         switch (event.getAction()) {
         case MotionEvent.ACTION_DOWN:
             if (!onControlDown(event)) {
