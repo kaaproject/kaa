@@ -117,7 +117,7 @@ Copyright 2014 CyberVision, Inc.
         <ant.version>1.9.4</ant.version>
         <hibernate-jpa-2.1-api.version>1.0.0.Final</hibernate-jpa-2.1-api.version>
         <cdap-stream-client.version>1.0.1</cdap-stream-client.version>
-        <jetty.version>9.0.2.v20130417</jetty.version>
+        <jetty.version>9.2.2.v20140723</jetty.version>
     </properties>
 
     <modules>
@@ -791,6 +791,7 @@ Copyright 2014 CyberVision, Inc.
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-webapp</artifactId>
+                <version>${jetty.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
