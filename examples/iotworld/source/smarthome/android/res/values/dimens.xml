@@ -34,7 +34,7 @@
     <dimen name="card_corner_radius">4dp</dimen>
     <dimen name="card_climate_details_corner_radius">6dp</dimen>
     
-    <dimen name="photo_album_card_width">170dp</dimen>
+    <dimen name="photo_album_card_width">150dp</dimen>
     <dimen name="photo_album_card_content_padding">12dp</dimen>
     
     <dimen name="device_icon_size">32dp</dimen>

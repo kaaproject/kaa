@@ -16,8 +16,7 @@
 -->
 <resources>
 
-    <dimen name="activity_horizontal_margin">10dp</dimen>
-    <dimen name="card_width">265dp</dimen>
-    <dimen name="photo_album_card_width">190dp</dimen>
+    <dimen name="card_width">275dp</dimen>
+    <dimen name="photo_album_card_width">175dp</dimen>
     
 </resources>

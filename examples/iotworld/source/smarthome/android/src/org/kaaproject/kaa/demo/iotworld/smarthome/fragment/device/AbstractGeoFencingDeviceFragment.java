@@ -22,7 +22,8 @@ import org.kaaproject.kaa.demo.iotworld.smarthome.util.ColorUtils;
 
 import android.annotation.TargetApi;
 import android.content.res.Configuration;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffColorFilter;
 import android.os.Build;
 import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
@@ -77,8 +78,9 @@ public abstract class AbstractGeoFencingDeviceFragment<D extends AbstractGeoFenc
     protected void setupView(LayoutInflater inflater, View rootView) {
         mGeoFencingStatusSpinner = new Spinner(mActivity);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            mGeoFencingStatusSpinner.setPopupBackgroundDrawable(new ColorDrawable(ColorUtils.darkerColor(getResources().getColor(
-                    mDevice.getDeviceType().getBaseColorResId()))));
+            int color = ColorUtils.darkerColor(getResources().getColor(
+                          mDevice.getDeviceType().getBaseColorResId()));            
+            mGeoFencingStatusSpinner.getPopupBackground().setColorFilter(new PorterDuffColorFilter(color, Mode.MULTIPLY));
         }
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(mActivity, R.layout.toolbar_spinner_item,
                 getResources().getStringArray(R.array.geofencing_status));
