@@ -15,6 +15,11 @@
 #
 
 #!/bin/bash
+if (!(which avrogencpp>>/dev/null)); then
+   echo "Error: Avrogen hasn't been installed"
+   exit
+fi
+echo "Generating necessary files according to Avro schemas"
 
 mkdir -p avro/event
 
