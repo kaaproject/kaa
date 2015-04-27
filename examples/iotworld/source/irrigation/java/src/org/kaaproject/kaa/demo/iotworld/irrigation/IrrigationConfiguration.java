@@ -40,7 +40,7 @@ public class IrrigationConfiguration implements ConfigurationListener {
     private final Properties persistedProperties;
     private static final String IS_ATTACHED_TO_USER = "is_attached_to_user";
     private static final String DEVICE_NAME = "device_name";
-    private final Path PROPERTY_PATH = Paths.get("irrigation.property");
+    private final Path PROPERTY_PATH = Paths.get("irrigation.state");
 
     private String profilePath;
     private Integer webPort;
@@ -155,7 +155,7 @@ public class IrrigationConfiguration implements ConfigurationListener {
     private OutputStream getPropertyOutputStream() {
         OutputStream out = null;
         try {
-            out = Files.newOutputStream(Paths.get("irrigation.state"), new OpenOption[] { StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING });
+            out = Files.newOutputStream(PROPERTY_PATH, new OpenOption[] { StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING });
         } catch (IOException e) {
             LOG.error("Can't get output stream from property file", e);
         }

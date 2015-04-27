@@ -186,9 +186,18 @@ public class IMSController implements DeviceEventClassFamily.Listener, Irrigatio
         scheduledFuture = executor.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
-                callback.beforeIrrigation();
-                gpioManager.togglePinToHight(configuration.getIrrigationDurationTime());
-                callback.afterIrrigation();
+                try {
+                    callback.beforeIrrigation();
+                    gpioManager.togglePinToHight(configuration.getIrrigationDurationTime());
+                    callback.afterIrrigation();
+                } catch (Exception e) {
+                    LOG.error("Failed to process irrigation!", e);
+                    try {
+                        gpioManager.togglePinToLow();
+                    } catch (Exception e2) {
+                        LOG.error("Failed to stop irrigation!", e2);
+                    }
+                }
             }
         }, initialDelay, delay, TimeUnit.MILLISECONDS);
     }
