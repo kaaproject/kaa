@@ -155,7 +155,7 @@ public class IrrigationConfiguration implements ConfigurationListener {
     private OutputStream getPropertyOutputStream() {
         OutputStream out = null;
         try {
-            out = Files.newOutputStream(Paths.get(""), new OpenOption[] { StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING });
+            out = Files.newOutputStream(Paths.get("irrigation.state"), new OpenOption[] { StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING });
         } catch (IOException e) {
             LOG.error("Can't get output stream from property file", e);
         }
