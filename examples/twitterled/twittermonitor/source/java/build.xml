@@ -30,6 +30,7 @@
         <javac srcdir="src" destdir="src/build/classes" classpathref="classpath"/>
         <jar destfile="build/jar/TwitterMonitor.jar">
             <fileset file="res/logback.xml"/>
+            <fileset file="res/twitter-monitor.properties"/>
             <fileset dir="src/build/classes">
                 <include name="**/*.class"/>
             </fileset>
