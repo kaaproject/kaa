@@ -20,8 +20,13 @@
 #ifdef ECONAIS_PLATFORM
 #include "../platform-impl/Econais/EC19D/econais_ec19d_platform.h"
 #else
+#ifdef STM32_LEAF_PLATFORM
+#include "../platform-impl/stm32/leafMapleMini/leaf_platform.h"
+#else
 #include "../platform-impl/posix/posix_platform.h"
-#endif
+#endif //#ifdef STM32_LEAF_PLATFORM
+
+#endif //ifdef ECONAIS_PLATFORM
 
 #endif /* PLATFORM_H_ */
 

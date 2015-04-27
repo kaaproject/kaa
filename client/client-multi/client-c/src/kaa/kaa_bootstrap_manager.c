@@ -293,7 +293,7 @@ kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstr
 {
     KAA_RETURN_IF_NIL2(self, protocol_id, NULL);
 
-    kaa_list_t *bootstrap_access_points_it = kaa_list_find_next(self->operations_access_points
+    kaa_list_t *bootstrap_access_points_it = kaa_list_find_next(self->bootstrap_access_points
                                                               , &find_bootstrap_access_points
                                                               , protocol_id);
 

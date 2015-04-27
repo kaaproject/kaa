@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" 
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/action_irrigate"
+        android:icon="@drawable/ic_irrigate"
+        android:title="@string/irrigate_now"
+        app:showAsAction="ifRoom"
+        app:actionLayout="@layout/irrigate_button"
+        android:orderInCategory="199"
+        />
+</menu>

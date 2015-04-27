@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include layout="@layout/card_device_title"
+         android:id="@+id/deviceCardTitle"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_alignParentTop="true"
+         android:layout_alignParentLeft="true"
+         android:layout_alignParentStart="true"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/deviceCardTitle"
+        android:layout_above="@+id/deviceGeofencingStatus">
+        <include layout="@layout/card_device_no_info"
+             android:id="@+id/deviceNoInfoLayout"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:gravity="center"
+             android:layout_gravity="center_vertical"/>
+        <LinearLayout
+            android:id="@+id/deviceDetailsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <org.kaaproject.kaa.demo.iotworld.smarthome.widget.FitSpanRecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"/>
+        </LinearLayout>
+    </FrameLayout>
+    <include layout="@layout/card_device_geofencing_status"
+         android:id="@id/deviceGeofencingStatus"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_alignParentBottom="true"
+         android:layout_alignParentLeft="true"
+         android:layout_alignParentStart="true"/>    
+</RelativeLayout>

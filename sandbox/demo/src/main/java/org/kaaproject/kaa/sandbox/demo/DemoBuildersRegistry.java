@@ -24,12 +24,27 @@ public class DemoBuildersRegistry {
     private static final List<DemoBuilder> demoBuilders = new ArrayList<>();
 
     static {
+        // Iot World demo
+        demoBuilders.add(new IotWorldDemoBuilder());
+        
+        demoBuilders.add(new ConnectedCarDemo());
+        
+        demoBuilders.add(new PowerPlantDemoBuilder());
+        demoBuilders.add(new TrafficLightsDriverDemoBuilder());
+        demoBuilders.add(new StreetLightDriverDemoBuilder());
+        demoBuilders.add(new CityLightsControllerDemoBuilder());
+        
+        demoBuilders.add(new TwitterBoardDemoBuilder());
+        demoBuilders.add(new TwitterMonitorDemoBuilder());
+        
+        demoBuilders.add(new VehicleTelemetryDemoBuider());
+
         //ANDROID DEMOS
         demoBuilders.add(new AndroidNotificationDemoBuilder());
         demoBuilders.add(new CellMonitorDemoBuilder());
         demoBuilders.add(new CityGuideDemoBuilder());
         demoBuilders.add(new PhotoFrameDemoBuilder());
-        demoBuilders.add(new SmartHouseDemoBuilder());
+//      demoBuilders.add(new SmartHouseDemoBuilder());
         demoBuilders.add(new VerifiersDemoBuilder());
 //      demoBuilders.add(new RobotRunDemoBuilder());
 
@@ -37,8 +52,6 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new DataCollectionDemoBuider());
         demoBuilders.add(new ConfigurationDemoBuilder());
         demoBuilders.add(new NotificationDemoBuilder());
-
-        demoBuilders.add(new PowerPlantDemoBuilder());
     }
 
     public static List<DemoBuilder> getRegisteredDemoBuilders() {

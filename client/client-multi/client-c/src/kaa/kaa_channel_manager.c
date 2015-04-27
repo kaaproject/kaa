@@ -273,6 +273,7 @@ static kaa_error_t init_channel(kaa_channel_manager_t *self
             KAA_LOG_TRACE(self->kaa_context->logger, KAA_ERR_NONE, "Found %s access point [0x%08X] for channel [0x%08X] "
                                 "(protocol: id=0x%08X, version=%u)", (is_bootstrap_channel ? "Bootstrap" : "Operations")
                                 , access_point->id, id, protocol_id.id, protocol_id.version);
+
             channel->set_access_point(channel->context, access_point);
         } else {
             if (is_bootstrap_channel) {

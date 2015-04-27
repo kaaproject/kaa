@@ -1,0 +1,38 @@
+{
+  "streetLightsConfiguration" : [ {
+    "zoneId" : 0,
+    "tags" : [ 6609455 ],
+    "__uuid":null
+  }, {
+    "zoneId" : 1,
+    "tags" : [ 6606552 ],
+    "__uuid":null
+  }, {
+    "zoneId" : 2,
+    "tags" : [ 6606305 ],
+    "__uuid":null
+  }, {
+    "zoneId" : 3,
+    "tags" : [ 6505594 ],
+    "__uuid":null
+  } ],
+  "trafficLightsConfiguration" : {
+    "mainRoadAllowTags" : [ 6454533, 6505593 ],
+    "allowStateDuration" : 30,
+    "disallowStateDuration" : 15,
+    "pedestrianWalkDuration" : 20,
+    "__uuid":null
+  },
+  "kaaClientConfiguration" : {
+    "host" : "localhost",
+    "port" : 8080,
+    "login" : "devuser",
+    "password" : "devuser123",
+    "trafficLightsAppToken" : "change_me",
+    "trafficLightsCfSchemaVersion" : 2,
+    "streetLightsAppToken" : "change_me",
+    "streetLightsCfSchemaVersion" : 2,
+    "__uuid":null
+  },
+  "__uuid":null
+}
