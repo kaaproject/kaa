@@ -7,10 +7,9 @@ package org.kaaproject.kaa.examples.powerplant;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"VoltageSample\",\"namespace\":\"org.kaaproject.kaa.examples.powerplant\",\"fields\":[{\"name\":\"panelId\",\"type\":\"int\"},{\"name\":\"timestamp\",\"type\":\"long\"},{\"name\":\"voltage\",\"type\":\"double\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"VoltageSample\",\"namespace\":\"org.kaaproject.kaa.examples.powerplant\",\"fields\":[{\"name\":\"panelId\",\"type\":\"int\"},{\"name\":\"voltage\",\"type\":\"double\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private int panelId;
-   private long timestamp;
    private double voltage;
 
   /**
@@ -23,9 +22,8 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
   /**
    * All-args constructor.
    */
-  public VoltageSample(java.lang.Integer panelId, java.lang.Long timestamp, java.lang.Double voltage) {
+  public VoltageSample(java.lang.Integer panelId, java.lang.Double voltage) {
     this.panelId = panelId;
-    this.timestamp = timestamp;
     this.voltage = voltage;
   }
 
@@ -34,8 +32,7 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return panelId;
-    case 1: return timestamp;
-    case 2: return voltage;
+    case 1: return voltage;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -44,8 +41,7 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: panelId = (java.lang.Integer)value$; break;
-    case 1: timestamp = (java.lang.Long)value$; break;
-    case 2: voltage = (java.lang.Double)value$; break;
+    case 1: voltage = (java.lang.Double)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -63,21 +59,6 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
    */
   public void setPanelId(java.lang.Integer value) {
     this.panelId = value;
-  }
-
-  /**
-   * Gets the value of the 'timestamp' field.
-   */
-  public java.lang.Long getTimestamp() {
-    return timestamp;
-  }
-
-  /**
-   * Sets the value of the 'timestamp' field.
-   * @param value the value to set.
-   */
-  public void setTimestamp(java.lang.Long value) {
-    this.timestamp = value;
   }
 
   /**
@@ -117,7 +98,6 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
     implements org.apache.avro.data.RecordBuilder<VoltageSample> {
 
     private int panelId;
-    private long timestamp;
     private double voltage;
 
     /** Creates a new Builder */
@@ -132,13 +112,9 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
         this.panelId = data().deepCopy(fields()[0].schema(), other.panelId);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.timestamp)) {
-        this.timestamp = data().deepCopy(fields()[1].schema(), other.timestamp);
+      if (isValidValue(fields()[1], other.voltage)) {
+        this.voltage = data().deepCopy(fields()[1].schema(), other.voltage);
         fieldSetFlags()[1] = true;
-      }
-      if (isValidValue(fields()[2], other.voltage)) {
-        this.voltage = data().deepCopy(fields()[2].schema(), other.voltage);
-        fieldSetFlags()[2] = true;
       }
     }
     
@@ -149,13 +125,9 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
         this.panelId = data().deepCopy(fields()[0].schema(), other.panelId);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.timestamp)) {
-        this.timestamp = data().deepCopy(fields()[1].schema(), other.timestamp);
+      if (isValidValue(fields()[1], other.voltage)) {
+        this.voltage = data().deepCopy(fields()[1].schema(), other.voltage);
         fieldSetFlags()[1] = true;
-      }
-      if (isValidValue(fields()[2], other.voltage)) {
-        this.voltage = data().deepCopy(fields()[2].schema(), other.voltage);
-        fieldSetFlags()[2] = true;
       }
     }
 
@@ -183,30 +155,6 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Gets the value of the 'timestamp' field */
-    public java.lang.Long getTimestamp() {
-      return timestamp;
-    }
-    
-    /** Sets the value of the 'timestamp' field */
-    public org.kaaproject.kaa.examples.powerplant.VoltageSample.Builder setTimestamp(long value) {
-      validate(fields()[1], value);
-      this.timestamp = value;
-      fieldSetFlags()[1] = true;
-      return this; 
-    }
-    
-    /** Checks whether the 'timestamp' field has been set */
-    public boolean hasTimestamp() {
-      return fieldSetFlags()[1];
-    }
-    
-    /** Clears the value of the 'timestamp' field */
-    public org.kaaproject.kaa.examples.powerplant.VoltageSample.Builder clearTimestamp() {
-      fieldSetFlags()[1] = false;
-      return this;
-    }
-
     /** Gets the value of the 'voltage' field */
     public java.lang.Double getVoltage() {
       return voltage;
@@ -214,20 +162,20 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
     
     /** Sets the value of the 'voltage' field */
     public org.kaaproject.kaa.examples.powerplant.VoltageSample.Builder setVoltage(double value) {
-      validate(fields()[2], value);
+      validate(fields()[1], value);
       this.voltage = value;
-      fieldSetFlags()[2] = true;
+      fieldSetFlags()[1] = true;
       return this; 
     }
     
     /** Checks whether the 'voltage' field has been set */
     public boolean hasVoltage() {
-      return fieldSetFlags()[2];
+      return fieldSetFlags()[1];
     }
     
     /** Clears the value of the 'voltage' field */
     public org.kaaproject.kaa.examples.powerplant.VoltageSample.Builder clearVoltage() {
-      fieldSetFlags()[2] = false;
+      fieldSetFlags()[1] = false;
       return this;
     }
 
@@ -236,8 +184,7 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
       try {
         VoltageSample record = new VoltageSample();
         record.panelId = fieldSetFlags()[0] ? this.panelId : (java.lang.Integer) defaultValue(fields()[0]);
-        record.timestamp = fieldSetFlags()[1] ? this.timestamp : (java.lang.Long) defaultValue(fields()[1]);
-        record.voltage = fieldSetFlags()[2] ? this.voltage : (java.lang.Double) defaultValue(fields()[2]);
+        record.voltage = fieldSetFlags()[1] ? this.voltage : (java.lang.Double) defaultValue(fields()[1]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);
