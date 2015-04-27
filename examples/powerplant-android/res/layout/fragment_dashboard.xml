@@ -84,24 +84,24 @@
                 android:weightSum="3"
                 android:orientation="horizontal"
                 android:layout_weight="1">
-                <lecho.lib.hellocharts.view.PieChartView
+                <org.kaaproject.kaa.demo.powerpant.view.GaugeChartView
                     android:id="@+id/gaugeChart11"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
                     android:layout_weight="1">
-                </lecho.lib.hellocharts.view.PieChartView>
-                <lecho.lib.hellocharts.view.PieChartView
+                </org.kaaproject.kaa.demo.powerpant.view.GaugeChartView>
+                <org.kaaproject.kaa.demo.powerpant.view.GaugeChartView
                     android:id="@+id/gaugeChart12"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
                     android:layout_weight="1">
-                </lecho.lib.hellocharts.view.PieChartView>
-                <lecho.lib.hellocharts.view.PieChartView
+                </org.kaaproject.kaa.demo.powerpant.view.GaugeChartView>
+                <org.kaaproject.kaa.demo.powerpant.view.GaugeChartView
                     android:id="@+id/gaugeChart13"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
                     android:layout_weight="1">
-                </lecho.lib.hellocharts.view.PieChartView>
+                </org.kaaproject.kaa.demo.powerpant.view.GaugeChartView>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/gaugeChartBottomLayout"
@@ -110,24 +110,24 @@
                 android:weightSum="3"
                 android:orientation="horizontal"
                 android:layout_weight="1">
-                <lecho.lib.hellocharts.view.PieChartView
+                <org.kaaproject.kaa.demo.powerpant.view.GaugeChartView
                     android:id="@+id/gaugeChart21"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
                     android:layout_weight="1">
-                </lecho.lib.hellocharts.view.PieChartView>
-                <lecho.lib.hellocharts.view.PieChartView
+                </org.kaaproject.kaa.demo.powerpant.view.GaugeChartView>
+                <org.kaaproject.kaa.demo.powerpant.view.GaugeChartView
                     android:id="@+id/gaugeChart22"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
                     android:layout_weight="1">
-                </lecho.lib.hellocharts.view.PieChartView>
-                <lecho.lib.hellocharts.view.PieChartView
+                </org.kaaproject.kaa.demo.powerpant.view.GaugeChartView>
+                <org.kaaproject.kaa.demo.powerpant.view.GaugeChartView
                     android:id="@+id/gaugeChart23"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
                     android:layout_weight="1">
-                </lecho.lib.hellocharts.view.PieChartView>
+                </org.kaaproject.kaa.demo.powerpant.view.GaugeChartView>
             </LinearLayout>
         </LinearLayout>
         
