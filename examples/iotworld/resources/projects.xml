@@ -32,6 +32,21 @@ This app demonstrates Kaa event subsystem capabilities on Android platform.
         <sdkLibDir>smarthome/android/SmartHome/libs</sdkLibDir>
         <destBinaryFile>smarthome/android/SmartHome/bin/SmartHome-debug.apk</destBinaryFile>
     </project>
+    <project id="climate_android">
+        <name>Climate control</name>
+		<description>Climate control Android app demonstrates Kaa event subsystem capabilities</description>
+		<details>
+            <![CDATA[
+This app demonstrates Kaa event subsystem capabilities on Android platform.
+            ]]>
+		</details>
+        <platform>ANDROID</platform>
+        <features>EVENT USER_VERIFIER</features>
+        <sourceArchive>iotworld/climate/android/climate.tar.gz</sourceArchive>
+        <projectFolder>climate/android/ClimateControl</projectFolder>
+        <sdkLibDir>climate/android/ClimateControl/libs</sdkLibDir>
+        <destBinaryFile>climate/android/ClimateControl/bin/ClimateControl-debug.apk</destBinaryFile>
+    </project>
     <project id="photoplayer_java">
         <name>Photo player</name>
         <description>Photo frame demo app based on Java SDK</description>

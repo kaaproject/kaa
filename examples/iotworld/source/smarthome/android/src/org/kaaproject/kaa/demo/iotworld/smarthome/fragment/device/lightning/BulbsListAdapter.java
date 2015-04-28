@@ -52,7 +52,11 @@ public class BulbsListAdapter extends RecyclerView.Adapter<BulbsListAdapter.View
     
     @Override
     public int getItemCount() {
-        return mDevice.getBulbs().size();
+        if (mDevice.getBulbs() != null) {
+            return mDevice.getBulbs().size();
+        } else {
+            return 0;
+        }
     }
  
     @Override

@@ -29,7 +29,7 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
     private static final Logger logger = LoggerFactory.getLogger(IotWorldDemoBuilder.class);
 
     private static final String SMARTHOME_ANDROID_ID = "smarthome_android";
-    private static final String THERMOSTAT_ANDROID_ID = "thermostat_android";
+    private static final String CLIMATE_ANDROID_ID = "climate_android";
     private static final String FAN_CONTROL_C_ID = "fan_control_c";
     private static final String MUSICPLAYER_JAVA_ID = "musicplayer_java";
     private static final String PHOTOPLAYER_JAVA_ID = "photoplayer_java";
@@ -140,7 +140,7 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         smartHomeApplication = client.editApplication(smartHomeApplication);
 
         ApplicationDto thermostatApplication = new ApplicationDto();
-        thermostatApplication.setName("Thermostat");
+        thermostatApplication.setName("Climate Control");
         thermostatApplication = client.editApplication(thermostatApplication);
 
         ApplicationDto fanControlApplication = new ApplicationDto();
@@ -276,19 +276,26 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         SdkKey sdkKey = createSdkKey(client, applicationId, true);
         
         List<String> aefMapIds = new ArrayList<>();
+        
+        Map<String, ApplicationEventAction> actionsMap
+                    = new HashMap<>();
+        
+        actionsMap.put("org.kaaproject.kaa.demo.iotworld.device.DeviceInfoRequest", ApplicationEventAction.BOTH);
+        actionsMap.put("org.kaaproject.kaa.demo.iotworld.device.DeviceInfoResponse", ApplicationEventAction.BOTH);
+        actionsMap.put("org.kaaproject.kaa.demo.iotworld.device.DeviceStatusSubscriptionRequest", ApplicationEventAction.BOTH);
+        actionsMap.put("org.kaaproject.kaa.demo.iotworld.device.DeviceChangeNameRequest", ApplicationEventAction.SINK);
 
         aefMapIds.add(createAefMap(client, 
                 applicationId, 
                 ecfMap.get(DEVICE_EVENT_CLASS_FAMILY),
-                defaultDeviceAefMap));
+                actionsMap));
         
         aefMapIds.add(createAefMap(client, 
                 applicationId, 
                 ecfMap.get(GEO_FENCING_EVENT_CLASS_FAMILY),
                 defaultGeoFencingDeviceAefMap));   
         
-        Map<String, ApplicationEventAction> actionsMap
-                    = new HashMap<>();
+        actionsMap = new HashMap<>();
         
         actionsMap.put("org.kaaproject.kaa.demo.iotworld.thermo.ThermostatStatusUpdate", ApplicationEventAction.SOURCE);
         actionsMap.put("org.kaaproject.kaa.demo.iotworld.thermo.ChangeDegreeRequest", ApplicationEventAction.SINK);
@@ -309,7 +316,7 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         
         sdkKey.setAefMapIds(aefMapIds);
         
-        projectsSdkMap.put(THERMOSTAT_ANDROID_ID, sdkKey);
+        projectsSdkMap.put(CLIMATE_ANDROID_ID, sdkKey);
     }
     
     private void configureFanControlApp(AdminClient client, 

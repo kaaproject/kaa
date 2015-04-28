@@ -51,12 +51,14 @@ public class ClimateCard extends AbstractGeoFencingDeviceCard<ClimateDevice> {
             setDetailsVisible(true);
             mCurrentDegreeView.setText(getResources().getString(R.string.degree_text, thermostatInfo.getDegree()));
             mTargetDegreeView.setText(getResources().getString(R.string.degree_text, thermostatInfo.getTargetDegree()));
-            if (thermostatInfo.getDegree() > thermostatInfo.getTargetDegree()) {
-                mStatusIconView.setImageResource(R.drawable.cooling_white);
-                mStatusTextView.setText(R.string.cooling);
-            } else if (thermostatInfo.getDegree() < thermostatInfo.getTargetDegree()) {
-                mStatusIconView.setImageResource(R.drawable.heating_white);
-                mStatusTextView.setText(R.string.heating);
+            if (thermostatInfo.getIsOperating()) {
+                if (thermostatInfo.getDegree() > thermostatInfo.getTargetDegree()) {
+                    mStatusIconView.setImageResource(R.drawable.cooling_white);
+                    mStatusTextView.setText(R.string.cooling);
+                } else {
+                    mStatusIconView.setImageResource(R.drawable.heating_white);
+                    mStatusTextView.setText(R.string.heating);
+                }
             } else {
                 mStatusIconView.setImageResource(R.drawable.pause_white);
                 mStatusTextView.setText(R.string.idle);

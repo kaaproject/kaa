@@ -66,6 +66,7 @@ public class ClimateDeviceFragment extends AbstractGeoFencingDeviceFragment<Clim
             if (!thermostatInfo.getIgnoreDegreeUpdate() || firstLoad) {
                 mThermostat.setTargetTemp(thermostatInfo.getTargetDegree(), false);
             }
+            mThermostat.setOperating(thermostatInfo.getIsOperating());
         }
         if (firstLoad) {
             mThermostat.setOnThermostatChangeListener(this);

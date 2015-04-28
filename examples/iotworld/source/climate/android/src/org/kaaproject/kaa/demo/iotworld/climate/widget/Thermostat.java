@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.demo.iotworld.smarthome.widget;
+package org.kaaproject.kaa.demo.iotworld.climate.widget;
 
-import org.kaaproject.kaa.demo.iotworld.smarthome.R;
-import org.kaaproject.kaa.demo.iotworld.smarthome.util.FontUtils;
-import org.kaaproject.kaa.demo.iotworld.smarthome.util.FontUtils.FontType;
+import org.kaaproject.kaa.demo.iotworld.climate.R;
+import org.kaaproject.kaa.demo.iotworld.climate.util.FontUtils;
+import org.kaaproject.kaa.demo.iotworld.climate.util.FontUtils.FontType;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
