@@ -41,6 +41,7 @@ import org.kaaproject.kaa.demo.powerplant.data.FakeDataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.data.RestDataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataPoint;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataReport;
+import org.kaaproject.kaa.demo.powerplant.view.GaugeChart;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -63,7 +64,7 @@ public class DashboardFragment extends Fragment {
 
     private static final String TAG = DashboardFragment.class.getSimpleName();
 
-    public static final int NUM_PANELS = 4;
+    public static final int NUM_PANELS = 6;
     public static final float MIN_VOLTAGE = 0.0f;
     public static final float MAX_VOLTAGE = 6.0f;
 
@@ -95,6 +96,7 @@ public class DashboardFragment extends Fragment {
     private TextView plantValueView;
     private TextView gridValueView;
     private TextView totalValueView;
+    private final List<GaugeChart> gaugeCharts = new ArrayList<>();
 
     private Line line;
     private DataEndpoint endpoint;
@@ -113,7 +115,13 @@ public class DashboardFragment extends Fragment {
 
         endpoint = new FakeDataEndpoint();
 //        endpoint = new RestDataEndpoint();
-
+        
+        gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart11));
+        gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart12));
+        gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart13));
+        gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart21));
+        gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart22));
+        gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart23));
         
         Thread updateThread = new Thread(new Runnable() {
 
@@ -173,10 +181,13 @@ public class DashboardFragment extends Fragment {
 
                             PieChartData data = pieChart.getPieChartData();
                             float plantVoltage = 0.0f;
+                           
+                            int counter = 0;
                             for (DataPoint dp : latestData.getDataPoints()) {
                                 plantVoltage += dp.getVoltage();
                                 SliceValue sliceValue = data.getValues().get(dp.getPanelId());
                                 sliceValue.setTarget(dp.getVoltage());
+                                gaugeCharts.get(counter++).setValue(dp.getVoltage());
                                 // sliceValue.setLabel(String.format(PIE_CHART_VALUE_FORMAT,
                                 // dp.getVoltage()));
                             }
@@ -221,6 +232,7 @@ public class DashboardFragment extends Fragment {
         plantValueView = (TextView) rootView.findViewById(R.id.solarPlantVoltageValueText);
         gridValueView = (TextView) rootView.findViewById(R.id.gridVoltageValueText);
         totalValueView = (TextView) rootView.findViewById(R.id.totalVoltageValueText);
+        rootView.findViewById(R.id.gaugeChart11);
 
         List<SliceValue> sliceValues = new ArrayList<SliceValue>(NUM_PANELS + 1);
 
