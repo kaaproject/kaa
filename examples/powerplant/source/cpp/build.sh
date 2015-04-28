@@ -28,7 +28,10 @@ then
     help
 fi
 
-APP_NAME="demo_client"
+# NOTE: The $APP_NAME value should match the one in the powerplant.sh script.
+APP_NAME="powerplant_demo"
+STARTUP_SCRIPT="powerplant"
+
 PROJECT_HOME=$(pwd)
 BUILD_DIR="build"
 LIBS_PATH="libs"
@@ -79,14 +82,35 @@ function build_app {
     make -j2
 }
 
+# Need root privileges
+function install_app {
+    cd "$PROJECT_HOME/$BUILD_DIR" &&
+    make install &&
+    cp "$PROJECT_HOME/$STARTUP_SCRIPT" /etc/init.d/ &&
+    chmod +x "/etc/init.d/$STARTUP_SCRIPT" &&
+    update-rc.d -f $STARTUP_SCRIPT remove
+    update-rc.d $STARTUP_SCRIPT defaults
+}
+
 function clean {
     rm -rf "$KAA_LIB_PATH/$BUILD_DIR"
     rm -rf "$PROJECT_HOME/$BUILD_DIR"
 }
 
+function run_as_service {
+    "/etc/init.d/$STARTUP_SCRIPT" restart
+}
+
 function run {
     cd "$PROJECT_HOME/$BUILD_DIR"
     ./$APP_NAME
+}
+
+function check_root {
+    if [ "$(id -u)" != "0" ]; then
+        echo "This command must be run as root!"
+        exit 1
+    fi
 }
 
 for cmd in $@
@@ -103,16 +127,17 @@ case "$cmd" in
     ;;
 
     deploy)
-        clean
+        check_root
         build_thirdparty
         build_app
-        run
-        ;;
+        install_app
+        run_as_service
+    ;;
 
     clean)
         clean
     ;;
-    
+
     *)
         help
     ;;

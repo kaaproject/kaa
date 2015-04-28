@@ -29,6 +29,8 @@ namespace power_plant {
 
 #define POWER_PLANT_DEBUG_LOGGING           0
 
+#define POWER_PLANT_STARTUP_WORKAROUND      1
+
 } /* namespace power_plant */
 
 #endif /* CONFIGURATIONCONSTANTS_HPP_ */
