@@ -16,6 +16,8 @@
 
 #include "PowerPlantController.hpp"
 
+#include <chrono>
+
 #include <kaa/Kaa.hpp>
 #include <kaa/configuration/storage/FileConfigurationStorage.hpp>
 
@@ -64,6 +66,9 @@ void PowerPlantController::run()
         KaaRootConfiguration configuration = getConfiguration();
 
         if (configuration.enableReporting) {
+            kaa::KaaUserLogRecord voltageReport;
+            voltageReport.timestamp = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+
             std::vector<kaa_log::VoltageSample> samples;
             samples.reserve(configuration.panelCount);
 
@@ -71,7 +76,6 @@ void PowerPlantController::run()
                 samples.push_back(solarPanels_[i].getVoltageSample());
             }
 
-            kaa::KaaUserLogRecord voltageReport;
             voltageReport.samples = std::move(samples);
             reportingManager_->addReport(voltageReport);
 

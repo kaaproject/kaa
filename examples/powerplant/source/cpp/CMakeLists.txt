@@ -53,3 +53,5 @@ endif()
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     target_link_libraries(${APP_NAME} kaacpp_s botan-1.10 boost_log-mt boost_system-mt avrocpp mraa)
 endif()
+
+install (TARGETS ${APP_NAME} DESTINATION /usr/local/sbin/)

@@ -16,9 +16,7 @@
 
 #include "SolarPanel.hpp"
 
-#include <chrono>
 #include <string>
-#include <cstdlib>
 
 #include "ConfigurationConstants.hpp"
 
@@ -39,7 +37,6 @@ kaa_log::VoltageSample SolarPanel::getVoltageSample()
     kaa_log::VoltageSample sample;
 
     sample.panelId = panelId_;
-    sample.timestamp = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     sample.voltage = panelConnection_->read() * POWER_PLANT_ADC_FACTOR;
 
 #if POWER_PLANT_DEBUG_LOGGING

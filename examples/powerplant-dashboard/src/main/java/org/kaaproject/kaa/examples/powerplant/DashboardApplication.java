@@ -31,17 +31,22 @@ import org.slf4j.LoggerFactory;
 public class DashboardApplication {
     
     private static final Logger LOG = LoggerFactory.getLogger(DashboardApplication.class);
-    
-    public static final String BASE_URI = "http://10.2.2.89:10000/api";
 
     public static void main(String[] args) throws IOException{
         LOG.info("Starting service");
+        
+        if(args.length != 2){
+            System.err.println("USAGE: java -jar PowerplantDashboard.jar bind_host bind_port");
+            return;
+        }
+        String baseURI = "http://" + args[0] + ":" + args[1] + "/api";
+        LOG.info("Base URI: {}", baseURI);
         
         final ResourceConfig rc = new ResourceConfig().packages("org.kaaproject.kaa.examples.powerplant.resources");
         rc.register(JacksonFeature.class);
         rc.register(SimpleMapperProvider.class);
         
-        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc, false);
+        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(baseURI), rc, false);
         server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandler(DashboardApplication.class.getClassLoader(), "/"),"/");
 
         server.start();

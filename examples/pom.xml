@@ -53,6 +53,7 @@
         <module>twitterled</module>
         <module>vehicletelemetry</module>
         <module>connectedcar</module>
+        <module>powerplant-android</module>
     </modules>
 
     <dependencyManagement>

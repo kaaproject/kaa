@@ -4,6 +4,10 @@
     "namespace":"org.kaaproject.kaa.examples.powerplant",
     "fields":[
         {
+            "name":"timestamp",
+            "type":"long"
+        },
+        {
             "name":"samples",
             "type":{
                 "type":"array",
@@ -15,10 +19,6 @@
                         {
                             "name":"panelId",
                             "type":"int"
-                        },
-                        {
-                            "name":"timestamp",
-                            "type":"long"
                         },
                         {
                             "name":"voltage",
