@@ -18,8 +18,10 @@ package org.kaaproject.kaa.demo.powerplant.fragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,13 +47,17 @@ import org.kaaproject.kaa.demo.powerplant.view.GaugeChart;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 /**
@@ -61,11 +67,13 @@ import android.widget.TextView;
  */
 public class DashboardFragment extends Fragment {
     private static final String EMPTY_STRING = "";
-
+    private static final String LOG_BOX_TEXT = "logBoxText";
+    
     private static final String TAG = DashboardFragment.class.getSimpleName();
 
     public static final int NUM_PANELS = 6;
     public static final float MIN_VOLTAGE = 0.0f;
+    public static final float NORMAL_VOLTAGE = 3.0f;
     public static final float MAX_VOLTAGE = 6.0f;
 
     private static final float Y_AXIS_MIN_MAX_DIV = 2.0f;
@@ -78,7 +86,7 @@ public class DashboardFragment extends Fragment {
     private static final int INTERVAL_FOR_HORIZONTAL_AXIS = 10;
 
     private static final int UPDATE_CHECK_PERIOD = 100;
-    private static final int UPDATE_PERIOD = 200;
+    private static final int UPDATE_PERIOD = 2000;
     private static final int POINTS_COUNT = 150;
     private static final int PAST_POINTS_COUNT = 3;
     private static final int FUTURE_POINTS_COUNT = 3;
@@ -89,6 +97,7 @@ public class DashboardFragment extends Fragment {
     private static final int LINE_CHART_AXIS_COLOR = Color.parseColor("#85919F");
     private static final int LINE_CHART_AXIS_TEXT_SIZE = 22;
     private static final int LINE_CHART_AXIS_TEXT_COLOR = Color.parseColor("#B7B7B8");
+    private int times = 0;
 
     protected PowerPlantActivity mActivity;
     private LineChartView lineChart;
@@ -97,6 +106,9 @@ public class DashboardFragment extends Fragment {
     private TextView gridValueView;
     private TextView totalValueView;
     private final List<GaugeChart> gaugeCharts = new ArrayList<>();
+    private final boolean[] isPanelsOutage = new boolean[NUM_PANELS];
+    private TextView logBox;
+    private LinkedList<String> savedLogs = new LinkedList<>();
 
     private Line line;
     private DataEndpoint endpoint;
@@ -122,6 +134,7 @@ public class DashboardFragment extends Fragment {
         gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart21));
         gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart22));
         gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart23));
+        logBox = (TextView) rootView.findViewById(R.id.logBox);
         
         Thread updateThread = new Thread(new Runnable() {
 
@@ -182,15 +195,20 @@ public class DashboardFragment extends Fragment {
                             PieChartData data = pieChart.getPieChartData();
                             float plantVoltage = 0.0f;
                            
+                            Log.d(TAG, "Now it's " + (times + 1) + "th repetition");
                             int counter = 0;
                             for (DataPoint dp : latestData.getDataPoints()) {
                                 plantVoltage += dp.getVoltage();
                                 SliceValue sliceValue = data.getValues().get(dp.getPanelId());
                                 sliceValue.setTarget(dp.getVoltage());
-                                gaugeCharts.get(counter++).setValue(dp.getVoltage());
+                                gaugeCharts.get(counter).setValue(dp.getVoltage());
+                                showLogIfNeeded(counter, dp.getVoltage());
                                 // sliceValue.setLabel(String.format(PIE_CHART_VALUE_FORMAT,
                                 // dp.getVoltage()));
+                                Log.d(TAG, "Panel #" + (counter + 1) + ", voltage: " + dp.getVoltage());
+                                counter++;
                             }
+                            times++;
 
                             float gridVoltage = latestData.getPowerConsumption() - plantVoltage;
                             SliceValue gridValue = data.getValues().get(NUM_PANELS).setTarget(gridVoltage);
@@ -291,7 +309,7 @@ public class DashboardFragment extends Fragment {
         // lineChart.setBackgroundColor(CHART_BACKROUND_COLOR);
         lineChart.getChartRenderer().setMinViewportXValue((float) 0);
         lineChart.getChartRenderer().setMaxViewportXValue((float) POINTS_COUNT);
-
+        
         List<PointValue> values = new ArrayList<PointValue>();
 
         float maxValue = Float.MIN_VALUE;
@@ -385,5 +403,52 @@ public class DashboardFragment extends Fragment {
         lineChartData.setAxisYLeft(axisY);
 
         lineChart.setLineChartData(lineChartData);
+    }
+    
+    private void showLogIfNeeded(int panelIndex, double curVoltage) {
+    	boolean isOutage = false;
+    	if (curVoltage < NORMAL_VOLTAGE) {
+    		isOutage = true;
+    	}
+    	
+    	// state has changed
+    	if ((!isPanelsOutage[panelIndex] || !isOutage) && (isPanelsOutage[panelIndex] || isOutage)) {
+    		prependToLogBox(isOutage, panelIndex);
+    		isPanelsOutage[panelIndex] = isOutage;
+    	}
+    }
+    
+    private void prependToLogBox(final boolean isOutage, final int panelIndex) {
+    	mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Calendar cal = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a ");
+            	String log;
+            	if (isOutage) {
+            		log = "<font color=\"red\">" + sdf.format(cal.getTime()) + " [WARN] Panel " +
+            					(panelIndex + 1) + " voltage outage detected</font>";
+            	} else {
+            		log = "<font color=\"#009d5d\">" + sdf.format(cal.getTime()) + " [INFO] Panel " +
+            					(panelIndex + 1) + " voltage is back to normal</font>";
+            	}
+            	
+            	if (savedLogs.size() > 30) {
+            		savedLogs.removeLast();
+            	}
+            	savedLogs.addFirst(log);
+            	
+            	logBox.setText(Html.fromHtml(getLogString()));
+            }
+        });
+    }
+    
+    private String getLogString() {
+    	StringBuilder res = new StringBuilder();
+    	for (String log : savedLogs) {
+    		res.append(log);
+    		res.append("\n");
+    	}
+    	return res.toString();
     }
 }

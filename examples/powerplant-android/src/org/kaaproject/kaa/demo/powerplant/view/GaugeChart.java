@@ -20,78 +20,83 @@ import android.util.Log;
 import android.view.View;
 
 public class GaugeChart extends View {
-	
+	// tag for logging
 	private static final String TAG = "GaugeChartView";
-	 
-	private static final float EPS = 1e-3f;
 	
-	private static final int TEXT_COLOR = Color.rgb(98, 98, 98);
-	private static final int RIM_COLOR = Color.rgb(224, 224, 224);
-	private static final float TEXT_FONT_SIZE = 0.07f;
-	private static final float TEXT_MEASURE_FONT_SIZE = 0.12f;
-	private static final int PREFFERED_SIZE = 150;
+	// constant declarations
+	private static final float EPS = 1e-3f;
+	private static final float ZERO = 0.0f;
+	private static final long MINUS_ONE = -1L;
 	private static final float CENTER_X = 0.5f;
 	private static final float CENTER_Y = 0.5f;
+	
+	// background
+	private static final int PREFFERED_SIZE = 150;
+	private Bitmap background; // holds the cached static part
+	private Paint backgroundPaint;
+	
+	// rim
+	private static final int RIM_COLOR = Color.rgb(224, 224, 224);
 	private static final float RIM_SIZE = 0.02f;
+	private RectF rimRect;
+	private Paint rimPaint;
+	private Paint rimCirclePaint;
+	
+	// face
+	private RectF faceRect;
+	private Paint facePaint;
+	
+	// scale
 	private static final float SCALE_POSITION = 0.045f;
 	private static final float SCALE_LINE_POSITION = 0.1f;
-	private static final float SCALE_LINE_WIDTH = 0.06f;
+	private static final float SCALE_LINE_WIDTH = 0.062f;
 	private static final float SCALE_FONT_SIZE = 0.07f;
-
-	
-	// scale configuration
 	private static final int TOTAL_NICKS = 7;
 	private static final float DEGREES_PER_NICK = 180.0f / (TOTAL_NICKS - 1);	
 	private static final int CENTER_POWER = 3;
 	private static final int MIN_POWER = 0;
 	private static final int MAX_POWER = 6;
-	
-	// hand configuration
+	private static final int GRADIET_START_COLOR = Color.rgb(4, 221, 132);
+	private RectF scaleRect;
+	private Paint scalePaint;
+	private RectF scaleLineRect;
+	private Paint scaleLinePaint;
+	private Paint redPaint;
+	private Paint gradientStartPaint;
+
+	// labels and text
+	private static final int TEXT_COLOR = Color.rgb(98, 98, 98);
+	private static final float TEXT_FONT_SIZE = 0.07f;
+	private static final float TEXT_MEASURE_FONT_SIZE = 0.12f;
 	private static final String POWER_LABEL = "Power, kW";
 	private static final float POWER_LABEL_POS_Y = 0.45f;
 	private static final float PANEL_NAME_LABEL_POS_Y = 0.75f;
 	private static final float MEASURES_LABEL_POS_Y = 0.65f;
-	private static final float HANDLE_ACCELERATION_COEFF = 30f;
-	private boolean isHandInitialized = false;
-	private float handTarget = CENTER_POWER;
-	private float handPosition = MIN_POWER;
-	private float handVelocity = 0.0f;
-	private float handAcceleration = 0.0f;
-	private long lastHandMoveTime = -1L;
-
-	// labels adjustments
 	private static final float MAGIC_LABEL_ALIGN_COEFF = 5f;
 	private static final float MAGIC_MEASURE_ALIGN_COEFF = 3f;
 	private String panelName;
-	
-	private Bitmap background; // holds the cached static part
-	
-	private RectF rimRect;
-	private Paint rimPaint;
-	private Paint rimCirclePaint;
-	
-	private RectF scaleRect;
-	private Paint scalePaint;
-	
 	private Paint textPaint;
 	private Paint labelPaint;
 	private Paint measuresPaint;
-	
-	private RectF scaleLineRect;
-	private Paint scaleLinePaint;
-	private Paint redPaint;
-	
-	private RectF faceRect;
-	private Bitmap faceTexture;
-	private Paint facePaint;
-	private Paint rimShadowPaint;
-	
-	private Paint backgroundPaint;
-	
+
 	// hand
+	private static final float HAND_CIRCLE_RADIUS = 0.01f;
+	private static final int HAND_COLOR = TEXT_COLOR;
 	private Paint handPaint;
 	private Path handPath;
 	private Paint handScrewPaint;
+
+	// physics
+	private static final float VELOCITY_BARRIER = 90.0f;
+	private float handleAccelerationCoef = 3f;
+	private boolean isHandInitialized = false;
+	private float handTarget = CENTER_POWER;
+	private float handPosition = MIN_POWER;
+	private float prevHandTarget = handTarget;
+	private float handVelocity = 0.0f;
+	private float handAcceleration = 0.0f;
+	private long lastHandMoveTime = -1L;
+	private float prevDistance = 1000f;
 	
 	public GaugeChart(Context context) {
 		super(context);
@@ -107,6 +112,8 @@ public class GaugeChart extends View {
 
 		try {
 			panelName = a.getString(R.styleable.GaugeChart_panel_name);
+			handleAccelerationCoef = a.getFloat(R.styleable.GaugeChart_update_time_s, 1.0f);
+			handleAccelerationCoef *= 0.9;
 		} finally {
 			a.recycle();
 		}
@@ -118,7 +125,6 @@ public class GaugeChart extends View {
 		super(context, attrs, defStyle);
 		init();
 	}
-	
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {	
@@ -175,9 +181,12 @@ public class GaugeChart extends View {
 		isHandInitialized = bundle.getBoolean("isHandInitialized");
 		handPosition = bundle.getFloat("handPosition");
 		handTarget = bundle.getFloat("handTarget");
+		prevHandTarget = bundle.getFloat("prevHandTarget");
 		handVelocity = bundle.getFloat("handVelocity");
 		handAcceleration = bundle.getFloat("handAcceleration");
 		lastHandMoveTime = bundle.getLong("lastHandMoveTime");
+		panelName = bundle.getString("panelName");
+		handleAccelerationCoef = bundle.getFloat("handleAccelerationCoef");
 	}
 
 	@Override
@@ -189,10 +198,17 @@ public class GaugeChart extends View {
 		state.putBoolean("isHandInitialized", isHandInitialized);
 		state.putFloat("handPosition", handPosition);
 		state.putFloat("handTarget", handTarget);
+		state.putFloat("prevHandTarget", prevHandTarget);
 		state.putFloat("handVelocity", handVelocity);
 		state.putFloat("handAcceleration", handAcceleration);
 		state.putLong("lastHandMoveTime", lastHandMoveTime);
+		state.putString("panelName", panelName);
+		state.putFloat("handleAccelerationCoef", handleAccelerationCoef);
 		return state;
+	}
+	
+	public void setValue(double voltage) {
+		setHandTarget(voltage);
 	}
 	
 	private void init() {	
@@ -200,13 +216,15 @@ public class GaugeChart extends View {
 		setValue(0);
 	}
 	
-	private void initDrawingTools() {
-		rimRect = new RectF(0.1f, 0.1f, 0.9f, 0.9f);
-		
+	private void initDrawingTools() {	
+		// background
 		backgroundPaint = new Paint();
 		backgroundPaint.setFilterBitmap(true);
 		backgroundPaint.setColor(Color.WHITE);
 
+		// rim
+		rimRect = new RectF(0.1f, 0.1f, 0.9f, 0.9f);
+		
 		rimPaint = new Paint();
 		rimPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
 		rimPaint.setColor(RIM_COLOR);
@@ -217,6 +235,7 @@ public class GaugeChart extends View {
 		rimCirclePaint.setColor(Color.argb(0x4f, 0x33, 0x36, 0x33));
 		rimCirclePaint.setStrokeWidth(0.005f);
 		
+		// face
 		faceRect = new RectF();
 		faceRect.set(rimRect.left + RIM_SIZE, rimRect.top + RIM_SIZE, 
 			     rimRect.right - RIM_SIZE, rimRect.bottom - RIM_SIZE);	
@@ -226,6 +245,7 @@ public class GaugeChart extends View {
 		facePaint.setFilterBitmap(true);
 		facePaint.setStyle(Paint.Style.FILL);
 		
+		// scale
 		scaleRect = new RectF();
 		scaleRect.set(faceRect.left + SCALE_LINE_POSITION, faceRect.top + SCALE_LINE_POSITION,
 					  faceRect.right - SCALE_LINE_POSITION, faceRect.bottom - SCALE_LINE_POSITION);
@@ -247,11 +267,16 @@ public class GaugeChart extends View {
 		
 		scaleLinePaint = new Paint();
 		scaleLinePaint.setStyle(Paint.Style.STROKE);
-		Shader gradient = new SweepGradient (scaleLineRect.centerX(), scaleLineRect.centerY(),
-				Color.rgb(90, 255, 80), Color.rgb(0, 133, 78));
+		Shader gradient = new SweepGradient(scaleLineRect.centerX(), scaleLineRect.centerY(),
+				GRADIET_START_COLOR, Color.BLACK);
 		scaleLinePaint.setShader(gradient);
 		scaleLinePaint.setStrokeWidth(SCALE_LINE_WIDTH);
 		scaleLinePaint.setAntiAlias(true);
+		
+		gradientStartPaint = new Paint();
+		gradientStartPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+		gradientStartPaint.setColor(GRADIET_START_COLOR);
+		
 		
 		redPaint = new Paint();
 		redPaint.setColor(Color.RED);
@@ -259,6 +284,7 @@ public class GaugeChart extends View {
 		redPaint.setStrokeWidth(SCALE_LINE_WIDTH * 0.8f);
 		redPaint.setAntiAlias(true);
 		
+		// paint for panel name label and power label
 		textPaint = new Paint();
 		textPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 		textPaint.setColor(TEXT_COLOR);
@@ -267,21 +293,20 @@ public class GaugeChart extends View {
 		textPaint.setTypeface(Typeface.SANS_SERIF);
 		textPaint.setAntiAlias(true);
 		
-		// hand
+		// hand 
 		handPaint = new Paint();
 		handPaint.setAntiAlias(true);
-		handPaint.setColor(0xff392f2c);		
-		handPaint.setShadowLayer(0.01f, -0.005f, -0.005f, 0x7f000000);
+		handPaint.setColor(HAND_COLOR);		
 		handPaint.setStyle(Paint.Style.FILL);	
 		
 		handPath = new Path();
-		handPath.moveTo(0.5f, 0.5f + 0.05f);
-		handPath.lineTo(0.5f - 0.010f, 0.5f + 0.05f - 0.007f);
-		handPath.lineTo(0.5f - 0.002f, 0.5f - 0.32f);
-		handPath.lineTo(0.5f + 0.002f, 0.5f - 0.32f);
-		handPath.lineTo(0.5f + 0.010f, 0.5f + 0.05f - 0.007f);
-		handPath.lineTo(0.5f, 0.5f + 0.05f);
-		handPath.addCircle(0.5f, 0.5f, 0.02f, Path.Direction.CW);
+		handPath.moveTo(CENTER_X, CENTER_Y + 0.05f);
+		handPath.lineTo(CENTER_X - 0.010f, CENTER_Y + 0.05f - 0.007f);
+		handPath.lineTo(CENTER_X - 0.002f, CENTER_Y - 0.32f);
+		handPath.lineTo(CENTER_X + 0.002f, CENTER_Y - 0.32f);
+		handPath.lineTo(CENTER_X + 0.010f, CENTER_Y + 0.05f - 0.007f);
+		handPath.lineTo(CENTER_X, CENTER_Y + 0.05f);
+		handPath.addCircle(CENTER_X, CENTER_Y, 0.02f, Path.Direction.CW);
 		
 		handScrewPaint = new Paint();
 		handScrewPaint.setAntiAlias(true);
@@ -296,6 +321,7 @@ public class GaugeChart extends View {
 		labelPaint.setTextAlign(Paint.Align.LEFT);
 		labelPaint.setLinearText(true);
 		
+		// measures (x.y kW)
 		measuresPaint = new Paint();
 		measuresPaint.setAntiAlias(true);
 		measuresPaint.setColor(TEXT_COLOR);
@@ -352,7 +378,10 @@ public class GaugeChart extends View {
 	}
 	
 	private void drawScale(Canvas canvas) {
-		canvas.drawArc(scaleLineRect, 174, 188, false, scaleLinePaint);
+		canvas.save(Canvas.MATRIX_SAVE_FLAG);
+		canvas.rotate(180, CENTER_X, CENTER_Y);
+		canvas.drawArc(scaleRect, -6, 188, false, scaleLinePaint);
+		canvas.restore();
 		
 		canvas.save(Canvas.MATRIX_SAVE_FLAG);
 		canvas.rotate(-90, CENTER_X, CENTER_Y);
@@ -379,11 +408,11 @@ public class GaugeChart extends View {
 		if (isHandInitialized) {
 			float handAngle = degreeToAngle(handPosition);
 			canvas.save(Canvas.MATRIX_SAVE_FLAG);
-			canvas.rotate(handAngle, 0.5f, 0.5f);
+			canvas.rotate(handAngle, CENTER_X, CENTER_Y);
 			canvas.drawPath(handPath, handPaint);
 			canvas.restore();
 			
-			canvas.drawCircle(0.5f, 0.5f, 0.01f, handScrewPaint);
+			canvas.drawCircle(CENTER_X, CENTER_Y, HAND_CIRCLE_RADIUS, handScrewPaint);
 		}
 	}
 	
@@ -400,35 +429,42 @@ public class GaugeChart extends View {
 			return;
 		}
 		
-		if (lastHandMoveTime != -1L) { 
+		if (lastHandMoveTime != MINUS_ONE) { 
 			long currentTime = System.currentTimeMillis();
 			float delta = (currentTime - lastHandMoveTime) / 1000.0f;
 
-			float direction = Math.signum(handVelocity);
-			if (Math.abs(handVelocity) < 90.0f) {
-				handAcceleration = HANDLE_ACCELERATION_COEFF * (handTarget - handPosition);
-			} else {
-				handAcceleration = 0.0f;
+			// previous (from previous rotation cycle) hand target and current target are not the same
+			if (Math.abs(handTarget - prevHandTarget) > EPS) {
+				handVelocity = ZERO;
+				prevHandTarget = handTarget;
 			}
-			handPosition += handVelocity * delta;
+			
+/*			if (panelName.equals("Panel 6")) {
+				Log.d(TAG, "handVelocity: " + handVelocity + "handAcceleration: " + handAcceleration + 
+						", delta: " + delta + ", handPosition: " + handPosition);
+			}*/
+			handPosition += handVelocity * delta + handAcceleration * delta * delta / 2;
 			handVelocity += handAcceleration * delta;
-			if ((handTarget - handPosition) * direction < 0.01f * direction) {
+			
+			float curDistance = Math.abs(handTarget - handPosition);
+/*			if (panelName.equals("Panel 6")) {
+				Log.d(TAG, "handTarget: " + handTarget + ", handPosition: " + handPosition +
+						", prevDistance: " + prevDistance + ", cur distance: " + curDistance);
+			}*/
+			if (curDistance >= prevDistance) {
 				handPosition = handTarget;
-				handVelocity = 0.0f;
-				handAcceleration = 0.0f;
-				lastHandMoveTime = -1L;
+				handVelocity = ZERO;
+				handAcceleration = ZERO;
+				lastHandMoveTime = MINUS_ONE;
 			} else {
 				lastHandMoveTime = System.currentTimeMillis();				
 			}
+			prevDistance = curDistance;
 			invalidate();
 		} else {
 			lastHandMoveTime = System.currentTimeMillis();
 			moveHand();
 		}
-	}
-	
-	public void setValue(double voltage) {
-		setHandTarget(voltage);
 	}
 	
 	private void setHandTarget(double power) {
@@ -438,7 +474,9 @@ public class GaugeChart extends View {
 			power = MAX_POWER;
 		}
 		handTarget = (float) power;
+		prevDistance = 1000f;
 		isHandInitialized = true;
+		handAcceleration = 2 * (handTarget - handPosition) / (handleAccelerationCoef * handleAccelerationCoef);
 		invalidate();
 	}
 	

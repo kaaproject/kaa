@@ -22,14 +22,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="2" >
+    android:weightSum="2"
+	android:background="#E0E0E0"
+	android:layout_marginTop="10dp">
 
     <RelativeLayout
         android:id="@+id/lineChartLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#FAFAFA">
+        android:background="#FFFFFF"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
         <TextView 
             android:id="@+id/lineChartYAxisText"
             android:layout_width="wrap_content"
@@ -69,7 +74,8 @@
         android:layout_weight="1"
         android:orientation="horizontal"
         android:weightSum="50"
-        android:baselineAligned="false">
+        android:baselineAligned="false"
+        android:layout_marginBottom="10dp">
         
         <LinearLayout
             android:id="@+id/gaugeChartMainLayout"
@@ -77,7 +83,9 @@
             android:layout_width="0dp"
             android:weightSum="2"
             android:orientation="vertical"
-            android:layout_weight="21">
+            android:layout_weight="21"
+            android:background="#FFFFFF"
+            android:layout_marginLeft="10dp">
             <LinearLayout
                 android:id="@+id/gaugeChartTopLayout"
                 android:layout_height="0dp"
@@ -90,21 +98,24 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
                     android:layout_weight="1"
-                    custom:panel_name="Panel 1">
+                    custom:panel_name="Panel 1"
+                    custom:update_time_s="2">
                 </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
                 <org.kaaproject.kaa.demo.powerplant.view.GaugeChart
                     android:id="@+id/gaugeChart12"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
                     android:layout_weight="1"
-                    custom:panel_name="Panel 2">
+                    custom:panel_name="Panel 2"
+                    custom:update_time_s="2">
                 </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
                 <org.kaaproject.kaa.demo.powerplant.view.GaugeChart
                     android:id="@+id/gaugeChart13"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
                     android:layout_weight="1"
-                    custom:panel_name="Panel 3">
+                    custom:panel_name="Panel 3"
+                    custom:update_time_s="2">
                 </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
             </LinearLayout>
             <LinearLayout
@@ -119,21 +130,24 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
                     android:layout_weight="1"
-                    custom:panel_name="Panel 4">
+                    custom:panel_name="Panel 4"
+                    custom:update_time_s="2">
                 </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
                 <org.kaaproject.kaa.demo.powerplant.view.GaugeChart
                     android:id="@+id/gaugeChart22"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
                     android:layout_weight="1"
-                    custom:panel_name="Panel 5">
+                    custom:panel_name="Panel 5"
+                    custom:update_time_s="2">
                 </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
                 <org.kaaproject.kaa.demo.powerplant.view.GaugeChart
                     android:id="@+id/gaugeChart23"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
                     android:layout_weight="1"
-                    custom:panel_name="Panel 6">
+                    custom:panel_name="Panel 6"
+                    custom:update_time_s="2">
                 </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
             </LinearLayout>
         </LinearLayout>
@@ -146,7 +160,8 @@
             <lecho.lib.hellocharts.view.PieChartView
                 android:id="@+id/pieChart"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_marginLeft="15dp">
             </lecho.lib.hellocharts.view.PieChartView>
             <LinearLayout
                 android:layout_height="wrap_content"
@@ -223,12 +238,28 @@
         <RelativeLayout
             android:layout_height="match_parent"
             android:layout_width="0dp"
-            android:layout_weight="15">
-            <lecho.lib.hellocharts.view.PieChartView
-                android:id="@+id/pieChart2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-            </lecho.lib.hellocharts.view.PieChartView>
+            android:layout_weight="15"
+            android:background="#FFFFFF"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="10dp">
+            <TextView
+	            android:id="@+id/logBox"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:layout_marginLeft="25dp"
+	            android:autoLink="all"
+	            android:clickable="false"
+	            android:cursorVisible="false"
+	            android:editable="false"
+	            android:gravity="left"
+	            android:isScrollContainer="true"
+	            android:longClickable="false"
+	            android:scrollbars="vertical"
+	            android:textSize="14dp"
+	            android:lineSpacingMultiplier="1.2"
+	            android:inputType="textMultiLine"
+	            android:paddingTop="15dp"
+	            android:paddingBottom="16dp"/>
         </RelativeLayout>
     </LinearLayout>
 
