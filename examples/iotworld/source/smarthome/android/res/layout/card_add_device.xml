@@ -19,6 +19,7 @@
     android:id="@+id/titleLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingRight="15dp"
     android:gravity="center_horizontal"
     android:orientation="horizontal">
     <ImageView 

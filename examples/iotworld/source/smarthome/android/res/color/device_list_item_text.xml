@@ -20,5 +20,5 @@
     <item android:color="#ffffffff" android:state_checked="true"/>
     <item android:color="#ffffffff" android:state_focused="true"/>
     <item android:color="#ffffffff" android:state_selected="true"/>
-    <item android:color="#ff757575"/>
+    <item android:color="#ff626262"/>
 </selector>

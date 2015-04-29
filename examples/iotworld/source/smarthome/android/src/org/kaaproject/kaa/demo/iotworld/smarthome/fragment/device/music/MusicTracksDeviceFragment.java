@@ -54,7 +54,6 @@ public class MusicTracksDeviceFragment extends AbstractMusicDeviceFragment imple
         if (mAlbumId == null) {
             mAlbumId = savedInstanceState.getString(ALBUM_ID);
         }
-        mAlbum = mDevice.getAlbum(mAlbumId);
     }
     
     @Override
@@ -79,6 +78,8 @@ public class MusicTracksDeviceFragment extends AbstractMusicDeviceFragment imple
     protected void setupView(LayoutInflater inflater, View rootView) {
         super.setupView(inflater, rootView);
         
+        mAlbum = mDevice.getAlbum(mAlbumId);
+
         mNoDataText.setText(R.string.no_tracks);
         
         mTrackListLayout = rootView.findViewById(R.id.track_list_layout);

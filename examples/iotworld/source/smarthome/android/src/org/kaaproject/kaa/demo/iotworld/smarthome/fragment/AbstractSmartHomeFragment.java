@@ -26,6 +26,7 @@ import org.kaaproject.kaa.demo.iotworld.smarthome.widget.SmartHomeToolbar;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.view.View;
@@ -57,16 +58,19 @@ public abstract class AbstractSmartHomeFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (mActivity == null) {
-            mActivity = (SmartHomeActivity) activity;
-            mActionBar = mActivity.getSupportActionBar();
-            mToolbar = mActivity.getSmartHomeToolbar();
-            mApplication = mActivity.getSmartHomeApplication();
-            mController = mApplication.getController();
-            mDeviceStore = mApplication.getDeviceStore();
-        }
+        mActivity = (SmartHomeActivity) activity;
     }
     
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mActionBar = mActivity.getSupportActionBar();
+        mToolbar = mActivity.getSmartHomeToolbar();
+        mApplication = mActivity.getSmartHomeApplication();
+        mController = mApplication.getController();
+        mDeviceStore = mApplication.getDeviceStore();
+    }
+
     protected void setupView(View rootView) {
         mWaitLayout = rootView.findViewById(R.id.waitLayout);
         mContentLayout = rootView.findViewById(R.id.contentLayout);

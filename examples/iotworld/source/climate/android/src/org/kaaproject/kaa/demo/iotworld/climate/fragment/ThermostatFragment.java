@@ -48,28 +48,27 @@ public class ThermostatFragment extends Fragment implements OnThermostatChangeLi
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (mActivity == null) {
-            mActivity = (ClimateControlActivity) activity;
-            mApplication = mActivity.getClimateControlApplication();
-            mController = mApplication.getController();
-            mThermostatDevice = mController.getThermostatDevice();
-        }
+        mActivity = (ClimateControlActivity) activity;
     }
     
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mApplication = mActivity.getClimateControlApplication();
+        mController = mApplication.getController();
+        mThermostatDevice = mController.getThermostatDevice();
+        ThermostatInfo thermostatInfo = mThermostatDevice.getThermostatInfo();
+        mThermostat.setTemp(thermostatInfo.getDegree());
+        mThermostat.setTargetTemp(thermostatInfo.getTargetDegree(), false);
+        mThermostat.setOnThermostatChangeListener(this);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_thermostat, container,
                 false);
         mThermostat = (Thermostat)rootView.findViewById(R.id.thermostat);
-        
-        ThermostatInfo thermostatInfo = mThermostatDevice.getThermostatInfo();
-        
-        mThermostat.setTemp(thermostatInfo.getDegree());
-        mThermostat.setTargetTemp(thermostatInfo.getTargetDegree(), false);
-        
-        mThermostat.setOnThermostatChangeListener(this);
-        
         return rootView;
     }
     

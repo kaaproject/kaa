@@ -40,23 +40,30 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone">
-            <TextView
-                android:id="@+id/irrigationStatusTextView"
+            <LinearLayout 
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:textSize="24sp"
-                android:layout_alignParentTop="true"/>
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:layout_alignParentTop="true"
+                android:layout_above="@+id/spentThisMonthView"
+                android:orientation="vertical">
+	            <TextView
+	                android:id="@+id/irrigationStatusTextView"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:textColor="@android:color/white"
+	                android:textSize="24sp"
+	                />
+	            <TextView
+	                android:id="@+id/irrigationScheduleTextView"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:textColor="@android:color/white"
+	                android:textSize="16sp"
+	                android:layout_marginTop="10dp"/>   
+            </LinearLayout>
             <TextView
-                android:id="@+id/irrigationScheduleTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:layout_marginTop="10dp"
-                android:layout_below="@id/irrigationStatusTextView"/>   
-            <TextView
-                android:id="@+id/spentThisMonthView"
+                android:id="@id/spentThisMonthView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"

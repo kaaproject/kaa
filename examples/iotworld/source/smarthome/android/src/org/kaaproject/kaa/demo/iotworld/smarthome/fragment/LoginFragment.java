@@ -44,6 +44,16 @@ public class LoginFragment extends AbstractSmartHomeFragment implements TextWatc
     }
     
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (!mApplication.isKaaStarted()) {
+            showWait();
+        } else {
+            showContent();
+        }
+    }
+    
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         
@@ -59,11 +69,6 @@ public class LoginFragment extends AbstractSmartHomeFragment implements TextWatc
         mPasswordInput.addTextChangedListener(this);
         mLoginButton.setOnClickListener(this);
 
-        if (!mApplication.isKaaStarted()) {
-            showWait();
-        } else {
-            showContent();
-        }
         return rootView;
     }
     

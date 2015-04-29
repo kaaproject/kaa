@@ -20,20 +20,30 @@
     
     <color name="rippleColor">#FFFFFF</color>
     
-    <color name="nav_header_color">#ff0d6074</color>
+<!--     <color name="nav_header_color">#ff0d6074</color> -->
+    <color name="nav_header_color">#ff607D8B</color>
+    
     <color name="nav_background_color">#fff9f9f9</color>
     <color name="nav_item_selected">#ffcccbcb</color>
     <color name="nav_item_pressed">#ff49b0c1</color>
-    <color name="status_bar_color">#ffb1c635</color>
     
     <color name="bar_login">#ff424242</color>
-    <color name="bar_home">#ffb1c635</color>
     
-    <color name="device_color_climate">#ff0497a7</color>
+<!--     <color name="bar_home">#ffb1c635</color> -->
+    <color name="bar_home">#ff4CAF50</color>
+    
+<!--     <color name="device_color_climate">#ff0497a7</color> -->
+    <color name="device_color_climate">#ff2196F3</color>
+    
     <color name="device_color_music">#fff38222</color>
-    <color name="device_color_photo">#ff788f9b</color>
-    <color name="device_color_lightning">#ff5e6bb2</color>
-    <color name="device_color_irrigation">#ff579fd7</color>
+<!--     <color name="device_color_photo">#ff788f9b</color> -->
+    <color name="device_color_photo">#ff8BC34A</color>
+    
+<!--     <color name="device_color_lightning">#ff5e6bb2</color> -->
+    <color name="device_color_lightning">#ff673AB7</color>
+    
+<!--     <color name="device_color_irrigation">#ff579fd7</color>     -->
+    <color name="device_color_irrigation">#ff1976D2</color>    
     
     <color name="add_device_color">#ff455b65</color>
     
@@ -44,9 +54,9 @@
     <color name="album_device_cover_border_color">#ffbb3f2e</color>
     <color name="album_cover_border_color">#fff38222</color>
     
-    <color name="grey_text_color">#ff919395</color>
+    <color name="grey_text_color">#ff626262</color>
     
-    <color name="card_divider_color">#ffedecec</color>
+    <color name="card_divider_color">#ff626262</color>
     
     <color name="thermostat_arc_cold">#FF1172C1</color>
     <color name="thermostat_arc">#FF666666</color>

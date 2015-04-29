@@ -56,6 +56,19 @@ public abstract class AbstractDeviceListFragment<D extends AbstractDevice>
     }
     
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mDeviceListAdapter = createListAdapter(mRecyclerView);
+        
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(layoutManager);
+        
+        showContent();
+        
+        notifyDataChanged();
+    }
+    
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         
@@ -66,15 +79,6 @@ public abstract class AbstractDeviceListFragment<D extends AbstractDevice>
         mNoDataText.setText(R.string.no_devices);
         mRecyclerView = (PressableRecyclerView) rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true); 
-        mDeviceListAdapter = createListAdapter(mRecyclerView);
-        
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(layoutManager);
-        
-        showContent();
-        
-        notifyDataChanged();
-        
         return rootView;
     }
     

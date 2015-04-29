@@ -64,8 +64,15 @@ public class HomeFragment extends AbstractSmartHomeFragment implements DeviceSel
     }
     
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        int cardsSpacing = getResources().getDimensionPixelSize(R.dimen.card_spacing);
+        mRecyclerView.setGridLayoutManager(GridLayoutManager.VERTICAL, 1, R.dimen.card_width, cardsSpacing);
+
+        mHomeAdapter = new HomeAdapter(mRecyclerView, mDeviceStore, this);
+        showContent();
+        
+        notifyDataChanged();
         discoverDevices(false);
     }
 
@@ -89,16 +96,6 @@ public class HomeFragment extends AbstractSmartHomeFragment implements DeviceSel
         
         mRecyclerView = (AutoSpanRecyclerView) rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true); 
-        
-        int cardsSpacing = getResources().getDimensionPixelSize(R.dimen.card_spacing);
-        mRecyclerView.setGridLayoutManager(GridLayoutManager.VERTICAL, 1, R.dimen.card_width, cardsSpacing);
-        
-        mHomeAdapter = new HomeAdapter(mRecyclerView, mDeviceStore, this);
-        
-        showContent();
-        
-        notifyDataChanged();
-        
         return rootView;
     }
     
