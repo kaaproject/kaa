@@ -42,11 +42,20 @@
  "namespace": "org.kaaproject.kaa.demo.iotworld.light",
  "type": "record",
  "classType": "event",
- "name": "BulbControlRequest",
+ "name": "ChangeBulbBrightnessRequest",
  "fields": [
 	{"name": "bulbId", "type": "string"},
-	{"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.light.BulbStatus"},
 	{"name": "brightness", "type": "int"}
+ ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.light",
+ "type": "record",
+ "classType": "event",
+ "name": "ChangeBulbStatusRequest",
+ "fields": [
+	{"name": "bulbId", "type": "string"},
+	{"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.light.BulbStatus"}
  ]
 }
 ]

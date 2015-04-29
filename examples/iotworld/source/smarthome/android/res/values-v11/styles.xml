@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   Copyright 2014-2015 CyberVision, Inc.
  
@@ -13,7 +14,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
 <resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">

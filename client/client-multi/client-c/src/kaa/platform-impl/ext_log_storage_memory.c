@@ -217,7 +217,7 @@ kaa_error_t ext_log_storage_add_log_record(void *context, kaa_log_record_t *reco
     } else if (self->logs) {
         it = kaa_list_push_back(self->logs, new_record);
     } else {
-        it = kaa_list_create(new_record);
+        self->logs = it = kaa_list_create(new_record);
     }
 
     if (!it) {
@@ -266,7 +266,7 @@ kaa_error_t ext_log_storage_write_next_record(void *context
     ext_log_storage_memory_t *self = (ext_log_storage_memory_t *)context;
 
     uint16_t zero_bucket_id = 0;
-    kaa_list_t *record_position = kaa_list_find_next(/*self->first_unmarked ? self->first_unmarked : */self->logs
+    kaa_list_t *record_position = kaa_list_find_next(self->first_unmarked ? self->first_unmarked : self->logs
                                                    , &find_by_bucket_id
                                                    , &zero_bucket_id);
     if (!record_position) {
@@ -329,7 +329,7 @@ kaa_error_t ext_log_storage_unmark_by_bucket_id(void *context, uint16_t bucket_i
         return KAA_ERR_NOT_FOUND;
 
     while (record_position) {
-        ext_log_record_t *log_record = (ext_log_record_t *)kaa_list_get_data(self->logs);
+        ext_log_record_t *log_record = (ext_log_record_t *)kaa_list_get_data(record_position);
 
         log_record->bucket_id = 0;
         self->unmarked_record_count++;

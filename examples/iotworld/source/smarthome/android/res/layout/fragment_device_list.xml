@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   Copyright 2014-2015 CyberVision, Inc.
  
@@ -13,7 +14,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -33,11 +33,12 @@
             android:layout_centerVertical="true"
             android:visibility="gone" 
             android:orientation="vertical">
-            <ListView
-                android:id="@+id/list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone" />
+		    <org.kaaproject.kaa.demo.iotworld.smarthome.widget.PressableRecyclerView 
+		        android:id="@+id/recycler_view"
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"        
+		        android:visibility="gone"    
+		        android:scrollbars="vertical"/>
             <TextView 
                 android:id="@+id/noDataText"
                 android:layout_width="wrap_content"

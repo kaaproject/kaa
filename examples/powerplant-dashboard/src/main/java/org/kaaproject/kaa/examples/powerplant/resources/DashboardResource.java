@@ -2,12 +2,11 @@ package org.kaaproject.kaa.examples.powerplant.resources;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -34,20 +33,8 @@ public class DashboardResource {
     private static final Logger LOG = LoggerFactory.getLogger(DashboardResource.class);
 
     private static final int MAX_SAMPLES = 100;
-    private static final ConcurrentMap<Integer, SortedSet<DataPoint>> voltageSamplesMap = new ConcurrentHashMap<>();
-
-    // TODO: remove this hardcode data;
-    static {
-        long time = new Date().getTime();
-        voltageSamplesMap.putIfAbsent(1, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
-        voltageSamplesMap.putIfAbsent(2, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
-        voltageSamplesMap.putIfAbsent(3, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
-        voltageSamplesMap.putIfAbsent(4, new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
-        voltageSamplesMap.get(1).add(new DataPoint(1, 5.2, time));
-        voltageSamplesMap.get(2).add(new DataPoint(2, 3.7, time));
-        voltageSamplesMap.get(3).add(new DataPoint(3, 2.2, time));
-        voltageSamplesMap.get(4).add(new DataPoint(4, 4.1, time));
-    }
+    private static final Map<Integer, SortedSet<DataPoint>> voltageSamplesMap = new HashMap<>();
+    private static final Object updateLock = new Object();
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -56,10 +43,12 @@ public class DashboardResource {
         LOG.trace("Sorted list {}", keyList);
 
         List<DataPoint> result = new ArrayList<DataPoint>();
-        for (Integer key : keyList) {
-            LOG.trace("Filtering {} samples using ts {}", key, time);
-            SortedSet<DataPoint> samples = voltageSamplesMap.get(key).tailSet(new DataPoint(key, 0.0, time));
-            result.addAll(samples);
+        synchronized (updateLock) {
+            for (Integer key : keyList) {
+                LOG.trace("Filtering {} samples using ts {}", key, time);
+                SortedSet<DataPoint> samples = voltageSamplesMap.get(key).tailSet(new DataPoint(key, 0.0f, time));
+                result.addAll(samples);
+            }
         }
 
         return result;
@@ -72,8 +61,10 @@ public class DashboardResource {
         List<Integer> keyList = sortKeyList();
 
         List<DataPoint> result = new ArrayList<DataPoint>();
-        for (Integer key : keyList) {
-            result.add(voltageSamplesMap.get(key).last());
+        synchronized (updateLock) {
+            for (Integer key : keyList) {
+                result.add(voltageSamplesMap.get(key).last());
+            }
         }
         return result;
     }
@@ -93,33 +84,33 @@ public class DashboardResource {
             return Response.status(Status.BAD_REQUEST).build();
         }
 
-        long ts = new Date().getTime();
-        for (VoltageSample sample : report.getSamples()) {
-            LOG.trace("processing {}", sample);
-            sample.setTimestamp(ts);
-            Integer panelId = sample.getPanelId();
-            SortedSet<DataPoint> sampleSet = voltageSamplesMap.get(panelId);
-            if (sampleSet == null) {
-                LOG.trace("[{}] no samples for this panel yet", panelId);
-                sampleSet = Collections.synchronizedSortedSet(new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
-                SortedSet<DataPoint> curSet = voltageSamplesMap.putIfAbsent(panelId, sampleSet);
-                if (curSet != null) {
-                    sampleSet = curSet;
+        long ts = System.currentTimeMillis();
+        synchronized (updateLock) {
+            for (VoltageSample sample : report.getSamples()) {
+                LOG.trace("processing {}", sample);
+                Integer panelId = sample.getPanelId();
+                SortedSet<DataPoint> sampleSet = voltageSamplesMap.get(panelId);
+                if (sampleSet == null) {
+                    LOG.trace("[{}] no samples for this panel yet", panelId);
+                    sampleSet = Collections.synchronizedSortedSet(new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
+                    SortedSet<DataPoint> curSet = voltageSamplesMap.put(panelId, sampleSet);
+                    if (curSet != null) {
+                        sampleSet = curSet;
+                    }
+                }
+                sampleSet.add(convert(sample, ts));
+                if (sampleSet.size() == MAX_SAMPLES) {
+                    DataPoint old = sampleSet.first();
+                    sampleSet.remove(old);
+                    LOG.trace("[{}] removing old data {}", panelId, old);
                 }
             }
-            sampleSet.add(convert(sample));
-            if (sampleSet.size() == MAX_SAMPLES) {
-                DataPoint old = sampleSet.first();
-                sampleSet.remove(old);
-                LOG.trace("[{}] removing old data {}", panelId, old);
-            }
         }
-
         return Response.noContent().build();
     }
 
-    private static DataPoint convert(VoltageSample sample) {
-        return new DataPoint(sample.getPanelId(), sample.getVoltage(), sample.getTimestamp());
+    private static DataPoint convert(VoltageSample sample, long ts) {
+        return new DataPoint(sample.getPanelId(), sample.getVoltage().floatValue(), ts);
     }
 
     private static final DatumReader<VoltageReport> datumReader = new SpecificDatumReader<VoltageReport>(VoltageReport.SCHEMA$);
