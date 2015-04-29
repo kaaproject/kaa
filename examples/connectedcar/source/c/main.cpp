@@ -206,16 +206,15 @@ void checkFencingPosition(rfid_t rfid)
         kaa_list_t *zones_it = configuration->zones;
         while (zones_it && (new_zone_id == UNKNOWN_GEOFENCING_ZONE_ID)) {
             kaa_configuration_geo_fencing_zone_t *zone = (kaa_configuration_geo_fencing_zone_t *)kaa_list_get_data(zones_it);
+            kaa_list_t *zone_tag_it = zone->tags;
 
-            if (current_zone_id != zone->id) {
-                kaa_list_t *zone_tag_it = zone->tags;
-                while (zone_tag_it && (new_zone_id == UNKNOWN_GEOFENCING_ZONE_ID)) {
-                    int64_t *tag = (int64_t *)kaa_list_get_data(zone_tag_it);
-                    if (*tag == rfid) {
-                        new_zone_id = zone->id;
-                    }
-                    zone_tag_it = kaa_list_next(zone_tag_it);
+            while (zone_tag_it && (new_zone_id == UNKNOWN_GEOFENCING_ZONE_ID)) {
+                int64_t *tag = (int64_t *)kaa_list_get_data(zone_tag_it);
+                if (*tag == rfid) {
+                    new_zone_id = zone->id;
                 }
+
+                zone_tag_it = kaa_list_next(zone_tag_it);
             }
             zones_it = kaa_list_next(zones_it);
         }
