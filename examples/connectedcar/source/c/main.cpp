@@ -32,13 +32,18 @@
 
 #define NSS 7
 #define CH_PD 22
+#define LEFT_LIGHT 21
+#define RIGHT_LIGHT 26
 #define ESP8266_RST 20
 
 #define RX_BUFFER_SIZE 256 //1460
 
-#define TRACE_DELAY 100
+#define ESP_SERIAL &Serial3
+#define ESP_SERIAL_BAUD 9600
 
-#define ESP_SERIAL Serial1
+#define LIGHT_BLINK_TIME 50
+#define LIGHT_BLINK_NUMBER 6 //Should be even number, 6 mean 3 blink, with interval on/off LIGHT_BLIM_TIME
+
 
 #define RFID_READER         Serial2
 #define RFID_BAUD_RATE      9600
@@ -73,6 +78,10 @@ static char dbg_array[DBG_SIZE];
 static rfid_t last_detected_rfid = RFID_MAX_NUMBER;
 
 
+/* Light blink variables */
+static uint32_t light_blink_time;
+static int light_blink_counter;
+
 
 void esp8266_serial_init(esp8266_serial_t **serial, HardwareSerial *hw_serial, uint32_t baud_rate);
 
@@ -84,10 +93,13 @@ void setup()
     pinMode(ESP8266_RST, OUTPUT);
     pinMode(BOARD_BUTTON_PIN, INPUT);
     pinMode(BOARD_LED_PIN, OUTPUT);
+    pinMode(LEFT_LIGHT, OUTPUT);
+    pinMode(RIGHT_LIGHT, OUTPUT);
 
+    light_blink_counter = -1;
     systick_enable();
 
-    esp8266_serial_init(&esp8266_serial, &Serial3, 115200);
+    esp8266_serial_init(&esp8266_serial, ESP_SERIAL, ESP_SERIAL_BAUD);
     if (!esp8266_serial) {
         debug("Serial Initialization failed, no memory\r\n");
         return;
@@ -114,10 +126,15 @@ void setup()
         debug("Failed to attach to user '%s', error code %d\r\n", KAA_USER_ID, error);
         return;
     }
+
+
 }
 
 void sendRFIDLog(rfid_t rfid)
 {
+    light_blink_time = millis();
+    lightOn(true, true);
+    light_blink_counter = 0;
     kaa_context_t *kaa_context = kaa_client_get_context(kaa_client);
 
     kaa_user_log_record_t *log_record = kaa_logging_rfid_log_create();
@@ -264,6 +281,22 @@ void process(void *context)
         }
     }
 
+    if (light_blink_counter >= 0) {
+        if ((millis() - light_blink_time) >= LIGHT_BLINK_TIME) {
+            light_blink_counter++;
+            light_blink_time = millis();
+            if ((light_blink_counter % 2) == 0) {
+                lightOn(true, true);
+            } else {
+                lightOff(true, true);
+            }
+        }
+        if (light_blink_counter > LIGHT_BLINK_NUMBER) {
+            lightOff(true, true);
+            light_blink_counter = -1;
+        }
+    }
+
     readRFID();
 }
 
@@ -271,7 +304,7 @@ void loop()
 {
     if (kaa_client) {
         debug("Starting Kaa client, to stop press \'S\'\r\n");
-        kaa_error_t error = kaa_client_start(kaa_client, process, (void*)kaa_client, 10);
+        kaa_error_t error = kaa_client_start(kaa_client, process, (void*)kaa_client, 5);
         if (error) {
             debug("Error running Kaa client, code %d\r\n", error);
         }
@@ -410,6 +443,22 @@ void ledOn()
 void ledOff()
 {
     digitalWrite(BOARD_LED_PIN, LOW);
+}
+
+void lightOn(bool left, bool right)
+{
+    if (left)
+        digitalWrite(LEFT_LIGHT, HIGH);
+    if (right)
+        digitalWrite(RIGHT_LIGHT, HIGH);
+}
+
+void lightOff(bool left, bool right)
+{
+    if (left)
+        digitalWrite(LEFT_LIGHT, LOW);
+    if (right)
+        digitalWrite(RIGHT_LIGHT, LOW);
 }
 
 void esp8266_reset()
