@@ -20,12 +20,11 @@ import org.kaaproject.kaa.demo.iotworld.smarthome.fragment.card.SpacesItemDecora
 import android.content.Context;
 import android.content.res.Configuration;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.ContextMenu;
 import android.view.View;
 
-public class AutoSpanRecyclerView extends RecyclerView {
+public class AutoSpanRecyclerView extends PressableRecyclerView {
     
     private OnItemClickListener mOnItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
@@ -72,7 +71,7 @@ public class AutoSpanRecyclerView extends RecyclerView {
     public void setOnItemLongClickListener (OnItemLongClickListener listener) {
         mOnItemLongClickListener = listener;
     }
-    
+
     public void setOnContextMenuListener (OnContextMenuListener listener) {
         mOnContextMenuListener = listener;
     }

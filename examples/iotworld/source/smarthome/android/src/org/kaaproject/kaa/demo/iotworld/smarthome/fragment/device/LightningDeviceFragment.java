@@ -26,6 +26,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class LightningDeviceFragment 
             extends AbstractGeoFencingDeviceFragment<LightningDevice> 
@@ -88,7 +89,7 @@ public class LightningDeviceFragment
 
     @Override
     public void onBulbStateChanged(String bulbId, boolean enabled) {
-        mDevice.changeBulbState(bulbId, enabled ? BulbStatus.ON : BulbStatus.OFF);
+        mDevice.changeBulbStatus(bulbId, enabled ? BulbStatus.ON : BulbStatus.OFF);
     }
  
     @Override

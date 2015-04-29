@@ -26,8 +26,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -72,11 +73,11 @@ public class BulbsListAdapter extends RecyclerView.Adapter<BulbsListAdapter.View
         FontUtils.setRobotoFont(v);
         ViewHolder vhItem = new ViewHolder(v);
         vhItem.brightnessControlView.setOnSeekBarChangeListener(mBulbItemBrightnessListener);
-        vhItem.bulbSwitchView.setOnClickListener(mBulbItemStateListener);
+        vhItem.bulbSwitchView.setOnCheckedChangeListener(mBulbItemStateListener);
         return vhItem;
     }
     
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView bulbView;        
         private TextView bulbTitleView;
@@ -110,8 +111,10 @@ public class BulbsListAdapter extends RecyclerView.Adapter<BulbsListAdapter.View
                 brightnessControlDisabledView.setProgress(bulb.getBrightness());
             }
             bulbSwitchView.setTag(bulb.getBulbId());
-            bulbSwitchView.setChecked(enabled);
             bulbSwitchView.setClickable(controlsEnabled);
+            bulbSwitchView.setOnCheckedChangeListener(null);
+            bulbSwitchView.setChecked(enabled);
+            bulbSwitchView.setOnCheckedChangeListener(mBulbItemStateListener);
             brightnessControlView.setEnabled(!enabled);
             brightnessControlView.setEnabled(enabled);
             if (controlsEnabled || !enabled) {
@@ -143,14 +146,13 @@ public class BulbsListAdapter extends RecyclerView.Adapter<BulbsListAdapter.View
         
     }
     
-    class BulbItemStateListener implements OnClickListener {
+    class BulbItemStateListener implements OnCheckedChangeListener {
 
         @Override
-        public void onClick(View v) {
-            SwitchCompat bulbSwitchView = (SwitchCompat)v;
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            SwitchCompat bulbSwitchView = (SwitchCompat)buttonView;
             String bulbId = (String) bulbSwitchView.getTag();
-            boolean enabled = bulbSwitchView.isChecked();
-            mBulbItemListener.onBulbStateChanged(bulbId, enabled);
+            mBulbItemListener.onBulbStateChanged(bulbId, isChecked);
         }
         
     }

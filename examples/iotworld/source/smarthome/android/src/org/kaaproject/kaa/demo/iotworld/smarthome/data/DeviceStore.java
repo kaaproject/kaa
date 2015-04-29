@@ -79,7 +79,7 @@ public class DeviceStore {
             }
         });
     }
-
+    
     private void discoverDeviceType(final DeviceType discoveryDeviceType) {
         mClient.findEventListeners(discoveryDeviceType.getListenerFqns(), new FindEventListenersCallback() {
             @Override

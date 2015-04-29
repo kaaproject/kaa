@@ -148,8 +148,8 @@ public abstract class AbstractDeviceFragment<D extends AbstractDevice> extends A
         } else {
             mDeviceTitle = getResources().getString(R.string.unknown);
         }
-        if (mActionBar != null) {
-            mActionBar.setTitle(getTitle());
+        if (mToolbar != null) {
+            mToolbar.setTitle(getTitle());
         }
     }
        

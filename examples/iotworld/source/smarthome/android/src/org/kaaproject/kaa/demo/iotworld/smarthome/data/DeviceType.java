@@ -29,8 +29,9 @@ import org.kaaproject.kaa.demo.iotworld.geo.GeoFencingStatusRequest;
 import org.kaaproject.kaa.demo.iotworld.geo.OperationModeUpdateRequest;
 import org.kaaproject.kaa.demo.iotworld.irrigation.IrrigationControlRequest;
 import org.kaaproject.kaa.demo.iotworld.irrigation.StartIrrigationRequest;
-import org.kaaproject.kaa.demo.iotworld.light.BulbControlRequest;
 import org.kaaproject.kaa.demo.iotworld.light.BulbListRequest;
+import org.kaaproject.kaa.demo.iotworld.light.ChangeBulbBrightnessRequest;
+import org.kaaproject.kaa.demo.iotworld.light.ChangeBulbStatusRequest;
 import org.kaaproject.kaa.demo.iotworld.music.ChangeVolumeRequest;
 import org.kaaproject.kaa.demo.iotworld.music.PauseRequest;
 import org.kaaproject.kaa.demo.iotworld.music.PlayListRequest;
@@ -79,7 +80,8 @@ public enum DeviceType {
               R.drawable.card_lightning,         
               R.color.device_color_lightning,
               deviceFqns, geoFencingDeviceFqns, new String[]{BulbListRequest.class.getName(),
-                                                             BulbControlRequest.class.getName()}),
+                                                             ChangeBulbBrightnessRequest.class.getName(),
+                                                             ChangeBulbStatusRequest.class.getName()}),
                                                              
     IRRIGATION(R.drawable.ic_nav_irrigation, 
              R.string.nav_irrigation, 

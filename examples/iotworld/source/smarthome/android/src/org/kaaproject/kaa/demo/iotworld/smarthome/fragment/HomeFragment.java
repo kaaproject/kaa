@@ -103,7 +103,7 @@ public class HomeFragment extends AbstractSmartHomeFragment implements DeviceSel
     }
     
     protected void notifyDataChanged() {
-        mHomeAdapter.notifyDataSetChanged();
+        mHomeAdapter.tryNotifyDataSetChanged();
         if (mHomeAdapter.getItemCount() > 0) {
             mNoDataText.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);

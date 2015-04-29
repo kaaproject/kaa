@@ -29,6 +29,7 @@ import org.kaaproject.kaa.demo.iotworld.smarthome.fragment.device.PhotoDeviceFra
 import org.kaaproject.kaa.demo.iotworld.smarthome.fragment.device.music.MusicAlbumsDeviceFragment;
 import org.kaaproject.kaa.demo.iotworld.smarthome.fragment.list.adapter.AbstractDeviceListAdapter;
 import org.kaaproject.kaa.demo.iotworld.smarthome.fragment.list.adapter.AbstractDeviceListAdapter.DeviceSelectionListener;
+import org.kaaproject.kaa.demo.iotworld.smarthome.widget.PressableRecyclerView;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -46,7 +47,7 @@ public abstract class AbstractDeviceListFragment<D extends AbstractDevice>
         extends AbstractSmartHomeFragment implements DeviceSelectionListener {
 
     private TextView mNoDataText;
-    private RecyclerView mRecyclerView;
+    private PressableRecyclerView mRecyclerView;
     private AbstractDeviceListAdapter<D> mDeviceListAdapter;
     
     public AbstractDeviceListFragment() {
@@ -63,7 +64,7 @@ public abstract class AbstractDeviceListFragment<D extends AbstractDevice>
         setupView(rootView);
         mNoDataText = (TextView) rootView.findViewById(R.id.noDataText);
         mNoDataText.setText(R.string.no_devices);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        mRecyclerView = (PressableRecyclerView) rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true); 
         mDeviceListAdapter = createListAdapter(mRecyclerView);
         
@@ -90,7 +91,7 @@ public abstract class AbstractDeviceListFragment<D extends AbstractDevice>
     }
     
     protected void notifyDataChanged() {
-        mDeviceListAdapter.notifyDataSetChanged();
+        mDeviceListAdapter.tryNotifyDataSetChanged();
         if (mDeviceListAdapter.getItemCount() > 0) {
             mNoDataText.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);

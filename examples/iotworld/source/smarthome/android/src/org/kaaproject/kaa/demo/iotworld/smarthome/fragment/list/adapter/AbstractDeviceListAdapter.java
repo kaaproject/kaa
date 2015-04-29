@@ -23,6 +23,7 @@ import org.kaaproject.kaa.demo.iotworld.smarthome.data.AbstractGeoFencingDevice;
 import org.kaaproject.kaa.demo.iotworld.smarthome.data.DeviceStore;
 import org.kaaproject.kaa.demo.iotworld.smarthome.data.DeviceType;
 import org.kaaproject.kaa.demo.iotworld.smarthome.util.FontUtils;
+import org.kaaproject.kaa.demo.iotworld.smarthome.widget.PressableAdapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -36,7 +37,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public abstract class AbstractDeviceListAdapter<T extends AbstractDevice> extends 
-        RecyclerView.Adapter<AbstractDeviceListAdapter.ViewHolder<T>> {
+        PressableAdapter<AbstractDeviceListAdapter.ViewHolder<T>> {
 
     private final RecyclerView mRecyclerView;
     private final DeviceSelectionListener mDeviceSelectionListener;

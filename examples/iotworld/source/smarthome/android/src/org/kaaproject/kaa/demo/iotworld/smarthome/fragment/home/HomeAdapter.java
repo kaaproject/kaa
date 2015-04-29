@@ -31,6 +31,7 @@ import org.kaaproject.kaa.demo.iotworld.smarthome.util.FontUtils;
 import org.kaaproject.kaa.demo.iotworld.smarthome.widget.AutoSpanRecyclerView;
 import org.kaaproject.kaa.demo.iotworld.smarthome.widget.AutoSpanRecyclerView.OnContextMenuListener;
 import org.kaaproject.kaa.demo.iotworld.smarthome.widget.AutoSpanRecyclerView.OnItemClickListener;
+import org.kaaproject.kaa.demo.iotworld.smarthome.widget.PressableAdapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -38,7 +39,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> 
+public class HomeAdapter extends PressableAdapter<HomeAdapter.ViewHolder> 
         implements OnItemClickListener, OnContextMenuListener {
 
     private final AutoSpanRecyclerView mRecyclerView;
@@ -161,7 +162,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder>
     public AbstractDevice getContextMenuDevice() {
         return mContextMenuDevice;
     }
-
+ 
     public static interface DeviceSelectionListener {
         
         public void onDeviceSelected(DeviceType deviceType, String endpointKey);

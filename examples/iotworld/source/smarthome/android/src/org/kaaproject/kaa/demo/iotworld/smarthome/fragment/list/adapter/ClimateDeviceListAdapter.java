@@ -71,10 +71,12 @@ public class ClimateDeviceListAdapter extends AbstractGeoFencingDeviceListAdapte
             ThermostatInfo thermostatInfo = device.getThermostatInfo();            
             temperatureTextView.setText(temperatureTextView.getResources().getString(R.string.climate_device_temperature_text,
                     thermostatInfo.getDegree(), thermostatInfo.getTargetDegree()));
-            if (thermostatInfo.getDegree() > thermostatInfo.getTargetDegree()) {
-                climateStatusImageView.setImageResource(R.drawable.cooling);
-            } else if (thermostatInfo.getDegree() < thermostatInfo.getTargetDegree()) {
-                climateStatusImageView.setImageResource(R.drawable.heating);
+            if (thermostatInfo.getIsOperating()) {
+                if (thermostatInfo.getDegree() > thermostatInfo.getTargetDegree()) {
+                    climateStatusImageView.setImageResource(R.drawable.cooling);
+                } else {
+                    climateStatusImageView.setImageResource(R.drawable.heating);
+                }
             } else {
                 climateStatusImageView.setImageResource(R.drawable.idle);
             }

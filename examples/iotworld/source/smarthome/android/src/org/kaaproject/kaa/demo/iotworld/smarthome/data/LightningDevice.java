@@ -19,11 +19,12 @@ import java.util.List;
 
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.demo.iotworld.LightEventClassFamily;
-import org.kaaproject.kaa.demo.iotworld.light.BulbControlRequest;
 import org.kaaproject.kaa.demo.iotworld.light.BulbInfo;
 import org.kaaproject.kaa.demo.iotworld.light.BulbListRequest;
 import org.kaaproject.kaa.demo.iotworld.light.BulbListStatusUpdate;
 import org.kaaproject.kaa.demo.iotworld.light.BulbStatus;
+import org.kaaproject.kaa.demo.iotworld.light.ChangeBulbBrightnessRequest;
+import org.kaaproject.kaa.demo.iotworld.light.ChangeBulbStatusRequest;
 
 import de.greenrobot.event.EventBus;
 
@@ -85,21 +86,11 @@ public class LightningDevice extends AbstractGeoFencingDevice implements LightEv
     }
     
     public void changeBulbBrightness(String bulbId, int brightness) {
-        BulbInfo bulb = getBulbById(bulbId);
-        if (bulb != null) {
-            controlBulb(bulbId, bulb.getStatus(), brightness);
-        }
+        mLightEventClassFamily.sendEvent(new ChangeBulbBrightnessRequest(bulbId, brightness), mEndpointKey);
     }
     
-    public void changeBulbState(String bulbId, BulbStatus status) {
-        BulbInfo bulb = getBulbById(bulbId);
-        if (bulb != null) {
-            controlBulb(bulbId, status, bulb.getBrightness());
-        }
-    }
-    
-    public void controlBulb(String bulbId, BulbStatus status, int brightness) {
-        mLightEventClassFamily.sendEvent(new BulbControlRequest(bulbId, status, brightness), mEndpointKey);
+    public void changeBulbStatus(String bulbId, BulbStatus status) {
+        mLightEventClassFamily.sendEvent(new ChangeBulbStatusRequest(bulbId, status), mEndpointKey);
     }
 
 }

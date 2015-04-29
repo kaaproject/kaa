@@ -33,7 +33,7 @@
             android:layout_centerVertical="true"
             android:visibility="gone" 
             android:orientation="vertical">
-		    <android.support.v7.widget.RecyclerView 
+		    <org.kaaproject.kaa.demo.iotworld.smarthome.widget.PressableRecyclerView 
 		        android:id="@+id/recycler_view"
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"        

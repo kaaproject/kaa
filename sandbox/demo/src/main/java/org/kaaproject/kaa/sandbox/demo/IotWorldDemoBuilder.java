@@ -248,7 +248,8 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         actionsMap = new HashMap<>();
         actionsMap.put("org.kaaproject.kaa.demo.iotworld.light.BulbListRequest", ApplicationEventAction.SOURCE);
         actionsMap.put("org.kaaproject.kaa.demo.iotworld.light.BulbListStatusUpdate", ApplicationEventAction.SINK);
-        actionsMap.put("org.kaaproject.kaa.demo.iotworld.light.BulbControlRequest", ApplicationEventAction.SOURCE);
+        actionsMap.put("org.kaaproject.kaa.demo.iotworld.light.ChangeBulbBrightnessRequest", ApplicationEventAction.SOURCE);
+        actionsMap.put("org.kaaproject.kaa.demo.iotworld.light.ChangeBulbStatusRequest", ApplicationEventAction.SOURCE);
         
         aefMapIds.add(createAefMap(client, 
                 applicationId, 
@@ -448,7 +449,8 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         
         actionsMap.put("org.kaaproject.kaa.demo.iotworld.light.BulbListRequest", ApplicationEventAction.SINK);
         actionsMap.put("org.kaaproject.kaa.demo.iotworld.light.BulbListStatusUpdate", ApplicationEventAction.SOURCE);
-        actionsMap.put("org.kaaproject.kaa.demo.iotworld.light.BulbControlRequest", ApplicationEventAction.SINK);
+        actionsMap.put("org.kaaproject.kaa.demo.iotworld.light.ChangeBulbBrightnessRequest", ApplicationEventAction.SINK);
+        actionsMap.put("org.kaaproject.kaa.demo.iotworld.light.ChangeBulbStatusRequest", ApplicationEventAction.SINK);
         
         aefMapIds.add(createAefMap(client, 
                 applicationId, 
