@@ -19,7 +19,6 @@
                                 "type":"enum",
                                 "name":"GeoFencingZoneID",
                                 "symbols":[
-                                    "AWAY",
                                     "NEAR",
                                     "HOME"
                                 ]

@@ -18,6 +18,8 @@ public class IMSRunner {
 
     private static KaaClient kaaClient;
 
+    private static volatile boolean running = true;
+
     public static void main(String[] args) {
         LOG.info("Raspberry PI 2 controller started");
         LOG.info("--= Press any key to exit =--");
@@ -47,9 +49,33 @@ public class IMSRunner {
         try {
             kaaClient.setEndpointAccessToken(DEFAULT_ACCESS_CODE);
             kaaClient.start();
-            System.in.read();
         } catch (Exception e) {
             LOG.info("Got exception during running kaa client", e);
+        }
+
+        final Thread mainThread = Thread.currentThread();
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                running = false;
+                mainThread.interrupt();
+                try {
+                    mainThread.join();
+                } catch (InterruptedException e) {
+                    LOG.error("Interrupted during await termination!", e);
+                }
+            }
+        });
+
+        while (running) {
+            try {
+                Thread.sleep(60 * 1000L);
+            } catch (InterruptedException e) {
+                if (running) {
+                    LOG.error("Interrupted during execution!", e);
+                } else {
+                    LOG.info("Received shutdown request!");
+                }
+            }
         }
 
         kaaClient.stop();
