@@ -56,6 +56,7 @@
         <attr name="tempMax" format="integer" />
         <attr name="coolingText" format="string" />
         <attr name="heatingText" format="string" />
+        <attr name="idleText" format="string" />
         <attr name="arcColorCold" format="color" />
         <attr name="progressColorCold" format="color" />
         <attr name="backgroundColorCold" format="color" />

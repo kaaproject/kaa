@@ -52,6 +52,7 @@ public class Thermostat extends View {
     
     private int mTempMax = 100;
     
+    private CharSequence mIdleText;
     private CharSequence mCoolingText;
     private CharSequence mHeatingText;
     
@@ -241,6 +242,7 @@ public class Thermostat extends View {
         mBackgroundColor = getResources().getColor(R.color.transparent);
         mBackgroundColorHeat = getResources().getColor(R.color.transparent);
         
+        mIdleText = getResources().getText(R.string.idle);
         mCoolingText = getResources().getText(R.string.cooling);
         mHeatingText = getResources().getText(R.string.heating);
 
@@ -309,7 +311,12 @@ public class Thermostat extends View {
             mTempMin = a.getInteger(R.styleable.Thermostat_tempMin, mTempMin);
             mTempMax = a.getInteger(R.styleable.Thermostat_tempMax, mTempMax);
             
-            CharSequence text = a.getText(R.styleable.Thermostat_coolingText);
+            CharSequence text = a.getText(R.styleable.Thermostat_idleText);
+            if (text != null) {
+                mIdleText = text;
+            }
+            
+            text = a.getText(R.styleable.Thermostat_coolingText);
             if (text != null) {
                 mCoolingText = text;
             }
@@ -343,15 +350,15 @@ public class Thermostat extends View {
         float text_size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 20f, getResources().getDisplayMetrics());
         float text_size_blur = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 22f, getResources().getDisplayMetrics());
 
-        float temp_text_size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 24f, getResources().getDisplayMetrics());
+        float temp_text_size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 20f, getResources().getDisplayMetrics());
         mTempDist = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 4f, getResources().getDisplayMetrics());
         
-        float target_text_size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 80f, getResources().getDisplayMetrics());
-        float target_text_size_blur = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 84f, getResources().getDisplayMetrics());     
+        float target_text_size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 50f, getResources().getDisplayMetrics());
+        float target_text_size_blur = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 54f, getResources().getDisplayMetrics());     
         float target_text_inner_blur = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.5f, getResources().getDisplayMetrics());
-        float target_text_blur = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5f, getResources().getDisplayMetrics());
-        
-        float control_size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6f, getResources().getDisplayMetrics());
+        float target_text_blur = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4f, getResources().getDisplayMetrics());
+
+        float control_size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3f, getResources().getDisplayMetrics());
         float control_size_blur = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, getResources().getDisplayMetrics());
         
         PathEffect arcEffect = new DashPathEffect(new float[] {mOnInterval,mOffInterval}, 0);
@@ -486,7 +493,7 @@ public class Thermostat extends View {
         int progressColor;
         int backgroundColor;
         
-        if (mProgress==mTargetProgress) {
+        if (mProgress==mTargetProgress || !mIsOperating) {
             arcColor = mArcColor;
             progressColor = mProgressColor;
             backgroundColor = mBackgroundColor;
@@ -558,37 +565,41 @@ public class Thermostat extends View {
         
         int yPos = (int)(mTranslateY-mTextYPos - ((mTextPaint.descent() + mTextPaint.ascent()) / 2));
         canvas.drawText(getTemp()+"", xPos, yPos, mTextPaint);
+        
+        float innerTextHeight = mTargetTextPaintGlow.descent() + Math.abs(mTargetTextPaintGlow.ascent()) + 
+                mTempDist + mTempTextPaintGlow.descent() + Math.abs(mTempTextPaintGlow.ascent());
+        
+        float innerTextTranslateY = mTranslateY + innerTextHeight/2 - (mTargetTextPaintGlow.descent() + Math.abs(mTargetTextPaintGlow.ascent()))/2;
 
         if (mEnableBlur) {
-            yPos = (int)(mTranslateY - ((mTargetTextPaintGlow.descent() + mTargetTextPaintGlow.ascent()) / 2));
+            yPos = (int)(innerTextTranslateY - ((mTargetTextPaintGlow.descent() + mTargetTextPaintGlow.ascent()) / 2));
             canvas.drawText(getTargetTemp()+"", mTranslateX, yPos, mTargetTextPaintGlow);
         }
         
-        yPos = (int)(mTranslateY - ((mTargetTextPaint.descent() + mTargetTextPaint.ascent()) / 2));
+        yPos = (int)(innerTextTranslateY - ((mTargetTextPaint.descent() + mTargetTextPaint.ascent()) / 2));
         canvas.drawText(getTargetTemp()+"", mTranslateX, yPos, mTargetTextPaint);
         
         float mTempY;
         if (mEnableBlur) {
-            mTempY = mTranslateY + mTargetTextPaintGlow.descent() + mTargetTextPaintGlow.ascent() - mTempDist;
+            mTempY = innerTextTranslateY + mTargetTextPaintGlow.descent() + mTargetTextPaintGlow.ascent() - mTempDist;
         }
         else {
-            mTempY = mTranslateY + mTargetTextPaint.descent() + mTargetTextPaint.ascent() - mTempDist;
+            mTempY = innerTextTranslateY + mTargetTextPaint.descent() + mTargetTextPaint.ascent() - mTempDist;
         }
         
+        String text = mIdleText.toString();
         if (mIsOperating && mProgress != mTargetProgress) {
-        
-            String text = mProgress < mTargetProgress ? mHeatingText.toString() : mCoolingText.toString();
-            text = text.toUpperCase();
-            
-            if (mEnableBlur) { 
-                yPos = (int)(mTempY - ((mTempTextPaintGlow.descent() + mTempTextPaintGlow.ascent()) / 2));
-                canvas.drawText(text, mTranslateX, yPos, mTempTextPaintGlow);
-            }
-    
-            yPos = (int)(mTempY - ((mTempTextPaint.descent() + mTempTextPaint.ascent()) / 2));
-            canvas.drawText(text, mTranslateX, yPos, mTempTextPaint);
-        
+            text = mProgress < mTargetProgress ? mHeatingText.toString() : mCoolingText.toString();
         }
+        text = text.toUpperCase();
+        
+        if (mEnableBlur) { 
+            yPos = (int)(mTempY - ((mTempTextPaintGlow.descent() + mTempTextPaintGlow.ascent()) / 2));
+            canvas.drawText(text, mTranslateX, yPos, mTempTextPaintGlow);
+        }
+
+        yPos = (int)(mTempY - ((mTempTextPaint.descent() + mTempTextPaint.ascent()) / 2));
+        canvas.drawText(text, mTranslateX, yPos, mTempTextPaint);
         
         if (mEnableBlur) { 
             canvas.drawLine(mControlUpRect.left, 
@@ -952,6 +963,7 @@ public class Thermostat extends View {
     public void setOperating(boolean isOperating) {
         if (mIsOperating != isOperating) {
             mIsOperating = isOperating;
+            updateColors();
             invalidate();
         }
     }

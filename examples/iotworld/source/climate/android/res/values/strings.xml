@@ -17,6 +17,7 @@
 <resources>
 
     <string name="app_name">Climate Control</string>
+    <string name="idle">Idle</string>
     <string name="cooling">Cooling</string>
     <string name="heating">Heating</string>
         

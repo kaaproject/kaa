@@ -29,7 +29,8 @@
     <!--  color name="thermostat_thumbs_color">#FFeefeff</color-->
     <color name="thermostat_thumbs_color">#ffeefeff</color>
     <color name="thermostat_thumbs_glow_color">#FFbdd4fd</color>
-    <color name="thermostat_controls_color">#ff979797</color>
+<!--     <color name="thermostat_controls_color">#ff979797</color> -->
+    <color name="thermostat_controls_color">#FFFFFFFF</color>
     <color name="thermostat_control_background_cold">#FF1172C1</color>
     <color name="thermostat_control_background">#FF191919</color>
     <color name="thermostat_control_background_heat">#FFF26522</color>

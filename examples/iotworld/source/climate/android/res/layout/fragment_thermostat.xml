@@ -21,13 +21,14 @@
     android:id="@+id/thermostatContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="50dp"
     android:background="@android:color/black" >
     <org.kaaproject.kaa.demo.iotworld.climate.widget.Thermostat
         android:id="@+id/thermostat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
         android:layout_gravity="center"
-        android:padding="30dp"
+        android:padding="20dp"
         thermostat:rotation="180"
         thermostat:startAngle="30"
         thermostat:sweepAngle="300"
@@ -49,6 +50,7 @@
         thermostat:enableBlur="true"
         thermostat:tempMin="20"
         thermostat:tempMax="120"
+        thermostat:idleText="@string/idle"
         thermostat:coolingText="@string/cooling"
         thermostat:heatingText="@string/heating"/>
 </FrameLayout>

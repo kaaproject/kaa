@@ -85,6 +85,7 @@
 				        app:enableBlur="false"
 				        app:tempMin="20"
 				        app:tempMax="120"
+				        app:idleText="@string/idle"
 				        app:coolingText="@string/cooling"
 				        app:heatingText="@string/heating"/>
 		    </LinearLayout>        
