@@ -140,8 +140,10 @@ void notifyOfNewFencingZone(int zone_id)
 {
     if (zone_id != UNKNOWN_GEOFENCING_ZONE_ID && current_zone_id != zone_id) {
         current_zone_id = zone_id;
-        kaa_geo_fencing_event_class_family_geo_fencing_position_t position;
 
+        debug("New zone detected, id=%d\r\n", current_zone_id);
+
+        kaa_geo_fencing_event_class_family_geo_fencing_position_t position;
         switch (zone_id) {
         case ENUM_GEO_FENCING_ZONE_ID_HOME:
             position = ENUM_GEO_FENCING_POSITION_HOME;
@@ -201,10 +203,11 @@ void checkFencingPosition(rfid_t rfid)
             zones_it = kaa_list_next(zones_it);
         }
 
-        if (new_zone_id != UNKNOWN_GEOFENCING_ZONE_ID) {
-            debug("New zone detected, id=%d\r\n", new_zone_id);
-            notifyOfNewFencingZone(new_zone_id);
+        if (new_zone_id == UNKNOWN_GEOFENCING_ZONE_ID) {
+            new_zone_id = ENUM_GEO_FENCING_ZONE_ID_AWAY;
         }
+
+        notifyOfNewFencingZone(new_zone_id);
     } else {
         debug("Skip check fencing position: configuration is null\r\n");
     }
