@@ -235,7 +235,7 @@ kaa_error_t kaa_client_create(kaa_client_t **kaa_client, kaa_client_props_t *pro
     self->wifi_ssid = props->wifi_ssid;
     self->wifi_pswd = props->wifi_pswd;
     self->operate = true;
-    self->blink_timeout = 2000;
+    self->blink_timeout = 500;
 
     error_code = kaa_log_collector_init(self);
     if (error_code) {
