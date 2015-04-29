@@ -67,6 +67,8 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
 
     private volatile SlideShowStatus pendingStatus = SlideShowStatus.PAUSED;
 
+    private static volatile boolean running = true;
+
     /**
      * @param args
      */
