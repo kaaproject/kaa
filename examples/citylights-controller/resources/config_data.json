@@ -1,19 +1,19 @@
 {
   "streetLightsConfiguration" : [ {
     "zoneId" : 0,
-    "tags" : [ 6609455 ],
+    "tags" : [ 1295020 ],
     "__uuid":null
   }, {
     "zoneId" : 1,
-    "tags" : [ 6606552 ],
+    "tags" : [ 4544311, 6606552, 6505593 ],
     "__uuid":null
   }, {
     "zoneId" : 2,
-    "tags" : [ 6606305 ],
+    "tags" : [ 6606305, 6505594 ],
     "__uuid":null
   }, {
     "zoneId" : 3,
-    "tags" : [ 6505594 ],
+    "tags" : [ 6454533 ],
     "__uuid":null
   } ],
   "trafficLightsConfiguration" : {
