@@ -18,12 +18,13 @@ package org.kaaproject.kaa.demo.powerplant.fragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import lecho.lib.hellocharts.formatter.AxisValueFormatter;
 import lecho.lib.hellocharts.model.Axis;
@@ -40,24 +41,22 @@ import org.kaaproject.kaa.demo.powerplant.PowerPlantActivity;
 import org.kaaproject.kaa.demo.powerplant.R;
 import org.kaaproject.kaa.demo.powerplant.data.DataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.data.FakeDataEndpoint;
-import org.kaaproject.kaa.demo.powerplant.data.RestDataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataPoint;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataReport;
 import org.kaaproject.kaa.demo.powerplant.view.GaugeChart;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
+import android.text.Spanned;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
 /**
@@ -67,7 +66,6 @@ import android.widget.TextView;
  */
 public class DashboardFragment extends Fragment {
     private static final String EMPTY_STRING = "";
-    private static final String LOG_BOX_TEXT = "logBoxText";
     
     private static final String TAG = DashboardFragment.class.getSimpleName();
 
@@ -97,7 +95,13 @@ public class DashboardFragment extends Fragment {
     private static final int LINE_CHART_AXIS_COLOR = Color.parseColor("#85919F");
     private static final int LINE_CHART_AXIS_TEXT_SIZE = 22;
     private static final int LINE_CHART_AXIS_TEXT_COLOR = Color.parseColor("#B7B7B8");
-    private int times = 0;
+    private static final int MAX_LOGS_TO_SAVE = 20;
+    private static final String OUTAGE_LOG_COLOR = "red";
+    private static final String BACK_TO_NORMAL_LOG_COLOR = "#009d5d";
+    private static final String OUTAGE_LOG_TAG = "[WARN]";
+    private static final String BACK_TO_NORMAL_LOG_TAG = "[INFO]";
+    private static final String OUTAGE_LOG_TEXT = "voltage outage detected";
+    private static final String BACK_TO_NORMAL_LOG_TEXT = "voltage is back to normal";
 
     protected PowerPlantActivity mActivity;
     private LineChartView lineChart;
@@ -109,7 +113,9 @@ public class DashboardFragment extends Fragment {
     private final boolean[] isPanelsOutage = new boolean[NUM_PANELS];
     private TextView logBox;
     private LinkedList<String> savedLogs = new LinkedList<>();
-
+    private StringBuilder curLogString = new StringBuilder();
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    
     private Line line;
     private DataEndpoint endpoint;
 
@@ -135,6 +141,7 @@ public class DashboardFragment extends Fragment {
         gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart22));
         gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart23));
         logBox = (TextView) rootView.findViewById(R.id.logBox);
+        logBox.setMovementMethod(new ScrollingMovementMethod());
         
         Thread updateThread = new Thread(new Runnable() {
 
@@ -195,7 +202,6 @@ public class DashboardFragment extends Fragment {
                             PieChartData data = pieChart.getPieChartData();
                             float plantVoltage = 0.0f;
                            
-                            Log.d(TAG, "Now it's " + (times + 1) + "th repetition");
                             int counter = 0;
                             for (DataPoint dp : latestData.getDataPoints()) {
                                 plantVoltage += dp.getVoltage();
@@ -205,13 +211,11 @@ public class DashboardFragment extends Fragment {
                                 showLogIfNeeded(counter, dp.getVoltage());
                                 // sliceValue.setLabel(String.format(PIE_CHART_VALUE_FORMAT,
                                 // dp.getVoltage()));
-                                Log.d(TAG, "Panel #" + (counter + 1) + ", voltage: " + dp.getVoltage());
                                 counter++;
                             }
-                            times++;
 
                             float gridVoltage = latestData.getPowerConsumption() - plantVoltage;
-                            SliceValue gridValue = data.getValues().get(NUM_PANELS).setTarget(gridVoltage);
+//                            SliceValue gridValue = data.getValues().get(NUM_PANELS).setTarget(gridVoltage);
 //                            gridValue.setLabel(String.format(PIE_CHART_VALUE_FORMAT, gridVoltage));
                             pieChart.startDataAnimation(UPDATE_PERIOD / 2);
                             updateLabels(plantVoltage, gridVoltage);
@@ -418,37 +422,58 @@ public class DashboardFragment extends Fragment {
     	}
     }
     
-    private void prependToLogBox(final boolean isOutage, final int panelIndex) {
-    	mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Calendar cal = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a ");
-            	String log;
-            	if (isOutage) {
-            		log = "<font color=\"red\">" + sdf.format(cal.getTime()) + " [WARN] Panel " +
-            					(panelIndex + 1) + " voltage outage detected</font>";
-            	} else {
-            		log = "<font color=\"#009d5d\">" + sdf.format(cal.getTime()) + " [INFO] Panel " +
-            					(panelIndex + 1) + " voltage is back to normal</font>";
-            	}
-            	
-            	if (savedLogs.size() > 30) {
-            		savedLogs.removeLast();
-            	}
-            	savedLogs.addFirst(log);
-            	
-            	logBox.setText(Html.fromHtml(getLogString()));
-            }
-        });
+    private void prependToLogBox(boolean isOutage, int panelIndex) {
+    	executor.execute(new UpdateLogBoxThread(isOutage, panelIndex));
     }
     
-    private String getLogString() {
-    	StringBuilder res = new StringBuilder();
-    	for (String log : savedLogs) {
-    		res.append(log);
-    		res.append("\n");
+    private String generateLogString(boolean isOutage, int panelIndex) {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a ");
+        String logColor;
+        String logTag;
+        String logText;
+        
+    	if (isOutage) {
+    		logColor = OUTAGE_LOG_COLOR;
+    		logTag = OUTAGE_LOG_TAG;
+    		logText = OUTAGE_LOG_TEXT;
+    	} else {
+    		logColor = BACK_TO_NORMAL_LOG_COLOR;
+    		logTag = BACK_TO_NORMAL_LOG_TAG;
+    		logText = BACK_TO_NORMAL_LOG_TEXT;
     	}
-    	return res.toString();
+    	
+		return String.format("<font color=\"%s\"> %s %s Panel %d %s</font><br>", logColor,
+				sdf.format(cal.getTime()), logTag, panelIndex + 1, logText);
+    }
+    
+    private class UpdateLogBoxThread extends Thread {
+    	private boolean isOutage;
+    	private int panelIndex;
+    	
+    	public UpdateLogBoxThread(boolean isOutage, int panelIndex) {
+    		this.isOutage = isOutage;
+    		this.panelIndex = panelIndex;
+    	}
+    	
+    	public void run() {
+	    	String log = generateLogString(isOutage, panelIndex);
+	    	if (savedLogs.size() > MAX_LOGS_TO_SAVE) {
+	    		String last = savedLogs.removeLast();
+	    		curLogString.delete(curLogString.length() - last.length(), curLogString.length());
+	    	}
+	    	savedLogs.addFirst(log);
+	    	curLogString.insert(0, log);
+	    	
+	    	final Spanned coloredLog = Html.fromHtml(log);
+	    	
+	    	mActivity.runOnUiThread(new Runnable() {
+	            @Override
+	            public void run() {
+	            	logBox.append(coloredLog);
+//	            	logBox.setText(Html.fromHtml(curLogString.toString()));
+	            }
+	        });
+    	}
     }
 }

@@ -1,13 +1,14 @@
 package org.kaaproject.kaa.demo.powerplant.view;
 
 import org.kaaproject.kaa.demo.powerplant.R;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Shader;
@@ -15,6 +16,8 @@ import android.graphics.SweepGradient;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.Layout;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -47,7 +50,6 @@ public class GaugeChart extends View {
 	private Paint facePaint;
 	
 	// scale
-	private static final float SCALE_POSITION = 0.045f;
 	private static final float SCALE_LINE_POSITION = 0.1f;
 	private static final float SCALE_LINE_WIDTH = 0.062f;
 	private static final float SCALE_FONT_SIZE = 0.07f;
@@ -72,12 +74,10 @@ public class GaugeChart extends View {
 	private static final float POWER_LABEL_POS_Y = 0.45f;
 	private static final float PANEL_NAME_LABEL_POS_Y = 0.75f;
 	private static final float MEASURES_LABEL_POS_Y = 0.65f;
-	private static final float MAGIC_LABEL_ALIGN_COEFF = 5f;
-	private static final float MAGIC_MEASURE_ALIGN_COEFF = 3f;
 	private String panelName;
 	private Paint textPaint;
-	private Paint labelPaint;
-	private Paint measuresPaint;
+	private TextPaint labelPaint;
+	private TextPaint measuresPaint;
 
 	// hand
 	private static final float HAND_CIRCLE_RADIUS = 0.01f;
@@ -87,7 +87,6 @@ public class GaugeChart extends View {
 	private Paint handScrewPaint;
 
 	// physics
-	private static final float VELOCITY_BARRIER = 90.0f;
 	private float handleAccelerationCoef = 3f;
 	private boolean isHandInitialized = false;
 	private float handTarget = CENTER_POWER;
@@ -100,6 +99,7 @@ public class GaugeChart extends View {
 	
 	public GaugeChart(Context context) {
 		super(context);
+		setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		init();
 	}
 
@@ -113,16 +113,18 @@ public class GaugeChart extends View {
 		try {
 			panelName = a.getString(R.styleable.GaugeChart_panel_name);
 			handleAccelerationCoef = a.getFloat(R.styleable.GaugeChart_update_time_s, 1.0f);
-			handleAccelerationCoef *= 0.9;
+			handleAccelerationCoef *= 1.2;
 		} finally {
 			a.recycle();
 		}
+		setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		init();
 		Log.d(TAG, panelName + " has initialized");
 	}
 
 	public GaugeChart(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		init();
 	}
 
@@ -163,6 +165,14 @@ public class GaugeChart extends View {
 		
 		background = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
 		Canvas backgroundCanvas = new Canvas(background);
+		
+		
+		Paint paint = new Paint(); 
+		paint.setColor(Color.WHITE); 
+		paint.setStyle(Style.FILL); 
+		backgroundCanvas.drawPaint(paint); 
+		
+		
 		float scale = (float) getWidth();		
 		backgroundCanvas.scale(scale, scale);
 		
@@ -298,6 +308,7 @@ public class GaugeChart extends View {
 		handPaint.setAntiAlias(true);
 		handPaint.setColor(HAND_COLOR);		
 		handPaint.setStyle(Paint.Style.FILL);	
+		handPaint.setPathEffect(null);
 		
 		handPath = new Path();
 		handPath.moveTo(CENTER_X, CENTER_Y + 0.05f);
@@ -307,27 +318,29 @@ public class GaugeChart extends View {
 		handPath.lineTo(CENTER_X + 0.010f, CENTER_Y + 0.05f - 0.007f);
 		handPath.lineTo(CENTER_X, CENTER_Y + 0.05f);
 		handPath.addCircle(CENTER_X, CENTER_Y, 0.02f, Path.Direction.CW);
+		handPath.close();
 		
 		handScrewPaint = new Paint();
 		handScrewPaint.setAntiAlias(true);
 		handScrewPaint.setColor(0xff493f3c);
 		handScrewPaint.setStyle(Paint.Style.FILL);
 		
-		labelPaint = new Paint();
+		labelPaint = new TextPaint();
 		labelPaint.setAntiAlias(true);
 		labelPaint.setColor(TEXT_COLOR);
 		labelPaint.setTextSize(TEXT_FONT_SIZE);
 		labelPaint.setTypeface(Typeface.SANS_SERIF);
-		labelPaint.setTextAlign(Paint.Align.LEFT);
+		labelPaint.setTextAlign(Paint.Align.CENTER);
 		labelPaint.setLinearText(true);
 		
 		// measures (x.y kW)
-		measuresPaint = new Paint();
-		measuresPaint.setAntiAlias(true);
+		measuresPaint = new TextPaint();
 		measuresPaint.setColor(TEXT_COLOR);
+		measuresPaint.setAntiAlias(true);
+		measuresPaint.setStyle(Style.FILL);
 		measuresPaint.setTextSize(TEXT_MEASURE_FONT_SIZE);
 		measuresPaint.setTypeface(Typeface.SANS_SERIF);
-		measuresPaint.setTextAlign(Paint.Align.LEFT);
+		measuresPaint.setTextAlign(Paint.Align.CENTER);
 		measuresPaint.setLinearText(true);
 	}
 	
@@ -345,10 +358,10 @@ public class GaugeChart extends View {
 	}
 	
 	private void drawLabels(Canvas canvas) {
-		drawFullText(canvas, POWER_LABEL, CENTER_X - getSpacedTextWidth(labelPaint, POWER_LABEL, MAGIC_LABEL_ALIGN_COEFF) /
-				2, POWER_LABEL_POS_Y, labelPaint, MAGIC_LABEL_ALIGN_COEFF);
-		drawFullText(canvas, panelName, CENTER_X - getSpacedTextWidth(labelPaint, panelName, MAGIC_LABEL_ALIGN_COEFF) /
-				2, PANEL_NAME_LABEL_POS_Y, labelPaint, MAGIC_LABEL_ALIGN_COEFF);
+		Log.d(TAG, labelPaint.measureText(POWER_LABEL) + "");
+//		canvas.drawText(POWER_LABEL, CENTER_X - Layout.getDesiredWidth(POWER_LABEL, labelPaint) / 2,
+		canvas.drawText(POWER_LABEL, CENTER_X, POWER_LABEL_POS_Y, labelPaint);
+		canvas.drawText(panelName, CENTER_X, PANEL_NAME_LABEL_POS_Y, labelPaint);
 	}
 	
 	@Override
@@ -416,11 +429,11 @@ public class GaugeChart extends View {
 		}
 	}
 	
+	@SuppressLint("DefaultLocale")
 	private void drawMeasures(Canvas canvas) {
 		if (isHandInitialized) {
 			String measures = String.format("%2.1f kW", handPosition);
-			drawFullText(canvas, measures, CENTER_X - getSpacedTextWidth(measuresPaint, measures, MAGIC_MEASURE_ALIGN_COEFF) / 2,
-					MEASURES_LABEL_POS_Y, measuresPaint, MAGIC_MEASURE_ALIGN_COEFF);
+			canvas.drawText(measures, CENTER_X, MEASURES_LABEL_POS_Y, measuresPaint);
 		}
 	}
 	
@@ -439,18 +452,10 @@ public class GaugeChart extends View {
 				prevHandTarget = handTarget;
 			}
 			
-/*			if (panelName.equals("Panel 6")) {
-				Log.d(TAG, "handVelocity: " + handVelocity + "handAcceleration: " + handAcceleration + 
-						", delta: " + delta + ", handPosition: " + handPosition);
-			}*/
 			handPosition += handVelocity * delta + handAcceleration * delta * delta / 2;
 			handVelocity += handAcceleration * delta;
 			
 			float curDistance = Math.abs(handTarget - handPosition);
-/*			if (panelName.equals("Panel 6")) {
-				Log.d(TAG, "handTarget: " + handTarget + ", handPosition: " + handPosition +
-						", prevDistance: " + prevDistance + ", cur distance: " + curDistance);
-			}*/
 			if (curDistance >= prevDistance) {
 				handPosition = handTarget;
 				handVelocity = ZERO;
@@ -486,19 +491,5 @@ public class GaugeChart extends View {
 	
 	private boolean handNeedsToMove() {
 		return Math.abs(handPosition - handTarget) > EPS;
-	}
-	
-	private void drawFullText(Canvas canvas, String text, float left, float top, Paint paint, float magicCoef) {
-	    float currentLeft = left;
-
-	    for (int i = 0; i < text.length(); i++) {
-	        String c = String.valueOf(text.charAt(i));
-	        canvas.drawText(c, currentLeft, top, paint);
-	        currentLeft += (paint.measureText(c) / getWidth() / magicCoef);
-	    }
-	}
-
-	private float getSpacedTextWidth(Paint paint, String text, float magicCoef) {
-	    return paint.measureText(text) / getWidth() / magicCoef;
 	}
 }
