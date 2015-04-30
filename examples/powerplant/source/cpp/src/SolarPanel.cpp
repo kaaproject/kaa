@@ -42,7 +42,6 @@ kaa_log::VoltageSample SolarPanel::getVoltageSample()
 #if POWER_PLANT_DEBUG_LOGGING
     std::cout << "{";
     std::cout << "panelId:" << sample.panelId << ", ";
-    std::cout << "timestamp:" << sample.timestamp << ", ";
     std::cout << "voltage:" << sample.voltage;
     std::cout << "}" << std::endl;
 #endif
