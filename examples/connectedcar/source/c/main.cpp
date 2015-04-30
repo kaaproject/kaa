@@ -75,12 +75,27 @@ static int current_zone_id = UNKNOWN_GEOFENCING_ZONE_ID;
 #define DBG_SIZE 256
 static char dbg_array[DBG_SIZE];
 
+typedef enum {
+    RFID_READ_WAIT_START = 0,
+    RFID_READ_LEFT_GUARD,
+    RFID_READ,
+    RFID_READ_RIGHT_GUARD,
+    RFID_READ_WAIT_FINISH
+} rfid_read_state_t;
+
 static rfid_t last_detected_rfid = RFID_MAX_NUMBER;
+static char rfid_buffer[RFID_LENGTH + 1];
+static int rfid_counter;
+static rfid_read_state_t rfid_state;
+static char rfid_char;
+
 
 
 /* Light blink variables */
 static uint32_t light_blink_time;
 static int light_blink_counter;
+
+
 
 
 void esp8266_serial_init(esp8266_serial_t **serial, HardwareSerial *hw_serial, uint32_t baud_rate);
@@ -238,38 +253,58 @@ void checkFencingPosition(rfid_t rfid)
 void readRFID()
 {
     if (RFID_READER.available() > 0) {
-        char buffer[RFID_LENGTH + 1];
-        buffer[RFID_LENGTH] = '\0';
-
-        delay(RFID_READ_DELAY);
-
-        if (RFID_READER.read() == RFID_LEFT_GUARD) {
-            SKIP_BYTES(RFID_READER, RFID_SKIP_LEFT);
-
-            for (int i = 0; i < RFID_LENGTH ; ++i) {
-                buffer[i] = RFID_READER.read();
-            }
-
-            SKIP_BYTES(RFID_READER, RFID_SKIP_RIGHT);
-
-            if (RFID_READER.read() == RFID_RIGHT_GUARD) {
-                RFID_READER.flush();
-                rfid_t rfid = strtoull(buffer, NULL, 16);
-
-                if (rfid != last_detected_rfid) {
-                    last_detected_rfid = rfid;
-
-                    debug("Scanned: %llu\r\n", rfid);
-
-                    sendRFIDLog(rfid);
-                    checkFencingPosition(rfid);
+        rfid_char = RFID_READER.read();
+        switch (rfid_state) {
+            case RFID_READ_WAIT_START:
+                if (rfid_char == RFID_LEFT_GUARD) {
+                    rfid_counter = 0;
+                    rfid_state = RFID_READ_LEFT_GUARD;
                 }
-            } else {
-                RFID_READER.flush();
-            }
+                break;
+            case RFID_READ_LEFT_GUARD:
+                rfid_counter++;
+                if (rfid_counter >= RFID_SKIP_LEFT) {
+                    rfid_counter = 0;
+                    rfid_state = RFID_READ;
+                }
+                break;
+            case RFID_READ:
+                rfid_buffer[rfid_counter++] = rfid_char;
+                if (rfid_counter >= RFID_LENGTH) {
+                    rfid_buffer[rfid_counter] = '\0';
+                    rfid_counter = 0;
+                    rfid_state = RFID_READ_RIGHT_GUARD;
+                }
+                break;
+            case RFID_READ_RIGHT_GUARD:
+                rfid_counter++;
+                if (rfid_counter >= RFID_SKIP_RIGHT) {
+                    rfid_counter = 0;
+                    rfid_state = RFID_READ_WAIT_FINISH;
+                }
+                break;
+            case RFID_READ_WAIT_FINISH:
+                if (rfid_char == RFID_RIGHT_GUARD) {
+                    rfid_t rfid = strtoull(rfid_buffer, NULL, 16);
+                    if (rfid != last_detected_rfid) {
+                        last_detected_rfid = rfid;
+
+                        debug("Scanned: %llu\r\n", rfid);
+
+                        sendRFIDLog(rfid);
+                        checkFencingPosition(rfid);
+                    }
+
+                } else {
+                    debug("Error scan RFID, wait RIGHT Guard, but got 0x%02X", rfid_char);
+                }
+                rfid_counter = 0;
+                rfid_state = RFID_READ_WAIT_START;
+                break;
         }
     }
 }
+
 
 void process(void *context)
 {
@@ -395,7 +430,7 @@ void ext_status_store(const char *buffer, size_t buffer_size)
  */
 
 #define USB_DELAY 5
-#define USB_TIMEOUT 100
+#define USB_TIMEOUT 20
 #define CHECK_USB(usb_delay, usb_timeout) { time_t start = millis(); \
                                             while((SerialUSB.pending() > 0)) { \
                                                 delay(usb_delay); \
@@ -484,7 +519,7 @@ void debug(const char* format, ...)
     int s = vsnprintf(dbg_array, DBG_SIZE, format, args);
     va_end(args);
 
-    CHECK_USB(USB_DELAY, USB_TIMEOUT);
+    //CHECK_USB(USB_DELAY, USB_TIMEOUT);
     SerialUSB.write(dbg_array, s);
 
 }

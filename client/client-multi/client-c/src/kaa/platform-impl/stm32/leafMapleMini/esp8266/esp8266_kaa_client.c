@@ -386,6 +386,9 @@ kaa_error_t kaa_client_process_channel_disconnected(kaa_client_t *kaa_client)
             KAA_LOG_ERROR(kaa_client->kaa_context->logger,
                     KAA_ERR_NONE, "ESP8266 connect tcp failed, code: %d", esp_error);
             kaa_client_channel_error(kaa_client);
+            //Need to reinitialize WiFi connection and ESP
+            kaa_client->connection_state = KAA_CLIENT_ESP8266_STATE_UNINITED;
+
         } else {
             KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE,
                         "Channel(0x%08X) connected to  port %d, fd=%d", kaa_client->channel_id,
