@@ -462,9 +462,9 @@ public class AvroEncDec implements PlatformEncDec {
         }
         switch (subscriptionType) {
         case MANDATORY:
-            return SubscriptionType.MANDATORY;
+            return SubscriptionType.MANDATORY_SUBSCRIPTION;
         case OPTIONAL:
-            return SubscriptionType.OPTIONAL;
+            return SubscriptionType.OPTIONAL_SUBSCRIPTION;
         default:
             return null;
         }

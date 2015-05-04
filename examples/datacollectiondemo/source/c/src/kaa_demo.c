@@ -195,7 +195,7 @@ void kaa_demo_add_log_record()
         return;
     }
 
-    log_record->level = ENUM_LEVEL_INFO;
+    log_record->level = ENUM_LEVEL_KAA_INFO;
     log_record->tag = kaa_string_move_create(KAA_DEMO_LOG_TAG, NULL);
 
     size_t log_message_buffer_size = strlen(KAA_DEMO_LOG_MESSAGE) + sizeof(log_record_counter);

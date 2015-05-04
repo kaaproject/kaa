@@ -500,8 +500,8 @@ public:
         std::string description;
 
         switch (type) {
-            case MANDATORY: description = "MANDATORY"; break;
-            case OPTIONAL: description = "OPTIONAL"; break;
+            case MANDATORY_SUBSCRIPTION: description = "MANDATORY_SUBSCRIPTION"; break;
+            case OPTIONAL_SUBSCRIPTION: description = "OPTIONAL_SUBSCRIPTION"; break;
             default: description = "UNKNOWN"; break;
         }
 

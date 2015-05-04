@@ -68,7 +68,7 @@ int main()
     size_t logNumber = 0;
     while (logNumber++ < LOGS_TO_SEND_COUNT) {
         KaaUserLogRecord logRecord;
-        logRecord.level = kaa_log::Level::INFO;
+        logRecord.level = kaa_log::Level::KAA_INFO;
         logRecord.tag = "TAG";
         logRecord.message = "MESSAGE_" + std::to_string(logNumber);
 
