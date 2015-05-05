@@ -106,7 +106,7 @@ public abstract class AbstractDevice implements DeviceEventClassFamily.Listener,
         } else {
             Log.w(TAG, "Endpoint already detached from user account!");
         }
-        releaseDevice();
+        releaseDevice(true);
     }
     
     public String getEndpointKey() {
@@ -149,10 +149,12 @@ public abstract class AbstractDevice implements DeviceEventClassFamily.Listener,
         mDeviceEventClassFamily.sendEvent(new DeviceChangeNameRequest(newName), mEndpointKey);
     }
     
-    public void releaseDevice() {
+    public void releaseDevice(boolean fireListeners) {
         releaseListeners();
-        mDeviceStore.deviceRemoved(mEndpointKey);
-        mEventBus.post(new DeviceRemovedEvent(mEndpointKey, getDeviceType()));
+        if (fireListeners) {
+            mDeviceStore.deviceRemoved(mEndpointKey);
+            mEventBus.post(new DeviceRemovedEvent(mEndpointKey, getDeviceType()));
+        }
     }
  
     

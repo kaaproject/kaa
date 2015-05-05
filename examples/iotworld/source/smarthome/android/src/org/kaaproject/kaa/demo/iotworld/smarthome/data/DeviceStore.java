@@ -99,14 +99,14 @@ public class DeviceStore {
         List<AbstractDevice> toReleaseList = new ArrayList<>(discoveredDevicesMap.values());
         for (AbstractDevice device : toReleaseList) {
             if (type == null || type == device.getDeviceType()) {
-                device.releaseDevice();
+                device.releaseDevice(true);
             }
         }
         toReleaseList.clear();
         toReleaseList = new ArrayList<>(devicesMap.values());
         for (AbstractDevice device : toReleaseList) {
             if (type == null || type == device.getDeviceType()) {
-                device.releaseDevice();
+                device.releaseDevice(true);
             }
         }
         toReleaseList.clear();
@@ -114,14 +114,20 @@ public class DeviceStore {
     
     public void deviceDiscovered(String endpointKey, DeviceType deviceType) {
         AbstractDevice device = createDevice(endpointKey, deviceType);
-        discoveredDevicesMap.put(endpointKey, device);
+        AbstractDevice oldOne = discoveredDevicesMap.put(endpointKey, device);
+        if (oldOne != null) {
+            oldOne.releaseDevice(false);
+        }
         device.initDevice();
     }
     
     protected void deviceInfoReceived(String endpointKey) {
         AbstractDevice device = discoveredDevicesMap.remove(endpointKey);
         if (device != null) {
-            devicesMap.put(endpointKey, device);
+            AbstractDevice oldOne = devicesMap.put(endpointKey, device);
+            if (oldOne != null) {
+                oldOne.releaseDevice(false);
+            }
         }
     }
     

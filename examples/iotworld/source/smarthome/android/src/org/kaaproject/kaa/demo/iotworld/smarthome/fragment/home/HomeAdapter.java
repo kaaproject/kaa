@@ -42,6 +42,8 @@ import android.view.ViewGroup;
 public class HomeAdapter extends PressableAdapter<HomeAdapter.ViewHolder> 
         implements OnItemClickListener, OnContextMenuListener {
 
+    private static final int INVALID_TYPE = -1;
+    
     private final AutoSpanRecyclerView mRecyclerView;
     private final DeviceStore mDeviceStore;
     private final DeviceSelectionListener mDeviceSelectionListener;
@@ -58,22 +60,26 @@ public class HomeAdapter extends PressableAdapter<HomeAdapter.ViewHolder>
     }
     
     @Override
-    public int getItemCount() {
+    public int getCurrentItemCount() {
         return mDeviceStore.getSize() + 1;
     }
     
     @Override
     public int getItemViewType(int position) { 
-        if (position == mDeviceStore.getSize()) {
-            return DeviceType.values().length;
+        if (position <= mDeviceStore.getSize()) {
+            if (position == mDeviceStore.getSize()) {
+                return DeviceType.values().length;
+            } else {
+                return mDeviceStore.getDevice(position).getDeviceType().ordinal();
+            }
         } else {
-            return mDeviceStore.getDevice(position).getDeviceType().ordinal();
+            return INVALID_TYPE;
         }
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (holder.mHolderId < DeviceType.values().length) {
+        if (holder.mHolderId != INVALID_TYPE && holder.mHolderId < DeviceType.values().length) {
             AbstractDevice device = mDeviceStore.getDevice(position);
             if (device != null) {
                 holder.bind(device);
@@ -86,7 +92,7 @@ public class HomeAdapter extends PressableAdapter<HomeAdapter.ViewHolder>
         View card = null;
         if (viewType == DeviceType.values().length) {
             card = new AddDeviceCard(parent.getContext());
-        } else {
+        } else if (viewType != INVALID_TYPE) {
             DeviceType deviceType = DeviceType.values()[viewType];
             switch (deviceType) {
             case CLIMATE:
@@ -107,7 +113,10 @@ public class HomeAdapter extends PressableAdapter<HomeAdapter.ViewHolder>
             default:
                 break;
             }
+        } else {
+            card = new View(parent.getContext());
         }
+        
         FontUtils.setRobotoFont(card);
         ViewHolder vhCard = new ViewHolder(card,viewType);
         return vhCard;

@@ -35,6 +35,7 @@ import org.kaaproject.kaa.demo.qrcode.QrCodeCaptureActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.LayoutInflater;
@@ -57,6 +58,7 @@ public class HomeFragment extends AbstractSmartHomeFragment implements DeviceSel
     private TextView mNoDataText;
     private AutoSpanRecyclerView mRecyclerView;
     private HomeAdapter mHomeAdapter;
+    private Handler mHandler = new Handler();
     
     public HomeFragment() {
         super();
@@ -66,6 +68,7 @@ public class HomeFragment extends AbstractSmartHomeFragment implements DeviceSel
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mHandler = new Handler();
         int cardsSpacing = getResources().getDimensionPixelSize(R.dimen.card_spacing);
         mRecyclerView.setGridLayoutManager(GridLayoutManager.VERTICAL, 1, R.dimen.card_width, cardsSpacing);
 
@@ -222,8 +225,13 @@ public class HomeFragment extends AbstractSmartHomeFragment implements DeviceSel
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == DEVICE_QR_CODE_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
-                String result = data.getStringExtra(Intents.Scan.RESULT);
-                mDeviceStore.attachDevice(result);
+                final String result = data.getStringExtra(Intents.Scan.RESULT);
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDeviceStore.attachDevice(result);
+                    }
+                }, 100);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

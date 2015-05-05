@@ -58,7 +58,7 @@ public abstract class AbstractDeviceListAdapter<T extends AbstractDevice> extend
     }
     
     @Override
-    public int getItemCount() {
+    public int getCurrentItemCount() {
         List<T> devices = mDeviceStore.getDevices(getDeviceType());
         if (devices != null) {
             return devices.size();

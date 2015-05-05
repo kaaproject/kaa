@@ -32,13 +32,19 @@ public class IrrigationDevice extends AbstractDevice implements IrrigationEventC
     private final IrrigationEventClassFamily mIrrigationEventClassFamily;
     
     private IrrigationStatus mIrrigationStatus;
-    private Handler mHandler = new Handler(Looper.getMainLooper());
-    
-    private CountDownTask mCountDownTask = new CountDownTask();
+    private Handler mHandler;    
+    private CountDownTask mCountDownTask;
     
     public IrrigationDevice(String endpointKey, DeviceStore deviceStore, KaaClient client, EventBus eventBus) {
         super(endpointKey, deviceStore, client, eventBus);
         mIrrigationEventClassFamily = mClient.getEventFamilyFactory().getIrrigationEventClassFamily();
+    }
+    
+    @Override
+    public void initDevice() {
+        mCountDownTask = new CountDownTask();
+        mHandler = new Handler(Looper.getMainLooper());
+        super.initDevice();
     }
     
     @Override
@@ -85,6 +91,12 @@ public class IrrigationDevice extends AbstractDevice implements IrrigationEventC
                 mIrrigationStatus.getTimeToNextIrrigationMs() > 0) {
             mHandler.postDelayed(mCountDownTask, 1000);
         }
+    }
+    
+    @Override
+    public void releaseDevice(boolean fireListeners) {
+        super.releaseDevice(fireListeners);
+        mHandler.removeCallbacks(mCountDownTask);
     }
     
     protected void fireIrrigationStatusUpdated() {

@@ -23,9 +23,11 @@ public abstract class PressableAdapter<VH extends ViewHolder> extends RecyclerVi
 
     private boolean mIsPressed = false;
     private boolean mNotifyDataSetChangedScheduled = false;
+    protected int mItemCount = 0;
 
     public void tryNotifyDataSetChanged() {
         if (!mIsPressed) {
+            mItemCount = getCurrentItemCount();
             notifyDataSetChanged();
         } else {
             mNotifyDataSetChangedScheduled = true;
@@ -35,9 +37,17 @@ public abstract class PressableAdapter<VH extends ViewHolder> extends RecyclerVi
     public void setRecyclerViewIsPressed(boolean isPressed) {
         mIsPressed = isPressed;
         if (!mIsPressed && mNotifyDataSetChangedScheduled) {
+            mItemCount = getCurrentItemCount();
             notifyDataSetChanged();
             mNotifyDataSetChangedScheduled = false;
         }
     }
+    
+    @Override
+    public int getItemCount() {
+        return mItemCount;
+    }
+    
+    protected abstract int getCurrentItemCount();
     
 }
