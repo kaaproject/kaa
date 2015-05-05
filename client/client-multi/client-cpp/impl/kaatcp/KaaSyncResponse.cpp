@@ -15,7 +15,11 @@
  */
 
 #include "kaa/kaatcp/KaaSyncResponse.hpp"
+#ifdef _WIN32
+#include <Winsock2.h>
+#else
 #include <arpa/inet.h>
+#endif
 
 namespace kaa {
 

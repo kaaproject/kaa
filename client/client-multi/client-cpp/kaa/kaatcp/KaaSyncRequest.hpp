@@ -19,7 +19,12 @@
 
 #include "kaa/kaatcp/KaaTcpCommon.hpp"
 #include "kaa/kaatcp/IKaaTcpRequest.hpp"
+#ifdef _WIN32
+#include <Winsock2.h>
+#else
 #include <arpa/inet.h>
+#endif
+
 
 namespace kaa {
 

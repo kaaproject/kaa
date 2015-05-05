@@ -34,23 +34,31 @@
 
 message ("\nLooking for Avro C++ headers and libraries")
 
+if (NOT "$ENV{AVRO_ROOT_DIR}" STREQUAL "")
+    set(AVRO_ROOT_DIR "$ENV{AVRO_ROOT_DIR}")
+endif(NOT "$ENV{AVRO_ROOT_DIR}" STREQUAL "")
+
 if (AVRO_ROOT_DIR)
     message (STATUS "Root dir: ${AVRO_ROOT_DIR}")
 endif ()
 
-find_package(PkgConfig)
-pkg_check_modules(PC_AVRO avro-cpp)
-set(AVRO_DEFINITIONS ${PC_AVRO_CFLAGS_OTHER})
+if (NOT WIN32)
+  include(FindPkgConfig)
+  if ( PKG_CONFIG_FOUND )
 
-find_path(AVRO_INCLUDE_DIR
-    NAMES
-    Encoder.hh
-    HINTS
-    ${AVRO_ROOT_DIR}/include
-    ${PC_AVRO_INCLUDEDIR}
-    ${PC_AVRO_INCLUDE_DIRS}
-    PATH_SUFFIXES
-    avro
+	pkg_check_modules(PC_AVRO avro-cpp)
+	set(AVRO_DEFINITIONS ${PC_AVRO_CFLAGS_OTHER})
+
+  endif(PKG_CONFIG_FOUND)
+endif (NOT WIN32)
+
+find_path(AVRO_INCLUDE_DIR 
+     avro/Encoder.hh
+     HINTS
+     ${AVRO_ROOT_DIR}/include
+     ${PC_AVRO_INCLUDEDIR}
+     ${PC_AVRO_INCLUDE_DIRS}
+     ${CMAKE_INCLUDE_PATH}
 )
 
 if (AVRO_LINK_STATIC)
