@@ -1,7 +1,23 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kaaproject.kaa.demo.iotworld.smarthome.fragment;
 
 import org.kaaproject.kaa.demo.iotworld.smarthome.R;
 import org.kaaproject.kaa.demo.iotworld.smarthome.data.AbstractDevice;
+import org.kaaproject.kaa.demo.iotworld.smarthome.data.AbstractGeoFencingDevice;
 import org.kaaproject.kaa.demo.iotworld.smarthome.data.DeviceType;
 import org.kaaproject.kaa.demo.iotworld.smarthome.data.event.DeviceRemovedEvent;
 import org.kaaproject.kaa.demo.iotworld.smarthome.data.event.DeviceUpdatedEvent;
@@ -48,8 +64,15 @@ public class HomeFragment extends AbstractSmartHomeFragment implements DeviceSel
     }
     
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        int cardsSpacing = getResources().getDimensionPixelSize(R.dimen.card_spacing);
+        mRecyclerView.setGridLayoutManager(GridLayoutManager.VERTICAL, 1, R.dimen.card_width, cardsSpacing);
+
+        mHomeAdapter = new HomeAdapter(mRecyclerView, mDeviceStore, this);
+        showContent();
+        
+        notifyDataChanged();
         discoverDevices(false);
     }
 
@@ -73,22 +96,11 @@ public class HomeFragment extends AbstractSmartHomeFragment implements DeviceSel
         
         mRecyclerView = (AutoSpanRecyclerView) rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true); 
-        
-        int cardsWidth = getResources().getDimensionPixelSize(R.dimen.card_width);
-        int cardsSpacing = getResources().getDimensionPixelSize(R.dimen.card_spacing);
-        mRecyclerView.setGridLayoutManager(GridLayoutManager.VERTICAL, 1, cardsWidth, cardsSpacing);
-        
-        mHomeAdapter = new HomeAdapter(mRecyclerView, mDeviceStore, this);
-        
-        showContent();
-        
-        notifyDataChanged();
-        
         return rootView;
     }
     
     protected void notifyDataChanged() {
-        mHomeAdapter.notifyDataSetChanged();
+        mHomeAdapter.tryNotifyDataSetChanged();
         if (mHomeAdapter.getItemCount() > 0) {
             mNoDataText.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
@@ -153,6 +165,11 @@ public class HomeFragment extends AbstractSmartHomeFragment implements DeviceSel
             case R.id.ctx_menu_rename_device:
                 contextMenuDevice.renameDevice(mActivity);
                 break;
+            case R.id.ctx_menu_change_mode:
+                if (contextMenuDevice instanceof AbstractGeoFencingDevice) {
+                    ((AbstractGeoFencingDevice)contextMenuDevice).changeDeviceMode(mActivity);
+                }
+                break;                
             case R.id.ctx_menu_detach_device:
                 contextMenuDevice.detach();
                 break;

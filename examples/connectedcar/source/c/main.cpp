@@ -32,13 +32,18 @@
 
 #define NSS 7
 #define CH_PD 22
+#define LEFT_LIGHT 21
+#define RIGHT_LIGHT 26
 #define ESP8266_RST 20
 
 #define RX_BUFFER_SIZE 256 //1460
 
-#define TRACE_DELAY 100
+#define ESP_SERIAL &Serial3
+#define ESP_SERIAL_BAUD 9600
 
-#define ESP_SERIAL Serial1
+#define LIGHT_BLINK_TIME 50
+#define LIGHT_BLINK_NUMBER 6 //Should be even number, 6 mean 3 blink, with interval on/off LIGHT_BLIM_TIME
+
 
 #define RFID_READER         Serial2
 #define RFID_BAUD_RATE      9600
@@ -70,7 +75,26 @@ static int current_zone_id = UNKNOWN_GEOFENCING_ZONE_ID;
 #define DBG_SIZE 256
 static char dbg_array[DBG_SIZE];
 
+typedef enum {
+    RFID_READ_WAIT_START = 0,
+    RFID_READ_LEFT_GUARD,
+    RFID_READ,
+    RFID_READ_RIGHT_GUARD,
+    RFID_READ_WAIT_FINISH
+} rfid_read_state_t;
+
 static rfid_t last_detected_rfid = RFID_MAX_NUMBER;
+static char rfid_buffer[RFID_LENGTH + 1];
+static int rfid_counter;
+static rfid_read_state_t rfid_state;
+static char rfid_char;
+
+
+
+/* Light blink variables */
+static uint32_t light_blink_time;
+static int light_blink_counter;
+
 
 
 
@@ -84,10 +108,13 @@ void setup()
     pinMode(ESP8266_RST, OUTPUT);
     pinMode(BOARD_BUTTON_PIN, INPUT);
     pinMode(BOARD_LED_PIN, OUTPUT);
+    pinMode(LEFT_LIGHT, OUTPUT);
+    pinMode(RIGHT_LIGHT, OUTPUT);
 
+    light_blink_counter = -1;
     systick_enable();
 
-    esp8266_serial_init(&esp8266_serial, &Serial3, 115200);
+    esp8266_serial_init(&esp8266_serial, ESP_SERIAL, ESP_SERIAL_BAUD);
     if (!esp8266_serial) {
         debug("Serial Initialization failed, no memory\r\n");
         return;
@@ -114,10 +141,15 @@ void setup()
         debug("Failed to attach to user '%s', error code %d\r\n", KAA_USER_ID, error);
         return;
     }
+
+
 }
 
 void sendRFIDLog(rfid_t rfid)
 {
+    light_blink_time = millis();
+    lightOn(true, true);
+    light_blink_counter = 0;
     kaa_context_t *kaa_context = kaa_client_get_context(kaa_client);
 
     kaa_user_log_record_t *log_record = kaa_logging_rfid_log_create();
@@ -140,8 +172,10 @@ void notifyOfNewFencingZone(int zone_id)
 {
     if (zone_id != UNKNOWN_GEOFENCING_ZONE_ID && current_zone_id != zone_id) {
         current_zone_id = zone_id;
-        kaa_geo_fencing_event_class_family_geo_fencing_position_t position;
 
+        debug("New zone detected, id=%d\r\n", current_zone_id);
+
+        kaa_geo_fencing_event_class_family_geo_fencing_position_t position;
         switch (zone_id) {
         case ENUM_GEO_FENCING_ZONE_ID_HOME:
             position = ENUM_GEO_FENCING_POSITION_HOME;
@@ -187,24 +221,24 @@ void checkFencingPosition(rfid_t rfid)
         kaa_list_t *zones_it = configuration->zones;
         while (zones_it && (new_zone_id == UNKNOWN_GEOFENCING_ZONE_ID)) {
             kaa_configuration_geo_fencing_zone_t *zone = (kaa_configuration_geo_fencing_zone_t *)kaa_list_get_data(zones_it);
+            kaa_list_t *zone_tag_it = zone->tags;
 
-            if (current_zone_id != zone->id) {
-                kaa_list_t *zone_tag_it = zone->tags;
-                while (zone_tag_it && (new_zone_id == UNKNOWN_GEOFENCING_ZONE_ID)) {
-                    int64_t *tag = (int64_t *)kaa_list_get_data(zone_tag_it);
-                    if (*tag == rfid) {
-                        new_zone_id = zone->id;
-                    }
-                    zone_tag_it = kaa_list_next(zone_tag_it);
+            while (zone_tag_it && (new_zone_id == UNKNOWN_GEOFENCING_ZONE_ID)) {
+                int64_t *tag = (int64_t *)kaa_list_get_data(zone_tag_it);
+                if (*tag == rfid) {
+                    new_zone_id = zone->id;
                 }
+
+                zone_tag_it = kaa_list_next(zone_tag_it);
             }
             zones_it = kaa_list_next(zones_it);
         }
 
-        if (new_zone_id != UNKNOWN_GEOFENCING_ZONE_ID) {
-            debug("New zone detected, id=%d\r\n", new_zone_id);
-            notifyOfNewFencingZone(new_zone_id);
+        if (new_zone_id == UNKNOWN_GEOFENCING_ZONE_ID) {
+            new_zone_id = ENUM_GEO_FENCING_ZONE_ID_AWAY;
         }
+
+        notifyOfNewFencingZone(new_zone_id);
     } else {
         debug("Skip check fencing position: configuration is null\r\n");
     }
@@ -219,38 +253,58 @@ void checkFencingPosition(rfid_t rfid)
 void readRFID()
 {
     if (RFID_READER.available() > 0) {
-        char buffer[RFID_LENGTH + 1];
-        buffer[RFID_LENGTH] = '\0';
-
-        delay(RFID_READ_DELAY);
-
-        if (RFID_READER.read() == RFID_LEFT_GUARD) {
-            SKIP_BYTES(RFID_READER, RFID_SKIP_LEFT);
-
-            for (int i = 0; i < RFID_LENGTH ; ++i) {
-                buffer[i] = RFID_READER.read();
-            }
-
-            SKIP_BYTES(RFID_READER, RFID_SKIP_RIGHT);
-
-            if (RFID_READER.read() == RFID_RIGHT_GUARD) {
-                RFID_READER.flush();
-                rfid_t rfid = strtoull(buffer, NULL, 16);
-
-                if (rfid != last_detected_rfid) {
-                    last_detected_rfid = rfid;
-
-                    debug("Scanned: %llu\r\n", rfid);
-
-                    sendRFIDLog(rfid);
-                    checkFencingPosition(rfid);
+        rfid_char = RFID_READER.read();
+        switch (rfid_state) {
+            case RFID_READ_WAIT_START:
+                if (rfid_char == RFID_LEFT_GUARD) {
+                    rfid_counter = 0;
+                    rfid_state = RFID_READ_LEFT_GUARD;
                 }
-            } else {
-                RFID_READER.flush();
-            }
+                break;
+            case RFID_READ_LEFT_GUARD:
+                rfid_counter++;
+                if (rfid_counter >= RFID_SKIP_LEFT) {
+                    rfid_counter = 0;
+                    rfid_state = RFID_READ;
+                }
+                break;
+            case RFID_READ:
+                rfid_buffer[rfid_counter++] = rfid_char;
+                if (rfid_counter >= RFID_LENGTH) {
+                    rfid_buffer[rfid_counter] = '\0';
+                    rfid_counter = 0;
+                    rfid_state = RFID_READ_RIGHT_GUARD;
+                }
+                break;
+            case RFID_READ_RIGHT_GUARD:
+                rfid_counter++;
+                if (rfid_counter >= RFID_SKIP_RIGHT) {
+                    rfid_counter = 0;
+                    rfid_state = RFID_READ_WAIT_FINISH;
+                }
+                break;
+            case RFID_READ_WAIT_FINISH:
+                if (rfid_char == RFID_RIGHT_GUARD) {
+                    rfid_t rfid = strtoull(rfid_buffer, NULL, 16);
+                    if (rfid != last_detected_rfid) {
+                        last_detected_rfid = rfid;
+
+                        debug("Scanned: %llu\r\n", rfid);
+
+                        sendRFIDLog(rfid);
+                        checkFencingPosition(rfid);
+                    }
+
+                } else {
+                    debug("Error scan RFID, wait RIGHT Guard, but got 0x%02X", rfid_char);
+                }
+                rfid_counter = 0;
+                rfid_state = RFID_READ_WAIT_START;
+                break;
         }
     }
 }
+
 
 void process(void *context)
 {
@@ -264,6 +318,22 @@ void process(void *context)
         }
     }
 
+    if (light_blink_counter >= 0) {
+        if ((millis() - light_blink_time) >= LIGHT_BLINK_TIME) {
+            light_blink_counter++;
+            light_blink_time = millis();
+            if ((light_blink_counter % 2) == 0) {
+                lightOn(true, true);
+            } else {
+                lightOff(true, true);
+            }
+        }
+        if (light_blink_counter > LIGHT_BLINK_NUMBER) {
+            lightOff(true, true);
+            light_blink_counter = -1;
+        }
+    }
+
     readRFID();
 }
 
@@ -271,7 +341,7 @@ void loop()
 {
     if (kaa_client) {
         debug("Starting Kaa client, to stop press \'S\'\r\n");
-        kaa_error_t error = kaa_client_start(kaa_client, process, (void*)kaa_client, 10);
+        kaa_error_t error = kaa_client_start(kaa_client, process, (void*)kaa_client, 5);
         if (error) {
             debug("Error running Kaa client, code %d\r\n", error);
         }
@@ -360,7 +430,7 @@ void ext_status_store(const char *buffer, size_t buffer_size)
  */
 
 #define USB_DELAY 5
-#define USB_TIMEOUT 100
+#define USB_TIMEOUT 20
 #define CHECK_USB(usb_delay, usb_timeout) { time_t start = millis(); \
                                             while((SerialUSB.pending() > 0)) { \
                                                 delay(usb_delay); \
@@ -412,6 +482,22 @@ void ledOff()
     digitalWrite(BOARD_LED_PIN, LOW);
 }
 
+void lightOn(bool left, bool right)
+{
+    if (left)
+        digitalWrite(LEFT_LIGHT, HIGH);
+    if (right)
+        digitalWrite(RIGHT_LIGHT, HIGH);
+}
+
+void lightOff(bool left, bool right)
+{
+    if (left)
+        digitalWrite(LEFT_LIGHT, LOW);
+    if (right)
+        digitalWrite(RIGHT_LIGHT, LOW);
+}
+
 void esp8266_reset()
 {
     //Enable Chip Select signal;
@@ -433,7 +519,7 @@ void debug(const char* format, ...)
     int s = vsnprintf(dbg_array, DBG_SIZE, format, args);
     va_end(args);
 
-    CHECK_USB(USB_DELAY, USB_TIMEOUT);
+    //CHECK_USB(USB_DELAY, USB_TIMEOUT);
     SerialUSB.write(dbg_array, s);
 
 }

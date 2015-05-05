@@ -1,8 +1,24 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kaaproject.kaa.demo.iotworld.smarthome.widget;
 
 import org.kaaproject.kaa.demo.iotworld.smarthome.R;
 import org.kaaproject.kaa.demo.iotworld.smarthome.util.FontUtils;
 import org.kaaproject.kaa.demo.iotworld.smarthome.util.FontUtils.FontType;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
@@ -36,6 +52,7 @@ public class Thermostat extends View {
     
     private int mTempMax = 100;
     
+    private CharSequence mIdleText;
     private CharSequence mCoolingText;
     private CharSequence mHeatingText;
     
@@ -69,6 +86,8 @@ public class Thermostat extends View {
     private int mProgress = 0;
     
     private int mTargetProgress = 0;
+    
+    private boolean mIsOperating = false;
         
     /**
      * The width of the progress line for the Thermostat.
@@ -223,6 +242,7 @@ public class Thermostat extends View {
         mBackgroundColor = getResources().getColor(R.color.transparent);
         mBackgroundColorHeat = getResources().getColor(R.color.transparent);
         
+        mIdleText = getResources().getText(R.string.idle);
         mCoolingText = getResources().getText(R.string.cooling);
         mHeatingText = getResources().getText(R.string.heating);
 
@@ -291,7 +311,12 @@ public class Thermostat extends View {
             mTempMin = a.getInteger(R.styleable.Thermostat_tempMin, mTempMin);
             mTempMax = a.getInteger(R.styleable.Thermostat_tempMax, mTempMax);
             
-            CharSequence text = a.getText(R.styleable.Thermostat_coolingText);
+            CharSequence text = a.getText(R.styleable.Thermostat_idleText);
+            if (text != null) {
+                mIdleText = text;
+            }
+            
+            text = a.getText(R.styleable.Thermostat_coolingText);
             if (text != null) {
                 mCoolingText = text;
             }
@@ -468,7 +493,7 @@ public class Thermostat extends View {
         int progressColor;
         int backgroundColor;
         
-        if (mProgress==mTargetProgress) {
+        if (mProgress==mTargetProgress || !mIsOperating) {
             arcColor = mArcColor;
             progressColor = mProgressColor;
             backgroundColor = mBackgroundColor;
@@ -495,6 +520,7 @@ public class Thermostat extends View {
         
     }
     
+    @SuppressLint("DefaultLocale")
     @Override
     protected void onDraw(Canvas canvas) {      
         
@@ -556,20 +582,20 @@ public class Thermostat extends View {
             mTempY = mTranslateY + mTargetTextPaint.descent() + mTargetTextPaint.ascent() - mTempDist;
         }
         
-        if (mProgress != mTargetProgress) {
-        
-            String text = mProgress < mTargetProgress ? mHeatingText.toString() : mCoolingText.toString();
-            text = text.toUpperCase();
-            
-            if (mEnableBlur) { 
-                yPos = (int)(mTempY - ((mTempTextPaintGlow.descent() + mTempTextPaintGlow.ascent()) / 2));
-                canvas.drawText(text, mTranslateX, yPos, mTempTextPaintGlow);
-            }
-    
-            yPos = (int)(mTempY - ((mTempTextPaint.descent() + mTempTextPaint.ascent()) / 2));
-            canvas.drawText(text, mTranslateX, yPos, mTempTextPaint);
-        
+        String text = mIdleText.toString();
+        if (mIsOperating && mProgress != mTargetProgress) {
+            text = mProgress < mTargetProgress ? mHeatingText.toString() : mCoolingText.toString();
         }
+        
+        text = text.toUpperCase();
+        
+        if (mEnableBlur) { 
+            yPos = (int)(mTempY - ((mTempTextPaintGlow.descent() + mTempTextPaintGlow.ascent()) / 2));
+            canvas.drawText(text, mTranslateX, yPos, mTempTextPaintGlow);
+        }
+
+        yPos = (int)(mTempY - ((mTempTextPaint.descent() + mTempTextPaint.ascent()) / 2));
+        canvas.drawText(text, mTranslateX, yPos, mTempTextPaint);
         
         if (mEnableBlur) { 
             canvas.drawLine(mControlUpRect.left, 
@@ -673,6 +699,9 @@ public class Thermostat extends View {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (!isEnabled()) {
+            return true;
+        }
         switch (event.getAction()) {
         case MotionEvent.ACTION_DOWN:
             if (!onControlDown(event)) {
@@ -925,6 +954,14 @@ public class Thermostat extends View {
     
     public int getTargetTemp() {
         return mTempMin+mTargetProgress;
+    }
+    
+    public void setOperating(boolean isOperating) {
+        if (mIsOperating != isOperating) {
+            mIsOperating = isOperating;
+            updateColors();
+            invalidate();
+        }
     }
     
     public void setTargetProgress(int targetProgress, boolean notifyListeners) {

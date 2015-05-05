@@ -102,6 +102,14 @@
             <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>iotworld</artifactId>
             <version>${project.version}</version>
+            <classifier>climate-src-android</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>iotworld</artifactId>
+            <version>${project.version}</version>
             <classifier>musicplayer-src-java</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
@@ -113,7 +121,15 @@
             <classifier>photoplayer-src-java</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
-        </dependency>       
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>iotworld</artifactId>
+            <version>${project.version}</version>
+            <classifier>irrigation-src-java</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>notificationdemo-android</artifactId>
@@ -805,6 +821,16 @@
                                     <groupId>org.kaaproject.kaa.examples</groupId>
                                     <artifactId>iotworld</artifactId>
                                     <version>${project.version}</version>
+                                    <classifier>climate-src-android</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/iotworld/climate/android</outputDirectory>
+                                    <destFileName>climate.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>iotworld</artifactId>
+                                    <version>${project.version}</version>
                                     <classifier>musicplayer-src-java</classifier>
                                     <type>tar.gz</type>
                                     <overWrite>false</overWrite>
@@ -820,7 +846,17 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/iotworld/photoplayer</outputDirectory>
                                     <destFileName>photoplayer.tar.gz</destFileName>
-                                </artifactItem>                                
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>iotworld</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>irrigation-src-java</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/iotworld/irrigation</outputDirectory>
+                                    <destFileName>irrigation.tar.gz</destFileName>
+                                </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.examples</groupId>
                                     <artifactId>notificationdemo-android</artifactId>

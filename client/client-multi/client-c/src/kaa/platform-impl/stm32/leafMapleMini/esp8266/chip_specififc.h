@@ -38,6 +38,9 @@ void ledOn();
 
 void ledOff();
 
+void lightOn(bool left, bool right);
+void lightOff(bool left, bool right);
+
 void esp8266_reset();
 
 #ifdef __cplusplus

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kaaproject.kaa.demo.iotworld.smarthome.data;
 
 import static org.kaaproject.kaa.demo.iotworld.smarthome.data.DeviceType.CommonDeviceListenersFqns.deviceFqns;
@@ -14,8 +29,9 @@ import org.kaaproject.kaa.demo.iotworld.geo.GeoFencingStatusRequest;
 import org.kaaproject.kaa.demo.iotworld.geo.OperationModeUpdateRequest;
 import org.kaaproject.kaa.demo.iotworld.irrigation.IrrigationControlRequest;
 import org.kaaproject.kaa.demo.iotworld.irrigation.StartIrrigationRequest;
-import org.kaaproject.kaa.demo.iotworld.light.BulbControlRequest;
 import org.kaaproject.kaa.demo.iotworld.light.BulbListRequest;
+import org.kaaproject.kaa.demo.iotworld.light.ChangeBulbBrightnessRequest;
+import org.kaaproject.kaa.demo.iotworld.light.ChangeBulbStatusRequest;
 import org.kaaproject.kaa.demo.iotworld.music.ChangeVolumeRequest;
 import org.kaaproject.kaa.demo.iotworld.music.PauseRequest;
 import org.kaaproject.kaa.demo.iotworld.music.PlayListRequest;
@@ -64,7 +80,8 @@ public enum DeviceType {
               R.drawable.card_lightning,         
               R.color.device_color_lightning,
               deviceFqns, geoFencingDeviceFqns, new String[]{BulbListRequest.class.getName(),
-                                                             BulbControlRequest.class.getName()}),
+                                                             ChangeBulbBrightnessRequest.class.getName(),
+                                                             ChangeBulbStatusRequest.class.getName()}),
                                                              
     IRRIGATION(R.drawable.ic_nav_irrigation, 
              R.string.nav_irrigation, 

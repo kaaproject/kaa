@@ -20,21 +20,21 @@
 #set ($PREFIX = $StyleUtils.toUpperUnderScore($namespacePrefix))
 #set ($prefix = $StyleUtils.toLowerUnderScore($namespacePrefix))
 typedef enum {
-#foreach ($symbol in $schema.getEnumSymbols())
+#foreach ($symbol in $symbols)
     ENUM_${ENUM_NAME}_$symbol,
 #end
 } ${prefix}_${enum_name}_t;
 
 #ifdef GENC_ENUM_DEFINE_ALIASES
-#foreach ($symbol in $schema.getEnumSymbols())
+#foreach ($symbol in $symbols)
 \#define $symbol ENUM_${ENUM_NAME}_$symbol
 #end
 # endif // GENC_ENUM_DEFINE_ALIASES
 
 #ifdef GENC_ENUM_STRING_LITERALS
-#set($sym_count = $schema.getEnumSymbols().size())
+#set($sym_count = $symbols.size())
 const char* ${PREFIX}_${ENUM_NAME}_SYMBOLS[$sym_count] = {
-#foreach ($symbol in $schema.getEnumSymbols())
+#foreach ($symbol in $symbols)
     "${symbol}"#set($sym_count = $sym_count - 1)#if ($sym_count > 0),
 #end
 #end

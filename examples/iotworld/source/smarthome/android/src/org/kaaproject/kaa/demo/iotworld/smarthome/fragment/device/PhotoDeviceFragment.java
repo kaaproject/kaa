@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kaaproject.kaa.demo.iotworld.smarthome.fragment.device;
 
 import java.io.File;
@@ -76,10 +91,14 @@ implements PhotoAlbumSelectionListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_upload_photo:
-                uploadPhoto();
+                if (mControlsEnabled) {
+                    uploadPhoto();
+                }
                 return true;
             case R.id.delete_uploaded_photos:
-                mDevice.deleteUploadedPhotos();
+                if (mControlsEnabled) {
+                    mDevice.deleteUploadedPhotos();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -95,9 +114,8 @@ implements PhotoAlbumSelectionListener {
         mRecyclerView = (AutoSpanRecyclerView) rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         
-        int cardsWidth = getResources().getDimensionPixelSize(R.dimen.photo_album_card_width);
         int cardsSpacing = getResources().getDimensionPixelSize(R.dimen.card_spacing);
-        mRecyclerView.setGridLayoutManager(GridLayoutManager.VERTICAL, 1, cardsWidth, cardsSpacing);
+        mRecyclerView.setGridLayoutManager(GridLayoutManager.VERTICAL, 1, R.dimen.photo_album_card_width, cardsSpacing);
         mPhotoAlbumsAdapter = new PhotoAlbumsAdapter(mRecyclerView, mDevice, this);
     }
     
@@ -117,13 +135,17 @@ implements PhotoAlbumSelectionListener {
 
     @Override
     public void onPhotoAlbumSelected(PhotoAlbumInfo album) {
-        mDevice.startStopSlideshow(album.getId());
+        if (mControlsEnabled) {
+            mDevice.startStopSlideshow(album.getId());
+        }
     }
     
     private void uploadPhoto() {
-        Intent intent = new Intent(
-        Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, REQUEST_SELECT_IMAGE);
+        if (mControlsEnabled) {
+            Intent intent = new Intent(
+            Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, REQUEST_SELECT_IMAGE);
+        }
     }
 
     @Override
@@ -160,7 +182,8 @@ implements PhotoAlbumSelectionListener {
             }
         }
     }
-    
-    
+
+    @Override
+    protected void updateControlsState() {}
 
 }

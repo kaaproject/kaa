@@ -50,6 +50,8 @@ typedef unsigned int uint32;
 
 #define KAA_DEMO_UPLOAD_COUNT_THRESHOLD 1 /* Count of collected serialized logs needed to initiate log upload */
 
+#define KAA_DEMO_TWO_DAYS_UPLOAD_TIMEOUT 2 * 24 * 60 * 60
+
 
 
 static kaa_digest kaa_public_key_hash;
@@ -233,7 +235,7 @@ kaa_error_t kaa_client_create(kaa_client_t **kaa_client, kaa_client_props_t *pro
     self->wifi_ssid = props->wifi_ssid;
     self->wifi_pswd = props->wifi_pswd;
     self->operate = true;
-    self->blink_timeout = 2000;
+    self->blink_timeout = 500;
 
     error_code = kaa_log_collector_init(self);
     if (error_code) {
@@ -384,6 +386,9 @@ kaa_error_t kaa_client_process_channel_disconnected(kaa_client_t *kaa_client)
             KAA_LOG_ERROR(kaa_client->kaa_context->logger,
                     KAA_ERR_NONE, "ESP8266 connect tcp failed, code: %d", esp_error);
             kaa_client_channel_error(kaa_client);
+            //Need to reinitialize WiFi connection and ESP
+            kaa_client->connection_state = KAA_CLIENT_ESP8266_STATE_UNINITED;
+
         } else {
             KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE,
                         "Channel(0x%08X) connected to  port %d, fd=%d", kaa_client->channel_id,
@@ -650,6 +655,18 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
                                                                 , kaa_client->kaa_context->bootstrap_manager);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Failed to create log upload strategy");
+        return error_code;
+    }
+
+    // Due to unknown problems with networking via ESP8266, some server responses are lost.
+    // It leads to log delivery timeouts.
+    error_code = ext_log_upload_strategy_by_volume_set_upload_timeout(kaa_client->log_upload_strategy_context
+                                                                    , KAA_DEMO_TWO_DAYS_UPLOAD_TIMEOUT);
+    if (error_code) {
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger,
+                                                error_code,
+                                                "Failed to create log upload strategy by volume set upload timeout to %d",
+                                                KAA_DEMO_TWO_DAYS_UPLOAD_TIMEOUT);
         return error_code;
     }
 

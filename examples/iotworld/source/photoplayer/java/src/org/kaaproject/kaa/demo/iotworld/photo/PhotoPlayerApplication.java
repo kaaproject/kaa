@@ -46,7 +46,7 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
 
     private static final String DEFAULT_DIR = "H:\\photos\\";
 
-    private static final String DEFAULT_ACCESS_CODE = "DUMMY_ACCESS_CODE";
+    private static final String DEFAULT_ACCESS_CODE = "PHOTO_PLAYER_ACCESS_CODE";
 
     private final String accessCode;
 
@@ -67,6 +67,8 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
 
     private volatile SlideShowStatus pendingStatus = SlideShowStatus.PAUSED;
 
+    private static volatile boolean running = true;
+
     /**
      * @param args
      */
@@ -78,12 +80,32 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
 
         application.start();
 
-        try {
-            System.in.read();
-            application.stop();
-        } catch (IOException e) {
-            e.printStackTrace();
+        final Thread mainThread = Thread.currentThread();
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                running = false;
+                mainThread.interrupt();
+                try {
+                    mainThread.join();
+                } catch (InterruptedException e) {
+                    LOG.error("Interrupted during await termination!", e);
+                }
+            }
+        });
+
+        while (running) {
+            try {
+                Thread.sleep(60 * 1000L);
+            } catch (InterruptedException e) {
+                if (running) {
+                    LOG.error("Interrupted during execution!", e);
+                } else {
+                    LOG.info("Received shutdown request!");
+                }
+            }
         }
+        
+        application.stop();
     }
 
     private PhotoPlayerApplication(Path rootPath, String accessCode) {

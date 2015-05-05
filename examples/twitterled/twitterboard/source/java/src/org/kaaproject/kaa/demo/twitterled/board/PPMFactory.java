@@ -44,32 +44,6 @@ public class PPMFactory {
     private static final byte PPM_NEWLINE = 0x0A;
     private static FontMetrics fontMetrics;
 
-    public static void main(String[] args) throws Exception {
-        List<TwitterMessageToken> tokens = new ArrayList<BoardController.TwitterMessageToken>();
-        tokens.add(new TwitterMessageToken("@ashvayka", Color.RED.getRGB()));
-        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
-        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
-        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
-        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
-        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
-        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
-        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
-        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
-        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
-        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
-        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
-        tokens.add(new TwitterMessageToken("Trip", Color.GREEN.getRGB()));
-        tokens.add(new TwitterMessageToken("!!!", Color.BLUE.getRGB()));
-        
-        
-        getFontMetrics();
-        
-        long time = System.currentTimeMillis();
-        int width = createAndSave("h:\\ppm\\new.ppm", tokens, Color.BLACK.getRGB());
-        long delta = System.currentTimeMillis() - time;
-        System.out.println(delta);
-    }
-
     public static int createAndSave(String filePath, List<TwitterMessageToken> tokens, int background) throws Exception {
         List<BufferedImage> images = new ArrayList<BufferedImage>(tokens.size());
         int width = 0;

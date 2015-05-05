@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kaaproject.kaa.demo.iotworld.smarthome.fragment.device;
 
 import org.kaaproject.kaa.demo.iotworld.geo.OperationMode;
@@ -7,7 +22,8 @@ import org.kaaproject.kaa.demo.iotworld.smarthome.util.ColorUtils;
 
 import android.annotation.TargetApi;
 import android.content.res.Configuration;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffColorFilter;
 import android.os.Build;
 import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
@@ -25,6 +41,7 @@ public abstract class AbstractGeoFencingDeviceFragment<D extends AbstractGeoFenc
         AbstractDeviceFragment<D> implements OnItemSelectedListener {
 
     private Spinner mGeoFencingStatusSpinner;
+    protected boolean mControlsEnabled = true;
 
     public AbstractGeoFencingDeviceFragment() {
         super();
@@ -61,8 +78,9 @@ public abstract class AbstractGeoFencingDeviceFragment<D extends AbstractGeoFenc
     protected void setupView(LayoutInflater inflater, View rootView) {
         mGeoFencingStatusSpinner = new Spinner(mActivity);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            mGeoFencingStatusSpinner.setPopupBackgroundDrawable(new ColorDrawable(ColorUtils.darkerColor(getResources().getColor(
-                    mDevice.getDeviceType().getBaseColorResId()))));
+            int color = ColorUtils.darkerColor(getResources().getColor(
+                          mDevice.getDeviceType().getBaseColorResId()));            
+            mGeoFencingStatusSpinner.getPopupBackground().setColorFilter(new PorterDuffColorFilter(color, Mode.MULTIPLY));
         }
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(mActivity, R.layout.toolbar_spinner_item,
                 getResources().getStringArray(R.array.geofencing_status));
@@ -106,8 +124,17 @@ public abstract class AbstractGeoFencingDeviceFragment<D extends AbstractGeoFenc
 
         mGeoFencingStatusSpinner.setTag(mode.ordinal());
         mGeoFencingStatusSpinner.setSelection(mode.ordinal());
+        
+        setControlsEnabled(mode != OperationMode.OFF);
     }
-
-
+    
+    private void setControlsEnabled(boolean enabled) {
+        if (mControlsEnabled != enabled) {
+            mControlsEnabled = enabled;
+            updateControlsState();
+        }
+    }
+    
+    protected abstract void updateControlsState();
 
 }
