@@ -30,7 +30,7 @@ fi
 
 # NOTE: The $APP_NAME value should match the one in the powerplant.sh script.
 APP_NAME="powerplant_demo"
-STARTUP_SCRIPT="powerplant"
+STARTUP_SCRIPT="powerplant.service"
 
 PROJECT_HOME=$(pwd)
 BUILD_DIR="build"
@@ -86,10 +86,8 @@ function build_app {
 function install_app {
     cd "$PROJECT_HOME/$BUILD_DIR" &&
     make install &&
-    cp "$PROJECT_HOME/$STARTUP_SCRIPT" /etc/init.d/ &&
-    chmod +x "/etc/init.d/$STARTUP_SCRIPT" &&
-    update-rc.d -f $STARTUP_SCRIPT remove
-    update-rc.d $STARTUP_SCRIPT defaults
+    cp "$PROJECT_HOME/$STARTUP_SCRIPT" /etc/systemd/system &&
+    systemctl enable /etc/systemd/system/$STARTUP_SCRIPT
 }
 
 function clean {
