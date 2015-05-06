@@ -4,13 +4,18 @@ setlocal
 
 call env.bat
 SET BUILD_HOME=%CD%
-SET BUILD_TYPE=debug     
+SET BUILD_TYPE=debug
 
-if /i %1 == release (
-  SET BUILD_TYPE=release
-)
+if "%1" == "" goto startBuild
+if /i %1 == release call :setRelease
+
+:startBuild
 
 call :buildKaaThirdparty
+goto :eof
+
+:setRelease
+  SET BUILD_TYPE=release
 goto :eof
 
 :buildKaaThirdparty
