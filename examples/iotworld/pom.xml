@@ -99,6 +99,8 @@
                         <descriptor>${project.basedir}/assembly/musicplayer-src-java.xml</descriptor>
                         <descriptor>${project.basedir}/assembly/photoplayer-src-java.xml</descriptor>
                         <descriptor>${project.basedir}/assembly/irrigation-src-java.xml</descriptor>
+                        <descriptor>${project.basedir}/assembly/fan-src-c.xml</descriptor>
+                        <descriptor>${project.basedir}/assembly/light-src-c.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>

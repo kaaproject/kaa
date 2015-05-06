@@ -132,6 +132,22 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>iotworld</artifactId>
+            <version>${project.version}</version>
+            <classifier>fan-src-c</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>iotworld</artifactId>
+            <version>${project.version}</version>
+            <classifier>light-src-c</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>notificationdemo-android</artifactId>
             <version>${project.version}</version>
             <classifier>notification-android-resources</classifier>
@@ -207,6 +223,22 @@
             <artifactId>verifiersdemo</artifactId>
             <version>${project.version}</version>
             <classifier>verifiers-android-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>powerplant-android</artifactId>
+            <version>${project.version}</version>
+            <classifier>powerplant-android-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>powerplant-android</artifactId>
+            <version>${project.version}</version>
+            <classifier>powerplant-android-resources</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
         </dependency>
@@ -762,6 +794,20 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>unpack-powerplantandroid-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/powerplantandroid</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>powerplant-android</includeArtifactIds>
+                            <includeClassifiers>powerplant-android-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>unpack-twitterboard-resources</id>
                         <goals>
                             <goal>unpack-dependencies</goal>
@@ -856,6 +902,26 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/iotworld/irrigation</outputDirectory>
                                     <destFileName>irrigation.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>iotworld</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>fan-src-c</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/iotworld/fan</outputDirectory>
+                                    <destFileName>fan.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>iotworld</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>light-src-c</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/iotworld/light</outputDirectory>
+                                    <destFileName>light.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.examples</groupId>
@@ -1076,6 +1142,16 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
                                     <destFileName>verifiers_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>powerplant-android</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>powerplant-android-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
+                                    <destFileName>powerplant_android.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.examples.twitterled</groupId>

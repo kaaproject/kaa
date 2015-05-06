@@ -37,45 +37,20 @@
         <sourceDirectory>src</sourceDirectory>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.6</version>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>${project.basedir}/assembly/src.xml</descriptor>
+                        <descriptor>${project.basedir}/assembly/resources.xml</descriptor>
+                    </descriptors>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>build-apk</id>
-                        <phase>install</phase>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <target>
-                                <property name="buildDir" value="${project.build.directory}" />
-                                <ant antfile="build.xml" target="debug" />
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.3</version>
-                <executions>
-                    <execution>
-                        <id>add-apk</id>
+                        <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>attach-artifact</goal>
+                            <goal>single</goal>
                         </goals>
-                        <configuration>
-                            <artifacts>
-                                <artifact>
-                                    <file>${project.basedir}/bin/Powerplant-debug.apk</file>
-                                    <type>apk</type>
-                                </artifact>
-                            </artifacts>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
