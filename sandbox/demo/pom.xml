@@ -212,6 +212,22 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>powerplant-android</artifactId>
+            <version>${project.version}</version>
+            <classifier>powerplant-android-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>powerplant-android</artifactId>
+            <version>${project.version}</version>
+            <classifier>powerplant-android-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>vehicletelemetry</artifactId>
             <version>${project.version}</version>
             <classifier>vehicletelemetry-resources</classifier>
@@ -762,6 +778,20 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>unpack-powerplantandroid-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/powerplantandroid</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>powerplant-android</includeArtifactIds>
+                            <includeClassifiers>powerplant-android-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>unpack-twitterboard-resources</id>
                         <goals>
                             <goal>unpack-dependencies</goal>
@@ -1076,6 +1106,16 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
                                     <destFileName>verifiers_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>powerplant-android</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>powerplant-android-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
+                                    <destFileName>powerplant_android.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.examples.twitterled</groupId>

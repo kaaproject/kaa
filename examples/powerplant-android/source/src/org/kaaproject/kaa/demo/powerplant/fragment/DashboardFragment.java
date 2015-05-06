@@ -41,6 +41,7 @@ import org.kaaproject.kaa.demo.powerplant.PowerPlantActivity;
 import org.kaaproject.kaa.demo.powerplant.R;
 import org.kaaproject.kaa.demo.powerplant.data.DataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.data.FakeDataEndpoint;
+import org.kaaproject.kaa.demo.powerplant.data.RestDataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataPoint;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataReport;
 import org.kaaproject.kaa.demo.powerplant.view.GaugeChart;
@@ -94,6 +95,7 @@ public class DashboardFragment extends Fragment {
     private static final int LINE_CHART_AXIS_SIZE = 20;
     private static final int LINE_CHART_AXIS_COLOR = Color.parseColor("#85919F");
     private static final int LINE_CHART_AXIS_TEXT_SIZE = 22;
+    private static final int AREA_TRANSPARENCY = 20;
     private static final int LINE_CHART_AXIS_TEXT_COLOR = Color.parseColor("#B7B7B8");
     private static final int MAX_LOGS_TO_SAVE = 20;
     private static final String OUTAGE_LOG_COLOR = "red";
@@ -131,8 +133,8 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
-        endpoint = new FakeDataEndpoint();
-//        endpoint = new RestDataEndpoint();
+//        endpoint = new FakeDataEndpoint();
+        endpoint = new RestDataEndpoint();
         
         gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart11));
         gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart12));
@@ -344,7 +346,7 @@ public class DashboardFragment extends Fragment {
         // In most cased you can call data model methods in builder-pattern-like
         // manner.
         line = new Line(values).setColor(LINE_CHART_LINE_COLOR).setCubic(LINE_CHART_IS_CUBIC).setHasLabels(false).setHasPoints(false)
-                .setFilled(true).setAreaTransparency(10);
+                .setFilled(true).setAreaTransparency(AREA_TRANSPARENCY);
         List<Line> lines = new ArrayList<Line>();
         lines.add(line);
 
@@ -353,6 +355,7 @@ public class DashboardFragment extends Fragment {
 
         Axis axisX = new Axis();
         Axis axisY = new Axis().setHasLines(true);
+       
         axisX.setTextSize(LINE_CHART_AXIS_SIZE);
         axisX.setTextColor(LINE_CHART_AXIS_COLOR);
         axisY.setTextSize(LINE_CHART_AXIS_SIZE);
@@ -405,7 +408,7 @@ public class DashboardFragment extends Fragment {
 
         lineChartData.setAxisXBottom(axisX);
         lineChartData.setAxisYLeft(axisY);
-
+        
         lineChart.setLineChartData(lineChartData);
     }
     
