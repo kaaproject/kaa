@@ -25,7 +25,7 @@ import android.util.Log;
 public class RestDataEndpoint extends AbstractDataEndpoint {
     private static final String TAG = RestDataEndpoint.class.getSimpleName();
 
-    private static final String BASE_URL = "http://192.168.13.100:10000/api/data";
+    private static final String BASE_URL = "http://kaa-demo-one.cybervisiontech.com/api/data";
     private static final String LATEST_URL = BASE_URL + "/latest";
 
     @Override

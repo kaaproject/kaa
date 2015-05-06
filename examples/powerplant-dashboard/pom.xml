@@ -90,7 +90,7 @@
         </dependencies>
     </dependencyManagement>
     
-        <build>
+    <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.avro</groupId>
@@ -111,6 +111,29 @@
                                 <include>logSchema.json</include>
                             </includes>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.kaaproject.kaa.examples.powerplant.DashboardApplication</mainClass>
+                        </manifest>
+                    </archive>
+                    <finalName>PowerPlantDashBoard</finalName>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
