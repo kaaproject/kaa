@@ -51,8 +51,8 @@
 #define RFID_SKIP_RIGHT     2
 #define RFID_MAX_NUMBER     0xFFFFFFFF
 
-#define SSID "Econais"
-#define PWD "Cha5hk123"
+#define SSID "KaaIoT"
+#define PWD "cybervision2015"
 
 #define KAA_USER_ID            "kaa"
 #define KAA_USER_ACCESS_TOKEN  "token"

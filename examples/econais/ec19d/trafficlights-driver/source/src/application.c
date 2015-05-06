@@ -40,9 +40,9 @@ typedef long long int64_t;
 #define BUTTON  IO_SDIO_DAT2  /* Use the SW2 Button */
 
 //Define your own WiFi SSID and passphrase
-#define SSID_STR   "cyber9"
+#define SSID_STR   "KaaIoT"
 #define USE_ENCRYPTION
-#define PASSPHRASE "Cha5hk123"
+#define PASSPHRASE "cybervision2015"
 /*****************************************************************************
 E X T E R N A L S
 *****************************************************************************/
