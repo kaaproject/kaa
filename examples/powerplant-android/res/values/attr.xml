@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-
 <!--
   Copyright 2014-2015 CyberVision, Inc.
  
@@ -17,8 +15,8 @@
 -->
 
 <resources>
-
-    <string name="app_name">Power plant</string>
-    <string name="please_wait">Please wait...</string>
-
+   <declare-styleable name="GaugeChart">
+       <attr name="panel_name" format="string" />
+       <attr name="update_time_s" format="float" />
+   </declare-styleable>
 </resources>

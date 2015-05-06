@@ -20,8 +20,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import lecho.lib.hellocharts.formatter.AxisValueFormatter;
 import lecho.lib.hellocharts.model.Axis;
@@ -38,14 +41,17 @@ import org.kaaproject.kaa.demo.powerplant.PowerPlantActivity;
 import org.kaaproject.kaa.demo.powerplant.R;
 import org.kaaproject.kaa.demo.powerplant.data.DataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.data.FakeDataEndpoint;
-import org.kaaproject.kaa.demo.powerplant.data.RestDataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataPoint;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataReport;
+import org.kaaproject.kaa.demo.powerplant.view.GaugeChart;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.Spanned;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -60,11 +66,12 @@ import android.widget.TextView;
  */
 public class DashboardFragment extends Fragment {
     private static final String EMPTY_STRING = "";
-
+    
     private static final String TAG = DashboardFragment.class.getSimpleName();
 
-    public static final int NUM_PANELS = 4;
+    public static final int NUM_PANELS = 6;
     public static final float MIN_VOLTAGE = 0.0f;
+    public static final float NORMAL_VOLTAGE = 3.0f;
     public static final float MAX_VOLTAGE = 6.0f;
 
     private static final float Y_AXIS_MIN_MAX_DIV = 2.0f;
@@ -77,7 +84,7 @@ public class DashboardFragment extends Fragment {
     private static final int INTERVAL_FOR_HORIZONTAL_AXIS = 10;
 
     private static final int UPDATE_CHECK_PERIOD = 100;
-    private static final int UPDATE_PERIOD = 200;
+    private static final int UPDATE_PERIOD = 2000;
     private static final int POINTS_COUNT = 150;
     private static final int PAST_POINTS_COUNT = 3;
     private static final int FUTURE_POINTS_COUNT = 3;
@@ -88,6 +95,13 @@ public class DashboardFragment extends Fragment {
     private static final int LINE_CHART_AXIS_COLOR = Color.parseColor("#85919F");
     private static final int LINE_CHART_AXIS_TEXT_SIZE = 22;
     private static final int LINE_CHART_AXIS_TEXT_COLOR = Color.parseColor("#B7B7B8");
+    private static final int MAX_LOGS_TO_SAVE = 20;
+    private static final String OUTAGE_LOG_COLOR = "red";
+    private static final String BACK_TO_NORMAL_LOG_COLOR = "#009d5d";
+    private static final String OUTAGE_LOG_TAG = "[WARN]";
+    private static final String BACK_TO_NORMAL_LOG_TAG = "[INFO]";
+    private static final String OUTAGE_LOG_TEXT = "voltage outage detected";
+    private static final String BACK_TO_NORMAL_LOG_TEXT = "voltage is back to normal";
 
     protected PowerPlantActivity mActivity;
     private LineChartView lineChart;
@@ -95,7 +109,13 @@ public class DashboardFragment extends Fragment {
     private TextView plantValueView;
     private TextView gridValueView;
     private TextView totalValueView;
-
+    private final List<GaugeChart> gaugeCharts = new ArrayList<>();
+    private final boolean[] isPanelsOutage = new boolean[NUM_PANELS];
+    private TextView logBox;
+    private LinkedList<String> savedLogs = new LinkedList<>();
+    private StringBuilder curLogString = new StringBuilder();
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    
     private Line line;
     private DataEndpoint endpoint;
 
@@ -113,7 +133,15 @@ public class DashboardFragment extends Fragment {
 
         endpoint = new FakeDataEndpoint();
 //        endpoint = new RestDataEndpoint();
-
+        
+        gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart11));
+        gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart12));
+        gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart13));
+        gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart21));
+        gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart22));
+        gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart23));
+        logBox = (TextView) rootView.findViewById(R.id.logBox);
+        logBox.setMovementMethod(new ScrollingMovementMethod());
         
         Thread updateThread = new Thread(new Runnable() {
 
@@ -173,16 +201,21 @@ public class DashboardFragment extends Fragment {
 
                             PieChartData data = pieChart.getPieChartData();
                             float plantVoltage = 0.0f;
+                           
+                            int counter = 0;
                             for (DataPoint dp : latestData.getDataPoints()) {
                                 plantVoltage += dp.getVoltage();
                                 SliceValue sliceValue = data.getValues().get(dp.getPanelId());
                                 sliceValue.setTarget(dp.getVoltage());
+                                gaugeCharts.get(counter).setValue(dp.getVoltage());
+                                showLogIfNeeded(counter, dp.getVoltage());
                                 // sliceValue.setLabel(String.format(PIE_CHART_VALUE_FORMAT,
                                 // dp.getVoltage()));
+                                counter++;
                             }
 
                             float gridVoltage = latestData.getPowerConsumption() - plantVoltage;
-                            SliceValue gridValue = data.getValues().get(NUM_PANELS).setTarget(gridVoltage);
+//                            SliceValue gridValue = data.getValues().get(NUM_PANELS).setTarget(gridVoltage);
 //                            gridValue.setLabel(String.format(PIE_CHART_VALUE_FORMAT, gridVoltage));
                             pieChart.startDataAnimation(UPDATE_PERIOD / 2);
                             updateLabels(plantVoltage, gridVoltage);
@@ -221,6 +254,7 @@ public class DashboardFragment extends Fragment {
         plantValueView = (TextView) rootView.findViewById(R.id.solarPlantVoltageValueText);
         gridValueView = (TextView) rootView.findViewById(R.id.gridVoltageValueText);
         totalValueView = (TextView) rootView.findViewById(R.id.totalVoltageValueText);
+        rootView.findViewById(R.id.gaugeChart11);
 
         List<SliceValue> sliceValues = new ArrayList<SliceValue>(NUM_PANELS + 1);
 
@@ -279,7 +313,7 @@ public class DashboardFragment extends Fragment {
         // lineChart.setBackgroundColor(CHART_BACKROUND_COLOR);
         lineChart.getChartRenderer().setMinViewportXValue((float) 0);
         lineChart.getChartRenderer().setMaxViewportXValue((float) POINTS_COUNT);
-
+        
         List<PointValue> values = new ArrayList<PointValue>();
 
         float maxValue = Float.MIN_VALUE;
@@ -373,5 +407,73 @@ public class DashboardFragment extends Fragment {
         lineChartData.setAxisYLeft(axisY);
 
         lineChart.setLineChartData(lineChartData);
+    }
+    
+    private void showLogIfNeeded(int panelIndex, double curVoltage) {
+    	boolean isOutage = false;
+    	if (curVoltage < NORMAL_VOLTAGE) {
+    		isOutage = true;
+    	}
+    	
+    	// state has changed
+    	if ((!isPanelsOutage[panelIndex] || !isOutage) && (isPanelsOutage[panelIndex] || isOutage)) {
+    		prependToLogBox(isOutage, panelIndex);
+    		isPanelsOutage[panelIndex] = isOutage;
+    	}
+    }
+    
+    private void prependToLogBox(boolean isOutage, int panelIndex) {
+    	executor.execute(new UpdateLogBoxThread(isOutage, panelIndex));
+    }
+    
+    private String generateLogString(boolean isOutage, int panelIndex) {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a ");
+        String logColor;
+        String logTag;
+        String logText;
+        
+    	if (isOutage) {
+    		logColor = OUTAGE_LOG_COLOR;
+    		logTag = OUTAGE_LOG_TAG;
+    		logText = OUTAGE_LOG_TEXT;
+    	} else {
+    		logColor = BACK_TO_NORMAL_LOG_COLOR;
+    		logTag = BACK_TO_NORMAL_LOG_TAG;
+    		logText = BACK_TO_NORMAL_LOG_TEXT;
+    	}
+    	
+		return String.format("<font color=\"%s\"> %s %s Panel %d %s</font><br>", logColor,
+				sdf.format(cal.getTime()), logTag, panelIndex + 1, logText);
+    }
+    
+    private class UpdateLogBoxThread extends Thread {
+    	private boolean isOutage;
+    	private int panelIndex;
+    	
+    	public UpdateLogBoxThread(boolean isOutage, int panelIndex) {
+    		this.isOutage = isOutage;
+    		this.panelIndex = panelIndex;
+    	}
+    	
+    	public void run() {
+	    	String log = generateLogString(isOutage, panelIndex);
+	    	if (savedLogs.size() > MAX_LOGS_TO_SAVE) {
+	    		String last = savedLogs.removeLast();
+	    		curLogString.delete(curLogString.length() - last.length(), curLogString.length());
+	    	}
+	    	savedLogs.addFirst(log);
+	    	curLogString.insert(0, log);
+	    	
+	    	final Spanned coloredLog = Html.fromHtml(log);
+	    	
+	    	mActivity.runOnUiThread(new Runnable() {
+	            @Override
+	            public void run() {
+	            	logBox.append(coloredLog);
+//	            	logBox.setText(Html.fromHtml(curLogString.toString()));
+	            }
+	        });
+    	}
     }
 }

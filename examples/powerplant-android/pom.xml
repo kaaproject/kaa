@@ -37,23 +37,19 @@
         <sourceDirectory>src</sourceDirectory>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.6</version>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <version>1.3.2</version>
                 <executions>
                     <execution>
                         <id>build-apk</id>
-                        <phase>install</phase>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <target>
-                                <property name="buildDir" value="${project.build.directory}" />
-                                <ant antfile="build.xml" target="debug" />
-                            </target>
-                        </configuration>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>exec</goal>
                         </goals>
+                        <configuration>
+                            <executable>${basedir}/build.sh</executable>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

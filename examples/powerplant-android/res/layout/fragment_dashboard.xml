@@ -18,17 +18,22 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom="http://schemas.android.com/apk/res/org.kaaproject.kaa.demo.powerplant"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="2" >
+    android:weightSum="2"
+	android:background="#E0E0E0"
+	android:layout_marginTop="10dp">
 
-    <RelativeLayout
+   <RelativeLayout
         android:id="@+id/lineChartLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#FAFAFA">
+        android:background="#FFFFFF"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
         <TextView 
             android:id="@+id/lineChartYAxisText"
             android:layout_width="wrap_content"
@@ -50,7 +55,6 @@
             android:layout_below="@+id/lineChartYAxisText"
             android:layout_above="@+id/lineChartXAxisText">
         </lecho.lib.hellocharts.view.LineChartView>
-
         <TextView 
             android:id="@+id/lineChartXAxisText"
             android:layout_width="wrap_content"
@@ -60,7 +64,21 @@
             android:layout_centerHorizontal="true"
             android:gravity="center"
         />
+        <View
+		    android:layout_width="3dp"
+			android:layout_height="fill_parent"
+		    android:background="@drawable/drop_shadow_right"
+		    android:layout_alignParentRight="true">
+    	</View>
     </RelativeLayout>
+	<View
+	    android:layout_width="fill_parent"
+		android:layout_height="3dp"
+	    android:background="@drawable/drop_shadow_down"
+		android:layout_below="@+id/lineChartLayout"
+		android:layout_marginLeft="10dp"
+		android:layout_marginRight="10dp">
+    </View>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -68,15 +86,19 @@
         android:layout_weight="1"
         android:orientation="horizontal"
         android:weightSum="50"
-        android:baselineAligned="false">
+        android:baselineAligned="false"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp">
         
-        <LinearLayout
+      <LinearLayout
             android:id="@+id/gaugeChartMainLayout"
             android:layout_height="match_parent"
             android:layout_width="0dp"
             android:weightSum="2"
             android:orientation="vertical"
-            android:layout_weight="21">
+            android:layout_weight="21"
+            android:background="#FFFFFF"
+            android:layout_marginLeft="10dp">
             <LinearLayout
                 android:id="@+id/gaugeChartTopLayout"
                 android:layout_height="0dp"
@@ -84,24 +106,36 @@
                 android:weightSum="3"
                 android:orientation="horizontal"
                 android:layout_weight="1">
-                <org.kaaproject.kaa.demo.powerpant.view.GaugeChartView
+                <org.kaaproject.kaa.demo.powerplant.view.GaugeChart
                     android:id="@+id/gaugeChart11"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
-                    android:layout_weight="1">
-                </org.kaaproject.kaa.demo.powerpant.view.GaugeChartView>
-                <org.kaaproject.kaa.demo.powerpant.view.GaugeChartView
+                    android:layout_weight="1"
+                    custom:panel_name="Panel 1"
+                    custom:update_time_s="2">
+                </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
+                <org.kaaproject.kaa.demo.powerplant.view.GaugeChart
                     android:id="@+id/gaugeChart12"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
-                    android:layout_weight="1">
-                </org.kaaproject.kaa.demo.powerpant.view.GaugeChartView>
-                <org.kaaproject.kaa.demo.powerpant.view.GaugeChartView
+                    android:layout_weight="1"
+                    custom:panel_name="Panel 2"
+                    custom:update_time_s="2">
+                </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
+                <org.kaaproject.kaa.demo.powerplant.view.GaugeChart
                     android:id="@+id/gaugeChart13"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
-                    android:layout_weight="1">
-                </org.kaaproject.kaa.demo.powerpant.view.GaugeChartView>
+                    android:layout_weight="1"
+                    custom:panel_name="Panel 3"
+                    custom:update_time_s="2">
+                </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
+                <View
+				    android:layout_width="3dp"
+					android:layout_height="fill_parent"
+				    android:background="@drawable/drop_shadow_right"
+				    android:layout_alignParentRight="true">
+    			</View>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/gaugeChartBottomLayout"
@@ -110,25 +144,44 @@
                 android:weightSum="3"
                 android:orientation="horizontal"
                 android:layout_weight="1">
-                <org.kaaproject.kaa.demo.powerpant.view.GaugeChartView
+                <org.kaaproject.kaa.demo.powerplant.view.GaugeChart
                     android:id="@+id/gaugeChart21"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
-                    android:layout_weight="1">
-                </org.kaaproject.kaa.demo.powerpant.view.GaugeChartView>
-                <org.kaaproject.kaa.demo.powerpant.view.GaugeChartView
+                    android:layout_weight="1"
+                    custom:panel_name="Panel 4"
+                    custom:update_time_s="2">
+                </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
+                <org.kaaproject.kaa.demo.powerplant.view.GaugeChart
                     android:id="@+id/gaugeChart22"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
-                    android:layout_weight="1">
-                </org.kaaproject.kaa.demo.powerpant.view.GaugeChartView>
-                <org.kaaproject.kaa.demo.powerpant.view.GaugeChartView
+                    android:layout_weight="1"
+                    custom:panel_name="Panel 5"
+                    custom:update_time_s="2">
+                </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
+                <org.kaaproject.kaa.demo.powerplant.view.GaugeChart
                     android:id="@+id/gaugeChart23"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" 
-                    android:layout_weight="1">
-                </org.kaaproject.kaa.demo.powerpant.view.GaugeChartView>
+                    android:layout_weight="1"
+                    custom:panel_name="Panel 6"
+                    custom:update_time_s="2">
+                </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
+                <View
+				    android:layout_width="3dp"
+					android:layout_height="fill_parent"
+				    android:background="@drawable/drop_shadow_right"
+				    android:layout_alignParentRight="true">
+    			</View>
             </LinearLayout>
+			<View
+			    android:layout_width="fill_parent"
+				android:layout_height="3dp"
+			    android:background="@drawable/drop_shadow_down"
+				android:layout_below="@+id/gaugeChartMainLayout">
+		    </View>
+
         </LinearLayout>
         
         <RelativeLayout
@@ -139,9 +192,11 @@
             <lecho.lib.hellocharts.view.PieChartView
                 android:id="@+id/pieChart"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_marginLeft="18dp">
             </lecho.lib.hellocharts.view.PieChartView>
             <LinearLayout
+                android:id="@+id/linearLayoutForPieChart"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_alignLeft="@+id/pieChart"
@@ -208,20 +263,62 @@
                     android:text="total"
                     android:textColor="#00BDF0"
                 />
-                
             </LinearLayout>
-
+			<View
+			    android:layout_width="3dp"
+				android:layout_height="fill_parent"
+			    android:background="@drawable/drop_shadow_right"
+			    android:layout_alignParentRight="true">
+	    	</View>
+	    	<View
+				android:layout_width="fill_parent"
+				android:layout_height="3dp"
+				android:background="@drawable/drop_shadow_down"
+				android:layout_marginLeft="18dp"
+				android:layout_alignBottom="@+id/pieChart">
+			</View>
         </RelativeLayout>
 
+        
         <RelativeLayout
             android:layout_height="match_parent"
             android:layout_width="0dp"
-            android:layout_weight="15">
-            <lecho.lib.hellocharts.view.PieChartView
-                android:id="@+id/pieChart2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-            </lecho.lib.hellocharts.view.PieChartView>
+            android:layout_weight="15"
+            android:background="#FFFFFF"
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="10dp">
+            <TextView
+	            android:id="@+id/logBox"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:layout_marginLeft="25dp"
+	            android:autoLink="all"
+	            android:clickable="false"
+	            android:cursorVisible="false"
+	            android:editable="false"
+	            android:gravity="bottom"
+	            android:longClickable="false"
+	            android:maxLines = "50"
+	            android:scrollbars="vertical"
+	            android:textSize="14sp"
+	            android:lineSpacingMultiplier="1.2"
+	            android:inputType="textMultiLine"
+	            android:paddingTop="15dp"
+	            android:paddingBottom="16dp"
+	            android:paddingRight="2dp">
+            </TextView>
+			<View
+			    android:layout_width="3dp"
+				android:layout_height="fill_parent"
+			    android:background="@drawable/drop_shadow_right"
+			    android:layout_alignParentRight="true">
+	    	</View>
+	    	<View
+				android:layout_width="fill_parent"
+				android:layout_height="3dp"
+				android:background="@drawable/drop_shadow_down"
+				android:layout_alignBottom="@+id/logBox">
+			</View>
         </RelativeLayout>
     </LinearLayout>
 

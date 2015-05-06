@@ -12,7 +12,7 @@ import android.util.Log;
 public class FakeDataEndpoint extends AbstractDataEndpoint {
 
     private static final String TAG = FakeDataEndpoint.class.getSimpleName();
-    private static final float MIN_GEN_VOLTAGE = 2.5f;
+    private static final float MIN_GEN_VOLTAGE = 2f;
     private static final float MAX_GEN_VOLTAGE = 5.0f;
     private static final int MAX_POINTS_COUNT = 150;
 
