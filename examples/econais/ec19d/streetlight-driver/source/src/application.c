@@ -159,15 +159,15 @@ static void start_client(void)
 
 /* -------------------------------------------------------------------------*/
 
+#define LIGHT_ON             0
+#define LIGHT_OFF            1
 #define LIGHT_ZONES_COUNT    6
 static const int light_zones[] = { IO_GPIO_1, IO_GPIO_2, IO_GPIO_3, IO_GPIO_4, IO_GPIO_5, IO_GPIO_6 };
+static int light_states[] = {LIGHT_OFF, LIGHT_OFF, LIGHT_OFF, LIGHT_OFF, LIGHT_OFF, LIGHT_OFF};
 
 kaa_error_t kaa_on_configuration_updated(void *context, const kaa_root_configuration_t *configuration)
 {
     int i = 0;
-    for(; i < LIGHT_ZONES_COUNT; ++i) {
-        sndc_io_write(light_zones[i], 0);
-    }
     sndc_printf("Configuration updated\n");
     kaa_list_t *it = configuration->light_zones;
     while (it) {
@@ -175,15 +175,29 @@ kaa_error_t kaa_on_configuration_updated(void *context, const kaa_root_configura
         if (zone->zone_id >= 0 && zone->zone_id < LIGHT_ZONES_COUNT) {
             switch (zone->zone_status) {
             case ENUM_ZONE_STATUS_ENABLE:
-                sndc_io_write(light_zones[zone->zone_id], 1);
+                if (light_states[i] != LIGHT_ON) {
+                    sndc_io_write(light_zones[zone->zone_id], LIGHT_ON);
+                    light_states[i] = LIGHT_ON;
+                }
                 break;
             case ENUM_ZONE_STATUS_DISABLE:
-                sndc_io_write(light_zones[zone->zone_id], 0);
+                if (light_states[i] != LIGHT_OFF) {
+                    sndc_io_write(light_zones[zone->zone_id], LIGHT_OFF);
+                    light_states[i] = LIGHT_OFF;
+                }
                 break;
             }
         }
         it = kaa_list_next(it);
+        i++;
     }
+    for(; i < LIGHT_ZONES_COUNT; ++i) {
+        if (light_states[i] != LIGHT_OFF) {
+             sndc_io_write(light_zones[i], LIGHT_OFF);
+             light_states[i] = LIGHT_OFF;
+        }
+    }
+
     return KAA_ERR_NONE;
 }
 
@@ -207,6 +221,7 @@ static void APP_main()
    int i = 0;
    for(; i < LIGHT_ZONES_COUNT; ++i) {
        sndc_io_setMode(light_zones[i], IO_MODE_OUTPUT);
+       sndc_io_write(light_zones[i], LIGHT_OFF);
        int32_t *zone_id = (int32_t *) KAA_MALLOC(sizeof(int32_t));
        *zone_id = i;
        if (zones) {
