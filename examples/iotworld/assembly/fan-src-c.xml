@@ -26,7 +26,7 @@
         <fileSet>
             <directory>${project.basedir}/source/fan</directory>
             <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>climate/c/FanControl</outputDirectory>
+            <outputDirectory>FanControl</outputDirectory>
         </fileSet>
     </fileSets>
 </assembly>

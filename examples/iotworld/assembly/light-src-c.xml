@@ -26,7 +26,7 @@
         <fileSet>
             <directory>${project.basedir}/source/light</directory>
             <useDefaultExcludes>true</useDefaultExcludes>
-            <outputDirectory>climate/c/LightControl</outputDirectory>
+            <outputDirectory>LightControl</outputDirectory>
         </fileSet>
     </fileSets>
 </assembly>
