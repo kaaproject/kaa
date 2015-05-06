@@ -104,7 +104,7 @@ void print_mem_stat(kaa_client_t *kaa_client);
 /*
  * Kaa status and public key storage file names.
  */
-#define KAA_KEY_STORAGE       "key.txt"
+#define KAA_KEY_STORAGE       "kaa_client.key"
 #define KAA_STATUS_STORAGE    "status.conf"
 
 static size_t kaa_public_key_length;
