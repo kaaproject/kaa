@@ -102,6 +102,14 @@
             <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>iotworld</artifactId>
             <version>${project.version}</version>
+            <classifier>smarthome-src-ios</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>iotworld</artifactId>
+            <version>${project.version}</version>
             <classifier>climate-src-android</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
@@ -861,6 +869,16 @@
                                     <type>tar.gz</type>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/iotworld/smarthome/android</outputDirectory>
+                                    <destFileName>smarthome.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>iotworld</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>smarthome-src-ios</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/iotworld/smarthome/ios</outputDirectory>
                                     <destFileName>smarthome.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>

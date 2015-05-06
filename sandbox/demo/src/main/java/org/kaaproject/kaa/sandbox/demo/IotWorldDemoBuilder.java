@@ -29,6 +29,7 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
     private static final Logger logger = LoggerFactory.getLogger(IotWorldDemoBuilder.class);
 
     private static final String SMARTHOME_ANDROID_ID = "smarthome_android";
+    private static final String SMARTHOME_IOS_ID = "smarthome_ios";
     private static final String CLIMATE_ANDROID_ID = "climate_android";
     private static final String FAN_CONTROL_C_ID = "fan_control_c";
     private static final String MUSICPLAYER_JAVA_ID = "musicplayer_java";
@@ -269,6 +270,7 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         sdkKey.setAefMapIds(aefMapIds);
         
         projectsSdkMap.put(SMARTHOME_ANDROID_ID, sdkKey);
+        projectsSdkMap.put(SMARTHOME_IOS_ID, sdkKey);
     }
     
     private void configureThermostatApp(AdminClient client, 
