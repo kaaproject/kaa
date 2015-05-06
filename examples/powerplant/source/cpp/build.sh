@@ -96,7 +96,7 @@ function clean {
 }
 
 function run_as_service {
-    "/etc/init.d/$STARTUP_SCRIPT" restart
+    systemctl restart powerplant.service
 }
 
 function run {
