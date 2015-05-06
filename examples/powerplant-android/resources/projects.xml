@@ -36,6 +36,6 @@ For more background on user verification refer to the corresponding <a href="htt
         <sourceArchive>android/powerplant_android.tar.gz</sourceArchive>
         <projectFolder>powerplantandroid/PowerPlantAndroid</projectFolder>
         <sdkLibDir>powerplantandroid/PowerPlantAndroid/libs</sdkLibDir>
-        <destBinaryFile>powerplantandroid/PowerPlantAndroid/bin/PowerPlantActivity.apk</destBinaryFile>
+        <destBinaryFile>powerplantandroid/PowerPlantAndroid/bin/Powerplant-debug.apk</destBinaryFile>
     </project>
 </projectsConfig>
