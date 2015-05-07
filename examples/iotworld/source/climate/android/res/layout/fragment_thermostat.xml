@@ -21,7 +21,8 @@
     android:id="@+id/thermostatContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="50dp"
+    android:paddingRight="50dp"
+    android:paddingTop="90dp"
     android:background="@android:color/black" >
     <org.kaaproject.kaa.demo.iotworld.climate.widget.Thermostat
         android:id="@+id/thermostat"
