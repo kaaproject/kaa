@@ -25,6 +25,20 @@ set(CMAKE_MODULE_PATH
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Modules
     )
 
+#Checks whether avrogen.sh exists
+set (AVROGEN "avrogen.sh")
+set (WORKDIR ${CMAKE_CURRENT_SOURCE_DIR})
+message("==================================")
+if (NOT EXISTS "${WORKDIR}/${AVROGEN}")
+   message("Error: avrogen.sh hasn't been found.")
+else()
+   message("avrogen.sh has been found")
+   execute_process(COMMAND chmod +x ./${AVROGEN}
+                   COMMAND "./${AVROGEN}" 
+                   WORKING_DIRECTORY ${WORKDIR}
+                  )
+endif()
+
 #
 # Sets common compilation flags.
 # 
