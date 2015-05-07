@@ -7,7 +7,7 @@
     "password" : null,
     "connectionPoolSize" : 1,
     "header" : false,
-    "path" : "/data",
+    "path" : "/api/data",
     "method" : "PUT",
     "mimeType" : "TEXT"
 }
