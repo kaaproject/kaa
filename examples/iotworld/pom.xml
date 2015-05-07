@@ -95,6 +95,7 @@
                     <descriptors>
                         <descriptor>${project.basedir}/assembly/resources.xml</descriptor>
                         <descriptor>${project.basedir}/assembly/smarthome-src-android.xml</descriptor>
+                        <descriptor>${project.basedir}/assembly/smarthome-src-ios.xml</descriptor>
                         <descriptor>${project.basedir}/assembly/climate-src-android.xml</descriptor>
                         <descriptor>${project.basedir}/assembly/musicplayer-src-java.xml</descriptor>
                         <descriptor>${project.basedir}/assembly/photoplayer-src-java.xml</descriptor>

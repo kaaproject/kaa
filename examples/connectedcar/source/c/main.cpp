@@ -183,7 +183,7 @@ void notifyOfNewFencingZone(int zone_id)
         case ENUM_GEO_FENCING_ZONE_ID_NEAR:
             position = ENUM_GEO_FENCING_POSITION_NEAR;
             break;
-        case ENUM_GEO_FENCING_ZONE_ID_AWAY:
+		case UNKNOWN_GEOFENCING_ZONE_ID:
             position = ENUM_GEO_FENCING_POSITION_AWAY;
             break;
         default:
@@ -197,6 +197,7 @@ void notifyOfNewFencingZone(int zone_id)
             position_update->position = position;
 
             kaa_context_t *kaa_context = kaa_client_get_context(kaa_client);
+
             kaa_error_t error = kaa_event_manager_send_kaa_geo_fencing_event_class_family_geo_fencing_position_update(
                                                                         kaa_context->event_manager, position_update, NULL);
             if (error) {
@@ -232,10 +233,6 @@ void checkFencingPosition(rfid_t rfid)
                 zone_tag_it = kaa_list_next(zone_tag_it);
             }
             zones_it = kaa_list_next(zones_it);
-        }
-
-        if (new_zone_id == UNKNOWN_GEOFENCING_ZONE_ID) {
-            new_zone_id = ENUM_GEO_FENCING_ZONE_ID_AWAY;
         }
 
         notifyOfNewFencingZone(new_zone_id);

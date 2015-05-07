@@ -112,7 +112,7 @@
                     android:layout_height="match_parent" 
                     android:layout_weight="1"
                     custom:panel_name="Panel 1"
-                    custom:update_time_s="2">
+                    custom:update_time_s="0.5">
                 </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
                 <org.kaaproject.kaa.demo.powerplant.view.GaugeChart
                     android:id="@+id/gaugeChart12"
@@ -120,7 +120,7 @@
                     android:layout_height="match_parent" 
                     android:layout_weight="1"
                     custom:panel_name="Panel 2"
-                    custom:update_time_s="2">
+                    custom:update_time_s="0.5">
                 </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
                 <org.kaaproject.kaa.demo.powerplant.view.GaugeChart
                     android:id="@+id/gaugeChart13"
@@ -128,7 +128,7 @@
                     android:layout_height="match_parent" 
                     android:layout_weight="1"
                     custom:panel_name="Panel 3"
-                    custom:update_time_s="2">
+                    custom:update_time_s="0.5">
                 </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
                 <View
 				    android:layout_width="3dp"
@@ -150,7 +150,7 @@
                     android:layout_height="match_parent" 
                     android:layout_weight="1"
                     custom:panel_name="Panel 4"
-                    custom:update_time_s="2">
+                    custom:update_time_s="0.5">
                 </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
                 <org.kaaproject.kaa.demo.powerplant.view.GaugeChart
                     android:id="@+id/gaugeChart22"
@@ -158,7 +158,7 @@
                     android:layout_height="match_parent" 
                     android:layout_weight="1"
                     custom:panel_name="Panel 5"
-                    custom:update_time_s="2">
+                    custom:update_time_s="0.5">
                 </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
                 <org.kaaproject.kaa.demo.powerplant.view.GaugeChart
                     android:id="@+id/gaugeChart23"
@@ -166,7 +166,7 @@
                     android:layout_height="match_parent" 
                     android:layout_weight="1"
                     custom:panel_name="Panel 6"
-                    custom:update_time_s="2">
+                    custom:update_time_s="0.5">
                 </org.kaaproject.kaa.demo.powerplant.view.GaugeChart>
                 <View
 				    android:layout_width="3dp"

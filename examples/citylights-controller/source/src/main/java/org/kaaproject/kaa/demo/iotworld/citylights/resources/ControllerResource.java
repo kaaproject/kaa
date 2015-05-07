@@ -163,9 +163,11 @@ public class ControllerResource {
         }
         CityLightsConfiguration configuration = kaaClient.getConfiguration();
         if (trafficState.isMainRoad()) {
-            ControllerApplication.getExecutor().schedule(createTimerRunnable(DISALLOW), configuration.getTrafficLightsConfiguration().getAllowStateDuration(), TimeUnit.SECONDS);
+            ControllerApplication.getExecutor().schedule(createTimerRunnable(DISALLOW),
+                    configuration.getTrafficLightsConfiguration().getAllowStateDuration(), TimeUnit.SECONDS);
         } else {
-            ControllerApplication.getExecutor().schedule(createTimerRunnable(ALLOW), configuration.getTrafficLightsConfiguration().getDisallowStateDuration(), TimeUnit.SECONDS);
+            ControllerApplication.getExecutor().schedule(createTimerRunnable(ALLOW),
+                    configuration.getTrafficLightsConfiguration().getDisallowStateDuration(), TimeUnit.SECONDS);
         }
     }
 
@@ -185,15 +187,20 @@ public class ControllerResource {
                 LOG.info("car is in zone {}", zoneId);
                 found = true;
                 if (streetState.getZoneId() != null) {
+                    if (streetState.getZoneId().intValue() == zoneId) {
+                        LOG.info("this is the same zone {}. No update needed", zoneId);
+                        continue;
+                    }
                     updateStreetLightsState(configuration.getKaaClientConfiguration(), streetState.getZoneId(), false);
                 }
-                updateStreetLightsState(configuration.getKaaClientConfiguration(), streetLightsConfig.getZoneId(), true);
+                updateStreetLightsState(configuration.getKaaClientConfiguration(), zoneId, true);
             }
         }
         if (!found) {
             if (streetState.getZoneId() != null) {
                 LOG.info("car left zone {}.", streetState.getZoneId());
                 updateStreetLightsState(configuration.getKaaClientConfiguration(), streetState.getZoneId(), false);
+                streetState.setZoneId(null);
             }
         }
     }

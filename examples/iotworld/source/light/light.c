@@ -48,6 +48,7 @@
 
 #define KAA_USER_ID            "kaa"
 #define KAA_USER_ACCESS_TOKEN  "token"
+#define KAA_ENDPOINT_ACCESS_TOKEN  "LIGHTS_CONTROLLER_ACCESS_CODE"
 
 static kaa_context_t *kaa_context_ = NULL;
 
@@ -582,6 +583,10 @@ kaa_error_t kaa_sdk_init() {
 			&kaa_on_attach_failed };
 
 	error_code = kaa_user_manager_set_attachment_listeners(kaa_context_->user_manager, &listeners);
+	KAA_RETURN_IF_ERR(error_code);
+
+	error_code = kaa_profile_manager_set_endpoint_access_token(kaa_context_->profile_manager,
+			KAA_ENDPOINT_ACCESS_TOKEN);
 	KAA_RETURN_IF_ERR(error_code);
 
 	error_code = kaa_user_manager_default_attach_to_user(kaa_context_->user_manager, KAA_USER_ID,

@@ -456,15 +456,22 @@ public class GaugeChart extends View {
 			handVelocity += handAcceleration * delta;
 			
 			float curDistance = Math.abs(handTarget - handPosition);
-			if (curDistance >= prevDistance) {
-				handPosition = handTarget;
-				handVelocity = ZERO;
-				handAcceleration = ZERO;
-				lastHandMoveTime = MINUS_ONE;
+			if (curDistance >= prevDistance || curDistance < EPS) {
+				resetHand();
 			} else {
 				lastHandMoveTime = System.currentTimeMillis();				
 			}
 			prevDistance = curDistance;
+			
+			// prevent hand moving out of possible bounds
+			if (handPosition < MIN_POWER) {
+				handPosition = MIN_POWER;
+				resetHand();
+			} else if (handPosition > MAX_POWER) {
+				handPosition = MAX_POWER;
+				resetHand();
+			}
+			
 			invalidate();
 		} else {
 			lastHandMoveTime = System.currentTimeMillis();
@@ -479,7 +486,7 @@ public class GaugeChart extends View {
 			power = MAX_POWER;
 		}
 		handTarget = (float) power;
-		prevDistance = 1000f;
+		prevDistance = 10000f;
 		isHandInitialized = true;
 		handAcceleration = 2 * (handTarget - handPosition) / (handleAccelerationCoef * handleAccelerationCoef);
 		invalidate();
@@ -491,5 +498,11 @@ public class GaugeChart extends View {
 	
 	private boolean handNeedsToMove() {
 		return Math.abs(handPosition - handTarget) > EPS;
+	}
+	
+	private void resetHand() {
+		handVelocity = ZERO;
+		handAcceleration = ZERO;
+		lastHandMoveTime = MINUS_ONE;
 	}
 }
