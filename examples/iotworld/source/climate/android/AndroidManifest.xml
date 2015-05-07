@@ -38,7 +38,8 @@
         android:name="org.kaaproject.kaa.demo.iotworld.climate.ClimateControlApplication" >
         <activity
             android:name=".ClimateControlActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"    
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="fullSensor"    
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
