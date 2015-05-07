@@ -51,18 +51,18 @@ import org.slf4j.LoggerFactory;
 public class HttpTransport extends AbstractKaaTransport<AvroHttpConfig> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpTransport.class);
-    private static final String BIND_INTERFACE_PROP_NAME = "transport.bindInterface";
-    private static final String LOCALHOST = "localhost";
     private static final int SUPPORTED_VERSION = 1;
-    
+
     private AbstractNettyServer netty;
 
     @Override
     public void init(SpecificTransportContext<AvroHttpConfig> context) throws TransportLifecycleException {
         AvroHttpConfig configuration = context.getConfiguration();
-        configuration.setBindInterface(replaceProperty(configuration.getBindInterface(), BIND_INTERFACE_PROP_NAME,
-                context.getCommonProperties().getProperty(BIND_INTERFACE_PROP_NAME, LOCALHOST)));
-        List<KaaCommandProcessorFactory<HttpRequest, HttpResponse>> processors = new ArrayList<KaaCommandProcessorFactory<HttpRequest,HttpResponse>>();
+        configuration.setBindInterface(replaceProperty(configuration.getBindInterface(), BIND_INTERFACE_PROP_NAME, context
+                .getCommonProperties().getProperty(BIND_INTERFACE_PROP_NAME, LOCALHOST)));
+        configuration.setPublicInterface(replaceProperty(configuration.getPublicInterface(), PUBLIC_INTERFACE_PROP_NAME, context
+                .getCommonProperties().getProperty(PUBLIC_INTERFACE_PROP_NAME, LOCALHOST)));
+        List<KaaCommandProcessorFactory<HttpRequest, HttpResponse>> processors = new ArrayList<KaaCommandProcessorFactory<HttpRequest, HttpResponse>>();
         processors.add(new SyncCommandFactory());
         processors.add(new LongSyncCommandFactory());
         final CommandFactory<HttpRequest, HttpResponse> factory = new CommandFactory<>(processors);
@@ -113,14 +113,14 @@ public class HttpTransport extends AbstractKaaTransport<AvroHttpConfig> {
 
     @Override
     protected ByteBuffer getSerializedConnectionInfo() {
-        byte[] interfaceData = toUTF8Bytes(context.getConfiguration().getBindInterface());
+        byte[] interfaceData = toUTF8Bytes(context.getConfiguration().getPublicInterface());
         byte[] publicKeyData = context.getServerKey().getEncoded();
-        ByteBuffer buf = ByteBuffer.wrap(new byte[SIZE_OF_INT*3 + interfaceData.length + publicKeyData.length]);
+        ByteBuffer buf = ByteBuffer.wrap(new byte[SIZE_OF_INT * 3 + interfaceData.length + publicKeyData.length]);
         buf.putInt(publicKeyData.length);
         buf.put(publicKeyData);
         buf.putInt(interfaceData.length);
         buf.put(interfaceData);
-        buf.putInt(context.getConfiguration().getBindPort());
+        buf.putInt(context.getConfiguration().getPublicPort());
         return buf;
     }
 

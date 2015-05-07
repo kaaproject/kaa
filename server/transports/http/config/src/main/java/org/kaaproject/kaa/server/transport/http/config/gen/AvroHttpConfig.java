@@ -7,10 +7,12 @@ package org.kaaproject.kaa.server.transport.http.config.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class AvroHttpConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroHttpConfig\",\"namespace\":\"org.kaaproject.kaa.server.transport.http.config.gen\",\"fields\":[{\"name\":\"bindInterface\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"bindPort\",\"type\":\"int\"},{\"name\":\"maxBodySize\",\"type\":\"int\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroHttpConfig\",\"namespace\":\"org.kaaproject.kaa.server.transport.http.config.gen\",\"fields\":[{\"name\":\"bindInterface\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"bindPort\",\"type\":\"int\"},{\"name\":\"publicInterface\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"publicPort\",\"type\":\"int\"},{\"name\":\"maxBodySize\",\"type\":\"int\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String bindInterface;
    private int bindPort;
+   private java.lang.String publicInterface;
+   private int publicPort;
    private int maxBodySize;
 
   /**
@@ -23,9 +25,11 @@ public class AvroHttpConfig extends org.apache.avro.specific.SpecificRecordBase 
   /**
    * All-args constructor.
    */
-  public AvroHttpConfig(java.lang.String bindInterface, java.lang.Integer bindPort, java.lang.Integer maxBodySize) {
+  public AvroHttpConfig(java.lang.String bindInterface, java.lang.Integer bindPort, java.lang.String publicInterface, java.lang.Integer publicPort, java.lang.Integer maxBodySize) {
     this.bindInterface = bindInterface;
     this.bindPort = bindPort;
+    this.publicInterface = publicInterface;
+    this.publicPort = publicPort;
     this.maxBodySize = maxBodySize;
   }
 
@@ -35,7 +39,9 @@ public class AvroHttpConfig extends org.apache.avro.specific.SpecificRecordBase 
     switch (field$) {
     case 0: return bindInterface;
     case 1: return bindPort;
-    case 2: return maxBodySize;
+    case 2: return publicInterface;
+    case 3: return publicPort;
+    case 4: return maxBodySize;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -45,7 +51,9 @@ public class AvroHttpConfig extends org.apache.avro.specific.SpecificRecordBase 
     switch (field$) {
     case 0: bindInterface = (java.lang.String)value$; break;
     case 1: bindPort = (java.lang.Integer)value$; break;
-    case 2: maxBodySize = (java.lang.Integer)value$; break;
+    case 2: publicInterface = (java.lang.String)value$; break;
+    case 3: publicPort = (java.lang.Integer)value$; break;
+    case 4: maxBodySize = (java.lang.Integer)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -78,6 +86,36 @@ public class AvroHttpConfig extends org.apache.avro.specific.SpecificRecordBase 
    */
   public void setBindPort(java.lang.Integer value) {
     this.bindPort = value;
+  }
+
+  /**
+   * Gets the value of the 'publicInterface' field.
+   */
+  public java.lang.String getPublicInterface() {
+    return publicInterface;
+  }
+
+  /**
+   * Sets the value of the 'publicInterface' field.
+   * @param value the value to set.
+   */
+  public void setPublicInterface(java.lang.String value) {
+    this.publicInterface = value;
+  }
+
+  /**
+   * Gets the value of the 'publicPort' field.
+   */
+  public java.lang.Integer getPublicPort() {
+    return publicPort;
+  }
+
+  /**
+   * Sets the value of the 'publicPort' field.
+   * @param value the value to set.
+   */
+  public void setPublicPort(java.lang.Integer value) {
+    this.publicPort = value;
   }
 
   /**
@@ -118,6 +156,8 @@ public class AvroHttpConfig extends org.apache.avro.specific.SpecificRecordBase 
 
     private java.lang.String bindInterface;
     private int bindPort;
+    private java.lang.String publicInterface;
+    private int publicPort;
     private int maxBodySize;
 
     /** Creates a new Builder */
@@ -136,9 +176,17 @@ public class AvroHttpConfig extends org.apache.avro.specific.SpecificRecordBase 
         this.bindPort = data().deepCopy(fields()[1].schema(), other.bindPort);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.maxBodySize)) {
-        this.maxBodySize = data().deepCopy(fields()[2].schema(), other.maxBodySize);
+      if (isValidValue(fields()[2], other.publicInterface)) {
+        this.publicInterface = data().deepCopy(fields()[2].schema(), other.publicInterface);
         fieldSetFlags()[2] = true;
+      }
+      if (isValidValue(fields()[3], other.publicPort)) {
+        this.publicPort = data().deepCopy(fields()[3].schema(), other.publicPort);
+        fieldSetFlags()[3] = true;
+      }
+      if (isValidValue(fields()[4], other.maxBodySize)) {
+        this.maxBodySize = data().deepCopy(fields()[4].schema(), other.maxBodySize);
+        fieldSetFlags()[4] = true;
       }
     }
     
@@ -153,9 +201,17 @@ public class AvroHttpConfig extends org.apache.avro.specific.SpecificRecordBase 
         this.bindPort = data().deepCopy(fields()[1].schema(), other.bindPort);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.maxBodySize)) {
-        this.maxBodySize = data().deepCopy(fields()[2].schema(), other.maxBodySize);
+      if (isValidValue(fields()[2], other.publicInterface)) {
+        this.publicInterface = data().deepCopy(fields()[2].schema(), other.publicInterface);
         fieldSetFlags()[2] = true;
+      }
+      if (isValidValue(fields()[3], other.publicPort)) {
+        this.publicPort = data().deepCopy(fields()[3].schema(), other.publicPort);
+        fieldSetFlags()[3] = true;
+      }
+      if (isValidValue(fields()[4], other.maxBodySize)) {
+        this.maxBodySize = data().deepCopy(fields()[4].schema(), other.maxBodySize);
+        fieldSetFlags()[4] = true;
       }
     }
 
@@ -208,6 +264,55 @@ public class AvroHttpConfig extends org.apache.avro.specific.SpecificRecordBase 
       return this;
     }
 
+    /** Gets the value of the 'publicInterface' field */
+    public java.lang.String getPublicInterface() {
+      return publicInterface;
+    }
+    
+    /** Sets the value of the 'publicInterface' field */
+    public org.kaaproject.kaa.server.transport.http.config.gen.AvroHttpConfig.Builder setPublicInterface(java.lang.String value) {
+      validate(fields()[2], value);
+      this.publicInterface = value;
+      fieldSetFlags()[2] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'publicInterface' field has been set */
+    public boolean hasPublicInterface() {
+      return fieldSetFlags()[2];
+    }
+    
+    /** Clears the value of the 'publicInterface' field */
+    public org.kaaproject.kaa.server.transport.http.config.gen.AvroHttpConfig.Builder clearPublicInterface() {
+      publicInterface = null;
+      fieldSetFlags()[2] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'publicPort' field */
+    public java.lang.Integer getPublicPort() {
+      return publicPort;
+    }
+    
+    /** Sets the value of the 'publicPort' field */
+    public org.kaaproject.kaa.server.transport.http.config.gen.AvroHttpConfig.Builder setPublicPort(int value) {
+      validate(fields()[3], value);
+      this.publicPort = value;
+      fieldSetFlags()[3] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'publicPort' field has been set */
+    public boolean hasPublicPort() {
+      return fieldSetFlags()[3];
+    }
+    
+    /** Clears the value of the 'publicPort' field */
+    public org.kaaproject.kaa.server.transport.http.config.gen.AvroHttpConfig.Builder clearPublicPort() {
+      fieldSetFlags()[3] = false;
+      return this;
+    }
+
     /** Gets the value of the 'maxBodySize' field */
     public java.lang.Integer getMaxBodySize() {
       return maxBodySize;
@@ -215,20 +320,20 @@ public class AvroHttpConfig extends org.apache.avro.specific.SpecificRecordBase 
     
     /** Sets the value of the 'maxBodySize' field */
     public org.kaaproject.kaa.server.transport.http.config.gen.AvroHttpConfig.Builder setMaxBodySize(int value) {
-      validate(fields()[2], value);
+      validate(fields()[4], value);
       this.maxBodySize = value;
-      fieldSetFlags()[2] = true;
+      fieldSetFlags()[4] = true;
       return this; 
     }
     
     /** Checks whether the 'maxBodySize' field has been set */
     public boolean hasMaxBodySize() {
-      return fieldSetFlags()[2];
+      return fieldSetFlags()[4];
     }
     
     /** Clears the value of the 'maxBodySize' field */
     public org.kaaproject.kaa.server.transport.http.config.gen.AvroHttpConfig.Builder clearMaxBodySize() {
-      fieldSetFlags()[2] = false;
+      fieldSetFlags()[4] = false;
       return this;
     }
 
@@ -238,7 +343,9 @@ public class AvroHttpConfig extends org.apache.avro.specific.SpecificRecordBase 
         AvroHttpConfig record = new AvroHttpConfig();
         record.bindInterface = fieldSetFlags()[0] ? this.bindInterface : (java.lang.String) defaultValue(fields()[0]);
         record.bindPort = fieldSetFlags()[1] ? this.bindPort : (java.lang.Integer) defaultValue(fields()[1]);
-        record.maxBodySize = fieldSetFlags()[2] ? this.maxBodySize : (java.lang.Integer) defaultValue(fields()[2]);
+        record.publicInterface = fieldSetFlags()[2] ? this.publicInterface : (java.lang.String) defaultValue(fields()[2]);
+        record.publicPort = fieldSetFlags()[3] ? this.publicPort : (java.lang.Integer) defaultValue(fields()[3]);
+        record.maxBodySize = fieldSetFlags()[4] ? this.maxBodySize : (java.lang.Integer) defaultValue(fields()[4]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

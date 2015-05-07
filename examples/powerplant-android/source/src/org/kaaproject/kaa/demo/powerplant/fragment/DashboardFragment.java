@@ -74,6 +74,7 @@ public class DashboardFragment extends Fragment {
     public static final float MIN_VOLTAGE = 0.0f;
     public static final float NORMAL_VOLTAGE = 3.0f;
     public static final float MAX_VOLTAGE = 6.0f;
+    private static final float VOLTAGE_MULTIPLY_COEF = 2.2f;
 
     private static final float Y_AXIS_MIN_MAX_DIV = 2.0f;
     private static final boolean LINE_CHART_IS_CUBIC = true;
@@ -84,8 +85,8 @@ public class DashboardFragment extends Fragment {
     private static final String PIE_CHART_VALUE_FORMAT = "%.1f";
     private static final int INTERVAL_FOR_HORIZONTAL_AXIS = 10;
 
-    private static final int UPDATE_CHECK_PERIOD = 100;
-    private static final int UPDATE_PERIOD = 2000;
+    private static final int UPDATE_CHECK_PERIOD = 300;
+    private static final int UPDATE_PERIOD = 1000;
     private static final int POINTS_COUNT = 150;
     private static final int PAST_POINTS_COUNT = 3;
     private static final int FUTURE_POINTS_COUNT = 3;
@@ -206,11 +207,12 @@ public class DashboardFragment extends Fragment {
                            
                             int counter = 0;
                             for (DataPoint dp : latestData.getDataPoints()) {
-                                plantVoltage += dp.getVoltage();
+                            	float curVoltage = convertVoltage(dp.getVoltage());
+                                plantVoltage += curVoltage;
                                 SliceValue sliceValue = data.getValues().get(dp.getPanelId());
-                                sliceValue.setTarget(dp.getVoltage());
-                                gaugeCharts.get(counter).setValue(dp.getVoltage());
-                                showLogIfNeeded(counter, dp.getVoltage());
+                                sliceValue.setTarget(curVoltage);
+                                gaugeCharts.get(counter).setValue(curVoltage);
+                                showLogIfNeeded(counter, curVoltage);
                                 // sliceValue.setLabel(String.format(PIE_CHART_VALUE_FORMAT,
                                 // dp.getVoltage()));
                                 counter++;
@@ -262,7 +264,7 @@ public class DashboardFragment extends Fragment {
 
         float plantVoltage = 0.0f;
         for (DataPoint dp : latestData.getDataPoints()) {
-            float value = dp.getVoltage();
+            float value = convertVoltage(dp.getVoltage());
             plantVoltage += value;
             SliceValue sliceValue = new SliceValue(value, Color.parseColor(PIE_CHART_PLANT_VALUE_COLOR));
             // sliceValue.setLabel(String.format(PIE_CHART_VALUE_FORMAT,
@@ -329,7 +331,7 @@ public class DashboardFragment extends Fragment {
             int pos = startPos + i;
             float value = 0.0f;
             for (DataPoint dp : data.get(i).getDataPoints()) {
-                value += dp.getVoltage();
+                value += convertVoltage(dp.getVoltage());
             }
             values.add(new PointValue(pos, value));
             minValue = Math.min(minValue, value);
@@ -478,5 +480,9 @@ public class DashboardFragment extends Fragment {
 	            }
 	        });
     	}
+    }
+    
+    private float convertVoltage(float voltage) {
+    	return voltage * VOLTAGE_MULTIPLY_COEF > MAX_VOLTAGE ? MAX_VOLTAGE : voltage * VOLTAGE_MULTIPLY_COEF;
     }
 }
