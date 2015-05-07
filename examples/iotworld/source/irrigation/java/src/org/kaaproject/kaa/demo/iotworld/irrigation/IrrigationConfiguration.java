@@ -27,15 +27,15 @@ public class IrrigationConfiguration implements ConfigurationListener {
     private static final String DEFAULT_NAME = "Irrigation management driver";
     private static final String DEFAULT_MODEL = "Raspberry PI 2B";
 
-    private static final long DEFAULT_IRRIGATION_DURATION_TIME_MS = TimeUnit.SECONDS.toMillis(5);
+    private static final long DEFAULT_IRRIGATION_DURATION_TIME_MS = TimeUnit.SECONDS.toMillis(3);
     private static final long MAX_IRRIGATION_PERIOD = TimeUnit.MINUTES.toMillis(5);
     private static final long DEFAULT_IRRIGATION_PERIOD = MAX_IRRIGATION_PERIOD;
 
     private static final float DEFAULT_WATER_FLOW_SENSOR_COEFFICIENT = 1.4f;
     private static final int DEFAULT_WEB_PORT = 7080;
 
-    private static final int DEFAULT_MONTHLY_SPENT_WATER = 1540;
-    private static final int DEFAULT_REMAINING_WATER = 20000;
+    private static final int DEFAULT_MONTHLY_SPENT_WATER = 540;
+    private static final int DEFAULT_REMAINING_WATER = 90000;
 
     private final Properties persistedProperties;
     private static final String IS_ATTACHED_TO_USER = "is_attached_to_user";
@@ -162,19 +162,12 @@ public class IrrigationConfiguration implements ConfigurationListener {
         return out;
     }
 
-    public boolean isAttachedToUser() {
-        String value = persistedProperties.getProperty(IS_ATTACHED_TO_USER, "false");
-        return Boolean.getBoolean(value);
-    }
-
     public void onAttachtoUser() {
         persistedProperties.put(IS_ATTACHED_TO_USER, true);
-        storeProperties();
     }
 
     public void onDetachFromUser() {
         persistedProperties.put(IS_ATTACHED_TO_USER, false);
-        storeProperties();
     }
 
     public void storeDeviceName(String deviceName) {

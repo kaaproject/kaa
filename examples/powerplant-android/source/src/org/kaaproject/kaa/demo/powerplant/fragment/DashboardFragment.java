@@ -83,11 +83,11 @@ public class DashboardFragment extends Fragment {
     private static final String PIE_CHART_GRID_VALUE_COLOR = "#FFB400";
     private static final String PIE_CHART_PLANT_VALUE_COLOR = "#009E5F";
     private static final String PIE_CHART_VALUE_FORMAT = "%.1f";
-    private static final int INTERVAL_FOR_HORIZONTAL_AXIS = 10;
+    private static final int INTERVAL_FOR_HORIZONTAL_AXIS = 20;
 
-    private static final int UPDATE_CHECK_PERIOD = 300;
-    private static final int UPDATE_PERIOD = 1000;
-    private static final int POINTS_COUNT = 150;
+    private static final int UPDATE_CHECK_PERIOD = 150;
+    private static final int UPDATE_PERIOD = 400;
+    private static final int POINTS_COUNT = 300;
     private static final int PAST_POINTS_COUNT = 3;
     private static final int FUTURE_POINTS_COUNT = 3;
 
@@ -105,7 +105,7 @@ public class DashboardFragment extends Fragment {
     private static final String BACK_TO_NORMAL_LOG_TAG = "[INFO]";
     private static final String OUTAGE_LOG_TEXT = "voltage outage detected";
     private static final String BACK_TO_NORMAL_LOG_TEXT = "voltage is back to normal";
-
+    
     protected PowerPlantActivity mActivity;
     private LineChartView lineChart;
     private PieChartView pieChart;
@@ -179,8 +179,11 @@ public class DashboardFragment extends Fragment {
                     while (!updated) {
                         try {
                             Thread.sleep(UPDATE_CHECK_PERIOD);
-                            if(System.currentTimeMillis() - previousUpdate < UPDATE_PERIOD){
+                            long updateDelta = System.currentTimeMillis() - previousUpdate;
+                            if(updateDelta < UPDATE_PERIOD){
                                 continue;
+                            } else {
+                            	Log.i(TAG, "Updating since -" + (updateDelta / 1000.) + " s.");
                             }
                             DataReport latestDataCandidate = endpoint.getLatestData();
                             if (latestDataCandidate.getTime() > previousReport.getTime()) {
@@ -213,14 +216,10 @@ public class DashboardFragment extends Fragment {
                                 sliceValue.setTarget(curVoltage);
                                 gaugeCharts.get(counter).setValue(curVoltage);
                                 showLogIfNeeded(counter, curVoltage);
-                                // sliceValue.setLabel(String.format(PIE_CHART_VALUE_FORMAT,
-                                // dp.getVoltage()));
                                 counter++;
                             }
 
                             float gridVoltage = latestData.getPowerConsumption() - plantVoltage;
-//                            SliceValue gridValue = data.getValues().get(NUM_PANELS).setTarget(gridVoltage);
-//                            gridValue.setLabel(String.format(PIE_CHART_VALUE_FORMAT, gridVoltage));
                             pieChart.startDataAnimation(UPDATE_PERIOD / 2);
                             updateLabels(plantVoltage, gridVoltage);
 
@@ -389,11 +388,8 @@ public class DashboardFragment extends Fragment {
                     formatedValue = ft.format(calendar.getTime());
                 } else {
                     int delta = POINTS_COUNT - (int) value;
-                    if (delta == 135) {
-                        System.out.println("WTF?");
-                    }
                     if (delta % INTERVAL_FOR_HORIZONTAL_AXIS == 0 && delta > INTERVAL_FOR_HORIZONTAL_AXIS) {
-                        formatedValue = "- " + delta;
+                        formatedValue = "- " + (delta / 2);
                     }
                 }
                 if (formatedValue == null) {
