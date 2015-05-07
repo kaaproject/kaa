@@ -170,7 +170,7 @@ void sendRFIDLog(rfid_t rfid)
 
 void notifyOfNewFencingZone(int zone_id)
 {
-    if (zone_id != UNKNOWN_GEOFENCING_ZONE_ID && current_zone_id != zone_id) {
+    if (current_zone_id != zone_id) {
         current_zone_id = zone_id;
 
         debug("New zone detected, id=%d\r\n", current_zone_id);
@@ -183,7 +183,7 @@ void notifyOfNewFencingZone(int zone_id)
         case ENUM_GEO_FENCING_ZONE_ID_NEAR:
             position = ENUM_GEO_FENCING_POSITION_NEAR;
             break;
-		case UNKNOWN_GEOFENCING_ZONE_ID:
+        case UNKNOWN_GEOFENCING_ZONE_ID:
             position = ENUM_GEO_FENCING_POSITION_AWAY;
             break;
         default:
