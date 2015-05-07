@@ -5,6 +5,8 @@
  "fields": [
      {"name": "bindInterface", "type": "string"},
      {"name": "bindPort", "type": "int"},
+     {"name": "publicInterface", "type": "string"},
+     {"name": "publicPort", "type": "int"},
      {"name": "maxBodySize", "type": "int"}
  ]
 }
