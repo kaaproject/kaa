@@ -14,7 +14,7 @@ Copyright 2014-2015 CyberVision, Inc.
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project name="MusicPlayer" default="debug">
+<project name="Irrigation" default="debug">
 
     <property name="java.target" value="1.7"/>
     <property name="java.source" value="1.7"/>

@@ -29,6 +29,7 @@ public final class IrrigationStateHolder {
         irrigationStatus.setMonthlySpentWater(configuration.getDefaultMonthlySpentWater());
         irrigationStatus.setRemainingWater(configuration.getDefaultRemainingWater());
         this.deviceInfo = new DeviceInfo(configuration.getDeviceName(), configuration.getDeviceModelName());
+        this.lastIrrigationTime = System.currentTimeMillis();
         setIrrigationIntervalSec(TimeUnit.MILLISECONDS.toSeconds(configuration.getIrrigationIntervalMs()));
     }
 
@@ -36,8 +37,8 @@ public final class IrrigationStateHolder {
         return new IrrigationStatusUpdate(irrigationStatus);
     }
 
-    public IrrigationStatusUpdate getIrrigationStatusUpdate(long timeToIrregation) {
-        irrigationStatus.setTimeToNextIrrigationMs(timeToIrregation);
+    public IrrigationStatusUpdate getIrrigationStatusUpdate(long timeToIrrigation) {
+        irrigationStatus.setTimeToNextIrrigationMs(timeToIrrigation);
         return new IrrigationStatusUpdate(irrigationStatus);
     }
 
@@ -91,13 +92,13 @@ public final class IrrigationStateHolder {
         return new IrrigationStatusUpdate(irrigationStatus);
     }
 
-    private void updateIrrigationStatus(boolean isIrrigation, boolean resetTimeToIrregation) {
-        updateIrrigationStatus(isIrrigation, resetTimeToIrregation, 0);
+    private void updateIrrigationStatus(boolean isIrrigation, boolean resetTimeToIrrigation) {
+        updateIrrigationStatus(isIrrigation, resetTimeToIrrigation, 0);
     }
 
-    private void updateIrrigationStatus(boolean isIrrigation, boolean resetTimeToIrregation, int currentCount) {
+    private void updateIrrigationStatus(boolean isIrrigation, boolean resetTimeToIrrigation, int currentCount) {
         irrigationStatus.setIsIrrigation(isIrrigation);
-        if (resetTimeToIrregation) {
+        if (resetTimeToIrrigation) {
             irrigationStatus.setTimeToNextIrrigationMs(0L);
         } else {
             irrigationStatus.setTimeToNextIrrigationMs(getIrrigationIntervalMs());
@@ -113,5 +114,6 @@ public final class IrrigationStateHolder {
 
     public void updateDeviceName(String name) {
         deviceInfo.setName(name);
+        configuration.storeDeviceName(name);
     }
 }

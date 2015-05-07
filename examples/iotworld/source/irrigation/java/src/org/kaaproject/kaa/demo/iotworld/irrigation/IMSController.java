@@ -73,13 +73,13 @@ public class IMSController implements DeviceEventClassFamily.Listener, Irrigatio
         LOG.info("Received irrigation control request from {}", source);
         long newInterval = TimeUnit.SECONDS.toMillis(request.getIrrigationIntervalSec());
 
-        long timeToIrregation = 0;
-        if (scheduledFuture != null && !scheduledFuture.isCancelled() || scheduledFuture.isDone()) {
-            timeToIrregation = scheduledFuture.getDelay(TimeUnit.MILLISECONDS);
+        long timeToIrrigation = 0;
+        if (scheduledFuture != null && (!scheduledFuture.isCancelled() || scheduledFuture.isDone())) {
+            timeToIrrigation = scheduledFuture.getDelay(TimeUnit.MILLISECONDS);
         }
 
         long newWateringTime = stateHolder.getLastWateringTime() + newInterval;
-        if (newWateringTime > timeToIrregation) {
+        if (newWateringTime > timeToIrrigation) {
             stateHolder.setTimeToNextIrrigationMs(newWateringTime - System.currentTimeMillis());
         } else {
             stateHolder.setTimeToNextIrrigationMs(newInterval);
@@ -197,6 +197,7 @@ public class IMSController implements DeviceEventClassFamily.Listener, Irrigatio
                     } catch (Exception e2) {
                         LOG.error("Failed to stop irrigation!", e2);
                     }
+                    callback.afterIrrigation();
                 }
             }
         }, initialDelay, delay, TimeUnit.MILLISECONDS);
@@ -249,10 +250,5 @@ public class IMSController implements DeviceEventClassFamily.Listener, Irrigatio
 
     public void init() {
         miniWebServer.start(getAccessToken());
-        if (configuration.isAttachedToUser()) {
-            LOG.info("Endpoint already attached to user.");
-            scheduleTimeTaskNow(stateHolder.getIrrigationIntervalMs(), new IrrigationCallbackImpl());
-            irrigation.sendEventToAll(stateHolder.getIrrigationStatusUpdate(scheduledFuture.getDelay(TimeUnit.MILLISECONDS)));
-        }
     }
 }
