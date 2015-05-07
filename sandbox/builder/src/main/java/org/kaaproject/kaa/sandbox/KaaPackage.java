@@ -17,9 +17,9 @@ package org.kaaproject.kaa.sandbox;
 
 public enum KaaPackage {
 
-    BOOTSTRAP("bootstrap", "kaa-bootstrap", "/etc/kaa-bootstrap/conf/bootstrap-server.properties", new String[] { "transport.bindInterface" }), 
+    BOOTSTRAP("bootstrap", "kaa-bootstrap", "/etc/kaa-bootstrap/conf/bootstrap-server.properties", new String[] { "transport.bindInterface", "transport.publicInterface" }), 
     CONTROL("control", "kaa-control", "/etc/kaa-control/conf/control-server.properties", new String[] {}), 
-    OPERATIONS("operations", "kaa-operations", "/etc/kaa-operations/conf/operations-server.properties", new String[] { "transport.bindInterface" }), 
+    OPERATIONS("operations", "kaa-operations", "/etc/kaa-operations/conf/operations-server.properties", new String[] { "transport.bindInterface", "transport.publicInterface" }), 
     ADMIN("admin", "kaa-admin", "/etc/kaa-admin/conf/admin-server.properties", new String[] {});
 
     String packageName;
