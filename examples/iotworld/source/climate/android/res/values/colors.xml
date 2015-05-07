@@ -18,14 +18,14 @@
     
     <color name="transparent">#00000000</color>
 
+    <color name="thermostat_arc">#FF5A8A20</color>
     <color name="thermostat_arc_cold">#FF1172C1</color>
-    <color name="thermostat_arc">#FF8ac147</color>
-    <!-- color name="thermostat_arc">#FF979797</color -->
-    <color name="thermostat_arc_heat">#FFF26522</color>
+    <color name="thermostat_arc_heat">#FFE35C1B</color>
+    <color name="thermostat_progress">#FFB0E86B</color>
     <color name="thermostat_progress_cold">#FF9dd3ff</color>
+    <color name="thermostat_progress_heat">#FFFF9B6B</color>
+    <!-- color name="thermostat_arc">#FF979797</color -->
     <!--  color name="thermostat_progress">#FFf6f6f6</color-->
-    <color name="thermostat_progress">#FF8ac147</color>
-    <color name="thermostat_progress_heat">#FFF9C6B2</color>
     <!--  color name="thermostat_thumbs_color">#FFeefeff</color-->
     <color name="thermostat_thumbs_color">#ffeefeff</color>
     <color name="thermostat_thumbs_glow_color">#FFbdd4fd</color>

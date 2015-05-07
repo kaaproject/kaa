@@ -341,7 +341,7 @@ public class Thermostat extends View {
         mOnInterval = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2.5f, getResources().getDisplayMetrics());
         mOffInterval = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2.5f, getResources().getDisplayMetrics());
         
-        float outer_blur = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6.66f, getResources().getDisplayMetrics());
+        float outer_blur = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.56f, getResources().getDisplayMetrics());
         float inner_blur = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.33f, getResources().getDisplayMetrics());
 
         float text_inner_blur = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0.66f, getResources().getDisplayMetrics());
