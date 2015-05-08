@@ -90,7 +90,40 @@ extern int usleep(__useconds_t                        __useconds);
 int kaa_demo_event_loop();
 void send_bulb_list_status_update(kaa_endpoint_id_p source, bool is_status_request);
 void persist_geofencing_state();
-void enable_all_lights(bool enable);
+
+void log_operation_mode() {
+	   switch (operation_mode) {
+			case ENUM_OPERATION_MODE_ON:
+				printf("Operation mode: ON\n");
+				break;
+			case ENUM_OPERATION_MODE_OFF:
+				printf("Operation mode: OFF\n");
+				break;
+			case ENUM_OPERATION_MODE_GEOFENCING:
+				printf("Operation mode: GEOFENCING\n");
+				break;
+			default:
+				printf("Operation mode: UNKNOWN\n");
+				break;
+	    }
+}
+
+void log_position() {
+	   switch (last_position) {
+			case ENUM_GEO_FENCING_POSITION_AWAY:
+				printf("Position: AWAY\n");
+				break;
+			case ENUM_GEO_FENCING_POSITION_HOME:
+				printf("Position: HOME\n");
+				break;
+			case ENUM_GEO_FENCING_POSITION_NEAR:
+				printf("Position: NEAR\n");
+				break;
+			default:
+				printf("Position: UNKNOWN\n");
+				break;
+	    }
+}
 
 void process_operation_mode(kaa_geo_fencing_event_class_family_geo_fencing_position_t new_position,
 							kaa_geo_fencing_event_class_family_operation_mode_t new_mode) {
@@ -98,20 +131,10 @@ void process_operation_mode(kaa_geo_fencing_event_class_family_geo_fencing_posit
 	if (new_mode != operation_mode) {
 		persist = true;
 		operation_mode = new_mode;
-		if (operation_mode == ENUM_OPERATION_MODE_OFF) {
-			enable_all_lights(false);
-		} else if (operation_mode == ENUM_OPERATION_MODE_ON) {
-			enable_all_lights(true);
-		} else {
-			enable_all_lights(last_position == ENUM_GEO_FENCING_POSITION_HOME);
-		}
 	}
 	if (last_position != new_position) {
 		persist = true;
 		last_position = new_position;
-		if (operation_mode == ENUM_OPERATION_MODE_GEOFENCING) {
-			enable_all_lights(last_position == ENUM_GEO_FENCING_POSITION_HOME);
-		}
 	}
 	if (persist) {
 		persist_geofencing_state();
@@ -119,11 +142,16 @@ void process_operation_mode(kaa_geo_fencing_event_class_family_geo_fencing_posit
 				kaa_geo_fencing_event_class_family_geo_fencing_status_response_create();
 		response->position = last_position;
 		response->mode = operation_mode;
+		send_bulb_list_status_update(NULL, true);
 		kaa_event_manager_send_kaa_geo_fencing_event_class_family_geo_fencing_status_response(kaa_context_->event_manager,
 				response,
 				NULL);
 		response->destroy(response);
 	}
+
+	printf("Process operation mode:\n");
+	log_operation_mode();
+	log_position();
 }
 
 void load_previous_state_if_any() {
@@ -194,6 +222,7 @@ void persist_geofencing_state() {
 		fwrite(&operation_mode, sizeof(operation_mode), 1, f);
 		fclose(f);
 	}
+	printf("Geofencing state persisted successfully\n");
 }
 
 void updateGpioValue(char *fileName, bool enable) {
@@ -283,19 +312,10 @@ char get_bulb_state(char id) {
 	return id;
 }
 
-void enable_all_lights(bool enable) {
-	char i = gpios_count;
-	if (enable) {
-		while (--i) {
-			set_bulb_state(i, ENUM_BULB_STATUS_ON);
-		}
-	} else {
-		while (--i) {
-			set_bulb_state(i, ENUM_BULB_STATUS_OFF);
-		}
-	}
-	persist_bulbs_state();
-
+bool is_operational() {
+	return operation_mode == ENUM_OPERATION_MODE_ON ||
+	       (operation_mode == ENUM_OPERATION_MODE_GEOFENCING
+		   && last_position == ENUM_GEO_FENCING_POSITION_HOME);
 }
 
 void *brightness_loop(void *id_ptr) {
@@ -312,7 +332,7 @@ void *brightness_loop(void *id_ptr) {
 
 		char bulb_state = get_bulb_state(*id);
 
-		if (bulb_state == ENUM_BULB_STATUS_ON) {
+		if (bulb_state == ENUM_BULB_STATUS_ON && is_operational()) {
 			if (percents <= 0) {
 				updateGpioValue(value, false);
 				usleep(period_microseconds);
@@ -373,7 +393,7 @@ void init_bulbs() {
 
 void deinit_bulbs() {
 	char i = gpios_count;
-	while (--i) {
+	while (i--) {
 		set_brightness(i, 0);
 	}
 	exportGpios(false);
@@ -475,6 +495,7 @@ void kaa_on_device_change_name_request(void *context, kaa_device_event_class_fam
 		fwrite(device_name, size, 1, f);
 		fclose(f);
 	}
+	send_bulb_list_status_update(NULL, true);
 	send_device_info_response(NULL);
 	event->destroy(event);
 	printf("Name changed\n");
