@@ -63,31 +63,68 @@ static kaa_transport_channel_interface_t operations_channel;
 
 static bool is_shutdown = false;
 
-static char gpio_nums[] = { 68, 69 };
+static char gpio_nums[] = { 66, 67, 68, 69 };
 #define gpios_count (sizeof(gpio_nums) / sizeof(gpio_nums[0]))
 int32_t brightness[gpios_count];
 char bulbs_state[gpios_count];
 static char gpio_indexes[gpios_count];
 static const int FILE_NAME_SIZE = 50;
-static kaa_geo_fencing_event_class_family_geo_fencing_position_t last_position;
-static kaa_geo_fencing_event_class_family_operation_mode_t operation_mode;
+static kaa_geo_fencing_event_class_family_geo_fencing_position_t last_position = ENUM_GEO_FENCING_POSITION_AWAY;
+static kaa_geo_fencing_event_class_family_operation_mode_t operation_mode = ENUM_OPERATION_MODE_OFF;
 pthread_t pth[gpios_count];
 
 pthread_mutex_t brightness_mutex;
 pthread_mutex_t bulb_states_mutex;
 
-static char *device_name;
+static char *device_name = "Home lights";
 static const char *device_model = "BeagleBone Black";
 
+static const char *geofencing_state = "geofencing_state";
 static const char *brightness_state = "brightness_state";
 static const char *name_state = "name_state";
 
 kaa_list_t *subscribers_list = NULL;
 
-extern int usleep(__useconds_t                       __useconds);
+extern int usleep(__useconds_t                        __useconds);
 
 int kaa_demo_event_loop();
 void send_bulb_list_status_update(kaa_endpoint_id_p source, bool is_status_request);
+void persist_geofencing_state();
+void enable_all_lights(bool enable);
+
+void process_operation_mode(kaa_geo_fencing_event_class_family_geo_fencing_position_t new_position,
+							kaa_geo_fencing_event_class_family_operation_mode_t new_mode) {
+	bool persist = false;
+	if (new_mode != operation_mode) {
+		persist = true;
+		operation_mode = new_mode;
+		if (operation_mode == ENUM_OPERATION_MODE_OFF) {
+			enable_all_lights(false);
+		} else if (operation_mode == ENUM_OPERATION_MODE_ON) {
+			enable_all_lights(true);
+		} else {
+			enable_all_lights(last_position == ENUM_GEO_FENCING_POSITION_HOME);
+		}
+	}
+	if (last_position != new_position) {
+		persist = true;
+		last_position = new_position;
+		if (operation_mode == ENUM_OPERATION_MODE_GEOFENCING) {
+			enable_all_lights(last_position == ENUM_GEO_FENCING_POSITION_HOME);
+		}
+	}
+	if (persist) {
+		persist_geofencing_state();
+		kaa_geo_fencing_event_class_family_geo_fencing_status_response_t *response =
+				kaa_geo_fencing_event_class_family_geo_fencing_status_response_create();
+		response->position = last_position;
+		response->mode = operation_mode;
+		kaa_event_manager_send_kaa_geo_fencing_event_class_family_geo_fencing_status_response(kaa_context_->event_manager,
+				response,
+				NULL);
+		response->destroy(response);
+	}
+}
 
 void load_previous_state_if_any() {
 
@@ -101,6 +138,7 @@ void load_previous_state_if_any() {
 		fread(device_name, size, 1, f);
 		fclose(f);
 	}
+
 	f = fopen(brightness_state, "rb");
 	if (f) {
 		fseek(f, 0, SEEK_END);
@@ -114,6 +152,22 @@ void load_previous_state_if_any() {
 		}
 	}
 
+	kaa_geo_fencing_event_class_family_geo_fencing_position_t persisted_position = last_position;
+	kaa_geo_fencing_event_class_family_operation_mode_t persisted_operation_mode = operation_mode;
+
+	f = fopen(geofencing_state, "rb");
+	if (f) {
+		fseek(f, 0, SEEK_END);
+		size_t size = ftell(f);
+		fseek(f, 0, SEEK_SET);
+		if (size) {
+			fread(&persisted_position, sizeof(persisted_position), 1, f);
+			fseek(f, sizeof(last_position), SEEK_SET);
+			fread(&persisted_operation_mode, sizeof(persisted_operation_mode), 1, f);
+			fclose(f);
+		}
+	}
+	process_operation_mode(persisted_position, persisted_operation_mode);
 }
 
 void persist_bulbs_state() {
@@ -129,6 +183,16 @@ void persist_bulbs_state() {
 		pthread_mutex_unlock(&bulb_states_mutex);
 		fclose(f);
 		printf("Brightness state persisted successfully\n");
+	}
+}
+
+void persist_geofencing_state() {
+	FILE *f = fopen(geofencing_state, "wb");
+	if (f) {
+		fwrite(&last_position, sizeof(last_position), 1, f);
+		fseek(f, sizeof(last_position), SEEK_SET);
+		fwrite(&operation_mode, sizeof(operation_mode), 1, f);
+		fclose(f);
 	}
 }
 
@@ -195,7 +259,7 @@ void set_brightness(char id, int32_t percent) {
 	percent = percent > 100 ? 100 : percent;
 	pthread_mutex_lock(&brightness_mutex);
 	brightness[id] = percent;
-	printf("Brightness was set to %d for bulb wit id %d\n", brightness[id], id);
+	printf("Brightness was set to %d for bulb with id %d\n", brightness[id], id);
 	pthread_mutex_unlock(&brightness_mutex);
 }
 
@@ -315,7 +379,7 @@ void deinit_bulbs() {
 	exportGpios(false);
 }
 
-void send_device_info_response() {
+void send_device_info_response(kaa_endpoint_id_p source) {
 	kaa_device_event_class_family_device_info_response_t *response =
 			kaa_device_event_class_family_device_info_response_create();
 	kaa_device_event_class_family_device_info_t *info = kaa_device_event_class_family_device_info_create();
@@ -327,7 +391,7 @@ void send_device_info_response() {
 	response->device_info = info;
 
 	kaa_event_manager_send_kaa_device_event_class_family_device_info_response(kaa_context_->event_manager, response,
-	NULL);
+			source);
 
 	printf("DeviceInfoResponse sent!\n");
 	response->destroy(response);
@@ -337,7 +401,7 @@ void kaa_on_device_info_request(void *context, kaa_device_event_class_family_dev
 		kaa_endpoint_id_p source) {
 	printf("DeviceInfoRequest event received!\n");
 
-	send_device_info_response();
+	send_device_info_response(source);
 
 	event->destroy(event);
 }
@@ -345,24 +409,14 @@ void kaa_on_device_info_request(void *context, kaa_device_event_class_family_dev
 void kaa_on_geo_fencing_position_update(void *context,
 		kaa_geo_fencing_event_class_family_geo_fencing_position_update_t *event, kaa_endpoint_id_p source) {
 	printf("GeoFencingPositionUpdate event received!\n");
-
-	if (last_position != event->position) {
-		if (event->position == ENUM_GEO_FENCING_POSITION_HOME) {
-			enable_all_lights(true);
-		} else {
-			enable_all_lights(false);
-		}
-	}
-
-	last_position = event->position;
-
+	process_operation_mode(event->position, operation_mode);
 	event->destroy(event);
 }
 
 void kaa_on_geo_fencing_event_class_family_operation_mode_update_request(void *context,
 		kaa_geo_fencing_event_class_family_operation_mode_update_request_t *event, kaa_endpoint_id_p source) {
 	printf("GeoFencingOperationModeUpdate event received!\n");
-	operation_mode = event->mode;
+	process_operation_mode(last_position, event->mode);
 	event->destroy(event);
 }
 
@@ -375,8 +429,9 @@ void kaa_on_geo_fencing_event_class_family_geo_fencing_status_request(void *cont
 	response->mode = operation_mode;
 	kaa_event_manager_send_kaa_geo_fencing_event_class_family_geo_fencing_status_response(kaa_context_->event_manager,
 			response,
-			NULL);
-
+			source);
+	event->destroy(event);
+	response->destroy(response);
 	printf("GeoFencingStatusResponse sent!\n");
 }
 
@@ -420,7 +475,7 @@ void kaa_on_device_change_name_request(void *context, kaa_device_event_class_fam
 		fwrite(device_name, size, 1, f);
 		fclose(f);
 	}
-	send_device_info_response();
+	send_device_info_response(NULL);
 	event->destroy(event);
 	printf("Name changed\n");
 }
@@ -453,6 +508,7 @@ void kaa_on_device_status_subscription_request(void *context,
 		subscribers_list = test_subscr_list;
 	}
 	event->destroy(event);
+	send_bulb_list_status_update(source, true);
 }
 
 void send_bulb_list_status_update(kaa_endpoint_id_p source, bool is_status_request) {
@@ -542,6 +598,7 @@ kaa_error_t kaa_on_detached(void *context, const char *endpoint_access_token) {
 
 kaa_error_t kaa_on_attach_success(void *context) {
 	printf("Kaa Demo attach success\n");
+	load_previous_state_if_any();
 	return KAA_ERR_NONE;
 }
 
@@ -587,6 +644,7 @@ kaa_error_t kaa_sdk_init() {
 
 	error_code = kaa_profile_manager_set_endpoint_access_token(kaa_context_->profile_manager,
 			KAA_ENDPOINT_ACCESS_TOKEN);
+
 	KAA_RETURN_IF_ERR(error_code);
 
 	error_code = kaa_user_manager_default_attach_to_user(kaa_context_->user_manager, KAA_USER_ID,
@@ -642,13 +700,7 @@ kaa_error_t kaa_sdk_init() {
  * Kaa demo lifecycle routine.
  */
 kaa_error_t kaa_demo_init() {
-
-	device_name = (char *) KAA_MALLOC(7);
-	KAA_RETURN_IF_NIL(device_name, KAA_ERR_NOMEM);
-	strcpy(device_name, "BORODA");
 	memset(bulbs_state, 0, gpios_count);
-	load_previous_state_if_any();
-
 	kaa_error_t error_code = kaa_sdk_init();
 	if (error_code) {
 		printf("Failed to init Kaa SDK. Error code : %d\n", error_code);

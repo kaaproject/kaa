@@ -27,7 +27,7 @@ public class MusicPlayerState {
     private static final String LISTENERS_PROP_DELIMITER = ",";
     
     private static final String DEVICE_PROP_NAME = "device.name"; 
-    private static final String DEFAULT_DEVICE_NAME = "Raspbery Pi 2 Photo Player";
+    private static final String DEFAULT_DEVICE_NAME = "Raspbery Pi 2 Music Player";
 
 
     private static final Logger LOG = LoggerFactory.getLogger(MusicPlayerApplication.class);

@@ -233,7 +233,7 @@ public class PhotoPlayerApplication implements DeviceEventClassFamily.Listener, 
             player.stop();
         }
         library.deleteUploadsAlbum();
-        photoECF.sendEvent(new PhotoAlbumsResponse(library.buildAlbumInfoList()), originator);
+        photoECF.sendEventToAll(new PhotoAlbumsResponse(library.buildAlbumInfoList()));
     }
 
     @Override
