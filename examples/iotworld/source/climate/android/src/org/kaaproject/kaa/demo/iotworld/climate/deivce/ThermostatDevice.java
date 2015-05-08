@@ -70,7 +70,7 @@ public class ThermostatDevice implements DeviceEventClassFamily.Listener,
     
     private static final long DEGREE_CHANGE_SPEED_MS = 5000;
     private static final int MAX_DEGREE_DEVIATION = 2;
-    private static final int DEFAULT_DEGREE = 80;
+    private static final int DEFAULT_DEGREE = 100;
     private static final int DEFAULT_TARGET_DEGREE = 70;
 
     private final SharedPreferences mPreferences;
