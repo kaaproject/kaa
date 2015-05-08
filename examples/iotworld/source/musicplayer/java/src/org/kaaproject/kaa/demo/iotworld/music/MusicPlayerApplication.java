@@ -1,7 +1,6 @@
 package org.kaaproject.kaa.demo.iotworld.music;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -282,9 +281,13 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
                 state.getGeoFencingPosition());
         if (state.getOperationMode() == OperationMode.OFF) {
             pausePlayback();
-        } else if (isPlaybackAllowed()) {
-            if (pendingStatus == PlaybackStatus.PLAYING) {
-                resumePlayback();
+        } else {
+            if (isPlaybackAllowed()) {
+                if (pendingStatus == PlaybackStatus.PLAYING) {
+                    resumePlayback();
+                }
+            }else{
+                pausePlayback();
             }
         }
     }
@@ -330,12 +333,17 @@ public class MusicPlayerApplication implements DeviceEventClassFamily.Listener, 
             LOG.error("Can't find song {} in music library", songId);
             throw new IllegalStateException("Can't find song " + songId + " in music library");
         }
+        Integer volume = null;
         if (player != null) {
+            volume = player.getVolume();
             player.clearEndOfMediaListener();
             player.stop();
         }
 
         player = new Mp3Player(song.getFilename());
+        if(volume != null){
+            player.setVolume(volume);
+        }
         player.setEndOfMediaListener(this);
         return player;
     }

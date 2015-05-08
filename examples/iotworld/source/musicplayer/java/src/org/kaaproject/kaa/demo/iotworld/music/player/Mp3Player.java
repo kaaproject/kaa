@@ -1,13 +1,5 @@
 package org.kaaproject.kaa.demo.iotworld.music.player;
 
-import java.util.LinkedList;
-
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.FloatControl;
-import javax.sound.sampled.Line;
-import javax.sound.sampled.Mixer;
-
 import maryb.player.Player;
 import maryb.player.PlayerEventListener;
 import maryb.player.PlayerState;
@@ -19,7 +11,8 @@ import org.slf4j.LoggerFactory;
 public class Mp3Player {
     private static final Logger LOG = LoggerFactory.getLogger(Mp3Player.class);
 
-    private static final float MAX_VOLUME = 100.0f;
+    private static final int MAX_VOLUME = 100;
+    private static final int MIN_VOLUME = 50;
 
     private static final float DEFAULT_VOLUME = 1.0f;
 
@@ -103,50 +96,27 @@ public class Mp3Player {
     }
 
     public Integer getMaxVolume() {
-        return (int) MAX_VOLUME;
+        return MAX_VOLUME - MIN_VOLUME;
     }
 
     public Integer getVolume() {
-        return (int) (MAX_VOLUME * player.getCurrentVolume());
+        return (int) ((MAX_VOLUME - MIN_VOLUME) * player.getCurrentVolume());
     }
 
-    public void setVolume(Integer volume) {
-        float newVolume = volume / MAX_VOLUME;
-        LinkedList<Line> speakers = new LinkedList<Line>();
+    public synchronized void setVolume(Integer volume) {
+        float newVolume = ((float) volume) / (MAX_VOLUME - MIN_VOLUME);
+        int systemVolume = MIN_VOLUME + volume;
 
-        Mixer.Info[] mixers = AudioSystem.getMixerInfo();
-
-        for (Mixer.Info mixerInfo : mixers) {
-
-            Mixer mixer = AudioSystem.getMixer(mixerInfo);
-            Line.Info[] lines = mixer.getTargetLineInfo();
-
-            for (Line.Info info : lines) {
-
-                try {
-                    Line line = mixer.getLine(info);
-                    speakers.add(line);
-                } catch (Exception e) {
-                    LOG.trace("Failed to get line", e);
-                }
-            }
-        }
-
-        for (Line line : speakers) {
-            try {
-                boolean opened = line.isOpen() || line instanceof Clip;
-                if (!opened)
-                {
-                    line.open();
-                }
-                FloatControl control = (FloatControl) line.getControl(FloatControl.Type.VOLUME);
-                control.setValue(control.getMaximum() * newVolume);
-            } catch (Exception e) {
-                LOG.trace("Failed to change line volume", e);
-            }
-        }
-
+        LOG.info("New player volume: {}", newVolume);
+        LOG.info("New system volume: {}", systemVolume);
         player.setCurrentVolume(newVolume);
+
+        try {
+            Process p = Runtime.getRuntime().exec("amixer cset numid=1 " + systemVolume + "%");
+            p.waitFor();
+        } catch (Exception e) {
+            LOG.error("Failed to execute volume update", e);
+        }
     }
 
     public PlaybackStatus getStatus() {
