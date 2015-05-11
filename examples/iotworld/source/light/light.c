@@ -78,6 +78,7 @@ pthread_mutex_t bulb_states_mutex;
 
 static char *device_name = "Home lights";
 static const char *device_model = "BeagleBone Black";
+static const char *bulb_names[] = {"Doorstep", "Kitchen", "Living room", "Bedroom"};
 
 static const char *geofencing_state = "geofencing_state";
 static const char *brightness_state = "brightness_state";
@@ -283,6 +284,16 @@ void set_direction(bool out) {
 	}
 }
 
+char get_builb_index(const char* bulb_id) {
+	char i = gpios_count;
+	while(i--) {
+		if (strcmp(bulb_names[i], bulb_id) == 0) {
+			return i;
+		}
+	}
+	return i;
+}
+
 void set_brightness(char id, int32_t percent) {
 	percent = percent < 0 ? 0 : percent;
 	percent = percent > 100 ? 100 : percent;
@@ -458,9 +469,10 @@ void kaa_on_geo_fencing_event_class_family_geo_fencing_status_request(void *cont
 void kaa_on_bulb_brightness_request(void *context, kaa_light_event_class_family_change_bulb_brightness_request_t *event,
 		kaa_endpoint_id_p source) {
 	printf("BulbChangeBrightnessRequest event received!\n");
-	printf("Sender id is %d \n", (*(event->bulb_id->data)));
+	printf("Sender id is %s \n", event->bulb_id->data);
 	printf("Received brightness is %d \n", event->brightness);
-	set_brightness(*(event->bulb_id->data), event->brightness);
+	char bulb_id = get_builb_index((const char*)event->bulb_id->data);
+	set_brightness(bulb_id, event->brightness);
 	persist_bulbs_state();
 	send_bulb_list_status_update(source, false);
 	event->destroy(event);
@@ -469,9 +481,10 @@ void kaa_on_bulb_brightness_request(void *context, kaa_light_event_class_family_
 void kaa_on_bulb_status_request(void *context, kaa_light_event_class_family_change_bulb_status_request_t *event,
 		kaa_endpoint_id_p source) {
 	printf("BulbChangeStatusRequest event received!\n");
-	printf("Sender id is %d \n", (*(event->bulb_id->data)));
+	printf("Sender id is %s \n", event->bulb_id->data);
 	printf("Received status is %d \n", event->status);
-	set_bulb_state(*(event->bulb_id->data), event->status);
+	char bulb_id = get_builb_index((const char*)event->bulb_id->data);
+	set_bulb_state(bulb_id, event->status);
 	persist_bulbs_state();
 	send_bulb_list_status_update(source, true);
 	event->destroy(event);
@@ -547,7 +560,7 @@ void send_bulb_list_status_update(kaa_endpoint_id_p source, bool is_status_reque
 		bulb_info->brightness = get_brightness(i);
 		bulb_info->max_brightness = 100;
 		bulb_id[0] = i;
-		bulb_info->bulb_id = kaa_string_copy_create(bulb_id);
+		bulb_info->bulb_id = kaa_string_copy_create(bulb_names[i]);
 		bulb_info->status = get_bulb_state(i);
 		bulb_info->ignore_brightness_update = 0;
 
