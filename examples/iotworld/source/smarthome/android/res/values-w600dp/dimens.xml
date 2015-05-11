@@ -21,5 +21,7 @@
     <dimen name="geofencing_spinner_width">100dp</dimen>
     
     <dimen name="track_duration_width">150dp</dimen>
+    
+    <dimen name="card_height">260dp</dimen>
 
 </resources>

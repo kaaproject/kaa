@@ -16,7 +16,9 @@
 -->
 <resources>
 
-    <dimen name="card_width">300dp</dimen>
-    <dimen name="photo_album_card_width">200dp</dimen>
+    <dimen name="card_width">320dp</dimen>
+    <dimen name="card_height">260dp</dimen>
+    
+    <dimen name="photo_album_card_width">220dp</dimen>
     
 </resources>

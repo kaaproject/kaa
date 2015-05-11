@@ -21,7 +21,7 @@
     <TextView
         android:id="@+id/geoFencingStatus"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="24dp"
         android:textColor="@android:color/white"
         android:textSize="18sp">
     </TextView>

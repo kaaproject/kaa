@@ -32,7 +32,11 @@ import android.graphics.Paint.Align;
 import android.graphics.PathEffect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Handler.Callback;
+import android.os.Message;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -41,7 +45,10 @@ import android.view.View;
 public class Thermostat extends View {
 
     private static final String TAG = Thermostat.class.getSimpleName();
-    private static int INVALID_PROGRESS_VALUE = -1;
+    private static final int INVALID_PROGRESS_VALUE = -1;
+    
+    private static final int CHECK_PRESSED_MESSAGE = 1001;
+    private static final int UPDATE_ON_CONTROL_MESSAGE = 1002;
     
     // The initial rotational offset -90 means that we start at 12 o'clock.
     private final int mAngleOffset = -90;
@@ -141,6 +148,7 @@ public class Thermostat extends View {
     private RectF mControlDownTouchRect = new RectF();
     private boolean mControlUpPressed = false;
     private boolean mControlDownPressed = false;
+    private Handler mHandler;
     private Paint mBackgroundPaint;
     private Paint mArcPaint;
     private float mOffInterval;
@@ -208,6 +216,29 @@ public class Thermostat extends View {
          */
         void onStopTrackingTouch(Thermostat Thermostat);
     }
+    
+    private class ThermostatHandlerCallback implements Callback {
+
+		@Override
+		public boolean handleMessage(Message msg) {
+			switch (msg.what) {
+				case CHECK_PRESSED_MESSAGE:
+					if (!mControlUpPressed && !mControlDownPressed) {
+						setPressed(false);
+					}
+					return true;
+				case UPDATE_ON_CONTROL_MESSAGE:
+					if (mControlUpPressed || mControlDownPressed) {
+						updateOnControl();
+						mHandler.sendEmptyMessageDelayed(UPDATE_ON_CONTROL_MESSAGE, 100);
+					}
+					return true;
+				default:
+					return false;
+			}
+		}
+    	
+    }
 
     public Thermostat(Context context) {
         super(context);
@@ -229,6 +260,7 @@ public class Thermostat extends View {
         Log.d(TAG, "Initialising Thermostat");
         final Resources res = getResources();
         float density = context.getResources().getDisplayMetrics().density;
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
 
         // Defaults, may need to link this into theme settings.
         
@@ -253,6 +285,7 @@ public class Thermostat extends View {
         // Convert the progress width to pixels for the current density.
         mProgressWidth = (int) (mProgressWidth * density);
         
+        mHandler = new Handler(new ThermostatHandlerCallback());
         
         if (attrs != null) {
             
@@ -560,33 +593,37 @@ public class Thermostat extends View {
         int xPos = mTranslateX-mTextXPos;
         if (mEnableBlur) {
             int yPos = (int)(mTranslateY-mTextYPos - ((mTextPaintGlow.descent() + mTextPaintGlow.ascent()) / 2)); 
-            canvas.drawText(getTemp()+"", xPos, yPos, mTextPaintGlow);
+            canvas.drawText(getTargetTemp()+"", xPos, yPos, mTextPaintGlow);
         }
         
         int yPos = (int)(mTranslateY-mTextYPos - ((mTextPaint.descent() + mTextPaint.ascent()) / 2));
-        canvas.drawText(getTemp()+"", xPos, yPos, mTextPaint);
+        canvas.drawText(getTargetTemp()+"", xPos, yPos, mTextPaint);
+        
+        float innerTextHeight = mTargetTextPaint.descent() + Math.abs(mTargetTextPaint.ascent()) + 
+                mTempDist + mTempTextPaint.descent() + Math.abs(mTempTextPaint.ascent());
+        
+        float innerTextTranslateY = mTranslateY + innerTextHeight/2 - (mTargetTextPaint.descent() + Math.abs(mTargetTextPaint.ascent()))/2;
 
         if (mEnableBlur) {
-            yPos = (int)(mTranslateY - ((mTargetTextPaintGlow.descent() + mTargetTextPaintGlow.ascent()) / 2));
-            canvas.drawText(getTargetTemp()+"", mTranslateX, yPos, mTargetTextPaintGlow);
+            yPos = (int)(innerTextTranslateY - ((mTargetTextPaintGlow.descent() + mTargetTextPaintGlow.ascent()) / 2));
+            canvas.drawText(getDisplayTemp()+"", mTranslateX, yPos, mTargetTextPaintGlow);
         }
         
-        yPos = (int)(mTranslateY - ((mTargetTextPaint.descent() + mTargetTextPaint.ascent()) / 2));
-        canvas.drawText(getTargetTemp()+"", mTranslateX, yPos, mTargetTextPaint);
+        yPos = (int)(innerTextTranslateY - ((mTargetTextPaint.descent() + mTargetTextPaint.ascent()) / 2));
+        canvas.drawText(getDisplayTemp()+"", mTranslateX, yPos, mTargetTextPaint);
         
         float mTempY;
         if (mEnableBlur) {
-            mTempY = mTranslateY + mTargetTextPaintGlow.descent() + mTargetTextPaintGlow.ascent() - mTempDist;
+            mTempY = innerTextTranslateY + mTargetTextPaintGlow.descent() + mTargetTextPaintGlow.ascent() - mTempDist;
         }
         else {
-            mTempY = mTranslateY + mTargetTextPaint.descent() + mTargetTextPaint.ascent() - mTempDist;
+            mTempY = innerTextTranslateY + mTargetTextPaint.descent() + mTargetTextPaint.ascent() - mTempDist;
         }
         
         String text = mIdleText.toString();
         if (mIsOperating && mProgress != mTargetProgress) {
             text = mProgress < mTargetProgress ? mHeatingText.toString() : mCoolingText.toString();
         }
-        
         text = text.toUpperCase();
         
         if (mEnableBlur) { 
@@ -672,24 +709,25 @@ public class Thermostat extends View {
                 mArcRect.centerY()-controlDistance-controlHeight/2, 
                 mArcRect.centerX()+controlWidth/2f, 
                 mArcRect.centerY()-controlDistance+controlHeight/2);
-        mControlUpTouchRect.set(mControlUpRect.left-mControlUpRect.width(),
-                mControlUpRect.top-mControlUpRect.height(),
-                mControlUpRect.right+mControlUpRect.width(),
-                mControlUpRect.bottom+mControlUpRect.height());
+        mControlUpTouchRect.set(mControlUpRect.left-mControlUpRect.width()*2,
+                mControlUpRect.top-mControlUpRect.height()*2,
+                mControlUpRect.right+mControlUpRect.width()*2,
+                mControlUpRect.bottom+mControlUpRect.height()*2);
         
         mControlDownRect.set(mArcRect.centerX()-controlWidth/2f, 
                 mArcRect.centerY()+controlDistance-controlHeight/2, 
                 mArcRect.centerX()+controlWidth/2f, 
                 mArcRect.centerY()+controlDistance+controlHeight/2);
-        mControlDownTouchRect.set(mControlDownRect.left-mControlDownRect.width(),
-                mControlDownRect.top-mControlDownRect.height(),
-                mControlDownRect.right+mControlDownRect.width(),
-                mControlDownRect.bottom+mControlDownRect.height());
+        mControlDownTouchRect.set(mControlDownRect.left-mControlDownRect.width()*2,
+                mControlDownRect.top-mControlDownRect.height()*2,
+                mControlDownRect.right+mControlDownRect.width()*2,
+                mControlDownRect.bottom+mControlDownRect.height()*2);
         
     
-        int arcStart = (int)mProgressSweep + mStartAngle  + mRotation + 90;
-        mTextXPos = (int) (mArcRadius * Math.cos(Math.toRadians(arcStart+10)));
-        mTextYPos = (int) (mArcRadius * Math.sin(Math.toRadians(arcStart+10)));
+        //int arcStart = (int)mProgressSweep + mStartAngle  + mRotation + 90;
+        int arcStart = (int)mTargetProgressSweep + mStartAngle  + mRotation + 90;
+        mTextXPos = (int) (mArcRadius * Math.cos(Math.toRadians(arcStart-10)));
+        mTextYPos = (int) (mArcRadius * Math.sin(Math.toRadians(arcStart-10)));
         
         setTouchInSide(mTouchInside);
         setMeasuredDimension(width, height);
@@ -704,9 +742,13 @@ public class Thermostat extends View {
         }
         switch (event.getAction()) {
         case MotionEvent.ACTION_DOWN:
+        	mHandler.removeMessages(CHECK_PRESSED_MESSAGE);
+        	setPressed(true);
             if (!onControlDown(event)) {
                 onStartTrackingTouch();
                 updateOnTouch(event, false);
+            } else {
+                mHandler.sendEmptyMessageDelayed(UPDATE_ON_CONTROL_MESSAGE, 500);
             }
             break;
         case MotionEvent.ACTION_MOVE:
@@ -718,11 +760,12 @@ public class Thermostat extends View {
             if (!mControlUpPressed && !mControlDownPressed) {
                 updateOnTouch(event, true);
                 onStopTrackingTouch();
-                setPressed(false);
             }
             else if (onControlUp(event)) {
-                updateOnControl();
+            	updateOnControl();            	
             }
+            mHandler.sendEmptyMessageDelayed(CHECK_PRESSED_MESSAGE, 1000);
+            mHandler.removeMessages(UPDATE_ON_CONTROL_MESSAGE);
             mControlUpPressed = false;
             mControlDownPressed = false;
             break;
@@ -735,7 +778,7 @@ public class Thermostat extends View {
 
         return true;
     }
-
+    
     @Override
     protected void drawableStateChanged() {
         super.drawableStateChanged();
@@ -788,7 +831,6 @@ public class Thermostat extends View {
         if (ignoreTouch) {
             return;
         }
-        setPressed(true);
         mTouchAngle = getTouchDegrees(event.getX(), event.getY());
         int targetProgress = getProgressForAngle(mTouchAngle);
         onTargetProgressRefresh(targetProgress, true, notifyListeners);
@@ -841,9 +883,10 @@ public class Thermostat extends View {
     }
 
     private void updateThumbPosition() {
-        int thumbAngle = (int) (mStartAngle + mProgressSweep + mRotation + 90);
-        mTextXPos = (int) (mArcRadius * Math.cos(Math.toRadians(thumbAngle+10)));
-        mTextYPos = (int) (mArcRadius * Math.sin(Math.toRadians(thumbAngle+10)));
+        //int thumbAngle = (int) (mStartAngle + mProgressSweep + mRotation + 90);
+    	int thumbAngle = (int) (mStartAngle + mTargetProgressSweep + mRotation + 90);
+        mTextXPos = (int) (mArcRadius * Math.cos(Math.toRadians(thumbAngle-10)));
+        mTextYPos = (int) (mArcRadius * Math.sin(Math.toRadians(thumbAngle-10)));
     }
     
     private void updateProgress(int progress, boolean fromUser) {
@@ -955,7 +998,15 @@ public class Thermostat extends View {
     public int getTargetTemp() {
         return mTempMin+mTargetProgress;
     }
-    
+
+    private int getDisplayTemp() {
+    	if (isPressed()) {
+            return getTargetTemp();
+    	} else {
+    		return getTemp();
+    	}
+    }
+
     public void setOperating(boolean isOperating) {
         if (mIsOperating != isOperating) {
             mIsOperating = isOperating;
