@@ -59,6 +59,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * The implementation of the {@link Fragment} class. Used as a superclass for
@@ -154,98 +155,111 @@ public class DashboardFragment extends Fragment {
                 Log.i(TAG, "generating history data ");
                 
                 final List<DataReport> reports = endpoint.getHistoryData(0);
-
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.i(TAG, "populating charts with data " + reports.size());
-                        prepareLineChart(rootView, reports);
-                        Log.i(TAG, "populated line chart with data ");
-                        preparePieChart(rootView, reports.get(reports.size() - 1));
-                        Log.i(TAG, "populated pie chart with data ");
-                    }
-                });
-                
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-                
-                DataReport previousReport = reports.get(reports.size() - 1);
-                long previousUpdate = 0l;
-                while (true) {
-                    boolean updated = false;
-                    while (!updated) {
-                        try {
-                            Thread.sleep(UPDATE_CHECK_PERIOD);
-                            long updateDelta = System.currentTimeMillis() - previousUpdate;
-                            if(updateDelta < UPDATE_PERIOD){
-                                continue;
-                            } else {
-                            	Log.i(TAG, "Updating since -" + (updateDelta / 1000.) + " s.");
-                            }
-                            DataReport latestDataCandidate = endpoint.getLatestData();
-                            if (latestDataCandidate.getTime() > previousReport.getTime()) {
-                                previousReport = latestDataCandidate;
-                                updated = true;
-                                previousUpdate = System.currentTimeMillis();
-                            }
-                        } catch (InterruptedException e) {
-                            Log.e(TAG, "Failed to fetch data", e);
-                        }
-                    }
-
-                    final DataReport latestData = previousReport;
-
+                if (reports == null) {
                     mActivity.runOnUiThread(new Runnable() {
-
                         @Override
                         public void run() {
-                            float maxValue = Float.MIN_VALUE;
-                            float minValue = Float.MAX_VALUE;
-
-                            PieChartData data = pieChart.getPieChartData();
-                            float plantVoltage = 0.0f;
-                           
-                            int counter = 0;
-                            for (DataPoint dp : latestData.getDataPoints()) {
-                            	float curVoltage = convertVoltage(dp.getVoltage());
-                                plantVoltage += curVoltage;
-                                SliceValue sliceValue = data.getValues().get(dp.getPanelId());
-                                sliceValue.setTarget(curVoltage);
-                                gaugeCharts.get(counter).setValue(curVoltage);
-                                showLogIfNeeded(counter, curVoltage);
-                                counter++;
-                            }
-
-                            float gridVoltage = latestData.getPowerConsumption() - plantVoltage;
-                            pieChart.startDataAnimation(UPDATE_PERIOD / 2);
-                            updateLabels(plantVoltage, gridVoltage);
-
-                            // Actual point update
-                            int curPointIndex = line.getValues().size() - FUTURE_POINTS_COUNT;
-                            PointValue curPoint = line.getValues().get(curPointIndex);
-                            curPoint.set(curPoint.getX(), plantVoltage);
-                            for (PointValue point : line.getValues()) {
-                                point.setTarget(point.getX() - 1, point.getY());
-                                minValue = Math.min(minValue, point.getY());
-                                maxValue = Math.max(maxValue, point.getY());
-                            }
-                            if (line.getValues().size() == (POINTS_COUNT + PAST_POINTS_COUNT + FUTURE_POINTS_COUNT)) {
-                                line.getValues().remove(0);
-                            }
-                            // Adding one dot to the end;
-                            line.getValues().add(new PointValue(POINTS_COUNT + FUTURE_POINTS_COUNT, plantVoltage));
-
-                            lineChart.startDataAnimation(UPDATE_PERIOD / 2);
-
-                            lineChart.getChartRenderer().setMinViewportYValue(minValue - Y_AXIS_MIN_MAX_DIV);
-                            lineChart.getChartRenderer().setMaxViewportYValue(maxValue + Y_AXIS_MIN_MAX_DIV);
+                    		Toast.makeText(mActivity, "No Data!", Toast.LENGTH_LONG).show();
+                    		try {
+								Thread.sleep(3000);
+							} catch (InterruptedException e) {
+							}
+                    		mActivity.finish();
                         }
                     });
+                } else {	
+	                mActivity.runOnUiThread(new Runnable() {
+	                    @Override
+	                    public void run() {
+	                        Log.i(TAG, "populating charts with data " + reports.size());
+	                        prepareLineChart(rootView, reports);
+	                        Log.i(TAG, "populated line chart with data ");
+	                        preparePieChart(rootView, reports.get(reports.size() - 1));
+	                        Log.i(TAG, "populated pie chart with data ");
+	                    }
+	                });
+	                
+	                try {
+	                    Thread.sleep(1000);
+	                } catch (InterruptedException e1) {
+	                    e1.printStackTrace();
+	                }
+	                
+	                DataReport previousReport = reports.get(reports.size() - 1);
+	                long previousUpdate = 0l;
+	                while (true) {
+	                    boolean updated = false;
+	                    while (!updated) {
+	                        try {
+	                            Thread.sleep(UPDATE_CHECK_PERIOD);
+	                            long updateDelta = System.currentTimeMillis() - previousUpdate;
+	                            if(updateDelta < UPDATE_PERIOD){
+	                                continue;
+	                            } else {
+	                            	Log.i(TAG, "Updating since -" + (updateDelta / 1000.) + " s.");
+	                            }
+	                            DataReport latestDataCandidate = endpoint.getLatestData();
+	                            if (latestDataCandidate.getTime() > previousReport.getTime()) {
+	                                previousReport = latestDataCandidate;
+	                                updated = true;
+	                                previousUpdate = System.currentTimeMillis();
+	                            }
+	                        } catch (InterruptedException e) {
+	                            Log.e(TAG, "Failed to fetch data", e);
+	                        }
+	                    }
+	
+	                    final DataReport latestData = previousReport;
+	
+	                    mActivity.runOnUiThread(new Runnable() {
+	
+	                        @Override
+	                        public void run() {
+	                            float maxValue = Float.MIN_VALUE;
+	                            float minValue = Float.MAX_VALUE;
+	
+	                            PieChartData data = pieChart.getPieChartData();
+	                            float plantVoltage = 0.0f;
+	                           
+	                            int counter = 0;
+	                            for (DataPoint dp : latestData.getDataPoints()) {
+	                            	float curVoltage = convertVoltage(dp.getVoltage());
+	                                plantVoltage += curVoltage;
+	                                SliceValue sliceValue = data.getValues().get(dp.getPanelId());
+	                                sliceValue.setTarget(curVoltage);
+	                                gaugeCharts.get(counter).setValue(curVoltage);
+	                                showLogIfNeeded(counter, curVoltage);
+	                                counter++;
+	                            }
+	
+	                            float gridVoltage = latestData.getPowerConsumption() - plantVoltage;
+	                            pieChart.startDataAnimation(UPDATE_PERIOD / 2);
+	                            updateLabels(plantVoltage, gridVoltage);
+	
+	                            // Actual point update
+	                            int curPointIndex = line.getValues().size() - FUTURE_POINTS_COUNT;
+	                            PointValue curPoint = line.getValues().get(curPointIndex);
+	                            curPoint.set(curPoint.getX(), plantVoltage);
+	                            for (PointValue point : line.getValues()) {
+	                                point.setTarget(point.getX() - 1, point.getY());
+	                                minValue = Math.min(minValue, point.getY());
+	                                maxValue = Math.max(maxValue, point.getY());
+	                            }
+	                            if (line.getValues().size() == (POINTS_COUNT + PAST_POINTS_COUNT + FUTURE_POINTS_COUNT)) {
+	                                line.getValues().remove(0);
+	                            }
+	                            // Adding one dot to the end;
+	                            line.getValues().add(new PointValue(POINTS_COUNT + FUTURE_POINTS_COUNT, plantVoltage));
+	
+	                            lineChart.startDataAnimation(UPDATE_PERIOD / 2);
+	
+	                            lineChart.getChartRenderer().setMinViewportYValue(minValue - Y_AXIS_MIN_MAX_DIV);
+	                            lineChart.getChartRenderer().setMaxViewportYValue(maxValue + Y_AXIS_MIN_MAX_DIV);
+	                        }
+	                    });
+	                }
                 }
-            }
+           }
         });
         updateThread.start();
 
