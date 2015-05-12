@@ -88,7 +88,7 @@ void show_topics(kaa_list_t *topics)
     while (topics) {
         topic = (kaa_topic_t *)kaa_list_get_data(topics);
         printf("Topic: id '%lu', name: %s, type: ", topic->id, topic->name);
-        if (topic->subscription_type == MANDATORY) {
+        if (topic->subscription_type == MANDATORY_SUBSCRIPTION) {
             printf("MANDATORY\n");
         } else {
             printf("OPTIONAL\n");
@@ -107,7 +107,7 @@ void on_list_uploaded(void *context, kaa_list_t *topics)
     kaa_topic_t *topic = NULL;
     while (topics) {
         topic = (kaa_topic_t *) kaa_list_get_data(topics);
-        if (topic->subscription_type == OPTIONAL) {
+        if (topic->subscription_type == OPTIONAL_SUBSCRIPTION) {
             printf("Subscribing to optional topic '%lu'\n", topic->id);
             err = kaa_subscribe_to_topic(kaa_context->notification_manager, &topic->id, false);
             if (err) {

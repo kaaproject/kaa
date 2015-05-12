@@ -23,8 +23,8 @@ extern "C" {
 #endif
 
 typedef enum {
-    MANDATORY = 0x00,
-    OPTIONAL  = 0x01
+    MANDATORY_SUBSCRIPTION = 0x00,
+    OPTIONAL_SUBSCRIPTION  = 0x01
 } kaa_topic_subscription_type_t;
 
 /**

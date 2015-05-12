@@ -133,7 +133,7 @@ void test_deserializing()
     unserialized_buffer += sizeof(uint16_t);
     *(uint64_t *)unserialized_buffer = KAA_HTONLL((uint64_t)22);    //topic id
     unserialized_buffer += sizeof(uint64_t);
-    *(uint8_t *)unserialized_buffer = (uint8_t)OPTIONAL;
+    *(uint8_t *)unserialized_buffer = (uint8_t)OPTIONAL_SUBSCRIPTION;
     unserialized_buffer += sizeof(uint16_t);
     *(uint16_t *)unserialized_buffer = KAA_HTONS((uint16_t)4); //KAA + 0
     unserialized_buffer += sizeof(uint16_t);
