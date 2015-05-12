@@ -568,9 +568,6 @@ kaa_error_t kaa_remove_topic_list_listener(kaa_notification_manager_t *self, uin
     if (err) {
         KAA_LOG_WARN(self->logger, err, "Failed to remove the topic listener: the listener is not found");
     }
-    if (!self->topics_listeners) {
-        KAA_LOG_TRACE(self->logger, err, "Topic listeners list is empty now.");
-    }
     return err;
 }
 
