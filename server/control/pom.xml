@@ -37,6 +37,7 @@
         <script.server.desc>Kaa Control Server</script.server.desc>
         <script.server.additional.commands>|api [args]</script.server.additional.commands>
         <sdk.path>${project.build.directory}/sdk</sdk.path>
+        <script.java.options>-Xmx128M -XX:MaxPermSize=64M</script.java.options>
     </properties>
     <dependencies>
         <dependency>
@@ -470,6 +471,9 @@
                                     token="#servername#" value="${script.server.name}" />
                                 <replace
                                     file="tmp_sh/init.d/deb/${script.server.name}.init.d"
+                                    token="#javaopts#" value="${script.java.options}"  />
+                                <replace
+                                    file="tmp_sh/init.d/deb/${script.server.name}.init.d"
                                     token="#serverdesc#" value="${script.server.desc}" />
                                 <replace
                                     file="tmp_sh/init.d/rpm/${script.server.name}.init.d"
@@ -477,6 +481,9 @@
                                 <replace
                                     file="tmp_sh/init.d/rpm/${script.server.name}.init.d"
                                     token="#serverdesc#" value="${script.server.desc}" />
+                                <replace
+                                    file="tmp_sh/init.d/rpm/${script.server.name}.init.d"
+                                    token="#javaopts#" value="${script.java.options}"  />
                             </tasks>
                         </configuration>
                     </execution>

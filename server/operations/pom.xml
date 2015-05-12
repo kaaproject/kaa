@@ -36,6 +36,7 @@
         <script.server.name>kaa-operations</script.server.name>
         <script.server.desc>Kaa Operations Server</script.server.desc>
         <script.server.additional.commands></script.server.additional.commands>
+        <script.java.options>-Xmx128M -XX:MaxPermSize=64M</script.java.options>
     </properties>
 
     <dependencies>
@@ -445,11 +446,17 @@
                                     file="tmp_sh/init.d/deb/${script.server.name}.init.d"
                                     token="#serverdesc#" value="${script.server.desc}" />
                                 <replace
+                                    file="tmp_sh/init.d/deb/${script.server.name}.init.d"
+                                    token="#javaopts#" value="${script.java.options}"  />
+                                <replace
                                     file="tmp_sh/init.d/rpm/${script.server.name}.init.d"
                                     token="#servername#" value="${script.server.name}" />
                                 <replace
                                     file="tmp_sh/init.d/rpm/${script.server.name}.init.d"
                                     token="#serverdesc#" value="${script.server.desc}" />
+                                <replace
+                                    file="tmp_sh/init.d/rpm/${script.server.name}.init.d"
+                                    token="#javaopts#" value="${script.java.options}"  />
 
                             </tasks>
                         </configuration>
