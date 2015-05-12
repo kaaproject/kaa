@@ -35,7 +35,7 @@
 * @brief Calculates the topic listener id to manage topic listeners.
 *
 * @param[in]   listener     Pointer to the listener, which id should be calculated.
-* @param[out]  listener_id  Pointer to the integer variable, which will be initialized with calculated id.
+* @param[out]  listener_id  Pointer to the variable, which will be initialized with calculated id.
 *
 * @return Error code.
 */
@@ -45,7 +45,7 @@ kaa_error_t kaa_calculate_topic_listener_id(kaa_topic_listener_t *listener, uint
 * @brief Calculates the notification listener id to manage topic listeners.
 *
 * @param[in]   listener     Pointer to the listener, which id should be calculated.
-* @param[out]  listener_id  Pointer to the integer variable, which will be initialized with calculated id.
+* @param[out]  listener_id  Pointer to the variable, which will be initialized with calculated id.
 *
 * @return Error code.
 */
@@ -56,7 +56,7 @@ kaa_error_t kaa_calculate_notification_listener_id(kaa_notification_listener_t *
 *
 * @param[in]  self         Pointer to the notification manager instance.
 * @param[in]  listener     Pointer to the listener, which callback will be called as soon as a notification received.
-* @param[out] listener_id  Pointer to the integer variable, which will be initialized with calculated id.
+* @param[out] listener_id  Pointer to the variable, which will be initialized with calculated id.
 *
 * @return Error code.
 */
@@ -67,8 +67,8 @@ kaa_error_t kaa_add_notification_listener(kaa_notification_manager_t *self, kaa_
 *
 * @param[in]  self        Pointer to the notification manager instance.
 * @param[in]  listener    Pointer to a listener, which callback will be called as soon as a notification received.
-* @param[in]  topic_id    Pointer to an id of topic listener wants to be notified about.
-* @param[out] listener_id Pointer to an integer variable, which will be initialized with calculated id.
+* @param[in]  topic_id    Pointer to an id of topic, listener wants to be notified about.
+* @param[out] listener_id Pointer to an variable, which will be initialized with calculated id. If NULL listener_id won't be initialized
 *
 * @return Error code.
 */
@@ -79,7 +79,7 @@ kaa_error_t kaa_add_optional_notification_listener(kaa_notification_manager_t *s
 * @brief Removes a mandatory notification listener
 *
 * @param[in]  self         Pointer to the notification manager instance.
-* @param[in]  listener_id  Pointer to the integer variable, which will be used to find listener that should be deleted.
+* @param[in]  listener_id  Pointer to the listener id, which will be used to find listener that should be removed from notification listeners' list. If NULL listener_id won't be initialized
 *
 * @return Error code.
 */
@@ -90,7 +90,7 @@ kaa_error_t kaa_remove_notification_listener(kaa_notification_manager_t *self, u
 *
 * @param[in]  self         Pointer to the notification manager instance.
 * @param[in]  topic_id     Pointer to the id of topic listener don't want to be notified about.
-* @param[in]  listener_id  Pointer to the integer variable, which will be used to find listener that should be deleted.
+* @param[in]  listener_id  Pointer to the variable, which will be used to find listener that should be removed from notification listeners' list.
 *
 * @return Error code.
 */
@@ -101,7 +101,7 @@ kaa_error_t kaa_remove_optional_notification_listener(kaa_notification_manager_t
 *
 * @param[in]  self               Pointer to the notification manager instance.
 * @param[in]  listener           Pointer to a listener, which callback will be called as soon as a notification received.
-* @param[out] topic_listener_id  Pointer to a integer variable, which will be initialized with calculated id.
+* @param[out] topic_listener_id  Pointer to a variable, which will be initialized with calculated id.
 *
 * @return Error code.
 */
@@ -111,7 +111,7 @@ kaa_error_t kaa_add_topic_list_listener(kaa_notification_manager_t *self, kaa_to
 * @brief Removes the topic list listener.
 *
 * @param[in]  self         Pointer to the notification manager instance.
-* @param[in]  topic_listener_id  Pointer to the integer variable, which will be used to find listener that should be deleted.
+* @param[in]  topic_listener_id  Pointer to the integer variable, which will be used to find listener that should be removed from topic listeners' list.. If NULL topic_listener_id won't be initialized
 *
 * @return Error code.
 */

@@ -57,6 +57,9 @@ static kaa_transport_channel_interface_t operations_channel;
 kaa_notification_listener_t notification_listener;
 kaa_topic_listener_t topic_listener;
 
+uint32_t topic_listener_id = 0;
+uint32_t notification_listener_id = 0;
+
 static bool is_shutdown = false;
 
 
@@ -71,7 +74,7 @@ void on_notification(void *context, uint64_t *topic_id, kaa_notification_t *noti
             is_shutdown = true;
         }
     } else {
-        printf("Error:Received null\n");
+        printf("Error:Received notification's body is null\n");
     }
 }
 
@@ -159,6 +162,15 @@ kaa_error_t kaa_sdk_init()
 
     topic_listener.callback = &on_list_uploaded;
     topic_listener.context = kaa_context_;
+
+    error_code = kaa_add_topic_list_listener(kaa_context_->notification_manager, &topic_listener, &topic_listener_id);
+    if (error_code) {
+        return error_code;
+    }
+    error_code = kaa_add_notification_listener(kaa_context_->notification_manager, &notification_listener, &notification_listener_id);
+    if (error_code) {
+        return error_code;
+    }
 
     return KAA_ERR_NONE;
 }
@@ -285,16 +297,6 @@ int main(/*int argc, char *argv[]*/)
         return error_code;
     }
 
-    uint32_t topic_listener_id = 0;
-    uint32_t notification_listener_id = 0;
-    error_code = kaa_add_topic_list_listener(kaa_context_->notification_manager, &topic_listener, &topic_listener_id);
-    if (error_code) {
-        return error_code;
-    }
-    error_code = kaa_add_notification_listener(kaa_context_->notification_manager, &notification_listener, &notification_listener_id);
-    if (error_code) {
-        return error_code;
-    }
     int rval = kaa_demo_event_loop();
 
     kaa_demo_destroy();

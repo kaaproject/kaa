@@ -42,7 +42,7 @@ size_t size = 0;
 kaa_topic_listener_t topic_listener;
 kaa_topic_listener_t topic_listener_2;
 //-----------------------------------------------------------------------------------------------
-void on_notification(void* contextmock, const uint64_t *topic_id, const kaa_notification_t *notif)
+void on_notification(void* contextmock, uint64_t *topic_id, kaa_notification_t *notif)
 {
     printf("\nNotification listener got his Notification\n\n");
 }
@@ -272,6 +272,21 @@ void test_subscriptions()
 
     err = kaa_unsubscribe_from_topic(context->notification_manager, &topic_id, false);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
+
+    uint64_t fake_ids[2] = { 22, 11 };
+    err = kaa_subscribe_to_topics(context->notification_manager, fake_ids, 2, false);
+    ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
+
+    err = kaa_unsubscribe_from_topics(context->notification_manager, fake_ids, 2, false);
+    ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
+
+    uint64_t existing_ids[1] = { 22 };
+    err = kaa_subscribe_to_topics(context->notification_manager, existing_ids, 1, false);
+    ASSERT_EQUAL(err, KAA_ERR_NONE);
+
+    err = kaa_unsubscribe_from_topics(context->notification_manager, existing_ids, 1, false);
+    ASSERT_EQUAL(err, KAA_ERR_NONE);
+
 }
 
 KAA_SUITE_MAIN(Notification, test_init, test_deinit

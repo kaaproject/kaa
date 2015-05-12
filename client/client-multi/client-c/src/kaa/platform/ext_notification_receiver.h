@@ -39,14 +39,14 @@ typedef void (*on_notification_callback)(void *context, uint64_t *topic_id, kaa_
 
 typedef struct {
     on_notification_callback  callback;
-    void* context;
+    void *context;
 } kaa_notification_listener_t;
 
 typedef struct {
     uint64_t id;
     kaa_topic_subscription_type_t subscription_type;
     uint16_t name_length;
-    char* name;
+    char *name;
 } kaa_topic_t;
 
 /**
