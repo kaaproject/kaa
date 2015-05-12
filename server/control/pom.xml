@@ -37,7 +37,7 @@
         <script.server.desc>Kaa Control Server</script.server.desc>
         <script.server.additional.commands>|api [args]</script.server.additional.commands>
         <sdk.path>${project.build.directory}/sdk</sdk.path>
-        <script.java.options>-Xmx128M -XX:MaxPermSize=64M</script.java.options>
+        <script.java.options></script.java.options>
     </properties>
     <dependencies>
         <dependency>

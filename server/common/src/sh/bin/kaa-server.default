@@ -14,5 +14,5 @@
 # limitations under the License.
 
 # Default options to pass to the JVM
-JAVA_OPTIONS="-Xms128M -XX:+UseG1GC"
+JAVA_OPTIONS="-Xms256M -Xmx4G -XX:+UseG1GC"
 SERVER_LOG_SUFIX=

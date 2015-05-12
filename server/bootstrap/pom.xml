@@ -36,7 +36,7 @@
         <server.confname>bootstrap-server.properties</server.confname>
         <script.server.name>kaa-bootstrap</script.server.name>
         <script.server.desc>Kaa Bootstrap Server</script.server.desc>
-        <script.java.options>-Xmx128M -XX:MaxPermSize=64M</script.java.options>
+        <script.java.options></script.java.options>
     </properties>
 
     <dependencies>

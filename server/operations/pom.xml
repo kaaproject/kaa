@@ -36,7 +36,7 @@
         <script.server.name>kaa-operations</script.server.name>
         <script.server.desc>Kaa Operations Server</script.server.desc>
         <script.server.additional.commands></script.server.additional.commands>
-        <script.java.options>-Xmx128M -XX:MaxPermSize=64M</script.java.options>
+        <script.java.options></script.java.options>
     </properties>
 
     <dependencies>

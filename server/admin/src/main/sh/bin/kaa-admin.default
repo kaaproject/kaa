@@ -14,5 +14,5 @@
 # limitations under the License.
 
 # Default options to pass to the JVM
-JAVA_OPTIONS="-Xms128M -Xmx128m -XX:+UseG1GC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled -XX:MaxPermSize=128M"
+JAVA_OPTIONS="-Xms256M -Xmx1G -XX:+UseG1GC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled -XX:MaxPermSize=256M"
 SERVER_LOG_SUFIX=
