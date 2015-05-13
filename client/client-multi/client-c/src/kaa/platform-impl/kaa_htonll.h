@@ -14,24 +14,13 @@
  * limitations under the License.
  */
 
-# ifndef KAA_LOGGING_DEFINITIONS_H_
-# define KAA_LOGGING_DEFINITIONS_H_
+#ifndef KAA_HTONLL_H_
+#define KAA_HTONLL_H_
 
-# include "kaa_logging_gen.h"
+#include <stdint.h>
 
-# ifdef __cplusplus
-extern "C" {
-# endif
+uint64_t htonll(uint64_t hostlonglong);
 
-/**
- * @typedef User-defined log record structure.
- */
-typedef ${namespace}_${record_name}_t    kaa_user_log_record_t;
+uint64_t ntohll(uint64_t netlonglong);
 
-# define KAA_LOGGING_DESERIALIZE(reader)  ${namespace}_${record_name}_deserialize(reader)
-
-# ifdef __cplusplus
-}      /* extern "C" */
-# endif
-
-# endif /* KAA_LOGGING_DEFINITIONS_H_ */
+#endif /* KAA_HTONLL_H_ */

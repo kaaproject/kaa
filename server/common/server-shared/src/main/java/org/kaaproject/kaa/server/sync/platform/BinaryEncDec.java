@@ -112,6 +112,7 @@ public class BinaryEncDec implements PlatformEncDec {
     private static final int CLIENT_META_SYNC_PROFILE_HASH_OPTION = 0x04;
     private static final int CLIENT_META_SYNC_KEY_HASH_OPTION = 0x02;
     private static final int CLIENT_META_SYNC_TIMEOUT_OPTION = 0x01;
+    private static final int CLIENT_METASYNC_NOTIFICATION_HAS_TOPIC_LIST_HASH = 0x02;
 
     // Notification types
     static final byte SYSTEM = 0x00;
@@ -173,8 +174,8 @@ public class BinaryEncDec implements PlatformEncDec {
     private static final byte NF_SUBSCRIPTION_REMOVE_FIELD_ID = 3;
 
     // Notification server sync fields
-    private static final byte NF_NOTIFICATIONS_FIELD_ID = 0;
-    private static final byte NF_TOPICS_FIELD_ID = 1;
+    private static final byte NF_TOPICS_FIELD_ID = 0;
+    private static final byte NF_NOTIFICATIONS_FIELD_ID = 1;
 
     /*
      * (non-Javadoc)
@@ -419,6 +420,18 @@ public class BinaryEncDec implements PlatformEncDec {
         int extPosition = buf.position();
 
         buf.putInt(notificationSync.getAppStateSeqNumber());
+        if (notificationSync.getAvailableTopics() != null) {
+            buf.put(NF_TOPICS_FIELD_ID);
+            buf.put(NOTHING);
+            buf.putShort((short) notificationSync.getAvailableTopics().size());
+            for (Topic t : notificationSync.getAvailableTopics()) {
+                buf.putLong(Long.parseLong(t.getId()));
+                buf.put(t.getSubscriptionType() == SubscriptionType.MANDATORY ? MANDATORY : OPTIONAL);
+                buf.put(NOTHING);
+                buf.putShort((short) t.getName().getBytes(UTF8).length);
+                putUTF(buf, t.getName());
+            }
+        }
         if (notificationSync.getNotifications() != null) {
             buf.put(NF_NOTIFICATIONS_FIELD_ID);
             buf.put(NOTHING);
@@ -433,18 +446,6 @@ public class BinaryEncDec implements PlatformEncDec {
                 buf.putLong(topicId);
                 putUTF(buf, nf.getUid());
                 put(buf, nf.getBody().array());
-            }
-        }
-        if (notificationSync.getAvailableTopics() != null) {
-            buf.put(NF_TOPICS_FIELD_ID);
-            buf.put(NOTHING);
-            buf.putShort((short) notificationSync.getAvailableTopics().size());
-            for (Topic t : notificationSync.getAvailableTopics()) {
-                buf.putLong(Long.parseLong(t.getId()));
-                buf.putShort(t.getSubscriptionType() == SubscriptionType.MANDATORY ? MANDATORY : OPTIONAL);
-                buf.put(NOTHING);
-                buf.put((byte) t.getName().getBytes(UTF8).length);
-                putUTF(buf, t.getName());
             }
         }
 
@@ -512,7 +513,9 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     public void putUTF(GrowingByteBuffer buf, String str) {
-        put(buf, str.getBytes(UTF8));
+        if (str != null) {
+            put(buf, str.getBytes(UTF8));
+        }
     }
 
     private void put(GrowingByteBuffer buf, byte[] data) {
@@ -710,8 +713,11 @@ public class BinaryEncDec implements PlatformEncDec {
         sync.setEventSync(eventSync);
     }
 
-    private void parseNotificationClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
-        int payloadLimitPosition = buf.position() + payloadLength - TOPIC_LIST_HASH_SIZE;
+    private void  parseNotificationClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
+        int payloadLimitPosition = buf.position() + payloadLength;
+        if (hasOption(options, CLIENT_METASYNC_NOTIFICATION_HAS_TOPIC_LIST_HASH)) {
+            payloadLimitPosition -= TOPIC_LIST_HASH_SIZE;
+        }
         NotificationClientSync nfSync = new NotificationClientSync();
         nfSync.setAppStateSeqNumber(buf.getInt());
         while (buf.position() < payloadLimitPosition) {
@@ -733,7 +739,9 @@ public class BinaryEncDec implements PlatformEncDec {
                 break;
             }
         }
-        nfSync.setTopicListHash(getNewByteBuffer(buf, TOPIC_LIST_HASH_SIZE));
+        if (hasOption(options, CLIENT_METASYNC_NOTIFICATION_HAS_TOPIC_LIST_HASH)) {
+            nfSync.setTopicListHash(getNewByteBuffer(buf, TOPIC_LIST_HASH_SIZE));
+        }
         sync.setNotificationSync(nfSync);
     }
 
