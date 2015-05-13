@@ -166,3 +166,8 @@ add_executable  (test_kaa_common_schema
                     test/kaa_test_external.c
                 )
 target_link_libraries(test_kaa_common_schema kaac ${CUNIT_LIB_NAME})
+
+add_executable  (test_kaa_notification_manager
+                    test/test_kaa_notification.c
+                )
+target_link_libraries(test_kaa_notification_manager kaac ${CUNIT_LIB_NAME})
