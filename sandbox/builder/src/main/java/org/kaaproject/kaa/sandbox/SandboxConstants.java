@@ -50,4 +50,6 @@ public interface SandboxConstants {
     
     public static final String SANDBOX_FOLDER = "/usr/lib/kaa-sandbox";
     public static final String ADMIN_FOLDER = "/usr/lib/kaa-admin";
+
+    public static final String CASSANDRA_INIT_SCRIPT = "/usr/lib/kaa-control/conf/cassandra.cql";
 }
