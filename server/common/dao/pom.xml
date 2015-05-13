@@ -234,7 +234,7 @@
                                         <copy file="src/main/resources/dao.properties.template"
                                               tofile="src/main/resources/dao.properties" />
                                         <replace file="src/main/resources/dao.properties"
-                                                 token="#driver_name#" value="mongodb" />
+                                                 token="#nosql_provider_name#" value="mongodb" />
                                     </tasks>
                                 </configuration>
                             </execution>
@@ -262,7 +262,7 @@
                                         <copy file="src/main/resources/dao.properties.template"
                                               tofile="src/main/resources/dao.properties" />
                                         <replace file="src/main/resources/dao.properties"
-                                                 token="#driver_name#" value="cassandra" />
+                                                 token="#nosql_provider_name#" value="cassandra" />
                                     </tasks>
                                 </configuration>
                             </execution>
