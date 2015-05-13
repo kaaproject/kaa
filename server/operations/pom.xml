@@ -255,6 +255,11 @@
             <classifier>twitter</classifier>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+            <artifactId>mongo-dao</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
