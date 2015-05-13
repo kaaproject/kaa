@@ -344,6 +344,10 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
             }
         }
 
+        LOG.info("Executing Cassandra cql script...");
+        executeSudoSsh("cqlsh -f "+CASSANDRA_INIT_SCRIPT);
+        Thread.sleep(5000L);
+
         String changeKaaHostFileSource = changeKaaHostFileTemplate.replaceAll(STOP_SERVICES_VAR, stopServices)
                                                                   .replaceAll(SET_NEW_HOSTS, setNewHosts)
                                                                   .replaceAll(START_SERVICES_VAR, startServices);
@@ -395,7 +399,6 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
         scheduleSudoSshCommand("chown -R "+SSH_USERNAME+":"+SSH_USERNAME+" " + ADMIN_FOLDER + "/webapps");
         scheduleSudoSshCommand("sed -i \"s/\\(tenant_developer_user=\\).*\\$/\\1"+AbstractDemoBuilder.tenantDeveloperUser+"/\" " + ADMIN_FOLDER +"/conf/sandbox-server.properties");
         scheduleSudoSshCommand("sed -i \"s/\\(tenant_developer_password=\\).*\\$/\\1"+AbstractDemoBuilder.tenantDeveloperPassword+"/\" " + ADMIN_FOLDER +"/conf/sandbox-server.properties");
-        scheduleSudoSshCommand("cqlsh -f "+CASSANDRA_INIT_SCRIPT);
 
         String stopAdminCommand = osType.getStopServiceTemplate().
                 replaceAll(SERVICE_NAME_VAR, KaaPackage.ADMIN.getServiceName());
