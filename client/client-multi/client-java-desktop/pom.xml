@@ -139,6 +139,9 @@
                             <artifactSet>
                                 <excludes>
                                     <exclude>junit:junit</exclude>
+                                    <exclude>ch.qos.logback:logback-core</exclude>
+                                    <exclude>ch.qos.logback:logback-classic</exclude>
+                                    <exclude>org.slf4j:log4j-over-slf4j</exclude>
                                 </excludes>
                             </artifactSet>
                             <shadedClassifierName>sdk</shadedClassifierName>
