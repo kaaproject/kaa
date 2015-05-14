@@ -47,8 +47,7 @@ typedef void (*external_process_fn)(void *context);
  *
  * @return Error code.
  */
-kaa_error_t kaa_client_create(kaa_client_t **kaa_client,
-        kaa_client_props_t *props);
+kaa_error_t kaa_client_create(kaa_client_t **kaa_client, kaa_client_props_t *props);
 
 /**
  * @brief De-initializes and destroys Kaa client
@@ -66,16 +65,17 @@ void kaa_client_destroy(kaa_client_t *kaa_client);
  *
  * Start Kaa client IO loop.
  *
- * @param[in]   kaa_context         		Pointer to an Kaa client.
- * @param[in]	external_process    		Callback function to process something outside a main loop
- * @param[in]	external_process_context	Callback function context
- * @param[in]	time_t max_delay			Callback delay
+ * @param[in]   kaa_context                  Pointer to an Kaa client.
+ * @param[in]    external_process            Callback function to process something outside a main loop
+ * @param[in]    external_process_context    Callback function context
+ * @param[in]    time_t max_delay            Callback delay
  *
  * @return Error code.
  */
-kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
-        external_process_fn external_process, void *external_process_context,
-        time_t max_delay);
+kaa_error_t kaa_client_start(kaa_client_t *kaa_client
+                           , external_process_fn external_process
+                           , void *external_process_context
+                           , time_t max_delay);
 
 /**
  * @brief Stop Kaa client.
