@@ -20,26 +20,28 @@
 #include <sndc_sdk_api.h>
 #include <sndc_sock_api.h>
 #include <sndc_file_api.h>
+
 #include <stdbool.h>
 typedef long long int64_t;
-#include "kaa/kaa_error.h"
-#include "kaa/kaa_common.h"
-#include "kaa/kaa.h"
-#include "kaa/utilities/kaa_log.h"
-#include "kaa/platform/ext_sha.h"
-#include "kaa/platform/ext_transport_channel.h"
-#include "kaa/platform/ext_system_logger.h"
-#include "kaa/platform/time.h"
-#include "kaa/platform-impl/kaa_tcp_channel.h"
-#include "kaa/kaa_bootstrap_manager.h"
-#include "kaa/kaa_channel_manager.h"
-#include "kaa/kaa_configuration_manager.h"
-#include "kaa/kaa_logging.h"
-#include "kaa/platform/ext_log_storage.h"
-#include "kaa/platform/ext_log_upload_strategy.h"
-#include "kaa/platform-impl/Econais/EC19D/econais_ec19d_file_utils.h"
 
-#include "kaa/kaa_context.h"
+#include "../../../kaa_error.h"
+#include "../../../kaa_common.h"
+#include "../../../kaa.h"
+#include "../../../utilities/kaa_log.h"
+#include "../../../platform/ext_sha.h"
+#include "../../../platform/ext_transport_channel.h"
+#include "../../../platform/ext_system_logger.h"
+#include "../../../platform/time.h"
+#include "../../../platform-impl/kaa_tcp_channel.h"
+#include "../../../kaa_bootstrap_manager.h"
+#include "../../../kaa_channel_manager.h"
+#include "../../../kaa_configuration_manager.h"
+#include "../../../kaa_logging.h"
+#include "../../../platform/ext_log_storage.h"
+#include "../../../platform/ext_log_upload_strategy.h"
+#include "econais_ec19d_file_utils.h"
+
+#include "../../../kaa_context.h"
 
 #define KAA_CLIENT_T
 
@@ -71,7 +73,7 @@ struct kaa_client_t {
 
 #define KAA_DEMO_LOG_GENERATION_FREQUENCY    3 /* seconds */
 
-#include <kaa_client.h>
+#include "../../../platform/kaa_client.h"
 
 //Forward declaration of internal functions
 kaa_error_t kaa_init_security_stuff();
@@ -203,45 +205,52 @@ error:
     return error_code;
 }
 
-void kaa_client_destroy(kaa_client_t *self)
+kaa_error_t kaa_client_stop(kaa_client_t *kaa_client)
 {
-    if(!self)
+    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
+    kaa_client->operate = false;
+    return KAA_ERR_NONE;
+}
+
+void kaa_client_destroy(kaa_client_t *kaa_client)
+{
+    if(!kaa_client)
         return;
 
-    if (self->start_semophore) {
-        sndc_sem_destroy(self->start_semophore);
-        self->start_semophore = NULL;
+    if (kaa_client->start_semophore) {
+        sndc_sem_destroy(kaa_client->start_semophore);
+        kaa_client->start_semophore = NULL;
     }
 
-    if (self->logging_semophore) {
-        sndc_sem_destroy(self->logging_semophore);
-        self->logging_semophore = NULL;
+    if (kaa_client->logging_semophore) {
+        sndc_sem_destroy(kaa_client->logging_semophore);
+        kaa_client->logging_semophore = NULL;
     }
 
-    if (self->operations_channel.context) {
-        self->operations_channel.destroy(self->operations_channel.context);
-        self->operations_channel.context = NULL;
+    if (kaa_client->operations_channel.context) {
+        kaa_client->operations_channel.destroy(kaa_client->operations_channel.context);
+        kaa_client->operations_channel.context = NULL;
     }
 
-    if (self->bootstrap_channel.context) {
-        self->bootstrap_channel.destroy(self->bootstrap_channel.context);
-        self->bootstrap_channel.context = NULL;
+    if (kaa_client->bootstrap_channel.context) {
+        kaa_client->bootstrap_channel.destroy(kaa_client->bootstrap_channel.context);
+        kaa_client->bootstrap_channel.context = NULL;
     }
 
-    if (self->log_storage_context) {
-        ext_log_storage_destroy(self->log_storage_context);
-        self->log_storage_context = NULL;
+    if (kaa_client->log_storage_context) {
+        ext_log_storage_destroy(kaa_client->log_storage_context);
+        kaa_client->log_storage_context = NULL;
     }
 
-    if (self->kaa_context) {
-        kaa_deinit(self->kaa_context);
-        self->kaa_context = NULL;
+    if (kaa_client->kaa_context) {
+        kaa_deinit(kaa_client->kaa_context);
+        kaa_client->kaa_context = NULL;
     }
 
-    if (self->thread_name) {
-        sndc_mem_free(self->thread_name);
+    if (kaa_client->thread_name) {
+        sndc_mem_free(kaa_client->thread_name);
     }
-    sndc_mem_free(self);
+    sndc_mem_free(kaa_client);
 }
 
 kaa_context_t* kaa_client_get_context(kaa_client_t *kaa_client)
@@ -250,32 +259,32 @@ kaa_context_t* kaa_client_get_context(kaa_client_t *kaa_client)
     return kaa_client->kaa_context;
 }
 
-kaa_error_t kaa_client_init_operations_channel(kaa_client_t *self)
+kaa_error_t kaa_client_init_operations_channel(kaa_client_t *kaa_client)
 {
-    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
     kaa_error_t error_code = KAA_ERR_NONE;
-    KAA_LOG_TRACE(self->kaa_context->logger, KAA_ERR_NONE, "Start operations channel initialization");
-    error_code = kaa_tcp_channel_create(&self->operations_channel
-                                      , self->kaa_context->logger
+    KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Start operations channel initialization");
+    error_code = kaa_tcp_channel_create(&kaa_client->operations_channel
+                                      , kaa_client->kaa_context->logger
                                       , OPERATIONS_SERVICES
                                       , OPERATIONS_SERVICES_COUNT);
     if (error_code) {
-        KAA_LOG_ERROR(self->kaa_context->logger, error_code, "Operations channel initialization failed");
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Operations channel initialization failed");
         return error_code;
     }
 
-    KAA_LOG_TRACE(self->kaa_context->logger, KAA_ERR_NONE, "Initializing Kaa SDK Operations channel added to transport channel manager");
+    KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Initializing Kaa SDK Operations channel added to transport channel manager");
 
-    error_code = kaa_channel_manager_add_transport_channel(self->kaa_context->channel_manager
-                                                         , &self->operations_channel
-                                                         , &self->operations_channel_id);
+    error_code = kaa_channel_manager_add_transport_channel(kaa_client->kaa_context->channel_manager
+                                                         , &kaa_client->operations_channel
+                                                         , &kaa_client->operations_channel_id);
     if (error_code) {
-        KAA_LOG_ERROR(self->kaa_context->logger, error_code, "Error during Kaa operations channel setting as transport");
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Error during Kaa operations channel setting as transport");
         return error_code;
     }
 
-    KAA_LOG_INFO(self->kaa_context->logger, KAA_ERR_NONE, "Operations channel initialized successfully");
-    print_mem_stat(self);
+    KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Operations channel initialized successfully");
+    print_mem_stat(kaa_client);
     return error_code;
 }
 
@@ -306,75 +315,78 @@ kaa_error_t on_kaa_tcp_channel_event(void *context
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_client_deinit_bootstrap_channel(kaa_client_t *self)
+kaa_error_t kaa_client_deinit_bootstrap_channel(kaa_client_t *kaa_client)
 {
-    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
-    KAA_LOG_TRACE(self->kaa_context->logger, KAA_ERR_NONE, "Bootstrap channel deinitialization starting ....");
-    print_mem_stat(self);
+    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
+    KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Bootstrap channel deinitialization starting ....");
+    print_mem_stat(kaa_client);
     kaa_error_t error_code = KAA_ERR_NONE;
 
     error_code = kaa_channel_manager_remove_transport_channel(
-            self->kaa_context->channel_manager,self->bootstrap_channel_id);
+            kaa_client->kaa_context->channel_manager,kaa_client->bootstrap_channel_id);
 
     if (error_code) {
-        KAA_LOG_TRACE(self->kaa_context->logger, error_code, "Bootstrap channel error removing from channel manager");
+        KAA_LOG_TRACE(kaa_client->kaa_context->logger, error_code, "Bootstrap channel error removing from channel manager");
         return error_code;
     }
 
-    self->bootstrap_channel.context = NULL;
-    self->bootstrap_channel.destroy = NULL;
-    self->bootstrap_channel.get_protocol_id = NULL;
-    self->bootstrap_channel.get_supported_services = NULL;
-    self->bootstrap_channel.init = NULL;
-    self->bootstrap_channel.set_access_point = NULL;
-    self->bootstrap_channel.sync_handler = NULL;
+    kaa_client->bootstrap_channel.context = NULL;
+    kaa_client->bootstrap_channel.destroy = NULL;
+    kaa_client->bootstrap_channel.get_protocol_id = NULL;
+    kaa_client->bootstrap_channel.get_supported_services = NULL;
+    kaa_client->bootstrap_channel.init = NULL;
+    kaa_client->bootstrap_channel.set_access_point = NULL;
+    kaa_client->bootstrap_channel.sync_handler = NULL;
 
-    self->bootstrap_state = BOOTSRAP_UNDEF;
-    KAA_LOG_INFO(self->kaa_context->logger, KAA_ERR_NONE, "Bootstrap channel deinitialized");
+    kaa_client->bootstrap_state = BOOTSRAP_UNDEF;
+    KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Bootstrap channel deinitialized");
 
     return error_code;
 }
 
 
-kaa_error_t kaa_client_start(kaa_client_t *self)
+kaa_error_t kaa_client_start(kaa_client_t *kaa_client
+                           , external_process_fn external_process
+                           , void *external_process_context
+                           , time_t max_delay)
 {
-    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
-    KAA_LOG_TRACE(self->kaa_context->logger, KAA_ERR_NONE, "Kaa client starting ...");
-    print_mem_stat(self);
+    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
+    KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Kaa client starting ...");
+    print_mem_stat(kaa_client);
     kaa_error_t error_code = KAA_ERR_NONE;
 
-    error_code = kaa_tcp_channel_create(&self->bootstrap_channel
-                                      , self->kaa_context->logger
+    error_code = kaa_tcp_channel_create(&kaa_client->bootstrap_channel
+                                      , kaa_client->kaa_context->logger
                                       , BOOTSTRAP_SERVICE
                                       , BOOTSTRAP_SERVICE_COUNT);
     if (error_code) {
-        KAA_LOG_ERROR(self->kaa_context->logger, error_code, "Error during Kaa bootstrap channel creation");
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Error during Kaa bootstrap channel creation");
         return error_code;
     }
 
-    error_code = kaa_tcp_channel_set_socket_events_callback(&self->bootstrap_channel,
-                                                        on_kaa_tcp_channel_event, (void*)self);
+    error_code = kaa_tcp_channel_set_socket_events_callback(&kaa_client->bootstrap_channel,
+                                                        on_kaa_tcp_channel_event, (void*)kaa_client);
     if (error_code) {
-        KAA_LOG_ERROR(self->kaa_context->logger, error_code, "Error setting callback bootstrap channel");
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Error setting callback bootstrap channel");
         return error_code;
     }
 
 
-    KAA_LOG_TRACE(self->kaa_context->logger, KAA_ERR_NONE, "Kaa client - bootstrap channel initialized");
-    print_mem_stat(self);
+    KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Kaa client - bootstrap channel initialized");
+    print_mem_stat(kaa_client);
 
-    error_code = kaa_channel_manager_add_transport_channel(self->kaa_context->channel_manager
-                                                         , &self->bootstrap_channel
-                                                         , &self->bootstrap_channel_id);
+    error_code = kaa_channel_manager_add_transport_channel(kaa_client->kaa_context->channel_manager
+                                                         , &kaa_client->bootstrap_channel
+                                                         , &kaa_client->bootstrap_channel_id);
 
     if (error_code) {
-        KAA_LOG_ERROR(self->kaa_context->logger, error_code, "Error setting bootstrap channel setting as transport");
+        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Error setting bootstrap channel setting as transport");
         return error_code;
     }
 
     //Push running thread
-    sndc_sem_post(&self->start_semophore);
-    KAA_LOG_INFO(self->kaa_context->logger, KAA_ERR_NONE, "Kaa client started");
+    sndc_sem_post(&kaa_client->start_semophore);
+    KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Kaa client started");
 
     return KAA_ERR_NONE;
 }
@@ -741,60 +753,59 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
 
 }
 
-/*
- * Example code for logging
- */
-kaa_error_t kaa_client_log_record(kaa_client_t *kaa_client, const char *record)
-{
-    if (!kaa_client || !record) {
-        return KAA_ERR_BADPARAM;
-    }
-
-    kaa_logging_record_t * kaa_record = kaa_logging_record_create();
-    if (!kaa_record) {
-        KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-                KAA_ERR_NOT_INITIALIZED,
-                "Failed to allocate log record");
-        return KAA_ERR_NOT_INITIALIZED;
-    }
-
-    kaa_record->body = kaa_string_move_create(record, NULL);
-
-    //Wait until thread sleep in select()
-    sndc_sem_wait(&kaa_client->logging_semophore);
-
-    kaa_error_t error_code = kaa_logging_add_record(kaa_client->kaa_context->log_collector, kaa_record);
-    if (error_code) {
-        KAA_LOG_ERROR(kaa_client->kaa_context->logger,
-                error_code,
-                "Failed to add log record");
-    }
-
-    KAA_LOG_DEBUG(kaa_client->kaa_context->logger,
-                    KAA_ERR_NONE,
-                    "Kaa record %s logged", record);
-
-    kaa_record->destroy(kaa_record);
-
-
-    return KAA_ERR_NONE;
-}
+///*
+// * Example code for logging
+// */
+//kaa_error_t kaa_client_log_record(kaa_client_t *kaa_client, const char *record)
+//{
+//    if (!kaa_client || !record) {
+//        return KAA_ERR_BADPARAM;
+//    }
+//
+//    kaa_logging_record_t * kaa_record = kaa_logging_record_create();
+//    if (!kaa_record) {
+//        KAA_LOG_ERROR(kaa_client->kaa_context->logger,
+//                KAA_ERR_NOT_INITIALIZED,
+//                "Failed to allocate log record");
+//        return KAA_ERR_NOT_INITIALIZED;
+//    }
+//
+//    kaa_record->body = kaa_string_move_create(record, NULL);
+//
+//    //Wait until thread sleep in select()
+//    sndc_sem_wait(&kaa_client->logging_semophore);
+//
+//    kaa_error_t error_code = kaa_logging_add_record(kaa_client->kaa_context->log_collector, kaa_record);
+//    if (error_code) {
+//        KAA_LOG_ERROR(kaa_client->kaa_context->logger,
+//                error_code,
+//                "Failed to add log record");
+//    }
+//
+//    KAA_LOG_DEBUG(kaa_client->kaa_context->logger,
+//                    KAA_ERR_NONE,
+//                    "Kaa record %s logged", record);
+//
+//    kaa_record->destroy(kaa_record);
+//
+//    return KAA_ERR_NONE;
+//}
 
 /**
  * Example code for configuration update
  */
-kaa_error_t kaa_client_configuration_update(kaa_client_t *kaa_client, const kaa_root_configuration_t *configuration)
-{
-    if (!kaa_client || !configuration) {
-        return KAA_ERR_BADPARAM;
-    }
-    sndc_printf("New configuration update.... timeout %d\n", configuration->timeout);
-
-    KAA_LOG_DEBUG(kaa_client->kaa_context->logger,
-                    KAA_ERR_NONE,
-                    "New configuration update.... timeout %d", configuration->timeout);
-    return KAA_ERR_NONE;
-}
+//kaa_error_t kaa_client_configuration_update(kaa_client_t *kaa_client, const kaa_root_configuration_t *configuration)
+//{
+//    if (!kaa_client || !configuration) {
+//        return KAA_ERR_BADPARAM;
+//    }
+//    sndc_printf("New configuration update.... timeout %d\n", configuration->timeout);
+//
+//    KAA_LOG_DEBUG(kaa_client->kaa_context->logger,
+//                    KAA_ERR_NONE,
+//                    "New configuration update.... timeout %d", configuration->timeout);
+//    return KAA_ERR_NONE;
+//}
 
 void ext_write_log(FILE * sink, const char * buffer, size_t message_size)
 {
