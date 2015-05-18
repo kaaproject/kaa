@@ -534,11 +534,6 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
         scp.setLocalTodir(LOG_DUMP_LOCATION);
         scp.setFile(SSH_USERNAME+"@"+sshForwardPort+":/var/log/kaa/*.log");
         scp.execute();
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     private Scp createScp() {
