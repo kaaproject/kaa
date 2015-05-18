@@ -16,11 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.profile;
 
-import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +26,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
@@ -126,7 +124,12 @@ public class DefaultProfileService implements ProfileService {
             dto.setNfSequenceNumber(0);
             dto.setChangedFlag(Boolean.FALSE);
 
-            cacheService.putEndpointKey(keyHash, generateEndpointKey(dto.getEndpointKey()));
+            try {
+                cacheService.putEndpointKey(keyHash, KeyUtil.getPublic(dto.getEndpointKey()));
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                LOG.error("Can't generate public key for endpoint key: {}. Reason: {}", dto.getEndpointKey(), e);
+                throw new RuntimeException(e);
+            }
 
             return endpointService.saveEndpointProfile(dto);
         } else {
@@ -215,15 +218,5 @@ public class DefaultProfileService implements ProfileService {
         LOG.trace("Profile json : {} ", profileJson);
 
         return profileJson;
-    }
-
-    private PublicKey generateEndpointKey(byte[] endpointKey) {
-        try {
-            X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(endpointKey);
-            KeyFactory keyFact = KeyFactory.getInstance("RSA");
-            return keyFact.generatePublic(x509KeySpec);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
