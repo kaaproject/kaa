@@ -204,7 +204,6 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     @Override
     public void start() {
         context.getExecutorContext().init();
-        logCollector.scheduleAtFixedRateLogUpload();
         getLifeCycleExecutor().submit(new Runnable() {
             @Override
             public void run() {

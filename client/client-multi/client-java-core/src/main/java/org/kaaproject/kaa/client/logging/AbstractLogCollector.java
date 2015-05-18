@@ -48,7 +48,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     public static final long MAX_BATCH_VOLUME = 512 * 1024; // Framework
                                                             // limitation
-    private final static long INITIAL_DELAY = 60L;
+    private final static long DELAY = 60L;
     private final static long PERIOD = 5 * 60L;
 
     protected final ExecutorContext executorContext;
@@ -156,6 +156,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         switch (decision) {
         case UPLOAD:
             if (!isUploading) {
+                scheduleLogUpload();
                 isUploading = true;
                 transport.sync();
             }
@@ -228,14 +229,14 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         }
     }
 
-    public final void scheduleAtFixedRateLogUpload() {
-        executorContext.getScheduledExecutor().scheduleAtFixedRate(new Runnable() {
+    public final void scheduleLogUpload() {
+        executorContext.getScheduledExecutor().schedule(new Runnable() {
             @Override
             public void run() {
                 if (!isDeliveryTimeout()) {
                     uploadIfNeeded();
                 }
             }
-        }, INITIAL_DELAY, PERIOD, TimeUnit.SECONDS);
+        }, DELAY, TimeUnit.SECONDS);
     }
 }
