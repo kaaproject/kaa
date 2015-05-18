@@ -343,10 +343,8 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
                 }
             }
         }
-
         LOG.info("Executing Cassandra cql script...");
         executeSudoSsh("cqlsh -f "+CASSANDRA_INIT_SCRIPT);
-        Thread.sleep(5000L);
 
         String changeKaaHostFileSource = changeKaaHostFileTemplate.replaceAll(STOP_SERVICES_VAR, stopServices)
                                                                   .replaceAll(SET_NEW_HOSTS, setNewHosts)
