@@ -40,7 +40,7 @@ This app demonstrates Kaa event subsystem capabilities on Android platform.
 This app demonstrates Kaa event subsystem capabilities on iOS platform.
             ]]>
 		</details>
-        <platform>iOS</platform>
+        <platform>C</platform>
         <features>EVENT USER_VERIFIER</features>
         <sourceArchive>iotworld/smarthome/ios/smarthome.tar.gz</sourceArchive>
         <projectFolder>smarthome/ios/SmartHome</projectFolder>
