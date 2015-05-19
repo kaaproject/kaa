@@ -16,9 +16,10 @@
 
 package org.kaaproject.kaa.client.logging;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -34,12 +35,14 @@ import org.junit.Test;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.context.ExecutorContext;
+import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode;
 import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.schema.base.Log;
 import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class DefaultLogCollectorTest {
 
@@ -220,6 +223,72 @@ public class DefaultLogCollectorTest {
         uploadResponse.setDeliveryStatuses(Collections.singletonList(status));
         logCollector.onLogResponse(uploadResponse);
         verify(transport, Mockito.timeout(1000).times(2)).sync();
+    }
+
+    @Test
+    public void testLogUploadAndFailureResponse() throws IOException, InterruptedException {
+        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        LogTransport transport = Mockito.mock(LogTransport.class);
+
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
+        DefaultLogUploadStrategy strategy = Mockito.spy(new DefaultLogUploadStrategy());
+        strategy.setRetryPeriod(0);
+        logCollector.setStrategy(strategy);
+        LogStorage storage = Mockito.mock(LogStorage.class);
+        logCollector.setStorage(storage);
+
+        Log record = new Log();
+        Mockito.when(storage.getStatus()).thenReturn(new LogStorageStatus() {
+            @Override
+            public long getRecordCount() {
+                return 1;
+            }
+
+            @Override
+            public long getConsumedVolume() {
+                return 1;
+            }
+        });
+
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        logCollector.addLogRecord(record);
+        Mockito.when(storage.getStatus()).thenReturn(new LogStorageStatus() {
+
+            @Override
+            public long getRecordCount() {
+                return 1;
+            }
+
+            @Override
+            public long getConsumedVolume() {
+                return 1024 * 1024;
+            }
+        });
+        logCollector.addLogRecord(record);
+
+        Mockito.when(storage.getRecordBlock(Mockito.anyLong())).thenReturn(
+                new LogBlock(1, Arrays.asList(new LogRecord(record), new LogRecord(record), new LogRecord(record))));
+
+        LogSyncRequest request1 = new LogSyncRequest();
+        logCollector.fillSyncRequest(request1);
+
+        Assert.assertEquals(3, request1.getLogEntries().size());
+
+        LogSyncResponse uploadResponse = new LogSyncResponse();
+        LogDeliveryStatus status = new LogDeliveryStatus(request1.getRequestId(), SyncResponseResultType.FAILURE,
+                LogDeliveryErrorCode.NO_APPENDERS_CONFIGURED);
+        uploadResponse.setDeliveryStatuses(Collections.singletonList(status));
+        logCollector.onLogResponse(uploadResponse);
+
+        LogFailoverCommand controller = (LogFailoverCommand) ReflectionTestUtils.getField(logCollector, "controller");
+        verify(strategy, Mockito.timeout(1000)).onFailure(controller, LogDeliveryErrorCode.NO_APPENDERS_CONFIGURED);
+        verify(transport, Mockito.timeout(1000).times(2)).sync();
+        reset(transport);
+        Thread.sleep(1000);
+        verify(transport, never()).sync();
     }
 
     @Test
