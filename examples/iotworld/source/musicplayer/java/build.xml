@@ -27,7 +27,12 @@
         <antcall target="clean"></antcall>
         <mkdir dir="src/build/classes"/>
         <mkdir dir="src/build/jar"/>
-        <javac srcdir="src" destdir="src/build/classes" classpathref="classpath"/>
+        <javac srcdir="src" destdir="src/build/classes" classpathref="classpath" includeantruntime="false"/>
+        <unzip dest="src/build/classes">
+            <fileset dir="res">
+                <include name="*.jar"/>
+            </fileset>
+        </unzip>
         <jar destfile="build/jar/MusicPlayer.jar">
             <fileset file="res/album.png" />
             <fileset file="res/logback.xml" />
