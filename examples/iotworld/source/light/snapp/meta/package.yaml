@@ -1,0 +1,10 @@
+name: lightsrvc
+vendor: Andrew Kokhanovskyi <akokhanovksyi@cybervisiontech.com>
+version: 1.0.0
+services:
+ - name: light
+   description: "light control service"
+   start: ./bin/light
+integration:
+    light:
+        apparmor: meta/light.apparmor

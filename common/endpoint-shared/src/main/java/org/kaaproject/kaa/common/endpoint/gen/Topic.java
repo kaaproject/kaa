@@ -7,7 +7,7 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class Topic extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Topic\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"subscriptionType\",\"type\":{\"type\":\"enum\",\"name\":\"SubscriptionType\",\"symbols\":[\"MANDATORY\",\"OPTIONAL\"]}}],\"direction\":\"in\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Topic\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"subscriptionType\",\"type\":{\"type\":\"enum\",\"name\":\"SubscriptionType\",\"symbols\":[\"MANDATORY_SUBSCRIPTION\",\"OPTIONAL_SUBSCRIPTION\"]}}],\"direction\":\"in\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String id;
    private java.lang.String name;

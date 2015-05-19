@@ -1,0 +1,10 @@
+name: fansrvc
+vendor: Andrew Kokhanovskyi <akokhanovksyi@cybervisiontech.com>
+version: 1.0.0
+services:
+ - name: fan
+   description: "fan control service"
+   start: ./bin/fan
+integration:
+    fan:
+        apparmor: meta/fan.apparmor

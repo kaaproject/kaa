@@ -71,9 +71,12 @@ ITransportConnectionInfoPtr createTransportInfo(const std::int32_t& accessPointI
 
 const BootstrapServers& getBootstrapServers()
 {
-    static BootstrapServers listOfServers = { createTransportInfo(0x4c22e496, 0xfb9a3cf0, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJvTnE/W607EBl/4dA81Lo1HJcEbJRa24zIYqFxKRFCD5rhI35siAb9ZS5i8G0u3Kffz2YdB71WFut1q7c4xhvHf1LaMlu/hDz8G1vfqcHvV6VAsaJz7vcQ5oHqQhlIgv+1iI6A9z/4qNRe5sZ3h0kN3zdJk2rA/L/FVrfM36fNfK6cNDkXeD75mhGhgyXhrW0zkt8mHF9m1k9fBA5sarkwKNT0WP+TUY8oB6Rkr1dcdOYW4tuuR0dWxngtn1j2Oghm2DCHxx4FGse3IdQHIsIeMmcR5/JXPOCE1arqe0Pk6HYJ/jtSBqTvKqb8k+54RrvauyfD+V04/nWZulHpuNZMCAwEAAQAAAAwxOTIuMTY4Ljc3LjIAACah")
-                                          , createTransportInfo(0x4c22e496, 0x56c8ff92, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJvTnE/W607EBl/4dA81Lo1HJcEbJRa24zIYqFxKRFCD5rhI35siAb9ZS5i8G0u3Kffz2YdB71WFut1q7c4xhvHf1LaMlu/hDz8G1vfqcHvV6VAsaJz7vcQ5oHqQhlIgv+1iI6A9z/4qNRe5sZ3h0kN3zdJk2rA/L/FVrfM36fNfK6cNDkXeD75mhGhgyXhrW0zkt8mHF9m1k9fBA5sarkwKNT0WP+TUY8oB6Rkr1dcdOYW4tuuR0dWxngtn1j2Oghm2DCHxx4FGse3IdQHIsIeMmcR5/JXPOCE1arqe0Pk6HYJ/jtSBqTvKqb8k+54RrvauyfD+V04/nWZulHpuNZMCAwEAAQAAAAwxOTIuMTY4Ljc3LjIAACag") };
-    std::random_shuffle(listOfServers.begin(), listOfServers.end());
+    static BootstrapServers listOfServers;
+    if (listOfServers.empty()) {
+        listOfServers.push_back(createTransportInfo(0x4c22e496, 0xfb9a3cf0, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJvTnE/W607EBl/4dA81Lo1HJcEbJRa24zIYqFxKRFCD5rhI35siAb9ZS5i8G0u3Kffz2YdB71WFut1q7c4xhvHf1LaMlu/hDz8G1vfqcHvV6VAsaJz7vcQ5oHqQhlIgv+1iI6A9z/4qNRe5sZ3h0kN3zdJk2rA/L/FVrfM36fNfK6cNDkXeD75mhGhgyXhrW0zkt8mHF9m1k9fBA5sarkwKNT0WP+TUY8oB6Rkr1dcdOYW4tuuR0dWxngtn1j2Oghm2DCHxx4FGse3IdQHIsIeMmcR5/JXPOCE1arqe0Pk6HYJ/jtSBqTvKqb8k+54RrvauyfD+V04/nWZulHpuNZMCAwEAAQAAAAwxOTIuMTY4Ljc3LjIAACah"));
+        listOfServers.push_back(createTransportInfo(0x4c22e496, 0x56c8ff92, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJvTnE/W607EBl/4dA81Lo1HJcEbJRa24zIYqFxKRFCD5rhI35siAb9ZS5i8G0u3Kffz2YdB71WFut1q7c4xhvHf1LaMlu/hDz8G1vfqcHvV6VAsaJz7vcQ5oHqQhlIgv+1iI6A9z/4qNRe5sZ3h0kN3zdJk2rA/L/FVrfM36fNfK6cNDkXeD75mhGhgyXhrW0zkt8mHF9m1k9fBA5sarkwKNT0WP+TUY8oB6Rkr1dcdOYW4tuuR0dWxngtn1j2Oghm2DCHxx4FGse3IdQHIsIeMmcR5/JXPOCE1arqe0Pk6HYJ/jtSBqTvKqb8k+54RrvauyfD+V04/nWZulHpuNZMCAwEAAQAAAAwxOTIuMTY4Ljc3LjIAACag"));
+        std::random_shuffle(listOfServers.begin(), listOfServers.end());
+    }
     return listOfServers;
 }
 

@@ -96,7 +96,7 @@ public class DataCollectionDemo {
     public static List<LogData> generateLogs(int logCount) {
         List<LogData> logs = new LinkedList<LogData>();
         for (int i = 0; i < logCount; i++) {
-            logs.add(new LogData(Level.INFO, "TAG", "MESSAGE_" + i));
+            logs.add(new LogData(Level.KAA_INFO, "TAG", "MESSAGE_" + i));
         }
         return logs;
     }

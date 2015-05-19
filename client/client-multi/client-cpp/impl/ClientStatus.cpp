@@ -154,7 +154,7 @@ void ClientParameter<DetailedTopicStates>::save(std::ostream &os)
 
             os << "[" << convertToByteArrayString(it->second.topicId) << ","
                         << convertToByteArrayString(it->second.topicName) << ","
-                        << (it->second.subscriptionType == SubscriptionType::MANDATORY ? "m," : "v,")
+                        << (it->second.subscriptionType == SubscriptionType::MANDATORY_SUBSCRIPTION ? "m," : "v,")
                         << it->second.sequenceNumber << "]";
         }
         os << std::endl;
@@ -278,7 +278,7 @@ void ClientParameter<DetailedTopicStates>::read(const std::string &strValue)
             DetailedTopicState ts;
             ts.topicId = convertFromByteArrayString(topicId);
             ts.topicName = convertFromByteArrayString(topicName);
-            ts.subscriptionType = (sType.compare("m") == 0 ? SubscriptionType::MANDATORY : SubscriptionType::OPTIONAL);
+            ts.subscriptionType = (sType.compare("m") == 0 ? SubscriptionType::MANDATORY_SUBSCRIPTION : SubscriptionType::OPTIONAL_SUBSCRIPTION);
             ts.sequenceNumber = topicSN;
 
             value_.insert(std::make_pair(ts.topicId, ts));

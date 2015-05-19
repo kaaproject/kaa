@@ -18,6 +18,7 @@ find_package(OpenSSL REQUIRED)
 
 set(KAA_SOURCE_FILES 
         ${KAA_SOURCE_FILES}
+        ${KAA_SRC_FOLDER}/platform-impl/posix/posix_kaa_client.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/sha.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/logger.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/posix_file_utils.c

@@ -1,0 +1,27 @@
+[
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.fan",
+ "type": "enum"  ,
+ "classType": "object",
+ "name": "FanStatus",
+ "symbols" : ["ON", "OFF"]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.fan",
+ "type": "record",
+ "classType": "event",
+ "name": "SwitchRequest",
+ "fields": [
+    {"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.fan.FanStatus"}
+  ]
+},
+{
+ "namespace": "org.kaaproject.kaa.demo.iotworld.fan",
+ "type": "record",
+ "classType": "event",
+ "name": "FanStatusUpdate",
+ "fields": [
+     {"name": "status", "type": "org.kaaproject.kaa.demo.iotworld.fan.FanStatus"}
+ ]
+}
+]
