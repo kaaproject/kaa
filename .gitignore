@@ -27,4 +27,5 @@ sandbox/web/src/main/java/org/kaaproject/kaa/sandbox/web/shared/Version.java
 pom.xml.versionsBackup
 /examples/*/source/java/res/*.jar
 /examples/iotworld/source/*/java/res/*.jar
+/examples/citylights-controller/source/res/*.jar
 .DS_Store
