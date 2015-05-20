@@ -100,7 +100,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.basedir}/source/irrigation/java/res</outputDirectory>
+                            <outputDirectory>${project.basedir}/source/irrigation/java/lib</outputDirectory>
                             <includeArtifactIds>logback-core,logback-classic,log4j-over-slf4j</includeArtifactIds>
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>
@@ -114,7 +114,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.basedir}/source/musicplayer/java/res</outputDirectory>
+                            <outputDirectory>${project.basedir}/source/musicplayer/java/lib</outputDirectory>
                             <includeArtifactIds>logback-core,logback-classic,log4j-over-slf4j</includeArtifactIds>
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>
@@ -128,7 +128,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.basedir}/source/photoplayer/java/res</outputDirectory>
+                            <outputDirectory>${project.basedir}/source/photoplayer/java/lib</outputDirectory>
                             <includeArtifactIds>logback-core,logback-classic,log4j-over-slf4j</includeArtifactIds>
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>

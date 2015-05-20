@@ -28,11 +28,6 @@
         <mkdir dir="src/build/classes"/>
         <mkdir dir="src/build/jar"/>
         <javac srcdir="src" destdir="src/build/classes" classpathref="classpath" includeantruntime="false"/>
-        <unzip dest="src/build/classes">
-            <fileset dir="res">
-                <include name="*.jar"/>
-            </fileset>
-        </unzip>
         <jar destfile="build/jar/DataCollectionDemo.jar">
             <fileset file="res/logback.xml" />
             <fileset dir="src/build/classes">
