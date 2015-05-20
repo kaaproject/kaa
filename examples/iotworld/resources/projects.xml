@@ -37,7 +37,7 @@ This app demonstrates Kaa event subsystem capabilities on Android platform.
 		<description>Smart home iOS app demonstrates Kaa event subsystem capabilities</description>
 		<details>
             <![CDATA[
-This app demonstrates Kaa event subsystem capabilities on Android platform.
+This app demonstrates Kaa event subsystem capabilities on iOS platform.
             ]]>
 		</details>
         <platform>C</platform>
