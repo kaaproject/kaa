@@ -14,24 +14,29 @@
  * limitations under the License.
  */
 
-# ifndef KAA_LOGGING_DEFINITIONS_H_
-# define KAA_LOGGING_DEFINITIONS_H_
+# ifndef KAA_NOTIFICATION_GEN_H_
+# define KAA_NOTIFICATION_GEN_H_
 
-# include "kaa_logging_gen.h"
+# include "../kaa_common_schema.h"
+# include "../collections/kaa_list.h"
 
 # ifdef __cplusplus
 extern "C" {
 # endif
 
-/**
- * @typedef User-defined log record structure.
- */
-typedef ${namespace}_${record_name}_t    kaa_user_log_record_t;
 
-# define KAA_LOGGING_DESERIALIZE(reader)  ${namespace}_${record_name}_deserialize(reader)
+typedef struct {
+    kaa_string_t * message;
 
-# ifdef __cplusplus
+    serialize_fn serialize;
+    get_size_fn  get_size;
+    destroy_fn   destroy;
+} kaa_notification_notification_t;
+
+kaa_notification_notification_t *kaa_notification_notification_create();
+kaa_notification_notification_t *kaa_notification_notification_deserialize(avro_reader_t reader);
+
+#ifdef __cplusplus
 }      /* extern "C" */
-# endif
-
-# endif /* KAA_LOGGING_DEFINITIONS_H_ */
+#endif
+#endif

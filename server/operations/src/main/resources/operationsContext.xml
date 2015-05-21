@@ -72,7 +72,7 @@
         <property name="locateExistingServerIfPossible" value="true" />
     </bean>
 
-    <!-- EHCAHCE -->
+    <!-- EHCACHE -->
 
     <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:config-location="ehcache.xml" />
 

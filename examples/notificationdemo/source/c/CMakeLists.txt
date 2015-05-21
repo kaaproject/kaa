@@ -14,10 +14,24 @@
 # limitations under the License.
 #
 
-set (KAA_SOURCE_FILES  ${KAA_SOURCE_FILES}
-                       ${KAA_SRC_FOLDER}/kaa_event.c
-                       ${KAA_SRC_FOLDER}/gen/kaa_profile_gen.c
-                       ${KAA_SRC_FOLDER}/gen/kaa_logging_gen.c
-                       ${KAA_SRC_FOLDER}/gen/kaa_configuration_gen.c
-                       ${KAA_SRC_FOLDER}/gen/kaa_notification_gen.c
+cmake_minimum_required(VERSION 2.8.8)
+
+project (C-SDK-sample)
+enable_language(C)
+
+find_package (OpenSSL REQUIRED)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -g -Wall -Wextra")
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
+                    ${CMAKE_CURRENT_SOURCE_DIR}/libs/kaa/src
+                   )
+
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build)
+
+set (SAMPLE_SOURCE_FILES
+            src/kaa_demo.c
 )
+
+add_executable(${APP_NAME} ${SAMPLE_SOURCE_FILES})
+target_link_libraries(${APP_NAME} kaac crypto)

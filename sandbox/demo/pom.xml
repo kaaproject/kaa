@@ -452,6 +452,14 @@
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>notificationdemo</artifactId>
+            <version>${project.version}</version>
+            <classifier>notification-src-c</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>connectedcar</artifactId>
             <version>${project.version}</version>
             <classifier>connectedcar-resources</classifier>
@@ -1139,6 +1147,16 @@
                                     <type>tar.gz</type>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/cpp</outputDirectory>
+                                    <destFileName>notification_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>notificationdemo</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>notification-src-c</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/c</outputDirectory>
                                     <destFileName>notification_demo.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>

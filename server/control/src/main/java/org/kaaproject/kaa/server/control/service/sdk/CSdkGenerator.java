@@ -77,13 +77,21 @@ public class CSdkGenerator extends SdkGenerator {
 
     private static final String KAA_CMAKEGEN         = "listfiles/CMakeGen.cmake";
     private static final String KAA_DEFAULTS_HEADER  = KAA_SRC_FOLDER + "/kaa_defaults.h";
-    private static final String LOG_HEADER           = KAA_GEN_SOURCE_DIR + "kaa_logging_definitions.h";
+
+    private static final String LOGGING_HEADER       = KAA_GEN_SOURCE_DIR + "kaa_logging_definitions.h";
     private static final String PROFILE_HEADER       = KAA_GEN_SOURCE_DIR + "kaa_profile_definitions.h";
     private static final String CONFIGURATION_HEADER = KAA_GEN_SOURCE_DIR + "kaa_configuration_definitions.h";
+    private static final String NOTIFICATION_HEADER  = KAA_GEN_SOURCE_DIR + "kaa_notification_definitions.h";
 
-    private static final String KAA_PROFILE_SOURCE_NAME_PATTERN       = "kaa_profile_gen";
-    private static final String KAA_LOG_SOURCE_NAME_PATTERN           = "kaa_logging_gen";
-    private static final String KAA_CONFIGURATION_SOURCE_NAME_PATTERN = "kaa_configuration_gen";
+    private static final String PROFILE_SOURCE_NAME_PATTERN       = "kaa_profile_gen";
+    private static final String LOGGING_SOURCE_NAME_PATTERN       = "kaa_logging_gen";
+    private static final String CONFIGURATION_SOURCE_NAME_PATTERN = "kaa_configuration_gen";
+    private static final String NOTIFICATION_SOURCE_NAME_PATTERN  = "kaa_notification_gen";
+
+    private static final String PROFILE_NAMESPACE       = KAA_SOURCE_PREFIX + "_" + "profile";
+    private static final String LOGGING_NAMESPACE       = KAA_SOURCE_PREFIX + "_" + "logging";
+    private static final String CONFIGURATION_NAMESPACE = KAA_SOURCE_PREFIX + "_" + "configuration";
+    private static final String NOTIFICATION_NAMESPACE  = KAA_SOURCE_PREFIX + "_" + "notification";
 
     private final VelocityEngine velocityEngine;
 
@@ -147,6 +155,10 @@ public class CSdkGenerator extends SdkGenerator {
 
         if (!StringUtils.isBlank(configurationBaseSchemaBody)) {
             cSources.addAll(generateConfigurationSources(configurationBaseSchemaBody));
+        }
+
+        if (!StringUtils.isBlank(notificationSchemaBody)) {
+            cSources.addAll(generateNotificationSources(notificationSchemaBody));
         }
 
         if (eventFamilies != null && !eventFamilies.isEmpty()) {
@@ -240,7 +252,7 @@ public class CSdkGenerator extends SdkGenerator {
             OutputStream sourceStream = new ByteArrayOutputStream();
         ) {
             Compiler compiler = new Compiler(schema, sourceName, headerStream, sourceStream);
-            compiler.setNamespacePrefix(KAA_SOURCE_PREFIX + "_" + namespace);
+            compiler.setNamespacePrefix(namespace);
             compiler.generate();
 
             tarEntries.add(createTarEntry(KAA_GEN_SOURCE_DIR + sourceName + C_HEADER_SUFFIX, headerStream.toString()));
@@ -258,9 +270,10 @@ public class CSdkGenerator extends SdkGenerator {
         return writer.toString();
     }
 
-    private String processHeaderTemplate(String templateName, Schema schema) {
+    private String processHeaderTemplate(String templateName, Schema schema, String namespace) {
         VelocityContext context = new VelocityContext();
         context.put("record_name", StyleUtils.toLowerUnderScore(schema.getName()));
+        context.put("namespace", namespace);
         return generateSourceFromTemplate(TEMPLATE_DIR + File.separator + templateName, context);
     }
 
@@ -325,9 +338,10 @@ public class CSdkGenerator extends SdkGenerator {
         Schema schema = new Schema.Parser().parse(profileSchemaBody);
         List<TarEntryData> tarEntries = new LinkedList<>();
 
-        tarEntries.add(createTarEntry(PROFILE_HEADER, processHeaderTemplate("kaa_profile_definitions.vm", schema)));
+        tarEntries.add(createTarEntry(PROFILE_HEADER,
+                                      processHeaderTemplate("kaa_profile_definitions.vm", schema, PROFILE_NAMESPACE)));
 
-        tarEntries.addAll(generateSourcesFromSchema(schema, KAA_PROFILE_SOURCE_NAME_PATTERN, "profile"));
+        tarEntries.addAll(generateSourcesFromSchema(schema, PROFILE_SOURCE_NAME_PATTERN, PROFILE_NAMESPACE));
 
         return tarEntries;
     }
@@ -336,9 +350,10 @@ public class CSdkGenerator extends SdkGenerator {
         Schema schema = new Schema.Parser().parse(logSchemaBody);
         List<TarEntryData> tarEntries = new LinkedList<>();
 
-        tarEntries.add(createTarEntry(LOG_HEADER, processHeaderTemplate("kaa_logging_definitions.vm", schema)));
+        tarEntries.add(createTarEntry(LOGGING_HEADER,
+                                      processHeaderTemplate("kaa_logging_definitions.vm", schema, LOGGING_NAMESPACE)));
 
-        tarEntries.addAll(generateSourcesFromSchema(schema, KAA_LOG_SOURCE_NAME_PATTERN, "logging"));
+        tarEntries.addAll(generateSourcesFromSchema(schema, LOGGING_SOURCE_NAME_PATTERN, LOGGING_NAMESPACE));
 
         return tarEntries;
     }
@@ -348,9 +363,21 @@ public class CSdkGenerator extends SdkGenerator {
         List<TarEntryData> tarEntries = new LinkedList<>();
 
         tarEntries.add(createTarEntry(CONFIGURATION_HEADER,
-                                      processHeaderTemplate("kaa_configuration_definitions.vm", schema)));
+                                      processHeaderTemplate("kaa_configuration_definitions.vm", schema, CONFIGURATION_NAMESPACE)));
 
-        tarEntries.addAll(generateSourcesFromSchema(schema, KAA_CONFIGURATION_SOURCE_NAME_PATTERN, "configuration"));
+        tarEntries.addAll(generateSourcesFromSchema(schema, CONFIGURATION_SOURCE_NAME_PATTERN, CONFIGURATION_NAMESPACE));
+
+        return tarEntries;
+    }
+
+    private List<TarEntryData> generateNotificationSources(String notificationSchemaBody) {
+        Schema schema = new Schema.Parser().parse(notificationSchemaBody);
+        List<TarEntryData> tarEntries = new LinkedList<>();
+
+        tarEntries.add(createTarEntry(NOTIFICATION_HEADER,
+                                      processHeaderTemplate("kaa_notification_definitions.vm", schema, NOTIFICATION_NAMESPACE)));
+
+        tarEntries.addAll(generateSourcesFromSchema(schema, NOTIFICATION_SOURCE_NAME_PATTERN, NOTIFICATION_NAMESPACE));
 
         return tarEntries;
     }
