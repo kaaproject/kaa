@@ -31,16 +31,22 @@ public class Utils {
     }
 
     public static KaaAdminServiceException handleException(Exception exception, boolean logException) {
+        return handleExceptionWithCause(exception, null, null, logException);
+    }
+
+    public static KaaAdminServiceException handleExceptionWithCause(Exception exceptionWithCause, Class expectedCauseClass,
+                                                                    String errorMessage, boolean logException) {
         if (logException) {
-            logger.error("Unexpected exception catched!", exception);
+            logger.error("Unexpected exception catched!", exceptionWithCause);
         }
-        if (exception instanceof KaaAdminServiceException) {
-            return (KaaAdminServiceException)exception;
-        }
-        else {
-            KaaAdminServiceException kaaAdminServiceException =
-                    new KaaAdminServiceException(exception.getMessage(), ServiceErrorCode.GENERAL_ERROR);
-            return kaaAdminServiceException;
+
+        Class causeClass = exceptionWithCause.getCause().getClass();
+        if (exceptionWithCause instanceof KaaAdminServiceException) {
+            return (KaaAdminServiceException) exceptionWithCause;
+        } else if (causeClass != null && causeClass.equals(expectedCauseClass)) {
+            return new KaaAdminServiceException(errorMessage, ServiceErrorCode.GENERAL_ERROR);
+        } else {
+            return new KaaAdminServiceException(exceptionWithCause.getMessage(), ServiceErrorCode.GENERAL_ERROR);
         }
     }
     

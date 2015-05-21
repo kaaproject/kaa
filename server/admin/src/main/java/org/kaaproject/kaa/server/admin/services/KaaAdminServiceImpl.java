@@ -1300,7 +1300,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
             return toDto(clientProvider.getClient().editConfiguration(toDataStruct(configuration)));
         } catch (Exception e) {
-            throw Utils.handleException(e);
+            throw Utils.handleExceptionWithCause(e, StaleObjectStateException.class,
+                    "Someone has already updated the configuration. Reload page to be able to edit it.", true);
         }
     }
 
