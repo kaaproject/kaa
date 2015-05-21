@@ -256,7 +256,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         configurationDto.setStatus(UpdateStatus.INACTIVE);
         configurationDto.setLastModifyTime(System.currentTimeMillis());
-        return getDto(configurationDao.save(new Configuration(configurationDto)));
+        return getDto(configurationDao.save(new Configuration(configurationDto), Configuration.class));
     }
 
     private void validateUuids(ConfigurationDto currentConfiguration, ConfigurationDto previousConfiguration, ConfigurationSchemaDto configurationSchema) {
