@@ -29,6 +29,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import java.io.Serializable;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_ACTIVATED_TIME;
@@ -48,6 +49,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTU
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_SEQUENCE_NUMBER;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_STATUS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_OPTIMISTIC_LOCK;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
@@ -109,6 +111,14 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
     @JoinColumn(name = ABSTRACT_STRUCTURE_ENDPOINT_GROUP_ID, nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     protected EndpointGroup endpointGroup;
+
+    @Version
+    @Column(name = ABSTRACT_STRUCTURE_OPTIMISTIC_LOCK)
+    private Long version;
+
+    public Long getVersion() {
+        return version;
+    }
 
     public AbstractStructure() {
     }

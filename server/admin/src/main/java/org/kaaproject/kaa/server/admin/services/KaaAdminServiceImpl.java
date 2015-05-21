@@ -39,6 +39,7 @@ import net.iharder.Base64;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
 import org.apache.avro.generic.GenericRecord;
+import org.hibernate.StaleObjectStateException;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
 import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
 import org.kaaproject.avro.ui.shared.RecordField;
@@ -1311,6 +1312,9 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             ConfigurationDto toSave = toConfigurationDto(configuration);
             ConfigurationDto stored = editConfiguration(toSave);
             return toConfigurationRecordFormDto(stored);
+        } catch (StaleObjectStateException e) {
+            throw new KaaAdminServiceException("Someone has already updated the configuration. Reload page to be able to edit it.",
+                    ServiceErrorCode.GENERAL_ERROR);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
