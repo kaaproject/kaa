@@ -40,10 +40,10 @@ public class Utils {
             logger.error("Unexpected exception catched!", exceptionWithCause);
         }
 
-        Class causeClass = exceptionWithCause.getCause().getClass();
+        Throwable cause = exceptionWithCause.getCause();
         if (exceptionWithCause instanceof KaaAdminServiceException) {
             return (KaaAdminServiceException) exceptionWithCause;
-        } else if (causeClass != null && causeClass.equals(expectedCauseClass)) {
+        } else if (cause != null && cause.getClass().equals(expectedCauseClass)) {
             return new KaaAdminServiceException(errorMessage, ServiceErrorCode.GENERAL_ERROR);
         } else {
             return new KaaAdminServiceException(exceptionWithCause.getMessage(), ServiceErrorCode.GENERAL_ERROR);
