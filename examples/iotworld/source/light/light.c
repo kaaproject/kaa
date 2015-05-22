@@ -72,7 +72,7 @@ static const char *geofencing_state = "geofencing_state";
 static const char *brightness_state = "brightness_state";
 static const char *name_state = "name_state";
 
-kaa_list_t *subscribers_list = NULL;
+kaa_list_t *subscribers_list = kaa_list_create();
 
 void send_bulb_list_status_update(kaa_endpoint_id_p source, bool is_status_request);
 void persist_geofencing_state();
@@ -502,44 +502,34 @@ void kaa_on_device_status_subscription_request(void *context
                                              , kaa_endpoint_id_p source)
 {
     KAA_RETURN_IF_NIL(source,);
-    kaa_list_t *test_subscr_list = NULL;
-    kaa_endpoint_id_p source_p = NULL;
-    if (subscribers_list == NULL) {
-        source_p = (kaa_endpoint_id_p) KAA_MALLOC(KAA_ENDPOINT_ID_LENGTH);
-        KAA_RETURN_IF_NIL(source_p,);
-        memcpy(source_p, source, 20);
-        test_subscr_list = kaa_list_create(source_p);
-    } else {
-        kaa_list_t *subs_node = subscribers_list;
-        while (subs_node) {
-            kaa_endpoint_id_p subscriber = (kaa_endpoint_id_p) kaa_list_get_data(subs_node);
-            if (!memcmp(subscriber, source, KAA_ENDPOINT_ID_LENGTH)) {
-                return;
-            }
-            subs_node = kaa_list_next(subs_node);
+
+    kaa_list_node_t *it = kaa_list_begin(subscribers_list);
+    while (it) {
+        kaa_endpoint_id_p subscriber = (kaa_endpoint_id_p) kaa_list_get_data(it);
+        if (!memcmp(subscriber, source, KAA_ENDPOINT_ID_LENGTH)) {
+            return;
         }
-        source_p = (kaa_endpoint_id_p) KAA_MALLOC(KAA_ENDPOINT_ID_LENGTH);
-        KAA_RETURN_IF_NIL(source_p,);
-        memcpy(source_p, source, 20);
-        test_subscr_list = kaa_list_push_front(subscribers_list, source_p);
+        it = kaa_list_next(it);
     }
-    if (test_subscr_list) {
-        subscribers_list = test_subscr_list;
-    }
+    kaa_endpoint_id_p source_p = (kaa_endpoint_id_p) KAA_MALLOC(KAA_ENDPOINT_ID_LENGTH);
+    KAA_RETURN_IF_NIL(source_p,);
+    memcpy(source_p, source, KAA_ENDPOINT_ID_LENGTH);
+    kaa_list_push_front(subscribers_list, source_p);
+
     event->destroy(event);
     send_bulb_list_status_update(source, true);
 }
 
-void send_bulb_list_status_update(kaa_endpoint_id_p source, bool is_status_request) {
+void send_bulb_list_status_update(kaa_endpoint_id_p source, bool is_status_request)
+{
     kaa_light_event_class_family_bulb_list_status_update_t *response =
             kaa_light_event_class_family_bulb_list_status_update_create();
 
-    kaa_list_t *bulbs_info_list = NULL;
+    kaa_list_t *bulbs_info_list = kaa_list_create();
 
     int i = gpios_count;
     char bulb_id[2] = { 0, 0 };
-    kaa_list_t *current_node_listener = subscribers_list;
-    kaa_list_t *bulb_info_node = bulbs_info_list;
+
     while (i--) {
         kaa_light_event_class_family_bulb_info_t *bulb_info = kaa_light_event_class_family_bulb_info_create();
         bulb_info->brightness = get_brightness(i);
@@ -549,32 +539,25 @@ void send_bulb_list_status_update(kaa_endpoint_id_p source, bool is_status_reque
         bulb_info->status = get_bulb_state(i);
         bulb_info->ignore_brightness_update = 0;
 
-        kaa_list_t *test_info_list = NULL;
-        if (bulbs_info_list == NULL) {
-            test_info_list = kaa_list_create(bulb_info);
-        } else {
-            test_info_list = kaa_list_push_front(bulbs_info_list, bulb_info);
-        }
-        if (test_info_list) {
-            bulbs_info_list = test_info_list;
-        }
+        kaa_list_push_front(bulbs_info_list, bulb_info);
     }
 
     response->bulbs = kaa_light_event_class_family_union_array_bulb_info_or_null_branch_0_create();
     response->bulbs->data = bulbs_info_list;
 
     if (source) {
+        kaa_list_node_t *current_node_listener = kaa_list_begin(subscribers_list);
         while (current_node_listener) {
             kaa_endpoint_id_p endpoint = (kaa_endpoint_id_p) kaa_list_get_data(current_node_listener);
             if ((!memcmp(endpoint, source, KAA_ENDPOINT_ID_LENGTH)) && !is_status_request) {
                 current_node_listener = kaa_list_next(current_node_listener);
-                bulb_info_node = bulbs_info_list;
                 continue;
             }
-            kaa_event_manager_send_kaa_light_event_class_family_bulb_list_status_update(kaa_client_get_context(kaa_client)->event_manager,
-                    response, endpoint);
+            kaa_event_manager_send_kaa_light_event_class_family_bulb_list_status_update(
+                                                            kaa_client_get_context(kaa_client)->event_manager
+                                                          , response
+                                                          , endpoint);
             current_node_listener = kaa_list_next(current_node_listener);
-            bulb_info_node = bulbs_info_list;
         }
     } else {
         kaa_event_manager_send_kaa_light_event_class_family_bulb_list_status_update(kaa_client_get_context(kaa_client)->event_manager,

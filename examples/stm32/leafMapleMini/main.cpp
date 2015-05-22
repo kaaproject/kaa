@@ -195,26 +195,23 @@ void checkFencingPosition(rfid_t rfid)
     if (configuration) {
         int new_zone_id = UNKNOWN_GEOFENCING_ZONE_ID;
 
-        kaa_list_t *zones_it = configuration->zones;
-        while (zones_it && (new_zone_id != UNKNOWN_GEOFENCING_ZONE_ID)) {
+        kaa_list_node_t *zones_it = kaa_list_begin(configuration->zones);
+        while (zones_it && (new_zone_id == UNKNOWN_GEOFENCING_ZONE_ID)) {
             kaa_configuration_geo_fencing_zone_t *zone = (kaa_configuration_geo_fencing_zone_t *)kaa_list_get_data(zones_it);
-            if (current_zone_id != zone->id) {
-                kaa_list_t *zone_tag_it = zone->tags;
-                while (zone_tag_it && (new_zone_id != UNKNOWN_GEOFENCING_ZONE_ID)) {
-                    int64_t *tag = (int64_t *)kaa_list_get_data(zone_tag_it);
-                    if (*tag == rfid) {
-                        new_zone_id = zone->id;
-                    }
-                    zone_tag_it = kaa_list_next(zone_tag_it);
+            kaa_list_node_t *zone_tag_it = kaa_list_begin(zone->tags);
+
+            while (zone_tag_it && (new_zone_id == UNKNOWN_GEOFENCING_ZONE_ID)) {
+                int64_t *tag = (int64_t *)kaa_list_get_data(zone_tag_it);
+                if (*tag == rfid) {
+                    new_zone_id = zone->id;
                 }
+
+                zone_tag_it = kaa_list_next(zone_tag_it);
             }
             zones_it = kaa_list_next(zones_it);
         }
 
-        if (new_zone_id != UNKNOWN_GEOFENCING_ZONE_ID) {
-            debug("New zone detected, id=%d", new_zone_id);
-            notifyOfNewFencingZone(new_zone_id);
-        }
+        notifyOfNewFencingZone(new_zone_id);
     } else {
         debug("Skip check fencing position: configuration is null\r\n");
     }

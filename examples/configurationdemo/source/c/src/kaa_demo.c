@@ -42,13 +42,11 @@ void kaa_demo_print_configuration_message(const kaa_root_configuration_t *config
     if (configuration->address_list->type == KAA_CONFIGURATION_UNION_ARRAY_LINK_OR_NULL_BRANCH_0) {
         printf("Configuration body:\n");
 
-        kaa_list_t *list_of_links = (kaa_list_t*) configuration->address_list->data;
-        kaa_configuration_link_t* current_link = NULL;
-
-        while (list_of_links) {
-            current_link = (kaa_configuration_link_t*) kaa_list_get_data(list_of_links);
+        kaa_list_node_t *it = kaa_list_begin((kaa_list_t*) configuration->address_list->data);
+        while (it) {
+            kaa_configuration_link_t* current_link = (kaa_configuration_link_t*) kaa_list_get_data(it);
             printf("%s - %s\n", current_link->label->data,current_link->url->data);
-            list_of_links = kaa_list_next(list_of_links);
+            it = kaa_list_next(it);
         }
     } else {
         printf("Configuration body: null\n");
