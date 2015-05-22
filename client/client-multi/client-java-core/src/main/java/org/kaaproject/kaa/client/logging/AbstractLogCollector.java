@@ -152,19 +152,25 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     }
 
-    private void processUploadDecision(LogUploadStrategyDecision decision) {
+    private void processUploadDecision(LogUploadStrategyDecision decision, boolean scheduleUpload) {
         switch (decision) {
-        case UPLOAD:
-            if (!isUploading) {
-                scheduleLogUpload();
-                isUploading = true;
-                transport.sync();
-            }
-            break;
-        case NOOP:
-        default:
-            break;
+            case UPLOAD:
+                if (!isUploading) {
+                    if (scheduleUpload) {
+                        scheduleLogUpload();
+                    }
+                    isUploading = true;
+                    transport.sync();
+                }
+                break;
+            case NOOP:
+            default:
+                break;
         }
+    }
+
+    private void processUploadDecision(LogUploadStrategyDecision decision) {
+        processUploadDecision(decision, true);
     }
 
     protected boolean isDeliveryTimeout() {
@@ -198,8 +204,12 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         return isTimeout;
     }
 
+    protected void uploadIfNeeded(boolean scheduleUpload) {
+        processUploadDecision(strategy.isUploadNeeded(storage.getStatus()), scheduleUpload);
+    }
+
     protected void uploadIfNeeded() {
-        processUploadDecision(strategy.isUploadNeeded(storage.getStatus()));
+        processUploadDecision(strategy.isUploadNeeded(storage.getStatus()), true);
     }
 
     private class DefaultLogUploadController implements LogFailoverCommand {
@@ -234,7 +244,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
             @Override
             public void run() {
                 if (!isDeliveryTimeout()) {
-                    uploadIfNeeded();
+                    uploadIfNeeded(false);
                 }
             }
         }, DELAY, TimeUnit.SECONDS);
