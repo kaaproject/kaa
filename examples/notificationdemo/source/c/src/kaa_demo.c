@@ -27,9 +27,7 @@
 
 
 
-static kaa_client_t *kaa_client = NULL;
-
-
+#define KAA_DEMO_UNUSED(x) (void)(x);
 
 #define KAA_DEMO_RETURN_IF_ERROR(error, message) \
     if ((error)) { \
@@ -39,8 +37,13 @@ static kaa_client_t *kaa_client = NULL;
 
 
 
+static kaa_client_t *kaa_client = NULL;
+
+
+
 void on_notification(void *context, uint64_t *topic_id, kaa_notification_t *notification)
 {
+    KAA_DEMO_UNUSED(context);
     static short notifications_received = 2;
     if (notification->message->type == KAA_NOTIFICATION_UNION_STRING_OR_NULL_BRANCH_0) {
         kaa_string_t *message = (kaa_string_t *)notification->message->data;
@@ -81,13 +84,12 @@ void on_topics_received(void *context, kaa_list_t *topics)
 
     kaa_error_t err = KAA_ERR_NONE;
     kaa_client_t *client = (kaa_client_t *)context;
-
     kaa_list_node_t *it = kaa_list_begin(topics);
     while (it) {
         kaa_topic_t *topic = (kaa_topic_t *) kaa_list_get_data(it);
         if (topic->subscription_type == OPTIONAL_SUBSCRIPTION) {
             printf("Subscribing to optional topic '%lu'\n", topic->id);
-            err = kaa_subscribe_to_topic(kaa_client_get_context(kaa_client)->notification_manager, &topic->id, false);
+            err = kaa_subscribe_to_topic(kaa_client_get_context(client)->notification_manager, &topic->id, false);
             if (err) {
                 printf("Failed to subscribe.\n");
             }

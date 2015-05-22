@@ -72,7 +72,7 @@ static const char *geofencing_state = "geofencing_state";
 static const char *brightness_state = "brightness_state";
 static const char *name_state = "name_state";
 
-kaa_list_t *subscribers_list = kaa_list_create();
+static kaa_list_t *subscribers_list = NULL;
 
 void send_bulb_list_status_update(kaa_endpoint_id_p source, bool is_status_request);
 void persist_geofencing_state();
@@ -619,6 +619,8 @@ kaa_error_t kaa_on_attach_failed(void *context, user_verifier_error_code_t error
 int main(/*int argc, char *argv[]*/)
 {
     printf("Light control demo started\n");
+
+    subscribers_list = kaa_list_create();
 
     init_bulbs();
 
