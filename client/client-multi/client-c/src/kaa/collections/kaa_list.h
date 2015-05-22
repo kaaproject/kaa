@@ -39,9 +39,9 @@ typedef bool (*match_predicate)(void *data, void *context);
 typedef void (*deallocate_list_data)(void *);
 
 /**
- * @brief Use to process element data but not modifying it.
+ * @brief Use to process element data.
  */
-typedef void (*process_data)(const void * const);
+typedef void (*process_data)(void *data, void *context);
 
 /**
  * @brief Creates empty list.
@@ -55,12 +55,12 @@ kaa_list_t *kaa_list_create();
 void kaa_list_destroy(kaa_list_t *list, deallocate_list_data deallocator);
 
 /**
- * @brief Removes all elements from the list (which are destroyed), and leaving the container with a size of 0.
+ * @brief Removes all elements from the list (which are destroyed), and leaving the list with a size of 0.
  */
 void kaa_list_clear(kaa_list_t *list, deallocate_list_data deallocator);
 
 /**
- * @brief Returns the number of elements in the list container.
+ * @brief Returns the number of elements in the list.
  * @return The number of elements or NULL if the list is NULL.
  */
 size_t kaa_list_get_size(kaa_list_t *list);
@@ -78,16 +78,28 @@ kaa_list_node_t *kaa_list_push_front(kaa_list_t *list, void *data);
 kaa_list_node_t *kaa_list_push_back(kaa_list_t *list, void *data);
 
 /**
- * @brief Returns an iterator pointing to the first element in the list container.
+ * @brief Returns an iterator pointing to the first element in the list.
  * @return An iterator or NULL if the list is NULL.
  */
 kaa_list_node_t *kaa_list_begin(kaa_list_t *list);
+
+/**
+ * @brief Returns an iterator pointing to the last element in the list.
+ * @return An iterator or NULL if the list is NULL.
+ */
+kaa_list_node_t *kaa_list_back(kaa_list_t *list);
 
 /**
  * @brief Gets iterator to the next element.
  * @return An iterator or NULL if the provided iterator is NULL.
  */
 kaa_list_node_t *kaa_list_next(kaa_list_node_t *it);
+
+/**
+ * @brief Gets iterator to the previous element.
+ * @return An iterator or NULL if the provided iterator is NULL.
+ */
+kaa_list_node_t *kaa_list_prev(kaa_list_node_t *it);
 
 /**
  * @brief Gets data from the iterator.
@@ -108,22 +120,27 @@ kaa_list_node_t *kaa_list_find_next(kaa_list_node_t *from, match_predicate pred,
 
 /**
  * @brief Merges the source list into the destination list by transferring all of its elements at their respective
- * ordered positions at the end of the container.
+ * ordered positions at the end of the source list.
  * @return The result list which contains all merged elements.
  */
 kaa_list_t *kaa_lists_merge(kaa_list_t *destination, kaa_list_t *source);
 
 /**
- * @brief Removes from the list container a single element.
+ * @brief Removes from the list a single element.
  * @return An iterator pointing to the element that followed the last element erased by the function call or NULL.
  */
 kaa_list_node_t *kaa_list_remove_at(kaa_list_t *list, kaa_list_node_t *it, deallocate_list_data deallocator);
 
 /**
- * @brief Removes from the container the first element for which the predicate returns true.
+ * @brief Removes from the list the first element for which the predicate returns true.
  * @return KAA_ERR_NONE if element was found.
  */
 kaa_error_t kaa_list_remove_first(kaa_list_t *list, match_predicate pred, void *context, deallocate_list_data deallocator);
+
+/**
+ * @brief Applies the function process to each of the elements in the range [first,last].
+ */
+void kaa_list_for_each(kaa_list_node_t *first, kaa_list_node_t *last, process_data process, void *context);
 
 #ifdef __cplusplus
 } // extern "C"
