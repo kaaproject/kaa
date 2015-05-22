@@ -114,9 +114,9 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
 
     @Version
     @Column(name = ABSTRACT_STRUCTURE_OPTIMISTIC_LOCK)
-    private Long version;
+    private long version;
 
-    public Long getVersion() {
+    public long getVersion() {
         return version;
     }
 
