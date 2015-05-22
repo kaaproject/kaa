@@ -85,6 +85,11 @@ kaa_list_node_t *kaa_list_next(kaa_list_node_t *it)
     return (it ? it->next : NULL);
 }
 
+kaa_list_node_t *kaa_list_prev(kaa_list_node_t *it)
+{
+    return (it ? it->prev : NULL);
+}
+
 kaa_list_t *kaa_lists_merge(kaa_list_t *destination_head, kaa_list_t *tail)
 {
     KAA_RETURN_IF_NIL(destination_head, tail);
@@ -153,6 +158,12 @@ kaa_list_node_t *kaa_list_begin(kaa_list_t *list)
 {
     KAA_RETURN_IF_NIL(list, NULL);
     return list->head;
+}
+
+kaa_list_node_t *kaa_list_back(kaa_list_t *list)
+{
+    KAA_RETURN_IF_NIL(list, NULL);
+    return list->tail;
 }
 
 void kaa_list_clear(kaa_list_t *list, deallocate_list_data deallocator)
@@ -240,3 +251,15 @@ kaa_list_node_t *kaa_list_find_next(kaa_list_node_t *from, match_predicate pred,
     return NULL;
 }
 
+void kaa_list_for_each(kaa_list_node_t *first, kaa_list_node_t *last, process_data process, void *context)
+{
+    KAA_RETURN_IF_NIL3(first, last, process, );
+    while (first) {
+        process(first->data, context);
+        if (first == last) {
+            break;
+        }
+
+        first = kaa_list_next(first);
+    }
+}

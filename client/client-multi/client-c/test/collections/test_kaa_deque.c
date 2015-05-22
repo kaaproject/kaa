@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include "kaa_test.h"
+#include "../kaa_test.h"
 
 #include "collections/kaa_deque.h"
 #include <string.h>
 
-void test_kaa_deque_create()
+void test_list_push_front()
 {
     kaa_error_t error_code = kaa_deque_create(NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_BADPARAM);
@@ -423,7 +423,7 @@ void test_kaa_deque_iterator_api()
 
 KAA_SUITE_MAIN(Deque, NULL, NULL
         ,
-        KAA_TEST_CASE(create, test_kaa_deque_create)
+        KAA_TEST_CASE(create, test_list_push_front)
         KAA_TEST_CASE(destroy, test_kaa_deque_destroy)
         KAA_TEST_CASE(first_last, test_kaa_deque_first_last)
         KAA_TEST_CASE(pop_front_back, test_kaa_deque_pop_front_back)

@@ -165,6 +165,8 @@ void test_deserializing()
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     notification->destroy(notification);
+
+    KAA_TRACE_OUT(context->logger);
 }
 
 void test_notification_listeners_adding_and_removing()
@@ -208,6 +210,8 @@ void test_notification_listeners_adding_and_removing()
 
     err = kaa_remove_optional_notification_listener(context->notification_manager, &topic_id, &id2);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
+
+    KAA_TRACE_OUT(context->logger);
 }
 
 void test_topic_list_listeners_adding_and_removing()
@@ -233,6 +237,8 @@ void test_topic_list_listeners_adding_and_removing()
 
     err = kaa_remove_topic_list_listener(context->notification_manager, &id2);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
+
+    KAA_TRACE_OUT(context->logger);
 }
 
 void test_retrieving_topic_list()
@@ -243,8 +249,9 @@ void test_retrieving_topic_list()
 
     size_t topics_size = kaa_list_get_size(topics);
     ASSERT_EQUAL(topics_size, 1);
-}
 
+    KAA_TRACE_OUT(context->logger);
+}
 
 void test_serializing()
 {
@@ -261,8 +268,12 @@ void test_serializing()
     err = kaa_platform_protocol_serialize_client_sync(context->platfrom_protocol, info, &buffer, &buffer_size);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
+    KAA_FREE(buffer);
     KAA_FREE(info);
+
+    KAA_TRACE_OUT(context->logger);
 }
+
 void test_subscriptions()
 {
     KAA_TRACE_IN(context->logger);
@@ -287,6 +298,7 @@ void test_subscriptions()
     err = kaa_unsubscribe_from_topics(context->notification_manager, existing_ids, 1, false);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
+    KAA_TRACE_OUT(context->logger);
 }
 
 KAA_SUITE_MAIN(Notification, test_init, test_deinit
