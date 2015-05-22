@@ -20,8 +20,9 @@
 
 #include "application.h"
 #include "sndc_sdk_api.h"
+
 typedef long long int64_t;
-#include "kaa/kaa.h"
+
 #include "kaa/kaa_profile.h"
 #include "kaa/kaa_configuration_manager.h"
 #include "kaa/kaa_context.h"
@@ -30,7 +31,7 @@ typedef long long int64_t;
 #include "kaa/utilities/kaa_mem.h"
 
 #include "kaa/gen/kaa_logging_definitions.h"
-#include "kaa_client.h"
+#include "kaa/platform/kaa_client.h"
 
 
 /* API level that the application is using */
@@ -245,7 +246,7 @@ static void APP_main()
                 IO_PIN_DRIVE_DEFAULT,
                 IO_PIN_SLEW_RATE_DEFAULT);
    sndc_io_setMode(BUTTON, IO_MODE_KEY);
-   
+
    sndc_device_config = sndc_config_get();
 
    /* clean all profiles */
@@ -256,7 +257,7 @@ static void APP_main()
    //infinite thread loop, button press is monitored by system events
    while(1)
    {
-      
+
       if (ip_connected && !kaa_started) {
           kaa_client_start(kaa_client);
           kaa_started = true;
@@ -353,11 +354,11 @@ static bool_t APP_handle_msg(sndc_appmsg_msg_t* msg)
          }
          break;
       }
-      
+
       default:
          break;
    }
-   
+
    return consumed;
 }
 
