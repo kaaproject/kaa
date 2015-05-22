@@ -41,7 +41,8 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
     protected String body;
     protected UpdateStatus status;
     protected long endpointCount;
-    
+    protected Long version;
+
     public AbstractStructureDto() {}
     
     public AbstractStructureDto(AbstractStructureDto other) {
@@ -64,6 +65,7 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
         this.body = other.body;
         this.status = other.status;
         this.endpointCount = other.endpointCount;
+        this.version = other.version;
     }
 
     @Override
@@ -220,6 +222,14 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
         this.endpointCount = endpointCount;
     }
 
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -288,6 +298,7 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
                 ", minorVersion=" + minorVersion +
                 ", lastModifyTime=" + lastModifyTime +
                 ", status=" + status +
+                ", version=" + version +
                 '}';
     }
 

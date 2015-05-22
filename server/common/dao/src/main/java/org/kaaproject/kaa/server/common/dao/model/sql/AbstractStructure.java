@@ -28,6 +28,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import java.io.Serializable;
@@ -114,9 +115,9 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
 
     @Version
     @Column(name = ABSTRACT_STRUCTURE_OPTIMISTIC_LOCK)
-    private long version;
+    private Long version;
 
-    public long getVersion() {
+    public Long getVersion() {
         return version;
     }
 
@@ -148,6 +149,7 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
             this.application = appId != null ? new Application(appId) : null;
             Long groupId = getLongId(dto.getEndpointGroupId());
             this.endpointGroup = groupId != null ? new EndpointGroup(groupId) : null;
+            this.version = dto.getVersion();
         }
     }
 
@@ -307,6 +309,7 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
         dto.setDeactivatedUsername(deactivatedUsername);
         dto.setStatus(status);
         dto.setEndpointCount(endpointCount);
+        dto.setVersion(version);
         return dto;
     }
 
