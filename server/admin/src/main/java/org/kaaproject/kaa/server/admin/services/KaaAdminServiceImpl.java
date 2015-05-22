@@ -114,6 +114,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -1300,8 +1301,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
             return toDto(clientProvider.getClient().editConfiguration(toDataStruct(configuration)));
         } catch (Exception e) {
-            throw Utils.handleExceptionWithCause(e, StaleObjectStateException.class,
-                    "Someone has already updated the configuration. Reload page to be able to edit it.", true);
+            throw Utils.handleExceptionWithCause(e, HibernateOptimisticLockingFailureException.class,
+                    "Someone has already updated the configuration. Reload page to be able to edit it", true);
         }
     }
 

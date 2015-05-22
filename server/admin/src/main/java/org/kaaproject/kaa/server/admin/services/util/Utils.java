@@ -16,8 +16,10 @@
 
 package org.kaaproject.kaa.server.admin.services.util;
 
+import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
+import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +42,16 @@ public class Utils {
             logger.error("Unexpected exception catched!", exceptionWithCause);
         }
 
-        Throwable cause = exceptionWithCause.getCause();
+        String cause = "";
+        if (exceptionWithCause.getClass().equals(ControlThriftException.class)) {
+            cause = ((ControlThriftException)exceptionWithCause).getCauseExceptionClass();
+        } else if (exceptionWithCause.getCause() != null) {
+            cause = exceptionWithCause.getClass().getCanonicalName();
+        }
+
         if (exceptionWithCause instanceof KaaAdminServiceException) {
             return (KaaAdminServiceException) exceptionWithCause;
-        } else if (cause != null && cause.getClass().equals(expectedCauseClass)) {
+        } else if (StringUtils.isNotBlank(cause) && cause.equals(expectedCauseClass.getCanonicalName())) {
             return new KaaAdminServiceException(errorMessage, ServiceErrorCode.GENERAL_ERROR);
         } else {
             return new KaaAdminServiceException(exceptionWithCause.getMessage(), ServiceErrorCode.GENERAL_ERROR);
