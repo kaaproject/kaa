@@ -20,12 +20,12 @@
 namespace kaa {
 
 enum class LogLevel {
-    TRACE = 0,
-    DEBUG,
-    INFO,
-    WARNING,
-    ERROR,
-    FATAL
+    KAA_TRACE = 0,
+    KAA_DEBUG,
+    KAA_INFO,
+    KAA_WARNING,
+    KAA_ERROR,
+    KAA_FATAL
 };
 
 class ILogger {

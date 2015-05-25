@@ -16,6 +16,8 @@
 package org.kaaproject.kaa.server.appenders.rest.appender;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -32,6 +34,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
@@ -61,6 +64,7 @@ public class RestLogAppender extends AbstractLogAppender<RestConfig> {
     private ExecutorService executor;
     private CloseableHttpClient client;
     private HttpHost target;
+    private URI targetURI;
     private RestConfig configuration;
     private boolean closed = false;
 
@@ -105,6 +109,14 @@ public class RestLogAppender extends AbstractLogAppender<RestConfig> {
             LOG.warn("Attempt to append data to already stopped appender");
             listener.onInternalError();
         }
+        if(targetURI == null){
+            try {
+                targetURI = new URIBuilder().setHost(target.getHostName()).setPort(target.getPort()).setScheme(target.getSchemeName()).setPath(configuration.getPath()).build();
+            } catch (URISyntaxException e) {
+                LOG.warn("[{}] failed to build request URI", this.getApplicationToken(), e);
+                listener.onInternalError();
+            }
+        }
         LOG.trace("[{}] appending {} logs to rest endpoint", this.getApplicationToken(), logEventPack.getEvents().size());
         final RestConfig configuration = this.configuration;
         try {
@@ -116,6 +128,8 @@ public class RestLogAppender extends AbstractLogAppender<RestConfig> {
                         try {
                             LOG.trace("[{}] appending {} to rest endpoint", RestLogAppender.this.getApplicationToken(), dto);
                             final HttpRequest request = createRequest(configuration, dto);
+                            LOG.trace("[{}] executing {}", RestLogAppender.this.getApplicationToken(), request.getRequestLine());
+                            
                             CloseableHttpResponse response = client.execute(target, request);
                             try {
                                 int responseCode = response.getStatusLine().getStatusCode();
@@ -146,15 +160,16 @@ public class RestLogAppender extends AbstractLogAppender<RestConfig> {
         }
     }
 
-    private HttpRequest createRequest(RestConfig configuration, LogEventDto dto) {
+    private HttpRequest createRequest(RestConfig configuration, LogEventDto dto) throws URISyntaxException {
         String body = buildRequestBody(configuration, dto);
         ContentType contentType = buildContentType(configuration);
         StringEntity entity = new StringEntity(body, contentType);
         final HttpEntityEnclosingRequestBase request;
+        
         if (configuration.getMethod() == MethodType.POST) {
-            request = new HttpPost(configuration.getPath());
+            request = new HttpPost(targetURI);
         } else {
-            request = new HttpPut(configuration.getPath());
+            request = new HttpPut(targetURI);
         }
         request.setEntity(entity);
         return request;

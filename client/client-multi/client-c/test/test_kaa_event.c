@@ -90,6 +90,8 @@ void test_kaa_create_event_manager()
     kaa_event_manager_destroy(event_manager);
 
     KAA_FREE(status);
+
+    KAA_TRACE_OUT(logger);
 }
 
 static kaa_endpoint_id endpoint_id1 = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
@@ -168,10 +170,14 @@ void test_kaa_event_listeners_serialize_request()
     ASSERT_EQUAL(cursor, buffer + actual_size);
 
     kaa_platform_message_writer_destroy(writer);
+
+    KAA_TRACE_OUT(logger);
 }
 
 void test_kaa_event_listeners_handle_sync()
 {
+    KAA_TRACE_IN(logger);
+
     const uint32_t extension_size = 52;
     char buffer[extension_size];
 
@@ -214,6 +220,8 @@ void test_kaa_event_listeners_handle_sync()
     ASSERT_FALSE(is_event_listeners_cb_called);
 
     kaa_platform_message_reader_destroy(reader);
+
+    KAA_TRACE_OUT(logger);
 }
 
 void test_kaa_event_sync_get_size()
@@ -271,6 +279,7 @@ void test_kaa_event_sync_get_size()
     size_t event_sync_size;
     error_code = kaa_event_request_get_size(event_manager, &event_sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
     ASSERT_EQUAL(event_sync_size, KAA_EXTENSION_HEADER_SIZE);
 
     error_code = kaa_event_handle_server_sync(event_manager, reader, 0x1, sizeof(uint32_t), 1);
@@ -282,6 +291,8 @@ void test_kaa_event_sync_get_size()
 
     kaa_platform_message_writer_destroy(writer);
     kaa_platform_message_reader_destroy(reader);
+
+    KAA_TRACE_OUT(logger);
 }
 
 static kaa_error_t serialize_event(kaa_platform_message_writer_t *writer
@@ -445,6 +456,8 @@ void test_event_sync_serialize()
     kaa_platform_message_writer_destroy(auto_writer);
     kaa_platform_message_reader_destroy(server_sync_reader);
     kaa_platform_message_writer_destroy(server_sync_writer);
+
+    KAA_TRACE_OUT(logger);
 }
 
 
@@ -517,7 +530,7 @@ void test_event_blocks()
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     const size_t event2_size = 6;
-    const char *event2 = (char *) KAA_MALLOC(event2_size + 1);
+    char *event2 = (char *) KAA_MALLOC(event2_size + 1);
     strcpy(event2, "event2");
     error_code = kaa_event_manager_add_event_to_transaction(event_manager, trx_id, "test.fqn2", event2, event2_size, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -540,10 +553,11 @@ void test_event_blocks()
     size_t request_size = 0;
     error_code = kaa_event_request_get_size(event_manager, &request_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
     ASSERT_EQUAL(request_size, expected_size);
 
     kaa_platform_message_reader_destroy(server_sync_reader);
+
+    KAA_TRACE_OUT(logger);
 }
 
 void test_kaa_server_sync_with_event_callbacks()
@@ -623,6 +637,8 @@ void test_kaa_server_sync_with_event_callbacks()
      kaa_platform_message_reader_destroy(server_sync_reader);
      kaa_platform_message_writer_destroy(server_sync_writer);
      KAA_FREE((void *) event_data);
+
+     KAA_TRACE_OUT(logger);
 }
 #endif
 

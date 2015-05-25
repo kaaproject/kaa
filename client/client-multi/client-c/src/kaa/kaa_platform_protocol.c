@@ -29,7 +29,6 @@
 #include "kaa_event.h"
 #include "kaa_profile.h"
 #include "kaa_logging.h"
-#include "kaa_notification_manager.h"
 #include "kaa_user.h"
 
 #include "kaa_platform_common.h"

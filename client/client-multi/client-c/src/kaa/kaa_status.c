@@ -51,7 +51,8 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
     memset(kaa_status->endpoint_public_key_hash, 0, SHA_1_DIGEST_LENGTH);
     memset(kaa_status->profile_hash, 0, SHA_1_DIGEST_LENGTH);
     kaa_status->endpoint_access_token = NULL;
-    kaa_status->topic_states = NULL;
+    kaa_status->topic_states = kaa_list_create();
+    KAA_RETURN_IF_NIL(kaa_status->topic_states, KAA_ERR_NOMEM);
 
     char *  read_buf = NULL;
     char *  read_buf_head = NULL;
@@ -81,26 +82,19 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
             READ_BUFFER(read_buf, kaa_status->endpoint_access_token, enpoint_access_token_length);
             kaa_status->endpoint_access_token[enpoint_access_token_length] = '\0';
         }
+
         size_t states_count = 0;
         READ_BUFFER(read_buf, &states_count, sizeof(size_t))
-        kaa_list_t *state_node = NULL;
-        kaa_topic_state_t *state = NULL;
         while (states_count--) {
-            state = (kaa_topic_state_t *)KAA_MALLOC(sizeof(kaa_topic_state_t));
+            kaa_topic_state_t *state = (kaa_topic_state_t *)KAA_MALLOC(sizeof(kaa_topic_state_t));
             KAA_RETURN_IF_NIL(state, KAA_ERR_NOMEM);
             READ_BUFFER(read_buf, &state->topic_id, sizeof(uint64_t))
             READ_BUFFER(read_buf, &state->sqn_number, sizeof(uint32_t))
 
-            if (!kaa_status->topic_states) {
-                state_node = kaa_list_create(state);
-            } else {
-                state_node = kaa_list_push_front(kaa_status->topic_states, state);
-            }
-            if (!state_node) {
+            if (!kaa_list_push_back(kaa_status->topic_states, state)) {
                 KAA_FREE(state);
                 return KAA_ERR_NOMEM;
             }
-            kaa_status->topic_states = state_node;
         }
     }
 
@@ -160,11 +154,11 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
     if (endpoint_access_token_length) {
         WRITE_BUFFER(self->endpoint_access_token, buffer, endpoint_access_token_length);
     }
-    kaa_list_t *state_node = self->topic_states;
-    kaa_topic_state_t *state = NULL;
+
+    kaa_list_node_t *state_node = kaa_list_begin(self->topic_states);
     WRITE_BUFFER(&states_count, buffer, sizeof(size_t));
     while (state_node) {
-        state = (kaa_topic_state_t *)kaa_list_get_data(state_node);
+        kaa_topic_state_t *state = (kaa_topic_state_t *)kaa_list_get_data(state_node);
         WRITE_BUFFER(&state->topic_id, buffer, sizeof(uint64_t));
         WRITE_BUFFER(&state->sqn_number, buffer, sizeof(uint32_t));
         state_node = kaa_list_next(state_node);

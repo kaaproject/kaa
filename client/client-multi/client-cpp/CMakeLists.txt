@@ -44,10 +44,14 @@ endif()
 # 
 # NOTE: Platform specific compilation flags should be set 
 # in the corresponding platform CMake script(s).
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+if (NOT MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif ()
 
 if (KAA_DEBUG_ENABLED)
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb")
+    if (NOT MSVC)
+       set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb")
+    endif () 
 else()
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Os")
     if (CMAKE_COMPILER_IS_GNUCXX)
@@ -65,6 +69,9 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++0x") 
 endif ()
 
+if (WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_WIN32_WINNT=0x0502") 
+endif (WIN32)
 
 # Release version is built by default.
 if(KAA_DEBUG_ENABLED)
@@ -205,14 +212,24 @@ find_package (Avro REQUIRED)
 
 find_package (Botan REQUIRED)
 
-add_definitions (${Boost_LIB_DIAGNOSTIC_DEFINITIONS} -DBOOST_LOG_DYN_LINK)
-
+if (WIN32 AND NOT CYGWIN AND NOT MSYS)
+    add_definitions (/EHs)
+    add_definitions (
+        -DBOOST_REGEX_DYN_LINK
+        -DBOOST_FILESYSTEM_DYN_LINK
+        -DBOOST_SYSTEM_DYN_LINK
+        -DBOOST_PROGRAM_OPTIONS_DYN_LINK
+        -DBOOST_LOG_DYN_LINK
+        -DBOOST_ALL_NO_LIB)
+else()
+    add_definitions (${Boost_LIB_DIAGNOSTIC_DEFINITIONS} -DBOOST_LOG_DYN_LINK)
+endif()
 
 # Sets path(s) to source files.
 include_directories (${CMAKE_CURRENT_SOURCE_DIR} 
                      ${Boost_INCLUDE_DIRS}
-                     ${Avro_INCLUDE_DIRS} 
-                     ${BOTAN_INCLUDE_DIRS})
+                     ${AVRO_INCLUDE_DIRS} 
+                     ${BOTAN_INCLUDE_DIR})
 
 set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/ClientStatus.cpp
@@ -242,11 +259,21 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
 # Builds Kaa libraries.
 add_library(kaacpp_o OBJECT ${KAA_SOURCE_FILES})
 add_library (kaacpp SHARED ./kaa $<TARGET_OBJECTS:kaacpp_o>)
-target_link_libraries(kaacpp pthread
-    ${BOTAN_LIBRARY}
-    ${AVRO_LIBRARIES}
-    ${Boost_LIBRARIES}
-)
+
+if (WIN32)
+    target_link_libraries(kaacpp dbghelp
+        ${BOTAN_LIBRARY}
+        ${AVRO_LIBRARIES}
+        ${Boost_LIBRARIES}
+    )
+else (WIN32)
+    target_link_libraries(kaacpp pthread
+        ${BOTAN_LIBRARY}
+        ${AVRO_LIBRARIES}
+        ${Boost_LIBRARIES}
+    )
+endif (WIN32)
+
 add_library (kaacpp_s STATIC ./kaa $<TARGET_OBJECTS:kaacpp_o>)
 # Sets paths Kaa libraries will be installed in.
 if(NOT KAA_INSTALL_PATH)

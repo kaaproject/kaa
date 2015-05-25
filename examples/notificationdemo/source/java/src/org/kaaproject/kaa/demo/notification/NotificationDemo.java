@@ -105,7 +105,7 @@ public class NotificationDemo {
     private static List<String> extractOptionalTopicIds(List<Topic> list) {
         List<String> topicIds = new ArrayList<>();
         for (Topic t : list) {
-            if (t.getSubscriptionType() == SubscriptionType.OPTIONAL) {
+            if (t.getSubscriptionType() == SubscriptionType.OPTIONAL_SUBSCRIPTION) {
                 topicIds.add(t.getId());
             }
         }
