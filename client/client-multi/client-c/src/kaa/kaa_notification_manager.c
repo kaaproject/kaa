@@ -17,12 +17,27 @@
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
 
 #include "kaa_notification_manager.h"
+
 #include <string.h>
+#include <stdio.h>
+
+#include "kaa_status.h"
+#include "kaa_platform_common.h"
+#include "utilities/kaa_mem.h"
+#include "kaa_common.h"
+#include "utilities/kaa_log.h"
+#include "kaa_platform_utils.h"
+#include "kaa_channel_manager.h"
+#include "platform-impl/kaa_htonll.h"
+
 #include "platform/sock.h"
 
 
 extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
                                                                                   , kaa_service_t service_type);
+
+
+
 struct kaa_notification_manager_t {
     kaa_list_t                 *mandatory_listeners;
     kaa_list_t                 *topics_listeners;

@@ -262,7 +262,7 @@ static void APP_main()
    {
 
       if (ip_connected && !kaa_started) {
-          kaa_client_start(kaa_client);
+          kaa_client_start(kaa_client, NULL, NULL, 0);
           kaa_started = true;
       }
       //thread sleep for 500 ms
@@ -352,8 +352,6 @@ static bool_t APP_handle_msg(sndc_appmsg_msg_t* msg)
          sndc_appmsg_ioEvent_t *io_event = (sndc_appmsg_ioEvent_t *)msg->par;
          if (testDone) {
              sndc_printf("SNDC_APPMSG_IO_EVENT level %d, pinMask %d\n", io_event->level, io_event->pin_mask);
-             //Logging example, it just log button pressing.
-             //kaa_client_log_record(kaa_client, "Button pressed");
          } else {
              testDone  = true;
              sndc_printf("Button pressed. \n");

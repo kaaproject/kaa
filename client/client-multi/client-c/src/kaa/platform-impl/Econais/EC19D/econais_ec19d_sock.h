@@ -25,7 +25,6 @@ econais_ec19d_sock.h
 
 #include <sys/types.h>
 #include <sndc_sock_api.h>
-#include "../../kaa_htonll.h"
 
 typedef int kaa_fd_t;
 

@@ -23,11 +23,11 @@
 
 
 
-typedef struct kaa_list_node_t {
+struct kaa_list_node_t {
     void                      *data;
     struct kaa_list_node_t    *next;
     struct kaa_list_node_t    *prev;
-} kaa_list_node_t;
+};
 
 struct kaa_list_t {
     kaa_list_node_t    *head;
