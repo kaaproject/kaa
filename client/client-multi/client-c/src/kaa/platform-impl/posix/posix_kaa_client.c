@@ -58,6 +58,9 @@ static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
 #ifndef KAA_DISABLE_FEATURE_LOGGING
                                              , KAA_SERVICE_LOGGING
 #endif
+#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
+                                             , KAA_SERVICE_NOTIFICATION
+#endif
                                              };
 static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
 

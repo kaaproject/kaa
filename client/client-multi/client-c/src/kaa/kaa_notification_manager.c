@@ -186,7 +186,7 @@ kaa_error_t kaa_notification_manager_get_size(kaa_notification_manager_t *self, 
     *expected_size = 0;
     *expected_size += sizeof(uint32_t); //state sqn size
 
-    if (self->status->topic_states) {
+    if (kaa_list_get_size(self->status->topic_states) > 0) {
         *expected_size += sizeof(uint32_t); //field id + reserved + count
         *expected_size += (sizeof(uint64_t) + sizeof(uint32_t)) * kaa_list_get_size(self->status->topic_states);
     }
