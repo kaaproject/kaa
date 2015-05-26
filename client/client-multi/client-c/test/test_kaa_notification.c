@@ -13,16 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include <string.h>
+#include <stdio.h>
+
+#include "kaa_test.h"
+
 #include "kaa_notification_manager.h"
 #include "kaa.h"
 #include "platform-impl/posix/posix_sock.h"
 #include "kaa_error.h"
 #include "kaa_common.h"
 #include "kaa_context.h"
+#include "utilities/kaa_mem.h"
+#include "utilities/kaa_log.h"
 #include "avro_src/avro/io.h"
-#include <string.h>
-
-#include "kaa_test.h"
+#include "platform/sock.h"
+#include "kaa_platform_common.h"
+#include "kaa_platform_utils.h"
+#include "kaa_platform_protocol.h"
 
 //----------------------------------------------------------------------------------------------
 kaa_context_t *context = NULL;
