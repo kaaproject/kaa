@@ -34,7 +34,6 @@ public class CouchbaseLogAppender extends AbstractLogAppender<CouchbaseConfig> {
     private static final Logger LOG = LoggerFactory.getLogger(CouchbaseLogAppender.class);
 
     private LogEventDao logEventDao;
-    //private String collectionName;
     private boolean closed = false;
 
     public CouchbaseLogAppender() {
