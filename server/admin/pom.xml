@@ -903,5 +903,17 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>couchbase</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.appenders.couchbase</groupId>
+                    <artifactId>config</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>couchbase</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 </project>
