@@ -16,6 +16,8 @@
 
 #include <stdint.h>
 #include <string.h>
+
+#include "kaa_common.h"
 #include "platform/stdio.h"
 #include "kaa_common_schema.h"
 #include "avro_src/avro/io.h"
@@ -376,16 +378,15 @@ void kaa_array_serialize(avro_writer_t writer, kaa_list_t *array, serialize_fn s
 {
     KAA_RETURN_IF_NIL(writer, );
 
-    if (array) {
-        size_t element_count = kaa_list_get_size(array);
+    size_t element_count = kaa_list_get_size(array);
 
-        if (element_count > 0) {
-            avro_binary_encoding.write_long(writer, element_count);
-            if (serialize) {
-                while (array) {
-                    serialize(writer, kaa_list_get_data(array));
-                    array = kaa_list_next(array);
-                }
+    if (element_count > 0) {
+        avro_binary_encoding.write_long(writer, element_count);
+        if (serialize) {
+            kaa_list_node_t *it = kaa_list_begin(array);
+            while (it) {
+                serialize(writer, kaa_list_get_data(it));
+                it = kaa_list_next(it);
             }
         }
     }
@@ -406,7 +407,8 @@ static kaa_list_t *kaa_array_deserialize(avro_reader_t reader, deserialize_fn de
 {
     KAA_RETURN_IF_NIL2(reader, deserialize, NULL);
 
-    kaa_list_t *array = NULL;
+    kaa_list_t *array = kaa_list_create();
+    KAA_RETURN_IF_NIL(array, NULL);
 
     int64_t element_count;
     avro_binary_encoding.read_long(reader, &element_count);
@@ -418,13 +420,8 @@ static kaa_list_t *kaa_array_deserialize(avro_reader_t reader, deserialize_fn de
             avro_binary_encoding.read_long(reader, &temp);
         }
 
-        if (!array) {
-            array = kaa_list_create(do_deserialize(reader, deserialize, context));
-            --element_count;
-        }
-
         while (element_count-- > 0) {
-            array = kaa_list_push_front(array, do_deserialize(reader, deserialize, context));
+            kaa_list_push_back(array, do_deserialize(reader, deserialize, context));
         }
 
         avro_binary_encoding.read_long(reader, &element_count);
@@ -450,17 +447,15 @@ size_t kaa_array_get_size(kaa_list_t *array, get_size_fn get_size)
     KAA_RETURN_IF_NIL(get_size, 0);
 
     size_t array_size = 0;
-    size_t count = 0;
 
-    kaa_list_t *cursor = array;
-    while (cursor) {
-        array_size += get_size(kaa_list_get_data(cursor));
-        ++count;
-        cursor = kaa_list_next(cursor);
-    }
+    if (array) {
+        kaa_list_node_t *it = kaa_list_begin(array);
+        while (it) {
+            array_size += get_size(kaa_list_get_data(it));
+            it = kaa_list_next(it);
+        }
 
-    if (count) {
-        array_size += avro_long_get_size(count);
+        array_size += avro_long_get_size(kaa_list_get_size(array));
     }
 
     array_size += avro_long_get_size(0);

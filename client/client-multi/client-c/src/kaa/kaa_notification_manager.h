@@ -16,19 +16,29 @@
 
 #ifndef KAA_KAA_NOTIFICATION_H_
 #define KAA_KAA_NOTIFICATION_H_
-#include <stddef.h>
-#include <stdio.h>
+
 #include <stdint.h>
-#include "stdbool.h"
-#include "kaa_status.h"
+#include <stdbool.h>
+#include <stddef.h>
+
 #include "kaa_error.h"
-#include "kaa_platform_common.h"
-#include "utilities/kaa_mem.h"
-#include "kaa_channel_manager.h"
-#include "kaa_common.h"
-#include "utilities/kaa_log.h"
-#include "kaa_platform_utils.h"
 #include "platform/ext_notification_receiver.h"
+#include "collections/kaa_list.h"
+
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @brief Kaa notification manager structure.
+ */
+#ifndef KAA_NOTIFICATION_MANAGER_T
+# define KAA_NOTIFICATION_MANAGER_T
+    typedef struct kaa_notification_manager_t       kaa_notification_manager_t;
+#endif
+
 
 
 /**
@@ -181,5 +191,9 @@ kaa_error_t kaa_unsubscribe_from_topics(kaa_notification_manager_t *self, uint64
 * @return The error code.
 */
 kaa_error_t kaa_sync_topic_subscriptions(kaa_notification_manager_t *self);
+
+#ifdef __cplusplus
+}      /* extern "C" */
+#endif
 
 #endif /* KAA_KAA_NOTIFICATION_H_ */

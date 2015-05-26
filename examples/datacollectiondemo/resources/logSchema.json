@@ -9,12 +9,12 @@
 		"type":"enum",
 		"name":"Level",
 		"symbols":[
-		  "DEBUG",
-		  "ERROR",
-		  "FATAL",
-		  "INFO",
-		  "TRACE",
-		  "WARN"
+		  "KAA_DEBUG",
+		  "KAA_ERROR",
+		  "KAA_FATAL",
+		  "KAA_INFO",
+		  "KAA_TRACE",
+		  "KAA_WARN"
 		]
 	  }
 	},

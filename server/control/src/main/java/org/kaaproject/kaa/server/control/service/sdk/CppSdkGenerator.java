@@ -328,18 +328,13 @@ public class CppSdkGenerator extends SdkGenerator {
 
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
 
-        int nodeCount = bootstrapNodes.size();
         for (BootstrapNodeInfo node : bootstrapNodes) {
             List<TransportMetaData> supportedChannels = node.getTransports();
 
             int accessPointId = ServerNameUtil.crc32(node.getConnectionInfo());
-            int transportCount = supportedChannels.size();
-
             for (TransportMetaData transport : supportedChannels) {
-                int supportedProtocolCount = transport.getConnectionInfo().size();
-
                 for(VersionConnectionInfoPair pair : transport.getConnectionInfo()) {
-                    String serverPattern = "createTransportInfo(";
+                    String serverPattern = "listOfServers.push_back(createTransportInfo(";
                     serverPattern += "0x" + Integer.toHexString(accessPointId);
                     serverPattern += ", ";
                     serverPattern += "0x" + Integer.toHexString(transport.getId());
@@ -348,22 +343,9 @@ public class CppSdkGenerator extends SdkGenerator {
                     serverPattern += ", \"";
                     serverPattern += Base64.encodeBase64String(pair.getConenctionInfo().array());
                     serverPattern += "\"";
-                    serverPattern += ")";
-
+                    serverPattern += "));\n";
                     bootstrapServers += serverPattern;
-
-                    if (--supportedProtocolCount > 0) {
-                        bootstrapServers += "\n                                            , ";
-                    }
                 }
-
-                if (--transportCount > 0) {
-                    bootstrapServers += "\n                                            , ";
-                }
-            }
-
-            if (--nodeCount > 0) {
-                bootstrapServers += "\n                                            , ";
             }
         }
 

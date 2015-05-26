@@ -176,7 +176,7 @@ void NotificationManager::removeNotificationListener(const std::string& topidId,
 
 void NotificationManager::subscribeToTopic(const std::string& id, bool forceSync)
 {
-    if (findTopic(id).subscriptionType != OPTIONAL) {
+    if (findTopic(id).subscriptionType != OPTIONAL_SUBSCRIPTION) {
         KAA_LOG_WARN(boost::format("Failed to subscribe: topic '%1%' isn't optional") % id);
         throw UnavailableTopicException(boost::format("Topic '%1%' isn't optional") % id);
     }
@@ -197,7 +197,7 @@ void NotificationManager::subscribeToTopics(const std::list<std::string>& idList
     SubscriptionCommands subscriptions;
 
     for (const auto& id : idList) {
-        if (findTopic(id).subscriptionType != OPTIONAL) {
+        if (findTopic(id).subscriptionType != OPTIONAL_SUBSCRIPTION) {
             KAA_LOG_WARN(boost::format("Failed to subscribe: topic '%1%' isn't optional") % id);
             throw UnavailableTopicException(boost::format("Topic '%1%' isn't optional") % id);
         }
@@ -221,7 +221,7 @@ void NotificationManager::subscribeToTopics(const std::list<std::string>& idList
 
 void NotificationManager::unsubscribeFromTopic(const std::string& id, bool forceSync)
 {
-    if (findTopic(id).subscriptionType != OPTIONAL) {
+    if (findTopic(id).subscriptionType != OPTIONAL_SUBSCRIPTION) {
         KAA_LOG_WARN(boost::format("Failed to unsubscribe: topic '%1%' isn't optional") % id);
         throw UnavailableTopicException(boost::format("Topic '%1%' isn't optional") % id);
     }
@@ -242,7 +242,7 @@ void NotificationManager::unsubscribeFromTopics(const std::list<std::string>& id
     SubscriptionCommands subscriptions;
 
     for (const auto& id : idList) {
-        if (findTopic(id).subscriptionType != OPTIONAL) {
+        if (findTopic(id).subscriptionType != OPTIONAL_SUBSCRIPTION) {
             KAA_LOG_WARN(boost::format("Failed to unsubscribe: topic '%1%' isn't optional") % id);
             throw UnavailableTopicException(boost::format("Topic '%1%' isn't optional") % id);
         }

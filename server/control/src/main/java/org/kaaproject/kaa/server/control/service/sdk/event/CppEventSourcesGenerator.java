@@ -69,6 +69,9 @@ public class CppEventSourcesGenerator {
 
     /** The Constant AVROGEN_SH_TEMPLATE. */
     private static final String AVROGEN_SH_TEMPLATE = "sdk/cpp/event/avrogen.sh.template";
+    
+    /** The Constant AVROGEN_bat_TEMPLATE. */
+    private static final String AVROGEN_BAT_TEMPLATE = "sdk/cpp/event/avrogen.bat.template";
 
     /** The Constant EVENT_FAMILY_FACTORY_SET_CONCRETE_EVENT_FAMILY_NAMES_TEMPLATE. */
     private static final String EVENT_FAMILY_FACTORY_SET_CONCRETE_EVENT_FAMILY_NAMES_TEMPLATE = "sdk/cpp/event/eventFamilyFactorySetEventFamilyClassNames.template";
@@ -92,6 +95,7 @@ public class CppEventSourcesGenerator {
 
     private static final String EVENT_FAMILY_FACTORY_PATH = "kaa/event/gen/EventFamilyFactory.hpp";
     private static final String AVROGEN_SH_PATH = "avrogen.sh";
+    private static final String AVROGEN_BAT_PATH = "avrogen.bat";
 
     private static final String EVENT_FAMILY_PATH_TEMPLATE = "kaa/event/gen/${event_family_class_name}.hpp";
     private static final String EVENT_FAMILY_SCHEMA_PATH_TEMPLATE = "avro/event/${event_family_class_name}.avsc";
@@ -110,6 +114,7 @@ public class CppEventSourcesGenerator {
     private static String eventFamilyFactorySetEventFamilyNames;
     private static String eventFamilyFactoryAddEventFamily;
     private static String avrogenSh;
+    private static String avrogenBat;
 
     static {
         try {
@@ -125,6 +130,7 @@ public class CppEventSourcesGenerator {
             eventFamilyFactorySetEventFamilyNames = SdkGenerator.readResource(EVENT_FAMILY_FACTORY_SET_CONCRETE_EVENT_FAMILY_NAMES_TEMPLATE);
             eventFamilyFactoryAddEventFamily = SdkGenerator.readResource(EVENT_FAMILY_FACTORY_ADD_EVENT_FAMILY_TEMPLATE);
             avrogenSh = SdkGenerator.readResource(AVROGEN_SH_TEMPLATE);
+            avrogenBat = SdkGenerator.readResource(AVROGEN_BAT_TEMPLATE);
         } catch (IOException e) {
             LOG.error("Unable to initialize CppEventSourcesGenerator", e);
         }
@@ -246,6 +252,14 @@ public class CppEventSourcesGenerator {
         tarEntry = new TarEntryData(entry, data);
         eventSources.add(tarEntry);
 
+        String avrogenBatSource = avrogenBat.replaceAll(EVENT_FAMILY_CLASS_LIST_VAR, eventFamilyClassList);
+
+        entry = new TarArchiveEntry(AVROGEN_BAT_PATH);
+        data = avrogenBatSource.getBytes();
+        entry.setSize(data.length);
+        tarEntry = new TarEntryData(entry, data);
+        eventSources.add(tarEntry);
+        
         return eventSources;
     }
 
