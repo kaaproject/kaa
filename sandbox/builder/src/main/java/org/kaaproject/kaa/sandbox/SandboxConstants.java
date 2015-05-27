@@ -50,4 +50,6 @@ public interface SandboxConstants {
     
     public static final String SANDBOX_FOLDER = "/usr/lib/kaa-sandbox";
     public static final String ADMIN_FOLDER = "/usr/lib/kaa-admin";
+
+    public static final String LOG_DUMP_LOCATION = "sandbox/builder/target/sandbox_logs/";
 }
