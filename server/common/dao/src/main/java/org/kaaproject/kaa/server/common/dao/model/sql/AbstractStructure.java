@@ -28,7 +28,9 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import java.io.Serializable;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_ACTIVATED_TIME;
@@ -48,6 +50,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTU
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_SEQUENCE_NUMBER;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_STATUS;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.ABSTRACT_STRUCTURE_OPTIMISTIC_LOCK;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
@@ -110,6 +113,14 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
     @OnDelete(action = OnDeleteAction.CASCADE)
     protected EndpointGroup endpointGroup;
 
+    @Version
+    @Column(name = ABSTRACT_STRUCTURE_OPTIMISTIC_LOCK)
+    private Long version;
+
+    public Long getVersion() {
+        return version;
+    }
+
     public AbstractStructure() {
     }
 
@@ -138,6 +149,7 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
             this.application = appId != null ? new Application(appId) : null;
             Long groupId = getLongId(dto.getEndpointGroupId());
             this.endpointGroup = groupId != null ? new EndpointGroup(groupId) : null;
+            this.version = dto.getVersion();
         }
     }
 
@@ -297,6 +309,7 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
         dto.setDeactivatedUsername(deactivatedUsername);
         dto.setStatus(status);
         dto.setEndpointCount(endpointCount);
+        dto.setVersion(version);
         return dto;
     }
 
