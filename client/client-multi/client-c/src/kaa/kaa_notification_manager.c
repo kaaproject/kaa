@@ -865,6 +865,10 @@ static kaa_error_t update_sequence_number(kaa_notification_manager_t *self, uint
         state = (kaa_topic_state_t *)kaa_list_get_data(it);
         if (sqn_number > state->sqn_number) {
             state->sqn_number = sqn_number;
+        } else {
+        	if (sqn_number == state->sqn_number) {
+                return KAA_ERR_BADDATA;
+        	}
         }
     }
 
@@ -954,13 +958,18 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
                         }
                     }
                     shift_and_sub_extension(reader, &extension_length, kaa_aligned_size_get(notification_size));
-
-                    err = update_sequence_number(self, topic_id, seq_number);
-                    if (err) {
-                        KAA_LOG_WARN(self->logger, err, "Failed to update notification sequence number for topic '%lu'", topic_id);
+                    if (uid_length == 0) {
+                        err = update_sequence_number(self, topic_id, seq_number);
                     }
-
-                    err = kaa_notification_received(self, notification, &topic_id);
+                    if (err) {
+                    	if (err != KAA_ERR_BADDATA) {
+                            KAA_LOG_WARN(self->logger, err, "Failed to update notification sequence number for topic '%lu'", topic_id);
+                    	} else {
+                    		err = KAA_ERR_NONE;
+                    	}
+                    } else {
+                    	err = kaa_notification_received(self, notification, &topic_id);
+                    }
                     notification->destroy(notification);
                     if (err) {
                         KAA_LOG_WARN(self->logger, err, "Failed to notify listeners");
