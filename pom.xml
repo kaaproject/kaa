@@ -97,6 +97,8 @@ Copyright 2014 CyberVision, Inc.
         <cassandra.driver.version>2.1.4</cassandra.driver.version>
         <cassandra.driver.mapping>2.1.4</cassandra.driver.mapping>
         <cassandra-unit.version>2.0.2.2</cassandra-unit.version>
+		
+		<couchbase.client.version>2.1.3</couchbase.client.version>
 
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -876,6 +878,11 @@ Copyright 2014 CyberVision, Inc.
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+			<dependency>
+				<groupId>com.couchbase.client</groupId>
+				<artifactId>java-client</artifactId>
+				<version>${couchbase.client.version}</version>
+			</dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-digester3</artifactId>
