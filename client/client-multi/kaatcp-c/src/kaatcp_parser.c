@@ -188,6 +188,7 @@ static kaatcp_error_t kaatcp_parser_message_done(kaatcp_parser_t *parser)
                 bootstrap->sync_header = sync_header;
                 kaatcp_error_t rval = kaatcp_parser_parse_bootstrap_message(bootstrap, cursor, parser->payload + parser->message_length);
                 if (rval) {
+                    free(bootstrap);
                     return rval;
                 }
                 parser->handlers.bootstrap_handler(bootstrap);
