@@ -78,10 +78,7 @@ public class LogEventMongoDao implements LogEventDao {
         if (configuration.getSocketKeepalive() != null) {
             optionsBuilder.socketKeepAlive(configuration.getSocketKeepalive());
         }
-        if (configuration.getAutoConnectRetry() != null) {
-            optionsBuilder.autoConnectRetry(configuration.getAutoConnectRetry());
-        }
-
+        
         MongoClientOptions options = optionsBuilder.build();
         mongoClient = new MongoClient(seeds, credentials, options);
 
