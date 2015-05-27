@@ -359,9 +359,9 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
         new_access_point->connection_data = (char *)KAA_MALLOC(new_access_point->connection_data_len);
 
         if (!new_access_point->connection_data || !new_access_point->connection_data_len) {
-            destroy_access_point(new_access_point);
             KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM, "Failed to allocate buffer for connection data, size %u"
                                                                         , new_access_point->connection_data_len);
+            destroy_access_point(new_access_point);
             return KAA_ERR_NOMEM;
         }
 
