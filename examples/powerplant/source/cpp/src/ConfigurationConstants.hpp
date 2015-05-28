@@ -27,10 +27,6 @@ namespace power_plant {
 #define POWER_PLANT_CONFIGURATION_FILE      "power_plant.cfg"
 #define POWER_PLANT_ADC_FACTOR              0.004566667
 
-#define POWER_PLANT_DEBUG_LOGGING           0
-
-#define POWER_PLANT_STARTUP_WORKAROUND      1
-
 } /* namespace power_plant */
 
 #endif /* CONFIGURATIONCONSTANTS_HPP_ */

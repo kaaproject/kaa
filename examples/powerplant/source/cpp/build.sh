@@ -78,7 +78,11 @@ function build_thirdparty {
 function build_app {
     mkdir -p "$PROJECT_HOME/$BUILD_DIR" &&
     cd "$PROJECT_HOME/$BUILD_DIR" &&
-    cmake -DAPP_NAME=$APP_NAME ..
+    cmake -DAPP_NAME=$APP_NAME \
+          -DPOWER_PLANT_STARTUP_WORKAROUND=1 \
+          -DPOWER_PLANT_RANDOMIZER=0 \
+          -DPOWER_PLANT_DEBUG_LOGGING=0 \
+          ..
     make -j2
 }
 

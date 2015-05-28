@@ -96,6 +96,8 @@ static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *l
 {
     KAA_RETURN_IF_NIL2(context_p, logger, KAA_ERR_BADPARAM);
 
+    KAA_LOG_INFO(logger, KAA_ERR_NONE, "Going to create Kaa context");
+
     *context_p = (kaa_context_t *) KAA_MALLOC(sizeof(kaa_context_t));
     KAA_RETURN_IF_NIL(*context_p, KAA_ERR_NOMEM);
 
@@ -106,59 +108,81 @@ static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *l
     if (!(*context_p)->status)
         error = KAA_ERR_NOMEM;
 
+    KAA_LOG_INFO(logger, error, "Kaa status holder created, error %d", error);
+
     if (!error)
         error = kaa_status_create(&((*context_p)->status->status_instance));
+
+    KAA_LOG_INFO(logger, error, "Kaa status created, error %d", error);
 
     if (!error)
         error = kaa_platform_protocol_create(&((*context_p)->platfrom_protocol), *context_p,
                                              (*context_p)->status->status_instance);
 
+    KAA_LOG_INFO(logger, error, "Kaa platform_protocol created, error %d", error);
+
     if (!error)
         error = kaa_channel_manager_create(&((*context_p)->channel_manager), (*context_p));
+
+    KAA_LOG_INFO(logger, error, "Kaa channel_manager created, error %d", error);
 
     if (!error)
         error = kaa_bootstrap_manager_create(&((*context_p)->bootstrap_manager), (*context_p)->channel_manager,
                                              (*context_p)->logger);
 
+    KAA_LOG_INFO(logger, error, "Kaa bootstrap_manager created, error %d", error);
+
     if (!error)
         error = kaa_profile_manager_create(&((*context_p)->profile_manager), (*context_p)->status->status_instance,
                                            (*context_p)->channel_manager, (*context_p)->logger);
+
+    KAA_LOG_INFO(logger, error, "Kaa profile_manager created, error %d", error);
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
     if (!error)
         error = kaa_event_manager_create(&((*context_p)->event_manager), (*context_p)->status->status_instance,
                                          (*context_p)->channel_manager, (*context_p)->logger);
+    KAA_LOG_INFO(logger, error, "Kaa event_manager created, error %d", error);
 #else
     (*context_p)->event_manager = NULL;
+    KAA_LOG_INFO(logger, error, "Kaa event_manager disabled");
 #endif
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
     if (!error)
         error = kaa_log_collector_create(&((*context_p)->log_collector), (*context_p)->status->status_instance,
                                          (*context_p)->channel_manager, (*context_p)->logger);
+    KAA_LOG_INFO(logger, error, "Kaa log_collector created, error %d", error);
 #else
     (*context_p)->log_collector = NULL;
+    KAA_LOG_INFO(logger, error, "Kaa log_collector disabled");
 #endif
 
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
     if (!error)
         error = kaa_configuration_manager_create(&((*context_p)->configuration_manager), (*context_p)->channel_manager,
                                                  (*context_p)->status->status_instance, (*context_p)->logger);
+    KAA_LOG_INFO(logger, error, "Kaa configuration_manager created, error %d", error);
 #else
     (*context_p)->configuration_manager = NULL;
+    KAA_LOG_INFO(logger, error, "Kaa configuration_manager disabled");
 #endif
 
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
     if (!error)
         error = kaa_notification_manager_create(&((*context_p)->notification_manager), (*context_p)->status->status_instance,
                                                 (*context_p)->channel_manager, (*context_p)->logger);
+    KAA_LOG_INFO(logger, error, "Kaa notification_manager created, error %d", error);
 #else
     (*context_p)->notification_manager = NULL;
+    KAA_LOG_INFO(logger, error, "Kaa notification_manager disabled");
 #endif
 
     if (!error)
         error = kaa_user_manager_create(&((*context_p)->user_manager), (*context_p)->status->status_instance,
                                         (*context_p)->channel_manager, (*context_p)->logger);
+
+    KAA_LOG_INFO(logger, error, "Kaa user_manager created, error %d", error);
 
     if (error) {
         kaa_context_destroy(*context_p);
@@ -216,14 +240,20 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
         return error;
     }
 
+    KAA_LOG_INFO(logger, error, "Kaa context created, error %d", error);
+
     // Initialize endpoint identity
     char *pub_key_buffer = NULL;
     size_t pub_key_buffer_size = 0;
     bool need_deallocation = false;
 
     ext_get_endpoint_public_key(&pub_key_buffer, &pub_key_buffer_size, &need_deallocation);
+
+    KAA_LOG_INFO(logger, KAA_ERR_NONE, "Got public key");
     kaa_digest pub_key_hash;
     error = ext_calculate_sha_hash(pub_key_buffer, pub_key_buffer_size, pub_key_hash);
+
+    KAA_LOG_INFO(logger, error, "Calculated public key hash (need_deallocation %d), error %d", need_deallocation, error);
 
     if (need_deallocation && pub_key_buffer_size > 0) {
         KAA_FREE(pub_key_buffer);
@@ -245,6 +275,8 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
         kaa_log_destroy(logger);
         return error;
     }
+
+    KAA_LOG_INFO(logger, error, "Kaa context initialized");
     return KAA_ERR_NONE;
 }
 
