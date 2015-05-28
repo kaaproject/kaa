@@ -73,6 +73,7 @@
     display: inline-block;
     background-color: transparent;
     transition: background-color 0.5s ease;
+    -webkit-transition: background-color 0.5s ease; /* Safari */
     width: 100%;
 }
 
@@ -82,6 +83,7 @@
 
 .appHeaderPanel .buttons .button:hover {
     transition: background-color 0.2s ease;
+    -webkit-transition: background-color 0.2s ease; /* Safari */
     background-color: #E5E5E5;
 }
 
@@ -106,20 +108,24 @@
     height: 100%;
     float: left;
     display: flex;
+    display: -webkit-box; /* Safari */
 }
 
 .contentContainer {
     height: 100%;
     display: flex;
+    display: -webkit-box; /* Safari */
 }
 
 .leftPanel {
     height: 100%;
     float: left;
     display: flex;
+    display: -webkit-box; /* Safari */
     width: 235px;
     margin-left: -200px;
     transition: margin-left .3s;
+    -webkit-transition:  margin-left .3s; /* Safari */
 }
 
 .leftPanel.isOpen {
@@ -172,6 +178,7 @@
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.05);
     transition: color 0.3s ease-in-out 0s;
+    -webkit-transition:  color 0.3s ease-in-out 0s; /* Safari */
 }
 
 .nav > li > a {
@@ -200,8 +207,8 @@
   top: 0;
   bottom: 0;
   z-index: 0;
-  -webkit-transition: left .25s;
   transition: left .25s;
+  -webkit-transition: left .25s;
 }
 
 .navPrimary ul.nav > li.active > a > span.icon > b {
@@ -350,6 +357,7 @@
 	position: absolute;
 	top: 0;
 	transition: background-color 0.5s ease;
+	-webkit-transition: background-color 0.5s ease; /* Safari */
     background-color: transparent;
     
     -webkit-border-radius: 4px;
@@ -359,6 +367,7 @@
 		
 .demoProjectWidget .platformImageHover:hover {
     transition: background-color 0.2s ease;
+    -webkit-transition: background-color 0.2s ease; /* Safari */
     background-color: rgba(0, 0, 0, 0.15);
 }
 

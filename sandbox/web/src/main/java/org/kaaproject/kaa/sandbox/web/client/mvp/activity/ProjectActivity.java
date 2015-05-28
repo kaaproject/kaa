@@ -45,6 +45,7 @@ public class ProjectActivity extends AbstractActivity {
     private final ClientFactory clientFactory;
     private final ProjectPlace place;
     private ProjectView view;
+    private Project project;
     
     private List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
     
@@ -83,14 +84,14 @@ public class ProjectActivity extends AbstractActivity {
         registrations.add(view.getSourceButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                getProjectSourceCode(place.getProjectId());
+                getProjectSourceCode();
             }
           }));
         
         registrations.add(view.getBinaryButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                getProjectBinary(place.getProjectId());
+                getProjectBinary();
             }
           }));
         
@@ -107,74 +108,86 @@ public class ProjectActivity extends AbstractActivity {
 
             @Override
             public void onSuccessImpl(Project result) {
-                if (result.getIconBase64() != null && result.getIconBase64().length() > 0) {
-                    view.getApplicationImage().setUrl("data:image/png;base64,"+result.getIconBase64());
+                project = result;
+                if (project.getIconBase64() != null && project.getIconBase64().length() > 0) {
+                    view.getApplicationImage().setUrl("data:image/png;base64,"+project.getIconBase64());
                 } else {
-                    view.getApplicationImage().setResource(Utils.getPlatformIconBig(result.getPlatform()));
+                    view.getApplicationImage().setResource(Utils.getPlatformIconBig(project.getPlatform()));
                 }
-                view.setProjectTitle(result.getName());
-                view.setPlatform(result.getPlatform());
-                view.setFeatures(result.getFeatures());
-                view.getDescription().setText(result.getDescription());
-                view.getDetails().setHTML(result.getDetails());
-                view.setBinaryButtonVisible(result.getDestBinaryFile() != null && 
-                        result.getDestBinaryFile().length() > 0);
+                view.setProjectTitle(project.getName());
+                view.setPlatform(project.getPlatform());
+                view.setFeatures(project.getFeatures());
+                view.getDescription().setText(project.getDescription());
+                view.getDetails().setHTML(project.getDetails());
+                view.setBinaryButtonVisible(project.getDestBinaryFile() != null && 
+                        project.getDestBinaryFile().length() > 0);
             }
         });
     }
     
-    private void getProjectSourceCode(String projectId) {
-        getProjectData(projectId, ProjectDataType.SOURCE);
+    private void getProjectSourceCode() {
+        getProjectData(ProjectDataType.SOURCE);
     }
     
-    private void getProjectBinary(String projectId) {
-        getProjectData(projectId, ProjectDataType.BINARY);
+    private void getProjectBinary() {
+        getProjectData(ProjectDataType.BINARY);
     }
     
-    private void getProjectData(final String projectId, final ProjectDataType type) {
+    private void getProjectData(final ProjectDataType type) {
         view.clearError();
-        Sandbox.getSandboxService().checkProjectDataExists(projectId, type, new BusyAsyncCallback<Boolean>() {
-
-            @Override
-            public void onFailureImpl(Throwable caught) {
-                view.setErrorMessage(Utils.getErrorMessage(caught));
-            }
-
-            @Override
-            public void onSuccessImpl(Boolean result) {
-                if (result) {
-                    ServletHelper.downloadProjectFile(projectId, type);
+        if (project != null) {
+            Sandbox.getSandboxService().checkProjectDataExists(project.getId(), type, new BusyAsyncCallback<Boolean>() {
+    
+                @Override
+                public void onFailureImpl(Throwable caught) {
+                    view.setErrorMessage(Utils.getErrorMessage(caught));
                 }
-                else {
-                    ConsoleDialog.startConsoleDialog(new ConsoleDialogListener() {
-                        @Override
-                        public void onOk(boolean success) {
-                            if (success) {
-                                ServletHelper.downloadProjectFile(projectId, type);
+    
+                @Override
+                public void onSuccessImpl(Boolean result) {
+                    if (result) {
+                        ServletHelper.downloadProjectFile(project.getId(), type);
+                    }
+                    else {
+                        String initialMessage = "Assembling ";
+                        if (type == ProjectDataType.SOURCE) {
+                            initialMessage += "sources";
+                        } else {
+                            initialMessage += "binary";
+                        }
+                        initialMessage += " for '" + project.getName() + "' project...\n";
+                        ConsoleDialog.startConsoleDialog(initialMessage, new ConsoleDialogListener() {
+                            @Override
+                            public void onOk(boolean success) {
+                                if (success) {
+                                    ServletHelper.downloadProjectFile(project.getId(), type);
+                                }
                             }
-                        }
-
-                        @Override
-                        public void onStart(String uuid, final ConsoleDialog dialog, final AsyncCallback<Void> callback) {
-                            Sandbox.getSandboxService().buildProjectData(uuid, null, projectId, type, new AsyncCallback<Void>() {
-                              @Override
-                              public void onFailure(Throwable caught) {
-                                  callback.onFailure(caught);
-                              }
-                    
-                              @Override
-                              public void onSuccess(Void result) {
-                                  dialog.appendToConsoleAtFinish("Succesfully prepared project data!\n");
-                                  dialog.appendToConsoleAtFinish("\n\n\n-------- CLICK OK TO START DOWNLOAD " + 
-                                          (type==ProjectDataType.SOURCE ? "PROJECT SOURCES" : "BINARY FILE") + " --------\n\n\n");
-                                  callback.onSuccess(result);
-                              }
-                            });
-                        }
-                    });
+    
+                            @Override
+                            public void onStart(String uuid, final ConsoleDialog dialog, final AsyncCallback<Void> callback) {
+                                Sandbox.getSandboxService().buildProjectData(uuid, null, project.getId(), type, new AsyncCallback<Void>() {
+                                  @Override
+                                  public void onFailure(Throwable caught) {
+                                      callback.onFailure(caught);
+                                  }
+                        
+                                  @Override
+                                  public void onSuccess(Void result) {
+                                      dialog.appendToConsoleAtFinish("Succesfully prepared project data!\n");
+                                      dialog.appendToConsoleAtFinish("\n\n\n-------- CLICK OK TO START DOWNLOAD " + 
+                                              (type==ProjectDataType.SOURCE ? "PROJECT SOURCES" : "BINARY FILE") + " --------\n\n\n");
+                                      callback.onSuccess(result);
+                                  }
+                                });
+                            }
+                        });
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            view.setErrorMessage("Unable to retrieve project data!");
+        }
     }
     
     
