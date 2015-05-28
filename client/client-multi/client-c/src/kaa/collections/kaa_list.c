@@ -35,8 +35,6 @@ struct kaa_list_t {
     size_t             size;
 };
 
-
-
 static kaa_list_node_t *set_next_neighbor(kaa_list_node_t *whom, kaa_list_node_t *neighbor)
 {
     KAA_RETURN_IF_NIL(whom, NULL);
@@ -262,4 +260,69 @@ void kaa_list_for_each(kaa_list_node_t *first, kaa_list_node_t *last, process_da
 
         first = kaa_list_next(first);
     }
+}
+
+static kaa_list_node_t *kaa_split_util(struct kaa_list_node_t *head);
+
+
+static kaa_list_node_t *kaa_merge_util(struct kaa_list_node_t *first, struct kaa_list_node_t *second, match_predicate pred)
+{
+    if (!first) {
+        return second;
+    }
+
+    if (!second) {
+        return first;
+    }
+
+    if (pred(first->data ,second->data)) {
+
+        first->next = kaa_merge_util(first->next,second, pred);
+        first->next->prev = first;
+        first->prev = NULL;
+
+        return first;
+    } else {
+        second->next = kaa_merge_util(first,second->next, pred);
+        second->next->prev = second;
+        second->prev = NULL;
+        return second;
+    }
+}
+
+// Function to do merge sort
+static kaa_list_node_t *kaa_merge_sort(kaa_list_node_t *head, match_predicate pred)
+{
+    if (!head || !head->next) {
+        return head;
+    kaa_list_node_t *second = kaa_split_util(head);
+
+    head = kaa_merge_sort(head, pred);
+    second = kaa_merge_sort(second, pred);
+
+    head = kaa_merge_util(head, second, pred);
+    return head;
+}
+
+static kaa_list_node_t *kaa_split_util( kaa_list_node_t *head)
+{
+    kaa_list_node_t *fast = head;
+    kaa_list_node_t *slow = head;
+    while (fast->next && fast->next->next) {
+        fast = fast->next->next;
+        slow = slow->next;
+    }
+    kaa_list_node_t *temp = slow->next;
+    slow->next = NULL;
+    return temp;
+}
+
+void kaa_list_sort(kaa_list_t *list, match_predicate pred)
+{
+    kaa_list_node_t *node = kaa_merge_sort(kaa_list_begin(list), pred);
+    list->head =  node;
+    while (node->next) {
+        node = node->next;
+    }
+    list->tail = node;
 }
