@@ -958,11 +958,6 @@ kaa_error_t kaa_topic_list_updated(kaa_notification_manager_t *self, kaa_list_t 
 kaa_error_t kaa_notification_received(kaa_notification_manager_t *self, kaa_notification_t *notification, uint64_t* topic_id)
 {
     KAA_RETURN_IF_NIL2(self, notification, KAA_ERR_BADDATA);
-    kaa_topic_t* topic = NULL;
-    kaa_error_t err = kaa_find_topic(self, &topic, topic_id);
-    if (err) {
-        KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Unknown notification received(topic id = %lu) ", *topic_id);
-    }
     if (kaa_notify_optional_notification_subscribers(self, topic_id, notification)) {
         kaa_notify_mandatory_notification_subscribers(self,topic_id, notification);
     }
