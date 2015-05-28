@@ -262,18 +262,13 @@ void kaa_list_for_each(kaa_list_node_t *first, kaa_list_node_t *last, process_da
     }
 }
 
-static kaa_list_node_t *kaa_split_util(struct kaa_list_node_t *head);
+static kaa_list_node_t *kaa_split_util(kaa_list_node_t *head);
 
 
-static kaa_list_node_t *kaa_merge_util(struct kaa_list_node_t *first, struct kaa_list_node_t *second, match_predicate pred)
+static kaa_list_node_t *kaa_merge_util(kaa_list_node_t *first, kaa_list_node_t *second, match_predicate pred)
 {
-    if (!first) {
-        return second;
-    }
-
-    if (!second) {
-        return first;
-    }
+    KAA_RETURN_IF_NIL(first, second);
+    KAA_RETURN_IF_NIL(second, first)
 
     if (pred(first->data ,second->data)) {
 
@@ -290,11 +285,10 @@ static kaa_list_node_t *kaa_merge_util(struct kaa_list_node_t *first, struct kaa
     }
 }
 
-// Function to do merge sort
 static kaa_list_node_t *kaa_merge_sort(kaa_list_node_t *head, match_predicate pred)
 {
-    if (!head || !head->next) {
-        return head;
+    KAA_RETURN_IF_NIL2(head, head->next, head);
+
     kaa_list_node_t *second = kaa_split_util(head);
 
     head = kaa_merge_sort(head, pred);

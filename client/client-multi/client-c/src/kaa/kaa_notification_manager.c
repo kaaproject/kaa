@@ -120,8 +120,8 @@ static void kaa_destroy_notification_wrapper(void *data)
 {
     KAA_RETURN_IF_NIL(data, );
     kaa_notification_wrapper_t* wrapper = (kaa_notification_wrapper_t *)data;
-    if(wrapper->notification) {
-       wrapper->notification->destroy(wrapper->notification);
+    if (wrapper->notification) {
+        wrapper->notification->destroy(wrapper->notification);
     }
     KAA_FREE(wrapper);
 }
@@ -132,7 +132,7 @@ static void kaa_destroy_notification_node(void *data)
     kaa_list_destroy(node->notifications, kaa_destroy_notification_wrapper);
     KAA_FREE(node);
 }
-static kaa_error_t kaa_create_topic_notification_node(kaa_topic_notifications_node_t**node, kaa_notification_t *item, uint32_t *sqn, uint64_t *topic_id)
+static kaa_error_t kaa_create_topic_notification_node(kaa_topic_notifications_node_t **node, kaa_notification_t *item, uint32_t *sqn, uint64_t *topic_id)
 {
     KAA_RETURN_IF_NIL(node, KAA_ERR_BADPARAM);
     kaa_topic_notifications_node_t * new_node = (kaa_topic_notifications_node_t *) KAA_MALLOC(sizeof(kaa_topic_notifications_node_t));
@@ -142,20 +142,20 @@ static kaa_error_t kaa_create_topic_notification_node(kaa_topic_notifications_no
 
     new_node->notifications = kaa_list_create();
     if (!new_node->notifications) {
-        KAA_FREE(new_node);
+        kaa_destroy_notification_node(new_node);
         return KAA_ERR_NOMEM;
     }
 
     kaa_notification_wrapper_t * wrapper = (kaa_notification_wrapper_t *) KAA_MALLOC(sizeof(kaa_notification_wrapper_t));
     if (!wrapper) {
         kaa_list_destroy(new_node->notifications, NULL);
-        KAA_FREE(new_node);
+        kaa_destroy_notification_node(new_node);
         return KAA_ERR_NOMEM;
     }
 
     if(!kaa_list_push_back(new_node->notifications, wrapper)) {
         kaa_list_destroy(new_node->notifications, NULL);
-        KAA_FREE(new_node);
+        kaa_destroy_notification_node(new_node);
         KAA_FREE(wrapper);
         return KAA_ERR_NOMEM;
     }
@@ -1179,7 +1179,7 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
     if (kaa_list_get_size(self->notifications)) {
         kaa_sort_notifications(self->notifications);
         kaa_list_for_each(kaa_list_begin(self->notifications), kaa_list_back(self->notifications), &kaa_notify_notification_listeners, self);
-        kaa_list_destroy(self->notifications, &kaa_destroy_notification_node);
+        kaa_list_clear(self->notifications, &kaa_destroy_notification_node);
         self->notifications = kaa_list_create();
         if (!self->notifications) {
             return KAA_ERR_NOMEM;
