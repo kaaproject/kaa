@@ -33,7 +33,7 @@ Copyright 2014 CyberVision, Inc.
         <akka.version>2.3.1</akka.version>
         <spring.version>4.0.2.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
-        <spring.data.version>1.3.0.RELEASE</spring.data.version>
+        <spring.data.version>Fowler-RELEASE</spring.data.version>
         <ehcache.version>2.8.1</ehcache.version>
         <ehcache-spring.version>1.2.0</ehcache-spring.version>
         <hibernate.version>4.3.5.Final</hibernate.version>
@@ -72,7 +72,7 @@ Copyright 2014 CyberVision, Inc.
         <joda-time.version>2.2</joda-time.version>
         <junit.version>4.11</junit.version>
         <embed.mongo.version>1.42</embed.mongo.version>
-        <mongo-driver.version>2.11.4</mongo-driver.version>
+        <mongo-driver.version>3.0.1</mongo-driver.version>
         <mockito.version>1.9.5</mockito.version>
         <equalsverifier.version>1.4.1</equalsverifier.version>
         <jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
@@ -97,6 +97,8 @@ Copyright 2014 CyberVision, Inc.
         <cassandra.driver.version>2.1.4</cassandra.driver.version>
         <cassandra.driver.mapping>2.1.4</cassandra.driver.mapping>
         <cassandra-unit.version>2.0.2.2</cassandra-unit.version>
+        
+        <couchbase.client.version>2.1.3</couchbase.client.version>
 
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -624,6 +626,18 @@ Copyright 2014 CyberVision, Inc.
                 <classifier>rest</classifier>
             </dependency>
             <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.couchbase</groupId>
+                <artifactId>config</artifactId>
+                <version>${project.version}</version>
+                <classifier>couchbase</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.couchbase</groupId>
+                <artifactId>appender</artifactId>
+                <version>${project.version}</version>
+                <classifier>couchbase</classifier>
+            </dependency>
+            <dependency>
                 <groupId>org.kaaproject.kaa.common</groupId>
                 <artifactId>core</artifactId>
                 <version>${project.version}</version>
@@ -863,6 +877,11 @@ Copyright 2014 CyberVision, Inc.
                 <version>${spring.data.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.couchbase.client</groupId>
+                <artifactId>java-client</artifactId>
+                <version>${couchbase.client.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
