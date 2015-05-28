@@ -437,7 +437,7 @@ public class BinaryEncDec implements PlatformEncDec {
             buf.put(NOTHING);
             buf.putShort((short) notificationSync.getNotifications().size());
             for (Notification nf : notificationSync.getNotifications()) {
-                buf.putInt((nf.getSeqNumber() != null)? nf.getSeqNumber():0);
+                buf.putInt((nf.getSeqNumber() != null) ? nf.getSeqNumber() : 0);
                 buf.put(nf.getType() == NotificationType.SYSTEM ? SYSTEM : CUSTOM);
                 buf.put(NOTHING);
                 buf.putShort(nf.getUid() != null ? (short) nf.getUid().length() : (short) 0);
