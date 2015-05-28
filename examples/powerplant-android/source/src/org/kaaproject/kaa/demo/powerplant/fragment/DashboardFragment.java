@@ -39,6 +39,7 @@ import lecho.lib.hellocharts.view.PieChartView;
 
 import org.kaaproject.kaa.demo.powerplant.PowerPlantActivity;
 import org.kaaproject.kaa.demo.powerplant.R;
+import org.kaaproject.kaa.demo.powerplant.data.CouchBaseDataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.data.DataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.data.FakeDataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.data.RestDataEndpoint;
@@ -76,6 +77,7 @@ public class DashboardFragment extends Fragment {
     public static final float NORMAL_VOLTAGE = 3.0f;
     public static final float MAX_VOLTAGE = 6.0f;
     private static final float VOLTAGE_MULTIPLY_COEF = 2.2f;
+    private static final DataReport INITIAL_REPORT = new DataReport(System.currentTimeMillis(), null, 1f);
 
     private static final float Y_AXIS_MIN_MAX_DIV = 2.0f;
     private static final boolean LINE_CHART_IS_CUBIC = true;
@@ -86,7 +88,7 @@ public class DashboardFragment extends Fragment {
     private static final String PIE_CHART_VALUE_FORMAT = "%.1f";
     private static final int INTERVAL_FOR_HORIZONTAL_AXIS = 20;
 
-    private static final int UPDATE_CHECK_PERIOD = 150;
+    private static final int UPDATE_CHECK_PERIOD = 1000;
     private static final int UPDATE_PERIOD = 400;
     private static final int POINTS_COUNT = 300;
     private static final int PAST_POINTS_COUNT = 3;
@@ -130,13 +132,19 @@ public class DashboardFragment extends Fragment {
             mActivity = (PowerPlantActivity) activity;
         }
     }
+    
+    @Override
+    public void onDestroy() {
+    	super.onDestroy();
+    	endpoint.stop();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
+        endpoint = new CouchBaseDataEndpoint(getActivity());
 //        endpoint = new FakeDataEndpoint();
-        endpoint = new RestDataEndpoint();
         
         gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart11));
         gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart12));
@@ -167,14 +175,18 @@ public class DashboardFragment extends Fragment {
                     		mActivity.finish();
                         }
                     });
-                } else {	
+                } else {
 	                mActivity.runOnUiThread(new Runnable() {
 	                    @Override
 	                    public void run() {
 	                        Log.i(TAG, "populating charts with data " + reports.size());
 	                        prepareLineChart(rootView, reports);
 	                        Log.i(TAG, "populated line chart with data ");
-	                        preparePieChart(rootView, reports.get(reports.size() - 1));
+	                        if (!reports.isEmpty()) {
+		                        preparePieChart(rootView, reports.get(reports.size() - 1));
+	                        } else {
+	                        	preparePieChart(rootView, INITIAL_REPORT);
+	                        }
 	                        Log.i(TAG, "populated pie chart with data ");
 	                    }
 	                });
@@ -185,7 +197,10 @@ public class DashboardFragment extends Fragment {
 	                    e1.printStackTrace();
 	                }
 	                
-	                DataReport previousReport = reports.get(reports.size() - 1);
+	                DataReport previousReport = INITIAL_REPORT;
+	                if (!reports.isEmpty()) {
+	                	previousReport = reports.get(reports.size() - 1);
+	                }
 	                long previousUpdate = 0l;
 	                while (true) {
 	                    boolean updated = false;
@@ -199,7 +214,8 @@ public class DashboardFragment extends Fragment {
 	                            	Log.i(TAG, "Updating since -" + (updateDelta / 1000.) + " s.");
 	                            }
 	                            DataReport latestDataCandidate = endpoint.getLatestData();
-	                            if (latestDataCandidate.getTime() > previousReport.getTime()) {
+	                            latestDataCandidate = (latestDataCandidate == null ? previousReport : latestDataCandidate);
+	                            if (latestDataCandidate.getTime() >= previousReport.getTime()) {
 	                                previousReport = latestDataCandidate;
 	                                updated = true;
 	                                previousUpdate = System.currentTimeMillis();
