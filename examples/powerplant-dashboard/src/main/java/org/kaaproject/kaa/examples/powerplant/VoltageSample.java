@@ -7,8 +7,9 @@ package org.kaaproject.kaa.examples.powerplant;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"VoltageSample\",\"namespace\":\"org.kaaproject.kaa.examples.powerplant\",\"fields\":[{\"name\":\"panelId\",\"type\":\"int\"},{\"name\":\"voltage\",\"type\":\"double\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"VoltageSample\",\"namespace\":\"org.kaaproject.kaa.examples.powerplant\",\"fields\":[{\"name\":\"zoneId\",\"type\":\"int\"},{\"name\":\"panelId\",\"type\":\"int\"},{\"name\":\"voltage\",\"type\":\"double\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
+   private int zoneId;
    private int panelId;
    private double voltage;
 
@@ -22,7 +23,8 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
   /**
    * All-args constructor.
    */
-  public VoltageSample(java.lang.Integer panelId, java.lang.Double voltage) {
+  public VoltageSample(java.lang.Integer zoneId, java.lang.Integer panelId, java.lang.Double voltage) {
+    this.zoneId = zoneId;
     this.panelId = panelId;
     this.voltage = voltage;
   }
@@ -31,8 +33,9 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
   // Used by DatumWriter.  Applications should not call. 
   public java.lang.Object get(int field$) {
     switch (field$) {
-    case 0: return panelId;
-    case 1: return voltage;
+    case 0: return zoneId;
+    case 1: return panelId;
+    case 2: return voltage;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -40,10 +43,26 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: panelId = (java.lang.Integer)value$; break;
-    case 1: voltage = (java.lang.Double)value$; break;
+    case 0: zoneId = (java.lang.Integer)value$; break;
+    case 1: panelId = (java.lang.Integer)value$; break;
+    case 2: voltage = (java.lang.Double)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
+  }
+
+  /**
+   * Gets the value of the 'zoneId' field.
+   */
+  public java.lang.Integer getZoneId() {
+    return zoneId;
+  }
+
+  /**
+   * Sets the value of the 'zoneId' field.
+   * @param value the value to set.
+   */
+  public void setZoneId(java.lang.Integer value) {
+    this.zoneId = value;
   }
 
   /**
@@ -97,6 +116,7 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<VoltageSample>
     implements org.apache.avro.data.RecordBuilder<VoltageSample> {
 
+    private int zoneId;
     private int panelId;
     private double voltage;
 
@@ -108,27 +128,59 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
     /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.examples.powerplant.VoltageSample.Builder other) {
       super(other);
-      if (isValidValue(fields()[0], other.panelId)) {
-        this.panelId = data().deepCopy(fields()[0].schema(), other.panelId);
+      if (isValidValue(fields()[0], other.zoneId)) {
+        this.zoneId = data().deepCopy(fields()[0].schema(), other.zoneId);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.voltage)) {
-        this.voltage = data().deepCopy(fields()[1].schema(), other.voltage);
+      if (isValidValue(fields()[1], other.panelId)) {
+        this.panelId = data().deepCopy(fields()[1].schema(), other.panelId);
         fieldSetFlags()[1] = true;
+      }
+      if (isValidValue(fields()[2], other.voltage)) {
+        this.voltage = data().deepCopy(fields()[2].schema(), other.voltage);
+        fieldSetFlags()[2] = true;
       }
     }
     
     /** Creates a Builder by copying an existing VoltageSample instance */
     private Builder(org.kaaproject.kaa.examples.powerplant.VoltageSample other) {
             super(org.kaaproject.kaa.examples.powerplant.VoltageSample.SCHEMA$);
-      if (isValidValue(fields()[0], other.panelId)) {
-        this.panelId = data().deepCopy(fields()[0].schema(), other.panelId);
+      if (isValidValue(fields()[0], other.zoneId)) {
+        this.zoneId = data().deepCopy(fields()[0].schema(), other.zoneId);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.voltage)) {
-        this.voltage = data().deepCopy(fields()[1].schema(), other.voltage);
+      if (isValidValue(fields()[1], other.panelId)) {
+        this.panelId = data().deepCopy(fields()[1].schema(), other.panelId);
         fieldSetFlags()[1] = true;
       }
+      if (isValidValue(fields()[2], other.voltage)) {
+        this.voltage = data().deepCopy(fields()[2].schema(), other.voltage);
+        fieldSetFlags()[2] = true;
+      }
+    }
+
+    /** Gets the value of the 'zoneId' field */
+    public java.lang.Integer getZoneId() {
+      return zoneId;
+    }
+    
+    /** Sets the value of the 'zoneId' field */
+    public org.kaaproject.kaa.examples.powerplant.VoltageSample.Builder setZoneId(int value) {
+      validate(fields()[0], value);
+      this.zoneId = value;
+      fieldSetFlags()[0] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'zoneId' field has been set */
+    public boolean hasZoneId() {
+      return fieldSetFlags()[0];
+    }
+    
+    /** Clears the value of the 'zoneId' field */
+    public org.kaaproject.kaa.examples.powerplant.VoltageSample.Builder clearZoneId() {
+      fieldSetFlags()[0] = false;
+      return this;
     }
 
     /** Gets the value of the 'panelId' field */
@@ -138,20 +190,20 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
     
     /** Sets the value of the 'panelId' field */
     public org.kaaproject.kaa.examples.powerplant.VoltageSample.Builder setPanelId(int value) {
-      validate(fields()[0], value);
+      validate(fields()[1], value);
       this.panelId = value;
-      fieldSetFlags()[0] = true;
+      fieldSetFlags()[1] = true;
       return this; 
     }
     
     /** Checks whether the 'panelId' field has been set */
     public boolean hasPanelId() {
-      return fieldSetFlags()[0];
+      return fieldSetFlags()[1];
     }
     
     /** Clears the value of the 'panelId' field */
     public org.kaaproject.kaa.examples.powerplant.VoltageSample.Builder clearPanelId() {
-      fieldSetFlags()[0] = false;
+      fieldSetFlags()[1] = false;
       return this;
     }
 
@@ -162,20 +214,20 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
     
     /** Sets the value of the 'voltage' field */
     public org.kaaproject.kaa.examples.powerplant.VoltageSample.Builder setVoltage(double value) {
-      validate(fields()[1], value);
+      validate(fields()[2], value);
       this.voltage = value;
-      fieldSetFlags()[1] = true;
+      fieldSetFlags()[2] = true;
       return this; 
     }
     
     /** Checks whether the 'voltage' field has been set */
     public boolean hasVoltage() {
-      return fieldSetFlags()[1];
+      return fieldSetFlags()[2];
     }
     
     /** Clears the value of the 'voltage' field */
     public org.kaaproject.kaa.examples.powerplant.VoltageSample.Builder clearVoltage() {
-      fieldSetFlags()[1] = false;
+      fieldSetFlags()[2] = false;
       return this;
     }
 
@@ -183,8 +235,9 @@ public class VoltageSample extends org.apache.avro.specific.SpecificRecordBase i
     public VoltageSample build() {
       try {
         VoltageSample record = new VoltageSample();
-        record.panelId = fieldSetFlags()[0] ? this.panelId : (java.lang.Integer) defaultValue(fields()[0]);
-        record.voltage = fieldSetFlags()[1] ? this.voltage : (java.lang.Double) defaultValue(fields()[1]);
+        record.zoneId = fieldSetFlags()[0] ? this.zoneId : (java.lang.Integer) defaultValue(fields()[0]);
+        record.panelId = fieldSetFlags()[1] ? this.panelId : (java.lang.Integer) defaultValue(fields()[1]);
+        record.voltage = fieldSetFlags()[2] ? this.voltage : (java.lang.Double) defaultValue(fields()[2]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

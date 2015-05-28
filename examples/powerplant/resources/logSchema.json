@@ -17,6 +17,10 @@
                     "namespace":"org.kaaproject.kaa.examples.powerplant",
                     "fields":[
                         {
+                            "name":"zoneId",
+                            "type":"int"
+                        },
+                        {
                             "name":"panelId",
                             "type":"int"
                         },

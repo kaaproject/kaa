@@ -88,12 +88,12 @@ public class DashboardResource {
         synchronized (updateLock) {
             for (VoltageSample sample : report.getSamples()) {
                 LOG.trace("processing {}", sample);
-                Integer panelId = sample.getPanelId();
-                SortedSet<DataPoint> sampleSet = voltageSamplesMap.get(panelId);
+                Integer zoneId = sample.getZoneId();
+                SortedSet<DataPoint> sampleSet = voltageSamplesMap.get(zoneId);
                 if (sampleSet == null) {
-                    LOG.trace("[{}] no samples for this panel yet", panelId);
+                    LOG.trace("[{}] no samples for this panel yet", zoneId);
                     sampleSet = Collections.synchronizedSortedSet(new TreeSet<DataPoint>(DataPoint.TS_COMPARATOR));
-                    SortedSet<DataPoint> curSet = voltageSamplesMap.put(panelId, sampleSet);
+                    SortedSet<DataPoint> curSet = voltageSamplesMap.put(zoneId, sampleSet);
                     if (curSet != null) {
                         sampleSet = curSet;
                     }
@@ -102,7 +102,7 @@ public class DashboardResource {
                 if (sampleSet.size() == MAX_SAMPLES) {
                     DataPoint old = sampleSet.first();
                     sampleSet.remove(old);
-                    LOG.trace("[{}] removing old data {}", panelId, old);
+                    LOG.trace("[{}] removing old data {}", zoneId, old);
                 }
             }
         }
@@ -110,7 +110,7 @@ public class DashboardResource {
     }
 
     private static DataPoint convert(VoltageSample sample, long ts) {
-        return new DataPoint(sample.getPanelId(), sample.getVoltage().floatValue(), ts);
+        return new DataPoint(sample.getZoneId(), sample.getVoltage().floatValue(), ts);
     }
 
     private static final DatumReader<VoltageReport> datumReader = new SpecificDatumReader<VoltageReport>(VoltageReport.SCHEMA$);

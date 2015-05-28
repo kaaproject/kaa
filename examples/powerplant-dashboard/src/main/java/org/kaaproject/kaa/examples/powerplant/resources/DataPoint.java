@@ -8,8 +8,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class DataPoint {
 
-    @XmlElement(name="panel")
-    public int panelId;
+    @XmlElement
+    public int zoneId;
     
     @XmlElement
     public double voltage;
@@ -17,9 +17,9 @@ public class DataPoint {
     @XmlElement
     public long time;
 
-    public DataPoint(int panelId, double voltage, long time) {
+    public DataPoint(int zoneId, double voltage, long time) {
         super();
-        this.panelId = panelId;
+        this.zoneId = zoneId;
         this.voltage = voltage;
         this.time = time;
     }
@@ -39,7 +39,7 @@ public class DataPoint {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + panelId;
+        result = prime * result + zoneId;
         result = prime * result + (int) (time ^ (time >>> 32));
         return result;
     }
@@ -56,7 +56,7 @@ public class DataPoint {
             return false;
         }
         DataPoint other = (DataPoint) obj;
-        if (panelId != other.panelId) {
+        if (zoneId != other.zoneId) {
             return false;
         }
         if (time != other.time) {

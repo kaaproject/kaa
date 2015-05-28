@@ -91,7 +91,7 @@ public class RestDataEndpoint extends AbstractDataEndpoint {
                 report = new DataReport(time, dataPoints, getConsumption());
                 resultMap.put(time, report);
             }
-            report.getDataPoints().add(new DataPoint(dataPoint.getInt("panelId"), (float) dataPoint.getDouble("voltage")));
+            report.getDataPoints().add(new DataPoint(dataPoint.getInt("zoneId"), (float) dataPoint.getDouble("voltage")));
         }
 
         List<DataReport> result = new ArrayList<DataReport>(resultMap.values());

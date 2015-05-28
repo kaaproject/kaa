@@ -41,11 +41,11 @@ public class DashboardApplication {
         }
         String baseURI = "http://" + args[0] + ":" + args[1] + "/api";
         LOG.info("Base URI: {}", baseURI);
-        
+
         final ResourceConfig rc = new ResourceConfig().packages("org.kaaproject.kaa.examples.powerplant.resources");
         rc.register(JacksonFeature.class);
         rc.register(SimpleMapperProvider.class);
-        
+
         HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(baseURI), rc, false);
         server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandler(DashboardApplication.class.getClassLoader(), "/"),"/");
 
