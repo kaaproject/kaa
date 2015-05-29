@@ -1,0 +1,21 @@
+{
+  "activeEndpointType" : "COUCHBASE",
+  "restConfiguration" : {
+    "org.kaaproject.kaa.demo.powerplant.configuration.RestEndpointConfiguration" : {
+      "baseURL" : "http://kaa-demo-one.cybervisiontech.com:10000/api/data",
+      "__uuid": null 
+    }
+  },
+  "couchbaseConfiguration" : {
+    "org.kaaproject.kaa.demo.powerplant.configuration.CouchbaseEndpointConfiguration" : {
+      "couchbaseURL" : "http://10.0.2.2:4984/",
+      "localDBName" : "powerplant_logs",
+      "username" : "kaa",
+      "password" : "kaa",
+      "gatewayName" : "sync_gateway",
+      "channelName" : "totals",
+      "__uuid": null 
+    }
+  },
+  "__uuid": null
+}

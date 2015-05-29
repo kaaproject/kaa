@@ -1,0 +1,88 @@
+{
+  "type" : "record",
+  "name" : "PowerPlantEndpointConfiguration",
+  "namespace" : "org.kaaproject.kaa.demo.powerplant.configuration",
+  "fields" : [ {
+    "name" : "activeEndpointType",
+    "type" : {
+      "type" : "enum",
+      "name" : "endpointType",
+      "symbols" : [ "FAKE", "REST", "COUCHBASE" ]
+    },
+    "displayName" : "Active endpoint",
+    "by_default" : "COUCHBASE",
+    "displayNames" : [ "FakeDataEndpoint", "RestDataEndpoint", "CouchbaseDataEndpoint" ]
+  }, {
+    "name" : "restConfiguration",
+    "type" : [ {
+      "type" : "record",
+      "name" : "RestEndpointConfiguration",
+      "fields" : [ {
+        "name" : "baseURL",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "by_default" : "http://kaa-demo-one.cybervisiontech.com:10000/api/data"
+      } ]
+    }, "null" ]
+  }, {
+    "name" : "couchbaseConfiguration",
+    "type" : [ {
+      "type" : "record",
+      "name" : "CouchbaseEndpointConfiguration",
+      "fields" : [ {
+        "name" : "couchbaseURL",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Couchbase DB URL",
+        "displayPrompt" : "",
+        "by_default" : "http://localhost:4984/"
+      }, {
+        "name" : "localDBName",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Local Couchbase Lite DB name",
+        "by_default" : "powerplant_logs"
+      }, {
+        "name" : "username",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Couchbase DB user name",
+        "by_default" : "kaa"
+      }, {
+        "name" : "password",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Couchbase DB user password",
+        "by_default" : "kaa",
+        "inputType" : "password"
+      }, {
+        "name" : "gatewayName",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "displayName" : "Sync gateway name",
+        "by_default" : "sync_gateway"
+      }, {
+        "name" : "channelName",
+        "type" : {
+          "type" : "string",
+          "avro.java.string" : "String"
+        },
+        "by_default" : "totals",
+        "inputType" : "plain"
+      } ]
+    }, "null" ]
+  } ],
+  "displayName" : "Configuration of endpoints for powerplant Android demo"
+}

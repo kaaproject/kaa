@@ -42,15 +42,21 @@ import android.util.Log;
 public class RestDataEndpoint extends AbstractDataEndpoint {
     private static final String TAG = RestDataEndpoint.class.getSimpleName();
 
-    private static final String BASE_URL = "http://kaa-demo-one.cybervisiontech.com:10000/api/data";
-    private static final String LATEST_URL = BASE_URL + "/latest";
     private static final int PANNELS_PER_ZONE = 1;
+    
+    private String baseURL;
+    private String latestURL;
 
+    public RestDataEndpoint(String baseURLStr) {
+    	this.baseURL = baseURLStr;
+    	this.latestURL = baseURL + "/latest";
+    }
+    
     @Override
     public DataReport getLatestData() {
         try {
             long time = System.currentTimeMillis();
-            HttpGet getRequest = new HttpGet(LATEST_URL);
+            HttpGet getRequest = new HttpGet(latestURL);
             getRequest.addHeader("accept", "application/json");
             JSONArray jsonArray = fetchJson(getRequest);
             List<DataReport> reports = toDataReport(jsonArray);
@@ -65,7 +71,7 @@ public class RestDataEndpoint extends AbstractDataEndpoint {
     @Override
     public List<DataReport> getHistoryData(long fromTime) {
         try {
-            HttpGet getRequest = new HttpGet(BASE_URL + "?from=" + fromTime);
+            HttpGet getRequest = new HttpGet(baseURL + "?from=" + fromTime);
             getRequest.addHeader("accept", "application/json");
             JSONArray jsonArray = fetchJson(getRequest);
             return toDataReport(jsonArray);

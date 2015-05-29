@@ -19,13 +19,13 @@ package org.kaaproject.kaa.demo.powerplant.fragment;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import lecho.lib.hellocharts.formatter.AxisValueFormatter;
 import lecho.lib.hellocharts.model.Axis;
@@ -38,10 +38,17 @@ import lecho.lib.hellocharts.model.SliceValue;
 import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PieChartView;
 
+import org.kaaproject.kaa.client.AndroidKaaPlatformContext;
+import org.kaaproject.kaa.client.Kaa;
+import org.kaaproject.kaa.client.KaaClient;
+import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
+import org.kaaproject.kaa.client.configuration.base.SimpleConfigurationStorage;
 import org.kaaproject.kaa.demo.powerplant.PowerPlantActivity;
 import org.kaaproject.kaa.demo.powerplant.R;
+import org.kaaproject.kaa.demo.powerplant.configuration.PowerPlantEndpointConfiguration;
 import org.kaaproject.kaa.demo.powerplant.data.CouchBaseDataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.data.DataEndpoint;
+import org.kaaproject.kaa.demo.powerplant.data.DataEndpointFactory;
 import org.kaaproject.kaa.demo.powerplant.data.FakeDataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.data.RestDataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataPoint;
@@ -80,8 +87,7 @@ public class DashboardFragment extends Fragment {
     public static final float NORMAL_VOLTAGE = 3000.0f * AVG_PANEL_PER_ZONE;
     public static final float MAX_VOLTAGE = 6000.0f * AVG_PANEL_PER_ZONE;
     private static final float VOLTAGE_MULTIPLY_COEF = 1f;
-    private static final DataReport INITIAL_REPORT = new DataReport(System.currentTimeMillis(),
-    		Collections.<DataPoint> emptyList(), 0f);
+    private static final DataReport INITIAL_REPORT = generateInitialDataReport();
 
     private static final float Y_AXIS_MIN_MAX_DIV = 2.0f;
     private static final boolean LINE_CHART_IS_CUBIC = true;
@@ -119,15 +125,23 @@ public class DashboardFragment extends Fragment {
     private TextView plantValueView;
     private TextView gridValueView;
     private TextView totalValueView;
-    private final List<GaugeChart> gaugeCharts = new ArrayList<>();
-    private final boolean[] isPanelsOutage = new boolean[NUM_ZONES];
     private TextView logBox;
-    private LinkedList<String> savedLogs = new LinkedList<>();
-    private StringBuilder curLogString = new StringBuilder();
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
     
     private Line line;
+    
+    private final List<GaugeChart> gaugeCharts = new ArrayList<>();
+    private final boolean[] isPanelsOutage = new boolean[NUM_ZONES];
+    private LinkedList<String> savedLogs = new LinkedList<>();
+    private StringBuilder curLogString = new StringBuilder();
+    
+    private ExecutorService logBoxUpdateExecutor = Executors.newSingleThreadExecutor();
+    private AndroidKaaPlatformContext androidKaaPlatformContext;
+    private boolean noEndpointUpdate = true;
+    private ExecutorService updateChartsExecutor = Executors.newSingleThreadExecutor();
+    private Thread updateThread;
+    
     private DataEndpoint endpoint;
+    private KaaClient kaaClient;
 
     @Override
     public void onAttach(Activity activity) {
@@ -140,15 +154,41 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onDestroy() {
     	super.onDestroy();
-    	endpoint.stop();
+    	if (endpoint != null) {
+    		endpoint.stop();
+            kaaClient.setConfigurationStorage(new SimpleConfigurationStorage(androidKaaPlatformContext, "saved_config.cfg"));
+    		kaaClient.stop();
+    	}
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
-        endpoint = new CouchBaseDataEndpoint(getActivity());
-//        endpoint = new FakeDataEndpoint();
+        androidKaaPlatformContext = new AndroidKaaPlatformContext(getActivity());
+        kaaClient = Kaa.newClient(androidKaaPlatformContext);
+        
+        endpoint = DataEndpointFactory.createEndpoint(kaaClient.getConfiguration(), getActivity());
+        Log.i(TAG, "Default configuration: " + kaaClient.getConfiguration().toString());
+        
+        
+        kaaClient.addConfigurationListener(new ConfigurationListener() {
+			@Override
+			public void onConfigurationUpdate(PowerPlantEndpointConfiguration config) {
+				endpoint.stop();
+				endpoint = DataEndpointFactory.createEndpoint(config, getActivity());
+				noEndpointUpdate = false;
+				Log.i(TAG, "Updating configuration: " + config.toString());
+				try {
+					updateChartsExecutor.awaitTermination(5, TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					Log.i(TAG, "Interrupted while waiting for update thread to be killed", e);
+				}
+				updateChartsExecutor.execute(updateThread);
+			}
+		});
+        
+        kaaClient.start();
         
         gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart11));
         gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart12));
@@ -159,12 +199,13 @@ public class DashboardFragment extends Fragment {
         logBox = (TextView) rootView.findViewById(R.id.logBox);
         logBox.setMovementMethod(new ScrollingMovementMethod());
         
-        Thread updateThread = new Thread(new Runnable() {
+        updateThread = new Thread(new Runnable() {
 
             @Override
             public void run() {
                 
                 Log.i(TAG, "generating history data ");
+                noEndpointUpdate = true;
                 
                 final List<DataReport> reports = endpoint.getHistoryData(0);
                 if (reports == null) {
@@ -212,7 +253,7 @@ public class DashboardFragment extends Fragment {
 	                        try {
 	                            Thread.sleep(UPDATE_CHECK_PERIOD);
 	                            long updateDelta = System.currentTimeMillis() - previousUpdate;
-	                            if(updateDelta < UPDATE_PERIOD){
+	                            if(updateDelta < UPDATE_PERIOD) {
 	                                continue;
 	                            } else {
 	                            	Log.i(TAG, "Updating since -" + (updateDelta / 1000.) + " s.");
@@ -249,7 +290,7 @@ public class DashboardFragment extends Fragment {
 	                                SliceValue sliceValue = data.getValues().get(dp.getPanelId());
 	                                sliceValue.setTarget(curVoltage);
 	                                gaugeCharts.get(counter).setValue(dp.getAverageVoltage());
-	                                showLogIfNeeded(counter, curVoltage * 1000);
+	                                showLogIfNeeded(counter, curVoltage * 1000);	
 	                                counter++;
 	                                Log.i(TAG, dp.toString());
 	                            }
@@ -283,8 +324,9 @@ public class DashboardFragment extends Fragment {
                 }
            }
         });
-        updateThread.start();
-
+        
+        updateChartsExecutor.execute(updateThread);
+        
         return rootView;
     }
 
@@ -456,7 +498,7 @@ public class DashboardFragment extends Fragment {
     }
     
     private void prependToLogBox(boolean isOutage, int panelIndex) {
-    	executor.execute(new UpdateLogBoxThread(isOutage, panelIndex));
+    	logBoxUpdateExecutor.execute(new UpdateLogBoxThread(isOutage, panelIndex));
     }
     
     private String generateLogString(boolean isOutage, int panelIndex) {
@@ -490,6 +532,7 @@ public class DashboardFragment extends Fragment {
     	}
     	
     	public void run() {
+    		Log.i(TAG, curLogString.length() + "");
 	    	String log = generateLogString(isOutage, panelIndex);
 	    	if (savedLogs.size() > MAX_LOGS_TO_SAVE) {
 	    		String last = savedLogs.removeLast();
@@ -511,5 +554,14 @@ public class DashboardFragment extends Fragment {
     
     private float convertVoltage(float voltage) {
     	return (voltage * VOLTAGE_MULTIPLY_COEF > MAX_VOLTAGE ? MAX_VOLTAGE : voltage * VOLTAGE_MULTIPLY_COEF) / 1000;
+    }
+    
+    private static DataReport generateInitialDataReport() {
+    	List<DataPoint> dataPoints = new ArrayList<>();
+    	for (int i = 0; i < NUM_ZONES; i++) {
+    		dataPoints.add(new DataPoint(i, 1000, 0));
+    	}
+    	
+    	return new DataReport(0, dataPoints, 0f);
     }
 }
