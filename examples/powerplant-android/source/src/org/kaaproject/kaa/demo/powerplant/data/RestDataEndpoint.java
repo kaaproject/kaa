@@ -33,6 +33,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.kaaproject.kaa.demo.powerplant.fragment.DashboardFragment;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataPoint;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataReport;
 
@@ -43,6 +44,7 @@ public class RestDataEndpoint extends AbstractDataEndpoint {
 
     private static final String BASE_URL = "http://kaa-demo-one.cybervisiontech.com:10000/api/data";
     private static final String LATEST_URL = BASE_URL + "/latest";
+    private static final int PANNELS_PER_ZONE = 1;
 
     @Override
     public DataReport getLatestData() {
@@ -104,10 +106,11 @@ public class RestDataEndpoint extends AbstractDataEndpoint {
             DataReport report = resultMap.get(time);
             if (report == null) {
                 List<DataPoint> dataPoints = new ArrayList<DataPoint>();
-                report = new DataReport(time, dataPoints, getConsumption());
+                report = new DataReport(time, dataPoints, getConsumption(PANNELS_PER_ZONE * DashboardFragment.NUM_ZONES));
                 resultMap.put(time, report);
             }
-            report.getDataPoints().add(new DataPoint(dataPoint.getInt("zoneId"), (float) dataPoint.getDouble("voltage")));
+            report.getDataPoints().add(new DataPoint(dataPoint.getInt("zoneId"), PANNELS_PER_ZONE,
+            		(float) dataPoint.getDouble("voltage")));
         }
 
         List<DataReport> result = new ArrayList<DataReport>(resultMap.values());

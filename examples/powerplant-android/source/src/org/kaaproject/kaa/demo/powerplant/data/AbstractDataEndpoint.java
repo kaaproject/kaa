@@ -20,9 +20,10 @@ import org.kaaproject.kaa.demo.powerplant.fragment.DashboardFragment;
 
 public abstract class AbstractDataEndpoint implements DataEndpoint {
 
-    private static final float CONSUME_VOLTAGE_DIV = 5.0f;
+    private static final float CONSUME_VOLTAGE_DIV = 2000f;
 
-    protected float getConsumption() {
-        return DashboardFragment.MAX_VOLTAGE * DashboardFragment.NUM_PANELS + (float)Math.random() * CONSUME_VOLTAGE_DIV;
+    protected float getConsumption(int pannelCount) {
+        return  pannelCount * DashboardFragment.NUM_ZONES * 
+        		(DashboardFragment.MAX_VOLTAGE + (float)Math.random() * CONSUME_VOLTAGE_DIV) * 100;
     }
 }

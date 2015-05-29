@@ -31,6 +31,7 @@ public class FakeDataEndpoint extends AbstractDataEndpoint {
     private static final float MIN_GEN_VOLTAGE = 0f;
     private static final float MAX_GEN_VOLTAGE = 7.2f;
     private static final int MAX_POINTS_COUNT = 150;
+    private static final int PANNELS_PER_ZONE = 1;
 
     @Override
     public DataReport getLatestData() {
@@ -53,10 +54,10 @@ public class FakeDataEndpoint extends AbstractDataEndpoint {
     
     private DataReport genDataReport(long time) {
         List<DataPoint> dataPoints = new ArrayList<DataPoint>();
-        for (int i = 0; i < DashboardFragment.NUM_PANELS; i++) {
-            dataPoints.add(new DataPoint(i, genRandomVoltage()));
+        for (int i = 0; i < DashboardFragment.NUM_ZONES; i++) {
+            dataPoints.add(new DataPoint(i, PANNELS_PER_ZONE, genRandomVoltage()));
         }
-        return new DataReport(time, dataPoints, getConsumption());
+        return new DataReport(time, dataPoints, getConsumption(PANNELS_PER_ZONE * DashboardFragment.NUM_ZONES));
     }
 
     private float genRandomVoltage() {

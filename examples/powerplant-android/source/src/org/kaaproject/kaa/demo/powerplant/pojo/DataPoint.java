@@ -20,11 +20,14 @@ public class DataPoint {
 
     private final int zoneId;
 
+    private final int panelCount;
+    
     private final float voltage;
 
-    public DataPoint(int zoneId, float voltage) {
+    public DataPoint(int zoneId, int panelCount, float voltage) {
         super();
         this.zoneId = zoneId;
+        this.panelCount = panelCount;
         this.voltage = voltage;
     }
 
@@ -32,15 +35,25 @@ public class DataPoint {
         return zoneId;
     }
 
+    public int getPanelCount() {
+    	return panelCount;
+    }
+    
     public float getVoltage() {
         return voltage;
+    }
+    
+    public float getAverageVoltage() {
+    	return voltage / panelCount;
     }
 
     @Override
     public String toString() {
         return "DataPoint{" +
                 "zoneId=" + zoneId +
+                ", panelCount=" + panelCount + 
                 ", voltage=" + voltage +
+                ", avgVoltage=" + getAverageVoltage() +
                 '}';
     }
 }
