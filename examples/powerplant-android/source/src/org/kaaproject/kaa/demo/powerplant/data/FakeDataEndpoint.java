@@ -29,7 +29,7 @@ public class FakeDataEndpoint extends AbstractDataEndpoint {
 
     private static final String TAG = FakeDataEndpoint.class.getSimpleName();
     private static final float MIN_GEN_VOLTAGE = 0f;
-    private static final float MAX_GEN_VOLTAGE = 7.2f;
+    private static final float MAX_GEN_VOLTAGE = 6000f;
     private static final int MAX_POINTS_COUNT = 150;
     private static final int PANNELS_PER_ZONE = 1;
 
@@ -44,7 +44,7 @@ public class FakeDataEndpoint extends AbstractDataEndpoint {
     public List<DataReport> getHistoryData(long fromTime) {
         sleepABit();
         List<DataReport> reports = new ArrayList<DataReport>(MAX_POINTS_COUNT);
-        long time = (System.currentTimeMillis() / 1000) * 1000;
+        long time = System.currentTimeMillis() / 1000;
         for (int i = 0; i < MAX_POINTS_COUNT; i++) {
             long pointTime = time - (i * 1000);
             reports.add(genDataReport(pointTime));
@@ -55,7 +55,7 @@ public class FakeDataEndpoint extends AbstractDataEndpoint {
     private DataReport genDataReport(long time) {
         List<DataPoint> dataPoints = new ArrayList<DataPoint>();
         for (int i = 0; i < DashboardFragment.NUM_ZONES; i++) {
-            dataPoints.add(new DataPoint(i, PANNELS_PER_ZONE, genRandomVoltage()));
+            dataPoints.add(new DataPoint(i, 1000, genRandomVoltage()));
         }
         return new DataReport(time, dataPoints, getConsumption(PANNELS_PER_ZONE * DashboardFragment.NUM_ZONES));
     }

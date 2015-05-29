@@ -199,6 +199,10 @@ public class CouchBaseDataEndpoint extends AbstractDataEndpoint {
 			pull.stop();
 		}
 		
+		if (database != null) {
+			database.close();
+		}
+		
 		if (manager != null) {
 			manager.close();
 		}
