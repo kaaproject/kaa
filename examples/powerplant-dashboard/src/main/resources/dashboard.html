@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="lineCharts.js"></script>
+    <script type="text/javascript" src="gaugeCharts.js"></script>
+    <script type="text/javascript">
+        google.load("visualization", "1", {
+            packages : [ "corechart", "line", "gauge", ]
+        });
+        google.setOnLoadCallback(drawCharts);
+        
+        function drawCharts(){
+            //drawLineChart();
+            drawGaugeCharts();
+        } 
+    </script>
+  </head>
+  <body>
+    <!--div id="line_chart_div" style="width: 1280px; height: 560px;"></div-->
+    <div id="gauge_chart_div" style="width: 1280px; height: 240px;"></div>
+  </body>
+</html>

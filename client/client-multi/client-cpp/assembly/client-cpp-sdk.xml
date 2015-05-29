@@ -34,9 +34,14 @@
             <outputDirectory>Modules</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>${project.basedir}/tools</directory>
+            <outputDirectory>tools</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>${project.basedir}</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
+                <include>avrogen.bat</include>
                 <include>avrogen.sh</include>
                 <include>CMakeLists.txt</include>
                 <include>README</include>

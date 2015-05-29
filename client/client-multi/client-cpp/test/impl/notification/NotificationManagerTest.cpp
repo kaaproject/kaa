@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(GetTopicsTest)
         topicState.topicName = ss.str();
 
         topicState.sequenceNumber = std::rand();
-        topicState.subscriptionType = SubscriptionType::OPTIONAL;
+        topicState.subscriptionType = SubscriptionType::OPTIONAL_SUBSCRIPTION;
 
         states.insert(std::make_pair(topicState.topicId, topicState));
     }
@@ -144,7 +144,7 @@ static Topics createTopics(std::size_t topicCount, bool isOptional = true)
         ss << "topic_" << i << "_name";
         topic.name = ss.str();
 
-        topic.subscriptionType = isOptional ? SubscriptionType::OPTIONAL : SubscriptionType::MANDATORY;
+        topic.subscriptionType = isOptional ? SubscriptionType::OPTIONAL_SUBSCRIPTION : SubscriptionType::MANDATORY_SUBSCRIPTION;
 
         topics.push_back(topic);
     }
@@ -350,7 +350,7 @@ BOOST_AUTO_TEST_CASE(SubscribeToMandatoryTopicTest)
 
     std::size_t topicCount = 1 + rand() % 10;
     /*
-     * All topics are MANDATORY.
+     * All topics are MANDATORY_SUBSCRIPTION.
      */
     auto topics = createTopics(topicCount, false);
 
@@ -376,7 +376,7 @@ BOOST_AUTO_TEST_CASE(UnsubscribeFromMandatoryTopicTest)
 
     std::size_t topicCount = 1 + rand() % 10;
     /*
-     * All topics are MANDATORY.
+     * All topics are MANDATORY_SUBSCRIPTION.
      */
     auto topics = createTopics(topicCount, false);
 

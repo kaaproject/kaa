@@ -25,6 +25,7 @@
 #include "utilities/kaa_mem.h"
 #include "avro_src/encoding.h"
 #include "avro_src/avro/io.h"
+#include "kaa_common.h"
 
 
 
@@ -1008,14 +1009,10 @@ static void test_array_get_size()
 
     size_t array_size = 1 + rand() % 10;
 
-    kaa_list_t *avro_array = NULL;
+    kaa_list_t *avro_array = kaa_list_create();
     size_t i = 0;
     for (i = 0; i < array_size; ++i) {
-        if (avro_array) {
-            avro_array = kaa_list_push_front(avro_array, kaa_string_copy_create(plain_str));
-        } else {
-            avro_array = kaa_list_create(kaa_string_copy_create(plain_str));
-        }
+        kaa_list_push_back(avro_array, kaa_string_copy_create(plain_str));
     }
 
     size_t expected_size = avro_long_get_size(array_size)
@@ -1031,7 +1028,7 @@ static void test_array_get_size()
 
 
 
-static void test_empty_array_serialize()
+static void test_null_array_serialize()
 {
     KAA_TRACE_IN(logger);
 
@@ -1045,6 +1042,29 @@ static void test_empty_array_serialize()
 
     ASSERT_EQUAL((int)empty_array_buffer[0], 0);
 
+    avro_writer_free(avro_writer);
+
+    KAA_TRACE_OUT(logger);
+}
+
+
+
+static void test_empty_array_serialize()
+{
+    KAA_TRACE_IN(logger);
+
+    size_t empty_array_buffer_size = 1;
+    char empty_array_buffer[empty_array_buffer_size];
+    memset(empty_array_buffer, 1 + rand(), empty_array_buffer_size);
+
+    avro_writer_t avro_writer = avro_writer_memory(empty_array_buffer, empty_array_buffer_size);
+    kaa_list_t *empty_array = kaa_list_create();
+
+    kaa_array_serialize(avro_writer, empty_array, NULL);
+
+    ASSERT_EQUAL((int)empty_array_buffer[0], 0);
+
+    kaa_list_destroy(empty_array, NULL);
     avro_writer_free(avro_writer);
 
     KAA_TRACE_OUT(logger);
@@ -1069,16 +1089,11 @@ static void test_array_serialize()
     avro_writer_t manual_avro_writer = avro_writer_memory(manual_buffer, expected_size);
     avro_binary_encoding.write_long(manual_avro_writer, array_size);
 
-    kaa_list_t *avro_array = NULL;
+    kaa_list_t *avro_array = kaa_list_create();
     size_t i = 0;
     for (i = 0; i < array_size; ++i) {
         kaa_string_t *array_data = kaa_string_copy_create(plain_str);
-        if (avro_array) {
-            kaa_list_push_back(avro_array, array_data);
-        } else {
-            avro_array = kaa_list_create(array_data);
-        }
-
+        kaa_list_push_back(avro_array, array_data);
         avro_binary_encoding.write_string(manual_avro_writer, array_data->data);
     }
 
@@ -1112,7 +1127,9 @@ static float *create_float()
     return float_value;
 }
 
-
+void kaa_null_destroy(void *data)
+{
+}
 
 static void test_array_deserialize_wo_ctx()
 {
@@ -1120,14 +1137,10 @@ static void test_array_deserialize_wo_ctx()
 
     size_t array_size = 1 + rand() % 10;
 
-    kaa_list_t *avro_array1 = NULL;
+    kaa_list_t *avro_array1 = kaa_list_create();
     size_t i = 0;
     for (i = 0; i < array_size; ++i) {
-        if (avro_array1) {
-            avro_array1 = kaa_list_push_front(avro_array1, create_float());
-        } else {
-            avro_array1 = kaa_list_create(create_float());
-        }
+        kaa_list_push_back(avro_array1, create_float());
     }
 
     size_t buffer_size = kaa_array_get_size(avro_array1, kaa_float_get_size);
@@ -1142,27 +1155,28 @@ static void test_array_deserialize_wo_ctx()
     ASSERT_NOT_NULL(avro_array2);
     ASSERT_EQUAL(kaa_list_get_size(avro_array2), array_size);
 
-    /*
-     * Deserialized array has a back order, so reverse the original.
-     */
-    kaa_list_t *reverse_avro_array = NULL;
-    kaa_list_t *it = avro_array1;
-    while (it) {
-        if (reverse_avro_array) {
-            reverse_avro_array = kaa_list_push_front(reverse_avro_array, kaa_list_get_data(it));
-        } else {
-            reverse_avro_array = kaa_list_create(kaa_list_get_data(it));
-        }
-        it  = kaa_list_next(it);
-    }
-    kaa_list_destroy_no_data_cleanup(avro_array1);
-    avro_array1 = reverse_avro_array;
+//    /*
+//     * Deserialized array has a back order, so reverse the original.
+//     */
+//    kaa_list_t *reverse_avro_array = NULL;
+//    kaa_list_t *it = avro_array1;
+//    while (it) {
+//        if (reverse_avro_array) {
+//            reverse_avro_array = kaa_list_push_front(reverse_avro_array, kaa_list_get_data(it));
+//        } else {
+//            reverse_avro_array = kaa_list_create(kaa_list_get_data(it));
+//        }
+//        it  = kaa_list_next(it);
+//    }
+//
+//    kaa_list_destroy(avro_array1, kaa_null_destroy);
+//    avro_array1 = reverse_avro_array;
 
     /*
      * Compare origin and deserialized arrays.
      */
-    kaa_list_t *it1 = avro_array1;
-    kaa_list_t *it2 = avro_array2;
+    kaa_list_node_t *it1 = kaa_list_begin(avro_array1);
+    kaa_list_node_t *it2 = kaa_list_begin(avro_array2);
     while (it1 && it2) {
         float *float_value1 = kaa_list_get_data(it1);
         float *float_value2 = kaa_list_get_data(it2);
@@ -1194,14 +1208,10 @@ static void test_array_deserialize_w_ctx()
 
     size_t array_size = 1 + rand() % 10;
 
-    kaa_list_t *avro_array1 = NULL;
+    kaa_list_t *avro_array1 = kaa_list_create();
     size_t i = 0;
     for (i = 0; i < array_size; ++i) {
-        if (avro_array1) {
-            avro_array1 = kaa_list_push_front(avro_array1, kaa_fixed_copy_create(plain_fixed, plain_fixed_size));
-        } else {
-            avro_array1 = kaa_list_create(kaa_fixed_copy_create(plain_fixed, plain_fixed_size));
-        }
+        kaa_list_push_back(avro_array1, kaa_fixed_copy_create(plain_fixed, plain_fixed_size));
     }
 
     size_t buffer_size = kaa_array_get_size(avro_array1, kaa_fixed_get_size);
@@ -1216,7 +1226,7 @@ static void test_array_deserialize_w_ctx()
     ASSERT_NOT_NULL(avro_array2);
     ASSERT_EQUAL(kaa_list_get_size(avro_array2), array_size);
 
-    kaa_list_t *it = avro_array2;
+    kaa_list_node_t *it = kaa_list_begin(avro_array2);
     while (it) {
         kaa_bytes_t *fixed = kaa_list_get_data(it);
         ASSERT_NOT_NULL(fixed);
@@ -1300,6 +1310,7 @@ KAA_SUITE_MAIN(Log, test_init, test_deinit
        KAA_TEST_CASE(null_deserialize, test_null_deserialize)
 
        KAA_TEST_CASE(array_get_size, test_array_get_size)
+       KAA_TEST_CASE(null_array_serialize, test_null_array_serialize)
        KAA_TEST_CASE(empty_array_serialize, test_empty_array_serialize)
        KAA_TEST_CASE(array_serialize, test_array_serialize)
        KAA_TEST_CASE(array_deserialize_wo_ctx, test_array_deserialize_wo_ctx)

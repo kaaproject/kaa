@@ -66,19 +66,91 @@
             <artifactId>admin-rest-client</artifactId>
             <version>${project.version}</version>
         </dependency>
+<!--         <dependency> -->
+<!--             <groupId>org.kaaproject.kaa.examples</groupId> -->
+<!--             <artifactId>smarthousedemo</artifactId> -->
+<!--             <version>${project.version}</version> -->
+<!--             <classifier>smarthouse-android-resources</classifier> -->
+<!--             <type>tar.gz</type> -->
+<!--             <scope>provided</scope> -->
+<!--         </dependency> -->
+<!--         <dependency> -->
+<!--             <groupId>org.kaaproject.kaa.examples</groupId> -->
+<!--             <artifactId>smarthousedemo</artifactId> -->
+<!--             <version>${project.version}</version> -->
+<!--             <classifier>smarthouse-android-src</classifier> -->
+<!--             <type>tar.gz</type> -->
+<!--             <scope>provided</scope> -->
+<!--         </dependency> -->
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
-            <artifactId>smarthousedemo</artifactId>
+            <artifactId>iotworld</artifactId>
             <version>${project.version}</version>
-            <classifier>smarthouse-android-resources</classifier>
+            <classifier>iotworld-resources</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
-            <artifactId>smarthousedemo</artifactId>
+            <artifactId>iotworld</artifactId>
             <version>${project.version}</version>
-            <classifier>smarthouse-android-src</classifier>
+            <classifier>smarthome-src-android</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>iotworld</artifactId>
+            <version>${project.version}</version>
+            <classifier>smarthome-src-ios</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>iotworld</artifactId>
+            <version>${project.version}</version>
+            <classifier>climate-src-android</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>iotworld</artifactId>
+            <version>${project.version}</version>
+            <classifier>musicplayer-src-java</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>iotworld</artifactId>
+            <version>${project.version}</version>
+            <classifier>photoplayer-src-java</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>iotworld</artifactId>
+            <version>${project.version}</version>
+            <classifier>irrigation-src-java</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>iotworld</artifactId>
+            <version>${project.version}</version>
+            <classifier>fan-src-c</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>iotworld</artifactId>
+            <version>${project.version}</version>
+            <classifier>light-src-c</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
         </dependency>
@@ -159,6 +231,102 @@
             <artifactId>verifiersdemo</artifactId>
             <version>${project.version}</version>
             <classifier>verifiers-android-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>powerplant-android</artifactId>
+            <version>${project.version}</version>
+            <classifier>powerplant-android-src</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>powerplant-android</artifactId>
+            <version>${project.version}</version>
+            <classifier>powerplant-android-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>vehicletelemetry</artifactId>
+            <version>${project.version}</version>
+            <classifier>vehicletelemetry-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>vehicletelemetry</artifactId>
+            <version>${project.version}</version>
+            <classifier>vehicletelemetry-src-cpp</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>powerplant</artifactId>
+            <version>${project.version}</version>
+            <classifier>powerplant-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>powerplant</artifactId>
+            <version>${project.version}</version>
+            <classifier>powerplant-src-cpp</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>citylighs-controller</artifactId>
+            <version>${project.version}</version>
+            <classifier>citylightscontroller-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>citylighs-controller</artifactId>
+            <version>${project.version}</version>
+            <classifier>citylightscontroller-src-java</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.econais.ec19d</groupId>
+            <artifactId>streetlight-driver</artifactId>
+            <version>${project.version}</version>
+            <classifier>streetlight-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.econais.ec19d</groupId>
+            <artifactId>streetlight-driver</artifactId>
+            <version>${project.version}</version>
+            <classifier>streetlight-src-c</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.econais.ec19d</groupId>
+            <artifactId>trafficlights-driver</artifactId>
+            <version>${project.version}</version>
+            <classifier>trafficlights-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.econais.ec19d</groupId>
+            <artifactId>trafficlights-driver</artifactId>
+            <version>${project.version}</version>
+            <classifier>trafficlights-src-c</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
         </dependency>
@@ -290,6 +458,54 @@
             <type>tar.gz</type>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>connectedcar</artifactId>
+            <version>${project.version}</version>
+            <classifier>connectedcar-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples</groupId>
+            <artifactId>connectedcar</artifactId>
+            <version>${project.version}</version>
+            <classifier>connectedcar-src-c</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.twitterled</groupId>
+            <artifactId>twitterboard</artifactId>
+            <version>${project.version}</version>
+            <classifier>twitterboard-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.twitterled</groupId>
+            <artifactId>twitterboard</artifactId>
+            <version>${project.version}</version>
+            <classifier>twitterboard-src-java</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.twitterled</groupId>
+            <artifactId>twittermonitor</artifactId>
+            <version>${project.version}</version>
+            <classifier>twittermonitor-resources</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.examples.twitterled</groupId>
+            <artifactId>twittermonitor</artifactId>
+            <version>${project.version}</version>
+            <classifier>twittermonitor-src-java</classifier>
+            <type>tar.gz</type>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -349,18 +565,33 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
+<!--                     <execution> -->
+<!--                         <id>unpack-smarthouse-resources</id> -->
+<!--                         <goals> -->
+<!--                             <goal>unpack-dependencies</goal> -->
+<!--                         </goals> -->
+<!--                         <phase>generate-resources</phase> -->
+<!--                         <configuration> -->
+<!--                             <outputDirectory>${project.build.directory}/generated-resources/demo/smarthouse -->
+<!--                             </outputDirectory> -->
+<!--                             <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds> -->
+<!--                             <includeArtifactIds>smarthousedemo</includeArtifactIds> -->
+<!--                             <includeClassifiers>smarthouse-android-resources</includeClassifiers> -->
+<!--                             <excludeTransitive>true</excludeTransitive> -->
+<!--                         </configuration> -->
+<!--                     </execution> -->
                     <execution>
-                        <id>unpack-smarthouse-resources</id>
+                        <id>unpack-iotworld-resources</id>
                         <goals>
                             <goal>unpack-dependencies</goal>
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/generated-resources/demo/smarthouse
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/iotworld
                             </outputDirectory>
                             <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
-                            <includeArtifactIds>smarthousedemo</includeArtifactIds>
-                            <includeClassifiers>smarthouse-android-resources</includeClassifiers>
+                            <includeArtifactIds>iotworld</includeArtifactIds>
+                            <includeClassifiers>iotworld-resources</includeClassifiers>
                             <excludeTransitive>true</excludeTransitive>
                         </configuration>
                     </execution>
@@ -416,11 +647,23 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/generated-resources/demo/datacollection
-                            </outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/datacollection</outputDirectory>
                             <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
                             <includeArtifactIds>datacollectiondemo</includeArtifactIds>
                             <includeClassifiers>datacollection-resources</includeClassifiers>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-connectedcar-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/connectedcar</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>connectedcar</includeArtifactIds>
+                            <includeClassifiers>connectedcar-resources</includeClassifiers>
                         </configuration>
                     </execution>
                     <execution>
@@ -467,6 +710,21 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>unpack-vehicletelemetry-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/vehicletelemetry
+                            </outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>vehicletelemetry</includeArtifactIds>
+                            <includeClassifiers>vehicletelemetry-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>unpack-event-resources</id>
                         <goals>
                             <goal>unpack-dependencies</goal>
@@ -478,6 +736,62 @@
                             <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
                             <includeArtifactIds>eventdemo</includeArtifactIds>
                             <includeClassifiers>event-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-powerplant-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/powerplant</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>powerplant</includeArtifactIds>
+                            <includeClassifiers>powerplant-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-citylightscontroller-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/citylightscontroller</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>citylighs-controller</includeArtifactIds>
+                            <includeClassifiers>citylightscontroller-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-streetlight-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/streetlight</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples.econais.ec19d</includeGroupIds>
+                            <includeArtifactIds>streetlight-driver</includeArtifactIds>
+                            <includeClassifiers>streetlight-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-trafficlights-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/trafficlights</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples.econais.ec19d</includeGroupIds>
+                            <includeArtifactIds>trafficlights-driver</includeArtifactIds>
+                            <includeClassifiers>trafficlights-resources</includeClassifiers>
                             <excludeTransitive>true</excludeTransitive>
                         </configuration>
                     </execution>
@@ -496,6 +810,48 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>unpack-powerplantandroid-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/powerplantandroid</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples</includeGroupIds>
+                            <includeArtifactIds>powerplant-android</includeArtifactIds>
+                            <includeClassifiers>powerplant-android-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-twitterboard-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/twitterboard</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples.twitterled</includeGroupIds>
+                            <includeArtifactIds>twitterboard</includeArtifactIds>
+                            <includeClassifiers>twitterboard-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-twittermonitor-resources</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources/demo/twittermonitor</outputDirectory>
+                            <includeGroupIds>org.kaaproject.kaa.examples.twitterled</includeGroupIds>
+                            <includeArtifactIds>twittermonitor</includeArtifactIds>
+                            <includeClassifiers>twittermonitor-resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>copy</id>
                         <phase>prepare-package</phase>
                         <goals>
@@ -503,15 +859,95 @@
                         </goals>
                         <configuration>
                             <artifactItems>
+<!--                                 <artifactItem> -->
+<!--                                     <groupId>org.kaaproject.kaa.examples</groupId> -->
+<!--                                     <artifactId>smarthousedemo</artifactId> -->
+<!--                                     <version>${project.version}</version> -->
+<!--                                     <classifier>smarthouse-android-src</classifier> -->
+<!--                                     <type>tar.gz</type> -->
+<!--                                     <overWrite>false</overWrite> -->
+<!--                                     <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory> -->
+<!--                                     <destFileName>smarthouse_demo.tar.gz</destFileName> -->
+<!--                                 </artifactItem> -->
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.examples</groupId>
-                                    <artifactId>smarthousedemo</artifactId>
+                                    <artifactId>iotworld</artifactId>
                                     <version>${project.version}</version>
-                                    <classifier>smarthouse-android-src</classifier>
+                                    <classifier>smarthome-src-android</classifier>
                                     <type>tar.gz</type>
                                     <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
-                                    <destFileName>smarthouse_demo.tar.gz</destFileName>
+                                    <outputDirectory>${project.build.directory}/demo_projects/iotworld/smarthome/android</outputDirectory>
+                                    <destFileName>smarthome.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>iotworld</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>smarthome-src-ios</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/iotworld/smarthome/ios</outputDirectory>
+                                    <destFileName>smarthome.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>iotworld</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>climate-src-android</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/iotworld/climate/android</outputDirectory>
+                                    <destFileName>climate.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>iotworld</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>musicplayer-src-java</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/iotworld/musicplayer</outputDirectory>
+                                    <destFileName>musicplayer.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>iotworld</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>photoplayer-src-java</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/iotworld/photoplayer</outputDirectory>
+                                    <destFileName>photoplayer.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>iotworld</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>irrigation-src-java</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/iotworld/irrigation</outputDirectory>
+                                    <destFileName>irrigation.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>iotworld</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>fan-src-c</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/iotworld/fan</outputDirectory>
+                                    <destFileName>fan.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>iotworld</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>light-src-c</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/iotworld/light</outputDirectory>
+                                    <destFileName>light.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.examples</groupId>
@@ -555,6 +991,26 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>vehicletelemetry</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>vehicletelemetry-src-cpp</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/cpp</outputDirectory>
+                                    <destFileName>vehicletelemetry_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>connectedcar</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>connectedcar-src-c</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/c</outputDirectory>
+                                    <destFileName>connectedcar_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
                                     <artifactId>eventdemo</artifactId>
                                     <version>${project.version}</version>
                                     <classifier>event-src-java</classifier>
@@ -582,6 +1038,46 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/cpp</outputDirectory>
                                     <destFileName>event_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>powerplant</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>powerplant-src-cpp</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/cpp</outputDirectory>
+                                    <destFileName>powerplant.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>citylighs-controller</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>citylightscontroller-src-java</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/java</outputDirectory>
+                                    <destFileName>citylightscontroller.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples.econais.ec19d</groupId>
+                                    <artifactId>streetlight-driver</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>streetlight-src-c</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/c</outputDirectory>
+                                    <destFileName>streetlight.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples.econais.ec19d</groupId>
+                                    <artifactId>trafficlights-driver</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>trafficlights-src-c</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/c</outputDirectory>
+                                    <destFileName>trafficlights.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.kaaproject.kaa.examples</groupId>
@@ -682,6 +1178,36 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
                                     <destFileName>verifiers_demo.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples</groupId>
+                                    <artifactId>powerplant-android</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>powerplant-android-src</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/android</outputDirectory>
+                                    <destFileName>powerplant_android.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples.twitterled</groupId>
+                                    <artifactId>twitterboard</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>twitterboard-src-java</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/java</outputDirectory>
+                                    <destFileName>twitterboard.tar.gz</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kaaproject.kaa.examples.twitterled</groupId>
+                                    <artifactId>twittermonitor</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>twittermonitor-src-java</classifier>
+                                    <type>tar.gz</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/demo_projects/java</outputDirectory>
+                                    <destFileName>twittermonitor.tar.gz</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>

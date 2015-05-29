@@ -37,22 +37,22 @@ private:
         std::ofstream of(filename_, std::ios::openmode::_S_app);
         // TODO: timestamps...
         switch (level) {
-        case LogLevel::TRACE:
+        case LogLevel::KAA_TRACE:
             of << "[TRACE]\t" << message << std::endl;
             break;
-        case LogLevel::DEBUG:
+        case LogLevel::KAA_DEBUG:
             of << "[DEBUG]\t" << message << std::endl;
             break;
-        case LogLevel::INFO:
+        case LogLevel::KAA_INFO:
             of << "[INFO]\t" << message << std::endl;
             break;
-        case LogLevel::WARNING:
+        case LogLevel::KAA_WARNING:
             of << "[WARN]\t" << message << std::endl;
             break;
-        case LogLevel::ERROR:
+        case LogLevel::KAA_ERROR:
             of << "[ERROR]\t" << message << std::endl;
             break;
-        case LogLevel::FATAL:
+        case LogLevel::KAA_FATAL:
             of << "[FATAL]\t" << message << std::endl;
             break;
         default:

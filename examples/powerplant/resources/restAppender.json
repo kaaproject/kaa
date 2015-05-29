@@ -1,0 +1,13 @@
+{
+    "host" : "localhost",
+    "port" : 10000,
+    "ssl" : false,
+    "verifySslCert" : false,
+    "username" : null,
+    "password" : null,
+    "connectionPoolSize" : 1,
+    "header" : false,
+    "path" : "/api/data",
+    "method" : "PUT",
+    "mimeType" : "TEXT"
+}

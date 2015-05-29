@@ -132,8 +132,8 @@ public class DemoProjectWidget extends VerticalPanel implements
             @Override
             public void onClick(ClickEvent event) {
                 if (project != null) {
-                    ProjectActionEvent action = new ProjectActionEvent(project
-                            .getId(), ProjectAction.OPEN_DETAILS);
+                    ProjectActionEvent action = new ProjectActionEvent(project,
+                                                    ProjectAction.OPEN_DETAILS);
                     fireEvent(action);
                 }
             }
@@ -143,8 +143,8 @@ public class DemoProjectWidget extends VerticalPanel implements
             @Override
             public void onClick(ClickEvent event) {
                 if (project != null) {
-                    ProjectActionEvent action = new ProjectActionEvent(project
-                            .getId(), ProjectAction.GET_SOURCE_CODE);
+                    ProjectActionEvent action = new ProjectActionEvent(project, 
+                                                    ProjectAction.GET_SOURCE_CODE);
                     fireEvent(action);
                 }
             }
@@ -154,8 +154,8 @@ public class DemoProjectWidget extends VerticalPanel implements
             @Override
             public void onClick(ClickEvent event) {
                 if (project != null) {
-                    ProjectActionEvent action = new ProjectActionEvent(project
-                            .getId(), ProjectAction.GET_BINARY);
+                    ProjectActionEvent action = new ProjectActionEvent(project, 
+                                                    ProjectAction.GET_BINARY);
                     fireEvent(action);
                 }
             }

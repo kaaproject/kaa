@@ -52,4 +52,5 @@ public interface SandboxConstants {
     public static final String ADMIN_FOLDER = "/usr/lib/kaa-admin";
 
     public static final String CASSANDRA_INIT_SCRIPT = "/usr/lib/kaa-control/conf/cassandra.cql";
+    public static final String LOG_DUMP_LOCATION = "sandbox/builder/target/sandbox_logs/";
 }

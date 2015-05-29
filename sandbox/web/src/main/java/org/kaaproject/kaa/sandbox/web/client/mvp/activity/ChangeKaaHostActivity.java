@@ -109,7 +109,8 @@ public class ChangeKaaHostActivity extends AbstractActivity {
         final String host = view.getKaaHost().getValue();
         if (host != null && host.length() > 0) {
             view.clearError();
-            ConsoleDialog.startConsoleDialog(new ConsoleDialogListener() {
+            ConsoleDialog.startConsoleDialog("Going to change kaa host to '"
+                                            + host + "'...\n", new ConsoleDialogListener() {
 
                 @Override
                 public void onOk(boolean success) {

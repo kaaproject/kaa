@@ -19,8 +19,16 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 uint64_t htonll(uint64_t hostlonglong);
 
 uint64_t ntohll(uint64_t netlonglong);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* KAA_HTONLL_H_ */
