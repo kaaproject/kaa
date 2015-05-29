@@ -16,22 +16,24 @@
 
 package org.kaaproject.kaa.sandbox.web.client.mvp.event.project;
 
+import org.kaaproject.kaa.sandbox.demo.projects.Project;
+
 import com.google.gwt.event.shared.GwtEvent;
 
 public class ProjectActionEvent extends GwtEvent<ProjectActionEventHandler>{
 
   private static Type<ProjectActionEventHandler> TYPE;
 
-  private final String projectId;
+  private final Project project;
   private final ProjectAction action;
 
-  public ProjectActionEvent(String projectId, ProjectAction action) {
-    this.projectId = projectId;
+  public ProjectActionEvent(Project project, ProjectAction action) {
+    this.project = project;
     this.action = action;
   }
 
-  public String getProjectId() {
-      return projectId;
+  public Project getProject() {
+      return project;
   }
 
   public ProjectAction getAction() {
