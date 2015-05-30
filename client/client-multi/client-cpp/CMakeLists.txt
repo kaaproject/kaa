@@ -190,7 +190,7 @@ if ( NOT KAA_WITHOUT_CONNECTIVITY_CHECKER )
             impl/channel/connectivity/IPConnectivityChecker.cpp
     )
 endif()
-message("==================================")
+
 if ( NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL OR NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL OR NOT KAA_WITHOUT_BOOTSTRAP_HTTP_CHANNEL )
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/http/HttpUrl.cpp
@@ -203,8 +203,10 @@ if ( NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL OR NOT KAA_WITHOUT_OPERATION_LONG_PO
 endif()
 
 if ( NOT KAA_WITHOUT_THREADSAFE OR NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL OR NOT KAA_WITHOUT_OPERATION_TCP_CHANNEL)
+    message("KAA_THREADSAFE ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_THREADSAFE")
 endif()
+message("==================================")
 
 find_package (Boost 1.55 REQUIRED COMPONENTS log system)
 

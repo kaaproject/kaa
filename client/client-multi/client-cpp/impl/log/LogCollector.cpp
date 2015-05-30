@@ -39,9 +39,9 @@ void LogCollector::addLogRecord(const KaaUserLogRecord& record)
     LogRecordPtr serializedRecord(new LogRecord(record));
 
     {
-        KAA_MUTEX_LOCKING(storageGuard_);
+        KAA_MUTEX_LOCKING("storageGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-        KAA_MUTEX_LOCKED(storageGuard_);
+        KAA_MUTEX_LOCKED("storageGuard_");
 
         storage_->addLogRecord(serializedRecord);
     }
@@ -78,9 +78,9 @@ void LogCollector::setStorage(ILogStoragePtr storage)
         throw KaaException("Bad log storage");
     }
 
-    KAA_MUTEX_LOCKING(storageGuard_);
+    KAA_MUTEX_LOCKING("storageGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-    KAA_MUTEX_LOCKED(storageGuard_);
+    KAA_MUTEX_LOCKED("storageGuard_");
 
     KAA_LOG_INFO("New log storage was set");
     storage_ = storage;
@@ -93,9 +93,9 @@ void LogCollector::setUploadStrategy(ILogUploadStrategyPtr strategy)
         throw KaaException("Bad log upload strategy");
     }
 
-    KAA_MUTEX_LOCKING(storageGuard_);
+    KAA_MUTEX_LOCKING("storageGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-    KAA_MUTEX_LOCKED(storageGuard_);
+    KAA_MUTEX_LOCKED("storageGuard_");
 
     KAA_LOG_INFO("New log upload strategy was set");
     uploadStrategy_ = strategy;
@@ -143,16 +143,16 @@ std::shared_ptr<LogSyncRequest> LogCollector::getLogUploadRequest()
     std::shared_ptr<LogSyncRequest> request;
 
     {
-        KAA_MUTEX_LOCKING(storageGuard_);
+        KAA_MUTEX_LOCKING("storageGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-        KAA_MUTEX_LOCKED(storageGuard_);
+        KAA_MUTEX_LOCKED("storageGuard_");
 
         recordPack = storage_->getRecordBlock(uploadStrategy_->getBatchSize());
     }
 
     if (!recordPack.second.empty()) {
         request.reset(new LogSyncRequest);
-        request->requestId = requestId_++;
+        request->requestId = recordPack.first;
 
         std::vector<LogEntry> logs;
         logs.reserve(recordPack.second.size());
@@ -170,9 +170,9 @@ std::shared_ptr<LogSyncRequest> LogCollector::getLogUploadRequest()
 
 void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
 {
-    KAA_MUTEX_LOCKING(storageGuard_);
+    KAA_MUTEX_LOCKING("storageGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(storageLock, storageGuard_);
-    KAA_MUTEX_LOCKED(storageGuard_);
+    KAA_MUTEX_LOCKED("storageGuard_");
 
     if (!response.deliveryStatuses.is_null()) {
         const auto& deliveryStatuses = response.deliveryStatuses.get_array();
@@ -188,9 +188,9 @@ void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
                 KAA_LOG_WARN(boost::format("Logs (requestId %1%) failed to deliver") % status.requestId);
                 storage_->notifyUploadFailed(status.requestId);
 
-                KAA_MUTEX_UNLOCKING(storageGuard_);
+                KAA_MUTEX_UNLOCKING("storageGuard_");
                 KAA_UNLOCK(storageLock);
-                KAA_MUTEX_UNLOCKED(storageGuard_);
+                KAA_MUTEX_UNLOCKED("storageGuard_");
 
                 if (!status.errorCode.is_null()) {
                     uploadStrategy_->onFailure(status.errorCode.get_LogDeliveryErrorCode());
@@ -198,9 +198,9 @@ void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
                     KAA_LOG_ERROR("Log delivery failed, but no error code received");
                 }
 
-                KAA_MUTEX_LOCKING(storageGuard_);
+                KAA_MUTEX_LOCKING("storageGuard_");
                 KAA_LOCK(storageLock);
-                KAA_MUTEX_LOCKED(storageGuard_);
+                KAA_MUTEX_LOCKED("storageGuard_");
             }
         }
     }
