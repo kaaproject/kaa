@@ -122,6 +122,8 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
             startBox();
             provisionBox();
             schedulePackagesInstall();
+            LOG.info("Executing Cassandra cql script...");
+            scheduleSudoSshCommand("cqlsh -f "+CASSANDRA_INIT_SCRIPT);
             scheduleServicesStart();
             LOG.info("Executing remote ssh commands...");
             executeScheduledSshCommands();
