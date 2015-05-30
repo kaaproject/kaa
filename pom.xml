@@ -1359,6 +1359,10 @@ Copyright 2014 CyberVision, Inc.
             <id>central</id>
             <url>http://repo1.maven.org/maven2/</url>
         </repository>
+    	<repository>
+            <id>twitter-twttr</id>
+            <url>http://maven.twttr.com/</url>
+        </repository>
         <repository>
             <id>repository.kaaproject</id>
             <url>http://repository.kaaproject.org/repository/internal/</url>
