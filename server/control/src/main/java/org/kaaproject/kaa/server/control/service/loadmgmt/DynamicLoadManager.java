@@ -238,67 +238,6 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
         }
     }
 
-    // /**
-    // * Transform Zk List of supported channels into bootstrap thrift list of
-    // * supported channels
-    // *
-    // * @param supportedChannelsArray
-    // * @return List<ThriftSupportedChannel>
-    // */
-    // private List<ThriftSupportedChannel>
-    // getThriftSupportedChannelsFromZkSupportedChannels(List<SupportedChannel>
-    // supportedChannelsArray,
-    // OperationsServerMeta meta) {
-    // List<ThriftSupportedChannel> thriftSuppChannels = new ArrayList<>();
-    // for (SupportedChannel channel : supportedChannelsArray) {
-    // ThriftChannelType thriftType = null;
-    // ThriftCommunicationParameters communicationParams = new
-    // ThriftCommunicationParameters();
-    // switch (channel.getZkChannel().getChannelType()) {
-    // case HTTP:
-    // thriftType = ThriftChannelType.HTTP;
-    // ZkHttpComunicationParameters zkCommParams =
-    // (ZkHttpComunicationParameters) channel.getZkChannel()
-    // .getCommunicationParameters();
-    // communicationParams.setHttpParams(new
-    // ThriftIpParameters(zkCommParams.getZkComunicationParameters().getHostName()
-    // .toString(),
-    // zkCommParams.getZkComunicationParameters().getPort().intValue()));
-    // break;
-    // case HTTP_LP:
-    // thriftType = ThriftChannelType.HTTP_LP;
-    // ZkHttpLpComunicationParameters zkLpCommParams =
-    // (ZkHttpLpComunicationParameters) channel.getZkChannel()
-    // .getCommunicationParameters();
-    // communicationParams.setHttpLpParams(new
-    // ThriftIpParameters(zkLpCommParams.getZkComunicationParameters().getHostName()
-    // .toString(),
-    // zkLpCommParams.getZkComunicationParameters().getPort().intValue()));
-    // break;
-    // case KAATCP:
-    // thriftType = ThriftChannelType.KAATCP;
-    // ZkKaaTcpComunicationParameters zkTcpCommParams =
-    // (ZkKaaTcpComunicationParameters) channel.getZkChannel()
-    // .getCommunicationParameters();
-    // communicationParams.setKaaTcpParams(new
-    // ThriftIpParameters(zkTcpCommParams.getZkComunicationParameters().getHostName()
-    // .toString(),
-    // zkTcpCommParams.getZkComunicationParameters().getPort().intValue()));
-    // break;
-    // default:
-    // break;
-    // }
-    // if (thriftType != null) {
-    // meta.history.put(channel.getZkChannel().getChannelType(), new
-    // OperationsServerLoadHistory(opsLoadHistoryTTL));
-    // ThriftSupportedChannel thriftChannel = new
-    // ThriftSupportedChannel(thriftType, communicationParams);
-    // thriftSuppChannels.add(thriftChannel);
-    // }
-    // }
-    // return thriftSuppChannels;
-    // }
-
     /*
      * (non-Javadoc)
      * 

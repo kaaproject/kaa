@@ -100,8 +100,9 @@ struct Notification {
 struct RedirectionRule {
   1: shared.Integer accessPointId
   2: shared.Long ruleId
-  3: probability redirectionProbability
-  4: shared.Long ruleTTL
+  3: probability initRedirectProbability
+  4: probability sessionRedirectProbability
+  5: shared.Long ruleTTL
 }
 
 struct EventClassFamilyVersion {

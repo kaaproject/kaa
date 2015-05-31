@@ -21,14 +21,21 @@ import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaServi
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaServiceStatus;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaStatusListener;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.GlobalUserActor;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.LocalUserActor;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.ApplicationActorStatusResponse;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestState;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.TenantActorStatusResponse;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionRouteMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
@@ -66,6 +73,8 @@ public class TenantActor extends UntypedActor {
     private final Map<String, ActorRef> globalUsers;
 
     private final String tenantId;
+
+    private Map<UUID, StatusRequestState> statusRequestStatesMap = new HashMap<UUID, StatusRequestState>();
 
     private TenantActor(AkkaContext context, String tenantId) {
         super();
@@ -143,6 +152,10 @@ public class TenantActor extends UntypedActor {
             processEndpointUserActionRouteMessage((EndpointUserActionRouteMessage) message);
         } else if (message instanceof ClusterUpdateMessage) {
             processClusterUpdate((ClusterUpdateMessage) message);
+        } else if (message instanceof StatusRequestMessage) {
+            processStatusRequest((StatusRequestMessage) message);
+        } else if (message instanceof ApplicationActorStatusResponse) {
+            processStatusResponse((ApplicationActorStatusResponse) message);
         }
     }
 
@@ -152,6 +165,26 @@ public class TenantActor extends UntypedActor {
         }
         for (ActorRef userActor : localUsers.values()) {
             userActor.tell(message, ActorRef.noSender());
+        }
+    }
+
+    private void processStatusRequest(StatusRequestMessage message) {
+        LOG.debug("[{}] Processing status request", message.getId());
+        statusRequestStatesMap.put(message.getId(), new StatusRequestState(message, applications.size()));
+        for (ActorRef tenant : applications.values()) {
+            tenant.tell(new StatusRequestMessage(message.getId()), this.getSelf());
+        }
+    }
+
+    private void processStatusResponse(ApplicationActorStatusResponse message) {
+        StatusRequestState state = statusRequestStatesMap.get(message.getRequestId());
+        if (state != null) {
+            if (state.processResponse(message)) {
+                int endpointCount = state.getEndpontCount();
+                context().parent().tell(new TenantActorStatusResponse(message.getRequestId(), endpointCount), ActorRef.noSender());
+            }
+        } else {
+            LOG.warn("[{}] State for status request is not found", message.getRequestId());
         }
     }
 
