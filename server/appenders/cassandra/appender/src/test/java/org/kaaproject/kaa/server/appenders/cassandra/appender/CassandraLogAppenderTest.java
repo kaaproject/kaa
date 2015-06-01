@@ -111,20 +111,14 @@ public class CassandraLogAppenderTest {
         configuration.setCassandraServers(Arrays.asList(server));
         
         List<ColumnMappingElement> columnMapping = new ArrayList<ColumnMappingElement>();
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_FIELD, "applicationToken", "application_token", ColumnType.TEXT, true, false));
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.UUID, "", "id", ColumnType.UUID, true, false));
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_FIELD, "timestamp", "timestamp", ColumnType.BIGINT, false, true));
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.UUID, "", "random_id", ColumnType.UUID, false, true));
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_JSON, "", "header_json", ColumnType.TEXT, false, false));
+        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_FIELD, "endpointKeyHash", "endpointKeyHash", ColumnType.TEXT, true, false));
         columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.EVENT_JSON, "", "event_json", ColumnType.TEXT, false, false));
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_BINARY, "", "header_binary", ColumnType.BLOB, false, false));
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.EVENT_BINARY, "", "event_binary", ColumnType.BLOB, false, false));
+        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.UUID, "", "binid", ColumnType.UUID, false, true));
 
         configuration.setColumnMapping(columnMapping);
         
         List<ClusteringElement> clusteringMapping = new ArrayList<ClusteringElement>();
-        clusteringMapping.add(new ClusteringElement("timestamp", OrderType.DESC));
-        clusteringMapping.add(new ClusteringElement("random_id", OrderType.DESC));
+        clusteringMapping.add(new ClusteringElement("binid", OrderType.DESC));
         configuration.setClusteringMapping(clusteringMapping);
 
         AvroByteArrayConverter<CassandraConfig> converter = new AvroByteArrayConverter<>(CassandraConfig.class);

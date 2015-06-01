@@ -91,7 +91,7 @@ public class ApplicationLogActorMessageProcessor {
                     logAppender.doAppend(message.getLogEventPack(), callback);
                 }
             } catch (Exception e) {
-                LOG.debug("Error during execution of appender(s)", e);
+                LOG.warn("Error during execution of appender(s)", e);
                 sendErrorMessageToEndpoint(message, LogDeliveryErrorCode.APPENDER_INTERNAL_ERROR);
             }
         } else {
