@@ -18,6 +18,9 @@
 #define SQLITEDBLOGSTORAGE_HPP_
 
 #include <memory>
+#include <list>
+#include <cstdint>
+#include <string>
 #include <unordered_map>
 
 #include <sqlite3.h>
@@ -41,8 +44,8 @@ public:
     virtual void removeRecordBlock(RecordBlockId id);
     virtual void notifyUploadFailed(RecordBlockId id);
 
-    virtual std::size_t getRecordsCount() { return unmarkedRecordCount_; }
-    virtual std::size_t getConsumedVolume() { return consumedMemory_; }
+    virtual std::size_t getRecordsCount();
+    virtual std::size_t getConsumedVolume();
 
 private:
     void openDBConnection();
@@ -51,6 +54,7 @@ private:
     void resetBucketID();
 
     void updateBucketIDForRecords(std::int32_t id, std::list<int>& idList);
+    void removeRecordById(sqlite3_int64 id);
 
 private:
     const std::string dbName_;
