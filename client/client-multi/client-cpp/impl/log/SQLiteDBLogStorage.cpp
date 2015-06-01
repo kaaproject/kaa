@@ -169,8 +169,7 @@ void SQLiteDBLogStorage::resetBucketID()
         int errorCode = sqlite3_step(stmt.getStatement());
         throwIfError(errorCode, SQLITE_DONE, (boost::format("(error %d)") % errorCode).str());
 
-        int resetedRecordCount = sqlite3_changes(db_);
-        KAA_LOG_INFO(boost::format("Bucket id reseted for %d record(s)") % resetedRecordCount);
+        KAA_LOG_INFO(boost::format("Bucket id reseted for %d record(s)") % sqlite3_changes(db_));
     } catch (std::exception& e) {
         KAA_LOG_FATAL(boost::format("Failed to reset bucket id: %s") % e.what());
         throw;
@@ -203,9 +202,7 @@ void SQLiteDBLogStorage::updateBucketIDForRecords(std::int32_t id, std::list<int
     errorCode = sqlite3_step(stmt.getStatement());
     throwIfError(errorCode, SQLITE_DONE, (boost::format("(error %d)") % errorCode).str());
 
-
-    int updatedRecordCount = sqlite3_changes(db_);
-    KAA_LOG_TRACE(boost::format("Update bucket id to %d for %d records with %s id-s") % id % updatedRecordCount % strIdList);
+    KAA_LOG_TRACE(boost::format("Update bucket id to %d for %d records with %s id-s") % id % sqlite3_changes(db_) % strIdList);
 }
 
 void SQLiteDBLogStorage::removeRecordById(sqlite3_int64 id)
