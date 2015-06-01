@@ -44,10 +44,10 @@ void LogCollector::addLogRecord(const KaaUserLogRecord& record)
         KAA_MUTEX_LOCKED("storageGuard_");
 
         storage_->addLogRecord(serializedRecord);
-    }
 
-    if (isDeliveryTimeout()) {
-        return;
+        if (isDeliveryTimeout()) {
+            return;
+        }
     }
 
     processLogUploadDecision(uploadStrategy_->isUploadNeeded(storage_->getStatus()));
@@ -118,14 +118,13 @@ bool LogCollector::isDeliveryTimeout()
 
     for (const auto& request : timeoutsMap_) {
         if (now >= request.second) {
+            KAA_LOG_INFO(boost::format("Log delivery timeout detected, bucket id %li") % request.first);
             isTimeout = true;
             break;
         }
     }
 
     if (isTimeout) {
-        KAA_LOG_INFO("Log delivery timeout detected");
-
         for (const auto& request : timeoutsMap_) {
             storage_->notifyUploadFailed(request.first);
         }
