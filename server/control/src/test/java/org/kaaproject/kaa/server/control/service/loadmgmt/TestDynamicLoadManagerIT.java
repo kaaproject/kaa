@@ -47,6 +47,7 @@ import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
+import org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.EndpointCountRebalancer;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,8 +190,7 @@ public class TestDynamicLoadManagerIT {
         zkServiceMock = mock(ControlZkService.class);
         pNodeMock = mock(ControlNode.class);
         when(ldServiceMock.getOpsServerHistoryTTL()).thenReturn(300);
-        when(ldServiceMock.getDynamicMgmtClass()).thenReturn(
-                "org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.DefaultRebalancer");
+        when(ldServiceMock.getRebalancer()).thenReturn(new EndpointCountRebalancer());
         when(ldServiceMock.getZkService()).thenReturn(zkServiceMock);
         when(zkServiceMock.getControlZKNode()).thenReturn(pNodeMock);
     }
@@ -461,7 +461,7 @@ public class TestDynamicLoadManagerIT {
         OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
         nodeInfo.setTimeStarted(System.currentTimeMillis());
         nodeInfo.setTransports(new ArrayList<TransportMetaData>());
-        nodeInfo.setLoadInfo(new LoadInfo(loadInfo));
+        nodeInfo.setLoadInfo(new LoadInfo(loadInfo, 1.0));
         nodeInfo.setConnectionInfo(new ConnectionInfo(thriftHost, thriftPort, publicKey));
         return nodeInfo;
     }

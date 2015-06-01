@@ -96,9 +96,6 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
     /** The last bootstrap servers update failed. */
     private boolean lastBootstrapServersUpdateFailed = false;
 
-    /** The dynamic_mgmt. */
-    private Rebalancer dynamicMgmt;
-
     /** Time to live of Operations server load history, in ms. */
     private long opsLoadHistoryTTL = 600000;
 
@@ -114,17 +111,6 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
         bootstrapsMap = new Hashtable<String, BootstrapNodeInfo>();
         // Translate seconds to ms
         opsLoadHistoryTTL = loadDistributionService.getOpsServerHistoryTTL() * 1000;
-        try {
-            Class<?> dynamicMgmtClass = Class.forName(getLoadDistributionService().getDynamicMgmtClass());
-            Object obj = dynamicMgmtClass.newInstance();
-            if (obj instanceof Rebalancer) {
-                dynamicMgmt = (Rebalancer) obj;
-            } else {
-                LOG.error("Error initializing dynamic load management class instance (not a instance of rebalance)");
-            }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            LOG.error("Error initializing dynamic management class!", e);
-        }
     }
 
     /**
@@ -139,12 +125,12 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
                 updateBootstrap(bootstrapNodeInfo);
             }
         }
-        if (dynamicMgmt != null) {
+        if (loadDistributionService.getRebalancer() != null) {
             Map<Integer, OperationsServerLoadHistory> opsServerHistory = new HashMap<Integer, OperationsServerLoadHistory>();
             for (Integer accessPointId : opsServersMap.keySet()) {
                 opsServerHistory.put(accessPointId, opsServersMap.get(accessPointId).history);
             }
-            Map<Integer, RedirectionRule> rules = dynamicMgmt.recalculate(opsServerHistory);
+            Map<Integer, List<RedirectionRule>> rules = loadDistributionService.getRebalancer().recalculate(opsServerHistory);
             LOG.trace("DynamicLoadManager recalculate() got {} redirection rules", rules.size());
             for (Integer accessPointId : rules.keySet()) {
                 if (opsServersMap.containsKey(accessPointId)) {
@@ -364,9 +350,9 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
      * @param rule
      *            the rule
      */
-    private void sendRedirectionRule(final Integer accessPointId, OperationsNodeInfo nodeInfo, final RedirectionRule rule) {
-        LOG.trace("Set redirection rule for Operations server: {}; Thrift: {}:{}", accessPointId, nodeInfo.getConnectionInfo().getThriftHost()
-                .toString(), nodeInfo.getConnectionInfo().getThriftPort());
+    private void sendRedirectionRule(final Integer accessPointId, OperationsNodeInfo nodeInfo, final List<RedirectionRule> rules) {
+        LOG.trace("Set redirection rule for Operations server: {}; Thrift: {}:{}", accessPointId, nodeInfo.getConnectionInfo()
+                .getThriftHost().toString(), nodeInfo.getConnectionInfo().getThriftPort());
         try {
             ThriftClient<OperationsThriftService.Client> client = new ThriftClient<OperationsThriftService.Client>(nodeInfo
                     .getConnectionInfo().getThriftHost().toString(), nodeInfo.getConnectionInfo().getThriftPort(),
@@ -375,15 +361,18 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
 
                 @Override
                 public void isSuccess(boolean activitySuccess) {
-                    LOG.info("Operations server {} redirection rule set {}", accessPointId, activitySuccess ? "successfully" : "unsuccessfully");
+                    LOG.info("Operations server {} redirection rule set {}", accessPointId, activitySuccess ? "successfully"
+                            : "unsuccessfully");
                 }
 
                 @Override
                 public void doInTemplate(org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Client t) {
                     try { // NOSONAR
-                        t.setRedirectionRule(rule);
-                        LOG.info("Operations {} set redirection rule: {} <> {}", accessPointId, rule.getAccessPointId(),
-                                rule.getRedirectionProbability());
+                        for (RedirectionRule rule : rules) {
+                            t.setRedirectionRule(rule);
+                            LOG.info("Operations {} set redirection rule: {} <> {}, {}", accessPointId, rule.getAccessPointId(),
+                                    rule.getInitRedirectProbability(), rule.getSessionRedirectProbability());
+                        }
                     } catch (TException e) {
                         LOG.error(MessageFormat.format("Operations server {0} set redirection rule failed", accessPointId), e);
                     }
@@ -422,6 +411,6 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
      * @return Rebalancer instance.
      */
     public Rebalancer getDynamicRebalancer() {
-        return dynamicMgmt;
+        return loadDistributionService.getRebalancer();
     }
 }

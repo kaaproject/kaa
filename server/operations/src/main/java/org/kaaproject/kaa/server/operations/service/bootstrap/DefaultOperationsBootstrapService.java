@@ -289,7 +289,7 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
         OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
         ByteBuffer keyData = ByteBuffer.wrap(keyStoreService.getPublicKey().getEncoded());
         nodeInfo.setConnectionInfo(new ConnectionInfo(getConfig().getThriftHost(), getConfig().getThriftPort(), keyData));
-        nodeInfo.setLoadInfo(new LoadInfo(DEFAULT_LOAD_INDEX));
+        nodeInfo.setLoadInfo(new LoadInfo(DEFAULT_LOAD_INDEX, 1.0));
         nodeInfo.setTransports(new ArrayList<TransportMetaData>());
         operationsNode = new OperationsNode(nodeInfo, getConfig().getZkHostPortList(), new RetryUntilElapsed(getConfig()
                 .getZkMaxRetryTime(), getConfig().getZkSleepTime()));
