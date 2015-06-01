@@ -38,7 +38,7 @@ function measure_coverage {
 }
 
 function run_tests {
-    cd build && make -j4 && TEST_BUILD_FAILED=0 && ./kaatest --report_level=detailed --report_format=xml 2>$RUN_DIR/unittest_result.xml && TEST_RESULT=0
+    cd build && make -j4 && TEST_BUILD_FAILED=0 && ./kaatest && TEST_RESULT=0 # --report_level=detailed --report_format=xml 2>$RUN_DIR/unittest_result.xml && TEST_RESULT=0
 }
 
 function test_cleanup {
@@ -52,7 +52,7 @@ then
     help
 fi
 
-mkdir -p build; cd build; cmake ..; cd ..
+mkdir -p build; cd build; cmake -DKAA_WITH_SQLITE_LOG_STORAGE=1 ..; cd ..
 
 for cmd in $@
 do
@@ -68,18 +68,18 @@ case "$cmd" in
 
     clean)
     cd build && make clean && cd .. 
-    test_cleanup
+    #test_cleanup
     ;;
     
     test)
     cd $TEST_DIR
     mkdir -p build; cd build; cmake ..; cd ..
     run_tests
-    if [[ $TEST_BUILD_FAILED -eq 0 ]]
-    then
-        measure_coverage  
-    fi
-    test_cleanup
+    #if [[ $TEST_BUILD_FAILED -eq 0 ]]
+    #then
+        #    measure_coverage  
+    #fi
+    #test_cleanup
     if [[ $TEST_RESULT -ne 0 ]]
     then
         echo "Kaa C++ SDK unittests have failed!"

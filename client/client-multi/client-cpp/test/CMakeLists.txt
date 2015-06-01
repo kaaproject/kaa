@@ -29,12 +29,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_EVENTS")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_NOTIFICATIONS")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_CONFIGURATION")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_LOGGING")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_SQLITE_LOG_STORAGE")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_TCP_CHANNEL")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_LONG_POLL_CHANNEL")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_OPERATION_HTTP_CHANNEL")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_CONNECTIVITY_CHECKER")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_THREADSAFE")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_MAX_LOG_LEVEL=6")
 
 set ( CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../Modules/)
 
@@ -44,6 +46,7 @@ find_package (Avro REQUIRED)
 find_package (Botan REQUIRED)
 find_package (Boost 1.55 REQUIRED
     COMPONENTS unit_test_framework log system)
+find_package (Sqlite3 REQUIRED)
 
 include_directories (
         ${CMAKE_CURRENT_SOURCE_DIR}
@@ -51,6 +54,8 @@ include_directories (
         ${Boost_INCLUDE_DIRS}
         ${Avro_INCLUDE_DIRS} 
         ${BOTAN_INCLUDE_DIRS}
+        ${SQLITE3_INCLUDE_DIR}
+
 )
 
 set ( KAA_TEST_SOURCES 
@@ -95,6 +100,7 @@ set ( KAA_TEST_SOURCES
         ../impl/log/LogRecord.cpp
         ../impl/log/DefaultLogUploadStrategy.cpp
         ../impl/log/MemoryLogStorage.cpp
+        ../impl/log/SQLiteDBLogStorage.cpp
         ../impl/kaatcp/KaaTcpCommon.cpp
         ../impl/kaatcp/KaaTcpParser.cpp
         ../impl/kaatcp/ConnackMessage.cpp
@@ -104,27 +110,28 @@ set ( KAA_TEST_SOURCES
         ../impl/channel/TransportProtocolIdConstants.cpp
         ../impl/channel/IPTransportInfo.cpp
         TestRunner.cpp
-        impl/common/EndpointObjectHashTest.cpp
-        impl/common/AvroByteArrayConverterTest.cpp
-        impl/configuration/ConfigurationPersistenceTest.cpp
-        impl/configuration/ConfigurationProcessorTest.cpp
-        impl/configuration/ConfigurationManagerTest.cpp
-        impl/configuration/FileConfigurationStorageTest.cpp
-        impl/http/HttpUrlTest.cpp
-        impl/http/HttpResponseTest.cpp
-        impl/http/HttpRequestTest.cpp
-        impl/ClientStatusTest.cpp
-        impl/event/EndpointRegistrationManagerTest.cpp
-        impl/security/KeyUtilsTest.cpp
-        impl/event/EventTransportTest.cpp
-        impl/channel/KaaChannelManagerTest.cpp
-        impl/notification/NotificationTransportTest.cpp
-        impl/notification/NotificationManagerTest.cpp
-        impl/kaatcp/KaaTcpTest.cpp
-        impl/channel/IPConnectivityCheckerTest.cpp
-        impl/log/DefaultLogUploadStrategyTest.cpp
-        impl/log/MemoryLogStorageTest.cpp
-        impl/log/LogCollectorTest.cpp
+#        impl/common/EndpointObjectHashTest.cpp
+#        impl/common/AvroByteArrayConverterTest.cpp
+#        impl/configuration/ConfigurationPersistenceTest.cpp
+#        impl/configuration/ConfigurationProcessorTest.cpp
+#        impl/configuration/ConfigurationManagerTest.cpp
+#        impl/configuration/FileConfigurationStorageTest.cpp
+#        impl/http/HttpUrlTest.cpp
+#        impl/http/HttpResponseTest.cpp
+#        impl/http/HttpRequestTest.cpp
+#        impl/ClientStatusTest.cpp
+#        impl/event/EndpointRegistrationManagerTest.cpp
+#        impl/security/KeyUtilsTest.cpp
+#        impl/event/EventTransportTest.cpp
+#        impl/channel/KaaChannelManagerTest.cpp
+#        impl/notification/NotificationTransportTest.cpp
+#        impl/notification/NotificationManagerTest.cpp
+#        impl/kaatcp/KaaTcpTest.cpp
+#        impl/channel/IPConnectivityCheckerTest.cpp
+#        impl/log/DefaultLogUploadStrategyTest.cpp
+#        impl/log/MemoryLogStorageTest.cpp
+#        impl/log/LogCollectorTest.cpp
+        impl/log/SQLiteDBLogStorageTest.cpp
     )
 
 add_executable ( kaatest  ${KAA_TEST_SOURCES})
@@ -132,5 +139,6 @@ target_link_libraries ( kaatest pthread
     ${BOTAN_LIBRARY}
     ${AVRO_LIBRARIES} 
     ${Boost_LIBRARIES}
+    ${SQLITE3_LIBRARY}
 )
 
