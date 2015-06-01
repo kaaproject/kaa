@@ -107,7 +107,7 @@
               "displayName": "Value",
               "weight": 0.2,
               "by_default": "applicationToken",
-              "type": "string"
+              "type": ["string", "null"]
             },
             {
               "name": "columnName",

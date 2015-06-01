@@ -27,6 +27,8 @@ import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType;
+import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement;
+import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement;
 import org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
@@ -43,7 +45,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
 
-    private static final String LOG_TABLE_PREFIX = "logs_";
     private static final Logger LOG = LoggerFactory.getLogger(CassandraLogAppender.class);
     private static final int MAX_CALLBACK_THREAD_POOL_SIZE = 10;
 
@@ -85,6 +86,9 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
             } catch (IOException e) {
                 LOG.warn("Got io exception. Can't generate log events", e);
                 listener.onInternalError();
+            } catch (RuntimeException e) {
+                LOG.warn("Appender got runtime exception:", e);
+                listener.onInternalError();
             }
         } else {
             LOG.info("Attempted to append to closed appender named [{}].", getName());
@@ -96,6 +100,7 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
     protected void initFromConfiguration(LogAppenderDto appender, CassandraConfig configuration) {
         LOG.info("Initializing new appender instance using {}", configuration);
         try {
+            trimConfigurationFields(configuration);
             setExecuteRequestType(configuration);
             logEventDao = new CassandraLogEventDao(configuration);
             createTable(appender.getApplicationToken());
@@ -109,6 +114,24 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
             LOG.info("Cassandra log appender initialized");
         } catch (Exception e) {
             LOG.error("Failed to init cassandra log appender: ", e);
+        }
+    }
+
+    private void trimConfigurationFields(CassandraConfig configuration) {
+        for (ColumnMappingElement element : configuration.getColumnMapping()) {
+            if (element.getColumnName() != null) {
+                element.setColumnName(element.getColumnName().trim());
+            }
+            if (element.getValue() != null) {
+                element.setValue(element.getValue().trim());
+            }
+        }
+        if (configuration.getClusteringMapping() != null) {
+            for (ClusteringElement element : configuration.getClusteringMapping()) {
+                if(element.getColumnName() != null){
+                    element.setColumnName(element.getColumnName().trim());
+                }
+            }
         }
     }
 
