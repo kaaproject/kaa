@@ -18,7 +18,9 @@ package org.kaaproject.kaa.server.appenders.cassandra.appender;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -48,6 +50,7 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraLogAppender.class);
     private static final int MAX_CALLBACK_THREAD_POOL_SIZE = 10;
 
+    private ExecutorService executor;
     private ExecutorService callbackExecutor;
 
     private LogEventDao logEventDao;
@@ -55,41 +58,53 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
     private boolean closed = false;
     private CassandraExecuteRequestType executeRequestType;
 
+    private ThreadLocal<Map<String, GenericAvroConverter<GenericRecord>>> converters = new ThreadLocal<Map<String, GenericAvroConverter<GenericRecord>>>() {
+
+        @Override
+        protected Map<String, GenericAvroConverter<GenericRecord>> initialValue() {
+            return new HashMap<String, GenericAvroConverter<GenericRecord>>();
+        }
+
+    };
+
     public CassandraLogAppender() {
         super(CassandraConfig.class);
     }
 
     @Override
-    public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
+    public void doAppend(final LogEventPack logEventPack, final RecordHeader header, final LogDeliveryCallback listener) {
         if (!closed) {
-            try {
-                LOG.debug("[{}] appending {} logs to cassandra collection", tableName, logEventPack.getEvents().size());
-                GenericAvroConverter<GenericRecord> eventConverter = getConverter(logEventPack.getLogSchema().getSchema());
-                GenericAvroConverter<GenericRecord> headerConverter = getConverter(header.getSchema().toString());
-                List<CassandraLogEventDto> dtoList = generateCassandraLogEvent(logEventPack, header, eventConverter);
-                LOG.debug("[{}] saving {} objects", tableName, dtoList.size());
-                if (!dtoList.isEmpty()) {
-                    switch (executeRequestType) {
-                    case ASYNC:
-                        ListenableFuture<ResultSet> result = logEventDao.saveAsync(dtoList, tableName, eventConverter, headerConverter);
-                        Futures.addCallback(result, new Callback(listener), callbackExecutor);
-                        break;
-                    case SYNC:
-                        logEventDao.save(dtoList, tableName, eventConverter, headerConverter);
-                        listener.onSuccess();
-                        break;
+            executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        LOG.debug("[{}] appending {} logs to cassandra collection", tableName, logEventPack.getEvents().size());
+                        GenericAvroConverter<GenericRecord> eventConverter = getConverter(logEventPack.getLogSchema().getSchema());
+                        GenericAvroConverter<GenericRecord> headerConverter = getConverter(header.getSchema().toString());
+                        List<CassandraLogEventDto> dtoList = generateCassandraLogEvent(logEventPack, header, eventConverter);
+                        LOG.debug("[{}] saving {} objects", tableName, dtoList.size());
+                        if (!dtoList.isEmpty()) {
+                            switch (executeRequestType) {
+                            case ASYNC:
+                                ListenableFuture<ResultSet> result = logEventDao.saveAsync(dtoList, tableName, eventConverter,
+                                        headerConverter);
+                                Futures.addCallback(result, new Callback(listener), callbackExecutor);
+                                break;
+                            case SYNC:
+                                logEventDao.save(dtoList, tableName, eventConverter, headerConverter);
+                                listener.onSuccess();
+                                break;
+                            }
+                            LOG.debug("[{}] appended {} logs to cassandra collection", tableName, logEventPack.getEvents().size());
+                        } else {
+                            listener.onInternalError();
+                        }
+                    } catch (Exception e) {
+                        LOG.warn("Got exception. Can't process log events", e);
+                        listener.onInternalError();
                     }
-                    LOG.debug("[{}] appended {} logs to cassandra collection", tableName, logEventPack.getEvents().size());
-                } else {
-                    listener.onInternalError();
                 }
-            } catch (IOException e) {
-                LOG.warn("Got io exception. Can't generate log events", e);
-                listener.onInternalError();
-            } catch (RuntimeException e) {
-                LOG.warn("Appender got runtime exception:", e);
-                listener.onInternalError();
-            }
+            });
         } else {
             LOG.info("Attempted to append to closed appender named [{}].", getName());
             listener.onConnectionError();
@@ -104,12 +119,9 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
             setExecuteRequestType(configuration);
             logEventDao = new CassandraLogEventDao(configuration);
             createTable(appender.getApplicationToken());
-            Integer callbackPoolSize = configuration.getCallbackThreadPoolSize();
-            if (callbackPoolSize != null) {
-                callbackPoolSize = Math.min(callbackPoolSize, MAX_CALLBACK_THREAD_POOL_SIZE);
-            } else {
-                callbackPoolSize = MAX_CALLBACK_THREAD_POOL_SIZE;
-            }
+            int executorPoolSize = Math.min(configuration.getExecutorThreadPoolSize(), MAX_CALLBACK_THREAD_POOL_SIZE);
+            int callbackPoolSize = Math.min(configuration.getCallbackThreadPoolSize(), MAX_CALLBACK_THREAD_POOL_SIZE);
+            executor = Executors.newFixedThreadPool(executorPoolSize);
             callbackExecutor = Executors.newFixedThreadPool(callbackPoolSize);
             LOG.info("Cassandra log appender initialized");
         } catch (Exception e) {
@@ -128,7 +140,7 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
         }
         if (configuration.getClusteringMapping() != null) {
             for (ClusteringElement element : configuration.getClusteringMapping()) {
-                if(element.getColumnName() != null){
+                if (element.getColumnName() != null) {
                     element.setColumnName(element.getColumnName().trim());
                 }
             }
@@ -146,6 +158,9 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
             closed = true;
             if (logEventDao != null) {
                 logEventDao.close();
+            }
+            if (executor != null) {
+                executor.shutdownNow();
             }
             if (callbackExecutor != null) {
                 callbackExecutor.shutdownNow();
@@ -199,6 +214,7 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
 
         @Override
         public void onFailure(Throwable t) {
+            LOG.warn("Failed to store record", t);
             if (t instanceof UnsupportedFeatureException) {
                 callback.onRemoteError();
             } else if (t instanceof IOException) {
@@ -207,5 +223,26 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
                 callback.onInternalError();
             }
         }
+    }
+
+    /**
+     * Gets the converter.
+     * 
+     * @param schema
+     *            the schema
+     * @return the converter
+     */
+    private GenericAvroConverter<GenericRecord> getConverter(String schema) {
+        LOG.trace("Get converter for schema [{}]", schema);
+        Map<String, GenericAvroConverter<GenericRecord>> converterMap = converters.get();
+        GenericAvroConverter<GenericRecord> genAvroConverter = converterMap.get(schema);
+        if (genAvroConverter == null) {
+            LOG.trace("Create new converter for schema [{}]", schema);
+            genAvroConverter = new GenericAvroConverter<GenericRecord>(schema);
+            converterMap.put(schema, genAvroConverter);
+            converters.set(converterMap);
+        }
+        LOG.trace("Get converter [{}] from map.", genAvroConverter);
+        return genAvroConverter;
     }
 }
