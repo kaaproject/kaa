@@ -136,7 +136,7 @@ public class DashboardFragment extends Fragment {
     
     private ExecutorService logBoxUpdateExecutor = Executors.newSingleThreadExecutor();
     private AndroidKaaPlatformContext androidKaaPlatformContext;
-    private boolean noEndpointUpdate = true;
+    private volatile boolean noEndpointUpdate = true;
     private ExecutorService updateChartsExecutor = Executors.newSingleThreadExecutor();
     private Thread updateThread;
     
