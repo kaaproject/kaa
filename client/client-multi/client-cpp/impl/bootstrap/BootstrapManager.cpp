@@ -20,6 +20,8 @@
 #include <cstdlib>
 #include <cstdint>
 #include <algorithm>
+#include <random>
+#include <chrono>
 
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/logging/Log.hpp"
@@ -35,7 +37,7 @@ void BootstrapManager::receiveOperationsServerList()
     }
 }
 
-std::list<ITransportConnectionInfoPtr> BootstrapManager::getOPSByAccessPointId(std::int32_t id)
+std::vector<ITransportConnectionInfoPtr> BootstrapManager::getOPSByAccessPointId(std::int32_t id)
 {
     OperationsServers servers;
 
@@ -124,24 +126,17 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
     lastOperationsServers_.clear();
     operationServers_.clear();
 
-    std::srand(std::time(nullptr));
-
     for (const auto& serverMetaData : operationsServers) {
         ITransportConnectionInfoPtr connectionInfo(
                 new GenericTransportInfo(ServerType::OPERATIONS, serverMetaData));
 
         auto& servers = operationServers_[serverMetaData.protocolVersionInfo];
-
-        if (rand() % 2) {
-            servers.push_back(connectionInfo);
-        } else {
-            servers.push_front(connectionInfo);
-        }
     }
 
-    for (auto& transportSpecificServers : operationServers_) {
-        lastOperationsServers_[transportSpecificServers.first] =
-                                    transportSpecificServers.second.begin();
+    for (auto& servers : operationServers_) {
+        auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+        std::shuffle(servers.second.begin(), servers.second.end(), std::default_random_engine(seed));
+        lastOperationsServers_[servers.first] = servers.second.begin();
     }
 
     if (serverToApply) {

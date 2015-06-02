@@ -37,7 +37,7 @@ public:
     virtual void onServerListUpdated(const std::vector<ProtocolMetaData>& operationsServers);
 
 private:
-    typedef std::list<ITransportConnectionInfoPtr> OperationsServers;
+    typedef std::vector<ITransportConnectionInfoPtr> OperationsServers;
 
     OperationsServers getOPSByAccessPointId(std::int32_t id);
     void              notifyChannelManangerAboutServer(const OperationsServers& servers);
