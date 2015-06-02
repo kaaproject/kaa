@@ -36,7 +36,7 @@ public class FakeDataEndpoint extends AbstractDataEndpoint {
     @Override
     public DataReport getLatestData() {
         sleepABit();
-        long time = System.currentTimeMillis();
+        long time = System.currentTimeMillis() / 1000;
         return genDataReport(time);
     }
 
@@ -46,7 +46,7 @@ public class FakeDataEndpoint extends AbstractDataEndpoint {
         List<DataReport> reports = new ArrayList<DataReport>(MAX_POINTS_COUNT);
         long time = System.currentTimeMillis() / 1000;
         for (int i = 0; i < MAX_POINTS_COUNT; i++) {
-            long pointTime = time - (i * 1000);
+            long pointTime = time - i;
             reports.add(genDataReport(pointTime));
         }
         return reports;

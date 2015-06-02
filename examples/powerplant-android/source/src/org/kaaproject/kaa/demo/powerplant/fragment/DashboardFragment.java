@@ -256,6 +256,8 @@ public class DashboardFragment extends Fragment {
 	                            }
 	                            DataReport latestDataCandidate = endpoint.getLatestData();
 	                            latestDataCandidate = (latestDataCandidate == null ? previousReport : latestDataCandidate);
+	                            Log.i(TAG, "Latest data: " + latestDataCandidate.toString());
+	                            Log.i(TAG, "Previous data: " + previousReport.toString());
 	                            if (latestDataCandidate.getTime() >= previousReport.getTime()) {
 	                                previousReport = latestDataCandidate;
 	                                updated = true;
@@ -528,7 +530,6 @@ public class DashboardFragment extends Fragment {
     	}
     	
     	public void run() {
-    		Log.i(TAG, curLogString.length() + "");
 	    	String log = generateLogString(isOutage, panelIndex);
 	    	if (savedLogs.size() > MAX_LOGS_TO_SAVE) {
 	    		String last = savedLogs.removeLast();

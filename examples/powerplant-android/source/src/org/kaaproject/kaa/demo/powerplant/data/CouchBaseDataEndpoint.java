@@ -110,7 +110,7 @@ public class CouchBaseDataEndpoint extends AbstractDataEndpoint {
 		DataReport report = null;
 		if (reports != null && !reports.isEmpty()) {
 			report = reports.get(0);
-			Log.i(TAG, report.toString());
+//			Log.i(TAG, report.toString());
 		} else {
 			Log.i(TAG, "no data");
 		}
