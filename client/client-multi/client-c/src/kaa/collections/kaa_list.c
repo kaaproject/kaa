@@ -270,15 +270,15 @@ static kaa_list_node_t *kaa_merge_util(kaa_list_node_t *first, kaa_list_node_t *
     KAA_RETURN_IF_NIL(first, second);
     KAA_RETURN_IF_NIL(second, first)
 
-    if (pred(first->data ,second->data)) {
+    if (pred(first->data, second->data)) {
 
-        first->next = kaa_merge_util(first->next,second, pred);
+        first->next = kaa_merge_util(first->next, second, pred);
         first->next->prev = first;
         first->prev = NULL;
 
         return first;
     } else {
-        second->next = kaa_merge_util(first,second->next, pred);
+        second->next = kaa_merge_util(first, second->next, pred);
         second->next->prev = second;
         second->prev = NULL;
         return second;
