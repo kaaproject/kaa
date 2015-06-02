@@ -27,8 +27,6 @@
 
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
 #include "kaa/log/SQLiteDBLogStorage.hpp"
-
-#define KAA_LOG_DB_STORAGE    "logs.db"
 #else
 #include "kaa/log/MemoryLogStorage.hpp"
 #endif
@@ -39,7 +37,7 @@ LogCollector::LogCollector(IKaaChannelManagerPtr manager)
     : requestId_(0), transport_(nullptr)
 {
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
-    storage_.reset(new SQLiteDBLogStorage(KAA_LOG_DB_STORAGE));
+    storage_.reset(new SQLiteDBLogStorage());
 #else
     storage_.reset(new MemoryLogStorage());
 #endif

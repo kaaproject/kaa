@@ -29,11 +29,29 @@
 #include "kaa/log/ILogStorage.hpp"
 #include "kaa/log/ILogStorageStatus.hpp"
 
+#define KAA_DEFAULT_LOG_DB_STORAGE    "logs.db"
+
 namespace kaa {
+
+enum SQLiteOptimizationOptions
+{
+    SQLITE_NO_OPTIMIZATIONS    = 0x0,
+
+    SQLITE_SYNCHRONOUS_OFF     = 0x1,
+    SQLITE_MEMORY_JOURNAL_MODE = 0x2,
+    SQLITE_MEMORY_TEMP_STORE   = 0x4,
+    SQLITE_COUNT_CHANGES_OFF   = 0x8,
+
+    SQLITE_ALL_OPTIMIZATIONS   = SQLITE_SYNCHRONOUS_OFF |
+                                 SQLITE_MEMORY_JOURNAL_MODE |
+                                 SQLITE_MEMORY_TEMP_STORE |
+                                 SQLITE_COUNT_CHANGES_OFF
+};
 
 class SQLiteDBLogStorage : public ILogStorage, public ILogStorageStatus {
 public:
-    SQLiteDBLogStorage(const std::string& dbName);
+    SQLiteDBLogStorage(const std::string& dbName = KAA_DEFAULT_LOG_DB_STORAGE
+                     , int optimizationMask = (int)SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS);
     ~SQLiteDBLogStorage();
 
     virtual void addLogRecord(LogRecordPtr record);
@@ -50,7 +68,10 @@ public:
 private:
     void openDBConnection();
     void closeDBConnection();
+
     void initLogTable();
+    void applyOptimization(int mask);
+
     void resetBucketID();
 
     void updateBucketIDForRecords(std::int32_t id, std::list<int>& idList);

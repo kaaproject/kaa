@@ -68,7 +68,7 @@ case "$cmd" in
 
     clean)
     cd build && make clean && cd .. 
-    #test_cleanup
+    test_cleanup
     ;;
     
     test)

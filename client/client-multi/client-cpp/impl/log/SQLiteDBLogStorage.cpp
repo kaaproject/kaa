@@ -76,6 +76,14 @@
 #define KAA_HOW_MANY_LOGS_IN_DB \
     "SELECT COUNT(*), SUM(LENGTH(" KAA_LOG_DATA_FIELD_NAME ")) FROM " KAA_LOG_TABLE_NAME ";"
 
+/*
+ * OPTIMIZATION OPTIONS.
+ */
+#define KAA_SYNCHRONIZATION_OPTION        "PRAGMA synchronous=OFF"
+#define KAA_COUNT_CHANGES_OPTION          "PRAGMA count_changes=OFF"
+#define KAA_MEMORY_JOURNAL_MODE_OPTION    "PRAGMA journal_mode=MEMORY"
+#define KAA_MEMORY_TEMP_STORE_OPTION      "PRAGMA temp_store=MEMORY"
+
 namespace kaa {
 
 static void throwIfError(int errorCode, int expectedErrorCode, const std::string& errorMessage)
@@ -112,11 +120,17 @@ private:
     sqlite3_stmt *stmt_;
 };
 
-SQLiteDBLogStorage::SQLiteDBLogStorage(const std::string& dbName)
+SQLiteDBLogStorage::SQLiteDBLogStorage(const std::string& dbName, int optimizationMask)
     : dbName_(dbName), db_(nullptr), unmarkedRecordCount_(0), totalRecordCount_(0), consumedMemory_(0)
 {
     openDBConnection();
     initLogTable();
+
+    if ((SQLiteOptimizationOptions)optimizationMask != SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS) {
+        applyOptimization(optimizationMask);
+    } else {
+        KAA_LOG_INFO("No database optimization is switched on");
+    }
 
     SQLiteStatement stmt(db_, KAA_HOW_MANY_LOGS_IN_DB);
     int errorCode = sqlite3_step(stmt.getStatement());
@@ -159,6 +173,28 @@ void SQLiteDBLogStorage::initLogTable()
     } catch (std::exception& e) {
         KAA_LOG_FATAL(boost::format("Failed to init log table: %s") % e.what());
         throw;
+    }
+}
+
+void SQLiteDBLogStorage::applyOptimization(int mask)
+{
+    char* errorMessage;
+
+    if (mask & SQLiteOptimizationOptions::SQLITE_SYNCHRONOUS_OFF) {
+        sqlite3_exec(db_, KAA_SYNCHRONIZATION_OPTION, NULL, NULL, &errorMessage);
+        KAA_LOG_INFO(boost::format("Applied '%s' optimization") % KAA_SYNCHRONIZATION_OPTION);
+    }
+    if (mask & SQLiteOptimizationOptions::SQLITE_MEMORY_JOURNAL_MODE) {
+        sqlite3_exec(db_, KAA_MEMORY_JOURNAL_MODE_OPTION, NULL, NULL, &errorMessage);
+        KAA_LOG_INFO(boost::format("Applied '%s' optimization") % KAA_MEMORY_JOURNAL_MODE_OPTION);
+    }
+    if (mask & SQLiteOptimizationOptions::SQLITE_MEMORY_TEMP_STORE) {
+        sqlite3_exec(db_, KAA_MEMORY_TEMP_STORE_OPTION, NULL, NULL, &errorMessage);
+        KAA_LOG_INFO(boost::format("Applied '%s' optimization") % KAA_MEMORY_TEMP_STORE_OPTION);
+    }
+    if (mask & SQLiteOptimizationOptions::SQLITE_COUNT_CHANGES_OFF) {
+        sqlite3_exec(db_, KAA_COUNT_CHANGES_OPTION, NULL, NULL, &errorMessage);
+        KAA_LOG_INFO(boost::format("Applied '%s' optimization") % KAA_COUNT_CHANGES_OPTION);
     }
 }
 
