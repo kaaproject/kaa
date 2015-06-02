@@ -132,8 +132,6 @@ public class DashboardFragment extends Fragment {
     
     private ExecutorService logBoxUpdateExecutor = Executors.newSingleThreadExecutor();
     private AndroidKaaPlatformContext androidKaaPlatformContext;
-    private volatile boolean noEndpointUpdate = true;
-    private ExecutorService updateChartsExecutor = Executors.newSingleThreadExecutor();
     private Thread updateThread;
     
     private DataEndpoint endpoint;
@@ -173,14 +171,12 @@ public class DashboardFragment extends Fragment {
 			public void onConfigurationUpdate(PowerPlantEndpointConfiguration config) {
 				endpoint.stop();
 				endpoint = DataEndpointFactory.createEndpoint(config, getActivity());
-				noEndpointUpdate = false;
 				Log.i(TAG, "Updating configuration: " + config.toString());
 				try {
-					updateChartsExecutor.awaitTermination(5, TimeUnit.SECONDS);
+					Thread.sleep(1000L);
 				} catch (InterruptedException e) {
 					Log.i(TAG, "Interrupted while waiting for update thread to be killed", e);
 				}
-				updateChartsExecutor.execute(updateThread);
 			}
 		});
         
@@ -201,7 +197,6 @@ public class DashboardFragment extends Fragment {
             public void run() {
                 
                 Log.i(TAG, "generating history data ");
-                noEndpointUpdate = true;
                 
                 final List<DataReport> reports = endpoint.getHistoryData(0);
                 if (reports == null) {
@@ -239,33 +234,24 @@ public class DashboardFragment extends Fragment {
 	                }
 	                
 	                DataReport previousReport = INITIAL_REPORT;
-	                if (!reports.isEmpty()) {
-	                	previousReport = reports.get(reports.size() - 1);
-	                }
 	                long previousUpdate = 0l;
 	                while (true) {
-	                    boolean updated = false;
-	                    while (!updated) {
-	                        try {
-	                            Thread.sleep(UPDATE_CHECK_PERIOD);
-	                            long updateDelta = System.currentTimeMillis() - previousUpdate;
-	                            if(updateDelta < UPDATE_PERIOD) {
-	                                continue;
-	                            } else {
-	                            	Log.i(TAG, "Updating since -" + (updateDelta / 1000.) + " s.");
-	                            }
-	                            DataReport latestDataCandidate = endpoint.getLatestData();
-	                            latestDataCandidate = (latestDataCandidate == null ? previousReport : latestDataCandidate);
-	                            Log.i(TAG, "Latest data: " + latestDataCandidate.toString());
-	                            Log.i(TAG, "Previous data: " + previousReport.toString());
-	                            if (latestDataCandidate.getTime() >= previousReport.getTime()) {
-	                                previousReport = latestDataCandidate;
-	                                updated = true;
-	                                previousUpdate = System.currentTimeMillis();
-	                            }
-	                        } catch (InterruptedException e) {
-	                            Log.e(TAG, "Failed to fetch data", e);
+	                	try {
+	                		Thread.sleep(UPDATE_CHECK_PERIOD);
+	                        long updateDelta = System.currentTimeMillis() - previousUpdate;
+	                        if (updateDelta < UPDATE_PERIOD) {
+	                        	continue;
+	                        } else {
+	                        	Log.i(TAG, "Updating since -" + (updateDelta / 1000.) + " s.");
 	                        }
+	                        DataReport latestDataCandidate = endpoint.getLatestData();
+	                        latestDataCandidate = (latestDataCandidate == null ? previousReport : latestDataCandidate);
+	                        Log.i(TAG, "Latest data: " + latestDataCandidate.toString());
+	                        Log.i(TAG, "Previous data: " + previousReport.toString());
+	                        previousReport = latestDataCandidate;
+	                        previousUpdate = System.currentTimeMillis();
+	                    } catch (InterruptedException e) {
+	                    	Log.e(TAG, "Failed to fetch data", e);
 	                    }
 	
 	                    final DataReport latestData = previousReport;
@@ -323,7 +309,7 @@ public class DashboardFragment extends Fragment {
            }
         });
         
-        updateChartsExecutor.execute(updateThread);
+        updateThread.start();
         
         return rootView;
     }
