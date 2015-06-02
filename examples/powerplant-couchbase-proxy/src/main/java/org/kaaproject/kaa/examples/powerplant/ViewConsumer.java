@@ -114,7 +114,6 @@ public class ViewConsumer {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
                     Thread.sleep(UPDATE_CHECK_TIME);
-                    JsonArray startKey = JsonArray.create().add(latestTs);
                     // get the latest data
                     ViewResult latestData = bucket.query(ViewQuery.from(DEFAULT_DESIGN, DEFAULT_VIEW).stale(Stale.FALSE).groupLevel(2).descending().limit(1));
 

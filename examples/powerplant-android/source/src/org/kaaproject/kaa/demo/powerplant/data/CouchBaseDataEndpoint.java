@@ -43,30 +43,17 @@ import com.couchbase.lite.android.AndroidContext;
 import com.couchbase.lite.auth.Authenticator;
 import com.couchbase.lite.auth.BasicAuthenticator;
 import com.couchbase.lite.replicator.Replication;
-import com.couchbase.lite.replicator.Replication.ChangeEvent;
-import com.couchbase.lite.replicator.Replication.ChangeListener;
-
 
 public class CouchBaseDataEndpoint extends AbstractDataEndpoint {
 	private static final String TAG = CouchBaseDataEndpoint.class.getSimpleName();
 	
 	private static final int MAX_QUERY_SIZE = 300;
-	private static final String CHANNEL_NAME = "totals";
-	private static final String USERNAME = "kaa";
-	private static final String PASSWORD = "kaa";
-	private static final String EVENT_FIELD = "event";
-	private static final String HEADER_FIELD = "header";
 	private static final String ZONES_FIELD = "zones";
 	private static final String TIMESTAMP_FIELD = "ts";
 	private static final String ZONE_ID_FIELD = "zoneId";
 	private static final String COUNT_FIELD = "count"; 
-	private static final String APPLICATION_TOKEN_FIELD = "applicationToken";
 	private static final String SUM_FIELD = "sum";
-	private static final String DB_URL_STRING = "http://10.2.2.201:4984/";
-	private static final String LOCAL_DB_NAME = "someranssfad";
 	private static final String VIEW_NAME = "powerplant_view";
-	private static final String GATEWAY_NAME = "sync_gateway";
-	private static final String APPLICATION_TOKEN = "12345678910";
 	
 	private URL dbURL;
 	private Context parentContext;
@@ -92,15 +79,6 @@ public class CouchBaseDataEndpoint extends AbstractDataEndpoint {
             pull.setAuthenticator(auth);
             pull.setChannels(channels);
             pull.setContinuous(true);
-            pull.addChangeListener(new ChangeListener(){
-
-				@Override
-				public void changed(ChangeEvent arg0) {
-//					Log.i(TAG, "State changed: " + arg0.toString());
-					
-				}
-            	
-            });
 			pull.start();
 			
 		} catch (IOException e) {

@@ -46,11 +46,8 @@ import org.kaaproject.kaa.client.configuration.base.SimpleConfigurationStorage;
 import org.kaaproject.kaa.demo.powerplant.PowerPlantActivity;
 import org.kaaproject.kaa.demo.powerplant.R;
 import org.kaaproject.kaa.demo.powerplant.configuration.PowerPlantEndpointConfiguration;
-import org.kaaproject.kaa.demo.powerplant.data.CouchBaseDataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.data.DataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.data.DataEndpointFactory;
-import org.kaaproject.kaa.demo.powerplant.data.FakeDataEndpoint;
-import org.kaaproject.kaa.demo.powerplant.data.RestDataEndpoint;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataPoint;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataReport;
 import org.kaaproject.kaa.demo.powerplant.view.GaugeChart;
@@ -89,7 +86,6 @@ public class DashboardFragment extends Fragment {
     private static final float VOLTAGE_MULTIPLY_COEF = 1f;
     private static final DataReport INITIAL_REPORT = generateInitialDataReport();
 
-    private static final float Y_AXIS_MIN_MAX_DIV = 2.0f;
     private static final boolean LINE_CHART_IS_CUBIC = true;
     private static final String Y_AXIS_LABEL = "Power, MW";
     private static final String X_AXIS_LABEL = "Time, sec";
