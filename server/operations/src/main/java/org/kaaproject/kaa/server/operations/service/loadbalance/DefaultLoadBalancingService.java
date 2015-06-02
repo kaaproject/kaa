@@ -35,7 +35,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class DefaultLoadBalancingService implements LoadBalancingService {
 
-    private static final int DEFAULT_STATS_UPDATE_FREQUENCY = 10 * 1000;
+    private static final long DEFAULT_STATS_UPDATE_FREQUENCY = 10 * 1000;
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLoadBalancingService.class);

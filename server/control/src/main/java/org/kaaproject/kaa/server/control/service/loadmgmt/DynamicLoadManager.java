@@ -76,6 +76,7 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
             this.opsServer = opsServer;
             this.nodeInfo = nodeInfo;
             history = new OperationsServerLoadHistory(opsLoadHistoryTTL);
+            history.addOpsServerLoad(nodeInfo.getLoadInfo());
         }
     }
 
@@ -215,10 +216,10 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
     @Override
     public void onNodeAdded(OperationsNodeInfo nodeInfo) {
         String dnsName = getNameFromConnectionInfo(nodeInfo.getConnectionInfo());
+        int accessPointId = ServerNameUtil.crc32(nodeInfo.getConnectionInfo());
+        addNewOperationsServer(accessPointId, dnsName, nodeInfo);
 
-        addNewOperationsServer(dnsName, nodeInfo);
-
-        LOG.info("Operations server {} added. Updating {} Bootstrap servers", dnsName, bootstrapsMap.size());
+        LOG.info("Operations server [{}][{}] added. Updating {} Bootstrap servers", accessPointId, dnsName, bootstrapsMap.size());
         for (BootstrapNodeInfo bootstrapNodeInfo : bootstrapsMap.values()) {
             updateBootstrap(bootstrapNodeInfo);
         }
@@ -235,11 +236,12 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
     @Override
     public void onNodeUpdated(OperationsNodeInfo nodeInfo) {
         String dnsName = getNameFromConnectionInfo(nodeInfo.getConnectionInfo());
-        LOG.info("Operations server {} update", dnsName);
-        if (opsServersMap.containsKey(dnsName)) {
-            opsServersMap.get(dnsName).history.addOpsServerLoad(nodeInfo.getLoadInfo());
+        int accessPointId = ServerNameUtil.crc32(nodeInfo.getConnectionInfo());
+        LOG.info("Operations server [{}][{}] updated", accessPointId, dnsName);
+        if (opsServersMap.containsKey(accessPointId)) {
+            opsServersMap.get(accessPointId).history.addOpsServerLoad(nodeInfo.getLoadInfo());
         } else {
-            addNewOperationsServer(dnsName, nodeInfo);
+            addNewOperationsServer(accessPointId, dnsName, nodeInfo);
         }
     }
 
@@ -247,11 +249,11 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
      * @param dnsName
      * @param nodeInfo
      */
-    private void addNewOperationsServer(String dnsName, OperationsNodeInfo nodeInfo) {
+    private void addNewOperationsServer(int accessPointId, String dnsName, OperationsNodeInfo nodeInfo) {
         OperationsServerMeta meta = new OperationsServerMeta(null, nodeInfo);
         ThriftOperationsServer operations = new ThriftOperationsServer(dnsName, DEFAULT_PRIORITY);
         meta.opsServer = operations;
-        opsServersMap.put(ServerNameUtil.crc32(nodeInfo.getConnectionInfo()), meta);
+        opsServersMap.put(accessPointId, meta);
     }
 
     /*
@@ -265,9 +267,10 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
     @Override
     public void onNodeRemoved(OperationsNodeInfo nodeInfo) {
         String dnsName = getNameFromConnectionInfo(nodeInfo.getConnectionInfo());
-        opsServersMap.remove(dnsName);
+        int accessPointId = ServerNameUtil.crc32(nodeInfo.getConnectionInfo());
+        opsServersMap.remove(accessPointId);
 
-        LOG.info("Operations server {} removed. Updating {} Bootstrap servers", dnsName, bootstrapsMap.size());
+        LOG.info("Operations server [{}][{}] removed. Updating {} Bootstrap servers", accessPointId, dnsName, bootstrapsMap.size());
         for (BootstrapNodeInfo bootstrapNodeInfo : bootstrapsMap.values()) {
             updateBootstrap(bootstrapNodeInfo);
         }

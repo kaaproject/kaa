@@ -167,9 +167,15 @@ public class OperationsServerActor extends UntypedActor {
 
     private void processStatusRequest(StatusRequestMessage message) {
         LOG.debug("[{}] Processing status request", message.getId());
-        statusRequestStatesMap.put(message.getId(), new StatusRequestState(message, tenants.size()));
-        for (ActorRef tenant : tenants.values()) {
-            tenant.tell(new StatusRequestMessage(message.getId()), this.getSelf());
+        if (tenants.size() > 0) {
+            statusRequestStatesMap.put(message.getId(), new StatusRequestState(message, tenants.size()));
+            for (ActorRef tenant : tenants.values()) {
+                tenant.tell(new StatusRequestMessage(message.getId()), this.getSelf());
+            }
+        } else {
+            if(message.getListener() != null){
+                message.getListener().onStatusUpdate(new AkkaServiceStatus(System.currentTimeMillis(), 0));
+            }
         }
     }
 

@@ -71,6 +71,12 @@ public class EndpointCountRebalancer implements Rebalancer {
             LOG.debug("No rebalancing in standalone mode");
             return result;
         }
+        for(Entry<Integer, OperationsServerLoadHistory> accessPointHistory : opsServerLoadHistory.entrySet()){
+            LOG.debug("Access point: {} has {} history items", accessPointHistory.getKey(), accessPointHistory.getValue().getHistory().size());
+            for(OperationsServerLoad load : accessPointHistory.getValue().getHistory()){
+                LOG.debug("History: {}", load);
+            }
+        }
         int minLoadedOpsServer = getMinLoadedOpsServer(opsServerLoadHistory);
         int minEndpointCount = getLastEndpointCount(opsServerLoadHistory.get(minLoadedOpsServer));
         int maxLoadedOpsServer = getMaxLoadedOpsServer(opsServerLoadHistory);
