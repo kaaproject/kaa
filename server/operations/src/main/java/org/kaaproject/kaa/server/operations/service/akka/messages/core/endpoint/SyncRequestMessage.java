@@ -160,6 +160,10 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
             diff.setConfigurationSync(resolvedConfigurationSync);
             request.setConfigurationSync(other.getConfigurationSync());
             LOG.debug("[{}] Updated configuration request", channelUuid);
+        } else {
+            if (hasProfileSync) {
+                diff.setConfigurationSync(request.getConfigurationSync());
+            }
         }
         if (other.getNotificationSync() != null) {
             NotificationClientSync resolvedNotificationClientSync = hasProfileSync ?
@@ -168,6 +172,10 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
             diff.setNotificationSync(resolvedNotificationClientSync);
             request.setNotificationSync(other.getNotificationSync());
             LOG.debug("[{}] Updated notification request", channelUuid);
+        } else {
+            if (hasProfileSync) {
+                diff.setNotificationSync(request.getNotificationSync());
+            }
         }
         if (other.getUserSync() != null) {
             diff.setUserSync(other.getUserSync());

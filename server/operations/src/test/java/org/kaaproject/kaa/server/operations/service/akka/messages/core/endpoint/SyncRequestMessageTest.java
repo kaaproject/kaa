@@ -103,6 +103,11 @@ public class SyncRequestMessageTest {
         other.setConfigurationSync(CONFIGURATION_CLIENT_SYNC);
         Assert.assertNotNull(message.merge(otherMessage).getConfigurationSync());
         Assert.assertNotNull(message.merge(otherMessage).getNotificationSync());
+
+        other.setConfigurationSync(null);
+        other.setNotificationSync(null);
+        Assert.assertNotNull(message.merge(otherMessage).getConfigurationSync());
+        Assert.assertNotNull(message.merge(otherMessage).getNotificationSync());
     }
 
     @Test
