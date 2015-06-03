@@ -50,7 +50,7 @@ typedef struct {
 typedef struct {
     kaa_transport_protocol_id_t    protocol_id;
     kaa_list_t                     *access_points;
-    kaa_list_t                     *current_access_points;
+    kaa_list_node_t                *current_access_points;
 } kaa_operations_access_points_t;
 
 struct kaa_bootstrap_manager_t {
@@ -120,13 +120,13 @@ static kaa_error_t kaa_bootstrap_manager_on_server_sync(kaa_bootstrap_manager_t 
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
-    kaa_access_point_t *access_point = NULL;
+    kaa_access_point_t *access_point;
     kaa_operations_access_points_t *operations_access_points;
-    kaa_list_t *channel_it = self->operations_access_points;
 
+    kaa_list_node_t *channel_it = kaa_list_begin(self->operations_access_points);
     while (channel_it) {
         operations_access_points = kaa_list_get_data(channel_it);
-        access_point = (kaa_access_point_t *)kaa_list_get_data(operations_access_points->access_points);
+        access_point = kaa_list_get_data(kaa_list_begin(operations_access_points->access_points));
 
         kaa_channel_manager_on_new_access_point(self->channel_manager
                                               , &operations_access_points->protocol_id
@@ -145,50 +145,43 @@ static kaa_error_t add_operations_access_point(kaa_bootstrap_manager_t *self
 {
     KAA_RETURN_IF_NIL2(protocol_id, access_point, KAA_ERR_BADPARAM);
 
-    kaa_list_t *channel_it = kaa_list_find_next(self->operations_access_points
-                                              , find_operations_access_points
-                                              , protocol_id);
+    kaa_list_node_t *channel_it = kaa_list_find_next(kaa_list_begin(self->operations_access_points)
+                                                   , find_operations_access_points
+                                                   , protocol_id);
 
     if (channel_it) {
         kaa_operations_access_points_t *operations_access_points = kaa_list_get_data(channel_it);
-        KAA_RETURN_IF_NIL(operations_access_points, KAA_ERR_BADDATA);
-
-        kaa_list_t *access_point_it = kaa_list_push_front(operations_access_points->access_points
-                                                        , access_point);
+        kaa_list_node_t *access_point_it = kaa_list_push_front(operations_access_points->access_points
+                                                             , access_point);
         KAA_RETURN_IF_NIL(access_point_it, KAA_ERR_NOMEM);
 
-        operations_access_points->current_access_points =
-                operations_access_points->access_points = access_point_it;
+        operations_access_points->current_access_points = access_point_it;
     } else {
         kaa_operations_access_points_t *operations_access_points =
-                (kaa_operations_access_points_t *)KAA_MALLOC(sizeof(kaa_operations_access_points_t));
+                (kaa_operations_access_points_t *)KAA_CALLOC(1, sizeof(kaa_operations_access_points_t));
         KAA_RETURN_IF_NIL(operations_access_points, KAA_ERR_NOMEM);
 
         operations_access_points->protocol_id = *protocol_id;
-        operations_access_points->current_access_points =
-                operations_access_points->access_points = kaa_list_create(access_point);
+        operations_access_points->access_points = kaa_list_create();
+        operations_access_points->current_access_points = kaa_list_push_front(operations_access_points->access_points
+                                                                            , access_point);
 
-        if (!operations_access_points->access_points) {
-            KAA_FREE(operations_access_points);
+        if (!operations_access_points->access_points || !operations_access_points->current_access_points) {
+            destroy_operations_access_points(operations_access_points);
             KAA_LOG_WARN(self->logger, KAA_ERR_NOMEM, "Failed to add new access point: "
                                 "id=0x%08X, protocol: id=0x%08X, version=%u"
                                 , access_point->id, protocol_id->id, protocol_id->version);
             return KAA_ERR_NOMEM;
         }
 
-        kaa_list_t *operations_access_points_it = self->operations_access_points ?
-                        kaa_list_push_front(self->operations_access_points, operations_access_points) :
-                        kaa_list_create(operations_access_points);
-
+        kaa_list_node_t *operations_access_points_it = kaa_list_push_front(self->operations_access_points, operations_access_points);
         if (!operations_access_points_it) {
-            KAA_FREE(operations_access_points);
+            destroy_operations_access_points(operations_access_points);
             KAA_LOG_WARN(self->logger, KAA_ERR_NOMEM, "Failed to add new access point: "
                                 "id=0x%08X, protocol: id=0x%08X, version=%u"
                                 , access_point->id, protocol_id->id, protocol_id->version);
             return KAA_ERR_NOMEM;
         }
-
-        self->operations_access_points = operations_access_points_it;
     }
 
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received new Operations access point [0x%08X] "
@@ -209,8 +202,12 @@ kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_man
 
     (*bootstrap_manager_p)->channel_manager = channel_manager;
     (*bootstrap_manager_p)->logger = logger;
-    (*bootstrap_manager_p)->operations_access_points = NULL;
-    (*bootstrap_manager_p)->bootstrap_access_points  = NULL;
+
+    (*bootstrap_manager_p)->bootstrap_access_points = kaa_list_create();
+    KAA_RETURN_IF_NIL((*bootstrap_manager_p)->bootstrap_access_points, KAA_ERR_NOMEM);
+
+    (*bootstrap_manager_p)->operations_access_points = kaa_list_create();
+    KAA_RETURN_IF_NIL((*bootstrap_manager_p)->operations_access_points, KAA_ERR_NOMEM);
 
     return KAA_ERR_NONE;
 }
@@ -228,15 +225,13 @@ kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa_bootst
 {
     KAA_RETURN_IF_NIL2(self, protocol_id, NULL);
 
-    kaa_list_t *operations_access_points_it = kaa_list_find_next(self->operations_access_points
-                                                              , &find_operations_access_points
-                                                              , protocol_id);
+    kaa_list_node_t *operations_access_points_it = kaa_list_find_next(kaa_list_begin(self->operations_access_points)
+                                                                     , &find_operations_access_points
+                                                                     , protocol_id);
     KAA_RETURN_IF_NIL(operations_access_points_it, NULL);
 
     kaa_operations_access_points_t *operations_access_points =
             (kaa_operations_access_points_t *)kaa_list_get_data(operations_access_points_it);
-    KAA_RETURN_IF_NIL(operations_access_points, NULL);
-
     return (kaa_access_point_t *)kaa_list_get_data(operations_access_points->current_access_points);
 }
 
@@ -262,30 +257,24 @@ static kaa_error_t get_next_bootstrap_access_point_index(kaa_transport_protocol_
 static kaa_error_t add_bootstrap_access_point(kaa_bootstrap_manager_t *self
                                             , size_t index)
 {
-    if (index < KAA_BOOTSTRAP_ACCESS_POINT_COUNT) {
-        kaa_bootstrap_access_points_t *bootstrap_access_point =
-                    (kaa_bootstrap_access_points_t *)KAA_MALLOC(sizeof(kaa_bootstrap_access_points_t));
-        KAA_RETURN_IF_NIL(bootstrap_access_point, KAA_ERR_NOMEM);
+    if (index >= KAA_BOOTSTRAP_ACCESS_POINT_COUNT)
+        return KAA_ERR_BADDATA;
 
-        bootstrap_access_point->protocol_id = KAA_BOOTSTRAP_ACCESS_POINTS[index].protocol_id;
-        bootstrap_access_point->index = index;
+    kaa_bootstrap_access_points_t *bootstrap_access_point =
+                (kaa_bootstrap_access_points_t *)KAA_MALLOC(sizeof(kaa_bootstrap_access_points_t));
+    KAA_RETURN_IF_NIL(bootstrap_access_point, KAA_ERR_NOMEM);
 
-        kaa_list_t *bootstrap_access_point_it = self->bootstrap_access_points ?
-                kaa_list_push_front(self->bootstrap_access_points, bootstrap_access_point) :
-                kaa_list_create(bootstrap_access_point);
+    bootstrap_access_point->protocol_id = KAA_BOOTSTRAP_ACCESS_POINTS[index].protocol_id;
+    bootstrap_access_point->index = index;
 
-        if (!bootstrap_access_point_it) {
-            KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM, "Failed to allocate memory "
-                                                "for Bootstrap access point info");
-            KAA_FREE(bootstrap_access_point);
-            return KAA_ERR_NOMEM;
-        }
-
-        self->bootstrap_access_points = bootstrap_access_point_it;
-        return KAA_ERR_NONE;
+    kaa_list_node_t *bootstrap_access_point_it = kaa_list_push_front(self->bootstrap_access_points, bootstrap_access_point);
+    if (!bootstrap_access_point_it) {
+        KAA_FREE(bootstrap_access_point);
+        KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM, "Failed to allocate memory for Bootstrap access point info");
+        return KAA_ERR_NOMEM;
     }
 
-    return KAA_ERR_BADDATA;
+    return KAA_ERR_NONE;
 }
 
 kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstrap_manager_t *self
@@ -293,9 +282,9 @@ kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstr
 {
     KAA_RETURN_IF_NIL2(self, protocol_id, NULL);
 
-    kaa_list_t *bootstrap_access_points_it = kaa_list_find_next(self->bootstrap_access_points
-                                                              , &find_bootstrap_access_points
-                                                              , protocol_id);
+    kaa_list_node_t *bootstrap_access_points_it = kaa_list_find_next(kaa_list_begin(self->bootstrap_access_points)
+                                                                   , &find_bootstrap_access_points
+                                                                   , protocol_id);
 
     size_t index;
     if (bootstrap_access_points_it) {
@@ -328,8 +317,7 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
-    kaa_list_destroy(self->operations_access_points, destroy_operations_access_points);
-    self->operations_access_points = NULL;
+    kaa_list_clear(self->operations_access_points, destroy_operations_access_points);
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
@@ -346,14 +334,15 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received %u access points (request_id=%u)"
                                                         , access_point_count, request_id);
 
-    uint32_t access_point_id;
     kaa_transport_protocol_id_t protocol_id;
-    uint16_t connection_data_len;
 
     while (access_point_count--) {
-        error_code = kaa_platform_message_read(reader, &access_point_id, sizeof(uint32_t));
+        kaa_access_point_t *new_access_point = (kaa_access_point_t *)KAA_MALLOC(sizeof(kaa_access_point_t));
+        KAA_RETURN_IF_NIL(new_access_point, KAA_ERR_NOMEM);
+
+        error_code = kaa_platform_message_read(reader, &new_access_point->id, sizeof(uint32_t));
         KAA_RETURN_IF_ERR(error_code);
-        access_point_id = KAA_NTOHL(access_point_id);
+        new_access_point->id = KAA_NTOHL(new_access_point->id);
 
         error_code = kaa_platform_message_read(reader, &protocol_id.id, sizeof(uint32_t));
         KAA_RETURN_IF_ERR(error_code);
@@ -363,42 +352,33 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
         KAA_RETURN_IF_ERR(error_code);
         protocol_id.version = KAA_NTOHS(protocol_id.version);
 
-        error_code = kaa_platform_message_read(reader, &connection_data_len, sizeof(uint16_t));
+        error_code = kaa_platform_message_read(reader, &new_access_point->connection_data_len, sizeof(uint16_t));
         KAA_RETURN_IF_ERR(error_code);
-        connection_data_len = KAA_NTOHS(connection_data_len);
+        new_access_point->connection_data_len = KAA_NTOHS(new_access_point->connection_data_len);
 
-        if (!connection_data_len) {
-            KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Connection data length is 0");
-            return KAA_ERR_BADDATA;
+        new_access_point->connection_data = (char *)KAA_MALLOC(new_access_point->connection_data_len);
+
+        if (!new_access_point->connection_data || !new_access_point->connection_data_len) {
+            KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM, "Failed to allocate buffer for connection data, size %u"
+                                                                        , new_access_point->connection_data_len);
+            destroy_access_point(new_access_point);
+            return KAA_ERR_NOMEM;
         }
 
-        char *connection_data = (char *)KAA_MALLOC(connection_data_len);
-        KAA_RETURN_IF_NIL(connection_data, KAA_ERR_NOMEM);
-
-        kaa_access_point_t *new_access_point =
-                (kaa_access_point_t *)KAA_MALLOC(sizeof(kaa_access_point_t));
-        KAA_RETURN_IF_NIL(new_access_point, KAA_ERR_NOMEM);
-
         error_code = kaa_platform_message_read_aligned(reader
-                                                     , connection_data
-                                                     , connection_data_len);
+                                                     , new_access_point->connection_data
+                                                     , new_access_point->connection_data_len);
         if (error_code) {
-            KAA_FREE(connection_data);
-            KAA_FREE(new_access_point);
+            destroy_access_point(new_access_point);
             KAA_LOG_ERROR(self->logger, error_code, "Failed to read connection data");
             return error_code;
         }
 
-        new_access_point->id = access_point_id;
-        new_access_point->connection_data = connection_data;
-        new_access_point->connection_data_len = connection_data_len;
-
         error_code = add_operations_access_point(self, &protocol_id, new_access_point);
         if (error_code) {
+            destroy_access_point(new_access_point);
             KAA_LOG_WARN(self->logger, error_code, "Failed to add new access point "
                     "to channel (protocol: id=0x%08X, version=%u)", protocol_id.id, protocol_id.version);
-            KAA_FREE(new_access_point->connection_data);
-            KAA_FREE(new_access_point);
         }
     }
 
@@ -416,9 +396,9 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
     kaa_access_point_t *access_point = NULL;
 
     if (type == KAA_SERVER_BOOTSTRAP) {
-        kaa_list_t *bootstrap_access_points_it = kaa_list_find_next(self->bootstrap_access_points
-                                                                  , &find_bootstrap_access_points
-                                                                  , protocol_id);
+        kaa_list_node_t *bootstrap_access_points_it = kaa_list_find_next(kaa_list_begin(self->bootstrap_access_points)
+                                                                       , &find_bootstrap_access_points
+                                                                       , protocol_id);
 
         size_t index_from = 0;
         if (bootstrap_access_points_it) {
@@ -441,14 +421,13 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
             }
         }
     } else {
-        kaa_list_t *operations_access_points_it = kaa_list_find_next(self->operations_access_points
-                                                                   , &find_operations_access_points
-                                                                   , protocol_id);
+        kaa_list_node_t *operations_access_points_it = kaa_list_find_next(kaa_list_begin(self->operations_access_points)
+                                                                        , &find_operations_access_points
+                                                                        , protocol_id);
         KAA_RETURN_IF_NIL(operations_access_points_it, KAA_ERR_NOT_FOUND);
 
         kaa_operations_access_points_t *operations_access_points =
                 (kaa_operations_access_points_t *)kaa_list_get_data(operations_access_points_it);
-        KAA_RETURN_IF_NIL(operations_access_points, KAA_ERR_BADDATA);
 
         operations_access_points->current_access_points =
                 kaa_list_next(operations_access_points->current_access_points);

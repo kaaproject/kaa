@@ -30,6 +30,7 @@
 extern "C" {
 #endif
 
+#include "../kaa_context.h"
 #include "kaa_client_properies.h"
 
 struct kaa_client_t;

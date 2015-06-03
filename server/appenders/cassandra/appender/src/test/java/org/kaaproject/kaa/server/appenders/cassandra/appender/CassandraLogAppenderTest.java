@@ -16,10 +16,14 @@
 
 package org.kaaproject.kaa.server.appenders.cassandra.appender;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.cassandraunit.CassandraCQLUnit;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.junit.Assert;
@@ -36,6 +40,11 @@ import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchTy
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraServer;
+import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement;
+import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement;
+import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElementType;
+import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnType;
+import org.kaaproject.kaa.server.appenders.cassandra.config.gen.OrderType;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
@@ -44,13 +53,10 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 
 public class CassandraLogAppenderTest {
 
@@ -72,7 +78,6 @@ public class CassandraLogAppenderTest {
     private String endpointKeyHash;
 
     private AvroByteArrayConverter<LogData> logDataConverter = new AvroByteArrayConverter<>(LogData.class);
-    private AvroByteArrayConverter<CassandraConfig> converter = new AvroByteArrayConverter<>(CassandraConfig.class);
 
     @Before
     public void beforeTest() throws IOException {
@@ -85,6 +90,7 @@ public class CassandraLogAppenderTest {
         appenderDto.setName("Test Name");
         appenderDto.setTenantId(String.valueOf(RANDOM.nextInt()));
         appenderDto.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.values()));
+        appenderDto.setApplicationToken(appToken);
 
         header = new RecordHeader();
         header.setApplicationToken(appToken);
@@ -100,8 +106,20 @@ public class CassandraLogAppenderTest {
         configuration = new CassandraConfig();
         configuration.setCassandraBatchType(CassandraBatchType.UNLOGGED);
         configuration.setKeySpace(KEY_SPACE_NAME);
-        configuration.setCassandraExecuteRequestType(CassandraExecuteRequestType.ASYNC);
+        configuration.setTableNamePattern("logs_$app_token_$config_hash");
+        configuration.setCassandraExecuteRequestType(CassandraExecuteRequestType.SYNC);
         configuration.setCassandraServers(Arrays.asList(server));
+        
+        List<ColumnMappingElement> columnMapping = new ArrayList<ColumnMappingElement>();
+        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_FIELD, "endpointKeyHash", "endpointKeyHash", ColumnType.TEXT, true, false));
+        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.EVENT_JSON, "", "event_json", ColumnType.TEXT, false, false));
+        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.UUID, "", "binid", ColumnType.UUID, false, true));
+
+        configuration.setColumnMapping(columnMapping);
+        
+        List<ClusteringElement> clusteringMapping = new ArrayList<ClusteringElement>();
+        clusteringMapping.add(new ClusteringElement("binid", OrderType.DESC));
+        configuration.setClusteringMapping(clusteringMapping);
 
         AvroByteArrayConverter<CassandraConfig> converter = new AvroByteArrayConverter<>(CassandraConfig.class);
         byte[] rawConfiguration = converter.toByteArray(configuration);
@@ -109,6 +127,7 @@ public class CassandraLogAppenderTest {
 
         logAppender = new CassandraLogAppender();
         logAppender.init(appenderDto);
+        logAppender.setApplicationToken(appToken);
     }
 
     @Test
@@ -117,7 +136,7 @@ public class CassandraLogAppenderTest {
         logAppender.doAppend(generateLogEventPack(20), callback);
         CassandraLogEventDao logEventDao = (CassandraLogEventDao) ReflectionTestUtils.getField(logAppender, "logEventDao");
         Session session = (Session) ReflectionTestUtils.getField(logEventDao, "session");
-        ResultSet resultSet = session.execute(QueryBuilder.select().countAll().from(KEY_SPACE_NAME, "logs_" + appToken));
+        ResultSet resultSet = session.execute(QueryBuilder.select().countAll().from(KEY_SPACE_NAME, "logs_" + appToken + "_" + Math.abs(configuration.hashCode())));
         Row row = resultSet.one();
         Assert.assertEquals(20L, row.getLong(0));
         Assert.assertEquals(1, callback.getSuccessCount());

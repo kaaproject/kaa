@@ -20,17 +20,19 @@
 
 #include "application.h"
 #include "sndc_sdk_api.h"
+
 typedef long long int64_t;
-#include "kaa/kaa.h"
+
 #include "kaa/kaa_profile.h"
 #include "kaa/kaa_configuration_manager.h"
 #include "kaa/kaa_context.h"
+#include "kaa/kaa_logging.h"
 #include "kaa/platform/ext_tcp_utils.h"
 #include "kaa/utilities/kaa_log.h"
 #include "kaa/utilities/kaa_mem.h"
 
 #include "kaa/gen/kaa_logging_definitions.h"
-#include "kaa_client.h"
+#include "kaa/platform/kaa_client.h"
 
 
 /* API level that the application is using */
@@ -245,7 +247,7 @@ static void APP_main()
                 IO_PIN_DRIVE_DEFAULT,
                 IO_PIN_SLEW_RATE_DEFAULT);
    sndc_io_setMode(BUTTON, IO_MODE_KEY);
-   
+
    sndc_device_config = sndc_config_get();
 
    /* clean all profiles */
@@ -256,9 +258,9 @@ static void APP_main()
    //infinite thread loop, button press is monitored by system events
    while(1)
    {
-      
+
       if (ip_connected && !kaa_started) {
-          kaa_client_start(kaa_client);
+          kaa_client_start(kaa_client, NULL, NULL, 0);
           kaa_started = true;
       }
       //thread sleep for 500 ms
@@ -348,16 +350,16 @@ static bool_t APP_handle_msg(sndc_appmsg_msg_t* msg)
          if (io_event->level) {
              kaa_logging_traffic_lights_log_t *record = kaa_logging_traffic_lights_log_create();
              record->event_type = ENUM_EVENT_TYPE_BUTTON;
-             kaa_client_log_record(kaa_client, record);
+             kaa_logging_add_record(kaa_client_get_context(kaa_client)->log_collector, record);
              record->destroy(record);
          }
          break;
       }
-      
+
       default:
          break;
    }
-   
+
    return consumed;
 }
 

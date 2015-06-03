@@ -20,15 +20,16 @@
 
 #include "application.h"
 #include "sndc_sdk_api.h"
+
 typedef long long int64_t;
-#include "kaa/kaa.h"
+
 #include "kaa/kaa_profile.h"
 #include "kaa/kaa_configuration_manager.h"
 #include "kaa/kaa_context.h"
 #include "kaa/platform/ext_tcp_utils.h"
 #include "kaa/utilities/kaa_log.h"
 #include "kaa/utilities/kaa_mem.h"
-#include "kaa_client.h"
+#include "kaa/platform/kaa_client.h"
 
 
 /* API level that the application is using */
@@ -169,7 +170,7 @@ kaa_error_t kaa_on_configuration_updated(void *context, const kaa_root_configura
 {
     int i = 0;
     sndc_printf("Configuration updated\n");
-    kaa_list_t *it = configuration->light_zones;
+    kaa_list_node_t *it = kaa_list_begin(configuration->light_zones);
     while (it) {
         kaa_configuration_light_zone_t *zone = (kaa_configuration_light_zone_t *) kaa_list_get_data(it);
         if (zone->zone_id >= 0 && zone->zone_id < LIGHT_ZONES_COUNT) {
@@ -217,18 +218,14 @@ static void APP_main()
        }
    }
 
-   kaa_list_t *zones = NULL;
+   kaa_list_t *zones = kaa_list_create();
    int i = 0;
    for(; i < LIGHT_ZONES_COUNT; ++i) {
        sndc_io_setMode(light_zones[i], IO_MODE_OUTPUT);
        sndc_io_write(light_zones[i], LIGHT_OFF);
        int32_t *zone_id = (int32_t *) KAA_MALLOC(sizeof(int32_t));
        *zone_id = i;
-       if (zones) {
-           zones = kaa_list_push_front(zones, zone_id);
-       } else {
-           zones = kaa_list_create(zone_id);
-       }
+       kaa_list_push_front(zones, zone_id);
    }
    kaa_profile_street_lights_profile_t *profile = kaa_profile_street_lights_profile_create();
    profile->light_zones = zones;
@@ -251,7 +248,7 @@ static void APP_main()
    //             IO_PIN_DRIVE_DEFAULT,
    //             IO_PIN_SLEW_RATE_DEFAULT);
    //sndc_io_setMode(BUTTON, IO_MODE_KEY);
-   
+
    //sndc_device_config = sndc_config_get();
 
    /* clean all profiles */
@@ -263,9 +260,9 @@ static void APP_main()
    //infinite thread loop, button press is monitored by system events
    while(1)
    {
-      
+
       if (ip_connected && !kaa_started) {
-          kaa_client_start(kaa_client);
+          kaa_client_start(kaa_client, NULL, NULL, 0);
           kaa_started = true;
       }
       //thread sleep for 500 ms
@@ -355,8 +352,6 @@ static bool_t APP_handle_msg(sndc_appmsg_msg_t* msg)
          sndc_appmsg_ioEvent_t *io_event = (sndc_appmsg_ioEvent_t *)msg->par;
          if (testDone) {
              sndc_printf("SNDC_APPMSG_IO_EVENT level %d, pinMask %d\n", io_event->level, io_event->pin_mask);
-             //Logging example, it just log button pressing.
-             //kaa_client_log_record(kaa_client, "Button pressed");
          } else {
              testDone  = true;
              sndc_printf("Button pressed. \n");
@@ -364,11 +359,11 @@ static bool_t APP_handle_msg(sndc_appmsg_msg_t* msg)
          }
          break;
       }
-      
+
       default:
          break;
    }
-   
+
    return consumed;
 }
 

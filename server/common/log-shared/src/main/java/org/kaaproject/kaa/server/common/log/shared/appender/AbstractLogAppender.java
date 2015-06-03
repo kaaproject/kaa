@@ -221,7 +221,7 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
      *            the schema
      * @return the converter
      */
-    private GenericAvroConverter<GenericRecord> getConverter(String schema) {
+    protected GenericAvroConverter<GenericRecord> getConverter(String schema) {
         LOG.trace("Get converter for schema [{}]", schema);
         GenericAvroConverter<GenericRecord> genAvroConverter = converters.get(schema);
         if (genAvroConverter == null) {

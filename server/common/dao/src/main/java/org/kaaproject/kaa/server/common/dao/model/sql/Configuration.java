@@ -173,7 +173,7 @@ public final class Configuration extends AbstractStructure<ConfigurationDto> imp
                 + majorVersion + ", minorVersion=" + minorVersion + ", description=" + description + ", createdTime=" + createdTime + ", lastModifyTime="
                 + lastModifyTime + ", activatedTime=" + activatedTime + ", deactivatedTime=" + deactivatedTime + ", createdUsername=" + createdUsername
                 + ", modifiedUsername=" + modifiedUsername + ", activatedUsername=" + activatedUsername + ", deactivatedUsername=" + deactivatedUsername
-                + ", endpointCount=" + endpointCount + ", status=" + status + ", id=" + id + "]";
+                + ", endpointCount=" + endpointCount + ", status=" + status + ", id=" + id + ", version=" + getVersion() + "]";
     }
 
 }

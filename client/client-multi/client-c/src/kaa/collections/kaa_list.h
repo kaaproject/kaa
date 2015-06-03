@@ -21,115 +21,127 @@
 extern "C" {
 #endif
 
-#include "../kaa_common.h"
 #include <stdbool.h>
-#include <sys/types.h> // For ssize_t
+#include <stddef.h>
 
+#include "../kaa_error.h"
+
+typedef struct kaa_list_node_t kaa_list_node_t;
 typedef struct kaa_list_t kaa_list_t;
 
 /**
- * Return 0 if data doesn't match search criteria.
+ * @brief Return @b false if data doesn't match search criteria.
  */
 typedef bool (*match_predicate)(void *data, void *context);
 
 /**
- * Use to deallocate list node data.
+ * @brief Use to deallocate list node data.
  */
 typedef void (*deallocate_list_data)(void *);
 
-
+/**
+ * @brief Use to process element data.
+ */
+typedef void (*process_data)(void *data, void *context);
 
 /**
- * Adds new element to the end of the list.
+ * @brief Creates empty list.
+ * @return The list object.
  */
-kaa_list_t *kaa_list_push_back(kaa_list_t *head, void *data);
+kaa_list_t *kaa_list_create();
 
 /**
- * Adds new element to the begin of the list, returns new list head.
+ * @brief Destroys list and all elements.
  */
-kaa_list_t *kaa_list_push_front(kaa_list_t *head, void *data);
+void kaa_list_destroy(kaa_list_t *list, deallocate_list_data deallocator);
 
 /**
- * Returns data on current list position.
+ * @brief Removes all elements from the list (which are destroyed), and leaving the list with a size of 0.
  */
-void *kaa_list_get_data(kaa_list_t *position);
+void kaa_list_clear(kaa_list_t *list, deallocate_list_data deallocator);
 
 /**
- * Returns size of the list.
+ * @brief Returns the number of elements in the list.
+ * @return The number of elements or NULL if the list is NULL.
  */
-size_t kaa_list_get_size(kaa_list_t *position);
+size_t kaa_list_get_size(kaa_list_t *list);
 
 /**
- * Checks if there is an element after current position.
+ * @brief Inserts a new element at the beginning of the list, right before its current first element.
+ * @return An iterator to the inserted element or NULL if the list or data are NULL.
  */
-bool kaa_list_has_next(kaa_list_t *position);
+kaa_list_node_t *kaa_list_push_front(kaa_list_t *list, void *data);
 
 /**
- * Returns next element.
+ * @brief Inserts a new element at the end of the list, after its current last element.
+ * @return An iterator to the inserted element or NULL if the list or data are NULL.
  */
-kaa_list_t *kaa_list_next(kaa_list_t *position);
+kaa_list_node_t *kaa_list_push_back(kaa_list_t *list, void *data);
 
 /**
- * Adds all elements of list2 to the end of list1.
- * Returns iterator to the beginning of the inserted elements
+ * @brief Returns an iterator pointing to the first element in the list.
+ * @return An iterator or NULL if the list is NULL.
  */
-kaa_list_t *kaa_lists_merge(kaa_list_t *list1, kaa_list_t *list2);
+kaa_list_node_t *kaa_list_begin(kaa_list_t *list);
 
 /**
- * Creates list with 1 element having given data.
- * Returns iterator to the head of created list.
+ * @brief Returns an iterator pointing to the last element in the list.
+ * @return An iterator or NULL if the list is NULL.
  */
-kaa_list_t *kaa_list_create(void *data);
+kaa_list_node_t *kaa_list_back(kaa_list_t *list);
 
 /**
- * Frees data occupied by list, deallocates data from the list using given deallocator.
+ * @brief Gets iterator to the next element.
+ * @return An iterator or NULL if the provided iterator is NULL.
  */
-void kaa_list_destroy(kaa_list_t *head, deallocate_list_data deallocator);
+kaa_list_node_t *kaa_list_next(kaa_list_node_t *it);
 
 /**
- * Frees data occupied by list, data will not be deallocated.
+ * @brief Gets iterator to the previous element.
+ * @return An iterator or NULL if the provided iterator is NULL.
  */
-void kaa_list_destroy_no_data_cleanup(void *head);
+kaa_list_node_t *kaa_list_prev(kaa_list_node_t *it);
 
 /**
- * Removes element from list at given position. Position must be valid iterator
- * to the element in the given list. Deallocates released data using given deallocator.
- * Returns iterator pointing to the position before removed element, pointer
- * to the head of the list if (*head == position) or NULL if the position was not found.
+ * @brief Gets data from the iterator.
+ * @return Data or NULL if the iterator is NULL.
  */
-kaa_list_t *kaa_list_remove_at(kaa_list_t **head, kaa_list_t *position, deallocate_list_data deallocator);
+void *kaa_list_get_data(kaa_list_node_t *it);
 
 /**
- * Removes first element that is matched by predicate.
- * Returns KAA_ERR_NONE if element was found.
+ * @brief Sets new data to the element. Old data will be destroyed.
  */
-kaa_error_t kaa_list_remove_first(kaa_list_t **head, match_predicate pred, void *context, deallocate_list_data deallocator);
+void kaa_list_set_data_at(kaa_list_node_t *it, void *data, deallocate_list_data deallocator);
 
 /**
- * Inserts data into the given position. Deallocates memory occupied by previous
- * data using given deallocator.
+ * @brief Returns an iterator to the first element in the list that matches by the predicate.
+ * If no such element is found, the function returns NULL.
  */
-void kaa_list_set_data_at(kaa_list_t *position, void *data, deallocate_list_data deallocator);
+kaa_list_node_t *kaa_list_find_next(kaa_list_node_t *from, match_predicate pred, void *context);
 
 /**
- * Insert data after a given iterator.
- * Returns iterator to an inserted item in list.
+ * @brief Merges the source list into the destination list by transferring all of its elements at their respective
+ * ordered positions at the end of the source list.
+ * @return The result list which contains all merged elements.
  */
-kaa_list_t *kaa_list_insert_after(kaa_list_t *position, void *data);
+kaa_list_t *kaa_lists_merge(kaa_list_t *destination, kaa_list_t *source);
 
 /**
- * Returns first element in list from given position where ((*pred)(data, context) != 0).
- * If nothing matched given criteria or list is empty NULL is returned.
+ * @brief Removes from the list a single element.
+ * @return An iterator pointing to the element that followed the last element erased by the function call or NULL.
  */
-kaa_list_t *kaa_list_find_next(kaa_list_t *from, match_predicate pred, void *context);
+kaa_list_node_t *kaa_list_remove_at(kaa_list_t *list, kaa_list_node_t *it, deallocate_list_data deallocator);
 
 /**
- * Returns last element in list from given position where ((*pred)(data, context) != 0).
- * If nothing matched given criteria or list is empty NULL is returned.
+ * @brief Removes from the list the first element for which the predicate returns true.
+ * @return KAA_ERR_NONE if element was found.
  */
-kaa_list_t *kaa_list_find_last(kaa_list_t *from, match_predicate pred, void *context);
+kaa_error_t kaa_list_remove_first(kaa_list_t *list, match_predicate pred, void *context, deallocate_list_data deallocator);
 
-kaa_list_t *kaa_list_split_after(kaa_list_t *head, kaa_list_t *after, kaa_list_t **tail);
+/**
+ * @brief Applies the function process to each of the elements in the range [first,last].
+ */
+void kaa_list_for_each(kaa_list_node_t *first, kaa_list_node_t *last, process_data process, void *context);
 
 #ifdef __cplusplus
 } // extern "C"

@@ -78,13 +78,13 @@ public class MainActivity extends AbstractActivity {
             public void onProjectAction(ProjectActionEvent event) {
                 switch(event.getAction()) {
                 case GET_SOURCE_CODE:
-                    getProjectSourceCode(event.getProjectId());
+                    getProjectSourceCode(event.getProject());
                     break;
                 case GET_BINARY:
-                    getProjectBinary(event.getProjectId());
+                    getProjectBinary(event.getProject());
                     break;
                 case OPEN_DETAILS:
-                    clientFactory.getPlaceController().goTo(new ProjectPlace(event.getProjectId()));
+                    clientFactory.getPlaceController().goTo(new ProjectPlace(event.getProject().getId()));
                     break;
                 default:
                     break;
@@ -162,17 +162,17 @@ public class MainActivity extends AbstractActivity {
         });
     }
     
-    private void getProjectSourceCode(String projectId) {
-        getProjectData(projectId, ProjectDataType.SOURCE);
+    private void getProjectSourceCode(Project project) {
+        getProjectData(project, ProjectDataType.SOURCE);
     }
     
-    private void getProjectBinary(String projectId) {
-        getProjectData(projectId, ProjectDataType.BINARY);
+    private void getProjectBinary(Project project) {
+        getProjectData(project, ProjectDataType.BINARY);
     }
     
-    private void getProjectData(final String projectId, final ProjectDataType type) {
+    private void getProjectData(final Project project, final ProjectDataType type) {
         view.clearError();
-        Sandbox.getSandboxService().checkProjectDataExists(projectId, type, new BusyAsyncCallback<Boolean>() {
+        Sandbox.getSandboxService().checkProjectDataExists(project.getId(), type, new BusyAsyncCallback<Boolean>() {
 
             @Override
             public void onFailureImpl(Throwable caught) {
@@ -182,20 +182,27 @@ public class MainActivity extends AbstractActivity {
             @Override
             public void onSuccessImpl(Boolean result) {
                 if (result) {
-                    ServletHelper.downloadProjectFile(projectId, type);
+                    ServletHelper.downloadProjectFile(project.getId(), type);
                 }
                 else {
-                    ConsoleDialog.startConsoleDialog(new ConsoleDialogListener() {
+                    String initialMessage = "Assembling ";
+                    if (type == ProjectDataType.SOURCE) {
+                        initialMessage += "sources";
+                    } else {
+                        initialMessage += "binary";
+                    }
+                    initialMessage += " for '" + project.getName() + "' project...\n";
+                    ConsoleDialog.startConsoleDialog(initialMessage, new ConsoleDialogListener() {
                         @Override
                         public void onOk(boolean success) {
                             if (success) {
-                                ServletHelper.downloadProjectFile(projectId, type);
+                                ServletHelper.downloadProjectFile(project.getId(), type);
                             }
                         }
 
                         @Override
                         public void onStart(String uuid, final ConsoleDialog dialog, final AsyncCallback<Void> callback) {
-                            Sandbox.getSandboxService().buildProjectData(uuid, null, projectId, type, new AsyncCallback<Void>() {
+                            Sandbox.getSandboxService().buildProjectData(uuid, null, project.getId(), type, new AsyncCallback<Void>() {
                               @Override
                               public void onFailure(Throwable caught) {
                                   callback.onFailure(caught);

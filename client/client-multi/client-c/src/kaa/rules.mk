@@ -53,10 +53,12 @@ cSRCS_$(d) :=  utilities/kaa_log.c \
                gen/kaa_configuration_gen.c \
                gen/kaa_logging_gen.c \
                gen/kaa_profile_gen.c \
+               gen/kaa_notification_gen.c \
                kaa_bootstrap_manager.c \
                kaa_channel_manager.c \
                kaa_common_schema.c \
                kaa_configuration_manager.c \
+               kaa_notification_manager.c \
                kaa_event.c \
                kaa_logging.c \
                kaa_platform_protocol.c \

@@ -58,6 +58,9 @@ static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
 #ifndef KAA_DISABLE_FEATURE_LOGGING
                                              , KAA_SERVICE_LOGGING
 #endif
+#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
+                                             , KAA_SERVICE_NOTIFICATION
+#endif
                                              };
 static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
 
@@ -176,7 +179,7 @@ static uint16_t get_poll_timeout(kaa_client_t *kaa_client)
     uint16_t select_timeout;
     kaa_tcp_channel_get_max_timeout(&kaa_client->channel, &select_timeout);
 
-    if (select_timeout > kaa_client->external_process_max_delay) {
+    if ((kaa_client->external_process_max_delay > 0) && (select_timeout > kaa_client->external_process_max_delay)) {
         select_timeout = kaa_client->external_process_max_delay;
     }
 
@@ -277,8 +280,8 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
     KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Starting Kaa client...");
 
     while (kaa_client->operate) {
-        if ((KAA_TIME() - kaa_client->external_process_last_call) >= kaa_client->external_process_max_delay) {
-            if (kaa_client->external_process_fn) {
+        if (kaa_client->external_process_fn) {
+            if ((KAA_TIME() - kaa_client->external_process_last_call) >= kaa_client->external_process_max_delay) {
                 kaa_client->external_process_fn(kaa_client->external_process_context);
             }
             kaa_client->external_process_last_call = KAA_TIME();

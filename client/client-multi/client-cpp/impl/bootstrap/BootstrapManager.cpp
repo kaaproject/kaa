@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <algorithm>
+#include <chrono>
 
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/logging/Log.hpp"
@@ -35,7 +36,7 @@ void BootstrapManager::receiveOperationsServerList()
     }
 }
 
-std::list<ITransportConnectionInfoPtr> BootstrapManager::getOPSByAccessPointId(std::int32_t id)
+BootstrapManager::OperationsServers BootstrapManager::getOPSByAccessPointId(std::int32_t id)
 {
     OperationsServers servers;
 
@@ -124,22 +125,19 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
     lastOperationsServers_.clear();
     operationServers_.clear();
 
-    std::srand(std::time(nullptr));
-
     for (const auto& serverMetaData : operationsServers) {
         ITransportConnectionInfoPtr connectionInfo(
                 new GenericTransportInfo(ServerType::OPERATIONS, serverMetaData));
 
         auto& servers = operationServers_[serverMetaData.protocolVersionInfo];
-
-        if (rand() % 2) {
-            servers.push_back(connectionInfo);
-        } else {
-            servers.push_front(connectionInfo);
-        }
+        servers.push_back(connectionInfo);
     }
 
     for (auto& transportSpecificServers : operationServers_) {
+        std::shuffle (transportSpecificServers.second.begin()
+                    , transportSpecificServers.second.end()
+                    , std::default_random_engine(std::chrono::high_resolution_clock::now().time_since_epoch().count()));
+
         lastOperationsServers_[transportSpecificServers.first] =
                                     transportSpecificServers.second.begin();
     }

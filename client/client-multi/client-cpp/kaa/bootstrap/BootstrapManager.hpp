@@ -17,6 +17,8 @@
 #ifndef BOOTSTRAPMANAGER_HPP_
 #define BOOTSTRAPMANAGER_HPP_
 
+#include <vector>
+
 #include "kaa/KaaThread.hpp"
 #include "kaa/bootstrap/IBootstrapManager.hpp"
 #include "kaa/bootstrap/BootstrapTransport.hpp"
@@ -37,7 +39,7 @@ public:
     virtual void onServerListUpdated(const std::vector<ProtocolMetaData>& operationsServers);
 
 private:
-    typedef std::list<ITransportConnectionInfoPtr> OperationsServers;
+    typedef std::vector<ITransportConnectionInfoPtr> OperationsServers;
 
     OperationsServers getOPSByAccessPointId(std::int32_t id);
     void              notifyChannelManangerAboutServer(const OperationsServers& servers);

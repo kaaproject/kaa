@@ -25,12 +25,22 @@
 #include "kaa/common/exception/TransportNotFoundException.hpp"
 #include "kaa/log/LogRecord.hpp"
 
+#ifdef KAA_USE_SQLITE_LOG_STORAGE
+#include "kaa/log/SQLiteDBLogStorage.hpp"
+#else
+#include "kaa/log/MemoryLogStorage.hpp"
+#endif
+
 namespace kaa {
 
 LogCollector::LogCollector(IKaaChannelManagerPtr manager)
     : requestId_(0), transport_(nullptr)
 {
+#ifdef KAA_USE_SQLITE_LOG_STORAGE
+    storage_.reset(new SQLiteDBLogStorage());
+#else
     storage_.reset(new MemoryLogStorage());
+#endif
     uploadStrategy_.reset(new DefaultLogUploadStrategy(manager));
 }
 
@@ -39,15 +49,15 @@ void LogCollector::addLogRecord(const KaaUserLogRecord& record)
     LogRecordPtr serializedRecord(new LogRecord(record));
 
     {
-        KAA_MUTEX_LOCKING(storageGuard_);
+        KAA_MUTEX_LOCKING("storageGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-        KAA_MUTEX_LOCKED(storageGuard_);
+        KAA_MUTEX_LOCKED("storageGuard_");
 
         storage_->addLogRecord(serializedRecord);
-    }
 
-    if (isDeliveryTimeout()) {
-        return;
+        if (isDeliveryTimeout()) {
+            return;
+        }
     }
 
     processLogUploadDecision(uploadStrategy_->isUploadNeeded(storage_->getStatus()));
@@ -78,9 +88,9 @@ void LogCollector::setStorage(ILogStoragePtr storage)
         throw KaaException("Bad log storage");
     }
 
-    KAA_MUTEX_LOCKING(storageGuard_);
+    KAA_MUTEX_LOCKING("storageGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-    KAA_MUTEX_LOCKED(storageGuard_);
+    KAA_MUTEX_LOCKED("storageGuard_");
 
     KAA_LOG_INFO("New log storage was set");
     storage_ = storage;
@@ -93,9 +103,9 @@ void LogCollector::setUploadStrategy(ILogUploadStrategyPtr strategy)
         throw KaaException("Bad log upload strategy");
     }
 
-    KAA_MUTEX_LOCKING(storageGuard_);
+    KAA_MUTEX_LOCKING("storageGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-    KAA_MUTEX_LOCKED(storageGuard_);
+    KAA_MUTEX_LOCKED("storageGuard_");
 
     KAA_LOG_INFO("New log upload strategy was set");
     uploadStrategy_ = strategy;
@@ -118,14 +128,13 @@ bool LogCollector::isDeliveryTimeout()
 
     for (const auto& request : timeoutsMap_) {
         if (now >= request.second) {
+            KAA_LOG_INFO(boost::format("Log delivery timeout detected, bucket id %li") % request.first);
             isTimeout = true;
             break;
         }
     }
 
     if (isTimeout) {
-        KAA_LOG_INFO("Log delivery timeout detected");
-
         for (const auto& request : timeoutsMap_) {
             storage_->notifyUploadFailed(request.first);
         }
@@ -143,16 +152,16 @@ std::shared_ptr<LogSyncRequest> LogCollector::getLogUploadRequest()
     std::shared_ptr<LogSyncRequest> request;
 
     {
-        KAA_MUTEX_LOCKING(storageGuard_);
+        KAA_MUTEX_LOCKING("storageGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-        KAA_MUTEX_LOCKED(storageGuard_);
+        KAA_MUTEX_LOCKED("storageGuard_");
 
         recordPack = storage_->getRecordBlock(uploadStrategy_->getBatchSize());
     }
 
     if (!recordPack.second.empty()) {
         request.reset(new LogSyncRequest);
-        request->requestId = requestId_++;
+        request->requestId = recordPack.first;
 
         std::vector<LogEntry> logs;
         logs.reserve(recordPack.second.size());
@@ -170,9 +179,9 @@ std::shared_ptr<LogSyncRequest> LogCollector::getLogUploadRequest()
 
 void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
 {
-    KAA_MUTEX_LOCKING(storageGuard_);
+    KAA_MUTEX_LOCKING("storageGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(storageLock, storageGuard_);
-    KAA_MUTEX_LOCKED(storageGuard_);
+    KAA_MUTEX_LOCKED("storageGuard_");
 
     if (!response.deliveryStatuses.is_null()) {
         const auto& deliveryStatuses = response.deliveryStatuses.get_array();
@@ -188,9 +197,9 @@ void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
                 KAA_LOG_WARN(boost::format("Logs (requestId %1%) failed to deliver") % status.requestId);
                 storage_->notifyUploadFailed(status.requestId);
 
-                KAA_MUTEX_UNLOCKING(storageGuard_);
+                KAA_MUTEX_UNLOCKING("storageGuard_");
                 KAA_UNLOCK(storageLock);
-                KAA_MUTEX_UNLOCKED(storageGuard_);
+                KAA_MUTEX_UNLOCKED("storageGuard_");
 
                 if (!status.errorCode.is_null()) {
                     uploadStrategy_->onFailure(status.errorCode.get_LogDeliveryErrorCode());
@@ -198,9 +207,9 @@ void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
                     KAA_LOG_ERROR("Log delivery failed, but no error code received");
                 }
 
-                KAA_MUTEX_LOCKING(storageGuard_);
+                KAA_MUTEX_LOCKING("storageGuard_");
                 KAA_LOCK(storageLock);
-                KAA_MUTEX_LOCKED(storageGuard_);
+                KAA_MUTEX_LOCKED("storageGuard_");
             }
         }
     }
