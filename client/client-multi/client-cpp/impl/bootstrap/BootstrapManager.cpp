@@ -71,7 +71,7 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
                 KAA_LOG_ERROR("Can not process server change. Channel manager was not specified");
             }
         } else {
-            KAA_LOG_WARN(boost::format("Failed to find server for channel %2%. Going to sync...")
+            KAA_LOG_WARN(boost::format("Failed to find server for channel %s. Going to sync...")
                                             % LoggingUtils::TransportProtocolIdToString(protocolId));
             bootstrapTransport_->sync();
         }
