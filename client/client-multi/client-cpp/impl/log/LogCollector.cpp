@@ -48,26 +48,28 @@ void LogCollector::addLogRecord(const KaaUserLogRecord& record)
 {
     LogRecordPtr serializedRecord(new LogRecord(record));
 
-    KAA_MUTEX_LOCKING("storageGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-    KAA_MUTEX_LOCKED("storageGuard_");
-    storage_->addLogRecord(serializedRecord);
+    {
+        KAA_MUTEX_LOCKING("storageGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
+        KAA_MUTEX_LOCKED("storageGuard_");
+        storage_->addLogRecord(serializedRecord);
 
-    if (isDeliveryTimeout()) {
-        uploadStrategy_->onTimeout(*this);
+        if (isDeliveryTimeout()) {
+            uploadStrategy_->onTimeout(*this);
 
-        KAA_LOG_INFO(boost::format("Going to notify log storage of logs delivery timeout..."));
+            KAA_LOG_INFO(boost::format("Going to notify log storage of logs delivery timeout..."));
 
-        KAA_MUTEX_LOCKING("timeoutsGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(timeoutsLock, timeoutsGuard_);
-        KAA_MUTEX_LOCKED("timeoutsGuard_");
+            KAA_MUTEX_LOCKING("timeoutsGuard_");
+            KAA_MUTEX_UNIQUE_DECLARE(timeoutsLock, timeoutsGuard_);
+            KAA_MUTEX_LOCKED("timeoutsGuard_");
 
-        for (const auto& request : timeouts_) {
-            storage_->notifyUploadFailed(request.first);
+            for (const auto& request : timeouts_) {
+                storage_->notifyUploadFailed(request.first);
+            }
+
+            timeouts_.clear();
+            return;
         }
-
-        timeouts_.clear();
-        return;
     }
 
     processLogUploadDecision(uploadStrategy_->isUploadNeeded(storage_->getStatus()));
