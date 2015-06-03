@@ -36,7 +36,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_OPERATION_HTTP_CHANNEL")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_CONNECTIVITY_CHECKER")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_THREADSAFE")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_MAX_LOG_LEVEL=3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_MAX_LOG_LEVEL=0")
 
 set ( CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../Modules/)
 
@@ -110,28 +110,29 @@ set ( KAA_TEST_SOURCES
         ../impl/channel/TransportProtocolIdConstants.cpp
         ../impl/channel/IPTransportInfo.cpp
         TestRunner.cpp
-#        impl/common/EndpointObjectHashTest.cpp
-#        impl/common/AvroByteArrayConverterTest.cpp
-#        impl/configuration/ConfigurationPersistenceTest.cpp
-#        impl/configuration/ConfigurationProcessorTest.cpp
-#        impl/configuration/ConfigurationManagerTest.cpp
-#        impl/configuration/FileConfigurationStorageTest.cpp
-#        impl/http/HttpUrlTest.cpp
-#        impl/http/HttpResponseTest.cpp
-#        impl/http/HttpRequestTest.cpp
-#        impl/ClientStatusTest.cpp
-#        impl/event/EndpointRegistrationManagerTest.cpp
-#        impl/security/KeyUtilsTest.cpp
-#        impl/event/EventTransportTest.cpp
-#        impl/channel/KaaChannelManagerTest.cpp
-#        impl/notification/NotificationTransportTest.cpp
-#        impl/notification/NotificationManagerTest.cpp
-#        impl/kaatcp/KaaTcpTest.cpp
-#        impl/channel/IPConnectivityCheckerTest.cpp
-#        impl/log/DefaultLogUploadStrategyTest.cpp
-#        impl/log/MemoryLogStorageTest.cpp
-#        impl/log/LogCollectorTest.cpp
+        impl/common/EndpointObjectHashTest.cpp
+        impl/common/AvroByteArrayConverterTest.cpp
+        impl/configuration/ConfigurationPersistenceTest.cpp
+        impl/configuration/ConfigurationProcessorTest.cpp
+        impl/configuration/ConfigurationManagerTest.cpp
+        impl/configuration/FileConfigurationStorageTest.cpp
+        impl/http/HttpUrlTest.cpp
+        impl/http/HttpResponseTest.cpp
+        impl/http/HttpRequestTest.cpp
+        impl/ClientStatusTest.cpp
+        impl/event/EndpointRegistrationManagerTest.cpp
+        impl/security/KeyUtilsTest.cpp
+        impl/event/EventTransportTest.cpp
+        impl/channel/KaaChannelManagerTest.cpp
+        impl/notification/NotificationTransportTest.cpp
+        impl/notification/NotificationManagerTest.cpp
+        impl/kaatcp/KaaTcpTest.cpp
+        impl/channel/IPConnectivityCheckerTest.cpp
+        impl/log/DefaultLogUploadStrategyTest.cpp
+        impl/log/MemoryLogStorageTest.cpp
+        impl/log/LogCollectorTest.cpp
         impl/log/SQLiteDBLogStorageTest.cpp
+        impl/utils/KaaTimerTest.cpp
     )
 
 add_executable ( kaatest  ${KAA_TEST_SOURCES})
