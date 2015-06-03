@@ -42,10 +42,12 @@ public class ViewConsumer {
     private static final String DEFAULT_DESIGN = "dev_total_zone_view";
     private static final String DEFAULT_VIEW = "total_zone_view_dev";
     private static final String DEFAULT_CLUSTER_IP = "127.0.0.1";
-    private static final String DEFAULT_DB_NAME = "powerplant_kaa_test";
+    private static final String DEFAULT_DB_NAME = "powerplant";
     private static final long UPDATE_CHECK_TIME = 300L;
     private static final int MAX_CACHE_SIZE = 4000;
     private static final int INITIAL_CAPACITY = 3600;
+    private static final int TIMESTAMP_MAX = 2000000000;    // year 2033
+    private static final int TIMESTAMP_MIN = 1433259210;    // 1 Jan 1970
     private static final long TTL_SECONDS = 300;
     private static Cache<String, JsonDocument> documentCache;
 
@@ -124,8 +126,10 @@ public class ViewConsumer {
 
                     JsonArray latestRow = (JsonArray) iterator.next().key();
                     int curLatestTs = latestRow.getInt(0);
-
-                    if (curLatestTs >= latestTs) {
+                    if (curLatestTs > TIMESTAMP_MAX || curLatestTs < TIMESTAMP_MIN) {
+                        System.out.println("Error in data, incorrect timestamp for row: " + latestRow);
+                        throw new RuntimeException("Incorrect timestamp for row: " + latestRow);
+                    } else if (curLatestTs >= latestTs) {
                         latestTs = curLatestTs;
                         uploadData();
                     }
