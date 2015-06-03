@@ -20,8 +20,6 @@
 #include <cstdlib>
 #include <cstdint>
 #include <algorithm>
-#include <random>
-#include <chrono>
 
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/logging/Log.hpp"
@@ -37,7 +35,7 @@ void BootstrapManager::receiveOperationsServerList()
     }
 }
 
-std::vector<ITransportConnectionInfoPtr> BootstrapManager::getOPSByAccessPointId(std::int32_t id)
+BootstrapManager::OperationsServers BootstrapManager::getOPSByAccessPointId(std::int32_t id)
 {
     OperationsServers servers;
 
@@ -72,7 +70,7 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
                 KAA_LOG_ERROR("Can not process server change. Channel manager was not specified");
             }
         } else {
-            KAA_LOG_WARN(boost::format("Failed to find server for channel %2%. Going to sync...")
+            KAA_LOG_WARN(boost::format("Failed to find server for channel %s. Going to sync...")
                                             % LoggingUtils::TransportProtocolIdToString(protocolId));
             bootstrapTransport_->sync();
         }
@@ -131,12 +129,16 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
                 new GenericTransportInfo(ServerType::OPERATIONS, serverMetaData));
 
         auto& servers = operationServers_[serverMetaData.protocolVersionInfo];
+        servers.push_back(connectionInfo);
     }
 
-    for (auto& servers : operationServers_) {
-        auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-        std::shuffle(servers.second.begin(), servers.second.end(), std::default_random_engine(seed));
-        lastOperationsServers_[servers.first] = servers.second.begin();
+    for (auto& transportSpecificServers : operationServers_) {
+        std::shuffle (transportSpecificServers.second.begin()
+                    , transportSpecificServers.second.end()
+                    , std::default_random_engine(std::chrono::high_resolution_clock::now().time_since_epoch().count()));
+
+        lastOperationsServers_[transportSpecificServers.first] =
+                                    transportSpecificServers.second.begin();
     }
 
     if (serverToApply) {

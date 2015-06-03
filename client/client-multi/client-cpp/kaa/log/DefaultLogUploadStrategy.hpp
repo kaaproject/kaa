@@ -51,12 +51,10 @@ namespace kaa {
  */
 class DefaultLogUploadStrategy: public ILogUploadStrategy {
 public:
-    DefaultLogUploadStrategy(IKaaChannelManagerPtr manager);
-
     virtual LogUploadStrategyDecision isUploadNeeded(ILogStorageStatus& status);
 
-    virtual void onTimeout();
-    virtual void onFailure(LogDeliveryErrorCode code);
+    virtual void onTimeout(ILogFailoverCommand& controller);
+    virtual void onFailure(ILogFailoverCommand& controller, LogDeliveryErrorCode code);
 
     virtual std::size_t getBatchSize() { return batchSize_; }
     virtual std::size_t getTimeout() { return uploadTimeout_; }
@@ -95,8 +93,6 @@ private:
 
     typedef std::chrono::system_clock Clock;
     std::chrono::time_point<Clock> nextUploadAttemptTS_;
-
-    IKaaChannelManagerPtr channelManager_;
 };
 
 } /* namespace kaa */

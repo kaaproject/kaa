@@ -17,6 +17,8 @@
 #ifndef BOOTSTRAPMANAGER_HPP_
 #define BOOTSTRAPMANAGER_HPP_
 
+#include <vector>
+
 #include "kaa/KaaThread.hpp"
 #include "kaa/bootstrap/IBootstrapManager.hpp"
 #include "kaa/bootstrap/BootstrapTransport.hpp"

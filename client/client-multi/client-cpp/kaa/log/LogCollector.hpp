@@ -28,6 +28,8 @@
 #include "kaa/log/ILogProcessor.hpp"
 #include "kaa/log/ILogUploadStrategy.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
+#include "kaa/log/ILogFailoverCommand.hpp"
+#include "kaa/utils/KaaTimer.hpp"
 
 namespace kaa {
 
@@ -36,7 +38,7 @@ class LoggingTransport;
 /**
  * Default @c ILogCollector implementation.
  */
-class LogCollector : public ILogCollector, public ILogProcessor {
+class LogCollector : public ILogCollector, public ILogProcessor, public ILogFailoverCommand {
 public:
     LogCollector(IKaaChannelManagerPtr manager);
 
@@ -45,28 +47,40 @@ public:
     virtual void setStorage(ILogStoragePtr storage);
     virtual void setUploadStrategy(ILogUploadStrategyPtr strategy);
 
-    std::shared_ptr<LogSyncRequest> getLogUploadRequest();
+    virtual std::shared_ptr<LogSyncRequest> getLogUploadRequest();
     virtual void onLogUploadResponse(const LogSyncResponse& response);
 
     void setTransport(LoggingTransport* transport);
 
 private:
+    virtual void retryLogUpload();
+    virtual void retryLogUpload(std::size_t delay);
+
+    virtual void switchAccessPoint();
+
     void doSync();
     void processLogUploadDecision(LogUploadStrategyDecision decision);
 
     bool isDeliveryTimeout();
+    void addDeliveryTimeout(std::int32_t requestId);
+    bool removeDeliveryTimeout(std::int32_t requestId);
 
 private:
-    ILogStoragePtr        storage_;
-    ILogUploadStrategyPtr uploadStrategy_;
-
+    ILogStoragePtr    storage_;
     KAA_MUTEX_DECLARE(storageGuard_);
 
-    RequestId requestId_;
+    ILogUploadStrategyPtr uploadStrategy_;
+
     LoggingTransport* transport_;
+    KAA_MUTEX_DECLARE(transportGuard_);
 
     typedef std::chrono::system_clock clock_t;
-    std::unordered_map<std::int32_t, std::chrono::time_point<clock_t>> timeoutsMap_;
+    std::unordered_map<std::int32_t, std::chrono::time_point<clock_t>> timeouts_;
+    KAA_MUTEX_DECLARE(timeoutsGuard_);
+
+    IKaaChannelManagerPtr    channelManager_;
+
+    KaaTimer<void ()>        uploadTimer_;
 };
 
 }  // namespace kaa

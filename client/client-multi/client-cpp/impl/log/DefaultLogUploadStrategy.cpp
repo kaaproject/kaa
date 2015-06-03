@@ -18,6 +18,7 @@
 
 #include "kaa/logging/Log.hpp"
 #include "kaa/log/ILogStorageStatus.hpp"
+#include "kaa/log/ILogFailoverCommand.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 
 namespace kaa {
@@ -28,16 +29,6 @@ const std::size_t DefaultLogUploadStrategy::DEFAULT_RETRY_PERIOD;
 
 const std::size_t DefaultLogUploadStrategy::DEFAULT_UPLOAD_VOLUME_THRESHOLD;
 const std::size_t DefaultLogUploadStrategy::DEFAULT_UPLOAD_COUNT_THRESHOLD;
-
-DefaultLogUploadStrategy::DefaultLogUploadStrategy(IKaaChannelManagerPtr manager)
-{
-    if (!manager) {
-        KAA_LOG_ERROR("Failed to create default upload strategy: channel manager is null");
-        throw KaaException("Channel manager is null");
-    }
-
-    channelManager_ = manager;
-}
 
 LogUploadStrategyDecision DefaultLogUploadStrategy::isUploadNeeded(ILogStorageStatus& status)
 {
@@ -65,19 +56,14 @@ LogUploadStrategyDecision DefaultLogUploadStrategy::isUploadNeeded(ILogStorageSt
     return decision;
 }
 
-void DefaultLogUploadStrategy::onTimeout()
+void DefaultLogUploadStrategy::onTimeout(ILogFailoverCommand& controller)
 {
-    KAA_LOG_WARN("Log upload timeout occurred. Try to switch to another Operations server");
+    KAA_LOG_WARN("Log upload timeout occurred. Try to switch to another Operations server...");
 
-    IDataChannelPtr logChannel = channelManager_->getChannelByTransportType(TransportType::LOGGING);
-    if (logChannel) {
-        channelManager_->onServerFailed(logChannel->getServer());
-    } else {
-        KAA_LOG_ERROR("Can't find LOGGING data channel");
-    }
+    controller.switchAccessPoint();
 }
 
-void DefaultLogUploadStrategy::onFailure(LogDeliveryErrorCode code)
+void DefaultLogUploadStrategy::onFailure(ILogFailoverCommand& controller, LogDeliveryErrorCode code)
 {
     switch (code) {
         case LogDeliveryErrorCode::NO_APPENDERS_CONFIGURED:
@@ -87,6 +73,7 @@ void DefaultLogUploadStrategy::onFailure(LogDeliveryErrorCode code)
             KAA_LOG_WARN(boost::format("Log upload failed with error code %1%. Retry upload after %2% seconds")
                                                                                            % code % retryReriod_);
             nextUploadAttemptTS_ = std::chrono::system_clock::now() + std::chrono::seconds(retryReriod_);
+            controller.retryLogUpload(retryReriod_);
             break;
         default:
             break;
