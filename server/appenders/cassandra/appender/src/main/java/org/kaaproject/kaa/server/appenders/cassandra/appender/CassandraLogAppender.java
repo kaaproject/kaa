@@ -56,7 +56,8 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
     private ExecutorService callbackExecutor;
 
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private AtomicInteger cassandraLogCount = new AtomicInteger();
+    private AtomicInteger cassandraSuccessLogCount = new AtomicInteger();
+    private AtomicInteger cassandraFailureLogCount = new AtomicInteger();
     private AtomicInteger inputLogCount = new AtomicInteger();
 
     private LogEventDao logEventDao;
@@ -81,8 +82,8 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
             @Override
             public void run() {
                 long second = System.currentTimeMillis() / 1000;
-                LOG.info("[{}] Perf status. Received {} input log record count, and cassandra {} callbacks per second.",
-                        second, inputLogCount.getAndSet(0), cassandraLogCount.getAndSet(0));
+                LOG.info("[{}] Received {} log record count, {} success cassandra callbacks, {}  failure cassandra callbacks / second.",
+                        second, inputLogCount.getAndSet(0), cassandraSuccessLogCount.getAndSet(0), cassandraFailureLogCount.getAndSet(0));
             }
         }, 0L, 1L, TimeUnit.SECONDS);
     }
@@ -106,12 +107,12 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
                                 case ASYNC:
                                     ListenableFuture<ResultSet> result = logEventDao.saveAsync(dtoList, tableName, eventConverter,
                                             headerConverter);
-                                    Futures.addCallback(result, new Callback(listener, cassandraLogCount, logCount), callbackExecutor);
+                                    Futures.addCallback(result, new Callback(listener, cassandraSuccessLogCount, cassandraFailureLogCount, logCount), callbackExecutor);
                                     break;
                                 case SYNC:
                                     logEventDao.save(dtoList, tableName, eventConverter, headerConverter);
                                     listener.onSuccess();
-                                    cassandraLogCount.getAndAdd(logCount);
+                                    cassandraSuccessLogCount.getAndAdd(logCount);
                                     break;
                             }
                             LOG.debug("[{}] appended {} logs to cassandra collection", tableName, logEventPack.getEvents().size());
@@ -224,22 +225,26 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
     private static final class Callback implements FutureCallback<ResultSet> {
 
         private final LogDeliveryCallback callback;
-        private final AtomicInteger cassandraLogCount;
+        private final AtomicInteger cassandraSuccessLogCount;
+        private final AtomicInteger cassandraFailureLogCount;
         private final int size;
 
-        private Callback(LogDeliveryCallback callback, AtomicInteger cassandraLogCount, int size) {
+        private Callback(LogDeliveryCallback callback, AtomicInteger cassandraSuccessLogCount, AtomicInteger cassandraFailureLogCount, int size) {
             this.callback = callback;
-            this.cassandraLogCount = cassandraLogCount;
+            this.cassandraSuccessLogCount = cassandraSuccessLogCount;
+            this.cassandraFailureLogCount = cassandraFailureLogCount;
             this.size = size;
         }
 
         @Override
         public void onSuccess(ResultSet result) {
+            cassandraSuccessLogCount.getAndAdd(size);
             callback.onSuccess();
         }
 
         @Override
         public void onFailure(Throwable t) {
+            cassandraFailureLogCount.getAndAdd(size);
             LOG.warn("Failed to store record", t);
             if (t instanceof UnsupportedFeatureException) {
                 callback.onRemoteError();
