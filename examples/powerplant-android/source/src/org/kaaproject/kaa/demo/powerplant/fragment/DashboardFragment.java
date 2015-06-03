@@ -134,7 +134,7 @@ public class DashboardFragment extends Fragment {
     private AndroidKaaPlatformContext androidKaaPlatformContext;
     private Thread updateThread;
     
-    private DataEndpoint endpoint;
+    private volatile DataEndpoint endpoint;
     private KaaClient kaaClient;
 
     @Override
@@ -172,11 +172,6 @@ public class DashboardFragment extends Fragment {
 				endpoint.stop();
 				endpoint = DataEndpointFactory.createEndpoint(config, getActivity());
 				Log.i(TAG, "Updating configuration: " + config.toString());
-				try {
-					Thread.sleep(1000L);
-				} catch (InterruptedException e) {
-					Log.i(TAG, "Interrupted while waiting for update thread to be killed", e);
-				}
 			}
 		});
         
