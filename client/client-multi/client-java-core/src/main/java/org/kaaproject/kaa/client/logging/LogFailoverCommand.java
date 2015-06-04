@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.client.logging;
 
-public interface LogFailoverCommand extends AccessPointCommand{
+public interface LogFailoverCommand extends AccessPointCommand {
 
     void retryLogUpload();
 
