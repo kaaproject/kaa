@@ -21,10 +21,9 @@ package org.kaaproject.kaa.server.control.service.loadmgmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -33,8 +32,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.zk.control.ControlNode;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
-import org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager;
-import org.kaaproject.kaa.server.control.service.loadmgmt.LoadDistributionService;
+import org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.EndpointCountRebalancer;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 
 /**
@@ -56,7 +54,7 @@ public class DynamicLoadManagerTest {
         zkServiceMock = mock(ControlZkService.class);
         pNodeMock = mock(ControlNode.class);
         when(ldServiceMock.getOpsServerHistoryTTL()).thenReturn(300);
-        when(ldServiceMock.getDynamicMgmtClass()).thenReturn("org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.DefaultRebalancer");
+        when(ldServiceMock.getRebalancer()).thenReturn(new EndpointCountRebalancer());
         when(ldServiceMock.getZkService()).thenReturn(zkServiceMock);
         when(zkServiceMock.getControlZKNode()).thenReturn(pNodeMock);
     }
@@ -71,38 +69,7 @@ public class DynamicLoadManagerTest {
         assertNotNull(dm.getLoadDistributionService());
         assertNotNull(dm.getDynamicRebalancer());
         verify(ldServiceMock, atLeast(1)).getOpsServerHistoryTTL();
-        verify(ldServiceMock, atLeast(1)).getDynamicMgmtClass();
         assertEquals(300000, dm.getOpsServerHistoryTTL());
-    }
-
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#DynamicLoadManager(org.kaaproject.kaa.server.control.service.loadmgmt.LoadDistributionService)}.
-     * With DynamicMgmtClass specified with not instance of Rebalance.java interface 
-     */
-    @Test
-    public void testDynamicLoadManagerIncorrectMgmtClass() {
-        when(ldServiceMock.getDynamicMgmtClass()).thenReturn("org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.OperationsServerLoadHistory");
-        DynamicLoadManager dm = new DynamicLoadManager(ldServiceMock);
-        assertNotNull(dm);
-        assertNotNull(dm.getLoadDistributionService());
-        assertNull(dm.getDynamicRebalancer());
-        verify(ldServiceMock, atLeast(1)).getDynamicMgmtClass();
-        when(ldServiceMock.getDynamicMgmtClass()).thenReturn("org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.DefaultRebalancer");
-    }
-    
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#DynamicLoadManager(org.kaaproject.kaa.server.control.service.loadmgmt.LoadDistributionService)}.
-     * With incorrect DynamicMgmtClass specified  
-     */
-    @Test
-    public void testDynamicLoadManagerAbsentMgmtClass() {
-        when(ldServiceMock.getDynamicMgmtClass()).thenReturn("org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.Kjajja");
-        DynamicLoadManager dm = new DynamicLoadManager(ldServiceMock);
-        assertNotNull(dm);
-        assertNotNull(dm.getLoadDistributionService());
-        assertNull(dm.getDynamicRebalancer());
-        verify(ldServiceMock, atLeast(1)).getDynamicMgmtClass();
-        when(ldServiceMock.getDynamicMgmtClass()).thenReturn("org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.DefaultRebalancer");
     }
     
     /**

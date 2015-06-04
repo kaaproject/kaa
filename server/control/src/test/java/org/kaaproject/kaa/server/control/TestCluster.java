@@ -169,7 +169,7 @@ public class TestCluster {
         OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
         ByteBuffer testKeyData = ByteBuffer.wrap(new byte[]{10,11,12,45,34,23,67,89,66,12});
         nodeInfo.setConnectionInfo(new ConnectionInfo(ENDPOINT_NODE_HOST, 1000,testKeyData));
-        nodeInfo.setLoadInfo(new LoadInfo(1));
+        nodeInfo.setLoadInfo(new LoadInfo(1, 1.0));
         nodeInfo.setTimeStarted(System.currentTimeMillis());
         nodeInfo.setTransports(new ArrayList<TransportMetaData>());
         return nodeInfo;
