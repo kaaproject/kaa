@@ -34,6 +34,10 @@ int main()
     std::this_thread::sleep_for(std::chrono::seconds(startup_sleep_timeout));
 #endif
 
+#if POWER_PLANT_RANDOMIZER
+    std::srand(std::time(NULL));
+#endif
+
     std::cout << "Going to start power plant demo application..." << std::endl;
 
     try {

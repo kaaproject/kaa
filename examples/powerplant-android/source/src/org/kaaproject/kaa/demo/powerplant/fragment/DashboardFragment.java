@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import lecho.lib.hellocharts.formatter.AxisValueFormatter;
 import lecho.lib.hellocharts.model.Axis;
@@ -37,11 +38,16 @@ import lecho.lib.hellocharts.model.SliceValue;
 import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PieChartView;
 
+import org.kaaproject.kaa.client.AndroidKaaPlatformContext;
+import org.kaaproject.kaa.client.Kaa;
+import org.kaaproject.kaa.client.KaaClient;
+import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
+import org.kaaproject.kaa.client.configuration.base.SimpleConfigurationStorage;
 import org.kaaproject.kaa.demo.powerplant.PowerPlantActivity;
 import org.kaaproject.kaa.demo.powerplant.R;
+import org.kaaproject.kaa.demo.powerplant.configuration.PowerPlantEndpointConfiguration;
 import org.kaaproject.kaa.demo.powerplant.data.DataEndpoint;
-import org.kaaproject.kaa.demo.powerplant.data.FakeDataEndpoint;
-import org.kaaproject.kaa.demo.powerplant.data.RestDataEndpoint;
+import org.kaaproject.kaa.demo.powerplant.data.DataEndpointFactory;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataPoint;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataReport;
 import org.kaaproject.kaa.demo.powerplant.view.GaugeChart;
@@ -71,22 +77,24 @@ public class DashboardFragment extends Fragment {
     
     private static final String TAG = DashboardFragment.class.getSimpleName();
 
-    public static final int NUM_PANELS = 6;
+    public static final int AVG_PANEL_PER_ZONE = 1;
+    public static final int MAX_PANEL_PER_ZONE = 1;
+    public static final int NUM_ZONES = 6;
     public static final float MIN_VOLTAGE = 0.0f;
-    public static final float NORMAL_VOLTAGE = 3.0f;
-    public static final float MAX_VOLTAGE = 6.0f;
-    private static final float VOLTAGE_MULTIPLY_COEF = 2.2f;
+    public static final float NORMAL_VOLTAGE = 3000.0f * AVG_PANEL_PER_ZONE;
+    public static final float MAX_VOLTAGE = 6000.0f * AVG_PANEL_PER_ZONE;
+    private static final float VOLTAGE_MULTIPLY_COEF = 1f;
+    private static final DataReport INITIAL_REPORT = generateInitialDataReport();
 
-    private static final float Y_AXIS_MIN_MAX_DIV = 2.0f;
     private static final boolean LINE_CHART_IS_CUBIC = true;
-    private static final String Y_AXIS_LABEL = "Power, kW";
+    private static final String Y_AXIS_LABEL = "Power, MW";
     private static final String X_AXIS_LABEL = "Time, sec";
     private static final String PIE_CHART_GRID_VALUE_COLOR = "#FFB400";
     private static final String PIE_CHART_PLANT_VALUE_COLOR = "#009E5F";
     private static final String PIE_CHART_VALUE_FORMAT = "%.1f";
     private static final int INTERVAL_FOR_HORIZONTAL_AXIS = 20;
 
-    private static final int UPDATE_CHECK_PERIOD = 150;
+    private static final int UPDATE_CHECK_PERIOD = 1000;
     private static final int UPDATE_PERIOD = 400;
     private static final int POINTS_COUNT = 300;
     private static final int PAST_POINTS_COUNT = 3;
@@ -113,15 +121,21 @@ public class DashboardFragment extends Fragment {
     private TextView plantValueView;
     private TextView gridValueView;
     private TextView totalValueView;
-    private final List<GaugeChart> gaugeCharts = new ArrayList<>();
-    private final boolean[] isPanelsOutage = new boolean[NUM_PANELS];
     private TextView logBox;
-    private LinkedList<String> savedLogs = new LinkedList<>();
-    private StringBuilder curLogString = new StringBuilder();
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
     
     private Line line;
-    private DataEndpoint endpoint;
+    
+    private final List<GaugeChart> gaugeCharts = new ArrayList<>();
+    private final boolean[] isPanelsOutage = new boolean[NUM_ZONES];
+    private LinkedList<String> savedLogs = new LinkedList<>();
+    private StringBuilder curLogString = new StringBuilder();
+    
+    private ExecutorService logBoxUpdateExecutor = Executors.newSingleThreadExecutor();
+    private AndroidKaaPlatformContext androidKaaPlatformContext;
+    private Thread updateThread;
+    
+    private volatile DataEndpoint endpoint;
+    private KaaClient kaaClient;
 
     @Override
     public void onAttach(Activity activity) {
@@ -130,13 +144,38 @@ public class DashboardFragment extends Fragment {
             mActivity = (PowerPlantActivity) activity;
         }
     }
+    
+    @Override
+    public void onDestroy() {
+    	super.onDestroy();
+    	if (endpoint != null) {
+    		endpoint.stop();
+            kaaClient.setConfigurationStorage(new SimpleConfigurationStorage(androidKaaPlatformContext, "saved_config.cfg"));
+    		kaaClient.stop();
+    	}
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
-//        endpoint = new FakeDataEndpoint();
-        endpoint = new RestDataEndpoint();
+        androidKaaPlatformContext = new AndroidKaaPlatformContext(getActivity());
+        kaaClient = Kaa.newClient(androidKaaPlatformContext);
+        
+        endpoint = DataEndpointFactory.createEndpoint(kaaClient.getConfiguration(), getActivity());
+        Log.i(TAG, "Default configuration: " + kaaClient.getConfiguration().toString());
+        
+        
+        kaaClient.addConfigurationListener(new ConfigurationListener() {
+			@Override
+			public void onConfigurationUpdate(PowerPlantEndpointConfiguration config) {
+				endpoint.stop();
+				endpoint = DataEndpointFactory.createEndpoint(config, getActivity());
+				Log.i(TAG, "Updating configuration: " + config.toString());
+			}
+		});
+        
+        kaaClient.start();
         
         gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart11));
         gaugeCharts.add((GaugeChart) rootView.findViewById(R.id.gaugeChart12));
@@ -147,7 +186,7 @@ public class DashboardFragment extends Fragment {
         logBox = (TextView) rootView.findViewById(R.id.logBox);
         logBox.setMovementMethod(new ScrollingMovementMethod());
         
-        Thread updateThread = new Thread(new Runnable() {
+        updateThread = new Thread(new Runnable() {
 
             @Override
             public void run() {
@@ -167,14 +206,18 @@ public class DashboardFragment extends Fragment {
                     		mActivity.finish();
                         }
                     });
-                } else {	
+                } else {
 	                mActivity.runOnUiThread(new Runnable() {
 	                    @Override
 	                    public void run() {
 	                        Log.i(TAG, "populating charts with data " + reports.size());
 	                        prepareLineChart(rootView, reports);
 	                        Log.i(TAG, "populated line chart with data ");
-	                        preparePieChart(rootView, reports.get(reports.size() - 1));
+	                        if (!reports.isEmpty()) {
+		                        preparePieChart(rootView, reports.get(reports.size() - 1));
+	                        } else {
+	                        	preparePieChart(rootView, INITIAL_REPORT);
+	                        }
 	                        Log.i(TAG, "populated pie chart with data ");
 	                    }
 	                });
@@ -185,31 +228,29 @@ public class DashboardFragment extends Fragment {
 	                    e1.printStackTrace();
 	                }
 	                
-	                DataReport previousReport = reports.get(reports.size() - 1);
+	                DataReport previousReport = INITIAL_REPORT;
 	                long previousUpdate = 0l;
 	                while (true) {
-	                    boolean updated = false;
-	                    while (!updated) {
-	                        try {
-	                            Thread.sleep(UPDATE_CHECK_PERIOD);
-	                            long updateDelta = System.currentTimeMillis() - previousUpdate;
-	                            if(updateDelta < UPDATE_PERIOD){
-	                                continue;
-	                            } else {
-	                            	Log.i(TAG, "Updating since -" + (updateDelta / 1000.) + " s.");
-	                            }
-	                            DataReport latestDataCandidate = endpoint.getLatestData();
-	                            if (latestDataCandidate.getTime() > previousReport.getTime()) {
-	                                previousReport = latestDataCandidate;
-	                                updated = true;
-	                                previousUpdate = System.currentTimeMillis();
-	                            }
-	                        } catch (InterruptedException e) {
-	                            Log.e(TAG, "Failed to fetch data", e);
+	                	try {
+	                		Thread.sleep(UPDATE_CHECK_PERIOD);
+	                        long updateDelta = System.currentTimeMillis() - previousUpdate;
+	                        if (updateDelta < UPDATE_PERIOD) {
+	                        	continue;
+	                        } else {
+	                        	Log.i(TAG, "Updating since -" + (updateDelta / 1000.) + " s.");
 	                        }
+	                        DataReport latestDataCandidate = endpoint.getLatestData();
+	                        latestDataCandidate = (latestDataCandidate == null ? previousReport : latestDataCandidate);
+	                        Log.i(TAG, "Latest data: " + latestDataCandidate.toString());
+	                        Log.i(TAG, "Previous data: " + previousReport.toString());
+	                        previousReport = latestDataCandidate;
+	                        previousUpdate = System.currentTimeMillis();
+	                    } catch (InterruptedException e) {
+	                    	Log.e(TAG, "Failed to fetch data", e);
 	                    }
 	
 	                    final DataReport latestData = previousReport;
+	                    Log.i(TAG, "latest data: " + latestData.toString());
 	
 	                    mActivity.runOnUiThread(new Runnable() {
 	
@@ -227,14 +268,15 @@ public class DashboardFragment extends Fragment {
 	                                plantVoltage += curVoltage;
 	                                SliceValue sliceValue = data.getValues().get(dp.getPanelId());
 	                                sliceValue.setTarget(curVoltage);
-	                                gaugeCharts.get(counter).setValue(curVoltage);
-	                                showLogIfNeeded(counter, curVoltage);
+	                                gaugeCharts.get(counter).setValue(dp.getAverageVoltage());
+	                                showLogIfNeeded(counter, curVoltage * 1000);	
 	                                counter++;
+	                                Log.i(TAG, dp.toString());
 	                            }
 	
-	                            float gridVoltage = latestData.getPowerConsumption() - plantVoltage;
+	                            float gridVoltage = (latestData.getPowerConsumption() - plantVoltage * 1000) / 1000;
 	                            pieChart.startDataAnimation(UPDATE_PERIOD / 2);
-	                            updateLabels(plantVoltage, gridVoltage);
+	                            updateLabels(plantVoltage * 1000, gridVoltage);
 	
 	                            // Actual point update
 	                            int curPointIndex = line.getValues().size() - FUTURE_POINTS_COUNT;
@@ -253,16 +295,17 @@ public class DashboardFragment extends Fragment {
 	
 	                            lineChart.startDataAnimation(UPDATE_PERIOD / 2);
 	
-	                            lineChart.getChartRenderer().setMinViewportYValue(minValue - Y_AXIS_MIN_MAX_DIV);
-	                            lineChart.getChartRenderer().setMaxViewportYValue(maxValue + Y_AXIS_MIN_MAX_DIV);
+	                            lineChart.getChartRenderer().setMinViewportYValue(MIN_VOLTAGE);
+	                            lineChart.getChartRenderer().setMaxViewportYValue((MAX_VOLTAGE * MAX_PANEL_PER_ZONE * NUM_ZONES) / 1000);
 	                        }
 	                    });
 	                }
                 }
            }
         });
+        
         updateThread.start();
-
+        
         return rootView;
     }
 
@@ -272,25 +315,21 @@ public class DashboardFragment extends Fragment {
         gridValueView = (TextView) rootView.findViewById(R.id.gridVoltageValueText);
         totalValueView = (TextView) rootView.findViewById(R.id.totalVoltageValueText);
         rootView.findViewById(R.id.gaugeChart11);
-
-        List<SliceValue> sliceValues = new ArrayList<SliceValue>(NUM_PANELS + 1);
+        
+        List<SliceValue> sliceValues = new ArrayList<SliceValue>(NUM_ZONES + 1);
 
         float plantVoltage = 0.0f;
         for (DataPoint dp : latestData.getDataPoints()) {
             float value = convertVoltage(dp.getVoltage());
             plantVoltage += value;
             SliceValue sliceValue = new SliceValue(value, Color.parseColor(PIE_CHART_PLANT_VALUE_COLOR));
-            // sliceValue.setLabel(String.format(PIE_CHART_VALUE_FORMAT,
-            // value));
             sliceValue.setLabel(EMPTY_STRING);
             sliceValues.add(sliceValue);
         }
 
-        float gridVoltage = MAX_VOLTAGE * NUM_PANELS - plantVoltage;
+        float gridVoltage = MAX_VOLTAGE * NUM_ZONES / 1000 - plantVoltage;
         SliceValue gridSlice = new SliceValue(gridVoltage, Color.parseColor(PIE_CHART_GRID_VALUE_COLOR));
         gridSlice.setLabel(EMPTY_STRING);
-        // gridSlice.setLabel(String.format(PIE_CHART_VALUE_FORMAT,
-        // gridVoltage));
 
         sliceValues.add(gridSlice);
         PieChartData pieChartData = new PieChartData(sliceValues);
@@ -302,13 +341,13 @@ public class DashboardFragment extends Fragment {
         pieChart.setChartRotation(-90, true);
         pieChart.setPieChartData(pieChartData);
 
-        updateLabels(plantVoltage, gridVoltage);
+        updateLabels(plantVoltage * 1000, gridVoltage * 1000);
     }
 
     private void updateLabels(float plantVoltage, float gridVoltage) {
-        plantValueView.setText(String.format(PIE_CHART_VALUE_FORMAT, plantVoltage) + " kW");
-        gridValueView.setText(String.format(PIE_CHART_VALUE_FORMAT, gridVoltage) + " kW");
-        totalValueView.setText(String.format(PIE_CHART_VALUE_FORMAT, plantVoltage + gridVoltage) + " kW");
+        plantValueView.setText(String.format(PIE_CHART_VALUE_FORMAT, plantVoltage / 1000) + " MW");
+        gridValueView.setText(String.format(PIE_CHART_VALUE_FORMAT, gridVoltage / 1000) + " MW");
+        totalValueView.setText(String.format(PIE_CHART_VALUE_FORMAT, (plantVoltage + gridVoltage) / 1000) + " MW");
     }
 
     private void prepareLineChart(View rootView, List<DataReport> data) {
@@ -355,8 +394,8 @@ public class DashboardFragment extends Fragment {
             values.add(new PointValue(POINTS_COUNT + i + 1, latestValue));
         }
 
-        lineChart.getChartRenderer().setMinViewportYValue(minValue - Y_AXIS_MIN_MAX_DIV);
-        lineChart.getChartRenderer().setMaxViewportYValue(maxValue + Y_AXIS_MIN_MAX_DIV);
+        lineChart.getChartRenderer().setMinViewportYValue(MIN_VOLTAGE);
+        lineChart.getChartRenderer().setMaxViewportYValue((MAX_VOLTAGE * MAX_PANEL_PER_ZONE * NUM_ZONES) / 1000);
 
         // In most cased you can call data model methods in builder-pattern-like
         // manner.
@@ -438,7 +477,7 @@ public class DashboardFragment extends Fragment {
     }
     
     private void prependToLogBox(boolean isOutage, int panelIndex) {
-    	executor.execute(new UpdateLogBoxThread(isOutage, panelIndex));
+    	logBoxUpdateExecutor.execute(new UpdateLogBoxThread(isOutage, panelIndex));
     }
     
     private String generateLogString(boolean isOutage, int panelIndex) {
@@ -458,7 +497,7 @@ public class DashboardFragment extends Fragment {
     		logText = BACK_TO_NORMAL_LOG_TEXT;
     	}
     	
-		return String.format("<font color=\"%s\"> %s %s Panel %d %s</font><br>", logColor,
+		return String.format("<font color=\"%s\"> %s %s Zone %d %s</font><br>", logColor,
 				sdf.format(cal.getTime()), logTag, panelIndex + 1, logText);
     }
     
@@ -486,13 +525,21 @@ public class DashboardFragment extends Fragment {
 	            @Override
 	            public void run() {
 	            	logBox.append(coloredLog);
-//	            	logBox.setText(Html.fromHtml(curLogString.toString()));
 	            }
 	        });
     	}
     }
     
     private float convertVoltage(float voltage) {
-    	return voltage * VOLTAGE_MULTIPLY_COEF > MAX_VOLTAGE ? MAX_VOLTAGE : voltage * VOLTAGE_MULTIPLY_COEF;
+    	return (voltage * VOLTAGE_MULTIPLY_COEF > MAX_VOLTAGE ? MAX_VOLTAGE : voltage * VOLTAGE_MULTIPLY_COEF) / 1000;
+    }
+    
+    private static DataReport generateInitialDataReport() {
+    	List<DataPoint> dataPoints = new ArrayList<>();
+    	for (int i = 0; i < NUM_ZONES; i++) {
+    		dataPoints.add(new DataPoint(i, 1000, 0));
+    	}
+    	
+    	return new DataReport(0, dataPoints, 0f);
     }
 }

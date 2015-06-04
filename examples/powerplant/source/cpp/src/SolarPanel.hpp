@@ -19,21 +19,28 @@
 
 #include <memory>
 
+#if !POWER_PLANT_RANDOMIZER
 #include <mraa.hpp>
+#endif
 
+#include "ConfigurationConstants.hpp"
 #include <kaa/log/gen/LogDefinitions.hpp>
 
 namespace power_plant {
 
 class SolarPanel {
 public:
-    SolarPanel(std::size_t panelId);
+    SolarPanel(std::int32_t zoneId, std::int32_t panelId);
 
     kaa_log::VoltageSample getVoltageSample();
 
 private:
-    std::int32_t                  panelId_;
+    const std::int32_t            zoneId_;
+    const std::int32_t            panelId_;
+
+#if !POWER_PLANT_RANDOMIZER
     std::shared_ptr<mraa::Aio>    panelConnection_;
+#endif
 };
 
 } /* namespace power_plant */

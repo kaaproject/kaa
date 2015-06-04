@@ -16,7 +16,7 @@
 
 <resources>
    <declare-styleable name="GaugeChart">
-       <attr name="panel_name" format="string" />
+       <attr name="zone_name" format="string" />
        <attr name="update_time_s" format="float" />
    </declare-styleable>
 </resources>

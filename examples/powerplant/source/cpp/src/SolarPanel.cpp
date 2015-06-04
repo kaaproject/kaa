@@ -18,29 +18,36 @@
 
 #include <string>
 
-#include "ConfigurationConstants.hpp"
-
 namespace power_plant {
 
-SolarPanel::SolarPanel(std::size_t panelId)
-    : panelId_(panelId)
+SolarPanel::SolarPanel(std::int32_t zoneId, std::int32_t panelId)
+    : zoneId_(zoneId), panelId_(panelId)
 {
-    if (panelId_ >= POWER_PLANT_MAX_SOLAR_PANEL_COUNT) {
-        throw std::invalid_argument("Pin number must be less than " + std::to_string(POWER_PLANT_MAX_SOLAR_PANEL_COUNT));
+#if !POWER_PLANT_RANDOMIZER
+    if (zoneId_ >= POWER_PLANT_MAX_SOLAR_PANEL_COUNT) {
+        throw std::invalid_argument("Zone id number must be less than " + std::to_string(POWER_PLANT_MAX_SOLAR_PANEL_COUNT));
     }
 
-    panelConnection_ = std::make_shared<mraa::Aio>(panelId_);
+    panelConnection_ = std::make_shared<mraa::Aio>(zoneId_);
+#endif
 }
 
 kaa_log::VoltageSample SolarPanel::getVoltageSample()
 {
     kaa_log::VoltageSample sample;
 
+    sample.zoneId = zoneId_;
     sample.panelId = panelId_;
+
+#if POWER_PLANT_RANDOMIZER
+    sample.voltage = (double)rand() / ((double)rand() + 1);
+#else
     sample.voltage = panelConnection_->read() * POWER_PLANT_ADC_FACTOR;
+#endif
 
 #if POWER_PLANT_DEBUG_LOGGING
     std::cout << "{";
+    std::cout << "zoneId:" << sample.zoneId << ", ";
     std::cout << "panelId:" << sample.panelId << ", ";
     std::cout << "voltage:" << sample.voltage;
     std::cout << "}" << std::endl;
