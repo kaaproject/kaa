@@ -311,7 +311,7 @@ void SQLiteDBLogStorage::addLogRecord(LogRecordPtr record)
     }
 }
 
-ILogStorage::RecordPack SQLiteDBLogStorage::getRecordBlock(std::size_t bucketSize)
+ILogStorage::RecordPack SQLiteDBLogStorage::getRecordBlock(std::size_t bucketSize, std::size_t recordsBlockCount)
 {
     static std::int32_t id = 0;
     ILogStorage::RecordPack pack;
@@ -328,13 +328,15 @@ ILogStorage::RecordPack SQLiteDBLogStorage::getRecordBlock(std::size_t bucketSiz
         KAA_MUTEX_LOCKED("storageGuard");
 
         std::size_t leftBucketSize = bucketSize;
+        std::size_t leftRecordsCount = recordsBlockCount;
+
         while (SQLITE_ROW == (errorCode = sqlite3_step(stmt.getStatement()))) {
             auto recordId = sqlite3_column_int64(stmt.getStatement(), 0);
             const void *recordData = sqlite3_column_blob(stmt.getStatement(), 1);
             int recordDataSize = sqlite3_column_bytes(stmt.getStatement(), 1);
 
             if (recordData && recordDataSize > 0) {
-                if (leftBucketSize < (std::size_t)recordDataSize) {
+                if (leftRecordsCount == 0 || leftBucketSize < (std::size_t)recordDataSize) {
                     errorCode = SQLITE_DONE;
                     break;
                 }
@@ -342,6 +344,7 @@ ILogStorage::RecordPack SQLiteDBLogStorage::getRecordBlock(std::size_t bucketSiz
                 pack.second.push_back(LogRecordPtr(new LogRecord((const std::uint8_t *)recordData, recordDataSize)));
                 unmarkedRecordIds.push_back(recordId);
                 leftBucketSize -= recordDataSize;
+                leftRecordsCount--;
 
                 KAA_LOG_TRACE(boost::format("Find unmarked record (id %d, size %d, left bucket size %u)")
                                                                     % recordId % recordDataSize % leftBucketSize);

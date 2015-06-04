@@ -43,8 +43,8 @@ public:
             KAA_MUTEX_UNIQUE_DECLARE(timerLock, timerGuard_);
             KAA_MUTEX_LOCKED("timerGuard_");
 
-            condition_.notify_one();
             isThreadRun_ = false;
+            condition_.notify_one();
 
             KAA_MUTEX_UNLOCKING("timerGuard_");
             KAA_UNLOCK(timerLock);

@@ -57,10 +57,20 @@ public:
     virtual void onFailure(ILogFailoverCommand& controller, LogDeliveryErrorCode code);
 
     virtual std::size_t getBatchSize() { return batchSize_; }
+    virtual std::size_t getRecordsBatchCount() { return recordsBatchCount_; }
+
     virtual std::size_t getTimeout() { return uploadTimeout_; }
 
+    virtual std::size_t getTimeoutCheckPeriod() { return timeoutCheckPeriod_; }
+
+    virtual std::size_t getLogUploadCheckPeriod() { return logUploadCheckReriod_;  };
+
     void setBatchSize(std::size_t size) { batchSize_ = size; }
+    void setRecordsBatchCount(std::size_t count)  { recordsBatchCount_ = count; }
     void setUploadTimeout(std::size_t timeout) { uploadTimeout_ = timeout; }
+    void setUploadTimeoutCheckPeriod(std::size_t period) { timeoutCheckPeriod_ = period; }
+    void setLogUploadCheckPeriod(std::size_t period) { logUploadCheckReriod_ = period; }
+
     void setRetryPeriod(std::size_t period) { retryReriod_ = period; }
     void setVolumeThreshold(std::size_t maxVolume) { uploadVolumeThreshold_ = maxVolume; }
     void setCountThreshold(std::size_t maxCount) { uploadCountThreshold_ = maxCount; }
@@ -70,8 +80,14 @@ public:
                                                                  the report pack that will be delivered in a single
                                                                  request to the Operaions server. */
 
+    static const std::size_t DEFAULT_RECORDS_BATCH_COUNT = 256;
+
     static const std::size_t DEFAULT_UPLOAD_TIMEOUT = 2 * 60; /*!< The default value (in seconds) for time to wait
                                                                    the log delivery response. */
+
+    static const std::size_t DEFAULT_TIMEOUT_CHECK_PERIOD = 10;
+
+    static const std::size_t DEFAULT_LOG_UPLOAD_CHECK_PERIOD = 30;
 
     static const std::size_t DEFAULT_RETRY_PERIOD = 5 * 60; /*!< The default value (in seconds) for time to postpone
                                                                  log upload. */
@@ -85,8 +101,14 @@ public:
 private:
     std::size_t batchSize_ = DEFAULT_BATCH_SIZE;
 
+    std::size_t recordsBatchCount_ = DEFAULT_RECORDS_BATCH_COUNT;
+
     std::size_t uploadTimeout_ = DEFAULT_UPLOAD_TIMEOUT;
     std::size_t retryReriod_ = DEFAULT_RETRY_PERIOD;
+
+    std::size_t timeoutCheckPeriod_ = DEFAULT_TIMEOUT_CHECK_PERIOD;
+
+    std::size_t logUploadCheckReriod_ = DEFAULT_LOG_UPLOAD_CHECK_PERIOD;
 
     std::size_t uploadVolumeThreshold_ = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
     std::size_t uploadCountThreshold_ = DEFAULT_UPLOAD_COUNT_THRESHOLD;

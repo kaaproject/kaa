@@ -42,35 +42,49 @@ LogCollector::LogCollector(IKaaChannelManagerPtr manager)
     storage_.reset(new MemoryLogStorage());
 #endif
     uploadStrategy_.reset(new DefaultLogUploadStrategy());
+
+    startTimeoutCheckTimer();
+}
+
+void LogCollector::startTimeoutCheckTimer() {
+    timeoutTimer_.start(uploadStrategy_->getTimeoutCheckPeriod(), [&]
+                    {
+                            if (isDeliveryTimeout()) {
+                                processTimeout();
+                            }
+                            startTimeoutCheckTimer();
+                    });
+}
+
+void LogCollector::processTimeout()
+{
+    uploadStrategy_->onTimeout(*this);
+
+    KAA_LOG_WARN(boost::format("Going to notify log storage of logs delivery timeout..."));
+
+    KAA_MUTEX_LOCKING("timeoutsGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(timeoutsLock, timeoutsGuard_);
+    KAA_MUTEX_LOCKED("timeoutsGuard_");
+
+    for (const auto& request : timeouts_) {
+        storage_->notifyUploadFailed(request.first);
+    }
+
+    timeouts_.clear();
 }
 
 void LogCollector::addLogRecord(const KaaUserLogRecord& record)
 {
     LogRecordPtr serializedRecord(new LogRecord(record));
 
-    {
-        KAA_MUTEX_LOCKING("storageGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-        KAA_MUTEX_LOCKED("storageGuard_");
-        storage_->addLogRecord(serializedRecord);
+    KAA_MUTEX_LOCKING("storageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
+    KAA_MUTEX_LOCKED("storageGuard_");
+    storage_->addLogRecord(serializedRecord);
 
-        if (isDeliveryTimeout()) {
-            uploadStrategy_->onTimeout(*this);
-
-            KAA_LOG_INFO(boost::format("Going to notify log storage of logs delivery timeout..."));
-
-            KAA_MUTEX_LOCKING("timeoutsGuard_");
-            KAA_MUTEX_UNIQUE_DECLARE(timeoutsLock, timeoutsGuard_);
-            KAA_MUTEX_LOCKED("timeoutsGuard_");
-
-            for (const auto& request : timeouts_) {
-                storage_->notifyUploadFailed(request.first);
-            }
-
-            timeouts_.clear();
-            return;
-        }
-    }
+    KAA_MUTEX_UNLOCKING("storageGuard_");
+    KAA_UNLOCK(lock);
+    KAA_MUTEX_UNLOCKED("storageGuard_");
 
     processLogUploadDecision(uploadStrategy_->isUploadNeeded(storage_->getStatus()));
 
@@ -86,6 +100,13 @@ void LogCollector::processLogUploadDecision(LogUploadStrategyDecision decision)
     }
     case LogUploadStrategyDecision::NOOP:
         KAA_LOG_TRACE("Nothing to do now");
+        if (storage_->getStatus().getRecordsCount() > 0) {
+            logUploadCheckTimer_.stop();
+            logUploadCheckTimer_.start(uploadStrategy_->getLogUploadCheckPeriod(),[&]
+            {
+                processLogUploadDecision(uploadStrategy_->isUploadNeeded(storage_->getStatus()));
+            });
+        }
         break;
     default:
         KAA_LOG_WARN("Unknown log upload decision");
@@ -135,6 +156,7 @@ void LogCollector::doSync()
 
 bool LogCollector::isDeliveryTimeout()
 {
+
     KAA_MUTEX_LOCKING("timeoutsGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(timeoutsLock, timeoutsGuard_);
     KAA_MUTEX_LOCKED("timeoutsGuard_");
@@ -142,11 +164,10 @@ bool LogCollector::isDeliveryTimeout()
     auto now = clock_t::now();
     for (const auto& request : timeouts_) {
         if (now >= request.second) {
-            KAA_LOG_INFO(boost::format("Log delivery timeout detected, bucket id %li") % request.first);
+            KAA_LOG_WARN(boost::format("Log delivery timeout detected, bucket id %li") % request.first);
             return true;
         }
     }
-
     return false;
 }
 
@@ -178,7 +199,7 @@ std::shared_ptr<LogSyncRequest> LogCollector::getLogUploadRequest()
         KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
         KAA_MUTEX_LOCKED("storageGuard_");
 
-        recordPack = storage_->getRecordBlock(uploadStrategy_->getBatchSize());
+        recordPack = storage_->getRecordBlock(uploadStrategy_->getBatchSize(), uploadStrategy_->getRecordsBatchCount());
     }
 
     if (!recordPack.second.empty()) {
@@ -235,6 +256,10 @@ void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
             }
         }
     }
+
+    KAA_MUTEX_UNLOCKING("storageGuard_");
+    KAA_UNLOCK(storageLock);
+    KAA_MUTEX_UNLOCKED("storageGuard_");
 
     processLogUploadDecision(uploadStrategy_->isUploadNeeded(storage_->getStatus()));
 }
