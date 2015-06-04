@@ -22,8 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
@@ -50,9 +48,8 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     public static final long MAX_BATCH_VOLUME = 512 * 1024; // Framework
                                                             // limitation
-
-    // TODO: reuse this scheduler in other subsystems
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final static long DELAY = 60L;
+    private final static long PERIOD = 5 * 60L;
 
     protected final ExecutorContext executorContext;
     private final LogTransport transport;
@@ -156,24 +153,30 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     @Override
     public void stop() {
-        scheduler.shutdown();
+
     }
 
-    private void processUploadDecision(LogUploadStrategyDecision decision) {
+    private void processUploadDecision(LogUploadStrategyDecision decision, boolean scheduleUpload) {
         switch (decision) {
-        case UPLOAD:
-            if (!isUploading) {
-                isUploading = true;
-                transport.sync();
-            }
-            break;
-        case NOOP:
-        default:
-            break;
+            case UPLOAD:
+                if (!isUploading) {
+                    if (scheduleUpload) {
+                        scheduleLogUpload();
+                    }
+                    isUploading = true;
+                    transport.sync();
+                }
+                break;
+            case NOOP:
+            default:
+                break;
         }
     }
 
-    // TODO: fix this. it is now executed only when new log record is added.
+    private void processUploadDecision(LogUploadStrategyDecision decision) {
+        processUploadDecision(decision, true);
+    }
+
     protected boolean isDeliveryTimeout() {
         boolean isTimeout = false;
         long currentTime = System.currentTimeMillis();
@@ -205,8 +208,12 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         return isTimeout;
     }
 
+    protected void uploadIfNeeded(boolean scheduleUpload) {
+        processUploadDecision(strategy.isUploadNeeded(storage.getStatus()), scheduleUpload);
+    }
+
     protected void uploadIfNeeded() {
-        processUploadDecision(strategy.isUploadNeeded(storage.getStatus()));
+        processUploadDecision(strategy.isUploadNeeded(storage.getStatus()), true);
     }
 
     private class DefaultLogUploadController implements LogFailoverCommand {
@@ -227,12 +234,23 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
         @Override
         public void retryLogUpload(int delay) {
-            scheduler.schedule(new Runnable() {
+            executorContext.getScheduledExecutor().schedule(new Runnable() {
                 @Override
                 public void run() {
                     uploadIfNeeded();
                 }
             }, delay, TimeUnit.SECONDS);
         }
+    }
+
+    public final void scheduleLogUpload() {
+        executorContext.getScheduledExecutor().schedule(new Runnable() {
+            @Override
+            public void run() {
+                if (!isDeliveryTimeout()) {
+                    uploadIfNeeded(false);
+                }
+            }
+        }, DELAY, TimeUnit.SECONDS);
     }
 }
