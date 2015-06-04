@@ -63,8 +63,6 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     private LogUploadStrategy strategy;
     private LogFailoverCommand controller;
 
-    private volatile boolean isUploading = false;
-
     public AbstractLogCollector(LogTransport transport, ExecutorContext executorContext, KaaChannelManager manager) {
         this.strategy = new DefaultLogUploadStrategy();
         this.storage = new MemoryLogStorage(strategy.getBatchSize());
@@ -96,7 +94,6 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     public void fillSyncRequest(LogSyncRequest request) {
         LogBlock group = null;
         synchronized (storage) {
-            isUploading = false;
             if (storage.getStatus().getRecordCount() == 0) {
                 LOG.debug("Log storage is empty");
                 return;
@@ -162,10 +159,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     private void processUploadDecision(LogUploadStrategyDecision decision) {
         switch (decision) {
         case UPLOAD:
-            if (!isUploading) {
-                isUploading = true;
-                transport.sync();
-            }
+            transport.sync();
             break;
         case NOOP:
         default:
