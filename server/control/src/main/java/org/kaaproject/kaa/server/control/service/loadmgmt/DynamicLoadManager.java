@@ -22,9 +22,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
@@ -110,8 +110,8 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
      */
     public DynamicLoadManager(LoadDistributionService loadDistributionService) {
         setLoadDistributionService(loadDistributionService);
-        opsServersMap = new Hashtable<Integer, OperationsServerMeta>();
-        bootstrapsMap = new Hashtable<String, BootstrapNodeInfo>();
+        opsServersMap = new ConcurrentHashMap<Integer, OperationsServerMeta>();
+        bootstrapsMap = new ConcurrentHashMap<String, BootstrapNodeInfo>();
         // Translate seconds to ms
         opsLoadHistoryTTL = loadDistributionService.getOpsServerHistoryTTL() * 1000;
         try {
