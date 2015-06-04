@@ -65,6 +65,10 @@ private:
     void addDeliveryTimeout(std::int32_t requestId);
     bool removeDeliveryTimeout(std::int32_t requestId);
 
+    void startTimeoutCheckTimer();
+
+    void processTimeout();
+
 private:
     ILogStoragePtr    storage_;
     KAA_MUTEX_DECLARE(storageGuard_);
@@ -80,7 +84,9 @@ private:
 
     IKaaChannelManagerPtr    channelManager_;
 
+    KaaTimer<void ()>        logUploadCheckTimer_;
     KaaTimer<void ()>        uploadTimer_;
+    KaaTimer<void ()>        timeoutTimer_;
 };
 
 }  // namespace kaa

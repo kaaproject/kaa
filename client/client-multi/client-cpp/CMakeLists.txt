@@ -278,6 +278,7 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/kaatcp/KaaTcpResponseProcessor.cpp
         impl/channel/TransportProtocolIdConstants.cpp
         impl/channel/IPTransportInfo.cpp
+        impl/failover/DefaultFailoverStrategy.cpp
     )
 
 # Builds Kaa libraries.

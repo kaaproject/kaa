@@ -68,6 +68,9 @@ public:
      */
     virtual std::size_t getBatchSize() = 0;
 
+
+    virtual std::size_t getRecordsBatchCount() = 0;
+
     /**
      * @brief Maximum time to wait the log delivery response.
      *
@@ -76,6 +79,10 @@ public:
      * @return    Time in seconds.
      */
     virtual std::size_t getTimeout() = 0;
+
+    virtual std::size_t getTimeoutCheckPeriod() = 0;
+
+    virtual std::size_t getLogUploadCheckPeriod() = 0;
 
     /**
      * @brief Callback is used when the log delivery timeout detected.

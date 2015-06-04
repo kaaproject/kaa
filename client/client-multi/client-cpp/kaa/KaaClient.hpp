@@ -76,6 +76,7 @@ public:
     virtual void                                addLogRecord(const KaaUserLogRecord& record);
     virtual void                                setLogStorage(ILogStoragePtr storage);
     virtual void                                setLogUploadStrategy(ILogUploadStrategyPtr strategy);
+    virtual void                                setFailoverStrategy(IFailoverStrategyPtr strategy);
     virtual void                                setProfileContainer(IProfileContainerPtr container);
     virtual void                                addTopicListListener(INotificationTopicListListener& listener);
     virtual void                                removeTopicListListener(INotificationTopicListListener& listener);
@@ -126,6 +127,8 @@ public:
 private:
     IKaaClientStateStoragePtr                       status_;
     IBootstrapManagerPtr                            bootstrapManager_;
+    IFailoverStrategyPtr 							failoverStrategy_;
+
     std::unique_ptr<ProfileManager>                 profileManager_;
     std::unique_ptr<NotificationManager>            notificationManager_;
 
