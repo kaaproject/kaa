@@ -121,7 +121,7 @@ public abstract class AbstractCassandraDao<T, K> {
         LOG.debug("Execute cassandra batch {}", batch);
         batch.setConsistencyLevel(getWriteConsistencyLevel());
         ResultSet resultSet = getSession().execute(batch);
-        LOG.info("Executed batch {}", resultSet);
+        LOG.debug("Executed batch {}", resultSet);
     }
 
     protected void executeBatch(Statement... statements) {
