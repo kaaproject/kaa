@@ -34,6 +34,7 @@
 #include "kaa/channel/IPTransportInfo.hpp"
 #include "kaa/channel/ITransportConnectionInfo.hpp"
 #include "kaa/channel/TransportProtocolIdConstants.hpp"
+#include "kaa/utils/KaaTimer.hpp"
 
 
 namespace kaa {
@@ -76,6 +77,10 @@ public:
         return ServerType::OPERATIONS;
     }
     
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) {
+    	failoverStrategy_ = strategy;
+    }
+
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {
         connectivityChecker_= checker;
     }
@@ -122,7 +127,9 @@ private:
     boost::asio::io_service::work work_;
     boost::asio::ip::tcp::socket sock_;
     boost::asio::deadline_timer pingTimer_;
-    boost::asio::deadline_timer reconnectTimer_;
+    //boost::asio::deadline_timer reconnectTimer_;
+    KaaTimer<void ()> retryTimer_;
+
     boost::asio::streambuf responseBuffer_;
     std::array<std::thread, THREADPOOL_SIZE> channelThreads_;
 
@@ -143,6 +150,7 @@ private:
     KAA_MUTEX_DECLARE(channelGuard_);
 
     ConnectivityCheckerPtr connectivityChecker_;
+    IFailoverStrategyPtr failoverStrategy_;
 };
 
 }

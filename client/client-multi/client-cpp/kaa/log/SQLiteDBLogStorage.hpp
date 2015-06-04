@@ -58,7 +58,7 @@ public:
 
     virtual ILogStorageStatus& getStatus() {return *this; }
 
-    virtual RecordPack getRecordBlock(std::size_t blockSize);
+    virtual RecordPack getRecordBlock(std::size_t blockSize, std::size_t recordsBlockCount);
     virtual void removeRecordBlock(RecordBlockId id);
     virtual void notifyUploadFailed(RecordBlockId id);
 

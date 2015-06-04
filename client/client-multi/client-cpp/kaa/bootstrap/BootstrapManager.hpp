@@ -23,6 +23,7 @@
 #include "kaa/bootstrap/IBootstrapManager.hpp"
 #include "kaa/bootstrap/BootstrapTransport.hpp"
 #include "kaa/channel/GenericTransportInfo.hpp"
+#include "kaa/utils/KaaTimer.hpp"
 
 namespace kaa {
 
@@ -31,6 +32,7 @@ public:
     BootstrapManager() : bootstrapTransport_(nullptr), channelManager_(nullptr) { }
     ~BootstrapManager() { }
 
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy);
     virtual void receiveOperationsServerList();
     virtual void useNextOperationsServer(const TransportProtocolId& protocolId);
     virtual void useNextOperationsServerByAccessPointId(std::int32_t id);
@@ -51,7 +53,11 @@ private:
     BootstrapTransport *bootstrapTransport_;
     IKaaChannelManager *channelManager_;
 
+    IFailoverStrategyPtr failoverStrategy_;
+
     std::unique_ptr<std::int32_t> serverToApply;
+
+    KaaTimer<void ()>        retryTimer_;
 
     KAA_R_MUTEX_MUTABLE_DECLARE(guard_);
 };

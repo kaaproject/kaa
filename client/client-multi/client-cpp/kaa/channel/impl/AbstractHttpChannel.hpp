@@ -64,6 +64,7 @@ public:
         return TransportProtocolIdConstants::HTTP_TRANSPORT_ID;
     }
 
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) {}
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
 
 protected:

@@ -54,7 +54,7 @@ const std::map<TransportType, ChannelDirection> DefaultOperationTcpChannel::SUPP
 
 
 DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys)
-    : clientKeys_(clientKeys), work_(io_), sock_(io_), pingTimer_(io_), reconnectTimer_(io_)
+    : clientKeys_(clientKeys), work_(io_), sock_(io_), pingTimer_(io_)/*, reconnectTimer_(io_)*/
     , firstStart_(true), isConnected_(false), isFirstResponseReceived_(false), isPendingSyncRequest_(false)
     , isShutdown_(false), isPaused_(false), multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager)
 {
@@ -204,9 +204,32 @@ void DefaultOperationTcpChannel::onServerFailed()
     closeConnection();
 
     if (connectivityChecker_ && !connectivityChecker_->checkConnectivity()) {
-        KAA_LOG_TRACE(boost::format("Loss of connectivity. Attempt to reconnect will be made in {} sec") % RECONNECT_TIMEOUT);
-        reconnectTimer_.expires_from_now(boost::posix_time::seconds(RECONNECT_TIMEOUT));
-        reconnectTimer_.async_wait(std::bind(&DefaultOperationTcpChannel::openConnection, this));
+    	KAA_LOG_TRACE("Loss of connectivity detected.");
+    	FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::NO_CONNECTIVITY);
+        switch (decision.getAction()) {
+			case FailoverStrategyAction::NOOP:
+			    KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
+				return;
+			case FailoverStrategyAction::RETRY:
+			{
+				std::size_t period = decision.getRetryPeriod();
+				KAA_LOG_WARN(boost::format("Attempt to reconnect will be made in %1% secs "
+						"according to failover strategy decision.") % period);
+				retryTimer_.stop();
+				retryTimer_.start(period, [&] { openConnection(); });
+				break;
+			}
+			case FailoverStrategyAction::STOP_APP:
+			    KAA_LOG_WARN("Stopping application according to failover strategy decision!");
+				exit(EXIT_FAILURE);
+				break;
+	        default:
+	            break;
+		}
+
+        //KAA_LOG_TRACE(boost::format("Loss of connectivity. Attempt to reconnect will be made in {} sec") % RECONNECT_TIMEOUT);
+        //reconnectTimer_.expires_from_now(boost::posix_time::seconds(RECONNECT_TIMEOUT));
+        //reconnectTimer_.async_wait(std::bind(&DefaultOperationTcpChannel::openConnection, this));
         return;
     }
 

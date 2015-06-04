@@ -21,6 +21,8 @@
 #include <string>
 #include <cstdint>
 
+#include "kaa/failover/IFailoverStrategy.hpp"
+
 namespace kaa {
 
 class IKaaChannelManager;
@@ -32,6 +34,8 @@ class TransportProtocolId;
  */
 class IBootstrapManager {
 public:
+
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) = 0;
 
     /**
      * Receives the latest list of servers from the bootstrap server.
@@ -80,6 +84,7 @@ public:
      *
      */
     virtual void onServerListUpdated(const std::vector<ProtocolMetaData>& operationsServers) = 0;
+
 
     virtual ~IBootstrapManager() { }
 };

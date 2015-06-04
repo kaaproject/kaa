@@ -34,6 +34,29 @@ KaaChannelManager::KaaChannelManager(IBootstrapManager& manager, const Bootstrap
     }
 }
 
+void KaaChannelManager::setFailoverStrategy(IFailoverStrategyPtr strategy) {
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't set failover strategy. Channel manager is down");
+        return;
+    }
+
+    if (!strategy) {
+        KAA_LOG_WARN("Failover strategy is null");
+        return;
+    }
+
+    failoverStrategy_ = strategy;
+
+    KAA_MUTEX_LOCKING("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
+
+    bootstrapManager_.setFailoverStrategy(failoverStrategy_);
+    for (auto& channel : channels_) {
+        channel->setFailoverStrategy(failoverStrategy_);
+    }
+}
+
 void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInfo) {
     if (isShutdown_) {
         KAA_LOG_WARN("Can't update server. Channel manager is down");
@@ -45,7 +68,33 @@ void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInf
     }
 
     if (connectionInfo->getServerType() == ServerType::BOOTSTRAP) {
-        onTransportConnectionInfoUpdated(getNextBootstrapServer(connectionInfo));
+        ITransportConnectionInfoPtr nextConnectionInfo = getNextBootstrapServer(connectionInfo, false);
+        if (nextConnectionInfo) {
+            onTransportConnectionInfoUpdated(nextConnectionInfo);
+        } else {
+            FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::NO_BOOTSTRAP_SERVERS);
+            switch (decision.getAction()) {
+                 case FailoverStrategyAction::NOOP:
+                     KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
+                     break;
+                 case FailoverStrategyAction::RETRY:
+                 {
+                     std::size_t period = decision.getRetryPeriod();
+                     KAA_LOG_WARN(boost::format("Attempt to reconnect to first bootstrap server will be made in %1% secs "
+                             "according to failover strategy decision.") % period);
+                     retryTimer_.stop();
+                     retryTimer_.start(period, [&]
+                         {
+                             onTransportConnectionInfoUpdated(getNextBootstrapServer(connectionInfo, true));
+                         });
+                     break;
+                 }
+                 case FailoverStrategyAction::STOP_APP:
+                     KAA_LOG_WARN("Stopping application according to failover strategy decision!");
+                     exit(EXIT_FAILURE);
+                     break;
+             }
+        }
     } else {
         bootstrapManager_.useNextOperationsServer(connectionInfo->getTransportId());
     }
@@ -92,6 +141,7 @@ bool KaaChannelManager::addChannelToList(IDataChannelPtr channel)
     auto res = channels_.insert(channel);
 
     if (res.second) {
+    	channel->setFailoverStrategy(failoverStrategy_);
         channel->setConnectivityChecker(connectivityChecker_);
 
         ITransportConnectionInfoPtr connectionInfo;
@@ -332,7 +382,7 @@ ITransportConnectionInfoPtr KaaChannelManager::getCurrentBootstrapServer(const T
     return connectionInfo;
 }
 
-ITransportConnectionInfoPtr KaaChannelManager::getNextBootstrapServer(ITransportConnectionInfoPtr usedConnectionInfo)
+ITransportConnectionInfoPtr KaaChannelManager::getNextBootstrapServer(ITransportConnectionInfoPtr usedConnectionInfo, bool forceFirstElement)
 {
     ITransportConnectionInfoPtr nextConnectionInfo;
 
@@ -344,7 +394,7 @@ ITransportConnectionInfoPtr KaaChannelManager::getNextBootstrapServer(ITransport
         if (serverIt != list.end()) {
             if (++serverIt != list.end()) {
                 nextConnectionInfo = (*serverIt);
-            } else {
+            } else if (forceFirstElement) {
                 nextConnectionInfo = list.front();
             }
         }

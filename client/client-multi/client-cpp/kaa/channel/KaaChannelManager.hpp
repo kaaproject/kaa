@@ -26,6 +26,7 @@
 #include "kaa/common/TransportType.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
 #include "kaa/channel/connectivity/IPingServerStorage.hpp"
+#include "kaa/utils/KaaTimer.hpp"
 
 namespace kaa {
 
@@ -37,6 +38,7 @@ public:
     KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers);
     ~KaaChannelManager() { doShutdown(); }
 
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy);
     virtual void setChannel(TransportType type, IDataChannelPtr channel);
     virtual void addChannel(IDataChannelPtr channel);
     virtual void removeChannel(const std::string& id);
@@ -71,10 +73,13 @@ private:
     void doShutdown();
 
     ITransportConnectionInfoPtr getCurrentBootstrapServer(const TransportProtocolId& protocolId);
-    ITransportConnectionInfoPtr getNextBootstrapServer(ITransportConnectionInfoPtr usedConnectionInfo);
+    ITransportConnectionInfoPtr getNextBootstrapServer(ITransportConnectionInfoPtr usedConnectionInfo, bool forceFirstElement);
 
 private:
     IBootstrapManager&   bootstrapManager_;
+    IFailoverStrategyPtr failoverStrategy_;
+
+    KaaTimer<void ()>        retryTimer_;
 
     bool_type isShutdown_;
     bool_type isPaused_;
