@@ -201,6 +201,12 @@ public class AdminClient {
         ResponseEntity<List<TopicDto>> entity = restTemplate.exchange(url + "topics/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
+    
+    public void deleteTopic(TopicDto ropic) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("topicId", ropic.getId());
+        restTemplate.postForLocation(url + "delTopic", params);
+    }
 
     public ProfileSchemaDto createProfileSchema(ProfileSchemaDto profileSchema, String schemaResource) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
