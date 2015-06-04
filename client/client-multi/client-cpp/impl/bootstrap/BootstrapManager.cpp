@@ -62,19 +62,18 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
     auto serverIt = operationServers_.find(protocolId);
 
     if (lastServerIt != lastOperationsServers_.end() && serverIt != operationServers_.end()) {
-        if (++(lastServerIt->second) != serverIt->second.end()) {
-
+        OperationsServers::iterator nextOperationIterator = (lastServerIt->second)+1;
+        if (nextOperationIterator != serverIt->second.end()) {
             KAA_LOG_INFO(boost::format("New server [0x%X] will be user for %2%")
-                                            % (*lastServerIt->second)->getAccessPointId()
+                                            % (*nextOperationIterator)->getAccessPointId()
                                             % LoggingUtils::TransportProtocolIdToString(protocolId));
-
+            lastOperationsServers_[protocolId] = nextOperationIterator;
             if (channelManager_ != nullptr) {
-                channelManager_->onTransportConnectionInfoUpdated(*(lastServerIt->second));
+                channelManager_->onTransportConnectionInfoUpdated(*(nextOperationIterator));
             } else {
                 KAA_LOG_ERROR("Can not process server change. Channel manager was not specified");
             }
         } else {
-        	(lastServerIt->second)--;
             KAA_LOG_WARN(boost::format("Failed to find server for channel %1%.")
                                             % LoggingUtils::TransportProtocolIdToString(protocolId));
 
