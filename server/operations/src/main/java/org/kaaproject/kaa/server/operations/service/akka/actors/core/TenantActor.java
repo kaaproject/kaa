@@ -74,7 +74,7 @@ public class TenantActor extends UntypedActor {
 
     private final String tenantId;
 
-    private Map<UUID, StatusRequestState> statusRequestStatesMap = new HashMap<UUID, StatusRequestState>();
+    private final Map<UUID, StatusRequestState> statusRequestStatesMap;
 
     private TenantActor(AkkaContext context, String tenantId) {
         super();
@@ -83,6 +83,7 @@ public class TenantActor extends UntypedActor {
         this.applications = new HashMap<>();
         this.localUsers = new HashMap<>();
         this.globalUsers = new HashMap<>();
+        this.statusRequestStatesMap = new HashMap<UUID, StatusRequestState>();
     }
 
     /**

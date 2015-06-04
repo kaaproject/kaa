@@ -55,7 +55,7 @@ public class OperationsServerActor extends UntypedActor {
     /** The tenants id-actor map. */
     private final Map<String, ActorRef> tenants;
 
-    private Map<UUID, StatusRequestState> statusRequestStatesMap = new HashMap<UUID, StatusRequestState>();
+    private final Map<UUID, StatusRequestState> statusRequestStatesMap;
 
     /**
      * Instantiates a new endpoint server actor.
@@ -67,6 +67,7 @@ public class OperationsServerActor extends UntypedActor {
         super();
         this.context = context;
         this.tenants = new HashMap<String, ActorRef>();
+        this.statusRequestStatesMap = new HashMap<UUID, StatusRequestState>();
     }
 
     /**

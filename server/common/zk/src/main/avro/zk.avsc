@@ -15,7 +15,7 @@
  "name": "LoadInfo",
  "fields": [
      {"name": "endpointCount",  "type": "int"},
-     {"name": "loadAvarage",  "type": "double"}
+     {"name": "loadAverage",  "type": "double"}
  ]
 },
 {

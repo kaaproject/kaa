@@ -86,7 +86,7 @@ public class EndpointCountRebalancer implements Rebalancer {
         int maxDiff = maxEndpointCount - minEndpointCount;
         LOG.info("Max difference between endpoint counts is {}", maxDiff);
         if (maxDiff < minDiff) {
-            LOG.debug("Max endpoint count difference is to small to trigger recalculation. Min required diff is {}", minDiff);
+            LOG.debug("Max endpoint count difference is too small to trigger recalculation. Min required diff is {}", minDiff);
             return result;
         }
 
