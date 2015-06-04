@@ -46,7 +46,7 @@ public class OperationsServerLoadHistoryTest {
     @Test
     public void testAddOpsServerLoad() {
         OperationsServerLoadHistory hist = new OperationsServerLoadHistory(MAX_HISTORY_TIME_LIVE);
-        hist.addOpsServerLoad(new LoadInfo(2));
+        hist.addOpsServerLoad(new LoadInfo(2, 1.0));
         fillOutHistory(hist,1000,5);
         assertNotNull(hist.getHistory());
         if (hist.getHistory().size() >= 5) {
@@ -63,7 +63,7 @@ public class OperationsServerLoadHistoryTest {
         for(int i=0; i<number; i++) {
             try {
                 Thread.sleep(period);
-                hist.addOpsServerLoad(new LoadInfo(rnd.nextInt(1000)));
+                hist.addOpsServerLoad(new LoadInfo(rnd.nextInt(1000), 1.0));
             } catch (InterruptedException e) {
                 fail(e.toString());
             }
@@ -77,10 +77,10 @@ public class OperationsServerLoadHistoryTest {
     @Test
     public void testGetHistory() {
         OperationsServerLoadHistory hist = new OperationsServerLoadHistory(MAX_HISTORY_TIME_LIVE);
-        hist.addOpsServerLoad(new LoadInfo(2));
+        hist.addOpsServerLoad(new LoadInfo(2, 1.0));
         assertNotNull(hist.getHistory());
         assertEquals(1, hist.getHistory().size());
-        assertEquals(2, hist.getHistory().get(0).getLoadInfo().getLoadIndex().intValue());
+        assertEquals(2, hist.getHistory().get(0).getLoadInfo().getEndpointCount().intValue());
     }
 
     /**

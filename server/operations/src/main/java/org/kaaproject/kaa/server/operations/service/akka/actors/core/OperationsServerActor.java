@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,17 @@ import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaServi
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaServiceStatus;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaStatusListener;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestState;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.TenantActorStatusResponse;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.TenantAwareMessage;
 import org.kaaproject.kaa.server.transport.message.SessionControlMessage;
 import org.slf4j.Logger;
@@ -49,6 +55,8 @@ public class OperationsServerActor extends UntypedActor {
     /** The tenants id-actor map. */
     private final Map<String, ActorRef> tenants;
 
+    private final Map<UUID, StatusRequestState> statusRequestStatesMap;
+
     /**
      * Instantiates a new endpoint server actor.
      *
@@ -59,6 +67,7 @@ public class OperationsServerActor extends UntypedActor {
         super();
         this.context = context;
         this.tenants = new HashMap<String, ActorRef>();
+        this.statusRequestStatesMap = new HashMap<UUID, StatusRequestState>();
     }
 
     /**
@@ -112,6 +121,10 @@ public class OperationsServerActor extends UntypedActor {
             processNotificationMessage((ThriftNotificationMessage) message);
         } else if (message instanceof ClusterUpdateMessage) {
             processClusterUpdate((ClusterUpdateMessage) message);
+        } else if (message instanceof StatusRequestMessage) {
+            processStatusRequest((StatusRequestMessage) message);
+        } else if (message instanceof TenantActorStatusResponse) {
+            processStatusResponse((TenantActorStatusResponse) message);
         }
     }
 
@@ -150,6 +163,38 @@ public class OperationsServerActor extends UntypedActor {
     private void processClusterUpdate(ClusterUpdateMessage message) {
         for (ActorRef tenantActor : tenants.values()) {
             tenantActor.tell(message, ActorRef.noSender());
+        }
+    }
+
+    private void processStatusRequest(StatusRequestMessage message) {
+        LOG.debug("[{}] Processing status request", message.getId());
+        if (tenants.size() > 0) {
+            statusRequestStatesMap.put(message.getId(), new StatusRequestState(message, tenants.size()));
+            for (ActorRef tenant : tenants.values()) {
+                tenant.tell(new StatusRequestMessage(message.getId()), this.getSelf());
+            }
+        } else {
+            if(message.getListener() != null){
+                message.getListener().onStatusUpdate(new AkkaServiceStatus(System.currentTimeMillis(), 0));
+            }
+        }
+    }
+
+    private void processStatusResponse(TenantActorStatusResponse message) {
+        StatusRequestState state = statusRequestStatesMap.get(message.getRequestId());
+        if (state != null) {
+            if (state.processResponse(message)) {
+                int endpointCount = state.getEndpontCount();
+                AkkaStatusListener listener = state.getOriginator().getListener();
+                if (listener != null) {
+                    listener.onStatusUpdate(new AkkaServiceStatus(System.currentTimeMillis(), endpointCount));
+                } else {
+                    LOG.warn("[{}] Calculated state for empty listener", message.getRequestId());
+                }
+                statusRequestStatesMap.remove(message.getRequestId());
+            }
+        } else {
+            LOG.warn("[{}] State for status request is not found", message.getRequestId());
         }
     }
 
