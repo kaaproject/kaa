@@ -20,7 +20,6 @@
 #include <cstdlib>
 #include <cstdint>
 #include <algorithm>
-#include <chrono>
 
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/logging/Log.hpp"
