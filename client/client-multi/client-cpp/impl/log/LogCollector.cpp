@@ -34,7 +34,7 @@
 namespace kaa {
 
 LogCollector::LogCollector(IKaaChannelManagerPtr manager)
-    : transport_(nullptr), channelManager_(manager)
+    : transport_(nullptr), channelManager_(manager), timeoutAccessPointId_(0)
 {
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
     storage_.reset(new SQLiteDBLogStorage());
@@ -162,13 +162,29 @@ bool LogCollector::isDeliveryTimeout()
     KAA_MUTEX_LOCKED("timeoutsGuard_");
 
     auto now = clock_t::now();
+
+    IDataChannelPtr logChannel = channelManager_->getChannelByTransportType(TransportType::LOGGING);
+    std::int32_t currentAccessPointId  = 0;
+    if (logChannel) {
+        currentAccessPointId = logChannel->getServer()->getAccessPointId();
+    }
+
+    bool isTimeout = false;
+    timeoutAccessPointId_ = 0;
+
     for (const auto& request : timeouts_) {
-        if (now >= request.second) {
+        if (now >= request.second.getTimeoutTime()) {
             KAA_LOG_WARN(boost::format("Log delivery timeout detected, bucket id %li") % request.first);
-            return true;
+            isTimeout = true;
+            timeoutAccessPointId_ = request.second.getTransportAccessPointId();
+            // Check if current access point already has timeout
+            if (timeoutAccessPointId_ == currentAccessPointId) {
+                break;
+            }
         }
     }
-    return false;
+
+    return isTimeout;
 }
 
 void LogCollector::addDeliveryTimeout(std::int32_t requestId)
@@ -177,7 +193,15 @@ void LogCollector::addDeliveryTimeout(std::int32_t requestId)
     KAA_MUTEX_UNIQUE_DECLARE(timeoutsLock, timeoutsGuard_);
     KAA_MUTEX_LOCKED("timeoutsGuard_");
 
-    timeouts_.insert(std::make_pair(requestId, clock_t::now() + std::chrono::seconds(uploadStrategy_->getTimeout())));
+    IDataChannelPtr logChannel = channelManager_->getChannelByTransportType(TransportType::LOGGING);
+    std::int32_t currentAccessPointId  = 0;
+    if (logChannel) {
+        currentAccessPointId = logChannel->getServer()->getAccessPointId();
+    }
+    TimeoutInfo timeoutInfo(currentAccessPointId,
+            clock_t::now() + std::chrono::seconds(uploadStrategy_->getTimeout()));
+
+    timeouts_.insert(std::make_pair(requestId, timeoutInfo));
 }
 
 bool LogCollector::removeDeliveryTimeout(std::int32_t requestId)
@@ -290,7 +314,10 @@ void LogCollector::switchAccessPoint()
 {
     IDataChannelPtr logChannel = channelManager_->getChannelByTransportType(TransportType::LOGGING);
     if (logChannel) {
-        channelManager_->onServerFailed(logChannel->getServer());
+        if (timeoutAccessPointId_ == logChannel->getServer()->getAccessPointId()) {
+            KAA_LOG_WARN("Try to switch to another Operations server...");
+            channelManager_->onServerFailed(logChannel->getServer());
+        }
     } else {
         KAA_LOG_ERROR("Can't find LOGGING data channel");
     }
