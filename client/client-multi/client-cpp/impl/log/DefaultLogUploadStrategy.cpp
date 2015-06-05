@@ -61,7 +61,7 @@ LogUploadStrategyDecision DefaultLogUploadStrategy::isUploadNeeded(ILogStorageSt
 
 void DefaultLogUploadStrategy::onTimeout(ILogFailoverCommand& controller)
 {
-    KAA_LOG_WARN("Log upload timeout occurred. Try to switch to another Operations server...");
+    KAA_LOG_WARN("Log upload timeout occurred.");
 
     controller.switchAccessPoint();
 }
