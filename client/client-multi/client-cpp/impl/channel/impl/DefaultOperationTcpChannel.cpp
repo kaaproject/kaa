@@ -99,7 +99,19 @@ void DefaultOperationTcpChannel::onKaaSync(const KaaSyncResponse& message)
     KAA_MUTEX_LOCKING("channelGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
-    const auto& decodedResposne = encDec_->decodeData(encodedResponse.data(), encodedResponse.size());
+
+    std::string decodedResposne;
+    try {
+        decodedResposne = encDec_->decodeData(encodedResponse.data(), encodedResponse.size());
+    } catch (std::exception& e) {
+        KAA_MUTEX_LOCKING("channelGuard_");
+        KAA_UNLOCK(lock);
+        KAA_MUTEX_LOCKED("channelGuard_");
+        KAA_LOG_FATAL(boost::format("Unable to decode data: %s") % e.what());
+        onServerFailed();
+        return;
+    }
+
     KAA_MUTEX_LOCKING("channelGuard_");
     KAA_UNLOCK(lock);
     KAA_MUTEX_LOCKED("channelGuard_");
