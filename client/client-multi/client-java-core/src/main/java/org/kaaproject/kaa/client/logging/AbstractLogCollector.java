@@ -18,9 +18,11 @@ package org.kaaproject.kaa.client.logging;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -63,9 +65,12 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     private LogUploadStrategy strategy;
     private LogFailoverCommand controller;
 
+    private Object uploadCheckLock = new Object();
+    private boolean uploadCheckInProgress = false;
+
     public AbstractLogCollector(LogTransport transport, ExecutorContext executorContext, KaaChannelManager manager) {
         this.strategy = new DefaultLogUploadStrategy();
-        this.storage = new MemoryLogStorage(strategy.getBatchSize());
+        this.storage = new MemoryLogStorage(strategy.getBatchSize(), strategy.getBatchCount());
         this.controller = new DefaultLogUploadController();
         this.channelManager = manager;
         this.transport = transport;
@@ -98,7 +103,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                 LOG.debug("Log storage is empty");
                 return;
             }
-            group = storage.getRecordBlock(strategy.getBatchSize());
+            group = storage.getRecordBlock(strategy.getBatchSize(), strategy.getBatchCount());
         }
 
         if (group != null) {
@@ -115,7 +120,16 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                 request.setRequestId(group.getBlockId());
                 request.setLogEntries(logs);
 
-                timeoutMap.put(group.getBlockId(), System.currentTimeMillis() + strategy.getTimeout() * 1000);
+                long timeout = System.currentTimeMillis() + strategy.getTimeout() * 1000;
+                LOG.info("Adding following pair to timeoutMap: {}, {}", group.getBlockId(), timeout);
+                timeoutMap.put(group.getBlockId(), timeout);
+
+                executorContext.getScheduledExecutor().schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        checkDeliveryTimeout();
+                    }
+                }, strategy.getTimeout(), TimeUnit.SECONDS);
             }
         } else {
             LOG.warn("Log group is null: log group size is too small");
@@ -141,7 +155,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                     });
                     isAlreadyScheduled = true;
                 }
-
+                LOG.info("Removing key from timeoutMap: {}", response.getRequestId());
                 timeoutMap.remove(response.getRequestId());
             }
 
@@ -162,17 +176,39 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
             transport.sync();
             break;
         case NOOP:
+            if (strategy.getUploadCheckPeriod() > 0 && storage.getStatus().getRecordCount() > 0) {
+                LOG.trace("Attempt to execute upload check: {}", uploadCheckInProgress);
+                synchronized (uploadCheckLock) {
+                    if (!uploadCheckInProgress) {
+                        LOG.trace("Scheduling upload check with timeout: {}" + strategy.getUploadCheckPeriod());
+                        uploadCheckInProgress = true;
+                        executorContext.getScheduledExecutor().schedule(new Runnable() {
+                            @Override
+                            public void run() {
+                                synchronized (uploadCheckLock) {
+                                    uploadCheckInProgress = false;
+                                }
+                                uploadIfNeeded();
+                            }
+                        }, strategy.getUploadCheckPeriod(), TimeUnit.SECONDS);
+                    } else {
+                        LOG.trace("Upload check is already scheduled!");
+                    }
+                }
+            }
+            break;
         default:
             break;
         }
     }
 
-    // TODO: fix this. it is now executed only when new log record is added.
-    protected boolean isDeliveryTimeout() {
+    private boolean checkDeliveryTimeout() {
         boolean isTimeout = false;
         long currentTime = System.currentTimeMillis();
+        LOG.debug("Checking delivery timeout using time {}", currentTime);
 
         for (Map.Entry<Integer, Long> logRequest : timeoutMap.entrySet()) {
+            LOG.info("processing timeoutMap pair: {}, {}", logRequest.getKey(), logRequest.getValue());
             if (currentTime >= logRequest.getValue()) {
                 isTimeout = true;
                 break;
@@ -180,13 +216,18 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         }
 
         if (isTimeout) {
-            LOG.info("Log delivery timeout detected");
+            LOG.info("Log delivery timeout detected. Processing timeout map with {} keys", timeoutMap.size());
 
+            List<Integer> toRemove = new ArrayList<Integer>();
             for (Map.Entry<Integer, Long> logRequest : timeoutMap.entrySet()) {
                 storage.notifyUploadFailed(logRequest.getKey());
+                toRemove.add(logRequest.getKey());
             }
 
-            timeoutMap.clear();
+            for (Integer key : toRemove) {
+                LOG.info("Removing following key from timeoutMap: {}", key);
+                timeoutMap.remove(key);
+            }
             final LogFailoverCommand controller = this.controller;
             executorContext.getCallbackExecutor().execute(new Runnable() {
                 @Override

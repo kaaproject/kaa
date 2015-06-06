@@ -57,11 +57,11 @@ public class LogRecord {
         encodedRecord = CONVERTER.get().toByteArray(record);
     }
 
-    byte [] getData() {
+    public byte [] getData() {
         return encodedRecord;
     }
 
-    long getSize() {
+    public long getSize() {
         return encodedRecord.length;
     }
 }

@@ -50,7 +50,7 @@ public interface LogStorage {
      * @param blockSize Maximum size of sending log block
      * @return New log block ({@link  LogBlock})
      */
-    LogBlock getRecordBlock(long blockSize);
+    LogBlock getRecordBlock(long blockSize, int batchCount);
 
     /**
      * <p>Removes already sent log records by its block id.</p>

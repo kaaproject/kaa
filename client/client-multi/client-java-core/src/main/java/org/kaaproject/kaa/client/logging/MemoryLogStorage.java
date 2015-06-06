@@ -38,15 +38,17 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
         private final LinkedList<LogRecord> records; // NOSONAR
 
         private final long maxBucketSize;
-        private long consumedSize;
-        private boolean isUsed;
+        private final int maxBatchCount;
+        private volatile long consumedSize;
+        private volatile boolean used;
 
-        public Bucket(long bucketSize) {
+        public Bucket(long bucketSize, int batchCount) {
             id = RANDOM.nextInt();
             records = new LinkedList<>();
             maxBucketSize = bucketSize;
+            maxBatchCount = batchCount;
             consumedSize = 0;
-            isUsed = false;
+            used = false;
         }
 
         public List<LogRecord> getRecords() {
@@ -60,7 +62,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
         public boolean tryPushRecord(LogRecord rec) {
             long newConsumedSize = consumedSize + rec.getSize();
 
-            if (maxBucketSize >= newConsumedSize) {
+            if (maxBucketSize >= newConsumedSize && (maxRecordCount == 0 || records.size() < maxBatchCount)) {
                 records.add(rec);
                 consumedSize = newConsumedSize;
                 return true;
@@ -76,11 +78,11 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
         }
 
         public boolean isUsed() {
-            return isUsed;
+            return used;
         }
 
         public void setUsage(boolean state) {
-            isUsed = state;
+            used = state;
         }
 
         public long getConsumedSize() {
@@ -90,16 +92,17 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
 
     private long maxStorageSize = MAX_STORAGE_SIZE;
     private long maxBucketSize;
+    private int maxRecordCount;
     private Bucket currentBucket;
     private final List<Bucket> buckets;
 
     private long consumedSize;
     private long recordCount;
 
-    public MemoryLogStorage(long bucketSize) {
+    public MemoryLogStorage(long bucketSize, int bucketCount) {
         maxBucketSize = bucketSize;
+        maxRecordCount = bucketCount;
         consumedSize = 0;
-
         buckets = new LinkedList<>();
         initBucketList();
     }
@@ -116,7 +119,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
             }
 
             if (currentBucket.isUsed() || !currentBucket.tryPushRecord(record)) {
-                Bucket newBucket = new Bucket(maxBucketSize);
+                Bucket newBucket = new Bucket(maxBucketSize, maxRecordCount);
                 buckets.add(newBucket);
                 currentBucket = newBucket;
                 currentBucket.tryPushRecord(record);
@@ -140,13 +143,13 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public LogBlock getRecordBlock(long blockSize) {
+    public LogBlock getRecordBlock(long blockSize, int batchCount) {
         LogBlock logBlock = null;
 
         synchronized (buckets) {
             if (!buckets.isEmpty()) {
                 if (maxBucketSize != blockSize) {
-                    resize(blockSize);
+                    resize(blockSize, batchCount);
                 }
 
                 for (Bucket bucket : buckets) {
@@ -168,10 +171,10 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
         synchronized (buckets) {
             LOG.trace("Removing log group by id: {}", id);
 
+            boolean isFound = false;
             if (!buckets.isEmpty()) {
-                boolean isFound = false;
-                Iterator<Bucket> it = buckets.iterator();
 
+                Iterator<Bucket> it = buckets.iterator();
                 while (it.hasNext()) {
                     Bucket bucket = it.next();
                     if (bucket.getId() == id && bucket.isUsed()) {
@@ -184,10 +187,10 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
                         break;
                     }
                 }
+            }
 
-                if (!isFound) {
-                    LOG.warn("Failed to remove log group: unknown id {}, records: {}", id);
-                }
+            if (!isFound) {
+                LOG.warn("Failed to remove log group: unknown id {}, records: {}", id);
             }
         }
     }
@@ -219,7 +222,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
                 }
 
                 LOG.info("{} log records was forcibly removed", (currentRecordCount - recordCount));
-                resize(maxBucketSize);
+                resize(maxBucketSize, maxRecordCount);
             }
         }
     }
@@ -228,28 +231,26 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
     public void notifyUploadFailed(int id) {
         LOG.warn("Failed to upload log group with id {}. Try to send them later", id);
 
-        Iterator<Bucket> it = buckets.iterator();
-
-        while (it.hasNext()) {
-            Bucket bucket = it.next();
-
-            if (bucket.getId() == id && bucket.isUsed) {
-                bucket.setUsage(false);
-                break;
+        synchronized (buckets) {
+            for (Bucket bucket : buckets) {
+                if (bucket.getId() == id && bucket.used) {
+                    bucket.setUsage(false);
+                    break;
+                }
             }
         }
 
-        resize(maxBucketSize);
+        resize(maxBucketSize, maxRecordCount);
     }
 
-    private void resize(long newBucketSize) {
+    private void resize(long newBucketSize, int newBatchCount) {
         LOG.info("Resizing storage. CurBlockSize: {}, newBlockSize: {}", maxBucketSize, newBucketSize);
 
         synchronized (buckets) {
             Iterator<Bucket> bucketIt = buckets.iterator();
 
             List<Bucket> resizedBuckets = new LinkedList<>();
-            Bucket resizedBucket = new Bucket(newBucketSize);
+            Bucket resizedBucket = new Bucket(newBucketSize, newBatchCount);
 
             while (bucketIt.hasNext()) {
                 Bucket bucket = bucketIt.next();
@@ -261,7 +262,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
                         boolean isPushed = resizedBucket.tryPushRecord(record);
                         if (!isPushed) {
                             resizedBuckets.add(resizedBucket);
-                            resizedBucket = new Bucket(newBucketSize);
+                            resizedBucket = new Bucket(newBucketSize, newBatchCount);
                             // FIXME: Bucket max size may be less than record
                             // size
                             resizedBucket.tryPushRecord(record);
@@ -284,7 +285,7 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
     }
 
     private void initBucketList() {
-        currentBucket = new Bucket(maxBucketSize);
+        currentBucket = new Bucket(maxBucketSize, maxRecordCount);
         buckets.add(currentBucket);
     }
 

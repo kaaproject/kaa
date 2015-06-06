@@ -50,9 +50,7 @@ public class DefaultLogCollector extends AbstractLogCollector {
                     LOG.warn("Can't serialize log record {}", record);
                 }
 
-                if (!isDeliveryTimeout()) {
-                    uploadIfNeeded();
-                }
+                uploadIfNeeded();
             }
         });
     }
