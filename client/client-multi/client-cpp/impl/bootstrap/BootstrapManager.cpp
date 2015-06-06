@@ -65,7 +65,7 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
     if (lastServerIt != lastOperationsServers_.end() && serverIt != operationServers_.end()) {
         OperationsServers::iterator nextOperationIterator = (lastServerIt->second)+1;
         if (nextOperationIterator != serverIt->second.end()) {
-            KAA_LOG_INFO(boost::format("New server [0x%X] will be user for %2%")
+            KAA_LOG_INFO(boost::format("New server [%1%] will be user for %2%")
                                             % (*nextOperationIterator)->getAccessPointId()
                                             % LoggingUtils::TransportProtocolIdToString(protocolId));
             lastOperationsServers_[protocolId] = nextOperationIterator;

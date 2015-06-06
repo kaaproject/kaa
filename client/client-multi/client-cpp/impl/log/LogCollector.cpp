@@ -34,7 +34,9 @@
 namespace kaa {
 
 LogCollector::LogCollector(IKaaChannelManagerPtr manager)
-    : transport_(nullptr), channelManager_(manager), timeoutAccessPointId_(0)
+    : transport_(nullptr), channelManager_(manager), timeoutAccessPointId_(0),
+      logUploadCheckTimer_("LogCollector logUploadCheckTimer"), uploadTimer_("LogCollector uploadTimer"),
+      timeoutTimer_("LogCollector timeoutTimer")
 {
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
     storage_.reset(new SQLiteDBLogStorage());
@@ -71,6 +73,8 @@ void LogCollector::processTimeout()
     }
 
     timeouts_.clear();
+
+    processLogUploadDecision(uploadStrategy_->isUploadNeeded(storage_->getStatus()));
 }
 
 void LogCollector::addLogRecord(const KaaUserLogRecord& record)

@@ -32,12 +32,14 @@ template<class Signature, class Function = std::function<Signature>>
 class KaaTimer {
     typedef std::chrono::system_clock TimerClock;
 public:
-    KaaTimer() : isThreadRun_(true), isTimerRun_(false), timerThread_([&] { run(); })
+    KaaTimer(const std::string& timerName) :
+        timerName_(timerName), isThreadRun_(true), isTimerRun_(false), timerThread_([&] { run(); })
     {
 
     }
     ~KaaTimer()
     {
+        KAA_LOG_TRACE(boost::format("Timer[%1%] destroying ...") % timerName_);
         if (timerThread_.joinable()) {
             KAA_MUTEX_LOCKING("timerGuard_");
             KAA_MUTEX_UNIQUE_DECLARE(timerLock, timerGuard_);
@@ -56,6 +58,9 @@ public:
 
     void start(std::size_t seconds, const Function& callback)
     {
+
+        KAA_LOG_TRACE(boost::format("Timer[%1%] scheduling for %2% sec ...") % timerName_ % seconds );
+
         KAA_MUTEX_LOCKING("timerGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(timerLock, timerGuard_);
         KAA_MUTEX_LOCKED("timerGuard_");
@@ -70,6 +75,8 @@ public:
 
     void stop()
     {
+        KAA_LOG_TRACE(boost::format("Timer[%1%] stopping ...") % timerName_);
+
         KAA_MUTEX_LOCKING("timerGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(timerLock, timerGuard_);
         KAA_MUTEX_LOCKED("timerGuard_");
@@ -83,6 +90,7 @@ public:
 private:
     void run()
     {
+        KAA_LOG_TRACE(boost::format("Timer[%1%] starting thread ...") % timerName_);
         KAA_MUTEX_LOCKING("timerGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(timerLock, timerGuard_);
         KAA_MUTEX_LOCKED("timerGuard_");
@@ -92,6 +100,7 @@ private:
                 auto now = TimerClock::now();
                 if (now >= endTS_) {
                     isTimerRun_ = false;
+                    KAA_LOG_TRACE(boost::format("Timer[%1%] executing callback ...") % timerName_);
 
                     KAA_MUTEX_UNLOCKING("timerGuard_");
                     KAA_UNLOCK(timerLock);
@@ -116,6 +125,9 @@ private:
     }
 
 private:
+
+    const std::string timerName_;
+
     bool isThreadRun_;
     bool isTimerRun_;
 
