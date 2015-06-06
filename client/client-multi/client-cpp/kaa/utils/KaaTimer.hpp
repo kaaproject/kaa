@@ -91,11 +91,13 @@ private:
     void run()
     {
         KAA_LOG_TRACE(boost::format("Timer[%1%] starting thread ...") % timerName_);
-        KAA_MUTEX_LOCKING("timerGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(timerLock, timerGuard_);
-        KAA_MUTEX_LOCKED("timerGuard_");
 
         while (isThreadRun_) {
+
+            KAA_MUTEX_LOCKING("timerGuard_");
+            KAA_MUTEX_UNIQUE_DECLARE(timerLock, timerGuard_);
+            KAA_MUTEX_LOCKED("timerGuard_");
+
             if (isTimerRun_) {
                 auto now = TimerClock::now();
                 if (now >= endTS_) {

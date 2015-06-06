@@ -39,9 +39,9 @@
 namespace kaa {
 
 #if KAA_LOG_LEVEL > KAA_LOG_LEVEL_NONE
-void kaa_log_message(const LoggerPtr logger, LogLevel level, const char *message, const char *file, size_t lineno);
-void kaa_log_message(const LoggerPtr logger, LogLevel level, const std::string &message, const char *file, size_t lineno);
-void kaa_log_message(const LoggerPtr logger, LogLevel level, const boost::format& message, const char *file, size_t lineno);
+void kaa_log_message(const ILogger & logger, LogLevel level, const char *message, const char *file, size_t lineno);
+void kaa_log_message(const ILogger & logger, LogLevel level, const std::string &message, const char *file, size_t lineno);
+void kaa_log_message(const ILogger & logger, LogLevel level, const boost::format& message, const char *file, size_t lineno);
 
 #endif
 

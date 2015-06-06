@@ -26,22 +26,22 @@
 
 namespace kaa {
 
-static std::unique_ptr<ILogger> getDefaultLogger() {
-    std::unique_ptr<ILogger> logger(new DefaultLogger());
-    return logger;
+static LoggerPtr getDefaultLogger() {
+    return LoggerPtr(new DefaultLogger());
 }
 
-std::unique_ptr<ILogger> LoggerFactory::logger_ = getDefaultLogger();
+LoggerPtr LoggerFactory::logger_ = getDefaultLogger();
 
-const LoggerPtr LoggerFactory::getLogger() {
+const ILogger & LoggerFactory::getLogger() {
     if (logger_.get() == nullptr) {
         logger_ = getDefaultLogger();
     }
-    return logger_.get();
+    return *logger_;
+
 }
 
-void LoggerFactory::initLogger(std::unique_ptr<ILogger> logger) {
-    logger_.reset(logger.get());
+void LoggerFactory::initLogger(LoggerPtr logger) {
+    logger_ = logger;
 }
 
 }  // namespace kaa
