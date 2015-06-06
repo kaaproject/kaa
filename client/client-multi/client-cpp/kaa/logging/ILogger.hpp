@@ -35,7 +35,7 @@ public:
     virtual void log(LogLevel level, const char *message) const = 0;
 };
 
-typedef std::shared_ptr<ILogger> LoggerPtr;
+typedef ILogger* LoggerPtr;
 
 }  // namespace kaa
 

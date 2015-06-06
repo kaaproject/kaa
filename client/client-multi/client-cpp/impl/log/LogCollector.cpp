@@ -74,6 +74,10 @@ void LogCollector::processTimeout()
 
     timeouts_.clear();
 
+    KAA_MUTEX_UNLOCKING("timeoutsGuard_");
+    KAA_UNLOCK(timeoutsLock);
+    KAA_MUTEX_UNLOCKED("timeoutsGuard_");
+
     processLogUploadDecision(uploadStrategy_->isUploadNeeded(storage_->getStatus()));
 }
 

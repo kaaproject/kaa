@@ -27,10 +27,10 @@ namespace kaa {
 
 class LoggerFactory {
 public:
-    static void             initLogger(LoggerPtr logger);
-    static const ILogger &  getLogger();
+    static void             initLogger(std::unique_ptr<ILogger> logger);
+    static const LoggerPtr getLogger();
 private:
-    static LoggerPtr    logger_;
+    static std::unique_ptr<ILogger> logger_;
 };
 
 }  // namespace kaa

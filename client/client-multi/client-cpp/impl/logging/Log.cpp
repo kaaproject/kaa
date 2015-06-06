@@ -24,18 +24,20 @@ namespace kaa {
 
 static const char * const KAA_LOG_FMT = "[%1%:%2%]:\t%3%";
 
-void kaa_log_message(const ILogger & logger, LogLevel level, const char *message, const char *file, size_t lineno)
+void kaa_log_message(const LoggerPtr logger, LogLevel level, const char *message, const char *file, size_t lineno)
 {
     boost::format logline = boost::format(KAA_LOG_FMT) % file % lineno % message;
-    logger.log(level, logline.str().c_str());
+    if (logger) {
+        logger->log(level, logline.str().c_str());
+    }
 }
 
-void kaa_log_message(const ILogger & logger, LogLevel level, const std::string &message, const char *file, size_t lineno)
+void kaa_log_message(const LoggerPtr logger, LogLevel level, const std::string &message, const char *file, size_t lineno)
 {
     kaa_log_message(logger, level, message.c_str(), file, lineno);
 }
 
-void kaa_log_message(const ILogger & logger, LogLevel level, const boost::format& message, const char *file, size_t lineno)
+void kaa_log_message(const LoggerPtr logger, LogLevel level, const boost::format& message, const char *file, size_t lineno)
 {
     kaa_log_message(logger, level, message.str().c_str(), file, lineno);
 }
