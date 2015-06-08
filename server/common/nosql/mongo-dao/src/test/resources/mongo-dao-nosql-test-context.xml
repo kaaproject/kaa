@@ -45,24 +45,18 @@
     
     <!-- End of mandatory beans declaration -->
 
-    <mongo:mongo id="mongoClient" replica-set="#{mongo[servers]}" write-concern="#{mongo[write_concern]}">
-        <mongo:options
+    <mongo:mongo-client id="mongoClient" replica-set="#{mongo[servers]}">
+        <mongo:client-options
                 connections-per-host="#{mongo[connections_per_host]}"
                 threads-allowed-to-block-for-connection-multiplier="5"
                 connect-timeout="#{mongo[connection_timeout]}"
                 max-wait-time="#{mongo[max_wait_time]}"
-                auto-connect-retry="#{mongo[auto_connect_retry]}"
                 socket-keep-alive="#{mongo[socket_keepalive]}"
                 socket-timeout="#{mongo[socket_timeout]}"
-                slave-ok="#{mongo[slaveOk]}"
-                write-number="1"
-                write-timeout="0"
-                write-fsync="true"/>
-    </mongo:mongo>
+                write-concern="#{mongo[write_concern]}"/>
+    </mongo:mongo-client>
 
     <mongo:db-factory dbname="#{mongo[db_name]}" mongo-ref="mongoClient"/>
-
-    <mongo:auditing />
 
     <bean id="mongoTypeMapper" class="org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper">
         <constructor-arg name="typeKey">

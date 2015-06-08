@@ -32,6 +32,9 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.ApplicationActorStatusResponse;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestState;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.NotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicSubscriptionMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
@@ -174,6 +177,8 @@ public class ApplicationActor extends UntypedActor {
             processEndpointUserActionMessage((EndpointUserActionMessage) message, true);
         } else if (message instanceof EndpointUserActionRouteMessage) {
             processEndpointUserActionMessage(((EndpointUserActionRouteMessage) message).getMessage(), false);
+        } else if (message instanceof StatusRequestMessage) {
+            processStatusRequest((StatusRequestMessage) message);
         }
     }
 
@@ -204,6 +209,12 @@ public class ApplicationActor extends UntypedActor {
     private void processThriftNotificationMessage(ActorRef actor, ThriftNotificationMessage message) {
         LOG.debug("[{}] Processing thrift notification message {}", applicationToken, message);
         actor.tell(message, self());
+    }
+
+    private void processStatusRequest(StatusRequestMessage message) {
+        LOG.debug("[{}] Processing status request", message.getId());
+        int endpointCount = endpointSessions.size();
+        context().parent().tell(new ApplicationActorStatusResponse(message.getId(), endpointCount), ActorRef.noSender());
     }
 
     /**
@@ -392,9 +403,8 @@ public class ApplicationActor extends UntypedActor {
             String endpointActorId = uuid.toString().replaceAll("-", "");
             LOG.debug("[{}] Creating actor with endpointKey: {}", applicationToken, endpointActorId);
             endpointMetaData = new ActorMetaData(context().actorOf(
-                    Props.create(
-                            new EndpointActor.ActorCreator(context, endpointActorId, message.getAppToken(), message
-                                    .getKey())).withDispatcher(ENDPOINT_DISPATCHER_NAME), endpointActorId), endpointActorId);
+                    Props.create(new EndpointActor.ActorCreator(context, endpointActorId, message.getAppToken(), message.getKey()))
+                            .withDispatcher(ENDPOINT_DISPATCHER_NAME), endpointActorId), endpointActorId);
             endpointSessions.put(message.getKey(), endpointMetaData);
             endpointActorMap.put(endpointActorId, message.getKey());
             context().watch(endpointMetaData.actorRef);
@@ -465,7 +475,7 @@ public class ApplicationActor extends UntypedActor {
             LOG.warn("remove commands for remote actors are not supported yet!");
         }
     }
-    
+
     private ActorRef getOrCreateLogActor() {
         return getOrCreateLogActor(null);
     }
@@ -484,13 +494,13 @@ public class ApplicationActor extends UntypedActor {
     private ActorRef getOrCreateUserVerifierActor() {
         return getOrCreateUserVerifierActor(null);
     }
-    
+
     private ActorRef getOrCreateUserVerifierActor(String name) {
         ActorRef userVerifierActor = userVerifierSessions.get(name);
         if (userVerifierActor == null) {
             userVerifierActor = context().actorOf(
-                    Props.create(new ApplicationUserVerifierActor.ActorCreator(context, applicationToken))
-                            .withDispatcher(VERIFIER_DISPATCHER_NAME));
+                    Props.create(new ApplicationUserVerifierActor.ActorCreator(context, applicationToken)).withDispatcher(
+                            VERIFIER_DISPATCHER_NAME));
             context().watch(userVerifierActor);
             userVerifierSessions.put(userVerifierActor.path().name(), userVerifierActor);
         }

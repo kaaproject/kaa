@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kaaproject.kaa.server.operations.service.akka;
 
-/**
- * Provides akka http handler
- */
-package org.kaaproject.kaa.server.operations.service.http.handler;
+public class AkkaServiceStatus {
+
+    private final long ts;
+    private final int endpointCount;
+
+    public AkkaServiceStatus(long ts, int endpointCount) {
+        super();
+        this.ts = ts;
+        this.endpointCount = endpointCount;
+    }
+    
+    public long getTs() {
+        return ts;
+    }
+
+    public int getEndpointCount() {
+        return endpointCount;
+    }    
+}

@@ -105,6 +105,8 @@ public class KaaTcpServerIT {
         AvroTcpConfig config = new AvroTcpConfig();
         config.setBindInterface(TEST_HOST);
         config.setBindPort(TEST_PORT);
+        config.setPublicInterface(TEST_HOST);
+        config.setPublicPort(TEST_PORT);
 
         AvroByteArrayConverter<AvroTcpConfig> converter = new AvroByteArrayConverter<AvroTcpConfig>(AvroTcpConfig.class);
 

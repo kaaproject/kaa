@@ -101,6 +101,10 @@ endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL}")
 
+if (NOT KAA_WITHOUT_LOGGING AND KAA_WITH_SQLITE_LOG_STORAGE)
+    set(SQLITE_LOG_STORAGE_ENABLED 1)
+endif()
+
 # Disables Kaa library modules.
 message("==================================")
 message("KAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL}")
@@ -149,6 +153,14 @@ if ( NOT KAA_WITHOUT_LOGGING )
             impl/log/MemoryLogStorage.cpp
             impl/log/DefaultLogUploadStrategy.cpp
     )
+
+    if (KAA_WITH_SQLITE_LOG_STORAGE)
+        message("SQLITE_LOG_STORAGE ENABLED")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_SQLITE_LOG_STORAGE")
+        set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
+            impl/log/SQLiteDBLogStorage.cpp
+        )
+    endif() 
 endif()
 
 if ( NOT KAA_WITHOUT_OPERATION_TCP_CHANNEL )
@@ -190,7 +202,7 @@ if ( NOT KAA_WITHOUT_CONNECTIVITY_CHECKER )
             impl/channel/connectivity/IPConnectivityChecker.cpp
     )
 endif()
-message("==================================")
+
 if ( NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL OR NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL OR NOT KAA_WITHOUT_BOOTSTRAP_HTTP_CHANNEL )
     set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
             impl/http/HttpUrl.cpp
@@ -203,14 +215,22 @@ if ( NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL OR NOT KAA_WITHOUT_OPERATION_LONG_PO
 endif()
 
 if ( NOT KAA_WITHOUT_THREADSAFE OR NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL OR NOT KAA_WITHOUT_OPERATION_TCP_CHANNEL)
+    message("KAA_THREADSAFE ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_THREADSAFE")
 endif()
+message("==================================")
 
-find_package (Boost 1.55 REQUIRED COMPONENTS log system)
-
+#
+# Find third-party dependencies
+#
+find_package (Boost 1.54 REQUIRED COMPONENTS log system)
 find_package (Avro REQUIRED)
-
 find_package (Botan REQUIRED)
+
+
+if (SQLITE_LOG_STORAGE_ENABLED)
+    find_package (Sqlite3 REQUIRED)
+endif()
 
 if (WIN32 AND NOT CYGWIN AND NOT MSYS)
     add_definitions (/EHs)
@@ -230,6 +250,10 @@ include_directories (${CMAKE_CURRENT_SOURCE_DIR}
                      ${Boost_INCLUDE_DIRS}
                      ${AVRO_INCLUDE_DIRS} 
                      ${BOTAN_INCLUDE_DIR})
+                     
+if (SQLITE_LOG_STORAGE_ENABLED)
+    include_directories (${SQLITE3_INCLUDE_DIR})
+endif()
 
 set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/ClientStatus.cpp
@@ -254,24 +278,27 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/kaatcp/KaaTcpResponseProcessor.cpp
         impl/channel/TransportProtocolIdConstants.cpp
         impl/channel/IPTransportInfo.cpp
+        impl/failover/DefaultFailoverStrategy.cpp
     )
 
 # Builds Kaa libraries.
 add_library(kaacpp_o OBJECT ${KAA_SOURCE_FILES})
 add_library (kaacpp SHARED ./kaa $<TARGET_OBJECTS:kaacpp_o>)
 
+target_link_libraries(kaacpp
+                     ${BOTAN_LIBRARY}
+                     ${AVRO_LIBRARIES}
+                     ${Boost_LIBRARIES}
+    )
+
+if (SQLITE_LOG_STORAGE_ENABLED)
+    target_link_libraries(kaacpp ${SQLITE3_LIBRARY})
+endif()
+
 if (WIN32)
-    target_link_libraries(kaacpp dbghelp
-        ${BOTAN_LIBRARY}
-        ${AVRO_LIBRARIES}
-        ${Boost_LIBRARIES}
-    )
+    target_link_libraries(kaacpp dbghelp)
 else (WIN32)
-    target_link_libraries(kaacpp pthread
-        ${BOTAN_LIBRARY}
-        ${AVRO_LIBRARIES}
-        ${Boost_LIBRARIES}
-    )
+    target_link_libraries(kaacpp pthread)
 endif (WIN32)
 
 add_library (kaacpp_s STATIC ./kaa $<TARGET_OBJECTS:kaacpp_o>)

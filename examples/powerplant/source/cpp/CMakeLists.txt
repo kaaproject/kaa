@@ -29,6 +29,10 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -L/usr/local/lib -std=gnu++11 -stdlib=libc++")
 endif()
 
+add_definitions(-DPOWER_PLANT_STARTUP_WORKAROUND=${POWER_PLANT_STARTUP_WORKAROUND})
+add_definitions(-DPOWER_PLANT_RANDOMIZER=${POWER_PLANT_RANDOMIZER})
+add_definitions(-DPOWER_PLANT_DEBUG_LOGGING=${POWER_PLANT_DEBUG_LOGGING})
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
                     ${CMAKE_CURRENT_SOURCE_DIR}/libs/kaa
                    )
@@ -47,11 +51,15 @@ set (DEMO_SOURCE_FILES
 add_executable(${APP_NAME} ${DEMO_SOURCE_FILES})
 
 if (CMAKE_COMPILER_IS_GNUCXX)
-    target_link_libraries(${APP_NAME} kaacpp_s botan-1.10 boost_log boost_system avrocpp pthread mraa)
+    target_link_libraries(${APP_NAME} kaacpp_s botan-1.10 boost_log boost_system avrocpp pthread)
 endif()
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    target_link_libraries(${APP_NAME} kaacpp_s botan-1.10 boost_log-mt boost_system-mt avrocpp mraa)
+    target_link_libraries(${APP_NAME} kaacpp_s botan-1.10 boost_log-mt boost_system-mt avrocpp)
+endif()
+
+if (NOT POWER_PLANT_RANDOMIZER)
+    target_link_libraries(${APP_NAME} mraa)
 endif()
 
 install (TARGETS ${APP_NAME} DESTINATION /usr/local/sbin/)

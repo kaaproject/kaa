@@ -321,6 +321,69 @@ BOOST_AUTO_TEST_CASE(TimeoutLasyDetectionTest)
     BOOST_CHECK_EQUAL(logStorage->onNotifyUploadFailed_, 1);
 }
 
+class RetryLogUploadStrategy : public MockLogUploadStrategy {
+public:
+    virtual void onFailure(ILogFailoverCommand& controller, LogDeliveryErrorCode code)
+    {
+        MockLogUploadStrategy::onFailure(controller, code);
+        controller.retryLogUpload(retryTimeout_);
+    }
+};
+
+BOOST_AUTO_TEST_CASE(RetryUploadTest)
+{
+    const size_t BATCH_SIZE = 100500;
+    const size_t RETRY_TIMEOUT = 3;
+
+
+    MockChannelManager channelManager;
+    LogCollector logCollector(&channelManager);
+    CustomLoggingTransport transport(channelManager, logCollector);
+
+    logCollector.setTransport(&transport);
+
+    ILogStorage::RecordBlock block{ createSerializedLogRecord(),
+                                    createSerializedLogRecord(),
+                                    createSerializedLogRecord(),
+                                    createSerializedLogRecord()
+                                  };
+
+    ILogStorage::RecordPack recordPack(1, block);
+
+    std::shared_ptr<MockLogStorage> logStorage(new MockLogStorage);
+    logStorage->recordPack_ = recordPack;
+
+    std::shared_ptr<RetryLogUploadStrategy> uploadStrategy(new RetryLogUploadStrategy);
+    uploadStrategy->batchSize_ = BATCH_SIZE;
+    uploadStrategy->decision_ = LogUploadStrategyDecision::NOOP;
+    uploadStrategy->retryTimeout_ = RETRY_TIMEOUT;
+
+    logCollector.setStorage(logStorage);
+    logCollector.setUploadStrategy(uploadStrategy);
+
+    auto request = logCollector.getLogUploadRequest();
+
+    LogSyncResponse response;
+    LogDeliveryStatus deliveryStatus;
+    deliveryStatus.requestId = request->requestId;
+    deliveryStatus.result = SyncResponseResultType::FAILURE;
+    deliveryStatus.errorCode.set_LogDeliveryErrorCode(LogDeliveryErrorCode::REMOTE_INTERNAL_ERROR);
+    response.deliveryStatuses.set_array({ deliveryStatus });
+
+    BOOST_CHECK_EQUAL(transport.onSync_, 0);
+
+    logCollector.onLogUploadResponse(response);
+
+    BOOST_CHECK_EQUAL(logStorage->onNotifyUploadFailed_, 1);
+    BOOST_CHECK_EQUAL(logStorage->onRemoveRecordBlock_, 0);
+    BOOST_CHECK_EQUAL(uploadStrategy->onIsUploadNeeded_, 1);
+    BOOST_CHECK_EQUAL(uploadStrategy->onFailure_, 1);
+
+    std::this_thread::sleep_for(std::chrono::seconds(RETRY_TIMEOUT));
+
+    BOOST_CHECK_EQUAL(transport.onSync_, 1);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 }

@@ -122,6 +122,8 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
             startBox();
             provisionBox();
             schedulePackagesInstall();
+            LOG.info("Executing Cassandra cql script...");
+            scheduleSudoSshCommand("cqlsh -f "+CASSANDRA_INIT_SCRIPT);
             scheduleServicesStart();
             LOG.info("Executing remote ssh commands...");
             executeScheduledSshCommands();
@@ -137,6 +139,8 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
             exportBox();
         } catch (Exception e) {
             LOG.error("Failed to build sandbox image!", e);
+            dumpLogs();
+            LOG.error("Look for sandbox build logs at: " + LOG_DUMP_LOCATION);
             throw e;
         } finally {
             if (boxLoaded()) {
@@ -378,7 +382,7 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
         String sandboxSplashFileSource = AbstractDemoBuilder.updateCredentialsInfo(sandboxSplashFileTemplate);
 
         sandboxSplashFileSource = sandboxSplashFileSource.replaceAll(WEB_ADMIN_PORT_VAR, DEFAULT_WEB_ADMIN_PORT+"")
-                                                         .replaceAll(SSH_FORWARD_PORT_VAR, DEFAULT_SSH_FORWARD_PORT+"");
+                                                         .replaceAll(SSH_FORWARD_PORT_VAR, DEFAULT_SSH_FORWARD_PORT + "");
 
         File sandboxSplashFile = new File(distroPath, SANDBOX_SPLASH_PY);
         fos = new FileOutputStream(sandboxSplashFile);
@@ -425,7 +429,7 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
             throw new RuntimeException("Demo projects count mismatch!");
         }
         for (Project sandboxProject : sandboxProjects) {
-            if (sandboxProject.getDestBinaryFile() != null && 
+            if (sandboxProject.getDestBinaryFile() != null &&
                     sandboxProject.getDestBinaryFile().length()>0) {
                 LOG.info("[{}][{}] Building Demo Project...", sandboxProject.getPlatform(), sandboxProject.getName());
                 String output = sandboxClient.buildProjectBinary(sandboxProject.getId());
@@ -520,6 +524,17 @@ public abstract class AbstractSandboxBuilder implements SandboxBuilder, SandboxC
         Scp scp = createScp();
         scp.setLocalFile(file);
         scp.setRemoteTodir(SSH_USERNAME+"@"+DEFAULT_HOST+":"+to);
+        scp.execute();
+    }
+
+    private void dumpLogs(){
+        File dumpedLogsFolder  = new File(LOG_DUMP_LOCATION);
+        if(!dumpedLogsFolder.exists()){
+            dumpedLogsFolder.mkdirs();
+        }
+        Scp scp = createScp();
+        scp.setLocalTodir(LOG_DUMP_LOCATION);
+        scp.setFile(SSH_USERNAME+"@"+sshForwardPort+":/var/log/kaa/*.log");
         scp.execute();
     }
 

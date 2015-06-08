@@ -53,7 +53,7 @@ void NotificationManager::topicsListUpdated(const Topics& topicList)
     KAA_LOG_INFO(boost::format("New list of available topics received (topic_count=%1%)") % topicList.size());
 
     KAA_MUTEX_LOCKING("topicsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_)
+    KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_);
     KAA_MUTEX_LOCKED("topicsGuard_");
 
     std::unordered_map<std::string/*Topic ID*/, Topic> newTopics;

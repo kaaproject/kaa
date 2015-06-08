@@ -42,4 +42,14 @@
             </excludes>
         </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>${project.basedir}/../thirdparty/android/couchbase-lite-1.0.4-android_community.zip</source>
+            <outputDirectory>powerplantandroid</outputDirectory>
+        </file>
+        <file>
+            <source>${project.basedir}/../thirdparty/android/hellocharts-library.jar</source>
+            <outputDirectory>powerplantandroid/PowerPlantAndroid/libs</outputDirectory>
+        </file>
+    </files>
 </assembly>

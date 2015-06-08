@@ -23,26 +23,16 @@
 #include "kaa/log/DefaultLogUploadStrategy.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 
-#include "headers/channel/MockChannelManager.hpp"
+#include "headers/log/MockLogFailoverCommand.hpp"
 #include "headers/log/MockLogStorageStatus.hpp"
 
 namespace kaa {
 
 BOOST_AUTO_TEST_SUITE(DefaultLogUploadStrategyTestSuite)
 
-BOOST_AUTO_TEST_CASE(BadInitializationParamsTest)
-{
-    BOOST_CHECK_THROW(
-            {
-                IKaaChannelManagerPtr channelManager = NULL;
-                DefaultLogUploadStrategy strategy(channelManager);
-            }, KaaException);
-}
-
 BOOST_AUTO_TEST_CASE(GetSetBatchSizeTest)
 {
-    MockChannelManager channelManager;
-    DefaultLogUploadStrategy strategy(&channelManager);
+    DefaultLogUploadStrategy strategy;
 
     BOOST_CHECK_EQUAL(strategy.getBatchSize(), DefaultLogUploadStrategy::DEFAULT_BATCH_SIZE);
 
@@ -54,8 +44,8 @@ BOOST_AUTO_TEST_CASE(GetSetBatchSizeTest)
 
 BOOST_AUTO_TEST_CASE(GetSetUplaodTimeoutTest)
 {
-    MockChannelManager channelManager;
-    DefaultLogUploadStrategy strategy(&channelManager);
+    MockLogFailoverCommand failoverCommand;
+    DefaultLogUploadStrategy strategy;
 
     BOOST_CHECK_EQUAL(strategy.getTimeout(), DefaultLogUploadStrategy::DEFAULT_UPLOAD_TIMEOUT);
 
@@ -74,8 +64,8 @@ BOOST_AUTO_TEST_CASE(UploadByOccupiedSizeTest)
     logStorageStatus.consumedVolume_ = THRESHOLD_SIZE - 1;
     logStorageStatus.recordsCount_ = THRESHOLD_COUNT - 1;
 
-    MockChannelManager channelManager;
-    DefaultLogUploadStrategy strategy(&channelManager);
+    MockLogFailoverCommand failoverCommand;
+    DefaultLogUploadStrategy strategy;
 
     strategy.setVolumeThreshold(THRESHOLD_SIZE);
     strategy.setCountThreshold(THRESHOLD_COUNT);
@@ -98,8 +88,8 @@ BOOST_AUTO_TEST_CASE(UploadByRecordCountTest)
     logStorageStatus.consumedVolume_ = THRESHOLD_SIZE - 1;
     logStorageStatus.recordsCount_ = THRESHOLD_COUNT - 1;
 
-    MockChannelManager channelManager;
-    DefaultLogUploadStrategy strategy(&channelManager);
+    MockLogFailoverCommand failoverCommand;
+    DefaultLogUploadStrategy strategy;
 
     strategy.setVolumeThreshold(THRESHOLD_SIZE);
     strategy.setCountThreshold(THRESHOLD_COUNT);
@@ -115,8 +105,8 @@ BOOST_AUTO_TEST_CASE(UploadByRecordCountTest)
 
 BOOST_AUTO_TEST_CASE(OnFailureTest)
 {
-    MockChannelManager channelManager;
-    DefaultLogUploadStrategy strategy(&channelManager);
+    MockLogFailoverCommand failoverCommand;
+    DefaultLogUploadStrategy strategy;
 
     const size_t RETRY_PERIOD = 2;
     const std::size_t THRESHOLD_SIZE = 35;
@@ -132,8 +122,11 @@ BOOST_AUTO_TEST_CASE(OnFailureTest)
 
     BOOST_CHECK(strategy.isUploadNeeded(logStorageStatus) == LogUploadStrategyDecision::UPLOAD);
 
-    strategy.onFailure(LogDeliveryErrorCode::REMOTE_CONNECTION_ERROR);
+    strategy.onFailure(failoverCommand, LogDeliveryErrorCode::REMOTE_CONNECTION_ERROR);
 
+    BOOST_CHECK(failoverCommand.onRetryLogUploadWithDelay_ == 1);
+    BOOST_CHECK(failoverCommand.onRetryLogUpload_ == 0);
+    BOOST_CHECK(failoverCommand.onSwitchAccessPoint_ == 0);
     BOOST_CHECK(strategy.isUploadNeeded(logStorageStatus) == LogUploadStrategyDecision::NOOP);
 
     std::this_thread::sleep_for(std::chrono::seconds(RETRY_PERIOD / 2));
@@ -145,13 +138,14 @@ BOOST_AUTO_TEST_CASE(OnFailureTest)
 
 BOOST_AUTO_TEST_CASE(OnTimeoutTest)
 {
-    MockChannelManager channelManager;
-    DefaultLogUploadStrategy strategy(&channelManager);
+    MockLogFailoverCommand failoverCommand;
+    DefaultLogUploadStrategy strategy;
 
-    strategy.onTimeout();
+    strategy.onTimeout(failoverCommand);
 
-    BOOST_CHECK_EQUAL(channelManager.onGetChannelByTransportType_, 1);
-    BOOST_CHECK_EQUAL(channelManager.onServerFailed_, 1);
+    BOOST_CHECK(failoverCommand.onSwitchAccessPoint_ == 1);
+    BOOST_CHECK(failoverCommand.onRetryLogUploadWithDelay_ == 0);
+    BOOST_CHECK(failoverCommand.onRetryLogUpload_ == 0);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

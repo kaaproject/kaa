@@ -14,7 +14,8 @@
  "type": "record",
  "name": "LoadInfo",
  "fields": [
-     {"name": "loadIndex",  "type": "int"}
+     {"name": "endpointCount",  "type": "int"},
+     {"name": "loadAverage",  "type": "double"}
  ]
 },
 {

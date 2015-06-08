@@ -755,7 +755,7 @@ public class DefaultAkkaServiceTest {
     public void testRedirect() throws Exception {
         ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
         MessageEncoderDecoder crypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(), serverPair.getPublic());
-        akkaService.onRedirectionRule(new RedirectionRule("testDNS".hashCode(), 123, 1.0, 60000));
+        akkaService.onRedirectionRule(new RedirectionRule("testDNS".hashCode(), 123, 1.0, 0.0, 60000));
 
         Thread.sleep(1000);
 
@@ -787,7 +787,7 @@ public class DefaultAkkaServiceTest {
     public void testRedirectSessionRequest() throws Exception {
         ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
         MessageEncoderDecoder crypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(), serverPair.getPublic());
-        akkaService.onRedirectionRule(new RedirectionRule("testDNS".hashCode(), 123, 1.0, 60000));
+        akkaService.onRedirectionRule(new RedirectionRule("testDNS".hashCode(), 123, 0.0, 1.0, 60000));
 
         Thread.sleep(1000);
 
@@ -871,7 +871,7 @@ public class DefaultAkkaServiceTest {
     public void testRedirectExpire() throws Exception {
         ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
         MessageEncoderDecoder crypt = new MessageEncoderDecoder(clientPair.getPrivate(), clientPair.getPublic(), serverPair.getPublic());
-        akkaService.onRedirectionRule(new RedirectionRule("testDNS".hashCode(), 123, 1.0, 1000));
+        akkaService.onRedirectionRule(new RedirectionRule("testDNS".hashCode(), 123, 1.0, 1.0, 1000));
 
         Thread.sleep(2000);
 

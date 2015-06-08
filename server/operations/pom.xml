@@ -255,6 +255,11 @@
             <classifier>twitter</classifier>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+            <artifactId>mongo-dao</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -736,6 +741,18 @@
                     <artifactId>appender</artifactId>
                     <version>${project.version}</version>
                     <classifier>cassandra</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>couchbase</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.appenders.couchbase</groupId>
+                    <artifactId>appender</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>couchbase</classifier>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>

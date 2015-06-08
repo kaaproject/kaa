@@ -16,20 +16,24 @@
 
 package org.kaaproject.kaa.server.appenders.cassandra.appender;
 
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.avro.generic.GenericRecord;
+import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+
 import com.datastax.driver.core.ResultSet;
 import com.google.common.util.concurrent.ListenableFuture;
-import org.kaaproject.kaa.common.dto.logs.LogEventDto;
-
-import java.util.List;
-import java.util.concurrent.Future;
 
 public interface LogEventDao {
 
-    void createTable(String collectionName);
+    String createTable(String collectionName);
 
-    List<LogEventDto> save(List<LogEventDto> logEventDtoList, String collectionName);
+    List<CassandraLogEventDto> save(List<CassandraLogEventDto> logEventDtoList, String collectionName,
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter) throws IOException;
 
-    ListenableFuture<ResultSet> saveAsync(List<LogEventDto> logEventDtoList, String collectionName);
+    ListenableFuture<ResultSet> saveAsync(List<CassandraLogEventDto> logEventDtoList, String collectionName,
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter) throws IOException;
 
     void removeAll(String collectionName);
 

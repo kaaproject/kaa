@@ -33,11 +33,6 @@
       }
     },
     {
-      "name": "keySpace",
-      "displayName": "Keyspace name",
-      "type": "string"
-    },
-    {
       "displayName": "Authentication credentials",
       "namespace": "org.kaaproject.kaa.server.appenders.cassandra.config.gen",
       "name": "cassandraCredential",
@@ -65,6 +60,135 @@
         },
         "null"
       ]
+    },
+    {
+      "name": "keySpace",
+      "displayName": "Keyspace name",
+      "type": "string"
+    },
+    {
+      "name": "tableNamePattern",
+      "displayName": "Table name pattern",
+      "type": "string",
+      "by_default": "logs_$app_token_$config_hash"
+    },
+    {
+      "name": "columnMapping",
+      "displayName": "Column Mapping",
+      "minRowCount": 1,
+      "type": {
+        "type": "array",
+        "items": {
+          "namespace": "org.kaaproject.kaa.server.appenders.cassandra.config.gen",
+          "type": "record",
+          "name": "ColumnMappingElement",
+          "fields": [
+            {
+              "name": "type",
+              "displayName": "Type",
+              "weight": 0.2,
+              "by_default": "HEADER",
+              "type": {
+                "name": "ColumnMappingElementType",
+              	"type": "enum",
+          	  	"symbols": [
+            		"HEADER_FIELD",
+            		"EVENT_FIELD",
+            		"HEADER_JSON",
+            		"EVENT_JSON",
+            		"HEADER_BINARY",
+            		"EVENT_BINARY",
+            		"UUID"
+          	  	 ]
+          	  	}
+            },
+            {
+              "name": "value",
+              "displayName": "Value",
+              "weight": 0.2,
+              "by_default": "applicationToken",
+              "type": ["string", "null"]
+            },
+            {
+              "name": "columnName",
+              "displayName": "Name",
+              "weight": 0.2,
+              "by_default": "application_token",
+              "type": "string"
+            },
+            {
+              "name": "columnType",
+              "displayName": "Column Type",
+              "weight": 0.2,
+              "by_default": "BOOLEAN",
+              "type": {
+                "name":"ColumnType",
+              	"type":"enum",
+          	  	"symbols": [
+            		"BIGINT",
+            		"BLOB",
+            		"BOOLEAN",
+            		"DOUBLE",
+            		"FLOAT",
+            		"INT",
+            		"TEXT",
+            		"UUID"
+          	     ]
+          	  }
+            },
+            {
+              "name": "partitionKey",
+              "displayName": "Is part of partition key?",
+              "weight": 0.1,
+              "by_default": false,
+              "type": "boolean"
+            },
+            {
+              "name": "clusteringKey",
+              "displayName": "Is part of clustering key?",
+              "weight": 0.1,
+              "by_default": false,
+              "type": "boolean"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "clusteringMapping",
+      "displayName": "Clustering",
+      "minRowCount": 0,
+      "type": {
+        "type": "array",
+        "items": {
+          "namespace": "org.kaaproject.kaa.server.appenders.cassandra.config.gen",
+          "type": "record",
+          "name": "ClusteringElement",
+          "fields": [
+            {
+              "name": "columnName",
+              "displayName": "Name",
+              "weight": 0.2,
+              "by_default": "application_token",
+              "type": "string"
+            },
+            {
+              "name": "order",
+              "displayName": "Order",
+              "weight": 0.2,
+              "by_default": "DESC",
+              "type": {
+                "name":"OrderType",
+              	"type":"enum",
+          	  	"symbols": [
+            		"DESC",
+            		"ASC"
+          	     ]
+          	  }
+            }
+          ]
+        }
+      }
     },
     {
       "namespace": "org.kaaproject.kaa.server.appenders.cassandra.config.gen",
@@ -180,13 +304,16 @@
       ]
     },
     {
+      "name": "executorThreadPoolSize",
+      "displayName": "Executor thread pool size",
+      "by_default": 1,
+      "type": "int"
+    },
+    {
       "name": "callbackThreadPoolSize",
       "displayName": "Callback thread pool size",
       "by_default": 2,
-      "type": [
-        "int",
-        "null"
-      ]
+      "type": "int"
     },
     {
       "namespace": "org.kaaproject.kaa.server.appenders.cassandra.config.gen",

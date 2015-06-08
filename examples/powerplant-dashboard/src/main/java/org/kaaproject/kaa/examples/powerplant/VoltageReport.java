@@ -7,7 +7,7 @@ package org.kaaproject.kaa.examples.powerplant;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class VoltageReport extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"VoltageReport\",\"namespace\":\"org.kaaproject.kaa.examples.powerplant\",\"fields\":[{\"name\":\"timestamp\",\"type\":\"long\"},{\"name\":\"samples\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"VoltageSample\",\"fields\":[{\"name\":\"panelId\",\"type\":\"int\"},{\"name\":\"voltage\",\"type\":\"double\"}]}}}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"VoltageReport\",\"namespace\":\"org.kaaproject.kaa.examples.powerplant\",\"fields\":[{\"name\":\"timestamp\",\"type\":\"long\"},{\"name\":\"samples\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"VoltageSample\",\"fields\":[{\"name\":\"zoneId\",\"type\":\"int\"},{\"name\":\"panelId\",\"type\":\"int\"},{\"name\":\"voltage\",\"type\":\"double\"}]}}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private long timestamp;
    private java.util.List<org.kaaproject.kaa.examples.powerplant.VoltageSample> samples;

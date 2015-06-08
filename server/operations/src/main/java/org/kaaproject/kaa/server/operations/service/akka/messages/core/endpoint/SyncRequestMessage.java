@@ -147,22 +147,35 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         ClientSync diff = new ClientSync();
         diff.setRequestId(other.getRequestId());
         diff.setClientSyncMetaData(other.getClientSyncMetaData());
-        if (other.getConfigurationSync() != null) {
-            diff.setConfigurationSync(diff(request.getConfigurationSync(),
-                    other.getConfigurationSync()));
-            request.setConfigurationSync(other.getConfigurationSync());
-            LOG.debug("[{}] Updated configuration request", channelUuid);
-        }
-        if (other.getNotificationSync() != null) {
-            diff.setNotificationSync(diff(request.getNotificationSync(),
-                    other.getNotificationSync()));
-            request.setNotificationSync(other.getNotificationSync());
-            LOG.debug("[{}] Updated notification request", channelUuid);
-        }
-        if (other.getProfileSync() != null) {
+        boolean hasProfileSync = other.getProfileSync() != null;
+        if (hasProfileSync) {
             diff.setProfileSync(other.getProfileSync());
             request.setProfileSync(other.getProfileSync());
             LOG.debug("[{}] Updated profile request", channelUuid);
+        }
+        if (other.getConfigurationSync() != null) {
+            ConfigurationClientSync resolvedConfigurationSync = hasProfileSync ?
+                                                  other.getConfigurationSync() :
+                                                  diff(request.getConfigurationSync(), other.getConfigurationSync());
+            diff.setConfigurationSync(resolvedConfigurationSync);
+            request.setConfigurationSync(other.getConfigurationSync());
+            LOG.debug("[{}] Updated configuration request", channelUuid);
+        } else {
+            if (hasProfileSync) {
+                diff.setConfigurationSync(request.getConfigurationSync());
+            }
+        }
+        if (other.getNotificationSync() != null) {
+            NotificationClientSync resolvedNotificationClientSync = hasProfileSync ?
+                                                       other.getNotificationSync() :
+                                                       diff(request.getNotificationSync(), other.getNotificationSync());
+            diff.setNotificationSync(resolvedNotificationClientSync);
+            request.setNotificationSync(other.getNotificationSync());
+            LOG.debug("[{}] Updated notification request", channelUuid);
+        } else {
+            if (hasProfileSync) {
+                diff.setNotificationSync(request.getNotificationSync());
+            }
         }
         if (other.getUserSync() != null) {
             diff.setUserSync(other.getUserSync());

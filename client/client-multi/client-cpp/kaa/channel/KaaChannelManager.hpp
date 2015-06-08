@@ -26,6 +26,7 @@
 #include "kaa/common/TransportType.hpp"
 #include "kaa/channel/IKaaChannelManager.hpp"
 #include "kaa/channel/connectivity/IPingServerStorage.hpp"
+#include "kaa/utils/KaaTimer.hpp"
 
 namespace kaa {
 
@@ -37,6 +38,7 @@ public:
     KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers);
     ~KaaChannelManager() { doShutdown(); }
 
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy);
     virtual void setChannel(TransportType type, IDataChannelPtr channel);
     virtual void addChannel(IDataChannelPtr channel);
     virtual void removeChannel(const std::string& id);
@@ -52,7 +54,7 @@ public:
 
     virtual void clearChannelList();
 
-    virtual ITransportConnectionInfoPtr getPingServer() { return (*lastBSServers_.begin()).second; }
+    virtual ITransportConnectionInfoPtr getPingServer() { return *(lastBSServers_.begin()->second); }
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker);
 
@@ -71,28 +73,33 @@ private:
     void doShutdown();
 
     ITransportConnectionInfoPtr getCurrentBootstrapServer(const TransportProtocolId& protocolId);
-    ITransportConnectionInfoPtr getNextBootstrapServer(ITransportConnectionInfoPtr usedConnectionInfo);
+    ITransportConnectionInfoPtr getNextBootstrapServer(const TransportProtocolId& protocolId, bool forceFirstElement);
 
 private:
     IBootstrapManager&   bootstrapManager_;
+    IFailoverStrategyPtr failoverStrategy_;
+
+    KaaTimer<void ()>        retryTimer_;
 
     bool_type isShutdown_;
     bool_type isPaused_;
 
-    std::map<TransportProtocolId, std::list<ITransportConnectionInfoPtr>> bootstrapServers_;
+    std::map<TransportProtocolId, BootstrapServers> bootstrapServers_;
+    std::map<TransportProtocolId, BootstrapServers::iterator> lastBSServers_;
 
     KAA_MUTEX_DECLARE(lastOpsServersGuard_);
     std::map<TransportProtocolId, ITransportConnectionInfoPtr>    lastOpsServers_;
 
-    std::map<TransportProtocolId, ITransportConnectionInfoPtr>    lastBSServers_;
 
-    KAA_MUTEX_DECLARE(channelGuard_);
+    KAA_R_MUTEX_DECLARE(channelGuard_);
     std::set<IDataChannelPtr>                   channels_;
 
     KAA_R_MUTEX_DECLARE(mappedChannelGuard_);
     std::map<TransportType, IDataChannelPtr>    mappedChannels_;
 
     ConnectivityCheckerPtr connectivityChecker_;
+
+    TransportProtocolId bsTransportId_;
 };
 
 } /* namespace kaa */

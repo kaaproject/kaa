@@ -35,7 +35,7 @@ PowerPlantController::PowerPlantController()
 
     solarPanels_.reserve(POWER_PLANT_MAX_SOLAR_PANEL_COUNT);
     for (std::size_t i = 0; i < POWER_PLANT_MAX_SOLAR_PANEL_COUNT; ++i) {
-        solarPanels_.emplace_back(i);
+        solarPanels_.emplace_back(i, rand() % 100000);
     }
 
     kaaClient.setConfigurationStorage(std::make_shared<kaa::FileConfigurationStorage>(POWER_PLANT_CONFIGURATION_FILE));
@@ -67,7 +67,8 @@ void PowerPlantController::run()
 
         if (configuration.enableReporting) {
             kaa::KaaUserLogRecord voltageReport;
-            voltageReport.timestamp = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+            voltageReport.timestamp = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now())
+                                                                                                            .time_since_epoch().count();
 
             std::vector<kaa_log::VoltageSample> samples;
             samples.reserve(configuration.panelCount);

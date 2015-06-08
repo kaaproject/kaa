@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.demo.powerplant.data;
 
 import java.io.BufferedReader;
@@ -17,6 +33,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.kaaproject.kaa.demo.powerplant.fragment.DashboardFragment;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataPoint;
 import org.kaaproject.kaa.demo.powerplant.pojo.DataReport;
 
@@ -25,14 +42,21 @@ import android.util.Log;
 public class RestDataEndpoint extends AbstractDataEndpoint {
     private static final String TAG = RestDataEndpoint.class.getSimpleName();
 
-    private static final String BASE_URL = "http://kaa-demo-one.cybervisiontech.com:10000/api/data";
-    private static final String LATEST_URL = BASE_URL + "/latest";
+    private static final int PANNELS_PER_ZONE = 1;
+    
+    private String baseURL;
+    private String latestURL;
 
+    public RestDataEndpoint(String baseURLStr) {
+    	this.baseURL = baseURLStr;
+    	this.latestURL = baseURL + "/latest";
+    }
+    
     @Override
     public DataReport getLatestData() {
         try {
             long time = System.currentTimeMillis();
-            HttpGet getRequest = new HttpGet(LATEST_URL);
+            HttpGet getRequest = new HttpGet(latestURL);
             getRequest.addHeader("accept", "application/json");
             JSONArray jsonArray = fetchJson(getRequest);
             List<DataReport> reports = toDataReport(jsonArray);
@@ -47,7 +71,7 @@ public class RestDataEndpoint extends AbstractDataEndpoint {
     @Override
     public List<DataReport> getHistoryData(long fromTime) {
         try {
-            HttpGet getRequest = new HttpGet(BASE_URL + "?from=" + fromTime);
+            HttpGet getRequest = new HttpGet(baseURL + "?from=" + fromTime);
             getRequest.addHeader("accept", "application/json");
             JSONArray jsonArray = fetchJson(getRequest);
             return toDataReport(jsonArray);
@@ -88,10 +112,11 @@ public class RestDataEndpoint extends AbstractDataEndpoint {
             DataReport report = resultMap.get(time);
             if (report == null) {
                 List<DataPoint> dataPoints = new ArrayList<DataPoint>();
-                report = new DataReport(time, dataPoints, getConsumption());
+                report = new DataReport(time, dataPoints, getConsumption(PANNELS_PER_ZONE * DashboardFragment.NUM_ZONES));
                 resultMap.put(time, report);
             }
-            report.getDataPoints().add(new DataPoint(dataPoint.getInt("panelId"), (float) dataPoint.getDouble("voltage")));
+            report.getDataPoints().add(new DataPoint(dataPoint.getInt("zoneId"), PANNELS_PER_ZONE,
+            		(float) dataPoint.getDouble("voltage")));
         }
 
         List<DataReport> result = new ArrayList<DataReport>(resultMap.values());
@@ -113,5 +138,10 @@ public class RestDataEndpoint extends AbstractDataEndpoint {
             });
         }
         return result;
+    }
+    
+    @Override
+    public void stop() {
+    	
     }
 }

@@ -20,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.atmosphere.gwt20.client.Atmosphere;
-import org.atmosphere.gwt20.client.AtmosphereCloseHandler;
+import org.atmosphere.gwt20.client.AtmosphereErrorHandler;
 import org.atmosphere.gwt20.client.AtmosphereMessageHandler;
 import org.atmosphere.gwt20.client.AtmosphereRequestConfig;
 import org.atmosphere.gwt20.client.AtmosphereResponse;
@@ -30,8 +30,6 @@ import org.kaaproject.avro.ui.gwt.client.widget.dialog.AvroUiDialog;
 import org.kaaproject.kaa.sandbox.web.client.util.Utils;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -44,25 +42,26 @@ public class ConsoleDialog extends AvroUiDialog {
 
     private final static Logger logger = Logger.getLogger("ConsoleDialog");
     
+    private final static int MAX_CONSOLE_BUFFER = 5000;
+    
 	private TextArea console;
 	private Button okButton;
 	
 	private String consoleUuid;
 	private ConsoleDialogListener listener;
-	private Atmosphere atmosphere;
+	private static Atmosphere atmosphere;
 	
 	private String finishText = "";
-	private boolean consoleSessionFinished = false;
-	private boolean rpcCallFinished = false;
-	private boolean success = false;
+	private boolean consoleSessionSucceded = false;
+	private boolean rpcCallSucceded = false;
 	
-	public static ConsoleDialog startConsoleDialog(ConsoleDialogListener listener) {
+	public static ConsoleDialog startConsoleDialog(String initialMessage, ConsoleDialogListener listener) {
 	    if (logger.isLoggable(Level.FINE)) {
 	        logger.fine("startConsoleDialog");
 	    }
 		ConsoleDialog dialog = new ConsoleDialog(listener);
 		dialog.center();
-		dialog.startConsole();
+		dialog.startConsole(initialMessage);
 		return dialog;
 	}
 	
@@ -90,32 +89,39 @@ public class ConsoleDialog extends AvroUiDialog {
 			public void onClick(ClickEvent event) {
 				hide();
 				if (ConsoleDialog.this.listener != null) {
-					ConsoleDialog.this.listener.onOk(success);
+					ConsoleDialog.this.listener.onOk(rpcCallSucceded && consoleSessionSucceded);
 				}
 			}
         });
         okButton.setEnabled(false);
 	}
 	
-	private void startConsole() {
+	private void startConsole(String initialMessage) {
 	    
 	    if (logger.isLoggable(Level.FINE)) {
 	         logger.fine("startConsole");
 	    }
 
 		RPCSerializer rpc_serializer = GWT.create(RPCSerializer.class);
-		atmosphere = Atmosphere.create();
+		if (atmosphere == null) {
+		    atmosphere = Atmosphere.create();
+		}
+		atmosphere.unsubscribe();		
         AtmosphereRequestConfig rpcRequestConfig = AtmosphereRequestConfig.create(rpc_serializer);
+        
         rpcRequestConfig.setUrl(GWT.getModuleBaseURL() + "atmosphere/rpc");
         rpcRequestConfig.setTransport(AtmosphereRequestConfig.Transport.WEBSOCKET);
         rpcRequestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
-        rpcRequestConfig.setCloseHandler(new AtmosphereCloseHandler() {
-			@Override
-			public void onClose(AtmosphereResponse response) {
-				
-				okButton.setEnabled(true);
-			}
+        
+        rpcRequestConfig.setErrorHandler(new AtmosphereErrorHandler() {
+            @Override
+            public void onError(AtmosphereResponse response) {
+                consoleSessionSucceded = false;
+                ConsoleDialog.this.onError("Sorry, but there's some problem with your "
+                        + "socket or the server is down!\n");
+            }
         });
+        
         rpcRequestConfig.setMessageHandler(new AtmosphereMessageHandler() {
             @Override
             public void onMessage(AtmosphereResponse response) {
@@ -138,25 +144,22 @@ public class ConsoleDialog extends AvroUiDialog {
             			listener.onStart(consoleUuid, ConsoleDialog.this, new AsyncCallback<Void>() {
 							@Override
 							public void onFailure(Throwable caught) {
-								appendToConsoleAtFinish(Utils.getErrorMessage(caught)+"\n");
-								appendToConsoleAtFinish("Failed!");
-								rpcCallFinished = true;
-								success = false;
-		            			finished();
+                                rpcCallSucceded = false;
+								onError(Utils.getErrorMessage(caught)+"\nFailed!");
 							}
 
 							@Override
 							public void onSuccess(Void result) {
+                                rpcCallSucceded = true;
 								appendToConsoleAtFinish("Finished!");
-								rpcCallFinished = true;
-								success = true;
-		            			finished();
+								ConsoleDialog.this.onSuccess();
 							}
             			});
             		}
             		else if (message.getMessage().equals(consoleUuid + " finished")){
-            			consoleSessionFinished = true;
-            			finished();
+            			consoleSessionSucceded = true;
+            			atmosphere.unsubscribe();
+            			onSuccess();
             		}
             		else {
             			appendToConsole(message.getMessage());
@@ -166,11 +169,13 @@ public class ConsoleDialog extends AvroUiDialog {
         });
         rpcRequestConfig.setFlags(AtmosphereRequestConfig.Flags.enableProtocol);
         rpcRequestConfig.setFlags(AtmosphereRequestConfig.Flags.trackMessageLength);
+        rpcRequestConfig.clearFlags(AtmosphereRequestConfig.Flags.dropAtmosphereHeaders);
         
         if (logger.isLoggable(Level.FINE)) {
             logger.fine("atmosphere.subscribe ...");
         }
 
+        appendToConsole(initialMessage + "\n");
         atmosphere.subscribe(rpcRequestConfig);
  
         if (logger.isLoggable(Level.FINE)) {
@@ -179,15 +184,26 @@ public class ConsoleDialog extends AvroUiDialog {
 
 	}
 	
-	private void finished() {
-		if (rpcCallFinished && consoleSessionFinished) {
+	private void onError(String error) {
+	    appendToConsole(error);
+	    atmosphere.unsubscribe();
+	    okButton.setEnabled(true);
+	}
+	
+	private void onSuccess() {
+		if (rpcCallSucceded && consoleSessionSucceded) {
 			appendToConsole(finishText);
-			this.atmosphere.unsubscribe();
+	        okButton.setEnabled(true);
 		}
 	}
 	
 	public void appendToConsole(String text) {
-		console.setText(console.getText() + text);
+	    String consoleText = console.getText() + text;
+	    if (consoleText.length() > MAX_CONSOLE_BUFFER) {
+	        int start = consoleText.length() - MAX_CONSOLE_BUFFER;
+	        consoleText = consoleText.substring(start);
+	    }
+		console.setText(consoleText);
 		if (console.getText().length()>0) {
 			console.setCursorPos(console.getText().length()-1);
 			console.getElement().setScrollTop(console.getElement().getScrollHeight());
