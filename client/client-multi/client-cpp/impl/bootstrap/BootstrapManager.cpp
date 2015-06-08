@@ -185,10 +185,10 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
     }
 
     if (serverToApply) {
-        auto servers = getOPSByAccessPointId(*serverToApply.get());
+        auto servers = getOPSByAccessPointId(*serverToApply);
         if (!servers.empty()) {
-            KAA_LOG_DEBUG(boost::format("Found %1% servers by access point id %1%")
-                                            % servers.size() % *serverToApply.get());
+            KAA_LOG_DEBUG(boost::format("Found %1% servers by access point id %2%")
+                                            % servers.size() % *serverToApply);
             serverToApply.reset();
             notifyChannelManangerAboutServer(servers);
         }
