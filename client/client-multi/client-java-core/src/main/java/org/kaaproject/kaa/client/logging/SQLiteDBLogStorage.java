@@ -36,6 +36,7 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private static final Logger LOG = LoggerFactory.getLogger(SQLiteDBLogStorage.class);
 
     private static final String SQLITE_URL_PREFIX = "jdbc:sqlite:";
+    private static final String DEFAULT_DB_NAME = "kaa_logs";
     private static final String TABLE_NAME = "kaa_logs";
     private static final String RECORD_ID_COLUMN = "record_id";
     private static final String BUCKET_ID_COLUMN = "bucket_id";
@@ -94,7 +95,6 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private PreparedStatement insertStatement;
     private PreparedStatement deleteByRecordIdStatement;
     private PreparedStatement deleteByBucketIdStatement;
-    private PreparedStatement setBucketIdStatement;
     private PreparedStatement resetBucketIdStatement;
 
     private long recordCount;
@@ -104,6 +104,10 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private Map<Integer, Long> consumedMemoryStorage = new HashMap<>();
 
     private final Connection connection;
+
+    public SQLiteDBLogStorage() {
+        this(DEFAULT_DB_NAME);
+    }
 
     public SQLiteDBLogStorage(String dbName) {
         try {
@@ -145,7 +149,7 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 if (affectedRows == 1) {
                     consumedSize += record.getSize();
                     recordCount++;
-                    LOG.trace("Added a new log record, records count: [{}], data: {}", recordCount, record.getData());
+                    LOG.trace("Added a new log record, records count: {}, data: {}", recordCount, record.getData());
                 } else {
                     LOG.warn("No log record was added");
                 }
@@ -236,10 +240,11 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
         }
     }
 
-    private void updateBucketIdForRecords(int bucketId, List<String> recordIds) {
+    private void updateBucketIdForRecords(int bucketId, List<String> recordIds) throws SQLException {
         synchronized (connection) {
             LOG.trace("Updating bucket id [{}] for records with ids: {}", bucketId, recordIds);
 
+            PreparedStatement setBucketIdStatement = null;
             try {
                 setBucketIdStatement = connection.prepareStatement(getUpdateBucketIdStatement(recordIds));
             } catch (SQLException e) {
@@ -257,6 +262,10 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 }
             } catch (SQLException e) {
                 LOG.error("Failed to update bucket id [{}] for records with ids: {}", bucketId, recordIds, e);
+            } finally {
+                if (setBucketIdStatement != null) {
+                    tryCloseStatement(setBucketIdStatement);
+                }
             }
         }
     }
@@ -272,7 +281,7 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     @Override
     public void removeRecordBlock(int recordBlockId) {
         synchronized (connection) {
-            LOG.trace("Removing record block [{}] from storage", recordBlockId);
+            LOG.trace("Removing record block with id [{}] from storage", recordBlockId);
             if (deleteByBucketIdStatement == null) {
                 try {
                     deleteByBucketIdStatement = connection.prepareStatement(KAA_DELETE_BY_BUCKET_ID);
@@ -287,7 +296,7 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 int removedRecordsCount = deleteByBucketIdStatement.executeUpdate();
                 if (removedRecordsCount > 0) {
                     recordCount -= removedRecordsCount;
-                    LOG.info("Removed [{}] records from storage", recordCount);
+                    LOG.info("Removed {} records from storage. Total log record count: {}", removedRecordsCount, recordCount);
                 } else {
                     LOG.info("No records were removed from storage");
                 }
@@ -376,10 +385,6 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
             if (deleteByBucketIdStatement != null) {
                 deleteByBucketIdStatement.close();
-            }
-
-            if (setBucketIdStatement != null) {
-                setBucketIdStatement.close();
             }
 
             if (resetBucketIdStatement != null) {

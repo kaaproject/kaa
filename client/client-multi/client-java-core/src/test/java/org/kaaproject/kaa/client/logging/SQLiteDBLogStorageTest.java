@@ -59,6 +59,25 @@ public class SQLiteDBLogStorageTest extends AbstractLogStorageTest {
         storage.close();
     }
 
+    @Test
+    public void testGetBigRecordBlock() {
+        SQLiteDBLogStorage storage = getStorage();
+
+        LogRecord record = new LogRecord();
+        int insertionCount = 7;
+        /*
+         * Size of each record is 3B
+         */
+        int iter = insertionCount;
+        while (iter-- > 0) {
+            storage.addLogRecord(record);
+        }
+
+        LogBlock logBlock = storage.getRecordBlock(8192);
+        Assert.assertEquals(insertionCount, logBlock.getRecords().size());
+        storage.close();
+    }
+
     @After
     public void cleanup() {
         deleteDBFile();
