@@ -173,7 +173,7 @@ bool LogCollector::isDeliveryTimeout()
 
     IDataChannelPtr logChannel = channelManager_->getChannelByTransportType(TransportType::LOGGING);
     std::int32_t currentAccessPointId  = 0;
-    if (logChannel) {
+    if (logChannel && logChannel->getServer()) {
         currentAccessPointId = logChannel->getServer()->getAccessPointId();
     }
 
@@ -321,7 +321,7 @@ void LogCollector::retryLogUpload(std::size_t delay)
 void LogCollector::switchAccessPoint()
 {
     IDataChannelPtr logChannel = channelManager_->getChannelByTransportType(TransportType::LOGGING);
-    if (logChannel) {
+    if (logChannel && logChannel->getServer()) {
         if (timeoutAccessPointId_ == logChannel->getServer()->getAccessPointId()) {
             KAA_LOG_WARN("Try to switch to another Operations server...");
             channelManager_->onServerFailed(logChannel->getServer());
