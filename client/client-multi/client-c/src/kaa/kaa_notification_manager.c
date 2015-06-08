@@ -135,17 +135,18 @@ static void kaa_destroy_notification_node(void *data)
 {
     KAA_RETURN_IF_NIL(data, );
     kaa_topic_notifications_node_t * node = (kaa_topic_notifications_node_t *)data;
-    kaa_list_destroy(node->notifications, kaa_destroy_notification_wrapper);
+    if (node->notifications) {
+        kaa_list_destroy(node->notifications, kaa_destroy_notification_wrapper);
+    }
     KAA_FREE(node);
 }
 
 static kaa_error_t kaa_create_topic_notification_node(kaa_topic_notifications_node_t **node, kaa_notification_t *item, uint32_t *sqn, uint64_t *topic_id)
 {
     KAA_RETURN_IF_NIL(node, KAA_ERR_BADPARAM);
+
     kaa_topic_notifications_node_t * new_node = (kaa_topic_notifications_node_t *) KAA_MALLOC(sizeof(kaa_topic_notifications_node_t));
-    if (!new_node) {
-        return KAA_ERR_NOMEM;
-    }
+    KAA_RETURN_IF_NIL(new_node, KAA_ERR_NOMEM);
 
     new_node->notifications = kaa_list_create();
     if (!new_node->notifications) {
@@ -155,13 +156,11 @@ static kaa_error_t kaa_create_topic_notification_node(kaa_topic_notifications_no
 
     kaa_notification_wrapper_t * wrapper = (kaa_notification_wrapper_t *) KAA_MALLOC(sizeof(kaa_notification_wrapper_t));
     if (!wrapper) {
-        kaa_list_destroy(new_node->notifications, NULL);
         kaa_destroy_notification_node(new_node);
         return KAA_ERR_NOMEM;
     }
 
     if(!kaa_list_push_back(new_node->notifications, wrapper)) {
-        kaa_list_destroy(new_node->notifications, NULL);
         kaa_destroy_notification_node(new_node);
         KAA_FREE(wrapper);
         return KAA_ERR_NOMEM;
@@ -216,6 +215,7 @@ static kaa_error_t kaa_add_notification_to_map(kaa_list_t *notifications, kaa_no
 
 static bool kaa_predicate_for_notifications(void *notif_1, void *notif_2)
 {
+    KAA_RETURN_IF_NIL2(notif_1, notif_2, false);
     kaa_notification_wrapper_t *wrapper_1 = (kaa_notification_wrapper_t *)notif_1;
     kaa_notification_wrapper_t *wrapper_2 = (kaa_notification_wrapper_t *)notif_2;
     return wrapper_1->sqn < wrapper_2->sqn;
