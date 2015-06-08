@@ -1021,7 +1021,6 @@ static void kaa_notify_notification_listeners(void *data, void* context)
    kaa_list_node_t *notification_list_node = kaa_list_begin(node->notifications);
    kaa_notification_manager_t *self = (kaa_notification_manager_t *)context;
    while(notification_list_node) {
-       KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Passing notification\n");
        kaa_notification_wrapper_t *wrapper = (kaa_notification_wrapper_t *)kaa_list_get_data(notification_list_node);
        kaa_list_node_t *it = kaa_list_find_next(kaa_list_begin(self->status->topic_states)
                                                        , &kaa_find_topic_state_by_id
