@@ -26,7 +26,7 @@
 namespace kaa {
 
 KaaChannelManager::KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers)
-    : bootstrapManager_(manager), isShutdown_(false), isPaused_(false), bsTransportId_(0,0)
+    : bootstrapManager_(manager), retryTimer_("KaaChannelManager retryTimer"), isShutdown_(false), isPaused_(false), bsTransportId_(0,0)
 {
     for (const auto& connectionInfo : servers) {
         auto& list = bootstrapServers_[connectionInfo->getTransportId()];

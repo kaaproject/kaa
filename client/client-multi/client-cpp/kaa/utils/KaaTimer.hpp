@@ -32,23 +32,25 @@ template<class Signature, class Function = std::function<Signature>>
 class KaaTimer {
     typedef std::chrono::system_clock TimerClock;
 public:
-    KaaTimer() : isThreadRun_(true), isTimerRun_(false), timerThread_([&] { run(); })
+    KaaTimer(const std::string& timerName) :
+        timerName_(timerName), isThreadRun_(false), isTimerRun_(false), callback_([]{})
     {
 
     }
     ~KaaTimer()
     {
-        if (timerThread_.joinable()) {
-            KAA_MUTEX_LOCKING("timerGuard_");
+        //KAA_LOG_TRACE(boost::format("Timer[%1%] destroying ...") % timerName_);
+        if (isThreadRun_ && timerThread_.joinable()) {
+            //KAA_MUTEX_LOCKING("timerGuard_");
             KAA_MUTEX_UNIQUE_DECLARE(timerLock, timerGuard_);
-            KAA_MUTEX_LOCKED("timerGuard_");
+            //KAA_MUTEX_LOCKED("timerGuard_");
 
             isThreadRun_ = false;
             condition_.notify_one();
 
-            KAA_MUTEX_UNLOCKING("timerGuard_");
+            //KAA_MUTEX_UNLOCKING("timerGuard_");
             KAA_UNLOCK(timerLock);
-            KAA_MUTEX_UNLOCKED("timerGuard_");
+            //KAA_MUTEX_UNLOCKED("timerGuard_");
 
             timerThread_.join();
         }
@@ -56,9 +58,17 @@ public:
 
     void start(std::size_t seconds, const Function& callback)
     {
+
+        KAA_LOG_TRACE(boost::format("Timer[%1%] scheduling for %2% sec ...") % timerName_ % seconds );
+
         KAA_MUTEX_LOCKING("timerGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(timerLock, timerGuard_);
         KAA_MUTEX_LOCKED("timerGuard_");
+
+        if (!isThreadRun_) {
+            isThreadRun_ = true;
+            timerThread_ = std::thread([&] { run(); });
+        }
 
         if (!isTimerRun_) {
             endTS_ = TimerClock::now() + std::chrono::seconds(seconds);
@@ -70,6 +80,8 @@ public:
 
     void stop()
     {
+        KAA_LOG_TRACE(boost::format("Timer[%1%] stopping ...") % timerName_);
+
         KAA_MUTEX_LOCKING("timerGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(timerLock, timerGuard_);
         KAA_MUTEX_LOCKED("timerGuard_");
@@ -83,21 +95,27 @@ public:
 private:
     void run()
     {
+        KAA_LOG_TRACE(boost::format("Timer[%1%] starting thread ...") % timerName_);
+
         KAA_MUTEX_LOCKING("timerGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(timerLock, timerGuard_);
         KAA_MUTEX_LOCKED("timerGuard_");
 
         while (isThreadRun_) {
+
             if (isTimerRun_) {
                 auto now = TimerClock::now();
                 if (now >= endTS_) {
+                    KAA_LOG_TRACE(boost::format("Timer[%1%] executing callback ...") % timerName_);
                     isTimerRun_ = false;
+
+                    auto currentCallback = callback_;
 
                     KAA_MUTEX_UNLOCKING("timerGuard_");
                     KAA_UNLOCK(timerLock);
                     KAA_MUTEX_UNLOCKED("timerGuard_");
 
-                    callback_();
+                    currentCallback();
 
                     KAA_MUTEX_LOCKING("timer_mutex_");
                     KAA_LOCK(timerLock);
@@ -116,6 +134,9 @@ private:
     }
 
 private:
+
+    const std::string timerName_;
+
     bool isThreadRun_;
     bool isTimerRun_;
 

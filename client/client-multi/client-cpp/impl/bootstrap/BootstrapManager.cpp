@@ -20,7 +20,6 @@
 #include <cstdlib>
 #include <cstdint>
 #include <algorithm>
-#include <chrono>
 
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/logging/Log.hpp"
@@ -65,7 +64,7 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
     if (lastServerIt != lastOperationsServers_.end() && serverIt != operationServers_.end()) {
         OperationsServers::iterator nextOperationIterator = (lastServerIt->second)+1;
         if (nextOperationIterator != serverIt->second.end()) {
-            KAA_LOG_INFO(boost::format("New server [0x%X] will be user for %2%")
+            KAA_LOG_INFO(boost::format("New server [%1%] will be user for %2%")
                                             % (*nextOperationIterator)->getAccessPointId()
                                             % LoggingUtils::TransportProtocolIdToString(protocolId));
             lastOperationsServers_[protocolId] = nextOperationIterator;
@@ -185,10 +184,10 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
     }
 
     if (serverToApply) {
-        auto servers = getOPSByAccessPointId(*serverToApply.get());
+        auto servers = getOPSByAccessPointId(*serverToApply);
         if (!servers.empty()) {
-            KAA_LOG_DEBUG(boost::format("Found %1% servers by access point id %1%")
-                                            % servers.size() % *serverToApply.get());
+            KAA_LOG_DEBUG(boost::format("Found %1% servers by access point id %2%")
+                                            % servers.size() % *serverToApply);
             serverToApply.reset();
             notifyChannelManangerAboutServer(servers);
         }

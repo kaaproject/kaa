@@ -143,6 +143,12 @@ kaa_error_t kaa_list_remove_first(kaa_list_t *list, match_predicate pred, void *
  */
 void kaa_list_for_each(kaa_list_node_t *first, kaa_list_node_t *last, process_data process, void *context);
 
+/**
+ * @brief Sorts list according to predicate condition.
+ * @param pred  Predicate that is used to sort list.
+ */
+void kaa_list_sort(kaa_list_t *list, match_predicate pred);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

@@ -48,12 +48,16 @@ uint32_t id,id2;
 kaa_error_t err = 0;
 size_t size = 0;
 
+char *pointer_to_sqn = NULL;
+
+bool listener_has_been_notified = false;
 kaa_topic_listener_t topic_listener;
 kaa_topic_listener_t topic_listener_2;
 //-----------------------------------------------------------------------------------------------
 void on_notification(void* contextmock, uint64_t *topic_id, kaa_notification_t *notif)
 {
     printf("\nNotification listener got his Notification\n\n");
+    listener_has_been_notified = true;
 }
 
 void on_topic(void* contextmock, kaa_list_t *topics)
@@ -112,9 +116,12 @@ void test_deserializing()
     kaa_notification_t *notification = kaa_notification_notification_create();
     const char *message = "Hello World!!!\n";
     notification->message = kaa_string_copy_create(message);
-    size                  =                  ( sizeof(uint32_t) + sizeof(uint16_t) + sizeof(uint16_t) + sizeof(uint8_t) + sizeof(uint8_t) + sizeof(uint16_t) + 20
-                                                    + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint16_t) + sizeof(uint16_t) + sizeof(uint32_t) + sizeof(uint16_t)
-                                                    + sizeof(uint16_t) + sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint32_t) + 4 + kaa_aligned_size_get(notification->get_size(notification)));
+    size                  =               (sizeof(uint32_t) + sizeof(uint16_t) + sizeof(uint16_t) /*that was header*/+ sizeof(uint8_t) + sizeof(uint8_t) + sizeof(uint16_t) + sizeof(uint32_t) /*extension options
+                                          and payload length*/  + sizeof(uint32_t) + sizeof(uint32_t) /*state sqn and delta status*/ + sizeof(uint16_t) + sizeof(uint16_t) /*field id and topic count*/ + sizeof(uint64_t) /*topic ID*/
+                                          + sizeof(uint16_t) + sizeof(uint16_t) /*subscriptions type + topic name length*/ + sizeof(uint32_t) /*topic name + padding */ + sizeof(uint16_t) + sizeof(uint16_t) /*field id and notifications count*/
+                                          + sizeof(uint32_t) /* Notification sqn */ + sizeof(uint16_t) + sizeof(uint16_t) /* Notification type + uid length */+ sizeof (uint32_t) /* notification body size*/ + sizeof (uint64_t) /*Topic Id*/
+                                          + /*Not unicast notifications*/ + kaa_aligned_size_get(notification->get_size(notification)));
+
     char *unserialized_buffer = (char *)KAA_MALLOC(size);
     ASSERT_NOT_NULL(unserialized_buffer);
     buffer_pointer = unserialized_buffer;
@@ -129,11 +136,17 @@ void test_deserializing()
     *(uint8_t *)unserialized_buffer = (uint8_t)KAA_NOTIFICATION_EXTENSION_TYPE;
     unserialized_buffer += sizeof(uint8_t);
     unserialized_buffer += sizeof(uint8_t) + sizeof(uint16_t); // pass by extension options
-    uint32_t payload_info = (sizeof(uint32_t) + sizeof(uint16_t) + sizeof(uint16_t) + sizeof(uint32_t) + sizeof(uint16_t) + 20 /*TOPIC EXTENSION LENGTH  */
-                            + sizeof(uint16_t) + sizeof(uint32_t) + sizeof(uint64_t) + kaa_aligned_size_get(4) + kaa_aligned_size_get(notification->get_size(notification)));
+
+    uint32_t payload_info = sizeof(uint32_t) + sizeof(uint32_t) /*state sqn and delta status*/ + sizeof(uint16_t) + sizeof(uint16_t) /*field id and topic count*/ + sizeof(uint64_t) /*topic ID*/
+                                                  + sizeof(uint16_t) + sizeof(uint16_t) /*subscriptions type + topic name length*/ + sizeof(uint32_t) /*topic name + padding */ + sizeof(uint16_t) + sizeof(uint16_t) /*field id and notifications count*/
+                                                  + sizeof(uint32_t) /* Notification sqn */ + sizeof(uint16_t) + sizeof(uint16_t) /* Notification type + uid length */+ sizeof (uint32_t) /* notification body size*/ + sizeof (uint64_t) /*Topic Id*/
+                                                  +   kaa_aligned_size_get(notification->get_size(notification));
+
     *(uint32_t *)unserialized_buffer = KAA_HTONL((uint32_t) payload_info);
     unserialized_buffer += sizeof(uint32_t);
-    *(uint32_t *)unserialized_buffer = KAA_HTONL((uint32_t)455);
+    *(uint32_t *)unserialized_buffer = KAA_HTONL((uint32_t)455); //Notification sqn
+    unserialized_buffer += sizeof(uint32_t);
+    *(uint32_t *)unserialized_buffer = KAA_HTONL((uint32_t)2); // Delta status
     unserialized_buffer += sizeof(uint32_t);
     //TOPICS
     *(uint8_t *)unserialized_buffer = (uint8_t)0;
@@ -144,33 +157,33 @@ void test_deserializing()
     unserialized_buffer += sizeof(uint64_t);
     *(uint8_t *)unserialized_buffer = (uint8_t)OPTIONAL_SUBSCRIPTION;
     unserialized_buffer += sizeof(uint16_t);
-    *(uint16_t *)unserialized_buffer = KAA_HTONS((uint16_t)4); //KAA + 0
+    *(uint16_t *)unserialized_buffer = KAA_HTONS((uint16_t)4); //KAA
     unserialized_buffer += sizeof(uint16_t);
-    *unserialized_buffer++ = 'K';*unserialized_buffer++ = 'A';
-    *unserialized_buffer++ = 'A';*unserialized_buffer++ = '\0';
+    *unserialized_buffer++ = 'K';*unserialized_buffer++ = 'A'; // topic name + padding
+    *unserialized_buffer++ = 'A';*unserialized_buffer++ = 'A';
     unserialized_buffer += (4 - kaa_aligned_size_get(4));
     //-----------------------------------------------------------------------
-    *(uint8_t *)unserialized_buffer = (uint8_t)1;
+    *(uint8_t *)unserialized_buffer = (uint8_t)1; //Notification field ID
     unserialized_buffer += sizeof(uint16_t);
     *(uint16_t *)unserialized_buffer = KAA_HTONS ((uint16_t)1); // notitifications count
     unserialized_buffer += sizeof(uint16_t);
     *(uint32_t *)unserialized_buffer = KAA_HTONL((uint32_t)99); //sqn
+    pointer_to_sqn = unserialized_buffer; // To have the possibility to change sqn.
     unserialized_buffer += sizeof(uint32_t);
-    *(uint8_t *)unserialized_buffer = (uint8_t)0x1;
+    *(uint8_t *)unserialized_buffer = (uint8_t)0x1; //notification type
     unserialized_buffer += sizeof(uint16_t);
-    *(uint16_t *)unserialized_buffer = KAA_HTONS ((uint16_t)4);
+    *(uint16_t *)unserialized_buffer = KAA_HTONS ((uint16_t) 0); //uid length
     unserialized_buffer += sizeof(uint16_t);
     *(uint32_t *)unserialized_buffer = KAA_HTONL ((uint32_t)notification->get_size(notification));
     unserialized_buffer += sizeof(uint32_t);
     *(uint64_t *)unserialized_buffer = KAA_HTONLL((uint64_t)22);
     unserialized_buffer += sizeof(uint64_t);
-    *(uint32_t *)unserialized_buffer = KAA_HTONL((uint32_t)1111);
-    unserialized_buffer += sizeof(uint32_t);
 
     avro_writer_t avro_writer = avro_writer_memory(unserialized_buffer, notification->get_size(notification));
     notification->serialize(avro_writer, notification);
     err = kaa_platform_protocol_process_server_sync(context->platfrom_protocol, buffer_pointer, size);
     avro_writer_free(avro_writer);
+
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     notification->destroy(notification);
@@ -208,8 +221,11 @@ void test_notification_listeners_adding_and_removing()
     err = kaa_add_optional_notification_listener(context->notification_manager, &listener_2, &topic_id, &id2);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
+    *(uint32_t *)pointer_to_sqn = KAA_HTONL((uint32_t) 100); // Need to change sqn
     err = kaa_platform_protocol_process_server_sync(context->platfrom_protocol, buffer_pointer, size);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
+
+    ASSERT_EQUAL(listener_has_been_notified, true); // whether callback has been called
 
     err = kaa_remove_optional_notification_listener(context->notification_manager, &topic_id, &id);
     ASSERT_EQUAL(err, KAA_ERR_NONE);

@@ -29,7 +29,7 @@ namespace kaa {
 
 class BootstrapManager : public IBootstrapManager, public boost::noncopyable {
 public:
-    BootstrapManager() : bootstrapTransport_(nullptr), channelManager_(nullptr) { }
+    BootstrapManager() : bootstrapTransport_(nullptr), channelManager_(nullptr), retryTimer_("BootstrapManager retryTimer") { }
     ~BootstrapManager() { }
 
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy);

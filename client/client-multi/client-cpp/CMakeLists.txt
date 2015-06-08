@@ -223,7 +223,7 @@ message("==================================")
 #
 # Find third-party dependencies
 #
-find_package (Boost 1.55 REQUIRED COMPONENTS log system)
+find_package (Boost 1.54 REQUIRED COMPONENTS log system)
 find_package (Avro REQUIRED)
 find_package (Botan REQUIRED)
 
