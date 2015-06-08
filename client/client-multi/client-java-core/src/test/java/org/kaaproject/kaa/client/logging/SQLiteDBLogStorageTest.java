@@ -16,41 +16,64 @@
 
 package org.kaaproject.kaa.client.logging;
 
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 
-public class SQLiteDBLogStorageTest {
-    private static File dbFile = new File("test.db");
+public class SQLiteDBLogStorageTest extends AbstractLogStorageTest {
+    private static final String DB_FILENAME = "target/test.db";
+    private static File dbFile = new File(DB_FILENAME);
 
-    @BeforeClass
-    public static void prepareDB() throws ClassNotFoundException, SQLException {
+    @Before
+    public void prepare() throws ClassNotFoundException, SQLException {
         deleteDBFile();
     }
 
     @Test
-    public void testConstructor() throws IOException {
-        SQLiteDBLogStorage storage = new SQLiteDBLogStorage();
+    public void testPersistDBState() {
+        SQLiteDBLogStorage storage = getStorage();
 
-        storage.addLogRecord(new LogRecord());
-        storage.addLogRecord(new LogRecord());
+        LogRecord record = new LogRecord();
+        int insertionCount = 7;
+        /*
+         * Size of each record is 3B
+         */
+        int iter = insertionCount;
+        while (iter-- > 0) {
+            storage.addLogRecord(record);
+        }
+        LogBlock beforePersist = storage.getRecordBlock(15);
+        storage.close();
 
-        Assert.assertEquals(2, storage.getRecordCount());
+        storage = getStorage();
+        Assert.assertEquals(insertionCount, storage.getRecordCount());
+        Assert.assertEquals(insertionCount * 3, storage.getConsumedVolume());
+        LogBlock afterPersist = storage.getRecordBlock(15);
+
+        Assert.assertEquals(beforePersist.getRecords().size(), afterPersist.getRecords().size());
 
         storage.close();
     }
 
-    @AfterClass
-    public static void cleanupDB() {
+    @After
+    public void cleanup() {
         deleteDBFile();
     }
 
-    private static void deleteDBFile() {
+    @Override
+    protected SQLiteDBLogStorage getStorage(long bucketSize) {
+        return getStorage();
+    }
+
+    private SQLiteDBLogStorage getStorage() {
+        return new SQLiteDBLogStorage(DB_FILENAME);
+    }
+
+    private void deleteDBFile() {
         dbFile.delete();
     }
 }
