@@ -205,7 +205,7 @@ kaa_list_node_t *kaa_list_remove_at(kaa_list_t *list, kaa_list_node_t *it, deall
 
 kaa_error_t kaa_list_remove_first(kaa_list_t *list, match_predicate pred, void *context, deallocate_list_data deallocator)
 {
-    KAA_RETURN_IF_NIL3(list, pred,list->size, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(list, pred, list->size, KAA_ERR_BADPARAM);
 
     kaa_list_node_t *it = kaa_list_find_next(kaa_list_begin(list), pred, context);
     if (it) {
