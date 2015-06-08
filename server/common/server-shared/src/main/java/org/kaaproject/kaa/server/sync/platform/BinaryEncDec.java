@@ -420,6 +420,18 @@ public class BinaryEncDec implements PlatformEncDec {
         int extPosition = buf.position();
 
         buf.putInt(notificationSync.getAppStateSeqNumber());
+        SyncResponseStatus status = notificationSync.getResponseStatus();
+        switch (status) {
+        case NO_DELTA:
+            buf.putInt(0);
+            break;
+        case DELTA:
+            buf.putInt(1);
+            break;
+        case RESYNC:
+            buf.putInt(2);
+            break;
+        }
         if (notificationSync.getAvailableTopics() != null) {
             buf.put(NF_TOPICS_FIELD_ID);
             buf.put(NOTHING);

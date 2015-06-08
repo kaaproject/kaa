@@ -166,7 +166,7 @@ kaa_list_node_t *kaa_list_back(kaa_list_t *list)
 
 void kaa_list_clear(kaa_list_t *list, deallocate_list_data deallocator)
 {
-    KAA_RETURN_IF_NIL(list, );
+    KAA_RETURN_IF_NIL2(list, list->size, );
     kaa_list_node_t *it = list->head;
     while (it) {
         kaa_list_node_t *next = it->next;
@@ -186,7 +186,7 @@ void kaa_list_destroy(kaa_list_t *list, deallocate_list_data deallocator)
 
 kaa_list_node_t *kaa_list_remove_at(kaa_list_t *list, kaa_list_node_t *it, deallocate_list_data deallocator)
 {
-    KAA_RETURN_IF_NIL2(list, it, NULL);
+    KAA_RETURN_IF_NIL3(list, it, list->size, NULL);
 
     kaa_list_node_t *next = it->next;
     if (list->head == it) {
@@ -205,7 +205,7 @@ kaa_list_node_t *kaa_list_remove_at(kaa_list_t *list, kaa_list_node_t *it, deall
 
 kaa_error_t kaa_list_remove_first(kaa_list_t *list, match_predicate pred, void *context, deallocate_list_data deallocator)
 {
-    KAA_RETURN_IF_NIL2(list, pred, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(list, pred,list->size, KAA_ERR_BADPARAM);
 
     kaa_list_node_t *it = kaa_list_find_next(kaa_list_begin(list), pred, context);
     if (it) {
