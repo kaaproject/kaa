@@ -37,6 +37,7 @@
 namespace kaa {
 
 const std::uint16_t DefaultOperationTcpChannel::PING_TIMEOUT = 200;
+const std::uint16_t DefaultOperationTcpChannel::CONN_ACK_TIMEOUT = 20;
 const std::uint16_t DefaultOperationTcpChannel::RECONNECT_TIMEOUT = 5; // sec
 
 const std::uint32_t DefaultOperationTcpChannel::KAA_PLATFORM_PROTOCOL_AVRO_ID = 0xf291f2d4;
@@ -54,7 +55,7 @@ const std::map<TransportType, ChannelDirection> DefaultOperationTcpChannel::SUPP
 
 
 DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys)
-    : clientKeys_(clientKeys), work_(io_), sock_(io_), pingTimer_(io_)/*, reconnectTimer_(io_)*/, retryTimer_("DefaultOperationTcpChannel retryTimer")
+    : clientKeys_(clientKeys), work_(io_), sock_(io_), pingTimer_(io_), connAckTimer_(io_)/*, reconnectTimer_(io_)*/, retryTimer_("DefaultOperationTcpChannel retryTimer")
     , firstStart_(true), isConnected_(false), isFirstResponseReceived_(false), isPendingSyncRequest_(false)
     , isShutdown_(false), isPaused_(false), multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager)
 {
@@ -74,6 +75,7 @@ DefaultOperationTcpChannel::~DefaultOperationTcpChannel()
 void DefaultOperationTcpChannel::onConnack(const ConnackMessage& message)
 {
     KAA_LOG_DEBUG(boost::format("Channel \"%1%\". Connack (result=%2%) response received") % getId() % message.getMessage());
+    connAckTimer_.cancel();
     if (message.getReturnCode() != ConnackReturnCode::SUCCESS) {
         KAA_LOG_ERROR(boost::format("Channel \"%1%\". Connack result failed: %2%. Closing connection") % getId() % message.getMessage());
         onServerFailed();
@@ -187,6 +189,7 @@ void DefaultOperationTcpChannel::openConnection()
     KAA_MUTEX_UNLOCKED("channelGuard_");
 
     sendConnect();
+    setConnAckTimer();
     readFromSocket();
     setTimer();
 }
@@ -204,6 +207,7 @@ void DefaultOperationTcpChannel::closeConnection()
     KAA_MUTEX_UNLOCKED("channelGuard_");
 
     pingTimer_.cancel();
+    connAckTimer_.cancel();
     sendDisconnect();
     boost::system::error_code errorCode;
     sock_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, errorCode);
@@ -307,6 +311,12 @@ void DefaultOperationTcpChannel::setTimer()
     pingTimer_.async_wait(std::bind(&DefaultOperationTcpChannel::onPingTimeout, this, std::placeholders::_1));
 }
 
+void DefaultOperationTcpChannel::setConnAckTimer()
+{
+    connAckTimer_.expires_from_now(boost::posix_time::seconds(CONN_ACK_TIMEOUT));
+    connAckTimer_.async_wait(std::bind(&DefaultOperationTcpChannel::onConnAckTimeout, this, std::placeholders::_1));
+}
+
 void DefaultOperationTcpChannel::createThreads()
 {
     for (std::uint16_t i = 0; i < THREADPOOL_SIZE; ++i) {
@@ -372,6 +382,21 @@ void DefaultOperationTcpChannel::onPingTimeout(const boost::system::error_code& 
     KAA_MUTEX_LOCKED("channelGuard_");
     if (isConnected_) {
         setTimer();
+    }
+}
+
+void DefaultOperationTcpChannel::onConnAckTimeout(const boost::system::error_code& err)
+{
+    if (!err) {
+        KAA_LOG_DEBUG(boost::format("Channel \"%1%\". ConnAck message timeout") % getId());
+        onServerFailed();
+        return;
+    } else {
+        if (err != boost::asio::error::operation_aborted){
+            KAA_LOG_ERROR(boost::format("Channel \"%1%\". Failed to process ConnAck timeout: %2%") % getId() % err.message());
+        }else{
+            KAA_LOG_DEBUG(boost::format("Channel \"%1%\". ConnAck message processed") % getId());
+        }
     }
 }
 

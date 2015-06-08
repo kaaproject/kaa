@@ -87,6 +87,7 @@ public:
 
     void onReadEvent(const boost::system::error_code& err);
     void onPingTimeout(const boost::system::error_code& err);
+    void onConnAckTimeout(const boost::system::error_code& err);
 
     void onConnack(const ConnackMessage& message);
     void onDisconnect(const DisconnectMessage& message);
@@ -99,6 +100,7 @@ public:
 
 private:
     static const std::uint16_t PING_TIMEOUT;
+    static const std::uint16_t CONN_ACK_TIMEOUT;
     static const std::uint16_t RECONNECT_TIMEOUT;
 
     boost::system::error_code sendKaaSync(const std::map<TransportType, ChannelDirection>& transportTypes);
@@ -109,6 +111,7 @@ private:
 
     void readFromSocket();
     void setTimer();
+    void setConnAckTimer();
 
     void createThreads();
 
@@ -127,6 +130,7 @@ private:
     boost::asio::io_service::work work_;
     boost::asio::ip::tcp::socket sock_;
     boost::asio::deadline_timer pingTimer_;
+    boost::asio::deadline_timer connAckTimer_;
     //boost::asio::deadline_timer reconnectTimer_;
     KaaTimer<void ()> retryTimer_;
 
