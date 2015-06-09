@@ -19,6 +19,7 @@
 
 #include "kaa/kaatcp/KaaTcpCommon.hpp"
 #include "kaa/kaatcp/IKaaTcpRequest.hpp"
+#include "kaa/common/exception/KaaException.hpp"
 #include <boost/format.hpp>
 
 namespace kaa
@@ -74,7 +75,15 @@ public:
 private:
     void parseMessage(const char *payload, std::uint16_t size)
     {
-        reason_ = (DisconnectReason) *(payload + 1);
+        if (!payload || !size) {
+            throw KaaException("Bad Disconnect payload data");
+        }
+
+        int code = *(payload + 1);
+        if (code < (int)DisconnectReason::NONE || code > (int)DisconnectReason::INTERNAL_ERROR) {
+            throw KaaException(boost::format("Bad Disconnect return code: %1%") % code);
+        }
+        reason_ = (DisconnectReason) code;
     }
 
 private:

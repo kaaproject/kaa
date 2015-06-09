@@ -330,7 +330,12 @@ void DefaultOperationTcpChannel::onReadEvent(const boost::system::error_code& er
         std::ostringstream responseStream;
         responseStream << &responseBuffer_;
         const auto& responseStr = responseStream.str();
-        responsePorcessor.processResponseBuffer(responseStr.data(), responseStr.size());
+        try {
+            responsePorcessor.processResponseBuffer(responseStr.data(), responseStr.size());
+        } catch (const KaaException& exception) {
+            KAA_LOG_ERROR(boost::format("Channel \"%1%\". Failed to process response buffer, reason: %2%") % getId() % exception.what());
+            onServerFailed();
+        }
     } else if (err != boost::asio::error::eof) {
         KAA_MUTEX_LOCKING("channelGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
