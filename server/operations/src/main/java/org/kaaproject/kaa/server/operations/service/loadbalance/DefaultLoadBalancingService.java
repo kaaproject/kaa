@@ -19,6 +19,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
@@ -37,10 +38,14 @@ public class DefaultLoadBalancingService implements LoadBalancingService {
 
     private static final long DEFAULT_STATS_UPDATE_FREQUENCY = 10 * 1000;
 
-    /** The Constant LOG. */
+    /**
+     * The Constant LOG.
+     */
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLoadBalancingService.class);
 
-    /** The delta service. */
+    /**
+     * The delta service.
+     */
     @Autowired
     private AkkaService akkaService;
 
@@ -55,7 +60,7 @@ public class DefaultLoadBalancingService implements LoadBalancingService {
     public void start(OperationsNode operationsNode) {
         LOG.info("Starting service using {} update frequency", loadStatsUpdateFrequency);
         this.operationsNode = operationsNode;
-        this.akkaService.setStatusListener(new AkkaStatusListener() {
+        akkaService.setStatusListener(new AkkaStatusListener() {
 
             @Override
             public void onStatusUpdate(final AkkaServiceStatus status) {
@@ -73,7 +78,13 @@ public class DefaultLoadBalancingService implements LoadBalancingService {
     @Override
     public void stop() {
         LOG.info("Stopping service");
-        this.akkaService.removeStatusListener();
+        akkaService.removeStatusListener();
+        pool.shutdown();
+        try {
+            pool.awaitTermination(3, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            LOG.error("Failed to terminate service", e);
+        }
     }
 
     @Override
