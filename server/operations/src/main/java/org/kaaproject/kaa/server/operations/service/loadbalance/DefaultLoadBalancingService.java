@@ -19,6 +19,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
@@ -74,6 +75,12 @@ public class DefaultLoadBalancingService implements LoadBalancingService {
     public void stop() {
         LOG.info("Stopping service");
         this.akkaService.removeStatusListener();
+        this.pool.shutdown();
+        try {
+            this.pool.awaitTermination(3, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            LOG.error("Failed to terminate service", e);
+        }
     }
 
     @Override

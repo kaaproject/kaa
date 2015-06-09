@@ -84,7 +84,6 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
                 currentBucket = new MemBucket(bucketIdSeq.getAndIncrement());
                 buckets.put(currentBucket.getId(), currentBucket);
             }
-            
         }
     }
 
