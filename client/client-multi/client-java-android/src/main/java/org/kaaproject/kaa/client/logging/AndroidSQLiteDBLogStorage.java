@@ -74,7 +74,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 try {
                     insertStatement = database.compileStatement(PersistentLogStorageStorageInfo.KAA_INSERT_NEW_RECORD);
                 } catch (SQLiteException e) {
-                    Log.e(TAG, "Can't create row insert statement");
+                    Log.e(TAG, "Can't create row insert statement", e);
                     throw new RuntimeException(e);
                 }
             }
@@ -90,7 +90,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                     Log.w(TAG, "No log record was added");
                 }
             } catch (SQLiteException e) {
-                Log.e(TAG, "Can't add a new record");
+                Log.e(TAG, "Can't add a new record", e);
             }
         }
     }
