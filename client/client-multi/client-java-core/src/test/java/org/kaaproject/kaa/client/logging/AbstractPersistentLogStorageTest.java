@@ -16,26 +16,15 @@
 
 package org.kaaproject.kaa.client.logging;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.sql.SQLException;
-
-public class SQLiteDBLogStorageTest extends AbstractLogStorageTest {
-    private static final String DB_FILENAME = "target/test.db";
-    private static File dbFile = new File(DB_FILENAME);
-
-    @Before
-    public void prepare() throws ClassNotFoundException, SQLException {
-        deleteDBFile();
-    }
+public abstract class AbstractPersistentLogStorageTest extends AbstractLogStorageTest {
+    private static final int BUCKET_SIZE = 3;
 
     @Test
     public void testPersistDBState() {
-        SQLiteDBLogStorage storage = getStorage();
+        LogStorage storage = (LogStorage) getStorage(BUCKET_SIZE);
 
         LogRecord record = new LogRecord();
         int insertionCount = 7;
@@ -49,9 +38,10 @@ public class SQLiteDBLogStorageTest extends AbstractLogStorageTest {
         LogBlock beforePersist = storage.getRecordBlock(15);
         storage.close();
 
-        storage = getStorage();
-        Assert.assertEquals(insertionCount, storage.getRecordCount());
-        Assert.assertEquals(insertionCount * 3, storage.getConsumedVolume());
+        storage = (LogStorage) getStorage(BUCKET_SIZE);
+        LogStorageStatus storageStatus = (LogStorageStatus) storage;
+        Assert.assertEquals(insertionCount, storageStatus.getRecordCount());
+        Assert.assertEquals(insertionCount * 3, storageStatus.getConsumedVolume());
         LogBlock afterPersist = storage.getRecordBlock(15);
 
         Assert.assertEquals(beforePersist.getRecords().size(), afterPersist.getRecords().size());
@@ -61,7 +51,7 @@ public class SQLiteDBLogStorageTest extends AbstractLogStorageTest {
 
     @Test
     public void testGetBigRecordBlock() {
-        SQLiteDBLogStorage storage = getStorage();
+        LogStorage storage = (LogStorage) getStorage(BUCKET_SIZE);
 
         LogRecord record = new LogRecord();
         int insertionCount = 7;
@@ -78,21 +68,5 @@ public class SQLiteDBLogStorageTest extends AbstractLogStorageTest {
         storage.close();
     }
 
-    @After
-    public void cleanup() {
-        deleteDBFile();
-    }
 
-    @Override
-    protected SQLiteDBLogStorage getStorage(long bucketSize) {
-        return getStorage();
-    }
-
-    private SQLiteDBLogStorage getStorage() {
-        return new SQLiteDBLogStorage(DB_FILENAME);
-    }
-
-    private void deleteDBFile() {
-        dbFile.delete();
-    }
 }

@@ -31,66 +31,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
+public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SQLiteDBLogStorage.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DesktopSQLiteDBLogStorage.class);
 
     private static final String SQLITE_URL_PREFIX = "jdbc:sqlite:";
-    private static final String DEFAULT_DB_NAME = "kaa_logs";
-    private static final String TABLE_NAME = "kaa_logs";
-    private static final String RECORD_ID_COLUMN = "record_id";
-    private static final String BUCKET_ID_COLUMN = "bucket_id";
-    private static final String LOG_DATA_COLUMN = "log_data";
-    private static final String BUCKET_ID_INDEX_NAME = "IX_BUCKET_ID";
-
-    private static final String KAA_CREATE_LOG_TABLE =
-            "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("  +
-            RECORD_ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            BUCKET_ID_COLUMN + " INTEGER, " +
-            LOG_DATA_COLUMN + " BLOB);";
-
-    private static final String KAA_CREATE_BUCKET_ID_INDEX =
-            "CREATE INDEX IF NOT EXISTS " + BUCKET_ID_INDEX_NAME + " " +
-            " ON " + TABLE_NAME +  " (" + BUCKET_ID_COLUMN + ");";
-
-    private static final String KAA_HOW_MANY_LOGS_IN_DB =
-            "SELECT COUNT(*), SUM(LENGTH(" +
-            LOG_DATA_COLUMN + ")) FROM " + TABLE_NAME + ";";
-
-    private static final String KAA_RESET_BUCKET_ID_ON_START =
-            "UPDATE " + TABLE_NAME + " " +
-            "SET " + BUCKET_ID_COLUMN + " = NULL " +
-            "WHERE " + BUCKET_ID_COLUMN + " IS NOT NULL;";
-
-    private static final String KAA_INSERT_NEW_RECORD =
-            "INSERT INTO " + TABLE_NAME + " (" + LOG_DATA_COLUMN + ") " +
-            "VALUES (?);";
-
-    private static final String KAA_SELECT_UNMARKED_RECORDS =
-            "SELECT " + RECORD_ID_COLUMN + ", " + LOG_DATA_COLUMN + " " +
-            "FROM " + TABLE_NAME + " " +
-            "WHERE " + BUCKET_ID_COLUMN + " IS NULL " +
-            "ORDER BY " + RECORD_ID_COLUMN + " ASC;";
-
-    private static final String KAA_DELETE_BY_RECORD_ID =
-            "DELETE FROM " + TABLE_NAME + " " +
-            "WHERE " + RECORD_ID_COLUMN + " = ?;";
-
-    private static final String SUBSTITUTE_SYMBOL = "?";
-    private static final String KAA_UPDATE_BUCKET_ID =
-            "UPDATE " + TABLE_NAME + " "  +
-            "SET " + BUCKET_ID_COLUMN + " = ? " +
-            "WHERE " + RECORD_ID_COLUMN + " IN (?);";
-
-    private static final String KAA_DELETE_BY_BUCKET_ID =
-            "DELETE FROM " + TABLE_NAME + " " +
-            "WHERE " + BUCKET_ID_COLUMN + " = ?;";
-
-
-    private static final String KAA_RESET_BY_BUCKET_ID =
-            "UPDATE " + TABLE_NAME + " " +
-            "SET " + BUCKET_ID_COLUMN + " = NULL " +
-            "WHERE " + BUCKET_ID_COLUMN + " = ?;";
 
     private PreparedStatement insertStatement;
     private PreparedStatement deleteByRecordIdStatement;
@@ -105,11 +50,11 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
     private final Connection connection;
 
-    public SQLiteDBLogStorage() {
-        this(DEFAULT_DB_NAME);
+    public DesktopSQLiteDBLogStorage() {
+        this(PersistentLogStorageStorageInfo.DEFAULT_DB_NAME);
     }
 
-    public SQLiteDBLogStorage(String dbName) {
+    public DesktopSQLiteDBLogStorage(String dbName) {
         try {
             Class.forName("org.sqlite.JDBC");
             String dbURL = SQLITE_URL_PREFIX + dbName;
@@ -136,9 +81,9 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             LOG.trace("Adding a new log record...");
             if (insertStatement == null) {
                 try {
-                    insertStatement = connection.prepareStatement(KAA_INSERT_NEW_RECORD);
+                    insertStatement = connection.prepareStatement(PersistentLogStorageStorageInfo.KAA_INSERT_NEW_RECORD);
                 } catch (SQLException e) {
-                    LOG.error("Can't create row insert statement: {}", KAA_INSERT_NEW_RECORD, e);
+                    LOG.error("Can't create row insert statement", e);
                     throw new RuntimeException(e);
                 }
             }
@@ -169,13 +114,14 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
         synchronized (connection) {
             LOG.trace("Creating a new record block, needed size: {}", blockSize);
             Statement statement = null;
+            ResultSet rs = null;
             LogBlock logBlock = null;
             List<String> unmarkedRecordIds = new LinkedList<>();
             List<LogRecord> logRecords = new LinkedList<>();
             try {
                 long leftBlockSize = blockSize;
                 statement = connection.createStatement();
-                ResultSet rs = statement.executeQuery(KAA_SELECT_UNMARKED_RECORDS);
+                rs = statement.executeQuery(PersistentLogStorageStorageInfo.KAA_SELECT_UNMARKED_RECORDS);
                 while (rs.next()) {
                     int recordId = rs.getInt(1);
                     byte[] recordData = rs.getBytes(2);
@@ -209,6 +155,12 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
             } catch (SQLException e) {
                 LOG.error("Can't retrieve unmarked records from storage", e);
+            } finally {
+                try {
+                    tryCloseResultSet(rs);
+                } catch (SQLException e) {
+                    LOG.error("Can't close result set", e);
+                }
             }
             return logBlock;
         }
@@ -219,7 +171,7 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             LOG.trace("Removing log record with id [{}]", recordId);
             if (deleteByRecordIdStatement == null) {
                 try {
-                    deleteByRecordIdStatement = connection.prepareStatement(KAA_DELETE_BY_RECORD_ID);
+                    deleteByRecordIdStatement = connection.prepareStatement(PersistentLogStorageStorageInfo.KAA_DELETE_BY_RECORD_ID);
                 } catch (SQLException e) {
                     LOG.error("Can't create log remove statement", e);
                     throw new RuntimeException(e);
@@ -272,9 +224,9 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
     private String getUpdateBucketIdStatement(List<String> recordIds) {
         String queryString = StringUtils.join(recordIds, ",");
-        StringBuilder builder = new StringBuilder(KAA_UPDATE_BUCKET_ID);
-        int indexOf = builder.lastIndexOf(SUBSTITUTE_SYMBOL);
-        builder.replace(indexOf, indexOf + SUBSTITUTE_SYMBOL.length(), queryString);
+        StringBuilder builder = new StringBuilder(PersistentLogStorageStorageInfo.KAA_UPDATE_BUCKET_ID);
+        int indexOf = builder.lastIndexOf(PersistentLogStorageStorageInfo.SUBSTITUTE_SYMBOL);
+        builder.replace(indexOf, indexOf + PersistentLogStorageStorageInfo.SUBSTITUTE_SYMBOL.length(), queryString);
         return builder.toString();
     }
 
@@ -284,10 +236,10 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             LOG.trace("Removing record block with id [{}] from storage", recordBlockId);
             if (deleteByBucketIdStatement == null) {
                 try {
-                    deleteByBucketIdStatement = connection.prepareStatement(KAA_DELETE_BY_BUCKET_ID);
+                    deleteByBucketIdStatement = connection.prepareStatement(PersistentLogStorageStorageInfo.KAA_DELETE_BY_BUCKET_ID);
                 } catch (SQLException e) {
-                    LOG.error("Can't create record block deletion statement", e);
-                    throw new RuntimeException(e);
+
+
                 }
             }
 
@@ -301,7 +253,7 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                     LOG.info("No records were removed from storage");
                 }
             } catch (SQLException e) {
-                LOG.error("Failed to remove record block with id [{}]", recordBlockId);
+                LOG.error("Failed to remove record block with id [{}]", recordBlockId, e);
             }
         }
     }
@@ -312,7 +264,7 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             LOG.trace("Notifying upload fail for bucket id: {}", bucketId);
             if (resetBucketIdStatement == null) {
                 try {
-                    resetBucketIdStatement = connection.prepareStatement(KAA_RESET_BY_BUCKET_ID);
+                    resetBucketIdStatement = connection.prepareStatement(PersistentLogStorageStorageInfo.KAA_RESET_BY_BUCKET_ID);
                 } catch (SQLException e) {
                     LOG.error("Can't create bucket id reset statement", e);
                     throw new RuntimeException(e);
@@ -351,8 +303,8 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
         Statement statement = null;
         try {
             statement = connection.createStatement();
-            statement.executeUpdate(KAA_CREATE_LOG_TABLE);
-            statement.executeUpdate(KAA_CREATE_BUCKET_ID_INDEX);
+            statement.executeUpdate(PersistentLogStorageStorageInfo.KAA_CREATE_LOG_TABLE);
+            statement.executeUpdate(PersistentLogStorageStorageInfo.KAA_CREATE_BUCKET_ID_INDEX);
         } finally {
             tryCloseStatement(statement);
         }
@@ -361,13 +313,16 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private void retrieveConsumedSizeAndVolume() throws SQLException {
         synchronized (connection) {
             Statement statement = null;
+            ResultSet rs = null;
             try {
                 statement = connection.createStatement();
-                ResultSet rs = statement.executeQuery(KAA_HOW_MANY_LOGS_IN_DB);
+                rs = statement.executeQuery(PersistentLogStorageStorageInfo.KAA_HOW_MANY_LOGS_IN_DB);
                 rs.next();
                 recordCount = rs.getLong(1);
                 consumedSize = rs.getLong(2);
+                LOG.trace("Retrieved record count: {}, consumed size: {}", recordCount, consumedSize);
             } finally {
+                tryCloseResultSet(rs);
                 tryCloseStatement(statement);
             }
         }
@@ -375,27 +330,22 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
     public void close() {
         try {
-            if (insertStatement != null) {
-                insertStatement.close();
-            }
-
-            if (deleteByRecordIdStatement != null) {
-                deleteByRecordIdStatement.close();
-            }
-
-            if (deleteByBucketIdStatement != null) {
-                deleteByBucketIdStatement.close();
-            }
-
-            if (resetBucketIdStatement != null) {
-                resetBucketIdStatement.close();
-            }
+            tryCloseStatement(insertStatement);
+            tryCloseStatement(deleteByRecordIdStatement);
+            tryCloseStatement(deleteByBucketIdStatement);
+            tryCloseStatement(resetBucketIdStatement);
 
             if (connection != null) {
                 connection.close();
             }
         } catch (SQLException e) {
             LOG.error("Can't close SQLite db connection", e);
+        }
+    }
+
+    private void tryCloseResultSet(ResultSet rs) throws SQLException {
+        if (rs != null) {
+            rs.close();
         }
     }
 
@@ -406,17 +356,19 @@ public class SQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     }
 
     private void resetBucketIDs() throws SQLException {
-        LOG.debug("Resetting bucket ids on application start");
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            int updatedRows = statement.executeUpdate(KAA_RESET_BUCKET_ID_ON_START);
-            LOG.trace("Number of rows affected: {}", updatedRows);
-        } catch (SQLException e) {
-            LOG.error("Can't reset bucket IDs", e);
-            throw new RuntimeException(e);
-        } finally {
-            tryCloseStatement(statement);
+        synchronized (connection) {
+            LOG.debug("Resetting bucket ids on application start");
+            Statement statement = null;
+            try {
+                statement = connection.createStatement();
+                int updatedRows = statement.executeUpdate(PersistentLogStorageStorageInfo.KAA_RESET_BUCKET_ID_ON_START);
+                LOG.trace("Number of rows affected: {}", updatedRows);
+            } catch (SQLException e) {
+                LOG.error("Can't reset bucket IDs", e);
+                throw new RuntimeException(e);
+            } finally {
+                tryCloseStatement(statement);
+            }
         }
     }
 }
