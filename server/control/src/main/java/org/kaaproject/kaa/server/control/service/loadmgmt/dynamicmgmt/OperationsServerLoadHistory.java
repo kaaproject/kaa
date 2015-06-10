@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 
@@ -72,7 +73,7 @@ public class OperationsServerLoadHistory {
 
     public OperationsServerLoadHistory(long maxHistoryTimeLiv) {
         setMaxHistoryTimeLive(maxHistoryTimeLiv);
-        history = new LinkedList<OperationsServerLoad>();
+        history = new CopyOnWriteArrayList<OperationsServerLoad>();
     }
 
     /**
