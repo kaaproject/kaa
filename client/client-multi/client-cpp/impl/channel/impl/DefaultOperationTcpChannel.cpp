@@ -56,7 +56,7 @@ const std::map<TransportType, ChannelDirection> DefaultOperationTcpChannel::SUPP
 
 
 DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys)
-    : clientKeys_(clientKeys), work_(io_), /*sock_(io_), */pingTimer_(io_), connAckTimer_(io_)/*, reconnectTimer_(io_)*/, retryTimer_("DefaultOperationTcpChannel retryTimer")
+    : clientKeys_(clientKeys), work_(io_), socketWork_(socketIo_),/*sock_(io_), */pingTimer_(io_), connAckTimer_(io_)/*, reconnectTimer_(io_)*/, retryTimer_("DefaultOperationTcpChannel retryTimer")
     , firstStart_(true), isConnected_(false), isFirstResponseReceived_(false), isPendingSyncRequest_(false)
     , isShutdown_(false), isPaused_(false), multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager)
 {
@@ -175,7 +175,7 @@ void DefaultOperationTcpChannel::openConnection()
     }
     boost::system::error_code errorCode;
     responseBuffer_.reset(new boost::asio::streambuf());
-    sock_.reset(new boost::asio::ip::tcp::socket(io_));
+    sock_.reset(new boost::asio::ip::tcp::socket(socketIo_));
     sock_->open(ep.protocol(), errorCode);
     if (errorCode) {
         KAA_LOG_ERROR(boost::format("Channel \"%1%\". Failed to open socket: %2%") % getId() % errorCode.message());
@@ -332,8 +332,11 @@ void DefaultOperationTcpChannel::setConnAckTimer()
 
 void DefaultOperationTcpChannel::createThreads()
 {
-    for (std::uint16_t i = 0; i < THREADPOOL_SIZE; ++i) {
-        channelThreads_[i] = std::thread([this](){ io_.run(); });
+    for (std::uint16_t i = 0; i < TIMER_THREADPOOL_SIZE; ++i) {
+        timerThreads_[i] = std::thread([this](){ io_.run(); });
+    }
+    for (std::uint16_t i = 0; i < SOCKET_THREADPOOL_SIZE; ++i) {
+        channelThreads_[i] = std::thread([this](){ socketIo_.run(); });
     }
 }
 
@@ -471,7 +474,7 @@ void DefaultOperationTcpChannel::setServer(ITransportConnectionInfoPtr server)
             KAA_MUTEX_UNLOCKED("channelGuard_");
             closeConnection();
             sleep(1);
-            io_.post(std::bind(&DefaultOperationTcpChannel::openConnection, this));
+            socketIo_.post(std::bind(&DefaultOperationTcpChannel::openConnection, this));
         }
     } else {
         KAA_LOG_ERROR(boost::format("Invalid server info for channel %1%") % getId());
@@ -581,8 +584,12 @@ void DefaultOperationTcpChannel::doShutdown()
         KAA_MUTEX_UNLOCKED("channelGuard_");
         closeConnection();
         io_.stop();
-        for (std::uint16_t i = 0; i < THREADPOOL_SIZE; ++i) {
+        socketIo_.stop();
+        for (std::uint16_t i = 0; i < SOCKET_THREADPOOL_SIZE; ++i) {
             channelThreads_[i].join();
+        }
+        for (std::uint16_t i = 0; i < TIMER_THREADPOOL_SIZE; ++i) {
+            timerThreads_[i].join();
         }
     }
 }
@@ -625,7 +632,7 @@ void DefaultOperationTcpChannel::resume()
             createThreads();
             firstStart_ = false;
         }
-        io_.post(std::bind(&DefaultOperationTcpChannel::openConnection, this));
+        socketIo_.post(std::bind(&DefaultOperationTcpChannel::openConnection, this));
     }
 }
 

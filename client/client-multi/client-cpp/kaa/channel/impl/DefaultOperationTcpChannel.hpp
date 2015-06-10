@@ -121,14 +121,18 @@ private:
 private:
     static const std::string CHANNEL_ID;
     static const std::map<TransportType, ChannelDirection> SUPPORTED_TYPES;
-    static const std::uint16_t THREADPOOL_SIZE = 1;
+    static const std::uint16_t TIMER_THREADPOOL_SIZE = 1;
+    static const std::uint16_t SOCKET_THREADPOOL_SIZE = 1;
     static const std::uint32_t KAA_PLATFORM_PROTOCOL_AVRO_ID;
 
     std::list<TransportType> ackTypes_;
     KeyPair clientKeys_;
 
     boost::asio::io_service io_;
+    boost::asio::io_service socketIo_;
     boost::asio::io_service::work work_;
+    boost::asio::io_service::work socketWork_;
+
     std::unique_ptr<boost::asio::ip::tcp::socket> sock_;
     boost::asio::deadline_timer pingTimer_;
     boost::asio::deadline_timer connAckTimer_;
@@ -136,7 +140,8 @@ private:
     KaaTimer<void ()> retryTimer_;
 
     std::unique_ptr<boost::asio::streambuf> responseBuffer_;
-    std::array<std::thread, THREADPOOL_SIZE> channelThreads_;
+    std::array<std::thread, TIMER_THREADPOOL_SIZE> timerThreads_;
+    std::array<std::thread, SOCKET_THREADPOOL_SIZE> channelThreads_;
 
     bool firstStart_;
     bool isConnected_;
