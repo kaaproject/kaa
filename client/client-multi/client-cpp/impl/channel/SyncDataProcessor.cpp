@@ -212,8 +212,9 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
     return encodedData;
 }
 
-void SyncDataProcessor::processResponse(const std::vector<std::uint8_t> &response)
+DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std::uint8_t> &response)
 {
+    DemultiplexerReturnCode returnCode = DemultiplexerReturnCode::SUCCESS;
     SyncResponse syncResponse = responseConverter_.fromByteArray(response.data(), response.size());
     KAA_LOG_INFO(boost::format("Got SyncResponse: requestId: %1%, result: %2%")
         % syncResponse.requestId % LoggingUtils::SyncResponseResultTypeToString(syncResponse.status));
@@ -318,6 +319,7 @@ void SyncDataProcessor::processResponse(const std::vector<std::uint8_t> &respons
     if (!syncResponse.redirectSyncResponse.is_null()) {
         if (redirectionTransport_) {
             redirectionTransport_->onRedirectionResponse(syncResponse.redirectSyncResponse.get_RedirectSyncResponse());
+            returnCode = DemultiplexerReturnCode::REDIRECT;
         } else {
             KAA_LOG_ERROR("Got redirection sync response, but redirection transport was not set!");
         }
@@ -325,6 +327,7 @@ void SyncDataProcessor::processResponse(const std::vector<std::uint8_t> &respons
 
     KAA_LOG_DEBUG("Processed SyncResponse");
     clientStatus_->save();
+    return returnCode;
 }
 
 }  // namespace kaa

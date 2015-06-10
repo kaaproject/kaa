@@ -24,6 +24,7 @@
 
 #include <boost/bind.hpp>
 
+#include "kaa/common/exception/TransportRedirectException.hpp"
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
 #include "kaa/security/RsaEncoderDecoder.hpp"
@@ -118,9 +119,13 @@ void DefaultOperationTcpChannel::onKaaSync(const KaaSyncResponse& message)
     KAA_UNLOCK(lock);
     KAA_MUTEX_LOCKED("channelGuard_");
 
-    demultiplexer_->processResponse(
-            std::vector<std::uint8_t>(reinterpret_cast<const std::uint8_t *>(decodedResposne.data()),
-                                        reinterpret_cast<const std::uint8_t *>(decodedResposne.data() + decodedResposne.size())));
+    auto returnCode = demultiplexer_->processResponse(
+                                            std::vector<std::uint8_t>(reinterpret_cast<const std::uint8_t *>(decodedResposne.data()),
+                                                    reinterpret_cast<const std::uint8_t *>(decodedResposne.data() + decodedResposne.size())));
+
+    if (returnCode == DemultiplexerReturnCode::REDIRECT) {
+        throw TransportRedirectException(boost::format("Channel \"%1%\". Redirect response received") % getId());
+    }
 
     KAA_MUTEX_LOCKING("channelGuard_");
     KAA_LOCK(lock);
@@ -163,7 +168,13 @@ void DefaultOperationTcpChannel::onPingResponse()
 
 void DefaultOperationTcpChannel::openConnection()
 {
-    const auto& ep = HttpUtils::getEndpoint(currentServer_->getHost(), currentServer_->getPort());
+    boost::asio::ip::tcp::endpoint ep;
+    try {
+        ep = HttpUtils::getEndpoint(currentServer_->getHost(), currentServer_->getPort());
+    } catch (std::exception& e) {
+        KAA_LOG_ERROR(boost::format("Channel \"%1%\". Connection to endpoint failed: %2%") % getId() % e.what());
+        onServerFailed();
+    }
     boost::system::error_code errorCode;
     sock_.open(ep.protocol(), errorCode);
     if (errorCode) {
@@ -326,12 +337,22 @@ void DefaultOperationTcpChannel::createThreads()
 
 void DefaultOperationTcpChannel::onReadEvent(const boost::system::error_code& err)
 {
+    if (err) {
+        KAA_LOG_TRACE(boost::format("Channel \"%1%\". onReadEvent err %2%") % getId() % err);
+    }
     if (!err) {
         std::ostringstream responseStream;
         responseStream << &responseBuffer_;
         const auto& responseStr = responseStream.str();
+        if (responseStr.empty()) {
+            KAA_LOG_ERROR(boost::format("Channel \"%1%\". No data read from socket.") % getId());
+            onServerFailed();
+        }
         try {
             responsePorcessor.processResponseBuffer(responseStr.data(), responseStr.size());
+        } catch (const TransportRedirectException& exception) {
+            KAA_LOG_INFO(boost::format("Channel \"%1%\". Redirect response received.") % getId());
+            return;
         } catch (const KaaException& exception) {
             KAA_LOG_ERROR(boost::format("Channel \"%1%\". Failed to process response buffer, reason: %2%") % getId() % exception.what());
             onServerFailed();
