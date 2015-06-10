@@ -447,8 +447,7 @@ public class BinaryEncDecTest {
         // topic list
         buf.put((byte) 0);
         buf.put((byte) 0);
-        buf.put((byte) 0);
-        buf.put((byte) 1);
+        buf.putShort((short) 1);
         buf.putLong(303l);
         buf.putInt(MAGIC_NUMBER);
         // unicast notifications
@@ -497,7 +496,6 @@ public class BinaryEncDecTest {
         Assert.assertEquals(1, nSync.getTopicStates().size());
         Assert.assertEquals("303", nSync.getTopicStates().get(0).getTopicId());
         Assert.assertEquals(MAGIC_NUMBER, nSync.getTopicStates().get(0).getSeqNumber());
-        Assert.assertEquals(MAGIC_NUMBER, nSync.getTopicListHash().array()[MAGIC_INDEX]);
     }
 
     @Test

@@ -24,6 +24,7 @@
 #include "kaa/gen/EndpointGen.hpp"
 #include "kaa/log/ILogCollector.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
+#include "kaa/common/exception/KaaException.hpp"
 
 namespace kaa {
 
@@ -33,6 +34,14 @@ public:
     {
         AvroByteArrayConverter<KaaUserLogRecord> converter;  // TODO: make converter thread local when it would be possible
         converter.toByteArray(record, serializedLog_.data);
+    }
+
+    LogRecord(const std::uint8_t *data, size_t size)
+    {
+        if (!data || !size) {
+            throw KaaException("Null serialized log data");
+        }
+        serializedLog_.data.assign(data, data + size);
     }
 
     const std::vector<std::uint8_t>& getData() const { return serializedLog_.data; }

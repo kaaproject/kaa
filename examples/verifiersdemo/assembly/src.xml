@@ -27,11 +27,19 @@
             <directory>${project.basedir}/source</directory>
             <useDefaultExcludes>true</useDefaultExcludes>
             <outputDirectory>verifiers_demo/VerifiersDemo</outputDirectory>
+            <excludes>
+                <exclude>bin/</exclude>
+                <exclude>gen/</exclude>
+            </excludes>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/../thirdparty/android/appcompat_v7</directory>
             <useDefaultExcludes>true</useDefaultExcludes>
             <outputDirectory>verifiers_demo/appcompat_v7</outputDirectory>
+            <excludes>
+                <exclude>bin/</exclude>
+                <exclude>gen/</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
     <files>
@@ -40,5 +48,4 @@
             <outputDirectory>verifiers_demo</outputDirectory>
         </file>
     </files>
-    
 </assembly>

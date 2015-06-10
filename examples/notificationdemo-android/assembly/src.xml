@@ -27,6 +27,10 @@
             <directory>${project.basedir}/../thirdparty/android/appcompat_v7</directory>
             <useDefaultExcludes>true</useDefaultExcludes>
             <outputDirectory>notification_demo/appcompat_v7</outputDirectory>
+            <excludes>
+                <exclude>bin/</exclude>
+                <exclude>gen/</exclude>
+            </excludes>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/source</directory>

@@ -159,8 +159,8 @@ public class DefaultNotificationTransportTest {
         transport.onNotificationResponse(response);
 
         List<Topic> topicList = new ArrayList<>(1);
-        topicList.add(new Topic(topicId1, null, SubscriptionType.MANDATORY));
-        topicList.add(new Topic(topicId2, null, SubscriptionType.OPTIONAL));
+        topicList.add(new Topic(topicId1, null, SubscriptionType.MANDATORY_SUBSCRIPTION));
+        topicList.add(new Topic(topicId2, null, SubscriptionType.OPTIONAL_SUBSCRIPTION));
         response.setAvailableTopics(topicList);
 
         Notification nf1 = new Notification(topicId2, NotificationType.CUSTOM, "uid", 5, ByteBuffer.wrap(new byte [] { 1, 2, 3}));

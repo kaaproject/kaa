@@ -39,7 +39,7 @@ public final class TopicState {
 
     /**
      * Sets the value of the 'topicId' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -56,7 +56,7 @@ public final class TopicState {
 
     /**
      * Sets the value of the 'seqNumber' field.
-     * 
+     *
      * @param value
      *            the value to set.
      */
@@ -98,4 +98,14 @@ public final class TopicState {
         return true;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("TopicState [topicId=");
+        builder.append(topicId);
+        builder.append(", seqNumber=");
+        builder.append(seqNumber);
+        builder.append("]");
+        return builder.toString();
+    }
 }

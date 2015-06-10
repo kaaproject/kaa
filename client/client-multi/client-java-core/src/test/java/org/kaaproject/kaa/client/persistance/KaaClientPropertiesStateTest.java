@@ -89,10 +89,10 @@ public class KaaClientPropertiesStateTest {
         KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
 
         Topic topic1 = Topic.newBuilder().setId("1234").setName("testName")
-                .setSubscriptionType(SubscriptionType.OPTIONAL).build();
+                .setSubscriptionType(SubscriptionType.OPTIONAL_SUBSCRIPTION).build();
 
         Topic topic2 = Topic.newBuilder().setId("4321").setName("testName")
-                .setSubscriptionType(SubscriptionType.MANDATORY).build();
+                .setSubscriptionType(SubscriptionType.MANDATORY_SUBSCRIPTION).build();
 
         state.addTopic(topic1);
         state.addTopic(topic2);

@@ -43,36 +43,30 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.dir>${basedir}/../..</main.dir>
-        <jetty.version>9.2.2.v20140723</jetty.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-servlet</artifactId>
-            <version>${gwt.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
-            <version>${gwt.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-codeserver</artifactId>
-            <version>${gwt.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.jdramaix</groupId>
             <artifactId>gwtchosen</artifactId>
-            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.gwtquery</groupId>
             <artifactId>gwtquery</artifactId>
-            <version>1.4.2</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -126,12 +120,10 @@
         <dependency>
             <groupId>net.iharder</groupId>
             <artifactId>base64</artifactId>
-            <version>2.3.8</version>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>1.4</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -168,7 +160,6 @@
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.12</version>
         </dependency>
         <dependency>
             <groupId>com.twitter.common</groupId>
@@ -183,7 +174,6 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.3.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>
@@ -218,79 +208,72 @@
         <dependency>
             <groupId>org.versly</groupId>
             <artifactId>versly-wsdoc</artifactId>
-            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 		<dependency>
 		    <groupId>org.eclipse.jetty</groupId>
 		    <artifactId>jetty-server</artifactId>
-		    <version>${jetty.version}</version>
 		    <scope>provided</scope>
-		</dependency>        
+		</dependency>
 	    <dependency>
 	        <groupId>org.eclipse.jetty</groupId>
 	        <artifactId>jetty-servlet</artifactId>
-	        <version>${jetty.version}</version>
 	        <scope>provided</scope>
 	    </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-deploy</artifactId>
-            <version>${jetty.version}</version>
             <scope>provided</scope>
-        </dependency>   	    
+        </dependency>
 		<dependency>
 		    <groupId>org.eclipse.jetty</groupId>
 		    <artifactId>jetty-runner</artifactId>
-		    <version>${jetty.version}</version>
 		    <scope>provided</scope>
-		</dependency>	    
+		</dependency>
 		<dependency>
 		    <groupId>org.eclipse.jetty</groupId>
 		    <artifactId>jetty-start</artifactId>
-		    <version>${jetty.version}</version>
 		    <scope>provided</scope>
-		</dependency>		
+		</dependency>
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>javax-websocket-client-impl</artifactId>
-            <version>${jetty.version}</version>
             <scope>provided</scope>
-        </dependency>   		
+        </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>javax-websocket-server-impl</artifactId>
-            <version>${jetty.version}</version>
             <scope>provided</scope>
-        </dependency>           
+        </dependency>
         <dependency>
             <groupId>javax.websocket</groupId>
             <artifactId>javax.websocket-api</artifactId>
-            <version>1.0</version>
             <scope>provided</scope>
-        </dependency>       
+        </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>file</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.mongo</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>mongo</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>flume</classifier>
             <scope>runtime</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.appenders.rest</groupId>
+            <artifactId>config</artifactId>
+            <classifier>rest</classifier>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
             <artifactId>config</artifactId>
@@ -316,11 +299,6 @@
             <scope>runtime</scope>
         </dependency>
     </dependencies>
-    <dependencyManagement>
-        <dependencies>
-        </dependencies>
-    </dependencyManagement>
-
 
     <build>
         <finalName>kaa-admin</finalName>
@@ -920,6 +898,18 @@
                     <artifactId>config</artifactId>
                     <version>${project.version}</version>
                     <classifier>cassandra</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>couchbase</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.appenders.couchbase</groupId>
+                    <artifactId>config</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>couchbase</classifier>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>

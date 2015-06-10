@@ -101,9 +101,9 @@ void EndpointRegistrationManager::onEndpointsAttach(const std::vector<EndpointAt
                 auto callback = listenerIt->second;
                 attachEndpointListeners_.erase(listenerIt);
 
-                KAA_MUTEX_UNLOCKING(attachEndpointGuard_);
+                KAA_MUTEX_UNLOCKING("attachEndpointGuard_");
                 KAA_UNLOCK(attachEndpointLock);
-                KAA_MUTEX_UNLOCKED(attachEndpointGuard_);
+                KAA_MUTEX_UNLOCKED("attachEndpointGuard_");
 
                 if (isAttachSuccess) {
                     callback->onAttachSuccess(attachResponse.endpointKeyHash.is_null() ?
@@ -142,9 +142,9 @@ void EndpointRegistrationManager::onEndpointsDetach(const std::vector<EndpointDe
                 auto callback = listenerIt->second;
                 detachEndpointListeners_.erase(listenerIt);
 
-                KAA_MUTEX_UNLOCKING(detachEndpointGuard_);
+                KAA_MUTEX_UNLOCKING("detachEndpointGuard_");
                 KAA_UNLOCK(detachEndpointLock);
-                KAA_MUTEX_UNLOCKED(detachEndpointGuard_);
+                KAA_MUTEX_UNLOCKED("detachEndpointGuard_");
 
                 if (isDetachSuccess) {
                     callback->onDetachSuccess();
@@ -203,15 +203,15 @@ void EndpointRegistrationManager::attachEndpoint(const std::string& endpointAcce
             }
         }
 
-        KAA_MUTEX_UNLOCKING(attachEndpointGuard_);
+        KAA_MUTEX_UNLOCKING("attachEndpointGuard_");
         KAA_UNLOCK(attachEndpointLock);
-        KAA_MUTEX_UNLOCKED(attachEndpointGuard_);
+        KAA_MUTEX_UNLOCKED("attachEndpointGuard_");
 
         doSync();
     } else {
-        KAA_MUTEX_UNLOCKING(attachEndpointGuard_);
+        KAA_MUTEX_UNLOCKING("attachEndpointGuard_");
         KAA_UNLOCK(attachEndpointLock);
-        KAA_MUTEX_UNLOCKED(attachEndpointGuard_);
+        KAA_MUTEX_UNLOCKED("attachEndpointGuard_");
 
         KAA_LOG_WARN(boost::format("Ignore attach endpoint request (access token: '%1%'): already exists")
                                                                                         % endpointAccessToken);
@@ -243,15 +243,15 @@ void EndpointRegistrationManager::detachEndpoint(const std::string& endpointKeyH
             }
         }
 
-        KAA_MUTEX_UNLOCKING(detachEndpointGuard_);
+        KAA_MUTEX_UNLOCKING("detachEndpointGuard_");
         KAA_UNLOCK(detachEndpointLock);
-        KAA_MUTEX_UNLOCKED(detachEndpointGuard_);
+        KAA_MUTEX_UNLOCKED("detachEndpointGuard_");
 
         doSync();
     } else {
-        KAA_MUTEX_UNLOCKING(detachEndpointGuard_);
+        KAA_MUTEX_UNLOCKING("detachEndpointGuard_");
         KAA_UNLOCK(detachEndpointLock);
-        KAA_MUTEX_UNLOCKED(detachEndpointGuard_);
+        KAA_MUTEX_UNLOCKED("detachEndpointGuard_");
 
         KAA_LOG_WARN(boost::format("Ignore detach endpoint request (key hash: '%1%'): already exists")
                                                                                         % endpointKeyHash);

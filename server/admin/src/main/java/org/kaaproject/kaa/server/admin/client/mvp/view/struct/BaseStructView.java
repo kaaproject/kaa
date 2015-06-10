@@ -88,7 +88,9 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
         
         getColumnFormatter().setWidth(0, "400px");
         getColumnFormatter().setWidth(1, "400px");
-        getColumnFormatter().setWidth(2, "0px");
+        
+        // IE workaround
+        getColumnFormatter().getElement(2).setAttribute("width", "0px");
         
         FlexTable dateTable = new FlexTable();
         FlexTable userTable = new FlexTable();
@@ -164,7 +166,9 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V> extends 
 
         detailsTable.getColumnFormatter().setWidth(0, "200px");
         detailsTable.getColumnFormatter().setWidth(1, "600px");
-        detailsTable.getColumnFormatter().setWidth(2, "0px");
+        
+        // IE workaround
+        detailsTable.getColumnFormatter().getElement(2).setAttribute("width", "0px");
 
         description = new SizedTextArea(1024);
         description.setWidth("600px");

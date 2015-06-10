@@ -25,6 +25,7 @@ posix_sock.h
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include "../kaa_htonll.h"
 
 typedef int kaa_fd_t;
 
@@ -32,13 +33,12 @@ typedef struct sockaddr kaa_sockaddr_t;
 typedef struct sockaddr_storage kaa_sockaddr_storage_t;
 typedef socklen_t kaa_socklen_t;
 
+#define KAA_HTONS(hostshort)     htons((hostshort))
+#define KAA_HTONL(hostlong)      htonl((hostlong))
+#define KAA_HTONLL(hostlonglong) htonll((hostlonglong))
 
-#define KAA_HTONS(hostshort)    htons((hostshort))
-#define KAA_HTONL(hostlong)     htonl((hostlong))
-
-#define KAA_NTOHS(netshort)     ntohs((netshort))
-#define KAA_NTOHL(netlong)      ntohl((netlong))
-
-
+#define KAA_NTOHS(netshort)      ntohs((netshort))
+#define KAA_NTOHL(netlong)       ntohl((netlong))
+#define KAA_NTOHLL(netlonglong)  ntohll((netlonglong))
 
 #endif /* POSIX_SOCK_H_ */

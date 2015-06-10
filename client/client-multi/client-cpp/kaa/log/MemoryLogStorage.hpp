@@ -57,7 +57,7 @@ public:
     virtual void addLogRecord(LogRecordPtr serializedRecord);
     virtual ILogStorageStatus& getStatus() { return *this; }
 
-    virtual RecordPack getRecordBlock(std::size_t blockSize);
+    virtual RecordPack getRecordBlock(std::size_t blockSize, std::size_t recordsBlockCount);
     virtual void removeRecordBlock(RecordBlockId blockId);
     virtual void notifyUploadFailed(RecordBlockId blockId);
 

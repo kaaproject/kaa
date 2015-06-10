@@ -1,0 +1,40 @@
+{
+    "type":"record",
+    "name":"GeoFencingConfiguration",
+    "namespace":"org.kaaproject.kaa.demo.iotworld.connectedcar",
+    "fields":[
+        {
+            "name":"zones",
+            "type":{
+                "type":"array",
+                "items":{
+                    "type":"record",
+                    "name":"GeoFencingZone",
+                    "namespace":"org.kaaproject.kaa.demo.iotworld.connectedcar",
+                    "fields":[
+                        {
+                            "name":"id",
+                            "type":{
+                                "namespace":"org.kaaproject.kaa.demo.iotworld.connectedcar",
+                                "type":"enum",
+                                "name":"GeoFencingZoneID",
+                                "symbols":[
+                                    "NEAR",
+                                    "HOME"
+                                ]
+                            }
+                        },
+                        {
+                            "name":"tags",
+                            "type":{
+                                "type":"array",
+                                "items":"long"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "displayName":"Schema contains list of tags for geo fencing zones"
+}

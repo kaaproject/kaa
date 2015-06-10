@@ -4,3 +4,4 @@
 *.py.template   eol=lf
 *.sh.template	eol=lf
 *.json		text
+*.bat		eol=crlf

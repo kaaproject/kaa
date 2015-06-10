@@ -134,6 +134,7 @@ public class DaoConstants {
     public static final String ABSTRACT_STRUCTURE_STATUS = "status";
     public static final String ABSTRACT_STRUCTURE_APPLICATION_ID = APPLICATION_ID;
     public static final String ABSTRACT_STRUCTURE_ENDPOINT_GROUP_ID = ENDPOINT_GROUP_ID;
+    public static final String ABSTRACT_STRUCTURE_OPTIMISTIC_LOCK = "optimistic_lock";
 
     /**
      * Profile schema constants.

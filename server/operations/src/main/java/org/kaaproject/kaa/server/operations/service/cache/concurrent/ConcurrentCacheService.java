@@ -191,7 +191,6 @@ public class ConcurrentCacheService implements CacheService {
                 LOG.debug("Fetching result for getAppSeqNumber");
                 ApplicationDto appDto = applicationService.findAppByApplicationToken(key);
                 AppSeqNumber appSeqNumber = new AppSeqNumber(appDto.getTenantId(), appDto.getId(), appDto.getApplicationToken(), appDto.getSequenceNumber());
-                putAppSeqNumber(key, appSeqNumber);
                 return appSeqNumber;
             }
         });
@@ -228,7 +227,6 @@ public class ConcurrentCacheService implements CacheService {
                 for (ConfigurationDto confDto : configurations) {
                     if (confDto.getMajorVersion() == key.getConfigSchemaVersion()) {
                         confId = confDto.getId();
-                        putConfId(key, confId);
                         break;
                     }
                 }
@@ -292,7 +290,6 @@ public class ConcurrentCacheService implements CacheService {
                     }
                 }
 
-                putHistory(key, relatedChanges);
                 return relatedChanges;
             }
         });
@@ -329,7 +326,6 @@ public class ConcurrentCacheService implements CacheService {
                 LOG.debug("Fetching result for getFilters");
                 ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getApplicationToken());
                 List<ProfileFilterDto> value = profileService.findProfileFilterByAppIdAndVersion(appDto.getId(), key.getVersion());
-                putFilterList(key, value);
                 return value;
             }
         });
@@ -377,7 +373,6 @@ public class ConcurrentCacheService implements CacheService {
             public ProfileFilterDto compute(String key) {
                 LOG.debug("Fetching result for getFilter");
                 ProfileFilterDto value = profileService.findProfileFilterById(key);
-                putFilter(key, value);
                 return value;
             }
         });
@@ -412,7 +407,6 @@ public class ConcurrentCacheService implements CacheService {
             public EndpointConfigurationDto compute(EndpointObjectHash key) {
                 LOG.debug("Fetching result for getConfByHash {}", key);
                 EndpointConfigurationDto value = endpointService.findEndpointConfigurationByHash(key.getData());
-                putConfiguration(key, value);
                 return value;
             }
         });
@@ -452,7 +446,6 @@ public class ConcurrentCacheService implements CacheService {
                 LOG.debug("Fetching result for getConfSchemaByAppAndVersion");
                 ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getApplicationToken());
                 ConfigurationSchemaDto value = configurationService.findConfSchemaByAppIdAndVersion(appDto.getId(), key.getVersion());
-                putConfigurationSchema(key, value);
                 return value;
             }
         });
@@ -489,7 +482,6 @@ public class ConcurrentCacheService implements CacheService {
                 LOG.debug("Fetching result for getProfileSchemaByAppAndVersion");
                 ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getApplicationToken());
                 ProfileSchemaDto value = profileService.findProfileSchemaByAppIdAndVersion(appDto.getId(), key.getVersion());
-                putProfileSchema(key, value);
                 return value;
             }
         });
@@ -668,7 +660,6 @@ public class ConcurrentCacheService implements CacheService {
             public BaseData compute(List<EndpointGroupStateDto> key) {
                 LOG.debug("Fetching result for getMergedConfiguration");
                 BaseData result = worker.compute(key);
-                setMergedConfiguration(key, result);
                 return result;
             }
         });
@@ -702,7 +693,6 @@ public class ConcurrentCacheService implements CacheService {
             public DeltaCacheEntry compute(DeltaCacheKey key) {
                 LOG.debug("Fetching result for getMergedConfiguration");
                 DeltaCacheEntry result = worker.compute(key);
-                setDelta(key, result);
                 return result;
             }
         });

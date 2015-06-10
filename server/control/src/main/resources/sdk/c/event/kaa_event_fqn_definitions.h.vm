@@ -23,6 +23,10 @@
 # ifndef KAA_EVENT_FQN_DEFINITIONS_
 # define KAA_EVENT_FQN_DEFINITIONS_
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 typedef struct {
     char       *ecf_name;
     size_t      supported_incoming_fqns_count;
@@ -70,4 +74,9 @@ static const event_class_family_t SUPPORTED_EVENT_CLASS_FAMILIES[SUPPORTED_EVENT
 #end
 
 };
+
+# ifdef __cplusplus
+}      /* extern "C" */
+# endif
+
 # endif

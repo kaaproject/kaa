@@ -154,11 +154,7 @@ kaa_error_t ext_log_storage_add_log_record(void *context, kaa_log_record_t *reco
     kaa_log_record_t *rec = KAA_MALLOC(sizeof(kaa_log_record_t));
     *rec = *record;
 
-    if (self->logs) {
-        kaa_list_push_back(self->logs, rec);
-    } else {
-        self->logs = kaa_list_create(rec);
-    }
+    kaa_list_push_back(self->logs, rec);
 
     self->record_count++;
     self->total_size += rec->size;
@@ -171,7 +167,7 @@ kaa_error_t ext_log_storage_write_next_record(void *context, char *buffer, size_
     mock_storage_context_t *self = (mock_storage_context_t *)context;
     KAA_RETURN_IF_NIL2(self, self->logs, KAA_ERR_NOT_FOUND);
 
-    kaa_log_record_t *record = kaa_list_get_data(self->logs);
+    kaa_log_record_t *record = kaa_list_get_data(kaa_list_begin(self->logs));
 
     if (buffer_len < record->size) {
         return KAA_ERR_INSUFFICIENT_BUFFER;
@@ -212,10 +208,20 @@ static void destroy_log_record(void *record_p)
     }
 }
 
+mock_storage_context_t *create_mock_storage()
+{
+    mock_storage_context_t *storage = (mock_storage_context_t *)KAA_CALLOC(1, sizeof(mock_storage_context_t));
+    KAA_RETURN_IF_NIL(storage, NULL);
+    storage->logs = kaa_list_create();
+
+    return storage;
+}
+
 kaa_error_t ext_log_storage_destroy(void *context)
 {
     if (context) {
         kaa_list_destroy(((mock_storage_context_t *)context)->logs, &destroy_log_record);
+        KAA_FREE(context);
     }
     return KAA_ERR_NONE;
 }
@@ -240,10 +246,7 @@ void test_create_request()
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
     strategy.batch_size = 2 * test_log_record_size;
 
-    mock_storage_context_t storage;
-    memset(&storage, 0, sizeof(mock_storage_context_t));
-
-    error_code = kaa_logging_init(log_collector, &storage, &strategy);
+    error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_logging_add_record(log_collector, test_log_record);
@@ -311,10 +314,8 @@ void test_response()
     mock_strategy_context_t strategy;
     memset(&strategy, 0, sizeof(mock_strategy_context_t));
 
-    mock_storage_context_t storage;
-    memset(&storage, 0, sizeof(mock_storage_context_t));
-
-    error_code = kaa_logging_init(log_collector, &storage, &strategy);
+    mock_storage_context_t *storage = create_mock_storage();
+    error_code = kaa_logging_init(log_collector, storage, &strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     uint32_t response_count = 2;
@@ -350,8 +351,8 @@ void test_response()
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     ASSERT_NOT_NULL(strategy.on_failure_count);
-    ASSERT_NOT_NULL(storage.on_remove_by_id_count);
-    ASSERT_NOT_NULL(storage.on_unmark_by_id_count);
+    ASSERT_NOT_NULL(storage->on_remove_by_id_count);
+    ASSERT_NOT_NULL(storage->on_unmark_by_id_count);
 
     kaa_platform_message_reader_destroy(reader);
     kaa_log_collector_destroy(log_collector);
@@ -382,10 +383,7 @@ void test_timeout()
     strategy.timeout = TEST_TIMEOUT;
     strategy.batch_size = 2 * test_log_record_size;
 
-    mock_storage_context_t storage;
-    memset(&storage, 0, sizeof(mock_storage_context_t));
-
-    error_code = kaa_logging_init(log_collector, &storage, &strategy);
+    error_code = kaa_logging_init(log_collector, create_mock_storage(), &strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_logging_add_record(log_collector, test_log_record);
@@ -435,10 +433,10 @@ void test_decline_timeout()
     strategy.timeout = TEST_TIMEOUT;
     strategy.batch_size = 2 * test_log_record_size;
 
-    mock_storage_context_t storage;
-    memset(&storage, 0, sizeof(mock_storage_context_t));
+    mock_storage_context_t *storage = create_mock_storage();
+    ASSERT_NOT_NULL(storage);
 
-    error_code = kaa_logging_init(log_collector, &storage, &strategy);
+    error_code = kaa_logging_init(log_collector, storage, &strategy);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_logging_add_record(log_collector, test_log_record);
@@ -481,7 +479,7 @@ void test_decline_timeout()
 
     error_code = kaa_logging_handle_server_sync(log_collector, reader, 0, response_buffer_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    ASSERT_NOT_NULL(storage.on_remove_by_id_count);
+    ASSERT_NOT_NULL(storage->on_remove_by_id_count);
 
     error_code = kaa_logging_add_record(log_collector, test_log_record);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);

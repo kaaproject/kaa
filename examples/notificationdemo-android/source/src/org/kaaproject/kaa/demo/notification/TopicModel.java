@@ -33,7 +33,7 @@ public class TopicModel {
 
     public TopicModel(Topic topic) {
         this.topic = topic;
-        if (topic.getSubscriptionType() == SubscriptionType.MANDATORY) {
+        if (topic.getSubscriptionType() == SubscriptionType.MANDATORY_SUBSCRIPTION) {
             selected = true;
         }
         notifications = new LinkedList<>();
@@ -56,7 +56,7 @@ public class TopicModel {
     }
 
     public boolean isMandatoryTopic() {
-        return topic.getSubscriptionType() == SubscriptionType.MANDATORY;
+        return topic.getSubscriptionType() == SubscriptionType.MANDATORY_SUBSCRIPTION;
     }
 
     public int getNotificationsCount() {
