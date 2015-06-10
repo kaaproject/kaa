@@ -215,6 +215,9 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
 DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std::uint8_t> &response)
 {
     DemultiplexerReturnCode returnCode = DemultiplexerReturnCode::SUCCESS;
+    if (response.empty()) {
+        return DemultiplexerReturnCode::FAILURE;
+    }
     try {
         SyncResponse syncResponse = responseConverter_.fromByteArray(response.data(), response.size());
 

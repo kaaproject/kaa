@@ -135,7 +135,7 @@ private:
     //boost::asio::deadline_timer reconnectTimer_;
     KaaTimer<void ()> retryTimer_;
 
-    boost::asio::streambuf responseBuffer_;
+    std::unique_ptr<boost::asio::streambuf> responseBuffer_;
     std::array<std::thread, THREADPOOL_SIZE> channelThreads_;
 
     bool firstStart_;

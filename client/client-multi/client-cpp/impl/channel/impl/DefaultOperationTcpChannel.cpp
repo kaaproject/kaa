@@ -174,6 +174,7 @@ void DefaultOperationTcpChannel::openConnection()
         onServerFailed();
     }
     boost::system::error_code errorCode;
+    responseBuffer_.reset(new boost::asio::streambuf());
     sock_.reset(new boost::asio::ip::tcp::socket(io_));
     sock_->open(ep.protocol(), errorCode);
     if (errorCode) {
@@ -311,7 +312,7 @@ boost::system::error_code DefaultOperationTcpChannel::sendPingRequest()
 
 void DefaultOperationTcpChannel::readFromSocket()
 {
-    boost::asio::async_read(*sock_, responseBuffer_,
+    boost::asio::async_read(*sock_, *responseBuffer_,
               boost::asio::transfer_at_least(1),
               boost::bind(&DefaultOperationTcpChannel::onReadEvent, this,
                       boost::asio::placeholders::error));
@@ -343,7 +344,7 @@ void DefaultOperationTcpChannel::onReadEvent(const boost::system::error_code& er
     }
     if (!err) {
         std::ostringstream responseStream;
-        responseStream << &responseBuffer_;
+        responseStream << responseBuffer_.get();
         const auto& responseStr = responseStream.str();
         try {
             if (responseStr.empty()) {
@@ -469,6 +470,7 @@ void DefaultOperationTcpChannel::setServer(ITransportConnectionInfoPtr server)
             KAA_UNLOCK(lock);
             KAA_MUTEX_UNLOCKED("channelGuard_");
             closeConnection();
+            sleep(1);
             io_.post(std::bind(&DefaultOperationTcpChannel::openConnection, this));
         }
     } else {
