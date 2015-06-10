@@ -45,6 +45,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
+import android.util.Log;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -55,10 +56,8 @@ import de.greenrobot.event.EventBus;
  * Sends cell monitor log records to the Kaa cluster via the Kaa client.
  */
 public class CellMonitorApplication extends Application {
-
-    private static final Logger LOG = LoggerFactory
-            .getLogger(CellMonitorApplication.class);
-
+	public static final String TAG = "CellMonitor";
+	
     public static final int UNDEFINED = -1;
 
     private EventBus mEventBus;
@@ -105,10 +104,10 @@ public class CellMonitorApplication extends Application {
                     @Override
                     public void onStarted() {
                         mKaaStarted = true;
-                        LOG.info("Kaa client started");
+                        Log.i(TAG, "Kaa client started");
                     }
                 });
-        
+
         /*
          * Define a log upload strategy used by the Kaa client for logs delivery.
          */
@@ -116,12 +115,12 @@ public class CellMonitorApplication extends Application {
 
             @Override
             public void onTimeout(LogFailoverCommand logFailoverCommand) {
-                LOG.error("Unable to send logs within defined timeout!");
+                Log.e(TAG, "Unable to send logs within defined timeout!");
             }
 
             @Override
             public void onFailure(LogFailoverCommand logFailoverCommand, LogDeliveryErrorCode logDeliveryErrorCode) {
-                LOG.error("Unable to send logs, error code: " + logDeliveryErrorCode);
+                Log.e(TAG, "Unable to send logs, error code: " + logDeliveryErrorCode);
                 logFailoverCommand.retryLogUpload(10);
             }
 
@@ -280,7 +279,7 @@ public class CellMonitorApplication extends Application {
             mCellLocation = location;
             sendLog();
             mEventBus.post(new CellLocationChanged());
-            LOG.info("Cell location changed!");
+            Log.i(TAG, "Cell location changed!");
         }
 
         @Override
@@ -289,7 +288,7 @@ public class CellMonitorApplication extends Application {
             mSignalStrength = signalStrength;
             sendLog();
             mEventBus.post(new SignalStrengthChanged());
-            LOG.info("Signal strength changed!");
+            Log.i(TAG, "Signal strength changed!");
         }
     };
 
@@ -300,7 +299,7 @@ public class CellMonitorApplication extends Application {
             mGpsLocation = location;
             sendLog();
             mEventBus.post(new GpsLocationChanged());
-            LOG.info("GPS location changed!");
+            Log.i(TAG, "GPS location changed!");
         }
 
         @Override
