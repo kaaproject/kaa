@@ -22,8 +22,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
+import android.text.TextUtils;
 import android.util.Log;
-import com.sun.deploy.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -212,7 +212,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     }
 
     private String getUpdateBucketIdStatement(List<String> recordIds) {
-        String queryString = StringUtils.join(recordIds, ",");
+        String queryString = TextUtils.join(",", recordIds.toArray());
         StringBuilder builder = new StringBuilder(PersistentLogStorageStorageInfo.KAA_UPDATE_BUCKET_ID);
         int indexOf = builder.lastIndexOf(PersistentLogStorageStorageInfo.SUBSTITUTE_SYMBOL);
         builder.replace(indexOf, indexOf + PersistentLogStorageStorageInfo.SUBSTITUTE_SYMBOL.length(), queryString);
