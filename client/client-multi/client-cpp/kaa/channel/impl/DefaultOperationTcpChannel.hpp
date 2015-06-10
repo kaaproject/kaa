@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <thread>
 #include <array>
+#include <memory>
 
 #include <boost/asio.hpp>
 
@@ -128,7 +129,7 @@ private:
 
     boost::asio::io_service io_;
     boost::asio::io_service::work work_;
-    boost::asio::ip::tcp::socket sock_;
+    std::unique_ptr<boost::asio::ip::tcp::socket> sock_;
     boost::asio::deadline_timer pingTimer_;
     boost::asio::deadline_timer connAckTimer_;
     //boost::asio::deadline_timer reconnectTimer_;

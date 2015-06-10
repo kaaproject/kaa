@@ -215,118 +215,124 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
 DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std::uint8_t> &response)
 {
     DemultiplexerReturnCode returnCode = DemultiplexerReturnCode::SUCCESS;
-    SyncResponse syncResponse = responseConverter_.fromByteArray(response.data(), response.size());
-    KAA_LOG_INFO(boost::format("Got SyncResponse: requestId: %1%, result: %2%")
-        % syncResponse.requestId % LoggingUtils::SyncResponseResultTypeToString(syncResponse.status));
+    try {
+        SyncResponse syncResponse = responseConverter_.fromByteArray(response.data(), response.size());
 
-    KAA_LOG_DEBUG(boost::format("Got BootstrapSyncResponse: %1%")
-        % LoggingUtils::BootstrapSyncResponseToString(syncResponse.bootstrapSyncResponse));
+        KAA_LOG_INFO(boost::format("Got SyncResponse: requestId: %1%, result: %2%")
+            % syncResponse.requestId % LoggingUtils::SyncResponseResultTypeToString(syncResponse.status));
 
-    if (!syncResponse.bootstrapSyncResponse.is_null()) {
-        if (bootstrapTransport_) {
-            bootstrapTransport_->onBootstrapResponse(syncResponse.bootstrapSyncResponse.get_BootstrapSyncResponse());
-        } else {
-            KAA_LOG_ERROR("Got bootstrap sync response, but profile transport was not set!");
+        KAA_LOG_DEBUG(boost::format("Got BootstrapSyncResponse: %1%")
+            % LoggingUtils::BootstrapSyncResponseToString(syncResponse.bootstrapSyncResponse));
+
+        if (!syncResponse.bootstrapSyncResponse.is_null()) {
+            if (bootstrapTransport_) {
+                bootstrapTransport_->onBootstrapResponse(syncResponse.bootstrapSyncResponse.get_BootstrapSyncResponse());
+            } else {
+                KAA_LOG_ERROR("Got bootstrap sync response, but profile transport was not set!");
+            }
         }
-    }
 
-    KAA_LOG_DEBUG(boost::format("Got ProfileSyncResponse: %1%")
-        % LoggingUtils::ProfileSyncResponseToString(syncResponse.profileSyncResponse));
+        KAA_LOG_DEBUG(boost::format("Got ProfileSyncResponse: %1%")
+            % LoggingUtils::ProfileSyncResponseToString(syncResponse.profileSyncResponse));
 
-    if (!syncResponse.profileSyncResponse.is_null()) {
-        if (profileTransport_) {
-            profileTransport_->onProfileResponse(syncResponse.profileSyncResponse.get_ProfileSyncResponse());
-        } else {
-            KAA_LOG_ERROR("Got profile sync response, but profile transport was not set!");
+        if (!syncResponse.profileSyncResponse.is_null()) {
+            if (profileTransport_) {
+                profileTransport_->onProfileResponse(syncResponse.profileSyncResponse.get_ProfileSyncResponse());
+            } else {
+                KAA_LOG_ERROR("Got profile sync response, but profile transport was not set!");
+            }
+        } else if (syncResponse.status == SyncResponseResultType::PROFILE_RESYNC) {
+            if (profileTransport_) {
+                profileTransport_->onProfileResync();
+            } else {
+                KAA_LOG_ERROR("Got profile resync request, but profile transport was not set!");
+            }
         }
-    } else if (syncResponse.status == SyncResponseResultType::PROFILE_RESYNC) {
-        if (profileTransport_) {
-            profileTransport_->onProfileResync();
-        } else {
-            KAA_LOG_ERROR("Got profile resync request, but profile transport was not set!");
-        }
-    }
 
-    KAA_LOG_DEBUG(boost::format("Got ConfigurationSyncResponse: %1%")
-            % LoggingUtils::ConfigurationSyncResponseToString(syncResponse.configurationSyncResponse));
+        KAA_LOG_DEBUG(boost::format("Got ConfigurationSyncResponse: %1%")
+                % LoggingUtils::ConfigurationSyncResponseToString(syncResponse.configurationSyncResponse));
 
 #ifdef KAA_USE_CONFIGURATION
-    if (!syncResponse.configurationSyncResponse.is_null()) {
-        if (configurationTransport_) {
-            configurationTransport_->onConfigurationResponse(syncResponse.configurationSyncResponse.get_ConfigurationSyncResponse());
-        } else {
-            KAA_LOG_ERROR("Got configuration sync response, but configuration transport was not set!");
+        if (!syncResponse.configurationSyncResponse.is_null()) {
+            if (configurationTransport_) {
+                configurationTransport_->onConfigurationResponse(syncResponse.configurationSyncResponse.get_ConfigurationSyncResponse());
+            } else {
+                KAA_LOG_ERROR("Got configuration sync response, but configuration transport was not set!");
+            }
         }
-    }
 #endif
 
-    KAA_LOG_DEBUG(boost::format("Got EventSyncResponse: %1%")
-            % LoggingUtils::EventSyncResponseToString(syncResponse.eventSyncResponse));
+        KAA_LOG_DEBUG(boost::format("Got EventSyncResponse: %1%")
+                % LoggingUtils::EventSyncResponseToString(syncResponse.eventSyncResponse));
 
 #ifdef KAA_USE_EVENTS
-    if (eventTransport_) {
-        eventTransport_->onSyncResponseId(syncResponse.requestId);
-        if (!syncResponse.eventSyncResponse.is_null()) {
-                eventTransport_->onEventResponse(syncResponse.eventSyncResponse.get_EventSyncResponse());
+        if (eventTransport_) {
+            eventTransport_->onSyncResponseId(syncResponse.requestId);
+            if (!syncResponse.eventSyncResponse.is_null()) {
+                    eventTransport_->onEventResponse(syncResponse.eventSyncResponse.get_EventSyncResponse());
+            }
+        } else {
+            KAA_LOG_ERROR("Event transport was not set!");
         }
-    } else {
-        KAA_LOG_ERROR("Event transport was not set!");
-    }
 #endif
 
-    KAA_LOG_DEBUG(boost::format("Got NotificationSyncResponse: %1%")
-            % LoggingUtils::NotificationSyncResponseToString(syncResponse.notificationSyncResponse));
+        KAA_LOG_DEBUG(boost::format("Got NotificationSyncResponse: %1%")
+                % LoggingUtils::NotificationSyncResponseToString(syncResponse.notificationSyncResponse));
 
 #ifdef KAA_USE_NOTIFICATIONS
-    if (!syncResponse.notificationSyncResponse.is_null()) {
-        if (notificationTransport_) {
-            notificationTransport_->onNotificationResponse(syncResponse.notificationSyncResponse.get_NotificationSyncResponse());
-        } else {
-            KAA_LOG_ERROR("Got notification sync response, but notification transport was not set!");
+        if (!syncResponse.notificationSyncResponse.is_null()) {
+            if (notificationTransport_) {
+                notificationTransport_->onNotificationResponse(syncResponse.notificationSyncResponse.get_NotificationSyncResponse());
+            } else {
+                KAA_LOG_ERROR("Got notification sync response, but notification transport was not set!");
+            }
         }
-    }
 #endif
 
-    KAA_LOG_DEBUG(boost::format("Got UserSyncResponse: %1%")
-            % LoggingUtils::UserSyncResponseToString(syncResponse.userSyncResponse));
+        KAA_LOG_DEBUG(boost::format("Got UserSyncResponse: %1%")
+                % LoggingUtils::UserSyncResponseToString(syncResponse.userSyncResponse));
 
 #ifdef KAA_USE_EVENTS
-    if (!syncResponse.userSyncResponse.is_null()) {
-        if (userTransport_) {
-            userTransport_->onUserResponse(syncResponse.userSyncResponse.get_UserSyncResponse());
-        } else {
-            KAA_LOG_ERROR("Got user sync response, but user transport was not set!");
+        if (!syncResponse.userSyncResponse.is_null()) {
+            if (userTransport_) {
+                userTransport_->onUserResponse(syncResponse.userSyncResponse.get_UserSyncResponse());
+            } else {
+                KAA_LOG_ERROR("Got user sync response, but user transport was not set!");
+            }
         }
-    }
 #endif
 
-    KAA_LOG_DEBUG(boost::format("Got LogSyncResponse: %1%")
-            % LoggingUtils::LogSyncResponseToString(syncResponse.logSyncResponse));
+        KAA_LOG_DEBUG(boost::format("Got LogSyncResponse: %1%")
+                % LoggingUtils::LogSyncResponseToString(syncResponse.logSyncResponse));
 
 #ifdef KAA_USE_LOGGING
-    if (!syncResponse.logSyncResponse.is_null()) {
-        if (loggingTransport_) {
-            loggingTransport_->onLogSyncResponse(syncResponse.logSyncResponse.get_LogSyncResponse());
-        } else {
-            KAA_LOG_ERROR("Got log upload sync response, but logging transport was not set!");
+        if (!syncResponse.logSyncResponse.is_null()) {
+            if (loggingTransport_) {
+                loggingTransport_->onLogSyncResponse(syncResponse.logSyncResponse.get_LogSyncResponse());
+            } else {
+                KAA_LOG_ERROR("Got log upload sync response, but logging transport was not set!");
+            }
         }
-    }
 #endif
 
-    KAA_LOG_DEBUG(boost::format("Got RedirectSyncResponse: %1%")
-            % LoggingUtils::RedirectSyncResponseToString(syncResponse.redirectSyncResponse));
+        KAA_LOG_DEBUG(boost::format("Got RedirectSyncResponse: %1%")
+                % LoggingUtils::RedirectSyncResponseToString(syncResponse.redirectSyncResponse));
 
-    if (!syncResponse.redirectSyncResponse.is_null()) {
-        if (redirectionTransport_) {
-            redirectionTransport_->onRedirectionResponse(syncResponse.redirectSyncResponse.get_RedirectSyncResponse());
-            returnCode = DemultiplexerReturnCode::REDIRECT;
-        } else {
-            KAA_LOG_ERROR("Got redirection sync response, but redirection transport was not set!");
+        if (!syncResponse.redirectSyncResponse.is_null()) {
+            if (redirectionTransport_) {
+                redirectionTransport_->onRedirectionResponse(syncResponse.redirectSyncResponse.get_RedirectSyncResponse());
+                returnCode = DemultiplexerReturnCode::REDIRECT;
+            } else {
+                KAA_LOG_ERROR("Got redirection sync response, but redirection transport was not set!");
+            }
         }
-    }
 
-    KAA_LOG_DEBUG("Processed SyncResponse");
-    clientStatus_->save();
+        KAA_LOG_DEBUG("Processed SyncResponse");
+        clientStatus_->save();
+    } catch (const std::exception& e) {
+        KAA_LOG_ERROR(boost::format("Unable to process response: %s") % e.what());
+        returnCode = DemultiplexerReturnCode::FAILURE;
+    }
     return returnCode;
 }
 
