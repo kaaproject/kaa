@@ -73,8 +73,7 @@ public class DesktopHttpClient extends AbstractHttpClient {
                 if (status >= 200 && status < 300) {
                     responseDataRaw = getResponseBody(response, verifyResponse);
                 } else {
-                    throw new TransportException(
-                            "Invalid response code from server: " + status);
+                    throw new TransportException(status);
                 }
             } finally {
                 response.close();
