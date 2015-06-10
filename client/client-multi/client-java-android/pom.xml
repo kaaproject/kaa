@@ -34,7 +34,7 @@
         <!-- DO NOT TOUCH THIS PROPERTY AND ITS USAGE-->
         <android.httpclient.version>4.0.1</android.httpclient.version>
         <android.commons.codec.version>1.2</android.commons.codec.version>
-        <robolectric.version>3.0-rc3</robolectric.version>
+        <robolectric.version>2.4</robolectric.version>
     </properties>
 
     <dependencies>
