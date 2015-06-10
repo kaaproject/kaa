@@ -37,11 +37,14 @@ struct kaa_list_t {
 
 static kaa_list_node_t *set_next_neighbor(kaa_list_node_t *whom, kaa_list_node_t *neighbor)
 {
-    KAA_RETURN_IF_NIL(whom, NULL);
-    whom->next = neighbor;
     if (neighbor) {
         neighbor->prev = whom;
     }
+
+    if (whom) {
+        whom->next = neighbor;
+    }
+
     return neighbor;
 }
 

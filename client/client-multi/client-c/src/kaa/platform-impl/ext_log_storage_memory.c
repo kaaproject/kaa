@@ -244,6 +244,7 @@ kaa_error_t ext_log_storage_deallocate_log_record_buffer(void *context, kaa_log_
 
 bool find_by_bucket_id(void *log_record_p, void *bucket_id_p)
 {
+    KAA_RETURN_IF_NIL2(log_record_p, bucket_id_p, false);
     return ((ext_log_record_t *)log_record_p)->bucket_id == *((uint16_t *)bucket_id_p);
 }
 
