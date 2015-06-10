@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.client.logging;
 
-public interface PersistentLogStorageStorageInfo {
+public interface PersistentLogStorageConstants {
     int DB_VERSION = 1;
     String DEFAULT_DB_NAME = "kaa_logs";
     String TABLE_NAME = "kaa_logs";
