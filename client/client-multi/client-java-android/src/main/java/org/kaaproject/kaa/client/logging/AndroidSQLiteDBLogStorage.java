@@ -23,7 +23,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
-import org.sqlite.util.StringUtils;
+import com.sun.deploy.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,7 +43,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
     private long recordCount;
     private long consumedSize;
-    private int currentBucketId;
+    private int currentBucketId = 1;
 
     private Map<Integer, Long> consumedMemoryStorage = new HashMap<>();
 
@@ -69,7 +69,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     @Override
     public void addLogRecord(LogRecord record) {
         synchronized (database) {
-            Log.v(TAG, "Adding a new log record...");
+            Log.d(TAG, "Adding a new log record...");
             if (insertStatement == null) {
                 try {
                     insertStatement = database.compileStatement(PersistentLogStorageStorageInfo.KAA_INSERT_NEW_RECORD);
@@ -80,12 +80,12 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             }
 
             try {
-                insertStatement.bindBlob(0, record.getData());
-                long affectedRows = insertStatement.executeInsert();
-                if (affectedRows == 1) {
+                insertStatement.bindBlob(1, record.getData());
+                long insertedId = insertStatement.executeInsert();
+                if (insertedId >= 0) {
                     consumedSize += record.getSize();
                     recordCount++;
-                    Log.v(TAG, "Added a new log record, records count: " + recordCount + ", data: " + Arrays.toString(record.getData()));
+                    Log.i(TAG, "Added a new log record, records count: " + recordCount + ", data: " + Arrays.toString(record.getData()));
                 } else {
                     Log.w(TAG, "No log record was added");
                 }
@@ -103,7 +103,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     @Override
     public LogBlock getRecordBlock(long blockSize) {
         synchronized (database) {
-            Log.v(TAG, "Creating a new record block, needed size: " + blockSize);
+            Log.d(TAG, "Creating a new record block, needed size: " + blockSize);
             LogBlock logBlock = null;
             Cursor cursor = null;
             List<String> unmarkedRecordIds = new LinkedList<>();
@@ -136,7 +136,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                     consumedSize -= logBlockSize;
                     consumedMemoryStorage.put(logBlock.getBlockId(), logBlockSize);
 
-                    Log.i(TAG, "Created log block: id [" + logBlock.getBlockId() + "], size: " + logBlockSize + ". Log block record count:" +
+                    Log.i(TAG, "Created log block: id [" + logBlock.getBlockId() + "], size: " + logBlockSize + ". Log block record count: " +
                             logBlock.getRecords().size() + ", Total record count: " + recordCount);
                 } else {
                     Log.i(TAG, "No unmarked log records found");
@@ -167,7 +167,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             }
 
             try {
-                deleteByRecordIdStatement.bindLong(0, recordId);
+                deleteByRecordIdStatement.bindLong(1, recordId);
                 deleteByRecordIdStatement.execute();
 
                 long affectedRows = getAffectedRowCount();
@@ -191,23 +191,38 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             SQLiteStatement setBucketIdStatement = null;
             try {
                 setBucketIdStatement =
-                        database.compileStatement(PersistentLogStorageStorageInfo.KAA_UPDATE_BUCKET_ID);
+                        database.compileStatement(getUpdateBucketIdStatement(recordIds));
 
-                setBucketIdStatement.bindLong(0, bucketId);
-                setBucketIdStatement.bindString(1, StringUtils.join(recordIds, ","));
+                setBucketIdStatement.bindLong(1, bucketId);
                 setBucketIdStatement.execute();
+
+                long affectedRows = getAffectedRowCount();
+                if (affectedRows > 0) {
+                    Log.i(TAG, "Successfully updated id [" + bucketId + "] for log records: " + affectedRows);
+                } else {
+                    Log.w(TAG, "No log records were updated");
+                }
+
             } catch (SQLiteException e) {
                 Log.e(TAG, "Failed to update bucket id [" + bucketId + "] for records with ids: " + recordIds, e);
             } finally {
-                tryCloseStatement(resetBucketIdStatement);
+                tryCloseStatement(setBucketIdStatement);
             }
         }
+    }
+
+    private String getUpdateBucketIdStatement(List<String> recordIds) {
+        String queryString = StringUtils.join(recordIds, ",");
+        StringBuilder builder = new StringBuilder(PersistentLogStorageStorageInfo.KAA_UPDATE_BUCKET_ID);
+        int indexOf = builder.lastIndexOf(PersistentLogStorageStorageInfo.SUBSTITUTE_SYMBOL);
+        builder.replace(indexOf, indexOf + PersistentLogStorageStorageInfo.SUBSTITUTE_SYMBOL.length(), queryString);
+        return builder.toString();
     }
 
     @Override
     public void removeRecordBlock(int recordBlockId) {
         synchronized (database) {
-            Log.v(TAG, "Removing record block with id [" + recordBlockId + "] from storage");
+            Log.d(TAG, "Removing record block with id [" + recordBlockId + "] from storage");
             if (deleteByBucketIdStatement == null) {
                 try {
                     deleteByBucketIdStatement = database.compileStatement(PersistentLogStorageStorageInfo.KAA_DELETE_BY_BUCKET_ID);
@@ -218,15 +233,14 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             }
 
             try {
-                deleteByBucketIdStatement.bindLong(0, recordBlockId);
+                deleteByBucketIdStatement.bindLong(1, recordBlockId);
                 deleteByBucketIdStatement.execute();
 
-                database.rawQuery("GET_CHANGES_QUERY", null);
                 long removedRecordsCount = getAffectedRowCount();
 
                 if (removedRecordsCount > 0) {
                     recordCount -= removedRecordsCount;
-                    Log.i(TAG, "Removed " + removedRecordsCount + "records from storage. Total log record count: " + recordCount);
+                    Log.i(TAG, "Removed " + removedRecordsCount + " records from storage. Total log record count: " + recordCount);
                 } else {
                     Log.i(TAG, "No records were removed from storage");
                 }
@@ -239,7 +253,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     @Override
     public void notifyUploadFailed(int bucketId) {
         synchronized (database) {
-            Log.v(TAG, "Notifying upload fail for bucket id: " + bucketId);
+            Log.d(TAG, "Notifying upload fail for bucket id: " + bucketId);
             if (resetBucketIdStatement == null) {
                 try {
                     resetBucketIdStatement = database.compileStatement(PersistentLogStorageStorageInfo.KAA_RESET_BY_BUCKET_ID);
@@ -250,8 +264,15 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             }
 
             try {
-                resetBucketIdStatement.bindLong(0, bucketId);
+                resetBucketIdStatement.bindLong(1, bucketId);
                 resetBucketIdStatement.execute();
+
+                long affectedRows = getAffectedRowCount();
+                if (affectedRows > 0) {
+                    Log.i(TAG, "Total " + affectedRows + " log records reset for bucket id: [" + bucketId + "]");
+                } else {
+                    Log.w(TAG, "No log records for bucket with id: [" + bucketId + "]");
+                }
 
                 long previouslyConsumedSize = consumedMemoryStorage.get(bucketId);
                 consumedMemoryStorage.remove(bucketId);
@@ -293,10 +314,14 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             Cursor cursor = null;
             try {
                 cursor = database.rawQuery(PersistentLogStorageStorageInfo.KAA_HOW_MANY_LOGS_IN_DB, null);
-                cursor.moveToNext();
-                recordCount = cursor.getLong(0);
-                consumedSize = cursor.getLong(1);
-                Log.v(TAG, "Retrieved record count: " + recordCount + ", consumed size: " + consumedSize);
+                if (cursor.moveToFirst()) {
+                    recordCount = cursor.getLong(0);
+                    consumedSize = cursor.getLong(1);
+                    Log.i(TAG, "Retrieved record count: " + recordCount + ", consumed size: " + consumedSize);
+                } else {
+                    Log.e(TAG, "Unable to retrieve consumed size and volume");
+                    throw new RuntimeException("Unable to retrieve consumed size and volume");
+                }
             } finally {
                 tryCloseCursor(cursor);
             }
@@ -306,14 +331,9 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private void resetBucketIDs() {
         synchronized (database) {
             Log.d(TAG, "Resetting bucket ids on application start");
-            Cursor cursor = null;
-            try {
-                cursor = database.rawQuery(PersistentLogStorageStorageInfo.KAA_RESET_BUCKET_ID_ON_START, null);
-                long updatedRows = cursor.getLong(0);
-                Log.v(TAG, "Number of rows affected: " + updatedRows);
-            } finally {
-                tryCloseCursor(cursor);
-            }
+            database.execSQL(PersistentLogStorageStorageInfo.KAA_RESET_BUCKET_ID_ON_START);
+            long updatedRows = getAffectedRowCount();
+            Log.v(TAG, "Number of rows affected: " + updatedRows);
         }
     }
 
