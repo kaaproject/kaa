@@ -44,7 +44,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
     private long recordCount;
     private long consumedSize;
-    private int currentBucketId;
+    private int currentBucketId = 1;
 
     private Map<Integer, Long> consumedMemoryStorage = new HashMap<>();
 
@@ -158,6 +158,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             } finally {
                 try {
                     tryCloseResultSet(rs);
+                    tryCloseStatement(statement);
                 } catch (SQLException e) {
                     LOG.error("Can't close result set", e);
                 }
@@ -208,9 +209,9 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 setBucketIdStatement.setInt(1, bucketId);
                 int affectedRows = setBucketIdStatement.executeUpdate();
                 if (affectedRows > 0) {
-                    LOG.trace("Successfully updated id [{}] for log records: {}", bucketId, affectedRows);
+                    LOG.info("Successfully updated id [{}] for log records: {}", bucketId, affectedRows);
                 } else {
-                    LOG.info("No log records were updated");
+                    LOG.warn("No log records were updated");
                 }
             } catch (SQLException e) {
                 LOG.error("Failed to update bucket id [{}] for records with ids: {}", bucketId, recordIds, e);
@@ -238,8 +239,8 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 try {
                     deleteByBucketIdStatement = connection.prepareStatement(PersistentLogStorageStorageInfo.KAA_DELETE_BY_BUCKET_ID);
                 } catch (SQLException e) {
-
-
+                    LOG.error("Can't create record block deletion statement", e);
+                    throw new RuntimeException(e);
                 }
             }
 
@@ -250,7 +251,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                     recordCount -= removedRecordsCount;
                     LOG.info("Removed {} records from storage. Total log record count: {}", removedRecordsCount, recordCount);
                 } else {
-                    LOG.info("No records were removed from storage");
+                    LOG.warn("No records were removed from storage");
                 }
             } catch (SQLException e) {
                 LOG.error("Failed to remove record block with id [{}]", recordBlockId, e);
@@ -275,7 +276,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 resetBucketIdStatement.setInt(1, bucketId);
                 int affectedRows = resetBucketIdStatement.executeUpdate();
                 if (affectedRows > 0) {
-                    LOG.trace("Total [{}] log records reset for bucket id: [{}]", affectedRows, bucketId);
+                    LOG.info("Total {} log records reset for bucket id: [{}]", affectedRows, bucketId);
                 } else {
                     LOG.warn("No log records for bucket with id: [{}]", bucketId);
                 }
@@ -317,10 +318,14 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             try {
                 statement = connection.createStatement();
                 rs = statement.executeQuery(PersistentLogStorageStorageInfo.KAA_HOW_MANY_LOGS_IN_DB);
-                rs.next();
-                recordCount = rs.getLong(1);
-                consumedSize = rs.getLong(2);
-                LOG.trace("Retrieved record count: {}, consumed size: {}", recordCount, consumedSize);
+                if (rs.next()) {
+                    recordCount = rs.getLong(1);
+                    consumedSize = rs.getLong(2);
+                    LOG.trace("Retrieved record count: {}, consumed size: {}", recordCount, consumedSize);
+                } else {
+                    LOG.error("Unable to retrieve consumed size and volume");
+                    throw new RuntimeException("Unable to retrieve consumed size and volume");
+                }
             } finally {
                 tryCloseResultSet(rs);
                 tryCloseStatement(statement);
