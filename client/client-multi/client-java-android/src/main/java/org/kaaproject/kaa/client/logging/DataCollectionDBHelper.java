@@ -25,14 +25,14 @@ public class DataCollectionDBHelper extends SQLiteOpenHelper {
     private static final String TAG = "DataCollectionDBHelper";
 
     public DataCollectionDBHelper(Context context, String name) {
-        super(context, name, null, PersistentLogStorageStorageInfo.DB_VERSION);
+        super(context, name, null, PersistentLogStorageConstants.DB_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         Log.i(TAG, "Database is being created");
-        sqLiteDatabase.execSQL(PersistentLogStorageStorageInfo.KAA_CREATE_LOG_TABLE);
-        sqLiteDatabase.execSQL(PersistentLogStorageStorageInfo.KAA_CREATE_BUCKET_ID_INDEX);
+        sqLiteDatabase.execSQL(PersistentLogStorageConstants.KAA_CREATE_LOG_TABLE);
+        sqLiteDatabase.execSQL(PersistentLogStorageConstants.KAA_CREATE_BUCKET_ID_INDEX);
         Log.i(TAG, "Database with its tables and indices was successfully created");
     }
 
@@ -44,7 +44,7 @@ public class DataCollectionDBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         Log.i(TAG, "Database was upgraded. Dropping its contents");
 
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PersistentLogStorageStorageInfo.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PersistentLogStorageConstants.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 }

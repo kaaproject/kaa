@@ -53,7 +53,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private SQLiteStatement resetBucketIdStatement;
 
     public AndroidSQLiteDBLogStorage(Context context) {
-        this(context, PersistentLogStorageStorageInfo.DEFAULT_DB_NAME);
+        this(context, PersistentLogStorageConstants.DEFAULT_DB_NAME);
     }
 
     public AndroidSQLiteDBLogStorage(Context context, String dbName) {
@@ -72,7 +72,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             Log.d(TAG, "Adding a new log record...");
             if (insertStatement == null) {
                 try {
-                    insertStatement = database.compileStatement(PersistentLogStorageStorageInfo.KAA_INSERT_NEW_RECORD);
+                    insertStatement = database.compileStatement(PersistentLogStorageConstants.KAA_INSERT_NEW_RECORD);
                 } catch (SQLiteException e) {
                     Log.e(TAG, "Can't create row insert statement", e);
                     throw new RuntimeException(e);
@@ -110,7 +110,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             List<LogRecord> logRecords = new LinkedList<>();
             long leftBlockSize = blockSize;
             try {
-                cursor = database.rawQuery(PersistentLogStorageStorageInfo.KAA_SELECT_UNMARKED_RECORDS, null);
+                cursor = database.rawQuery(PersistentLogStorageConstants.KAA_SELECT_UNMARKED_RECORDS, null);
                 while (cursor.moveToNext()) {
                     int recordId = cursor.getInt(0);
                     byte[] recordData = cursor.getBlob(1);
@@ -159,7 +159,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             Log.v(TAG, "Removing log record with id [" + recordId + "]");
             if (deleteByRecordIdStatement == null) {
                 try {
-                    deleteByRecordIdStatement = database.compileStatement(PersistentLogStorageStorageInfo.KAA_DELETE_BY_RECORD_ID);
+                    deleteByRecordIdStatement = database.compileStatement(PersistentLogStorageConstants.KAA_DELETE_BY_RECORD_ID);
                 } catch (SQLiteException e) {
                     Log.e(TAG, "Can't create log remove statement", e);
                     throw new RuntimeException(e);
@@ -213,9 +213,9 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
     private String getUpdateBucketIdStatement(List<String> recordIds) {
         String queryString = TextUtils.join(",", recordIds.toArray());
-        StringBuilder builder = new StringBuilder(PersistentLogStorageStorageInfo.KAA_UPDATE_BUCKET_ID);
-        int indexOf = builder.lastIndexOf(PersistentLogStorageStorageInfo.SUBSTITUTE_SYMBOL);
-        builder.replace(indexOf, indexOf + PersistentLogStorageStorageInfo.SUBSTITUTE_SYMBOL.length(), queryString);
+        StringBuilder builder = new StringBuilder(PersistentLogStorageConstants.KAA_UPDATE_BUCKET_ID);
+        int indexOf = builder.lastIndexOf(PersistentLogStorageConstants.SUBSTITUTE_SYMBOL);
+        builder.replace(indexOf, indexOf + PersistentLogStorageConstants.SUBSTITUTE_SYMBOL.length(), queryString);
         return builder.toString();
     }
 
@@ -225,7 +225,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             Log.d(TAG, "Removing record block with id [" + recordBlockId + "] from storage");
             if (deleteByBucketIdStatement == null) {
                 try {
-                    deleteByBucketIdStatement = database.compileStatement(PersistentLogStorageStorageInfo.KAA_DELETE_BY_BUCKET_ID);
+                    deleteByBucketIdStatement = database.compileStatement(PersistentLogStorageConstants.KAA_DELETE_BY_BUCKET_ID);
                 } catch (SQLiteException e) {
                     Log.e(TAG, "Can't create record block deletion statement", e);
                     throw new RuntimeException(e);
@@ -256,7 +256,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             Log.d(TAG, "Notifying upload fail for bucket id: " + bucketId);
             if (resetBucketIdStatement == null) {
                 try {
-                    resetBucketIdStatement = database.compileStatement(PersistentLogStorageStorageInfo.KAA_RESET_BY_BUCKET_ID);
+                    resetBucketIdStatement = database.compileStatement(PersistentLogStorageConstants.KAA_RESET_BY_BUCKET_ID);
                 } catch (SQLiteException e) {
                     Log.e(TAG, "Can't create bucket id reset statement", e);
                     throw new RuntimeException(e);
@@ -313,7 +313,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
         synchronized (database) {
             Cursor cursor = null;
             try {
-                cursor = database.rawQuery(PersistentLogStorageStorageInfo.KAA_HOW_MANY_LOGS_IN_DB, null);
+                cursor = database.rawQuery(PersistentLogStorageConstants.KAA_HOW_MANY_LOGS_IN_DB, null);
                 if (cursor.moveToFirst()) {
                     recordCount = cursor.getLong(0);
                     consumedSize = cursor.getLong(1);
@@ -331,7 +331,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private void resetBucketIDs() {
         synchronized (database) {
             Log.d(TAG, "Resetting bucket ids on application start");
-            database.execSQL(PersistentLogStorageStorageInfo.KAA_RESET_BUCKET_ID_ON_START);
+            database.execSQL(PersistentLogStorageConstants.KAA_RESET_BUCKET_ID_ON_START);
             long updatedRows = getAffectedRowCount();
             Log.v(TAG, "Number of rows affected: " + updatedRows);
         }
