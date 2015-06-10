@@ -76,7 +76,6 @@ DefaultOperationTcpChannel::~DefaultOperationTcpChannel()
 void DefaultOperationTcpChannel::onConnack(const ConnackMessage& message)
 {
     KAA_LOG_DEBUG(boost::format("Channel \"%1%\". Connack (result=%2%) response received") % getId() % message.getMessage());
-    connAckTimer_.cancel();
     if (message.getReturnCode() != ConnackReturnCode::SUCCESS) {
         KAA_LOG_ERROR(boost::format("Channel \"%1%\". Connack result failed: %2%. Closing connection") % getId() % message.getMessage());
         onServerFailed();
@@ -130,6 +129,7 @@ void DefaultOperationTcpChannel::onKaaSync(const KaaSyncResponse& message)
     KAA_MUTEX_LOCKED("channelGuard_");
     if (!isFirstResponseReceived_) {
         KAA_LOG_INFO(boost::format("Channel \"%1%\". First response received") % getId());
+        connAckTimer_.cancel();
         isFirstResponseReceived_ = true;
     }
     if (isPendingSyncRequest_) {
