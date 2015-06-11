@@ -402,7 +402,7 @@ ITransportConnectionInfoPtr KaaChannelManager::getNextBootstrapServer(const Tran
     if (lastServerIt != lastBSServers_.end() && serverIt != bootstrapServers_.end()) {
         BootstrapServers::iterator nextBsIterator = (lastServerIt->second)+1;
         if (nextBsIterator != serverIt->second.end()) {
-            nextConnectionInfo = *(lastServerIt->second);
+            nextConnectionInfo = *(nextBsIterator);
             lastBSServers_[protocolId] = nextBsIterator;
         } else if (forceFirstElement) {
             nextConnectionInfo = (*serverIt).second.front();
