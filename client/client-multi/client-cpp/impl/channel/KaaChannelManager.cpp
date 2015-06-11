@@ -68,6 +68,13 @@ void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInf
         throw KaaException("empty connection info pointer");
     }
 
+    if (connectionInfo->isFailedState()) {
+        KAA_LOG_DEBUG("Connection already failed. Ignoring connection failover!");
+        return;
+    } else {
+        connectionInfo->setFailedState();
+    }
+
     if (connectionInfo->getServerType() == ServerType::BOOTSTRAP) {
         ITransportConnectionInfoPtr nextConnectionInfo = getNextBootstrapServer(connectionInfo->getTransportId(), false);
         if (nextConnectionInfo) {
@@ -111,6 +118,8 @@ void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInf
         KAA_LOG_WARN("Failed to update connection info: bad input data")
         throw KaaException("empty connection info pointer");
     }
+
+    connectionInfo->resetFailedState();
 
     TransportProtocolId protocolId = connectionInfo->getTransportId();
     if (connectionInfo->getServerType() == ServerType::OPERATIONS) {

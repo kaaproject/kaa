@@ -149,6 +149,7 @@ private:
     bool isPendingSyncRequest_;
     bool isShutdown_;
     bool isPaused_;
+    bool isFailoverInProgress_;
 
     IKaaDataMultiplexer *multiplexer_;
     IKaaDataDemultiplexer *demultiplexer_;

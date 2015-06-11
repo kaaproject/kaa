@@ -58,7 +58,7 @@ const std::map<TransportType, ChannelDirection> DefaultOperationTcpChannel::SUPP
 DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys)
     : clientKeys_(clientKeys), work_(io_), socketWork_(socketIo_),/*sock_(io_), */pingTimer_(io_), connAckTimer_(io_)/*, reconnectTimer_(io_)*/, retryTimer_("DefaultOperationTcpChannel retryTimer")
     , firstStart_(true), isConnected_(false), isFirstResponseReceived_(false), isPendingSyncRequest_(false)
-    , isShutdown_(false), isPaused_(false), multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager)
+    , isShutdown_(false), isPaused_(false), isFailoverInProgress_(false), multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager)
 {
     responsePorcessor.registerConnackReceiver(std::bind(&DefaultOperationTcpChannel::onConnack, this, std::placeholders::_1));
     responsePorcessor.registerKaaSyncReceiver(std::bind(&DefaultOperationTcpChannel::onKaaSync, this, std::placeholders::_1));
@@ -166,6 +166,10 @@ void DefaultOperationTcpChannel::onPingResponse()
 
 void DefaultOperationTcpChannel::openConnection()
 {
+    if (isConnected_) {
+        KAA_LOG_DEBUG(boost::format("Channel \"%1%\". Connection is already opened. Ignoring.") % getId());
+        return;
+    }
     boost::asio::ip::tcp::endpoint ep;
     try {
         ep = HttpUtils::getEndpoint(currentServer_->getHost(), currentServer_->getPort());
@@ -230,6 +234,13 @@ void DefaultOperationTcpChannel::closeConnection()
 
 void DefaultOperationTcpChannel::onServerFailed()
 {
+    if (isFailoverInProgress_) {
+        KAA_LOG_TRACE("Failover in progress. On server failed skipped.");
+        return;
+    } else {
+        isFailoverInProgress_ = true;
+    }
+
     closeConnection();
 
     if (connectivityChecker_ && !connectivityChecker_->checkConnectivity()) {
@@ -238,6 +249,7 @@ void DefaultOperationTcpChannel::onServerFailed()
         switch (decision.getAction()) {
 			case FailoverStrategyAction::NOOP:
 			    KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
+			    isFailoverInProgress_ = false;
 				return;
 			case FailoverStrategyAction::RETRY:
 			{
@@ -245,7 +257,7 @@ void DefaultOperationTcpChannel::onServerFailed()
 				KAA_LOG_WARN(boost::format("Attempt to reconnect will be made in %1% secs "
 						"according to failover strategy decision.") % period);
 				retryTimer_.stop();
-				retryTimer_.start(period, [&] { openConnection(); });
+				retryTimer_.start(period, [&] { isFailoverInProgress_ = false; openConnection(); });
 				break;
 			}
 			case FailoverStrategyAction::STOP_APP:
@@ -428,7 +440,11 @@ void DefaultOperationTcpChannel::onConnAckTimeout(const boost::system::error_cod
         if (err != boost::asio::error::operation_aborted){
             KAA_LOG_ERROR(boost::format("Channel \"%1%\". Failed to process ConnAck timeout: %2%") % getId() % err.message());
         }else{
-            KAA_LOG_DEBUG(boost::format("Channel \"%1%\". ConnAck message processed") % getId());
+            if (isConnected_) {
+                KAA_LOG_DEBUG(boost::format("Channel \"%1%\". ConnAck message processed") % getId());
+            } else {
+                KAA_LOG_DEBUG(boost::format("Channel \"%1%\". ConnAck timer was aborted") % getId());
+            }
         }
     }
 }
@@ -474,10 +490,14 @@ void DefaultOperationTcpChannel::setServer(ITransportConnectionInfoPtr server)
             KAA_MUTEX_UNLOCKED("channelGuard_");
             closeConnection();
             sleep(1);
-            socketIo_.post(std::bind(&DefaultOperationTcpChannel::openConnection, this));
+            isFailoverInProgress_ = false;
+            io_.post(std::bind(&DefaultOperationTcpChannel::openConnection, this));
+        } else {
+            isFailoverInProgress_ = false;
         }
     } else {
         KAA_LOG_ERROR(boost::format("Invalid server info for channel %1%") % getId());
+        isFailoverInProgress_ = false;
     }
 }
 
@@ -632,7 +652,7 @@ void DefaultOperationTcpChannel::resume()
             createThreads();
             firstStart_ = false;
         }
-        socketIo_.post(std::bind(&DefaultOperationTcpChannel::openConnection, this));
+        io_.post(std::bind(&DefaultOperationTcpChannel::openConnection, this));
     }
 }
 
