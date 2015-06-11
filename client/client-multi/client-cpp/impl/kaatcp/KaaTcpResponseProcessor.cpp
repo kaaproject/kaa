@@ -53,7 +53,7 @@ void KaaTcpResponseProcessor::processResponseBuffer(const char *buf, std::uint32
                 break;
             default:
                 KAA_LOG_ERROR(boost::format("KaaTcp: unexpected message type %1%") % (int) it->first);
-                break;
+                throw KaaException(boost::format("KaaTcp: unexpected message type: %1%") % (int) it->first);
         }
     }
 }

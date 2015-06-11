@@ -22,6 +22,12 @@
 
 namespace kaa {
 
+enum class DemultiplexerReturnCode {
+    SUCCESS = 0,
+    FAILURE,
+    REDIRECT
+};
+
 /**
  * Demultiplexer is responsible for deserializing of response data and notifying
  * appropriate services.
@@ -38,7 +44,7 @@ public:
      * @param response buffer which to be processed.
      *
      */
-    virtual void processResponse(const std::vector<std::uint8_t> &response) = 0;
+    virtual DemultiplexerReturnCode processResponse(const std::vector<std::uint8_t> &response) = 0;
 
     virtual ~IKaaDataDemultiplexer() {}
 };

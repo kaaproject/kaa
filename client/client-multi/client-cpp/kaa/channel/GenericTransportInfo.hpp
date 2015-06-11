@@ -29,12 +29,12 @@ class GenericTransportInfo: public ITransportConnectionInfo
 public:
     GenericTransportInfo(ServerType type, const ProtocolMetaData& metaData) :
         serverType_(type), accessPointId_(metaData.accessPointId)
-      , protocolId_(metaData.protocolVersionInfo), connectionData_(metaData.connectionInfo) {}
+      , protocolId_(metaData.protocolVersionInfo), connectionData_(metaData.connectionInfo), isFailedState_(false) {}
 
     GenericTransportInfo(ServerType type, const std::int32_t& accessPointId
         , const TransportProtocolId& protocolId, const std::vector<std::uint8_t>& connectionData)
         : serverType_(type), accessPointId_(accessPointId)
-        , protocolId_(protocolId), connectionData_(connectionData) {}
+        , protocolId_(protocolId), connectionData_(connectionData), isFailedState_(false) {}
 
     virtual ServerType getServerType() {
         return serverType_;
@@ -52,11 +52,24 @@ public:
         return connectionData_;
     }
 
+    virtual bool isFailedState() {
+        return isFailedState_;
+    }
+
+    virtual void setFailedState() {
+        isFailedState_ = true;
+    }
+
+    virtual void resetFailedState() {
+        isFailedState_ = false;
+    }
+
 protected:
     ServerType                   serverType_;
     std::int32_t                 accessPointId_;
     TransportProtocolId          protocolId_;
     std::vector<std::uint8_t>    connectionData_;
+    bool                         isFailedState_;
 };
 
 } /* namespace kaa */
