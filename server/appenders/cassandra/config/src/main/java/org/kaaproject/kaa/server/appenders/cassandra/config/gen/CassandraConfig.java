@@ -7,7 +7,7 @@ package org.kaaproject.kaa.server.appenders.cassandra.config.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"CassandraConfig\",\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"fields\":[{\"name\":\"cassandraServers\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"CassandraServer\",\"fields\":[{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Host\",\"weight\":0.75,\"by_default\":\"localhost\"},{\"name\":\"port\",\"type\":\"int\",\"displayName\":\"Port\",\"weight\":0.25,\"by_default\":9042}]}},\"displayName\":\"Cassandra nodes\",\"minRowCount\":1},{\"name\":\"cassandraCredential\",\"type\":[{\"type\":\"record\",\"name\":\"CassandraCredential\",\"fields\":[{\"name\":\"user\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"User\",\"weight\":0.5,\"by_default\":\"user\"},{\"name\":\"password\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Password\",\"weight\":0.5,\"by_default\":\"password\"}],\"optional\":true},\"null\"],\"displayName\":\"Authentication credentials\",\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\"},{\"name\":\"keySpace\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Keyspace name\"},{\"name\":\"tableNamePattern\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Table name pattern\",\"by_default\":\"logs_$app_token_$config_hash\"},{\"name\":\"columnMapping\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"ColumnMappingElement\",\"fields\":[{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"ColumnMappingElementType\",\"symbols\":[\"HEADER_FIELD\",\"EVENT_FIELD\",\"HEADER_JSON\",\"EVENT_JSON\",\"HEADER_BINARY\",\"EVENT_BINARY\",\"UUID\"]},\"displayName\":\"Type\",\"weight\":0.2,\"by_default\":\"HEADER\"},{\"name\":\"value\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"displayName\":\"Value\",\"weight\":0.2,\"by_default\":\"applicationToken\"},{\"name\":\"columnName\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Name\",\"weight\":0.2,\"by_default\":\"application_token\"},{\"name\":\"columnType\",\"type\":{\"type\":\"enum\",\"name\":\"ColumnType\",\"symbols\":[\"BIGINT\",\"BLOB\",\"BOOLEAN\",\"DOUBLE\",\"FLOAT\",\"INT\",\"TEXT\",\"UUID\"]},\"displayName\":\"Column Type\",\"weight\":0.2,\"by_default\":\"BOOLEAN\"},{\"name\":\"partitionKey\",\"type\":\"boolean\",\"displayName\":\"Is part of partition key?\",\"weight\":0.1,\"by_default\":false},{\"name\":\"clusteringKey\",\"type\":\"boolean\",\"displayName\":\"Is part of clustering key?\",\"weight\":0.1,\"by_default\":false}]}},\"displayName\":\"Column Mapping\",\"minRowCount\":1},{\"name\":\"clusteringMapping\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"ClusteringElement\",\"fields\":[{\"name\":\"columnName\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Name\",\"weight\":0.2,\"by_default\":\"application_token\"},{\"name\":\"order\",\"type\":{\"type\":\"enum\",\"name\":\"OrderType\",\"symbols\":[\"DESC\",\"ASC\"]},\"displayName\":\"Order\",\"weight\":0.2,\"by_default\":\"DESC\"}]}},\"displayName\":\"Clustering\",\"minRowCount\":0},{\"name\":\"cassandraBatchType\",\"type\":[{\"type\":\"enum\",\"name\":\"CassandraBatchType\",\"symbols\":[\"LOGGED\",\"UNLOGGED\"]},\"null\"],\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"by_default\":\"UNLOGGED\",\"optional\":true,\"displayName\":\"Cassandra batch type\"},{\"name\":\"cassandraSocketOption\",\"type\":[{\"type\":\"record\",\"name\":\"CassandraSocketOption\",\"fields\":[{\"name\":\"sendBufferSize\",\"type\":[\"int\",\"null\"],\"displayName\":\"Set send buffer size\",\"by_default\":8192,\"optional\":true},{\"name\":\"receiveBufferSize\",\"type\":[\"int\",\"null\"],\"displayName\":\"Set receive buffer size\",\"by_default\":8192,\"optional\":true},{\"name\":\"soLinger\",\"type\":[\"int\",\"null\"],\"displayName\":\"Delay before a reset is sent\",\"by_default\":0,\"optional\":true},{\"name\":\"connectionTimeout\",\"type\":[\"int\",\"null\"],\"displayName\":\"Connection timeout (ms)\",\"by_default\":5000,\"optional\":true},{\"name\":\"readTimeout\",\"type\":[\"int\",\"null\"],\"displayName\":\"Read timeout (ms)\",\"by_default\":12000,\"optional\":true},{\"name\":\"reuseAddress\",\"type\":[\"boolean\",\"null\"],\"displayName\":\"Reuse address\",\"by_default\":false,\"optional\":true},{\"name\":\"keepAlive\",\"type\":[\"boolean\",\"null\"],\"displayName\":\"Use keep alive\",\"by_default\":false,\"optional\":true},{\"name\":\"tcpNoDelay\",\"type\":[\"boolean\",\"null\"],\"displayName\":\"Tcp no delay\",\"by_default\":false,\"optional\":true}]},\"null\"],\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"displayName\":\"Cassandra socket option\",\"optional\":true},{\"name\":\"callbackThreadPoolSize\",\"type\":[\"int\",\"null\"],\"displayName\":\"Callback thread pool size\",\"by_default\":2},{\"name\":\"cassandraWriteConsistencyLevel\",\"type\":[{\"type\":\"enum\",\"name\":\"CassandraWriteConsistencyLevel\",\"symbols\":[\"ANY\",\"ONE\",\"TWO\",\"THREE\",\"QUORUM\",\"ALL\",\"LOCAL_QUORUM\",\"EACH_QUORUM\",\"SERIAL\",\"LOCAL_SERIAL\",\"LOCAL_ONE\"],\"optional\":true},\"null\"],\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"displayName\":\"Write consistency level\",\"by_default\":\"ONE\"},{\"name\":\"cassandraCompression\",\"type\":[{\"type\":\"enum\",\"name\":\"CassandraCompression\",\"symbols\":[\"NONE\",\"SNAPPY\",\"LZ4\"]},\"null\"],\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"by_default\":\"NONE\",\"optional\":true,\"displayName\":\"Compression type\"},{\"name\":\"cassandraExecuteRequestType\",\"type\":[{\"type\":\"enum\",\"name\":\"CassandraExecuteRequestType\",\"symbols\":[\"SYNC\",\"ASYNC\"]},\"null\"],\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"by_default\":\"SYNC\",\"optional\":true,\"displayName\":\"Cassandra execute request type\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"CassandraConfig\",\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"fields\":[{\"name\":\"cassandraServers\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"CassandraServer\",\"fields\":[{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Host\",\"weight\":0.75,\"by_default\":\"localhost\"},{\"name\":\"port\",\"type\":\"int\",\"displayName\":\"Port\",\"weight\":0.25,\"by_default\":9042}]}},\"displayName\":\"Cassandra nodes\",\"minRowCount\":1},{\"name\":\"cassandraCredential\",\"type\":[{\"type\":\"record\",\"name\":\"CassandraCredential\",\"fields\":[{\"name\":\"user\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"User\",\"weight\":0.5,\"by_default\":\"user\"},{\"name\":\"password\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Password\",\"weight\":0.5,\"by_default\":\"password\"}],\"optional\":true},\"null\"],\"displayName\":\"Authentication credentials\",\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\"},{\"name\":\"keySpace\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Keyspace name\"},{\"name\":\"tableNamePattern\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Table name pattern\",\"by_default\":\"logs_$app_token_$config_hash\"},{\"name\":\"columnMapping\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"ColumnMappingElement\",\"fields\":[{\"name\":\"type\",\"type\":{\"type\":\"enum\",\"name\":\"ColumnMappingElementType\",\"symbols\":[\"HEADER_FIELD\",\"EVENT_FIELD\",\"HEADER_JSON\",\"EVENT_JSON\",\"HEADER_BINARY\",\"EVENT_BINARY\",\"UUID\"]},\"displayName\":\"Type\",\"weight\":0.2,\"by_default\":\"HEADER\"},{\"name\":\"value\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"displayName\":\"Value\",\"weight\":0.2,\"by_default\":\"applicationToken\"},{\"name\":\"columnName\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Name\",\"weight\":0.2,\"by_default\":\"application_token\"},{\"name\":\"columnType\",\"type\":{\"type\":\"enum\",\"name\":\"ColumnType\",\"symbols\":[\"BIGINT\",\"BLOB\",\"BOOLEAN\",\"DOUBLE\",\"FLOAT\",\"INT\",\"TEXT\",\"UUID\"]},\"displayName\":\"Column Type\",\"weight\":0.2,\"by_default\":\"BOOLEAN\"},{\"name\":\"partitionKey\",\"type\":\"boolean\",\"displayName\":\"Is part of partition key?\",\"weight\":0.1,\"by_default\":false},{\"name\":\"clusteringKey\",\"type\":\"boolean\",\"displayName\":\"Is part of clustering key?\",\"weight\":0.1,\"by_default\":false}]}},\"displayName\":\"Column Mapping\",\"minRowCount\":1},{\"name\":\"clusteringMapping\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"ClusteringElement\",\"fields\":[{\"name\":\"columnName\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Name\",\"weight\":0.2,\"by_default\":\"application_token\"},{\"name\":\"order\",\"type\":{\"type\":\"enum\",\"name\":\"OrderType\",\"symbols\":[\"DESC\",\"ASC\"]},\"displayName\":\"Order\",\"weight\":0.2,\"by_default\":\"DESC\"}]}},\"displayName\":\"Clustering\",\"minRowCount\":0},{\"name\":\"cassandraBatchType\",\"type\":[{\"type\":\"enum\",\"name\":\"CassandraBatchType\",\"symbols\":[\"LOGGED\",\"UNLOGGED\"]},\"null\"],\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"by_default\":\"UNLOGGED\",\"optional\":true,\"displayName\":\"Cassandra batch type\"},{\"name\":\"cassandraSocketOption\",\"type\":[{\"type\":\"record\",\"name\":\"CassandraSocketOption\",\"fields\":[{\"name\":\"sendBufferSize\",\"type\":[\"int\",\"null\"],\"displayName\":\"Set send buffer size\",\"by_default\":8192,\"optional\":true},{\"name\":\"receiveBufferSize\",\"type\":[\"int\",\"null\"],\"displayName\":\"Set receive buffer size\",\"by_default\":8192,\"optional\":true},{\"name\":\"soLinger\",\"type\":[\"int\",\"null\"],\"displayName\":\"Delay before a reset is sent\",\"by_default\":0,\"optional\":true},{\"name\":\"connectionTimeout\",\"type\":[\"int\",\"null\"],\"displayName\":\"Connection timeout (ms)\",\"by_default\":5000,\"optional\":true},{\"name\":\"readTimeout\",\"type\":[\"int\",\"null\"],\"displayName\":\"Read timeout (ms)\",\"by_default\":12000,\"optional\":true},{\"name\":\"reuseAddress\",\"type\":[\"boolean\",\"null\"],\"displayName\":\"Reuse address\",\"by_default\":false,\"optional\":true},{\"name\":\"keepAlive\",\"type\":[\"boolean\",\"null\"],\"displayName\":\"Use keep alive\",\"by_default\":false,\"optional\":true},{\"name\":\"tcpNoDelay\",\"type\":[\"boolean\",\"null\"],\"displayName\":\"Tcp no delay\",\"by_default\":false,\"optional\":true}]},\"null\"],\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"displayName\":\"Cassandra socket option\",\"optional\":true},{\"name\":\"executorThreadPoolSize\",\"type\":\"int\",\"displayName\":\"Executor thread pool size\",\"by_default\":1},{\"name\":\"callbackThreadPoolSize\",\"type\":\"int\",\"displayName\":\"Callback thread pool size\",\"by_default\":2},{\"name\":\"cassandraWriteConsistencyLevel\",\"type\":[{\"type\":\"enum\",\"name\":\"CassandraWriteConsistencyLevel\",\"symbols\":[\"ANY\",\"ONE\",\"TWO\",\"THREE\",\"QUORUM\",\"ALL\",\"LOCAL_QUORUM\",\"EACH_QUORUM\",\"SERIAL\",\"LOCAL_SERIAL\",\"LOCAL_ONE\"],\"optional\":true},\"null\"],\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"displayName\":\"Write consistency level\",\"by_default\":\"ONE\"},{\"name\":\"cassandraCompression\",\"type\":[{\"type\":\"enum\",\"name\":\"CassandraCompression\",\"symbols\":[\"NONE\",\"SNAPPY\",\"LZ4\"]},\"null\"],\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"by_default\":\"NONE\",\"optional\":true,\"displayName\":\"Compression type\"},{\"name\":\"cassandraExecuteRequestType\",\"type\":[{\"type\":\"enum\",\"name\":\"CassandraExecuteRequestType\",\"symbols\":[\"SYNC\",\"ASYNC\"]},\"null\"],\"namespace\":\"org.kaaproject.kaa.server.appenders.cassandra.config.gen\",\"by_default\":\"SYNC\",\"optional\":true,\"displayName\":\"Cassandra execute request type\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraServer> cassandraServers;
    private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential cassandraCredential;
@@ -17,7 +17,8 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
    private java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement> clusteringMapping;
    private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType cassandraBatchType;
    private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption cassandraSocketOption;
-   private java.lang.Integer callbackThreadPoolSize;
+   private int executorThreadPoolSize;
+   private int callbackThreadPoolSize;
    private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel cassandraWriteConsistencyLevel;
    private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression cassandraCompression;
    private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType cassandraExecuteRequestType;
@@ -32,7 +33,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
   /**
    * All-args constructor.
    */
-  public CassandraConfig(java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraServer> cassandraServers, org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential cassandraCredential, java.lang.String keySpace, java.lang.String tableNamePattern, java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement> columnMapping, java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement> clusteringMapping, org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType cassandraBatchType, org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption cassandraSocketOption, java.lang.Integer callbackThreadPoolSize, org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel cassandraWriteConsistencyLevel, org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression cassandraCompression, org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType cassandraExecuteRequestType) {
+  public CassandraConfig(java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraServer> cassandraServers, org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential cassandraCredential, java.lang.String keySpace, java.lang.String tableNamePattern, java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement> columnMapping, java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement> clusteringMapping, org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType cassandraBatchType, org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption cassandraSocketOption, java.lang.Integer executorThreadPoolSize, java.lang.Integer callbackThreadPoolSize, org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel cassandraWriteConsistencyLevel, org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression cassandraCompression, org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType cassandraExecuteRequestType) {
     this.cassandraServers = cassandraServers;
     this.cassandraCredential = cassandraCredential;
     this.keySpace = keySpace;
@@ -41,6 +42,7 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
     this.clusteringMapping = clusteringMapping;
     this.cassandraBatchType = cassandraBatchType;
     this.cassandraSocketOption = cassandraSocketOption;
+    this.executorThreadPoolSize = executorThreadPoolSize;
     this.callbackThreadPoolSize = callbackThreadPoolSize;
     this.cassandraWriteConsistencyLevel = cassandraWriteConsistencyLevel;
     this.cassandraCompression = cassandraCompression;
@@ -59,10 +61,11 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
     case 5: return clusteringMapping;
     case 6: return cassandraBatchType;
     case 7: return cassandraSocketOption;
-    case 8: return callbackThreadPoolSize;
-    case 9: return cassandraWriteConsistencyLevel;
-    case 10: return cassandraCompression;
-    case 11: return cassandraExecuteRequestType;
+    case 8: return executorThreadPoolSize;
+    case 9: return callbackThreadPoolSize;
+    case 10: return cassandraWriteConsistencyLevel;
+    case 11: return cassandraCompression;
+    case 12: return cassandraExecuteRequestType;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -78,10 +81,11 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
     case 5: clusteringMapping = (java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement>)value$; break;
     case 6: cassandraBatchType = (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType)value$; break;
     case 7: cassandraSocketOption = (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption)value$; break;
-    case 8: callbackThreadPoolSize = (java.lang.Integer)value$; break;
-    case 9: cassandraWriteConsistencyLevel = (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel)value$; break;
-    case 10: cassandraCompression = (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression)value$; break;
-    case 11: cassandraExecuteRequestType = (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType)value$; break;
+    case 8: executorThreadPoolSize = (java.lang.Integer)value$; break;
+    case 9: callbackThreadPoolSize = (java.lang.Integer)value$; break;
+    case 10: cassandraWriteConsistencyLevel = (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel)value$; break;
+    case 11: cassandraCompression = (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression)value$; break;
+    case 12: cassandraExecuteRequestType = (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -207,6 +211,21 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
   }
 
   /**
+   * Gets the value of the 'executorThreadPoolSize' field.
+   */
+  public java.lang.Integer getExecutorThreadPoolSize() {
+    return executorThreadPoolSize;
+  }
+
+  /**
+   * Sets the value of the 'executorThreadPoolSize' field.
+   * @param value the value to set.
+   */
+  public void setExecutorThreadPoolSize(java.lang.Integer value) {
+    this.executorThreadPoolSize = value;
+  }
+
+  /**
    * Gets the value of the 'callbackThreadPoolSize' field.
    */
   public java.lang.Integer getCallbackThreadPoolSize() {
@@ -295,7 +314,8 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
     private java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement> clusteringMapping;
     private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType cassandraBatchType;
     private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption cassandraSocketOption;
-    private java.lang.Integer callbackThreadPoolSize;
+    private int executorThreadPoolSize;
+    private int callbackThreadPoolSize;
     private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel cassandraWriteConsistencyLevel;
     private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression cassandraCompression;
     private org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType cassandraExecuteRequestType;
@@ -340,21 +360,25 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
         this.cassandraSocketOption = data().deepCopy(fields()[7].schema(), other.cassandraSocketOption);
         fieldSetFlags()[7] = true;
       }
-      if (isValidValue(fields()[8], other.callbackThreadPoolSize)) {
-        this.callbackThreadPoolSize = data().deepCopy(fields()[8].schema(), other.callbackThreadPoolSize);
+      if (isValidValue(fields()[8], other.executorThreadPoolSize)) {
+        this.executorThreadPoolSize = data().deepCopy(fields()[8].schema(), other.executorThreadPoolSize);
         fieldSetFlags()[8] = true;
       }
-      if (isValidValue(fields()[9], other.cassandraWriteConsistencyLevel)) {
-        this.cassandraWriteConsistencyLevel = data().deepCopy(fields()[9].schema(), other.cassandraWriteConsistencyLevel);
+      if (isValidValue(fields()[9], other.callbackThreadPoolSize)) {
+        this.callbackThreadPoolSize = data().deepCopy(fields()[9].schema(), other.callbackThreadPoolSize);
         fieldSetFlags()[9] = true;
       }
-      if (isValidValue(fields()[10], other.cassandraCompression)) {
-        this.cassandraCompression = data().deepCopy(fields()[10].schema(), other.cassandraCompression);
+      if (isValidValue(fields()[10], other.cassandraWriteConsistencyLevel)) {
+        this.cassandraWriteConsistencyLevel = data().deepCopy(fields()[10].schema(), other.cassandraWriteConsistencyLevel);
         fieldSetFlags()[10] = true;
       }
-      if (isValidValue(fields()[11], other.cassandraExecuteRequestType)) {
-        this.cassandraExecuteRequestType = data().deepCopy(fields()[11].schema(), other.cassandraExecuteRequestType);
+      if (isValidValue(fields()[11], other.cassandraCompression)) {
+        this.cassandraCompression = data().deepCopy(fields()[11].schema(), other.cassandraCompression);
         fieldSetFlags()[11] = true;
+      }
+      if (isValidValue(fields()[12], other.cassandraExecuteRequestType)) {
+        this.cassandraExecuteRequestType = data().deepCopy(fields()[12].schema(), other.cassandraExecuteRequestType);
+        fieldSetFlags()[12] = true;
       }
     }
     
@@ -393,21 +417,25 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
         this.cassandraSocketOption = data().deepCopy(fields()[7].schema(), other.cassandraSocketOption);
         fieldSetFlags()[7] = true;
       }
-      if (isValidValue(fields()[8], other.callbackThreadPoolSize)) {
-        this.callbackThreadPoolSize = data().deepCopy(fields()[8].schema(), other.callbackThreadPoolSize);
+      if (isValidValue(fields()[8], other.executorThreadPoolSize)) {
+        this.executorThreadPoolSize = data().deepCopy(fields()[8].schema(), other.executorThreadPoolSize);
         fieldSetFlags()[8] = true;
       }
-      if (isValidValue(fields()[9], other.cassandraWriteConsistencyLevel)) {
-        this.cassandraWriteConsistencyLevel = data().deepCopy(fields()[9].schema(), other.cassandraWriteConsistencyLevel);
+      if (isValidValue(fields()[9], other.callbackThreadPoolSize)) {
+        this.callbackThreadPoolSize = data().deepCopy(fields()[9].schema(), other.callbackThreadPoolSize);
         fieldSetFlags()[9] = true;
       }
-      if (isValidValue(fields()[10], other.cassandraCompression)) {
-        this.cassandraCompression = data().deepCopy(fields()[10].schema(), other.cassandraCompression);
+      if (isValidValue(fields()[10], other.cassandraWriteConsistencyLevel)) {
+        this.cassandraWriteConsistencyLevel = data().deepCopy(fields()[10].schema(), other.cassandraWriteConsistencyLevel);
         fieldSetFlags()[10] = true;
       }
-      if (isValidValue(fields()[11], other.cassandraExecuteRequestType)) {
-        this.cassandraExecuteRequestType = data().deepCopy(fields()[11].schema(), other.cassandraExecuteRequestType);
+      if (isValidValue(fields()[11], other.cassandraCompression)) {
+        this.cassandraCompression = data().deepCopy(fields()[11].schema(), other.cassandraCompression);
         fieldSetFlags()[11] = true;
+      }
+      if (isValidValue(fields()[12], other.cassandraExecuteRequestType)) {
+        this.cassandraExecuteRequestType = data().deepCopy(fields()[12].schema(), other.cassandraExecuteRequestType);
+        fieldSetFlags()[12] = true;
       }
     }
 
@@ -611,28 +639,51 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
+    /** Gets the value of the 'executorThreadPoolSize' field */
+    public java.lang.Integer getExecutorThreadPoolSize() {
+      return executorThreadPoolSize;
+    }
+    
+    /** Sets the value of the 'executorThreadPoolSize' field */
+    public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setExecutorThreadPoolSize(int value) {
+      validate(fields()[8], value);
+      this.executorThreadPoolSize = value;
+      fieldSetFlags()[8] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'executorThreadPoolSize' field has been set */
+    public boolean hasExecutorThreadPoolSize() {
+      return fieldSetFlags()[8];
+    }
+    
+    /** Clears the value of the 'executorThreadPoolSize' field */
+    public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearExecutorThreadPoolSize() {
+      fieldSetFlags()[8] = false;
+      return this;
+    }
+
     /** Gets the value of the 'callbackThreadPoolSize' field */
     public java.lang.Integer getCallbackThreadPoolSize() {
       return callbackThreadPoolSize;
     }
     
     /** Sets the value of the 'callbackThreadPoolSize' field */
-    public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setCallbackThreadPoolSize(java.lang.Integer value) {
-      validate(fields()[8], value);
+    public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setCallbackThreadPoolSize(int value) {
+      validate(fields()[9], value);
       this.callbackThreadPoolSize = value;
-      fieldSetFlags()[8] = true;
+      fieldSetFlags()[9] = true;
       return this; 
     }
     
     /** Checks whether the 'callbackThreadPoolSize' field has been set */
     public boolean hasCallbackThreadPoolSize() {
-      return fieldSetFlags()[8];
+      return fieldSetFlags()[9];
     }
     
     /** Clears the value of the 'callbackThreadPoolSize' field */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearCallbackThreadPoolSize() {
-      callbackThreadPoolSize = null;
-      fieldSetFlags()[8] = false;
+      fieldSetFlags()[9] = false;
       return this;
     }
 
@@ -643,21 +694,21 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
     
     /** Sets the value of the 'cassandraWriteConsistencyLevel' field */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setCassandraWriteConsistencyLevel(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel value) {
-      validate(fields()[9], value);
+      validate(fields()[10], value);
       this.cassandraWriteConsistencyLevel = value;
-      fieldSetFlags()[9] = true;
+      fieldSetFlags()[10] = true;
       return this; 
     }
     
     /** Checks whether the 'cassandraWriteConsistencyLevel' field has been set */
     public boolean hasCassandraWriteConsistencyLevel() {
-      return fieldSetFlags()[9];
+      return fieldSetFlags()[10];
     }
     
     /** Clears the value of the 'cassandraWriteConsistencyLevel' field */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearCassandraWriteConsistencyLevel() {
       cassandraWriteConsistencyLevel = null;
-      fieldSetFlags()[9] = false;
+      fieldSetFlags()[10] = false;
       return this;
     }
 
@@ -668,21 +719,21 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
     
     /** Sets the value of the 'cassandraCompression' field */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setCassandraCompression(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression value) {
-      validate(fields()[10], value);
+      validate(fields()[11], value);
       this.cassandraCompression = value;
-      fieldSetFlags()[10] = true;
+      fieldSetFlags()[11] = true;
       return this; 
     }
     
     /** Checks whether the 'cassandraCompression' field has been set */
     public boolean hasCassandraCompression() {
-      return fieldSetFlags()[10];
+      return fieldSetFlags()[11];
     }
     
     /** Clears the value of the 'cassandraCompression' field */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearCassandraCompression() {
       cassandraCompression = null;
-      fieldSetFlags()[10] = false;
+      fieldSetFlags()[11] = false;
       return this;
     }
 
@@ -693,21 +744,21 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
     
     /** Sets the value of the 'cassandraExecuteRequestType' field */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder setCassandraExecuteRequestType(org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType value) {
-      validate(fields()[11], value);
+      validate(fields()[12], value);
       this.cassandraExecuteRequestType = value;
-      fieldSetFlags()[11] = true;
+      fieldSetFlags()[12] = true;
       return this; 
     }
     
     /** Checks whether the 'cassandraExecuteRequestType' field has been set */
     public boolean hasCassandraExecuteRequestType() {
-      return fieldSetFlags()[11];
+      return fieldSetFlags()[12];
     }
     
     /** Clears the value of the 'cassandraExecuteRequestType' field */
     public org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraConfig.Builder clearCassandraExecuteRequestType() {
       cassandraExecuteRequestType = null;
-      fieldSetFlags()[11] = false;
+      fieldSetFlags()[12] = false;
       return this;
     }
 
@@ -723,10 +774,11 @@ public class CassandraConfig extends org.apache.avro.specific.SpecificRecordBase
         record.clusteringMapping = fieldSetFlags()[5] ? this.clusteringMapping : (java.util.List<org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement>) defaultValue(fields()[5]);
         record.cassandraBatchType = fieldSetFlags()[6] ? this.cassandraBatchType : (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType) defaultValue(fields()[6]);
         record.cassandraSocketOption = fieldSetFlags()[7] ? this.cassandraSocketOption : (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketOption) defaultValue(fields()[7]);
-        record.callbackThreadPoolSize = fieldSetFlags()[8] ? this.callbackThreadPoolSize : (java.lang.Integer) defaultValue(fields()[8]);
-        record.cassandraWriteConsistencyLevel = fieldSetFlags()[9] ? this.cassandraWriteConsistencyLevel : (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel) defaultValue(fields()[9]);
-        record.cassandraCompression = fieldSetFlags()[10] ? this.cassandraCompression : (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression) defaultValue(fields()[10]);
-        record.cassandraExecuteRequestType = fieldSetFlags()[11] ? this.cassandraExecuteRequestType : (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType) defaultValue(fields()[11]);
+        record.executorThreadPoolSize = fieldSetFlags()[8] ? this.executorThreadPoolSize : (java.lang.Integer) defaultValue(fields()[8]);
+        record.callbackThreadPoolSize = fieldSetFlags()[9] ? this.callbackThreadPoolSize : (java.lang.Integer) defaultValue(fields()[9]);
+        record.cassandraWriteConsistencyLevel = fieldSetFlags()[10] ? this.cassandraWriteConsistencyLevel : (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel) defaultValue(fields()[10]);
+        record.cassandraCompression = fieldSetFlags()[11] ? this.cassandraCompression : (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression) defaultValue(fields()[11]);
+        record.cassandraExecuteRequestType = fieldSetFlags()[12] ? this.cassandraExecuteRequestType : (org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType) defaultValue(fields()[12]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

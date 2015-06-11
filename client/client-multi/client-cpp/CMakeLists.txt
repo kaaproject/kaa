@@ -223,7 +223,7 @@ message("==================================")
 #
 # Find third-party dependencies
 #
-find_package (Boost 1.55 REQUIRED COMPONENTS log system)
+find_package (Boost 1.54 REQUIRED COMPONENTS log system)
 find_package (Avro REQUIRED)
 find_package (Botan REQUIRED)
 
@@ -278,6 +278,7 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/kaatcp/KaaTcpResponseProcessor.cpp
         impl/channel/TransportProtocolIdConstants.cpp
         impl/channel/IPTransportInfo.cpp
+        impl/failover/DefaultFailoverStrategy.cpp
     )
 
 # Builds Kaa libraries.

@@ -24,8 +24,11 @@
 namespace kaa {
 
 const std::size_t DefaultLogUploadStrategy::DEFAULT_BATCH_SIZE;
+const std::size_t DefaultLogUploadStrategy::DEFAULT_RECORDS_BATCH_COUNT;
 const std::size_t DefaultLogUploadStrategy::DEFAULT_UPLOAD_TIMEOUT;
 const std::size_t DefaultLogUploadStrategy::DEFAULT_RETRY_PERIOD;
+const std::size_t DefaultLogUploadStrategy::DEFAULT_TIMEOUT_CHECK_PERIOD;
+const std::size_t DefaultLogUploadStrategy::DEFAULT_LOG_UPLOAD_CHECK_PERIOD;
 
 const std::size_t DefaultLogUploadStrategy::DEFAULT_UPLOAD_VOLUME_THRESHOLD;
 const std::size_t DefaultLogUploadStrategy::DEFAULT_UPLOAD_COUNT_THRESHOLD;
@@ -58,7 +61,7 @@ LogUploadStrategyDecision DefaultLogUploadStrategy::isUploadNeeded(ILogStorageSt
 
 void DefaultLogUploadStrategy::onTimeout(ILogFailoverCommand& controller)
 {
-    KAA_LOG_WARN("Log upload timeout occurred. Try to switch to another Operations server...");
+    KAA_LOG_WARN("Log upload timeout occurred.");
 
     controller.switchAccessPoint();
 }

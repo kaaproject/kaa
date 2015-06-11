@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.demo.powerplant;
 
 
+
 import org.kaaproject.kaa.demo.powerplant.R;
 import org.kaaproject.kaa.demo.powerplant.fragment.DashboardFragment;
 
@@ -26,7 +27,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
@@ -39,7 +39,9 @@ import android.view.WindowManager;
  */
 public class PowerPlantActivity extends FragmentActivity {
 
-    @Override
+    private static final String TAG = "PowerPlantActivity";
+
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -61,12 +63,6 @@ public class PowerPlantActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.city_guide, menu);
-        return true;
     }
 
     @Override

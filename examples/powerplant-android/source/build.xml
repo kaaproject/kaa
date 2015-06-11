@@ -36,7 +36,9 @@
         unless="sdk.dir"
     />
 
-    <target name="-pre-build"/>
+    <target name="-pre-build">
+        <unzip src="../couchbase-lite-1.0.4-android_community.zip" dest="libs/"/>
+    </target>
 
     <target name="-post-build"/>
 

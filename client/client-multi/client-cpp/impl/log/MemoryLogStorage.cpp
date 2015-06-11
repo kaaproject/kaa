@@ -64,7 +64,7 @@ void MemoryLogStorage::addLogRecord(LogRecordPtr serializedRecord)
 
 }
 
-ILogStorage::RecordPack MemoryLogStorage::getRecordBlock(std::size_t blockSize)
+ILogStorage::RecordPack MemoryLogStorage::getRecordBlock(std::size_t blockSize, std::size_t recordsBlockCount)
 {
     static std::int32_t bucketId = 0;
 
@@ -82,7 +82,7 @@ ILogStorage::RecordPack MemoryLogStorage::getRecordBlock(std::size_t blockSize)
 
     for (auto& log : logs_) {
         if (log.blockId_ == NO_OWNER) {
-            if (log.record_->getSize() > blockSize) {
+            if (recordsBlockCount == 0 || log.record_->getSize() > blockSize) {
                 if (block.empty()) {
                     KAA_LOG_ERROR(boost::format("Failed to get logs: block size (%1%B) is less than the size of "
                                         "the serialized log record (%2%B)") % blockSize % log.record_->getSize());
@@ -93,6 +93,7 @@ ILogStorage::RecordPack MemoryLogStorage::getRecordBlock(std::size_t blockSize)
 
             block.push_back(log.record_);
             blockSize -= log.record_->getSize();
+            recordsBlockCount--;
 
             log.blockId_ = recordBlockId;
 

@@ -107,16 +107,19 @@ public class CassandraLogAppenderTest {
         configuration.setCassandraBatchType(CassandraBatchType.UNLOGGED);
         configuration.setKeySpace(KEY_SPACE_NAME);
         configuration.setTableNamePattern("logs_$app_token_$config_hash");
-        configuration.setCassandraExecuteRequestType(CassandraExecuteRequestType.SYNC);
+        configuration.setCassandraExecuteRequestType(CassandraExecuteRequestType.ASYNC);
         configuration.setCassandraServers(Arrays.asList(server));
-        
+        configuration.setCallbackThreadPoolSize(3);
+        configuration.setExecutorThreadPoolSize(3);
+
         List<ColumnMappingElement> columnMapping = new ArrayList<ColumnMappingElement>();
-        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_FIELD, "endpointKeyHash", "endpointKeyHash", ColumnType.TEXT, true, false));
+        columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.HEADER_FIELD, "endpointKeyHash", "endpointKeyHash",
+                ColumnType.TEXT, true, false));
         columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.EVENT_JSON, "", "event_json", ColumnType.TEXT, false, false));
         columnMapping.add(new ColumnMappingElement(ColumnMappingElementType.UUID, "", "binid", ColumnType.UUID, false, true));
 
         configuration.setColumnMapping(columnMapping);
-        
+
         List<ClusteringElement> clusteringMapping = new ArrayList<ClusteringElement>();
         clusteringMapping.add(new ClusteringElement("binid", OrderType.DESC));
         configuration.setClusteringMapping(clusteringMapping);
@@ -131,12 +134,14 @@ public class CassandraLogAppenderTest {
     }
 
     @Test
-    public void doAppendTest() throws IOException {
+    public void doAppendTest() throws IOException, InterruptedException {
         DeliveryCallback callback = new DeliveryCallback();
         logAppender.doAppend(generateLogEventPack(20), callback);
+        Thread.sleep(3000);
         CassandraLogEventDao logEventDao = (CassandraLogEventDao) ReflectionTestUtils.getField(logAppender, "logEventDao");
         Session session = (Session) ReflectionTestUtils.getField(logEventDao, "session");
-        ResultSet resultSet = session.execute(QueryBuilder.select().countAll().from(KEY_SPACE_NAME, "logs_" + appToken + "_" + Math.abs(configuration.hashCode())));
+        ResultSet resultSet = session.execute(QueryBuilder.select().countAll()
+                .from(KEY_SPACE_NAME, "logs_" + appToken + "_" + Math.abs(configuration.hashCode())));
         Row row = resultSet.one();
         Assert.assertEquals(20L, row.getLong(0));
         Assert.assertEquals(1, callback.getSuccessCount());

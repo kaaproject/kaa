@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.demo.powerplant.view;
 
 import org.kaaproject.kaa.demo.powerplant.R;
@@ -16,7 +32,6 @@ import android.graphics.SweepGradient;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.text.Layout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -70,11 +85,11 @@ public class GaugeChart extends View {
 	private static final int TEXT_COLOR = Color.rgb(98, 98, 98);
 	private static final float TEXT_FONT_SIZE = 0.07f;
 	private static final float TEXT_MEASURE_FONT_SIZE = 0.12f;
-	private static final String POWER_LABEL = "Power, kW";
+	private static final String POWER_LABEL = "Avg/panel, kW";
 	private static final float POWER_LABEL_POS_Y = 0.45f;
-	private static final float PANEL_NAME_LABEL_POS_Y = 0.75f;
+	private static final float ZONE_NAME_LABEL_POS_Y = 0.75f;
 	private static final float MEASURES_LABEL_POS_Y = 0.65f;
-	private String panelName;
+	private String zoneName;
 	private Paint textPaint;
 	private TextPaint labelPaint;
 	private TextPaint measuresPaint;
@@ -111,7 +126,7 @@ public class GaugeChart extends View {
 			0, 0);
 
 		try {
-			panelName = a.getString(R.styleable.GaugeChart_panel_name);
+			zoneName = a.getString(R.styleable.GaugeChart_zone_name);
 			handleAccelerationCoef = a.getFloat(R.styleable.GaugeChart_update_time_s, 1.0f);
 			handleAccelerationCoef *= 1.2;
 		} finally {
@@ -119,7 +134,7 @@ public class GaugeChart extends View {
 		}
 		setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 		init();
-		Log.d(TAG, panelName + " has initialized");
+		Log.d(TAG, zoneName + " has initialized");
 	}
 
 	public GaugeChart(Context context, AttributeSet attrs, int defStyle) {
@@ -138,7 +153,7 @@ public class GaugeChart extends View {
 		
 		int chosenWidth = chooseDimension(widthMode, widthSize);
 		int chosenHeight = chooseDimension(heightMode, heightSize);
-		
+		 
 		int chosenDimension = Math.min(chosenWidth, chosenHeight);
 		
 		setMeasuredDimension(chosenDimension, chosenDimension);
@@ -195,7 +210,7 @@ public class GaugeChart extends View {
 		handVelocity = bundle.getFloat("handVelocity");
 		handAcceleration = bundle.getFloat("handAcceleration");
 		lastHandMoveTime = bundle.getLong("lastHandMoveTime");
-		panelName = bundle.getString("panelName");
+		zoneName = bundle.getString("zoneName");
 		handleAccelerationCoef = bundle.getFloat("handleAccelerationCoef");
 	}
 
@@ -212,7 +227,7 @@ public class GaugeChart extends View {
 		state.putFloat("handVelocity", handVelocity);
 		state.putFloat("handAcceleration", handAcceleration);
 		state.putLong("lastHandMoveTime", lastHandMoveTime);
-		state.putString("panelName", panelName);
+		state.putString("zoneName", zoneName);
 		state.putFloat("handleAccelerationCoef", handleAccelerationCoef);
 		return state;
 	}
@@ -294,7 +309,7 @@ public class GaugeChart extends View {
 		redPaint.setStrokeWidth(SCALE_LINE_WIDTH * 0.8f);
 		redPaint.setAntiAlias(true);
 		
-		// paint for panel name label and power label
+		// paint for zone name label and power label
 		textPaint = new Paint();
 		textPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 		textPaint.setColor(TEXT_COLOR);
@@ -358,10 +373,8 @@ public class GaugeChart extends View {
 	}
 	
 	private void drawLabels(Canvas canvas) {
-		Log.d(TAG, labelPaint.measureText(POWER_LABEL) + "");
-//		canvas.drawText(POWER_LABEL, CENTER_X - Layout.getDesiredWidth(POWER_LABEL, labelPaint) / 2,
 		canvas.drawText(POWER_LABEL, CENTER_X, POWER_LABEL_POS_Y, labelPaint);
-		canvas.drawText(panelName, CENTER_X, PANEL_NAME_LABEL_POS_Y, labelPaint);
+		canvas.drawText(zoneName, CENTER_X, ZONE_NAME_LABEL_POS_Y, labelPaint);
 	}
 	
 	@Override

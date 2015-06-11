@@ -23,6 +23,7 @@
 #include <kaa/Kaa.hpp>
 #include <kaa/log/ILogStorageStatus.hpp>
 #include <kaa/log/DefaultLogUploadStrategy.hpp>
+#include <kaa/KaaThread.hpp>
 
 using namespace kaa;
 
@@ -31,8 +32,7 @@ using namespace kaa;
 // The following custom strategy uploads every log record as soon as it is created.
 class LogUploadStrategy : public DefaultLogUploadStrategy {
 public:
-    LogUploadStrategy(IKaaChannelManagerPtr manager)
-        : DefaultLogUploadStrategy(manager) {}
+    LogUploadStrategy() : DefaultLogUploadStrategy() {}
 
     virtual LogUploadStrategyDecision isUploadNeeded(ILogStorageStatus& status)
     {
@@ -58,7 +58,7 @@ int main()
     IKaaClient& kaaClient =  Kaa::getKaaClient();
 
     // Set a custom strategy for uploading logs.
-    kaaClient.setLogUploadStrategy(std::make_shared<LogUploadStrategy>(&kaaClient.getChannelManager()));
+    kaaClient.setLogUploadStrategy(std::make_shared<LogUploadStrategy>());
 
     // Start the Kaa client and connect it to the Kaa server.
     Kaa::start();

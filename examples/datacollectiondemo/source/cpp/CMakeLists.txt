@@ -39,7 +39,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -L/usr/local/lib -std=gnu++11 -stdlib=libc++")
 endif()
 
-find_package (Boost 1.55 REQUIRED COMPONENTS log system)
+find_package (Boost 1.54 REQUIRED COMPONENTS log system)
 find_package (Avro REQUIRED)
 find_package (Botan REQUIRED)
 
@@ -65,6 +65,10 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build)
 set (SAMPLE_SOURCE_FILES
             src/KaaDemo.cpp
 )
+
+if ( NOT KAA_WITHOUT_THREADSAFE OR NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL OR NOT KAA_WITHOUT_OPERATION_TCP_CHANNEL)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_THREADSAFE")
+endif()
 
 add_executable(${APP_NAME} ${SAMPLE_SOURCE_FILES})
 

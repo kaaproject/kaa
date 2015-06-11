@@ -35,15 +35,16 @@ struct kaa_list_t {
     size_t             size;
 };
 
-
-
 static kaa_list_node_t *set_next_neighbor(kaa_list_node_t *whom, kaa_list_node_t *neighbor)
 {
-    KAA_RETURN_IF_NIL(whom, NULL);
-    whom->next = neighbor;
     if (neighbor) {
         neighbor->prev = whom;
     }
+
+    if (whom) {
+        whom->next = neighbor;
+    }
+
     return neighbor;
 }
 
@@ -168,7 +169,7 @@ kaa_list_node_t *kaa_list_back(kaa_list_t *list)
 
 void kaa_list_clear(kaa_list_t *list, deallocate_list_data deallocator)
 {
-    KAA_RETURN_IF_NIL(list, );
+    KAA_RETURN_IF_NIL2(list, list->size, );
     kaa_list_node_t *it = list->head;
     while (it) {
         kaa_list_node_t *next = it->next;
@@ -188,7 +189,7 @@ void kaa_list_destroy(kaa_list_t *list, deallocate_list_data deallocator)
 
 kaa_list_node_t *kaa_list_remove_at(kaa_list_t *list, kaa_list_node_t *it, deallocate_list_data deallocator)
 {
-    KAA_RETURN_IF_NIL2(list, it, NULL);
+    KAA_RETURN_IF_NIL3(list, it, list->size, NULL);
 
     kaa_list_node_t *next = it->next;
     if (list->head == it) {
@@ -207,7 +208,7 @@ kaa_list_node_t *kaa_list_remove_at(kaa_list_t *list, kaa_list_node_t *it, deall
 
 kaa_error_t kaa_list_remove_first(kaa_list_t *list, match_predicate pred, void *context, deallocate_list_data deallocator)
 {
-    KAA_RETURN_IF_NIL2(list, pred, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(list, pred, list->size, KAA_ERR_BADPARAM);
 
     kaa_list_node_t *it = kaa_list_find_next(kaa_list_begin(list), pred, context);
     if (it) {
@@ -262,4 +263,63 @@ void kaa_list_for_each(kaa_list_node_t *first, kaa_list_node_t *last, process_da
 
         first = kaa_list_next(first);
     }
+}
+
+static kaa_list_node_t *kaa_split_util(kaa_list_node_t *head);
+
+
+static kaa_list_node_t *kaa_merge_util(kaa_list_node_t *first, kaa_list_node_t *second, match_predicate pred)
+{
+    KAA_RETURN_IF_NIL(first, second);
+    KAA_RETURN_IF_NIL(second, first)
+
+    if (pred(first->data, second->data)) {
+
+        first->next = kaa_merge_util(first->next, second, pred);
+        first->next->prev = first;
+        first->prev = NULL;
+
+        return first;
+    } else {
+        second->next = kaa_merge_util(first, second->next, pred);
+        second->next->prev = second;
+        second->prev = NULL;
+        return second;
+    }
+}
+
+static kaa_list_node_t *kaa_merge_sort(kaa_list_node_t *head, match_predicate pred)
+{
+    KAA_RETURN_IF_NIL2(head, head->next, head);
+
+    kaa_list_node_t *second = kaa_split_util(head);
+
+    head = kaa_merge_sort(head, pred);
+    second = kaa_merge_sort(second, pred);
+
+    head = kaa_merge_util(head, second, pred);
+    return head;
+}
+
+static kaa_list_node_t *kaa_split_util( kaa_list_node_t *head)
+{
+    kaa_list_node_t *fast = head;
+    kaa_list_node_t *slow = head;
+    while (fast->next && fast->next->next) {
+        fast = fast->next->next;
+        slow = slow->next;
+    }
+    kaa_list_node_t *temp = slow->next;
+    slow->next = NULL;
+    return temp;
+}
+
+void kaa_list_sort(kaa_list_t *list, match_predicate pred)
+{
+    kaa_list_node_t *node = kaa_merge_sort(kaa_list_begin(list), pred);
+    list->head =  node;
+    while (node->next) {
+        node = node->next;
+    }
+    list->tail = node;
 }

@@ -37,8 +37,8 @@ std::string ConnackMessage::returnCodeToString(ConnackReturnCode code)
             return "Connection Refused: identifier rejected";
         case ConnackReturnCode::SERVER_UNAVAILABLE:
             return "Connection Refused: server unavailable";
-        case ConnackReturnCode::BAD_USER_PASSWORD:
-            return "Connection Refused: bad user name or password";
+        case ConnackReturnCode::BAD_CREDENTIALS:
+            return "Connection Refused: invalid authentication parameters";
         case ConnackReturnCode::NOT_AUTHORIZED:
             return "Connection Refused: not authorized";
         default:

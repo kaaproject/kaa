@@ -160,6 +160,7 @@ static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *l
         error = kaa_user_manager_create(&((*context_p)->user_manager), (*context_p)->status->status_instance,
                                         (*context_p)->channel_manager, (*context_p)->logger);
 
+
     if (error) {
         kaa_context_destroy(*context_p);
         *context_p = NULL;
@@ -222,6 +223,7 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
     bool need_deallocation = false;
 
     ext_get_endpoint_public_key(&pub_key_buffer, &pub_key_buffer_size, &need_deallocation);
+
     kaa_digest pub_key_hash;
     error = ext_calculate_sha_hash(pub_key_buffer, pub_key_buffer_size, pub_key_hash);
 
@@ -245,6 +247,7 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
         kaa_log_destroy(logger);
         return error;
     }
+
     return KAA_ERR_NONE;
 }
 

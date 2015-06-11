@@ -29,7 +29,7 @@ enum class ConnackReturnCode : std::uint8_t
     UNACCEPTABLE_VERSION = 0x02,
     IDENTIFIER_REJECTED = 0x03,
     SERVER_UNAVAILABLE = 0x04,
-    BAD_USER_PASSWORD = 0x05,
+    BAD_CREDENTIALS = 0x05,
     NOT_AUTHORIZED = 0x06
 };
 

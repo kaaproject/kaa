@@ -54,6 +54,7 @@
         <module>vehicletelemetry</module>
         <module>connectedcar</module>
         <module>powerplant-android</module>
+        <module>powerplant-couchbase-proxy</module>
     </modules>
 
     <dependencyManagement>

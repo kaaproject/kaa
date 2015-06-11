@@ -51,7 +51,7 @@ public abstract class AbstractKaaTcpServerInitializer extends ChannelInitializer
      * @throws Exception - initialization exceptions
      */
     public void init() throws Exception { //NOSONAR
-        LOG.info("Default Server Initializer Init() started: ");
+        LOG.debug("Default Server Initializer Init() started: ");
     }
 
     @Override
@@ -60,7 +60,7 @@ public abstract class AbstractKaaTcpServerInitializer extends ChannelInitializer
 
         final UUID uuid = UUID.randomUUID();
 
-        LOG.info("KaaTcpServerInitializer Initializing Channel {} connection from {}:{}"
+        LOG.debug("KaaTcpServerInitializer Initializing Channel {} connection from {}:{}"
                 , uuid, ch.remoteAddress().getAddress().toString(), ch.remoteAddress().getPort());
 
         Attribute<UUID> uuidAttr = ch.attr(AbstractNettyServer.UUID_KEY);

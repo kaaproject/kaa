@@ -35,6 +35,27 @@ namespace kaa {
 
 class LoggingTransport;
 
+typedef std::chrono::system_clock clock_t;
+
+class TimeoutInfo {
+
+public:
+    TimeoutInfo(const std::int32_t& transportAccessPointId, const std::chrono::time_point<clock_t>& timeoutTime)
+        : transportAccessPointId_(transportAccessPointId), timeoutTime_(timeoutTime) {}
+
+    std::int32_t getTransportAccessPointId() const {
+        return transportAccessPointId_;
+    }
+
+    std::chrono::time_point<clock_t> getTimeoutTime() const {
+        return timeoutTime_;
+    }
+
+private:
+    std::int32_t transportAccessPointId_;
+    std::chrono::time_point<clock_t> timeoutTime_;
+};
+
 /**
  * Default @c ILogCollector implementation.
  */
@@ -65,6 +86,10 @@ private:
     void addDeliveryTimeout(std::int32_t requestId);
     bool removeDeliveryTimeout(std::int32_t requestId);
 
+    void startTimeoutCheckTimer();
+
+    void processTimeout();
+
 private:
     ILogStoragePtr    storage_;
     KAA_MUTEX_DECLARE(storageGuard_);
@@ -74,13 +99,15 @@ private:
     LoggingTransport* transport_;
     KAA_MUTEX_DECLARE(transportGuard_);
 
-    typedef std::chrono::system_clock clock_t;
-    std::unordered_map<std::int32_t, std::chrono::time_point<clock_t>> timeouts_;
-    KAA_MUTEX_DECLARE(timeoutsGuard_);
-
     IKaaChannelManagerPtr    channelManager_;
 
+    std::unordered_map<std::int32_t, TimeoutInfo> timeouts_;
+    std::int32_t timeoutAccessPointId_;
+    KAA_MUTEX_DECLARE(timeoutsGuard_);
+
+    KaaTimer<void ()>        logUploadCheckTimer_;
     KaaTimer<void ()>        uploadTimer_;
+    KaaTimer<void ()>        timeoutTimer_;
 };
 
 }  // namespace kaa
