@@ -39,7 +39,7 @@ namespace kaa {
 class TestNotificationTransport : public NotificationTransport
 {
 public:
-    TestNotificationTransport(MockChannelManager &channelManager) : NotificationTransport(IKaaClientStateStoragePtr(), channelManager) {}
+    TestNotificationTransport(MockChannelManager &channelManager, IKaaClientStateStoragePtr status) : NotificationTransport(status, channelManager) {}
 
     virtual void setNotificationProcessor(INotificationProcessor* processor) {
         ++onSetNotificationProcessor_;
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(SyncWithTransportTest)
     NotificationManager notificationManager(status);
 
     MockChannelManager manager;
-    std::shared_ptr<TestNotificationTransport> notificationTransport(new TestNotificationTransport(manager));
+    std::shared_ptr<TestNotificationTransport> notificationTransport(new TestNotificationTransport(manager, status));
     notificationManager.setTransport(notificationTransport);
 
     BOOST_CHECK_NO_THROW(notificationManager.sync());
@@ -400,7 +400,7 @@ BOOST_AUTO_TEST_CASE(SubscribeToOptionalTopicTest)
     NotificationManager notificationManager(status);
     MockNotificationListener topicSpecificNotificationListener;
     MockChannelManager manager;
-    std::shared_ptr<TestNotificationTransport> notificationTransport(new TestNotificationTransport(manager));
+    std::shared_ptr<TestNotificationTransport> notificationTransport(new TestNotificationTransport(manager, status));
     notificationManager.setTransport(notificationTransport);
 
     std::size_t topicCount = 1;

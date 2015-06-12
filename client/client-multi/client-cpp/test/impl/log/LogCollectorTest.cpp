@@ -310,12 +310,15 @@ BOOST_AUTO_TEST_CASE(TimeoutLasyDetectionTest)
     BOOST_CHECK_EQUAL(uploadStrategy->onTimeout_, 0);
     BOOST_CHECK_EQUAL(uploadStrategy->onGetTimeout_, 1);
 
-    std::this_thread::sleep_for(std::chrono::seconds(DELIVERY_TIMEOUT));
+    std::this_thread::sleep_for(std::chrono::seconds(DELIVERY_TIMEOUT + 3));
 
     /*
      * Check on timeout do only on adding new record
      */
+
     logCollector.addLogRecord(createLogRecord());
+
+    std::this_thread::sleep_for(std::chrono::seconds(DELIVERY_TIMEOUT + 3));
 
     BOOST_CHECK_EQUAL(uploadStrategy->onTimeout_, 1);
     BOOST_CHECK_EQUAL(logStorage->onNotifyUploadFailed_, 1);
@@ -379,7 +382,7 @@ BOOST_AUTO_TEST_CASE(RetryUploadTest)
     BOOST_CHECK_EQUAL(uploadStrategy->onIsUploadNeeded_, 1);
     BOOST_CHECK_EQUAL(uploadStrategy->onFailure_, 1);
 
-    std::this_thread::sleep_for(std::chrono::seconds(RETRY_TIMEOUT));
+    std::this_thread::sleep_for(std::chrono::seconds(RETRY_TIMEOUT + 3));
 
     BOOST_CHECK_EQUAL(transport.onSync_, 1);
 }
