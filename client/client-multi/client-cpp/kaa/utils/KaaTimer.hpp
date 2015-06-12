@@ -102,7 +102,6 @@ private:
         KAA_MUTEX_LOCKED("timerGuard_");
 
         while (isThreadRun_) {
-
             if (isTimerRun_) {
                 auto now = TimerClock::now();
                 if (now >= endTS_) {
