@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright 2014 CyberVision, Inc.
+# Copyright 2014-2015 CyberVision, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,23 +17,21 @@
 set -e
 
 case "$1" in
-   remove)
-      echo "!Remove"
+   purge)
       for f in /etc/init.d/kaa-flume-*
       do
         if [ -x $f ]; then
-           service_name=$(basename "$f")
-           if ! chkconfig_loc="$(type -p "chkconfig")" || [ -z "$chkconfig_loc" ]; then
-	      update-rc.d -f $service_name remove >/dev/null
-           else
-	      chkconfig --del $service_name >/dev/null
-           fi
-           rm -f /etc/init.d/$service_name
+          service_name=$(basename "$f")
+          if ! chkconfig_loc="$(type -p "chkconfig")" || [ -z "$chkconfig_loc" ]; then
+            update-rc.d -f $service_name remove >/dev/null || exit 1
+          else
+            chkconfig --del $service_name >/dev/null || exit 1
+          fi
+          rm -f /etc/init.d/$service_name
         fi
       done
    ;;
-   purge|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
-      echo $1
+   remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
    ;;
    *)
       echo "postrm called with unknown argument \`\$1'" >&2

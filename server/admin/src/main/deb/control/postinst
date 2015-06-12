@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright 2014 CyberVision, Inc.
+# Copyright 2014-2015 CyberVision, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -63,88 +63,100 @@ checkport() {
 
 }
 
-# Check ports
-checkport HTTP "${HPORT}"
-#checkport Control "${CPORT}"
+case "$1" in
+    configure)
+        # Check ports
+        checkport HTTP "${HPORT}"
+        #checkport Control "${CPORT}"
+        
+        # Ask for confirmation if warnings were printed out
+        if [ ${warned} -eq 1 ]; then 
+          echo "Type <ENTER> to continue, <CTRL-C> to abort."
+          read answer
+        fi
+        
+        if [ ! -d "${TARGET}" ]; then
+           mkdir -p "${TARGET}"
+        fi
+        
+        FULLTARGET=`cd "${TARGET}" > /dev/null && pwd`
+        
+        if [ ! -d "${TARGET}/conf" ]; then
+           mkdir "${TARGET}/conf"
+        fi
+        
+        if [ ! -d "${TARGET}/logs" ]; then
+           mkdir "${TARGET}/logs"
+        fi
+        
+        if [ ! -d "${TARGET}/webapps" ]; then
+           mkdir "${TARGET}/webapps"
+        fi
+        
+        if [ ! -d "${TARGET}/work" ]; then
+           mkdir "${TARGET}/work"
+        fi
+        
+        if [ ! -d "${TARGET}/temp" ]; then
+           mkdir "${TARGET}/temp"
+        fi
+        
+        if [ ! -d "${TARGET}/db" ]; then
+           mkdir "${TARGET}/db"
+        fi
+        
+        sed -i -e "s/jetty.port=8080/jetty.port=${HPORT}/" "${TARGET}/start.d/http.ini"
+        
+        if [ -h /usr/bin/kaa-admin ]; then
+            rm -f /usr/bin/kaa-admin
+        fi
+        
+        if [ -h /etc/kaa-admin/conf ]; then
+            rm -f /etc/kaa-admin/conf
+        fi
+        
+        if [ ! -d /etc/kaa-admin ]; then
+            mkdir -p /etc/kaa-admin
+        fi
+        
+        if [ ! -d /var/log/kaa ]; then
+            mkdir -p /var/log/kaa
+        fi
+        
+        chown -R kaa:kaa "${TARGET}"
+        
+        chown -R kaa:kaa /var/log/kaa
+        chmod 755 /var/log/kaa
+        
+        ln -s /usr/lib/kaa-admin/bin/kaa-admin /usr/bin/kaa-admin
+        ln -s /usr/lib/kaa-admin/conf /etc/kaa-admin/conf
+        
+        if [ -f /usr/lib/kaa-admin/bin/kaa-admin.default ]; then
+            mv /usr/lib/kaa-admin/bin/kaa-admin.default /etc/default/kaa-admin
+        fi
+        
+        if [ -f /usr/lib/kaa-admin/bin/kaa-admin.init.d ]; then
+            mv /usr/lib/kaa-admin/bin/kaa-admin.init.d /etc/init.d/kaa-admin
+        fi
+        
+        if [ -x "/etc/init.d/kaa-admin" ]; then
+            if [ ! -e "/etc/init/kaa-admin.conf" ]; then
+                if ! chkconfig_loc="$(type -p "chkconfig")" || [ -z "$chkconfig_loc" ]; then
+                    update-rc.d -f kaa-admin defaults >/dev/null || exit 1
+                else
+                    chkconfig --add kaa-admin >/dev/null || exit 1
+                fi
+            fi
+        fi
+    ;;
 
-# Ask for confirmation if warnings were printed out
-if [ ${warned} -eq 1 ]; then 
-  echo "Type <ENTER> to continue, <CTRL-C> to abort."
-  read answer
-fi
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
 
-if [ ! -d "${TARGET}" ]; then
-   mkdir -p "${TARGET}"
-fi
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
 
-FULLTARGET=`cd "${TARGET}" > /dev/null && pwd`
-
-if [ ! -d "${TARGET}/conf" ]; then
-   mkdir "${TARGET}/conf"
-fi
-
-if [ ! -d "${TARGET}/logs" ]; then
-   mkdir "${TARGET}/logs"
-fi
-
-if [ ! -d "${TARGET}/webapps" ]; then
-   mkdir "${TARGET}/webapps"
-fi
-
-if [ ! -d "${TARGET}/work" ]; then
-   mkdir "${TARGET}/work"
-fi
-
-if [ ! -d "${TARGET}/temp" ]; then
-   mkdir "${TARGET}/temp"
-fi
-
-if [ ! -d "${TARGET}/db" ]; then
-   mkdir "${TARGET}/db"
-fi
-
-sed -i -e "s/jetty.port=8080/jetty.port=${HPORT}/" "${TARGET}/start.d/http.ini"
-
-if [ -h /usr/bin/kaa-admin ]; then
-    rm -f /usr/bin/kaa-admin
-fi
-
-if [ -h /etc/kaa-admin/conf ]; then
-    rm -f /etc/kaa-admin/conf
-fi
-
-if [ ! -d /etc/kaa-admin ]; then
-    mkdir -p /etc/kaa-admin
-fi
-
-if [ ! -d /var/log/kaa ]; then
-    mkdir -p /var/log/kaa
-fi
-
-chown -R kaa:kaa "${TARGET}"
-
-chown -R kaa:kaa /var/log/kaa
-chmod 755 /var/log/kaa
-
-ln -s /usr/lib/kaa-admin/bin/kaa-admin /usr/bin/kaa-admin
-ln -s /usr/lib/kaa-admin/conf /etc/kaa-admin/conf
-
-if [ -f /usr/lib/kaa-admin/bin/kaa-admin.default ]; then
-    mv /usr/lib/kaa-admin/bin/kaa-admin.default /etc/default/kaa-admin
-fi
-
-if [ -f /usr/lib/kaa-admin/bin/kaa-admin.init.d ]; then
-    mv /usr/lib/kaa-admin/bin/kaa-admin.init.d /etc/init.d/kaa-admin
-fi
-
-if [ -x "/etc/init.d/kaa-admin" ]; then
-	if [ ! -e "/etc/init/kaa-admin.conf" ]; then
-		if ! chkconfig_loc="$(type -p "chkconfig")" || [ -z "$chkconfig_loc" ]; then
-		    update-rc.d -f kaa-admin defaults >/dev/null
-		else
-		    chkconfig --add kaa-admin >/dev/null
-		fi
-	fi
-fi
-
-
+exit 0
