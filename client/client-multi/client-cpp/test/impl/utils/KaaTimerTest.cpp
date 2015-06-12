@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_SUITE(KaaTimerTestSuite)
 BOOST_AUTO_TEST_CASE(SuccessTimerTriggerTest)
 {
     std::size_t timeToWait = 4;
-    KaaTimer<void (void)> timer;
+    KaaTimer<void (void)> timer { "Kaa Timer" };
     timer.start(timeToWait, [] { increment(); });
 
     std::this_thread::sleep_for(std::chrono::seconds(timeToWait / 2));
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(SuccessTimerTriggerTest)
 BOOST_AUTO_TEST_CASE(StopTimerTest)
 {
     std::size_t timeToWait = 4;
-    KaaTimer<void (void)> timer;
+    KaaTimer<void (void)> timer { "Kaa Timer" };
     timer.start(timeToWait, [] { increment(); });
 
     std::this_thread::sleep_for(std::chrono::seconds(timeToWait / 2));

@@ -83,7 +83,7 @@ listOfServers.push_back(createTransportInfo(0x95f7e40f, 0x56c8ff92, 1, "AAABJjCC
 
 const Botan::SecureVector<std::uint8_t>& getDefaultConfigData() 
 {
-    static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("ADxjJaC8gEItgmfTVXiVsPw=");
+    static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("JENPTkZJR1VSQVRJT04gREFUQQIAAQIDBAUGBwgJCgsMDQ4P");
     return configData;
 }
 
