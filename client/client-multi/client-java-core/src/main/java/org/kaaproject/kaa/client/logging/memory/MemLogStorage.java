@@ -2,13 +2,13 @@ package org.kaaproject.kaa.client.logging.memory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.kaaproject.kaa.client.logging.LogBlock;
 import org.kaaproject.kaa.client.logging.LogRecord;
 import org.kaaproject.kaa.client.logging.LogStorage;
 import org.kaaproject.kaa.client.logging.LogStorageStatus;
+import org.kaaproject.kaa.client.logging.memory.MemBucket.MemBucketState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,6 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     private static final long DEFAULT_MAX_STORAGE_SIZE = 16 * 1024 * 1024;
     private static final long DEFAULT_MAX_BUCKET_SIZE = 16 * 1024;
     private static final int DEFAULT_MAX_BUCKET_RECORD_COUNT = 256;
-    private static final Random RANDOM = new Random();
 
     private final long maxStorageSize;
     private long maxBucketSize;
@@ -50,12 +49,13 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
         long volume = 0;
         LOG.trace("Calculating consumed volume");
         synchronized (buckets) {
-            for(MemBucket value : buckets.values()){
-                //TODO: check bucket state;
-                volume += value.getSize();
+            for(MemBucket bucket : buckets.values()){
+                if(bucket.getState() != MemBucketState.PENDING){
+                    volume += bucket.getSize();
+                }
             }
         }
-        LOG.trace("Calculated consumed volume {}", volume);
+        LOG.debug("Calculated consumed volume {}", volume);
         return volume;
     }
 
@@ -64,12 +64,13 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
         long count = 0;
         LOG.trace("Calculating record count");
         synchronized (buckets) {
-            for(MemBucket value : buckets.values()){
-                //TODO: check bucket state;
-                count += value.getCount();
+            for(MemBucket bucket : buckets.values()){
+                if(bucket.getState() != MemBucketState.PENDING){
+                    count += bucket.getCount();
+                }
             }
         }
-        LOG.trace("Calculated record count {}", count);
+        LOG.debug("Calculated record count {}", count);
         return count;
     }
 
@@ -79,34 +80,74 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
         if(record.getSize() > maxBucketSize){
             throw new IllegalArgumentException("Record size(" + record.getSize() + ") is bigger then max bucket size (" + maxBucketSize + ")!");
         }
+        if(getConsumedVolume() + record.getSize() > maxStorageSize){
+            throw new IllegalStateException("Storage is full!");
+        }
         synchronized (buckets) {
             if(currentBucket == null){
-                currentBucket = new MemBucket(bucketIdSeq.getAndIncrement());
+                currentBucket = new MemBucket(bucketIdSeq.getAndIncrement(), maxBucketSize, maxBucketRecordCount);
                 buckets.put(currentBucket.getId(), currentBucket);
+            }
+            if(!currentBucket.addRecord(record)){
+                LOG.trace("Current bucket is full. Creating new one.");
+                currentBucket.setState(MemBucketState.FULL);
+                currentBucket = new MemBucket(bucketIdSeq.getAndIncrement(), maxBucketSize, maxBucketRecordCount);
+                buckets.put(currentBucket.getId(), currentBucket);
+                currentBucket.addRecord(record);
+            }
+        }
+        LOG.trace("Added new log record to bucket [{}]", currentBucket.getId());
+    }
+
+    @Override
+    public LogBlock getRecordBlock(long blockSize, int batchCount) {
+        LOG.trace("Getting new record block with block size = {} and count = {}", blockSize, batchCount);
+        if(blockSize > maxBucketSize || batchCount > maxBucketRecordCount){
+            //TODO: add support of block resize
+            LOG.warn("Resize of record block is not supported yet");
+        }
+        LogBlock result = null;
+        synchronized (buckets) {
+            for(MemBucket bucket : buckets.values()){
+                if(bucket.getState() == MemBucketState.FREE){
+                    result = new LogBlock(bucket.id, bucket.getRecords());
+                }
+                if(bucket.getState() == MemBucketState.FULL){
+                    bucket.setState(MemBucketState.PENDING);
+                    result = new LogBlock(bucket.id, bucket.getRecords());
+                    break;
+                }
+            }
+        }
+        if(result != null){
+            LOG.debug("Return record block [{}]", result.getBlockId());
+        }
+        return result;
+    }
+
+    @Override
+    public void removeRecordBlock(int id) {
+        LOG.trace("Removing record block with id [{}]", id);
+        synchronized (buckets) {
+            if(buckets.remove(id) != null){
+                LOG.debug("Record block [{}] removed", id);
+            }else{
+                LOG.debug("Failed to remove record block [{}]", id);
             }
         }
     }
 
     @Override
-    public LogStorageStatus getStatus() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public LogBlock getRecordBlock(long blockSize, int batchCount) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void removeRecordBlock(int id) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
     public void notifyUploadFailed(int id) {
-        // TODO Auto-generated method stub
+        LOG.trace("Upload of record block [{}] failed", id);
+        synchronized (buckets) {
+            buckets.get(id).setState(MemBucketState.FULL);
+        }
+    }
+    
+    @Override
+    public LogStorageStatus getStatus() {
+        return this;
     }
 
 }

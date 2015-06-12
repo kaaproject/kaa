@@ -22,16 +22,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.context.ExecutorContext;
+import org.kaaproject.kaa.client.logging.memory.MemLogStorage;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryErrorCode;
 import org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus;
@@ -53,9 +51,6 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     public static final long MAX_BATCH_VOLUME = 512 * 1024; // Framework
                                                             // limitation
 
-    // TODO: reuse this scheduler in other subsystems
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
     protected final ExecutorContext executorContext;
     private final LogTransport transport;
     private final Map<Integer, Long> timeoutMap = new ConcurrentHashMap<>();
@@ -70,7 +65,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     public AbstractLogCollector(LogTransport transport, ExecutorContext executorContext, KaaChannelManager manager) {
         this.strategy = new DefaultLogUploadStrategy();
-        this.storage = new MemoryLogStorage(strategy.getBatchSize(), strategy.getBatchCount());
+        this.storage = new MemLogStorage(strategy.getBatchSize(), strategy.getBatchCount());
         this.controller = new DefaultLogUploadController();
         this.channelManager = manager;
         this.transport = transport;
@@ -98,13 +93,11 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     @Override
     public void fillSyncRequest(LogSyncRequest request) {
         LogBlock group = null;
-        synchronized (storage) {
-            if (storage.getStatus().getRecordCount() == 0) {
-                LOG.debug("Log storage is empty");
-                return;
-            }
-            group = storage.getRecordBlock(strategy.getBatchSize(), strategy.getBatchCount());
+        if (storage.getStatus().getRecordCount() == 0) {
+            LOG.debug("Log storage is empty");
+            return;
         }
+        group = storage.getRecordBlock(strategy.getBatchSize(), strategy.getBatchCount());
 
         if (group != null) {
             List<LogRecord> recordList = group.getRecords();
@@ -167,7 +160,6 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     @Override
     public void stop() {
-        scheduler.shutdown();
     }
 
     private void processUploadDecision(LogUploadStrategyDecision decision) {
@@ -177,24 +169,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
             break;
         case NOOP:
             if (strategy.getUploadCheckPeriod() > 0 && storage.getStatus().getRecordCount() > 0) {
-                LOG.trace("Attempt to execute upload check: {}", uploadCheckInProgress);
-                synchronized (uploadCheckLock) {
-                    if (!uploadCheckInProgress) {
-                        LOG.trace("Scheduling upload check with timeout: {}" + strategy.getUploadCheckPeriod());
-                        uploadCheckInProgress = true;
-                        executorContext.getScheduledExecutor().schedule(new Runnable() {
-                            @Override
-                            public void run() {
-                                synchronized (uploadCheckLock) {
-                                    uploadCheckInProgress = false;
-                                }
-                                uploadIfNeeded();
-                            }
-                        }, strategy.getUploadCheckPeriod(), TimeUnit.SECONDS);
-                    } else {
-                        LOG.trace("Upload check is already scheduled!");
-                    }
-                }
+                scheduleUploadCheck();
             }
             break;
         default:
@@ -202,32 +177,44 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         }
     }
 
+    protected void scheduleUploadCheck() {
+        LOG.trace("Attempt to execute upload check: {}", uploadCheckInProgress);
+        synchronized (uploadCheckLock) {
+            if (!uploadCheckInProgress) {
+                LOG.trace("Scheduling upload check with timeout: {}" + strategy.getUploadCheckPeriod());
+                uploadCheckInProgress = true;
+                executorContext.getScheduledExecutor().schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        synchronized (uploadCheckLock) {
+                            uploadCheckInProgress = false;
+                        }
+                        uploadIfNeeded();
+                    }
+                }, strategy.getUploadCheckPeriod(), TimeUnit.SECONDS);
+            } else {
+                LOG.trace("Upload check is already scheduled!");
+            }
+        }
+    }
+
     private boolean checkDeliveryTimeout() {
-        boolean isTimeout = false;
         long currentTime = System.currentTimeMillis();
         LOG.debug("Checking delivery timeout using time {}", currentTime);
-
+        boolean isTimeout = false;
+        List<Integer> toRemove = new ArrayList<Integer>();
         for (Map.Entry<Integer, Long> logRequest : timeoutMap.entrySet()) {
             LOG.info("processing timeoutMap pair: {}, {}", logRequest.getKey(), logRequest.getValue());
             if (currentTime >= logRequest.getValue()) {
-                isTimeout = true;
-                break;
-            }
-        }
-
-        if (isTimeout) {
-            LOG.info("Log delivery timeout detected. Processing timeout map with {} keys", timeoutMap.size());
-
-            List<Integer> toRemove = new ArrayList<Integer>();
-            for (Map.Entry<Integer, Long> logRequest : timeoutMap.entrySet()) {
                 storage.notifyUploadFailed(logRequest.getKey());
                 toRemove.add(logRequest.getKey());
             }
+        }
+        
+        timeoutMap.entrySet().removeAll(toRemove);
 
-            for (Integer key : toRemove) {
-                LOG.info("Removing following key from timeoutMap: {}", key);
-                timeoutMap.remove(key);
-            }
+        if (isTimeout) {
+            LOG.info("Log delivery timeout detected.");
             final LogFailoverCommand controller = this.controller;
             executorContext.getCallbackExecutor().execute(new Runnable() {
                 @Override
@@ -262,7 +249,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
         @Override
         public void retryLogUpload(int delay) {
-            scheduler.schedule(new Runnable() {
+            executorContext.getScheduledExecutor().schedule(new Runnable() {
                 @Override
                 public void run() {
                     uploadIfNeeded();
