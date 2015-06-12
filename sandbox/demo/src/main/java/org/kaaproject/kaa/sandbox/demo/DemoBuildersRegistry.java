@@ -26,17 +26,17 @@ public class DemoBuildersRegistry {
     static {
         // Iot World demo
         demoBuilders.add(new IotWorldDemoBuilder());
-        
+
         demoBuilders.add(new ConnectedCarDemo());
-        
+
         demoBuilders.add(new PowerPlantDemoBuilder());
         demoBuilders.add(new TrafficLightsDriverDemoBuilder());
         demoBuilders.add(new StreetLightDriverDemoBuilder());
         demoBuilders.add(new CityLightsControllerDemoBuilder());
-        
+
         demoBuilders.add(new TwitterBoardDemoBuilder());
         demoBuilders.add(new TwitterMonitorDemoBuilder());
-        
+
         demoBuilders.add(new VehicleTelemetryDemoBuider());
 
         //ANDROID DEMOS
