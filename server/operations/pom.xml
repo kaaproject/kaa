@@ -464,7 +464,7 @@
             <plugin>
                 <artifactId>jdeb</artifactId>
                 <groupId>org.vafer</groupId>
-                <version>1.1.1</version>
+                <version>1.4</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -496,6 +496,7 @@
                                 <data>
                                     <src>${project.basedir}/src/main/resources</src>
                                     <type>directory</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>
@@ -505,6 +506,7 @@
                                 <data>
                                     <src>../common/dao/src/main/resources/common-dao-context.xml</src>
                                     <type>file</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>
@@ -514,6 +516,7 @@
                                 <data>
                                     <src>../common/dao/src/main/resources/common-dao-sql-context.xml</src>
                                     <type>file</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>
@@ -523,6 +526,7 @@
                                 <data>
                                     <src>../common/dao/src/main/resources/dao.properties</src>
                                     <type>file</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>
@@ -532,6 +536,7 @@
                                 <data>
                                     <src>${project.basedir}/tmp_dao_resources</src>
                                     <type>directory</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>
@@ -541,6 +546,7 @@
                                 <data>
                                     <src>../../common/endpoint-shared/src/main/avro/default_profile_schema.avsc</src>
                                     <type>file</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>
@@ -550,6 +556,7 @@
                                 <data>
                                     <src>../../common/endpoint-shared/src/main/avro/default_configuration_schema.avsc</src>
                                     <type>file</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>
@@ -568,9 +575,10 @@
                                 <data>
                                     <src>../../common/endpoint-shared/src/main/avro/default_notification_schema.avsc</src>
                                     <type>file</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
-                                        <filemode>755</filemode>
+                                        <filemode>755</filemode>                                        
                                         <prefix>/usr/lib/${script.server.name}/conf</prefix>
                                     </mapper>
                                 </data>
@@ -608,7 +616,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>rpm-maven-plugin</artifactId>
-                        <version>2.1-alpha-1</version>
+                        <version>2.1.3</version>
                         <extensions>true</extensions>
                         <executions>
                             <execution>
@@ -647,6 +655,7 @@
                                 </mapping>
                                 <mapping>
                                     <directory>/usr/lib/${script.server.name}/conf</directory>
+                                    <configuration>true</configuration>
                                     <filemode>755</filemode>
                                     <username>kaa</username>
                                     <groupname>kaa</groupname>
