@@ -60,7 +60,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     private LogUploadStrategy strategy;
     private LogFailoverCommand controller;
 
-    private Object uploadCheckLock = new Object();
+    private final Object uploadCheckLock = new Object();
     private boolean uploadCheckInProgress = false;
 
     public AbstractLogCollector(LogTransport transport, ExecutorContext executorContext, KaaChannelManager manager) {
@@ -209,6 +209,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
             if (currentTime >= logRequest.getValue()) {
                 storage.notifyUploadFailed(logRequest.getKey());
                 toRemove.add(logRequest.getKey());
+                isTimeout = true;
             }
         }
         
