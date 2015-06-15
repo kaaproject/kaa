@@ -21,6 +21,32 @@
 
 namespace kaa {
 
+class MockTransportConnectionInfo : public ITransportConnectionInfo {
+public:
+
+    MockTransportConnectionInfo ():mockTransportPID(someMockMagicNumber_, someMockMagicNumber_) {}
+
+    virtual ServerType getServerType() { return mockServerType_; };
+
+    virtual std::int32_t getAccessPointId() { return someMockMagicNumber_; };
+
+    virtual TransportProtocolId getTransportId() { return mockTransportPID; };
+
+    virtual const std::vector<std::uint8_t>& getConnectionInfo() { return  mockConnectionInfo_; };
+
+    virtual bool isFailedState() { return false; };
+
+    virtual void setFailedState() {};
+
+    virtual void resetFailedState() {};
+private:
+
+    const std::int32_t someMockMagicNumber_ = 12345;
+    std::vector<std::uint8_t> mockConnectionInfo_;
+    const ServerType  mockServerType_ = ServerType::BOOTSTRAP;
+    TransportProtocolId mockTransportPID;
+};
+
 class MockDataChannel: public IDataChannel {
 public:
     virtual void sync(TransportType type) {}
@@ -43,10 +69,11 @@ public:
     virtual void setMultiplexer(IKaaDataMultiplexer *multiplexer) {}
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer) {}
 
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy){}
     virtual void setServer(ITransportConnectionInfoPtr server) {}
 
     virtual ITransportConnectionInfoPtr getServer() {
-        return ITransportConnectionInfoPtr();
+        return ITransportConnectionInfoPtr(new MockTransportConnectionInfo);
     }
 
     virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const {

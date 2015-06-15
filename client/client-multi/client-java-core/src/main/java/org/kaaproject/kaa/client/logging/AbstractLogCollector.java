@@ -156,6 +156,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     @Override
     public void stop() {
+        storage.close();
         scheduler.shutdown();
     }
 

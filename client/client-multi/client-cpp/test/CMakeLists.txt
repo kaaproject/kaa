@@ -109,6 +109,7 @@ set ( KAA_TEST_SOURCES
         ../impl/channel/connectivity/IPConnectivityChecker.cpp
         ../impl/channel/TransportProtocolIdConstants.cpp
         ../impl/channel/IPTransportInfo.cpp
+        ../impl/failover/DefaultFailoverStrategy.cpp
         TestRunner.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp
