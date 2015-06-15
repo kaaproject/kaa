@@ -79,7 +79,7 @@ public:
      *
      * @return The log record block marked by the unique @c RecordBlockId identifier.
      */
-    virtual RecordPack getRecordBlock(std::size_t blockSize) = 0;
+    virtual RecordPack getRecordBlock(std::size_t blockSize, std::size_t recordsBlockCount) = 0;
 
     /**
      * @brief Removes the log block marked by the specified id.

@@ -26,6 +26,8 @@ namespace kaa {
 
 #define LOG_TEST_DATA "test data"
 
+static std::int32_t mockBlocksCount = 10000;
+
 static LogRecordPtr createSerializedLogRecord()
 {
     static LogRecordPtr serializedLogRecord;
@@ -62,7 +64,7 @@ BOOST_AUTO_TEST_CASE(BlockSizeIsLessThanLogRecordSizeTest)
     auto serializedLogRecord = createSerializedLogRecord();
     logStorage.addLogRecord(serializedLogRecord);
 
-    BOOST_CHECK_THROW(logStorage.getRecordBlock(serializedLogRecord->getSize() - 1), KaaException);
+    BOOST_CHECK_THROW(logStorage.getRecordBlock(serializedLogRecord->getSize() - 1, mockBlocksCount), KaaException);
 }
 
 BOOST_AUTO_TEST_CASE(AddRecordsAndCheckStatusTest)
@@ -99,7 +101,7 @@ BOOST_AUTO_TEST_CASE(AddRecordsAndGetRecordBlockTest)
     }
 
     std::size_t recordBlockSize = logRecordCount * serializedLogRecord->getSize();
-    ILogStorage::RecordPack pack = logStorage.getRecordBlock(recordBlockSize);
+    ILogStorage::RecordPack pack = logStorage.getRecordBlock(recordBlockSize, mockBlocksCount);
 
     BOOST_CHECK_EQUAL(pack.second.size(), logRecordCount);
 }
@@ -119,7 +121,7 @@ BOOST_AUTO_TEST_CASE(GetStatusAfterLogBlockTest)
     }
 
     std::size_t recordBlockSize = (logRecordCount * serializedLogRecord->getSize()) / 2;
-    ILogStorage::RecordPack pack1 = logStorage.getRecordBlock(recordBlockSize);
+    ILogStorage::RecordPack pack1 = logStorage.getRecordBlock(recordBlockSize, mockBlocksCount);
 
     BOOST_CHECK_EQUAL(logStorage.getStatus().getRecordsCount(), (logRecordCount - pack1.second.size()));
     BOOST_CHECK_EQUAL(logStorage.getStatus().getConsumedVolume(),
@@ -141,7 +143,7 @@ BOOST_AUTO_TEST_CASE(RemoveLogBlockAndGetStatusTest)
     }
 
     std::size_t recordBlockSize1 = (logRecordCount * serializedLogRecord->getSize()) / 2;
-    ILogStorage::RecordPack pack1 = logStorage.getRecordBlock(recordBlockSize1);
+    ILogStorage::RecordPack pack1 = logStorage.getRecordBlock(recordBlockSize1, mockBlocksCount);
 
     logStorage.removeRecordBlock(pack1.first);
 
@@ -150,7 +152,7 @@ BOOST_AUTO_TEST_CASE(RemoveLogBlockAndGetStatusTest)
                      ((logRecordCount - pack1.second.size()) * serializedLogRecord->getSize()));
 
     std::size_t recordBlockSize2 = (logRecordCount - pack1.second.size()) * serializedLogRecord->getSize();
-    ILogStorage::RecordPack pack2 = logStorage.getRecordBlock(recordBlockSize2);
+    ILogStorage::RecordPack pack2 = logStorage.getRecordBlock(recordBlockSize2, mockBlocksCount);
 
     logStorage.removeRecordBlock(pack2.first);
 
@@ -173,7 +175,7 @@ BOOST_AUTO_TEST_CASE(NotifyUploadFailedAndGetStatusTest)
     }
 
     std::size_t recordBlockSize1 = (logRecordCount * serializedLogRecord->getSize()) / 2;
-    ILogStorage::RecordPack pack1 = logStorage.getRecordBlock(recordBlockSize1);
+    ILogStorage::RecordPack pack1 = logStorage.getRecordBlock(recordBlockSize1, mockBlocksCount);
 
     BOOST_CHECK_EQUAL(logStorage.getStatus().getRecordsCount(), (logRecordCount - pack1.second.size()));
     BOOST_CHECK_EQUAL(logStorage.getStatus().getConsumedVolume(),

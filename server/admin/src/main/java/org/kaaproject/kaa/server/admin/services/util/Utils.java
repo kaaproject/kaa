@@ -16,8 +16,10 @@
 
 package org.kaaproject.kaa.server.admin.services.util;
 
+import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
+import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,16 +33,28 @@ public class Utils {
     }
 
     public static KaaAdminServiceException handleException(Exception exception, boolean logException) {
+        return handleExceptionWithCause(exception, null, null, logException);
+    }
+
+    public static KaaAdminServiceException handleExceptionWithCause(Exception exceptionWithCause, Class expectedCauseClass,
+                                                                    String errorMessage, boolean logException) {
         if (logException) {
-            logger.error("Unexpected exception catched!", exception);
+            logger.error("Unexpected exception catched!", exceptionWithCause);
         }
-        if (exception instanceof KaaAdminServiceException) {
-            return (KaaAdminServiceException)exception;
+
+        String cause = "";
+        if (exceptionWithCause.getClass().equals(ControlThriftException.class)) {
+            cause = ((ControlThriftException)exceptionWithCause).getCauseExceptionClass();
+        } else if (exceptionWithCause.getCause() != null) {
+            cause = exceptionWithCause.getClass().getCanonicalName();
         }
-        else {
-            KaaAdminServiceException kaaAdminServiceException =
-                    new KaaAdminServiceException(exception.getMessage(), ServiceErrorCode.GENERAL_ERROR);
-            return kaaAdminServiceException;
+
+        if (exceptionWithCause instanceof KaaAdminServiceException) {
+            return (KaaAdminServiceException) exceptionWithCause;
+        } else if (StringUtils.isNotBlank(cause) && cause.equals(expectedCauseClass.getCanonicalName())) {
+            return new KaaAdminServiceException(errorMessage, ServiceErrorCode.GENERAL_ERROR);
+        } else {
+            return new KaaAdminServiceException(exceptionWithCause.getMessage(), ServiceErrorCode.GENERAL_ERROR);
         }
     }
     

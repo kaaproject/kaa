@@ -30,7 +30,11 @@ public:
     static boost::asio::ip::tcp::endpoint getEndpoint(std::string host, std::uint16_t port)
     {
         char portStr[6];
+#ifdef _WIN32
+        _snprintf_s(portStr, 6, 6, "%u", port);
+#else
         snprintf(portStr, 6, "%u", port);
+#endif
         boost::asio::io_service io_service;
         boost::asio::ip::tcp::resolver resolver(io_service);
         boost::asio::ip::tcp::resolver::query query(host, portStr, boost::asio::ip::resolver_query_base::numeric_service);

@@ -26,9 +26,9 @@ extern "C" {
 /**
  * @typedef User-defined log record structure.
  */
-typedef kaa_logging_${record_name}_t    kaa_user_log_record_t;
+typedef ${namespace}_${record_name}_t    kaa_user_log_record_t;
 
-# define KAA_LOGGING_DESERIALIZE(reader)  kaa_logging_${record_name}_deserialize(reader)
+# define KAA_LOGGING_DESERIALIZE(reader)  ${namespace}_${record_name}_deserialize(reader)
 
 # ifdef __cplusplus
 }      /* extern "C" */

@@ -93,10 +93,11 @@ static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_i
     info->log_bucket_id = bucket_id;
     info->timeout = KAA_TIME() + (kaa_time_t)ext_log_upload_strategy_get_timeout(self->log_upload_strategy_context);
 
-    kaa_list_t *it = self->timeouts ? kaa_list_push_front(self->timeouts, info) : kaa_list_create(info);
-    KAA_RETURN_IF_NIL(it, KAA_ERR_NOMEM);
-
-    self->timeouts = it;
+    kaa_list_node_t *it = kaa_list_push_back(self->timeouts, info);
+    if (!it) {
+        KAA_FREE(info);
+        return KAA_ERR_NOMEM;
+    }
 
     return KAA_ERR_NONE;
 }
@@ -105,8 +106,8 @@ static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_i
 
 static bool find_by_bucket_id(void *data, void *context)
 {
-    KAA_RETURN_IF_NIL2(data, context, KAA_ERR_BADPARAM);
-    return (((timeout_info_t *)data)->log_bucket_id = *((uint16_t *)context));
+    KAA_RETURN_IF_NIL2(data, context, false);
+    return (((timeout_info_t *)data)->log_bucket_id == *((uint16_t *)context));
 }
 
 
@@ -114,7 +115,7 @@ static bool find_by_bucket_id(void *data, void *context)
 static kaa_error_t remove_request(kaa_log_collector_t *self, uint16_t bucket_id)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
-    kaa_list_remove_first(&self->timeouts, &find_by_bucket_id, &bucket_id, NULL);
+    kaa_list_remove_first(self->timeouts, &find_by_bucket_id, &bucket_id, NULL);
     return KAA_ERR_NONE;
 }
 
@@ -125,9 +126,9 @@ static bool is_timeout(kaa_log_collector_t *self)
     KAA_RETURN_IF_NIL2(self, self->timeouts, false);
 
     bool is_timeout = false;
-    kaa_list_t *it = self->timeouts;
     kaa_time_t now = KAA_TIME();
 
+    kaa_list_node_t *it = kaa_list_begin(self->timeouts);
     while (it) {
         timeout_info_t *info = (timeout_info_t *)kaa_list_get_data(it);
         if (now >= info->timeout) {
@@ -139,20 +140,32 @@ static bool is_timeout(kaa_log_collector_t *self)
     }
 
     if (is_timeout) {
-        kaa_list_t *it = self->timeouts;
+        it = kaa_list_begin(self->timeouts);
         while (it) {
             timeout_info_t *info = (timeout_info_t *)kaa_list_get_data(it);
             ext_log_storage_unmark_by_bucket_id(self->log_storage_context, info->log_bucket_id);
             it = kaa_list_next(it);
         }
 
-        kaa_list_destroy(self->timeouts, NULL);
-        self->timeouts = NULL;
+        kaa_list_clear(self->timeouts, NULL);
         ext_log_upload_strategy_on_timeout(self->log_upload_strategy_context);
     }
 
     return is_timeout;
 }
+
+
+
+void kaa_log_collector_destroy(kaa_log_collector_t *self)
+{
+    KAA_RETURN_IF_NIL(self, );
+    ext_log_upload_strategy_destroy(self->log_upload_strategy_context);
+    ext_log_storage_destroy(self->log_storage_context);
+    kaa_list_destroy(self->timeouts, NULL);
+    KAA_FREE(self);
+}
+
+
 
 kaa_error_t kaa_log_collector_create(kaa_log_collector_t **log_collector_p
                                    , kaa_status_t *status
@@ -169,23 +182,16 @@ kaa_error_t kaa_log_collector_create(kaa_log_collector_t **log_collector_p
     collector->status                      = status;
     collector->channel_manager             = channel_manager;
     collector->logger                      = logger;
-    collector->timeouts                    = NULL;
     collector->is_sync_ignored             = false;
+
+    collector->timeouts = kaa_list_create();
+    if (!collector->timeouts) {
+        kaa_log_collector_destroy(collector);
+        return KAA_ERR_NOMEM;
+    }
 
     *log_collector_p = collector;
     return KAA_ERR_NONE;
-}
-
-
-
-void kaa_log_collector_destroy(kaa_log_collector_t *self)
-{
-    if (self) {
-        ext_log_upload_strategy_destroy(self->log_upload_strategy_context);
-        ext_log_storage_destroy(self->log_storage_context);
-        kaa_list_destroy(self->timeouts, NULL);
-        KAA_FREE(self);
-    }
 }
 
 
@@ -195,6 +201,7 @@ kaa_error_t kaa_logging_init(kaa_log_collector_t *self, void *log_storage_contex
     KAA_RETURN_IF_NIL3(self, log_storage_context, log_upload_strategy_context, KAA_ERR_BADPARAM);
 
     ext_log_storage_destroy(self->log_storage_context);
+    ext_log_upload_strategy_destroy(self->log_upload_strategy_context);
 
     self->log_storage_context = log_storage_context;
     self->log_upload_strategy_context = log_upload_strategy_context;

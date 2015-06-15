@@ -26,7 +26,7 @@
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",
  "type": "enum",
  "name": "SubscriptionType",
- "symbols" : ["MANDATORY", "OPTIONAL"]
+ "symbols" : ["MANDATORY_SUBSCRIPTION", "OPTIONAL_SUBSCRIPTION"]
 },
 {
  "namespace": "org.kaaproject.kaa.common.endpoint.gen",

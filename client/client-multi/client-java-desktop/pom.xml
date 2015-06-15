@@ -31,13 +31,20 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.dir>${basedir}/../../..</main.dir>
+        <sqlite.jdbc.version>3.8.10.1</sqlite.jdbc.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.kaaproject.kaa.client</groupId>
             <artifactId>client-java-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.client</groupId>
+            <artifactId>client-java-core</artifactId>
+            <classifier>tests</classifier>
             <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -77,6 +84,19 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>${sqlite.jdbc.version}</version>
         </dependency>
     </dependencies>
 
@@ -132,6 +152,9 @@
                             <artifactSet>
                                 <excludes>
                                     <exclude>junit:junit</exclude>
+                                    <exclude>ch.qos.logback:logback-core</exclude>
+                                    <exclude>ch.qos.logback:logback-classic</exclude>
+                                    <exclude>org.slf4j:log4j-over-slf4j</exclude>
                                 </excludes>
                             </artifactSet>
                             <shadedClassifierName>sdk</shadedClassifierName>

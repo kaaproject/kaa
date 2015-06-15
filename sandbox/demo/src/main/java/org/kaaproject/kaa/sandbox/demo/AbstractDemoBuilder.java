@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -157,31 +158,43 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
         buildDemoApplicationImpl(client);
         projectConfigs = loadProjectConfigs();
         logger.info("Demo application build finished.");
+        for (Project projectConfig : projectConfigs) {
+            String iconBase64 = loadIconBase64(projectConfig.getId());
+            projectConfig.setIconBase64(iconBase64);
+            setProjectSdkKey(projectConfig);
+        }
+    }
+    
+    private void setProjectSdkKey(Project projectConfig) {
+        SdkPropertiesDto sdkPropertiesDto = null;
+        if (isMultiApplicationProject()) {
+            Map<String, SdkPropertiesDto> projectsSdkMap = getProjectsSdkMap();
+                sdkPropertiesDto = projectsSdkMap.get(projectConfig.getId());
+        } else {
+            sdkPropertiesDto = this.sdkPropertiesDto;
+        }
+
+        switch (projectConfig.getPlatform()) {
+            case ANDROID:
+                sdkPropertiesDto.setTargetPlatform(SdkPlatform.ANDROID);
+                break;
+            case C:
+                sdkPropertiesDto.setTargetPlatform(SdkPlatform.C);
+                break;
+            case CPP:
+                sdkPropertiesDto.setTargetPlatform(SdkPlatform.CPP);
+                break;
+            case JAVA:
+                sdkPropertiesDto.setTargetPlatform(SdkPlatform.JAVA);
+                break;
+            default:
+                break;
+        }
         try {
-            for (Project projectConfig : projectConfigs) {
-                String iconBase64 = loadIconBase64(projectConfig.getId());
-                projectConfig.setIconBase64(iconBase64);
-                switch (projectConfig.getPlatform()) {
-                case ANDROID:
-                    sdkPropertiesDto.setTargetPlatform(SdkPlatform.ANDROID);
-                    break;
-                case C:
-                    sdkPropertiesDto.setTargetPlatform(SdkPlatform.C);
-                    break;
-                case CPP:
-                    sdkPropertiesDto.setTargetPlatform(SdkPlatform.CPP);
-                    break;
-                case JAVA:
-                    sdkPropertiesDto.setTargetPlatform(SdkPlatform.JAVA);
-                    break;
-                default:
-                    break;
-                }
-                projectConfig.setSdkKeyBase64(Base64.encodeObject(sdkPropertiesDto, Base64.URL_SAFE));
-                logger.info("Resulting sdk properties: {}", sdkPropertiesDto);
-            }
+            projectConfig.setSdkKeyBase64(Base64.encodeObject(sdkPropertiesDto, Base64.URL_SAFE));
+            logger.info("Resulting sdk properties: {}", sdkPropertiesDto);
         } catch (IOException e) {
-            logger.error("Unable to generate sdk key", e);
+            logger.error("Unable to generate sdk properties", e);
         }
     }
 
@@ -194,6 +207,14 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
     
     protected String getResourcePath(String resource) {
         return resourcesPath + "/" + resource;
+    }
+    
+    protected boolean isMultiApplicationProject() {
+        return false;
+    }
+    
+    protected Map<String, SdkPropertiesDto> getProjectsSdkMap() {
+        return null;
     }
     
     private void createUsers(AdminClient client) throws Exception {

@@ -15,7 +15,12 @@
  */
 
 #include "kaa/kaatcp/KaaSyncResponse.hpp"
+#include "kaa/common/exception/KaaException.hpp"
+#ifdef _WIN32
+#include <Winsock2.h>
+#else
 #include <arpa/inet.h>
+#endif
 
 namespace kaa {
 
@@ -27,13 +32,23 @@ KaaSyncResponse::KaaSyncResponse(const char * payload, std::uint32_t size) : isZ
 
 void KaaSyncResponse::parseMessage(const char * payload, std::uint32_t size)
 {
+    if (!payload || !size) {
+        throw KaaException("Bad KaaSyncResponse payload data");
+    }
+    if (size < KaaTcpCommon::KAA_SYNC_HEADER_LENGTH) {
+        throw KaaException(boost::format("Bad KaaSyncResponse payload size: %1%") % size);
+    }
     payload += 9;
     messageId_ = ntohs(*(std::uint16_t *)payload);
     payload += 2;
     isZipped_ = (*payload) & KaaTcpCommon::KAA_SYNC_ZIPPED_BIT;
     isEncrypted_ = (*payload) & KaaTcpCommon::KAA_SYNC_ENCRYPTED_BIT;
     ++payload;
-    payload_.assign((const std::uint8_t*) payload, (const std::uint8_t*) payload + size - KaaTcpCommon::KAA_SYNC_HEADER_LENGTH);
+    size -= KaaTcpCommon::KAA_SYNC_HEADER_LENGTH;
+    if (!size) {
+        throw KaaException("No payload in KaaSyncResponse");
+    }
+    payload_.assign((const std::uint8_t*) payload, (const std::uint8_t*) payload + size);
 }
 
 }

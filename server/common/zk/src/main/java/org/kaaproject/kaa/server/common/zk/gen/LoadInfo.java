@@ -7,9 +7,10 @@ package org.kaaproject.kaa.server.common.zk.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class LoadInfo extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LoadInfo\",\"namespace\":\"org.kaaproject.kaa.server.common.zk.gen\",\"fields\":[{\"name\":\"loadIndex\",\"type\":\"int\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"LoadInfo\",\"namespace\":\"org.kaaproject.kaa.server.common.zk.gen\",\"fields\":[{\"name\":\"endpointCount\",\"type\":\"int\"},{\"name\":\"loadAverage\",\"type\":\"double\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-   private int loadIndex;
+   private int endpointCount;
+   private double loadAverage;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -21,15 +22,17 @@ public class LoadInfo extends org.apache.avro.specific.SpecificRecordBase implem
   /**
    * All-args constructor.
    */
-  public LoadInfo(java.lang.Integer loadIndex) {
-    this.loadIndex = loadIndex;
+  public LoadInfo(java.lang.Integer endpointCount, java.lang.Double loadAverage) {
+    this.endpointCount = endpointCount;
+    this.loadAverage = loadAverage;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
   // Used by DatumWriter.  Applications should not call. 
   public java.lang.Object get(int field$) {
     switch (field$) {
-    case 0: return loadIndex;
+    case 0: return endpointCount;
+    case 1: return loadAverage;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -37,24 +40,40 @@ public class LoadInfo extends org.apache.avro.specific.SpecificRecordBase implem
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: loadIndex = (java.lang.Integer)value$; break;
+    case 0: endpointCount = (java.lang.Integer)value$; break;
+    case 1: loadAverage = (java.lang.Double)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
 
   /**
-   * Gets the value of the 'loadIndex' field.
+   * Gets the value of the 'endpointCount' field.
    */
-  public java.lang.Integer getLoadIndex() {
-    return loadIndex;
+  public java.lang.Integer getEndpointCount() {
+    return endpointCount;
   }
 
   /**
-   * Sets the value of the 'loadIndex' field.
+   * Sets the value of the 'endpointCount' field.
    * @param value the value to set.
    */
-  public void setLoadIndex(java.lang.Integer value) {
-    this.loadIndex = value;
+  public void setEndpointCount(java.lang.Integer value) {
+    this.endpointCount = value;
+  }
+
+  /**
+   * Gets the value of the 'loadAverage' field.
+   */
+  public java.lang.Double getLoadAverage() {
+    return loadAverage;
+  }
+
+  /**
+   * Sets the value of the 'loadAverage' field.
+   * @param value the value to set.
+   */
+  public void setLoadAverage(java.lang.Double value) {
+    this.loadAverage = value;
   }
 
   /** Creates a new LoadInfo RecordBuilder */
@@ -78,7 +97,8 @@ public class LoadInfo extends org.apache.avro.specific.SpecificRecordBase implem
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<LoadInfo>
     implements org.apache.avro.data.RecordBuilder<LoadInfo> {
 
-    private int loadIndex;
+    private int endpointCount;
+    private double loadAverage;
 
     /** Creates a new Builder */
     private Builder() {
@@ -88,42 +108,74 @@ public class LoadInfo extends org.apache.avro.specific.SpecificRecordBase implem
     /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.server.common.zk.gen.LoadInfo.Builder other) {
       super(other);
-      if (isValidValue(fields()[0], other.loadIndex)) {
-        this.loadIndex = data().deepCopy(fields()[0].schema(), other.loadIndex);
+      if (isValidValue(fields()[0], other.endpointCount)) {
+        this.endpointCount = data().deepCopy(fields()[0].schema(), other.endpointCount);
         fieldSetFlags()[0] = true;
+      }
+      if (isValidValue(fields()[1], other.loadAverage)) {
+        this.loadAverage = data().deepCopy(fields()[1].schema(), other.loadAverage);
+        fieldSetFlags()[1] = true;
       }
     }
     
     /** Creates a Builder by copying an existing LoadInfo instance */
     private Builder(org.kaaproject.kaa.server.common.zk.gen.LoadInfo other) {
             super(org.kaaproject.kaa.server.common.zk.gen.LoadInfo.SCHEMA$);
-      if (isValidValue(fields()[0], other.loadIndex)) {
-        this.loadIndex = data().deepCopy(fields()[0].schema(), other.loadIndex);
+      if (isValidValue(fields()[0], other.endpointCount)) {
+        this.endpointCount = data().deepCopy(fields()[0].schema(), other.endpointCount);
         fieldSetFlags()[0] = true;
+      }
+      if (isValidValue(fields()[1], other.loadAverage)) {
+        this.loadAverage = data().deepCopy(fields()[1].schema(), other.loadAverage);
+        fieldSetFlags()[1] = true;
       }
     }
 
-    /** Gets the value of the 'loadIndex' field */
-    public java.lang.Integer getLoadIndex() {
-      return loadIndex;
+    /** Gets the value of the 'endpointCount' field */
+    public java.lang.Integer getEndpointCount() {
+      return endpointCount;
     }
     
-    /** Sets the value of the 'loadIndex' field */
-    public org.kaaproject.kaa.server.common.zk.gen.LoadInfo.Builder setLoadIndex(int value) {
+    /** Sets the value of the 'endpointCount' field */
+    public org.kaaproject.kaa.server.common.zk.gen.LoadInfo.Builder setEndpointCount(int value) {
       validate(fields()[0], value);
-      this.loadIndex = value;
+      this.endpointCount = value;
       fieldSetFlags()[0] = true;
       return this; 
     }
     
-    /** Checks whether the 'loadIndex' field has been set */
-    public boolean hasLoadIndex() {
+    /** Checks whether the 'endpointCount' field has been set */
+    public boolean hasEndpointCount() {
       return fieldSetFlags()[0];
     }
     
-    /** Clears the value of the 'loadIndex' field */
-    public org.kaaproject.kaa.server.common.zk.gen.LoadInfo.Builder clearLoadIndex() {
+    /** Clears the value of the 'endpointCount' field */
+    public org.kaaproject.kaa.server.common.zk.gen.LoadInfo.Builder clearEndpointCount() {
       fieldSetFlags()[0] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'loadAverage' field */
+    public java.lang.Double getLoadAverage() {
+      return loadAverage;
+    }
+    
+    /** Sets the value of the 'loadAverage' field */
+    public org.kaaproject.kaa.server.common.zk.gen.LoadInfo.Builder setLoadAverage(double value) {
+      validate(fields()[1], value);
+      this.loadAverage = value;
+      fieldSetFlags()[1] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'loadAverage' field has been set */
+    public boolean hasLoadAverage() {
+      return fieldSetFlags()[1];
+    }
+    
+    /** Clears the value of the 'loadAverage' field */
+    public org.kaaproject.kaa.server.common.zk.gen.LoadInfo.Builder clearLoadAverage() {
+      fieldSetFlags()[1] = false;
       return this;
     }
 
@@ -131,7 +183,8 @@ public class LoadInfo extends org.apache.avro.specific.SpecificRecordBase implem
     public LoadInfo build() {
       try {
         LoadInfo record = new LoadInfo();
-        record.loadIndex = fieldSetFlags()[0] ? this.loadIndex : (java.lang.Integer) defaultValue(fields()[0]);
+        record.endpointCount = fieldSetFlags()[0] ? this.endpointCount : (java.lang.Integer) defaultValue(fields()[0]);
+        record.loadAverage = fieldSetFlags()[1] ? this.loadAverage : (java.lang.Double) defaultValue(fields()[1]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

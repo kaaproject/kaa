@@ -34,20 +34,27 @@ import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
 public class SyncRequestMessageTest {
+    private static final SessionInfo SESSION = new SessionInfo(UUID.randomUUID(),
+                                                               Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID,
+                                                               null,
+                                                               ChannelType.SYNC,
+                                                               null,
+                                                               null,
+                                                               "applicationToken",
+                                                               "sdkToken",
+                                                               0,
+                                                               true);
+
+    private static final NotificationClientSync NOTIFICATION_CLIENT_SYNC = new NotificationClientSync(2, null, null, null, null);
+    private static final ConfigurationClientSync CONFIGURATION_CLIENT_SYNC = new ConfigurationClientSync(1, ByteBuffer.wrap("String".getBytes()), false);
 
     @Test
     public void testIsValid() {
-
-        SessionInfo session = new SessionInfo(UUID.randomUUID(), Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, ChannelType.SYNC, null, null,
-                "applicationToken", "sdkToken", 0, true);
-
         ClientSync request = new ClientSync();
-        request.setClientSyncMetaData(new ClientSyncMetaData());
-        SyncRequestMessage message = new SyncRequestMessage(session, request, null, null);
+        SyncRequestMessage message = createSyncRequestMessage(request);
 
         ClientSync other = new ClientSync();
-        other.setClientSyncMetaData(new ClientSyncMetaData());
-        SyncRequestMessage otherMessage = new SyncRequestMessage(session, other, null, null);
+        SyncRequestMessage otherMessage = createSyncRequestMessage(other);
 
         Assert.assertFalse(message.isValid(TransportType.BOOTSTRAP));
 
@@ -57,12 +64,12 @@ public class SyncRequestMessageTest {
         Assert.assertTrue(message.isValid(TransportType.PROFILE));
 
         Assert.assertFalse(message.isValid(TransportType.CONFIGURATION));
-        other.setConfigurationSync(new ConfigurationClientSync(10, ByteBuffer.wrap("String".getBytes()), false));
+        other.setConfigurationSync(CONFIGURATION_CLIENT_SYNC);
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.CONFIGURATION));
 
         Assert.assertFalse(message.isValid(TransportType.NOTIFICATION));
-        other.setNotificationSync(new NotificationClientSync());
+        other.setNotificationSync(NOTIFICATION_CLIENT_SYNC);
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.NOTIFICATION));
 
@@ -81,6 +88,47 @@ public class SyncRequestMessageTest {
         message.merge(otherMessage);
         Assert.assertTrue(message.isValid(TransportType.EVENT));
 
+    }
+
+    @Test
+    public void testMergeWithProfileSync() {
+        ClientSync request = new ClientSync();
+        SyncRequestMessage message = createSyncRequestMessage(request);
+
+        ClientSync other = new ClientSync();
+        SyncRequestMessage otherMessage = createSyncRequestMessage(other);
+
+        request.setNotificationSync(NOTIFICATION_CLIENT_SYNC);
+        other.setProfileSync(new ProfileClientSync());
+        other.setNotificationSync(NOTIFICATION_CLIENT_SYNC);
+        other.setConfigurationSync(CONFIGURATION_CLIENT_SYNC);
+        Assert.assertNotNull(message.merge(otherMessage).getConfigurationSync());
+        Assert.assertNotNull(message.merge(otherMessage).getNotificationSync());
+
+        other.setConfigurationSync(null);
+        other.setNotificationSync(null);
+        Assert.assertNotNull(message.merge(otherMessage).getConfigurationSync());
+        Assert.assertNotNull(message.merge(otherMessage).getNotificationSync());
+    }
+
+    @Test
+    public void testMergeWithoutProfileSync() {
+        ClientSync request = new ClientSync();
+        SyncRequestMessage message = createSyncRequestMessage(request);
+
+        ClientSync other = new ClientSync();
+        SyncRequestMessage otherMessage = createSyncRequestMessage(other);
+
+        request.setNotificationSync(NOTIFICATION_CLIENT_SYNC);
+        other.setNotificationSync(NOTIFICATION_CLIENT_SYNC);
+
+        Assert.assertNull(message.merge(otherMessage).getConfigurationSync());
+        Assert.assertNull(message.merge(otherMessage).getNotificationSync());
+    }
+
+    private SyncRequestMessage createSyncRequestMessage(ClientSync request) {
+        request.setClientSyncMetaData(new ClientSyncMetaData());
+        return new SyncRequestMessage(SESSION, request, null, null);
     }
 
 }

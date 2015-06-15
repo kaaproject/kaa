@@ -36,9 +36,10 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class SdkGenerator {
 
-    /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(SdkGenerator.class);
+    /**
+     * The Constant logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(SdkGenerator.class);
 
     /**
      * Generate sdk.
@@ -77,7 +78,7 @@ public abstract class SdkGenerator {
      * @return the string
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    static String readFile(File file) throws IOException{
+    static String readFile(File file) throws IOException {
         String result = null;
         try {
             StringBuffer fileData = new StringBuffer();
@@ -106,7 +107,7 @@ public abstract class SdkGenerator {
      * @return the string
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static String readResource(String resource) throws IOException{
+    public static String readResource(String resource) throws IOException {
         String result = null;
         try {
             StringBuffer fileData = new StringBuffer();

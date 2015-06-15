@@ -34,6 +34,8 @@
 
 #include "kaa/channel/KaaChannelManager.hpp"
 
+#include "kaa/failover/DefaultFailoverStrategy.hpp"
+
 #include "kaa/logging/Log.hpp"
 
 namespace kaa {
@@ -60,6 +62,8 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 
     bootstrapManager_.reset(new BootstrapManager);
     channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getBootstrapServers()));
+    failoverStrategy_.reset(new DefaultFailoverStrategy);
+    channelManager_->setFailoverStrategy(failoverStrategy_);
 #ifdef KAA_USE_EVENTS
     registrationManager_.reset(new EndpointRegistrationManager(status_));
     eventManager_.reset(new EventManager(status_));
@@ -513,6 +517,18 @@ void KaaClient::setLogUploadStrategy(ILogUploadStrategyPtr strategy) {
         throw KaaException("Failed to set strategy. Logging subsystem is disabled");
 #endif
 }
+
+void KaaClient::setFailoverStrategy(IFailoverStrategyPtr strategy) {
+    if (!strategy) {
+        KAA_LOG_ERROR("Failed to set failover strategy: bad data");
+        throw KaaException("Bad failover strategy");
+    }
+
+    KAA_LOG_INFO("New failover strategy was set");
+    failoverStrategy_ = strategy;
+    channelManager_->setFailoverStrategy(failoverStrategy_);
+}
+
 IKaaDataMultiplexer& KaaClient::getOperationMultiplexer()
 {
     return *syncProcessor_;

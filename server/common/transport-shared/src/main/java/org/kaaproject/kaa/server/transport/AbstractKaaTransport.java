@@ -41,13 +41,17 @@ public abstract class AbstractKaaTransport<T extends SpecificRecordBase> impleme
     private static final Charset UTF8 = Charset.forName("UTF-8");
     protected static final int SIZE_OF_INT = 4;
 
+    protected static final String BIND_INTERFACE_PROP_NAME = "transport.bindInterface";
+    protected static final String PUBLIC_INTERFACE_PROP_NAME = "transport.publicInterface";
+    protected static final String LOCALHOST = "localhost";
+
     /**
      * A message handler
      */
     protected MessageHandler handler;
-    
+
     protected SpecificTransportContext<T> context;
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -60,14 +64,14 @@ public abstract class AbstractKaaTransport<T extends SpecificRecordBase> impleme
         try {
             T config = converter.fromByteArray(context.getConfiguration());
             LOG.info("Initializing transport {} with {}", getClassName(), config);
-            this.context = new SpecificTransportContext<T>(context, config); 
+            this.context = new SpecificTransportContext<T>(context, config);
             init(this.context);
         } catch (IOException e) {
             LOG.error(MessageFormat.format("Failed to initialize transport {0}", getClassName()), e);
             throw new TransportLifecycleException(e);
         }
     }
-    
+
     @Override
     public TransportMetaData getConnectionInfo() {
         LOG.info("Serializing connection info");
@@ -91,11 +95,11 @@ public abstract class AbstractKaaTransport<T extends SpecificRecordBase> impleme
      * @return the configuration class
      */
     public abstract Class<T> getConfigurationClass();
-    
+
     protected abstract ByteBuffer getSerializedConnectionInfo();
-    
+
     protected abstract int getMinSupportedVersion();
-    
+
     protected abstract int getMaxSupportedVersion();
 
     private String getClassName() {

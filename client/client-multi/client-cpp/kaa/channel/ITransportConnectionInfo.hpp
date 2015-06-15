@@ -70,6 +70,12 @@ public:
      */
     virtual const std::vector<std::uint8_t>& getConnectionInfo() = 0;
 
+    virtual bool isFailedState() = 0;
+
+    virtual void setFailedState() = 0;
+
+    virtual void resetFailedState() = 0;
+
     virtual ~ITransportConnectionInfo() {}
 };
 

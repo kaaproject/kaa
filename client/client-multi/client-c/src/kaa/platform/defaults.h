@@ -26,8 +26,12 @@
 #ifdef ECONAIS_PLATFORM
 #include "../platform-impl/Econais/EC19D/econais_ec19d_defaults.h"
 #else
+#ifdef STM32_LEAF_PLATFORM
+#include "../platform-impl/stm32/leafMapleMini/leaf_defaults.h"
+#else
 #include "../platform-impl/posix/posix_defaults.h"
-#endif
+#endif //#ifdef STM32_LEAF_PLATFORM
 
+#endif //ifdef ECONAIS_PLATFORM
 
 #endif /* DEFAULTS_H_ */

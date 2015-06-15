@@ -58,7 +58,7 @@ public:
                     , IKaaClientStateStoragePtr);
 
     virtual std::vector<std::uint8_t> compileRequest(const std::map<TransportType, ChannelDirection>& transportTypes);
-    virtual void processResponse(const std::vector<std::uint8_t> &response);
+    virtual DemultiplexerReturnCode processResponse(const std::vector<std::uint8_t> &response);
 private:
     AvroByteArrayConverter<SyncRequest>     requestConverter_;
     AvroByteArrayConverter<SyncResponse>    responseConverter_;

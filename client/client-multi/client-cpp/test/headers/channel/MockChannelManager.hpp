@@ -50,7 +50,7 @@ public:
 
     virtual void onTransportConnectionInfoUpdated(ITransportConnectionInfoPtr server) { ++onGetChannelByTransportType_; }
     virtual void onServerFailed(ITransportConnectionInfoPtr server) { ++onServerFailed_; }
-
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) { ++onFailOverStrategyChange_;}
     virtual void clearChannelList() { ++onClearChannelList_; }
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) { ++onSetConnectivityChecker_; }
@@ -74,6 +74,7 @@ public:
     std::size_t onShutdown_ = 0;
     std::size_t onPause_ = 0;
     std::size_t onResume = 0;
+    std::size_t onFailOverStrategyChange_ = 0;
 };
 
 } /* namespace kaa */

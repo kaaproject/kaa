@@ -1,0 +1,36 @@
+{
+    "type":"record",
+    "name":"VoltageReport",
+    "namespace":"org.kaaproject.kaa.examples.powerplant",
+    "fields":[
+        {
+            "name":"timestamp",
+            "type":"long"
+        },
+        {
+            "name":"samples",
+            "type":{
+                "type":"array",
+                "items":{
+                    "type":"record",
+                    "name":"VoltageSample",
+                    "namespace":"org.kaaproject.kaa.examples.powerplant",
+                    "fields":[
+                        {
+                            "name":"zoneId",
+                            "type":"int"
+                        },
+                        {
+                            "name":"panelId",
+                            "type":"int"
+                        },
+                        {
+                            "name":"voltage",
+                            "type":"double"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

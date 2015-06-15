@@ -71,6 +71,8 @@ public class ConfigurationServiceImplTest extends AbstractTest {
         List<ConfigurationDto> configs = generateConfiguration(null, null, 1, false, false);
         ConfigurationDto saved = configurationService.findConfigurationById(configs.get(0).getId());
         ConfigurationDto updated = configurationService.saveConfiguration(saved);
+        // update one more time (nothing should change)
+        updated = configurationService.saveConfiguration(updated);
         Assert.assertNotNull(saved);
         Assert.assertEquals(updated.getStatus(), UpdateStatus.INACTIVE);
     }

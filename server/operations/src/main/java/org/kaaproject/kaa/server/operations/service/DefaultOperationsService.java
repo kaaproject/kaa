@@ -148,9 +148,11 @@ public class DefaultOperationsService implements OperationsService {
 
         if (!Arrays.equals(profile.getProfileHash(), toByteArray(metaData.getProfileHash()))) {
             LOG.debug("[{}] Profile hash mismatch. Profile resync needed", context.getEndpointKey());
-            if(LOG.isTraceEnabled()){
-                LOG.trace("[{}] persisted profile hash is {}", context.getEndpointKey(), MessageEncoderDecoder.bytesToHex(profile.getProfileHash()));
-                LOG.trace("[{}] client profile hash is {}", context.getEndpointKey(),  MessageEncoderDecoder.bytesToHex(toByteArray(metaData.getProfileHash())));
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("[{}] persisted profile hash is {}", context.getEndpointKey(),
+                        MessageEncoderDecoder.bytesToHex(profile.getProfileHash()));
+                LOG.trace("[{}] client profile hash is {}", context.getEndpointKey(),
+                        MessageEncoderDecoder.bytesToHex(toByteArray(metaData.getProfileHash())));
             }
             context.setStatus(SyncStatus.PROFILE_RESYNC);
         }
@@ -577,9 +579,9 @@ public class DefaultOperationsService implements OperationsService {
      * @return true, if is first request
      */
     public static boolean isFirstRequest(EndpointProfileDto profile, HistorySubject subject) {
-        if(subject == HistorySubject.CONFIGURATION){
+        if (subject == HistorySubject.CONFIGURATION) {
             return profile.getCfGroupStates() == null || profile.getCfGroupStates().size() == 0;
-        }else{
+        } else {
             return profile.getNfGroupStates() == null || profile.getNfGroupStates().size() == 0;
         }
     }

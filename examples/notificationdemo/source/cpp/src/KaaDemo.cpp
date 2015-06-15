@@ -41,7 +41,7 @@ static void showTopicList(const Topics& topics)
 static std::list<std::string> extractOptionalTopicIds(const Topics& topics) {
     std::list<std::string> topicIds;
     for (const auto& topic : topics) {
-        if (topic.subscriptionType == SubscriptionType::OPTIONAL) {
+        if (topic.subscriptionType == SubscriptionType::OPTIONAL_SUBSCRIPTION) {
             topicIds.push_back(topic.id);
         }
     }

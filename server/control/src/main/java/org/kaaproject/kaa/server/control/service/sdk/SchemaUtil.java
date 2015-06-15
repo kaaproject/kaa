@@ -26,6 +26,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.avro.Schema;
+import org.apache.avro.Schema.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,40 +140,41 @@ public class SchemaUtil {
 
         return map;
     }
-
+    
     private static List<Schema> getChildSchemas(Schema parent) {
+        Map<String, Schema> namedSchemaMap = new HashMap<>();
+        parseChildSchemas(parent, namedSchemaMap);
+        return new LinkedList<Schema>(namedSchemaMap.values());
+    }
 
-        List<Schema> childs = new LinkedList<Schema>();
-
+    private static void parseChildSchemas(Schema parent, Map<String, Schema> namedSchemaMap) {
         switch (parent.getType()) {
             case RECORD:
-                childs.add(parent);
-                for (Schema.Field field : parent.getFields()) {
-                    childs.addAll(getChildSchemas(field.schema()));
+            case ENUM:
+            case FIXED:
+                if (!namedSchemaMap.containsKey(parent.getFullName())) {
+                    namedSchemaMap.put(parent.getFullName(), parent);
+                    if (parent.getType() == Type.RECORD) {
+                        for (Schema.Field field : parent.getFields()) {
+                            parseChildSchemas(field.schema(), namedSchemaMap);
+                        }
+                    }
                 }
                 break;
             case UNION:
                 for (Schema schema : parent.getTypes()) {
-                    childs.addAll(getChildSchemas(schema));
+                    parseChildSchemas(schema, namedSchemaMap);
                 }
                 break;
             case ARRAY:
-                childs.addAll(getChildSchemas(parent.getElementType()));
+                parseChildSchemas(parent.getElementType(), namedSchemaMap);
                 break;
             case MAP:
-                childs.addAll(getChildSchemas(parent.getValueType()));
-                break;
-            case ENUM:
-                childs.add(parent);
-                break;
-            case FIXED:
-                childs.add(parent);
+                parseChildSchemas(parent.getValueType(), namedSchemaMap);
                 break;
             default:
                 break;
         }
-
-        return childs;
     }
 }
 

@@ -25,7 +25,7 @@
 #include <string.h>
 
 
-#define KAA_STATUS_STATIC_SIZE      (sizeof(bool) + sizeof(bool) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint16_t) + SHA_1_DIGEST_LENGTH * sizeof(char) * 2)
+#define KAA_STATUS_STATIC_SIZE      (sizeof(bool) + sizeof(bool) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(size_t) + sizeof(uint32_t) + sizeof(uint16_t) + SHA_1_DIGEST_LENGTH * sizeof(char) * 2)
 
 #define READ_BUFFER(FROM, TO, SIZE) \
         memcpy(TO, FROM, SIZE); \
@@ -46,10 +46,13 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
     kaa_status->is_attached = false;
     kaa_status->event_seq_n = 0;
     kaa_status->config_seq_n = 0;
+    kaa_status->notification_seq_n = 0;
     kaa_status->log_bucket_id = 0;
     memset(kaa_status->endpoint_public_key_hash, 0, SHA_1_DIGEST_LENGTH);
     memset(kaa_status->profile_hash, 0, SHA_1_DIGEST_LENGTH);
     kaa_status->endpoint_access_token = NULL;
+    kaa_status->topic_states = kaa_list_create();
+    KAA_RETURN_IF_NIL(kaa_status->topic_states, KAA_ERR_NOMEM);
 
     char *  read_buf = NULL;
     char *  read_buf_head = NULL;
@@ -62,6 +65,7 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
         READ_BUFFER(read_buf, &kaa_status->is_attached, sizeof(kaa_status->is_attached))
         READ_BUFFER(read_buf, &kaa_status->event_seq_n, sizeof(kaa_status->event_seq_n))
         READ_BUFFER(read_buf, &kaa_status->config_seq_n, sizeof(kaa_status->config_seq_n))
+        READ_BUFFER(read_buf, &kaa_status->notification_seq_n, sizeof(kaa_status->notification_seq_n))
         READ_BUFFER(read_buf, &kaa_status->log_bucket_id, sizeof(kaa_status->log_bucket_id))
         READ_BUFFER(read_buf, kaa_status->endpoint_public_key_hash, SHA_1_DIGEST_LENGTH)
         READ_BUFFER(read_buf, kaa_status->profile_hash, SHA_1_DIGEST_LENGTH)
@@ -78,6 +82,20 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
             READ_BUFFER(read_buf, kaa_status->endpoint_access_token, enpoint_access_token_length);
             kaa_status->endpoint_access_token[enpoint_access_token_length] = '\0';
         }
+
+        size_t states_count = 0;
+        READ_BUFFER(read_buf, &states_count, sizeof(size_t))
+        while (states_count--) {
+            kaa_topic_state_t *state = (kaa_topic_state_t *)KAA_MALLOC(sizeof(kaa_topic_state_t));
+            KAA_RETURN_IF_NIL(state, KAA_ERR_NOMEM);
+            READ_BUFFER(read_buf, &state->topic_id, sizeof(uint64_t))
+            READ_BUFFER(read_buf, &state->sqn_number, sizeof(uint32_t))
+
+            if (!kaa_list_push_back(kaa_status->topic_states, state)) {
+                KAA_FREE(state);
+                return KAA_ERR_NOMEM;
+            }
+        }
     }
 
     if (needs_deallocation)
@@ -91,6 +109,7 @@ void kaa_status_destroy(kaa_status_t *self)
 {
     if (self) {
         KAA_FREE(self->endpoint_access_token);
+        kaa_list_destroy(self->topic_states, NULL);
         KAA_FREE(self);
     }
 }
@@ -115,7 +134,8 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
 
     size_t endpoint_access_token_length = self->endpoint_access_token ? strlen(self->endpoint_access_token) : 0;
-    size_t buffer_size = KAA_STATUS_STATIC_SIZE + sizeof(endpoint_access_token_length) + endpoint_access_token_length;
+    size_t states_count = kaa_list_get_size(self->topic_states);
+    size_t buffer_size = KAA_STATUS_STATIC_SIZE + sizeof(endpoint_access_token_length) + endpoint_access_token_length + states_count * (sizeof(uint32_t) + sizeof(uint64_t));
 
     char *buffer_head = (char *) KAA_MALLOC(buffer_size * sizeof(char));
     KAA_RETURN_IF_NIL(buffer_head, KAA_ERR_NOMEM);
@@ -126,6 +146,7 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
     WRITE_BUFFER(&self->is_attached, buffer, sizeof(self->is_attached));
     WRITE_BUFFER(&self->event_seq_n, buffer, sizeof(self->event_seq_n));
     WRITE_BUFFER(&self->config_seq_n, buffer, sizeof(self->config_seq_n));
+    WRITE_BUFFER(&self->notification_seq_n, buffer, sizeof(self->notification_seq_n));
     WRITE_BUFFER(&self->log_bucket_id, buffer, sizeof(self->log_bucket_id));
     WRITE_BUFFER(self->endpoint_public_key_hash, buffer, SHA_1_DIGEST_LENGTH);
     WRITE_BUFFER(self->profile_hash, buffer, SHA_1_DIGEST_LENGTH);
@@ -134,6 +155,14 @@ kaa_error_t kaa_status_save(kaa_status_t *self)
         WRITE_BUFFER(self->endpoint_access_token, buffer, endpoint_access_token_length);
     }
 
+    kaa_list_node_t *state_node = kaa_list_begin(self->topic_states);
+    WRITE_BUFFER(&states_count, buffer, sizeof(size_t));
+    while (state_node) {
+        kaa_topic_state_t *state = (kaa_topic_state_t *)kaa_list_get_data(state_node);
+        WRITE_BUFFER(&state->topic_id, buffer, sizeof(uint64_t));
+        WRITE_BUFFER(&state->sqn_number, buffer, sizeof(uint32_t));
+        state_node = kaa_list_next(state_node);
+    }
     ext_status_store(buffer_head, buffer_size);
 
     KAA_FREE(buffer_head);

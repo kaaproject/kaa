@@ -28,6 +28,7 @@ namespace kaa {
  * Forward declaration.
  */
 class ILogStorageStatus;
+class ILogFailoverCommand;
 
 /**
  * @brief Log upload decisions.
@@ -67,28 +68,38 @@ public:
      */
     virtual std::size_t getBatchSize() = 0;
 
+
+    virtual std::size_t getRecordsBatchCount() = 0;
+
     /**
      * @brief Maximum time to wait the log delivery response.
+     *
+     * @param[in] controller
      *
      * @return    Time in seconds.
      */
     virtual std::size_t getTimeout() = 0;
+
+    virtual std::size_t getTimeoutCheckPeriod() = 0;
+
+    virtual std::size_t getLogUploadCheckPeriod() = 0;
 
     /**
      * @brief Callback is used when the log delivery timeout detected.
      *
      * More information about the detection of the log delivery timeout read in the documentation for @c ILogCollector.
      */
-    virtual void onTimeout() = 0;
+    virtual void onTimeout(ILogFailoverCommand& controller) = 0;
 
     /**
      * @brief Callback is used when the log delivery is failed.
      *
+     * @param[in] controller
      * @param[in] code    The reason code of the log delivery failure.
      *
      * @see LogDeliveryErrorCode
      */
-    virtual void onFailure(LogDeliveryErrorCode code) = 0;
+    virtual void onFailure(ILogFailoverCommand& controller, LogDeliveryErrorCode code) = 0;
 
     virtual ~ILogUploadStrategy() {}
 };

@@ -267,6 +267,13 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
     }
 
     @Override
+    public ProfileFilter save(ProfileFilter o) {
+        ProfileFilter saved = super.save(o);
+        getSession().flush();
+        return saved;
+    }
+
+    @Override
     public long findActiveFilterCount(String schemaId, String groupId) {
         long count = 0;
         LOG.debug("Searching active profile filters by profile schema id [{}] and group id [{}]", schemaId, groupId);

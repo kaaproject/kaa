@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt;
 
+import java.util.List;
 import java.util.Map;
 
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
@@ -35,5 +36,5 @@ public interface Rebalancer {
      *            the Operations server load history
      * @return the map<string, redirection rule>
      */
-    public Map<Integer, RedirectionRule> recalculate(Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory);
+    public Map<Integer, List<RedirectionRule>> recalculate(Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory);
 }
