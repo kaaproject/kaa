@@ -34,7 +34,7 @@ For more background on Kaa data collection subsystem please refer to the corresp
         <features>CONFIGURATION</features>
         <sourceArchive>c/trafficlights.tar.gz</sourceArchive>
         <projectFolder>TrafficLights</projectFolder>
-        <sdkLibDir>CConnectedCarDemo/libs/kaa</sdkLibDir>
+        <sdkLibDir>TrafficLights/libs/kaa</sdkLibDir>
         <destBinaryFile></destBinaryFile>
     </project>
 </projectsConfig>
