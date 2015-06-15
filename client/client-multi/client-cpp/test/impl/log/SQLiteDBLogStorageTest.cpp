@@ -28,6 +28,7 @@ namespace kaa {
 
 static std::string testLogData("very big test data");
 static std::string testLogStorageName("logs.db");
+static std::int32_t mockBlocksCount = 10000;
 
 void removeDatabase(const std::string& dbName)
 {
@@ -88,7 +89,7 @@ BOOST_AUTO_TEST_CASE(RestoreAfterRestartTest)
     BOOST_CHECK_EQUAL(logStorage2.getStatus().getRecordsCount(), recordCount);
     BOOST_CHECK_EQUAL(logStorage2.getStatus().getConsumedVolume(), recordCount * serializedRecord->getSize());
 
-    auto logs = logStorage2.getRecordBlock(SIZE_MAX);
+    auto logs = logStorage2.getRecordBlock(SIZE_MAX, mockBlocksCount);
 
     for (auto& encodedLog : logs.second) {
         AvroByteArrayConverter<KaaUserLogRecord> decoder;
@@ -113,7 +114,7 @@ BOOST_AUTO_TEST_CASE(GetAllRecordsTest)
         logStorage.addLogRecord(serializedRecord);
     }
 
-    auto logs = logStorage.getRecordBlock(recordCount * serializedRecord->getSize());
+    auto logs = logStorage.getRecordBlock(recordCount * serializedRecord->getSize(), mockBlocksCount);
 
     BOOST_CHECK_EQUAL(logs.second.size(), recordCount);
 
@@ -141,7 +142,7 @@ BOOST_AUTO_TEST_CASE(GetPartOfRecordsTest)
     }
 
     std::size_t count = recordCount / 2;
-    auto logs = logStorage.getRecordBlock((count * serializedRecord->getSize()) + 1);
+    auto logs = logStorage.getRecordBlock((count * serializedRecord->getSize()) + 1, mockBlocksCount);
 
     BOOST_CHECK_EQUAL(logs.second.size(), count);
 
@@ -170,7 +171,7 @@ BOOST_AUTO_TEST_CASE(RemoveLogRecordsTest)
         }
 
         std::size_t count = recordCount / 2;
-        auto logs1 = logStorage1.getRecordBlock(count * serializedRecord->getSize());
+        auto logs1 = logStorage1.getRecordBlock(count * serializedRecord->getSize(), mockBlocksCount);
 
         BOOST_CHECK_EQUAL(logStorage1.getStatus().getRecordsCount(), (recordCount - count));
         BOOST_CHECK_EQUAL(logStorage1.getStatus().getConsumedVolume(), (recordCount - count) * serializedRecord->getSize());
@@ -180,7 +181,7 @@ BOOST_AUTO_TEST_CASE(RemoveLogRecordsTest)
         BOOST_CHECK_EQUAL(logStorage1.getStatus().getRecordsCount(), (recordCount - count));
         BOOST_CHECK_EQUAL(logStorage1.getStatus().getConsumedVolume(), (recordCount - count) * serializedRecord->getSize());
 
-        auto logs2 = logStorage1.getRecordBlock(count * serializedRecord->getSize());
+        auto logs2 = logStorage1.getRecordBlock(count * serializedRecord->getSize(), mockBlocksCount);
         logStorage1.removeRecordBlock(logs2.first);
 
         BOOST_CHECK_EQUAL(logStorage1.getStatus().getRecordsCount(), 0);
@@ -209,7 +210,7 @@ BOOST_AUTO_TEST_CASE(DeliveyFailedTest)
     }
 
     std::size_t count = recordCount / 2;
-    auto logs1 = logStorage.getRecordBlock(count * serializedRecord->getSize());
+    auto logs1 = logStorage.getRecordBlock(count * serializedRecord->getSize(), mockBlocksCount);
 
     BOOST_CHECK_EQUAL(logStorage.getStatus().getRecordsCount(), (recordCount - count));
     BOOST_CHECK_EQUAL(logStorage.getStatus().getConsumedVolume(), (recordCount - count) * serializedRecord->getSize());
@@ -238,7 +239,7 @@ BOOST_AUTO_TEST_CASE(DeliveyFailedWithRestartTest)
         }
 
         std::size_t count = recordCount - 1;
-        auto logs1 = logStorage1.getRecordBlock(count * serializedRecord->getSize());
+        auto logs1 = logStorage1.getRecordBlock(count * serializedRecord->getSize(), mockBlocksCount);
 
         BOOST_CHECK_EQUAL(logStorage1.getStatus().getRecordsCount(), (recordCount - count));
         BOOST_CHECK_EQUAL(logStorage1.getStatus().getConsumedVolume(), (recordCount - count) * serializedRecord->getSize());

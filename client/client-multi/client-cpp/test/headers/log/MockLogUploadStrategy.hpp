@@ -30,7 +30,9 @@ public:
     virtual std::size_t getTimeout() { ++onGetTimeout_; return timeout_; }
     virtual void onTimeout(ILogFailoverCommand& controller) { ++onTimeout_; }
     virtual void onFailure(ILogFailoverCommand& controller, LogDeliveryErrorCode code) { ++onFailure_; }
-
+    virtual std::size_t getRecordsBatchCount() { return ++recordBatchCount_; }
+    virtual std::size_t getTimeoutCheckPeriod() { return ++onTimeoutCheckPeriod_ ; }
+    virtual std::size_t getLogUploadCheckPeriod() { return ++onUploadCheckPeriod_; }
 public:
     LogUploadStrategyDecision decision_ = LogUploadStrategyDecision::NOOP;
     std::size_t batchSize_ = 0;
@@ -42,6 +44,9 @@ public:
     std::size_t onTimeout_ = 0;
     std::size_t onFailure_ = 0;
     std::size_t retryTimeout_ = 0;
+    std::size_t recordBatchCount_ = 0;
+    std::size_t onTimeoutCheckPeriod_ = 0;
+    std::size_t onUploadCheckPeriod_ = 0;
 };
 
 } /* namespace kaa */

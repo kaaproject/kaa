@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,24 @@
 
 package org.kaaproject.kaa.client.logging;
 
-public class MemoryLogStorageTest extends AbstractLogStorageTest {
+import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLog;
+
+@RunWith(RobolectricTestRunner.class)
+@Config(manifest = Config.NONE)
+public class AndroidSQLiteDBLogStorageTest extends AbstractPersistentLogStorageTest {
+
+    @BeforeClass
+    public static void beforeClass() {
+        ShadowLog.stream = System.out;
+    }
 
     @Override
     protected Object getStorage(long bucketSize) {
-        return new MemoryLogStorage(bucketSize);
+        return new AndroidSQLiteDBLogStorage(Robolectric.application);
     }
 }
