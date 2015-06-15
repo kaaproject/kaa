@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright 2014 CyberVision, Inc.
+# Copyright 2014-2015 CyberVision, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,11 +16,22 @@
 
 set -e
 
-if [ -d /usr/lib/#servername# ]; then
-    rm -rf /usr/lib/#servername#
-fi
+case "$1" in
+    install|upgrade)
+        if ! id kaa > /dev/null 2>&1 ; then
+                # Adding system user: kaa.
+                adduser --system --no-create-home --group --disabled-password --shell /bin/false kaa  >/dev/null
+        fi
+    ;;
 
-if ! id kaa > /dev/null 2>&1 ; then
-    adduser --system --no-create-home --group --disabled-password --shell /bin/false kaa
-fi
+    abort-upgrade)
+    ;;
+
+    *)
+        echo "preinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+exit 0
 

@@ -112,7 +112,7 @@ public class CSdkGenerator extends SdkGenerator {
      * @see org.kaaproject.kaa.server.control.service.sdk.SdkGenerator#generateSdk(java.lang.String, java.util.List, java.lang.String, int, int, int, java.lang.String, java.lang.String, java.lang.String, byte[], java.util.List)
      */
     @Override
-    public Sdk generateSdk(String buildVersion,
+    public Sdk generateSdkImpl(String buildVersion,
                            List<BootstrapNodeInfo> bootstrapNodes, String appToken,
                            int profileSchemaVersion, int configurationSchemaVersion,
                            int notificationSchemaVersion, int logSchemaVersion,

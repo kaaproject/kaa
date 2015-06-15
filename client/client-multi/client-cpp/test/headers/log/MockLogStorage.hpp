@@ -29,7 +29,7 @@ class MockLogStorage: public ILogStorage {
 public:
     virtual void addLogRecord(LogRecordPtr record) { ++onAddLogRecord_; }
     virtual ILogStorageStatus& getStatus() { ++onGetStatus_; return storageStatus_; }
-    virtual RecordPack getRecordBlock(std::size_t blockSize) { ++onGetRecordBlock_; blockSize_ = blockSize; return recordPack_; }
+    virtual RecordPack getRecordBlock(std::size_t blockSize, std::size_t recordsBlockCount) { ++onGetRecordBlock_; blockSize_ = blockSize; return recordPack_; }
     virtual void removeRecordBlock(RecordBlockId id) { ++onRemoveRecordBlock_; }
     virtual void notifyUploadFailed(RecordBlockId id) { ++onNotifyUploadFailed_; }
 

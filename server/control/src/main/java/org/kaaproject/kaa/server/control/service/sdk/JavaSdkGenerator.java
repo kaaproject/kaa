@@ -368,7 +368,7 @@ public class JavaSdkGenerator extends SdkGenerator {
      * java.util.List)
      */
     @Override
-    public Sdk generateSdk(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, String appToken, int profileSchemaVersion,
+    public Sdk generateSdkImpl(String buildVersion, List<BootstrapNodeInfo> bootstrapNodes, String appToken, int profileSchemaVersion,
                            int configurationSchemaVersion, int notificationSchemaVersion, int logSchemaVersion, String profileSchemaBody,
                            String notificationSchemaBody, String configurationProtocolSchemaBody, String configurationSchemaBody,
                            byte[] defaultConfigurationData, List<EventFamilyMetadata> eventFamilies, String logSchemaBody, String defaultVerifierToken)

@@ -44,7 +44,7 @@ add_definitions (-DBOOST_TEST_DYN_LINK -DBOOST_LOG_DYN_LINK -DRESOURCE_DIR="${CM
 
 find_package (Avro REQUIRED)
 find_package (Botan REQUIRED)
-find_package (Boost 1.55 REQUIRED
+find_package (Boost 1.54 REQUIRED
     COMPONENTS unit_test_framework log system)
 find_package (Sqlite3 REQUIRED)
 
@@ -109,6 +109,7 @@ set ( KAA_TEST_SOURCES
         ../impl/channel/connectivity/IPConnectivityChecker.cpp
         ../impl/channel/TransportProtocolIdConstants.cpp
         ../impl/channel/IPTransportInfo.cpp
+        ../impl/failover/DefaultFailoverStrategy.cpp
         TestRunner.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp

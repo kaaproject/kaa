@@ -160,6 +160,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     @Override
     public void stop() {
+        storage.close();
     }
 
     private void processUploadDecision(LogUploadStrategyDecision decision) {

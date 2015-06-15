@@ -57,7 +57,11 @@ public class LogRecord {
         encodedRecord = CONVERTER.get().toByteArray(record);
     }
 
-    public byte [] getData() {
+    LogRecord(byte[] avroEncodedRecord) {
+        encodedRecord = avroEncodedRecord;
+    }
+
+    byte [] getData() {
         return encodedRecord;
     }
 
