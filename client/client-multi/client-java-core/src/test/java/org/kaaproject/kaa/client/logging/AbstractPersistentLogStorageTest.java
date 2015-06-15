@@ -35,14 +35,14 @@ public abstract class AbstractPersistentLogStorageTest extends AbstractLogStorag
         while (iter-- > 0) {
             storage.addLogRecord(record);
         }
-        LogBlock beforePersist = storage.getRecordBlock(15);
+        LogBlock beforePersist = storage.getRecordBlock(15, 2);
         storage.close();
 
         storage = (LogStorage) getStorage(BUCKET_SIZE);
         LogStorageStatus storageStatus = (LogStorageStatus) storage;
         Assert.assertEquals(insertionCount, storageStatus.getRecordCount());
         Assert.assertEquals(insertionCount * 3, storageStatus.getConsumedVolume());
-        LogBlock afterPersist = storage.getRecordBlock(15);
+        LogBlock afterPersist = storage.getRecordBlock(15, 2);
 
         Assert.assertEquals(beforePersist.getRecords().size(), afterPersist.getRecords().size());
 
@@ -63,7 +63,7 @@ public abstract class AbstractPersistentLogStorageTest extends AbstractLogStorag
             storage.addLogRecord(record);
         }
 
-        LogBlock logBlock = storage.getRecordBlock(8192);
+        LogBlock logBlock = storage.getRecordBlock(8192, 1000);
         Assert.assertEquals(insertionCount, logBlock.getRecords().size());
         storage.close();
     }

@@ -101,16 +101,17 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     }
 
     @Override
-    public LogBlock getRecordBlock(long blockSize) {
+    public LogBlock getRecordBlock(long blockSize, int batchSize) {
         synchronized (database) {
-            Log.d(TAG, "Creating a new record block, needed size: " + blockSize);
+            Log.d(TAG, "Creating a new record block, needed size: " + blockSize + ", batchSize: " + batchSize);
             LogBlock logBlock = null;
             Cursor cursor = null;
             List<String> unmarkedRecordIds = new LinkedList<>();
             List<LogRecord> logRecords = new LinkedList<>();
             long leftBlockSize = blockSize;
             try {
-                cursor = database.rawQuery(PersistentLogStorageConstants.KAA_SELECT_UNMARKED_RECORDS, null);
+                cursor = database.rawQuery(PersistentLogStorageConstants.KAA_SELECT_UNMARKED_RECORDS,
+                        new String[] {String.valueOf(batchSize)});
                 while (cursor.moveToNext()) {
                     int recordId = cursor.getInt(0);
                     byte[] recordData = cursor.getBlob(1);

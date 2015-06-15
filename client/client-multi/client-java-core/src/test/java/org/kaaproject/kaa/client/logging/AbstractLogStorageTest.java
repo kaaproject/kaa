@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class AbstractLogStorageTest {
-    private void testAddHelper(int addedN, int blockSize, int expectedN) {
+    private void testAddHelper(int addedN, int blockSize, int batchSize, int expectedN) {
         LogStorage storage = (LogStorage) getStorage(blockSize);
         List<LogRecord> expectedList = new LinkedList<>();
         LogRecord record = new LogRecord();
@@ -37,7 +37,7 @@ public abstract class AbstractLogStorageTest {
             expectedList.add(record);
         }
 
-        LogBlock group = storage.getRecordBlock(blockSize);
+        LogBlock group = storage.getRecordBlock(blockSize, batchSize);
         List<LogRecord> actualList = group.getRecords();
 
         Assert.assertTrue("Expected: " + expectedList.size() + ", actual: " + actualList.size()
@@ -61,7 +61,7 @@ public abstract class AbstractLogStorageTest {
     public void testEmptyLogRecord() {
         long bucketSize = 3;
         LogStorage storage = (LogStorage) getStorage(bucketSize);
-        LogBlock group = storage.getRecordBlock(5);
+        LogBlock group = storage.getRecordBlock(5, 1);
         Assert.assertTrue(group == null);
         storage.close();
     }
@@ -104,8 +104,8 @@ public abstract class AbstractLogStorageTest {
             storage.addLogRecord(record);
         }
 
-        LogBlock group1 = storage.getRecordBlock(6);
-        LogBlock group2 = storage.getRecordBlock(6);
+        LogBlock group1 = storage.getRecordBlock(6, 2);
+        LogBlock group2 = storage.getRecordBlock(6, 2);
 
         Assert.assertNotEquals(group1.getBlockId(), group2.getBlockId());
         storage.close();
@@ -116,10 +116,10 @@ public abstract class AbstractLogStorageTest {
         /*
          * Size of each record is 3B
          */
-        testAddHelper(1, 3, 1);
-        testAddHelper(4, 3, 1);
-        testAddHelper(3, 9, 3);
-        testAddHelper(5, 5, 1);
+        testAddHelper(1, 3, 1, 1);
+        testAddHelper(4, 3, 2, 1);
+        testAddHelper(3, 9, 4, 3);
+        testAddHelper(5, 5, 2, 1);
     }
 
     @Test
@@ -138,11 +138,11 @@ public abstract class AbstractLogStorageTest {
             storage.addLogRecord(record);
         }
 
-        LogBlock group1 = storage.getRecordBlock(7);
+        LogBlock group1 = storage.getRecordBlock(7, 2);
 
         storage.notifyUploadFailed(group1.getBlockId());
 
-        LogBlock group2 = storage.getRecordBlock(7);
+        LogBlock group2 = storage.getRecordBlock(7, 2);
 
         Assert.assertTrue("Expected: " + group1.getRecords().size() + ", actual: " + group2.getRecords().size()
                 , group1.getRecords().size() == group2.getRecords().size());
@@ -176,17 +176,17 @@ public abstract class AbstractLogStorageTest {
             storage.addLogRecord(record);
         }
 
-        LogBlock removingBlock = storage.getRecordBlock(7);
+        LogBlock removingBlock = storage.getRecordBlock(7, 2);
 
         insertionCount -= removingBlock.getRecords().size();
         storage.removeRecordBlock(removingBlock.getBlockId());
 
-        removingBlock = storage.getRecordBlock(9);
+        removingBlock = storage.getRecordBlock(9, 3);
 
         insertionCount -= removingBlock.getRecords().size();
         storage.removeRecordBlock(removingBlock.getBlockId());
 
-        LogBlock leftBlock = storage.getRecordBlock(50);
+        LogBlock leftBlock = storage.getRecordBlock(50, 50);
         Assert.assertTrue(leftBlock.getRecords().size() == insertionCount);
         storage.close();
     }
@@ -207,20 +207,20 @@ public abstract class AbstractLogStorageTest {
             storage.addLogRecord(record);
         }
 
-        LogBlock removingBlock1 = storage.getRecordBlock(7);
+        LogBlock removingBlock1 = storage.getRecordBlock(7, 2);
         insertionCount -= removingBlock1.getRecords().size();
 
-        LogBlock removingBlock2 = storage.getRecordBlock(9);
+        LogBlock removingBlock2 = storage.getRecordBlock(9, 3);
         insertionCount -= removingBlock2.getRecords().size();
 
-        LogBlock removingBlock3 = storage.getRecordBlock(6);
+        LogBlock removingBlock3 = storage.getRecordBlock(6, 2);
         insertionCount -= removingBlock3.getRecords().size();
 
         storage.removeRecordBlock(removingBlock2.getBlockId());
         storage.notifyUploadFailed(removingBlock1.getBlockId());
         insertionCount += removingBlock1.getRecords().size();
 
-        LogBlock leftBlock = storage.getRecordBlock(50);
+        LogBlock leftBlock = storage.getRecordBlock(50, 50);
         Assert.assertTrue("Ac: " + leftBlock.getRecords().size() + ", ex: " + insertionCount
                 , leftBlock.getRecords().size() == insertionCount);
         storage.close();

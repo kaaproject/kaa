@@ -54,7 +54,8 @@ public interface PersistentLogStorageConstants {
                     "SELECT " + RECORD_ID_COLUMN + ", " + LOG_DATA_COLUMN + " " +
                     "FROM " + TABLE_NAME + " " +
                     "WHERE " + BUCKET_ID_COLUMN + " IS NULL " +
-                    "ORDER BY " + RECORD_ID_COLUMN + " ASC;";
+                    "ORDER BY " + RECORD_ID_COLUMN + " ASC " +
+                    "LIMIT ?;";
 
     String KAA_DELETE_BY_RECORD_ID =
                     "DELETE FROM " + TABLE_NAME + " " +

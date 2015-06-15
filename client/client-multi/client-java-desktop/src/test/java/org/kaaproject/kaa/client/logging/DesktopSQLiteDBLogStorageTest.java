@@ -18,6 +18,7 @@ package org.kaaproject.kaa.client.logging;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.sql.SQLException;

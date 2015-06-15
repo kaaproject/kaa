@@ -144,7 +144,12 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
             buckets.get(id).setState(MemBucketState.FULL);
         }
     }
-    
+
+    @Override
+    public void close() {
+        // automatically done by GC
+    }
+
     @Override
     public LogStorageStatus getStatus() {
         return this;
