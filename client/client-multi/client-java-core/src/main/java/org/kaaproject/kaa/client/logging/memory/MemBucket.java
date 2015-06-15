@@ -65,7 +65,7 @@ public class MemBucket {
             return false;
         }
         records.add(record);
-        size += 1;
+        size += record.getSize();
         return true;
     }
 }

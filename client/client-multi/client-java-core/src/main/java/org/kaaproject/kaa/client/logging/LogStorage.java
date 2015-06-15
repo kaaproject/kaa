@@ -23,7 +23,7 @@ package org.kaaproject.kaa.client.logging;
  * it to the Operation server, removes already sent records, cleans up elder
  * records in case if there is some limitation on a size of log storage.</p>
  *
- * <p>Reference implementation used by default ({@link MemoryLogStorage}).</p>
+ * <p>Reference implementation used by default ({@link org.kaaproject.kaa.client.logging.memory.MemLogStorage}).</p>
  */
 public interface LogStorage {
 
