@@ -111,6 +111,7 @@ set ( KAA_TEST_SOURCES
         ../impl/channel/IPTransportInfo.cpp
         ../impl/failover/DefaultFailoverStrategy.cpp
         ../impl/utils/ThreadPool.cpp
+        ../impl/context/SimpleExecutorContext.cpp
         TestRunner.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp

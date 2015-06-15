@@ -139,6 +139,113 @@ BOOST_AUTO_TEST_CASE(AddThreadPoolTaskTest)
 //    std::cout << "All tasks are executed" << std::endl;
 }
 
+BOOST_AUTO_TEST_CASE(ShutdownNowTest)
+{
+    ThreadPool threadPool;
+    std::atomic_uint actualTaskCount(0);
+    std::size_t timeToWait = 4;
+
+    ThreadPoolTask task = [&actualTaskCount, &timeToWait] ()
+                              {
+                                    std::this_thread::sleep_for(std::chrono::seconds(timeToWait));
+                                    actualTaskCount++;
+                              };
+    threadPool.add(task);
+    threadPool.add(task);
+
+    std::this_thread::sleep_for(std::chrono::seconds(timeToWait / 2));
+
+    threadPool.shutdownNow();
+
+    std::this_thread::sleep_for(std::chrono::seconds(timeToWait / 2 + 1));
+
+    BOOST_CHECK_EQUAL(actualTaskCount.load(), 1);
+}
+
+BOOST_AUTO_TEST_CASE(PendingAllTaskShutdownTest)
+{
+    std::mutex m;
+    std::condition_variable onTestComplete;
+
+    ThreadPool threadPool;
+
+    std::uint16_t expectedTaskCount = 0;
+    std::atomic_uint actualTaskCount(0);
+    std::size_t timeToWait = 4;
+
+    ThreadPoolTask task = [&actualTaskCount, &timeToWait, &onTestComplete] ()
+                              {
+                                    std::this_thread::sleep_for(std::chrono::seconds(timeToWait));
+                                    actualTaskCount++;
+                                    onTestComplete.notify_one();
+                              };
+    threadPool.add(task);
+    ++expectedTaskCount;
+
+    threadPool.add(task);
+    ++expectedTaskCount;
+
+    std::this_thread::sleep_for(std::chrono::seconds(timeToWait / 2));
+
+    threadPool.shutdown();
+
+    {
+        std::unique_lock<std::mutex> lock(m);
+        onTestComplete.wait(lock, [&expectedTaskCount, &actualTaskCount] () { return actualTaskCount == expectedTaskCount; });
+    }
+}
+
+BOOST_AUTO_TEST_CASE(AwaitTerminationTest)
+{
+    std::mutex m;
+    std::condition_variable onStart;
+
+    ThreadPool threadPool;
+
+    bool isStart = false;
+    std::size_t timeToWait = 2;
+    std::uint16_t expectedTaskCount = 0;
+    std::atomic_uint actualTaskCount(0);
+    std::size_t timeToWaitAllTasks = 0;
+
+    ThreadPoolTask task = [&m, &onStart, &actualTaskCount, &isStart, &timeToWait] ()
+                              {
+                                    {
+                                        std::unique_lock<std::mutex> lock(m);
+                                        onStart.wait(lock, [&isStart] () { return isStart; });
+                                    }
+                                    std::this_thread::sleep_for(std::chrono::seconds(timeToWait));
+                                    actualTaskCount++;
+                              };
+
+    threadPool.add(task);
+    ++expectedTaskCount;
+    timeToWaitAllTasks += timeToWait;
+
+    threadPool.add(task);
+    ++expectedTaskCount;
+    timeToWaitAllTasks += timeToWait;
+
+    threadPool.add(task);
+    timeToWaitAllTasks += timeToWait;
+
+    threadPool.add(task);
+    timeToWaitAllTasks += timeToWait;
+
+    {
+        std::unique_lock<std::mutex> lock(m);
+        isStart = true;
+        onStart.notify_all();
+    }
+
+    std::size_t timeToWaitTwoTask = 2 * timeToWait - 1; // '-1' to wake up a bit more earlier than third task will start.
+    threadPool.awaitTermination(timeToWaitTwoTask);
+
+    std::this_thread::sleep_for(std::chrono::seconds(timeToWaitAllTasks));
+
+    BOOST_CHECK_EQUAL(actualTaskCount.load(), expectedTaskCount);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 }

@@ -282,6 +282,7 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/channel/TransportProtocolIdConstants.cpp
         impl/channel/IPTransportInfo.cpp
         impl/failover/DefaultFailoverStrategy.cpp
+        impl/context/SimpleExecutorContext.cpp
     )
 
 # Builds Kaa libraries.

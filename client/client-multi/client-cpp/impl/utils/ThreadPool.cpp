@@ -35,15 +35,15 @@ void Worker::operator ()()
     KAA_LOG_TRACE(boost::format("Starting thread pool worker [0x%x]") % std::this_thread::get_id());
 
     KAA_MUTEX_LOCKING("tasksGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPool_.tasksGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPool_.threadPoolGuard_);
     KAA_MUTEX_LOCKED("tasksGuard_");
 
     while (threadPool_.isRun_) {
-        while (threadPool_.isRun_ && threadPool_.tasks_.empty()) {
+        while (threadPool_.isRun_ && threadPool_.tasks_.empty() && !threadPool_.isPendingShutdown_) {
             KAA_CONDITION_WAIT(threadPool_.onNewTask_, tasksLock);
         }
 
-        if (!threadPool_.isRun_) {
+        if (!threadPool_.isRun_ || (threadPool_.isPendingShutdown_ && threadPool_.tasks_.empty())) {
             return;
         }
 
@@ -77,7 +77,7 @@ ThreadPool::ThreadPool(std::size_t workerCount): workerCount_(workerCount)
 
 ThreadPool::~ThreadPool()
 {
-    stop();
+    stop(true);
 }
 
 void ThreadPool::add(const ThreadPoolTask& task)
@@ -88,8 +88,13 @@ void ThreadPool::add(const ThreadPoolTask& task)
     }
 
     KAA_MUTEX_LOCKING("tasksGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(tasksLock, tasksGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPoolGuard_);
     KAA_MUTEX_LOCKED("tasksGuard_");
+
+    if (isPendingShutdown_) {
+        KAA_LOG_WARN("Failed to add task to thread pool: pending shutdown");
+        throw KaaException("Failed to add task to thread pool: pending shutdown");
+    }
 
     if (workers_.empty()) {
         start();
@@ -104,6 +109,28 @@ void ThreadPool::add(const ThreadPoolTask& task)
     onNewTask_.notify_one();
 }
 
+void ThreadPool::awaitTermination(std::size_t seconds)
+{
+    KAA_MUTEX_LOCKING("tasksGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPoolGuard_);
+    KAA_MUTEX_LOCKED("tasksGuard_");
+
+    if (isRun_) {
+        shutdownTimer_.reset(new KaaTimer<void()>("Thread pool shutdown timer"));
+        shutdownTimer_->start(seconds, [this] () { stop(true); } );
+    }
+}
+
+void ThreadPool::shutdown()
+{
+    stop(false);
+}
+
+void ThreadPool::shutdownNow()
+{
+    stop(true);
+}
+
 void ThreadPool::start()
 {
     KAA_LOG_INFO(boost::format("Going to launch %u thread pool workers") % workerCount_);
@@ -113,16 +140,21 @@ void ThreadPool::start()
     }
 }
 
-void ThreadPool::stop()
+void ThreadPool::stop(bool force)
 {
     KAA_LOG_INFO(boost::format("Going to stop %u thread pool workers (isRun=%s)")
-                        % workerCount_ % (workers_.empty() ? "false" : "true"));
+                            % workerCount_ % (workers_.empty() ? "false" : "true"));
 
-    KAA_MUTEX_UNIQUE_DECLARE(tasksLock, tasksGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(tasksLock, threadPoolGuard_);
 
     if (!workers_.empty()) {
-        tasks_.clear();
-        isRun_ = false;
+        if (force) {
+            tasks_.clear();
+            isRun_ = false;
+        } else {
+            isPendingShutdown_ = true;
+        }
+
         onNewTask_.notify_all();
 
         KAA_UNLOCK(tasksLock);

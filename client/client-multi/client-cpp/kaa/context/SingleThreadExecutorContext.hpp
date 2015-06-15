@@ -14,31 +14,26 @@
  * limitations under the License.
  */
 
-#ifndef ITHREADPOOL_HPP_
-#define ITHREADPOOL_HPP_
+#ifndef SINGLETHREADEXECUTORCONTEXT_HPP_
+#define SINGLETHREADEXECUTORCONTEXT_HPP_
 
-#include <chrono>
-#include <functional>
-#include <memory>
+#include "kaa/context/AbstractExecutorContext.hpp"
 
 namespace kaa {
 
-typedef std::function<void()> ThreadPoolTask;
-
-class IThreadPool {
+class SingleThreadExecutorContext: public AbstractExecutorContext {
 public:
-    virtual void add(const ThreadPoolTask& task) = 0;
+    virtual void init() { executor_ = createExecutor(1); }
+    virtual void stop() { shutdownExecutor(executor_); }
 
-    virtual void awaitTermination(std::size_t seconds) = 0;
+    virtual IThreadPool& getLifeCycleExecutor() { return *executor_; }
+    virtual IThreadPool& getApiExecutor() { return *executor_; }
+    virtual IThreadPool& getCallbackExecutor() { return *executor_; }
 
-    virtual void shutdown() = 0;
-    virtual void shutdownNow() = 0;
-
-    virtual ~IThreadPool() {}
+private:
+    IThreadPoolPtr    executor_;
 };
-
-typedef std::shared_ptr<IThreadPool>    IThreadPoolPtr;
 
 } /* namespace kaa */
 
-#endif /* ITHREADPOOL_HPP_ */
+#endif /* SINGLETHREADEXECUTORCONTEXT_HPP_ */

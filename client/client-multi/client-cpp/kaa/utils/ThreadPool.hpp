@@ -17,11 +17,13 @@
 #ifndef THREADPOOL_HPP_
 #define THREADPOOL_HPP_
 
+#include <atomic>
 #include <cstdlib>
 #include <vector>
 #include <thread>
 
 #include "kaa/KaaThread.hpp"
+#include "kaa/utils/KaaTimer.hpp"
 #include "kaa/utils/IThreadPool.hpp"
 
 namespace kaa {
@@ -36,23 +38,31 @@ public:
 
     virtual void add(const ThreadPoolTask& task);
 
+    virtual void awaitTermination(std::size_t seconds);
+
+    virtual void shutdown();
+    virtual void shutdownNow();
+
 public:
     static const std::size_t DEFAULT_WORKER_NUMBER = 1;
 
 private:
     void start();
-    void stop();
+    void stop(bool force);
 
 private:
     bool isRun_ = true;
+    bool isPendingShutdown_ = false;
 
     std::list<std::thread>    workers_;
     std::size_t               workerCount_ = 0;
 
-    std::list<ThreadPoolTask>   tasks_;
-    KAA_MUTEX_DECLARE(tasksGuard_);
+    std::list<ThreadPoolTask>    tasks_;
 
-    KAA_CONDITION_VARIABLE      onNewTask_;
+    KAA_MUTEX_DECLARE(threadPoolGuard_);
+    KAA_CONDITION_VARIABLE    onNewTask_;
+
+    std::unique_ptr<KaaTimer<void()>>    shutdownTimer_;
 };
 
 } /* namespace kaa */
