@@ -247,7 +247,6 @@
  "fields": [
      {"name": "endpointPublicKey", "type": ["bytes", "null"]},
      {"name": "profileBody", "type": "bytes"},
-     {"name": "sdkToken", "type": "string"},
      {"name": "endpointAccessToken", "type": ["string", "null"]}
  ]
 },

@@ -535,7 +535,6 @@ public class AvroEncDec implements PlatformEncDec {
         sync.setEndpointAccessToken(source.getEndpointAccessToken());
         sync.setEndpointPublicKey(source.getEndpointPublicKey());
         sync.setProfileBody(source.getProfileBody());
-        sync.setSdkToken(source.getSdkToken());
         return sync;
     }
 
