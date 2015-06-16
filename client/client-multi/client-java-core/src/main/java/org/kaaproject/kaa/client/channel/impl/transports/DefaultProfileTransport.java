@@ -61,7 +61,6 @@ public class DefaultProfileTransport extends AbstractKaaTransport implements
                     request.setEndpointPublicKey(ByteBuffer.wrap(clientState.getPublicKey().getEncoded()));
                 }
                 request.setProfileBody(ByteBuffer.wrap(serializedProfile));
-                request.setSdkToken(properties.getSdkToken());
                 return request;
             } else {
                 LOG.info("Profile is up to date");

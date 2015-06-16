@@ -7,11 +7,10 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ProfileSyncRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"endpointPublicKey\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"profileBody\",\"type\":\"bytes\"},{\"name\":\"sdkToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointAccessToken\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]}],\"direction\":\"out\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ProfileSyncRequest\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"endpointPublicKey\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"profileBody\",\"type\":\"bytes\"},{\"name\":\"endpointAccessToken\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"]}],\"direction\":\"out\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.nio.ByteBuffer endpointPublicKey;
    private java.nio.ByteBuffer profileBody;
-   private java.lang.String sdkToken;
    private java.lang.String endpointAccessToken;
 
   /**
@@ -24,10 +23,9 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
   /**
    * All-args constructor.
    */
-  public ProfileSyncRequest(java.nio.ByteBuffer endpointPublicKey, java.nio.ByteBuffer profileBody, java.lang.String sdkToken, java.lang.String endpointAccessToken) {
+  public ProfileSyncRequest(java.nio.ByteBuffer endpointPublicKey, java.nio.ByteBuffer profileBody, java.lang.String endpointAccessToken) {
     this.endpointPublicKey = endpointPublicKey;
     this.profileBody = profileBody;
-    this.sdkToken = sdkToken;
     this.endpointAccessToken = endpointAccessToken;
   }
 
@@ -37,8 +35,7 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
     switch (field$) {
     case 0: return endpointPublicKey;
     case 1: return profileBody;
-    case 2: return sdkToken;
-    case 3: return endpointAccessToken;
+    case 2: return endpointAccessToken;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -48,8 +45,7 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
     switch (field$) {
     case 0: endpointPublicKey = (java.nio.ByteBuffer)value$; break;
     case 1: profileBody = (java.nio.ByteBuffer)value$; break;
-    case 2: sdkToken = (java.lang.String)value$; break;
-    case 3: endpointAccessToken = (java.lang.String)value$; break;
+    case 2: endpointAccessToken = (java.lang.String)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -82,21 +78,6 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
    */
   public void setProfileBody(java.nio.ByteBuffer value) {
     this.profileBody = value;
-  }
-
-  /**
-   * Gets the value of the 'sdkToken' field.
-   */
-  public java.lang.String getSdkToken() {
-    return sdkToken;
-  }
-
-  /**
-   * Sets the value of the 'sdkToken' field.
-   * @param value the value to set.
-   */
-  public void setSdkToken(java.lang.String value) {
-    this.sdkToken = value;
   }
 
   /**
@@ -137,7 +118,6 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
 
     private java.nio.ByteBuffer endpointPublicKey;
     private java.nio.ByteBuffer profileBody;
-    private java.lang.String sdkToken;
     private java.lang.String endpointAccessToken;
 
     /** Creates a new Builder */
@@ -156,13 +136,9 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
         this.profileBody = data().deepCopy(fields()[1].schema(), other.profileBody);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.sdkToken)) {
-        this.sdkToken = data().deepCopy(fields()[2].schema(), other.sdkToken);
+      if (isValidValue(fields()[2], other.endpointAccessToken)) {
+        this.endpointAccessToken = data().deepCopy(fields()[2].schema(), other.endpointAccessToken);
         fieldSetFlags()[2] = true;
-      }
-      if (isValidValue(fields()[3], other.endpointAccessToken)) {
-        this.endpointAccessToken = data().deepCopy(fields()[3].schema(), other.endpointAccessToken);
-        fieldSetFlags()[3] = true;
       }
     }
     
@@ -177,13 +153,9 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
         this.profileBody = data().deepCopy(fields()[1].schema(), other.profileBody);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.sdkToken)) {
-        this.sdkToken = data().deepCopy(fields()[2].schema(), other.sdkToken);
+      if (isValidValue(fields()[2], other.endpointAccessToken)) {
+        this.endpointAccessToken = data().deepCopy(fields()[2].schema(), other.endpointAccessToken);
         fieldSetFlags()[2] = true;
-      }
-      if (isValidValue(fields()[3], other.endpointAccessToken)) {
-        this.endpointAccessToken = data().deepCopy(fields()[3].schema(), other.endpointAccessToken);
-        fieldSetFlags()[3] = true;
       }
     }
 
@@ -237,31 +209,6 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
       return this;
     }
 
-    /** Gets the value of the 'sdkToken' field */
-    public java.lang.String getSdkToken() {
-      return sdkToken;
-    }
-    
-    /** Sets the value of the 'sdkToken' field */
-    public org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder setSdkToken(java.lang.String value) {
-      validate(fields()[2], value);
-      this.sdkToken = value;
-      fieldSetFlags()[2] = true;
-      return this; 
-    }
-    
-    /** Checks whether the 'sdkToken' field has been set */
-    public boolean hasSdkToken() {
-      return fieldSetFlags()[2];
-    }
-    
-    /** Clears the value of the 'sdkToken' field */
-    public org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder clearSdkToken() {
-      sdkToken = null;
-      fieldSetFlags()[2] = false;
-      return this;
-    }
-
     /** Gets the value of the 'endpointAccessToken' field */
     public java.lang.String getEndpointAccessToken() {
       return endpointAccessToken;
@@ -269,21 +216,21 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
     
     /** Sets the value of the 'endpointAccessToken' field */
     public org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder setEndpointAccessToken(java.lang.String value) {
-      validate(fields()[3], value);
+      validate(fields()[2], value);
       this.endpointAccessToken = value;
-      fieldSetFlags()[3] = true;
+      fieldSetFlags()[2] = true;
       return this; 
     }
     
     /** Checks whether the 'endpointAccessToken' field has been set */
     public boolean hasEndpointAccessToken() {
-      return fieldSetFlags()[3];
+      return fieldSetFlags()[2];
     }
     
     /** Clears the value of the 'endpointAccessToken' field */
     public org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest.Builder clearEndpointAccessToken() {
       endpointAccessToken = null;
-      fieldSetFlags()[3] = false;
+      fieldSetFlags()[2] = false;
       return this;
     }
 
@@ -293,8 +240,7 @@ public class ProfileSyncRequest extends org.apache.avro.specific.SpecificRecordB
         ProfileSyncRequest record = new ProfileSyncRequest();
         record.endpointPublicKey = fieldSetFlags()[0] ? this.endpointPublicKey : (java.nio.ByteBuffer) defaultValue(fields()[0]);
         record.profileBody = fieldSetFlags()[1] ? this.profileBody : (java.nio.ByteBuffer) defaultValue(fields()[1]);
-        record.sdkToken = fieldSetFlags()[2] ? this.sdkToken : (java.lang.String) defaultValue(fields()[2]);
-        record.endpointAccessToken = fieldSetFlags()[3] ? this.endpointAccessToken : (java.lang.String) defaultValue(fields()[3]);
+        record.endpointAccessToken = fieldSetFlags()[2] ? this.endpointAccessToken : (java.lang.String) defaultValue(fields()[2]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
+
 import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -63,7 +64,7 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         defaultGeoFencingDeviceAefMap.put("org.kaaproject.kaa.demo.iotworld.geo.OperationModeUpdateRequest", ApplicationEventAction.SINK);
         defaultGeoFencingDeviceAefMap.put("org.kaaproject.kaa.demo.iotworld.geo.GeoFencingPositionUpdate", ApplicationEventAction.SINK);
     }
-        
+
     private Map<String, SdkPropertiesDto> projectsSdkMap = new HashMap<>();
 
     protected IotWorldDemoBuilder() {
@@ -504,7 +505,7 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         client.addEventClassFamilySchema(eventClassFamily.getId(), getResourcePath(resource));
         return eventClassFamily;
     }
-    
+
     private SdkPropertiesDto createSdkProperties(AdminClient client,
                                        String applicationId,
                                        boolean createVerifier) throws Exception {

@@ -621,7 +621,6 @@ public class BinaryEncDec implements PlatformEncDec {
         int payloadLimitPosition = buf.position() + payloadLength;
         ProfileClientSync profileSync = new ProfileClientSync();
         profileSync.setProfileBody(getNewByteBuffer(buf, buf.getInt()));
-        profileSync.setSdkToken(getUTF8String(buf, Constants.SDK_TOKEN_SIZE));
         while (buf.position() < payloadLimitPosition) {
             byte fieldId = buf.get();
             // reading unused reserved field

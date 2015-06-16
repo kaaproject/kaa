@@ -20,7 +20,6 @@ import java.nio.ByteBuffer;
 public class ProfileClientSync {
     private ByteBuffer endpointPublicKey;
     private ByteBuffer profileBody;
-    private String sdkToken;
     private String endpointAccessToken;
 
     public ProfileClientSync() {
@@ -33,7 +32,6 @@ public class ProfileClientSync {
             String endpointAccessToken) {
         this.endpointPublicKey = endpointPublicKey;
         this.profileBody = profileBody;
-        this.sdkToken = sdkToken;
         this.endpointAccessToken = endpointAccessToken;
     }
 
@@ -72,23 +70,6 @@ public class ProfileClientSync {
     }
 
     /**
-     * Gets the value of the 'sdkToken' field.
-     */
-    public String getSdkToken() {
-        return sdkToken;
-    }
-
-    /**
-     * Sets the value of the 'sdkToken' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setSdkToken(String value) {
-        this.sdkToken = value;
-    }
-
-    /**
      * Gets the value of the 'endpointAccessToken' field.
      */
     public String getEndpointAccessToken() {
@@ -112,7 +93,6 @@ public class ProfileClientSync {
         result = prime * result + ((endpointAccessToken == null) ? 0 : endpointAccessToken.hashCode());
         result = prime * result + ((endpointPublicKey == null) ? 0 : endpointPublicKey.hashCode());
         result = prime * result + ((profileBody == null) ? 0 : profileBody.hashCode());
-        result = prime * result + ((sdkToken == null) ? 0 : sdkToken.hashCode());
         return result;
     }
 
@@ -149,13 +129,6 @@ public class ProfileClientSync {
         } else if (!profileBody.equals(other.profileBody)) {
             return false;
         }
-        if (sdkToken == null) {
-            if (other.sdkToken != null) {
-                return false;
-            }
-        } else if (!sdkToken.equals(other.sdkToken)) {
-            return false;
-        }
         return true;
     }
 
@@ -166,8 +139,6 @@ public class ProfileClientSync {
         builder.append(endpointPublicKey);
         builder.append(", profileBody=");
         builder.append(profileBody);
-        builder.append(", sdkToken=");
-        builder.append(sdkToken);
         builder.append(", endpointAccessToken=");
         builder.append(endpointAccessToken);
         builder.append("]");

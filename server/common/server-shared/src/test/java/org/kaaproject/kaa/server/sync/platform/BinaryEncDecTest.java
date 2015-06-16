@@ -234,19 +234,12 @@ public class BinaryEncDecTest {
 
     @Test
     public void testProfileClientSync() throws PlatformEncDecException {
-        ByteBuffer buf = ByteBuffer.wrap(new byte[4 + 100 + 4 + 32 + 4 + 128 + 4 + 8]);
-        String sdkToken = "12345678900987654321abcdEFGH";
+        ByteBuffer buf = ByteBuffer.wrap(new byte[4 + 100 + 4 + 4 + 128 + 4 + 8]);
         // profile length and data
         buf.putInt(100);
         byte[] profileBody = new byte[100];
         profileBody[MAGIC_INDEX] = MAGIC_NUMBER;
         buf.put(profileBody);
-        // sdk token
-        buf.put(sdkToken.getBytes(Charset.forName("UTF-8")));
-        buf.put((byte) 0);
-        buf.put((byte) 0);
-        buf.put((byte) 0);
-        buf.put((byte) 0);
         // public key
         buf.put((byte) 6);
         buf.put((byte) 0);
@@ -273,7 +266,6 @@ public class BinaryEncDecTest {
         ProfileClientSync pSync = sync.getProfileSync();
         Assert.assertEquals(MAGIC_NUMBER, pSync.getProfileBody().array()[MAGIC_INDEX]);
         Assert.assertEquals(MAGIC_NUMBER, pSync.getEndpointPublicKey().array()[MAGIC_INDEX]);
-        Assert.assertEquals(sdkToken, pSync.getSdkToken());
         Assert.assertEquals("token", pSync.getEndpointAccessToken());
     }
 
