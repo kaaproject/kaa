@@ -510,12 +510,10 @@ struct ProfileSyncRequest {
     typedef _endpoint_avsc_Union__12__ endpointAccessToken_t;
     endpointPublicKey_t endpointPublicKey;
     std::vector<uint8_t> profileBody;
-    std::string sdkToken;
     endpointAccessToken_t endpointAccessToken;
     ProfileSyncRequest() :
         endpointPublicKey(endpointPublicKey_t()),
         profileBody(std::vector<uint8_t>()),
-        sdkToken(std::string()),
         endpointAccessToken(endpointAccessToken_t())
         { }
 };
@@ -3963,13 +3961,11 @@ template<> struct codec_traits<kaa::ProfileSyncRequest> {
     static void encode(Encoder& e, const kaa::ProfileSyncRequest& v) {
         avro::encode(e, v.endpointPublicKey);
         avro::encode(e, v.profileBody);
-        avro::encode(e, v.sdkToken);
         avro::encode(e, v.endpointAccessToken);
     }
     static void decode(Decoder& d, kaa::ProfileSyncRequest& v) {
         avro::decode(d, v.endpointPublicKey);
         avro::decode(d, v.profileBody);
-        avro::decode(d, v.sdkToken);
         avro::decode(d, v.endpointAccessToken);
     }
 };
