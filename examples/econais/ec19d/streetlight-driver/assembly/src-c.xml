@@ -37,7 +37,7 @@
             <fileMode>0777</fileMode>
        </file>
        <file>
-            <source>${project.basedir}/deploy.sh</source>
+            <source>${project.basedir}/generate_kaa_key.sh</source>
             <outputDirectory>StreetLight</outputDirectory>
             <destName>generate_kaa_key.sh</destName>
             <fileMode>0777</fileMode>
