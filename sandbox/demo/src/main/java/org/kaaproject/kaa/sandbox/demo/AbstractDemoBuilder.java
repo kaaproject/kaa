@@ -208,7 +208,7 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
     protected String getResourcePath(String resource) {
         return resourcesPath + "/" + resource;
     }
-    
+
     protected boolean isMultiApplicationProject() {
         return false;
     }
