@@ -248,26 +248,6 @@ void test_profile_sync_serialize()
         ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     }
 
-    network_order_32 = KAA_HTONS(CONFIG_SCHEMA_VERSION) << 16 | CONFIG_SCHEMA_VERSION_VALUE;
-    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    network_order_32 = KAA_HTONS(PROFILE_SCHEMA_VERSION) << 16 | PROFILE_SCHEMA_VERSION_VALUE;
-    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    network_order_32 = KAA_HTONS(SYSTEM_NF_SCHEMA_VERSION) << 16 | SYS_NF_VERSION_VALUE;
-    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    network_order_32 = KAA_HTONS(USER_NF_SCHEMA_VERSION) << 16 | USER_NF_VERSION_VALUE;
-    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    network_order_32 = KAA_HTONS(LOG_SCHEMA_VERSION) << 16 | LOG_SCHEMA_VERSION_VALUE;
-    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
 #if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
     network_order_32 = KAA_HTONS(KAA_EVENT_SCHEMA_VERSIONS_SIZE) << 16 | EVENT_FAMILY_VERSIONS_COUNT_VALUE;
     error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
