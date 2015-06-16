@@ -32,13 +32,9 @@ extern "C" {
 # define BUILD_VERSION                  "0.6.1-SNAPSHOT"
 # define BUILD_COMMIT_HASH              "N/A"
 
-# define APPLICATION_TOKEN              "01234567890123456789"
+# define KAA_SDK_TOKEN                  "0123456789012345678912345678"
 
-# define CONFIG_SCHEMA_VERSION          6
 # define PROFILE_SCHEMA_VERSION         7
-# define SYSTEM_NF_SCHEMA_VERSION       1
-# define USER_NF_SCHEMA_VERSION         5
-# define LOG_SCHEMA_VERSION             4
 
 # define KAA_SYNC_TIMEOUT               60000L
 

@@ -124,12 +124,10 @@ public class CSdkGenerator extends SdkGenerator {
                            List<EventFamilyMetadata> eventFamilies,
                            String logSchemaBody) throws Exception {
 
-        String appToken = sdkProperties.getApplicationToken();
         Integer configurationSchemaVersion = sdkProperties.getConfigurationSchemaVersion();
         Integer profileSchemaVersion = sdkProperties.getProfileSchemaVersion();
         Integer notificationSchemaVersion = sdkProperties.getNotificationSchemaVersion();
         Integer logSchemaVersion = sdkProperties.getLogSchemaVersion();
-        String defaultVerifierToken = sdkProperties.getDefaultVerifierToken();
 
         String sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + C_SDK_DIR + "/" + C_SDK_PREFIX + buildVersion + ".tar.gz";
 
@@ -180,13 +178,11 @@ public class CSdkGenerator extends SdkGenerator {
             if (!e.isDirectory()) {
                 if (e.getName().equals(KAA_DEFAULTS_HEADER)) {
                     // TODO: eliminate schema versions and substitute them for a single sdkToken
-                    byte[] kaaDefaultsData = generateKaaDefaults(bootstrapNodes, appToken,
-                                                                 configurationSchemaVersion, profileSchemaVersion,
-                                                                 notificationSchemaVersion, logSchemaVersion,
+                    byte[] kaaDefaultsData = generateKaaDefaults(bootstrapNodes, sdkToken,
+                                                                 profileSchemaVersion,
                                                                  configurationProtocolSchemaBody,
                                                                  defaultConfigurationData,
-                                                                 eventFamilies,
-                                                                 defaultVerifierToken);
+                                                                 eventFamilies);
 
                     TarArchiveEntry kaaDefaultsEntry = new TarArchiveEntry(KAA_DEFAULTS_HEADER);
                     kaaDefaultsEntry.setSize(kaaDefaultsData.length);
@@ -242,7 +238,7 @@ public class CSdkGenerator extends SdkGenerator {
                                                               profileSchemaVersion,
                                                               configurationSchemaVersion,
                                                               notificationSchemaVersion,
-                                                              logSchemaVersion}).getMessage();
+                                                              logSchemaVersion }).getMessage();
 
         Sdk sdk = new Sdk();
         sdk.setFileName(sdkFileName);
@@ -305,15 +301,11 @@ public class CSdkGenerator extends SdkGenerator {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private byte[] generateKaaDefaults(List<BootstrapNodeInfo> bootstrapNodes,
-                                       String appToken,
-                                       int configurationSchemaVersion,
+                                       String sdkToken,
                                        int profileSchemaVersion,
-                                       int notificationSchemaVersion,
-                                       int logSchemaVersion,
                                        String configurationProtocolSchemaBody,
                                        byte[] defaultConfigurationData,
-                                       List<EventFamilyMetadata> eventFamilies,
-                                       String defaultVerifierToken) throws IOException {
+                                       List<EventFamilyMetadata> eventFamilies) throws IOException {
 
         VelocityContext context = new VelocityContext();
 
@@ -321,13 +313,7 @@ public class CSdkGenerator extends SdkGenerator {
 
         context.put("build_version", Version.PROJECT_VERSION);
         context.put("build_commit_hash", Version.COMMIT_HASH);
-        context.put("app_token", appToken);
-        context.put("config_version", configurationSchemaVersion);
-        context.put("profile_version", profileSchemaVersion);
-        context.put("user_nf_version", notificationSchemaVersion);
-        context.put("log_version", logSchemaVersion);
-        context.put("system_nf_version", 1);
-        context.put("user_verifier_token", (defaultVerifierToken != null ? defaultVerifierToken : ""));
+        context.put("sdk_token", sdkToken);
 
         context.put("eventFamilies", eventFamilies);
         context.put("bootstrapNodes", bootstrapNodes);
