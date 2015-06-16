@@ -32,7 +32,7 @@
     <files>
        <file>
             <source>${project.basedir}/deploy.sh</source>
-            <outputDirectory>StreetLight</outputDirectory>
+            <outputDirectory>TrafficLights</outputDirectory>
             <destName>deploy.sh</destName>
             <fileMode>0777</fileMode>
        </file>
