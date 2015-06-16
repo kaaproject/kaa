@@ -329,22 +329,8 @@ public class CppSdkGenerator extends SdkGenerator {
         }
 
         kaaDefaultsString = replaceVar(kaaDefaultsString, BOOTSTRAP_SERVERS_INFO_VAR, bootstrapServers);
-
-        kaaDefaultsString = replaceVar(kaaDefaultsString, CONFIG_SCHEMA_DEFAULT_VAR, configurationProtocolSchemaBody.replace("\"", "\\\""));
         kaaDefaultsString = replaceVar(kaaDefaultsString, CONFIG_DATA_DEFAULT_VAR, Base64.encodeBase64String(defaultConfigurationData));
 
-        String eventFamilyVersions = "";
-
-        for (int i=0;i<eventFamilies.size();i++) {
-            EventFamilyMetadata eventFamily = eventFamilies.get(i);
-            if (i>0) {
-                eventFamilyVersions += ", ";
-            }
-            eventFamilyVersions += "{\"" + eventFamily.getEcfName() + "\"," + eventFamily.getVersion() + "}";
-        }
-        eventFamilyVersions = "{ " + eventFamilyVersions + " }";
-
-        kaaDefaultsString = replaceVar(kaaDefaultsString, EVENT_FAMILY_VERSION_VAR, eventFamilyVersions);
         return kaaDefaultsString.getBytes();
     }
 
