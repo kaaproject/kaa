@@ -314,7 +314,8 @@ public class CSdkGenerator extends SdkGenerator {
         context.put("build_version", Version.PROJECT_VERSION);
         context.put("build_commit_hash", Version.COMMIT_HASH);
         context.put("sdk_token", sdkToken);
-
+        
+        context.put("profile_version", profileSchemaVersion);
         context.put("eventFamilies", eventFamilies);
         context.put("bootstrapNodes", bootstrapNodes);
         context.put("configurationData", defaultConfigurationData);
