@@ -38,9 +38,11 @@
 
 namespace kaa {
 
+class IExecutorContext;
+
 class NotificationManager : public INotificationManager, public INotificationProcessor {
 public:
-    NotificationManager(IKaaClientStateStoragePtr status);
+    NotificationManager(IKaaClientStateStoragePtr status, IExecutorContext& executorContext);
 
     virtual void addTopicListListener(INotificationTopicListListener& listener);
     virtual void removeTopicListListener(INotificationTopicListListener& listener);
@@ -73,6 +75,8 @@ private:
     bool notifyOptionalNotificationSubscribers(const std::string& id, const KaaNotification& notification);
 
 private:
+    IExecutorContext& executorContext_;
+
     std::shared_ptr<NotificationTransport>    transport_;
     IKaaClientStateStoragePtr                 clientStatus_;
 

@@ -75,11 +75,11 @@ case "$cmd" in
     cd $TEST_DIR
     mkdir -p build; cd build; cmake ..; cd ..
     run_tests
-    if [[ $TEST_BUILD_FAILED -eq 0 ]]
-    then
-        measure_coverage  
-    fi
-    test_cleanup
+    #if [[ $TEST_BUILD_FAILED -eq 0 ]]
+    #then
+        #    measure_coverage  
+    #fi
+    #test_cleanup
     if [[ $TEST_RESULT -ne 0 ]]
     then
         echo "Kaa C++ SDK unittests have failed!"

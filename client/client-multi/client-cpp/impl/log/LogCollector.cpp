@@ -24,6 +24,8 @@
 #include "kaa/log/DefaultLogUploadStrategy.hpp"
 #include "kaa/common/exception/TransportNotFoundException.hpp"
 #include "kaa/log/LogRecord.hpp"
+#include "kaa/context/IExecutorContext.hpp"
+#include "kaa/utils/IThreadPool.hpp"
 
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
 #include "kaa/log/SQLiteDBLogStorage.hpp"
@@ -33,10 +35,10 @@
 
 namespace kaa {
 
-LogCollector::LogCollector(IKaaChannelManagerPtr manager)
+LogCollector::LogCollector(IKaaChannelManagerPtr manager, IExecutorContext& executorContext)
     : transport_(nullptr), channelManager_(manager), timeoutAccessPointId_(0),
       logUploadCheckTimer_("LogCollector logUploadCheckTimer"), uploadTimer_("LogCollector uploadTimer"),
-      timeoutTimer_("LogCollector timeoutTimer")
+      timeoutTimer_("LogCollector timeoutTimer"), executorContext_(executorContext)
 {
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
     storage_.reset(new SQLiteDBLogStorage());
@@ -83,19 +85,21 @@ void LogCollector::processTimeout()
 
 void LogCollector::addLogRecord(const KaaUserLogRecord& record)
 {
-    LogRecordPtr serializedRecord(new LogRecord(record));
+    executorContext_.getApiExecutor().add([this, &record] ()
+            {
+                LogRecordPtr serializedRecord(new LogRecord(record));
 
-    KAA_MUTEX_LOCKING("storageGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
-    KAA_MUTEX_LOCKED("storageGuard_");
-    storage_->addLogRecord(serializedRecord);
+                KAA_MUTEX_LOCKING("storageGuard_");
+                KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
+                KAA_MUTEX_LOCKED("storageGuard_");
+                storage_->addLogRecord(serializedRecord);
 
-    KAA_MUTEX_UNLOCKING("storageGuard_");
-    KAA_UNLOCK(lock);
-    KAA_MUTEX_UNLOCKED("storageGuard_");
+                KAA_MUTEX_UNLOCKING("storageGuard_");
+                KAA_UNLOCK(lock);
+                KAA_MUTEX_UNLOCKED("storageGuard_");
 
-    processLogUploadDecision(uploadStrategy_->isUploadNeeded(storage_->getStatus()));
-
+                processLogUploadDecision(uploadStrategy_->isUploadNeeded(storage_->getStatus()));
+            });
 }
 
 void LogCollector::processLogUploadDecision(LogUploadStrategyDecision decision)

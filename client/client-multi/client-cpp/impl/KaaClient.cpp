@@ -37,6 +37,7 @@
 #include "kaa/failover/DefaultFailoverStrategy.hpp"
 
 #include "kaa/logging/Log.hpp"
+#include "kaa/context/SimpleExecutorContext.hpp"
 
 namespace kaa {
 
@@ -55,6 +56,8 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 
     initClientKeys();
 
+    executorContext_.reset(new SimpleExecutorContext);
+
 #ifdef KAA_USE_CONFIGURATION
     configurationProcessor_.reset(new ConfigurationProcessor);
     configurationManager_.reset(new ConfigurationManager);
@@ -71,12 +74,12 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 #endif
 
 #ifdef KAA_USE_NOTIFICATIONS
-    notificationManager_.reset(new NotificationManager(status_));
+    notificationManager_.reset(new NotificationManager(status_, *executorContext_));
 #endif
     profileManager_.reset(new ProfileManager());
 
 #ifdef KAA_USE_LOGGING
-    logCollector_.reset(new LogCollector(channelManager_.get()));
+    logCollector_.reset(new LogCollector(channelManager_.get(), *executorContext_));
 #endif
 
     initKaaConfiguration();

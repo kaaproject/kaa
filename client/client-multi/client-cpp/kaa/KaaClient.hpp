@@ -38,6 +38,7 @@
 #include "kaa/configuration/manager/ConfigurationManager.hpp"
 #include "kaa/configuration/storage/ConfigurationPersistenceManager.hpp"
 #include "kaa/log/LogCollector.hpp"
+#include "kaa/context/IExecutorContext.hpp"
 
 namespace kaa {
 
@@ -127,7 +128,7 @@ public:
 private:
     IKaaClientStateStoragePtr                       status_;
     IBootstrapManagerPtr                            bootstrapManager_;
-    IFailoverStrategyPtr 							failoverStrategy_;
+    IFailoverStrategyPtr                            failoverStrategy_;
 
     std::unique_ptr<ProfileManager>                 profileManager_;
     std::unique_ptr<NotificationManager>            notificationManager_;
@@ -149,6 +150,8 @@ private:
     std::unique_ptr<DefaultOperationTcpChannel>       opsTcpChannel_;
     std::unique_ptr<DefaultOperationHttpChannel>      opsHttpChannel_;
     std::unique_ptr<DefaultOperationLongPollChannel>  opsLongPollChannel_;
+
+    std::unique_ptr<IExecutorContext>                 executorContext_;
 
     int options_;
 };

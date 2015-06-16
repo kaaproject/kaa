@@ -113,30 +113,30 @@ set ( KAA_TEST_SOURCES
         ../impl/utils/ThreadPool.cpp
         ../impl/context/SimpleExecutorContext.cpp
         TestRunner.cpp
-        impl/common/EndpointObjectHashTest.cpp
-        impl/common/AvroByteArrayConverterTest.cpp
-        impl/configuration/ConfigurationPersistenceTest.cpp
-        impl/configuration/ConfigurationProcessorTest.cpp
-        impl/configuration/ConfigurationManagerTest.cpp
-        impl/configuration/FileConfigurationStorageTest.cpp
-        impl/http/HttpUrlTest.cpp
-        impl/http/HttpResponseTest.cpp
-        impl/http/HttpRequestTest.cpp
-        impl/ClientStatusTest.cpp
-        impl/event/EndpointRegistrationManagerTest.cpp
-        impl/security/KeyUtilsTest.cpp
-        impl/event/EventTransportTest.cpp
-        impl/channel/KaaChannelManagerTest.cpp
-        impl/notification/NotificationTransportTest.cpp
+#        impl/common/EndpointObjectHashTest.cpp
+#        impl/common/AvroByteArrayConverterTest.cpp
+#        impl/configuration/ConfigurationPersistenceTest.cpp
+#        impl/configuration/ConfigurationProcessorTest.cpp
+#        impl/configuration/ConfigurationManagerTest.cpp
+#        impl/configuration/FileConfigurationStorageTest.cpp
+#        impl/http/HttpUrlTest.cpp
+#        impl/http/HttpResponseTest.cpp
+#        impl/http/HttpRequestTest.cpp
+#        impl/ClientStatusTest.cpp
+#        impl/event/EndpointRegistrationManagerTest.cpp
+#        impl/security/KeyUtilsTest.cpp
+#        impl/event/EventTransportTest.cpp
+#        impl/channel/KaaChannelManagerTest.cpp
+#        impl/notification/NotificationTransportTest.cpp
         impl/notification/NotificationManagerTest.cpp
-        impl/kaatcp/KaaTcpTest.cpp
-        impl/channel/IPConnectivityCheckerTest.cpp
-        impl/log/DefaultLogUploadStrategyTest.cpp
-        impl/log/MemoryLogStorageTest.cpp
-        impl/log/LogCollectorTest.cpp
-        impl/log/SQLiteDBLogStorageTest.cpp
-        impl/utils/KaaTimerTest.cpp
-        impl/utils/ThreadPoolTest.cpp
+#        impl/kaatcp/KaaTcpTest.cpp
+#        impl/channel/IPConnectivityCheckerTest.cpp
+#        impl/log/DefaultLogUploadStrategyTest.cpp
+#        impl/log/MemoryLogStorageTest.cpp
+#        impl/log/LogCollectorTest.cpp
+#        impl/log/SQLiteDBLogStorageTest.cpp
+#        impl/utils/KaaTimerTest.cpp
+#        impl/utils/ThreadPoolTest.cpp
     )
 
 add_executable ( kaatest  ${KAA_TEST_SOURCES})
