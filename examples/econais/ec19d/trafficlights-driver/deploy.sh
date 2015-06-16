@@ -42,7 +42,7 @@ function copySources {
     current_folder_name=${PWD##*/}
     if [ ! -d "$ECONAIS_HOME_VAR/applications" ]
     then
-        echo "Can't find application folder. Check the path to the root econais folder..."
+        echo "Can't find application folder. Check the path to the root Econais folder..."
         exit 1
     fi
     mkdir -p "$ECONAIS_HOME_VAR/applications/$current_folder_name"

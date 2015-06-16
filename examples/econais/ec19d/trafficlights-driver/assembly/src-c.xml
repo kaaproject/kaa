@@ -29,4 +29,12 @@
             <outputDirectory>TrafficLights</outputDirectory>
         </fileSet>
     </fileSets>
+    <files>
+       <file>
+            <source>${project.basedir}/deploy.sh</source>
+            <outputDirectory>StreetLight</outputDirectory>
+            <destName>deploy.sh</destName>
+            <fileMode>0777</fileMode>
+       </file>
+    </files>
 </assembly>
