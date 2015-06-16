@@ -81,7 +81,7 @@ EndpointObjectHash ConfigurationPersistenceManager::getConfigurationHash()
 
 void ConfigurationPersistenceManager::readStoredConfiguration()
 {
-    if (state_->isConfigurationVersionUpdated()) {
+    if (state_->isSDKPropertiesUpdated()) {
         KAA_LOG_INFO("Ignore loading configuration from storage: configuration version updated");
         return;
     }
