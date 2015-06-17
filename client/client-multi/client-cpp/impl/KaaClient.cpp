@@ -61,7 +61,7 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 
 #ifdef KAA_USE_CONFIGURATION
     configurationProcessor_.reset(new ConfigurationProcessor);
-    configurationManager_.reset(new ConfigurationManager);
+    configurationManager_.reset(new ConfigurationManager(*executorContext_));
 #endif
 
     bootstrapManager_.reset(new BootstrapManager);

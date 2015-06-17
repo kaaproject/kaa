@@ -19,13 +19,24 @@
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/common/exception/KaaException.hpp"
 
+#include "kaa/context/SimpleExecutorContext.hpp"
+
 #include <fstream>
+#include <thread>
+#include <chrono>
 #include <avro/Compiler.hh>
 #include "resources/AvroAutoGen.hpp"
 
 #include <boost/test/unit_test.hpp>
 
+#include "headers/context/MockExecutorContext.hpp"
+
 namespace kaa {
+
+static void testSleep(std::size_t seconds)
+{
+    std::this_thread::sleep_for(std::chrono::seconds(seconds));
+}
 
 class ConfigurationReceiverMock : public IConfigurationReceiver
 {
@@ -50,7 +61,9 @@ BOOST_AUTO_TEST_SUITE(ConfigurationManagerSuite)
 
 BOOST_AUTO_TEST_CASE(configurationUpdated)
 {
-    ConfigurationManager manager;
+    SimpleExecutorContext context;
+    context.init();
+    ConfigurationManager manager(context);
     ConfigurationReceiverMock receiver;
 
     manager.subscribeForConfigurationChanges(receiver);
@@ -59,14 +72,18 @@ BOOST_AUTO_TEST_CASE(configurationUpdated)
     KaaRootConfiguration rootConfig = convert.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size());
 
     manager.onDeltaReceived(0, rootConfig, true);
+    testSleep(1);
     BOOST_CHECK(!receiver.isConfigurationReceived());
+
     manager.onConfigurationProcessed();
+    testSleep(1);
     BOOST_CHECK(receiver.isConfigurationReceived());
 
     manager.unsubscribeFromConfigurationChanges(receiver);
     receiver.reset();
     manager.onDeltaReceived(0, rootConfig, true);
     manager.onConfigurationProcessed();
+    testSleep(1);
     BOOST_CHECK(!receiver.isConfigurationReceived());
 
     const auto& checkConfiguration = manager.getConfiguration();
@@ -76,7 +93,8 @@ BOOST_AUTO_TEST_CASE(configurationUpdated)
 
 BOOST_AUTO_TEST_CASE(configurationPartialUpdated)
 {
-    ConfigurationManager manager;
+    MockExecutorContext context;
+    ConfigurationManager manager(context);
 
     AvroByteArrayConverter<KaaRootConfiguration> convert;
     KaaRootConfiguration rootConfig = convert.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size());

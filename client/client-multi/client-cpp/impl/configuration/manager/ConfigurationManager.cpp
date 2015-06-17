@@ -25,6 +25,8 @@
 #include "kaa/common/exception/KaaException.hpp"
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
+#include "kaa/context/IExecutorContext.hpp"
+#include "kaa/utils/IThreadPool.hpp"
 
 namespace kaa {
 
@@ -68,7 +70,7 @@ void ConfigurationManager::onDeltaReceived(int index, const KaaRootConfiguration
 
 void ConfigurationManager::onConfigurationProcessed()
 {
-    configurationReceivers_(root_);
+    executorContext_.getCallbackExecutor().add([this] { configurationReceivers_(root_); });
 }
 
 }  // namespace kaa
