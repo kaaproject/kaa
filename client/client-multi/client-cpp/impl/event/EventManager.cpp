@@ -231,6 +231,8 @@ std::int32_t EventManager::findEventListeners(const std::list<std::string>& even
 
     KAA_LOG_TRACE("Added event listeners resolving request");
 
+    doSync();
+
     return requestId;
 }
 
