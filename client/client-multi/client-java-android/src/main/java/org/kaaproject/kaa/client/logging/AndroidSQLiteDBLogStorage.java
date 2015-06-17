@@ -271,13 +271,12 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 long affectedRows = getAffectedRowCount();
                 if (affectedRows > 0) {
                     Log.i(TAG, "Total " + affectedRows + " log records reset for bucket id: [" + bucketId + "]");
+                    long previouslyConsumedSize = consumedMemoryStorage.remove(bucketId);
+                    consumedSize += previouslyConsumedSize;
                 } else {
-                    Log.w(TAG, "No log records for bucket with id: [" + bucketId + "]");
+                    Log.i(TAG, "No log records for bucket with id: [" + bucketId + "]");
                 }
 
-                long previouslyConsumedSize = consumedMemoryStorage.get(bucketId);
-                consumedMemoryStorage.remove(bucketId);
-                consumedSize += previouslyConsumedSize;
             } catch (SQLiteException e) {
                 Log.e(TAG, "Failed to reset bucket with id [" + bucketId + "]", e);
             }
