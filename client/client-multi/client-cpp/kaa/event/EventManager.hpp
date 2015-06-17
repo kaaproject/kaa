@@ -36,15 +36,17 @@
 
 namespace kaa {
 
+class IExecutorContext;
+
 class EventManager : public IEventManager
                    , public IEventListenersResolver
                    , public IEventDataProcessor
                    , public AbstractTransactable<std::list<Event> >
 {
 public:
-    EventManager(IKaaClientStateStoragePtr status)
+    EventManager(IKaaClientStateStoragePtr status, IExecutorContext& executorContext)
         : currentEventIndex_(0),eventTransport_(nullptr)
-        , status_(status)
+        , status_(status), executorContext_(executorContext)
     {
     }
 
@@ -90,6 +92,9 @@ private:
                          , const std::string& source);
 
     void generateUniqueRequestId(std::string& requstId);
+
+    void doSync();
+
 private:
     std::set<IEventFamily*>   eventFamilies_;
     std::map<std::int32_t, Event>          pendingEvents_;
@@ -102,6 +107,8 @@ private:
 
     std::map<std::int32_t/*request id*/, std::shared_ptr<EventListenersInfo> > eventListenersRequests_;
     KAA_MUTEX_MUTABLE_DECLARE(eventListenersGuard_);
+
+    IExecutorContext& executorContext_;
 };
 
 } /* namespace kaa */
