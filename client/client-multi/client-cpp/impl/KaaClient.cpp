@@ -89,31 +89,44 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 
 void KaaClient::start()
 {
+    executorContext_->getLifeCycleExecutor().add([this]
+    {
 #ifdef KAA_USE_CONFIGURATION
-    auto configHash = configurationPersistenceManager_->getConfigurationHash().getHashDigest();
-    if (configHash.empty()) {
-        SequenceNumber sn = { 0, 0, 1 };
-        status_->setAppSeqNumber(sn);
-        setDefaultConfiguration();
-    }
+        auto configHash = configurationPersistenceManager_->getConfigurationHash().getHashDigest();
+        if (configHash.empty()) {
+            SequenceNumber sn = { 0, 0, 1 };
+            status_->setAppSeqNumber(sn);
+            setDefaultConfiguration();
+        }
 #endif
-    bootstrapManager_->receiveOperationsServerList();
+        bootstrapManager_->receiveOperationsServerList();
+    });
 }
 
 void KaaClient::stop()
 {
-    channelManager_->shutdown();
+    executorContext_->getLifeCycleExecutor().add([this]
+                                                {
+                                                    channelManager_->shutdown();
+                                                });
     executorContext_->stop();
 }
 
 void KaaClient::pause()
 {
-    channelManager_->pause();
+    executorContext_->getLifeCycleExecutor().add([this]
+                                                {
+                                                    status_->save();
+                                                    channelManager_->pause();
+                                                });
 }
 
 void KaaClient::resume()
 {
-    channelManager_->resume();
+    executorContext_->getLifeCycleExecutor().add([this]
+                                                {
+                                                    channelManager_->resume();
+                                                });
 }
 
 void KaaClient::initKaaConfiguration()
