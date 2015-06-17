@@ -38,11 +38,13 @@ struct EndpointDetachResponse;
 struct UserAttachNotification;
 struct UserDetachNotification;
 
+class IExecutorContext;
+
 class EndpointRegistrationManager : public IEndpointRegistrationManager
                                   , public IRegistrationProcessor
 {
 public:
-    EndpointRegistrationManager(IKaaClientStateStoragePtr status);
+    EndpointRegistrationManager(IKaaClientStateStoragePtr status, IExecutorContext& executorContext);
 
     virtual void attachEndpoint(const std::string&  endpointAccessToken
                               , IAttachEndpointCallbackPtr listener = IAttachEndpointCallbackPtr());
@@ -109,6 +111,8 @@ private:
 
     std::unordered_map<std::int32_t, IAttachEndpointCallbackPtr> attachEndpointListeners_;
     std::unordered_map<std::int32_t, IDetachEndpointCallbackPtr> detachEndpointListeners_;
+
+    IExecutorContext& executorContext_;
 };
 
 }

@@ -69,7 +69,7 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
     failoverStrategy_.reset(new DefaultFailoverStrategy);
     channelManager_->setFailoverStrategy(failoverStrategy_);
 #ifdef KAA_USE_EVENTS
-    registrationManager_.reset(new EndpointRegistrationManager(status_));
+    registrationManager_.reset(new EndpointRegistrationManager(status_, *executorContext_));
     eventManager_.reset(new EventManager(status_, *executorContext_));
     eventFamilyFactory_.reset(new EventFamilyFactory(*eventManager_, *eventManager_));
 #endif
