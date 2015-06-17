@@ -66,7 +66,7 @@ void test_meta_extension_get_size()
                                               + sizeof(uint32_t) /* timeout */
                                               + SHA_1_DIGEST_LENGTH
                                               + SHA_1_DIGEST_LENGTH
-                                              + KAA_APPLICATION_TOKEN_LENGTH;
+                                              + KAA_SDK_TOKEN_LENGTH;
 
     size_t meta_extension_size;
     kaa_error_t error_code = kaa_meta_data_request_get_size(&meta_extension_size);
@@ -140,7 +140,7 @@ void test_meta_extension_serialize()
     uint32_t timeout;
     kaa_digest public_key_hash;
     kaa_digest profile_hash;
-    char application_token[KAA_APPLICATION_TOKEN_LENGTH];
+    char sdk_token[KAA_SDK_TOKEN_LENGTH];
 
     error_code = kaa_platform_message_read(reader, &request_id, sizeof(uint32_t));
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -160,9 +160,9 @@ void test_meta_extension_serialize()
     error_code = (memcmp(profile_hash, expected_profile_hash, SHA_1_DIGEST_LENGTH) == 0 ? KAA_ERR_NONE : KAA_ERR_READ_FAILED);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_platform_message_read_aligned(reader, application_token, KAA_APPLICATION_TOKEN_LENGTH);
+    error_code = kaa_platform_message_read_aligned(reader, sdk_token, KAA_SDK_TOKEN_LENGTH);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    error_code = (memcmp(application_token, APPLICATION_TOKEN, KAA_APPLICATION_TOKEN_LENGTH) == 0 ? KAA_ERR_NONE : KAA_ERR_READ_FAILED);
+    error_code = (memcmp(sdk_token, KAA_SDK_TOKEN, KAA_SDK_TOKEN_LENGTH) == 0 ? KAA_ERR_NONE : KAA_ERR_READ_FAILED);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_platform_message_reader_destroy(reader);
