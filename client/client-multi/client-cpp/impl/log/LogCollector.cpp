@@ -37,7 +37,7 @@ namespace kaa {
 
 LogCollector::LogCollector(IKaaChannelManagerPtr manager, IExecutorContext& executorContext)
     : transport_(nullptr), channelManager_(manager), timeoutAccessPointId_(0),
-      logUploadCheckTimer_("LogCollector logUploadCheckTimer"), uploadTimer_("LogCollector uploadTimer"),
+      logUploadCheckTimer_("LogCollector logUploadCheckTimer"), scheduledUploadTimer_("LogCollector uploadTimer"),
       timeoutTimer_("LogCollector timeoutTimer"), executorContext_(executorContext)
 {
 #ifdef KAA_USE_SQLITE_LOG_STORAGE
@@ -47,22 +47,32 @@ LogCollector::LogCollector(IKaaChannelManagerPtr manager, IExecutorContext& exec
 #endif
     uploadStrategy_.reset(new DefaultLogUploadStrategy());
 
-    startTimeoutCheckTimer();
+    startTimeoutTimer();
 }
 
-void LogCollector::startTimeoutCheckTimer() {
-    timeoutTimer_.start(uploadStrategy_->getTimeoutCheckPeriod(), [&]
+void LogCollector::startTimeoutTimer() {
+    timeoutTimer_.stop();
+    timeoutTimer_.start(uploadStrategy_->getTimeoutCheckPeriod(), [this]
                     {
                             if (isDeliveryTimeout()) {
                                 processTimeout();
                             }
-                            startTimeoutCheckTimer();
+                            startTimeoutTimer();
                     });
+}
+
+void LogCollector::startLogUploadCheckTimer()
+{
+    logUploadCheckTimer_.stop();
+    logUploadCheckTimer_.start(uploadStrategy_->getLogUploadCheckPeriod(),[this]
+    {
+        processLogUploadDecision(uploadStrategy_->isUploadNeeded(storage_->getStatus()));
+    });
 }
 
 void LogCollector::processTimeout()
 {
-    uploadStrategy_->onTimeout(*this);
+    executorContext_.getCallbackExecutor().add([this] () { uploadStrategy_->onTimeout(*this); });
 
     KAA_LOG_WARN(boost::format("Going to notify log storage of logs delivery timeout..."));
 
@@ -113,11 +123,7 @@ void LogCollector::processLogUploadDecision(LogUploadStrategyDecision decision)
     case LogUploadStrategyDecision::NOOP:
         KAA_LOG_TRACE("Nothing to do now");
         if (storage_->getStatus().getRecordsCount() > 0) {
-            logUploadCheckTimer_.stop();
-            logUploadCheckTimer_.start(uploadStrategy_->getLogUploadCheckPeriod(),[&]
-            {
-                processLogUploadDecision(uploadStrategy_->isUploadNeeded(storage_->getStatus()));
-            });
+            startLogUploadCheckTimer();
         }
         break;
     default:
@@ -150,6 +156,8 @@ void LogCollector::setUploadStrategy(ILogUploadStrategyPtr strategy)
 
     KAA_LOG_INFO("New log upload strategy was set");
     uploadStrategy_ = strategy;
+
+    rescheduleTimers();
 }
 
 void LogCollector::doSync()
@@ -279,9 +287,14 @@ void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
                 KAA_MUTEX_UNLOCKED("storageGuard_");
 
                 if (!status.errorCode.is_null()) {
+                    auto errocCode = status.errorCode.get_LogDeliveryErrorCode();
                     KAA_LOG_WARN(boost::format("Logs (requestId %ld) failed to deliver (error %d)")
-                                            % status.requestId % (int)status.errorCode.get_LogDeliveryErrorCode());
-                    uploadStrategy_->onFailure(*this, status.errorCode.get_LogDeliveryErrorCode());
+                                            % status.requestId % (int)errocCode);
+
+                    executorContext_.getCallbackExecutor().add([this, errocCode] ()
+                            {
+                                uploadStrategy_->onFailure(*this, errocCode);
+                            });
                 } else {
                     KAA_LOG_WARN("Log delivery failed, but no error code received");
                 }
@@ -318,8 +331,8 @@ void LogCollector::retryLogUpload()
 void LogCollector::retryLogUpload(std::size_t delay)
 {
     KAA_LOG_INFO(boost::format("Schedule log upload with %u second(s) delay ...") % delay);
-    uploadTimer_.stop();
-    uploadTimer_.start(delay, [&] { doSync(); });
+    scheduledUploadTimer_.stop();
+    scheduledUploadTimer_.start(delay, [&] { doSync(); });
 }
 
 void LogCollector::switchAccessPoint()
@@ -333,6 +346,12 @@ void LogCollector::switchAccessPoint()
     } else {
         KAA_LOG_ERROR("Can't find LOGGING data channel");
     }
+}
+
+void LogCollector::rescheduleTimers()
+{
+    startTimeoutTimer();
+    startLogUploadCheckTimer();
 }
 
 }  // namespace kaa

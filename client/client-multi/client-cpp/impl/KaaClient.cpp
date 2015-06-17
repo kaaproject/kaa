@@ -57,6 +57,7 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
     initClientKeys();
 
     executorContext_.reset(new SimpleExecutorContext);
+    executorContext_->init();
 
 #ifdef KAA_USE_CONFIGURATION
     configurationProcessor_.reset(new ConfigurationProcessor);
@@ -102,6 +103,7 @@ void KaaClient::start()
 void KaaClient::stop()
 {
     channelManager_->shutdown();
+    executorContext_->stop();
 }
 
 void KaaClient::pause()

@@ -19,17 +19,25 @@
 #include <memory>
 #include <thread>
 #include <chrono>
+#include <cstdlib>
 
 #include "kaa/log/LogRecord.hpp"
 #include "kaa/log/LogCollector.hpp"
 #include "kaa/log/LoggingTransport.hpp"
 #include "kaa/common/exception/KaaException.hpp"
+#include "kaa/context/SimpleExecutorContext.hpp"
 
 #include "headers/log/MockLogStorage.hpp"
 #include "headers/log/MockLogUploadStrategy.hpp"
 #include "headers/channel/MockChannelManager.hpp"
+#include "headers/context/MockExecutorContext.hpp"
 
 namespace kaa {
+
+static void testSleep(std::size_t seconds)
+{
+    std::this_thread::sleep_for(std::chrono::seconds(seconds));
+}
 
 class CustomLoggingTransport : public LoggingTransport {
 public:
@@ -75,7 +83,8 @@ BOOST_AUTO_TEST_SUITE(LogCollectorTestSuite)
 BOOST_AUTO_TEST_CASE(BadLogStorageTest)
 {
     MockChannelManager channelManager;
-    LogCollector logCollector(&channelManager);
+    MockExecutorContext executor;
+    LogCollector logCollector(&channelManager, executor);
 
     ILogUploadStrategyPtr fakeStrategy;
     BOOST_CHECK_THROW(logCollector.setUploadStrategy(fakeStrategy), KaaException);
@@ -84,32 +93,19 @@ BOOST_AUTO_TEST_CASE(BadLogStorageTest)
 BOOST_AUTO_TEST_CASE(BadLogUploadStrategyTest)
 {
     MockChannelManager channelManager;
-    LogCollector logCollector(&channelManager);
+    MockExecutorContext executor;
+    LogCollector logCollector(&channelManager, executor);
 
     ILogStoragePtr fakeStorage;
     BOOST_CHECK_THROW(logCollector.setStorage(fakeStorage), KaaException);
 }
 
-BOOST_AUTO_TEST_CASE(TransportNotFoundTest)
-{
-    MockChannelManager channelManager;
-    LogCollector logCollector(&channelManager);
-
-    std::shared_ptr<MockLogStorage> logStorage(new MockLogStorage);
-    std::shared_ptr<MockLogUploadStrategy> uploadStrategy(new MockLogUploadStrategy);
-
-    uploadStrategy->decision_ = LogUploadStrategyDecision::UPLOAD;
-
-    logCollector.setStorage(logStorage);
-    logCollector.setUploadStrategy(uploadStrategy);
-
-    BOOST_CHECK_THROW(logCollector.addLogRecord(createLogRecord()), KaaException);
-}
-
 BOOST_AUTO_TEST_CASE(AddLogRecordAndCheckStorageAndStrategyTest)
 {
     MockChannelManager channelManager;
-    LogCollector logCollector(&channelManager);
+    SimpleExecutorContext executor;
+    executor.init();
+    LogCollector logCollector(&channelManager, executor);
     CustomLoggingTransport transport(channelManager, logCollector);
 
     logCollector.setTransport(&transport);
@@ -118,11 +114,16 @@ BOOST_AUTO_TEST_CASE(AddLogRecordAndCheckStorageAndStrategyTest)
     std::shared_ptr<MockLogStorage> logStorage(new MockLogStorage);
     std::shared_ptr<MockLogUploadStrategy> uploadStrategy(new MockLogUploadStrategy);
 
+    uploadStrategy->recordsBatchCount_ = 10;
+    uploadStrategy->timeoutCheckPeriod_ = 10;
+    uploadStrategy->logUploadCheckPeriod_ = 10;
+
     logCollector.setStorage(logStorage);
     logCollector.setUploadStrategy(uploadStrategy);
 
     uploadStrategy->decision_ = LogUploadStrategyDecision::NOOP;
     logCollector.addLogRecord(logRecord);
+    testSleep(1);
 
     BOOST_CHECK_EQUAL(logStorage->onAddLogRecord_, 1);
     BOOST_CHECK_EQUAL(uploadStrategy->onIsUploadNeeded_, 1);
@@ -130,6 +131,7 @@ BOOST_AUTO_TEST_CASE(AddLogRecordAndCheckStorageAndStrategyTest)
 
     uploadStrategy->decision_ = LogUploadStrategyDecision::UPLOAD;
     logCollector.addLogRecord(logRecord);
+    testSleep(1);
 
     BOOST_CHECK_EQUAL(logStorage->onAddLogRecord_, 2);
     BOOST_CHECK_EQUAL(uploadStrategy->onIsUploadNeeded_, 2);
@@ -139,7 +141,8 @@ BOOST_AUTO_TEST_CASE(AddLogRecordAndCheckStorageAndStrategyTest)
 BOOST_AUTO_TEST_CASE(CreateRequestTest)
 {
     MockChannelManager channelManager;
-    LogCollector logCollector(&channelManager);
+    MockExecutorContext executor;
+    LogCollector logCollector(&channelManager, executor);
     CustomLoggingTransport transport(channelManager, logCollector);
 
     logCollector.setTransport(&transport);
@@ -147,6 +150,9 @@ BOOST_AUTO_TEST_CASE(CreateRequestTest)
     KaaUserLogRecord logRecord = createLogRecord();
     std::shared_ptr<MockLogStorage> logStorage(new MockLogStorage);
     std::shared_ptr<MockLogUploadStrategy> uploadStrategy(new MockLogUploadStrategy);
+    uploadStrategy->recordsBatchCount_ = 10;
+    uploadStrategy->timeoutCheckPeriod_ = 10;
+    uploadStrategy->logUploadCheckPeriod_ = 10;
 
     logCollector.setStorage(logStorage);
     logCollector.setUploadStrategy(uploadStrategy);
@@ -161,7 +167,8 @@ BOOST_AUTO_TEST_CASE(CreateRequestWithLogsTest)
 {
     const size_t BATCH_SIZE = 100500;
     MockChannelManager channelManager;
-    LogCollector logCollector(&channelManager);
+    MockExecutorContext executor;
+    LogCollector logCollector(&channelManager, executor);
     CustomLoggingTransport transport(channelManager, logCollector);
 
     logCollector.setTransport(&transport);
@@ -179,6 +186,9 @@ BOOST_AUTO_TEST_CASE(CreateRequestWithLogsTest)
 
     std::shared_ptr<MockLogUploadStrategy> uploadStrategy(new MockLogUploadStrategy);
     uploadStrategy->batchSize_ = BATCH_SIZE;
+    uploadStrategy->recordsBatchCount_ = 10;
+    uploadStrategy->timeoutCheckPeriod_ = 10;
+    uploadStrategy->logUploadCheckPeriod_ = 10;
 
     logCollector.setStorage(logStorage);
     logCollector.setUploadStrategy(uploadStrategy);
@@ -194,7 +204,9 @@ BOOST_AUTO_TEST_CASE(SuccessDeliveryTest)
 {
     const size_t BATCH_SIZE = 100500;
     MockChannelManager channelManager;
-    LogCollector logCollector(&channelManager);
+    SimpleExecutorContext executor;
+    executor.init();
+    LogCollector logCollector(&channelManager, executor);
     CustomLoggingTransport transport(channelManager, logCollector);
 
     logCollector.setTransport(&transport);
@@ -213,6 +225,9 @@ BOOST_AUTO_TEST_CASE(SuccessDeliveryTest)
     std::shared_ptr<MockLogUploadStrategy> uploadStrategy(new MockLogUploadStrategy);
     uploadStrategy->batchSize_ = BATCH_SIZE;
     uploadStrategy->decision_ = LogUploadStrategyDecision::NOOP;
+    uploadStrategy->recordsBatchCount_ = 10;
+    uploadStrategy->timeoutCheckPeriod_ = 10;
+    uploadStrategy->logUploadCheckPeriod_ = 10;
 
     logCollector.setStorage(logStorage);
     logCollector.setUploadStrategy(uploadStrategy);
@@ -226,6 +241,7 @@ BOOST_AUTO_TEST_CASE(SuccessDeliveryTest)
     response.deliveryStatuses.set_array({ deliveryStatus });
 
     logCollector.onLogUploadResponse(response);
+    testSleep(1);
 
     BOOST_CHECK_EQUAL(logStorage->onRemoveRecordBlock_, 1);
     BOOST_CHECK_EQUAL(logStorage->onNotifyUploadFailed_, 0);
@@ -236,7 +252,9 @@ BOOST_AUTO_TEST_CASE(FailedDeliveryTest)
 {
     const size_t BATCH_SIZE = 100500;
     MockChannelManager channelManager;
-    LogCollector logCollector(&channelManager);
+    SimpleExecutorContext executor;
+    executor.init();
+    LogCollector logCollector(&channelManager, executor);
     CustomLoggingTransport transport(channelManager, logCollector);
 
     logCollector.setTransport(&transport);
@@ -255,6 +273,9 @@ BOOST_AUTO_TEST_CASE(FailedDeliveryTest)
     std::shared_ptr<MockLogUploadStrategy> uploadStrategy(new MockLogUploadStrategy);
     uploadStrategy->batchSize_ = BATCH_SIZE;
     uploadStrategy->decision_ = LogUploadStrategyDecision::NOOP;
+    uploadStrategy->recordsBatchCount_ = 10;
+    uploadStrategy->timeoutCheckPeriod_ = 10;
+    uploadStrategy->logUploadCheckPeriod_ = 10;
 
     logCollector.setStorage(logStorage);
     logCollector.setUploadStrategy(uploadStrategy);
@@ -269,19 +290,22 @@ BOOST_AUTO_TEST_CASE(FailedDeliveryTest)
     response.deliveryStatuses.set_array({ deliveryStatus });
 
     logCollector.onLogUploadResponse(response);
+    testSleep(1);
 
     BOOST_CHECK_EQUAL(logStorage->onNotifyUploadFailed_, 1);
     BOOST_CHECK_EQUAL(logStorage->onRemoveRecordBlock_, 0);
     BOOST_CHECK_EQUAL(uploadStrategy->onIsUploadNeeded_, 1);
 }
 
-BOOST_AUTO_TEST_CASE(TimeoutLasyDetectionTest)
+BOOST_AUTO_TEST_CASE(TimeoutDetectionTest)
 {
     const size_t BATCH_SIZE = 100500;
     const size_t DELIVERY_TIMEOUT = 2;
 
     MockChannelManager channelManager;
-    LogCollector logCollector(&channelManager);
+    SimpleExecutorContext executor;
+    executor.init();
+    LogCollector logCollector(&channelManager, executor);
     CustomLoggingTransport transport(channelManager, logCollector);
 
     logCollector.setTransport(&transport);
@@ -300,6 +324,9 @@ BOOST_AUTO_TEST_CASE(TimeoutLasyDetectionTest)
     std::shared_ptr<MockLogUploadStrategy> uploadStrategy(new MockLogUploadStrategy);
     uploadStrategy->batchSize_ = BATCH_SIZE;
     uploadStrategy->timeout_ = DELIVERY_TIMEOUT;
+    uploadStrategy->logUploadCheckPeriod_ = DELIVERY_TIMEOUT;
+    uploadStrategy->timeoutCheckPeriod_ = 1;
+    uploadStrategy->recordsBatchCount_ = 10;
     uploadStrategy->decision_ = LogUploadStrategyDecision::NOOP;
 
     logCollector.setStorage(logStorage);
@@ -310,15 +337,7 @@ BOOST_AUTO_TEST_CASE(TimeoutLasyDetectionTest)
     BOOST_CHECK_EQUAL(uploadStrategy->onTimeout_, 0);
     BOOST_CHECK_EQUAL(uploadStrategy->onGetTimeout_, 1);
 
-    std::this_thread::sleep_for(std::chrono::seconds(DELIVERY_TIMEOUT + 3));
-
-    /*
-     * Check on timeout do only on adding new record
-     */
-
-    logCollector.addLogRecord(createLogRecord());
-
-    std::this_thread::sleep_for(std::chrono::seconds(DELIVERY_TIMEOUT + 3));
+    std::this_thread::sleep_for(std::chrono::seconds(2 * DELIVERY_TIMEOUT));
 
     BOOST_CHECK_EQUAL(uploadStrategy->onTimeout_, 1);
     BOOST_CHECK_EQUAL(logStorage->onNotifyUploadFailed_, 1);
@@ -338,9 +357,10 @@ BOOST_AUTO_TEST_CASE(RetryUploadTest)
     const size_t BATCH_SIZE = 100500;
     const size_t RETRY_TIMEOUT = 3;
 
-
     MockChannelManager channelManager;
-    LogCollector logCollector(&channelManager);
+    SimpleExecutorContext executor;
+    executor.init();
+    LogCollector logCollector(&channelManager, executor);
     CustomLoggingTransport transport(channelManager, logCollector);
 
     logCollector.setTransport(&transport);
@@ -360,6 +380,9 @@ BOOST_AUTO_TEST_CASE(RetryUploadTest)
     uploadStrategy->batchSize_ = BATCH_SIZE;
     uploadStrategy->decision_ = LogUploadStrategyDecision::NOOP;
     uploadStrategy->retryTimeout_ = RETRY_TIMEOUT;
+    uploadStrategy->recordsBatchCount_ = 10;
+    uploadStrategy->timeoutCheckPeriod_ = 10;
+    uploadStrategy->logUploadCheckPeriod_ = 10;
 
     logCollector.setStorage(logStorage);
     logCollector.setUploadStrategy(uploadStrategy);
@@ -376,13 +399,15 @@ BOOST_AUTO_TEST_CASE(RetryUploadTest)
     BOOST_CHECK_EQUAL(transport.onSync_, 0);
 
     logCollector.onLogUploadResponse(response);
+    testSleep(1);
 
     BOOST_CHECK_EQUAL(logStorage->onNotifyUploadFailed_, 1);
     BOOST_CHECK_EQUAL(logStorage->onRemoveRecordBlock_, 0);
     BOOST_CHECK_EQUAL(uploadStrategy->onIsUploadNeeded_, 1);
     BOOST_CHECK_EQUAL(uploadStrategy->onFailure_, 1);
+    BOOST_CHECK_EQUAL(transport.onSync_, 0);
 
-    std::this_thread::sleep_for(std::chrono::seconds(RETRY_TIMEOUT + 3));
+    std::this_thread::sleep_for(std::chrono::seconds(RETRY_TIMEOUT + 1));
 
     BOOST_CHECK_EQUAL(transport.onSync_, 1);
 }
