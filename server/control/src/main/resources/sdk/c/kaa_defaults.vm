@@ -36,6 +36,10 @@ extern "C" {
 
 # define PROFILE_SCHEMA_VERSION          ${profile_version}
 
+-#if (! $user_verifier_token.isEmpty())
+-# define DEFAULT_USER_VERIFIER_TOKEN    "${user_verifier_token}"
+-#end
+
 # define KAA_SYNC_TIMEOUT               60000L
 
 

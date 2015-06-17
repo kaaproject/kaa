@@ -137,26 +137,9 @@ void test_profile_sync_get_size()
     avro_writer_t writer = avro_writer_memory(serialized_profile, serialized_profile_size);
     profile->serialize(writer, profile);
 
-    size_t version_info_size = sizeof(uint32_t)
-                             + sizeof(uint32_t)
-                             + sizeof(uint32_t)
-                             + sizeof(uint32_t)
-                             + sizeof(uint32_t);
-
-#if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
-     version_info_size += sizeof(uint32_t);
-
-     for (size_t i = 0; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
-         version_info_size += sizeof(uint16_t)
-                            + sizeof(uint16_t)
-                            + kaa_aligned_size_get(strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name));
-     }
-#endif
-
     size_t expected_size = KAA_EXTENSION_HEADER_SIZE
                          + sizeof(uint32_t)  // profile size
-                         + kaa_aligned_size_get(serialized_profile_size)
-                         + version_info_size;
+                         + kaa_aligned_size_get(serialized_profile_size);
 
     size_t profile_sync_size = 0;
 
@@ -225,7 +208,6 @@ void test_profile_sync_serialize()
     error_code = kaa_platform_message_writer_create(&manual_writer, buffer, profile_sync_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    uint16_t network_order_16;
     uint32_t network_order_32;
 
     error_code = kaa_platform_message_write_extension_header(manual_writer
@@ -247,27 +229,6 @@ void test_profile_sync_serialize()
         error_code = kaa_platform_message_write_aligned(manual_writer, serialized_profile, serialized_profile_size);
         ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     }
-
-#if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
-    network_order_32 = KAA_HTONS(KAA_EVENT_SCHEMA_VERSIONS_SIZE) << 16 | EVENT_FAMILY_VERSIONS_COUNT_VALUE;
-    error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));
-    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    uint16_t event_family_name_len = 0;
-    for (size_t i = 0; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
-        network_order_16 = KAA_NTOHS(KAA_EVENT_SCHEMA_VERSIONS[i].version);
-        error_code = kaa_platform_message_write(manual_writer, &network_order_16, sizeof(uint16_t));
-        ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-        event_family_name_len = strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name);
-        network_order_16 = KAA_NTOHS(event_family_name_len);
-        error_code = kaa_platform_message_write(manual_writer, &network_order_16, sizeof(uint16_t));
-        ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-        error_code = kaa_platform_message_write_aligned(manual_writer, KAA_EVENT_SCHEMA_VERSIONS[i].name, event_family_name_len);
-        ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    }
-#endif
 
     network_order_32 = KAA_HTONS(TEST_PUB_KEY_SIZE) << 16 | PUB_KEY_VALUE;
     error_code = kaa_platform_message_write(manual_writer, &network_order_32, sizeof(uint32_t));

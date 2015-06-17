@@ -128,6 +128,7 @@ public class CSdkGenerator extends SdkGenerator {
         Integer profileSchemaVersion = sdkProperties.getProfileSchemaVersion();
         Integer notificationSchemaVersion = sdkProperties.getNotificationSchemaVersion();
         Integer logSchemaVersion = sdkProperties.getLogSchemaVersion();
+        String defaultVerifierToken = sdkProperties.getDefaultVerifierToken();
 
         String sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + C_SDK_DIR + "/" + C_SDK_PREFIX + buildVersion + ".tar.gz";
 
@@ -182,6 +183,7 @@ public class CSdkGenerator extends SdkGenerator {
                                                                  profileSchemaVersion,
                                                                  configurationProtocolSchemaBody,
                                                                  defaultConfigurationData,
+                                                                 defaultVerifierToken,
                                                                  eventFamilies);
 
                     TarArchiveEntry kaaDefaultsEntry = new TarArchiveEntry(KAA_DEFAULTS_HEADER);
@@ -305,6 +307,7 @@ public class CSdkGenerator extends SdkGenerator {
                                        int profileSchemaVersion,
                                        String configurationProtocolSchemaBody,
                                        byte[] defaultConfigurationData,
+                                       String defaultVerifierToken,
                                        List<EventFamilyMetadata> eventFamilies) throws IOException {
 
         VelocityContext context = new VelocityContext();
@@ -316,6 +319,8 @@ public class CSdkGenerator extends SdkGenerator {
         context.put("sdk_token", sdkToken);
         
         context.put("profile_version", profileSchemaVersion);
+        context.put("user_verifier_token", (defaultVerifierToken != null ? defaultVerifierToken : ""));
+        
         context.put("eventFamilies", eventFamilies);
         context.put("bootstrapNodes", bootstrapNodes);
         context.put("configurationData", defaultConfigurationData);
