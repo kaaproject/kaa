@@ -43,34 +43,6 @@ extern "C" {
 # define KAA_SYNC_TIMEOUT               60000L
 
 
-
-typedef struct {
-    const char *    name;
-    uint16_t         version;
-} kaa_events_schema_version_t;
-
-#if ($eventFamilies)
-#set ($familyCounter = $eventFamilies.size())
-# define KAA_EVENT_SCHEMA_VERSIONS_SIZE    $familyCounter
-
-static const kaa_events_schema_version_t KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEMA_VERSIONS_SIZE] = {
-#foreach ($family in $eventFamilies)
-#set ($familyCounter = $familyCounter - 1)
-    {
-          /* .name = */   "${family.getEcfName()}"
-        , /* .version = */${family.getVersion()}
-    }#if ($familyCounter > 0),
-#end
-#end
-};
-#else
-# define KAA_EVENT_SCHEMA_VERSIONS_SIZE    0
-
-static const kaa_events_schema_version KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEMA_VERSIONS_SIZE] = {};
-#end
-
-
-
 /**
  * @brief Uses to represent transport-specific connection data to establish
  * connection to Bootstrap servers.

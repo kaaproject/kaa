@@ -183,8 +183,7 @@ public class CSdkGenerator extends SdkGenerator {
                                                                  profileSchemaVersion,
                                                                  configurationProtocolSchemaBody,
                                                                  defaultConfigurationData,
-                                                                 defaultVerifierToken,
-                                                                 eventFamilies);
+                                                                 defaultVerifierToken);
 
                     TarArchiveEntry kaaDefaultsEntry = new TarArchiveEntry(KAA_DEFAULTS_HEADER);
                     kaaDefaultsEntry.setSize(kaaDefaultsData.length);
@@ -307,8 +306,7 @@ public class CSdkGenerator extends SdkGenerator {
                                        int profileSchemaVersion,
                                        String configurationProtocolSchemaBody,
                                        byte[] defaultConfigurationData,
-                                       String defaultVerifierToken,
-                                       List<EventFamilyMetadata> eventFamilies) throws IOException {
+                                       String defaultVerifierToken) throws IOException {
 
         VelocityContext context = new VelocityContext();
 
@@ -321,7 +319,6 @@ public class CSdkGenerator extends SdkGenerator {
         context.put("profile_version", profileSchemaVersion);
         context.put("user_verifier_token", (defaultVerifierToken != null ? defaultVerifierToken : ""));
         
-        context.put("eventFamilies", eventFamilies);
         context.put("bootstrapNodes", bootstrapNodes);
         context.put("configurationData", defaultConfigurationData);
 
