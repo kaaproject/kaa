@@ -400,6 +400,8 @@ kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
 
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client notification sync");
+
     kaa_error_t err = kaa_platform_message_write_extension_header(writer
                                                     , KAA_NOTIFICATION_EXTENSION_TYPE
                                                     , KAA_CLIENT_WANTS_TO_RECEIVE_NOTIFICATIONS
@@ -412,6 +414,7 @@ kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_
     *(uint32_t *)writer->current = KAA_HTONL((uint32_t)self->status->notification_seq_n);
     writer->current += sizeof(uint32_t);
 
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize %u topic states", kaa_list_get_size(self->status->topic_states));
     if (kaa_list_get_size(self->status->topic_states) > 0) {
         *(uint8_t *)writer->current = (uint8_t)TOPICS_STATE_ID;
         writer->current += sizeof(uint16_t);
@@ -424,8 +427,8 @@ kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_
                         , writer);
     }
 
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize %u uids", kaa_list_get_size(self->uids));
     if (kaa_list_get_size(self->uids) > 0) {
-        KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Going to serialize uids");
         *(uint8_t *)writer->current = (uint8_t)UID_ID;
         writer->current += sizeof(uint16_t);
         *(uint16_t *)writer->current = KAA_HTONS(kaa_list_get_size(self->uids));
@@ -436,6 +439,9 @@ kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_
                         , (process_data)&serialize_notifications_uid
                         , writer);
     }
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize %u subscriptions and %u unsubscriptions"
+                , kaa_list_get_size(self->subscriptions), kaa_list_get_size(self->unsubscriptions));
 
     serialize_subscriptions(writer, self->subscriptions, SUBSCRIPTION_ID);
     serialize_subscriptions(writer, self->unsubscriptions, UNSUBSCRIPTION_ID);
@@ -524,6 +530,7 @@ kaa_error_t kaa_notification_manager_create(kaa_notification_manager_t **self, k
 kaa_error_t kaa_add_notification_listener(kaa_notification_manager_t *self, kaa_notification_listener_t *listener, uint32_t* listener_id)
 {
     KAA_RETURN_IF_NIL2(self, listener, KAA_ERR_BADPARAM);
+
     if (!listener->callback) {
         KAA_LOG_WARN(self->logger, KAA_ERR_BADPARAM, "Failed to add mandatory notification listener: NULL callback");
         return KAA_ERR_BADPARAM;
@@ -535,6 +542,7 @@ kaa_error_t kaa_add_notification_listener(kaa_notification_manager_t *self, kaa_
         KAA_LOG_WARN(self->logger, err, "Failed to calculate mandatory listener id");
         return err;
     }
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to add mandatory notification listener (id = '%u')", id);
 
     if (kaa_list_find_next(kaa_list_begin(self->mandatory_listeners), &kaa_find_notification_listener_by_id, &id)) {
         KAA_LOG_WARN(self->logger, KAA_ERR_ALREADY_EXISTS, "Failed to add mandatory listener: listener is already subscribed");
@@ -563,6 +571,8 @@ kaa_error_t kaa_add_notification_listener(kaa_notification_manager_t *self, kaa_
 kaa_error_t kaa_remove_notification_listener(kaa_notification_manager_t *self, uint32_t *listener_id)
 {
     KAA_RETURN_IF_NIL2(self, listener_id, KAA_ERR_BADPARAM);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to remove mandatory notification listener (id = '%u')", *listener_id);
+
     return kaa_list_remove_first(self->mandatory_listeners
                                , &kaa_find_notification_listener_by_id
                                , listener_id
@@ -576,6 +586,7 @@ kaa_error_t kaa_add_optional_notification_listener(kaa_notification_manager_t *s
 {
     KAA_RETURN_IF_NIL4(self, listener, listener->callback, topic_id, KAA_ERR_BADPARAM);
 
+
     if (!kaa_list_find_next(kaa_list_begin(self->topics), &kaa_find_topic_by_id, topic_id)) {
         KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Failed to add optional notification listener: "
                                                             "topic with id = %lu not found", *topic_id);
@@ -588,6 +599,7 @@ kaa_error_t kaa_add_optional_notification_listener(kaa_notification_manager_t *s
         KAA_LOG_WARN(self->logger, err, "Failed to calculate optional listener id");
         return err;
     }
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to add optional notification listener (id = '%u')", id);
 
     kaa_notification_listener_wrapper_t *wrapper = (kaa_notification_listener_wrapper_t *) KAA_MALLOC(sizeof(kaa_notification_listener_wrapper_t));
     KAA_RETURN_IF_NIL(wrapper, KAA_ERR_NOMEM);
@@ -647,6 +659,7 @@ kaa_error_t kaa_add_optional_notification_listener(kaa_notification_manager_t *s
 kaa_error_t kaa_remove_optional_notification_listener(kaa_notification_manager_t *self, uint64_t *topic_id, uint32_t *listener_id)
 {
     KAA_RETURN_IF_NIL3(self, topic_id, listener_id, KAA_ERR_BADPARAM);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to remove optional notification listener (id = '%u')", *listener_id);
 
     kaa_list_node_t *opt_listeners_node = kaa_list_find_next(kaa_list_begin(self->optional_listeners)
                                                            , &kaa_find_optional_notification_listener_by_id
@@ -679,12 +692,14 @@ kaa_error_t kaa_add_topic_list_listener(kaa_notification_manager_t *self, kaa_to
 {
     KAA_RETURN_IF_NIL3(self, listener, listener->callback, KAA_ERR_BADPARAM);
 
+
     uint32_t id;
     kaa_error_t err = kaa_calculate_topic_listener_id(listener, &id);
     if (err) {
         KAA_LOG_WARN(self->logger, err, "Failed to calculate mandatory listener's id");
         return err;
     }
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to add topic list listener (id = '%u')", id);
 
     kaa_topic_listener_wrapper_t *wrapper = (kaa_topic_listener_wrapper_t *) KAA_MALLOC(sizeof(kaa_topic_listener_wrapper_t));
     KAA_RETURN_IF_NIL(wrapper, KAA_ERR_NOMEM);
@@ -712,6 +727,8 @@ kaa_error_t kaa_add_topic_list_listener(kaa_notification_manager_t *self, kaa_to
 kaa_error_t kaa_remove_topic_list_listener(kaa_notification_manager_t *self, uint32_t *topic_listener_id)
 {
     KAA_RETURN_IF_NIL2(self, topic_listener_id, KAA_ERR_BADPARAM);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to remove topic list listener (id = '%u')", *topic_listener_id);
+
     return kaa_list_remove_first(self->topics_listeners
                                , &kaa_find_topic_listener_by_id
                                , topic_listener_id
@@ -874,7 +891,7 @@ kaa_error_t kaa_unsubscribe_from_topic(kaa_notification_manager_t *self, uint64_
     kaa_topic_t* topic = NULL;
     kaa_error_t err = kaa_find_topic(self, &topic, topic_id);
     if (err) {
-        KAA_LOG_WARN(self->logger, KAA_ERR_BADPARAM, "Failed to unsubscribe from the topic with id = %lu.", *topic_id);
+        KAA_LOG_WARN(self->logger, err, "Failed to unsubscribe from the topic with id = %lu.", *topic_id);
         return err;
     }
     if (topic->subscription_type == MANDATORY_SUBSCRIPTION) {
@@ -1050,6 +1067,8 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received notification server sync: options 0, payload size %u", extension_length);
+
     kaa_list_clear(self->subscriptions, &kaa_data_destroy);
     kaa_list_clear(self->unsubscriptions, &kaa_data_destroy);
 
@@ -1057,7 +1076,9 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
     if (extension_length > 0) {
         self->status->notification_seq_n = KAA_NTOHL(*((uint32_t *) reader->current)); // State SQN
         shift_and_sub_extension(reader, &extension_length, sizeof(uint32_t));
+        KAA_LOG_TRACE(self->logger, err, "State sequence number is '%d'", self->status->notification_seq_n);
         if (KAA_NTOHL(*((uint32_t *) reader->current)) == KAA_NO_DELTA) {
+            KAA_LOG_TRACE(self->logger, err, "Received delta response: NO DELTA. Going to clear uids list...");
             kaa_list_clear(self->uids, &destroy_notifications_uid);
         }
         shift_and_sub_extension(reader, &extension_length, sizeof(uint32_t));
@@ -1076,7 +1097,7 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
                 uint16_t notifications_count = KAA_NTOHS(*((uint16_t *) reader->current)); // notifications count
                 shift_and_sub_extension(reader, &extension_length, sizeof(uint16_t));
 
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Notifications count is %u", notifications_count);
+                KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received notifications. Notifications count is %u", notifications_count);
 
                 while (notifications_count--) {
                     seq_number = KAA_NTOHL(*((uint32_t *) reader->current)); // sqn of the last received notification
@@ -1088,16 +1109,16 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
                     topic_id =  KAA_NTOHLL(*((uint64_t *) reader->current)); // topic id
                     shift_and_sub_extension(reader, &extension_length, sizeof(uint64_t));
 
-                    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Topic id is %lu", topic_id);
-
                     err = kaa_find_topic(self, &topic_found, &topic_id);
                     if (err) {
+                        KAA_LOG_TRACE(self->logger, err, "Topic is not found. Skipping notification...");
                         size_t skiped_size = kaa_aligned_size_get(uid_length) + kaa_aligned_size_get(notification_size);
                         shift_and_sub_extension(reader, &extension_length, skiped_size);
                         continue;
                     }
                     kaa_notifications_uid_t *uid = NULL;
                     if (uid_length) {
+                        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Notification's type is unicast");
                         uid = (kaa_notifications_uid_t *) KAA_MALLOC(sizeof(kaa_notifications_uid_t));
                         KAA_RETURN_IF_NIL(uid, KAA_ERR_NOMEM);
 
@@ -1109,7 +1130,8 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
                         }
                         err = kaa_platform_message_read_aligned(reader, uid->data, uid->length);
                         if (err) {
-                            KAA_LOG_WARN(self->logger, KAA_ERR_BADDATA, "Failed to read UID body");
+                            KAA_LOG_WARN(self->logger, err, "Failed to read UID body");
+                            return err;
                         }
                         extension_length -= kaa_aligned_size_get(uid->length);
 
@@ -1134,16 +1156,15 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
                         notification = KAA_NOTIFICATION_DESERIALIZE(avro_reader);
                         avro_reader_free(avro_reader);
                         if (!notification) {
-                            KAA_LOG_ERROR(self->logger, KAA_ERR_NOMEM, "Failed to deserialize notification");
+                            KAA_LOG_WARN(self->logger, KAA_ERR_NOMEM, "Failed to deserialize notification");
                             return KAA_ERR_NOMEM;
                         }
                     }
+                    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Notification's sqn = '%u', topic id = '%lu'", seq_number, topic_id);
                     shift_and_sub_extension(reader, &extension_length, kaa_aligned_size_get(notification_size));
                     if (uid_length == 0) {
-                        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Notifications sqn is %d", seq_number);
                         err = kaa_add_notification_to_map(self->notifications, notification, &topic_id, &seq_number);
                     } else {
-                        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Received unicast notification");
                         err = kaa_notification_received(self, notification, &topic_id);
                         notification->destroy(notification);
                     }
@@ -1159,7 +1180,7 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
                 KAA_RETURN_IF_NIL(new_topics, KAA_ERR_NOMEM);
 
                 uint16_t topic_count = KAA_NTOHS(*((uint16_t *) reader->current)); // topics count
-                KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Topic count is %u", topic_count);
+                KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received topics list. Topics count is %u", topic_count);
                 shift_and_sub_extension(reader, &extension_length, sizeof(uint16_t));
 
                 kaa_topic_t *topic = NULL;
@@ -1188,6 +1209,8 @@ kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager
 
                    topic->name[topic->name_length] = '\0';
                    extension_length -= kaa_aligned_size_get(topic->name_length);
+                   KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Topic Id = '%lu', subscription type = '%s', name = '%s'"
+                               , topic->id, (topic->subscription_type == MANDATORY_SUBSCRIPTION) ? "mandatory": "optional", topic->name);
 
                    if (!kaa_list_push_front(new_topics, topic)) {
                        destroy_topic(topic);
