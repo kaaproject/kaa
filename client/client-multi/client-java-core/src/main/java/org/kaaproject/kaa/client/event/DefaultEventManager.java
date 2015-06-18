@@ -181,14 +181,24 @@ public class DefaultEventManager implements EventManager {
 
     @Override
     public void eventListenersResponseReceived(List<EventListenersResponse> response) {
-        for (EventListenersResponse singleResponse : response) {
+        for (final EventListenersResponse singleResponse : response) {
             LOG.debug("Received event listener resolution response: {}", response);
-            EventListenersRequestBinding bind = eventListenersRequests.remove(singleResponse.getRequestId());
+            final EventListenersRequestBinding bind = eventListenersRequests.remove(singleResponse.getRequestId());
             if (bind != null) {
                 if (singleResponse.getResult() == SyncResponseResultType.SUCCESS) {
-                    bind.getListener().onEventListenersReceived(singleResponse.getListeners());
+                    executorContext.getCallbackExecutor().submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            bind.getListener().onEventListenersReceived(singleResponse.getListeners());
+                        }
+                    });
                 } else {
-                    bind.getListener().onRequestFailed();
+                    executorContext.getCallbackExecutor().submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            bind.getListener().onRequestFailed();
+                        }
+                    });
                 }
             }
         }

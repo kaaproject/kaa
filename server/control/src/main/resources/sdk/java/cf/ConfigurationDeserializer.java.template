@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import javax.annotation.Generated;
 
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import ${configuration_class_package}.${configuration_class};
 
@@ -36,11 +37,21 @@ import ${configuration_class_package}.${configuration_class};
 class ConfigurationDeserializer {
 
     private final AvroByteArrayConverter<${configuration_class}> converter = new AvroByteArrayConverter<${configuration_class}>(${configuration_class}.class);
+    private final ExecutorContext executorContext;
+
+    ConfigurationDeserializer(ExecutorContext executorContext) {
+        this.executorContext = executorContext;
+    }
 
     void notify(Collection<ConfigurationListener> listeners, byte[] configurationData) throws IOException {
-        ${configuration_class} configuration = fromByteArray(configurationData);
-        for(ConfigurationListener listener : listeners){
-            listener.onConfigurationUpdate(configuration);
+        final ${configuration_class} configuration = fromByteArray(configurationData);
+        for (final ConfigurationListener listener : listeners){
+            executorContext.getCallbackExecutor().submit(new Runnable() {
+                @Override
+                public void run() {
+                    listener.onConfigurationUpdate(configuration);
+                }
+            });
         }
     }
 
