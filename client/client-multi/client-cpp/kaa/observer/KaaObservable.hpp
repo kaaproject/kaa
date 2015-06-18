@@ -74,7 +74,10 @@ public:
         isNotifying_ = true;
         KAA_MUTEX_UNIQUE_DECLARE(lock, mainGuard_);
         for (auto& pair : slots_) {
-            pair.second(std::forward<Args>(args)...);
+            try {
+                pair.second(std::forward<Args>(args)...);
+            } catch (...) {
+            }
         }
         isNotifying_ = false;
         KAA_MUTEX_UNIQUE_DECLARE(modLock, modificationGuard_);

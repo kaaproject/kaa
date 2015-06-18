@@ -4,21 +4,24 @@
 
     void sendEvent(const ns${event_family_class_name} :: ${event_class_name}& event, const std::string& target = "")
     {
-        std::ostringstream stream;
-        AvroByteArrayConverter< ns${event_family_class_name} :: ${event_class_name} > converter;
-        converter.toByteArray(event, stream);
-        const auto& encodedData = stream.str();
-        std::vector<std::uint8_t> buffer(encodedData.begin(), encodedData.end());
-        static const TransactionIdPtr empty(nullptr);
-        eventManager_.produceEvent("${event_class_fqn}", buffer, target, empty);
+        executorContext_.getApiExecutor().add([=]
+               {
+                    std::vector<std::uint8_t> buffer;
+                    AvroByteArrayConverter< ns${event_family_class_name} :: ${event_class_name} > converter;
+                    converter.toByteArray(event, buffer);
+                    eventManager_.produceEvent("${event_class_fqn}", buffer, target, TransactionIdPtr());
+               });
     }
 
     void addEventToBlock(TransactionIdPtr trxId, const ns${event_family_class_name} :: ${event_class_name}& e, const std::string& target = "")
     {
-        std::ostringstream stream;
-        AvroByteArrayConverter< ns${event_family_class_name} :: ${event_class_name} > converter;
-        converter.toByteArray(e, stream);
-        const auto& encodedData = stream.str();
-        std::vector<std::uint8_t> buffer(encodedData.begin(), encodedData.end());
-        eventManager_.produceEvent("${event_class_fqn}", buffer, target, trxId);
+        executorContext_.getApiExecutor().add([=]
+               {
+                    std::vector<std::uint8_t> buffer;
+                    AvroByteArrayConverter< ns${event_family_class_name} :: ${event_class_name} > converter;
+                    converter.toByteArray(e, stream);
+                    const auto& encodedData = stream.str();
+                    std::vector<std::uint8_t> buffer(encodedData.begin(), encodedData.end());
+                    eventManager_.produceEvent("${event_class_fqn}", buffer, target, trxId);
+               });
     }

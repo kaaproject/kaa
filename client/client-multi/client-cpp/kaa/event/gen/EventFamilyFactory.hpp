@@ -34,10 +34,12 @@
 
 namespace kaa {
 
+class IExecutorContext;
+
 class EventFamilyFactory {
 public:
-    EventFamilyFactory(IEventManager& manager, ITransactable &transactionManager)
-        : eventManager_(manager), transactionManager_(transactionManager) {}
+    EventFamilyFactory(IEventManager& manager, ITransactable &transactionManager, IExecutorContext& executorContext)
+        : eventManager_(manager), transactionManager_(transactionManager), executorContext_(executorContext) {}
 
     TransactionIdPtr startEventsBlock() {
         return transactionManager_.beginTransaction();
@@ -57,6 +59,7 @@ private:
     std::set<std::string> efcNames_;
     std::map<std::string, std::shared_ptr<IEventFamily> > eventFamilies_;
     std::map<std::string, FQNList > supportedFQNLists_;
+    IExecutorContext& executorContext_;
 
     std::shared_ptr<IEventFamily> getEventFamilyByName(const std::string& efcName) {
         auto it = eventFamilies_.find(efcName);
