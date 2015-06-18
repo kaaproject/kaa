@@ -68,7 +68,7 @@ void Worker::operator ()()
 
 ThreadPool::ThreadPool(std::size_t workerCount): workerCount_(workerCount)
 {
-    if (!workerCount) {
+    if (!workerCount_) {
         KAA_LOG_ERROR(boost::format("Failed to create thread pool with %u workers ") % workerCount_);
         throw KaaException(boost::format("Failed to create thread pool with %u workers ") % workerCount_);
     }

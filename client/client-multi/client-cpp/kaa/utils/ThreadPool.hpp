@@ -32,8 +32,7 @@ class ThreadPool : public IThreadPool {
     friend class Worker;
 
 public:
-    ThreadPool() : ThreadPool(DEFAULT_WORKER_NUMBER) {}
-    ThreadPool(std::size_t workerCount);
+    ThreadPool(std::size_t workerCount = DEFAULT_WORKER_NUMBER);
     ~ThreadPool();
 
     virtual void add(const ThreadPoolTask& task);

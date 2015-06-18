@@ -34,9 +34,9 @@ SimpleExecutorContext::SimpleExecutorContext(std::size_t lifeCycleThreadCount, s
 
 void SimpleExecutorContext::init()
 {
-    lifeCycleExecutor_ = createExecutor(DEFAULT_THREAD_COUNT);
-    apiExecutor_ = createExecutor(DEFAULT_THREAD_COUNT);
-    callbackExecutor_ = createExecutor(DEFAULT_THREAD_COUNT);
+    lifeCycleExecutor_ = createExecutor(lifeCycleThreadCount_);
+    apiExecutor_ = createExecutor(apiThreadCount_);
+    callbackExecutor_ = createExecutor(callbackThreadCount_);
 }
 
 void SimpleExecutorContext::stop()
