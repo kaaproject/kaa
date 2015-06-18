@@ -15,80 +15,22 @@
  */
 package org.kaaproject.kaa.client.configuration.base;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.List;
-import java.util.concurrent.AbstractExecutorService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.avro.generic.GenericRecord;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
-import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.schema.base.Configuration;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
 public class ResyncConfigurationManagerTest {
 
-    private static ExecutorContext executorContext;
-    private static ExecutorService executor;
     private byte[] configurationData;
-
-    @BeforeClass
-    public static void beforeSuite() {
-        executorContext = Mockito.mock(ExecutorContext.class);
-        executor = Executors.newSingleThreadExecutor();
-        Mockito.when(executorContext.getApiExecutor()).thenReturn(new AbstractExecutorService() {
-
-            @Override
-            public void execute(Runnable command) {
-                command.run();
-            }
-
-            @Override
-            public List<Runnable> shutdownNow() {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public void shutdown() {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public boolean isTerminated() {
-                // TODO Auto-generated method stub
-                return false;
-            }
-
-            @Override
-            public boolean isShutdown() {
-                // TODO Auto-generated method stub
-                return false;
-            }
-
-            @Override
-            public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
-                // TODO Auto-generated method stub
-                return false;
-            }
-        });
-        Mockito.when(executorContext.getCallbackExecutor()).thenReturn(executor);
-    }
-
-    @AfterClass
-    public static void afterSuite() {
-        executor.shutdown();
-    }
 
     @Before
     public void init() throws IOException {
@@ -101,7 +43,7 @@ public class ResyncConfigurationManagerTest {
         KaaClientProperties properties = Mockito.mock(KaaClientProperties.class);
         ConfigurationStorage storage = Mockito.mock(ConfigurationStorage.class);
 
-        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties, executorContext);
+        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties);
         manager.setConfigurationStorage(storage);
 
         Mockito.when(properties.getDefaultConfigData()).thenReturn(configurationData);
@@ -117,7 +59,7 @@ public class ResyncConfigurationManagerTest {
         KaaClientProperties properties = Mockito.mock(KaaClientProperties.class);
         ConfigurationStorage storage = Mockito.mock(ConfigurationStorage.class);
 
-        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties, executorContext);
+        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties);
         manager.setConfigurationStorage(storage);
 
         Mockito.when(properties.getDefaultConfigData()).thenReturn(configurationData);
@@ -135,7 +77,7 @@ public class ResyncConfigurationManagerTest {
         KaaClientProperties properties = Mockito.mock(KaaClientProperties.class);
         ConfigurationStorage storage = Mockito.mock(ConfigurationStorage.class);
 
-        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties, executorContext);
+        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties);
         manager.setConfigurationStorage(storage);
 
         Mockito.when(storage.loadConfiguration()).thenReturn(ByteBuffer.wrap(configurationData));
@@ -144,23 +86,23 @@ public class ResyncConfigurationManagerTest {
         Assert.assertNotNull(manager.getConfigurationHashContainer());
         Assert.assertNotNull(manager.getConfigurationHashContainer().getConfigurationHash());
     }
-
+    
     @Test
     public void testConfigurationListeners() throws IOException {
         KaaClientProperties properties = Mockito.mock(KaaClientProperties.class);
         ConfigurationStorage storage = Mockito.mock(ConfigurationStorage.class);
 
-        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties, executorContext);
+        ResyncConfigurationManager manager = new ResyncConfigurationManager(properties);
         manager.setConfigurationStorage(storage);
 
         Mockito.when(storage.loadConfiguration()).thenReturn(ByteBuffer.wrap(configurationData));
-
+        
         ConfigurationListener listener = Mockito.mock(ConfigurationListener.class);
         manager.addListener(listener);
-
+        
         manager.getConfigurationProcessor().processConfigurationData(ByteBuffer.wrap(configurationData), true);
-        Mockito.verify(listener, Mockito.timeout(1000)).onConfigurationUpdate(new Configuration());
-
+        Mockito.verify(listener).onConfigurationUpdate(new Configuration());
+        
         Mockito.reset(listener);
         manager.removeListener(listener);
         manager.getConfigurationProcessor().processConfigurationData(ByteBuffer.wrap(configurationData), true);

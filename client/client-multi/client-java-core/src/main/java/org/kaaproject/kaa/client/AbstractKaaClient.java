@@ -173,13 +173,13 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         kaaClientState = new KaaClientPropertiesState(context.createPersistentStorage(), context.getBase64(), this.properties);
 
         TransportContext transportContext = buildTransportContext(properties, kaaClientState);
-
+        
         bootstrapManager = buildBootstrapManager(properties, kaaClientState, transportContext);
 
         channelManager = buildChannelManager(bootstrapManager, bootstrapServers, transportContext);
 
         bootstrapManager.setChannelManager(channelManager);
-
+        
         profileManager = buildProfileManager(properties, kaaClientState, transportContext);
         notificationManager = buildNotificationManager(properties, kaaClientState, transportContext);
         eventManager = buildEventManager(properties, kaaClientState, transportContext);
@@ -197,7 +197,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         transportContext.getUserTransport().setEndpointRegistrationProcessor(endpointRegistrationManager);
         transportContext.getLogTransport().setLogProcessor(logCollector);
         transportContext.initTransports(this.channelManager, this.kaaClientState);
-
+        
         eventFamilyFactory = new EventFamilyFactory(eventManager, context.getExecutorContext());
     }
 
@@ -551,10 +551,10 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
 
         return channelManager;
     }
-
+    
 
     protected ResyncConfigurationManager buildConfigurationManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
-        return new ResyncConfigurationManager(properties, context.getExecutorContext());
+        return new ResyncConfigurationManager(properties);
     }
 
     protected DefaultLogCollector buildLogCollector(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {

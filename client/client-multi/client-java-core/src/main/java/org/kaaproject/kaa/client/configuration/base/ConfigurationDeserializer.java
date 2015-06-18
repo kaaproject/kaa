@@ -20,16 +20,15 @@ import java.util.Collection;
 
 import javax.annotation.Generated;
 
-import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.schema.base.Configuration;
 
 /**
  * This class deserialize binary data to configuration object.
- *
+ * 
  * This implementation is auto-generated. Please modify corresponding template
  * file.
- *
+ * 
  * @author Andrew Shvayka
  *
  */
@@ -37,21 +36,11 @@ import org.kaaproject.kaa.schema.base.Configuration;
 class ConfigurationDeserializer {
 
     private final AvroByteArrayConverter<Configuration> converter = new AvroByteArrayConverter<Configuration>(Configuration.class);
-    private final ExecutorContext executorContext;
-
-    ConfigurationDeserializer(ExecutorContext executorContext) {
-        this.executorContext = executorContext;
-    }
 
     void notify(Collection<ConfigurationListener> listeners, byte[] configurationData) throws IOException {
-        final Configuration configuration = fromByteArray(configurationData);
-        for (final ConfigurationListener listener : listeners){
-            executorContext.getCallbackExecutor().submit(new Runnable() {
-                @Override
-                public void run() {
-                    listener.onConfigurationUpdate(configuration);
-                }
-            });
+        Configuration configuration = fromByteArray(configurationData);
+        for(ConfigurationListener listener : listeners){
+            listener.onConfigurationUpdate(configuration);
         }
     }
 

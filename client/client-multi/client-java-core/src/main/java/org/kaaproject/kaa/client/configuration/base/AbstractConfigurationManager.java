@@ -26,7 +26,6 @@ import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.configuration.ConfigurationHashContainer;
 import org.kaaproject.kaa.client.configuration.ConfigurationProcessor;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
-import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,18 +35,15 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
 
     private final Set<ConfigurationListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<ConfigurationListener, Boolean>());
     private final KaaClientProperties properties;
-    protected final ConfigurationDeserializer deserializer;
-    protected final ExecutorContext executorContext;
+    protected final ConfigurationDeserializer deserializer = new ConfigurationDeserializer();
 
     private volatile byte[] configurationData;
     private ConfigurationStorage storage;
-    private final ConfigurationHashContainer container;
+    private ConfigurationHashContainer container;
 
-    public AbstractConfigurationManager(KaaClientProperties properties, ExecutorContext executorContext) {
+    public AbstractConfigurationManager(KaaClientProperties properties) {
         super();
         this.properties = properties;
-        this.executorContext = executorContext;
-        this.deserializer = new ConfigurationDeserializer(executorContext);
         container = new HashContainer();
     }
 
