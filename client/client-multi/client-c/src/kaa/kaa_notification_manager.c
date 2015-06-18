@@ -265,7 +265,6 @@ static kaa_error_t kaa_find_topic(kaa_notification_manager_t *self, kaa_topic_t 
     KAA_RETURN_IF_NIL2(topic_id, topic, KAA_ERR_BADPARAM);
     kaa_list_node_t *topic_node = kaa_list_find_next(kaa_list_begin(self->topics), &kaa_find_topic_by_id, topic_id);
     if (!topic_node) {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_NOT_FOUND, "Topic with id = %lu not found.", *topic_id);
         return KAA_ERR_NOT_FOUND;
     }
     *topic = kaa_list_get_data(topic_node);
@@ -582,6 +581,7 @@ kaa_error_t kaa_add_notification_listener(kaa_notification_manager_t *self, kaa_
     if (listener_id) {
         *listener_id = id;
     }
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Added mandatory notification listener id '%u'", id);
     return KAA_ERR_NONE;
 }
 
@@ -596,7 +596,10 @@ kaa_error_t kaa_remove_notification_listener(kaa_notification_manager_t *self, u
                                            , &kaa_data_destroy);
     if (err) {
         KAA_LOG_TRACE(self->logger, err, "Failed to remove mandatory notification listener: the listener with id '%u' is not found.", *listener_id);
+    } else {
+        KAA_LOG_TRACE(self->logger, err, "Removed mandatory notification listener id '%u'", *listener_id);
     }
+
     return err;
 }
 
@@ -609,7 +612,7 @@ kaa_error_t kaa_add_optional_notification_listener(kaa_notification_manager_t *s
 
     if (!kaa_list_find_next(kaa_list_begin(self->topics), &kaa_find_topic_by_id, topic_id)) {
         KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Failed to add optional notification listener: "
-                                                            "topic with id %lu not found", *topic_id);
+                                                            "topic with id '%lu' not found", *topic_id);
         return KAA_ERR_NOT_FOUND;
     }
 
@@ -671,7 +674,7 @@ kaa_error_t kaa_add_optional_notification_listener(kaa_notification_manager_t *s
         *listener_id = id;
     }
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "The optional listener with id %lu has been added", id);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Added optional notification listener id '%u', topic id '%lu'", id, *topic_id);
 
     return KAA_ERR_NONE;
 }
@@ -685,7 +688,7 @@ kaa_error_t kaa_remove_optional_notification_listener(kaa_notification_manager_t
                                                            , &kaa_find_optional_notification_listener_by_id
                                                            , topic_id);
     if (!opt_listeners_node) {
-        KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Failed to remove the optional listener: there is no listeners subscribed on this topic (topic id %lu).", *topic_id);
+        KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Failed to remove the optional listener: there is no listeners subscribed on this topic (topic id '%lu').", *topic_id);
         return KAA_ERR_NOT_FOUND;
     }
 
@@ -697,10 +700,10 @@ kaa_error_t kaa_remove_optional_notification_listener(kaa_notification_manager_t
                                             , listener_id
                                             , &kaa_data_destroy);
     if (error) {
-        KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Failed to remove the optional listener: the listener with id %lu is not found.", *listener_id);
+        KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Failed to remove the optional listener: the listener with id '%lu' is not found.", *listener_id);
         return error;
     } else {
-        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "The optional listener with id %lu has been removed.", *listener_id);
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Removed optional notification listener id '%u', topic id '%lu'", *listener_id, *topic_id);
         if (!kaa_list_get_size(optional_wrapper->listeners)) {
             kaa_list_remove_at(self->optional_listeners, opt_listeners_node, &destroy_optional_listeners_wrapper);
         }
@@ -840,7 +843,7 @@ static kaa_error_t kaa_add_subscribtions_or_unsubscribtions(kaa_notification_man
          uint64_t *subs_topic_id = (uint64_t *) KAA_MALLOC(sizeof(uint64_t));
          KAA_RETURN_IF_NIL(subs_topic_id, KAA_ERR_NOMEM);
          *subs_topic_id = topic_ids[size];
-         KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to add (un)subscription to topic with id '%lu'", *subs_topic_id);
+         KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to add %s to topic with id '%lu'", subscription_id == SUBSCRIPTION_ID ? "subscription" : "unsubscription", *subs_topic_id);
          if (!kaa_list_push_front(new_subscriptions, subs_topic_id)) {
              KAA_FREE(subs_topic_id);
              kaa_list_destroy(new_subscriptions, &kaa_data_destroy);
@@ -858,21 +861,21 @@ kaa_error_t kaa_subscribe_to_topic(kaa_notification_manager_t *self, uint64_t *t
     kaa_topic_t* topic = NULL;
     kaa_error_t err = kaa_find_topic(self, &topic, topic_id);
     if (err) {
-        KAA_LOG_WARN(self->logger, KAA_ERR_BADPARAM, "Failed to subscribe to the topic with id %lu.", *topic_id);
+        KAA_LOG_WARN(self->logger, KAA_ERR_BADPARAM, "Failed to subscribe to the topic with id '%lu'.", *topic_id);
         return err;
     }
     if (topic->subscription_type == MANDATORY_SUBSCRIPTION) {
-        KAA_LOG_WARN(self->logger, KAA_ERR_BADPARAM, "Failed to subscribe to the topic with id %lu. Topic isn't optional.", *topic_id);
+        KAA_LOG_WARN(self->logger, KAA_ERR_BADPARAM, "Failed to subscribe to the topic with id '%lu'. Topic isn't optional.", *topic_id);
         return KAA_ERR_BADPARAM;
     }
     err = kaa_add_subscribtion_or_unsubscribtion(self->subscriptions, topic_id);
     KAA_RETURN_IF_ERR(err);
 
     if (force_sync) {
-        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to subscribe to topic %lu", *topic_id);
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to subscribe to topic '%lu'", *topic_id);
         kaa_sync_topic_subscriptions(self);
     } else {
-        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Subscription to topic %lu is postponed till sync", *topic_id);
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Subscription to topic '%lu' is postponed till sync", *topic_id);
     }
     return KAA_ERR_NONE;
 }
@@ -886,11 +889,11 @@ kaa_error_t kaa_subscribe_to_topics(kaa_notification_manager_t *self, uint64_t *
     while (size_copy--) {
         err = kaa_find_topic(self, &topic, topic_ids + size_copy);
         if (err) {
-            KAA_LOG_WARN(self->logger, err, "Failed to subscribe to the topic with id %lu.", topic_ids[size_copy]);
+            KAA_LOG_WARN(self->logger, err, "Failed to subscribe to the topic.Topic with id '%lu' not found.", topic_ids[size_copy]);
             return err;
         } else {
             if (topic->subscription_type == MANDATORY_SUBSCRIPTION) {
-                KAA_LOG_WARN(self->logger, KAA_ERR_BADPARAM, "Failed to subscribe to the topics. Topic with id %lu. Topic isn't optional.", topic_ids[size_copy]);
+                KAA_LOG_WARN(self->logger, KAA_ERR_BADPARAM, "Failed to subscribe to the topics. Topic with id '%lu'. Topic isn't optional.", topic_ids[size_copy]);
                 return KAA_ERR_BADPARAM;
             }
         }
@@ -916,21 +919,21 @@ kaa_error_t kaa_unsubscribe_from_topic(kaa_notification_manager_t *self, uint64_
     kaa_topic_t* topic = NULL;
     kaa_error_t err = kaa_find_topic(self, &topic, topic_id);
     if (err) {
-        KAA_LOG_WARN(self->logger, err, "Failed to unsubscribe from the topic with id %lu.", *topic_id);
+        KAA_LOG_WARN(self->logger, err, "Failed to unsubscribe from the topic with id '%lu'.", *topic_id);
         return err;
     }
     if (topic->subscription_type == MANDATORY_SUBSCRIPTION) {
-        KAA_LOG_WARN(self->logger, KAA_ERR_BADPARAM, "Failed to unsubscribe from the topic with id %lu. Topic isn't optional.", *topic_id);
+        KAA_LOG_WARN(self->logger, KAA_ERR_BADPARAM, "Failed to unsubscribe from the topic with id '%lu'. Topic isn't optional.", *topic_id);
         return KAA_ERR_BADPARAM;
     }
     err = kaa_add_subscribtion_or_unsubscribtion(self->unsubscriptions, topic_id);
     KAA_RETURN_IF_ERR(err);
 
     if (force_sync) {
-        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to unsubscribe from the topic %lu", *topic_id);
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to unsubscribe from the topic '%lu'", *topic_id);
         kaa_sync_topic_subscriptions(self);
     } else {
-        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Unsubscription from the topic %lu is postponed till sync", *topic_id);
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Unsubscription from the topic '%lu' is postponed till sync", *topic_id);
     }
     return KAA_ERR_NONE;
 }
@@ -944,11 +947,11 @@ kaa_error_t kaa_unsubscribe_from_topics(kaa_notification_manager_t *self, uint64
     while (size_copy--) {
         err = kaa_find_topic(self, &topic, topic_ids + size_copy);
         if (err) {
-            KAA_LOG_WARN(self->logger, err, "Failed to unsubscribe from the topic with id %lu.", topic_ids[size_copy]);
+            KAA_LOG_WARN(self->logger, err, "Failed to subscribe to the topic.Topic with id '%lu' not found", topic_ids[size_copy]);
             return err;
         } else {
             if (topic->subscription_type == MANDATORY_SUBSCRIPTION) {
-                KAA_LOG_WARN(self->logger, KAA_ERR_BADPARAM, "Failed to unsubscribe from the topics. Topic with id %lu. Topic isn't optional.", topic_ids[size_copy]);
+                KAA_LOG_WARN(self->logger, KAA_ERR_BADPARAM, "Failed to unsubscribe from the topics. Topic with id '%lu'. Topic isn't optional.", topic_ids[size_copy]);
                 return KAA_ERR_BADPARAM;
             }
         }
@@ -975,7 +978,7 @@ static kaa_error_t do_sync(kaa_notification_manager_t *self)
     if (channel) {
         channel->sync_handler(channel->context, notification_sync_services, 1);
     } else {
-        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Filed to retrieve channel");
+        KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to retrieve channel");
     }
 
     return KAA_ERR_NONE;
@@ -990,8 +993,6 @@ kaa_error_t kaa_sync_topic_subscriptions(kaa_notification_manager_t *self)
 kaa_error_t kaa_topic_list_updated(kaa_notification_manager_t *self, kaa_list_t *new_topics)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "New list of available topics received (topic_count %lu)",
-                                                                                            kaa_list_get_size(new_topics));
     kaa_topic_t *topic = NULL;
     kaa_list_node_t  *topic_node = kaa_list_begin(new_topics);
     while (topic_node && kaa_list_get_size(self->topics) > 0) {
