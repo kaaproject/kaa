@@ -277,13 +277,12 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 int affectedRows = resetBucketIdStatement.executeUpdate();
                 if (affectedRows > 0) {
                     LOG.info("Total {} log records reset for bucket id: [{}]", affectedRows, bucketId);
+                    long previouslyConsumedSize = consumedMemoryStorage.remove(bucketId);
+                    consumedSize += previouslyConsumedSize;
                 } else {
-                    LOG.warn("No log records for bucket with id: [{}]", bucketId);
+                    LOG.info("No log records for bucket with id: [{}]", bucketId);
                 }
 
-                long previouslyConsumedSize = consumedMemoryStorage.get(bucketId);
-                consumedMemoryStorage.remove(bucketId);
-                consumedSize += previouslyConsumedSize;
             } catch (SQLException e) {
                 LOG.error("Failed to reset bucket with id [{}]", bucketId, e);
             }
