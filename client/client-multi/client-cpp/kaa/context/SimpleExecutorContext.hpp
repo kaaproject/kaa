@@ -25,9 +25,9 @@ namespace kaa {
 
 class SimpleExecutorContext : public AbstractExecutorContext {
 public:
-    SimpleExecutorContext() : SimpleExecutorContext(DEFAULT_THREAD_COUNT, DEFAULT_THREAD_COUNT, DEFAULT_THREAD_COUNT) {}
-
-    SimpleExecutorContext(std::size_t lifeCycleThreadCount, std::size_t apiThreadCount, std::size_t callbackThreadCount);
+    SimpleExecutorContext(std::size_t lifeCycleThreadCount = DEFAULT_THREAD_COUNT
+                        , std::size_t apiThreadCount = DEFAULT_THREAD_COUNT
+                        , std::size_t callbackThreadCount = DEFAULT_THREAD_COUNT);
 
     virtual void init();
     virtual void stop();
