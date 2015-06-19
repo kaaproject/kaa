@@ -235,7 +235,7 @@ kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_me
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile user client sync");
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client user sync");
 
     size_t size = kaa_user_request_get_size_no_header(self);
     if (kaa_platform_message_write_extension_header(writer, KAA_USER_EXTENSION_TYPE, KAA_USER_RECEIVE_UPDATES_FLAG, size)) {
@@ -250,6 +250,8 @@ kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_me
         writer->current += sizeof(uint16_t);
         *((uint16_t *) writer->current) = KAA_HTONS((uint16_t) self->user_info->user_verifier_token_len);
         writer->current += sizeof(uint32_t); /* verifier token length + reserved */
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing external system authentication parameters: user external id length %u, virifier length %u"
+                    , self->user_info->user_external_id_len, self->user_info->user_verifier_token_len);
 
         if (self->user_info->user_external_id_len) {
             if (kaa_platform_message_write_aligned(writer
@@ -295,7 +297,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received user server sync");
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received user server sync: options %u, payload size %u", extension_options, extension_length);
 
     size_t remaining_length = extension_length;
     uint32_t field_header = 0;
@@ -309,6 +311,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
         field = (field_header >> 24) & 0xFF;
         switch (field) {
             case USER_ATTACH_RESPONSE_FIELD: {
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Received user attach response");
                 user_sync_result_t result = (uint8_t) (field_header >> 8) & 0xFF;
                 destroy_user_info(self->user_info);
                 self->user_info = NULL;
@@ -350,6 +353,8 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                         reason[reason_length] = '\0';
                         remaining_length -= kaa_aligned_size_get(reason_length);
 
+                        KAA_LOG_TRACE(self->logger, user_verifier_error_code, "Failed to attach to user: %s", reason);
+
                         if (self->attachment_listeners.on_attach_failed) {
                             (self->attachment_listeners.on_attach_failed)(self->attachment_listeners.context
                                                                         , (user_verifier_error_code_t)user_verifier_error_code
@@ -366,6 +371,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                 break;
             }
             case USER_ATTACH_NOTIFICATION_FIELD: {
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Received user attach notification");
                 uint8_t external_id_length = (field_header >> 16) & 0xFF;
                 uint16_t access_token_length = (field_header) & 0xFFFF;
                 if (external_id_length + access_token_length > remaining_length)
@@ -388,6 +394,8 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                     return KAA_ERR_READ_FAILED;
                 }
                 access_token[access_token_length] = '\0';
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Endpoint external id '%s' (length %u), access token '%s' (length %u)"
+                            , external_id, external_id_length, access_token, access_token_length);
                 remaining_length -= kaa_aligned_size_get(access_token_length);
 
                 self->status->is_attached = true;
@@ -398,6 +406,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                 break;
             }
             case USER_DETACH_NOTIFICATION_FIELD: {
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Received user detach notification");
                 uint16_t access_token_length = (field_header) & 0xFFFF;
                 if (access_token_length > remaining_length)
                     return KAA_ERR_INVALID_BUFFER_SIZE;
@@ -409,6 +418,8 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                     return KAA_ERR_READ_FAILED;
                 }
                 access_token[access_token_length] = '\0';
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Endpoint access token '%s' (length %u)"
+                            , access_token, access_token_length);
                 remaining_length -= kaa_aligned_size_get(access_token_length);
 
                 self->status->is_attached = false;

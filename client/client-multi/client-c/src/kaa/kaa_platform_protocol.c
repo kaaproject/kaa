@@ -124,9 +124,11 @@ kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size)
 
 
 
-kaa_error_t kaa_meta_data_request_serialize(kaa_status_t *status, kaa_platform_message_writer_t* writer, uint32_t request_id)
+kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *self, kaa_platform_message_writer_t* writer, uint32_t request_id)
 {
-    KAA_RETURN_IF_NIL2(status, writer, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(self, self->status, writer, KAA_ERR_BADPARAM);
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client meta sync");
 
     uint32_t options = TIMEOUT_VALUE | PUBLIC_KEY_HASH_VALUE | PROFILE_HASH_VALUE | APP_TOKEN_VALUE;
 
@@ -149,13 +151,15 @@ kaa_error_t kaa_meta_data_request_serialize(kaa_status_t *status, kaa_platform_m
     err_code = kaa_platform_message_write(writer, &timeout, sizeof(timeout));
     KAA_RETURN_IF_ERR(err_code);
 
-    err_code = kaa_platform_message_write_aligned(writer, status->endpoint_public_key_hash, SHA_1_DIGEST_LENGTH);
+    err_code = kaa_platform_message_write_aligned(writer, self->status->endpoint_public_key_hash, SHA_1_DIGEST_LENGTH);
     KAA_RETURN_IF_ERR(err_code);
 
-    err_code = kaa_platform_message_write_aligned(writer, status->profile_hash, SHA_1_DIGEST_LENGTH);
+    err_code = kaa_platform_message_write_aligned(writer, self->status->profile_hash, SHA_1_DIGEST_LENGTH);
     KAA_RETURN_IF_ERR(err_code);
 
     err_code = kaa_platform_message_write_aligned(writer, APPLICATION_TOKEN, KAA_APPLICATION_TOKEN_LENGTH);
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Meta sync: payload length '%u', request id '%u", payload_length, request_id);
 
     return err_code;
 }
@@ -313,7 +317,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
     char *extension_count_p = writer->current;
     writer->current += KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE;
 
-    error_code = kaa_meta_data_request_serialize(self->status, writer, self->request_id);
+    error_code = kaa_meta_data_request_serialize(self, writer, self->request_id);
 
     while (!error_code && services_count--) {
         switch (services[services_count]) {
@@ -495,8 +499,10 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
             break;
         }
         case KAA_META_DATA_EXTENSION_TYPE: {
+            KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received meta server sync: options 0, payload size %u", sizeof(uint32_t));
             error_code = kaa_platform_message_read(reader, &request_id, sizeof(uint32_t));
             request_id = KAA_NTOHL(request_id);
+            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Request id %u", request_id);
             break;
         }
         case KAA_PROFILE_EXTENSION_TYPE: {
