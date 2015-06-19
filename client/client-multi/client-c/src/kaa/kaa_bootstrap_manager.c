@@ -376,9 +376,9 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
         if (error_code) {
             destroy_access_point(new_access_point);
             KAA_LOG_WARN(self->logger, error_code, "Failed to add new access point "
-                    "to channel (protocol: id=0x%08X, version=%d)", protocol_id.id, protocol_id.version);
+                    "to channel (protocol: id=0x%08X, version=%u)", protocol_id.id, protocol_id.version);
         }
-        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Added access point: access point id '%u', protocol id '0x%08X', protocol version '%d', connection data length '%d'"
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Added access point: access point id '%u', protocol id '0x%08X', protocol version '%u', connection data length '%u'"
                     , new_access_point->id, protocol_id.id, protocol_id.version, new_access_point->connection_data_len);
     }
 

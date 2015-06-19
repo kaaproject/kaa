@@ -39,7 +39,7 @@
 
 
 extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
-                                            , kaa_context_t *context, kaa_logger_t *logger);
+                                            , kaa_context_t *context);
 
 extern void kaa_channel_manager_destroy(kaa_channel_manager_t *self);
 
@@ -163,13 +163,13 @@ void test_create_channel_manager()
     kaa_error_t error_code;
     kaa_channel_manager_t *channel_manager = NULL;
 
-    error_code = kaa_channel_manager_create(NULL, &kaa_context, logger);
+    error_code = kaa_channel_manager_create(NULL, &kaa_context);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_channel_manager_create(&channel_manager, NULL, logger);
+    error_code = kaa_channel_manager_create(&channel_manager, NULL);
     ASSERT_NOT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context, logger);
+    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_NOT_EQUAL(channel_manager, NULL);
 
@@ -183,7 +183,7 @@ void test_add_channel()
     kaa_error_t error_code;
     kaa_channel_manager_t *channel_manager = NULL;
 
-    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context, logger);
+    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     uint32_t protocol_id = 0xAABBCCDD;
@@ -227,7 +227,7 @@ void test_get_service_specific_channel()
     kaa_error_t error_code;
     kaa_channel_manager_t *channel_manager = NULL;
 
-    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context, logger);
+    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     uint32_t global_channel_protocol_id = 0xAABBCCAA;
@@ -294,7 +294,7 @@ void test_get_bootstrap_client_sync_size()
     size_t expected_size = 0, actual_size = 0;
     kaa_channel_manager_t *channel_manager = NULL;
 
-    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context, logger);
+    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_channel_manager_bootstrap_request_get_size(channel_manager, &actual_size);
@@ -375,7 +375,7 @@ void test_get_bootstrap_client_sync_serialize()
     size_t sync_size = 0;
     kaa_channel_manager_t *channel_manager = NULL;
 
-    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context, logger);
+    error_code = kaa_channel_manager_create(&channel_manager, &kaa_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     uint32_t channel1_protocol_id = 0xAABBCCAA;
