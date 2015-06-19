@@ -132,7 +132,6 @@ kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *self, kaa_p
 
     uint32_t options = TIMEOUT_VALUE | PUBLIC_KEY_HASH_VALUE | PROFILE_HASH_VALUE | APP_TOKEN_VALUE;
 
-
     size_t payload_length = 0;
     kaa_error_t err_code = kaa_meta_data_request_get_size(&payload_length);
     KAA_RETURN_IF_ERR(err_code);
