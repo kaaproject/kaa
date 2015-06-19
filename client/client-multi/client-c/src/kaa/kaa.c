@@ -46,7 +46,8 @@ extern kaa_error_t kaa_profile_manager_create(kaa_profile_manager_t **profile_ma
                                               kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
 extern void kaa_profile_manager_destroy(kaa_profile_manager_t *self);
 
-extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context);
+extern kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p, kaa_context_t *context
+                                            , kaa_logger_t *logger);
 extern void kaa_channel_manager_destroy(kaa_channel_manager_t *self);
 extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self,
                                                                                     kaa_service_t service_type);
@@ -114,7 +115,7 @@ static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *l
                                              (*context_p)->status->status_instance);
 
     if (!error)
-        error = kaa_channel_manager_create(&((*context_p)->channel_manager), (*context_p));
+        error = kaa_channel_manager_create(&((*context_p)->channel_manager), (*context_p), (*context_p)->logger);
 
     if (!error)
         error = kaa_bootstrap_manager_create(&((*context_p)->bootstrap_manager), (*context_p)->channel_manager,
