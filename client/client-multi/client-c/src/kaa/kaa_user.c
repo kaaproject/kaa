@@ -372,7 +372,6 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                 break;
             }
             case USER_ATTACH_NOTIFICATION_FIELD: {
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Received user attach notification");
                 uint8_t external_id_length = (field_header >> 16) & 0xFF;
                 uint16_t access_token_length = (field_header) & 0xFFFF;
                 if (external_id_length + access_token_length > remaining_length)
@@ -395,8 +394,8 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                     return KAA_ERR_READ_FAILED;
                 }
                 access_token[access_token_length] = '\0';
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Endpoint external id '%s' (length %u), access token '%s' (length %u)"
-                            , external_id, external_id_length, access_token, access_token_length);
+                KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received user attach notification: endpoint external id '%s' (length %u), access token '%s' (length %u)"
+                           , external_id, external_id_length, access_token, access_token_length);
                 remaining_length -= kaa_aligned_size_get(access_token_length);
 
                 self->status->is_attached = true;
@@ -419,8 +418,8 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                     return KAA_ERR_READ_FAILED;
                 }
                 access_token[access_token_length] = '\0';
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Endpoint access token '%s' (length %u)"
-                            , access_token, access_token_length);
+                KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received user detach notification: endpoint access token '%s' (length %u)"
+                           , access_token, access_token_length);
                 remaining_length -= kaa_aligned_size_get(access_token_length);
 
                 self->status->is_attached = false;
