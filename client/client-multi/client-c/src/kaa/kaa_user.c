@@ -250,8 +250,8 @@ kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_me
         writer->current += sizeof(uint16_t);
         *((uint16_t *) writer->current) = KAA_HTONS((uint16_t) self->user_info->user_verifier_token_len);
         writer->current += sizeof(uint32_t); /* verifier token length + reserved */
-        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing external system authentication parameters: user external id length %u, virifier length %u"
-                    , self->user_info->user_external_id_len, self->user_info->user_verifier_token_len);
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing external system authentication parameters: user external id '%s' (length %u), verifier '%s' (length %u)"
+                    , self->user_info->user_external_id, self->user_info->user_external_id_len, self->user_info->user_verifier_token, self->user_info->user_verifier_token_len);
 
         if (self->user_info->user_external_id_len) {
             if (kaa_platform_message_write_aligned(writer
@@ -323,7 +323,6 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                     if (self->attachment_listeners.on_attach_success)
                         (self->attachment_listeners.on_attach_success)(self->attachment_listeners.context);
                 } else {
-                    KAA_LOG_ERROR(self->logger, KAA_ERR_BAD_STATE, "Failed to attach endpoint to user");
 
                     uint16_t user_verifier_error_code;
                     if (kaa_platform_message_read(reader, &user_verifier_error_code, sizeof(uint16_t))) {
@@ -353,7 +352,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                         reason[reason_length] = '\0';
                         remaining_length -= kaa_aligned_size_get(reason_length);
 
-                        KAA_LOG_TRACE(self->logger, user_verifier_error_code, "Failed to attach to user: %s", reason);
+                        KAA_LOG_ERROR(self->logger, KAA_ERR_EVENT_NOT_ATTACHED, "Failed to attach to user: error %d, reason '%s'", user_verifier_error_code, reason);
 
                         if (self->attachment_listeners.on_attach_failed) {
                             (self->attachment_listeners.on_attach_failed)(self->attachment_listeners.context
@@ -361,11 +360,13 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                                                                         , reason);
                         }
                     } else {
+                        KAA_LOG_ERROR(self->logger, KAA_ERR_EVENT_NOT_ATTACHED, "Failed to attach to user: error %d, reason 'unknown'", user_verifier_error_code);
                         if (self->attachment_listeners.on_attach_failed) {
                             (self->attachment_listeners.on_attach_failed)(self->attachment_listeners.context
                                                                         , (user_verifier_error_code_t)user_verifier_error_code
                                                                         , NULL);
                         }
+
                     }
                 }
                 break;
