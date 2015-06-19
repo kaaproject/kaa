@@ -141,11 +141,7 @@ void EventManager::onEventFromServer(const std::string& eventClassFQN, const std
         auto it = std::find(list.begin(), list.end(), eventClassFQN);
         if (it != list.end()) {
             KAA_LOG_TRACE(boost::format("Processing event for %1%") % eventClassFQN);
-            executorContext_.getCallbackExecutor().add([family, &eventClassFQN, &data, &source]
-                                                        {
-                                                            family->onGenericEvent(eventClassFQN, data, source);
-                                                        });
-
+            family->onGenericEvent(eventClassFQN, data, source);
             isProcessed = true;
         }
     }
@@ -191,7 +187,7 @@ void EventManager::onEventListenersReceived(const EventSyncResponse::eventListen
                         listeners = response.listeners.get_array();
                     }
 
-                    executorContext_.getCallbackExecutor().add([callback, &listeners]
+                    executorContext_.getCallbackExecutor().add([callback, listeners]
                                                                 {
                                                                     callback->onEventListenersReceived(listeners);
                                                                 });

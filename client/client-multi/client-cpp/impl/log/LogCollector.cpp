@@ -95,10 +95,14 @@ void LogCollector::processTimeout()
 
 void LogCollector::addLogRecord(const KaaUserLogRecord& record)
 {
-    executorContext_.getApiExecutor().add([this, &record] ()
-            {
-                LogRecordPtr serializedRecord(new LogRecord(record));
+    /*
+     * To avoid overhead on copying big-sized log records while capturing in lambdas,
+     * serialization has been performed before adding task to executor.
+     */
+    LogRecordPtr serializedRecord(new LogRecord(record));
 
+    executorContext_.getApiExecutor().add([this, serializedRecord] ()
+            {
                 KAA_MUTEX_LOCKING("storageGuard_");
                 KAA_MUTEX_UNIQUE_DECLARE(lock, storageGuard_);
                 KAA_MUTEX_LOCKED("storageGuard_");

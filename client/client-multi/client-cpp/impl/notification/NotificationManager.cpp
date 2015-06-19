@@ -324,12 +324,12 @@ const Topic& NotificationManager::findTopic(const std::string& id)
 
 void NotificationManager::notifyTopicUpdateSubscribers(const Topics& topics)
 {
-    executorContext_.getCallbackExecutor().add([this, &topics] () { topicListeners_(topics); });
+    executorContext_.getCallbackExecutor().add([this, topics] () { topicListeners_(topics); });
 }
 
 void NotificationManager::notifyMandatoryNotificationSubscribers(const std::string& id, const KaaNotification& notification)
 {
-    executorContext_.getCallbackExecutor().add([this, &id, &notification] () { mandatoryListeners_(id, notification); });
+    executorContext_.getCallbackExecutor().add([this, id, notification] () { mandatoryListeners_(id, notification); });
 }
 
 bool NotificationManager::notifyOptionalNotificationSubscribers(const std::string& id, const KaaNotification& notification)
@@ -350,7 +350,7 @@ bool NotificationManager::notifyOptionalNotificationSubscribers(const std::strin
 
         notified = true;
 
-        executorContext_.getCallbackExecutor().add([&notifier, &id, &notification] () { notifier(id, notification); });
+        executorContext_.getCallbackExecutor().add([&notifier, id, notification] () { notifier(id, notification); });
     }
 
     return notified;
