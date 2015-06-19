@@ -33,13 +33,13 @@
 #include "utilities/kaa_mem.h"
 #include "platform/ext_sha.h"
 #include "platform/sock.h"
-
+#include "kaa.h"
 
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
 extern void        kaa_status_destroy(kaa_status_t *self);
 
 extern kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size);
-extern kaa_error_t kaa_meta_data_request_serialize(kaa_status_t *status
+extern kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *status
                                                  , kaa_platform_message_writer_t* writer
                                                  , uint32_t request_id);
 
@@ -117,8 +117,14 @@ void test_meta_extension_serialize()
     error_code = ext_copy_sha_hash(status->profile_hash, expected_profile_hash);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_meta_data_request_serialize(status, writer, 1);
+    kaa_context_t *context = NULL;
+    kaa_init(&context);
+    kaa_platform_protocol_t *protocol = NULL;
+    kaa_platform_protocol_create(&protocol, context, status);
+
+    error_code = kaa_meta_data_request_serialize(protocol, writer, 1);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    kaa_deinit(context);
 
     kaa_platform_message_reader_t *reader;
     error_code = kaa_platform_message_reader_create(&reader, buffer, meta_extension_size);
