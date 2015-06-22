@@ -313,7 +313,6 @@ Copyright 2014 CyberVision, Inc.
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.9.1</version>
                     <configuration>
-                        <additionalparam>-Xdoclint:none</additionalparam>
                         <detectOfflineLinks>false</detectOfflineLinks>
                     </configuration>
                     <executions>
