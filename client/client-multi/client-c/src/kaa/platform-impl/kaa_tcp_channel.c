@@ -359,7 +359,7 @@ kaa_error_t kaa_tcp_channel_sync_handler(void *context, const kaa_service_t serv
     if (((kaa_tcp_channel_t *) context)->access_point.state == AP_RESOLVED
             && ((kaa_tcp_channel_t *) context)->pending_request_service_count > 0
             && ((kaa_tcp_channel_t *) context)->channel_state == KAA_TCP_CHANNEL_UNDEFINED) {
-        KAA_LOG_TRACE(((kaa_tcp_channel_t *) context)->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] connection down but access point resolved, trying to connect...."
+        KAA_LOG_INFO(((kaa_tcp_channel_t *) context)->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] connection down but access point resolved, trying to connect...."
                                                                                       , ((kaa_tcp_channel_t *) context)->access_point.id);
         error_code = kaa_tcp_channel_connect_access_point(((kaa_tcp_channel_t *) context));
         if (error_code) {
