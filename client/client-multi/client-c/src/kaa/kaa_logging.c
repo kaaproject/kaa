@@ -311,7 +311,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
     if (self->is_sync_ignored) {
         return KAA_ERR_NONE;
     }
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile log client sync");
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client logging sync");
 
     kaa_platform_message_writer_t tmp_writer = *writer;
 
@@ -329,6 +329,7 @@ kaa_error_t kaa_logging_request_serialize(kaa_log_collector_t *self, kaa_platfor
         self->log_bucket_id = self->status->log_bucket_id;
     ++self->log_bucket_id;
 
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Request id '%u'", self->log_bucket_id);
     *((uint16_t *) tmp_writer.current) = KAA_HTONS(self->log_bucket_id);
     tmp_writer.current += sizeof(uint16_t);
     char *records_count_p = tmp_writer.current; // Pointer to the records count. Will be filled in later.
@@ -395,6 +396,8 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
                                          , size_t extension_length)
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
+
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received logging server sync: options 0, payload size %u", extension_length);
 
     uint32_t delivery_status_count;
     kaa_error_t error_code = kaa_platform_message_read(reader, &delivery_status_count, sizeof(uint32_t));

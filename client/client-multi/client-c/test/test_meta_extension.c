@@ -43,6 +43,9 @@ extern kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *stat
                                                  , kaa_platform_message_writer_t* writer
                                                  , uint32_t request_id);
 
+extern kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p
+                                       , kaa_context_t *context
+                                       , kaa_status_t *status);
 
 
 static kaa_logger_t *logger = NULL;
