@@ -326,7 +326,8 @@ static kaa_error_t kaa_fill_event_structure(kaa_event_t *event
 
     event->seq_num = sequence_number;
     event->event_class_fqn = kaa_bytes_copy_create((const uint8_t *)fqn
-                                                 , strlen(fqn));
+                                                 , strlen(fqn) + 1);
+    --event->event_class_fqn->size;
     KAA_RETURN_IF_NIL(event->event_class_fqn, KAA_ERR_NOMEM);
 
     if (event_data && event_data_size > 0) {
@@ -588,14 +589,14 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
                 return error;
             }
         }
-        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serialized event: sqn '%u',fqn length '%u', data size '%u'"
-                    , event->seq_num, event->event_class_fqn->size, event->event_data ? event->event_data->size : 0);
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serialized event: sqn '%u',fqn length '%u', data size '%u', fqn '%s'"
+                    , event->seq_num, event->event_class_fqn->size, event->event_data ? event->event_data->size : 0, event->event_class_fqn->buffer);
         it = kaa_list_next(it);
     }
     return KAA_ERR_NONE;
 }
 
-static kaa_error_t kaa_event_listeners_request_serialize(kaa_event_manager_t *self, kaa_platform_message_writer_t *writer, uint16_t *listeners_count)
+static kaa_error_t kaa_event_listeners_request_serialize(kaa_event_manager_t *self, kaa_platform_message_writer_t *writer)
 {
     kaa_list_node_t *it = kaa_list_begin(self->event_listeners_requests);
     while (it) {
@@ -623,7 +624,6 @@ static kaa_error_t kaa_event_listeners_request_serialize(kaa_event_manager_t *se
         }
         it = kaa_list_next(it);
     }
-    *listeners_count = kaa_list_get_size(self->event_listeners_requests);
     return KAA_ERR_NONE;
 }
 
@@ -688,13 +688,13 @@ kaa_error_t kaa_event_request_serialize(kaa_event_manager_t *self, size_t reques
             char *listeners_count_p = writer->current; // Pointer to the listeners count. Will be filled in later
             writer->current += sizeof(uint16_t);
 
-            uint16_t listeners_count = 0;
-            error = kaa_event_listeners_request_serialize(self, writer, &listeners_count);
+            uint16_t listeners_count = kaa_list_get_size(self->event_listeners_requests);
+            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing %u event listeners", listeners_count);
+            error = kaa_event_listeners_request_serialize(self, writer);
             if (error) {
                 KAA_LOG_ERROR(self->logger, error, "Failed to serialize event listeners request");
                 return error;
             }
-            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serialized %u event listeners", listeners_count);
             *((uint16_t *) listeners_count_p) = KAA_HTONS(listeners_count);
         }
     }
@@ -1016,7 +1016,7 @@ kaa_error_t kaa_event_create_transaction(kaa_event_manager_t *self, kaa_event_bl
         return KAA_ERR_NOMEM;
     }
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Creating new events batch id, %zu", *trx_id);
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Creating new events batch, id %zu", *trx_id);
 
     self->trx_counter = *trx_id;
     return KAA_ERR_NONE;
