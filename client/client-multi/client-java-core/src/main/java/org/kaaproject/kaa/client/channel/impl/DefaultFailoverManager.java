@@ -109,7 +109,7 @@ public class DefaultFailoverManager implements FailoverManager {
             AccessPointIdResolution newResolution = new AccessPointIdResolution(connectionInfo.getAccessPointId(), null);
             resolutionProgressMap.put(connectionInfo.getServerType(), newResolution);
         } else {
-            LOG.debug("Same server [{}] was used, nothing has changed");
+            LOG.debug("Same server [{}] is used, nothing has changed", connectionInfo);
         }
     }
 
