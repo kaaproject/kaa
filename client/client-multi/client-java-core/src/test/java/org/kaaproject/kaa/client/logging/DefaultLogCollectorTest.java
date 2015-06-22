@@ -32,6 +32,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.context.ExecutorContext;
@@ -101,9 +102,10 @@ public class DefaultLogCollectorTest {
     @Test
     public void testDefaultUploadConfiguration() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
 
-        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager, failoverManager);
         DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy();
         strategy.setCountThreshold(5);
         logCollector.setStrategy(strategy);
@@ -126,8 +128,9 @@ public class DefaultLogCollectorTest {
     @Test
     public void testStorageStatusAffect() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
-        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager, failoverManager);
         LogStorage storage = Mockito.mock(LogStorage.class);
         logCollector.setStorage(storage);
         Log record = new Log();
@@ -170,9 +173,10 @@ public class DefaultLogCollectorTest {
     @Test
     public void testLogUploadRequestAndSuccessResponse() throws Exception {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
 
-        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager, failoverManager);
         DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy();
         logCollector.setStrategy(strategy);
         LogStorage storage = Mockito.mock(LogStorage.class);
@@ -228,9 +232,10 @@ public class DefaultLogCollectorTest {
     @Test
     public void testLogUploadAndFailureResponse() throws IOException, InterruptedException {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
 
-        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager, failoverManager);
         DefaultLogUploadStrategy strategy = Mockito.spy(new DefaultLogUploadStrategy());
         strategy.setRetryPeriod(0);
         logCollector.setStrategy(strategy);
@@ -296,9 +301,10 @@ public class DefaultLogCollectorTest {
         long timeout = 2; // in seconds
 
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
 
-        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager, failoverManager);
 
         DefaultLogUploadStrategy tmp = new DefaultLogUploadStrategy();
         tmp.setTimeout(1);

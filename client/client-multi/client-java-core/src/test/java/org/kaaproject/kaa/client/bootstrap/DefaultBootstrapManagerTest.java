@@ -33,6 +33,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
+import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.IPTransportInfoTest;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
@@ -93,6 +94,11 @@ public class DefaultBootstrapManagerTest {
 
         @Override
         public void onServerFailed(TransportConnectionInfo server) {
+
+        }
+
+        @Override
+        public void setFailoverManager(FailoverManager failoverManager) {
 
         }
 

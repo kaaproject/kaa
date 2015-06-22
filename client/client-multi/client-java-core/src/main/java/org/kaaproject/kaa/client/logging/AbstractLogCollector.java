@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
@@ -58,6 +59,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
     private final LogTransport transport;
     private final Map<Integer, Long> timeoutMap = new ConcurrentHashMap<>();
     private final KaaChannelManager channelManager;
+    private final FailoverManager failoverManager;
 
     protected LogStorage storage;
     private LogUploadStrategy strategy;
@@ -65,13 +67,15 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     private volatile boolean isUploading = false;
 
-    public AbstractLogCollector(LogTransport transport, ExecutorContext executorContext, KaaChannelManager manager) {
+    public AbstractLogCollector(LogTransport transport, ExecutorContext executorContext,
+                                KaaChannelManager channelManager, FailoverManager failoverManager) {
         this.strategy = new DefaultLogUploadStrategy();
         this.storage = new MemoryLogStorage(strategy.getBatchSize());
         this.controller = new DefaultLogUploadController();
-        this.channelManager = manager;
+        this.channelManager = channelManager;
         this.transport = transport;
         this.executorContext = executorContext;
+        this.failoverManager = failoverManager;
     }
 
     @Override
@@ -215,7 +219,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         public void switchAccessPoint() {
             TransportConnectionInfo server = channelManager.getActiveServer(TransportType.LOGGING);
             if (server != null) {
-                channelManager.onServerFailed(server);
+                failoverManager.onServerFailed(server);
             } else {
                 LOG.warn("Failed to switch Operation server. No channel is used for logging transport");
             }

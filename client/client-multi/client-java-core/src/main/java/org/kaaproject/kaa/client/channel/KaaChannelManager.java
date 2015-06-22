@@ -200,4 +200,11 @@ public interface KaaChannelManager {
      * @return
      */
     TransportConnectionInfo getActiveServer(TransportType type);
+
+    /**
+     * Sets a new failover manager
+     *
+     * @param failoverManager the failover manager
+     */
+    void setFailoverManager(FailoverManager failoverManager);
 }

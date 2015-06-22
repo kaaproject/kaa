@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
@@ -60,8 +61,8 @@ public class DefaultOperationHttpChannel extends AbstractHttpChannel {
         }
     }
 
-    public DefaultOperationHttpChannel(AbstractKaaClient client, KaaClientState state) {
-        super(client, state);
+    public DefaultOperationHttpChannel(AbstractKaaClient client, KaaClientState state, FailoverManager failoverManager) {
+        super(client, state, failoverManager);
     }
 
     private void processTypes(Map<TransportType, ChannelDirection> types) throws Exception {
