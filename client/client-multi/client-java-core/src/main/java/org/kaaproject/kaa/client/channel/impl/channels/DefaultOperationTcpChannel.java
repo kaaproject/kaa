@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -235,7 +236,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private final MessageFactory messageFactory = new MessageFactory();
 
-    private boolean areTasksScheduled;
+    private volatile Future<?> pingTaskFuture;
+
+    private boolean isReadTaskScheduled;
 
     public DefaultOperationTcpChannel(KaaClientState state, KaaChannelManager channelManager) {
         this.state = state;
@@ -281,6 +284,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     private synchronized void closeConnection() {
+        if (pingTaskFuture != null && !pingTaskFuture.isCancelled()) {
+            pingTaskFuture.cancel(true);
+        }
         if (socket != null) {
             LOG.info("Channel \"{}\": closing current connection", getId());
             try {
@@ -309,11 +315,14 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             LOG.info("Channel [{}]: opening connection to server {}", getId(), currentServer);
             this.socket = createSocket(currentServer.getHost(), currentServer.getPort());
             sendConnect();
-            if (!areTasksScheduled) {
-                schedulePingTask();
+            if (!isReadTaskScheduled) {
                 executor.execute(readTask);
-                areTasksScheduled = true;
+                isReadTaskScheduled = true;
             }
+            if (pingTaskFuture != null && !pingTaskFuture.isCancelled()) {
+                pingTaskFuture.cancel(true);
+            }
+            schedulePingTask();
         } catch (Exception e) {
             LOG.error("Failed to create a socket for server {}:{}", currentServer.getHost(), currentServer.getPort());
             LOG.error("Stack trace: ", e);
@@ -336,7 +345,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     private void schedulePingTask() {
         if (executor != null) {
             LOG.debug("Scheduling a ping task ({} seconds) for channel [{}]", PING_TIMEOUT, getId());
-            executor.scheduleWithFixedDelay(pingTask, PING_TIMEOUT, PING_TIMEOUT, TimeUnit.SECONDS);
+            pingTaskFuture = executor.schedule(pingTask, PING_TIMEOUT, TimeUnit.SECONDS);
         }
     }
 
