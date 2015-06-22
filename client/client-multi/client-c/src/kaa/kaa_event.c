@@ -1016,7 +1016,7 @@ kaa_error_t kaa_event_create_transaction(kaa_event_manager_t *self, kaa_event_bl
         return KAA_ERR_NOMEM;
     }
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Creating new events batch with, %zu", *trx_id);
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Creating new events batch id, %zu", *trx_id);
 
     self->trx_counter = *trx_id;
     return KAA_ERR_NONE;
