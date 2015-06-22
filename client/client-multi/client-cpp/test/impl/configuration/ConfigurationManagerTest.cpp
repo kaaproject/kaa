@@ -69,7 +69,8 @@ BOOST_AUTO_TEST_CASE(configurationUpdated)
     manager.subscribeForConfigurationChanges(receiver);
 
     AvroByteArrayConverter<KaaRootConfiguration> convert;
-    KaaRootConfiguration rootConfig = convert.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size());
+    auto rootConfig = std::make_shared<KaaRootConfiguration>();
+    convert.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size(), *rootConfig);
 
     manager.onDeltaReceived(0, rootConfig, true);
     testSleep(1);
@@ -88,7 +89,7 @@ BOOST_AUTO_TEST_CASE(configurationUpdated)
 
     const auto& checkConfiguration = manager.getConfiguration();
 
-    BOOST_CHECK(checkConfiguration.data == rootConfig.data);
+    BOOST_CHECK(checkConfiguration.data == (*rootConfig).data);
 }
 
 BOOST_AUTO_TEST_CASE(configurationPartialUpdated)
@@ -97,7 +98,8 @@ BOOST_AUTO_TEST_CASE(configurationPartialUpdated)
     ConfigurationManager manager(context);
 
     AvroByteArrayConverter<KaaRootConfiguration> convert;
-    KaaRootConfiguration rootConfig = convert.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size());
+    auto rootConfig = std::make_shared<KaaRootConfiguration>();
+    convert.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size(), *rootConfig);
 
     BOOST_CHECK_THROW(manager.onDeltaReceived(0, rootConfig, false), KaaException);
 }

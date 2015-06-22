@@ -127,7 +127,8 @@ BOOST_AUTO_TEST_CASE(SimpleAvroBinaryDecoding)
     AvroByteArrayConverter<BasicEndpointProfile> converter;
     SharedDataBuffer encodedData = converter.toByteArray(encodingProfile);
 
-    BasicEndpointProfile decodedProfile1 = converter.fromByteArray(encodedData.first.get(), encodedData.second);
+    BasicEndpointProfile decodedProfile1;
+    converter.fromByteArray(encodedData.first.get(), encodedData.second, decodedProfile1);
     BasicEndpointProfile decodedProfile2 = decodeBinaryData<BasicEndpointProfile>(
                                             encodedData.first.get(), encodedData.second);
 

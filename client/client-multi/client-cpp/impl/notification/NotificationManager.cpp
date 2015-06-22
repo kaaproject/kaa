@@ -91,14 +91,14 @@ void NotificationManager::topicsListUpdated(const Topics& topicList)
 
 void NotificationManager::notificationReceived(const Notifications& notifications)
 {
-    KaaNotification deserializedNotification;
     AvroByteArrayConverter<KaaNotification> deserializer;
 
     for (const Notification& notification : notifications) {
         try {
             findTopic(notification.topicId);
 
-            deserializer.fromByteArray(notification.body.data(), notification.body.size(), deserializedNotification);
+            auto deserializedNotification = std::make_shared<KaaNotification>();
+            deserializer.fromByteArray(notification.body.data(), notification.body.size(), *deserializedNotification);
 
             if (!notifyOptionalNotificationSubscribers(notification.topicId, deserializedNotification)) {
                 notifyMandatoryNotificationSubscribers(notification.topicId, deserializedNotification);
@@ -327,12 +327,12 @@ void NotificationManager::notifyTopicUpdateSubscribers(const Topics& topics)
     executorContext_.getCallbackExecutor().add([this, topics] () { topicListeners_(topics); });
 }
 
-void NotificationManager::notifyMandatoryNotificationSubscribers(const std::string& id, const KaaNotification& notification)
+void NotificationManager::notifyMandatoryNotificationSubscribers(const std::string& id, KaaNotificationPtr notification)
 {
-    executorContext_.getCallbackExecutor().add([this, id, notification] () { mandatoryListeners_(id, notification); });
+    executorContext_.getCallbackExecutor().add([this, id, notification] () { mandatoryListeners_(id, *notification); });
 }
 
-bool NotificationManager::notifyOptionalNotificationSubscribers(const std::string& id, const KaaNotification& notification)
+bool NotificationManager::notifyOptionalNotificationSubscribers(const std::string& id, KaaNotificationPtr notification)
 {
     bool notified = false;
 
@@ -350,13 +350,14 @@ bool NotificationManager::notifyOptionalNotificationSubscribers(const std::strin
 
         notified = true;
 
-        executorContext_.getCallbackExecutor().add([&notifier, id, notification] () { notifier(id, notification); });
+        executorContext_.getCallbackExecutor().add([&notifier, id, notification] () { notifier(id, *notification); });
     }
 
     return notified;
 }
 
-void NotificationManager::setTransport(std::shared_ptr<NotificationTransport> transport) {
+void NotificationManager::setTransport(std::shared_ptr<NotificationTransport> transport)
+{
        if (transport) {
            transport_ = transport;
            transport_->setNotificationProcessor(this);

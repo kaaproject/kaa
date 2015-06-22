@@ -50,10 +50,10 @@ const KaaRootConfiguration& ConfigurationManager::getConfiguration()
     KAA_MUTEX_UNIQUE_DECLARE(lock, configurationGuard_);
     KAA_MUTEX_LOCKED("configurationGuard_");
 
-    return root_;
+    return *root_;
 }
 
-void ConfigurationManager::onDeltaReceived(int index, const KaaRootConfiguration& datum, bool fullResync)
+void ConfigurationManager::onDeltaReceived(int index, const std::shared_ptr<KaaRootConfiguration>& datum, bool fullResync)
 {
     if (!fullResync) {
         throw KaaException("Partial configuration updates are not supported");
@@ -70,7 +70,8 @@ void ConfigurationManager::onDeltaReceived(int index, const KaaRootConfiguration
 
 void ConfigurationManager::onConfigurationProcessed()
 {
-    executorContext_.getCallbackExecutor().add([this] { configurationReceivers_(root_); });
+    auto configuration = root_;
+    executorContext_.getCallbackExecutor().add([this, configuration] { configurationReceivers_(*configuration); });
 }
 
 }  // namespace kaa

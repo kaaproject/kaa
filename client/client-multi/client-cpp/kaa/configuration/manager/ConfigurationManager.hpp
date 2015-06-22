@@ -43,7 +43,7 @@ public:
     ConfigurationManager(IExecutorContext& executorContext) : executorContext_(executorContext) {}
     ~ConfigurationManager() {}
 
-    void onDeltaReceived(int index, const KaaRootConfiguration& datum, bool fullResync);
+    void onDeltaReceived(int index, const std::shared_ptr<KaaRootConfiguration>& datum, bool fullResync);
 
     /**
      * @link IConfigurationManager @endlink implementation
@@ -59,7 +59,7 @@ public:
 
 private:
     IExecutorContext& executorContext_;
-    KaaRootConfiguration root_;
+    std::shared_ptr<KaaRootConfiguration> root_;
 
     KAA_MUTEX_DECLARE(configurationGuard_);
     KaaObservable<void (const KaaRootConfiguration &), IConfigurationReceiver *> configurationReceivers_;

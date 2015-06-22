@@ -89,7 +89,8 @@ BOOST_AUTO_TEST_SUITE(ConfigurationPersistenceSuite)
 BOOST_AUTO_TEST_CASE(checkConfigurationPersistence)
 {
     AvroByteArrayConverter<KaaRootConfiguration> converter;
-    KaaRootConfiguration configuration = converter.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size());
+    KaaRootConfiguration configuration;
+    converter.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size(), configuration);
     EndpointObjectHash checkHash(getDefaultConfigData().begin(), getDefaultConfigData().size());
 
     ConfigurationPersistenceManager cpm(IKaaClientStateStoragePtr(new ClientStatus(CLIENT_STATUS_FILE_LOCATION)));
