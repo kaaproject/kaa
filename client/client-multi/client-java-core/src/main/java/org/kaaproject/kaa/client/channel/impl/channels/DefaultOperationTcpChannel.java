@@ -239,6 +239,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     private volatile Future<?> pingTaskFuture;
 
     private boolean isReadTaskScheduled;
+    private volatile boolean isOpenConnectionScheduled;
 
     public DefaultOperationTcpChannel(KaaClientState state, KaaChannelManager channelManager) {
         this.state = state;
@@ -328,6 +329,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             LOG.error("Stack trace: ", e);
             onServerFailed();
             socket = null;
+        } finally {
+            isOpenConnectionScheduled = false;
         }
     }
 
@@ -335,7 +338,12 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         closeConnection();
         if (connectivityChecker != null && !connectivityChecker.checkConnectivity()) {
             LOG.warn("Loss of connectivity. Attempt to reconnect will be made in {} sec", RECONNECT_TIMEOUT);
-            executor.schedule(openConnectionTask, RECONNECT_TIMEOUT, TimeUnit.SECONDS);
+            synchronized (this) {
+                if (!isOpenConnectionScheduled) {
+                    executor.schedule(openConnectionTask, RECONNECT_TIMEOUT, TimeUnit.SECONDS);
+                    isOpenConnectionScheduled = true;
+                }
+            }
             return;
         }
 
@@ -493,7 +501,10 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                 executor = createExecutor();
             }
             closeConnection();
-            executor.submit(openConnectionTask);
+            if (!isOpenConnectionScheduled) {
+                executor.submit(openConnectionTask);
+                isOpenConnectionScheduled = true;
+            }
         } else {
             LOG.info("Can't start new session. Channel [{}] is paused", getId());
         }
@@ -537,7 +548,10 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             if (executor == null) {
                 executor = createExecutor();
             }
-            executor.submit(openConnectionTask);
+            if (!isOpenConnectionScheduled) {
+                executor.submit(openConnectionTask);
+                isOpenConnectionScheduled = true;
+            }
         }
     }
 
