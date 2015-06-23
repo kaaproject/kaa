@@ -202,7 +202,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     }
                 } catch (RuntimeException e) {
                     if (!Thread.currentThread().isInterrupted() && !isShutdown && !isPaused) {
-                        LOG.error("Failed to read from the socket for channel [{}]: {}", getId());
+                        LOG.error("Failed to read from the socket for channel [{}]: {}", getId(), socket);
                         LOG.error("Stack trace: ", e);
                         onServerFailed();
                     } else {
