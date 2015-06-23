@@ -60,7 +60,7 @@ public class SingleThreadExecutorContext extends AbstractExecutorContext impleme
     
     @Override
     public ScheduledExecutorService getScheduledExecutor() {
-        return singleThreadExecutor;
+        return getSingleThreadExecutor();
     }
 
     private ScheduledExecutorService getSingleThreadExecutor() {

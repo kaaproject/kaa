@@ -20,6 +20,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.logging.LogRecord;
 
+import java.util.List;
+
 public class MemBucketTest {
 
     public void addLogRecordTestHelper(int maxSize, int maxRecordCount) {
@@ -47,4 +49,26 @@ public class MemBucketTest {
         addLogRecordTestHelper(10, 1);
     }
 
+    @Test
+    public void shrinkToSizeTest() {
+        MemBucket bucket = new MemBucket(1, 100, 100);
+        addNRecordsToBucket(bucket, 10);
+        List<LogRecord> overSize = bucket.shrinkToSize(10, 4);
+        Assert.assertEquals(3, bucket.getCount());
+        Assert.assertEquals(9, bucket.getSize());
+        Assert.assertEquals(7, overSize.size());
+
+        bucket = new MemBucket(1, 100, 100);
+        addNRecordsToBucket(bucket, 10);
+        overSize = bucket.shrinkToSize(10, 2);
+        Assert.assertEquals(2, bucket.getCount());
+        Assert.assertEquals(6, bucket.getSize());
+        Assert.assertEquals(8, overSize.size());
+    }
+
+    private void addNRecordsToBucket(MemBucket bucket, int n) {
+        while (n-- > 0) {
+            bucket.addRecord(new LogRecord());
+        }
+    }
 }

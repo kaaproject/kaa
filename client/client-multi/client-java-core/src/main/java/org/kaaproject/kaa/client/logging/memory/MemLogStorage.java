@@ -1,6 +1,7 @@
 package org.kaaproject.kaa.client.logging.memory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -78,7 +79,7 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     public void addLogRecord(LogRecord record) {
         LOG.trace("Adding new log record with size {}", record.getSize());
         if(record.getSize() > maxBucketSize){
-            throw new IllegalArgumentException("Record size(" + record.getSize() + ") is bigger then max bucket size (" + maxBucketSize + ")!");
+            throw new IllegalArgumentException("Record size(" + record.getSize() + ") is bigger than max bucket size (" + maxBucketSize + ")!");
         }
         if(getConsumedVolume() + record.getSize() > maxStorageSize){
             throw new IllegalStateException("Storage is full!");
@@ -106,21 +107,33 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
             //TODO: add support of block resize
             LOG.warn("Resize of record block is not supported yet");
         }
-        LogBlock result = null;
+        MemBucket bucketCandidate = null;
         synchronized (buckets) {
-            for(MemBucket bucket : buckets.values()){
-                if(bucket.getState() == MemBucketState.FREE){
-                    result = new LogBlock(bucket.id, bucket.getRecords());
+            for (MemBucket bucket : buckets.values()) {
+                if (bucket.getState() == MemBucketState.FREE) {
+                    bucketCandidate = bucket;
                 }
-                if(bucket.getState() == MemBucketState.FULL){
+                if (bucket.getState() == MemBucketState.FULL) {
                     bucket.setState(MemBucketState.PENDING);
-                    result = new LogBlock(bucket.id, bucket.getRecords());
+                    bucketCandidate = bucket;
                     break;
                 }
             }
         }
-        if(result != null){
-            LOG.debug("Return record block [{}]", result.getBlockId());
+
+        LogBlock result = null;
+        if (bucketCandidate != null) {
+            if (bucketCandidate.getSize() <= blockSize && bucketCandidate.getCount() <= batchCount) {
+                result = new LogBlock(bucketCandidate.getId(), bucketCandidate.getRecords());
+                LOG.debug("Return record block [{}]", result);
+            } else {
+                LOG.debug("Shrinking bucket {} to new size: [{}] and count: [{}]", bucketCandidate, blockSize, batchCount);
+                List<LogRecord> overSized = bucketCandidate.shrinkToSize(blockSize, batchCount);
+                result = new LogBlock(bucketCandidate.getId(), bucketCandidate.getRecords());
+                for (LogRecord record : overSized) {
+                    addLogRecord(record);
+                }
+            }
         }
         return result;
     }

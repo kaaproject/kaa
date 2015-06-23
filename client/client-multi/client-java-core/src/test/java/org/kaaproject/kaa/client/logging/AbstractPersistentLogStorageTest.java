@@ -21,10 +21,11 @@ import org.junit.Test;
 
 public abstract class AbstractPersistentLogStorageTest extends AbstractLogStorageTest {
     private static final int BUCKET_SIZE = 3;
+    private static final int RECORD_COUNT = 2;
 
     @Test
     public void testPersistDBState() {
-        LogStorage storage = (LogStorage) getStorage(BUCKET_SIZE);
+        LogStorage storage = (LogStorage) getStorage(BUCKET_SIZE, RECORD_COUNT);
 
         LogRecord record = new LogRecord();
         int insertionCount = 7;
@@ -38,7 +39,7 @@ public abstract class AbstractPersistentLogStorageTest extends AbstractLogStorag
         LogBlock beforePersist = storage.getRecordBlock(15, 2);
         storage.close();
 
-        storage = (LogStorage) getStorage(BUCKET_SIZE);
+        storage = (LogStorage) getStorage(BUCKET_SIZE, RECORD_COUNT);
         LogStorageStatus storageStatus = (LogStorageStatus) storage;
         Assert.assertEquals(insertionCount, storageStatus.getRecordCount());
         Assert.assertEquals(insertionCount * 3, storageStatus.getConsumedVolume());
@@ -51,7 +52,7 @@ public abstract class AbstractPersistentLogStorageTest extends AbstractLogStorag
 
     @Test
     public void testGetBigRecordBlock() {
-        LogStorage storage = (LogStorage) getStorage(BUCKET_SIZE);
+        LogStorage storage = (LogStorage) getStorage(BUCKET_SIZE, RECORD_COUNT);
 
         LogRecord record = new LogRecord();
         int insertionCount = 7;

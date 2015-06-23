@@ -38,7 +38,7 @@ public class DesktopSQLiteDBLogStorageTest extends AbstractPersistentLogStorageT
     }
 
     @Override
-    protected DesktopSQLiteDBLogStorage getStorage(long bucketSize) {
+    protected DesktopSQLiteDBLogStorage getStorage(long bucketSize, int recordCount) {
         return getStorage();
     }
 

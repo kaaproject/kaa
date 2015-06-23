@@ -25,7 +25,7 @@ import java.util.List;
 
 public abstract class AbstractLogStorageTest {
     private void testAddHelper(int addedN, int blockSize, int batchSize, int expectedN) {
-        LogStorage storage = (LogStorage) getStorage(blockSize);
+        LogStorage storage = (LogStorage) getStorage(blockSize, batchSize);
         List<LogRecord> expectedList = new LinkedList<>();
         LogRecord record = new LogRecord();
 
@@ -60,7 +60,8 @@ public abstract class AbstractLogStorageTest {
     @Test
     public void testEmptyLogRecord() {
         long bucketSize = 3;
-        LogStorage storage = (LogStorage) getStorage(bucketSize);
+        int recordCount = 3;
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
         LogBlock group = storage.getRecordBlock(5, 1);
         Assert.assertTrue(group == null);
         storage.close();
@@ -69,7 +70,8 @@ public abstract class AbstractLogStorageTest {
     @Test
     public void testRecordCountAndConsumedBytes() {
         long bucketSize = 3;
-        LogStorage storage = (LogStorage) getStorage(bucketSize);
+        int recordCount = 3;
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
         LogRecord record = new LogRecord();
         int insertionCount = 3;
 
@@ -91,7 +93,8 @@ public abstract class AbstractLogStorageTest {
     @Test
     public void testUniqueIdGeneration() {
         long bucketSize = 3;
-        LogStorage storage = (LogStorage) getStorage(bucketSize);
+        int recordCount = 3;
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
         LogRecord record = new LogRecord();
 
         int insertionCount = 3;
@@ -125,7 +128,8 @@ public abstract class AbstractLogStorageTest {
     @Test
     public void testGetSameLogBlock() {
         long bucketSize = 3;
-        LogStorage storage = (LogStorage) getStorage(bucketSize);
+        int recordCount = 3;
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
         LogRecord record = new LogRecord();
 
         int insertionCount = 3;
@@ -162,8 +166,9 @@ public abstract class AbstractLogStorageTest {
 
     @Test
     public void testLogRecordRemoval() {
-        long bucketSize = 3;
-        LogStorage storage = (LogStorage) getStorage(bucketSize);
+        long bucketSize = 9;
+        int recordCount = 3;
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
         LogRecord record = new LogRecord();
 
         int insertionCount = 7;
@@ -193,8 +198,9 @@ public abstract class AbstractLogStorageTest {
 
     @Test
     public void testComplexLogRemoval() {
-        long bucketSize = 3;
-        LogStorage storage = (LogStorage) getStorage(bucketSize);
+        long bucketSize = 9;
+        int recordCount = 3;
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
         LogRecord record = new LogRecord();
 
         int insertionCount = 8;
@@ -226,5 +232,5 @@ public abstract class AbstractLogStorageTest {
         storage.close();
     }
 
-    protected abstract Object getStorage(long bucketSize);
+    protected abstract Object getStorage(long bucketSize, int recordCount);
 }
