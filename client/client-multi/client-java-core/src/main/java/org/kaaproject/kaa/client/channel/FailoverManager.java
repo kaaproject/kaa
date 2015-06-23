@@ -32,17 +32,17 @@ public interface FailoverManager {
     void onServerFailed(TransportConnectionInfo connectionInfo);
 
     /**
-     * Needs to be invoked just before current server is changed.
+     * Needs to be invoked as soon as current server is changed.
      *
-     * @param oldConnectionInfo
-     *                          the connection information of the current server.
+     * @param connectionInfo
+     *                       the connection information of the newly connected server.
      *
      * @see org.kaaproject.kaa.client.channel.TransportConnectionInfo
      */
-    void onServerChanged(TransportConnectionInfo oldConnectionInfo);
+    void onServerChanged(TransportConnectionInfo connectionInfo);
 
     /**
-     * Needs to be invoked as soon as connection to a server is established.
+     * Needs to be invoked as soon as connection to the current server is established.
      *
      * @param connectionInfo
      *                       the connection information of the current server,
