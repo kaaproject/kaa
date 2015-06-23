@@ -538,11 +538,11 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
         /**
          * Event options
          */
-        options = temp_network_order_16 = (!event->target ? 0 : KAA_EVENT_OPTION_TARGET_ID_PRESENT)
-                                           | (event->event_data ? KAA_EVENT_OPTION_EVENT_HAS_DATA : 0);
-        temp_network_order_16 = KAA_HTONS(temp_network_order_16);
+        options = (!event->target ? 0 : KAA_EVENT_OPTION_TARGET_ID_PRESENT)
+                   | (event->event_data ? KAA_EVENT_OPTION_EVENT_HAS_DATA : 0);
+        options = KAA_HTONS(options);
 
-        error = kaa_platform_message_write(writer, &temp_network_order_16, sizeof(uint16_t));
+        error = kaa_platform_message_write(writer, &options, sizeof(uint16_t));
         if (error) {
             KAA_LOG_ERROR(self->logger, error, "Failed to write event options");
             return error;
@@ -593,7 +593,7 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
             }
         }
         KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serialized event: sqn '%u', options '%u', data size '%u', fqn '%s'"
-                    , event->seq_num, options, event->event_data ? event->event_data->size : 0, event->event_class_fqn->buffer);
+                    , event->seq_num, KAA_NTOHS(options), event->event_data ? event->event_data->size : 0, event->event_class_fqn->buffer);
         it = kaa_list_next(it);
     }
     return KAA_ERR_NONE;
