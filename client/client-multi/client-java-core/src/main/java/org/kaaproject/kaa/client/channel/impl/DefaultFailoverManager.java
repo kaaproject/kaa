@@ -91,7 +91,6 @@ public class DefaultFailoverManager implements FailoverManager {
     @Override
     public synchronized void onServerChanged(TransportConnectionInfo connectionInfo) {
         LOG.trace("Server {} has changed", connectionInfo);
-
         if (connectionInfo == null) {
             LOG.warn("Server connection info is null, can't resolve");
             return;
@@ -116,7 +115,6 @@ public class DefaultFailoverManager implements FailoverManager {
     @Override
     public synchronized void onServerConnected(TransportConnectionInfo connectionInfo) {
         LOG.trace("Server {} has connected", connectionInfo);
-
         if (connectionInfo == null) {
             LOG.warn("Server connection info is null, can't resolve");
             return;
@@ -130,6 +128,11 @@ public class DefaultFailoverManager implements FailoverManager {
 
             LOG.trace("Cancelling fail resolution: {}", accessPointIdResolution);
             cancelCurrentFailResolution(accessPointIdResolution);
+        } else if (accessPointIdResolution.getCurResolution() != null) {
+            LOG.debug("Connection for outdated accessPointId: {} was received, ignoring. The new accessPointId is: {}",
+                    connectionInfo.getAccessPointId(), accessPointIdResolution.getAccessPointId());
+        } else {
+            LOG.trace("There is no current resolution in progress, connected to the same server: {}", connectionInfo);
         }
     }
 
