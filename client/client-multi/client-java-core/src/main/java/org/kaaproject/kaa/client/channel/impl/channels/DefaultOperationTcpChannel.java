@@ -187,12 +187,23 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     LOG.info("Channel [{}] is reading data from stream using [{}] byte buffer", getId(), buffer.length);
-                    int size = socket.getInputStream().read(buffer);
-                    LOG.info("Channel [{}] is read data {} bytes from stream", getId(), size);
+                    int size = 0;
+                    if (socket != null) {
+                        size = socket.getInputStream().read(buffer);
+                        LOG.info("Channel [{}] is read data {} bytes from stream", getId(), size);
+                    } else if (!isOpenConnectionScheduled) {
+                        LOG.debug("Socket is null, calling onServerFailed()");
+                        onServerFailed();
+                    }
                     if (size > 0) {
                         messageFactory.getFramer().pushBytes(Arrays.copyOf(buffer, size));
                     } else if (size == -1) {
                         LOG.info("Channel [{}] received end of stream", getId(), size);
+                    } else {
+                        long openConnectionTimeout = (RECONNECT_TIMEOUT / 2) * 1000;
+                        LOG.info("Socket is null, waiting for a new connection to be opened (sleeping for a {} ms)",
+                                openConnectionTimeout);
+                        Thread.sleep(openConnectionTimeout);
                     }
                 } catch (IOException | KaaTcpProtocolException e) {
                     if (!isShutdown && !isPaused) {
@@ -209,6 +220,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                         LOG.warn("Socket connection for channel was interrupted", e);
                         LOG.info("Socket connection for channel [{}] was interrupted, shutdown [{}]", getId(), isShutdown);
                     }
+                } catch (InterruptedException e) {
+                    LOG.info("Interrupted while waiting for a socket connection", e);
+                    break;
                 }
             }
             LOG.info("Read Task is interrupted for channel [{}]", getId());
@@ -223,6 +237,11 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                 try {
                     LOG.info("Executing ping task for channel [{}]", getId());
                     sendPingRequest();
+                    if (!Thread.currentThread().isInterrupted()) {
+                        schedulePingTask();
+                    } else {
+                        LOG.info("Can't schedule ping task for channel [{}]. Task was interrupted", getId());
+                    }
                 } catch (IOException e) {
                     LOG.error("Failed to send ping request for channel [{}]: {}", getId());
                     LOG.error("Stack trace: ", e);
