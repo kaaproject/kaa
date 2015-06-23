@@ -142,10 +142,16 @@ static void destroy_event_listener_request(void *request_p)
     KAA_FREE(subscriber);
 }
 
-static kaa_event_listeners_request_t *create_event_listener_request(uint16_t request_id, const char *fqns[], size_t fqns_count, const kaa_event_listeners_callback_t *callback)
+static kaa_event_listeners_request_t *create_event_listener_request(kaa_event_manager_t *self, const char *fqns[], size_t fqns_count, const kaa_event_listeners_callback_t *callback)
 {
     kaa_event_listeners_request_t *result = (kaa_event_listeners_request_t *) KAA_MALLOC(sizeof(kaa_event_listeners_request_t));
     KAA_RETURN_IF_NIL(result, NULL);
+
+    result->is_sent = false;
+    result->callback = *callback;
+    result->request_id = self->event_listeners_request_id + 1;
+
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to create event listeners request: fqns count %zu, request id '%u'", fqns_count, result->request_id);
 
     result->fqns = (kaa_bytes_t **) KAA_CALLOC(fqns_count, sizeof(kaa_bytes_t *));
     if (!result->fqns) {
@@ -156,16 +162,13 @@ static kaa_event_listeners_request_t *create_event_listener_request(uint16_t req
 
     size_t i = 0;
     for (; i < fqns_count; ++i) {
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Target fqn[%d]: '%s'", i+1, fqns[i]);
         result->fqns[i] = kaa_bytes_copy_create((const uint8_t *) fqns[i], strlen(fqns[i]));
         if (!result->fqns[i]) {
             destroy_event_listener_request(result);
             return NULL;
         }
     }
-
-    result->callback = *callback;
-    result->request_id = request_id;
-    result->is_sent = false;
 
     return result;
 }
@@ -514,6 +517,7 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
     kaa_error_t error = KAA_ERR_NONE;
 
     uint16_t temp_network_order_16 = 0;
+    uint16_t options = 0;
     uint32_t temp_network_order_32 = 0;
 
     kaa_list_node_t *it = kaa_list_begin(events);
@@ -534,9 +538,8 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
         /**
          * Event options
          */
-        temp_network_order_16 = (!event->target ? 0 : KAA_EVENT_OPTION_TARGET_ID_PRESENT)
-                              | (event->event_data ? KAA_EVENT_OPTION_EVENT_HAS_DATA : 0);
-        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Options '%u'", temp_network_order_16);
+        options = temp_network_order_16 = (!event->target ? 0 : KAA_EVENT_OPTION_TARGET_ID_PRESENT)
+                                           | (event->event_data ? KAA_EVENT_OPTION_EVENT_HAS_DATA : 0);
         temp_network_order_16 = KAA_HTONS(temp_network_order_16);
 
         error = kaa_platform_message_write(writer, &temp_network_order_16, sizeof(uint16_t));
@@ -589,8 +592,8 @@ static kaa_error_t kaa_event_list_serialize(kaa_event_manager_t *self, kaa_list_
                 return error;
             }
         }
-        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serialized event: sqn '%u',fqn length '%u', data size '%u', fqn '%s'"
-                    , event->seq_num, event->event_class_fqn->size, event->event_data ? event->event_data->size : 0, event->event_class_fqn->buffer);
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serialized event: sqn '%u', options '%u', data size '%u', fqn '%s'"
+                    , event->seq_num, options, event->event_data ? event->event_data->size : 0, event->event_class_fqn->buffer);
         it = kaa_list_next(it);
     }
     return KAA_ERR_NONE;
@@ -705,8 +708,6 @@ static kaa_error_t kaa_event_read_event(kaa_event_manager_t *self, kaa_platform_
 {
 
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
-
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Event received");
 
     uint16_t event_options = 0;
     kaa_error_t error = kaa_platform_message_read(reader, &event_options, sizeof(uint16_t));
@@ -843,7 +844,7 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
         event_sequence_number = KAA_HTONL(event_sequence_number);
         extension_length -= sizeof(uint32_t);
 
-        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Received event sequence number '%u'", event_sequence_number);
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received event sequence number '%u'", event_sequence_number);
         if (self->sequence_number_status != KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED) {
             self->sequence_number_status = KAA_EVENT_SEQUENCE_NUMBER_SYNCHRONIZED;
 
@@ -914,7 +915,7 @@ kaa_error_t kaa_event_handle_server_sync(kaa_event_manager_t *self
                 }
 
                 event_listeners_responses_count = KAA_NTOHS(event_listeners_responses_count);
-                KAA_LOG_DEBUG(self->logger, KAA_ERR_NONE, "Received %u event listeners response(s)"
+                KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received %u event listeners response(s)"
                                                                     , event_listeners_responses_count);
 
                 while (event_listeners_responses_count--) {
@@ -941,10 +942,7 @@ kaa_error_t kaa_event_manager_find_event_listeners(kaa_event_manager_t *self, co
 {
     KAA_RETURN_IF_NIL5(self, fqns_count, callback, callback->on_event_listeners, callback->on_event_listeners_failed, KAA_ERR_BADPARAM);
 
-    kaa_event_listeners_request_t *subscriber = create_event_listener_request(self->event_listeners_request_id + 1
-                                                                            , fqns
-                                                                            , fqns_count
-                                                                            , callback);
+    kaa_event_listeners_request_t *subscriber = create_event_listener_request(self, fqns, fqns_count, callback);
     KAA_RETURN_IF_NIL(subscriber, KAA_ERR_NOMEM);
 
     kaa_list_node_t *request_it = kaa_list_push_front(self->event_listeners_requests, subscriber);
@@ -980,7 +978,7 @@ kaa_error_t kaa_event_manager_add_on_event_callback(kaa_event_manager_t *self, c
 {
     KAA_RETURN_IF_NIL2(self, callback, KAA_ERR_BADPARAM);
     if (fqn) {
-        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Adding callback for events with fqn '%s'", fqn);
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Adding callback for events, fqn '%s'", fqn);
         event_callback_pair_t *pair = create_event_callback_pair(fqn, callback);
         KAA_RETURN_IF_NIL(pair, KAA_ERR_NOMEM);
         kaa_list_node_t *it = kaa_list_begin(self->event_callbacks);
@@ -1026,7 +1024,7 @@ kaa_error_t kaa_event_finish_transaction(kaa_event_manager_t *self, kaa_event_bl
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_NOT_INITIALIZED);
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to send events from event batch with id %zu", trx_id);
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to send events from event batch, id %zu", trx_id);
 
     kaa_list_node_t *it = kaa_list_find_next(kaa_list_begin(self->transactions), &transaction_search_by_id_predicate, &trx_id);
     if (it) {

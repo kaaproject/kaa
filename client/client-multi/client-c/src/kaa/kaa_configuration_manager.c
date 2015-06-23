@@ -142,7 +142,7 @@ kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manage
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to serialize client configuration sync");
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client configuration sync");
 
     uint32_t payload_size = sizeof(uint32_t) + SHA_1_DIGEST_LENGTH;
 

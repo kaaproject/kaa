@@ -418,7 +418,7 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
         error_code = kaa_platform_message_write(writer, &network_order_16, sizeof(uint16_t));
         KAA_RETURN_IF_ERR(error_code);
 
-        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing %u supported protocols, request id %u", self->sync_info.channel_count, self->sync_info.request_id);
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing %u supported protocol(s), request id %u", self->sync_info.channel_count, self->sync_info.request_id);
         kaa_transport_channel_wrapper_t *channel_wrapper;
         kaa_transport_protocol_id_t protocol_info;
 

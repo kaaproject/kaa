@@ -328,12 +328,11 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
     KAA_RETURN_IF_ERR(error_code);
     access_point_count = KAA_NTOHS(access_point_count);
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received %u access points (request_id=%u)"
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received %u access points (request_id %u)"
                                                         , access_point_count, request_id);
 
     kaa_transport_protocol_id_t protocol_id;
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Access points info:");
     while (access_point_count--) {
         kaa_access_point_t *new_access_point = (kaa_access_point_t *)KAA_MALLOC(sizeof(kaa_access_point_t));
         KAA_RETURN_IF_NIL(new_access_point, KAA_ERR_NOMEM);

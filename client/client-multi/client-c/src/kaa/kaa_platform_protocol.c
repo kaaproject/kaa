@@ -159,7 +159,7 @@ kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *self, kaa_p
 
     err_code = kaa_platform_message_write_aligned(writer, APPLICATION_TOKEN, KAA_APPLICATION_TOKEN_LENGTH);
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Meta sync: payload length '%u', request id '%u", payload_length, request_id);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Meta sync: payload length '%u', request id '%u'", payload_length, request_id);
 
     return err_code;
 }
@@ -441,7 +441,7 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
     if (error) {
         self->request_id--;
     } else {
-        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Client sync successfully serialized");
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Client sync serialized: request id '%u', payload size '%zu'", self->request_id, *buffer_size);
     }
 
     return error;
@@ -455,7 +455,7 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
 {
     KAA_RETURN_IF_NIL3(self, buffer, buffer_size, KAA_ERR_BADPARAM);
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Processing server sync...");
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Server sync received: payload size '%zu'", buffer_size);
 
     kaa_platform_message_reader_t *reader = NULL;
     kaa_error_t error_code = kaa_platform_message_reader_create(&reader, buffer, buffer_size);
@@ -502,7 +502,7 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
             KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received meta server sync: options 0, payload size %u", sizeof(uint32_t));
             error_code = kaa_platform_message_read(reader, &request_id, sizeof(uint32_t));
             request_id = KAA_NTOHL(request_id);
-            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Request id %u", request_id);
+            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Server sync request id %u", request_id);
             break;
         }
         case KAA_PROFILE_EXTENSION_TYPE: {

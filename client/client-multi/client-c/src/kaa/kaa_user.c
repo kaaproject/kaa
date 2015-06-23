@@ -250,8 +250,8 @@ kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_me
         writer->current += sizeof(uint16_t);
         *((uint16_t *) writer->current) = KAA_HTONS((uint16_t) self->user_info->user_verifier_token_len);
         writer->current += sizeof(uint32_t); /* verifier token length + reserved */
-        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing external system authentication parameters: user external id '%s' (length %u), verifier '%s' (length %u)"
-                    , self->user_info->user_external_id, self->user_info->user_external_id_len, self->user_info->user_verifier_token, self->user_info->user_verifier_token_len);
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing external system authentication parameters: user external id '%s', access token '%s', verifier token '%s'"
+                    , self->user_info->user_external_id, self->user_info->user_access_token, self->user_info->user_verifier_token);
 
         if (self->user_info->user_external_id_len) {
             if (kaa_platform_message_write_aligned(writer
@@ -311,14 +311,13 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
         field = (field_header >> 24) & 0xFF;
         switch (field) {
             case USER_ATTACH_RESPONSE_FIELD: {
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Received user attach response");
                 user_sync_result_t result = (uint8_t) (field_header >> 8) & 0xFF;
                 destroy_user_info(self->user_info);
                 self->user_info = NULL;
                 self->is_waiting_user_attach_response = false;
 
                 if (result == USER_RESULT_SUCCESS) {
-                    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Endpoint was successfully attached to user");
+                    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Endpoint was successfully attached to user");
                     self->status->is_attached = true;
                     if (self->attachment_listeners.on_attach_success)
                         (self->attachment_listeners.on_attach_success)(self->attachment_listeners.context);
@@ -406,7 +405,6 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                 break;
             }
             case USER_DETACH_NOTIFICATION_FIELD: {
-                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Received user detach notification");
                 uint16_t access_token_length = (field_header) & 0xFFFF;
                 if (access_token_length > remaining_length)
                     return KAA_ERR_INVALID_BUFFER_SIZE;

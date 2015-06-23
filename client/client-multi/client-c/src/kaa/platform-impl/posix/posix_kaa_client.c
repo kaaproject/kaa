@@ -149,7 +149,7 @@ kaa_error_t kaa_client_create(kaa_client_t **kaa_client, kaa_client_props_t *pro
     }
 #endif
 
-    KAA_LOG_INFO(self->kaa_context->logger, KAA_ERR_NONE, "Kaa client initialized");
+    KAA_LOG_INFO(self->kaa_context->logger, KAA_ERR_NONE, "Kaa client created");
 
     *kaa_client = self;
     return error_code;
@@ -213,7 +213,7 @@ kaa_error_t kaa_client_process_channel_connected(kaa_client_t *kaa_client)
     } else if (poll_result > 0) {
         if (channel_fd >= 0) {
             if (FD_ISSET(channel_fd, &read_fds)) {
-                KAA_LOG_DEBUG(kaa_client->kaa_context->logger, KAA_ERR_NONE,
+                KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE,
                         "Processing IN event for the client socket %d", channel_fd);
                 error_code = kaa_tcp_channel_process_event(&kaa_client->channel, FD_READ);
                 if (error_code) {
@@ -222,7 +222,7 @@ kaa_error_t kaa_client_process_channel_connected(kaa_client_t *kaa_client)
                 }
             }
             if (FD_ISSET(channel_fd, &write_fds)) {
-                KAA_LOG_DEBUG(kaa_client->kaa_context->logger, KAA_ERR_NONE,
+                KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE,
                         "Processing OUT event for the client socket %d", channel_fd);
 
                 error_code = kaa_tcp_channel_process_event(&kaa_client->channel, FD_WRITE);
@@ -312,7 +312,6 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
             }
         }
     }
-
     KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Kaa client stopped");
 
     return error_code;
@@ -322,7 +321,7 @@ kaa_error_t kaa_client_stop(kaa_client_t *kaa_client)
 {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 
-    KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Going to stop Kaa client...");
+    KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Going to stop Kaa client...");
     kaa_client->operate = false;
 
     return KAA_ERR_NONE;
@@ -371,7 +370,7 @@ kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel
         return error_code;
     }
 
-    KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Channel [0x%08X] initialized successfully (type %d)"
+    KAA_LOG_TRACE(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Channel [0x%08X] initialized successfully (type %d)"
                                                                                 , kaa_client->channel_id, channel_type);
 
     return error_code;
