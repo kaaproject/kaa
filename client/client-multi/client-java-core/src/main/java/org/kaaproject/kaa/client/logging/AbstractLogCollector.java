@@ -19,9 +19,11 @@ package org.kaaproject.kaa.client.logging;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -53,7 +55,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
     protected final ExecutorContext executorContext;
     private final LogTransport transport;
-    private final Map<Integer, Long> timeoutMap = new ConcurrentHashMap<>();
+    private final Set<Integer> timeouts = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
     private final KaaChannelManager channelManager;
 
     protected LogStorage storage;
@@ -113,14 +115,14 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                 request.setRequestId(group.getBlockId());
                 request.setLogEntries(logs);
 
-                long timeout = System.currentTimeMillis() + strategy.getTimeout() * 1000;
-                LOG.info("Adding following pair to timeoutMap: {}, {}", group.getBlockId(), timeout);
-                timeoutMap.put(group.getBlockId(), timeout);
+                LOG.info("Adding following bucket id [{}] for timeout tracking", group.getBlockId());
+                timeouts.add(group.getBlockId());
 
+                final LogBlock timeoutGroup = group;
                 executorContext.getScheduledExecutor().schedule(new Runnable() {
                     @Override
                     public void run() {
-                        checkDeliveryTimeout();
+                        checkDeliveryTimeout(timeoutGroup.getBlockId());
                     }
                 }, strategy.getTimeout(), TimeUnit.SECONDS);
             }
@@ -148,8 +150,8 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                     });
                     isAlreadyScheduled = true;
                 }
-                LOG.info("Removing key from timeoutMap: {}", response.getRequestId());
-                timeoutMap.remove(response.getRequestId());
+                LOG.info("Removing bucket id from timeouts: {}", response.getRequestId());
+                timeouts.remove(response.getRequestId());
             }
 
             if (!isAlreadyScheduled) {
@@ -182,7 +184,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         LOG.trace("Attempt to execute upload check: {}", uploadCheckInProgress);
         synchronized (uploadCheckLock) {
             if (!uploadCheckInProgress) {
-                LOG.trace("Scheduling upload check with timeout: {}" + strategy.getUploadCheckPeriod());
+                LOG.trace("Scheduling upload check with timeout: {}", strategy.getUploadCheckPeriod());
                 uploadCheckInProgress = true;
                 executorContext.getScheduledExecutor().schedule(new Runnable() {
                     @Override
@@ -199,24 +201,13 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         }
     }
 
-    private boolean checkDeliveryTimeout() {
-        long currentTime = System.currentTimeMillis();
-        LOG.debug("Checking delivery timeout using time {}", currentTime);
-        boolean isTimeout = false;
-        List<Integer> toRemove = new ArrayList<Integer>();
-        for (Map.Entry<Integer, Long> logRequest : timeoutMap.entrySet()) {
-            LOG.info("processing timeoutMap pair: {}, {}", logRequest.getKey(), logRequest.getValue());
-            if (currentTime >= logRequest.getValue()) {
-                storage.notifyUploadFailed(logRequest.getKey());
-                toRemove.add(logRequest.getKey());
-                isTimeout = true;
-            }
-        }
-        
-        timeoutMap.entrySet().removeAll(toRemove);
+    private boolean checkDeliveryTimeout(int bucketId) {
+        LOG.debug("Checking for a delivery timeout of the bucket with id: [{}] ", bucketId);
+        boolean isTimeout = timeouts.remove(bucketId);
 
         if (isTimeout) {
-            LOG.info("Log delivery timeout detected.");
+            LOG.info("Log delivery timeout detected for the bucket with id: [{}]", bucketId);
+            storage.notifyUploadFailed(bucketId);
             final LogFailoverCommand controller = this.controller;
             executorContext.getCallbackExecutor().execute(new Runnable() {
                 @Override
@@ -224,6 +215,8 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                     strategy.onTimeout(controller);
                 }
             });
+        } else {
+            LOG.trace("No log delivery timeout for the bucket with id [{}] was detected", bucketId);
         }
 
         return isTimeout;
