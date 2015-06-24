@@ -226,9 +226,14 @@ public abstract class AbstractLogStorageTest {
         storage.notifyUploadFailed(removingBlock1.getBlockId());
         insertionCount += removingBlock1.getRecords().size();
 
-        LogBlock leftBlock = storage.getRecordBlock(50, 50);
-        Assert.assertTrue("Ac: " + leftBlock.getRecords().size() + ", ex: " + insertionCount
-                , leftBlock.getRecords().size() == insertionCount);
+        LogBlock leftBlock1 = storage.getRecordBlock(50, 50);
+        LogBlock leftBlock2 = storage.getRecordBlock(50, 50);
+        int leftSize = leftBlock1.getRecords().size();
+        if (leftBlock2 != null) {
+            leftSize += leftBlock2.getRecords().size();
+        }
+        Assert.assertTrue("Ac: " + leftSize + ", ex: " + insertionCount
+                , leftSize == insertionCount);
         storage.close();
     }
 

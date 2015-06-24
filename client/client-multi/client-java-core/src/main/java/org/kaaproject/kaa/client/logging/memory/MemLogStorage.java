@@ -50,8 +50,8 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
         long volume = 0;
         LOG.trace("Calculating consumed volume");
         synchronized (buckets) {
-            for(MemBucket bucket : buckets.values()){
-                if(bucket.getState() != MemBucketState.PENDING){
+            for (MemBucket bucket : buckets.values()) {
+                if (bucket.getState() != MemBucketState.PENDING) {
                     volume += bucket.getSize();
                 }
             }
@@ -65,8 +65,8 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
         long count = 0;
         LOG.trace("Calculating record count");
         synchronized (buckets) {
-            for(MemBucket bucket : buckets.values()){
-                if(bucket.getState() != MemBucketState.PENDING){
+            for (MemBucket bucket : buckets.values()) {
+                if (bucket.getState() != MemBucketState.PENDING) {
                     count += bucket.getCount();
                 }
             }
@@ -81,15 +81,15 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
         if(record.getSize() > maxBucketSize){
             throw new IllegalArgumentException("Record size(" + record.getSize() + ") is bigger than max bucket size (" + maxBucketSize + ")!");
         }
-        if(getConsumedVolume() + record.getSize() > maxStorageSize){
+        if (getConsumedVolume() + record.getSize() > maxStorageSize) {
             throw new IllegalStateException("Storage is full!");
         }
         synchronized (buckets) {
-            if(currentBucket == null){
+            if (currentBucket == null || currentBucket.getState() != MemBucketState.FREE) {
                 currentBucket = new MemBucket(bucketIdSeq.getAndIncrement(), maxBucketSize, maxBucketRecordCount);
                 buckets.put(currentBucket.getId(), currentBucket);
             }
-            if(!currentBucket.addRecord(record)){
+            if (!currentBucket.addRecord(record)) {
                 LOG.trace("Current bucket is full. Creating new one.");
                 currentBucket.setState(MemBucketState.FULL);
                 currentBucket = new MemBucket(bucketIdSeq.getAndIncrement(), maxBucketSize, maxBucketRecordCount);
@@ -103,7 +103,7 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     @Override
     public LogBlock getRecordBlock(long blockSize, int batchCount) {
         LOG.trace("Getting new record block with block size = {} and count = {}", blockSize, batchCount);
-        if(blockSize > maxBucketSize || batchCount > maxBucketRecordCount){
+        if (blockSize > maxBucketSize || batchCount > maxBucketRecordCount) {
             //TODO: add support of block resize
             LOG.warn("Resize of record block is not supported yet");
         }
@@ -123,9 +123,13 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
 
         LogBlock result = null;
         if (bucketCandidate != null) {
+            if (bucketCandidate.getState() == MemBucketState.FREE) {
+                LOG.trace("Only a bucket with state FREE found");
+                bucketCandidate.setState(MemBucketState.PENDING);
+            }
             if (bucketCandidate.getSize() <= blockSize && bucketCandidate.getCount() <= batchCount) {
                 result = new LogBlock(bucketCandidate.getId(), bucketCandidate.getRecords());
-                LOG.debug("Return record block [{}]", result);
+                LOG.debug("Return record block with records count: [{}]", bucketCandidate.getCount());
             } else {
                 LOG.debug("Shrinking bucket {} to new size: [{}] and count: [{}]", bucketCandidate, blockSize, batchCount);
                 List<LogRecord> overSized = bucketCandidate.shrinkToSize(blockSize, batchCount);
@@ -142,9 +146,9 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     public void removeRecordBlock(int id) {
         LOG.trace("Removing record block with id [{}]", id);
         synchronized (buckets) {
-            if(buckets.remove(id) != null){
+            if (buckets.remove(id) != null) {
                 LOG.debug("Record block [{}] removed", id);
-            }else{
+            } else {
                 LOG.debug("Failed to remove record block [{}]", id);
             }
         }
