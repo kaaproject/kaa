@@ -55,14 +55,6 @@ ProfileSyncRequestPtr ProfileTransport::createProfileRequest()
             if (encodedProfile.second) {
                 request->profileBody.assign(encodedProfile.first.get(), encodedProfile.first.get() + encodedProfile.second);
             }
-
-            /* Version info */
-            request->versionInfo.configVersion = CONFIG_VERSION;
-            request->versionInfo.profileVersion = PROFILE_VERSION;
-            request->versionInfo.systemNfVersion = SYSTEM_NF_VERSION;
-            request->versionInfo.userNfVersion = USER_NF_VERSION;
-            request->versionInfo.logSchemaVersion = LOG_SCHEMA_VERSION;
-            populateEventFamilyVersions(request->versionInfo.eventFamilyVersions);
         } else {
             KAA_LOG_INFO("Profile is up to date");
         }
@@ -83,29 +75,6 @@ void ProfileTransport::onProfileResponse(const ProfileSyncResponse& response)
     }
 
     KAA_LOG_INFO("Processed profile response");
-}
-
-void ProfileTransport::populateEventFamilyVersions(EndpointVersionInfo::eventFamilyVersions_t& versions)
-{
-    static std::vector<EventClassFamilyVersionInfo> versionContainer;
-    const auto& predefinedVersions = getEventClassFamilyVersionInfo();
-
-    versions.set_null();
-
-    if (!predefinedVersions.empty()) {
-        versionContainer.reserve(predefinedVersions.size());
-
-        for (const auto& version : predefinedVersions) {
-            EventClassFamilyVersionInfo info;
-            info.name = version.first;
-            info.version = version.second;
-            versionContainer.push_back(info);
-        }
-    }
-
-    if (!versionContainer.empty()) {
-        versions.set_array(versionContainer);
-    }
 }
 
 } /* namespace kaa */

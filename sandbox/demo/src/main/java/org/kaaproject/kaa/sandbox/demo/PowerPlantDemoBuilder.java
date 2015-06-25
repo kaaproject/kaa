@@ -54,9 +54,9 @@ public class PowerPlantDemoBuilder extends AbstractDemoBuilder {
         powerPlantApplication.setName("Power plant");
         powerPlantApplication = client.editApplication(powerPlantApplication);
 
-        sdkKey.setApplicationId(powerPlantApplication.getId());
-        sdkKey.setProfileSchemaVersion(1);
-        sdkKey.setNotificationSchemaVersion(1);
+        sdkPropertiesDto.setApplicationId(powerPlantApplication.getId());
+        sdkPropertiesDto.setProfileSchemaVersion(1);
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
 
         loginTenantDeveloper(client);
 
@@ -69,7 +69,7 @@ public class PowerPlantDemoBuilder extends AbstractDemoBuilder {
         logSchemaDto.setName("Power plant log schema");
         logSchemaDto.setDescription("Log schema describes incoming voltage reports");
         logSchemaDto = client.createLogSchema(logSchemaDto, getResourcePath("logSchema.json"));
-        sdkKey.setLogSchemaVersion(logSchemaDto.getMajorVersion());
+        sdkPropertiesDto.setLogSchemaVersion(logSchemaDto.getMajorVersion());
 
         LogAppenderDto powerPlantLogAppender = new LogAppenderDto();
         powerPlantLogAppender.setName("Power plant log appender");
@@ -100,7 +100,7 @@ public class PowerPlantDemoBuilder extends AbstractDemoBuilder {
         configurationSchema = client.createConfigurationSchema(configurationSchema, getResourcePath("configSchema.json"));
 
         logger.info("Configuration schema version: {}", configurationSchema.getMajorVersion());
-        sdkKey.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
+        sdkPropertiesDto.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
         logger.info("Configuration schema was created.");
 
         EndpointGroupDto baseEndpointGroup = null;

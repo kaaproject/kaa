@@ -17,12 +17,7 @@
 package org.kaaproject.kaa.server.operations.service.cache;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.atMost;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.security.GeneralSecurityException;
 import java.security.KeyPairGenerator;
@@ -48,6 +43,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
@@ -61,6 +57,7 @@ import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
+import org.kaaproject.kaa.server.common.dao.SdkKeyService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.cache.concurrent.ConcurrentCacheService;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFamilyVersion;
@@ -108,13 +105,16 @@ public class ConcurrentCacheServiceTest {
 
     private static final String TEST_APP_ID = "testAppId";
     private static final String TEST_APP_TOKEN = "testApp";
+    private static final String TEST_SDK_TOKEN = "testSdkToken";
     private static final String APP_ID = "testAppId";
+    private static final String DEFAULT_VERIFIER_TOKEN = "defaultVerifierToken";
     private static final int TEST_APP_SEQ_NUMBER = 42;
     private static final int TEST_APP_SEQ_NUMBER_NEW = 46;
 
     private static final EndpointConfigurationDto CF1 = new EndpointConfigurationDto();
     private static final ConfigurationSchemaDto CF1_SCHEMA = new ConfigurationSchemaDto();
     private static final ProfileSchemaDto PF1_SCHEMA = new ProfileSchemaDto();
+    private static final SdkPropertiesDto SDK_PROPERTIES = new SdkPropertiesDto();
     private static final ProfileFilterDto TEST_PROFILE_FILTER = new ProfileFilterDto();
     private static final List<ProfileFilterDto> TEST_PROFILE_FILTER_LIST = Collections.singletonList(TEST_PROFILE_FILTER);
 
@@ -131,6 +131,10 @@ public class ConcurrentCacheServiceTest {
     private static final AppVersionKey CF_SCHEMA_KEY = new AppVersionKey(TEST_APP_TOKEN, CONF1_SCHEMA_VERSION);
     private static final AppVersionKey PF_SCHEMA_KEY = new AppVersionKey(TEST_APP_TOKEN, PROFILE1_SCHEMA_VERSION);
 
+    private static final List<String> AEFMAP_IDS = Arrays.asList("id1");
+    private static final ApplicationEventFamilyMapDto APPLICATION_EVENT_FAMILY_MAP_DTO = new ApplicationEventFamilyMapDto();
+    private static final List<ApplicationEventFamilyMapDto> AEFM_LIST = Arrays.asList(APPLICATION_EVENT_FAMILY_MAP_DTO);
+
     private PublicKey publicKey;
     private EndpointObjectHash publicKeyHash;
 
@@ -143,6 +147,7 @@ public class ConcurrentCacheServiceTest {
     private EndpointService endpointService;
     private EventClassService eventClassService;
     private ApplicationEventMapService applicationEventMapService;
+    private SdkKeyService sdkKeyService;
 
     @Before
     public void prepare() throws GeneralSecurityException {
@@ -157,6 +162,17 @@ public class ConcurrentCacheServiceTest {
             public ApplicationDto answer(InvocationOnMock invocation) {
                 sleepABit();
                 return appDto;
+            }
+        });
+
+        SDK_PROPERTIES.setApplicationToken(TEST_APP_TOKEN);
+        SDK_PROPERTIES.setApplicationId(APP_ID);
+        SDK_PROPERTIES.setDefaultVerifierToken(DEFAULT_VERIFIER_TOKEN);
+        when(sdkKeyService.findSdkKeyByToken(TEST_SDK_TOKEN)).then(new Answer<SdkPropertiesDto>() {
+            @Override
+            public SdkPropertiesDto answer(InvocationOnMock invocationOnMock) throws Throwable {
+                sleepABit();
+                return SDK_PROPERTIES;
             }
         });
 
@@ -317,6 +333,9 @@ public class ConcurrentCacheServiceTest {
             }
         });
 
+        APPLICATION_EVENT_FAMILY_MAP_DTO.setEcfName("someName");
+        when(applicationEventMapService.findApplicationEventFamilyMapsByIds(AEFMAP_IDS)).thenReturn(AEFM_LIST);
+
         when(appService.findAppById(APP_ID)).thenReturn(appDto);
     }
 
@@ -355,6 +374,17 @@ public class ConcurrentCacheServiceTest {
         assertEquals(CF1_ID, cacheService.getConfIdByKey(TEST_CONF_ID_KEY));
         verify(configurationService, times(0)).findConfigurationsByEndpointGroupId(ENDPOINT_GROUP1_ID);
         reset(configurationService);
+    }
+
+    @Test
+    public void testGetAppTokenBySdkToken() {
+        assertEquals(TEST_APP_TOKEN, cacheService.getAppTokenBySdkToken(TEST_SDK_TOKEN));
+        verify(sdkKeyService, times(1)).findSdkKeyByToken(TEST_SDK_TOKEN);
+        reset(sdkKeyService);
+
+        assertEquals(TEST_APP_TOKEN, cacheService.getAppTokenBySdkToken(TEST_SDK_TOKEN));
+        verify(sdkKeyService, never()).findSdkKeyByToken(TEST_SDK_TOKEN);
+        reset(sdkKeyService);
     }
 
     @Test
@@ -516,6 +546,28 @@ public class ConcurrentCacheServiceTest {
     }
 
     @Test
+    public void testGetSdkProperties() {
+        assertEquals(SDK_PROPERTIES, cacheService.getSdkPropertiesBySdkToken(TEST_SDK_TOKEN));
+        verify(sdkKeyService, times(1)).findSdkKeyByToken(TEST_SDK_TOKEN);
+        reset(sdkKeyService);
+
+        assertEquals(SDK_PROPERTIES, cacheService.getSdkPropertiesBySdkToken(TEST_SDK_TOKEN));
+        verify(sdkKeyService, times(0)).findSdkKeyByToken(TEST_SDK_TOKEN);
+        reset(sdkKeyService);
+    }
+
+    @Test
+    public void testGetApplicationEventFamilyMapsByIds() {
+        assertEquals(AEFM_LIST, cacheService.getApplicationEventFamilyMapsByIds(AEFMAP_IDS));
+        verify(applicationEventMapService, times(1)).findApplicationEventFamilyMapsByIds(AEFMAP_IDS);
+        reset(applicationEventMapService);
+
+        assertEquals(AEFM_LIST, cacheService.getApplicationEventFamilyMapsByIds(AEFMAP_IDS));
+        verify(applicationEventMapService, times(0)).findApplicationEventFamilyMapsByIds(AEFMAP_IDS);
+        reset(applicationEventMapService);
+    }
+
+    @Test
     public void testConcurrentGetProfileSchemaMultipleTimes() throws GetDeltaException {
         for (int i = 0; i < STRESS_TEST_INVOCATIONS; i++) {
             launchCodeInParallelThreads(STRESS_TEST_N_THREADS, new Runnable() {
@@ -619,6 +671,7 @@ public class ConcurrentCacheServiceTest {
         endpointService = mock(EndpointService.class);
         eventClassService = mock(EventClassService.class);
         applicationEventMapService = mock(ApplicationEventMapService.class);
+        sdkKeyService = mock(SdkKeyService.class);
 
         ReflectionTestUtils.invokeMethod(cacheService, "setApplicationService", appService);
         ReflectionTestUtils.invokeMethod(cacheService, "setConfigurationService", configurationService);
@@ -627,6 +680,7 @@ public class ConcurrentCacheServiceTest {
         ReflectionTestUtils.invokeMethod(cacheService, "setEndpointService", endpointService);
         ReflectionTestUtils.invokeMethod(cacheService, "setEventClassService", eventClassService);
         ReflectionTestUtils.invokeMethod(cacheService, "setApplicationEventMapService", applicationEventMapService);
+        ReflectionTestUtils.invokeMethod(cacheService, "setSdkKeyService", sdkKeyService);
     }
 
     private HistoryDto buildNotMatchingHistoryDto(ChangeType changeType) {
