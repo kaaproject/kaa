@@ -27,7 +27,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;

@@ -43,11 +43,11 @@ public class PowerPlantAndroidDemoBuilder extends AbstractDemoBuilder {
         powerPlantAndroidApplciation.setName("Power plant demo android");
         powerPlantAndroidApplciation = client.editApplication(powerPlantAndroidApplciation);
 
-        sdkKey.setApplicationId(powerPlantAndroidApplciation.getId());
-        sdkKey.setNotificationSchemaVersion(1);
-        sdkKey.setProfileSchemaVersion(1);
-        sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
-        sdkKey.setLogSchemaVersion(1);
+        sdkPropertiesDto.setApplicationId(powerPlantAndroidApplciation.getId());
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
+        sdkPropertiesDto.setProfileSchemaVersion(1);
+        sdkPropertiesDto.setTargetPlatform(SdkPlatform.ANDROID);
+        sdkPropertiesDto.setLogSchemaVersion(1);
 
         loginTenantDeveloper(client);
 
@@ -58,7 +58,7 @@ public class PowerPlantAndroidDemoBuilder extends AbstractDemoBuilder {
         configurationSchema.setDescription("Default configuration schema for the powerplant android demo");
         configurationSchema = client.createConfigurationSchema(configurationSchema, getResourcePath("config_schema.avsc"));
         logger.info("Configuration schema version: {}", configurationSchema.getMajorVersion());
-        sdkKey.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
+        sdkPropertiesDto.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
         logger.info("Configuration schema was created.");
 
         EndpointGroupDto baseEndpointGroup = null;

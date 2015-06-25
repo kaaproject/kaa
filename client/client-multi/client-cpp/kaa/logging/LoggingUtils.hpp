@@ -101,26 +101,20 @@ public:
     static std::string ProfileSyncRequestToString(const SyncRequest::profileSyncRequest_t& request) {
         std::ostringstream ss;
         if (!request.is_null()) {
+            const auto profileRequest = request.get_ProfileSyncRequest();
+
             if (!request.get_ProfileSyncRequest().endpointAccessToken.is_null()) {
-                ss << KVSTRING(endpointAccessToken, request.get_ProfileSyncRequest().endpointAccessToken.get_string());
+                ss << KVSTRING(endpointAccessToken, profileRequest.endpointAccessToken.get_string());
             } else {
                 ss << KVSTRING(endpointAccessToken, "null");
             }
-            if (!request.get_ProfileSyncRequest().endpointPublicKey.is_null()) {
-                ss << KVSTRING(endpointPublicKey, ByteArrayToString(request.get_ProfileSyncRequest().endpointPublicKey.get_bytes()));
+            if (!profileRequest.endpointPublicKey.is_null()) {
+                ss << KVSTRING(endpointPublicKey, ByteArrayToString(profileRequest.endpointPublicKey.get_bytes()));
             } else {
                 ss << KVSTRING(endpointPublicKey, "null");
             }
 
-            ss << KVSTRING(profileBody, ByteArrayToString(request.get_ProfileSyncRequest().profileBody));
-
-            ss << KVSTRING(configVersion, request.get_ProfileSyncRequest().versionInfo.configVersion);
-            ss << KVSTRING(profileVersion, request.get_ProfileSyncRequest().versionInfo.profileVersion);
-            ss << KVSTRING(systemNfVersion, request.get_ProfileSyncRequest().versionInfo.systemNfVersion);
-            ss << KVSTRING(userNfVersion, request.get_ProfileSyncRequest().versionInfo.userNfVersion);
-            ss << KVSTRING(logSchemaVersion, request.get_ProfileSyncRequest().versionInfo.logSchemaVersion);
-
-            ss << KVSTRING(eventFamilyVersions, EventFamilyVersionsToString(request.get_ProfileSyncRequest().versionInfo.eventFamilyVersions));
+            ss << KVSTRING(profileBody, ByteArrayToString(profileRequest.profileBody));
         } else {
             ss << "null";
         }
@@ -132,7 +126,7 @@ public:
         if (!request.is_null()) {
             const auto& syncRequest = request.get_SyncRequestMetaData();
 
-            ss << KVSTRING(applicationToken, syncRequest.applicationToken) << ", ";
+            ss << KVSTRING(sdkToken, syncRequest.sdkToken) << ", ";
 
             if (syncRequest.endpointPublicKeyHash.is_null()) {
                 ss << KVSTRING(endpointPublicKeyHash, "null") << ",";
@@ -595,25 +589,6 @@ public:
         }
 
         return description;
-    }
-
-    static std::string EventFamilyVersionsToString(const EndpointVersionInfo::eventFamilyVersions_t& versions) {
-        std::ostringstream stream;
-
-        if (!versions.is_null()) {
-            const auto& container = versions.get_array();
-            stream << "[";
-            for (auto it = container.begin(); it != container.end(); ++it) {
-                stream << "{name: " << it->name << ", ";
-                stream << "version: " << it->version << "}";
-                if ((it + 1) != container.end()) { stream << ", "; }
-            }
-            stream << "]";
-        } else {
-            stream << "null";
-        }
-
-        return stream.str();
     }
 
     static std::string OutcomingEventsToString(const EventSyncRequest::events_t& events) {

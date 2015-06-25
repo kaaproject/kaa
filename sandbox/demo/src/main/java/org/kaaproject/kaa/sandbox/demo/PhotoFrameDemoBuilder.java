@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -59,12 +58,12 @@ public class PhotoFrameDemoBuilder extends AbstractDemoBuilder {
         photoFrameApplication.setName("Photo frame");
         photoFrameApplication = client.editApplication(photoFrameApplication);
 
-        sdkKey.setApplicationId(photoFrameApplication.getId());
-        sdkKey.setProfileSchemaVersion(1);
-        sdkKey.setConfigurationSchemaVersion(1);
-        sdkKey.setNotificationSchemaVersion(1);
-        sdkKey.setLogSchemaVersion(1);
-        sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
+        sdkPropertiesDto.setApplicationId(photoFrameApplication.getId());
+        sdkPropertiesDto.setApplicationToken(photoFrameApplication.getApplicationToken());
+        sdkPropertiesDto.setProfileSchemaVersion(1);
+        sdkPropertiesDto.setConfigurationSchemaVersion(1);
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
+        sdkPropertiesDto.setLogSchemaVersion(1);
 
         loginTenantDeveloper(client);
 
@@ -72,7 +71,7 @@ public class PhotoFrameDemoBuilder extends AbstractDemoBuilder {
 
         List<String> aefMapIds = new ArrayList<>();
         aefMapIds.add(photoFrameAefMap.getId());
-        sdkKey.setAefMapIds(aefMapIds);
+        sdkPropertiesDto.setAefMapIds(aefMapIds);
 
         TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();
         UserVerifierDto trustfulUserVerifier = new UserVerifierDto();
@@ -86,7 +85,7 @@ public class PhotoFrameDemoBuilder extends AbstractDemoBuilder {
         RawData rawData = algotithm.getRootData();
         trustfulUserVerifier.setJsonConfiguration(rawData.getRawData());
         trustfulUserVerifier = client.editUserVerifierDto(trustfulUserVerifier);
-        sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
+        sdkPropertiesDto.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
 
         logger.info("Finished loading 'Photo Frame Demo Application' data.");
     }

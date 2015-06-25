@@ -32,10 +32,10 @@ public class SessionInfoTest {
     public void equalsHashCode() {
         UUID uuid1 = UUID.randomUUID();
         UUID uuid2 = UUID.randomUUID();
-        SessionInfo info1 = new SessionInfo(uuid1, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, 0, false);
-        SessionInfo info2 = new SessionInfo(uuid1, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, 0, false);
-        SessionInfo info3 = new SessionInfo(uuid2, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, 0, false);
-        SessionInfo info4 = new SessionInfo(null, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, 0, false);
+        SessionInfo info1 = new SessionInfo(uuid1, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, null, 0, false);
+        SessionInfo info2 = new SessionInfo(uuid1, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, null, 0, false);
+        SessionInfo info3 = new SessionInfo(uuid2, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, null, 0, false);
+        SessionInfo info4 = new SessionInfo(null, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, null, 0, false);
         Assert.assertEquals(info1, info2);
         Assert.assertEquals(info1.hashCode(), info2.hashCode());
         Assert.assertNotEquals(info1, info3);

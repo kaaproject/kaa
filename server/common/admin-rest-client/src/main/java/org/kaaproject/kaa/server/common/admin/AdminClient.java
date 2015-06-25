@@ -34,7 +34,7 @@ import org.apache.http.HttpHost;
 import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -201,7 +201,7 @@ public class AdminClient {
         ResponseEntity<List<TopicDto>> entity = restTemplate.exchange(url + "topics/"+applicationId, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-    
+
     public void deleteTopic(TopicDto ropic) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("topicId", ropic.getId());
@@ -321,12 +321,12 @@ public class AdminClient {
     public UserVerifierDto editUserVerifierDto(UserVerifierDto userVerifierDto) throws Exception {
         return restTemplate.postForObject(url + "userVerifier", userVerifierDto, UserVerifierDto.class);
     }
-
-    public void downloadSdk(SdkKey key, String destination) throws Exception {
+    
+    public void downloadSdk(SdkPropertiesDto key, String destination) throws Exception {
         FileResponseExtractor extractor = new FileResponseExtractor( new File(destination));
         final List<MediaType> mediaTypes = Arrays.asList(MediaType.APPLICATION_JSON,
                 MediaType.valueOf("application/*+json"));
-        final HttpEntity<SdkKey> requestEntity = new HttpEntity<>(key);
+        final HttpEntity<SdkPropertiesDto> requestEntity = new HttpEntity<>(key);
         RequestCallback request = new RequestCallback() {
             @SuppressWarnings("unchecked")
             @Override
@@ -354,12 +354,12 @@ public class AdminClient {
         restTemplate.execute(url + "sdk", HttpMethod.POST, request, extractor);
         logger.info("Downloaded sdk to file '{}'", extractor.getDestFile());
     }
-
-    public FileData downloadSdk(SdkKey key) throws Exception {
+    
+    public FileData downloadSdk(SdkPropertiesDto key) throws Exception {
         FileDataResponseExtractor extractor = new FileDataResponseExtractor();
         final List<MediaType> mediaTypes = Arrays.asList(MediaType.APPLICATION_JSON,
                 MediaType.valueOf("application/*+json"));
-        final HttpEntity<SdkKey> requestEntity = new HttpEntity<>(key);
+        final HttpEntity<SdkPropertiesDto> requestEntity = new HttpEntity<>(key);
         RequestCallback request = new RequestCallback() {
             @SuppressWarnings("unchecked")
             @Override
