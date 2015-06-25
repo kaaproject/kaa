@@ -63,13 +63,13 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     @Override
     public void addLogRecord(LogRecord record) {
         LOG.trace("Adding new log record with size {}", record.getSize());
-        if(record.getSize() > maxBucketSize){
+        if(record.getSize() > maxBucketSize) {
             throw new IllegalArgumentException("Record size(" + record.getSize() + ") is bigger than max bucket size (" + maxBucketSize + ")!");
         }
-        if (getConsumedVolume() + record.getSize() > maxStorageSize) {
-            throw new IllegalStateException("Storage is full!");
-        }
         synchronized (buckets) {
+            if (consumedVolume + record.getSize() > maxStorageSize) {
+                throw new IllegalStateException("Storage is full!");
+            }
             if (currentBucket == null || currentBucket.getState() != MemBucketState.FREE) {
                 currentBucket = new MemBucket(bucketIdSeq.getAndIncrement(), maxBucketSize, maxBucketRecordCount);
                 buckets.put(currentBucket.getId(), currentBucket);
