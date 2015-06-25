@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.client</groupId>
-        <version>0.7.0-SNAPSHOT</version>
+        <version>0.7.1-SNAPSHOT</version>
         <artifactId>client-multi</artifactId>
     </parent>
     <artifactId>client-c</artifactId>
@@ -48,7 +48,7 @@
 
     <build>
         <plugins>
-              <plugin>
+            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <descriptors>
@@ -77,6 +77,9 @@
                         <exclude>**/*.log</exclude>
                         <exclude>**/build/**</exclude>
                         <exclude>**/gcovr</exclude>
+			<!-- SHA implementation from RFC 3174 -->
+			<exclude>**/platform-impl/sha1.h</exclude>
+			<exclude>**/sha1.c</exclude>
                     </excludes>
                 </configuration>
             </plugin>

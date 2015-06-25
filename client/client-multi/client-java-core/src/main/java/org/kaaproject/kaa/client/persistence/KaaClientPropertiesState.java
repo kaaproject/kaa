@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -66,7 +67,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String NF_SUBSCRIPTIONS = "nf_subscriptions";
     private static final String IS_REGISTERED = "is_registered";
     private static final String IS_ATTACHED = "is_attached";
-    private static final String CONFIGURATION_VERSION = "conf_schema_version";
+
     public static final String STATE_FILE_LOCATION = "state.file_location";
     public static final String CLIENT_PRIVATE_KEY_FILE_LOCATION = "keys.private";
     public static final String CLIENT_PUBLIC_KEY_FILE_LOCATION = "keys.public";
@@ -155,13 +156,12 @@ public class KaaClientPropertiesState implements KaaClientState {
             LOG.info("First SDK start");
             setPropertiesHash(properties.getPropertiesHash());
         }
-
-        checkConfigVersionForUpdates(properties);
     }
 
     private void parseNfSubscriptions() {
         if(state.getProperty(NF_SUBSCRIPTIONS) != null){
-            BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(state.getProperty(NF_SUBSCRIPTIONS).getBytes(), null);
+            byte[] data = base64.decodeBase64(state.getProperty(NF_SUBSCRIPTIONS));
+            BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(data, null);
             SpecificDatumReader<TopicSubscriptionInfo> avroReader = new SpecificDatumReader<TopicSubscriptionInfo>(
                     TopicSubscriptionInfo.class);
     
@@ -174,22 +174,10 @@ public class KaaClientPropertiesState implements KaaClientState {
                     nfSubscriptions.put(decodedInfo.getTopicInfo().getId(), decodedInfo);
                 }
             } catch (Exception e) {
-                LOG.error("Unexpected exception occurred while reading information from decoder");
+                LOG.error("Unexpected exception occurred while reading information from decoder", e);
             }
         }else{
             LOG.info("No subscription info found in state");
-        }
-    }
-
-    private void checkConfigVersionForUpdates(KaaClientProperties sdkProperties) {
-        int configVersionFromProperties = sdkProperties.getVersionInfo().getConfigVersion();
-        String loadedConfigVersionStr = state.getProperty(CONFIGURATION_VERSION);
-
-        isConfigVersionUpdated = (loadedConfigVersionStr != null ? (configVersionFromProperties != Integer.parseInt(loadedConfigVersionStr))
-                : false);
-
-        if (isConfigVersionUpdated || (loadedConfigVersionStr == null)) {
-            state.setProperty(CONFIGURATION_VERSION, Integer.toString(configVersionFromProperties));
         }
     }
 
@@ -233,7 +221,8 @@ public class KaaClientPropertiesState implements KaaClientState {
             }
 
             encoder.flush();
-            state.setProperty(NF_SUBSCRIPTIONS, baos.toString());
+            String base64Str = new String(base64.encodeBase64(baos.toByteArray()), Charset.forName("UTF-8"));
+            state.setProperty(NF_SUBSCRIPTIONS, base64Str);
         } catch (IOException e) {
             LOG.error("Can't persist notification subscription info", e);
         }

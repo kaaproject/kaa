@@ -141,7 +141,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     @Override
     public void subscribeToTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
         Topic topic = findTopicById(topicId);
-        if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL) {
+        if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL_SUBSCRIPTION) {
             LOG.warn("Failed to subscribe: topic '{}' isn't optional", topicId);
             throw new UnavailableTopicException(String.format("Topic '%s' isn't optional", topicId));
         }
@@ -159,7 +159,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
 
         for (String id : topicIds) {
             Topic topic = findTopicById(id);
-            if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL) {
+            if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL_SUBSCRIPTION) {
                 LOG.warn("Failed to subscribe: topic '{}' isn't optional", id);
                 throw new UnavailableTopicException(String.format("Topic '%s' isn't optional", id));
             }
@@ -177,7 +177,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
     @Override
     public void unsubscribeFromTopic(String topicId, boolean forceSync) throws UnavailableTopicException {
         Topic topic = findTopicById(topicId);
-        if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL) {
+        if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL_SUBSCRIPTION) {
             LOG.warn("Failed to unsubscribe: topic '{}' isn't optional", topicId);
             throw new UnavailableTopicException(String.format("Topic '%s' isn't optional", topicId));
         }
@@ -199,7 +199,7 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
 
         for (String id : topicIds) {
             Topic topic = findTopicById(id);
-            if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL) {
+            if (topic.getSubscriptionType() != SubscriptionType.OPTIONAL_SUBSCRIPTION) {
                 LOG.warn("Failed to unsubscribe: topic '{}' isn't optional", id);
                 throw new UnavailableTopicException(String.format("Topic '%s' isn't optional", id));
             }

@@ -80,13 +80,13 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     ts1.topicId = "topic1";
     ts1.sequenceNumber = 100;
     ts1.topicName = "topicName1";
-    ts1.subscriptionType = SubscriptionType::MANDATORY;
+    ts1.subscriptionType = SubscriptionType::MANDATORY_SUBSCRIPTION;
 
     DetailedTopicState ts2;
     ts2.topicId = "topic2";
     ts2.sequenceNumber = 200;
     ts2.topicName = "topicName2";
-    ts2.subscriptionType = SubscriptionType::OPTIONAL;
+    ts2.subscriptionType = SubscriptionType::OPTIONAL_SUBSCRIPTION;
 
     ts.insert(std::make_pair(ts1.topicId, ts1));
     ts.insert(std::make_pair(ts2.topicId, ts2));
@@ -144,14 +144,6 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     BOOST_CHECK_EQUAL(cs_restored.getEndpointKeyHash(), endpointKeyHash);
 
     cleanfile();
-}
-
-BOOST_AUTO_TEST_CASE(checkConfigVersionUpdates)
-{
-    const std::string filename(RESOURCE_DIR + std::string("/test_kaa_status.file"));
-    ClientStatus cs(filename);
-
-    BOOST_CHECK_MESSAGE(cs.isConfigurationVersionUpdated(), "Expect: configuration version is updated");
 }
 
 }  // namespace kaa

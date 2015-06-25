@@ -139,7 +139,7 @@ public class MessageFactoryTest {
 
         request.setRequestId(42);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setApplicationToken("AppToken");
+        md.setSdkToken("sdkToken");
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(SHA1HashUtils.hashToBytes(clientPair.getPublic().getEncoded())));
         request.setSyncRequestMetaData(md);
 
@@ -184,7 +184,7 @@ public class MessageFactoryTest {
 
         request.setRequestId(42);
         SyncRequestMetaData md = new SyncRequestMetaData();
-        md.setApplicationToken("AppToken");
+        md.setSdkToken("sdkToken");
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(SHA1HashUtils.hashToBytes(clientPair.getPublic().getEncoded())));
         request.setSyncRequestMetaData(md);
 

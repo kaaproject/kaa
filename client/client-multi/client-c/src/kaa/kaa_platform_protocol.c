@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
@@ -82,6 +81,13 @@ extern kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration
 extern kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_options, size_t extension_length);
 #endif
 
+/** External notification API */
+#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
+extern kaa_error_t kaa_notification_manager_get_size(kaa_notification_manager_t *self, size_t *expected_size);
+extern kaa_error_t kaa_notification_manager_request_serialize(kaa_notification_manager_t *self, kaa_platform_message_writer_t *writer);
+extern kaa_error_t kaa_notification_manager_handle_server_sync(kaa_notification_manager_t *self, kaa_platform_message_reader_t *reader, uint32_t extension_length);
+#endif
+
 /** External status API */
 extern kaa_error_t kaa_status_save(kaa_status_t *self);
 
@@ -108,7 +114,7 @@ kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size)
         size += sizeof(uint32_t); // timeout value
         size += kaa_aligned_size_get(SHA_1_DIGEST_LENGTH); // public key hash length
         size += kaa_aligned_size_get(SHA_1_DIGEST_LENGTH); // profile hash length
-        size += kaa_aligned_size_get(KAA_APPLICATION_TOKEN_LENGTH); // token length
+        size += kaa_aligned_size_get(KAA_SDK_TOKEN_LENGTH); // sdk token length
     }
 
     *expected_size = size;
@@ -149,7 +155,7 @@ kaa_error_t kaa_meta_data_request_serialize(kaa_status_t *status, kaa_platform_m
     err_code = kaa_platform_message_write_aligned(writer, status->profile_hash, SHA_1_DIGEST_LENGTH);
     KAA_RETURN_IF_ERR(err_code);
 
-    err_code = kaa_platform_message_write_aligned(writer, APPLICATION_TOKEN, KAA_APPLICATION_TOKEN_LENGTH);
+    err_code = kaa_platform_message_write_aligned(writer, KAA_SDK_TOKEN, KAA_SDK_TOKEN_LENGTH);
 
     return err_code;
 }
@@ -260,6 +266,15 @@ static kaa_error_t kaa_client_sync_get_size(kaa_platform_protocol_t *self
             break;
         }
 #endif
+#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
+        case KAA_SERVICE_NOTIFICATION: {
+            err_code = kaa_notification_manager_get_size(self->kaa_context->notification_manager
+                                                , &extension_size);
+            if (!err_code)
+                KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Calculated notification extension size %u", extension_size);
+            break;
+        }
+#endif
         default:
             extension_size = 0;
             break;
@@ -365,6 +380,16 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
         case KAA_SERVICE_CONFIGURATION: {
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
             error_code = kaa_configuration_manager_request_serialize(self->kaa_context->configuration_manager, writer);
+            if (error_code)
+                KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the configuration extension");
+#else
+            --total_services_count;
+#endif
+            break;
+        }
+        case KAA_SERVICE_NOTIFICATION: {
+#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
+            error_code = kaa_notification_manager_request_serialize(self->kaa_context->notification_manager, writer);
             if (error_code)
                 KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the configuration extension");
 #else
@@ -513,6 +538,14 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
                                                     , reader
                                                     , extension_options
                                                     , extension_length);
+            break;
+        }
+#endif
+#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
+        case KAA_NOTIFICATION_EXTENSION_TYPE: {
+            error_code = kaa_notification_manager_handle_server_sync(self->kaa_context->notification_manager
+                                                   , reader
+                                                   , extension_length);
             break;
         }
 #endif

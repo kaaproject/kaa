@@ -138,7 +138,7 @@ public class EncDecActor extends UntypedActor {
     public void onReceive(Object message) throws Exception {
         LOG.debug("Received: {}", message.getClass().getName());
         if (message instanceof SessionInitMessage) {
-            RedirectionRule redirection = checkRedirection(redirectionRules, random.nextDouble());
+            RedirectionRule redirection = checkInitRedirection(redirectionRules, random.nextDouble());
             if (redirection == null) {
                 messageProcessor.decodeAndForward(context(), (SessionInitMessage) message);
             } else {
@@ -146,7 +146,7 @@ public class EncDecActor extends UntypedActor {
             }
         } else if (message instanceof SessionAware) {
             if (message instanceof SessionAwareMessage) {
-                RedirectionRule redirection = checkRedirection(redirectionRules, random.nextDouble());
+                RedirectionRule redirection = checkSessionRedirection(redirectionRules, random.nextDouble());
                 if (redirection == null) {
                     messageProcessor.decodeAndForward(context(), (SessionAwareMessage) message);
                 } else {
@@ -178,15 +178,24 @@ public class EncDecActor extends UntypedActor {
             LOG.info("Redirection rule {} removed", message.getRuleId());
         }
     }
+    
+    public static RedirectionRule checkInitRedirection(HashMap<Long, RedirectionRule> redirectionRules, double random) {
+        return checkRedirection(redirectionRules, random, true);
+    }
+    
+    public static RedirectionRule checkSessionRedirection(HashMap<Long, RedirectionRule> redirectionRules, double random) {
+        return checkRedirection(redirectionRules, random, false);
+    }
 
-    public static RedirectionRule checkRedirection(HashMap<Long, RedirectionRule> redirectionRules, double random) { // NOSONAR
+    public static RedirectionRule checkRedirection(HashMap<Long, RedirectionRule> redirectionRules, double random, boolean initSession) { // NOSONAR
         RedirectionRule result = null;
         for (RedirectionRule rule : redirectionRules.values()) {
-            if (random <= rule.redirectionProbability) {
+            double redirectionProbability = initSession ? rule.initRedirectProbability : rule.sessionRedirectProbability;
+            if (random <= redirectionProbability) {
                 result = rule;
                 break;
             } else {
-                random -= rule.redirectionProbability;
+                random -= redirectionProbability;
             }
         }
         return result;

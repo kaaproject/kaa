@@ -34,6 +34,8 @@ class IKaaChannelManager
 {
 public:
 
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) = 0;
+
     /**
      * Updates the manager by setting the channel to the specified transport type.
      *

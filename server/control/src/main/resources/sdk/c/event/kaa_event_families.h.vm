@@ -23,6 +23,10 @@
 # include "../kaa_event.h"
 # include "../kaa_error.h"
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 #foreach ($event in $incomingEventFqns)
 #set($e_name = $StyleUtils.toLowerUnderScore($StyleUtils.removePackageName(${event})))
 
@@ -78,5 +82,9 @@ kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self
  */
 kaa_error_t kaa_event_manager_add_${prefix}_${e_name}_event_to_block(kaa_event_manager_t *self, ${prefix}_${e_name}_t *event, kaa_endpoint_id_p target, kaa_event_block_id trx_id);
 #end
+
+# ifdef __cplusplus
+}      /* extern "C" */
+# endif
 
 # endif // KAA_${EVENT_FAMILY_NAME}_H

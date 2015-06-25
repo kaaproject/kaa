@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.server.appenders</groupId>
-        <version>0.7.0-SNAPSHOT</version>
+        <version>0.7.1-SNAPSHOT</version>
         <artifactId>flume</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
@@ -56,7 +56,6 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>flume</classifier>
         </dependency>
         <dependency>

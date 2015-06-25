@@ -48,7 +48,11 @@
 #define KAA_MUTEX_UNIQUE_DECLARE(name, mtx)     KAA_MUTEX_UNIQUE name(mtx)
 #define KAA_R_MUTEX_UNIQUE_DECLARE(name, mtx)   KAA_R_MUTEX_UNIQUE name(mtx)
 
+#ifdef _WIN32
+typedef std::atomic<bool> bool_type;
+#else
 typedef std::atomic_bool bool_type;
+#endif
 typedef std::atomic_int_fast32_t RequestId;
 
 #define kaa_thread_local thread_local

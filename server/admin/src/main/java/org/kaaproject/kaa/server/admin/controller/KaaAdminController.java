@@ -42,7 +42,7 @@ import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -357,7 +357,7 @@ public class KaaAdminController {
      */
     @RequestMapping(value="sdk", method=RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
-    public void getSdk(@RequestBody SdkKey key,
+    public void getSdk(@RequestBody SdkPropertiesDto key,
             HttpServletRequest request,
             HttpServletResponse response) throws KaaAdminServiceException {
         try {

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>7D7AEA2B-EE69-48CD-AD21-7EA095214FF3</string>
+	<key>IDESourceControlProjectName</key>
+	<string>SmartHouse</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>B401B74FA4825A3AF8BEAD942EB222B09AC26B7C</key>
+		<string>https://github.com/abohomol/kaa.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>examples/iotworld/source/smarthome/ios/SmartHouse.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>B401B74FA4825A3AF8BEAD942EB222B09AC26B7C</key>
+		<string>../../../../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/abohomol/kaa.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>B401B74FA4825A3AF8BEAD942EB222B09AC26B7C</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>B401B74FA4825A3AF8BEAD942EB222B09AC26B7C</string>
+			<key>IDESourceControlWCCName</key>
+			<string>kaa</string>
+		</dict>
+	</array>
+</dict>
+</plist>

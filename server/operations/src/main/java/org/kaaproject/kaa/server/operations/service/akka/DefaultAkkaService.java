@@ -27,6 +27,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.OperationsServerActor;
 import org.kaaproject.kaa.server.operations.service.akka.actors.io.EncDecActor;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdateMessage;
 import org.kaaproject.kaa.server.sync.platform.PlatformLookup;
@@ -79,6 +80,8 @@ public class DefaultAkkaService implements AkkaService {
     private AkkaContext context;
 
     private AkkaEventServiceListener listener;
+
+    private StatusListenerThread statusListenerThread;
 
     /**
      * Inits the actor system.
@@ -166,5 +169,47 @@ public class DefaultAkkaService implements AkkaService {
     @Override
     public void onUserConfigurationUpdate(UserConfigurationUpdate update) {
         opsActor.tell(new UserConfigurationUpdateMessage(update), ActorRef.noSender());
+    }
+
+    @Override
+    public void setStatusListener(final AkkaStatusListener listener, final long statusUpdateFrequency) {
+        this.statusListenerThread = new StatusListenerThread(listener, statusUpdateFrequency);
+        this.statusListenerThread.start();
+    }
+
+    @Override
+    public void removeStatusListener() {
+        this.statusListenerThread.stopped = true;
+        this.statusListenerThread.interrupt();
+    }
+
+    public class StatusListenerThread extends Thread {
+
+        private final AkkaStatusListener listener;
+        private final long statusUpdateFrequency;
+
+        private volatile boolean stopped = false;
+
+        public StatusListenerThread(AkkaStatusListener listener, long statusUpdateFrequency) {
+            super();
+            this.listener = listener;
+            this.statusUpdateFrequency = statusUpdateFrequency;
+        }
+
+        @Override
+        public void run() {
+            while (!stopped) {
+                try {
+                    Thread.sleep(statusUpdateFrequency);
+                } catch (InterruptedException e) {
+                    if (!stopped) {
+                        LOG.warn("Status update thread was interrupted", e);
+                    } else {
+                        break;
+                    }
+                }
+                opsActor.tell(new StatusRequestMessage(listener), ActorRef.noSender());
+            }
+        }
     }
 }

@@ -44,6 +44,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.kaaproject.kaa.avro.avrogenc.Compiler;
 import org.kaaproject.kaa.avro.avrogenc.StyleUtils;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
@@ -77,13 +78,21 @@ public class CSdkGenerator extends SdkGenerator {
 
     private static final String KAA_CMAKEGEN         = "listfiles/CMakeGen.cmake";
     private static final String KAA_DEFAULTS_HEADER  = KAA_SRC_FOLDER + "/kaa_defaults.h";
-    private static final String LOG_HEADER           = KAA_GEN_SOURCE_DIR + "kaa_logging_definitions.h";
+
+    private static final String LOGGING_HEADER       = KAA_GEN_SOURCE_DIR + "kaa_logging_definitions.h";
     private static final String PROFILE_HEADER       = KAA_GEN_SOURCE_DIR + "kaa_profile_definitions.h";
     private static final String CONFIGURATION_HEADER = KAA_GEN_SOURCE_DIR + "kaa_configuration_definitions.h";
+    private static final String NOTIFICATION_HEADER  = KAA_GEN_SOURCE_DIR + "kaa_notification_definitions.h";
 
-    private static final String KAA_PROFILE_SOURCE_NAME_PATTERN       = "kaa_profile_gen";
-    private static final String KAA_LOG_SOURCE_NAME_PATTERN           = "kaa_logging_gen";
-    private static final String KAA_CONFIGURATION_SOURCE_NAME_PATTERN = "kaa_configuration_gen";
+    private static final String PROFILE_SOURCE_NAME_PATTERN       = "kaa_profile_gen";
+    private static final String LOGGING_SOURCE_NAME_PATTERN       = "kaa_logging_gen";
+    private static final String CONFIGURATION_SOURCE_NAME_PATTERN = "kaa_configuration_gen";
+    private static final String NOTIFICATION_SOURCE_NAME_PATTERN  = "kaa_notification_gen";
+
+    private static final String PROFILE_NAMESPACE       = KAA_SOURCE_PREFIX + "_" + "profile";
+    private static final String LOGGING_NAMESPACE       = KAA_SOURCE_PREFIX + "_" + "logging";
+    private static final String CONFIGURATION_NAMESPACE = KAA_SOURCE_PREFIX + "_" + "configuration";
+    private static final String NOTIFICATION_NAMESPACE  = KAA_SOURCE_PREFIX + "_" + "notification";
 
     private final VelocityEngine velocityEngine;
 
@@ -105,17 +114,21 @@ public class CSdkGenerator extends SdkGenerator {
      */
     @Override
     public Sdk generateSdk(String buildVersion,
-                           List<BootstrapNodeInfo> bootstrapNodes, String appToken,
-                           int profileSchemaVersion, int configurationSchemaVersion,
-                           int notificationSchemaVersion, int logSchemaVersion,
+                           List<BootstrapNodeInfo> bootstrapNodes, String sdkToken,
+                           SdkPropertiesDto sdkProperties,
                            String profileSchemaBody,
                            String notificationSchemaBody,
                            String configurationProtocolSchemaBody,
                            String configurationBaseSchemaBody,
                            byte[] defaultConfigurationData,
                            List<EventFamilyMetadata> eventFamilies,
-                           String logSchemaBody,
-                           String defaultVerifierToken) throws Exception {
+                           String logSchemaBody) throws Exception {
+
+        Integer configurationSchemaVersion = sdkProperties.getConfigurationSchemaVersion();
+        Integer profileSchemaVersion = sdkProperties.getProfileSchemaVersion();
+        Integer notificationSchemaVersion = sdkProperties.getNotificationSchemaVersion();
+        Integer logSchemaVersion = sdkProperties.getLogSchemaVersion();
+        String defaultVerifierToken = sdkProperties.getDefaultVerifierToken();
 
         String sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + C_SDK_DIR + "/" + C_SDK_PREFIX + buildVersion + ".tar.gz";
 
@@ -149,6 +162,10 @@ public class CSdkGenerator extends SdkGenerator {
             cSources.addAll(generateConfigurationSources(configurationBaseSchemaBody));
         }
 
+        if (!StringUtils.isBlank(notificationSchemaBody)) {
+            cSources.addAll(generateNotificationSources(notificationSchemaBody));
+        }
+
         if (eventFamilies != null && !eventFamilies.isEmpty()) {
             cSources.addAll(CEventSourcesGenerator.generateEventSources(eventFamilies));
         }
@@ -161,12 +178,11 @@ public class CSdkGenerator extends SdkGenerator {
         while ((e = templateArchive.getNextEntry()) != null) {
             if (!e.isDirectory()) {
                 if (e.getName().equals(KAA_DEFAULTS_HEADER)) {
-                    byte[] kaaDefaultsData = generateKaaDefaults(bootstrapNodes, appToken,
-                                                                 configurationSchemaVersion, profileSchemaVersion,
-                                                                 notificationSchemaVersion, logSchemaVersion,
+                    // TODO: eliminate schema versions and substitute them for a single sdkToken
+                    byte[] kaaDefaultsData = generateKaaDefaults(bootstrapNodes, sdkToken,
+                                                                 profileSchemaVersion,
                                                                  configurationProtocolSchemaBody,
                                                                  defaultConfigurationData,
-                                                                 eventFamilies,
                                                                  defaultVerifierToken);
 
                     TarArchiveEntry kaaDefaultsEntry = new TarArchiveEntry(KAA_DEFAULTS_HEADER);
@@ -223,7 +239,7 @@ public class CSdkGenerator extends SdkGenerator {
                                                               profileSchemaVersion,
                                                               configurationSchemaVersion,
                                                               notificationSchemaVersion,
-                                                              logSchemaVersion}).getMessage();
+                                                              logSchemaVersion }).getMessage();
 
         Sdk sdk = new Sdk();
         sdk.setFileName(sdkFileName);
@@ -240,7 +256,7 @@ public class CSdkGenerator extends SdkGenerator {
             OutputStream sourceStream = new ByteArrayOutputStream();
         ) {
             Compiler compiler = new Compiler(schema, sourceName, headerStream, sourceStream);
-            compiler.setNamespacePrefix(KAA_SOURCE_PREFIX + "_" + namespace);
+            compiler.setNamespacePrefix(namespace);
             compiler.generate();
 
             tarEntries.add(createTarEntry(KAA_GEN_SOURCE_DIR + sourceName + C_HEADER_SUFFIX, headerStream.toString()));
@@ -258,9 +274,10 @@ public class CSdkGenerator extends SdkGenerator {
         return writer.toString();
     }
 
-    private String processHeaderTemplate(String templateName, Schema schema) {
+    private String processHeaderTemplate(String templateName, Schema schema, String namespace) {
         VelocityContext context = new VelocityContext();
         context.put("record_name", StyleUtils.toLowerUnderScore(schema.getName()));
+        context.put("namespace", namespace);
         return generateSourceFromTemplate(TEMPLATE_DIR + File.separator + templateName, context);
     }
 
@@ -273,7 +290,6 @@ public class CSdkGenerator extends SdkGenerator {
     /**
      * Generate client properties.
      *
-     * @param kaaDefaultsStream the kaa defaults stream
      * @param bootstrapNodes the bootstrap nodes
      * @param appToken the app token
      * @param configurationSchemaVersion the configuration schema version
@@ -286,14 +302,10 @@ public class CSdkGenerator extends SdkGenerator {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private byte[] generateKaaDefaults(List<BootstrapNodeInfo> bootstrapNodes,
-                                       String appToken,
-                                       int configurationSchemaVersion,
+                                       String sdkToken,
                                        int profileSchemaVersion,
-                                       int notificationSchemaVersion,
-                                       int logSchemaVersion,
                                        String configurationProtocolSchemaBody,
                                        byte[] defaultConfigurationData,
-                                       List<EventFamilyMetadata> eventFamilies,
                                        String defaultVerifierToken) throws IOException {
 
         VelocityContext context = new VelocityContext();
@@ -302,15 +314,11 @@ public class CSdkGenerator extends SdkGenerator {
 
         context.put("build_version", Version.PROJECT_VERSION);
         context.put("build_commit_hash", Version.COMMIT_HASH);
-        context.put("app_token", appToken);
-        context.put("config_version", configurationSchemaVersion);
+        context.put("sdk_token", sdkToken);
+        
         context.put("profile_version", profileSchemaVersion);
-        context.put("user_nf_version", notificationSchemaVersion);
-        context.put("log_version", logSchemaVersion);
-        context.put("system_nf_version", 1);
         context.put("user_verifier_token", (defaultVerifierToken != null ? defaultVerifierToken : ""));
-
-        context.put("eventFamilies", eventFamilies);
+        
         context.put("bootstrapNodes", bootstrapNodes);
         context.put("configurationData", defaultConfigurationData);
 
@@ -325,9 +333,10 @@ public class CSdkGenerator extends SdkGenerator {
         Schema schema = new Schema.Parser().parse(profileSchemaBody);
         List<TarEntryData> tarEntries = new LinkedList<>();
 
-        tarEntries.add(createTarEntry(PROFILE_HEADER, processHeaderTemplate("kaa_profile_definitions.vm", schema)));
+        tarEntries.add(createTarEntry(PROFILE_HEADER,
+                                      processHeaderTemplate("kaa_profile_definitions.vm", schema, PROFILE_NAMESPACE)));
 
-        tarEntries.addAll(generateSourcesFromSchema(schema, KAA_PROFILE_SOURCE_NAME_PATTERN, "profile"));
+        tarEntries.addAll(generateSourcesFromSchema(schema, PROFILE_SOURCE_NAME_PATTERN, PROFILE_NAMESPACE));
 
         return tarEntries;
     }
@@ -336,9 +345,10 @@ public class CSdkGenerator extends SdkGenerator {
         Schema schema = new Schema.Parser().parse(logSchemaBody);
         List<TarEntryData> tarEntries = new LinkedList<>();
 
-        tarEntries.add(createTarEntry(LOG_HEADER, processHeaderTemplate("kaa_logging_definitions.vm", schema)));
+        tarEntries.add(createTarEntry(LOGGING_HEADER,
+                                      processHeaderTemplate("kaa_logging_definitions.vm", schema, LOGGING_NAMESPACE)));
 
-        tarEntries.addAll(generateSourcesFromSchema(schema, KAA_LOG_SOURCE_NAME_PATTERN, "logging"));
+        tarEntries.addAll(generateSourcesFromSchema(schema, LOGGING_SOURCE_NAME_PATTERN, LOGGING_NAMESPACE));
 
         return tarEntries;
     }
@@ -348,9 +358,21 @@ public class CSdkGenerator extends SdkGenerator {
         List<TarEntryData> tarEntries = new LinkedList<>();
 
         tarEntries.add(createTarEntry(CONFIGURATION_HEADER,
-                                      processHeaderTemplate("kaa_configuration_definitions.vm", schema)));
+                                      processHeaderTemplate("kaa_configuration_definitions.vm", schema, CONFIGURATION_NAMESPACE)));
 
-        tarEntries.addAll(generateSourcesFromSchema(schema, KAA_CONFIGURATION_SOURCE_NAME_PATTERN, "configuration"));
+        tarEntries.addAll(generateSourcesFromSchema(schema, CONFIGURATION_SOURCE_NAME_PATTERN, CONFIGURATION_NAMESPACE));
+
+        return tarEntries;
+    }
+
+    private List<TarEntryData> generateNotificationSources(String notificationSchemaBody) {
+        Schema schema = new Schema.Parser().parse(notificationSchemaBody);
+        List<TarEntryData> tarEntries = new LinkedList<>();
+
+        tarEntries.add(createTarEntry(NOTIFICATION_HEADER,
+                                      processHeaderTemplate("kaa_notification_definitions.vm", schema, NOTIFICATION_NAMESPACE)));
+
+        tarEntries.addAll(generateSourcesFromSchema(schema, NOTIFICATION_SOURCE_NAME_PATTERN, NOTIFICATION_NAMESPACE));
 
         return tarEntries;
     }

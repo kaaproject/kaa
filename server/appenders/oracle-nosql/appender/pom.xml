@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.server.appenders</groupId>
-        <version>0.7.0-SNAPSHOT</version>
+        <version>0.7.1-SNAPSHOT</version>
         <artifactId>oracle-nosql</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server.appenders.oracle-nosql</groupId>
@@ -42,7 +42,6 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.oracle-nosql</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>oracle-nosql</classifier>
         </dependency>
         <dependency>

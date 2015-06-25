@@ -19,7 +19,7 @@
   <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject</groupId>
-        <version>0.7.0-SNAPSHOT</version>
+        <version>0.7.1-SNAPSHOT</version>
         <artifactId>kaa</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa</groupId>
@@ -35,6 +35,7 @@
 
     <modules>
         <!--module>robotrun</module-->
+        <module>iotworld</module>
         <module>smarthousedemo</module>
         <module>configurationdemo</module>
         <module>notificationdemo</module>
@@ -45,6 +46,15 @@
         <module>notificationdemo-android</module>
         <module>photoframe</module>
         <module>verifiersdemo</module>
+        <module>powerplant</module>
+        <module>powerplant-dashboard</module>
+        <module>econais</module>
+        <module>citylights-controller</module>
+        <module>twitterled</module>
+        <module>vehicletelemetry</module>
+        <module>connectedcar</module>
+        <module>powerplant-android</module>
+        <module>powerplant-couchbase-proxy</module>
     </modules>
 
     <dependencyManagement>

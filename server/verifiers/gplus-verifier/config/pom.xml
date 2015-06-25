@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.server.verifiers</groupId>
-        <version>0.7.0-SNAPSHOT</version>
+        <version>0.7.1-SNAPSHOT</version>
         <artifactId>gplus-verifier</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
@@ -42,10 +42,6 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>verifier-shared</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>utils</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

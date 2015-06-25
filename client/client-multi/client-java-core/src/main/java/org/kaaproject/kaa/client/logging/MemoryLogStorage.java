@@ -296,4 +296,9 @@ public class MemoryLogStorage implements LogStorage, LogStorageStatus {
     public void setMaxStorageSize(long maxStorageSize) {
         this.maxStorageSize = maxStorageSize;
     }
+
+    @Override
+    public void close() {
+        // Will be done by GC
+    }
 }

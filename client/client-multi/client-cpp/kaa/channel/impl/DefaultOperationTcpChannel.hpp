@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <thread>
 #include <array>
+#include <memory>
 
 #include <boost/asio.hpp>
 
@@ -34,6 +35,7 @@
 #include "kaa/channel/IPTransportInfo.hpp"
 #include "kaa/channel/ITransportConnectionInfo.hpp"
 #include "kaa/channel/TransportProtocolIdConstants.hpp"
+#include "kaa/utils/KaaTimer.hpp"
 
 
 namespace kaa {
@@ -76,12 +78,17 @@ public:
         return ServerType::OPERATIONS;
     }
     
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) {
+    	failoverStrategy_ = strategy;
+    }
+
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {
         connectivityChecker_= checker;
     }
 
     void onReadEvent(const boost::system::error_code& err);
     void onPingTimeout(const boost::system::error_code& err);
+    void onConnAckTimeout(const boost::system::error_code& err);
 
     void onConnack(const ConnackMessage& message);
     void onDisconnect(const DisconnectMessage& message);
@@ -94,6 +101,7 @@ public:
 
 private:
     static const std::uint16_t PING_TIMEOUT;
+    static const std::uint16_t CONN_ACK_TIMEOUT;
     static const std::uint16_t RECONNECT_TIMEOUT;
 
     boost::system::error_code sendKaaSync(const std::map<TransportType, ChannelDirection>& transportTypes);
@@ -104,6 +112,7 @@ private:
 
     void readFromSocket();
     void setTimer();
+    void setConnAckTimer();
 
     void createThreads();
 
@@ -112,19 +121,27 @@ private:
 private:
     static const std::string CHANNEL_ID;
     static const std::map<TransportType, ChannelDirection> SUPPORTED_TYPES;
-    static const std::uint16_t THREADPOOL_SIZE = 2;
+    static const std::uint16_t TIMER_THREADPOOL_SIZE = 1;
+    static const std::uint16_t SOCKET_THREADPOOL_SIZE = 1;
     static const std::uint32_t KAA_PLATFORM_PROTOCOL_AVRO_ID;
 
     std::list<TransportType> ackTypes_;
     KeyPair clientKeys_;
 
     boost::asio::io_service io_;
+    boost::asio::io_service socketIo_;
     boost::asio::io_service::work work_;
-    boost::asio::ip::tcp::socket sock_;
+    boost::asio::io_service::work socketWork_;
+
+    std::unique_ptr<boost::asio::ip::tcp::socket> sock_;
     boost::asio::deadline_timer pingTimer_;
-    boost::asio::deadline_timer reconnectTimer_;
-    boost::asio::streambuf responseBuffer_;
-    std::array<std::thread, THREADPOOL_SIZE> channelThreads_;
+    boost::asio::deadline_timer connAckTimer_;
+    //boost::asio::deadline_timer reconnectTimer_;
+    KaaTimer<void ()> retryTimer_;
+
+    std::unique_ptr<boost::asio::streambuf> responseBuffer_;
+    std::array<std::thread, TIMER_THREADPOOL_SIZE> timerThreads_;
+    std::array<std::thread, SOCKET_THREADPOOL_SIZE> channelThreads_;
 
     bool firstStart_;
     bool isConnected_;
@@ -132,6 +149,7 @@ private:
     bool isPendingSyncRequest_;
     bool isShutdown_;
     bool isPaused_;
+    bool isFailoverInProgress_;
 
     IKaaDataMultiplexer *multiplexer_;
     IKaaDataDemultiplexer *demultiplexer_;
@@ -143,6 +161,7 @@ private:
     KAA_MUTEX_DECLARE(channelGuard_);
 
     ConnectivityCheckerPtr connectivityChecker_;
+    IFailoverStrategyPtr failoverStrategy_;
 };
 
 }

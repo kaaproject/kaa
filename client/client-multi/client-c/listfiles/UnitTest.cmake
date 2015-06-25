@@ -120,10 +120,16 @@ add_executable  (test_platform_protocol
 target_link_libraries(test_platform_protocol kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
 add_executable  (test_deque
-                    test/test_kaa_deque.c
+                    test/collections/test_kaa_deque.c
                     test/kaa_test_external.c
                 )
 target_link_libraries(test_deque kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+
+add_executable  (test_list
+                    test/collections/test_kaa_list.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_list kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
 add_executable  (test_channel_manager
                     test/test_kaa_channel_manager.c
@@ -166,3 +172,8 @@ add_executable  (test_kaa_common_schema
                     test/kaa_test_external.c
                 )
 target_link_libraries(test_kaa_common_schema kaac ${CUNIT_LIB_NAME})
+
+add_executable  (test_kaa_notification_manager
+                    test/test_kaa_notification.c
+                )
+target_link_libraries(test_kaa_notification_manager kaac ${CUNIT_LIB_NAME})

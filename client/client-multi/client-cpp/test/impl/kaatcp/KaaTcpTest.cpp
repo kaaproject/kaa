@@ -62,13 +62,7 @@ BOOST_AUTO_TEST_CASE(testTcpParser)
 {
     char buffer[] = { 0x10, 0x01, 0x05 };
     KaaTcpParser parser;
-    parser.parseBuffer(buffer, 3);
-
-    const auto& messages1 = parser.releaseMessages();
-    BOOST_CHECK_EQUAL(false, messages1.empty());
-    BOOST_CHECK_EQUAL((std::uint8_t)  KaaTcpMessageType::MESSAGE_CONNECT, (std::uint8_t) messages1.begin()->first);
-    BOOST_CHECK_EQUAL(1, messages1.begin()->second.second);
-    BOOST_CHECK_EQUAL(0x05,  messages1.begin()->second.first.get()[0]);
+    BOOST_CHECK_THROW(parser.parseBuffer(buffer, 3), KaaException);
 
     parser.resetParser();
 

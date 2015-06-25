@@ -39,16 +39,19 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.tools.ant.taskdefs.Execute;
 import org.apache.tools.ant.taskdefs.PumpStreamHandler;
 import org.atmosphere.client.TrackMessageSizeInterceptor;
+import org.atmosphere.config.service.Disconnect;
 import org.atmosphere.config.service.ManagedService;
+import org.atmosphere.config.service.Post;
 import org.atmosphere.config.service.Ready;
 import org.atmosphere.cpr.AtmosphereResource;
+import org.atmosphere.cpr.AtmosphereResourceEvent;
 import org.atmosphere.cpr.AtmosphereResourceFactory;
 import org.atmosphere.gwt20.managed.AtmosphereMessageInterceptor;
 import org.atmosphere.gwt20.server.GwtRpcInterceptor;
 import org.atmosphere.interceptor.AtmosphereResourceLifecycleInterceptor;
 import org.atmosphere.interceptor.IdleResourceInterceptor;
 import org.atmosphere.interceptor.SuspendTrackerInterceptor;
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.sandbox.demo.projects.Platform;
 import org.kaaproject.kaa.sandbox.demo.projects.Project;
@@ -109,6 +112,8 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     
     private static final String CHANGE_KAA_HOST_DIALOG_SHOWN_PROPERTY = "changeKaaHostDialogShown";
     
+    private static final int MESSAGE_BROADCAST_TIMEOUT = 10000; 
+    
     @Autowired
     private CacheService cacheService;
     
@@ -123,6 +128,8 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     private Map<String, Project> projectsMap = new HashMap<>();
     
     private static String[] sandboxEnv;
+    
+    private static AtmosphereResourceFactory atmosphereResourceFactory;
     
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -164,8 +171,25 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     
     @Ready
     public void onReady(final AtmosphereResource r) {
-    	LOG.info("Received RPC GET, uuid: {}", r.uuid());
+    	LOG.debug("Received RPC GET, uuid: {}", r.uuid());
+    	if (atmosphereResourceFactory == null) {
+    	    atmosphereResourceFactory = r.getAtmosphereConfig().resourcesFactory();
+    	}
     	r.getBroadcaster().broadcast(r.uuid(), r);
+    }
+    
+    @Disconnect
+    public void disconnected(AtmosphereResourceEvent event){
+        if (event.isCancelled()) {
+            LOG.debug("User:" + event.getResource().uuid() + " unexpectedly disconnected");
+        } else if (event.isClosedByClient()) {
+            LOG.debug("User:" + event.getResource().uuid() + " closed the connection");
+        }
+    }
+
+    @Post
+    public void post(AtmosphereResource r) {
+        LOG.debug("POST received with transport + " + r.transport());
     }
     
     @Override
@@ -190,9 +214,8 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
     
     @Override
     public void changeKaaHost(String uuid, String host) throws SandboxServiceException {
-    	AtmosphereResource res = AtmosphereResourceFactory.getDefault().find(uuid);
         try {
-        	ClientMessageOutputStream outStream = new ClientMessageOutputStream(res, null);
+        	ClientMessageOutputStream outStream = new ClientMessageOutputStream(uuid, null);
         	if (guiChangeHostEnabled) {
         	    executeCommand(outStream, new String[]{"sudo",sandboxHome + "/change_kaa_host.sh",host}, null);
         	    cacheService.flushAllCaches();
@@ -200,7 +223,9 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
         	    outStream.println("WARNING: change host from GUI is disabled!");
         	}
         } finally {
-            res.getBroadcaster().broadcast(uuid + " finished", res);
+            if (uuid != null) {
+                broadcastMessage(uuid, uuid + " finished");
+            }
         }
     }
     
@@ -225,24 +250,22 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
 
     @Override
     public void buildProjectData(String uuid, BuildOutputData outputData, String projectId, ProjectDataType dataType) throws SandboxServiceException {
-        AtmosphereResource res = null;
         PrintStream outPrint = null;
         ClientMessageOutputStream outStream = null;
         ByteArrayOutputStream byteOutStream = null;
-        if (uuid != null) {
-            res = AtmosphereResourceFactory.getDefault().find(uuid);
-        } else if (outputData != null) {
+        if (outputData != null) {
             byteOutStream = new ByteArrayOutputStream();
             outPrint = new PrintStream(byteOutStream);
         }
         try {
-            outStream = new ClientMessageOutputStream(res, outPrint);
+            outStream = new ClientMessageOutputStream(uuid, outPrint);
             Project project = projectsMap.get(projectId);
             if (project != null) {
                 String sdkKeyBase64 = project.getSdkKeyBase64();
-                SdkKey sdkKey = (SdkKey)Base64.decodeToObject(sdkKeyBase64, Base64.URL_SAFE, null);
+                SdkPropertiesDto sdkPropertiesDto = (SdkPropertiesDto)Base64.decodeToObject(sdkKeyBase64, Base64.URL_SAFE, null);
+                outStream.println("SDK properties for project build: " + sdkPropertiesDto.toString());
                 outStream.println("Getting SDK for requested project...");
-                FileData sdkFileData = cacheService.getSdk(sdkKey);
+                FileData sdkFileData = cacheService.getSdk(sdkPropertiesDto);
                 if (sdkFileData != null) {
                     outStream.println("Successfuly got SDK.");
                     File rootDir = createTempDirectory("demo-project");
@@ -319,8 +342,8 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
             }
             throw Utils.handleException(e);
         } finally {
-            if (res != null) {
-                res.getBroadcaster().broadcast(uuid + " finished", res);
+            if (uuid != null) {
+                broadcastMessage(uuid, uuid + " finished");
             }
             if (outPrint != null) {
                 outPrint.flush();
@@ -361,14 +384,33 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
         }
         return temp;
     }
-
+    
+    private static void broadcastMessage(String uuid, Object message) {
+        if (uuid != null) {
+            AtmosphereResource res = null;
+            int waitTime = 0;
+            while ((res = atmosphereResourceFactory.find(uuid)) == null 
+                    && waitTime < MESSAGE_BROADCAST_TIMEOUT) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {}
+                waitTime += 500;
+            }
+            if (res == null) {
+                 LOG.warn("Unable to find atmosphere resource for uuid: {}", uuid);
+            } else {
+                res.getBroadcaster().broadcast(message, res);
+            }
+        }
+    }
+    
     class ClientMessageOutputStream extends OutputStream {
 
-    	private AtmosphereResource res;
+    	private String resourceUuid;
     	private PrintStream out;
     	
-    	ClientMessageOutputStream(AtmosphereResource res, PrintStream out) {
-    		this.res = res;
+    	ClientMessageOutputStream(String resourceUuid, PrintStream out) {
+    		this.resourceUuid = resourceUuid;
     		this.out = out;
     	}
     	
@@ -381,8 +423,8 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
 			byte[] data = new byte[len];
 			System.arraycopy(b, off, data, 0, len);
 			String message = new String(data);
-			if (res != null) {
-			    res.getBroadcaster().broadcast(message, res);
+			if (resourceUuid != null) {
+			    broadcastMessage(resourceUuid, message);
 			}
 			if (out != null) {
 			    out.print(message);
@@ -390,13 +432,14 @@ public class SandboxServiceImpl implements SandboxService, InitializingBean {
 		}
 		
 		public void println(String text) {
-		    if (res != null) {
-		        res.getBroadcaster().broadcast((text+"\n"), res);
+		    if (resourceUuid != null) {
+		        broadcastMessage(resourceUuid, (text+"\n"));
 		    }
 	        if (out != null) {
 	            out.println(text);
 	        }
 		}
+
     }
 
 

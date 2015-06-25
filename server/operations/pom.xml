@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.7.0-SNAPSHOT</version>
+        <version>0.7.1-SNAPSHOT</version>
         <artifactId>server</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server</groupId>
@@ -92,11 +92,6 @@
             <classifier>tcp</classifier>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
-            <artifactId>verifier</artifactId>
-            <classifier>trustful</classifier>
-        </dependency>
-        <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>log-shared</artifactId>
         </dependency>
@@ -127,7 +122,6 @@
         <dependency>
             <groupId>org.kaaproject.kaa.common</groupId>
             <artifactId>core</artifactId>
-            <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -216,51 +210,55 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
             <artifactId>appender</artifactId>
-            <version>${project.version}</version>
             <classifier>file</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.mongo</groupId>
             <artifactId>appender</artifactId>
-            <version>${project.version}</version>
             <classifier>mongo</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
             <artifactId>appender</artifactId>
-            <version>${project.version}</version>
             <classifier>flume</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.appenders.rest</groupId>
+            <artifactId>appender</artifactId>
+            <classifier>rest</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
             <artifactId>verifier</artifactId>
-            <version>${project.version}</version>
             <classifier>trustful</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
             <artifactId>verifier</artifactId>
-            <version>${project.version}</version>
             <classifier>gplus</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
             <artifactId>verifier</artifactId>
-            <version>${project.version}</version>
             <classifier>facebook</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
             <artifactId>verifier</artifactId>
-            <version>${project.version}</version>
             <classifier>twitter</classifier>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+            <artifactId>mongo-dao</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -347,7 +345,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>
@@ -467,7 +464,7 @@
             <plugin>
                 <artifactId>jdeb</artifactId>
                 <groupId>org.vafer</groupId>
-                <version>1.1.1</version>
+                <version>1.4</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -499,6 +496,7 @@
                                 <data>
                                     <src>${project.basedir}/src/main/resources</src>
                                     <type>directory</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>
@@ -508,6 +506,7 @@
                                 <data>
                                     <src>../common/dao/src/main/resources/common-dao-context.xml</src>
                                     <type>file</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>
@@ -517,6 +516,7 @@
                                 <data>
                                     <src>../common/dao/src/main/resources/common-dao-sql-context.xml</src>
                                     <type>file</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>
@@ -526,6 +526,7 @@
                                 <data>
                                     <src>../common/dao/src/main/resources/dao.properties</src>
                                     <type>file</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>
@@ -535,6 +536,7 @@
                                 <data>
                                     <src>${project.basedir}/tmp_dao_resources</src>
                                     <type>directory</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>
@@ -544,6 +546,7 @@
                                 <data>
                                     <src>../../common/endpoint-shared/src/main/avro/default_profile_schema.avsc</src>
                                     <type>file</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>
@@ -553,6 +556,7 @@
                                 <data>
                                     <src>../../common/endpoint-shared/src/main/avro/default_configuration_schema.avsc</src>
                                     <type>file</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
                                         <filemode>755</filemode>
@@ -571,9 +575,10 @@
                                 <data>
                                     <src>../../common/endpoint-shared/src/main/avro/default_notification_schema.avsc</src>
                                     <type>file</type>
+                                    <conffile>true</conffile>
                                     <mapper>
                                         <type>perm</type>
-                                        <filemode>755</filemode>
+                                        <filemode>755</filemode>                                        
                                         <prefix>/usr/lib/${script.server.name}/conf</prefix>
                                     </mapper>
                                 </data>
@@ -611,7 +616,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>rpm-maven-plugin</artifactId>
-                        <version>2.1-alpha-1</version>
+                        <version>2.1.3</version>
                         <extensions>true</extensions>
                         <executions>
                             <execution>
@@ -650,6 +655,7 @@
                                 </mapping>
                                 <mapping>
                                     <directory>/usr/lib/${script.server.name}/conf</directory>
+                                    <configuration>true</configuration>
                                     <filemode>755</filemode>
                                     <username>kaa</username>
                                     <groupname>kaa</groupname>
@@ -744,6 +750,18 @@
                     <artifactId>appender</artifactId>
                     <version>${project.version}</version>
                     <classifier>cassandra</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>couchbase</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.appenders.couchbase</groupId>
+                    <artifactId>appender</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>couchbase</classifier>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>

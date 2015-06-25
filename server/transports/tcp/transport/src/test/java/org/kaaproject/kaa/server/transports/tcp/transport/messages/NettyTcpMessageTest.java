@@ -42,10 +42,11 @@ public class NettyTcpMessageTest {
         CipherPair sessionKey = Mockito.mock(CipherPair.class);
         EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
         String applicationToken = "AppToken";
+        String sdkToken = "SdkToken";
         int keepAlive = 100;
 
         SessionInfo session = new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
-                applicationToken, keepAlive, true);
+                applicationToken, sdkToken, keepAlive, true);
 
         Connect command = new Connect(keepAlive, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, "aesSessionKey".getBytes(),
                 "syncRequest".getBytes(), "signature".getBytes());
@@ -80,10 +81,11 @@ public class NettyTcpMessageTest {
         CipherPair sessionKey = Mockito.mock(CipherPair.class);
         EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
         String applicationToken = "AppToken";
+        String sdkToken = "SdkToken";
         int keepAlive = 100;
 
         SessionInfo session = new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
-                applicationToken, keepAlive, true);
+                applicationToken, sdkToken, keepAlive, true);
 
         SyncRequest command = new SyncRequest("avroObject".getBytes(), false, false);
 
@@ -102,10 +104,11 @@ public class NettyTcpMessageTest {
         CipherPair sessionKey = Mockito.mock(CipherPair.class);
         EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
         String applicationToken = "AppToken";
+        String sdkToken = "SdkToken";
         int keepAlive = 100;
 
         SessionInfo session = new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
-                applicationToken, keepAlive, true);
+                applicationToken, sdkToken, keepAlive, true);
 
         NettyTcpDisconnectMessage message = new NettyTcpDisconnectMessage(session);
 
@@ -123,10 +126,11 @@ public class NettyTcpMessageTest {
         CipherPair sessionKey = Mockito.mock(CipherPair.class);
         EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
         String applicationToken = "AppToken";
+        String sdkToken = "SdkToken";
         int keepAlive = 100;
 
         SessionInfo session = new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
-                applicationToken, keepAlive, true);
+                applicationToken, sdkToken, keepAlive, true);
 
         NettyTcpPingMessage message = new NettyTcpPingMessage(session);
 

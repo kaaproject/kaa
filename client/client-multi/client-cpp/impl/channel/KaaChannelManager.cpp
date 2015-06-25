@@ -26,11 +26,35 @@
 namespace kaa {
 
 KaaChannelManager::KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers)
-    : bootstrapManager_(manager), isShutdown_(false), isPaused_(false)
+    : bootstrapManager_(manager), retryTimer_("KaaChannelManager retryTimer"), isShutdown_(false), isPaused_(false), bsTransportId_(0,0)
 {
     for (const auto& connectionInfo : servers) {
         auto& list = bootstrapServers_[connectionInfo->getTransportId()];
         list.push_back(connectionInfo);
+        lastBSServers_[connectionInfo->getTransportId()] = list.begin();
+    }
+}
+
+void KaaChannelManager::setFailoverStrategy(IFailoverStrategyPtr strategy) {
+    if (isShutdown_) {
+        KAA_LOG_WARN("Can't set failover strategy. Channel manager is down");
+        return;
+    }
+
+    if (!strategy) {
+        KAA_LOG_WARN("Failover strategy is null");
+        return;
+    }
+
+    failoverStrategy_ = strategy;
+
+    KAA_MUTEX_LOCKING("channelGuard_");
+    KAA_R_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
+
+    bootstrapManager_.setFailoverStrategy(failoverStrategy_);
+    for (auto& channel : channels_) {
+        channel->setFailoverStrategy(failoverStrategy_);
     }
 }
 
@@ -44,8 +68,42 @@ void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInf
         throw KaaException("empty connection info pointer");
     }
 
+    if (connectionInfo->isFailedState()) {
+        KAA_LOG_DEBUG("Connection already failed. Ignoring connection failover!");
+        return;
+    } else {
+        connectionInfo->setFailedState();
+    }
+
     if (connectionInfo->getServerType() == ServerType::BOOTSTRAP) {
-        onTransportConnectionInfoUpdated(getNextBootstrapServer(connectionInfo));
+        ITransportConnectionInfoPtr nextConnectionInfo = getNextBootstrapServer(connectionInfo->getTransportId(), false);
+        if (nextConnectionInfo) {
+            onTransportConnectionInfoUpdated(nextConnectionInfo);
+        } else {
+            FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::NO_BOOTSTRAP_SERVERS);
+            switch (decision.getAction()) {
+                 case FailoverStrategyAction::NOOP:
+                     KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
+                     break;
+                 case FailoverStrategyAction::RETRY:
+                 {
+                     std::size_t period = decision.getRetryPeriod();
+                     KAA_LOG_WARN(boost::format("Attempt to reconnect to first bootstrap server will be made in %1% secs "
+                             "according to failover strategy decision.") % period);
+                     bsTransportId_ = connectionInfo->getTransportId();
+                     retryTimer_.stop();
+                     retryTimer_.start(period, [&]
+                         {
+                             onTransportConnectionInfoUpdated(getNextBootstrapServer(bsTransportId_, true));
+                         });
+                     break;
+                 }
+                 case FailoverStrategyAction::STOP_APP:
+                     KAA_LOG_WARN("Stopping application according to failover strategy decision!");
+                     exit(EXIT_FAILURE);
+                     break;
+             }
+        }
     } else {
         bootstrapManager_.useNextOperationsServer(connectionInfo->getTransportId());
     }
@@ -61,6 +119,8 @@ void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInf
         throw KaaException("empty connection info pointer");
     }
 
+    connectionInfo->resetFailedState();
+
     TransportProtocolId protocolId = connectionInfo->getTransportId();
     if (connectionInfo->getServerType() == ServerType::OPERATIONS) {
         KAA_MUTEX_LOCKING("lastOpsServersGuard_");
@@ -71,7 +131,7 @@ void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInf
     }
 
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
 
     for (auto& channel : channels_) {
@@ -86,12 +146,13 @@ void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInf
 bool KaaChannelManager::addChannelToList(IDataChannelPtr channel)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
 
     auto res = channels_.insert(channel);
 
     if (res.second) {
+    	channel->setFailoverStrategy(failoverStrategy_);
         channel->setConnectivityChecker(connectivityChecker_);
 
         ITransportConnectionInfoPtr connectionInfo;
@@ -221,7 +282,7 @@ void KaaChannelManager::removeChannel(IDataChannelPtr channel)
     }
 
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
 
     if (channels_.erase(channel)) {
@@ -232,7 +293,7 @@ void KaaChannelManager::removeChannel(IDataChannelPtr channel)
 void KaaChannelManager::removeChannel(const std::string& id)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
 
     for (auto it = channels_.begin(); it != channels_.end(); ++it) {
@@ -261,7 +322,7 @@ void KaaChannelManager::useNewChannelForType(TransportType type) {
 std::list<IDataChannelPtr> KaaChannelManager::getChannels()
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
 
     std::list<IDataChannelPtr> channels(channels_.begin(), channels_.end());
@@ -287,7 +348,7 @@ IDataChannelPtr KaaChannelManager::getChannelByTransportType(TransportType type)
 IDataChannelPtr KaaChannelManager::getChannel(const std::string& channelId)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
 
     IDataChannelPtr channel = nullptr;
@@ -304,7 +365,7 @@ IDataChannelPtr KaaChannelManager::getChannel(const std::string& channelId)
 void KaaChannelManager::clearChannelList()
 {
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
 
     KAA_MUTEX_LOCKING("mappedChannelGuard_");
@@ -323,33 +384,31 @@ ITransportConnectionInfoPtr KaaChannelManager::getCurrentBootstrapServer(const T
         auto serverTypeIt = bootstrapServers_.find(protocolId);
         if (serverTypeIt != bootstrapServers_.end()) {
             connectionInfo = (*serverTypeIt).second.front();
-            lastBSServers_[protocolId] = connectionInfo;
+            lastBSServers_[protocolId] = (*serverTypeIt).second.begin();
         }
     } else {
-        connectionInfo = (*it).second;
+        connectionInfo = *(it->second);
     }
 
     return connectionInfo;
 }
 
-ITransportConnectionInfoPtr KaaChannelManager::getNextBootstrapServer(ITransportConnectionInfoPtr usedConnectionInfo)
+ITransportConnectionInfoPtr KaaChannelManager::getNextBootstrapServer(const TransportProtocolId& protocolId, bool forceFirstElement)
 {
     ITransportConnectionInfoPtr nextConnectionInfo;
+    auto lastServerIt = lastBSServers_.find(protocolId);
+    auto serverIt = bootstrapServers_.find(protocolId);
 
-    auto serverTypeIt = bootstrapServers_.find(usedConnectionInfo->getTransportId());
-    if (serverTypeIt != bootstrapServers_.end()) {
-        const auto& list = (*serverTypeIt).second;
-        auto serverIt = std::find(list.begin(), list.end(), usedConnectionInfo);
-
-        if (serverIt != list.end()) {
-            if (++serverIt != list.end()) {
-                nextConnectionInfo = (*serverIt);
-            } else {
-                nextConnectionInfo = list.front();
-            }
+    if (lastServerIt != lastBSServers_.end() && serverIt != bootstrapServers_.end()) {
+        BootstrapServers::iterator nextBsIterator = (lastServerIt->second)+1;
+        if (nextBsIterator != serverIt->second.end()) {
+            nextConnectionInfo = *(nextBsIterator);
+            lastBSServers_[protocolId] = nextBsIterator;
+        } else if (forceFirstElement) {
+            nextConnectionInfo = (*serverIt).second.front();
+            lastBSServers_[protocolId] = (*serverIt).second.begin();
         }
     }
-
     return nextConnectionInfo;
 }
 
@@ -367,7 +426,7 @@ void KaaChannelManager::setConnectivityChecker(ConnectivityCheckerPtr checker) {
     connectivityChecker_ = checker;
 
     KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
+    KAA_R_MUTEX_UNIQUE_DECLARE(channelLock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
 
     for (auto& channel : channels_) {

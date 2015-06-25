@@ -29,8 +29,9 @@ import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mongodb.MongoException.Network;
 import com.mongodb.MongoInternalException;
+import com.mongodb.MongoServerException;
+import com.mongodb.MongoSocketException;
 
 public class MongoDbLogAppender extends AbstractLogAppender<MongoDbConfig> {
 
@@ -56,10 +57,10 @@ public class MongoDbLogAppender extends AbstractLogAppender<MongoDbConfig> {
                     LOG.debug("[{}] appended {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
                 }
                 listener.onSuccess();
-            } catch (Network e) {
+            } catch (MongoSocketException e) {
                 LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed due to network error", getName()), e);
                 listener.onConnectionError();
-            } catch (MongoInternalException e) {
+            } catch (MongoInternalException | MongoServerException e) {
                 LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed due to remote error", getName()), e);
                 listener.onRemoteError();
             } catch (Exception e) {

@@ -30,9 +30,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.schema.base.Profile;
+import org.kaaproject.kaa.server.common.dao.SdkKeyService;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
@@ -41,11 +43,11 @@ import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.SdkKey;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest;
-import org.kaaproject.kaa.server.sync.EndpointVersionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +63,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProfileServiceIT extends AbstractTest {
 
-    private static final int CONFIGURATION_SCHEMA_VERSION = 1;
     private static final int PROFILE_SCHEMA_VERSION = 1;
     private static final int NEW_PROFILE_SCHEMA_VERSION = 2;
 
@@ -69,6 +70,8 @@ public class ProfileServiceIT extends AbstractTest {
     private static final String CUSTOMER_NAME = "CUSTOMER_NAME";
     private static final String APP_NAME = "APP_NAME";
     private static final String APP_TOKEN = "APP_TOKEN";
+    private String sdkToken;
+    private String newSdkToken;
 
     private static final Profile ENDPOINT_PROFILE = new Profile();
     private static final BasicEndpointProfile NEW_ENDPOINT_PROFILE = new BasicEndpointProfile("newprofile");
@@ -80,6 +83,9 @@ public class ProfileServiceIT extends AbstractTest {
 
     @Autowired
     protected ProfileService profileService;
+
+    @Autowired
+    protected SdkKeyService sdkKeyService;
 
     @Autowired
     protected EndpointProfileDao<EndpointProfile> endpointProfileDao;
@@ -134,6 +140,24 @@ public class ProfileServiceIT extends AbstractTest {
         profileSchema2.setSchema(BasicEndpointProfile.SCHEMA$.toString());
         profileSchema2.setApplication(application);
         profileSchema2 = profileSchemaDao.save(profileSchema2);
+
+        SdkPropertiesDto sdkPropertiesDto = new SdkPropertiesDto();
+        sdkPropertiesDto.setApplicationId(application.getStringId());
+        sdkPropertiesDto.setProfileSchemaVersion(profileSchema.getMajorVersion());
+        sdkPropertiesDto.setConfigurationSchemaVersion(1);
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
+        sdkPropertiesDto.setLogSchemaVersion(1);
+        sdkPropertiesDto = sdkKeyService.saveSdkKey(sdkPropertiesDto);
+        sdkToken = new SdkKey(sdkPropertiesDto).getToken();
+
+        SdkPropertiesDto newSdkPropertiesDto = new SdkPropertiesDto();
+        newSdkPropertiesDto.setApplicationId(application.getStringId());
+        newSdkPropertiesDto.setProfileSchemaVersion(profileSchema2.getMajorVersion());
+        newSdkPropertiesDto.setConfigurationSchemaVersion(1);
+        newSdkPropertiesDto.setNotificationSchemaVersion(1);
+        newSdkPropertiesDto.setLogSchemaVersion(1);
+        newSdkPropertiesDto = sdkKeyService.saveSdkKey(newSdkPropertiesDto);
+        newSdkToken = new SdkKey(newSdkPropertiesDto).getToken();
     }
 
     @After
@@ -145,9 +169,7 @@ public class ProfileServiceIT extends AbstractTest {
     public void registerProfileServiceTest() throws IOException {
         byte[] profile = baseAvroConverter.encode(ENDPOINT_PROFILE);
         RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN,
-                ENDPOINT_KEY.getBytes(),
-                new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
-                profile);
+                ENDPOINT_KEY.getBytes(), sdkToken, profile);
         EndpointProfileDto dto = profileService.registerProfile(request);
         Assert.assertNotNull(dto);
         Assert.assertNotNull(dto.getId());
@@ -161,19 +183,18 @@ public class ProfileServiceIT extends AbstractTest {
     @Test
     public void updateProfileServiceTest() throws IOException {
         byte[] profile = baseAvroConverter.encode(ENDPOINT_PROFILE);
-        RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN,
-                ENDPOINT_KEY.getBytes(),
-                new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
-                profile);
+        RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN, ENDPOINT_KEY.getBytes(), sdkToken, profile);
 
         EndpointProfileDto oldDto = profileService.registerProfile(request);
+
+        Assert.assertEquals(baseAvroConverter.encodeToJson(ENDPOINT_PROFILE), oldDto.getProfile().replaceAll(" ", ""));
 
         byte[] newProfile = newAvroConverter.encode(NEW_ENDPOINT_PROFILE);
         UpdateProfileRequest updateRequest = new UpdateProfileRequest(APP_TOKEN,
                 EndpointObjectHash.fromSHA1(ENDPOINT_KEY.getBytes()),
                 null,
                 newProfile,
-                new EndpointVersionInfo(CONFIGURATION_SCHEMA_VERSION, NEW_PROFILE_SCHEMA_VERSION, 1, 1, null, 1));
+                newSdkToken);
         EndpointProfileDto newDto = profileService.updateProfile(updateRequest);
 
         Assert.assertNotNull(newDto);

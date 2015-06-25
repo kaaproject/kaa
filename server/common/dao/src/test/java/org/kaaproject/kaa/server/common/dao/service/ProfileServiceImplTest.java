@@ -188,6 +188,7 @@ public class ProfileServiceImplTest extends AbstractTest {
         ProfileFilterDto filterDto = filters.get(0);
         filterDto.setStatus(null);
         ProfileFilterDto saved = profileService.saveProfileFilter(filterDto);
+        saved = profileService.saveProfileFilter(saved);
 
         Assert.assertNotNull(saved);
         Assert.assertEquals(saved.getStatus(), UpdateStatus.INACTIVE);

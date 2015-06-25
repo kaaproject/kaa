@@ -22,9 +22,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
@@ -76,6 +76,7 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
             this.opsServer = opsServer;
             this.nodeInfo = nodeInfo;
             history = new OperationsServerLoadHistory(opsLoadHistoryTTL);
+            history.addOpsServerLoad(nodeInfo.getLoadInfo());
         }
     }
 
@@ -96,9 +97,6 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
     /** The last bootstrap servers update failed. */
     private boolean lastBootstrapServersUpdateFailed = false;
 
-    /** The dynamic_mgmt. */
-    private Rebalancer dynamicMgmt;
-
     /** Time to live of Operations server load history, in ms. */
     private long opsLoadHistoryTTL = 600000;
 
@@ -110,21 +108,10 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
      */
     public DynamicLoadManager(LoadDistributionService loadDistributionService) {
         setLoadDistributionService(loadDistributionService);
-        opsServersMap = new Hashtable<Integer, OperationsServerMeta>();
-        bootstrapsMap = new Hashtable<String, BootstrapNodeInfo>();
+        opsServersMap = new ConcurrentHashMap<Integer, OperationsServerMeta>();
+        bootstrapsMap = new ConcurrentHashMap<String, BootstrapNodeInfo>();
         // Translate seconds to ms
         opsLoadHistoryTTL = loadDistributionService.getOpsServerHistoryTTL() * 1000;
-        try {
-            Class<?> dynamicMgmtClass = Class.forName(getLoadDistributionService().getDynamicMgmtClass());
-            Object obj = dynamicMgmtClass.newInstance();
-            if (obj instanceof Rebalancer) {
-                dynamicMgmt = (Rebalancer) obj;
-            } else {
-                LOG.error("Error initializing dynamic load management class instance (not a instance of rebalance)");
-            }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            LOG.error("Error initializing dynamic management class!", e);
-        }
     }
 
     /**
@@ -139,12 +126,12 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
                 updateBootstrap(bootstrapNodeInfo);
             }
         }
-        if (dynamicMgmt != null) {
+        if (loadDistributionService.getRebalancer() != null) {
             Map<Integer, OperationsServerLoadHistory> opsServerHistory = new HashMap<Integer, OperationsServerLoadHistory>();
             for (Integer accessPointId : opsServersMap.keySet()) {
                 opsServerHistory.put(accessPointId, opsServersMap.get(accessPointId).history);
             }
-            Map<Integer, RedirectionRule> rules = dynamicMgmt.recalculate(opsServerHistory);
+            Map<Integer, List<RedirectionRule>> rules = loadDistributionService.getRebalancer().recalculate(opsServerHistory);
             LOG.trace("DynamicLoadManager recalculate() got {} redirection rules", rules.size());
             for (Integer accessPointId : rules.keySet()) {
                 if (opsServersMap.containsKey(accessPointId)) {
@@ -229,75 +216,14 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
     @Override
     public void onNodeAdded(OperationsNodeInfo nodeInfo) {
         String dnsName = getNameFromConnectionInfo(nodeInfo.getConnectionInfo());
+        int accessPointId = ServerNameUtil.crc32(nodeInfo.getConnectionInfo());
+        addNewOperationsServer(accessPointId, dnsName, nodeInfo);
 
-        addNewOperationsServer(dnsName, nodeInfo);
-
-        LOG.info("Operations server {} added. Updating {} Bootstrap servers", dnsName, bootstrapsMap.size());
+        LOG.info("Operations server [{}][{}] added. Updating {} Bootstrap servers", accessPointId, dnsName, bootstrapsMap.size());
         for (BootstrapNodeInfo bootstrapNodeInfo : bootstrapsMap.values()) {
             updateBootstrap(bootstrapNodeInfo);
         }
     }
-
-    // /**
-    // * Transform Zk List of supported channels into bootstrap thrift list of
-    // * supported channels
-    // *
-    // * @param supportedChannelsArray
-    // * @return List<ThriftSupportedChannel>
-    // */
-    // private List<ThriftSupportedChannel>
-    // getThriftSupportedChannelsFromZkSupportedChannels(List<SupportedChannel>
-    // supportedChannelsArray,
-    // OperationsServerMeta meta) {
-    // List<ThriftSupportedChannel> thriftSuppChannels = new ArrayList<>();
-    // for (SupportedChannel channel : supportedChannelsArray) {
-    // ThriftChannelType thriftType = null;
-    // ThriftCommunicationParameters communicationParams = new
-    // ThriftCommunicationParameters();
-    // switch (channel.getZkChannel().getChannelType()) {
-    // case HTTP:
-    // thriftType = ThriftChannelType.HTTP;
-    // ZkHttpComunicationParameters zkCommParams =
-    // (ZkHttpComunicationParameters) channel.getZkChannel()
-    // .getCommunicationParameters();
-    // communicationParams.setHttpParams(new
-    // ThriftIpParameters(zkCommParams.getZkComunicationParameters().getHostName()
-    // .toString(),
-    // zkCommParams.getZkComunicationParameters().getPort().intValue()));
-    // break;
-    // case HTTP_LP:
-    // thriftType = ThriftChannelType.HTTP_LP;
-    // ZkHttpLpComunicationParameters zkLpCommParams =
-    // (ZkHttpLpComunicationParameters) channel.getZkChannel()
-    // .getCommunicationParameters();
-    // communicationParams.setHttpLpParams(new
-    // ThriftIpParameters(zkLpCommParams.getZkComunicationParameters().getHostName()
-    // .toString(),
-    // zkLpCommParams.getZkComunicationParameters().getPort().intValue()));
-    // break;
-    // case KAATCP:
-    // thriftType = ThriftChannelType.KAATCP;
-    // ZkKaaTcpComunicationParameters zkTcpCommParams =
-    // (ZkKaaTcpComunicationParameters) channel.getZkChannel()
-    // .getCommunicationParameters();
-    // communicationParams.setKaaTcpParams(new
-    // ThriftIpParameters(zkTcpCommParams.getZkComunicationParameters().getHostName()
-    // .toString(),
-    // zkTcpCommParams.getZkComunicationParameters().getPort().intValue()));
-    // break;
-    // default:
-    // break;
-    // }
-    // if (thriftType != null) {
-    // meta.history.put(channel.getZkChannel().getChannelType(), new
-    // OperationsServerLoadHistory(opsLoadHistoryTTL));
-    // ThriftSupportedChannel thriftChannel = new
-    // ThriftSupportedChannel(thriftType, communicationParams);
-    // thriftSuppChannels.add(thriftChannel);
-    // }
-    // }
-    // return thriftSuppChannels;
-    // }
 
     /*
      * (non-Javadoc)
@@ -310,11 +236,12 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
     @Override
     public void onNodeUpdated(OperationsNodeInfo nodeInfo) {
         String dnsName = getNameFromConnectionInfo(nodeInfo.getConnectionInfo());
-        LOG.info("Operations server {} update", dnsName);
-        if (opsServersMap.containsKey(dnsName)) {
-            opsServersMap.get(dnsName).history.addOpsServerLoad(nodeInfo.getLoadInfo());
+        int accessPointId = ServerNameUtil.crc32(nodeInfo.getConnectionInfo());
+        LOG.info("Operations server [{}][{}] updated", accessPointId, dnsName);
+        if (opsServersMap.containsKey(accessPointId)) {
+            opsServersMap.get(accessPointId).history.addOpsServerLoad(nodeInfo.getLoadInfo());
         } else {
-            addNewOperationsServer(dnsName, nodeInfo);
+            addNewOperationsServer(accessPointId, dnsName, nodeInfo);
         }
     }
 
@@ -322,11 +249,11 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
      * @param dnsName
      * @param nodeInfo
      */
-    private void addNewOperationsServer(String dnsName, OperationsNodeInfo nodeInfo) {
+    private void addNewOperationsServer(int accessPointId, String dnsName, OperationsNodeInfo nodeInfo) {
         OperationsServerMeta meta = new OperationsServerMeta(null, nodeInfo);
         ThriftOperationsServer operations = new ThriftOperationsServer(dnsName, DEFAULT_PRIORITY);
         meta.opsServer = operations;
-        opsServersMap.put(ServerNameUtil.crc32(nodeInfo.getConnectionInfo()), meta);
+        opsServersMap.put(accessPointId, meta);
     }
 
     /*
@@ -340,9 +267,10 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
     @Override
     public void onNodeRemoved(OperationsNodeInfo nodeInfo) {
         String dnsName = getNameFromConnectionInfo(nodeInfo.getConnectionInfo());
-        opsServersMap.remove(dnsName);
+        int accessPointId = ServerNameUtil.crc32(nodeInfo.getConnectionInfo());
+        opsServersMap.remove(accessPointId);
 
-        LOG.info("Operations server {} removed. Updating {} Bootstrap servers", dnsName, bootstrapsMap.size());
+        LOG.info("Operations server [{}][{}] removed. Updating {} Bootstrap servers", accessPointId, dnsName, bootstrapsMap.size());
         for (BootstrapNodeInfo bootstrapNodeInfo : bootstrapsMap.values()) {
             updateBootstrap(bootstrapNodeInfo);
         }
@@ -425,9 +353,9 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
      * @param rule
      *            the rule
      */
-    private void sendRedirectionRule(final Integer accessPointId, OperationsNodeInfo nodeInfo, final RedirectionRule rule) {
-        LOG.trace("Set redirection rule for Operations server: {}; Thrift: {}:{}", accessPointId, nodeInfo.getConnectionInfo().getThriftHost()
-                .toString(), nodeInfo.getConnectionInfo().getThriftPort());
+    private void sendRedirectionRule(final Integer accessPointId, OperationsNodeInfo nodeInfo, final List<RedirectionRule> rules) {
+        LOG.trace("Set redirection rule for Operations server: {}; Thrift: {}:{}", accessPointId, nodeInfo.getConnectionInfo()
+                .getThriftHost().toString(), nodeInfo.getConnectionInfo().getThriftPort());
         try {
             ThriftClient<OperationsThriftService.Client> client = new ThriftClient<OperationsThriftService.Client>(nodeInfo
                     .getConnectionInfo().getThriftHost().toString(), nodeInfo.getConnectionInfo().getThriftPort(),
@@ -436,15 +364,18 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
 
                 @Override
                 public void isSuccess(boolean activitySuccess) {
-                    LOG.info("Operations server {} redirection rule set {}", accessPointId, activitySuccess ? "successfully" : "unsuccessfully");
+                    LOG.info("Operations server {} redirection rule set {}", accessPointId, activitySuccess ? "successfully"
+                            : "unsuccessfully");
                 }
 
                 @Override
                 public void doInTemplate(org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Client t) {
                     try { // NOSONAR
-                        t.setRedirectionRule(rule);
-                        LOG.info("Operations {} set redirection rule: {} <> {}", accessPointId, rule.getAccessPointId(),
-                                rule.getRedirectionProbability());
+                        for (RedirectionRule rule : rules) {
+                            t.setRedirectionRule(rule);
+                            LOG.info("Operations {} set redirection rule: {} <> {}, {}", accessPointId, rule.getAccessPointId(),
+                                    rule.getInitRedirectProbability(), rule.getSessionRedirectProbability());
+                        }
                     } catch (TException e) {
                         LOG.error(MessageFormat.format("Operations server {0} set redirection rule failed", accessPointId), e);
                     }
@@ -483,6 +414,6 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
      * @return Rebalancer instance.
      */
     public Rebalancer getDynamicRebalancer() {
-        return dynamicMgmt;
+        return loadDistributionService.getRebalancer();
     }
 }

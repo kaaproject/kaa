@@ -19,4 +19,5 @@ set (KAA_SOURCE_FILES  ${KAA_SOURCE_FILES}
                        ${KAA_SRC_FOLDER}/gen/kaa_profile_gen.c
                        ${KAA_SRC_FOLDER}/gen/kaa_logging_gen.c
                        ${KAA_SRC_FOLDER}/gen/kaa_configuration_gen.c
+                       ${KAA_SRC_FOLDER}/gen/kaa_notification_gen.c
 )

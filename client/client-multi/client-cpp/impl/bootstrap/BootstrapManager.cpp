@@ -28,6 +28,10 @@
 
 namespace kaa {
 
+void BootstrapManager::setFailoverStrategy(IFailoverStrategyPtr strategy) {
+    failoverStrategy_ = strategy;
+}
+
 void BootstrapManager::receiveOperationsServerList()
 {
     if (bootstrapTransport_ != nullptr) {
@@ -35,7 +39,7 @@ void BootstrapManager::receiveOperationsServerList()
     }
 }
 
-std::list<ITransportConnectionInfoPtr> BootstrapManager::getOPSByAccessPointId(std::int32_t id)
+BootstrapManager::OperationsServers BootstrapManager::getOPSByAccessPointId(std::int32_t id)
 {
     OperationsServers servers;
 
@@ -58,21 +62,40 @@ void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protoc
     auto serverIt = operationServers_.find(protocolId);
 
     if (lastServerIt != lastOperationsServers_.end() && serverIt != operationServers_.end()) {
-        if (++(lastServerIt->second) != serverIt->second.end()) {
-
-            KAA_LOG_INFO(boost::format("New server [0x%X] will be user for %2%")
-                                            % (*lastServerIt->second)->getAccessPointId()
+        OperationsServers::iterator nextOperationIterator = (lastServerIt->second)+1;
+        if (nextOperationIterator != serverIt->second.end()) {
+            KAA_LOG_INFO(boost::format("New server [%1%] will be user for %2%")
+                                            % (*nextOperationIterator)->getAccessPointId()
                                             % LoggingUtils::TransportProtocolIdToString(protocolId));
-
+            lastOperationsServers_[protocolId] = nextOperationIterator;
             if (channelManager_ != nullptr) {
-                channelManager_->onTransportConnectionInfoUpdated(*(lastServerIt->second));
+                channelManager_->onTransportConnectionInfoUpdated(*(nextOperationIterator));
             } else {
                 KAA_LOG_ERROR("Can not process server change. Channel manager was not specified");
             }
         } else {
-            KAA_LOG_WARN(boost::format("Failed to find server for channel %2%. Going to sync...")
+            KAA_LOG_WARN(boost::format("Failed to find server for channel %1%.")
                                             % LoggingUtils::TransportProtocolIdToString(protocolId));
-            bootstrapTransport_->sync();
+
+            FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::ALL_OPERATION_SERVERS_NA);
+            switch (decision.getAction()) {
+                case FailoverStrategyAction::NOOP:
+                    KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
+                    break;
+                case FailoverStrategyAction::RETRY:
+                {
+                    std::size_t period = decision.getRetryPeriod();
+                    KAA_LOG_WARN(boost::format("Attempt to receive operations server list will be made in %1% secs "
+                            "according to failover strategy decision.") % period);
+                    retryTimer_.stop();
+                    retryTimer_.start(period, [&] { receiveOperationsServerList(); });
+                    break;
+                }
+                case FailoverStrategyAction::STOP_APP:
+                    KAA_LOG_WARN("Stopping application according to failover strategy decision!");
+                    exit(EXIT_FAILURE);
+                    break;
+            }
         }
     } else {
         throw KaaException("There are no available servers at the time");
@@ -114,6 +137,25 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
 {
     if (operationsServers.empty()) {
         KAA_LOG_WARN("Received empty operations server list");
+        FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::NO_OPERATION_SERVERS);
+        switch (decision.getAction()) {
+			case FailoverStrategyAction::NOOP:
+				KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
+				break;
+			case FailoverStrategyAction::RETRY:
+			{
+				std::size_t period = decision.getRetryPeriod();
+				KAA_LOG_WARN(boost::format("Attempt to receive operations server list will be made in %1% secs "
+						"according to failover strategy decision.") % period);
+				retryTimer_.stop();
+				retryTimer_.start(period, [&] { receiveOperationsServerList(); });
+				break;
+			}
+			case FailoverStrategyAction::STOP_APP:
+				KAA_LOG_WARN("Stopping application according to failover strategy decision!");
+				exit(EXIT_FAILURE);
+				break;
+		}
         return;
     }
 
@@ -124,31 +166,28 @@ void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& 
     lastOperationsServers_.clear();
     operationServers_.clear();
 
-    std::srand(std::time(nullptr));
-
     for (const auto& serverMetaData : operationsServers) {
         ITransportConnectionInfoPtr connectionInfo(
                 new GenericTransportInfo(ServerType::OPERATIONS, serverMetaData));
 
         auto& servers = operationServers_[serverMetaData.protocolVersionInfo];
-
-        if (rand() % 2) {
-            servers.push_back(connectionInfo);
-        } else {
-            servers.push_front(connectionInfo);
-        }
+        servers.push_back(connectionInfo);
     }
 
     for (auto& transportSpecificServers : operationServers_) {
+        std::shuffle (transportSpecificServers.second.begin()
+                    , transportSpecificServers.second.end()
+                    , std::default_random_engine(std::chrono::high_resolution_clock::now().time_since_epoch().count()));
+
         lastOperationsServers_[transportSpecificServers.first] =
                                     transportSpecificServers.second.begin();
     }
 
     if (serverToApply) {
-        auto servers = getOPSByAccessPointId(*serverToApply.get());
+        auto servers = getOPSByAccessPointId(*serverToApply);
         if (!servers.empty()) {
-            KAA_LOG_DEBUG(boost::format("Found %1% servers by access point id %1%")
-                                            % servers.size() % *serverToApply.get());
+            KAA_LOG_DEBUG(boost::format("Found %1% servers by access point id %2%")
+                                            % servers.size() % *serverToApply);
             serverToApply.reset();
             notifyChannelManangerAboutServer(servers);
         }

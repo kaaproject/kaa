@@ -19,7 +19,7 @@
 
 	<parent>
 		<groupId>org.kaaproject</groupId>
-		<version>0.7.0-SNAPSHOT</version>
+		<version>0.7.1-SNAPSHOT</version>
 		<artifactId>kaa</artifactId>
 	</parent>
 	<groupId>org.kaaproject.kaa</groupId>
@@ -39,10 +39,4 @@
 		<module>core</module>
 	</modules>
 
-	<dependencies>
-	</dependencies>
-	<dependencyManagement>
-		<dependencies>
-		</dependencies>
-	</dependencyManagement>
 </project>

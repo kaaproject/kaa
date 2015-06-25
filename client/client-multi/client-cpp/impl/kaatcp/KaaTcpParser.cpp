@@ -17,6 +17,7 @@
 #include "kaa/kaatcp/KaaTcpParser.hpp"
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
+#include "kaa/common/exception/KaaException.hpp"
 
 namespace kaa {
 
@@ -55,7 +56,14 @@ void KaaTcpParser::processByte(char byte)
 
 void KaaTcpParser::retrieveMessageType(char byte)
 {
-    messageType_ = (KaaTcpMessageType) ((std::uint8_t)(byte) >> 4);
+    int messageType = ((std::uint8_t)(byte) >> 4);
+    if (messageType != (int)KaaTcpMessageType::MESSAGE_CONNACK
+        && messageType != (int)KaaTcpMessageType::MESSAGE_PINGRESP
+        && messageType != (int)KaaTcpMessageType::MESSAGE_DISCONNECT
+        && messageType != (int)KaaTcpMessageType::MESSAGE_KAASYNC) {
+            throw KaaException(boost::format("KaaTcp: unexpected message type: %1%") % messageType);
+    }
+    messageType_ = (KaaTcpMessageType) messageType;
 }
 
 void KaaTcpParser::parseBuffer(const char *buffer, std::uint32_t size)

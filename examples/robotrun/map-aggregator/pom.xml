@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.examples</groupId>
-        <version>0.7.0-SNAPSHOT</version>
+        <version>0.7.1-SNAPSHOT</version>
         <artifactId>robotrun</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.examples.robotrun</groupId>
@@ -210,7 +210,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <name>kaa-${artifactId}</name>
+                            <name>kaa-${project.artifactId}</name>
                             <copyright>Kaaproject</copyright>
                             <distribution>development</distribution>
                             <group>Applications/Kaa</group>

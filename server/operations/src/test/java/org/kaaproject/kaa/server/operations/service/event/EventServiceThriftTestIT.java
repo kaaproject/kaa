@@ -288,7 +288,7 @@ public class EventServiceThriftTestIT {
             ByteBuffer keyData = ByteBuffer.wrap(new byte[] { 45, 45, 45, 45, 45 });
             ConnectionInfo connectionInfo = new ConnectionInfo(thriftHost, thriftPort, keyData);
             nodeInfo.setConnectionInfo(connectionInfo);
-            nodeInfo.setLoadInfo(new LoadInfo(1));
+            nodeInfo.setLoadInfo(new LoadInfo(1, 1.0));
             nodeInfo.setTransports(new ArrayList<TransportMetaData>());
             String zkHostPortList = "localhost:" + ZK_PORT;
             operationsNode = new OperationsNode(nodeInfo, zkHostPortList, new RetryUntilElapsed(3000, 1000));

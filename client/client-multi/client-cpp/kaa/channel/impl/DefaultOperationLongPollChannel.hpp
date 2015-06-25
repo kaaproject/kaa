@@ -67,6 +67,7 @@ public:
     virtual void pause();
     virtual void resume();
 
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) {}
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
 
     virtual ITransportConnectionInfoPtr getServer() {
