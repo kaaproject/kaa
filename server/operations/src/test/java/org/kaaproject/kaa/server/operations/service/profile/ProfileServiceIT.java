@@ -17,6 +17,9 @@
 package org.kaaproject.kaa.server.operations.service.profile;
 
 import java.io.IOException;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.sql.SQLException;
 import java.util.Arrays;
 
@@ -66,7 +69,7 @@ public class ProfileServiceIT extends AbstractTest {
     private static final int PROFILE_SCHEMA_VERSION = 1;
     private static final int NEW_PROFILE_SCHEMA_VERSION = 2;
 
-    private static final String ENDPOINT_KEY = "ENDPOINT_KEY";
+    private static final byte[] ENDPOINT_KEY = getRandEndpointKey();
     private static final String CUSTOMER_NAME = "CUSTOMER_NAME";
     private static final String APP_NAME = "APP_NAME";
     private static final String APP_TOKEN = "APP_TOKEN";
@@ -169,12 +172,12 @@ public class ProfileServiceIT extends AbstractTest {
     public void registerProfileServiceTest() throws IOException {
         byte[] profile = baseAvroConverter.encode(ENDPOINT_PROFILE);
         RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN,
-                ENDPOINT_KEY.getBytes(), sdkToken, profile);
+                ENDPOINT_KEY, sdkToken, profile);
         EndpointProfileDto dto = profileService.registerProfile(request);
         Assert.assertNotNull(dto);
         Assert.assertNotNull(dto.getId());
-        Assert.assertTrue(Arrays.equals(ENDPOINT_KEY.getBytes(), dto.getEndpointKey()));
-        Assert.assertTrue(Arrays.equals(EndpointObjectHash.fromSHA1(ENDPOINT_KEY.getBytes()).getData(),
+        Assert.assertTrue(Arrays.equals(ENDPOINT_KEY, dto.getEndpointKey()));
+        Assert.assertTrue(Arrays.equals(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData(),
                 dto.getEndpointKeyHash()));
         Assert.assertEquals(baseAvroConverter.encodeToJson(ENDPOINT_PROFILE), dto.getProfile().replaceAll(" ", ""));
         Assert.assertTrue(Arrays.equals(EndpointObjectHash.fromSHA1(profile).getData(), dto.getProfileHash()));
@@ -183,7 +186,7 @@ public class ProfileServiceIT extends AbstractTest {
     @Test
     public void updateProfileServiceTest() throws IOException {
         byte[] profile = baseAvroConverter.encode(ENDPOINT_PROFILE);
-        RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN, ENDPOINT_KEY.getBytes(), sdkToken, profile);
+        RegisterProfileRequest request = new RegisterProfileRequest(APP_TOKEN, ENDPOINT_KEY, sdkToken, profile);
 
         EndpointProfileDto oldDto = profileService.registerProfile(request);
 
@@ -191,7 +194,7 @@ public class ProfileServiceIT extends AbstractTest {
 
         byte[] newProfile = newAvroConverter.encode(NEW_ENDPOINT_PROFILE);
         UpdateProfileRequest updateRequest = new UpdateProfileRequest(APP_TOKEN,
-                EndpointObjectHash.fromSHA1(ENDPOINT_KEY.getBytes()),
+                EndpointObjectHash.fromSHA1(ENDPOINT_KEY),
                 null,
                 newProfile,
                 newSdkToken);
@@ -205,4 +208,12 @@ public class ProfileServiceIT extends AbstractTest {
                 newDto.getProfileHash()));
     }
 
+    private static byte[] getRandEndpointKey() {
+        try {
+            return KeyPairGenerator.getInstance("RSA", "SunRsaSign").generateKeyPair().getPublic().getEncoded();
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

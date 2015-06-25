@@ -694,18 +694,6 @@ public class ConcurrentCacheService implements CacheService {
         });
     }
 
-    /*
-         * (non-Javadoc)
-         *
-         * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
-         * setEndpointKey(org.kaaproject.kaa.common.hash.EndpointObjectHash,
-         * java.security.PublicKey)
-         */
-    @Override
-    public void setEndpointKey(EndpointObjectHash key, PublicKey endpointKey) {
-        putEndpointKey(key, endpointKey);
-    }
-
     /**
      * Put endpoint key.
      *
@@ -715,6 +703,7 @@ public class ConcurrentCacheService implements CacheService {
      *            the endpoint key
      * @return the public key
      */
+    @Override
     @CachePut(value = "endpointKeys", key = "#key")
     public PublicKey putEndpointKey(EndpointObjectHash key, PublicKey endpointKey) {
         return endpointKey;
