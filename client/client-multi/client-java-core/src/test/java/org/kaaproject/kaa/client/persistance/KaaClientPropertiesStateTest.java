@@ -16,10 +16,6 @@
 
 package org.kaaproject.kaa.client.persistance;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -37,6 +33,8 @@ import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+
+import static org.junit.Assert.*;
 
 public class KaaClientPropertiesStateTest {
 
@@ -158,5 +156,19 @@ public class KaaClientPropertiesStateTest {
         KaaClientState newState = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), newProps);
 
         Assert.assertTrue(newState.isConfigurationVersionUpdated());
+    }
+
+    @Test
+    public void testClean() throws Exception {
+        KaaClientState state = new KaaClientPropertiesState(new FilePersistentStorage(), CommonsBase64.getInstance(), getProperties());
+        File stateProps = new File("state.properties");
+        File statePropsBckp = new File("state.properties_bckp");
+        state.persist();
+        state.persist();
+        assertTrue(stateProps.exists());
+        assertTrue(statePropsBckp.exists());
+        state.clean();
+        assertFalse(stateProps.exists());
+        assertFalse(statePropsBckp.exists());
     }
 }
