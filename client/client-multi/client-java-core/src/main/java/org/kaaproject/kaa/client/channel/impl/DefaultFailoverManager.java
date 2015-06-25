@@ -20,6 +20,7 @@ import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,18 +37,18 @@ public class DefaultFailoverManager implements FailoverManager {
     private static final long DEFAULT_RESOLUTION_TIMEOUT = 10000L;      // 10 seconds
 
     private final KaaChannelManager channelManager;
-    private final ScheduledExecutorService executor;
+    private final ExecutorContext context;
     private long resolutionTimeout;
     private Map<ServerType, AccessPointIdResolution> resolutionProgressMap = new HashMap<>();
 
-    public DefaultFailoverManager(KaaChannelManager channelManager) {
-        this(channelManager, DEFAULT_RESOLUTION_TIMEOUT);
+    public DefaultFailoverManager(KaaChannelManager channelManager, ExecutorContext context) {
+        this(channelManager, context, DEFAULT_RESOLUTION_TIMEOUT);
     }
 
-    public DefaultFailoverManager(KaaChannelManager channelManager, long resolutionTimeoutMs) {
+    public DefaultFailoverManager(KaaChannelManager channelManager, ExecutorContext context, long resolutionTimeoutMs) {
         this.channelManager = channelManager;
+        this.context = context;
         this.resolutionTimeout = resolutionTimeoutMs;
-        executor = Executors.newScheduledThreadPool(1);
     }
 
     @Override
@@ -73,7 +74,7 @@ public class DefaultFailoverManager implements FailoverManager {
         }
 
         LOG.trace("Next fail resolution will be available in {} ms", resolutionTimeout);
-        Future<?> currentResolution = executor.schedule(new Runnable() {
+        Future<?> currentResolution = context.getScheduledExecutor().schedule(new Runnable() {
             @Override
             public void run() {
                 LOG.debug("Removing server {} from resolution map for type: {}", connectionInfo, connectionInfo.getServerType());

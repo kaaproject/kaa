@@ -22,6 +22,7 @@ import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.junit.Assert;
@@ -29,6 +30,7 @@ import org.junit.Test;
 import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.channel.impl.DefaultFailoverManager;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationsChannel;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.common.TransportType;
@@ -166,7 +168,9 @@ public class DefaultOperationsChannelTest {
         KaaChannelManager manager = Mockito.mock(KaaChannelManager.class);
         MessageEncoderDecoder encDec = Mockito.mock(MessageEncoderDecoder.class);
         AbstractHttpClient httpClient = Mockito.mock(AbstractHttpClient.class);
-        FailoverManager flManager = new DefaultFailoverManager(manager, 100);
+        ExecutorContext context = Mockito.mock(ExecutorContext.class);
+        Mockito.when(context.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
+        FailoverManager flManager = new DefaultFailoverManager(manager, context, 100);
         FailoverManager failoverManager = Mockito.spy(flManager);
         Mockito.when(
                 httpClient.executeHttpRequest(Mockito.anyString(),

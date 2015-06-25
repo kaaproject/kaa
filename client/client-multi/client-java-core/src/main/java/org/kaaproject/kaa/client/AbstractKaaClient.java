@@ -561,7 +561,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     protected FailoverManager buildFailoverManager(KaaChannelManager channelManager) {
-        return new DefaultFailoverManager(channelManager);
+        return new DefaultFailoverManager(channelManager, context.getExecutorContext());
     }
 
     protected ResyncConfigurationManager buildConfigurationManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {

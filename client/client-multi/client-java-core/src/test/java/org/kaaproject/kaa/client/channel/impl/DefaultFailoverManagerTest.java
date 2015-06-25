@@ -21,12 +21,14 @@ import org.junit.Test;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertEquals;
@@ -38,11 +40,14 @@ public class DefaultFailoverManagerTest {
     private KaaChannelManager channelManager;
     private Map<ServerType, DefaultFailoverManager.AccessPointIdResolution> resolutionProgressMap;
     private DefaultFailoverManager failoverManager;
+    private ExecutorContext context;
 
     @Before
     public void setUp() {
         channelManager = Mockito.mock(KaaChannelManager.class);
-        failoverManager = new DefaultFailoverManager(channelManager, RESOLUTION_TIMEOUT_MS);
+        context = Mockito.mock(ExecutorContext.class);
+        Mockito.when(context.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
+        failoverManager = new DefaultFailoverManager(channelManager, context, RESOLUTION_TIMEOUT_MS);
         resolutionProgressMap = Mockito.spy(new HashMap<ServerType, DefaultFailoverManager.AccessPointIdResolution>());
         ReflectionTestUtils.setField(failoverManager, "resolutionProgressMap", resolutionProgressMap);
     }
@@ -90,6 +95,7 @@ public class DefaultFailoverManagerTest {
 
         failoverManager.onServerFailed(info);
         Mockito.verify(channelManager, Mockito.times(1)).onServerFailed(info);
+        Mockito.verify(context, Mockito.times(1)).getScheduledExecutor();
 
         ArgumentCaptor<DefaultFailoverManager.AccessPointIdResolution> argument =
                 ArgumentCaptor.forClass(DefaultFailoverManager.AccessPointIdResolution.class);
