@@ -83,10 +83,8 @@ public abstract class AbstractLogStorageTest {
             storage.addLogRecord(record);
         }
 
-        LogStorageStatus logStorageStatus = (LogStorageStatus) storage;
-
-        Assert.assertTrue(logStorageStatus.getRecordCount() == insertionCount);
-        Assert.assertTrue(logStorageStatus.getConsumedVolume() == (insertionCount * record.getSize()));
+        Assert.assertTrue(storage.getStatus().getRecordCount() == insertionCount);
+        Assert.assertTrue(storage.getStatus().getConsumedVolume() == (insertionCount * record.getSize()));
         storage.close();
     }
 

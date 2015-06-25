@@ -25,6 +25,9 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     private long maxBucketSize;
     private int maxBucketRecordCount;
 
+    private volatile long consumedVolume;
+    private volatile long recordCount;
+
     private final AtomicInteger bucketIdSeq = new AtomicInteger();
     private MemBucket currentBucket;
     private final Map<Integer, MemBucket> buckets;
@@ -47,32 +50,14 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
 
     @Override
     public long getConsumedVolume() {
-        long volume = 0;
-        LOG.trace("Calculating consumed volume");
-        synchronized (buckets) {
-            for (MemBucket bucket : buckets.values()) {
-                if (bucket.getState() != MemBucketState.PENDING) {
-                    volume += bucket.getSize();
-                }
-            }
-        }
-        LOG.debug("Calculated consumed volume {}", volume);
-        return volume;
+        LOG.debug("Consumed volume: {}", consumedVolume);
+        return consumedVolume;
     }
 
     @Override
     public long getRecordCount() {
-        long count = 0;
-        LOG.trace("Calculating record count");
-        synchronized (buckets) {
-            for (MemBucket bucket : buckets.values()) {
-                if (bucket.getState() != MemBucketState.PENDING) {
-                    count += bucket.getCount();
-                }
-            }
-        }
-        LOG.debug("Calculated record count {}", count);
-        return count;
+        LOG.debug("Record count: {}", recordCount);
+        return recordCount;
     }
 
     @Override
@@ -96,8 +81,10 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
                 buckets.put(currentBucket.getId(), currentBucket);
                 currentBucket.addRecord(record);
             }
+            recordCount++;
+            consumedVolume += record.getSize();
         }
-        LOG.trace("Added new log record to bucket [{}]", currentBucket.getId());
+        LOG.trace("Added a new log record to bucket [{}]", currentBucket.getId());
     }
 
     @Override
@@ -107,6 +94,8 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
             //TODO: add support of block resize
             LOG.warn("Resize of record block is not supported yet");
         }
+
+        LogBlock result = null;
         MemBucket bucketCandidate = null;
         synchronized (buckets) {
             for (MemBucket bucket : buckets.values()) {
@@ -119,23 +108,24 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
                     break;
                 }
             }
-        }
 
-        LogBlock result = null;
-        if (bucketCandidate != null) {
-            if (bucketCandidate.getState() == MemBucketState.FREE) {
-                LOG.trace("Only a bucket with state FREE found");
-                bucketCandidate.setState(MemBucketState.PENDING);
-            }
-            if (bucketCandidate.getSize() <= blockSize && bucketCandidate.getCount() <= batchCount) {
-                result = new LogBlock(bucketCandidate.getId(), bucketCandidate.getRecords());
-                LOG.debug("Return record block with records count: [{}]", bucketCandidate.getCount());
-            } else {
-                LOG.debug("Shrinking bucket {} to new size: [{}] and count: [{}]", bucketCandidate, blockSize, batchCount);
-                List<LogRecord> overSized = bucketCandidate.shrinkToSize(blockSize, batchCount);
-                result = new LogBlock(bucketCandidate.getId(), bucketCandidate.getRecords());
-                for (LogRecord record : overSized) {
-                    addLogRecord(record);
+            if (bucketCandidate != null) {
+                consumedVolume -= bucketCandidate.getSize();
+                recordCount -= bucketCandidate.getCount();
+                if (bucketCandidate.getState() == MemBucketState.FREE) {
+                    LOG.trace("Only a bucket with state FREE found: [{}]. Changing its state to PENDING", bucketCandidate.getId());
+                    bucketCandidate.setState(MemBucketState.PENDING);
+                }
+                if (bucketCandidate.getSize() <= blockSize && bucketCandidate.getCount() <= batchCount) {
+                    result = new LogBlock(bucketCandidate.getId(), bucketCandidate.getRecords());
+                    LOG.debug("Return record block with records count: [{}]", bucketCandidate.getCount());
+                } else {
+                    LOG.debug("Shrinking bucket {} to new size: [{}] and count: [{}]", bucketCandidate, blockSize, batchCount);
+                    List<LogRecord> overSized = bucketCandidate.shrinkToSize(blockSize, batchCount);
+                    result = new LogBlock(bucketCandidate.getId(), bucketCandidate.getRecords());
+                    for (LogRecord record : overSized) {
+                        addLogRecord(record);
+                    }
                 }
             }
         }
@@ -159,6 +149,8 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
         LOG.trace("Upload of record block [{}] failed", id);
         synchronized (buckets) {
             buckets.get(id).setState(MemBucketState.FULL);
+            consumedVolume += buckets.get(id).getSize();
+            recordCount += buckets.get(id).getCount();
         }
     }
 

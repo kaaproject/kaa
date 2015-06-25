@@ -49,7 +49,7 @@ public class MemLogStorageTest extends AbstractLogStorageTest {
         LogBlock logBlock = storage.getRecordBlock(maxSize, maxCount);
         Assert.assertTrue(logBlock.getRecords().size() <= maxCount);
         Assert.assertTrue(getLogBlockSize(logBlock) <= maxSize);
-        Assert.assertEquals(insertionCount - logBlock.getRecords().size(), ((LogStorageStatus) storage).getRecordCount());
+        Assert.assertEquals(insertionCount - logBlock.getRecords().size(), storage.getStatus().getRecordCount());
     }
 
     private long getLogBlockSize(LogBlock logBlock) {
