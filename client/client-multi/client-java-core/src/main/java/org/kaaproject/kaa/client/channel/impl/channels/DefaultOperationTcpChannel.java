@@ -102,6 +102,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     private final KaaChannelManager channelManager;
 
     private final int RECONNECT_TIMEOUT = 5; // in sec
+    private final int SOCKET_OPENING_TIMEOUT = 2;  // in sec
     private ConnectivityChecker connectivityChecker;
 
     private final Runnable openConnectionTask = new Runnable() {
@@ -200,10 +201,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     } else if (size == -1) {
                         LOG.info("Channel [{}] received end of stream", getId(), size);
                     } else {
-                        long openConnectionTimeout = (RECONNECT_TIMEOUT / 2) * 1000;
-                        LOG.info("Socket is null, waiting for a new connection to be opened (sleeping for a {} ms)",
-                                openConnectionTimeout);
-                        Thread.sleep(openConnectionTimeout);
+                        LOG.info("Socket is null, waiting for a new connection to be opened (sleeping for a {} s)",
+                                SOCKET_OPENING_TIMEOUT);
+                        TimeUnit.SECONDS.sleep(SOCKET_OPENING_TIMEOUT);
                     }
                 } catch (IOException | KaaTcpProtocolException e) {
                     if (!isShutdown && !isPaused) {
