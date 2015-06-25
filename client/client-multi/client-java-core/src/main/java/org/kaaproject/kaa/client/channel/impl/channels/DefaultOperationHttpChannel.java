@@ -25,6 +25,7 @@ import org.kaaproject.kaa.client.channel.ChannelDirection;
 import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
+import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.TransportType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,9 @@ public class DefaultOperationHttpChannel extends AbstractHttpChannel {
             try {
                 processTypes(typesToProcess);
                 connectionFailed(false);
+            } catch (TransportException e) {
+                LOG.error("Failed to receive response from the operation {}", e);
+                connectionFailed(true, e.getStatus());
             } catch (Exception e) {
                 LOG.error("Failed to receive response from the operation {}", e);
                 connectionFailed(true);

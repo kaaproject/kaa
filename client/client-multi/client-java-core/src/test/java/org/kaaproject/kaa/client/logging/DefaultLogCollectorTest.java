@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.client.logging;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
@@ -26,6 +25,7 @@ import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.AfterClass;
@@ -48,12 +48,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class DefaultLogCollectorTest {
 
     private static ExecutorContext executorContext;
-    private static ExecutorService executor;
+    private static ScheduledExecutorService executor;
 
     @BeforeClass
     public static void beforeSuite() {
         executorContext = Mockito.mock(ExecutorContext.class);
-        executor = Executors.newSingleThreadExecutor();
+        executor = Executors.newSingleThreadScheduledExecutor();
         Mockito.when(executorContext.getApiExecutor()).thenReturn(new AbstractExecutorService() {
 
             @Override
@@ -92,6 +92,7 @@ public class DefaultLogCollectorTest {
             }
         });
         Mockito.when(executorContext.getCallbackExecutor()).thenReturn(executor);
+        Mockito.when(executorContext.getScheduledExecutor()).thenReturn(executor);
     }
 
     @AfterClass
@@ -214,7 +215,7 @@ public class DefaultLogCollectorTest {
         });
         logCollector.addLogRecord(record);
 
-        Mockito.when(storage.getRecordBlock(Mockito.anyLong())).thenReturn(
+        Mockito.when(storage.getRecordBlock(Mockito.anyLong(), Mockito.anyInt())).thenReturn(
                 new LogBlock(1, Arrays.asList(new LogRecord(record), new LogRecord(record), new LogRecord(record))));
 
         LogSyncRequest request1 = new LogSyncRequest();
@@ -274,7 +275,7 @@ public class DefaultLogCollectorTest {
         });
         logCollector.addLogRecord(record);
 
-        Mockito.when(storage.getRecordBlock(Mockito.anyLong())).thenReturn(
+        Mockito.when(storage.getRecordBlock(Mockito.anyLong(), Mockito.anyInt())).thenReturn(
                 new LogBlock(1, Arrays.asList(new LogRecord(record), new LogRecord(record), new LogRecord(record))));
 
         LogSyncRequest request1 = new LogSyncRequest();

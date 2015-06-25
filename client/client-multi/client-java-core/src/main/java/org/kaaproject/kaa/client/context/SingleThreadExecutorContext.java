@@ -17,6 +17,7 @@ package org.kaaproject.kaa.client.context;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class SingleThreadExecutorContext extends AbstractExecutorContext implements ExecutorContext {
     private static final Logger LOG = LoggerFactory.getLogger(SingleThreadExecutorContext.class);
 
-    private ExecutorService singleThreadExecutor;
+    private ScheduledExecutorService singleThreadExecutor;
 
     public SingleThreadExecutorContext() {
         super();
@@ -33,7 +34,7 @@ public class SingleThreadExecutorContext extends AbstractExecutorContext impleme
     @Override
     public void init() {
         LOG.debug("Creating executor service");
-        singleThreadExecutor = Executors.newSingleThreadExecutor();
+        singleThreadExecutor = Executors.newSingleThreadScheduledExecutor();
         LOG.debug("Created executor service");
     }
 
@@ -56,8 +57,13 @@ public class SingleThreadExecutorContext extends AbstractExecutorContext impleme
     public ExecutorService getCallbackExecutor() {
         return getSingleThreadExecutor();
     }
+    
+    @Override
+    public ScheduledExecutorService getScheduledExecutor() {
+        return getSingleThreadExecutor();
+    }
 
-    private ExecutorService getSingleThreadExecutor() {
+    private ScheduledExecutorService getSingleThreadExecutor() {
         return singleThreadExecutor;
     }
 }

@@ -37,6 +37,10 @@
             <directory>${project.basedir}/source/climate/android</directory>
             <useDefaultExcludes>true</useDefaultExcludes>
             <outputDirectory>climate/android/ClimateControl</outputDirectory>
+            <excludes>
+                <exclude>bin/</exclude>
+                <exclude>gen/</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
 </assembly>

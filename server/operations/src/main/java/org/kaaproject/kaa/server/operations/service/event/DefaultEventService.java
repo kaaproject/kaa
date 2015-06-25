@@ -128,7 +128,7 @@ public class DefaultEventService implements EventService {
         String serverId = remoteEndpointEvent.getRecipient().getServerId();
         NeighborConnection<MessageTemplate, Message> server = neighbors.getNeghborConnection(serverId);
         if (server == null) {
-            LOG.info("sendRouteInfo() specified server {} not found in neighbors list", serverId);
+            LOG.debug("sendRouteInfo() specified server {} not found in neighbors list", serverId);
             notifyListenersOnServerProblem(serverId);
             return;
         }
@@ -481,7 +481,7 @@ public class DefaultEventService implements EventService {
     private void sendMessagesToServer(List<Message> messages, String serverId) {
         NeighborConnection<MessageTemplate, Message> server = neighbors.getNeghborConnection(serverId);
         if (server == null) {
-            LOG.info("specified server {} not found in neighbors list", serverId);
+            LOG.debug("specified server {} not found in neighbors list", serverId);
             notifyListenersOnServerProblem(serverId);
             return;
         }
@@ -594,20 +594,20 @@ public class DefaultEventService implements EventService {
         operationsNode.addListener(new OperationsNodeListener() {
             @Override
             public void onNodeUpdated(OperationsNodeInfo node) {
-                LOG.info("Update of node {} is pushed to resolver {}", node, resolver);
+                LOG.debug("Update of node {} is pushed to resolver {}", node, resolver);
                 resolver.onNodeUpdated(node);
             }
 
             @Override
             public void onNodeRemoved(OperationsNodeInfo node) {
-                LOG.info("Remove of node {} is pushed to resolver {}", node, resolver);
+                LOG.debug("Remove of node {} is pushed to resolver {}", node, resolver);
                 resolver.onNodeRemoved(node);
                 notifyListeners();
             }
 
             @Override
             public void onNodeAdded(OperationsNodeInfo node) {
-                LOG.info("Add of node {} is pushed to resolver {}", node, resolver);
+                LOG.debug("Add of node {} is pushed to resolver {}", node, resolver);
                 resolver.onNodeAdded(node);
                 notifyListeners();
             }
