@@ -229,7 +229,7 @@ public class MessageEncoderDecoder {
      */
     public byte[] decodeData(byte[] message) throws GeneralSecurityException {
         if (sessionCipherPair == null) {
-            sessionCipherPair = new CipherPair(SESSION_CRYPT_ALGORITHM, sessionKey);
+            sessionCipherPair = new CipherPair(SESSION_CRYPT_ALGORITHM, getSessionKey());
         }
         return sessionCipherPair.decCipher.doFinal(message);
     }
