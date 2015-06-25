@@ -598,7 +598,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     protected BootstrapTransport buildBootstrapTransport(KaaClientProperties properties, KaaClientState kaaClientState) {
-        return new DefaultBootstrapTransport(properties.getApplicationToken());
+        return new DefaultBootstrapTransport(properties.getSdkToken());
     }
 
     protected ProfileTransport buildProfileTransport(KaaClientProperties properties, KaaClientState kaaClientState) {

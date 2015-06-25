@@ -114,7 +114,7 @@ kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size)
         size += sizeof(uint32_t); // timeout value
         size += kaa_aligned_size_get(SHA_1_DIGEST_LENGTH); // public key hash length
         size += kaa_aligned_size_get(SHA_1_DIGEST_LENGTH); // profile hash length
-        size += kaa_aligned_size_get(KAA_APPLICATION_TOKEN_LENGTH); // token length
+        size += kaa_aligned_size_get(KAA_SDK_TOKEN_LENGTH); // sdk token length
     }
 
     *expected_size = size;
@@ -155,7 +155,7 @@ kaa_error_t kaa_meta_data_request_serialize(kaa_status_t *status, kaa_platform_m
     err_code = kaa_platform_message_write_aligned(writer, status->profile_hash, SHA_1_DIGEST_LENGTH);
     KAA_RETURN_IF_ERR(err_code);
 
-    err_code = kaa_platform_message_write_aligned(writer, APPLICATION_TOKEN, KAA_APPLICATION_TOKEN_LENGTH);
+    err_code = kaa_platform_message_write_aligned(writer, KAA_SDK_TOKEN, KAA_SDK_TOKEN_LENGTH);
 
     return err_code;
 }

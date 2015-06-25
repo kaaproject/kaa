@@ -19,19 +19,19 @@ package org.kaaproject.kaa.server.admin.services.cache;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 
 public interface CacheService {
 
-    FileData getSdk(SdkKey key);
+    FileData getSdk(SdkPropertiesDto key);
 
-    FileData putSdk(SdkKey key, FileData sdkFile);
+    FileData putSdk(SdkPropertiesDto key, FileData sdkFile);
 
-    void flushSdk(SdkKey key) throws KaaAdminServiceException;
+    void flushSdk(SdkPropertiesDto key) throws KaaAdminServiceException;
     
-    List<SdkKey> getCachedSdkKeys(String applicationId);
+    List<SdkPropertiesDto> getCachedSdkKeys(String applicationId);
 
     byte[] uploadedFile(String key, byte[] data);
 

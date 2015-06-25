@@ -29,7 +29,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;

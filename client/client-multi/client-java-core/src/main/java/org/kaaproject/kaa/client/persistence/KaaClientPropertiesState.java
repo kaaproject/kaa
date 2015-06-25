@@ -67,7 +67,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String NF_SUBSCRIPTIONS = "nf_subscriptions";
     private static final String IS_REGISTERED = "is_registered";
     private static final String IS_ATTACHED = "is_attached";
-    private static final String CONFIGURATION_VERSION = "conf_schema_version";
+
     public static final String STATE_FILE_LOCATION = "state.file_location";
     public static final String CLIENT_PRIVATE_KEY_FILE_LOCATION = "keys.private";
     public static final String CLIENT_PUBLIC_KEY_FILE_LOCATION = "keys.public";
@@ -156,8 +156,6 @@ public class KaaClientPropertiesState implements KaaClientState {
             LOG.info("First SDK start");
             setPropertiesHash(properties.getPropertiesHash());
         }
-
-        checkConfigVersionForUpdates(properties);
     }
 
     private void parseNfSubscriptions() {
@@ -180,18 +178,6 @@ public class KaaClientPropertiesState implements KaaClientState {
             }
         }else{
             LOG.info("No subscription info found in state");
-        }
-    }
-
-    private void checkConfigVersionForUpdates(KaaClientProperties sdkProperties) {
-        int configVersionFromProperties = sdkProperties.getVersionInfo().getConfigVersion();
-        String loadedConfigVersionStr = state.getProperty(CONFIGURATION_VERSION);
-
-        isConfigVersionUpdated = (loadedConfigVersionStr != null ? (configVersionFromProperties != Integer.parseInt(loadedConfigVersionStr))
-                : false);
-
-        if (isConfigVersionUpdated || (loadedConfigVersionStr == null)) {
-            state.setProperty(CONFIGURATION_VERSION, Integer.toString(configVersionFromProperties));
         }
     }
 

@@ -20,7 +20,6 @@ import java.nio.ByteBuffer;
 public class ProfileClientSync {
     private ByteBuffer endpointPublicKey;
     private ByteBuffer profileBody;
-    private EndpointVersionInfo versionInfo;
     private String endpointAccessToken;
 
     public ProfileClientSync() {
@@ -29,11 +28,10 @@ public class ProfileClientSync {
     /**
      * All-args constructor.
      */
-    public ProfileClientSync(ByteBuffer endpointPublicKey, ByteBuffer profileBody, EndpointVersionInfo versionInfo,
+    public ProfileClientSync(ByteBuffer endpointPublicKey, ByteBuffer profileBody, String sdkToken,
             String endpointAccessToken) {
         this.endpointPublicKey = endpointPublicKey;
         this.profileBody = profileBody;
-        this.versionInfo = versionInfo;
         this.endpointAccessToken = endpointAccessToken;
     }
 
@@ -72,23 +70,6 @@ public class ProfileClientSync {
     }
 
     /**
-     * Gets the value of the 'versionInfo' field.
-     */
-    public EndpointVersionInfo getVersionInfo() {
-        return versionInfo;
-    }
-
-    /**
-     * Sets the value of the 'versionInfo' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setVersionInfo(EndpointVersionInfo value) {
-        this.versionInfo = value;
-    }
-
-    /**
      * Gets the value of the 'endpointAccessToken' field.
      */
     public String getEndpointAccessToken() {
@@ -112,7 +93,6 @@ public class ProfileClientSync {
         result = prime * result + ((endpointAccessToken == null) ? 0 : endpointAccessToken.hashCode());
         result = prime * result + ((endpointPublicKey == null) ? 0 : endpointPublicKey.hashCode());
         result = prime * result + ((profileBody == null) ? 0 : profileBody.hashCode());
-        result = prime * result + ((versionInfo == null) ? 0 : versionInfo.hashCode());
         return result;
     }
 
@@ -149,13 +129,6 @@ public class ProfileClientSync {
         } else if (!profileBody.equals(other.profileBody)) {
             return false;
         }
-        if (versionInfo == null) {
-            if (other.versionInfo != null) {
-                return false;
-            }
-        } else if (!versionInfo.equals(other.versionInfo)) {
-            return false;
-        }
         return true;
     }
 
@@ -166,8 +139,6 @@ public class ProfileClientSync {
         builder.append(endpointPublicKey);
         builder.append(", profileBody=");
         builder.append(profileBody);
-        builder.append(", versionInfo=");
-        builder.append(versionInfo);
         builder.append(", endpointAccessToken=");
         builder.append(endpointAccessToken);
         builder.append("]");
