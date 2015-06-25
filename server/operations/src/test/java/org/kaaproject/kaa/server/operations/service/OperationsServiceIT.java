@@ -24,7 +24,9 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -866,5 +868,14 @@ public class OperationsServiceIT extends AbstractTest {
         context.setStatus(SyncStatus.SUCCESS);
         context.setMetaData(request.getClientSyncMetaData());
         return context;
+    }
+
+    private static byte[] getRandEndpointKey() {
+        try {
+            return KeyPairGenerator.getInstance("RSA", "SunRsaSign").generateKeyPair().getPublic().getEncoded();
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

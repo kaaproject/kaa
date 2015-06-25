@@ -43,6 +43,8 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(AbstractHttpChannel.class);
 
+    private static final int UNATHORIZED_HTTP_STATUS = 401;
+
     private IPTransportInfo currentServer;
     private final AbstractKaaClient client;
     private final KaaClientState state;
@@ -232,6 +234,18 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     }
 
     protected void connectionFailed(boolean failed) {
+        connectionFailed(failed, -1);
+    }
+
+    protected void connectionFailed(boolean failed, int status) {
+        switch (status) {
+            case UNATHORIZED_HTTP_STATUS:
+                state.clean();
+                break;
+            default:
+                break;
+        }
+
         lastConnectionFailed = failed;
         if (failed) {
             client.getChannelManager().onServerFailed(currentServer);
