@@ -32,17 +32,7 @@ const char * const BUILD_VERSION = "0.7.1-SNAPSHOT";
 
 const char * const BUILD_COMMIT_HASH = "";
 
-const char * const APPLICATION_TOKEN = "48461193020513321075";
-
-const std::uint32_t PROFILE_VERSION = 1;
-
-const std::uint32_t CONFIG_VERSION = 1;
-
-const std::uint32_t SYSTEM_NF_VERSION = 1;
-
-const std::uint32_t USER_NF_VERSION = 2;
-
-const std::uint32_t LOG_SCHEMA_VERSION = 2;
+const char * const SDK_TOKEN = "48461193020513321075";
 
 const std::uint32_t POLLING_PERIOD_SECONDS = 5;
 
@@ -69,7 +59,7 @@ ITransportConnectionInfoPtr createTransportInfo(const std::int32_t& accessPointI
     return connectionInfo;
 }
 
-const BootstrapServers& getBootstrapServers() 
+const BootstrapServers& getBootstrapServers()
 {
     static BootstrapServers listOfServers;
     if (listOfServers.empty()) {
@@ -81,28 +71,17 @@ listOfServers.push_back(createTransportInfo(0x95f7e40f, 0x56c8ff92, 1, "AAABJjCC
     return listOfServers;
 }
 
-const Botan::SecureVector<std::uint8_t>& getDefaultConfigData() 
+const Botan::SecureVector<std::uint8_t>& getDefaultConfigData()
 {
-    static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("ADxjJaC8gEItgmfTVXiVsPw=");
+    static const Botan::SecureVector<std::uint8_t> configData = Botan::base64_decode("JENPTkZJR1VSQVRJT04gREFUQQIAAQIDBAUGBwgJCgsMDQ4P");
     return configData;
 }
 
-const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo() 
-{
-    static const EventClassFamilyVersionInfos versions {  };/* {{"familyName1",1}, {"familyName2",3}};*/
-    return versions;
-}
-
-HashDigest getPropertiesHash() 
+HashDigest getPropertiesHash()
 {
     std::ostringstream ss;
 
-    ss << APPLICATION_TOKEN;
-    ss << PROFILE_VERSION;
-    ss << CONFIG_VERSION;
-    ss << SYSTEM_NF_VERSION;
-    ss << USER_NF_VERSION;
-    ss << LOG_SCHEMA_VERSION;
+    ss << SDK_TOKEN;
     ss << POLLING_PERIOD_SECONDS;
     ss << CLIENT_PUB_KEY_LOCATION;
     ss << CLIENT_PRIV_KEY_LOCATION;
@@ -115,10 +94,6 @@ HashDigest getPropertiesHash()
 
     ss.write(reinterpret_cast<const char*>(
             getDefaultConfigData().begin()), getDefaultConfigData().size());
-
-    for (const auto& eventFamily : getEventClassFamilyVersionInfo()) {
-        ss << eventFamily.first << eventFamily.second;
-    }
 
     return EndpointObjectHash(ss.str()).getHashDigest();
 }

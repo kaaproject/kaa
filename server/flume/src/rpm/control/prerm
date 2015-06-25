@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright 2014 CyberVision, Inc.
+# Copyright 2014-2015 CyberVision, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@ if [ "$1" = "0" ]; then
   for f in /etc/init.d/kaa-flume-*
   do
       if [ -x $f ]; then
-	  service_name=$(basename "$f")
+        service_name=$(basename "$f")
           if ! service_loc="$(type -p "service")" || [ -z "$service_loc" ]; then
-	     invoke-rc.d $service_name stop || exit $?
+            invoke-rc.d $service_name stop || exit $?
           else
-	     service $service_name stop || exit $?
+            service $service_name stop || exit $?
           fi
        fi
   done

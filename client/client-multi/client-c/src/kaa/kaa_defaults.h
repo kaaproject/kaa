@@ -32,38 +32,11 @@ extern "C" {
 # define BUILD_VERSION                  "0.6.1-SNAPSHOT"
 # define BUILD_COMMIT_HASH              "N/A"
 
-# define APPLICATION_TOKEN              "01234567890123456789"
+# define KAA_SDK_TOKEN                  "0123456789012345678912345678"
 
-# define CONFIG_SCHEMA_VERSION          6
 # define PROFILE_SCHEMA_VERSION         7
-# define SYSTEM_NF_SCHEMA_VERSION       1
-# define USER_NF_SCHEMA_VERSION         5
-# define LOG_SCHEMA_VERSION             4
 
 # define KAA_SYNC_TIMEOUT               60000L
-
-
-
-typedef struct {
-    const char *    name;
-    uint16_t        version;
-} kaa_events_schema_version_t;
-
-# define KAA_EVENT_SCHEMA_VERSIONS_SIZE    2
-
-static const kaa_events_schema_version_t KAA_EVENT_SCHEMA_VERSIONS[KAA_EVENT_SCHEMA_VERSIONS_SIZE] =
-{
-    {
-          /* .name = */   "1ecf"
-        , /* .version = */3
-    },
-    {
-          /* .name = */   "2ecf"
-        , /* .version = */2
-    }
-};
-
-
 
 /**
  * @brief Uses to represent transport-specific connection data to establish

@@ -35,11 +35,7 @@ class NotificationTransport: public AbstractKaaTransport<TransportType::NOTIFICA
                              public INotificationTransport
 {
 public:
-    NotificationTransport(IKaaClientStateStoragePtr status, IKaaChannelManager& manager)
-        : AbstractKaaTransport(manager), notificationProcessor_(nullptr)
-    {
-        setClientState(status);
-    }
+    NotificationTransport(IKaaClientStateStoragePtr status, IKaaChannelManager& manager);
 
     virtual NotificationSyncRequestPtr createEmptyNotificationRequest();
 

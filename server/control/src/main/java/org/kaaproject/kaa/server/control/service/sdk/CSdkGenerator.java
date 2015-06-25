@@ -44,6 +44,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.kaaproject.kaa.avro.avrogenc.Compiler;
 import org.kaaproject.kaa.avro.avrogenc.StyleUtils;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
@@ -113,17 +114,21 @@ public class CSdkGenerator extends SdkGenerator {
      */
     @Override
     public Sdk generateSdk(String buildVersion,
-                           List<BootstrapNodeInfo> bootstrapNodes, String appToken,
-                           int profileSchemaVersion, int configurationSchemaVersion,
-                           int notificationSchemaVersion, int logSchemaVersion,
+                           List<BootstrapNodeInfo> bootstrapNodes, String sdkToken,
+                           SdkPropertiesDto sdkProperties,
                            String profileSchemaBody,
                            String notificationSchemaBody,
                            String configurationProtocolSchemaBody,
                            String configurationBaseSchemaBody,
                            byte[] defaultConfigurationData,
                            List<EventFamilyMetadata> eventFamilies,
-                           String logSchemaBody,
-                           String defaultVerifierToken) throws Exception {
+                           String logSchemaBody) throws Exception {
+
+        Integer configurationSchemaVersion = sdkProperties.getConfigurationSchemaVersion();
+        Integer profileSchemaVersion = sdkProperties.getProfileSchemaVersion();
+        Integer notificationSchemaVersion = sdkProperties.getNotificationSchemaVersion();
+        Integer logSchemaVersion = sdkProperties.getLogSchemaVersion();
+        String defaultVerifierToken = sdkProperties.getDefaultVerifierToken();
 
         String sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + C_SDK_DIR + "/" + C_SDK_PREFIX + buildVersion + ".tar.gz";
 
@@ -173,12 +178,11 @@ public class CSdkGenerator extends SdkGenerator {
         while ((e = templateArchive.getNextEntry()) != null) {
             if (!e.isDirectory()) {
                 if (e.getName().equals(KAA_DEFAULTS_HEADER)) {
-                    byte[] kaaDefaultsData = generateKaaDefaults(bootstrapNodes, appToken,
-                                                                 configurationSchemaVersion, profileSchemaVersion,
-                                                                 notificationSchemaVersion, logSchemaVersion,
+                    // TODO: eliminate schema versions and substitute them for a single sdkToken
+                    byte[] kaaDefaultsData = generateKaaDefaults(bootstrapNodes, sdkToken,
+                                                                 profileSchemaVersion,
                                                                  configurationProtocolSchemaBody,
                                                                  defaultConfigurationData,
-                                                                 eventFamilies,
                                                                  defaultVerifierToken);
 
                     TarArchiveEntry kaaDefaultsEntry = new TarArchiveEntry(KAA_DEFAULTS_HEADER);
@@ -235,7 +239,7 @@ public class CSdkGenerator extends SdkGenerator {
                                                               profileSchemaVersion,
                                                               configurationSchemaVersion,
                                                               notificationSchemaVersion,
-                                                              logSchemaVersion}).getMessage();
+                                                              logSchemaVersion }).getMessage();
 
         Sdk sdk = new Sdk();
         sdk.setFileName(sdkFileName);
@@ -286,7 +290,6 @@ public class CSdkGenerator extends SdkGenerator {
     /**
      * Generate client properties.
      *
-     * @param kaaDefaultsStream the kaa defaults stream
      * @param bootstrapNodes the bootstrap nodes
      * @param appToken the app token
      * @param configurationSchemaVersion the configuration schema version
@@ -299,14 +302,10 @@ public class CSdkGenerator extends SdkGenerator {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private byte[] generateKaaDefaults(List<BootstrapNodeInfo> bootstrapNodes,
-                                       String appToken,
-                                       int configurationSchemaVersion,
+                                       String sdkToken,
                                        int profileSchemaVersion,
-                                       int notificationSchemaVersion,
-                                       int logSchemaVersion,
                                        String configurationProtocolSchemaBody,
                                        byte[] defaultConfigurationData,
-                                       List<EventFamilyMetadata> eventFamilies,
                                        String defaultVerifierToken) throws IOException {
 
         VelocityContext context = new VelocityContext();
@@ -315,15 +314,11 @@ public class CSdkGenerator extends SdkGenerator {
 
         context.put("build_version", Version.PROJECT_VERSION);
         context.put("build_commit_hash", Version.COMMIT_HASH);
-        context.put("app_token", appToken);
-        context.put("config_version", configurationSchemaVersion);
+        context.put("sdk_token", sdkToken);
+        
         context.put("profile_version", profileSchemaVersion);
-        context.put("user_nf_version", notificationSchemaVersion);
-        context.put("log_version", logSchemaVersion);
-        context.put("system_nf_version", 1);
         context.put("user_verifier_token", (defaultVerifierToken != null ? defaultVerifierToken : ""));
-
-        context.put("eventFamilies", eventFamilies);
+        
         context.put("bootstrapNodes", bootstrapNodes);
         context.put("configurationData", defaultConfigurationData);
 

@@ -35,8 +35,7 @@ enum class ClientParameterT {
     EP_ACCESS_TOKEN,
     EP_ATTACH_STATUS,
     EP_KEY_HASH,
-    PROPERTIES_HASH,
-    CONFIGURATION_VERSION
+    PROPERTIES_HASH
 };
 
 class IPersistentParameter {
@@ -60,7 +59,6 @@ static bimap create_bimap()
     bi.left.insert(bimap::left_value_type(ClientParameterT::EP_ATTACH_STATUS,      "ep_attach_status"));
     bi.left.insert(bimap::left_value_type(ClientParameterT::EP_KEY_HASH,           "ep_key_hash"));
     bi.left.insert(bimap::left_value_type(ClientParameterT::PROPERTIES_HASH,       "properties_hash"));
-    bi.left.insert(bimap::left_value_type(ClientParameterT::CONFIGURATION_VERSION, "configuration_version"));
     return bi;
 }
 
@@ -326,7 +324,7 @@ void ClientParameter<HashDigest>::read(const std::string &strValue)
     }
 }
 
-ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), isConfigVersionUpdated(false)
+ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), isSDKPropertiesForUpdated_(false)
 {
     auto appseqntoken = parameterToToken_.left.find(ClientParameterT::APPSEQUENCENUMBER);
     if (appseqntoken != parameterToToken_.left.end()) {
@@ -384,17 +382,9 @@ ClientStatus::ClientStatus(const std::string& filename) : filename_(filename), i
         parameters_.insert(std::make_pair(ClientParameterT::PROPERTIES_HASH, propertiesHash));
     }
 
-    auto configversion = parameterToToken_.left.find(ClientParameterT::CONFIGURATION_VERSION);
-    if (configversion != parameterToToken_.left.end()) {
-        std::shared_ptr<IPersistentParameter> configVersion(new ClientParameter<std::int32_t>(
-                configversion->second, (std::int32_t)CONFIG_VERSION));
-        parameters_.insert(std::make_pair(ClientParameterT::CONFIGURATION_VERSION, configVersion));
-    }
-
     this->read();
 
     checkSDKPropertiesForUpdates();
-    checkConfigVersionForUpdates();
 }
 
 void ClientStatus::checkSDKPropertiesForUpdates()
@@ -413,21 +403,11 @@ void ClientStatus::checkSDKPropertiesForUpdates()
         if (it != parameters_.end()) {
             it->second->setValue(truePropertiesHash);
         }
+
+        isSDKPropertiesForUpdated_ = true;
         KAA_LOG_INFO("SDK properties were updated");
     } else {
         KAA_LOG_INFO("SDK properties are up to date");
-    }
-}
-
-void ClientStatus::checkConfigVersionForUpdates()
-{
-    auto parameter_it = parameters_.find(ClientParameterT::CONFIGURATION_VERSION);
-    if (parameter_it != parameters_.end()) {
-        isConfigVersionUpdated = ((std::int32_t)CONFIG_VERSION != boost::any_cast<std::int32_t>(
-                                    parameter_it->second->getValue()));
-        if (isConfigVersionUpdated) {
-            parameter_it->second->setValue((std::int32_t)CONFIG_VERSION);
-        }
     }
 }
 

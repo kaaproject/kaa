@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright 2014 CyberVision, Inc.
+# Copyright 2014-2015 CyberVision, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,51 +16,64 @@
 
 set -e
 
-if [ -h /usr/bin/#servername# ]; then
-    rm -f /usr/bin/#servername#
-fi
+case "$1" in
+    configure)
+        if [ -h /usr/bin/#servername# ]; then
+            rm -f /usr/bin/#servername#
+        fi
+        
+        if [ -h /etc/#servername#/conf ]; then
+            rm -f /etc/#servername#/conf
+        fi
+        
+        if [ ! -d /etc/#servername# ]; then
+            mkdir -p /etc/#servername#
+        fi
+        
+        if [ ! -d /usr/lib/#servername#/keys ]; then
+            mkdir -p /usr/lib/#servername#/keys
+            chown -R kaa:kaa /usr/lib/#servername#/keys
+            chmod 700 /usr/lib/#servername#/keys
+        fi
+        
+        
+        if [ ! -d /var/log/kaa ]; then
+            mkdir -p /var/log/kaa
+        fi
+        
+        chown -R kaa:kaa /var/log/kaa
+        chmod 755 /var/log/kaa
+        
+        ln -s /usr/lib/#servername#/bin/#servername# /usr/bin/#servername#
+        ln -s /usr/lib/#servername#/conf /etc/#servername#/conf
+        
+        if [ -f /usr/lib/#servername#/bin/#servername#.default ]; then
+            mv /usr/lib/#servername#/bin/#servername#.default /etc/default/#servername#
+        fi
+        
+        if [ -f /usr/lib/#servername#/bin/#servername#.init.d ]; then
+            mv /usr/lib/#servername#/bin/#servername#.init.d /etc/init.d/#servername#
+        fi
+        
+        if [ -x "/etc/init.d/#servername#" ]; then
+            if [ ! -e "/etc/init/#servername#.conf" ]; then
+                if ! chkconfig_loc="$(type -p "chkconfig")" || [ -z "$chkconfig_loc" ]; then
+                    update-rc.d -f #servername# defaults >/dev/null || exit 1
+                else
+                    chkconfig --add #servername# >/dev/null || exit 1
+                fi
+            fi
+        fi    
+    ;;
 
-if [ -h /etc/#servername#/conf ]; then
-    rm -f /etc/#servername#/conf
-fi
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
 
-if [ ! -d /etc/#servername# ]; then
-    mkdir -p /etc/#servername#
-fi
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
 
-if [ ! -d /usr/lib/#servername#/keys ]; then
-    mkdir -p /usr/lib/#servername#/keys
-    chown -R kaa:kaa /usr/lib/#servername#/keys
-    chmod 700 /usr/lib/#servername#/keys
-fi
-
-
-if [ ! -d /var/log/kaa ]; then
-    mkdir -p /var/log/kaa
-fi
-
-chown -R kaa:kaa /var/log/kaa
-chmod 755 /var/log/kaa
-
-ln -s /usr/lib/#servername#/bin/#servername# /usr/bin/#servername#
-ln -s /usr/lib/#servername#/conf /etc/#servername#/conf
-
-if [ -f /usr/lib/#servername#/bin/#servername#.default ]; then
-    mv /usr/lib/#servername#/bin/#servername#.default /etc/default/#servername#
-fi
-
-if [ -f /usr/lib/#servername#/bin/#servername#.init.d ]; then
-    mv /usr/lib/#servername#/bin/#servername#.init.d /etc/init.d/#servername#
-fi
-
-if [ -x "/etc/init.d/#servername#" ]; then
-	if [ ! -e "/etc/init/#servername#.conf" ]; then
-		if ! chkconfig_loc="$(type -p "chkconfig")" || [ -z "$chkconfig_loc" ]; then
-		    update-rc.d -f #servername# defaults >/dev/null
-		else
-		    chkconfig --add #servername# >/dev/null
-		fi
-	fi
-fi
-
+exit 0
 

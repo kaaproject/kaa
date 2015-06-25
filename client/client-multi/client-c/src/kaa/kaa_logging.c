@@ -106,8 +106,8 @@ static kaa_error_t remember_request(kaa_log_collector_t *self, uint16_t bucket_i
 
 static bool find_by_bucket_id(void *data, void *context)
 {
-    KAA_RETURN_IF_NIL2(data, context, KAA_ERR_BADPARAM);
-    return (((timeout_info_t *)data)->log_bucket_id = *((uint16_t *)context));
+    KAA_RETURN_IF_NIL2(data, context, false);
+    return (((timeout_info_t *)data)->log_bucket_id == *((uint16_t *)context));
 }
 
 

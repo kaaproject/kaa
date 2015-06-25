@@ -21,12 +21,13 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.HasId;
 
-public class SdkKey implements HasId, Serializable {
+public class SdkPropertiesDto implements HasId, Serializable {
 
     private static final long serialVersionUID = 2433663439327120870L;
 
     public static final String SDK_KEY_PARAMETER = "sdkKey";
 
+    private String id;
     private String applicationId;
     private Integer configurationSchemaVersion;
     private Integer profileSchemaVersion;
@@ -35,15 +36,16 @@ public class SdkKey implements HasId, Serializable {
     private SdkPlatform targetPlatform;
     private List<String> aefMapIds;
     private String defaultVerifierToken;
+    private String applicationToken;
 
-    public SdkKey() {
+    public SdkPropertiesDto() {
     }
 
-    public SdkKey(String applicationId, Integer configurationSchemaVersion,
-            Integer profileSchemaVersion, Integer notificationSchemaVersion,
-            Integer logSchemaVersion,
-            SdkPlatform targetPlatform, List<String> aefMapIds, 
-            String defaultVerifierToken) {
+    public SdkPropertiesDto(String applicationId, Integer configurationSchemaVersion,
+                            Integer profileSchemaVersion, Integer notificationSchemaVersion,
+                            Integer logSchemaVersion,
+                            SdkPlatform targetPlatform, List<String> aefMapIds,
+                            String defaultVerifierToken, String applicationToken) {
         super();
         this.applicationId = applicationId;
         this.configurationSchemaVersion = configurationSchemaVersion;
@@ -53,6 +55,7 @@ public class SdkKey implements HasId, Serializable {
         this.targetPlatform = targetPlatform;
         this.aefMapIds = aefMapIds;
         this.defaultVerifierToken = defaultVerifierToken;
+        this.applicationToken = applicationToken;
     }
 
     public String getApplicationId() {
@@ -119,113 +122,91 @@ public class SdkKey implements HasId, Serializable {
         this.defaultVerifierToken = defaultVerifierToken;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((aefMapIds == null) ? 0 : aefMapIds.hashCode());
-        result = prime * result
-                + ((applicationId == null) ? 0 : applicationId.hashCode());
-        result = prime
-                * result
-                + ((configurationSchemaVersion == null) ? 0
-                        : configurationSchemaVersion.hashCode());
-        result = prime
-                * result
-                + ((defaultVerifierToken == null) ? 0 : defaultVerifierToken
-                        .hashCode());
-        result = prime
-                * result
-                + ((logSchemaVersion == null) ? 0 : logSchemaVersion.hashCode());
-        result = prime
-                * result
-                + ((notificationSchemaVersion == null) ? 0
-                        : notificationSchemaVersion.hashCode());
-        result = prime
-                * result
-                + ((profileSchemaVersion == null) ? 0 : profileSchemaVersion
-                        .hashCode());
-        result = prime * result
-                + ((targetPlatform == null) ? 0 : targetPlatform.hashCode());
-        return result;
+    public String getApplicationToken() {
+        return applicationToken;
     }
 
+    public void setApplicationToken(String applicationToken) {
+        this.applicationToken = applicationToken;
+    }
+
+
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SdkPropertiesDto that = (SdkPropertiesDto) o;
+
+        if (aefMapIds != null ? !aefMapIds.equals(that.aefMapIds) : that.aefMapIds != null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null)  {
             return false;
         }
-        SdkKey other = (SdkKey) obj;
-        if (aefMapIds == null) {
-            if (other.aefMapIds != null) {
-                return false;
-            }
-        } else if (!aefMapIds.equals(other.aefMapIds)) {
+        if (applicationToken != null ? !applicationToken.equals(that.applicationToken) : that.applicationToken != null) {
             return false;
         }
-        if (applicationId == null) {
-            if (other.applicationId != null) {
-                return false;
-            }
-        } else if (!applicationId.equals(other.applicationId)) {
+        if (configurationSchemaVersion != null ? !configurationSchemaVersion.equals(that.configurationSchemaVersion) : that.configurationSchemaVersion != null) {
             return false;
         }
-        if (configurationSchemaVersion == null) {
-            if (other.configurationSchemaVersion != null) {
-                return false;
-            }
-        } else if (!configurationSchemaVersion
-                .equals(other.configurationSchemaVersion)) {
+        if (defaultVerifierToken != null ? !defaultVerifierToken.equals(that.defaultVerifierToken) : that.defaultVerifierToken != null) {
             return false;
         }
-        if (defaultVerifierToken == null) {
-            if (other.defaultVerifierToken != null) {
-                return false;
-            }
-        } else if (!defaultVerifierToken.equals(other.defaultVerifierToken)) {
+        if (logSchemaVersion != null ? !logSchemaVersion.equals(that.logSchemaVersion) : that.logSchemaVersion != null) {
             return false;
         }
-        if (logSchemaVersion == null) {
-            if (other.logSchemaVersion != null) {
-                return false;
-            }
-        } else if (!logSchemaVersion.equals(other.logSchemaVersion)) {
+        if (notificationSchemaVersion != null ? !notificationSchemaVersion.equals(that.notificationSchemaVersion) : that.notificationSchemaVersion != null) {
             return false;
         }
-        if (notificationSchemaVersion == null) {
-            if (other.notificationSchemaVersion != null) {
-                return false;
-            }
-        } else if (!notificationSchemaVersion
-                .equals(other.notificationSchemaVersion)) {
+        if (profileSchemaVersion != null ? !profileSchemaVersion.equals(that.profileSchemaVersion) : that.profileSchemaVersion != null) {
             return false;
         }
-        if (profileSchemaVersion == null) {
-            if (other.profileSchemaVersion != null) {
-                return false;
-            }
-        } else if (!profileSchemaVersion.equals(other.profileSchemaVersion)) {
+        if (targetPlatform != that.targetPlatform) {
             return false;
         }
-        if (targetPlatform != other.targetPlatform) {
-            return false;
-        }
+
         return true;
     }
 
     @Override
-    public String getId() {
-        return null;
+    public int hashCode() {
+        int result = applicationId != null ? applicationId.hashCode() : 0;
+        result = 31 * result + (configurationSchemaVersion != null ? configurationSchemaVersion.hashCode() : 0);
+        result = 31 * result + (profileSchemaVersion != null ? profileSchemaVersion.hashCode() : 0);
+        result = 31 * result + (notificationSchemaVersion != null ? notificationSchemaVersion.hashCode() : 0);
+        result = 31 * result + (logSchemaVersion != null ? logSchemaVersion.hashCode() : 0);
+        result = 31 * result + (targetPlatform != null ? targetPlatform.hashCode() : 0);
+        result = 31 * result + (aefMapIds != null ? aefMapIds.hashCode() : 0);
+        result = 31 * result + (defaultVerifierToken != null ? defaultVerifierToken.hashCode() : 0);
+        result = 31 * result + (applicationToken != null ? applicationToken.hashCode() : 0);
+        return result;
     }
 
     @Override
-    public void setId(String id) {}
+    public String toString() {
+        return "SdkPropertiesDto{" +
+                "id='" + id + '\'' +
+                ", applicationId='" + applicationId + '\'' +
+                ", configurationSchemaVersion=" + configurationSchemaVersion +
+                ", profileSchemaVersion=" + profileSchemaVersion +
+                ", notificationSchemaVersion=" + notificationSchemaVersion +
+                ", logSchemaVersion=" + logSchemaVersion +
+                ", targetPlatform=" + targetPlatform +
+                ", aefMapIds=" + aefMapIds +
+                ", defaultVerifierToken='" + defaultVerifierToken + '\'' +
+                ", applicationToken='" + applicationToken + '\'' +
+                '}';
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
 }

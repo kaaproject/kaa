@@ -48,9 +48,9 @@ public class VehicleTelemetryDemoBuider extends AbstractDemoBuilder {
         vehicleTelemetryApplication.setName("Vehicle telemetry");
         vehicleTelemetryApplication = client.editApplication(vehicleTelemetryApplication);
 
-        sdkKey.setApplicationId(vehicleTelemetryApplication.getId());
-        sdkKey.setConfigurationSchemaVersion(1);
-        sdkKey.setNotificationSchemaVersion(1);
+        sdkPropertiesDto.setApplicationId(vehicleTelemetryApplication.getId());
+        sdkPropertiesDto.setConfigurationSchemaVersion(1);
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
 
         loginTenantDeveloper(client);
 
@@ -59,14 +59,14 @@ public class VehicleTelemetryDemoBuider extends AbstractDemoBuilder {
         profileSchema.setName("Vehicle telemetry profile schema");
         profileSchema.setDescription("Profile schema describing vehicle telemetry application profile");
         profileSchema = client.createProfileSchema(profileSchema, getResourcePath("profileSchema.json"));
-        sdkKey.setProfileSchemaVersion(profileSchema.getMajorVersion());
+        sdkPropertiesDto.setProfileSchemaVersion(profileSchema.getMajorVersion());
 
         LogSchemaDto logSchemaDto = new LogSchemaDto();
         logSchemaDto.setApplicationId(vehicleTelemetryApplication.getId());
         logSchemaDto.setName("Vehicle telemetry log schema");
         logSchemaDto.setDescription("Log schema describing incoming logs");
         logSchemaDto = client.createLogSchema(logSchemaDto, getResourcePath("logSchema.json"));
-        sdkKey.setLogSchemaVersion(logSchemaDto.getMajorVersion());
+        sdkPropertiesDto.setLogSchemaVersion(logSchemaDto.getMajorVersion());
 
         LogAppenderDto vehicleTelemetryLogAppender = new LogAppenderDto();
         vehicleTelemetryLogAppender.setName("Vehicle telemetry log appender");
@@ -83,8 +83,6 @@ public class VehicleTelemetryDemoBuider extends AbstractDemoBuilder {
         vehicleTelemetryLogAppender.setPluginClassName("org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender");
         vehicleTelemetryLogAppender.setJsonConfiguration(FileUtils.readResource(getResourcePath("mongoAppender.json")));
         vehicleTelemetryLogAppender = client.editLogAppenderDto(vehicleTelemetryLogAppender);
-
-
 
         logger.info("Finished loading 'Vehicle telemetry application' data.");
     }

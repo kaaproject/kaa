@@ -28,6 +28,8 @@ import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
@@ -37,6 +39,7 @@ import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
+import org.kaaproject.kaa.server.common.dao.SdkKeyService;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFqnVersion;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableKey;
@@ -90,6 +93,14 @@ public interface CacheService {
     List<ProfileFilterDto> getFilters(AppVersionKey key);
 
     /**
+     * Gets application event family maps by their ids.
+     *
+     * @param key list of ids
+     * @return list of application event family maps
+     */
+    List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByIds(List<String> key);
+
+    /**
      * Gets the filter.
      *
      * @param profileFilterId the profile filter id
@@ -122,6 +133,13 @@ public interface CacheService {
      */
     ProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key);
 
+    /**
+     * Gets the sdk properties by sdk token.
+     *
+     * @param key the sdk token
+     * @return sdk properties by sdk token
+     */
+    SdkPropertiesDto getSdkPropertiesBySdkToken(String key);
 
     /**
      * Gets the merged configuration.
@@ -185,6 +203,14 @@ public interface CacheService {
     String getTenantIdByAppToken(String appToken);
 
     /**
+     * Gets the application token by the sdk token
+     *
+     * @param sdkToken the sdk token
+     * @return application token for the specified sdk token
+     */
+    String getAppTokenBySdkToken(String sdkToken);
+
+    /**
      * Gets the Event Class Family Id by Event Class FQN
      *
      * @param fqn of one of the events that belong to target Event Class Family
@@ -245,6 +271,13 @@ public interface CacheService {
      * @param endpointService the new endpoint service
      */
     void setEndpointService(EndpointService endpointService);
+
+    /**
+     * Setter for test purposes only
+     *
+     * @param sdkKeyService the new sdk key service
+     */
+    void setSdkKeyService(SdkKeyService sdkKeyService);
 
     /**
      * Cache invalidate method.
@@ -324,6 +357,15 @@ public interface CacheService {
      * @return the string
      */
     String putConfId(ConfigurationIdKey key, String value);
+
+    /**
+     * Put application event family maps
+     *
+     * @param key list of event family maps ids
+     * @param value list of event family maps
+     * @return the list
+     */
+    public List<ApplicationEventFamilyMapDto> putApplicationEventFamilyMaps(List<String> key, List<ApplicationEventFamilyMapDto> value);
 
     void setEventClassService(EventClassService eventClassService);
 

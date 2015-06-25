@@ -35,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class HibernateApplicationDaoTest extends HibernateAbstractTest {
 
     @Test
-    public void testSaveApplicationTest() {
+    public void testSaveApplication() {
         Application application = generateApplication(null);
         Assert.assertNotNull(application.getId());
     }

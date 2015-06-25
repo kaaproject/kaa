@@ -50,7 +50,6 @@ public:
     }
 
 private:
-    void populateEventFamilyVersions(EndpointVersionInfo::eventFamilyVersions_t& versions);
     bool isProfileOutDated(const HashDigest& profileHash);
 
 private:

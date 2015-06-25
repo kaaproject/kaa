@@ -20,6 +20,7 @@
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/channel/KaaChannelManager.hpp"
 #include "kaa/common/exception/KaaException.hpp"
+#include "kaa/failover/DefaultFailoverStrategy.hpp"
 
 #include "headers/channel/MockDataChannel.hpp"
 #include "headers/bootstrap/MockBootstrapManager.hpp"
@@ -76,6 +77,8 @@ public:
     {
         isPaused_ = false;
     }
+
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) {}
 
     bool isPaused() const { return isPaused_; }
     bool isShutdown() const { return isShutdown_; }
@@ -367,6 +370,9 @@ BOOST_AUTO_TEST_CASE(ServerFailedTest)
     MockBootstrapManager BootstrapManager;
     KaaChannelManager channelManager(BootstrapManager, servers);
 
+    IFailoverStrategyPtr failoverStrategy(std::make_shared<DefaultFailoverStrategy>());
+    channelManager.setFailoverStrategy(failoverStrategy);
+
     ITransportConnectionInfoPtr fakeServer;
     BOOST_CHECK_THROW(channelManager.onServerFailed(fakeServer), KaaException);
 
@@ -391,6 +397,7 @@ BOOST_AUTO_TEST_CASE(ServerFailedTest)
     channelManager.addChannel(ch2);
 
     BOOST_CHECK(userCh1->server_);
+    BOOST_CHECK(userCh1->server_->getPort() == 80);
 
     channelManager.onServerFailed(servers[0]);
 
@@ -401,6 +408,7 @@ BOOST_AUTO_TEST_CASE(ServerFailedTest)
     BOOST_CHECK(userCh1->server_->getPort() == 443);
 
     channelManager.onServerFailed(servers[2]);
+    std::this_thread::sleep_for(std::chrono::seconds(DefaultFailoverStrategy::DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD + 3));
     BOOST_CHECK(userCh1->server_->getPort() == 80);
 }
 

@@ -305,7 +305,7 @@ void SQLiteDBLogStorage::addLogRecord(LogRecordPtr record)
         consumedMemory_ += record->getSize();
 
         KAA_LOG_TRACE(boost::format("Added log record (%u bytes). Total: %u, unmarked: %u")
-                            % record->getSize() % unmarkedRecordCount_ % totalRecordCount_);
+                            % record->getSize() % totalRecordCount_ % unmarkedRecordCount_);
     } catch (std::exception& e) {
         KAA_LOG_ERROR(boost::format("Failed to add log record: %s") % e.what());
     }

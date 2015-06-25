@@ -35,7 +35,7 @@ public class DefaultMetaDataTransport implements MetaDataTransport {
     public SyncRequestMetaData createMetaDataRequest() {
         if (state != null && properties != null && publicKeyHash != null) {
             SyncRequestMetaData request = new SyncRequestMetaData();
-            request.setApplicationToken(properties.getApplicationToken());
+            request.setSdkToken(properties.getSdkToken());
             request.setEndpointPublicKeyHash(ByteBuffer.wrap(publicKeyHash.getData()));
             request.setProfileHash(ByteBuffer.wrap(state.getProfileHash().getData()));
             request.setTimeout(timeout);

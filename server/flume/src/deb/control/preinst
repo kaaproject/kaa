@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright 2014 CyberVision, Inc.
+# Copyright 2014-2015 CyberVision, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,21 +16,31 @@
 
 set -e
 
-if [ -d /usr/lib/kaa-flume ]; then
-    rm -rf /usr/lib/kaa-flume
-fi
+case "$1" in
+    install|upgrade)
+        if ! id kaa > /dev/null 2>&1 ; then
+                # Adding system user: kaa.
+                adduser --system --no-create-home --group --disabled-password --shell /bin/false kaa  >/dev/null
+        fi
+        if [ -f /etc/security/limits.d/flume.conf ]; then
+            rm -rf /etc/security/limits.d/flume.conf    
+        fi
+        touch /etc/security/limits.d/flume.conf
+        
+        echo "flume - nofile 32768" >> /etc/security/limits.d/flume.conf
+        echo "flume - nproc 65536" >> /etc/security/limits.d/flume.conf
+        
+        chmod -R 666 /etc/security/limits.d/flume.conf
+    ;;
 
-if ! id kaa > /dev/null 2>&1 ; then
-    adduser --system --no-create-home --group --disabled-password --shell /bin/false kaa
-fi  
+    abort-upgrade)
+    ;;
 
-if [ -f /etc/security/limits.d/flume.conf ]; then
-    rm -rf /etc/security/limits.d/flume.conf  	
-fi
+    *)
+        echo "preinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
 
-touch /etc/security/limits.d/flume.conf
+exit 0
 
-echo "flume - nofile 32768" >> /etc/security/limits.d/flume.conf
-echo "flume - nproc 65536" >> /etc/security/limits.d/flume.conf
-
-chmod -R 666 /etc/security/limits.d/flume.conf

@@ -67,4 +67,9 @@ public interface LogStorage {
      * @param id Unique id of log block.
      */
     void notifyUploadFailed(int id);
+
+    /**
+     * Closes log storage and releases all used resources (if any)
+     */
+    void close();
 }

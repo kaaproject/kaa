@@ -52,8 +52,13 @@
     <cache name="profileSchemas" maxEntriesLocalHeap="10000" eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300" timeToLiveSeconds="600"
         memoryStoreEvictionPolicy="LRU" transactionalMode="off" statistics="true">
         <persistence strategy="localTempSwap" />
-    </cache>   
-    
+    </cache>
+
+    <cache name="sdkProperties" maxEntriesLocalHeap="10000" eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300" timeToLiveSeconds="600"
+           memoryStoreEvictionPolicy="LRU" transactionalMode="off" statistics="true">
+        <persistence strategy="localTempSwap" />
+    </cache>
+
     <cache name="configurations" maxEntriesLocalHeap="10000" eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300" timeToLiveSeconds="600"
         memoryStoreEvictionPolicy="LRU" transactionalMode="off" statistics="true">
         <persistence strategy="localTempSwap" />
@@ -66,6 +71,11 @@
                 
     <cache name="history" maxEntriesLocalHeap="100000" eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300" timeToLiveSeconds="600"
         memoryStoreEvictionPolicy="LRU" transactionalMode="off" statistics="true">
+        <persistence strategy="localTempSwap" />
+    </cache>
+
+    <cache name="applicationEFMs" maxEntriesLocalHeap="100000" eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300" timeToLiveSeconds="600"
+           memoryStoreEvictionPolicy="LRU" transactionalMode="off" statistics="true">
         <persistence strategy="localTempSwap" />
     </cache>
     
@@ -91,6 +101,11 @@
     
     <cache name="tenantIds" maxEntriesLocalHeap="100000" eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300" timeToLiveSeconds="600"
         memoryStoreEvictionPolicy="LRU" transactionalMode="off" statistics="true">
+        <persistence strategy="localTempSwap" />
+    </cache>
+
+    <cache name="appTokens" maxEntriesLocalHeap="100000" eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300" timeToLiveSeconds="600"
+           memoryStoreEvictionPolicy="LRU" transactionalMode="off" statistics="true">
         <persistence strategy="localTempSwap" />
     </cache>
     

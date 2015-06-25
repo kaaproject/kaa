@@ -15,7 +15,7 @@
  */
 package org.kaaproject.kaa.sandbox.web.services;
 
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.sandbox.web.services.cache.CacheService;
 import org.kaaproject.kaa.sandbox.web.services.rest.AdminClientProvider;
@@ -55,7 +55,7 @@ public class CacheServiceImpl implements CacheService {
     
     @Override
     @Cacheable(SDK_CACHE)
-    public FileData getSdk(SdkKey key) throws SandboxServiceException {
+    public FileData getSdk(SdkPropertiesDto key) throws SandboxServiceException {
         AdminClient client = clientProvider.getClient();
         client.login(tenantDeveloperUser, tenantDeveloperPassword);
         FileData fileData;

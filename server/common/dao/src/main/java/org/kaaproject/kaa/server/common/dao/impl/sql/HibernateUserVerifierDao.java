@@ -65,7 +65,7 @@ public class HibernateUserVerifierDao extends HibernateAbstractDao<UserVerifier>
     public UserVerifier findByAppIdAndVerifierToken(String appId, String verifierToken) {
         LOG.debug("Searching user verifier by application id [{}] and verifier token [{}]", appId, verifierToken);
         UserVerifier verifier = null;
-        if (isNotBlank(appId)) {
+        if (isNotBlank(appId) && isNotBlank(verifierToken)) {
             verifier = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
                     Restrictions.and(
                             Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
