@@ -146,8 +146,8 @@ public class OperationsServiceIT extends AbstractTest {
     private static final BasicEndpointProfile ENDPOINT_PROFILE = new BasicEndpointProfile("dummy profile 1");
     private static final BasicEndpointProfile NEW_ENDPOINT_PROFILE = new BasicEndpointProfile("dummy profile 2");
     private static final BasicEndpointProfile FAKE_ENDPOINT_PROFILE = new BasicEndpointProfile("dummy profile 3");
-    private static final byte[] ENDPOINT_KEY = "Endpoint Super Secret Public Key".getBytes(UTF_8);
-    private static final byte[] ENDPOINT_KEY2 = "Endpoint Super Secret Public Key 2".getBytes(UTF_8);
+    private static final byte[] ENDPOINT_KEY = getRandEndpointKey();
+    private static final byte[] ENDPOINT_KEY2 = getRandEndpointKey();
     private static final SdkPropertiesDto SDK_PROPERTIES = new SdkPropertiesDto(null, CONF_SCHEMA_VERSION,
             PROFILE_SCHEMA_VERSION, 1, 1, SdkPlatform.JAVA, null, null, null);
     private String SDK_TOKEN;
@@ -361,6 +361,7 @@ public class OperationsServiceIT extends AbstractTest {
         ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
+        md.setSdkToken(SDK_TOKEN);
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(ByteBuffer.wrap(ENDPOINT_KEY),
@@ -395,6 +396,7 @@ public class OperationsServiceIT extends AbstractTest {
         ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
+        md.setSdkToken(SDK_TOKEN);
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(ByteBuffer.wrap(ENDPOINT_KEY),
@@ -442,6 +444,7 @@ public class OperationsServiceIT extends AbstractTest {
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
         md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(oldProfile).getData()));
+        md.setSdkToken(SDK_TOKEN);
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(null,
@@ -622,6 +625,7 @@ public class OperationsServiceIT extends AbstractTest {
         ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY2).getData()));
+        md.setSdkToken(SDK_TOKEN);
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(ByteBuffer.wrap(ENDPOINT_KEY2),

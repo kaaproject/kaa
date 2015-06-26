@@ -91,7 +91,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private volatile boolean isShutdown = false;
     private volatile boolean isPaused = false;
-    private boolean isFirstResponseReceived = false;
+    private volatile boolean isFirstResponseReceived = false;
 
     private KaaDataDemultiplexer demultiplexer;
     private KaaDataMultiplexer multiplexer;
