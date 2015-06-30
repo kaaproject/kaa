@@ -16,7 +16,9 @@
 
 package org.kaaproject.kaa.client.channel.impl;
 
+import org.kaaproject.kaa.client.channel.FailoverDecision;
 import org.kaaproject.kaa.client.channel.FailoverManager;
+import org.kaaproject.kaa.client.channel.FailoverStatus;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
@@ -135,6 +137,12 @@ public class DefaultFailoverManager implements FailoverManager {
         } else {
             LOG.trace("There is no current resolution in progress, connected to the same server: {}", connectionInfo);
         }
+    }
+
+    @Override
+    public FailoverDecision onFailover(FailoverStatus failoverStatus) {
+        // TODO: implement
+        return null;
     }
 
     private void cancelCurrentFailResolution(AccessPointIdResolution accessPointIdResolution) {
