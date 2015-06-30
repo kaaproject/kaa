@@ -31,8 +31,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.IPTransportInfo;
-import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
@@ -99,7 +99,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     private volatile Socket socket;
     private MessageEncoderDecoder encDec;
 
-    private final KaaChannelManager channelManager;
+    private final FailoverManager failoverManager;
 
     private final int RECONNECT_TIMEOUT = 5; // in sec
     private final int SOCKET_OPENING_TIMEOUT = 2;  // in sec
@@ -167,6 +167,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     LOG.error("Failed to process response for channel [{}]", getId(), e);
                 }
                 isFirstResponseReceived = true;
+                failoverManager.onServerConnected(currentServer);
             }
         }
     };
@@ -264,10 +265,10 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private boolean isReadTaskScheduled;
     private volatile boolean isOpenConnectionScheduled;
-
-    public DefaultOperationTcpChannel(KaaClientState state, KaaChannelManager channelManager) {
+    
+    public DefaultOperationTcpChannel(KaaClientState state, FailoverManager failoverManager) {
         this.state = state;
-        this.channelManager = channelManager;
+        this.failoverManager = failoverManager;
         messageFactory.registerMessageListener(connAckListener);
         messageFactory.registerMessageListener(kaaSyncResponseListener);
         messageFactory.registerMessageListener(pingResponseListener);
@@ -371,7 +372,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             return;
         }
 
-        channelManager.onServerFailed(currentServer);
+        failoverManager.onServerFailed(currentServer);
     }
 
     private void schedulePingTask() {
@@ -481,6 +482,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             if (!isFirstResponseReceived) {
                 LOG.info("First KaaSync message received and processed for channel [{}]", getId());
                 isFirstResponseReceived = true;
+                failoverManager.onServerConnected(currentServer);
                 LOG.debug("There are pending requests for channel [{}] -> starting sync", getId());
                 syncAll();
             } else {

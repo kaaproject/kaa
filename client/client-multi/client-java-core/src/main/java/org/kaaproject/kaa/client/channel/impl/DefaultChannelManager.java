@@ -27,6 +27,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
@@ -56,6 +57,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
 
     private final Map<String, BlockingQueue<SyncTask>> syncTaskQueueMap = new ConcurrentHashMap<String, BlockingQueue<SyncTask>>();
     private final Map<String, SyncWorker> syncWorkers = new HashMap<String, DefaultChannelManager.SyncWorker>();
+
+    private FailoverManager failoverManager;
 
     private ConnectivityChecker connectivityChecker;
     private boolean isShutdown = false;
@@ -123,6 +126,11 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             if (server != null) {
                 LOG.debug("Applying server {} for channel [{}] type {}", server, channel.getId(), channel.getTransportProtocolId());
                 channel.setServer(server);
+                if (failoverManager != null) {
+                    failoverManager.onServerChanged(server);
+                } else {
+                    LOG.warn("Failover manager isn't set: null");
+                }
             } else {
                 if (lastServers != null && lastServers.isEmpty()) {
                     if (channel.getServerType() == ServerType.BOOTSTRAP) {
@@ -256,6 +264,11 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             if (channel.getServerType() == newServer.getServerType() && channel.getTransportProtocolId().equals(newServer.getTransportId())) {
                 LOG.debug("Applying server {} for channel [{}] type {}", newServer, channel.getId(), channel.getTransportProtocolId());
                 channel.setServer(newServer);
+                if (failoverManager != null) {
+                    failoverManager.onServerChanged(newServer);
+                } else {
+                    LOG.warn("Failover manager isn't set: null");
+                }
             }
         }
     }
@@ -457,5 +470,9 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             this.stop = true;
             this.interrupt();
         }
+    }
+
+    public void setFailoverManager(FailoverManager failoverManager) {
+        this.failoverManager = failoverManager;
     }
 }

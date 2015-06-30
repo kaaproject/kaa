@@ -30,6 +30,7 @@ import org.kaaproject.kaa.client.bootstrap.DefaultBootstrapManager;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.ConfigurationTransport;
 import org.kaaproject.kaa.client.channel.EventTransport;
+import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
@@ -44,6 +45,7 @@ import org.kaaproject.kaa.client.channel.UserTransport;
 import org.kaaproject.kaa.client.channel.impl.DefaultBootstrapDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.DefaultChannelManager;
 import org.kaaproject.kaa.client.channel.impl.DefaultOperationDataProcessor;
+import org.kaaproject.kaa.client.channel.impl.DefaultFailoverManager;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationTcpChannel;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultBootstrapTransport;
@@ -148,6 +150,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     private final DefaultEndpointRegistrationManager endpointRegistrationManager;
 
     private final KaaInternalChannelManager channelManager;
+    private final FailoverManager failoverManager;
 
     protected final KaaClientPlatformContext context;
     protected final KaaClientStateListener stateListener;
@@ -176,7 +179,11 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         
         bootstrapManager = buildBootstrapManager(properties, kaaClientState, transportContext);
 
-        channelManager = buildChannelManager(bootstrapManager, bootstrapServers, transportContext);
+        channelManager = buildChannelManager(bootstrapManager, bootstrapServers);
+        failoverManager = buildFailoverManager(channelManager);
+        channelManager.setFailoverManager(failoverManager);
+
+        initializeChannels(channelManager, transportContext);
 
         bootstrapManager.setChannelManager(channelManager);
         
@@ -522,10 +529,13 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
                 configurationTransport, userTransport, redirectionTransport, logTransport);
     }
 
-    protected KaaInternalChannelManager buildChannelManager(BootstrapManager bootstrapManager, Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers, TransportContext transportContext) {
+    protected KaaInternalChannelManager buildChannelManager(BootstrapManager bootstrapManager, Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers) {
         KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers);
         channelManager.setConnectivityChecker(context.createConnectivityChecker());
+        return channelManager;
+    }
 
+    protected void initializeChannels(KaaInternalChannelManager channelManager, TransportContext transportContext) {
         DefaultBootstrapDataProcessor bootstrapDataProcessor = new DefaultBootstrapDataProcessor();
         bootstrapDataProcessor.setBootstrapTransport(transportContext.getBootstrapTransport());
 
@@ -539,26 +549,27 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         operationsDataProcessor.setUserTransport(transportContext.getUserTransport());
         operationsDataProcessor.setLogTransport(transportContext.getLogTransport());
 
-        KaaDataChannel bootstrapChannel = new DefaultBootstrapChannel(this, kaaClientState);
+        KaaDataChannel bootstrapChannel = new DefaultBootstrapChannel(this, kaaClientState, failoverManager);
         bootstrapChannel.setMultiplexer(bootstrapDataProcessor);
         bootstrapChannel.setDemultiplexer(bootstrapDataProcessor);
         channelManager.addChannel(bootstrapChannel);
 
-        KaaDataChannel operationsChannel = new DefaultOperationTcpChannel(kaaClientState, channelManager);
+        KaaDataChannel operationsChannel = new DefaultOperationTcpChannel(kaaClientState, failoverManager);
         operationsChannel.setMultiplexer(operationsDataProcessor);
         operationsChannel.setDemultiplexer(operationsDataProcessor);
         channelManager.addChannel(operationsChannel);
-
-        return channelManager;
     }
-    
+
+    protected FailoverManager buildFailoverManager(KaaChannelManager channelManager) {
+        return new DefaultFailoverManager(channelManager, context.getExecutorContext());
+    }
 
     protected ResyncConfigurationManager buildConfigurationManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
         return new ResyncConfigurationManager(properties);
     }
 
     protected DefaultLogCollector buildLogCollector(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
-        return new DefaultLogCollector(transportContext.getLogTransport(), context.getExecutorContext(), channelManager);
+        return new DefaultLogCollector(transportContext.getLogTransport(), context.getExecutorContext(), channelManager, failoverManager);
     }
 
     protected DefaultEndpointRegistrationManager buildRegistrationManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
