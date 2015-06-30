@@ -25,8 +25,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class FailoverDecision {
     private final FailoverAction action;
-    private final long retryPeriod;
-    private final TimeUnit timeUnit;
+    private long retryPeriod;
+    private TimeUnit timeUnit;
+
+    public FailoverDecision(FailoverAction action) {
+        this.action = action;
+    }
 
     public FailoverDecision(FailoverAction action, long retryPeriod, TimeUnit timeUnit) {
         this.action = action;

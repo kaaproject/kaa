@@ -30,16 +30,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.kaaproject.kaa.client.channel.ChannelDirection;
-import org.kaaproject.kaa.client.channel.FailoverManager;
-import org.kaaproject.kaa.client.channel.IPTransportInfo;
-import org.kaaproject.kaa.client.channel.KaaDataChannel;
-import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
-import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
-import org.kaaproject.kaa.client.channel.ServerType;
-import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
-import org.kaaproject.kaa.client.channel.TransportProtocolId;
-import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
+import org.kaaproject.kaa.client.channel.*;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.Constants;
@@ -69,6 +60,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(DefaultOperationTcpChannel.class);
 
+    private static final int EXIT_FAILURE = 1;
     private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<TransportType, ChannelDirection>();
     static {
         SUPPORTED_TYPES.put(TransportType.PROFILE, ChannelDirection.BIDIRECTIONAL);
@@ -101,7 +93,6 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private final FailoverManager failoverManager;
 
-    private final int RECONNECT_TIMEOUT = 5; // in sec
     private final int SOCKET_OPENING_TIMEOUT = 2;  // in sec
     private ConnectivityChecker connectivityChecker;
 
@@ -265,7 +256,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private boolean isReadTaskScheduled;
     private volatile boolean isOpenConnectionScheduled;
-    
+
     public DefaultOperationTcpChannel(KaaClientState state, FailoverManager failoverManager) {
         this.state = state;
         this.failoverManager = failoverManager;
@@ -362,12 +353,29 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     private void onServerFailed() {
         closeConnection();
         if (connectivityChecker != null && !connectivityChecker.checkConnectivity()) {
-            LOG.warn("Loss of connectivity. Attempt to reconnect will be made in {} sec", RECONNECT_TIMEOUT);
-            synchronized (this) {
-                if (!isOpenConnectionScheduled) {
-                    executor.schedule(openConnectionTask, RECONNECT_TIMEOUT, TimeUnit.SECONDS);
-                    isOpenConnectionScheduled = true;
-                }
+            LOG.warn("Loss of connectivity detected");
+
+            FailoverDecision decision = failoverManager.onFailover(FailoverStatus.NO_CONNECTIVITY);
+            switch (decision.getAction()) {
+                case NOOP:
+                    LOG.warn("No operation is performed according to failover strategy decision");
+                    break;
+                case RETRY:
+                    long retryPeriod = decision.getRetryPeriod();
+                    synchronized (this) {
+                        if (!isOpenConnectionScheduled) {
+                            LOG.warn("Attempt to reconnect will be made in {} ms " +
+                                    "according to failover strategy decision", retryPeriod);
+                            executor.schedule(openConnectionTask, retryPeriod, TimeUnit.MILLISECONDS);
+                            isOpenConnectionScheduled = true;
+                        } else {
+                            LOG.info("Reconnect is already scheduled, ignoring the call");
+                        }
+                    }
+                break;
+                case STOP_APP:
+                    LOG.warn("Stopping application according to failover strategy decision!");
+                    System.exit(EXIT_FAILURE);
             }
             return;
         }

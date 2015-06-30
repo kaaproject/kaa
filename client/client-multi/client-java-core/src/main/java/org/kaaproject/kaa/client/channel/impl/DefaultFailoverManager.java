@@ -16,41 +16,62 @@
 
 package org.kaaproject.kaa.client.channel.impl;
 
-import org.kaaproject.kaa.client.channel.FailoverDecision;
-import org.kaaproject.kaa.client.channel.FailoverManager;
-import org.kaaproject.kaa.client.channel.FailoverStatus;
-import org.kaaproject.kaa.client.channel.KaaChannelManager;
-import org.kaaproject.kaa.client.channel.ServerType;
-import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.*;
+import org.kaaproject.kaa.client.channel.FailoverDecision.FailoverAction;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class DefaultFailoverManager implements FailoverManager {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultFailoverManager.class);
 
-    private static final long DEFAULT_RESOLUTION_TIMEOUT = 10000L;      // 10 seconds
+    // all timeout values are specified in seconds
+    private static final long DEFAULT_FAILURE_RESOLUTION_TIMEOUT = 10;
+    private static final long DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD = 2;
+    private static final long DEFAULT_OPERATION_SERVERS_RETRY_PERIOD = 2;
+    private static final long DEFAULT_NO_OPERATION_SERVERS_RETRY_PERIOD = 2;
+    private static final long DEFAULT_NO_CONNECTIVITY_RETRY_PERIOD = 5;
+    private static final TimeUnit DEFAULT_TIMEUNIT = TimeUnit.SECONDS;
+
+    private long failureResolutionTimeout;
+    private long bootstrapServersRetryPeriod;
+    private long operationsServersRetryPeriod;
+    private long noOperationServersRetryPeriod;
+    private long noConnectivityRetryPeriod;
+    private TimeUnit timeUnit = DEFAULT_TIMEUNIT;
 
     private final KaaChannelManager channelManager;
     private final ExecutorContext context;
-    private long resolutionTimeout;
     private Map<ServerType, AccessPointIdResolution> resolutionProgressMap = new HashMap<>();
 
     public DefaultFailoverManager(KaaChannelManager channelManager, ExecutorContext context) {
-        this(channelManager, context, DEFAULT_RESOLUTION_TIMEOUT);
+        this(channelManager,
+             context,
+             DEFAULT_FAILURE_RESOLUTION_TIMEOUT,
+             DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD,
+             DEFAULT_OPERATION_SERVERS_RETRY_PERIOD,
+             DEFAULT_NO_OPERATION_SERVERS_RETRY_PERIOD,
+             DEFAULT_NO_CONNECTIVITY_RETRY_PERIOD,
+             DEFAULT_TIMEUNIT);
     }
 
-    public DefaultFailoverManager(KaaChannelManager channelManager, ExecutorContext context, long resolutionTimeoutMs) {
+    public DefaultFailoverManager(KaaChannelManager channelManager, ExecutorContext context,
+                                  long failureResolutionTimeout, long bootstrapServersRetryPeriod,
+                                  long operationsServersRetryPeriod, long noOperationServersRetryPeriod,
+                                  long noConnectivityRetryPeriod, TimeUnit timeUnit) {
         this.channelManager = channelManager;
         this.context = context;
-        this.resolutionTimeout = resolutionTimeoutMs;
+        this.failureResolutionTimeout = failureResolutionTimeout;
+        this.bootstrapServersRetryPeriod = bootstrapServersRetryPeriod;
+        this.operationsServersRetryPeriod = operationsServersRetryPeriod;
+        this.noOperationServersRetryPeriod = noOperationServersRetryPeriod;
+        this.noConnectivityRetryPeriod = noConnectivityRetryPeriod;
+        this.timeUnit = timeUnit;
     }
 
     @Override
@@ -75,14 +96,16 @@ public class DefaultFailoverManager implements FailoverManager {
             }
         }
 
-        LOG.trace("Next fail resolution will be available in {} ms", resolutionTimeout);
+        LOG.trace("Next fail resolution will be available in {} s",
+                        TimeUnit.SECONDS.convert(failureResolutionTimeout, timeUnit));
+
         Future<?> currentResolution = context.getScheduledExecutor().schedule(new Runnable() {
             @Override
             public void run() {
                 LOG.debug("Removing server {} from resolution map for type: {}", connectionInfo, connectionInfo.getServerType());
                 resolutionProgressMap.remove(connectionInfo.getServerType());
             }
-        }, resolutionTimeout, TimeUnit.MILLISECONDS);
+        }, failureResolutionTimeout, timeUnit);
 
         channelManager.onServerFailed(connectionInfo);
 
@@ -141,8 +164,18 @@ public class DefaultFailoverManager implements FailoverManager {
 
     @Override
     public FailoverDecision onFailover(FailoverStatus failoverStatus) {
-        // TODO: implement
-        return null;
+        switch(failoverStatus) {
+            case NO_BOOTSTRAP_SERVERS:
+                return new FailoverDecision(FailoverAction.RETRY, bootstrapServersRetryPeriod, timeUnit);
+            case NO_OPERATION_SERVERS:
+                return new FailoverDecision(FailoverAction.RETRY, noOperationServersRetryPeriod, timeUnit);
+            case ALL_OPERATION_SERVERS_NA:
+                return new FailoverDecision(FailoverAction.RETRY, operationsServersRetryPeriod, timeUnit);
+            case NO_CONNECTIVITY:
+                return new FailoverDecision(FailoverAction.RETRY, noConnectivityRetryPeriod, timeUnit);
+            default:
+                return new FailoverDecision(FailoverAction.NOOP);
+        }
     }
 
     private void cancelCurrentFailResolution(AccessPointIdResolution accessPointIdResolution) {

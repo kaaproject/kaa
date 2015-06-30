@@ -18,10 +18,7 @@ package org.kaaproject.kaa.client.bootstrap;
 
 import java.util.List;
 
-import org.kaaproject.kaa.client.channel.BootstrapTransport;
-import org.kaaproject.kaa.client.channel.KaaChannelManager;
-import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
-import org.kaaproject.kaa.client.channel.TransportProtocolId;
+import org.kaaproject.kaa.client.channel.*;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 
@@ -70,6 +67,14 @@ public interface BootstrapManager {
      * @see KaaChannelManager
      */
     void setChannelManager(KaaInternalChannelManager manager);
+
+    /**
+     * Sets Failover manager.
+     *
+     * @param manager the failover manager to be set
+     * @see FailoverManager
+     */
+    void setFailoverManager(FailoverManager manager);
 
     /**
      * Updates the operation server list.

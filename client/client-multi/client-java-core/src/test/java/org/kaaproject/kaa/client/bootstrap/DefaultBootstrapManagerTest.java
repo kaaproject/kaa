@@ -18,6 +18,7 @@ package org.kaaproject.kaa.client.bootstrap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -29,20 +30,14 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
-import org.kaaproject.kaa.client.channel.BootstrapTransport;
-import org.kaaproject.kaa.client.channel.FailoverManager;
-import org.kaaproject.kaa.client.channel.IPTransportInfo;
-import org.kaaproject.kaa.client.channel.IPTransportInfoTest;
-import org.kaaproject.kaa.client.channel.KaaDataChannel;
-import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
-import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
-import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
-import org.kaaproject.kaa.client.channel.KaaInvalidChannelException;
-import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
-import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
+import org.kaaproject.kaa.client.channel.*;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
+import org.kaaproject.kaa.client.channel.impl.DefaultFailoverManager;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
@@ -189,7 +184,7 @@ public class DefaultBootstrapManagerTest {
     @Test
     public void testReceiveOperationsServerList() throws TransportException {
         BootstrapTransport transport = mock(BootstrapTransport.class);
-        DefaultBootstrapManager manager = new DefaultBootstrapManager(transport);
+        DefaultBootstrapManager manager = new DefaultBootstrapManager(transport, null);
 
         boolean exception = false;
         try {
@@ -207,7 +202,8 @@ public class DefaultBootstrapManagerTest {
 
     @Test
     public void testOperationsServerInfoRetrieving() throws TransportException, NoSuchAlgorithmException, InvalidKeySpecException {
-        DefaultBootstrapManager manager = new DefaultBootstrapManager(null);
+        ExecutorContext executorContext = mock(ExecutorContext.class);
+        DefaultBootstrapManager manager = new DefaultBootstrapManager(null, executorContext);
 
         boolean exception = false;
         try {
@@ -230,8 +226,12 @@ public class DefaultBootstrapManagerTest {
         list.add(md);
 
         ChanelManagerMock channelManager = spy(new ChanelManagerMock());
+        when(executorContext.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
+        FailoverManager failoverManager =
+                spy(new DefaultFailoverManager(channelManager, executorContext, 1, 1, 1, 1, 1, TimeUnit.MILLISECONDS));
 
         manager.setChannelManager(channelManager);
+        manager.setFailoverManager(failoverManager);
         manager.setTransport(transport);
         manager.onProtocolListUpdated(list);
         manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
@@ -239,12 +239,12 @@ public class DefaultBootstrapManagerTest {
         assertEquals("http://localhost:9889", channelManager.getReceivedUrl());
 
         manager.useNextOperationsServerByAccessPointId("some.name".hashCode());
-        verify(channelManager, times(1)).onTransportConnectionInfoUpdated(Mockito.any(TransportConnectionInfo.class));
+        verify(channelManager, times(1)).onTransportConnectionInfoUpdated(any(TransportConnectionInfo.class));
     }
 
     @Test
     public void testUseServerByDnsName() throws NoSuchAlgorithmException {
-        DefaultBootstrapManager manager = new DefaultBootstrapManager(null);
+        DefaultBootstrapManager manager = new DefaultBootstrapManager(null, null);
 
         ChanelManagerMock channelManager = spy(new ChanelManagerMock());
         manager.setChannelManager(channelManager);
@@ -266,7 +266,7 @@ public class DefaultBootstrapManagerTest {
         assertEquals("http://localhost:9889", channelManager.getReceivedUrl());
 
         manager.useNextOperationsServerByAccessPointId("localhost2:9889".hashCode());
-        Mockito.verify(transport, Mockito.times(1)).sync();
+        verify(transport, times(1)).sync();
 
         list = new ArrayList<ProtocolMetaData>();
         md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost2", 9889, keyPair.getPublic());

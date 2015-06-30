@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -47,7 +48,7 @@ public class DefaultFailoverManagerTest {
         channelManager = Mockito.mock(KaaChannelManager.class);
         context = Mockito.mock(ExecutorContext.class);
         Mockito.when(context.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
-        failoverManager = new DefaultFailoverManager(channelManager, context, RESOLUTION_TIMEOUT_MS);
+        failoverManager = new DefaultFailoverManager(channelManager, context, RESOLUTION_TIMEOUT_MS, 1, 1, 1, 1, TimeUnit.MILLISECONDS);
         resolutionProgressMap = Mockito.spy(new HashMap<ServerType, DefaultFailoverManager.AccessPointIdResolution>());
         ReflectionTestUtils.setField(failoverManager, "resolutionProgressMap", resolutionProgressMap);
     }
