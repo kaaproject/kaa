@@ -16,7 +16,8 @@
 
 package org.kaaproject.kaa.server.control.service.sdk;
 
-import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
+
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 
 /**
  * A factory for creating SdkGenerator objects.

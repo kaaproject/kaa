@@ -18,6 +18,7 @@ package org.kaaproject.kaa.client.logging;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -37,7 +38,7 @@ public class DesktopSQLiteDBLogStorageTest extends AbstractPersistentLogStorageT
     }
 
     @Override
-    protected DesktopSQLiteDBLogStorage getStorage(long bucketSize) {
+    protected DesktopSQLiteDBLogStorage getStorage(long bucketSize, int recordCount) {
         return getStorage();
     }
 

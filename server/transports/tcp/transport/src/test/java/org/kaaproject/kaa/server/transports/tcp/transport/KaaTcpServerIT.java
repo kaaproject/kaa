@@ -61,7 +61,7 @@ public class KaaTcpServerIT {
                         @Override
                         public void process(SessionInitMessage message) {
                             message.onSessionCreated(new SessionInfo(UUID.randomUUID(), 1, Mockito.mock(ChannelContext.class),
-                                    ChannelType.ASYNC, null, null, null, 100, false));
+                                    ChannelType.ASYNC, null, null, null, null, 100, false));
                             handler.process(message);
                         }
 

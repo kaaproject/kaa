@@ -41,6 +41,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private PreparedStatement deleteByRecordIdStatement;
     private PreparedStatement deleteByBucketIdStatement;
     private PreparedStatement resetBucketIdStatement;
+    private PreparedStatement selectUnmarkedStatement;
 
     private long totalRecordCount;
     private long unmarkedRecordCount;
@@ -112,19 +113,30 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
         return this;
     }
 
+
+
+
     @Override
-    public LogBlock getRecordBlock(long blockSize) {
+    public LogBlock getRecordBlock(long blockSize, int batchCount) {
         synchronized (connection) {
-            LOG.trace("Creating a new record block, needed size: {}", blockSize);
-            Statement statement = null;
+            LOG.trace("Creating a new record block, needed size: {}, batch count: {}", blockSize, batchCount);
+            if (selectUnmarkedStatement == null) {
+                try {
+                    selectUnmarkedStatement = connection.prepareStatement(PersistentLogStorageConstants.KAA_SELECT_UNMARKED_RECORDS);
+                } catch (SQLException e) {
+                    LOG.error("Can't create select unmarked statement", e);
+                    throw new RuntimeException(e);
+                }
+            }
+
             ResultSet rs = null;
             LogBlock logBlock = null;
             List<String> unmarkedRecordIds = new LinkedList<>();
             List<LogRecord> logRecords = new LinkedList<>();
             try {
                 long leftBlockSize = blockSize;
-                statement = connection.createStatement();
-                rs = statement.executeQuery(PersistentLogStorageConstants.KAA_SELECT_UNMARKED_RECORDS);
+                selectUnmarkedStatement.setInt(1, batchCount);
+                rs = selectUnmarkedStatement.executeQuery();
                 while (rs.next()) {
                     int recordId = rs.getInt(1);
                     byte[] recordData = rs.getBytes(2);
@@ -163,7 +175,6 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             } finally {
                 try {
                     tryCloseResultSet(rs);
-                    tryCloseStatement(statement);
                 } catch (SQLException e) {
                     LOG.error("Can't close result set", e);
                 }
@@ -344,6 +355,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             tryCloseStatement(deleteByRecordIdStatement);
             tryCloseStatement(deleteByBucketIdStatement);
             tryCloseStatement(resetBucketIdStatement);
+            tryCloseStatement(selectUnmarkedStatement);
 
             if (connection != null) {
                 connection.close();

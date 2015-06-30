@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.operations.pojo;
 import java.util.Arrays;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.server.sync.EndpointVersionInfo;
 
 
 /**
@@ -41,8 +40,8 @@ public class UpdateProfileRequest {
     /** The app token. */
     private final String appToken;
 
-    /** The version info. */
-    private final EndpointVersionInfo versionInfo;
+    /** The sdk token. */
+    private final String sdkToken;
 
     private final String accessToken;
 
@@ -55,16 +54,16 @@ public class UpdateProfileRequest {
      *            the endpoint key hash
      * @param profile
      *            the profile
-     * @param versionInfo
-     *            the version info
+     * @param sdkToken
+     *            the sdk token
      */
-    public UpdateProfileRequest(String appToken, EndpointObjectHash endpointKeyHash, String accessToken, byte[] profile, EndpointVersionInfo versionInfo) {
+    public UpdateProfileRequest(String appToken, EndpointObjectHash endpointKeyHash, String accessToken, byte[] profile, String sdkToken) {
         super();
         this.appToken = appToken;
         this.endpointKeyHash = endpointKeyHash;
         this.accessToken = accessToken;
         this.profile = Arrays.copyOf(profile, profile.length);
-        this.versionInfo = versionInfo;
+        this.sdkToken = sdkToken;
     }
 
     /**
@@ -104,11 +103,11 @@ public class UpdateProfileRequest {
     }
 
     /**
-     * Gets the version info.
+     * Gets the sdk token.
      *
-     * @return the version info
+     * @return the sdk token
      */
-    public EndpointVersionInfo getVersionInfo() {
-        return versionInfo;
+    public String getSdkToken() {
+        return sdkToken;
     }
 }

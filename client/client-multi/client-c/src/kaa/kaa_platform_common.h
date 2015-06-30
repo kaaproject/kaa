@@ -56,7 +56,7 @@ extern "C" {
 #define KAA_REDIRECT_EXTENSION_TYPE         8
 
 
-#define KAA_APPLICATION_TOKEN_LENGTH    20
+#define KAA_SDK_TOKEN_LENGTH    28
 
 /**
  * Constants used for a meta data extension.

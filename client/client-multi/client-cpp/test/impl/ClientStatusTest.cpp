@@ -146,14 +146,6 @@ BOOST_AUTO_TEST_CASE(checkSetAndSaveParameters)
     cleanfile();
 }
 
-BOOST_AUTO_TEST_CASE(checkConfigVersionUpdates)
-{
-    const std::string filename(RESOURCE_DIR + std::string("/test_kaa_status.file"));
-    ClientStatus cs(filename);
-
-    BOOST_CHECK_MESSAGE(cs.isConfigurationVersionUpdated(), "Expect: configuration version is updated");
-}
-
 }  // namespace kaa
 
 BOOST_AUTO_TEST_SUITE_END()

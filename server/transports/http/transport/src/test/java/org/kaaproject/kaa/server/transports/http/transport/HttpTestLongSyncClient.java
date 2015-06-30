@@ -43,7 +43,7 @@ import org.kaaproject.kaa.server.transports.http.transport.commands.LongSyncComm
 public class HttpTestLongSyncClient extends HttpTestClient<SyncRequest, SyncResponse> {
 
     /** Defined application token */
-    public static final String APPLICATION_TOKEN = "123test";
+    public static final String SDK_TOKEN = "123test";
 
     /** Hash size, in test we use fake hashes gust generating them as random bytes */
     public static final int HASH_SIZE = 32;
@@ -107,7 +107,7 @@ public class HttpTestLongSyncClient extends HttpTestClient<SyncRequest, SyncResp
 
         SyncRequest request = new SyncRequest();
         request.setSyncRequestMetaData(new SyncRequestMetaData());
-        request.getSyncRequestMetaData().setApplicationToken(APPLICATION_TOKEN);
+        request.getSyncRequestMetaData().setSdkToken(SDK_TOKEN);
         request.getSyncRequestMetaData().setEndpointPublicKeyHash(ByteBuffer.wrap(getClientPublicKeyHash().getData()));
         request.getSyncRequestMetaData().setProfileHash(ByteBuffer.wrap(profileHash));
 

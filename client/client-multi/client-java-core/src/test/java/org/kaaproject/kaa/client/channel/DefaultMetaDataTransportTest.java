@@ -45,7 +45,7 @@ public class DefaultMetaDataTransportTest {
         SyncRequestMetaData request = transport.createMetaDataRequest();
 
         Mockito.verify(state, Mockito.times(1)).getProfileHash();
-        Mockito.verify(properties, Mockito.times(1)).getApplicationToken();
+        Mockito.verify(properties, Mockito.times(1)).getSdkToken();
 
         Assert.assertEquals(new Long(5), request.getTimeout());
     }

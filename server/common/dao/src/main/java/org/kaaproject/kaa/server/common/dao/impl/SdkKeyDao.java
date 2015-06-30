@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.client.logging;
+package org.kaaproject.kaa.server.common.dao.impl;
 
-public class MemoryLogStorageTest extends AbstractLogStorageTest {
+public interface SdkKeyDao<T> extends Dao<T, String> {
 
-    @Override
-    protected Object getStorage(long bucketSize) {
-        return new MemoryLogStorage(bucketSize);
-    }
+    /**
+     * Find Sdk key object by its token
+     * @param token     token of an SDK
+     * @return the found sdk token
+     */
+    public T findSdkKeyByToken(String token);
 }

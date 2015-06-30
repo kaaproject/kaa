@@ -29,6 +29,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
@@ -74,6 +75,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     private IPTransportInfo currentServer;
     private final AbstractKaaClient client;
     private final KaaClientState state;
+    private final FailoverManager failoverManager;
 
     private ScheduledExecutorService scheduler;
 
@@ -114,9 +116,10 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
         }
     };
 
-    public DefaultOperationsChannel(AbstractKaaClient client, KaaClientState state) {
+    public DefaultOperationsChannel(AbstractKaaClient client, KaaClientState state, FailoverManager failoverManager) {
         this.client = client;
         this.state = state;
+        this.failoverManager = failoverManager;
     }
 
     protected ScheduledExecutorService createExecutor() {
@@ -189,6 +192,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
             }
             demultiplexer.processResponse(decodedResponse);
             processingResponse = false;
+            failoverManager.onServerConnected(currentServer);
         } catch (Exception e) {
             LOG.error("Failed to process response {}", Arrays.toString(response));
             LOG.error("Exception stack trace: ", e);
@@ -202,7 +206,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
             synchronized (this) {
                 stopPollScheduler(false);
             }
-            client.getChannelManager().onServerFailed(info);
+            failoverManager.onServerFailed(info);
         } else {
             LOG.debug("Channel [{}] connection aborted", getId());
         }

@@ -7,9 +7,9 @@ package org.kaaproject.kaa.common.endpoint.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SyncRequestMetaData\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"applicationToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointPublicKeyHash\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"profileHash\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"timeout\",\"type\":[\"long\",\"null\"]}],\"direction\":\"out\"}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SyncRequestMetaData\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen\",\"fields\":[{\"name\":\"sdkToken\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"endpointPublicKeyHash\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"profileHash\",\"type\":[\"bytes\",\"null\"]},{\"name\":\"timeout\",\"type\":[\"long\",\"null\"]}],\"direction\":\"out\"}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-   private java.lang.String applicationToken;
+   private java.lang.String sdkToken;
    private java.nio.ByteBuffer endpointPublicKeyHash;
    private java.nio.ByteBuffer profileHash;
    private java.lang.Long timeout;
@@ -24,8 +24,8 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
   /**
    * All-args constructor.
    */
-  public SyncRequestMetaData(java.lang.String applicationToken, java.nio.ByteBuffer endpointPublicKeyHash, java.nio.ByteBuffer profileHash, java.lang.Long timeout) {
-    this.applicationToken = applicationToken;
+  public SyncRequestMetaData(java.lang.String sdkToken, java.nio.ByteBuffer endpointPublicKeyHash, java.nio.ByteBuffer profileHash, java.lang.Long timeout) {
+    this.sdkToken = sdkToken;
     this.endpointPublicKeyHash = endpointPublicKeyHash;
     this.profileHash = profileHash;
     this.timeout = timeout;
@@ -35,7 +35,7 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
   // Used by DatumWriter.  Applications should not call. 
   public java.lang.Object get(int field$) {
     switch (field$) {
-    case 0: return applicationToken;
+    case 0: return sdkToken;
     case 1: return endpointPublicKeyHash;
     case 2: return profileHash;
     case 3: return timeout;
@@ -46,7 +46,7 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: applicationToken = (java.lang.String)value$; break;
+    case 0: sdkToken = (java.lang.String)value$; break;
     case 1: endpointPublicKeyHash = (java.nio.ByteBuffer)value$; break;
     case 2: profileHash = (java.nio.ByteBuffer)value$; break;
     case 3: timeout = (java.lang.Long)value$; break;
@@ -55,18 +55,18 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
   }
 
   /**
-   * Gets the value of the 'applicationToken' field.
+   * Gets the value of the 'sdkToken' field.
    */
-  public java.lang.String getApplicationToken() {
-    return applicationToken;
+  public java.lang.String getSdkToken() {
+    return sdkToken;
   }
 
   /**
-   * Sets the value of the 'applicationToken' field.
+   * Sets the value of the 'sdkToken' field.
    * @param value the value to set.
    */
-  public void setApplicationToken(java.lang.String value) {
-    this.applicationToken = value;
+  public void setSdkToken(java.lang.String value) {
+    this.sdkToken = value;
   }
 
   /**
@@ -135,7 +135,7 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<SyncRequestMetaData>
     implements org.apache.avro.data.RecordBuilder<SyncRequestMetaData> {
 
-    private java.lang.String applicationToken;
+    private java.lang.String sdkToken;
     private java.nio.ByteBuffer endpointPublicKeyHash;
     private java.nio.ByteBuffer profileHash;
     private java.lang.Long timeout;
@@ -148,8 +148,8 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
     /** Creates a Builder by copying an existing Builder */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder other) {
       super(other);
-      if (isValidValue(fields()[0], other.applicationToken)) {
-        this.applicationToken = data().deepCopy(fields()[0].schema(), other.applicationToken);
+      if (isValidValue(fields()[0], other.sdkToken)) {
+        this.sdkToken = data().deepCopy(fields()[0].schema(), other.sdkToken);
         fieldSetFlags()[0] = true;
       }
       if (isValidValue(fields()[1], other.endpointPublicKeyHash)) {
@@ -169,8 +169,8 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
     /** Creates a Builder by copying an existing SyncRequestMetaData instance */
     private Builder(org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData other) {
             super(org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.SCHEMA$);
-      if (isValidValue(fields()[0], other.applicationToken)) {
-        this.applicationToken = data().deepCopy(fields()[0].schema(), other.applicationToken);
+      if (isValidValue(fields()[0], other.sdkToken)) {
+        this.sdkToken = data().deepCopy(fields()[0].schema(), other.sdkToken);
         fieldSetFlags()[0] = true;
       }
       if (isValidValue(fields()[1], other.endpointPublicKeyHash)) {
@@ -187,27 +187,27 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
       }
     }
 
-    /** Gets the value of the 'applicationToken' field */
-    public java.lang.String getApplicationToken() {
-      return applicationToken;
+    /** Gets the value of the 'sdkToken' field */
+    public java.lang.String getSdkToken() {
+      return sdkToken;
     }
     
-    /** Sets the value of the 'applicationToken' field */
-    public org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder setApplicationToken(java.lang.String value) {
+    /** Sets the value of the 'sdkToken' field */
+    public org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder setSdkToken(java.lang.String value) {
       validate(fields()[0], value);
-      this.applicationToken = value;
+      this.sdkToken = value;
       fieldSetFlags()[0] = true;
       return this; 
     }
     
-    /** Checks whether the 'applicationToken' field has been set */
-    public boolean hasApplicationToken() {
+    /** Checks whether the 'sdkToken' field has been set */
+    public boolean hasSdkToken() {
       return fieldSetFlags()[0];
     }
     
-    /** Clears the value of the 'applicationToken' field */
-    public org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder clearApplicationToken() {
-      applicationToken = null;
+    /** Clears the value of the 'sdkToken' field */
+    public org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData.Builder clearSdkToken() {
+      sdkToken = null;
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -291,7 +291,7 @@ public class SyncRequestMetaData extends org.apache.avro.specific.SpecificRecord
     public SyncRequestMetaData build() {
       try {
         SyncRequestMetaData record = new SyncRequestMetaData();
-        record.applicationToken = fieldSetFlags()[0] ? this.applicationToken : (java.lang.String) defaultValue(fields()[0]);
+        record.sdkToken = fieldSetFlags()[0] ? this.sdkToken : (java.lang.String) defaultValue(fields()[0]);
         record.endpointPublicKeyHash = fieldSetFlags()[1] ? this.endpointPublicKeyHash : (java.nio.ByteBuffer) defaultValue(fields()[1]);
         record.profileHash = fieldSetFlags()[2] ? this.profileHash : (java.nio.ByteBuffer) defaultValue(fields()[2]);
         record.timeout = fieldSetFlags()[3] ? this.timeout : (java.lang.Long) defaultValue(fields()[3]);

@@ -57,6 +57,10 @@
             <directory>${project.basedir}/source/smarthome/android</directory>
             <useDefaultExcludes>true</useDefaultExcludes>
             <outputDirectory>smarthome/android/SmartHome</outputDirectory>
+            <excludes>
+                <exclude>bin/</exclude>
+                <exclude>gen/</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
 </assembly>

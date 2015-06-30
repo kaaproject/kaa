@@ -17,6 +17,7 @@ package org.kaaproject.kaa.client.context;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,20 +37,23 @@ public class SimpleExecutorContext extends AbstractExecutorContext implements Ex
     private final int lifeCycleThreadCount;
     private final int apiThreadCount;
     private final int callbackThreadCount;
+    private final int scheduledThreadCount;
 
     private ExecutorService lifeCycleExecutor;
     private ExecutorService apiExecutor;
     private ExecutorService callbackExecutor;
+    private ScheduledExecutorService scheduledExecutor;
 
     public SimpleExecutorContext() {
-        this(SINGLE_THREAD, SINGLE_THREAD, SINGLE_THREAD);
+        this(SINGLE_THREAD, SINGLE_THREAD, SINGLE_THREAD, SINGLE_THREAD);
     }
 
-    public SimpleExecutorContext(int lifeCycleThreadCount, int apiThreadCount, int callbackThreadCount) {
+    public SimpleExecutorContext(int lifeCycleThreadCount, int apiThreadCount, int callbackThreadCount, int scheduledThreadCount) {
         super();
         this.lifeCycleThreadCount = lifeCycleThreadCount;
         this.apiThreadCount = apiThreadCount;
         this.callbackThreadCount = callbackThreadCount;
+        this.scheduledThreadCount = scheduledThreadCount;
     }
 
     @Override
@@ -58,6 +62,7 @@ public class SimpleExecutorContext extends AbstractExecutorContext implements Ex
         lifeCycleExecutor = createExecutor(lifeCycleThreadCount);
         apiExecutor = createExecutor(apiThreadCount);
         callbackExecutor = createExecutor(callbackThreadCount);
+        scheduledExecutor = createScheduledExecutor(scheduledThreadCount);
         LOG.debug("Created executor services");
     }
 
@@ -66,6 +71,7 @@ public class SimpleExecutorContext extends AbstractExecutorContext implements Ex
         shutdownExecutor(lifeCycleExecutor);
         shutdownExecutor(apiExecutor);
         shutdownExecutor(callbackExecutor);
+        shutdownExecutor(scheduledExecutor);
     }
 
     @Override
@@ -83,11 +89,24 @@ public class SimpleExecutorContext extends AbstractExecutorContext implements Ex
         return callbackExecutor;
     }
 
+    @Override
+    public ScheduledExecutorService getScheduledExecutor() {
+        return scheduledExecutor;
+    }
+
     private ExecutorService createExecutor(int nThreads) {
         if (nThreads == 1) {
             return Executors.newSingleThreadExecutor();
         } else {
             return Executors.newFixedThreadPool(nThreads);
+        }
+    }
+
+    private ScheduledExecutorService createScheduledExecutor(int nThreads) {
+        if (nThreads == 1) {
+            return Executors.newSingleThreadScheduledExecutor();
+        } else {
+            return Executors.newScheduledThreadPool(nThreads);
         }
     }
 }
