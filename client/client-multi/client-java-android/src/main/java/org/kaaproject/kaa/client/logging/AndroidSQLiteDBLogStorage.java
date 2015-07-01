@@ -41,8 +41,9 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private final SQLiteOpenHelper dbHelper;
     private final SQLiteDatabase database;
 
-    private long recordCount;
-    private long consumedSize;
+    private long totalRecordCount;
+    private long unmarkedRecordCount;
+    private long unmarkedConsumedSize;
     private int currentBucketId = 1;
 
     private Map<Integer, Long> consumedMemoryStorage = new HashMap<>();
@@ -61,7 +62,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
         dbHelper = new DataCollectionDBHelper(context, dbName);
         database = dbHelper.getWritableDatabase();
         retrieveConsumedSizeAndVolume();
-        if (recordCount > 0) {
+        if (totalRecordCount > 0) {
             resetBucketIDs();
         }
     }
@@ -83,9 +84,11 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 insertStatement.bindBlob(1, record.getData());
                 long insertedId = insertStatement.executeInsert();
                 if (insertedId >= 0) {
-                    consumedSize += record.getSize();
-                    recordCount++;
-                    Log.i(TAG, "Added a new log record, records count: " + recordCount + ", data: " + Arrays.toString(record.getData()));
+                    unmarkedConsumedSize += record.getSize();
+                    totalRecordCount++;
+                    unmarkedRecordCount++;
+                    Log.i(TAG, "Added a new log record, total record count: " + totalRecordCount + ", data: " + Arrays.toString(record.getData()) +
+                        "unmarked record count: " + unmarkedRecordCount);
                 } else {
                     Log.w(TAG, "No log record was added");
                 }
@@ -134,11 +137,14 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                     logBlock = new LogBlock(currentBucketId++, logRecords);
 
                     long logBlockSize = blockSize - leftBlockSize;
-                    consumedSize -= logBlockSize;
+                    unmarkedConsumedSize -= logBlockSize;
+                    unmarkedRecordCount -= logRecords.size();
                     consumedMemoryStorage.put(logBlock.getBlockId(), logBlockSize);
 
-                    Log.i(TAG, "Created log block: id [" + logBlock.getBlockId() + "], size: " + logBlockSize + ". Log block record count: " +
-                            logBlock.getRecords().size() + ", Total record count: " + recordCount);
+                    Log.i(TAG, "Created log block: id [" + logBlock.getBlockId() + "], size: " +
+                            logBlockSize + ". Log block record count: " +
+                            logBlock.getRecords().size() + ", total record count: " + totalRecordCount +
+                            ", unmarked record count: " + unmarkedRecordCount);
                 } else {
                     Log.i(TAG, "No unmarked log records found");
                 }
@@ -174,7 +180,7 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 long affectedRows = getAffectedRowCount();
 
                 if (affectedRows > 0) {
-                    recordCount--;
+                    totalRecordCount--;
                     Log.i(TAG, "Removed log record with id [" + recordId + "]");
                 } else {
                     Log.w(TAG, "No log record was removed");
@@ -240,8 +246,8 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 long removedRecordsCount = getAffectedRowCount();
 
                 if (removedRecordsCount > 0) {
-                    recordCount -= removedRecordsCount;
-                    Log.i(TAG, "Removed " + removedRecordsCount + " records from storage. Total log record count: " + recordCount);
+                    totalRecordCount -= removedRecordsCount;
+                    Log.i(TAG, "Removed " + removedRecordsCount + " records from storage. Total log record count: " + totalRecordCount);
                 } else {
                     Log.i(TAG, "No records were removed from storage");
                 }
@@ -272,7 +278,8 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 if (affectedRows > 0) {
                     Log.i(TAG, "Total " + affectedRows + " log records reset for bucket id: [" + bucketId + "]");
                     long previouslyConsumedSize = consumedMemoryStorage.remove(bucketId);
-                    consumedSize += previouslyConsumedSize;
+                    unmarkedConsumedSize += previouslyConsumedSize;
+                    unmarkedRecordCount += affectedRows;
                 } else {
                     Log.i(TAG, "No log records for bucket with id: [" + bucketId + "]");
                 }
@@ -301,12 +308,12 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
     @Override
     public long getConsumedVolume() {
-        return consumedSize;
+        return unmarkedConsumedSize;
     }
 
     @Override
     public long getRecordCount() {
-        return recordCount;
+        return unmarkedRecordCount;
     }
 
     private void retrieveConsumedSizeAndVolume() {
@@ -315,9 +322,9 @@ public class AndroidSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             try {
                 cursor = database.rawQuery(PersistentLogStorageConstants.KAA_HOW_MANY_LOGS_IN_DB, null);
                 if (cursor.moveToFirst()) {
-                    recordCount = cursor.getLong(0);
-                    consumedSize = cursor.getLong(1);
-                    Log.i(TAG, "Retrieved record count: " + recordCount + ", consumed size: " + consumedSize);
+                    unmarkedRecordCount = totalRecordCount = cursor.getLong(0);
+                    unmarkedConsumedSize = cursor.getLong(1);
+                    Log.i(TAG, "Retrieved record count: " + totalRecordCount + ", consumed size: " + unmarkedConsumedSize);
                 } else {
                     Log.e(TAG, "Unable to retrieve consumed size and volume");
                     throw new RuntimeException("Unable to retrieve consumed size and volume");

@@ -235,5 +235,51 @@ public abstract class AbstractLogStorageTest {
         storage.close();
     }
 
+    @Test
+    public void testLogStoreCountAndVolume() {
+        long bucketSize = 9;
+        int recordCount = 3;
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
+        LogRecord record = new LogRecord();
+
+        int insertionCount = 9;
+        int receivedCount = 0;
+
+        /*
+         * Size of each record is 3B
+         */
+        int iter = insertionCount;
+        while (iter-- > 0) {
+            storage.addLogRecord(record);
+        }
+
+        LogBlock logBlock = storage.getRecordBlock(6, 2);
+        receivedCount = addIfNotEmpty(receivedCount, logBlock);
+        Assert.assertEquals(insertionCount - receivedCount, storage.getStatus().getRecordCount());
+        Assert.assertEquals((insertionCount - receivedCount) * 3, storage.getStatus().getConsumedVolume());
+
+        logBlock = storage.getRecordBlock(7, 3);
+        receivedCount = addIfNotEmpty(receivedCount, logBlock);
+        Assert.assertEquals(insertionCount - receivedCount, storage.getStatus().getRecordCount());
+        Assert.assertEquals((insertionCount - receivedCount) * 3, storage.getStatus().getConsumedVolume());
+
+        logBlock = storage.getRecordBlock(9, 2);
+        receivedCount = addIfNotEmpty(receivedCount, logBlock);
+        Assert.assertEquals(insertionCount - receivedCount, storage.getStatus().getRecordCount());
+        Assert.assertEquals((insertionCount - receivedCount) * 3, storage.getStatus().getConsumedVolume());
+
+        storage.notifyUploadFailed(logBlock.getBlockId());
+        receivedCount -= logBlock.getRecords().size();
+        Assert.assertEquals(insertionCount - receivedCount, storage.getStatus().getRecordCount());
+        Assert.assertEquals((insertionCount - receivedCount) * 3, storage.getStatus().getConsumedVolume());
+    }
+
+    private int addIfNotEmpty(int count, LogBlock logBlock) {
+        if (logBlock != null && logBlock.getRecords().size() > 0) {
+            count += logBlock.getRecords().size();
+        }
+        return count;
+    }
+
     protected abstract Object getStorage(long bucketSize, int recordCount);
 }
