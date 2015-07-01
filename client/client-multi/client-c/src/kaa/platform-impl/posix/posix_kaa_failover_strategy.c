@@ -1,8 +1,18 @@
+
 /*
- * posix_kaa_strategy.c
+ * Copyright 2014-2015 CyberVision, Inc.
  *
- *  Created on: Jul 1, 2015
- *      Author: architec
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <time.h>
@@ -85,4 +95,10 @@ void kaa_failover_execute(kaa_failover_strategy_t* self, kaa_access_point_t *acc
         KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Stopping application according to the failover strategy...");
         exit(0);
     }
+}
+
+void kaa_failover_strategy_reset_next_execution_time(kaa_failover_strategy_t *self)
+{
+    KAA_RETURN_IF_NIL(self, );
+    self->metadata.next_execution_time = 0;
 }

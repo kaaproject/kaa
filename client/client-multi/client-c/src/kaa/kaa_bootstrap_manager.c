@@ -21,7 +21,6 @@
 #include <sys/types.h>
 #include "platform/stdio.h"
 #include "platform/sock.h"
-#include "platform/time.h"
 #include "kaa_defaults.h"
 #include "kaa_platform_common.h"
 #include "kaa_platform_utils.h"
@@ -42,6 +41,7 @@ extern kaa_error_t kaa_channel_manager_on_new_access_point(kaa_channel_manager_t
                                                          , kaa_server_type_t server_type
                                                          , kaa_access_point_t *access_point);
 
+
 extern void kaa_failover_execute(kaa_failover_strategy_t* self, kaa_access_point_t *access_point
                                , kaa_server_type_t server, kaa_transport_protocol_id_t *protocol_id);
 
@@ -49,9 +49,9 @@ extern void kaa_get_failover_metainfo(kaa_failover_strategy_t *self, kaa_access_
                                     , kaa_server_type_t *server, kaa_transport_protocol_id_t *protocol_id, kaa_time_t *next_execution_time);
 
 extern kaa_failover_decision_t kaa_failover_strategy_get_decision(kaa_failover_strategy_t* strategy);
-
 extern kaa_time_t kaa_channel_manager_get_next_operations_time_request(kaa_channel_manager_t *self);
 extern void kaa_channel_manager_set_next_operations_time_request(kaa_channel_manager_t *self, kaa_time_t next_time);
+extern void kaa_failover_strategy_reset_next_execution_time(kaa_failover_strategy_t *self);
 
 typedef struct {
     kaa_transport_protocol_id_t    protocol_id;
@@ -453,10 +453,9 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
                 kaa_list_next(operations_access_points->current_access_points);
 
         access_point = (kaa_access_point_t *)kaa_list_get_data(operations_access_points->current_access_points);
-        if (!access_point) {
-            execute_failover = true;
-        }
 
+        if (!access_point)
+            execute_failover = true;
     }
     if (execute_failover) {
         kaa_failover_execute(self->kaa_context->failover_strategy, access_point, type, protocol_id);
@@ -485,7 +484,6 @@ bool kaa_bootstrap_manager_process_failover(kaa_bootstrap_manager_t *self)
 {
     KAA_RETURN_IF_NIL2(self, self->kaa_context->failover_strategy, false);
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Executing failover strategy...");
     kaa_failover_decision_t decision = kaa_failover_strategy_get_decision(self->kaa_context->failover_strategy);
     if(decision.action == KAA_NOOP)
         return false;
@@ -509,6 +507,7 @@ bool kaa_bootstrap_manager_process_failover(kaa_bootstrap_manager_t *self)
     }
 
     if (current_time >= next_execution_time) {
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Executing failover strategy...");
         switch (server) {
         case KAA_SERVER_BOOTSTRAP:
             KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Processing failover of bootstraps");
@@ -525,6 +524,7 @@ bool kaa_bootstrap_manager_process_failover(kaa_bootstrap_manager_t *self)
             KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to execute failover strategy: unknown server type");
             break;
         }
+        kaa_failover_strategy_reset_next_execution_time(self->kaa_context->failover_strategy);
     }
 
     return true;
