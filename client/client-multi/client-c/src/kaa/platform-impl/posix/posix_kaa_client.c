@@ -43,7 +43,6 @@ extern kaa_error_t ext_log_upload_strategy_by_volume_create(void **strategy_p
                                                           , kaa_bootstrap_manager_t *bootstrap_manager);
 
 
-
 static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
 static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
 
@@ -288,28 +287,33 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
         }
 
         //Check Kaa channel is ready to transmit something
-        if (kaa_client->channel_id > 0) {
-            if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED) {
-                error_code = kaa_client_process_channel_disconnected(kaa_client);
-            } else  if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_CONNECTED) {
-                error_code = kaa_client_process_channel_connected(kaa_client);
-            }
-        } else {
-            //No initialized channels
-            if (kaa_client->boostrap_complete) {
-                KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE,
-                            "Channel [0x%08X] Boostrap complete, reinitializing to Operations ...", kaa_client->channel_id);
-                kaa_client->boostrap_complete = false;
-                kaa_client_deinit_channel(kaa_client);
-                kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_OPERATIONS);
-            } else {
-                KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE,
-                            "Channel [0x%08X] Operations error, reinitializing to Bootstrap ...", kaa_client->channel_id);
-                kaa_client->boostrap_complete = true;
-                kaa_client_deinit_channel(kaa_client);
+        if (kaa_bootstrap_manager_process_failover(kaa_client->kaa_context->bootstrap_manager)) {
 
-                kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_BOOTSTRAP);
+        } else {
+            if (kaa_client->channel_id > 0) {
+                if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED) {
+                    error_code = kaa_client_process_channel_disconnected(kaa_client);
+                } else  if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_CONNECTED) {
+                    error_code = kaa_client_process_channel_connected(kaa_client);
+                }
+            } else {
+                //No initialized channels
+                if (kaa_client->boostrap_complete) {
+                    KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE,
+                                "Channel [0x%08X] Boostrap complete, reinitializing to Operations ...", kaa_client->channel_id);
+                    kaa_client->boostrap_complete = false;
+                    kaa_client_deinit_channel(kaa_client);
+                    kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_OPERATIONS);
+                } else {
+                    KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE,
+                                "Channel [0x%08X] Operations error, reinitializing to Bootstrap ...", kaa_client->channel_id);
+                    kaa_client->boostrap_complete = true;
+                    kaa_client_deinit_channel(kaa_client);
+
+                    kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_BOOTSTRAP);
             }
+        }
+
         }
     }
 

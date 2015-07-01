@@ -60,6 +60,7 @@ struct kaa_channel_manager_t {
     kaa_list_t         *transport_channels;
     kaa_context_t      *kaa_context;
     kaa_sync_info_t    sync_info;
+    kaa_time_t         next_request_time;
 };
 
 
@@ -442,9 +443,22 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
         }
     }
 
+    self->next_request_time = KAA_TIME() + 15;
+
     return error_code;
 }
 
+kaa_time_t kaa_channel_manager_get_next_operations_time_request(kaa_channel_manager_t *self)
+{
+    KAA_RETURN_IF_NIL(self, 0);
+    return self->next_request_time;
+}
+
+void kaa_channel_manager_set_next_operations_time_request(kaa_channel_manager_t *self, kaa_time_t next_time)
+{
+    KAA_RETURN_IF_NIL(self, );
+    self->next_request_time = next_time;
+}
 
 kaa_error_t kaa_channel_manager_on_new_access_point(kaa_channel_manager_t *self
                                                   , kaa_transport_protocol_id_t *protocol_id
