@@ -289,7 +289,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                         break;
                     case RETRY:
                         long retryPeriod = decision.getRetryPeriod();
-                        LOG.warn("Attempt to reconnect to first bootstrap server will be made in {} ms ",
+                        LOG.warn("Attempt to reconnect to first bootstrap server will be made in {} ms, " +
                                  "according to failover strategy decision", retryPeriod);
                         executorContext.getScheduledExecutor().schedule(new Runnable() {
                             @Override

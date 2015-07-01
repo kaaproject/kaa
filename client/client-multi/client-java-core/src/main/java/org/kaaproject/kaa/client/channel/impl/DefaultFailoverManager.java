@@ -82,10 +82,13 @@ public class DefaultFailoverManager implements FailoverManager {
             return;
         }
 
+        long currentResolutionTime = -1;
         AccessPointIdResolution currentAccessPointIdResolution = resolutionProgressMap.get(connectionInfo.getServerType());
         if (currentAccessPointIdResolution != null) {
+            currentResolutionTime = currentAccessPointIdResolution.getResolutionTime();
             if (currentAccessPointIdResolution.getAccessPointId() == connectionInfo.getAccessPointId()
-                    && currentAccessPointIdResolution.getCurResolution() != null) {
+                    && currentAccessPointIdResolution.getCurResolution() != null
+                    && System.currentTimeMillis() < currentAccessPointIdResolution.getResolutionTime()) {
                 LOG.debug("Resolution is in progress for {} server", connectionInfo);
                 return;
             } else {
@@ -96,8 +99,7 @@ public class DefaultFailoverManager implements FailoverManager {
             }
         }
 
-        LOG.trace("Next fail resolution will be available in {} s",
-                        TimeUnit.SECONDS.convert(failureResolutionTimeout, timeUnit));
+        LOG.trace("Next fail resolution will be available in {} {}", failureResolutionTimeout, timeUnit.toString());
 
         Future<?> currentResolution = context.getScheduledExecutor().schedule(new Runnable() {
             @Override
@@ -109,8 +111,15 @@ public class DefaultFailoverManager implements FailoverManager {
 
         channelManager.onServerFailed(connectionInfo);
 
+        long updatedResolutionTime = currentAccessPointIdResolution != null ? currentAccessPointIdResolution.getResolutionTime() : currentResolutionTime;
+
         AccessPointIdResolution newAccessPointIdResolution =
                 new AccessPointIdResolution(connectionInfo.getAccessPointId(), currentResolution);
+
+        if (updatedResolutionTime != currentResolutionTime) {
+            newAccessPointIdResolution.setResolutionTime(updatedResolutionTime);
+        }
+
         resolutionProgressMap.put(connectionInfo.getServerType(), newAccessPointIdResolution);
     }
 
@@ -163,11 +172,20 @@ public class DefaultFailoverManager implements FailoverManager {
     }
 
     @Override
-    public FailoverDecision onFailover(FailoverStatus failoverStatus) {
-        switch(failoverStatus) {
+    public synchronized FailoverDecision onFailover(FailoverStatus failoverStatus) {
+        LOG.trace("Applying failover strategy for status: {}", failoverStatus);
+        switch (failoverStatus) {
             case NO_BOOTSTRAP_SERVERS:
+                AccessPointIdResolution bootstrapResolution = resolutionProgressMap.get(ServerType.BOOTSTRAP);
+                if (bootstrapResolution != null) {
+                    bootstrapResolution.setResolutionTime(System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(bootstrapServersRetryPeriod, timeUnit));
+                }
                 return new FailoverDecision(FailoverAction.RETRY, bootstrapServersRetryPeriod, timeUnit);
             case NO_OPERATION_SERVERS:
+                AccessPointIdResolution operationsResolution = resolutionProgressMap.get(ServerType.BOOTSTRAP);
+                if (operationsResolution != null) {
+                    operationsResolution.setResolutionTime(System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(noOperationServersRetryPeriod, timeUnit));
+                }
                 return new FailoverDecision(FailoverAction.RETRY, noOperationServersRetryPeriod, timeUnit);
             case ALL_OPERATION_SERVERS_NA:
                 return new FailoverDecision(FailoverAction.RETRY, operationsServersRetryPeriod, timeUnit);
@@ -188,12 +206,14 @@ public class DefaultFailoverManager implements FailoverManager {
     }
 
     static class AccessPointIdResolution {
-        public int accessPointId;
-        public Future<?> curResolution;
+        private int accessPointId;
+        private long resolutionTime;            // in milliseconds
+        private Future<?> curResolution;
 
         public AccessPointIdResolution(int accessPointId, Future<?> curResolution) {
             this.accessPointId = accessPointId;
             this.curResolution = curResolution;
+            this.resolutionTime = Long.MAX_VALUE;
         }
 
         public int getAccessPointId() {
@@ -206,6 +226,14 @@ public class DefaultFailoverManager implements FailoverManager {
 
         public void setCurResolution(Future<?> curResolution) {
             this.curResolution = curResolution;
+        }
+
+        public long getResolutionTime() {
+            return resolutionTime;
+        }
+
+        public void setResolutionTime(long resolutionTime) {
+            this.resolutionTime = resolutionTime;
         }
 
         @Override
@@ -240,6 +268,7 @@ public class DefaultFailoverManager implements FailoverManager {
         public String toString() {
             return "AccessPointIdResolution{" +
                     "accessPointId=" + accessPointId +
+                    "resolutionTIme=" + resolutionTime +
                     ", curResolution=" + curResolution +
                     '}';
         }

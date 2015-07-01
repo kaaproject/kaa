@@ -18,6 +18,7 @@ package org.kaaproject.kaa.client.channel.impl;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.kaaproject.kaa.client.channel.FailoverStatus;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
@@ -36,7 +37,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class DefaultFailoverManagerTest {
-    private static final int RESOLUTION_TIMEOUT_MS = 100;
+    private static final int RESOLUTION_TIMEOUT_MS = 500;
+    private static final int BOOTSTRAP_RETRY_PERIOD = 100;
 
     private KaaChannelManager channelManager;
     private Map<ServerType, DefaultFailoverManager.AccessPointIdResolution> resolutionProgressMap;
@@ -48,7 +50,7 @@ public class DefaultFailoverManagerTest {
         channelManager = Mockito.mock(KaaChannelManager.class);
         context = Mockito.mock(ExecutorContext.class);
         Mockito.when(context.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
-        failoverManager = new DefaultFailoverManager(channelManager, context, RESOLUTION_TIMEOUT_MS, 1, 1, 1, 1, TimeUnit.MILLISECONDS);
+        failoverManager = new DefaultFailoverManager(channelManager, context, RESOLUTION_TIMEOUT_MS, BOOTSTRAP_RETRY_PERIOD, 1, 1, 1, TimeUnit.MILLISECONDS);
         resolutionProgressMap = Mockito.spy(new HashMap<ServerType, DefaultFailoverManager.AccessPointIdResolution>());
         ReflectionTestUtils.setField(failoverManager, "resolutionProgressMap", resolutionProgressMap);
     }
@@ -107,13 +109,27 @@ public class DefaultFailoverManagerTest {
 
         TransportConnectionInfo info2 = mockForTransportConnectionInfo(2, ServerType.BOOTSTRAP);
         failoverManager.onServerFailed(info2);
-        DefaultFailoverManager.AccessPointIdResolution accessPointIdResolutionSpy = spyForResolutionMap(info2);
+        final DefaultFailoverManager.AccessPointIdResolution accessPointIdResolutionSpy = spyForResolutionMap(info2);
         failoverManager.onServerFailed(info2);
         Mockito.verify(accessPointIdResolutionSpy, Mockito.never()).setCurResolution(null);
 
         info2 = mockForTransportConnectionInfo(3, ServerType.BOOTSTRAP);
         failoverManager.onServerFailed(info2);
         Mockito.verify(channelManager, Mockito.times(1)).onServerFailed(info2);
+
+        Mockito.reset(accessPointIdResolutionSpy);
+        failoverManager.onFailover(FailoverStatus.NO_BOOTSTRAP_SERVERS);
+        failoverManager.onServerFailed(info2);
+        Mockito.verify(accessPointIdResolutionSpy, Mockito.never()).setCurResolution(null);
+        Thread.sleep(BOOTSTRAP_RETRY_PERIOD * 2);
+        failoverManager.onServerFailed(info2);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Mockito.verify(accessPointIdResolutionSpy, Mockito.timeout(BOOTSTRAP_RETRY_PERIOD * 2).times(1)).setCurResolution(null);
+            }
+        }).start();
     }
 
     private TransportConnectionInfo mockForTransportConnectionInfo(int accessPointId) {
