@@ -18,7 +18,10 @@ package org.kaaproject.kaa.client.bootstrap;
 
 import java.util.List;
 
-import org.kaaproject.kaa.client.channel.*;
+import org.kaaproject.kaa.client.channel.BootstrapTransport;
+import org.kaaproject.kaa.client.channel.FailoverManager;
+import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
+import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 
@@ -47,7 +50,7 @@ public interface BootstrapManager {
     /**
      * Update the Channel Manager with endpoint's properties retrieved by its DNS.
      *
-     * @param name endpoint's DNS.
+     * @param accessPointId endpoint's DNS.
      *
      */
     void useNextOperationsServerByAccessPointId(int accessPointId);
@@ -64,7 +67,7 @@ public interface BootstrapManager {
      * Sets Channel manager.
      *
      * @param manager the channel manager to be set.
-     * @see KaaChannelManager
+     * @see KaaInternalChannelManager
      */
     void setChannelManager(KaaInternalChannelManager manager);
 
@@ -80,7 +83,7 @@ public interface BootstrapManager {
      * Updates the operation server list.
      *
      * @param list the operation server list.
-     * @see OperationsServerList
+     * @see ProtocolMetaData
      */
     void onProtocolListUpdated(List<ProtocolMetaData> list);
 }

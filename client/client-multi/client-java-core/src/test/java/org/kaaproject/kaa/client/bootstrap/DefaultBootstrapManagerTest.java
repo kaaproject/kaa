@@ -34,14 +34,23 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
-import org.kaaproject.kaa.client.channel.*;
+import org.kaaproject.kaa.client.channel.BootstrapTransport;
+import org.kaaproject.kaa.client.channel.FailoverManager;
+import org.kaaproject.kaa.client.channel.IPTransportInfo;
+import org.kaaproject.kaa.client.channel.IPTransportInfoTest;
+import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
+import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
+import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
+import org.kaaproject.kaa.client.channel.KaaInvalidChannelException;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.DefaultFailoverManager;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
-import org.mockito.Mockito;
 
 public class DefaultBootstrapManagerTest {
 

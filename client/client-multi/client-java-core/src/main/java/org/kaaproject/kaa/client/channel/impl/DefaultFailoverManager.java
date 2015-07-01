@@ -16,8 +16,13 @@
 
 package org.kaaproject.kaa.client.channel.impl;
 
-import org.kaaproject.kaa.client.channel.*;
+import org.kaaproject.kaa.client.channel.FailoverDecision;
 import org.kaaproject.kaa.client.channel.FailoverDecision.FailoverAction;
+import org.kaaproject.kaa.client.channel.FailoverManager;
+import org.kaaproject.kaa.client.channel.FailoverStatus;
+import org.kaaproject.kaa.client.channel.KaaChannelManager;
+import org.kaaproject.kaa.client.channel.ServerType;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
