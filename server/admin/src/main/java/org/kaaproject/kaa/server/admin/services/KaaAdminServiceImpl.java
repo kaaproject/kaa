@@ -1940,7 +1940,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            if(null!=notification.getExpiredAt() && notification.getExpiredAt().before(new Date())){
+            if(notification.getExpiredAt() != null && notification.getExpiredAt().before(new Date())){
                 throw new IllegalArgumentException("Overdue expiry time for notification");
             }
             notification.setBody(body);
