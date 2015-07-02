@@ -305,7 +305,11 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
                                 "Channel [0x%08X] Boostrap complete, reinitializing to Operations ...", kaa_client->channel_id);
                     kaa_client->boostrap_complete = false;
                     kaa_client_deinit_channel(kaa_client);
-                    kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_OPERATIONS);
+                    error_code = kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_OPERATIONS);
+                    if (error_code == KAA_ERR_BAD_STATE) {
+                        kaa_client_deinit_channel(kaa_client);
+                        kaa_client->boostrap_complete = false;
+                    }
                 } else {
                     KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE,
                                 "Channel [0x%08X] Operations error, reinitializing to Bootstrap ...", kaa_client->channel_id);

@@ -40,7 +40,10 @@ extern kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_
                                                                           , kaa_transport_protocol_id_t *protocol_id);
 
 extern void kaa_get_failover_metainfo(kaa_failover_strategy_t *self, kaa_access_point_t **acess_point
-        , kaa_server_type_t *server, kaa_transport_protocol_id_t *protocol_id, kaa_time_t *next_execution_time);
+                                    , kaa_server_type_t *server, kaa_transport_protocol_id_t *protocol_id, kaa_time_t *next_execution_time);
+
+extern void kaa_failover_execute(kaa_failover_strategy_t* self, kaa_access_point_t *access_point,
+                                 kaa_server_type_t server, kaa_transport_protocol_id_t *protocol_id);
 
 typedef struct {
     uint32_t                             channel_id;
@@ -288,6 +291,7 @@ static kaa_error_t init_channel(kaa_channel_manager_t *self
                 KAA_LOG_INFO(self->kaa_context->logger, KAA_ERR_NOT_FOUND, "Could not find access point for Operations channel [0x%08X] "
                                     "(protocol: id=0x%08X, version=%u)", id, protocol_id.id, protocol_id.version);
             }
+            return KAA_ERR_BAD_STATE;
         }
     }
 
@@ -302,7 +306,7 @@ kaa_error_t kaa_channel_manager_add_transport_channel(kaa_channel_manager_t *sel
 
     kaa_error_t error_code = add_channel(self, channel, channel_id);
     if (!error_code) {
-        init_channel(self, channel);
+        error_code = init_channel(self, channel);
     }
 
     return error_code;
