@@ -39,7 +39,8 @@ extern kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa
 extern kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstrap_manager_t *self
                                                                           , kaa_transport_protocol_id_t *protocol_id);
 
-
+extern void kaa_get_failover_metainfo(kaa_failover_strategy_t *self, kaa_access_point_t **acess_point
+        , kaa_server_type_t *server, kaa_transport_protocol_id_t *protocol_id, kaa_time_t *next_execution_time);
 
 typedef struct {
     uint32_t                             channel_id;
@@ -256,13 +257,20 @@ static kaa_error_t init_channel(kaa_channel_manager_t *self
 
         bool is_bootstrap_channel = ((kaa_transport_channel_wrapper_t *)kaa_list_get_data(it))->
                                                                 server_type == KAA_SERVER_BOOTSTRAP;
+        kaa_server_type_t server;
+        kaa_time_t next_execution_time;
+        kaa_transport_protocol_id_t protocol_id_mock;
+        kaa_access_point_t *acess_point_mock = NULL;
+        kaa_get_failover_metainfo(self->kaa_context->failover_strategy, &acess_point_mock, &server, &protocol_id_mock, &next_execution_time);
 
-        if (is_bootstrap_channel) {
-            access_point = kaa_bootstrap_manager_get_bootstrap_access_point(
-                                self->kaa_context->bootstrap_manager, &protocol_id);
+        if (next_execution_time) {
+            access_point = NULL;
         } else {
-            access_point = kaa_bootstrap_manager_get_operations_access_point(
-                                self->kaa_context->bootstrap_manager, &protocol_id);
+            if (is_bootstrap_channel) {
+                access_point = kaa_bootstrap_manager_get_bootstrap_access_point(self->kaa_context->bootstrap_manager, &protocol_id);
+            } else {
+                access_point = kaa_bootstrap_manager_get_operations_access_point(self->kaa_context->bootstrap_manager, &protocol_id);
+            }
         }
 
         if (access_point) {
@@ -272,6 +280,7 @@ static kaa_error_t init_channel(kaa_channel_manager_t *self
 
             channel->set_access_point(channel->context, access_point);
         } else {
+            kaa_failover_execute(self->kaa_context->failover_strategy, access_point, KAA_SERVER_OPERATIONS, &protocol_id);
             if (is_bootstrap_channel) {
                 KAA_LOG_WARN(self->kaa_context->logger, KAA_ERR_NOT_FOUND, "Could not find access point for Bootstrap channel [0x%08X] "
                                     "(protocol: id=0x%08X, version=%u)", id, protocol_id.id, protocol_id.version);
@@ -443,7 +452,7 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
         }
     }
 
-    self->next_request_time = KAA_TIME() + 15;
+    self->next_request_time = KAA_TIME() + 10;
 
     return error_code;
 }

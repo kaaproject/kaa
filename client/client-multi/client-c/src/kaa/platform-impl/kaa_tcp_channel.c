@@ -301,7 +301,7 @@ static kaa_error_t kaa_tcp_channel_on_access_point_failed(kaa_tcp_channel_t *sel
     kaa_error_t error_code = kaa_bootstrap_manager_on_access_point_failed(self->transport_context.bootstrap_manager
                                                             , &self->protocol_id
                                                             , self->channel_operation_type);
-    if (error_code != KAA_ERR_NOT_FOUND) {
+    if (error_code != KAA_ERR_EVENT_NOT_ATTACHED) {
         KAA_LOG_ERROR(self->logger, error_code, "Kaa TCP channel [0x%08X] "
                 "error notifying bootstrap manager on access point failure"
                 , self->access_point.id);

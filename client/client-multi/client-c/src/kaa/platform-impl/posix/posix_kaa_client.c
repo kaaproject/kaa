@@ -241,7 +241,9 @@ kaa_error_t kaa_client_process_channel_connected(kaa_client_t *kaa_client)
                 "Channel [0x%08X] connection terminated", kaa_client->channel_id);
 
         kaa_client->channel_state = KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED;
-        kaa_client_deinit_channel(kaa_client);
+        if (error_code != KAA_ERR_EVENT_NOT_ATTACHED) {
+            kaa_client_deinit_channel(kaa_client);
+        }
     }
 
     return error_code;
@@ -288,7 +290,7 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
 
         //Check Kaa channel is ready to transmit something
         if (kaa_bootstrap_manager_process_failover(kaa_client->kaa_context->bootstrap_manager)) {
-
+            kaa_client->boostrap_complete = false;
         } else {
             if (kaa_client->channel_id > 0) {
                 if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED) {
@@ -313,8 +315,7 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
                     kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_BOOTSTRAP);
             }
         }
-
-        }
+      }
     }
 
     KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Kaa client stopped");

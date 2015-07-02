@@ -420,6 +420,7 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
         size_t index_from = 0;
         if (bootstrap_access_points_it) {
             index_from = ((kaa_bootstrap_access_points_t *)kaa_list_get_data(bootstrap_access_points_it))->index + 1;
+            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Found previous bootstrap access point.");
         }
 
         size_t next_index = 0;
@@ -439,6 +440,9 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
                 error_code = add_bootstrap_access_point(self, next_index);
                 KAA_RETURN_IF_ERR(error_code);
             }
+        } else {
+            if (bootstrap_access_points_it)
+                ((kaa_bootstrap_access_points_t *)kaa_list_get_data(bootstrap_access_points_it))->index = 0;
         }
     } else {
         kaa_list_node_t *operations_access_points_it = kaa_list_find_next(kaa_list_begin(self->operations_access_points)
@@ -466,7 +470,7 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
                                               , protocol_id
                                               , type
                                               , access_point);
-        return KAA_ERR_NONE;
+        return KAA_ERR_EVENT_NOT_ATTACHED;
     } else if (type == KAA_SERVER_OPERATIONS) {
         KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Could not find next Operations access point "
                 "(protocol: id=0x%08X, version=%u)"
