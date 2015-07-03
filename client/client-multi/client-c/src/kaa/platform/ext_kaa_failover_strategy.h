@@ -28,13 +28,6 @@
 #include "../platform/time.h"
 
 typedef enum {
-    NO_BOOTSTRAP_SERVERS = 0, /*!< No accessible bootstrap servers. */
-    NO_OPERATION_SERVERS,    /*!< Initiate log upload. */
-    ALL_OPERATION_SERVERS_NA,
-    NO_CONNECTIVITY
-} kaa_failover_t;
-
-typedef enum {
     KAA_NOOP = 0, /*!< Nothing to be done. */
     KAA_RETRY,    /*!< Initiate log upload. */
     KAA_STOP_APP

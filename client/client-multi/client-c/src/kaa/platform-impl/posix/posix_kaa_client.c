@@ -315,7 +315,6 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
                                 "Channel [0x%08X] Operations error, reinitializing to Bootstrap ...", kaa_client->channel_id);
                     kaa_client->boostrap_complete = true;
                     kaa_client_deinit_channel(kaa_client);
-
                     kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_BOOTSTRAP);
             }
         }
