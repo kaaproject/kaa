@@ -61,6 +61,7 @@ import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
 import org.kaaproject.kaa.client.configuration.base.ConfigurationManager;
 import org.kaaproject.kaa.client.configuration.base.ResyncConfigurationManager;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.context.TransportContext;
 import org.kaaproject.kaa.client.event.DefaultEventManager;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
@@ -186,6 +187,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
         initializeChannels(channelManager, transportContext);
 
         bootstrapManager.setChannelManager(channelManager);
+        bootstrapManager.setFailoverManager(failoverManager);
         
         profileManager = buildProfileManager(properties, kaaClientState, transportContext);
         notificationManager = buildNotificationManager(properties, kaaClientState, transportContext);
@@ -530,7 +532,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     protected KaaInternalChannelManager buildChannelManager(BootstrapManager bootstrapManager, Map<TransportProtocolId, List<TransportConnectionInfo>> bootstrapServers) {
-        KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers);
+        KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootstrapServers, context.getExecutorContext());
         channelManager.setConnectivityChecker(context.createConnectivityChecker());
         return channelManager;
     }
@@ -590,7 +592,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     protected BootstrapManager buildBootstrapManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
-        return new DefaultBootstrapManager(transportContext.getBootstrapTransport());
+        return new DefaultBootstrapManager(transportContext.getBootstrapTransport(), context.getExecutorContext());
     }
 
     public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
