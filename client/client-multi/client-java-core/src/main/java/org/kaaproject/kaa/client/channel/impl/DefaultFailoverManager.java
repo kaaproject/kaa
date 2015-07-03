@@ -187,12 +187,16 @@ public class DefaultFailoverManager implements FailoverManager {
                 }
                 return new FailoverDecision(FailoverAction.RETRY, bootstrapServersRetryPeriod, timeUnit);
             case NO_OPERATION_SERVERS:
-                AccessPointIdResolution operationsResolution = resolutionProgressMap.get(ServerType.BOOTSTRAP);
+                AccessPointIdResolution operationsResolution = resolutionProgressMap.get(ServerType.OPERATIONS);
                 if (operationsResolution != null) {
                     operationsResolution.setResolutionTime(System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(noOperationServersRetryPeriod, timeUnit));
                 }
                 return new FailoverDecision(FailoverAction.RETRY, noOperationServersRetryPeriod, timeUnit);
             case ALL_OPERATION_SERVERS_NA:
+                operationsResolution = resolutionProgressMap.get(ServerType.OPERATIONS);
+                if (operationsResolution != null) {
+                    operationsResolution.setResolutionTime(System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(operationsServersRetryPeriod, timeUnit));
+                }
                 return new FailoverDecision(FailoverAction.RETRY, operationsServersRetryPeriod, timeUnit);
             case NO_CONNECTIVITY:
                 return new FailoverDecision(FailoverAction.RETRY, noConnectivityRetryPeriod, timeUnit);

@@ -388,10 +388,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     LOG.warn("Stopping application according to failover strategy decision!");
                     System.exit(EXIT_FAILURE);
             }
-            return;
+        } else {
+            failoverManager.onServerFailed(currentServer);
         }
-
-        failoverManager.onServerFailed(currentServer);
     }
 
     private void schedulePingTask() {
