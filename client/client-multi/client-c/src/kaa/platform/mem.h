@@ -28,5 +28,9 @@
 
 #endif //ifdef ECONAIS_PLATFORM
 
+#ifdef ESP8266_PlATFORM
+#include "../platform-impl/esp8266/esp8266_mem.h"
+#endif /* ESP8266_PLATFORM */
+
 #endif /* MEM_H_ */
 

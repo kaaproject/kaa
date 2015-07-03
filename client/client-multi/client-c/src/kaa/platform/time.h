@@ -29,4 +29,8 @@
 
 #endif //ifdef ECONAIS_PLATFORM
 
+#ifndef ESP8266_PLATFORM
+#include "../platform-impl/esp8266/esp8266_time.h"
+#endif /* ESP8266_PLATFORM */
+
 #endif /* TIME_H_ */
