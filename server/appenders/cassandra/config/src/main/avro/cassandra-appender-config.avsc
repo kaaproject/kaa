@@ -98,7 +98,8 @@
                                     "EVENT_JSON",
                                     "HEADER_BINARY",
                                     "EVENT_BINARY",
-                                    "UUID"
+                                    "UUID",
+                                    "TS"
                                 ]
                             }
                         },

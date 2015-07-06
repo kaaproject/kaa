@@ -21,10 +21,14 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.avro.generic.GenericRecord;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
@@ -55,7 +59,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 public class CassandraLogEventDao implements LogEventDao {
 
-
     private static final String $CONFIG_HASH = "$config_hash";
 
     private static final String $APP_TOKEN = "$app_token";
@@ -69,6 +72,8 @@ public class CassandraLogEventDao implements LogEventDao {
     private static final String CLUSTERING_DEFINITION = "$clustering_definition";
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS $keyspace_name.$table_name ("
             + "$columns_definition PRIMARY KEY ( $primary_key_definition )) $clustering_definition;";
+
+    private final ConcurrentMap<String, ThreadLocal<SimpleDateFormat>> dateFormatMap = new ConcurrentHashMap<String, ThreadLocal<SimpleDateFormat>>();
 
     private Cluster cluster;
     private Session session;
@@ -288,6 +293,7 @@ public class CassandraLogEventDao implements LogEventDao {
 
     private Insert[] prepareQuery(List<CassandraLogEventDto> logEventDtoList, String collectionName,
             GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter) throws IOException {
+        String reuseTsValue = null;
         Insert[] insertArray = new Insert[logEventDtoList.size()];
         for (int i = 0; i < logEventDtoList.size(); i++) {
             CassandraLogEventDto dto = logEventDtoList.get(i);
@@ -315,11 +321,43 @@ public class CassandraLogEventDao implements LogEventDao {
                 case UUID:
                     insert.value(element.getColumnName(), UUID.randomUUID());
                     break;
+                case TS:
+                    reuseTsValue = formatTs(reuseTsValue, element);
+                    insert.value(element.getColumnName(), reuseTsValue);
+                    break;
                 }
             }
             insertArray[i] = insert;
 
         }
         return insertArray;
+    }
+
+    private String formatTs(String tsValue, ColumnMappingElement element) {
+        if (tsValue == null) {
+            long ts = System.currentTimeMillis();
+            final String pattern = element.getValue();
+            if (pattern == null || pattern.isEmpty()) {
+                tsValue = ts + "";
+            } else {
+                ThreadLocal<SimpleDateFormat> formatterTL = dateFormatMap.get(pattern);
+                if (formatterTL == null) {
+                    formatterTL = new ThreadLocal<SimpleDateFormat>() {
+                        @Override
+                        protected SimpleDateFormat initialValue() {
+                            return new SimpleDateFormat(pattern);
+                        }
+                    };
+                    dateFormatMap.putIfAbsent(pattern, formatterTL);
+                }
+                SimpleDateFormat formatter = formatterTL.get();
+                if (formatter == null) {
+                    formatter = new SimpleDateFormat(pattern);
+                    formatterTL.set(formatter);
+                }
+                tsValue = formatter.format(new Date(ts));
+            }
+        }
+        return tsValue;
     }
 }
