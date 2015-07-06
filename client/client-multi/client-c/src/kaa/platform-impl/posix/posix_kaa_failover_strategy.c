@@ -51,6 +51,12 @@ kaa_error_t kaa_failover_strategy_create(kaa_failover_strategy_t** strategy, kaa
     return KAA_ERR_NONE;
 }
 
+void kaa_failover_strategy_destroy(kaa_failover_strategy_t* strategy)
+{
+    KAA_RETURN_IF_NIL(strategy,);
+    KAA_FREE(strategy);
+}
+
 void kaa_set_failover_metainfo(kaa_failover_strategy_t *strategy, kaa_access_point_t *acess_point
                     , kaa_server_type_t server, kaa_transport_protocol_id_t *protocol_id, kaa_time_t next_execution_time)
 {

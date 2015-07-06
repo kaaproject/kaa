@@ -204,17 +204,15 @@ static kaa_error_t add_operations_access_point(kaa_bootstrap_manager_t *self
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p
-                                       , kaa_channel_manager_t *channel_manager
-                                       , kaa_logger_t *logger, kaa_context_t *kaa_context)
+kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p, kaa_context_t *kaa_context)
 {
-    KAA_RETURN_IF_NIL4(bootstrap_manager_p, channel_manager, kaa_context, logger, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(bootstrap_manager_p, kaa_context, KAA_ERR_BADPARAM);
 
     *bootstrap_manager_p = (kaa_bootstrap_manager_t*) KAA_MALLOC(sizeof(kaa_bootstrap_manager_t));
     KAA_RETURN_IF_NIL(*bootstrap_manager_p, KAA_ERR_NOMEM);
 
-    (*bootstrap_manager_p)->channel_manager = channel_manager;
-    (*bootstrap_manager_p)->logger = logger;
+    (*bootstrap_manager_p)->channel_manager = kaa_context->channel_manager;
+    (*bootstrap_manager_p)->logger = kaa_context->logger;
     (*bootstrap_manager_p)->kaa_context = kaa_context;
 
     (*bootstrap_manager_p)->bootstrap_access_points = kaa_list_create();
@@ -263,11 +261,17 @@ static kaa_error_t get_next_bootstrap_access_point_index(kaa_transport_protocol_
                 return KAA_ERR_NONE;
             }
         }
+        i = 0; // from the beginning
+        for (; i < index_from; ++i) {
+            if (kaa_transport_protocol_id_equals(&(KAA_BOOTSTRAP_ACCESS_POINTS[i].protocol_id), protocol_id)) {
+               *next_index = i;
+               *execute_failover = true; //execute failover
+               return KAA_ERR_NONE;
+            }
+        }
     }
-    *next_index = 0; // from the beginning
-    *execute_failover = true; // plus execute failover
 
-    return KAA_ERR_NONE;
+    return KAA_ERR_NOT_FOUND;
 }
 
 static kaa_error_t add_bootstrap_access_point(kaa_bootstrap_manager_t *self

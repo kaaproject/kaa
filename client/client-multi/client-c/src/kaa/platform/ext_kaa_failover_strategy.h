@@ -27,8 +27,8 @@
 #include "../kaa_error.h"
 #include "../platform/time.h"
 
-#define KAA_FAILOVER_RETRY_PERIOD                 5
-#define KAA_BOOTSTRAP_RESPONSE_PERIOD            10
+#define KAA_FAILOVER_RETRY_PERIOD                 2
+#define KAA_BOOTSTRAP_RESPONSE_PERIOD             5
 
 typedef enum {
     KAA_NOOP = 0, /*!< Nothing to be done. */
