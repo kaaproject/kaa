@@ -27,11 +27,15 @@
 #include "../kaa_error.h"
 #include "../platform/time.h"
 
+#define KAA_FAILOVER_RETRY_PERIOD                 5
+#define KAA_BOOTSTRAP_RESPONSE_PERIOD            10
+
 typedef enum {
     KAA_NOOP = 0, /*!< Nothing to be done. */
     KAA_RETRY,    /*!< Initiate log upload. */
     KAA_STOP_APP
 } kaa_failover_strategy_action_t;
+
 
 typedef struct {
     kaa_failover_strategy_action_t action;

@@ -24,7 +24,6 @@
 #include "../../kaa_bootstrap_manager.h"
 #include "posix_kaa_failover_strategy.h"
 
-#define KAA_DEFAULT_RETRY_PERIOD    5
 
 
 typedef struct {
@@ -46,8 +45,9 @@ kaa_error_t kaa_failover_strategy_create(kaa_failover_strategy_t** strategy, kaa
     *strategy = (kaa_failover_strategy_t *) KAA_CALLOC(1, sizeof(kaa_failover_strategy_t));
     KAA_RETURN_IF_NIL(*strategy, KAA_ERR_NOMEM);
     (*strategy)->decision.action = KAA_RETRY;
-    (*strategy)->decision.retry_period = KAA_DEFAULT_RETRY_PERIOD;
+    (*strategy)->decision.retry_period = KAA_FAILOVER_RETRY_PERIOD;
     (*strategy)->logger = logger;
+
     return KAA_ERR_NONE;
 }
 

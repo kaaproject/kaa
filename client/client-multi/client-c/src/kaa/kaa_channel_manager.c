@@ -30,7 +30,7 @@
 #include "kaa_platform_common.h"
 #include "kaa_platform_protocol.h"
 #include "kaa_platform_utils.h"
-
+#include "platform-impl/posix/posix_kaa_failover_strategy.h"
 
 
 extern kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa_bootstrap_manager_t *self
@@ -456,7 +456,7 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
         }
     }
 
-    self->next_request_time = KAA_TIME() + 10;
+    self->next_request_time = KAA_TIME() + KAA_BOOTSTRAP_RESPONSE_PERIOD;
 
     return error_code;
 }

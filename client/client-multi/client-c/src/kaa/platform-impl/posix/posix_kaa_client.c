@@ -30,6 +30,7 @@
 #include "../../platform/kaa_client.h"
 #include "../../platform/ext_transport_channel.h"
 #include "../../platform-impl/kaa_tcp_channel.h"
+#include "../../platform-impl/posix/posix_kaa_failover_strategy.h"
 #include "../../kaa_logging.h"
 #include "../../kaa_channel_manager.h"
 
@@ -178,8 +179,13 @@ static uint16_t get_poll_timeout(kaa_client_t *kaa_client)
     uint16_t select_timeout;
     kaa_tcp_channel_get_max_timeout(&kaa_client->channel, &select_timeout);
 
+
     if ((kaa_client->external_process_max_delay > 0) && (select_timeout > kaa_client->external_process_max_delay)) {
         select_timeout = kaa_client->external_process_max_delay;
+    }
+
+    if ((KAA_BOOTSTRAP_RESPONSE_PERIOD > 0) && (select_timeout > KAA_BOOTSTRAP_RESPONSE_PERIOD)) {
+        select_timeout = KAA_BOOTSTRAP_RESPONSE_PERIOD;
     }
 
     return select_timeout;
@@ -203,6 +209,7 @@ kaa_error_t kaa_client_process_channel_connected(kaa_client_t *kaa_client)
 
     if (kaa_tcp_channel_is_ready(&kaa_client->channel, FD_READ))
         FD_SET(channel_fd, &read_fds);
+
     if (kaa_tcp_channel_is_ready(&kaa_client->channel, FD_WRITE))
         FD_SET(channel_fd, &write_fds);
 

@@ -20,7 +20,15 @@
 
 #include "../../platform/ext_kaa_failover_strategy.h"
 
-
+/**
+* @brief Sets decision that will be made in case of failover.
+*
+* @param[in]   strategy     The pointer to the failover strategy instance.
+* @param[in]  decision      The pointer to the the decision structure, filled by user.
+*
+* @return The error code.
+*/
 kaa_error_t kaa_failover_strategy_set(kaa_failover_strategy_t* strategy, kaa_failover_decision_t* decision);
+
 
 #endif /* POSIX_KAA_STRATEGY_H_ */
