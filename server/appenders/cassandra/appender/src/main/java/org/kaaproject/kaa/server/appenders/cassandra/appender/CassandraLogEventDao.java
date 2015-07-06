@@ -25,10 +25,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.avro.generic.GenericRecord;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
@@ -74,7 +74,7 @@ public class CassandraLogEventDao implements LogEventDao {
 	private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS $keyspace_name.$table_name ("
 			+ "$columns_definition PRIMARY KEY ( $primary_key_definition )) $clustering_definition;";
 
-	private final Map<String, ThreadLocal<SimpleDateFormat>> dateFormatMap = new HashMap<String, ThreadLocal<SimpleDateFormat>>();
+	private final ConcurrentMap<String, ThreadLocal<SimpleDateFormat>> dateFormatMap = new ConcurrentHashMap<String, ThreadLocal<SimpleDateFormat>>();
 
 	private Cluster cluster;
 	private Session session;
@@ -379,12 +379,21 @@ public class CassandraLogEventDao implements LogEventDao {
 	private String formatTs(String tsValue, ColumnMappingElement element) {
 		if (tsValue == null) {
 			long ts = System.currentTimeMillis();
-			String pattern = element.getValue();
+			final String pattern = element.getValue();
 			if (pattern == null || pattern.isEmpty()) {
 				tsValue = ts + "";
 			} else {
 				ThreadLocal<SimpleDateFormat> formatterTL = dateFormatMap
 						.get(pattern);
+				if (formatterTL == null) {
+					formatterTL = new ThreadLocal<SimpleDateFormat>() {
+						@Override
+						protected SimpleDateFormat initialValue() {
+							return new SimpleDateFormat(pattern);
+						}
+					};
+					dateFormatMap.putIfAbsent(pattern, formatterTL);
+				}
 				SimpleDateFormat formatter = formatterTL.get();
 				if (formatter == null) {
 					formatter = new SimpleDateFormat(pattern);
