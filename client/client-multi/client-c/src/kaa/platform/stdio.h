@@ -22,18 +22,14 @@
 #else
 #ifdef STM32_LEAF_PLATFORM
 #include "../platform-impl/stm32/leafMapleMini/leaf_stdio.h"
-#endif /* ECONIAS_PLATFORM */
-#endif /*  STM32_LEAF_PLATFORM */
+#else
 #ifdef ESP8266_PLATFORM
 #include "../platform-impl/esp8266/esp8266_stdio.h"
-#endif /* ESP8266_PLATFORM */
-
-#ifndef ECONAIS_PLATFORM
-#ifndef STM32_LEAF_PLATFORM
+#else
 #include "../platform-impl/posix/posix_stdio.h"
 #endif /* ESP8266_PLATFORM */
-#endif /* ECONAIS_PLATFORM */
-
+#endif /*  STM32_LEAF_PLATFORM */
+#endif /* ECONIAS_PLATFORM */
 
 #endif /* STDIO_H_ */
 
