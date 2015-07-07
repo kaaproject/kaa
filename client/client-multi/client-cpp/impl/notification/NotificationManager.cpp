@@ -148,8 +148,13 @@ void NotificationManager::addNotificationListener(const std::string& topidId, IN
     KAA_MUTEX_UNIQUE_DECLARE(optionalListenersLock, optionalListenersGuard_);
     KAA_MUTEX_LOCKED("optionalListenersGuard_");
 
-    optionalListeners_[topidId].addCallback(&listener, std::bind(&INotificationListener::onNotification, &listener,
-                                                                 std::placeholders::_1, std::placeholders::_2));
+    auto it = optionalListeners_.find(topidId);
+    if (it == optionalListeners_.end()) {
+        it = optionalListeners_.insert(std::make_pair(topidId, std::make_shared<NotificationObservable>())).first;
+    }
+
+    it->second->addCallback(&listener, std::bind(&INotificationListener::onNotification, &listener,
+                            std::placeholders::_1, std::placeholders::_2));
 }
 
 void NotificationManager::removeNotificationListener(INotificationListener& listener)
@@ -167,8 +172,8 @@ void NotificationManager::removeNotificationListener(const std::string& topidId,
 
     auto it = optionalListeners_.find(topidId);
     if (it != optionalListeners_.end()) {
-        it->second.removeCallback(&listener);
-        if (it->second.isEmpty()) {
+        it->second->removeCallback(&listener);
+        if (it->second->isEmpty()) {
             optionalListeners_.erase(topidId);
         }
     }
@@ -342,14 +347,14 @@ bool NotificationManager::notifyOptionalNotificationSubscribers(const std::strin
 
     auto it = optionalListeners_.find(id);
     if (it != optionalListeners_.end()) {
-        auto& notifier = it->second;
+        auto notifier = it->second;
 
         KAA_MUTEX_UNLOCKING("optionalListenersGuard_");
         KAA_UNLOCK(optionalListenersLock);
         KAA_MUTEX_UNLOCKED("optionalListenersGuard_");
 
         notified = true;
-        notifier(id, notification);
+        (*notifier)(id, notification);
     }
 
     return notified;
