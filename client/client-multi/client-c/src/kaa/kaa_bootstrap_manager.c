@@ -233,7 +233,7 @@ void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self)
 void kaa_bootstrap_manager_schedule_failover(kaa_bootstrap_manager_t *self, kaa_access_point_t* access_point,
                                              kaa_transport_protocol_id_t *protocol_id, kaa_server_type_t type)
 {
-    KAA_RETURN_IF_NIL3(self, access_point, protocol_id, );
+    KAA_RETURN_IF_NIL2(self, protocol_id, );
     kaa_failover_decision_t decision = kaa_failover_strategy_on_failover(self->kaa_context->failover_strategy);
     switch (decision.action) {
     case KAA_NOOP:
@@ -327,6 +327,7 @@ kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstr
 
     size_t index;
     bool execute_failover = false;
+
     if (bootstrap_access_points_it) {
         index = ((kaa_bootstrap_access_points_t *)kaa_list_get_data(bootstrap_access_points_it))->index;
     } else {
