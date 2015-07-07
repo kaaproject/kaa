@@ -25,17 +25,8 @@
 #include "posix_kaa_failover_strategy.h"
 
 
-
-typedef struct {
-    kaa_access_point_t *acess_point;
-    kaa_server_type_t server;
-    kaa_transport_protocol_id_t protocol_id;
-    kaa_time_t next_execution_time;
-} failover_meta_info;
-
 struct kaa_failover_strategy_t {
     kaa_failover_decision_t decision;
-    failover_meta_info      metadata;
     kaa_logger_t            *logger;
 };
 
@@ -57,54 +48,9 @@ void kaa_failover_strategy_destroy(kaa_failover_strategy_t* strategy)
     KAA_FREE(strategy);
 }
 
-void kaa_set_failover_metainfo(kaa_failover_strategy_t *strategy, kaa_access_point_t *acess_point
-                    , kaa_server_type_t server, kaa_transport_protocol_id_t *protocol_id, kaa_time_t next_execution_time)
+kaa_failover_decision_t kaa_failover_strategy_on_failover(void *self)
 {
-    KAA_RETURN_IF_NIL(strategy, );
-
-    if (acess_point)
-        strategy->metadata.acess_point = acess_point;
-
-        strategy->metadata.protocol_id = *protocol_id;
-        strategy->metadata.server = server;
-        strategy->metadata.next_execution_time = next_execution_time;
-}
-
-void kaa_get_failover_metainfo(kaa_failover_strategy_t *self, kaa_access_point_t **acess_point
-                             , kaa_server_type_t *server, kaa_transport_protocol_id_t *protocol_id, kaa_time_t *next_execution_time)
-{
-    KAA_RETURN_IF_NIL4(self, acess_point, protocol_id, next_execution_time, );
-
-    *acess_point = self->metadata.acess_point;
-    *protocol_id = self->metadata.protocol_id;
-    *server = self->metadata.server;
-    *next_execution_time = self->metadata.next_execution_time;
-}
-
-kaa_failover_decision_t kaa_failover_strategy_get_decision(kaa_failover_strategy_t* strategy)
-{
+    kaa_failover_strategy_t *strategy = (kaa_failover_strategy_t *) self;
     return strategy->decision;
 }
 
-void kaa_failover_execute(kaa_failover_strategy_t* self, kaa_access_point_t *access_point, kaa_server_type_t server, kaa_transport_protocol_id_t *protocol_id)
-{
-    KAA_RETURN_IF_NIL(self, );
-    switch (self->decision.action) {
-    case KAA_NOOP:
-        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Nothing to be done...");
-        break;
-    case KAA_RETRY:
-        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to retry in %u seconds...", self->decision.retry_period);
-        kaa_set_failover_metainfo(self, access_point, server, protocol_id, KAA_TIME() + self->decision.retry_period);
-        break;
-    case KAA_STOP_APP:
-        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Stopping application according to the failover strategy...");
-        exit(0);
-    }
-}
-
-void kaa_failover_strategy_reset_next_execution_time(kaa_failover_strategy_t *self)
-{
-    KAA_RETURN_IF_NIL(self, );
-    self->metadata.next_execution_time = 0;
-}

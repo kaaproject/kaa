@@ -18,11 +18,6 @@
 #ifndef EXT_FAILOVER_STRATEGY_H_
 #define EXT_FAILOVER_STRATEGY_H_
 
-#ifndef KAA_FAILOVER_STRATEGY
-    #define KAA_FAILOVER_STRATEGY
-        typedef struct kaa_failover_strategy_t       kaa_failover_strategy_t;
-#endif
-
 #include <stddef.h>
 #include "../kaa_error.h"
 #include "../platform/time.h"
@@ -42,6 +37,6 @@ typedef struct {
     kaa_time_t retry_period;
 } kaa_failover_decision_t;
 
-kaa_error_t kaa_failover_strategy_set_decision(kaa_failover_strategy_t *self, kaa_failover_decision_t *decision);
+kaa_failover_decision_t kaa_failover_strategy_on_failover(void *self);
 
 #endif /* EXT_FAILOVER_STRATEGY_H_ */

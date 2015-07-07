@@ -296,7 +296,7 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
         }
 
         //Check Kaa channel is ready to transmit something
-        if (kaa_bootstrap_manager_process_failover(kaa_client->kaa_context->bootstrap_manager)) {
+        if (kaa_process_failover(kaa_client->kaa_context)) {
             kaa_client->boostrap_complete = false;
         } else {
             if (kaa_client->channel_id > 0) {
@@ -382,7 +382,9 @@ kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel
                                                          , &kaa_client->channel
                                                          , &kaa_client->channel_id);
     if (error_code) {
-        KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Failed to add transport channel, type %d", channel_type);
+        KAA_LOG_WARN(kaa_client->kaa_context->logger, error_code, "Failed to %s channel, type %d",
+                     error_code == KAA_ERR_BAD_STATE ? "initialize" : "add", channel_type);
+
         return error_code;
     }
 

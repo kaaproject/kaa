@@ -62,15 +62,7 @@ typedef enum {
 kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self
                                                        , kaa_transport_protocol_id_t *protocol_id
                                                        , kaa_server_type_t type);
-/**
- * @brief Processes failovers.
- *
- * @param[in]   self           Bootstrap manager.
- * @return                     if failover is scheduled returns true, otherwise - false.
- *
- */
 
-bool kaa_bootstrap_manager_process_failover(kaa_bootstrap_manager_t *self);
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif

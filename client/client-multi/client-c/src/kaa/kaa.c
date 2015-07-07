@@ -91,6 +91,7 @@ extern void kaa_notification_manager_destroy(kaa_notification_manager_t *self);
 
 extern kaa_error_t kaa_failover_strategy_create(kaa_failover_strategy_t** strategy, kaa_logger_t *logger);
 extern void kaa_failover_strategy_destroy(kaa_failover_strategy_t* strategy);
+extern bool kaa_bootstrap_manager_process_failover(kaa_bootstrap_manager_t *self);
 
 /* Forward declaration */
 static kaa_error_t kaa_context_destroy(kaa_context_t *context);
@@ -290,4 +291,10 @@ kaa_error_t kaa_deinit(kaa_context_t *kaa_context)
         KAA_LOG_ERROR(logger, error, "Failed to destroy Kaa context");
     kaa_log_destroy(logger);
     return error;
+}
+
+bool kaa_process_failover(kaa_context_t *kaa_context)
+{
+    KAA_RETURN_IF_NIL(kaa_context, false);
+    return kaa_bootstrap_manager_process_failover(kaa_context->bootstrap_manager);
 }
