@@ -511,7 +511,7 @@ bool kaa_bootstrap_manager_process_failover(kaa_bootstrap_manager_t *self)
 
     kaa_failover_decision_t decision = kaa_failover_strategy_on_failover(self->kaa_context->failover_strategy);
     if(decision.action == KAA_NOOP)
-        return false;
+       return false;
     kaa_error_t error_code = KAA_ERR_NONE;
     kaa_time_t current_time = KAA_TIME();
     if (!self->failover_meta_info.next_execution_time) {

@@ -24,6 +24,7 @@
 #ifndef KAA_H_
 #define KAA_H_
 
+#include <stdbool.h>
 #include "kaa_context.h"
 #include "kaa_error.h"
 
