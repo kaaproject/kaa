@@ -51,7 +51,6 @@ extern void kaa_get_failover_metainfo(kaa_failover_strategy_t *self, kaa_access_
 extern kaa_failover_decision_t kaa_failover_strategy_get_decision(kaa_failover_strategy_t* strategy);
 extern kaa_time_t kaa_channel_manager_get_next_operations_time_request(kaa_channel_manager_t *self);
 extern void kaa_channel_manager_set_next_operations_time_request(kaa_channel_manager_t *self, kaa_time_t next_time);
-extern void kaa_channel_manager_set_next_operations_time_request(kaa_channel_manager_t *self, kaa_time_t next_time);
 extern void kaa_failover_strategy_reset_next_execution_time(kaa_failover_strategy_t *self);
 typedef struct {
     kaa_transport_protocol_id_t    protocol_id;
@@ -253,23 +252,22 @@ static kaa_error_t get_next_bootstrap_access_point_index(kaa_transport_protocol_
 {
     KAA_RETURN_IF_NIL4(protocol_id, next_index, execute_failover, KAA_BOOTSTRAP_ACCESS_POINT_COUNT, KAA_ERR_BADPARAM);
 
+    size_t i = index_from;
     if (index_from < KAA_BOOTSTRAP_ACCESS_POINT_COUNT) {
-        size_t i = index_from;
         for (; i < KAA_BOOTSTRAP_ACCESS_POINT_COUNT; ++i) {
             if (kaa_transport_protocol_id_equals(&(KAA_BOOTSTRAP_ACCESS_POINTS[i].protocol_id), protocol_id)) {
                 *next_index = i;
                 return KAA_ERR_NONE;
             }
         }
-        i = 0; // from the beginning
-        for (; i < index_from; ++i) {
-            if (kaa_transport_protocol_id_equals(&(KAA_BOOTSTRAP_ACCESS_POINTS[i].protocol_id), protocol_id)) {
-               *next_index = i;
-               *execute_failover = true; //execute failover
-               return KAA_ERR_NONE;
-            }
-        }
     }
+    i = 0; // from the beginning
+    for (; i < KAA_BOOTSTRAP_ACCESS_POINT_COUNT; ++i) {
+         if (kaa_transport_protocol_id_equals(&(KAA_BOOTSTRAP_ACCESS_POINTS[i].protocol_id), protocol_id))
+             *next_index = i;
+             *execute_failover = true; //execute failover
+             return KAA_ERR_NONE;
+         }
 
     return KAA_ERR_NOT_FOUND;
 }
