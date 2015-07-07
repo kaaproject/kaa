@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.avro.avrogenc;
+package org.kaaproject.kaa.avro.avrogen;
 
 public class StyleUtils {
     public static String toLowerUnderScore(String camelCaseName) {
@@ -58,6 +58,16 @@ public class StyleUtils {
         }
 
         return convertedName.toString();
+    }
+
+    public static String fixCamelHumps(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Name couldn't be null or empty");
+        }
+        if (Character.isLowerCase(name.charAt(0))) {
+            return Character.toUpperCase(name.charAt(0)) + name.substring(1);
+        }
+        return name;
     }
 
     public static String removePackageName(String fullClassName) {

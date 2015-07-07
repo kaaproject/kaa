@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.avro.avrogenc;
+package org.kaaproject.kaa.avro.avrogen;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class TypeConverter {
     }
 
     public static String convertToCType(String namespace, Schema schema) {
-        String cType = new String();
+        String cType = "";
         switch (schema.getType()) {
         case BOOLEAN:
             cType = "int8_t";
@@ -72,6 +72,51 @@ public class TypeConverter {
         }
 
         return cType;
+    }
+
+    public static String convertToObjCType(Schema schema) {
+        String objCType = "";
+        switch (schema.getType()) {
+            case BOOLEAN:
+                objCType = "BOOL";
+                break;
+            case INT:
+                objCType = "int32_t";
+                break;
+            case LONG:
+                objCType = "int64_t";
+                break;
+            case FLOAT:
+                objCType = "float";
+                break;
+            case DOUBLE:
+                objCType = "double";
+                break;
+            case STRING:
+                objCType = "NSString *";
+                break;
+            case BYTES:
+            case FIXED:
+                objCType = "NSData *";
+                break;
+            case ARRAY:
+                objCType = "NSArray *";
+                break;
+            case UNION:
+                objCType = "KAAUnion *";
+                break;
+            case ENUM:
+                objCType = schema.getName();
+                break;
+            case RECORD:
+                objCType = schema.getName() + " *";
+                break;
+            default:
+                // TODO: add handling
+                break;
+        }
+
+        return objCType;
     }
 
     public static String generateUnionName(Schema schema) {
@@ -170,6 +215,18 @@ public class TypeConverter {
         return (schema.getType() == Type.DOUBLE);
     }
 
+    public static boolean isAvroInt(Schema schema) {
+        return schema.getType() == Type.INT;
+    }
+
+    public static boolean isAvroLong(Schema schema) {
+        return schema.getType() == Type.LONG;
+    }
+
+    public static boolean isAvroBoolean(Schema schema) {
+        return schema.getType() == Type.BOOLEAN;
+    }
+
     public static boolean isTypeOut(Schema schema) {
         String prop = schema.getProp(DIRECTION_FIELD);
         return (prop == null || prop.equalsIgnoreCase("out"));
@@ -178,5 +235,19 @@ public class TypeConverter {
     public static boolean isTypeIn(Schema schema) {
         String prop = schema.getProp(DIRECTION_FIELD);
         return (prop == null || prop.equalsIgnoreCase("in"));
+    }
+
+    public static String getLastBranchNumber(Schema schema) {
+        return "" + (schema.getTypes().size() - 1);
+    }
+
+    public static boolean containsUnion(Schema schema) {
+        for (Field field : schema.getFields()) {
+            if (isAvroUnion(field.schema())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

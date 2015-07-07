@@ -23,11 +23,11 @@ Copyright 2014 CyberVision, Inc.
         <artifactId>kaa</artifactId>
     </parent>
 
-    <groupId>org.kaaproject.kaa.avrogenc</groupId>
-    <artifactId>avrogenc</artifactId>
+    <groupId>org.kaaproject.kaa.avrogen</groupId>
+    <artifactId>avrogen</artifactId>
     <packaging>jar</packaging>
 
-    <name>Kaa Avro C Generator</name>
+    <name>Kaa Avro Generator</name>
     <url>http://kaaproject.org</url>
 
     <properties>
@@ -53,7 +53,7 @@ Copyright 2014 CyberVision, Inc.
                             <manifest>
                                 <addClasspath>true</addClasspath>
                                 <classpathPrefix>lib/</classpathPrefix>
-                                <mainClass>org.kaaproject.kaa.avro.avrogenc.Main</mainClass>
+                                <mainClass>org.kaaproject.kaa.avro.avrogen.Main</mainClass>
                             </manifest>
                         </archive>
                     </configuration>

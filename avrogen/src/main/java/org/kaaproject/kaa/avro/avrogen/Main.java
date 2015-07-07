@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.avro.avrogenc;
+package org.kaaproject.kaa.avro.avrogen;
 
+
+import org.kaaproject.kaa.avro.avrogen.compiler.*;
 
 public class Main {
     public static void main(String[] args) {
         try {
             if (args.length < 3) {
-                throw new KaaCGeneratorException("Not enough argument. "
+                throw new KaaGeneratorException("Not enough argument. "
                         + "Need {FULL_PATH_TO_SCHEMA} {OUTPUT_PATH} {SOURCE_NAME}");
             }
 
-            Compiler compiler = new Compiler(args[0], args[1], args[2]);
+            org.kaaproject.kaa.avro.avrogen.compiler.Compiler compiler = new ObjectiveCCompiler(args[0], args[1], args[2]);
             compiler.generate();
         } catch (Exception e) {
             System.err.println("Compilation failure: " + e.toString());

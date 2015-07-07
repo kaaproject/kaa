@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.avro.avrogenc;
+package org.kaaproject.kaa.avro.avrogen;
 
 public class GenerationContext {
     private enum DirectionType {

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.avro.avrogenc;
+package org.kaaproject.kaa.avro.avrogen;
 
-public class KaaCGeneratorException extends Exception {
-    public KaaCGeneratorException() {
+public class KaaGeneratorException extends Exception {
+    public KaaGeneratorException() {
         super();
     }
 
-    public KaaCGeneratorException(String str) {
+    public KaaGeneratorException(String str) {
         super(str);
     }
 }

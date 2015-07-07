@@ -126,8 +126,8 @@
             <artifactId>endpoint-shared</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.kaaproject.kaa.avrogenc</groupId>
-            <artifactId>avrogenc</artifactId>
+            <groupId>org.kaaproject.kaa.avrogen</groupId>
+            <artifactId>avrogen</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.avro.avrogenc;
+package org.kaaproject.kaa.avro.avrogen.compiler;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -35,22 +35,26 @@ import org.apache.avro.Schema.Field;
 import org.apache.avro.Schema.Type;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.kaaproject.kaa.avro.avrogen.GenerationContext;
+import org.kaaproject.kaa.avro.avrogen.KaaGeneratorException;
+import org.kaaproject.kaa.avro.avrogen.StyleUtils;
+import org.kaaproject.kaa.avro.avrogen.TypeConverter;
 
-public class Compiler {
+public abstract class Compiler {
     private static final String DIRECTION_PROP = "direction";
 
     private final String generatedSourceName;
 
     private Schema schema;
 
-    private VelocityEngine engine;
+    protected VelocityEngine engine;
 
-    private PrintWriter headerWriter;
-    private PrintWriter sourceWriter;
+    protected PrintWriter headerWriter;
+    protected PrintWriter sourceWriter;
 
-    private String namespacePrefix;
+    protected String namespacePrefix;
 
-    private final Map<Schema, GenerationContext> schemaQueue;
+    protected final Map<Schema, GenerationContext> schemaQueue;
 
     private void initVelocityEngine() {
         engine = new VelocityEngine();
@@ -65,7 +69,7 @@ public class Compiler {
         engine.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
     }
 
-    private Compiler(String sourceName) throws KaaCGeneratorException {
+    private Compiler(String sourceName) throws KaaGeneratorException {
         this.namespacePrefix = "kaa";
         this.generatedSourceName = sourceName;
         this.schemaQueue = new LinkedHashMap<>();
@@ -73,7 +77,7 @@ public class Compiler {
     }
 
     public Compiler(Schema schema, String sourceName, OutputStream hdrS, OutputStream srcS)
-            throws KaaCGeneratorException
+            throws KaaGeneratorException
     {
         this(sourceName);
 
@@ -84,7 +88,7 @@ public class Compiler {
         prepareTemplates(false);
     }
 
-    public Compiler(String schemaPath, String outputPath, String sourceName) throws KaaCGeneratorException {
+    public Compiler(String schemaPath, String outputPath, String sourceName) throws KaaGeneratorException {
         this(sourceName);
         try {
             this.schema = new Schema.Parser().parse(new File(schemaPath));
@@ -95,30 +99,36 @@ public class Compiler {
             outputDir.mkdirs();
 
             String headerPath = outputPath + File.separator + generatedSourceName + ".h";
-            String sourcePath = outputPath + File.separator + generatedSourceName + ".c";
+            String sourcePath = outputPath + File.separator + generatedSourceName + getSourceExtension();
 
-            Files.move(new File("src/main/resources/header.tmpl.gen").toPath()
+            Files.move(new File(headerTemplateGen()).toPath()
                     , new File(headerPath).toPath(), StandardCopyOption.REPLACE_EXISTING);
-            Files.move(new File("src/main/resources/source.tmpl.gen").toPath()
+            Files.move(new File(sourceTemplateGen()).toPath()
                     , new File(sourcePath).toPath(), StandardCopyOption.REPLACE_EXISTING);
 
             this.headerWriter = new PrintWriter(new BufferedWriter(new FileWriter(headerPath, true)));
             this.sourceWriter = new PrintWriter(new BufferedWriter(new FileWriter(sourcePath, true)));
         } catch (Exception e) {
-            throw new KaaCGeneratorException("Failed to create ouput path: " + e.toString());
+            throw new KaaGeneratorException("Failed to create output path: " + e.toString());
         }
     }
 
-    private void prepareTemplates(boolean toFile) throws KaaCGeneratorException  {
+    protected abstract String headerTemplateGen();
+    protected abstract String sourceTemplateGen();
+    protected abstract String headerTemplate();
+    protected abstract String sourceTemplate();
+    protected abstract String getSourceExtension();
+
+    private void prepareTemplates(boolean toFile) throws KaaGeneratorException {
         try {
             VelocityContext context = new VelocityContext();
             context.put("headerName", generatedSourceName);
 
             StringWriter hdrWriter = new StringWriter();
-            engine.getTemplate("header.tmpl").merge(context, hdrWriter);
+            engine.getTemplate(headerTemplate()).merge(context, hdrWriter);
 
             StringWriter srcWriter = new StringWriter();
-            engine.getTemplate("source.tmpl").merge(context, srcWriter);
+            engine.getTemplate(sourceTemplate()).merge(context, srcWriter);
 
             if (toFile) {
                 writeToFile(hdrWriter, srcWriter);
@@ -126,7 +136,7 @@ public class Compiler {
                 writeToStream(hdrWriter, srcWriter);
             }
         } catch (Exception e) {
-            throw new KaaCGeneratorException("Failed to prepare source templates: " + e.toString());
+            throw new KaaGeneratorException("Failed to prepare source templates: " + e.toString());
         }
     }
 
@@ -136,16 +146,16 @@ public class Compiler {
     }
 
     private void writeToFile(StringWriter hdrWriter, StringWriter srcWriter) throws Exception {
-        FileOutputStream hdrOs = new FileOutputStream("src/main/resources/header.tmpl.gen");
+        FileOutputStream hdrOs = new FileOutputStream(headerTemplateGen());
         hdrOs.write(hdrWriter.toString().getBytes());
         hdrOs.close();
 
-        FileOutputStream srcOs = new FileOutputStream("src/main/resources/source.tmpl.gen");
+        FileOutputStream srcOs = new FileOutputStream(sourceTemplateGen());
         srcOs.write(srcWriter.toString().getBytes());
         srcOs.close();
     }
 
-    public void generate() throws KaaCGeneratorException {
+    public void generate() throws KaaGeneratorException {
         try {
             System.out.println("Processing schema: " + schema);
 
@@ -158,11 +168,10 @@ public class Compiler {
             }
 
             doGenerate();
-            compeleteGeneration();
 
-            System.out.println("C sources were successfully generated");
+            System.out.println("Sources were successfully generated");
         } catch (Exception e) {
-            throw new KaaCGeneratorException("Failed to generate C sources: " + e.toString());
+            throw new KaaGeneratorException("Failed to generate sources: " + e.toString());
         } finally {
             headerWriter.close();
             sourceWriter.close();
@@ -202,43 +211,9 @@ public class Compiler {
         }
     }
 
-    private void doGenerate() {
-        for (Map.Entry<Schema, GenerationContext> cursor : schemaQueue.entrySet()) {
-            switch (cursor.getKey().getType()) {
-            case RECORD:
-                processRecord(cursor.getKey());
-                break;
-            case UNION:
-                processUnion(cursor.getKey(), cursor.getValue());
-                break;
-            case ENUM:
-                processEnum(cursor.getKey());
-                break;
-            default:
-                break;
-            }
-        }
-    }
+    protected abstract void doGenerate();
 
-    private void processUnion(Schema schema, GenerationContext genContext) {
-        VelocityContext context = new VelocityContext();
-
-        context.put("schema", schema);
-        context.put("generationContext", genContext);
-        context.put("StyleUtils", StyleUtils.class);
-        context.put("TypeConverter", TypeConverter.class);
-        context.put("namespacePrefix", namespacePrefix);
-
-        StringWriter headerWriter = new StringWriter();
-        engine.getTemplate("union.h.vm").merge(context, headerWriter);
-        appendResult(headerWriter.toString(), true);
-
-        StringWriter sourceWriter = new StringWriter();
-        engine.getTemplate("union.c.vm").merge(context, sourceWriter);
-        appendResult(sourceWriter.toString(), false);
-    }
-
-    private void processRecord(Schema schema) {
+    protected void processRecord(Schema schema, String headerTemplate, String sourceTemplate) {
         VelocityContext context = new VelocityContext();
 
         context.put("schema", schema);
@@ -247,15 +222,15 @@ public class Compiler {
         context.put("namespacePrefix", namespacePrefix);
 
         StringWriter headerWriter = new StringWriter();
-        engine.getTemplate("record.h.vm").merge(context, headerWriter);
+        engine.getTemplate(headerTemplate).merge(context, headerWriter);
         appendResult(headerWriter.toString(), true);
 
         StringWriter sourceWriter = new StringWriter();
-        engine.getTemplate("record.c.vm").merge(context, sourceWriter);
+        engine.getTemplate(sourceTemplate).merge(context, sourceWriter);
         appendResult(sourceWriter.toString(), false);
     }
 
-    private void processEnum(Schema schema) {
+    protected void processEnum(Schema schema, String template) {
         VelocityContext context = new VelocityContext();
 
         List<String> symbols = schema.getEnumSymbols();
@@ -266,20 +241,16 @@ public class Compiler {
         context.put("namespacePrefix", namespacePrefix);
 
         StringWriter writer = new StringWriter();
-        engine.getTemplate("enum.h.vm").merge(context, writer);
+        engine.getTemplate(template).merge(context, writer);
         appendResult(writer.toString(), true);
     }
 
-    private void appendResult(String str, boolean toHeader) {
+    protected void appendResult(String str, boolean toHeader) {
         if (toHeader) {
             headerWriter.write(str);
         } else {
             sourceWriter.write(str);
         }
-    }
-
-    private void compeleteGeneration() {
-        headerWriter.write("#ifdef __cplusplus\n}      /* extern \"C\" */\n#endif\n#endif");
     }
 
     public void setNamespacePrefix(String namespacePrefix) {

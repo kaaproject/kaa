@@ -42,11 +42,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.kaaproject.kaa.avro.avrogenc.Compiler;
-import org.kaaproject.kaa.avro.avrogenc.StyleUtils;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.common.Environment;
+import org.kaaproject.kaa.avro.avrogen.compiler.Compiler;
+import org.kaaproject.kaa.avro.avrogen.compiler.CCompiler;
+import org.kaaproject.kaa.avro.avrogen.StyleUtils;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
 import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
@@ -256,7 +257,7 @@ public class CSdkGenerator extends SdkGenerator {
             OutputStream headerStream = new ByteArrayOutputStream();
             OutputStream sourceStream = new ByteArrayOutputStream();
         ) {
-            Compiler compiler = new Compiler(schema, sourceName, headerStream, sourceStream);
+            Compiler compiler = new CCompiler(schema, sourceName, headerStream, sourceStream);
             compiler.setNamespacePrefix(namespace);
             compiler.generate();
 
@@ -292,11 +293,8 @@ public class CSdkGenerator extends SdkGenerator {
      * Generate client properties.
      *
      * @param bootstrapNodes the bootstrap nodes
-     * @param appToken the app token
-     * @param configurationSchemaVersion the configuration schema version
+     * @param sdkToken the sdk token
      * @param profileSchemaVersion the profile schema version
-     * @param notificationSchemaVersion the notification schema version
-     * @param logSchemaVersion the log schema version
      * @param configurationProtocolSchemaBody the configuration protocol schema body
      * @param defaultConfigurationData the default configuration data
      * @return the byte[]
