@@ -284,11 +284,12 @@ static kaa_error_t get_next_bootstrap_access_point_index(kaa_transport_protocol_
     }
     i = 0; // from the beginning
     for (; i < KAA_BOOTSTRAP_ACCESS_POINT_COUNT; ++i) {
-         if (kaa_transport_protocol_id_equals(&(KAA_BOOTSTRAP_ACCESS_POINTS[i].protocol_id), protocol_id))
+         if (kaa_transport_protocol_id_equals(&(KAA_BOOTSTRAP_ACCESS_POINTS[i].protocol_id), protocol_id)) {
              *next_index = i;
              *execute_failover = true; //execute failover
              return KAA_ERR_NONE;
          }
+    }
 
     return KAA_ERR_NOT_FOUND;
 }
