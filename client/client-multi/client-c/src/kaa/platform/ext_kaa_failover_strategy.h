@@ -43,6 +43,14 @@ typedef struct {
     kaa_time_t retry_period;
 } kaa_failover_decision_t;
 
+/**
+* @brief Returns the decision, depending on the failover reason.
+*
+* @param[in]   self         Pointer to the failover strategy instance.
+* @param[in]   reason       Reason that caused failover strategy to be executed.
+*
+* @return kaa_failover_decision_t
+*/
 kaa_failover_decision_t kaa_failover_strategy_on_failover(void *self, kaa_failover_reason reason);
 
 #endif /* EXT_FAILOVER_STRATEGY_H_ */

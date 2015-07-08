@@ -464,16 +464,11 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
 
         access_point = (kaa_access_point_t *)&(KAA_BOOTSTRAP_ACCESS_POINTS[next_index].access_point);
 
-        if (!execute_failover) {
-            if (bootstrap_access_points_it){
-                ((kaa_bootstrap_access_points_t *)kaa_list_get_data(bootstrap_access_points_it))->index = next_index;
-            } else {
-                error_code = add_bootstrap_access_point(self, next_index);
-                KAA_RETURN_IF_ERR(error_code);
-            }
+        if (bootstrap_access_points_it){
+            ((kaa_bootstrap_access_points_t *)kaa_list_get_data(bootstrap_access_points_it))->index = next_index;
         } else {
-            if (bootstrap_access_points_it)
-                ((kaa_bootstrap_access_points_t *)kaa_list_get_data(bootstrap_access_points_it))->index = 0;
+            error_code = add_bootstrap_access_point(self, next_index);
+            KAA_RETURN_IF_ERR(error_code);
         }
     } else {
         kaa_list_node_t *operations_access_points_it = kaa_list_find_next(kaa_list_begin(self->operations_access_points)
