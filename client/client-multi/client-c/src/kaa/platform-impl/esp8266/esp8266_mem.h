@@ -1,7 +1,8 @@
 #ifndef ESP8266_MEM_H
 #define ESP8266_MEM_H
 
-#include <stdlib.h>
+#include <mem.h>
+
 #ifndef __KAA_MALLOC
 #define __KAA_MALLOC(S) os_malloc(S)
 #endif /* __KAA_MALLOC */
