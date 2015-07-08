@@ -27,7 +27,6 @@
 #include <stdbool.h>
 #include "kaa_error.h"
 #include "kaa_common.h"
-#include "platform/time.h"
 #include "platform/ext_transport_channel.h"
 
 #ifdef __cplusplus

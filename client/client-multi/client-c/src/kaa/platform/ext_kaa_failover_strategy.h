@@ -31,12 +31,18 @@ typedef enum {
     KAA_STOP_APP
 } kaa_failover_strategy_action_t;
 
+typedef enum {
+    BOOTSTRAP_SERVERS_NA = 0,
+    OPERATION_SERVERS_NA,
+    EMPTY_OPERATION_SERVERS_LIST,
+    NO_CONNECTIVITY
+} kaa_failover_reason;
 
 typedef struct {
     kaa_failover_strategy_action_t action;
     kaa_time_t retry_period;
 } kaa_failover_decision_t;
 
-kaa_failover_decision_t kaa_failover_strategy_on_failover(void *self);
+kaa_failover_decision_t kaa_failover_strategy_on_failover(void *self, kaa_failover_reason reason);
 
 #endif /* EXT_FAILOVER_STRATEGY_H_ */

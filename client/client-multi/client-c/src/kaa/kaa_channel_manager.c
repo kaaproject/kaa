@@ -39,9 +39,6 @@ extern kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa
 extern kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstrap_manager_t *self
                                                                           , kaa_transport_protocol_id_t *protocol_id);
 
-extern void kaa_bootstrap_manager_schedule_failover(kaa_bootstrap_manager_t *self, kaa_access_point_t* access_point,
-                                                    kaa_transport_protocol_id_t *protocol_id, kaa_server_type_t type);
-
 typedef struct {
     uint32_t                             channel_id;
     kaa_server_type_t                    server_type;
@@ -270,7 +267,6 @@ static kaa_error_t init_channel(kaa_channel_manager_t *self
 
             channel->set_access_point(channel->context, access_point);
         } else {
-            kaa_bootstrap_manager_schedule_failover(self->kaa_context->bootstrap_manager, NULL, &protocol_id, KAA_SERVER_OPERATIONS);
             if (is_bootstrap_channel) {
                 KAA_LOG_WARN(self->kaa_context->logger, KAA_ERR_NOT_FOUND, "Could not find access point for Bootstrap channel [0x%08X] "
                                     "(protocol: id=0x%08X, version=%u)", id, protocol_id.id, protocol_id.version);

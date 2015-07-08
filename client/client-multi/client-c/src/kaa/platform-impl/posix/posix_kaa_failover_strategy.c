@@ -33,7 +33,7 @@ struct kaa_failover_strategy_t {
 kaa_error_t kaa_failover_strategy_create(kaa_failover_strategy_t** strategy, kaa_logger_t *logger)
 {
     KAA_RETURN_IF_NIL2(strategy, logger, KAA_ERR_BADPARAM);
-    *strategy = (kaa_failover_strategy_t *) KAA_CALLOC(1, sizeof(kaa_failover_strategy_t));
+    *strategy = (kaa_failover_strategy_t *) KAA_MALLOC(sizeof(kaa_failover_strategy_t));
     KAA_RETURN_IF_NIL(*strategy, KAA_ERR_NOMEM);
     (*strategy)->decision.action = KAA_RETRY;
     (*strategy)->decision.retry_period = KAA_FAILOVER_RETRY_PERIOD;
@@ -48,7 +48,7 @@ void kaa_failover_strategy_destroy(kaa_failover_strategy_t* strategy)
     KAA_FREE(strategy);
 }
 
-kaa_failover_decision_t kaa_failover_strategy_on_failover(void *self)
+kaa_failover_decision_t kaa_failover_strategy_on_failover(void *self, kaa_failover_reason reason)
 {
     kaa_failover_strategy_t *strategy = (kaa_failover_strategy_t *) self;
     return strategy->decision;
