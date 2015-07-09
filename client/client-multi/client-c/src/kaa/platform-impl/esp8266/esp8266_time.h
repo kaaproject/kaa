@@ -1,6 +1,7 @@
 #ifndef ESP8266_TIME_H
 #define ESP8266_TIME_H
 
+#include <stdint.h>
 #include <time.h>
 
 typedef uint32_t kaa_time_t;
