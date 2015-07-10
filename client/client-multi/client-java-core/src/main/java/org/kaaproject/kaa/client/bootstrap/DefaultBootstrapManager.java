@@ -146,7 +146,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
 
     @Override
     public synchronized void onProtocolListUpdated(List<ProtocolMetaData> list) {
-        LOG.trace("Protocol list was updated: {}", list);
+        LOG.trace("Protocol list was updated");
         operationsServerList = list;
         mappedOperationServerList.clear();
         mappedIterators.clear();
