@@ -54,8 +54,10 @@ public class FailoverDecision {
      * Enum which represents an action corresponding to a failover scenario
      */
     public static enum FailoverAction {
-        NOOP,           // doing nothing
+        NOOP,               // doing nothing
         RETRY,
+        USE_NEXT_BOOTSTRAP,
+        USE_NEXT_OPERATIONS,
         STOP_APP
     }
 }

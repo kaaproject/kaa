@@ -171,7 +171,7 @@ public class DefaultOperationsChannelTest {
         AbstractHttpClient httpClient = Mockito.mock(AbstractHttpClient.class);
         ExecutorContext context = Mockito.mock(ExecutorContext.class);
         Mockito.when(context.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
-        FailoverManager flManager = new DefaultFailoverManager(manager, context, 100, 1, 1, 1, 1, TimeUnit.MILLISECONDS);
+        FailoverManager flManager = new DefaultFailoverManager(manager, context, 100, 1, 1, 1, TimeUnit.MILLISECONDS);
         FailoverManager failoverManager = Mockito.spy(flManager);
         Mockito.when(
                 httpClient.executeHttpRequest(Mockito.anyString(),

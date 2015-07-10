@@ -208,6 +208,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                         messageFactory.getFramer().pushBytes(Arrays.copyOf(buffer, size));
                     } else if (size == -1) {
                         LOG.info("Channel [{}] received end of stream", getId(), size);
+                        onServerFailed();
                     } else {
                         LOG.info("Socket is null, waiting for a new connection to be opened (sleeping for a {} s)",
                                 SOCKET_OPENING_TIMEOUT);
@@ -354,6 +355,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         } catch (Exception e) {
             LOG.error("Failed to create a socket for server {}:{}", currentServer.getHost(), currentServer.getPort());
             LOG.error("Stack trace: ", e);
+            isOpenConnectionScheduled = false;
             onServerFailed();
             socket = null;
         } finally {

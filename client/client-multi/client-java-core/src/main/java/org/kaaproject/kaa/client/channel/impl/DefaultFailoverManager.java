@@ -39,14 +39,12 @@ public class DefaultFailoverManager implements FailoverManager {
     private static final long DEFAULT_FAILURE_RESOLUTION_TIMEOUT = 10;
     private static final long DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD = 2;
     private static final long DEFAULT_OPERATION_SERVERS_RETRY_PERIOD = 2;
-    private static final long DEFAULT_NO_OPERATION_SERVERS_RETRY_PERIOD = 2;
     private static final long DEFAULT_NO_CONNECTIVITY_RETRY_PERIOD = 5;
     private static final TimeUnit DEFAULT_TIMEUNIT = TimeUnit.SECONDS;
 
     private long failureResolutionTimeout;
     private long bootstrapServersRetryPeriod;
     private long operationsServersRetryPeriod;
-    private long noOperationServersRetryPeriod;
     private long noConnectivityRetryPeriod;
     private TimeUnit timeUnit = DEFAULT_TIMEUNIT;
 
@@ -60,21 +58,19 @@ public class DefaultFailoverManager implements FailoverManager {
              DEFAULT_FAILURE_RESOLUTION_TIMEOUT,
              DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD,
              DEFAULT_OPERATION_SERVERS_RETRY_PERIOD,
-             DEFAULT_NO_OPERATION_SERVERS_RETRY_PERIOD,
              DEFAULT_NO_CONNECTIVITY_RETRY_PERIOD,
              DEFAULT_TIMEUNIT);
     }
 
     public DefaultFailoverManager(KaaChannelManager channelManager, ExecutorContext context,
                                   long failureResolutionTimeout, long bootstrapServersRetryPeriod,
-                                  long operationsServersRetryPeriod, long noOperationServersRetryPeriod,
+                                  long operationsServersRetryPeriod,
                                   long noConnectivityRetryPeriod, TimeUnit timeUnit) {
         this.channelManager = channelManager;
         this.context = context;
         this.failureResolutionTimeout = failureResolutionTimeout;
         this.bootstrapServersRetryPeriod = bootstrapServersRetryPeriod;
         this.operationsServersRetryPeriod = operationsServersRetryPeriod;
-        this.noOperationServersRetryPeriod = noOperationServersRetryPeriod;
         this.noConnectivityRetryPeriod = noConnectivityRetryPeriod;
         this.timeUnit = timeUnit;
     }
@@ -93,7 +89,7 @@ public class DefaultFailoverManager implements FailoverManager {
             currentResolutionTime = currentAccessPointIdResolution.getResolutionTime();
             if (currentAccessPointIdResolution.getAccessPointId() == connectionInfo.getAccessPointId()
                     && currentAccessPointIdResolution.getCurResolution() != null
-                    && System.currentTimeMillis() < currentAccessPointIdResolution.getResolutionTime()) {
+                    && System.currentTimeMillis() < currentResolutionTime) {
                 LOG.debug("Resolution is in progress for {} server", connectionInfo);
                 return;
             } else {
@@ -180,20 +176,20 @@ public class DefaultFailoverManager implements FailoverManager {
     public synchronized FailoverDecision onFailover(FailoverStatus failoverStatus) {
         LOG.trace("Applying failover strategy for status: {}", failoverStatus);
         switch (failoverStatus) {
-            case NO_BOOTSTRAP_SERVERS:
+            case BOOTSTRAP_SERVERS_NA:
                 AccessPointIdResolution bootstrapResolution = resolutionProgressMap.get(ServerType.BOOTSTRAP);
                 if (bootstrapResolution != null) {
                     bootstrapResolution.setResolutionTime(System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(bootstrapServersRetryPeriod, timeUnit));
                 }
                 return new FailoverDecision(FailoverAction.RETRY, bootstrapServersRetryPeriod, timeUnit);
-            case NO_OPERATION_SERVERS:
-                AccessPointIdResolution operationsResolution = resolutionProgressMap.get(ServerType.OPERATIONS);
-                if (operationsResolution != null) {
-                    operationsResolution.setResolutionTime(System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(noOperationServersRetryPeriod, timeUnit));
+            case NO_OPERATION_SERVERS_RECEIVED:
+                bootstrapResolution = resolutionProgressMap.get(ServerType.BOOTSTRAP);
+                if (bootstrapResolution != null) {
+                    bootstrapResolution.setResolutionTime(System.currentTimeMillis());
                 }
-                return new FailoverDecision(FailoverAction.RETRY, noOperationServersRetryPeriod, timeUnit);
-            case ALL_OPERATION_SERVERS_NA:
-                operationsResolution = resolutionProgressMap.get(ServerType.OPERATIONS);
+                return new FailoverDecision(FailoverAction.USE_NEXT_BOOTSTRAP, bootstrapServersRetryPeriod, timeUnit);
+            case OPERATION_SERVERS_NA:
+                AccessPointIdResolution operationsResolution = resolutionProgressMap.get(ServerType.OPERATIONS);
                 if (operationsResolution != null) {
                     operationsResolution.setResolutionTime(System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(operationsServersRetryPeriod, timeUnit));
                 }

@@ -36,6 +36,7 @@ import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.transport.TransportException;
+import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +90,7 @@ public class DefaultBootstrapManager implements BootstrapManager {
                 }
             } else {
                 LOG.warn("Failed to find server for channel [{}]", transportId);
-                FailoverDecision decision = failoverManager.onFailover(FailoverStatus.ALL_OPERATION_SERVERS_NA);
+                FailoverDecision decision = failoverManager.onFailover(FailoverStatus.OPERATION_SERVERS_NA);
                 applyDecision(decision);
             }
         } else {
@@ -106,14 +107,14 @@ public class DefaultBootstrapManager implements BootstrapManager {
     public synchronized void useNextOperationsServerByAccessPointId(int accessPointId) {
         List<ProtocolMetaData> servers = getTransportsByAccessPointId(accessPointId);
         if (servers != null && servers.size() > 0) {
-            notifyChannelManangerAboutServer(servers);
+            notifyChannelManagerAboutServer(servers);
         } else {
             serverToApply = accessPointId;
             transport.sync();
         }
     }
 
-    private void notifyChannelManangerAboutServer(List<ProtocolMetaData> transports) {
+    private void notifyChannelManagerAboutServer(List<ProtocolMetaData> transports) {
         for (ProtocolMetaData transport : transports) {
             LOG.debug("Applying new transport {}", transports);
             channelManager.onTransportConnectionInfoUpdated(new GenericTransportInfo(ServerType.OPERATIONS, transport));
@@ -145,45 +146,42 @@ public class DefaultBootstrapManager implements BootstrapManager {
 
     @Override
     public synchronized void onProtocolListUpdated(List<ProtocolMetaData> list) {
+        LOG.trace("Protocol list was updated: {}", list);
         operationsServerList = list;
         mappedOperationServerList.clear();
         mappedIterators.clear();
 
-        if (operationsServerList == null || list.isEmpty()) {
-            LOG.trace("Received empty operations server list: {}", list);
-            FailoverDecision decision = failoverManager.onFailover(FailoverStatus.NO_OPERATION_SERVERS);
+        if (operationsServerList == null || operationsServerList.isEmpty()) {
+            LOG.trace("Received empty operations server list");
+            FailoverDecision decision = failoverManager.onFailover(FailoverStatus.NO_OPERATION_SERVERS_RECEIVED);
             applyDecision(decision);
             return;
         }
 
-        if (!operationsServerList.isEmpty()) {
-            for (ProtocolMetaData server : operationsServerList) {
-                TransportProtocolId transportId = new TransportProtocolId(server.getProtocolVersionInfo().getId(), server.getProtocolVersionInfo().getVersion());
-                List<ProtocolMetaData> servers = mappedOperationServerList.get(transportId);
-                if (servers == null) {
-                    servers = new LinkedList<>();
-                    mappedOperationServerList.put(transportId, servers);
-                }
-                servers.add(server);
+        for (ProtocolMetaData server : operationsServerList) {
+            TransportProtocolId transportId = new TransportProtocolId(server.getProtocolVersionInfo().getId(), server.getProtocolVersionInfo().getVersion());
+            List<ProtocolMetaData> servers = mappedOperationServerList.get(transportId);
+            if (servers == null) {
+                servers = new LinkedList<>();
+                mappedOperationServerList.put(transportId, servers);
             }
-            for (Map.Entry<TransportProtocolId, List<ProtocolMetaData>> entry : mappedOperationServerList.entrySet()) {
-                Collections.shuffle(entry.getValue());
-                mappedIterators.put(entry.getKey(), entry.getValue().iterator());
-            }
-            if (serverToApply != null) {
-                List<ProtocolMetaData> servers = getTransportsByAccessPointId(serverToApply);
-                if (servers != null && servers.size() > 0) {
-                    notifyChannelManangerAboutServer(servers);
-                    serverToApply = null;
-                }
-            } else {
-                for (Map.Entry<TransportProtocolId, Iterator<ProtocolMetaData>> entry : mappedIterators.entrySet()) {
-                    TransportConnectionInfo info = new GenericTransportInfo(ServerType.OPERATIONS, entry.getValue().next());
-                    channelManager.onTransportConnectionInfoUpdated(info);
-                }
+            servers.add(server);
+        }
+        for (Map.Entry<TransportProtocolId, List<ProtocolMetaData>> entry : mappedOperationServerList.entrySet()) {
+            Collections.shuffle(entry.getValue());
+            mappedIterators.put(entry.getKey(), entry.getValue().iterator());
+        }
+        if (serverToApply != null) {
+            List<ProtocolMetaData> servers = getTransportsByAccessPointId(serverToApply);
+            if (servers != null && servers.size() > 0) {
+                notifyChannelManagerAboutServer(servers);
+                serverToApply = null;
             }
         } else {
-            throw new BootstrapRuntimeException("Operations Server list is empty");
+            for (Map.Entry<TransportProtocolId, Iterator<ProtocolMetaData>> entry : mappedIterators.entrySet()) {
+                TransportConnectionInfo info = new GenericTransportInfo(ServerType.OPERATIONS, entry.getValue().next());
+                channelManager.onTransportConnectionInfoUpdated(info);
+            }
         }
     }
 
@@ -207,9 +205,25 @@ public class DefaultBootstrapManager implements BootstrapManager {
                     }
                 }, retryPeriod, TimeUnit.MILLISECONDS);
                 break;
+            case USE_NEXT_BOOTSTRAP:
+                LOG.warn("Trying to switch to the next bootstrap server according to failover strategy decision");
+                retryPeriod = decision.getRetryPeriod();
+                failoverManager.onServerFailed(channelManager.getActiveServer(TransportType.BOOTSTRAP));
+                executorContext.getScheduledExecutor().schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            receiveOperationsServerList();
+                        } catch (TransportException e) {
+                            LOG.error("Error while receiving operations server list", e);
+                        }
+                    }
+                }, retryPeriod, TimeUnit.MILLISECONDS);
+                break;
             case STOP_APP:
                 LOG.warn("Stopping application according to failover strategy decision!");
                 System.exit(EXIT_FAILURE);
+                break;
         }
     }
 }

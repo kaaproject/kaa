@@ -291,9 +291,11 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         if (server.getServerType() == ServerType.BOOTSTRAP) {
             TransportConnectionInfo nextConnectionInfo = getNextBootstrapServer(server);
             if (nextConnectionInfo != null) {
+                LOG.trace("Using next bootstrap server");
                 onTransportConnectionInfoUpdated(nextConnectionInfo);
             } else {
-                FailoverDecision decision = failoverManager.onFailover(FailoverStatus.NO_BOOTSTRAP_SERVERS);
+                LOG.trace("Can't find next bootstrap server");
+                FailoverDecision decision = failoverManager.onFailover(FailoverStatus.BOOTSTRAP_SERVERS_NA);
                 switch (decision.getAction()) {
                     case NOOP:
                         LOG.warn("No operation is performed according to failover strategy decision");
@@ -312,6 +314,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                     case STOP_APP:
                         LOG.warn("Stopping application according to failover strategy decision!");
                         System.exit(EXIT_FAILURE);
+                        break;
                 }
             }
         } else {
@@ -344,8 +347,11 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         List<TransportConnectionInfo> serverList = bootststrapServers.get(currentServer.getTransportId());
         int serverIndex = serverList.indexOf(currentServer);
 
-        if ((serverIndex != -1) && (serverIndex < serverList.size() - 1)) {
-            bsi = serverList.get(++serverIndex);
+        if (serverIndex >= 0) {
+            if (++serverIndex == serverList.size()) {
+                serverIndex = 0;
+            }
+            bsi = serverList.get(serverIndex);
             lastBSServers.put(currentServer.getTransportId(), bsi);
         }
 
