@@ -35,7 +35,7 @@ kaa_error_t kaa_failover_strategy_create(kaa_failover_strategy_t** strategy, kaa
     KAA_RETURN_IF_NIL2(strategy, logger, KAA_ERR_BADPARAM);
     *strategy = (kaa_failover_strategy_t *) KAA_MALLOC(sizeof(kaa_failover_strategy_t));
     KAA_RETURN_IF_NIL(*strategy, KAA_ERR_NOMEM);
-    (*strategy)->decision.action = KAA_RETRY;
+    (*strategy)->decision.action = KAA_USE_NEXT_BOOTSTRAP;
     (*strategy)->decision.retry_period = KAA_FAILOVER_RETRY_PERIOD;
     (*strategy)->logger = logger;
 

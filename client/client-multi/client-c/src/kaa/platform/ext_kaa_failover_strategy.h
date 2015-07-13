@@ -26,16 +26,18 @@
 #define KAA_BOOTSTRAP_RESPONSE_PERIOD             5
 
 typedef enum {
-    KAA_NOOP = 0, /*!< Nothing to be done. */
-    KAA_RETRY,    /*!< Initiate log upload. */
+    KAA_NOOP = 0,
+    KAA_RETRY,
+    KAA_USE_NEXT_BOOTSTRAP,
+    KAA_USE_NEXT_OPERATIONS,
     KAA_STOP_APP
 } kaa_failover_strategy_action_t;
 
 typedef enum {
-    BOOTSTRAP_SERVERS_NA = 0,
-    OPERATION_SERVERS_NA,
-    EMPTY_OPERATION_SERVERS_LIST,
-    NO_CONNECTIVITY
+    KAA_BOOTSTRAP_SERVERS_NA = 0,
+    KAA_OPERATION_SERVERS_NA,
+    KAA_NO_OPERATION_SERVERS_RECEIVED,
+    KAA_NO_CONNECTIVITY
 } kaa_failover_reason;
 
 typedef struct {
