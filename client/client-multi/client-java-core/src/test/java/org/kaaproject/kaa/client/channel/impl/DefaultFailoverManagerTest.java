@@ -50,7 +50,7 @@ public class DefaultFailoverManagerTest {
         channelManager = Mockito.mock(KaaChannelManager.class);
         context = Mockito.mock(ExecutorContext.class);
         Mockito.when(context.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
-        failoverManager = new DefaultFailoverManager(channelManager, context, RESOLUTION_TIMEOUT_MS, BOOTSTRAP_RETRY_PERIOD, 1, 1, 1, TimeUnit.MILLISECONDS);
+        failoverManager = new DefaultFailoverManager(channelManager, context, RESOLUTION_TIMEOUT_MS, BOOTSTRAP_RETRY_PERIOD, 1, 1, TimeUnit.MILLISECONDS);
         resolutionProgressMap = Mockito.spy(new HashMap<ServerType, DefaultFailoverManager.AccessPointIdResolution>());
         ReflectionTestUtils.setField(failoverManager, "resolutionProgressMap", resolutionProgressMap);
     }
@@ -118,7 +118,7 @@ public class DefaultFailoverManagerTest {
         Mockito.verify(channelManager, Mockito.times(1)).onServerFailed(info2);
 
         Mockito.reset(accessPointIdResolutionSpy);
-        failoverManager.onFailover(FailoverStatus.NO_BOOTSTRAP_SERVERS);
+        failoverManager.onFailover(FailoverStatus.BOOTSTRAP_SERVERS_NA);
         failoverManager.onServerFailed(info2);
         Mockito.verify(accessPointIdResolutionSpy, Mockito.never()).setCurResolution(null);
         Thread.sleep(BOOTSTRAP_RETRY_PERIOD * 2);

@@ -21,8 +21,8 @@ package org.kaaproject.kaa.client.channel;
  * a failover strategy
  */
 public enum FailoverStatus {
-    NO_BOOTSTRAP_SERVERS,
-    NO_OPERATION_SERVERS,
-    ALL_OPERATION_SERVERS_NA,
+    BOOTSTRAP_SERVERS_NA,
+    OPERATION_SERVERS_NA,
+    NO_OPERATION_SERVERS_RECEIVED,
     NO_CONNECTIVITY
 }

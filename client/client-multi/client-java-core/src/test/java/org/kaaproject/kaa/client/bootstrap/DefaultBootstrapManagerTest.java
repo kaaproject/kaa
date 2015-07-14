@@ -238,7 +238,7 @@ public class DefaultBootstrapManagerTest {
         ChanelManagerMock channelManager = spy(new ChanelManagerMock());
         when(executorContext.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
         FailoverManager failoverManager =
-                spy(new DefaultFailoverManager(channelManager, executorContext, 1, 1, 1, 1, 1, TimeUnit.MILLISECONDS));
+                spy(new DefaultFailoverManager(channelManager, executorContext, 1, 1, 1, 1, TimeUnit.MILLISECONDS));
 
         manager.setChannelManager(channelManager);
         manager.setFailoverManager(failoverManager);
