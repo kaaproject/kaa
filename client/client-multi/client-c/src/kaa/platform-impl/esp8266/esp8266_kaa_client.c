@@ -58,7 +58,6 @@ kaa_error_t kaa_client_create(kaa_client_t **client, kaa_client_props_t *props) 
 
     kaa_client_t *self = (kaa_client_t*)KAA_CALLOC(1, sizeof(kaa_client_t));
     KAA_RETURN_IF_NIL(self, KAA_ERR_NOMEM);
-    
     error_code = kaa_init(&self->context);
 
     if(error_code) {
@@ -104,7 +103,7 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
     KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE, "Starting Kaa client...");
 
     while(kaa_client->operate) {
-           
+        printf("in kaa_client_start loop\t\n"); 
     }
 
     return error_code;
@@ -135,7 +134,7 @@ void kaa_client_destroy(kaa_client_t *self)
 
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-kaa_error_t kaa_log_cola_lector_init(kaa_client_t *kaa_client) {
+kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client) {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
     kaa_error_t error_code  = ext_unlimited_log_storage_create(&kaa_client->log_storage_context,
                                                                kaa_client->context->logger);

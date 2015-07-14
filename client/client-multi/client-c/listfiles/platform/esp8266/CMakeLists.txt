@@ -23,5 +23,11 @@ set(ESP8266_SRC_FOLDER ${KAA_SRC_FOLDER}/platform-impl/esp8266)
 set(ESP8266_SRC 
     ${ESP8266_SRC_FOLDER}/esp8266_logger.c
     ${ESP8266_SRC_FOLDER}/esp8266_kaa_client.c
+    ${ESP8266_SRC_FOLDER}/esp8266_configuration_persistence.c
+    ${ESP8266_SRC_FOLDER}/esp8266_status.c
+    ${ESP8266_SRC_FOLDER}/esp8266_key_utils.c
+    #${ESP8266_SRC_FOLDER}/sha.c
+    ${KAA_SRC_FOLDER}/platform-impl/sha.c
+    ${KAA_SRC_FOLDER}/platform-impl/sha1.c
     )
 
