@@ -24,6 +24,7 @@
 #ifndef KAA_BOOTSTRAP_MANAGER_H_
 #define KAA_BOOTSTRAP_MANAGER_H_
 
+#include <stdbool.h>
 #include "kaa_error.h"
 #include "kaa_common.h"
 #include "platform/ext_transport_channel.h"

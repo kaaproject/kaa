@@ -85,6 +85,10 @@ typedef struct kaa_status_holder_t                  kaa_status_holder_t;
     typedef struct kaa_logger_t                     kaa_logger_t;
 #endif
 
+#ifndef KAA_FAILOVER_STRATEGY
+# define KAA_FAILOVER_STRATEGY
+    typedef struct kaa_failover_strategy_t       kaa_failover_strategy_t;
+#endif
 
 /**
  * General Kaa endpoint context. Contains private structures of all Kaa endpoint SDK subsystems that can be used
@@ -102,6 +106,7 @@ typedef struct {
     kaa_configuration_manager_t *configuration_manager;  /**< See @link kaa_configuration_manager.h @endlink. */
     kaa_logger_t                *logger;                 /**< See @link kaa_log.h @endlink. */
     kaa_notification_manager_t  *notification_manager;   /**< See @link kaa_notification.h @endlink. */
+    kaa_failover_strategy_t     *failover_strategy;
 } kaa_context_t;
 
 #ifdef __cplusplus

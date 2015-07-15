@@ -301,7 +301,7 @@ static kaa_error_t kaa_tcp_channel_on_access_point_failed(kaa_tcp_channel_t *sel
     kaa_error_t error_code = kaa_bootstrap_manager_on_access_point_failed(self->transport_context.bootstrap_manager
                                                             , &self->protocol_id
                                                             , self->channel_operation_type);
-    if (error_code != KAA_ERR_NOT_FOUND) {
+    if (error_code != KAA_ERR_EVENT_NOT_ATTACHED) {
         KAA_LOG_ERROR(self->logger, error_code, "Kaa TCP channel [0x%08X] "
                 "error notifying bootstrap manager on access point failure"
                 , self->access_point.id);
@@ -758,10 +758,9 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *sel
                     }
                 } else if (tcp_channel->pending_request_service_count > 0) {
                     if (tcp_channel->channel_operation_type == KAA_SERVER_BOOTSTRAP) {
-                        kaa_service_t boostrap_service[] = {KAA_SERVICE_BOOTSTRAP};
                         KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] going to sync Bootstrap service"
                                                                                                      , tcp_channel->access_point.id);
-                        error_code = kaa_tcp_channel_write_pending_services(tcp_channel, boostrap_service, 1);
+                        error_code = kaa_tcp_channel_authorize(tcp_channel);
                     } else if (tcp_channel->channel_state == KAA_TCP_CHANNEL_AUTHORIZED) {
                         KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] going to sync all services"
                                                                                                 , tcp_channel->access_point.id);
@@ -1081,10 +1080,6 @@ kaa_error_t kaa_tcp_channel_socket_io_error(kaa_tcp_channel_t *self)
 kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
-
-    if (self->channel_state != KAA_TCP_CHANNEL_UNDEFINED) {
-        return KAA_ERR_NONE;
-    }
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
