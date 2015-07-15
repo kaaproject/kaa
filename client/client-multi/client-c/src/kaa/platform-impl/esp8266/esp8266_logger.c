@@ -4,21 +4,21 @@
 
 #include "../../platform/ext_system_logger.h"
 
+#include <stdio.h>
 #include <time.h>
 
 kaa_time_t ext_get_systime() {
-    return system_get_rtc_time()*system_rtc_clock_cali_proc()/1000000; 
+    return system_get_rtc_time()*((system_rtc_clock_cali_proc()*1000)>>12)/1000; 
 };
 
 void ext_write_log(FILE *sink, const char *buffer, size_t message_size) {
-    if(!buffer)
-        return;
-    printf("%s", buffer);
+//    if(!buffer)
+//        return;
+    printf("%s\r\n", buffer);
 }
 
 int ext_logger_sprintf(char *buffer,size_t buffer_size, const char *format, va_list args) {
-    /*return vsnprintf(buffer, buffer_size, format, args);*/
-    return -1; //TODO
+    return vsnprintf(buffer, buffer_size, format, args);
 }
 
 /*int ext_snpintf(char *buffer, size_t buffer_size, const char *format, ...) {
@@ -34,10 +34,10 @@ int ext_format_sprintf(char * buffer, size_t buffer_size, const char * format,
         kaa_error_t error_code) {
 
     time_t t = ext_get_systime(NULL);
-//    struct tm* tp = gmtime(&t);
+    struct tm* tp = gmtime(&t);
 
-     return snprintf(buffer, buffer_size, format, 0,
-            0, 0, 0, 0, t,
+    return snprintf(buffer, buffer_size, format, 1900 + tp->tm_year,
+            tp->tm_mon + 1, tp->tm_mday, tp->tm_hour, tp->tm_min, tp->tm_sec,
             log_level_name, truncated_name, lineno, error_code);
 }
 
