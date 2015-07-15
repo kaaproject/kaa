@@ -87,7 +87,7 @@ private:
     std::size_t consumedMemory_;
     std::unordered_map<std::int32_t/*Bucket id*/, std::size_t /*Bucket size*/> consumedMemoryStorage_;
 
-    KAA_MUTEX_DECLARE(storageGuard);
+    KAA_MUTEX_DECLARE(sqliteLogStorageGuard_);
 };
 
 } /* namespace kaa */

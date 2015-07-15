@@ -293,9 +293,9 @@ void SQLiteDBLogStorage::addLogRecord(LogRecordPtr record)
         errorCode = sqlite3_bind_blob(stmt.getStatement(), 1, record->getLogEntry().data.data(), record->getSize(), SQLITE_STATIC);
         throwIfError(errorCode, SQLITE_OK, (boost::format("Failed to bind record data (error %d)") % errorCode).str());
 
-        KAA_MUTEX_LOCKING("storageGuard");
-        KAA_MUTEX_UNIQUE_DECLARE(storageGuardLock, storageGuard);
-        KAA_MUTEX_LOCKED("storageGuard");
+        KAA_MUTEX_LOCKING("sqliteLogStorageGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(storageGuardLock, sqliteLogStorageGuard_);
+        KAA_MUTEX_LOCKED("sqliteLogStorageGuard_");
 
         errorCode = sqlite3_step(stmt.getStatement());
         throwIfError(errorCode, SQLITE_DONE, (boost::format("Failed to execute sql insert query (error %d)") % errorCode).str());
@@ -323,9 +323,9 @@ ILogStorage::RecordPack SQLiteDBLogStorage::getRecordBlock(std::size_t bucketSiz
         std::list<int> unmarkedRecordIds;
         SQLiteStatement stmt(db_, KAA_SELECT_UNMARKED_RECORDS);
 
-        KAA_MUTEX_LOCKING("storageGuard");
-        KAA_MUTEX_UNIQUE_DECLARE(storageGuardLock, storageGuard);
-        KAA_MUTEX_LOCKED("storageGuard");
+        KAA_MUTEX_LOCKING("sqliteLogStorageGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(storageGuardLock, sqliteLogStorageGuard_);
+        KAA_MUTEX_LOCKED("sqliteLogStorageGuard_");
 
         std::size_t leftBucketSize = bucketSize;
         std::size_t leftRecordsCount = recordsBlockCount;
@@ -391,9 +391,9 @@ void SQLiteDBLogStorage::removeRecordBlock(RecordBlockId id)
         errorCode = sqlite3_bind_int64(stmt.getStatement(), 1, id);
         throwIfError(errorCode, SQLITE_OK, (boost::format("Failed to bind bucket id (error %d)") % errorCode).str());
 
-        KAA_MUTEX_LOCKING("storageGuard");
-        KAA_MUTEX_UNIQUE_DECLARE(storageGuardLock, storageGuard);
-        KAA_MUTEX_LOCKED("storageGuard");
+        KAA_MUTEX_LOCKING("sqliteLogStorageGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(storageGuardLock, sqliteLogStorageGuard_);
+        KAA_MUTEX_LOCKED("sqliteLogStorageGuard_");
 
         errorCode = sqlite3_step(stmt.getStatement());
         throwIfError(errorCode, SQLITE_DONE, (boost::format("Failed to execute sql delete query (error %d)") % errorCode).str());
@@ -419,9 +419,9 @@ void SQLiteDBLogStorage::notifyUploadFailed(RecordBlockId id)
         errorCode = sqlite3_bind_int64(stmt.getStatement(), 1, id);
         throwIfError(errorCode, SQLITE_OK, (boost::format("Failed to bind bucket id (error %d)") % errorCode).str());
 
-        KAA_MUTEX_LOCKING("storageGuard");
-        KAA_MUTEX_UNIQUE_DECLARE(storageGuardLock, storageGuard);
-        KAA_MUTEX_LOCKED("storageGuard");
+        KAA_MUTEX_LOCKING("sqliteLogStorageGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(storageGuardLock, sqliteLogStorageGuard_);
+        KAA_MUTEX_LOCKED("sqliteLogStorageGuard_");
 
         errorCode = sqlite3_step(stmt.getStatement());
         throwIfError(errorCode, SQLITE_DONE, (boost::format("Failed to execute sql update query (error %d)") % errorCode).str());
@@ -446,17 +446,17 @@ void SQLiteDBLogStorage::notifyUploadFailed(RecordBlockId id)
 
 std::size_t SQLiteDBLogStorage::getRecordsCount()
 {
-    KAA_MUTEX_LOCKING("storageGuard");
-    KAA_MUTEX_UNIQUE_DECLARE(storageGuardLock, storageGuard);
-    KAA_MUTEX_LOCKED("storageGuard");
+    KAA_MUTEX_LOCKING("sqliteLogStorageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(storageGuardLock, sqliteLogStorageGuard_);
+    KAA_MUTEX_LOCKED("sqliteLogStorageGuard_");
     return unmarkedRecordCount_;
 }
 
 std::size_t SQLiteDBLogStorage::getConsumedVolume()
 {
-    KAA_MUTEX_LOCKING("storageGuard");
-    KAA_MUTEX_UNIQUE_DECLARE(storageGuardLock, storageGuard);
-    KAA_MUTEX_LOCKED("storageGuard");
+    KAA_MUTEX_LOCKING("sqliteLogStorageGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(storageGuardLock, sqliteLogStorageGuard_);
+    KAA_MUTEX_LOCKED("sqliteLogStorageGuard_");
     return consumedMemory_;
 }
 

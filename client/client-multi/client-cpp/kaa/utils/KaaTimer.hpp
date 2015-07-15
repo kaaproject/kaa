@@ -121,12 +121,12 @@ private:
                 } else {
                     KAA_MUTEX_UNLOCKING("timerGuard_");
                     condition_.wait_for(timerLock, (endTS_ - now));
-                    KAA_MUTEX_UNLOCKED("timerGuard_");
+                    KAA_MUTEX_LOCKED("timerGuard_");
                 }
             } else {
                 KAA_MUTEX_UNLOCKING("timerGuard_");
                 condition_.wait(timerLock);
-                KAA_MUTEX_UNLOCKED("timerGuard_");
+                KAA_MUTEX_LOCKED("timerGuard_");
             }
         }
     }
