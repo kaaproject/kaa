@@ -45,7 +45,7 @@ MemoryLogStorage::MemoryLogStorage(size_t maxOccupiedSize, float percentToDelete
 void MemoryLogStorage::addLogRecord(LogRecordPtr serializedRecord)
 {
     KAA_MUTEX_LOCKING("logsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(logsLock, logsGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(logsLock, memoryLogStorageGuard_);
     KAA_MUTEX_LOCKED("logsGuard_");
 
     if (maxOccupiedSize_ && ((totalOccupiedSize_ + serializedRecord->getSize()) > maxOccupiedSize_)) {
@@ -69,7 +69,7 @@ ILogStorage::RecordPack MemoryLogStorage::getRecordBlock(std::size_t blockSize, 
     static std::int32_t bucketId = 0;
 
     KAA_MUTEX_LOCKING("logsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(logsLock, logsGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(logsLock, memoryLogStorageGuard_);
     KAA_MUTEX_LOCKED("logsGuard_");
 
     ILogStorage::RecordBlock block;
@@ -108,7 +108,7 @@ ILogStorage::RecordPack MemoryLogStorage::getRecordBlock(std::size_t blockSize, 
 void MemoryLogStorage::removeRecordBlock(RecordBlockId blockId)
 {
     KAA_MUTEX_LOCKING("logsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(logsLock, logsGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(logsLock, memoryLogStorageGuard_);
     KAA_MUTEX_LOCKED("logsGuard_");
 
     std::uint32_t removedRecordCount = 0;
@@ -129,7 +129,7 @@ void MemoryLogStorage::removeRecordBlock(RecordBlockId blockId)
 void MemoryLogStorage::notifyUploadFailed(RecordBlockId blockId)
 {
     KAA_MUTEX_LOCKING("logsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(logsLock, logsGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(logsLock, memoryLogStorageGuard_);
     KAA_MUTEX_LOCKED("logsGuard_");
 
     std::uint32_t recordCount = 0;
@@ -176,7 +176,7 @@ void MemoryLogStorage::shrinkToSize(std::size_t newSize)
 std::size_t MemoryLogStorage::getConsumedVolume()
 {
     KAA_MUTEX_LOCKING("logsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(logsLock, logsGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(logsLock, memoryLogStorageGuard_);
     KAA_MUTEX_LOCKED("logsGuard_");
     return occupiedSizeOfUnmarkedRecords_;
 }
@@ -184,7 +184,7 @@ std::size_t MemoryLogStorage::getConsumedVolume()
 std::size_t MemoryLogStorage::getRecordsCount()
 {
     KAA_MUTEX_LOCKING("logsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(logsLock, logsGuard_);
+    KAA_MUTEX_UNIQUE_DECLARE(logsLock, memoryLogStorageGuard_);
     KAA_MUTEX_LOCKED("logsGuard_");
     return unmarkedRecordCount_;
 }
