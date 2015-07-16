@@ -18,6 +18,10 @@ set(ESP8266_INCDIRS
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-implicit-function-declaration -DESP8266_PLATFORM -Os -Wpointer-arith  -Wl,-EL -fno-inline-functions -nostdlib -mlongcalls -mtext-section-literals  -D__ets__ -DICACHE_FLASH -ffunction-sections")
 
+if(KAA_MAX_LOG_LEVEL EQUAL 6)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_TRACE_MEMORY_ALLOCATIONS")
+endif()
+
 set(ESP8266_SRC_FOLDER ${KAA_SRC_FOLDER}/platform-impl/esp8266)
 
 set(ESP8266_SRC 
@@ -26,8 +30,13 @@ set(ESP8266_SRC
     ${ESP8266_SRC_FOLDER}/esp8266_configuration_persistence.c
     ${ESP8266_SRC_FOLDER}/esp8266_status.c
     ${ESP8266_SRC_FOLDER}/esp8266_key_utils.c
-    #${ESP8266_SRC_FOLDER}/sha.c
+    ${ESP8266_SRC_FOLDER}/esp8266_tcp_utils.c
     ${KAA_SRC_FOLDER}/platform-impl/sha.c
     ${KAA_SRC_FOLDER}/platform-impl/sha1.c
+    ${KAA_SRC_FOLDER}/platform-impl/ext_log_storage_memory.c
+    ${KAA_SRC_FOLDER}/platform-impl/ext_log_upload_strategy_by_volume.c
+    ${KAA_SRC_FOLDER}/platform-impl/kaa_tcp_channel.c
+    ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_parser.c
+    ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_request.c
     )
 

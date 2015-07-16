@@ -9,11 +9,38 @@
 #include <utilities/kaa_log.h>
 #include <kaa_logging.h>
 #include <platform/time.h>
+#include <kaa_channel_manager.h>
+#include <platform-impl/kaa_tcp_channel.h>
 
 typedef enum {
     KAA_CLIENT_CHANNEL_STATE_CONNECTED = 0,
     KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED
 } kaa_client_channel_state_t;
+
+typedef enum {
+    KAA_CLIENT_CHANNEL_TYPE_BOOTSTRAP = 0,
+    KAA_CLIENT_CHANNEL_TYPE_OPERATIONS
+} kaa_client_channel_type_t;
+
+static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
+static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_service_t);
+
+static kaa_service_t OPERATIONS_SERVICES[] = { KAA_SERVICE_PROFILE
+                                             , KAA_SERVICE_USER
+#ifndef KAA_DISABLE_FEATURE_CONFIGURATION
+                                             , KAA_SERVICE_CONFIGURATION
+#endif
+#ifndef KAA_DISABLE_FEATURE_EVENTS
+                                             , KAA_SERVICE_EVENT
+#endif
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+                                             , KAA_SERVICE_LOGGING
+#endif
+#ifndef KAA_DISABLE_FEATURE_NOTIFICATION
+                                             , KAA_SERVICE_NOTIFICATION
+#endif
+                                             };
+static const int OPERATIONS_SERVICES_COUNT = sizeof(OPERATIONS_SERVICES) / sizeof(kaa_service_t);
 
 struct kaa_client_t {
     kaa_context_t                       *context;
@@ -37,6 +64,10 @@ struct kaa_client_t {
 #endif  
 };
 
+static kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel_type_t channel_type);
+static kaa_error_t kaa_client_deinit_channel(kaa_client_t *kaa_client);
+static kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd);
+
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
 extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
@@ -50,6 +81,18 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *client);
 
 #define KAA_RETURN_IF_ERR_MSG(E, msg) \
         { if(E) { printf("Error %i. \"%s\"\n",(E), (msg)); return (E); } }
+
+
+kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd)
+{
+    KAA_RETURN_IF_NIL(context, KAA_ERR_BADPARAM);
+
+    if (event_type == SOCKET_DISCONNECTED) {
+        ((kaa_client_t *)context)->channel_socket_closed = true;
+    }
+
+    return KAA_ERR_NONE;
+}
 
 kaa_error_t kaa_client_create(kaa_client_t **client, kaa_client_props_t *props) {
     KAA_RETURN_IF_NIL(client, KAA_ERR_BADPARAM);
@@ -87,6 +130,98 @@ kaa_context_t *kaa_client_get_context(kaa_client_t *client) {
     return client->context;
 }
 
+static uint16_t get_poll_timeout(kaa_client_t *kaa_client)
+{
+    KAA_RETURN_IF_NIL(kaa_client, 0);
+
+    uint16_t select_timeout;
+    kaa_tcp_channel_get_max_timeout(&kaa_client->channel, &select_timeout);
+
+    if ((kaa_client->external_process_max_delay > 0) && (select_timeout > kaa_client->external_process_max_delay)) {
+        select_timeout = kaa_client->external_process_max_delay;
+    }
+
+    return select_timeout;
+}
+
+
+kaa_error_t kaa_client_process_channel_connected(kaa_client_t *kaa_client)
+{
+    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
+
+    kaa_error_t error_code = KAA_ERR_NONE;
+
+    fd_set read_fds, write_fds, except_fds;
+    struct timeval select_tv = { get_poll_timeout(kaa_client), 0 };
+    int channel_fd = 0;
+
+    FD_ZERO(&read_fds);
+    FD_ZERO(&write_fds);
+    FD_ZERO(&except_fds);
+
+    kaa_tcp_channel_get_descriptor(&kaa_client->channel, &channel_fd);
+
+    if (kaa_tcp_channel_is_ready(&kaa_client->channel, FD_READ))
+        FD_SET(channel_fd, &read_fds);
+    if (kaa_tcp_channel_is_ready(&kaa_client->channel, FD_WRITE))
+        FD_SET(channel_fd, &write_fds);
+
+    int poll_result = select(channel_fd + 1, &read_fds, &write_fds, NULL, &select_tv);
+    if (poll_result == 0) {
+        kaa_tcp_channel_check_keepalive(&kaa_client->channel);
+    } else if (poll_result > 0) {
+        if (channel_fd >= 0) {
+            if (FD_ISSET(channel_fd, &read_fds)) {
+                KAA_LOG_DEBUG(kaa_client->context->logger, KAA_ERR_NONE,
+                        "Processing IN event for the client socket %d", channel_fd);
+                error_code = kaa_tcp_channel_process_event(&kaa_client->channel, FD_READ);
+                if (error_code) {
+                    KAA_LOG_ERROR(kaa_client->context->logger, error_code,
+                            "Failed to process IN event for the client socket %d", channel_fd);
+                }
+            }
+            if (FD_ISSET(channel_fd, &write_fds)) {
+                KAA_LOG_DEBUG(kaa_client->context->logger, KAA_ERR_NONE,
+                        "Processing OUT event for the client socket %d", channel_fd);
+
+                error_code = kaa_tcp_channel_process_event(&kaa_client->channel, FD_WRITE);
+                if (error_code) {
+                    KAA_LOG_ERROR(kaa_client->context->logger, error_code,
+                            "Failed to process OUT event for the client socket %d", channel_fd);
+                }
+            }
+        }
+    } else {
+        KAA_LOG_ERROR(kaa_client->context->logger, KAA_ERR_BAD_STATE, "Failed to poll descriptors");
+        error_code = KAA_ERR_BAD_STATE;
+    }
+
+    if (kaa_client->channel_socket_closed) {
+        KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE,
+                "Channel [0x%08X] connection terminated", kaa_client->channel_id);
+
+        kaa_client->channel_state = KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED;
+        kaa_client_deinit_channel(kaa_client);
+    }
+
+    return error_code;
+}
+
+kaa_error_t kaa_client_process_channel_disconnected(kaa_client_t *kaa_client)
+{
+    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
+
+    kaa_error_t error_code = kaa_tcp_channel_check_keepalive(&kaa_client->channel);
+    if (error_code) {
+        KAA_LOG_ERROR(kaa_client->context->logger, error_code, "Failed to connect channel [0x%08X]", kaa_client->channel_id);
+    } else {
+        KAA_LOG_TRACE(kaa_client->context->logger, error_code, "Channel [0x%08X] successfully connected", kaa_client->channel_id);
+        kaa_client->channel_state = KAA_CLIENT_CHANNEL_STATE_CONNECTED;
+    }
+
+    return error_code;
+}
+
 kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
                              external_process_fn external_process,
                              void *external_process_context,
@@ -103,11 +238,130 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
     KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE, "Starting Kaa client...");
 
     while(kaa_client->operate) {
-        printf("in kaa_client_start loop\t\n"); 
+//        printf("in kaa_client_start loop\t\n");
+        if(kaa_client->external_process) {
+            if ((KAA_TIME() - kaa_client->external_process_last_call) >= kaa_client->external_process_max_delay) {
+                kaa_client->external_process(kaa_client->external_process_context);
+            }
+            kaa_client->external_process_last_call = KAA_TIME();
+        }
+        if(kaa_client->channel_id>0) {
+            if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED) {
+                error_code = kaa_client_process_channel_disconnected(kaa_client);
+            } else  if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_CONNECTED) {
+                printf("channel state connected\n");
+                error_code = kaa_client_process_channel_connected(kaa_client);
+            }
+        } else {
+            //No initialized channels
+            if (kaa_client->bootstrap_complete) {
+                KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE,
+                            "Channel [0x%08X] Boostrap complete, reinitializing to Operations ...", kaa_client->channel_id);
+                kaa_client->bootstrap_complete = false;
+                kaa_client_deinit_channel(kaa_client);
+                kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_OPERATIONS);
+            } else {
+                KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE,
+                            "Channel [0x%08X] Operations error, reinitializing to Bootstrap ...", kaa_client->channel_id);
+                kaa_client->bootstrap_complete = true;
+                kaa_client_deinit_channel(kaa_client);
+
+                kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_BOOTSTRAP);
+            }
+        }
     }
 
     return error_code;
 }
+
+kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel_type_t channel_type)
+{
+    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
+
+    kaa_error_t error_code = KAA_ERR_NONE;
+
+    KAA_LOG_TRACE(kaa_client->context->logger, KAA_ERR_NONE, "Initializing channel....");
+
+    switch (channel_type) {
+        case KAA_CLIENT_CHANNEL_TYPE_BOOTSTRAP:
+            error_code = kaa_tcp_channel_create(&kaa_client->channel
+                                              , kaa_client->context->logger
+                                              , BOOTSTRAP_SERVICE
+                                              , BOOTSTRAP_SERVICE_COUNT);
+            break;
+        case KAA_CLIENT_CHANNEL_TYPE_OPERATIONS:
+            error_code = kaa_tcp_channel_create(&kaa_client->channel
+                                              , kaa_client->context->logger
+                                              , OPERATIONS_SERVICES
+                                              , OPERATIONS_SERVICES_COUNT);
+            break;
+    }
+
+    if (error_code) {
+        KAA_LOG_ERROR(kaa_client->context->logger, error_code, "Failed to create transport channel, type %d", channel_type);
+        return error_code;
+    }
+
+    error_code = kaa_tcp_channel_set_keepalive_timeout(&kaa_client->channel, 5);
+
+    if(error_code) {
+        KAA_LOG_ERROR(kaa_client->context->logger, error_code, "Filed to set channel keepalive timeout, type %d", channel_type);
+        return error_code;
+    }
+
+    error_code = kaa_tcp_channel_set_socket_events_callback(&kaa_client->channel, &on_kaa_tcp_channel_event, kaa_client);
+    if (error_code) {
+        KAA_LOG_ERROR(kaa_client->context->logger, error_code,
+                "Failed to set socket events callback, channel type %d", channel_type);
+        return error_code;
+    }
+
+    error_code = kaa_channel_manager_add_transport_channel(kaa_client->context->channel_manager
+                                                         , &kaa_client->channel
+                                                         , &kaa_client->channel_id);
+    if (error_code) {
+        KAA_LOG_ERROR(kaa_client->context->logger, error_code, "Failed to add transport channel, type %d", channel_type);
+        return error_code;
+    }
+
+    KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE, "Channel [0x%08X] initialized successfully (type %d)"
+                                                                                , kaa_client->channel_id, channel_type);
+
+    return error_code;
+}
+
+kaa_error_t kaa_client_deinit_channel(kaa_client_t *kaa_client)
+{
+    KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
+
+    kaa_error_t error_code = KAA_ERR_NONE;
+
+    if (kaa_client->channel_id == 0)
+        return KAA_ERR_NONE;
+
+    KAA_LOG_TRACE(kaa_client->context->logger, KAA_ERR_NONE, "Deinitializing channel....");
+
+    error_code = kaa_channel_manager_remove_transport_channel(kaa_client->context->channel_manager,kaa_client->channel_id);
+    if (error_code) {
+        KAA_LOG_TRACE(kaa_client->context->logger, error_code, "Bootstrap channel error removing from channel manager");
+        return error_code;
+    }
+
+    kaa_client->channel_id = 0;
+    kaa_client->channel_socket_closed = false;
+    kaa_client->channel.context = NULL;
+    kaa_client->channel.destroy = NULL;
+    kaa_client->channel.get_protocol_id = NULL;
+    kaa_client->channel.get_supported_services = NULL;
+    kaa_client->channel.init = NULL;
+    kaa_client->channel.set_access_point = NULL;
+    kaa_client->channel.sync_handler = NULL;
+
+    KAA_LOG_TRACE(kaa_client->context->logger, KAA_ERR_NONE, "Channel deinitialized successfully");
+
+    return error_code;
+}
+
 
 kaa_error_t kaa_client_stop(kaa_client_t *kaa_client)
 {
