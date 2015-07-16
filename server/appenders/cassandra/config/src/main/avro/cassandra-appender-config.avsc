@@ -322,7 +322,7 @@
         {
             "name":"dataTTL",
             "displayName":"TTL",
-            "by_default":1209600,
+            "by_default":0,
             "type":"int"
         },
         {
