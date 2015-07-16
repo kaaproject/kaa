@@ -238,7 +238,6 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
     KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE, "Starting Kaa client...");
 
     while(kaa_client->operate) {
-//        printf("in kaa_client_start loop\t\n");
         if(kaa_client->external_process) {
             if ((KAA_TIME() - kaa_client->external_process_last_call) >= kaa_client->external_process_max_delay) {
                 kaa_client->external_process(kaa_client->external_process_context);
@@ -249,7 +248,6 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
             if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED) {
                 error_code = kaa_client_process_channel_disconnected(kaa_client);
             } else  if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_CONNECTED) {
-                printf("channel state connected\n");
                 error_code = kaa_client_process_channel_connected(kaa_client);
             }
         } else {
@@ -302,7 +300,7 @@ kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel
         return error_code;
     }
 
-    error_code = kaa_tcp_channel_set_keepalive_timeout(&kaa_client->channel, 5);
+    error_code = kaa_tcp_channel_set_keepalive_timeout(&kaa_client->channel, 20);
 
     if(error_code) {
         KAA_LOG_ERROR(kaa_client->context->logger, error_code, "Filed to set channel keepalive timeout, type %d", channel_type);
