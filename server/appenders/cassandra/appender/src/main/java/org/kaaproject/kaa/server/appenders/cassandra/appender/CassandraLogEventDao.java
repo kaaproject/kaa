@@ -327,6 +327,10 @@ public class CassandraLogEventDao implements LogEventDao {
                     break;
                 }
             }
+            
+            //Here we get ttl parameter from config and add it to insert query
+            insert.using(QueryBuilder.ttl(configuration.getDataTTL()));
+            
             insertArray[i] = insert;
 
         }
