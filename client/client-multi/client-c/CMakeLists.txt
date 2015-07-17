@@ -132,7 +132,6 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/platform/${KAA_PLATFORM}/CMakeList
 include_directories(KAA_INCLUDE_PATHS
                         ${KAA_INCLUDE_PATHS}
                         ${CMAKE_CURRENT_SOURCE_DIR}/${KAA_SRC_FOLDER}
-                        ${ESP8266_INCDIRS}
                    )
 
 # Sets path(s) to source files.
@@ -159,7 +158,6 @@ set (KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/kaa.c
         ${KAA_SRC_FOLDER}/kaa_notification_manager.c
         ${KAA_SRC_FOLDER}/platform-impl/kaa_htonll.c
-        ${ESP8266_SRC}
     )
 
 # Includes auto-generated Cmake's scripts.
