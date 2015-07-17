@@ -2,6 +2,8 @@ if(KAA_MAX_LOG_LEVEL EQUAL 7)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKAA_TRACE_MEMORY_ALLOCATIONS")
 endif()
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DESP8266_PLATFORM")
+
 set(ESP8266_SRC_FOLDER ${KAA_SRC_FOLDER}/platform-impl/esp8266)
 
 set(ESP8266_SRC
@@ -26,3 +28,9 @@ set(KAA_SOURCE_FILES ${KAA_SOURCE_FILES} ${ESP8266_SRC})
 
 set(KAA_INCLUDE_PATHS ${KAA_INCLUDE_PATHS} ${ESP8266_INCDIRS})
 
+add_custom_target(rsa ALL DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/kaa/platform-impl/esp8266/rsa.h)
+
+add_custom_command(TARGET rsa
+                   PRE_BUILD
+                   COMMAND java -jar ${CMAKE_CURRENT_SOURCE_DIR}/../../../examples/connectedcar/source/c/pub_key_generator.jar
+                   ${CMAKE_CURRENT_SOURCE_DIR}/src/kaa/platform-impl/esp8266/rsa.h)
