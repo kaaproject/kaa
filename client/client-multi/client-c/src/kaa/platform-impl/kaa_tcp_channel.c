@@ -950,8 +950,8 @@ void kaa_tcp_channel_connack_message_callback(void *context, kaatcp_connack_t me
             }
 
         } else {
-            KAA_LOG_WARN(channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] authorization failed"
-                                                                                , channel->access_point.id);
+            KAA_LOG_WARN(channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] authorization failed, code %d"
+                                                                                , channel->access_point.id, message.return_code);
             kaa_tcp_channel_socket_io_error(channel);
         }
     } else {
