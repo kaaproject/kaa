@@ -320,6 +320,12 @@
             "type":"int"
         },
         {
+            "name":"dataTTL",
+            "displayName":"TTL",
+            "by_default":0,
+            "type":"int"
+        },
+        {
             "namespace":"org.kaaproject.kaa.server.appenders.cassandra.config.gen",
             "name":"cassandraWriteConsistencyLevel",
             "displayName":"Write consistency level",
