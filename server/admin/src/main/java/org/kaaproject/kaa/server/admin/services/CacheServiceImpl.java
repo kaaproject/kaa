@@ -87,7 +87,7 @@ public class CacheServiceImpl implements CacheService {
     public FileData getRecordLibrary(RecordKey key) throws KaaAdminServiceException {
         try {
             org.kaaproject.kaa.server.common.thrift.gen.control.FileData 
-                   thriftFileData = clientProvider.getClient().generateRecordStructureLibrary(key.getApplicationId(), key.getLogSchemaVersion());
+                   thriftFileData = clientProvider.getClient().generateRecordStructureLibrary(key.getApplicationId(), key.getSchemaVersion());
             FileData fileData = new FileData();
             fileData.setFileName(thriftFileData.getFileName());
             fileData.setFileData(thriftFileData.getData());
@@ -102,7 +102,7 @@ public class CacheServiceImpl implements CacheService {
     public FileData getRecordSchema(RecordKey key) throws KaaAdminServiceException {
         try {
             org.kaaproject.kaa.server.common.thrift.gen.control.FileData 
-                    thriftFileData = clientProvider.getClient().getRecordStructureSchema(key.getApplicationId(), key.getLogSchemaVersion());
+                    thriftFileData = clientProvider.getClient().getRecordStructureSchema(key.getApplicationId(), key.getSchemaVersion());
             FileData fileData = new FileData();
             fileData.setFileName(thriftFileData.getFileName());
             fileData.setFileData(thriftFileData.getData());

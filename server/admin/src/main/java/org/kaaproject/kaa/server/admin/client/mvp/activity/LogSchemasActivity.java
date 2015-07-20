@@ -71,7 +71,7 @@ public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSc
 
     @Override
     protected void onCustomRowAction(RowActionEvent<String> event) {
-        Integer logSchemaVersion = Integer.valueOf(event.getClickedId());
+        Integer schemaVersion = Integer.valueOf(event.getClickedId());
         final int action = event.getAction();
 
         AsyncCallback<String> callback = new AsyncCallback<String>() {
@@ -87,10 +87,10 @@ public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSc
 
         switch (action) {
             case KaaRowAction.DOWNLOAD_LOG_SCHEMA_LIBRARY:
-                KaaAdmin.getDataSource().getRecordLibrary(applicationId, logSchemaVersion, RecordFiles.LIBRARY, callback);
+                KaaAdmin.getDataSource().getRecordLibrary(applicationId, schemaVersion, RecordFiles.LOG_LIBRARY, callback);
                 break;
-            case KaaRowAction.DOWNLOAD_LOG_SCHEMA:
-                KaaAdmin.getDataSource().getRecordLibrary(applicationId, logSchemaVersion, RecordFiles.SCHEMA, callback);
+            case KaaRowAction.DOWNLOAD_SCHEMA:
+                KaaAdmin.getDataSource().getRecordLibrary(applicationId, schemaVersion, RecordFiles.LOG_SCHEMA, callback);
                 break;
             default:
                 break;

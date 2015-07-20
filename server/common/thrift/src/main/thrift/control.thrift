@@ -32,6 +32,16 @@ enum SdkPlatform {
   C = 4
 }
 
+enum RecordFile {
+  CONFIGURATION_BASE_SCHEMA = 1,
+  CONFIGURATION_OVERRIDE_SCHEMA = 2,
+  CONFIGURATION_SCHEMA = 3,
+  NOTIFICATION_SCHEMA = 4,
+  PROFILE_SCHEMA = 5,
+  LOG_SCHEMA = 6,
+  LOG_LIBRARY = 7
+}
+
 struct Sdk {
   1: string fileName
   2: binary data
@@ -237,6 +247,7 @@ service ControlThriftService extends cli.CliThriftService{
   void deleteLogAppender(1: id logAppenderId) throws(1: ControlThriftException ControlException)
   FileData generateRecordStructureLibrary(1: id applicationId, 2: shared.Integer logSchemaVersion) throws(1: ControlThriftException ControlException)
   FileData getRecordStructureSchema(1: id applicationId, 2: shared.Integer logSchemaVersion) throws(1: ControlThriftException ControlException)
+  FileData getRecordStructureData(1: id applicationId, 2: shared.Integer schemaVersion, 3:RecordFile recordFile) throws(1: ControlThriftException ControlException)
   
   /**
   * User verifiers

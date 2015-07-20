@@ -110,8 +110,8 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
                 new ActionButtonCell.ActionListener<T>() {
                     @Override
                     public void onItemAction(T value) {
-                        Integer logSchemaVersion = value.getMajorVersion();
-                        RowActionEvent<String> rowDownloadSchemaEvent = new RowActionEvent<>(String.valueOf(logSchemaVersion), KaaRowAction.DOWNLOAD_LOG_SCHEMA);
+                        Integer schemaVersion = value.getMajorVersion();
+                        RowActionEvent<String> rowDownloadSchemaEvent = new RowActionEvent<>(String.valueOf(schemaVersion), KaaRowAction.DOWNLOAD_SCHEMA);
                         fireEvent(rowDownloadSchemaEvent);
                     }
                 }, new ActionButtonCell.ActionValidator<T>() {

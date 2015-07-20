@@ -29,7 +29,7 @@ public class KaaRowAction {
     /** The Constant DOWNLOAD_LOG_SCHEMA_LIBRARY. */
     public static final int DOWNLOAD_LOG_SCHEMA_LIBRARY = RowActionEvent.MAX_ACTION + 2;
     
-    /** The Constant DOWNLOAD_LOG_SCHEMA. */
-    public static final int DOWNLOAD_LOG_SCHEMA = RowActionEvent.MAX_ACTION + 3;
+    /** The Constant DOWNLOAD_SCHEMA. */
+    public static final int DOWNLOAD_SCHEMA = RowActionEvent.MAX_ACTION + 3;
     
 }

@@ -84,6 +84,7 @@ import org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftException;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.control.FileData;
+import org.kaaproject.kaa.server.common.thrift.gen.control.RecordFile;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
@@ -1854,6 +1855,36 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
             Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logSchema.getSchema());
             String libraryFileName = MessageFormatter.arrayFormat(SCHEMA_NAME_PATTERN, new Object[] { logSchemaVersion }).getMessage();
+            String schemaInJson = recordWrapperSchema.toString(true);
+            byte[] schemaData = schemaInJson.getBytes(StandardCharsets.UTF_8);
+
+            FileData schema = new FileData();
+            schema.setFileName(libraryFileName);
+            schema.setData(schemaData);
+            return schema;
+
+        } catch (Exception e) {
+            LOG.error("Unable to get Record Structure Schema", e);
+            throw new TException(e);
+        }
+    }
+
+    @Override
+    public FileData getRecordStructureData(String applicationId, int schemaVersion, RecordFile recordFile) throws ControlThriftException,
+            TException {
+
+        try {
+            ApplicationDto application = applicationService.findAppById(applicationId);
+            if (application == null) {
+                throw new TException("Application not found!");
+            }
+            LogSchemaDto logSchema = logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, schemaVersion);
+            if (logSchema == null) {
+                throw new TException("Log schema not found!");
+            }
+
+            Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logSchema.getSchema());
+            String libraryFileName = MessageFormatter.arrayFormat(SCHEMA_NAME_PATTERN, new Object[] { schemaVersion }).getMessage();
             String schemaInJson = recordWrapperSchema.toString(true);
             byte[] schemaData = schemaInJson.getBytes(StandardCharsets.UTF_8);
 

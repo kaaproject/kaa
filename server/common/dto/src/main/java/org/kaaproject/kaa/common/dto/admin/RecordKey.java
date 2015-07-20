@@ -25,26 +25,30 @@ public class RecordKey implements Serializable {
     public static final String RECORD_KEY_PARAMETER = "recordKey";
 
     private String applicationId;
-    private int logSchemaVersion;
+    private int schemaVersion;
     private RecordFiles recordFiles;
 
     public RecordKey() {
     }
 
-    public RecordKey(String applicationId, int logSchemaVersion, RecordFiles recordFiles) {
+    public RecordKey(String applicationId, int schemaVersion, RecordFiles recordFiles) {
         this.applicationId = applicationId;
-        this.logSchemaVersion = logSchemaVersion;
+        this.schemaVersion = schemaVersion;
         this.recordFiles = recordFiles;
     }
 
     public RecordKey(String applicationId, int logSchemaVersion) {
-        this.applicationId = applicationId;
-        this.logSchemaVersion = logSchemaVersion;
-        this.recordFiles = RecordFiles.LIBRARY;
+        this(applicationId, logSchemaVersion, RecordFiles.LOG_LIBRARY);
     }
 
     public static enum RecordFiles {
-        SCHEMA, LIBRARY;
+        CONFIGURATION_BASE_SCHEMA,
+        CONFIGURATION_OVERRIDE_SCHEMA,
+        CONFIGURATION_SCHEMA,
+        NOTIFICATION_SCHEMA,
+        PROFILE_SCHEMA,
+        LOG_SCHEMA,
+        LOG_LIBRARY,
     }
 
     public String getApplicationId() {
@@ -55,12 +59,12 @@ public class RecordKey implements Serializable {
         this.applicationId = applicationId;
     }
 
-    public int getLogSchemaVersion() {
-        return logSchemaVersion;
+    public int getSchemaVersion() {
+        return schemaVersion;
     }
 
-    public void setLogSchemaVersion(int logSchemaVersion) {
-        this.logSchemaVersion = logSchemaVersion;
+    public void setSchemaVersion(int schemaVersion) {
+        this.schemaVersion = schemaVersion;
     }
 
     public RecordFiles getRecordFiles() {
@@ -76,8 +80,8 @@ public class RecordKey implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((applicationId == null) ? 0 : applicationId.hashCode());
-        result = prime * result + logSchemaVersion;
         result = prime * result + ((recordFiles == null) ? 0 : recordFiles.hashCode());
+        result = prime * result + schemaVersion;
         return result;
     }
 
@@ -95,16 +99,16 @@ public class RecordKey implements Serializable {
                 return false;
         } else if (!applicationId.equals(other.applicationId))
             return false;
-        if (logSchemaVersion != other.logSchemaVersion)
-            return false;
         if (recordFiles != other.recordFiles)
+            return false;
+        if (schemaVersion != other.schemaVersion)
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "RecordKey [applicationId=" + applicationId + ", logSchemaVersion=" + logSchemaVersion + ", recordFiles=" + recordFiles + "]";
+        return "RecordKey [applicationId=" + applicationId + ", schemaVersion=" + schemaVersion + ", recordFiles=" + recordFiles + "]";
     }
 
 }
