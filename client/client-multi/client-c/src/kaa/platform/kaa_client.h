@@ -30,6 +30,8 @@
 extern "C" {
 #endif
 
+#include "time.h"
+
 #include "../kaa_context.h"
 #include "kaa_client_properies.h"
 
@@ -76,7 +78,7 @@ void kaa_client_destroy(kaa_client_t *kaa_client);
 kaa_error_t kaa_client_start(kaa_client_t *kaa_client
                            , external_process_fn external_process
                            , void *external_process_context
-                           , time_t max_delay);
+                           , kaa_time_t max_delay);
 
 /**
  * @brief Stop Kaa client.
