@@ -82,6 +82,8 @@ struct kaa_status_holder_t {
     kaa_status_t *status_instance;
 };
 
+extern kaa_error_t kaa_status_set_registered(kaa_status_t *self, bool is_registered);
+
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
 extern kaa_error_t kaa_notification_manager_create(kaa_notification_manager_t **self, kaa_status_t *status
                                                  , kaa_channel_manager_t *channel_manager
@@ -284,4 +286,11 @@ kaa_error_t kaa_deinit(kaa_context_t *kaa_context)
         KAA_LOG_ERROR(logger, error, "Failed to destroy Kaa context");
     kaa_log_destroy(logger);
     return error;
+}
+
+kaa_error_t kaa_context_set_status_registered(kaa_context_t *kaa_context, bool is_registered)
+{
+    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
+
+    return kaa_status_set_registered(kaa_context->status->status_instance, is_registered);
 }

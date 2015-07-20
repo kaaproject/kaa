@@ -32,7 +32,6 @@
 #include "../platform/time.h"
 #include "../kaa_platform_common.h"
 #include "kaa_tcp_channel.h"
-#include "kaa_status.h"
 
 
 
@@ -114,11 +113,7 @@ typedef struct {
     kaa_tcp_encrypt_t              encryption;
 } kaa_tcp_channel_t;
 
-extern kaa_error_t kaa_status_set_registered(kaa_status_t *self, bool is_registered);
-
-typedef struct kaa_status_holder_t {
-    kaa_status_t    *status_instance;
-} kaa_status_holder_t;
+extern kaa_error_t kaa_context_set_status_registered(kaa_context_t *kaa_context, bool is_registered);
 
 static kaa_error_t kaa_tcp_channel_get_transport_protocol_info(void *context, kaa_transport_protocol_id_t *protocol_info);
 static kaa_error_t kaa_tcp_channel_get_supported_services(void *context, kaa_service_t **supported_services, size_t *service_count);
@@ -954,8 +949,8 @@ void kaa_tcp_channel_connack_message_callback(void *context, kaatcp_connack_t me
                 channel->keepalive.last_sent_keepalive = channel->keepalive.last_receive_keepalive;
             }
 
-        } else if(message.return_code == (uint16_t) KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS) {
-            kaa_status_set_registered(channel->transport_context.kaa_context->status->status_instance, false);
+        } else if (message.return_code == (uint16_t) KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS) {
+            kaa_context_set_status_registered(channel->transport_context.kaa_context, false);
             KAA_LOG_WARN(channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] received KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS"
                                                                                 , channel->access_point.id);
             channel->channel_state = KAA_TCP_CHANNEL_UNDEFINED;
