@@ -110,7 +110,7 @@ static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *l
         error = kaa_status_create(&((*context_p)->status->status_instance));
 
     if (!error)
-        error = kaa_platform_protocol_create(&((*context_p)->platfrom_protocol), *context_p,
+        error = kaa_platform_protocol_create(&((*context_p)->platform_protocol), *context_p,
                                              (*context_p)->status->status_instance);
 
     if (!error)
@@ -191,7 +191,7 @@ static kaa_error_t kaa_context_destroy(kaa_context_t *context)
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
     kaa_notification_manager_destroy(context->notification_manager);
 #endif
-    kaa_platform_protocol_destroy(context->platfrom_protocol);
+    kaa_platform_protocol_destroy(context->platform_protocol);
     KAA_FREE(context);
     return KAA_ERR_NONE;
 }

@@ -231,13 +231,10 @@ static kaa_error_t add_channel(kaa_channel_manager_t *self
 static kaa_error_t init_channel(kaa_channel_manager_t *self
                               , kaa_transport_channel_interface_t *channel)
 {
-    KAA_RETURN_IF_NIL2(self, channel, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(self, self->kaa_context, channel, KAA_ERR_BADPARAM);
 
-    static kaa_transport_context_t transport_context = { NULL, NULL };
-    if (!transport_context.platform_protocol) {
-        transport_context.platform_protocol = self->kaa_context->platfrom_protocol;
-        transport_context.bootstrap_manager = self->kaa_context->bootstrap_manager;
-    }
+    static kaa_transport_context_t transport_context = { NULL };
+    transport_context.kaa_context = self->kaa_context;
 
     channel->init(channel->context, &transport_context);
 

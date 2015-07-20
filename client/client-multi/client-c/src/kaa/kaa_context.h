@@ -92,7 +92,7 @@ typedef struct kaa_status_holder_t                  kaa_status_holder_t;
  */
 typedef struct {
     kaa_status_holder_t         *status;                 /**< See @link kaa_status.h @endlink. */
-    kaa_platform_protocol_t     *platfrom_protocol;      /**< See @link kaa_platform_protocol.h @endlink. */
+    kaa_platform_protocol_t     *platform_protocol;      /**< See @link kaa_platform_protocol.h @endlink. */
     kaa_bootstrap_manager_t     *bootstrap_manager;      /**< See @link kaa_bootstrap.h @endlink. */
     kaa_channel_manager_t       *channel_manager;        /**< See @link kaa_channel_manager.h @endlink. */
     kaa_profile_manager_t       *profile_manager;        /**< See @link kaa_profile.h @endlink. */
