@@ -340,15 +340,16 @@ void test_handle_server_sync()
     ASSERT_NOT_NULL(protocol2_channel_context.access_point);
     ASSERT_EQUAL(protocol2_channel_context.access_point->id, access_point1_protocol2->id);
 
-    ASSERT_NOT_NULL(protocol1_channel_context.transport_context.bootstrap_manager);
-    error_code = kaa_bootstrap_manager_on_access_point_failed(protocol1_channel_context.transport_context.bootstrap_manager
+    ASSERT_NOT_NULL(protocol1_channel_context.transport_context.kaa_context);
+    ASSERT_NOT_NULL(protocol1_channel_context.transport_context.kaa_context->bootstrap_manager);
+    error_code = kaa_bootstrap_manager_on_access_point_failed(protocol1_channel_context.transport_context.kaa_context->bootstrap_manager
                                                             , &protocol1_channel_context.protocol_info
                                                             , KAA_SERVER_OPERATIONS);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_NOT_NULL(protocol1_channel_context.access_point);
     ASSERT_EQUAL(protocol1_channel_context.access_point->id, access_point1_protocol1->id);
 
-    error_code = kaa_bootstrap_manager_on_access_point_failed(protocol1_channel_context.transport_context.bootstrap_manager
+    error_code = kaa_bootstrap_manager_on_access_point_failed(protocol1_channel_context.transport_context.kaa_context->bootstrap_manager
                                                             , &protocol1_channel_context.protocol_info
                                                             , KAA_SERVER_OPERATIONS);
     ASSERT_EQUAL(error_code, KAA_ERR_NOT_FOUND);
@@ -477,7 +478,7 @@ int test_init(void)
         return error;
 
     kaa_context.logger = logger;
-    kaa_context.platfrom_protocol = NULL;
+    kaa_context.platform_protocol = NULL;
     kaa_context.bootstrap_manager = NULL;
 
     error = kaa_channel_manager_create(&channel_manager, &kaa_context);
