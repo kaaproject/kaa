@@ -29,6 +29,7 @@ import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.thrift.ControlThriftClientProvider;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
+import org.kaaproject.kaa.server.common.thrift.gen.control.RecordFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
@@ -42,6 +43,7 @@ public class CacheServiceImpl implements CacheService {
     private static final String SDK_CACHE = "sdkCache";
     private static final String RECORD_LIBRARY_CACHE = "recordLibraryCache";
     private static final String RECORD_SCHEMA_CACHE = "recordSchemaCache";
+    private static final String RECORD_DATA_CACHE = "recordDataCache";
     private static final String FILE_UPLOAD_CACHE = "fileUploadCache";
 
     @Autowired
@@ -113,6 +115,22 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
+    @Cacheable(RECORD_DATA_CACHE)
+    public FileData getRecordData(RecordKey key) throws KaaAdminServiceException {
+        try {
+            org.kaaproject.kaa.server.common.thrift.gen.control.FileData
+                    thriftFileData = clientProvider.getClient().getRecordStructureData(key.getApplicationId(),
+                    key.getSchemaVersion(), covertRecordFile(key.getRecordFiles()));
+            FileData fileData = new FileData();
+            fileData.setFileName(thriftFileData.getFileName());
+            fileData.setFileData(thriftFileData.getData());
+            return fileData;
+        } catch (TException e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     @Cacheable(value = FILE_UPLOAD_CACHE, key = "#key")
     public byte[] uploadedFile(String key, byte[] data) {
         return data;
@@ -122,5 +140,33 @@ public class CacheServiceImpl implements CacheService {
     @CacheEvict(value = FILE_UPLOAD_CACHE, key = "#key")
     public void removeUploadedFile(String key) {
     }
-    
+
+    private RecordFile covertRecordFile(RecordKey.RecordFiles recordFiles) {
+        RecordFile recordFile = null;
+        switch (recordFiles) {
+            case LOG_SCHEMA:
+                recordFile = RecordFile.LOG_SCHEMA;
+                break;
+            case LOG_LIBRARY:
+                recordFile = RecordFile.LOG_LIBRARY;
+                break;
+            case CONFIGURATION_SCHEMA:
+                recordFile = RecordFile.CONFIGURATION_SCHEMA;
+                break;
+            case CONFIGURATION_BASE_SCHEMA:
+                recordFile = RecordFile.CONFIGURATION_BASE_SCHEMA;
+                break;
+            case CONFIGURATION_OVERRIDE_SCHEMA:
+                recordFile = RecordFile.CONFIGURATION_OVERRIDE_SCHEMA;
+                break;
+            case NOTIFICATION_SCHEMA:
+                recordFile = RecordFile.NOTIFICATION_SCHEMA;
+                break;
+            case PROFILE_SCHEMA:
+                recordFile = RecordFile.PROFILE_SCHEMA;
+                break;
+            default:break;
+        }
+        return recordFile;
+    }
 }

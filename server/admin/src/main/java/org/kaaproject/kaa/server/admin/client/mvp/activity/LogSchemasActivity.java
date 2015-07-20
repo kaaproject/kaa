@@ -87,10 +87,10 @@ public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSc
 
         switch (action) {
             case KaaRowAction.DOWNLOAD_LOG_SCHEMA_LIBRARY:
-                KaaAdmin.getDataSource().getRecordLibrary(applicationId, schemaVersion, RecordFiles.LOG_LIBRARY, callback);
+                KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.LOG_LIBRARY, callback);
                 break;
             case KaaRowAction.DOWNLOAD_SCHEMA:
-                KaaAdmin.getDataSource().getRecordLibrary(applicationId, schemaVersion, RecordFiles.LOG_SCHEMA, callback);
+                KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.LOG_SCHEMA, callback);
                 break;
             default:
                 break;

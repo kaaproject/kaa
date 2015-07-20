@@ -82,7 +82,7 @@ public class ProfileSchemasActivity extends AbstractListActivity<ProfileSchemaDt
                 ServletHelper.downloadRecordLibrary(key);
             }
         };
-        KaaAdmin.getDataSource().getRecordLibrary(applicationId, schemaVersion, RecordFiles.PROFILE_SCHEMA, callback);
+        KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.PROFILE_SCHEMA, callback);
     }
 
 }

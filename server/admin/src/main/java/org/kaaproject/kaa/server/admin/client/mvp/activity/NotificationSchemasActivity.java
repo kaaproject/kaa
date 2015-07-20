@@ -81,6 +81,6 @@ public class NotificationSchemasActivity extends AbstractListActivity<Notificati
                 ServletHelper.downloadRecordLibrary(key);
             }
         };
-        KaaAdmin.getDataSource().getRecordLibrary(applicationId, schemaVersion, RecordFiles.NOTIFICATION_SCHEMA, callback);
+        KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.NOTIFICATION_SCHEMA, callback);
     }
 }

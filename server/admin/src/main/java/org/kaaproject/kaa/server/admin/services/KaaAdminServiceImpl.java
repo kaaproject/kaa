@@ -2148,6 +2148,18 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    @Override
+    public String getRecordDataByApplicationIdAndSchemaVersion(String applicationId, int schemaVersion, RecordKey.RecordFiles file) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            checkApplicationId(applicationId);
+            RecordKey sdkKey = new RecordKey(applicationId, schemaVersion, file);
+            return Base64.encodeObject(sdkKey, Base64.URL_SAFE);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
     private TenantUserDto toTenantUser(TenantAdminDto tenantAdmin) {
         User user = userFacade.findById(Long.valueOf(tenantAdmin.getExternalUid()));
         LOG.debug("Convert tenant admin to tenant user {}.", user);

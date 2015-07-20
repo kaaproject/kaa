@@ -276,6 +276,17 @@ public class DataSource {
         });
     }
 
+    public void getRecordData(String applicationId,
+                                 Integer logSchemaVersion, RecordFiles fileType,
+                                 final AsyncCallback<String> callback) {
+        rpcService.getRecordDataByApplicationIdAndSchemaVersion(applicationId, logSchemaVersion, fileType,
+                new DataCallback<String>(callback) {
+                    @Override
+                    protected void onResult(String result) {
+                    }
+                });
+    }
+
     public void getRecordLibrary(String applicationId,
             Integer logSchemaVersion, RecordFiles fileType,
             final AsyncCallback<String> callback) {

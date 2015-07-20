@@ -26,6 +26,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.data.ConfigurationSchemasDataP
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
@@ -71,6 +72,7 @@ public class ConfigurationSchemasActivity extends AbstractListActivity<Configura
     @Override
     protected void onCustomRowAction(RowActionEvent<String> event) {
         Integer schemaVersion = Integer.valueOf(event.getClickedId());
+        final int action = event.getAction();
         AsyncCallback<String> callback = new AsyncCallback<String>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -81,6 +83,19 @@ public class ConfigurationSchemasActivity extends AbstractListActivity<Configura
                 ServletHelper.downloadRecordLibrary(key);
             }
         };
-        KaaAdmin.getDataSource().getRecordLibrary(applicationId, schemaVersion, RecordFiles.CONFIGURATION_SCHEMA, callback);
+
+        switch (action) {
+            case KaaRowAction.DOWNLOAD_SCHEMA:
+                KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.CONFIGURATION_SCHEMA, callback);
+                break;
+            case KaaRowAction.DOWNLOAD_BASE_SCHEMA:
+                KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.CONFIGURATION_BASE_SCHEMA, callback);
+                break;
+            case KaaRowAction.DOWNLOAD_OVERRIDE_SCHEMA:
+                KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.CONFIGURATION_OVERRIDE_SCHEMA, callback);
+                break;
+            default:
+                break;
+        }
     }
 }
