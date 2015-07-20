@@ -559,8 +559,9 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
     ASSERT_NOT_NULL(channel);
     //Fill with fake pointers, just for non null
     kaa_transport_context_t transport_context;
-    transport_context.platform_protocol = (kaa_platform_protocol_t *)CONNECTION_DATA;
-    transport_context.bootstrap_manager = (kaa_bootstrap_manager_t *)CONNECTION_DATA;
+    transport_context.kaa_context = (kaa_context_t*)calloc(1, sizeof(kaa_context_t));
+    transport_context.kaa_context->platform_protocol = (kaa_platform_protocol_t *)CONNECTION_DATA;
+    transport_context.kaa_context->bootstrap_manager = (kaa_bootstrap_manager_t *)CONNECTION_DATA;
 
     kaa_error_t error_code = channel->init(channel->context, &transport_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);

@@ -113,7 +113,7 @@ typedef struct {
     kaa_tcp_encrypt_t              encryption;
 } kaa_tcp_channel_t;
 
-
+extern kaa_error_t kaa_context_set_status_registered(kaa_context_t *kaa_context, bool is_registered);
 
 static kaa_error_t kaa_tcp_channel_get_transport_protocol_info(void *context, kaa_transport_protocol_id_t *protocol_info);
 static kaa_error_t kaa_tcp_channel_get_supported_services(void *context, kaa_service_t **supported_services, size_t *service_count);
@@ -298,7 +298,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
 
 static kaa_error_t kaa_tcp_channel_on_access_point_failed(kaa_tcp_channel_t *self)
 {
-    kaa_error_t error_code = kaa_bootstrap_manager_on_access_point_failed(self->transport_context.bootstrap_manager
+    kaa_error_t error_code = kaa_bootstrap_manager_on_access_point_failed(self->transport_context.kaa_context->bootstrap_manager
                                                             , &self->protocol_id
                                                             , self->channel_operation_type);
     if (error_code != KAA_ERR_EVENT_NOT_ATTACHED) {
@@ -436,7 +436,7 @@ kaa_error_t kaa_tcp_channel_destroy_context(void *context)
  */
 kaa_error_t kaa_tcp_channel_init(void *context, kaa_transport_context_t *transport_context)
 {
-    KAA_RETURN_IF_NIL4(context, transport_context, transport_context->platform_protocol, transport_context->bootstrap_manager, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(context, transport_context, transport_context->kaa_context, KAA_ERR_BADPARAM);
     kaa_tcp_channel_t *channel = (kaa_tcp_channel_t *) context;
     channel->transport_context = *transport_context;
     return KAA_ERR_NONE;
@@ -948,6 +948,12 @@ void kaa_tcp_channel_connack_message_callback(void *context, kaatcp_connack_t me
                 channel->keepalive.last_sent_keepalive = channel->keepalive.last_receive_keepalive;
             }
 
+        } else if (message.return_code == (uint16_t) KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS) {
+            kaa_context_set_status_registered(channel->transport_context.kaa_context, false);
+            KAA_LOG_WARN(channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] received KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS"
+                                                                                , channel->access_point.id);
+            channel->channel_state = KAA_TCP_CHANNEL_UNDEFINED;
+            kaa_tcp_channel_authorize(channel);
         } else {
             KAA_LOG_WARN(channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] authorization failed"
                                                                                 , channel->access_point.id);
@@ -990,7 +996,7 @@ void kaa_tcp_channel_kaasync_message_callback(void *context, kaatcp_kaasync_t *m
 
     if (!zipped && !encrypted) {
         kaa_error_t error_code =
-                kaa_platform_protocol_process_server_sync(channel->transport_context.platform_protocol
+                kaa_platform_protocol_process_server_sync(channel->transport_context.kaa_context->platform_protocol
                                                         , message->sync_request
                                                         , message->sync_request_size);
         if (error_code)
@@ -1097,7 +1103,7 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     char *sync_buffer = NULL;
     size_t sync_size = 0;
 
-    error_code = kaa_platform_protocol_serialize_client_sync(self->transport_context.platform_protocol
+    error_code = kaa_platform_protocol_serialize_client_sync(self->transport_context.kaa_context->platform_protocol
                                                            , &serialize_info
                                                            , &sync_buffer
                                                            , &sync_size);
@@ -1476,7 +1482,7 @@ kaa_error_t kaa_tcp_channel_write_pending_services(kaa_tcp_channel_t *self
     char *sync_buffer = NULL;
     size_t sync_size = 0;
 
-    error_code = kaa_platform_protocol_serialize_client_sync(self->transport_context.platform_protocol
+    error_code = kaa_platform_protocol_serialize_client_sync(self->transport_context.kaa_context->platform_protocol
                                                            , &serialize_info
                                                            , &sync_buffer
                                                            , &sync_size);

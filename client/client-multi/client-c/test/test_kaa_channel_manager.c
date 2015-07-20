@@ -482,7 +482,7 @@ int test_init(void)
 
     kaa_context.logger = logger;
     kaa_context.bootstrap_manager = NULL;
-    kaa_context.platfrom_protocol = NULL;
+    kaa_context.platform_protocol = NULL;
 
     return 0;
 }

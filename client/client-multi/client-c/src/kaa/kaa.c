@@ -82,6 +82,8 @@ struct kaa_status_holder_t {
     kaa_status_t *status_instance;
 };
 
+extern kaa_error_t kaa_status_set_registered(kaa_status_t *self, bool is_registered);
+
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
 extern kaa_error_t kaa_notification_manager_create(kaa_notification_manager_t **self, kaa_status_t *status
                                                  , kaa_channel_manager_t *channel_manager
@@ -114,7 +116,7 @@ static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *l
         error = kaa_status_create(&((*context_p)->status->status_instance));
 
     if (!error)
-        error = kaa_platform_protocol_create(&((*context_p)->platfrom_protocol), *context_p,
+        error = kaa_platform_protocol_create(&((*context_p)->platform_protocol), *context_p,
                                              (*context_p)->status->status_instance);
 
     if (!error)
@@ -198,7 +200,7 @@ static kaa_error_t kaa_context_destroy(kaa_context_t *context)
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
     kaa_notification_manager_destroy(context->notification_manager);
 #endif
-    kaa_platform_protocol_destroy(context->platfrom_protocol);
+    kaa_platform_protocol_destroy(context->platform_protocol);
     KAA_FREE(context);
     return KAA_ERR_NONE;
 }
@@ -297,4 +299,11 @@ bool kaa_process_failover(kaa_context_t *kaa_context)
 {
     KAA_RETURN_IF_NIL(kaa_context, false);
     return kaa_bootstrap_manager_process_failover(kaa_context->bootstrap_manager);
+}
+
+kaa_error_t kaa_context_set_status_registered(kaa_context_t *kaa_context, bool is_registered)
+{
+    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
+
+    return kaa_status_set_registered(kaa_context->status->status_instance, is_registered);
 }
