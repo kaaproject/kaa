@@ -198,10 +198,6 @@ static kaa_error_t add_operations_access_point(kaa_bootstrap_manager_t *self
         }
     }
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received new Operations access point [0x%08X] "
-                        "(protocol: id=0x%08X, version=%u)"
-                        , access_point->id, protocol_id->id, protocol_id->version);
-
     return KAA_ERR_NONE;
 }
 
@@ -369,6 +365,7 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
                                                    , size_t extension_length)
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received bootstrap server sync: options %u, payload size %u", extension_options, extension_length);
 
     kaa_list_clear(self->operations_access_points, destroy_operations_access_points);
 
@@ -384,7 +381,7 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
     KAA_RETURN_IF_ERR(error_code);
     access_point_count = KAA_NTOHS(access_point_count);
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received %u access points (request_id=%u)"
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received %u access points (request_id %u)"
                                                         , access_point_count, request_id);
 
     if (!access_point_count) {
@@ -454,6 +451,8 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
             KAA_LOG_WARN(self->logger, error_code, "Failed to add new access point "
                     "to channel (protocol: id=0x%08X, version=%u)", protocol_id.id, protocol_id.version);
         }
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Added access point: access point id '%u', protocol id '0x%08X', protocol version '%u', connection data length '%u'"
+                    , new_access_point->id, protocol_id.id, protocol_id.version, new_access_point->connection_data_len);
     }
 
     kaa_bootstrap_manager_on_server_sync(self);

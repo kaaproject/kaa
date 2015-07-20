@@ -57,6 +57,7 @@ typedef struct {
 struct kaa_channel_manager_t {
     kaa_list_t         *transport_channels;
     kaa_context_t      *kaa_context;
+    kaa_logger_t       *logger;
     kaa_sync_info_t    sync_info;
 };
 
@@ -109,6 +110,7 @@ kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
     (*channel_manager_p)->kaa_context             = context;
     (*channel_manager_p)->sync_info.request_id    = 0;
     (*channel_manager_p)->sync_info.is_up_to_date = false;
+    (*channel_manager_p)->logger                  = context->logger;
 
     return KAA_ERR_NONE;
 }
@@ -391,6 +393,7 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
                                                           , kaa_platform_message_writer_t* writer)
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client bootstrap sync");
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
@@ -412,6 +415,7 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
         error_code = kaa_platform_message_write(writer, &network_order_16, sizeof(uint16_t));
         KAA_RETURN_IF_ERR(error_code);
 
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing %u supported protocol(s), request id %u", self->sync_info.channel_count, self->sync_info.request_id);
         kaa_transport_channel_wrapper_t *channel_wrapper;
         kaa_transport_protocol_id_t protocol_info;
 
@@ -435,6 +439,7 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
             error_code = kaa_platform_message_write(writer, &network_order_16, sizeof(uint16_t));
             KAA_RETURN_IF_ERR(error_code);
 
+            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serialized protocol: id '%u', version '%u'", protocol_info.id, protocol_info.version);
             it = kaa_list_next(it);
         }
     }

@@ -259,13 +259,14 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received profile server sync");
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received profile server sync: options %u, payload size %zu", extension_options, extension_length);
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
     self->need_resync = false;
     if (extension_options & KAA_PROFILE_RESYNC_OPTION) {
         self->need_resync = true;
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to resync profile...");
         kaa_transport_channel_interface_t *channel =
                 kaa_channel_manager_get_transport_channel(self->channel_manager, profile_sync_services[0]);
         if (channel)
@@ -273,8 +274,10 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
     }
 
 
-    if (!self->status->is_registered)
+    if (!self->status->is_registered) {
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Endpoint has been registered");
         self->status->is_registered = true;
+    }
 
     return error_code;
 }
