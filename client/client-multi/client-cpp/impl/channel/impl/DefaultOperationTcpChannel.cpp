@@ -36,6 +36,7 @@
 #include "kaa/kaatcp/PingRequest.hpp"
 #include "kaa/kaatcp/DisconnectMessage.hpp"
 #include "kaa/http/HttpUtils.hpp"
+#include "kaa/IKaaClientStateStorage.hpp"
 
 namespace kaa {
 
@@ -57,10 +58,11 @@ const std::map<TransportType, ChannelDirection> DefaultOperationTcpChannel::SUPP
         };
 
 
-DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys)
+DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientStateStoragePtr clientState)
     : clientKeys_(clientKeys), work_(io_), socketWork_(socketIo_),/*sock_(io_), */pingTimer_(io_), connAckTimer_(io_)/*, reconnectTimer_(io_)*/, retryTimer_("DefaultOperationTcpChannel retryTimer")
     , firstStart_(true), isConnected_(false), isFirstResponseReceived_(false), isPendingSyncRequest_(false)
-    , isShutdown_(false), isPaused_(false), isFailoverInProgress_(false), multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager)
+    , isShutdown_(false), isPaused_(false), isFailoverInProgress_(false), multiplexer_(nullptr), demultiplexer_(nullptr)
+    , channelManager_(channelManager), clientState_(clientState)
 {
     responsePorcessor.registerConnackReceiver(std::bind(&DefaultOperationTcpChannel::onConnack, this, std::placeholders::_1));
     responsePorcessor.registerKaaSyncReceiver(std::bind(&DefaultOperationTcpChannel::onKaaSync, this, std::placeholders::_1));
@@ -78,9 +80,20 @@ DefaultOperationTcpChannel::~DefaultOperationTcpChannel()
 void DefaultOperationTcpChannel::onConnack(const ConnackMessage& message)
 {
     KAA_LOG_DEBUG(boost::format("Channel \"%1%\". Connack (result=%2%) response received") % getId() % message.getMessage());
-    if (message.getReturnCode() != ConnackReturnCode::SUCCESS) {
+
+    switch (message.getReturnCode()) {
+    case ConnackReturnCode::ACCEPTED:
+        break;
+    case ConnackReturnCode::REFUSE_BAD_CREDENTIALS:
+        KAA_LOG_WARN(boost::format("Channel \"%1%\". Connack result: bad credentials. Going to re-register... ") % getId());
+        clientState_->setRegistered(false);
+        clientState_->save();
+        setServer(currentServer_);
+        break;
+    default:
         KAA_LOG_ERROR(boost::format("Channel \"%1%\". Connack result failed: %2%. Closing connection") % getId() % message.getMessage());
         onServerFailed();
+        break;
     }
 }
 

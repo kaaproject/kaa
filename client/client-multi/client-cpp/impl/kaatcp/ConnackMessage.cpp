@@ -30,17 +30,17 @@ std::string ConnackMessage::returnCodeToString(ConnackReturnCode code)
     switch (code) {
         case ConnackReturnCode::UNKNOWN:
             return "Connack Unknown";
-        case ConnackReturnCode::SUCCESS:
+        case ConnackReturnCode::ACCEPTED:
             return "Connection Accepted";
-        case ConnackReturnCode::UNACCEPTABLE_VERSION:
+        case ConnackReturnCode::REFUSE_BAD_PROTOCOL:
             return "Connection Refused: unacceptable protocol version";
-        case ConnackReturnCode::IDENTIFIER_REJECTED:
+        case ConnackReturnCode::REFUSE_ID_REJECT:
             return "Connection Refused: identifier rejected";
-        case ConnackReturnCode::SERVER_UNAVAILABLE:
+        case ConnackReturnCode::REFUSE_SERVER_UNAVAILABLE:
             return "Connection Refused: server unavailable";
-        case ConnackReturnCode::BAD_CREDENTIALS:
+        case ConnackReturnCode::REFUSE_BAD_CREDENTIALS:
             return "Connection Refused: invalid authentication parameters";
-        case ConnackReturnCode::NOT_AUTHORIZED:
+        case ConnackReturnCode::REFUSE_NO_AUTH:
             return "Connection Refused: not authorized";
         default:
             return (boost::format("Invalid response code %1%") % (std::uint8_t) code).str();
@@ -59,7 +59,7 @@ void ConnackMessage::parseMessage(const char *payload, std::uint16_t size)
     }
 
     int code = *(payload + 1);
-    if (code < (int)ConnackReturnCode::UNKNOWN || code > (int)ConnackReturnCode::NOT_AUTHORIZED) {
+    if (code < (int)ConnackReturnCode::UNKNOWN || code > (int)ConnackReturnCode::REFUSE_NO_AUTH) {
         throw KaaException(boost::format("Bad Connack return code: %1%") % code);
     }
     returnCode_ = (ConnackReturnCode) code;

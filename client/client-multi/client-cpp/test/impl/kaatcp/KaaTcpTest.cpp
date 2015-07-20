@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(testResponseProcessor)
     processor.registerConnackReceiver(
             [&checker](const ConnackMessage& message)
             {
-                BOOST_CHECK_EQUAL((std::uint8_t)ConnackReturnCode::IDENTIFIER_REJECTED, (std::uint8_t)message.getReturnCode());
+                BOOST_CHECK_EQUAL((std::uint8_t)ConnackReturnCode::REFUSE_ID_REJECT, (std::uint8_t)message.getReturnCode());
                 checker.onConnack(message);
             });
     processor.registerPingResponseReceiver(
