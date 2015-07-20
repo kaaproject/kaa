@@ -129,6 +129,13 @@ kaa_error_t kaa_status_set_endpoint_access_token(kaa_status_t * self, const char
     return KAA_ERR_NONE;
 }
 
+kaa_error_t kaa_status_set_registered(kaa_status_t *self, bool is_registered)
+{
+    KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);
+    self->is_registered = is_registered;
+    return KAA_ERR_NONE;
+}
+
 kaa_error_t kaa_status_save(kaa_status_t *self)
 {
     KAA_RETURN_IF_NIL(self, KAA_ERR_BADPARAM);

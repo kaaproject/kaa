@@ -181,7 +181,7 @@ void test_deserializing()
 
     avro_writer_t avro_writer = avro_writer_memory(unserialized_buffer, notification->get_size(notification));
     notification->serialize(avro_writer, notification);
-    err = kaa_platform_protocol_process_server_sync(context->platfrom_protocol, buffer_pointer, size);
+    err = kaa_platform_protocol_process_server_sync(context->platform_protocol, buffer_pointer, size);
     avro_writer_free(avro_writer);
 
     ASSERT_EQUAL(err, KAA_ERR_NONE);
@@ -222,7 +222,7 @@ void test_notification_listeners_adding_and_removing()
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     *(uint32_t *)pointer_to_sqn = KAA_HTONL((uint32_t) 100); // Need to change sqn
-    err = kaa_platform_protocol_process_server_sync(context->platfrom_protocol, buffer_pointer, size);
+    err = kaa_platform_protocol_process_server_sync(context->platform_protocol, buffer_pointer, size);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     ASSERT_EQUAL(listener_has_been_notified, true); // whether callback has been called
@@ -290,7 +290,7 @@ void test_serializing()
     info->services_count = 1;
     info->allocator = &allocator;
     info->allocator_context = &allocator; //mock
-    err = kaa_platform_protocol_serialize_client_sync(context->platfrom_protocol, info, &buffer, &buffer_size);
+    err = kaa_platform_protocol_serialize_client_sync(context->platform_protocol, info, &buffer, &buffer_size);
     ASSERT_EQUAL(err, KAA_ERR_NONE);
 
     KAA_FREE(buffer);

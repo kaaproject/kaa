@@ -79,7 +79,7 @@ void test_empty_log_collector_extension_count(void)
     error_code = kaa_logging_init(kaa_context->log_collector, log_storage_context, log_upload_strategy_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_platform_protocol_serialize_client_sync(kaa_context->platfrom_protocol, info, &buffer, &buffer_size);
+    error_code = kaa_platform_protocol_serialize_client_sync(kaa_context->platform_protocol, info, &buffer, &buffer_size);
     KAA_FREE(info);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
