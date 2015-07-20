@@ -96,7 +96,7 @@ public:
     }
     virtual void setEndpointKeyHash(const std::string& ) {}
 
-    virtual bool isConfigurationVersionUpdated() const {
+    virtual bool isSDKPropertiesUpdated() const {
         return false;
     }
 

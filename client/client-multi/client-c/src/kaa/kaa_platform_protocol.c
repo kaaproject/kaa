@@ -39,8 +39,8 @@
 /** External channel manager API */
 extern kaa_error_t kaa_channel_manager_bootstrap_request_get_size(kaa_channel_manager_t *self
                                                                 , size_t *expected_size);
-extern kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_t *self
-                                                                 , kaa_platform_message_writer_t* writer);
+
+extern kaa_error_t kaa_bootstrap_manager_bootstrap_request_serialize(kaa_bootstrap_manager_t *self, kaa_platform_message_writer_t* writer);
 
 /** External bootstrap manager API */
 extern kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self
@@ -114,7 +114,7 @@ kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size)
         size += sizeof(uint32_t); // timeout value
         size += kaa_aligned_size_get(SHA_1_DIGEST_LENGTH); // public key hash length
         size += kaa_aligned_size_get(SHA_1_DIGEST_LENGTH); // profile hash length
-        size += kaa_aligned_size_get(KAA_APPLICATION_TOKEN_LENGTH); // token length
+        size += kaa_aligned_size_get(KAA_SDK_TOKEN_LENGTH); // sdk token length
     }
 
     *expected_size = size;
@@ -157,7 +157,7 @@ kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *self, kaa_p
     err_code = kaa_platform_message_write_aligned(writer, self->status->profile_hash, SHA_1_DIGEST_LENGTH);
     KAA_RETURN_IF_ERR(err_code);
 
-    err_code = kaa_platform_message_write_aligned(writer, APPLICATION_TOKEN, KAA_APPLICATION_TOKEN_LENGTH);
+    err_code = kaa_platform_message_write_aligned(writer, KAA_SDK_TOKEN, KAA_SDK_TOKEN_LENGTH);
 
     KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Meta sync: payload length '%u', request id '%u'", payload_length, request_id);
 
@@ -322,8 +322,7 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
     while (!error_code && services_count--) {
         switch (services[services_count]) {
         case KAA_SERVICE_BOOTSTRAP: {
-            error_code = kaa_channel_manager_bootstrap_request_serialize(self->kaa_context->channel_manager
-                                                                       , writer);
+            error_code = kaa_bootstrap_manager_bootstrap_request_serialize(self->kaa_context->bootstrap_manager, writer);
             if (error_code)
                 KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the bootstrap extension");
             break;

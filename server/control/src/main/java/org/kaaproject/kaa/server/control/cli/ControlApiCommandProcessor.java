@@ -62,6 +62,7 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.UserDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService;
@@ -1798,14 +1799,15 @@ public class ControlApiCommandProcessor {
             int notificationSchemaVersion = Integer.parseInt(line.getOptionValue("nsv"));
             int logSchemaVersion = Integer.parseInt(line.getOptionValue("lsv"));
 
-            Sdk sdk = client.generateSdk(sdkPlatform,
-                    applicationId,
-                    profileSchemaVersion,
-                    configurationSchemaVersion,
-                    notificationSchemaVersion,
-                    null,
-                    logSchemaVersion,
-                    null);
+            SdkPropertiesDto sdkPropertiesDto = new SdkPropertiesDto();
+            sdkPropertiesDto.setTargetPlatform(toSdkPlatform(sdkPlatform));
+            sdkPropertiesDto.setApplicationId(applicationId);
+            sdkPropertiesDto.setProfileSchemaVersion(profileSchemaVersion);
+            sdkPropertiesDto.setConfigurationSchemaVersion(configurationSchemaVersion);
+            sdkPropertiesDto.setNotificationSchemaVersion(notificationSchemaVersion);
+            sdkPropertiesDto.setLogSchemaVersion(logSchemaVersion);
+
+            Sdk sdk = client.generateSdk(toDataStruct(sdkPropertiesDto));
 
             writer.println("Generated SDK: " + sdk.getFileName());
 
@@ -1837,6 +1839,22 @@ public class ControlApiCommandProcessor {
             handleException("Unable to generate SDK", e, errorWriter);
         }
     }
+
+    private org.kaaproject.kaa.common.dto.admin.SdkPlatform toSdkPlatform(SdkPlatform sdkPlatform) {
+        switch (sdkPlatform) {
+            case JAVA:
+                return org.kaaproject.kaa.common.dto.admin.SdkPlatform.JAVA;
+            case ANDROID:
+                return org.kaaproject.kaa.common.dto.admin.SdkPlatform.ANDROID;
+            case CPP:
+                return org.kaaproject.kaa.common.dto.admin.SdkPlatform.CPP;
+            case C:
+                return org.kaaproject.kaa.common.dto.admin.SdkPlatform.C;
+            default:
+                return null;
+        }
+    }
+
 
     /**
      * Creates the API command to work with topic entities.

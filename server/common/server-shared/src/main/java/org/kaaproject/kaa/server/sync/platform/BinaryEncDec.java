@@ -32,9 +32,7 @@ import org.kaaproject.kaa.server.sync.EndpointAttachRequest;
 import org.kaaproject.kaa.server.sync.EndpointAttachResponse;
 import org.kaaproject.kaa.server.sync.EndpointDetachRequest;
 import org.kaaproject.kaa.server.sync.EndpointDetachResponse;
-import org.kaaproject.kaa.server.sync.EndpointVersionInfo;
 import org.kaaproject.kaa.server.sync.Event;
-import org.kaaproject.kaa.server.sync.EventClassFamilyVersionInfo;
 import org.kaaproject.kaa.server.sync.EventClientSync;
 import org.kaaproject.kaa.server.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.sync.EventListenersResponse;
@@ -108,7 +106,7 @@ public class BinaryEncDec implements PlatformEncDec {
     private static final byte USER_SYNC_ENDPOINT_ID_OPTION = 0x01;
     private static final short EVENT_DATA_IS_EMPTY_OPTION = (short) 0x02;
     private static final int CLIENT_EVENT_DATA_IS_PRESENT_OPTION = 0x02;
-    private static final int CLIENT_META_SYNC_APP_TOKEN_OPTION = 0x08;
+    private static final int CLIENT_META_SYNC_SDK_TOKEN_OPTION = 0x08;
     private static final int CLIENT_META_SYNC_PROFILE_HASH_OPTION = 0x04;
     private static final int CLIENT_META_SYNC_KEY_HASH_OPTION = 0x02;
     private static final int CLIENT_META_SYNC_TIMEOUT_OPTION = 0x01;
@@ -601,8 +599,8 @@ public class BinaryEncDec implements PlatformEncDec {
         if (hasOption(options, CLIENT_META_SYNC_PROFILE_HASH_OPTION)) {
             md.setProfileHash(getNewByteBuffer(buf, PROFILE_HASH_SIZE));
         }
-        if (hasOption(options, CLIENT_META_SYNC_APP_TOKEN_OPTION)) {
-            md.setApplicationToken(getUTF8String(buf, Constants.APP_TOKEN_SIZE));
+        if (hasOption(options, CLIENT_META_SYNC_SDK_TOKEN_OPTION)) {
+            md.setSdkToken(getUTF8String(buf, Constants.SDK_TOKEN_SIZE));
         }
         sync.setClientSyncMetaData(md);
     }
@@ -623,30 +621,11 @@ public class BinaryEncDec implements PlatformEncDec {
         int payloadLimitPosition = buf.position() + payloadLength;
         ProfileClientSync profileSync = new ProfileClientSync();
         profileSync.setProfileBody(getNewByteBuffer(buf, buf.getInt()));
-        profileSync.setVersionInfo(new EndpointVersionInfo());
         while (buf.position() < payloadLimitPosition) {
             byte fieldId = buf.get();
             // reading unused reserved field
             buf.get();
             switch (fieldId) {
-            case CONF_SCHEMA_VERSION_FIELD_ID:
-                profileSync.getVersionInfo().setConfigVersion(getIntFromUnsignedShort(buf));
-                break;
-            case PROFILE_SCHEMA_VERSION_FIELD_ID:
-                profileSync.getVersionInfo().setProfileVersion(getIntFromUnsignedShort(buf));
-                break;
-            case SYSTEM_NOTIFICATION_SCHEMA_VERSION_FIELD_ID:
-                profileSync.getVersionInfo().setSystemNfVersion(getIntFromUnsignedShort(buf));
-                break;
-            case USER_NOTIFICATION_SCHEMA_VERSION_FIELD_ID:
-                profileSync.getVersionInfo().setUserNfVersion(getIntFromUnsignedShort(buf));
-                break;
-            case LOG_SCHEMA_VERSION_FIELD_ID:
-                profileSync.getVersionInfo().setLogSchemaVersion(getIntFromUnsignedShort(buf));
-                break;
-            case EVENT_FAMILY_VERSIONS_COUNT_FIELD_ID:
-                profileSync.getVersionInfo().setEventFamilyVersions(parseEventFamilyVersionList(buf, getIntFromUnsignedShort(buf)));
-                break;
             case PUBLIC_KEY_FIELD_ID:
                 profileSync.setEndpointPublicKey(getNewByteBuffer(buf, getIntFromUnsignedShort(buf)));
                 break;
@@ -873,15 +852,6 @@ public class BinaryEncDec implements PlatformEncDec {
         String userAccessToken = getUTF8String(buf, tokenLength);
         String userVerifierToken = getUTF8String(buf, verifierTokenLength);
         return new UserAttachRequest(userVerifierToken, userExternalId, userAccessToken);
-    }
-
-    private static List<EventClassFamilyVersionInfo> parseEventFamilyVersionList(ByteBuffer buf, int count) {
-        List<EventClassFamilyVersionInfo> result = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            int version = getIntFromUnsignedShort(buf);
-            result.add(new EventClassFamilyVersionInfo(getUTF8String(buf), version));
-        }
-        return result;
     }
 
     private static int getIntFromUnsignedShort(ByteBuffer buf) {

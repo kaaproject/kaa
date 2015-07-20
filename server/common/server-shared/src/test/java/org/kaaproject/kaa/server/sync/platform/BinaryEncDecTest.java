@@ -46,8 +46,6 @@ import org.kaaproject.kaa.server.sync.SyncStatus;
 import org.kaaproject.kaa.server.sync.UserAttachNotification;
 import org.kaaproject.kaa.server.sync.UserClientSync;
 import org.kaaproject.kaa.server.sync.UserServerSync;
-import org.kaaproject.kaa.server.sync.platform.BinaryEncDec;
-import org.kaaproject.kaa.server.sync.platform.PlatformEncDecException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -221,7 +219,7 @@ public class BinaryEncDecTest {
     }
 
     private byte[] getValidMetaData() {
-        ByteBuffer buf = ByteBuffer.wrap(new byte[8 + SHA_1_LENGTH + SHA_1_LENGTH + 20]);
+        ByteBuffer buf = ByteBuffer.wrap(new byte[8 + SHA_1_LENGTH + SHA_1_LENGTH + 28]);
         buf.putInt(1);
         buf.putInt(60);
         byte[] keyHash = new byte[SHA_1_LENGTH];
@@ -230,52 +228,18 @@ public class BinaryEncDecTest {
         byte[] profileHash = new byte[SHA_1_LENGTH];
         profileHash[MAGIC_INDEX] = MAGIC_NUMBER + 1;
         buf.put(profileHash);
-        buf.put("12345678900987654321".getBytes(Charset.forName("UTF-8")));
+        buf.put("12345678900987654321abcdEFGH".getBytes(Charset.forName("UTF-8")));
         return concat(buildExtensionHeader(BinaryEncDec.META_DATA_EXTENSION_ID, 0, 0, 0x0F, buf.array().length), buf.array());
     }
 
     @Test
     public void testProfileClientSync() throws PlatformEncDecException {
-        ByteBuffer buf = ByteBuffer.wrap(new byte[4 + 100 + (4 * 5) + 12 + 4 + 128 + 4 + 8]);
+        ByteBuffer buf = ByteBuffer.wrap(new byte[4 + 100 + 4 + 4 + 128 + 4 + 8]);
         // profile length and data
         buf.putInt(100);
         byte[] profileBody = new byte[100];
         profileBody[MAGIC_INDEX] = MAGIC_NUMBER;
         buf.put(profileBody);
-        // profile schema
-        buf.put((byte) 1);
-        buf.put((byte) 0);
-        buf.put((byte) 0);
-        buf.put((byte) (MAGIC_NUMBER + 1));
-        // config schema
-        buf.put((byte) 0);
-        buf.put((byte) 0);
-        buf.put((byte) 0);
-        buf.put((byte) (MAGIC_NUMBER + 2));
-        // system nf schema
-        buf.put((byte) 2);
-        buf.put((byte) 0);
-        buf.put((byte) 0);
-        buf.put((byte) (MAGIC_NUMBER + 3));
-        // user nf schema
-        buf.put((byte) 3);
-        buf.put((byte) 0);
-        buf.put((byte) 0);
-        buf.put((byte) (MAGIC_NUMBER + 4));
-        // log schema
-        buf.put((byte) 4);
-        buf.put((byte) 0);
-        buf.put((byte) 0);
-        buf.put((byte) (MAGIC_NUMBER + 5));
-        // event family count
-        buf.put((byte) 5);
-        buf.put((byte) 0);
-        buf.put((byte) 0);
-        buf.put((byte) 1);
-        // event family version and length
-        buf.putShort((short) MAGIC_NUMBER);
-        buf.putShort((short) 4);
-        buf.put("name".getBytes(Charset.forName("UTF-8")));
         // public key
         buf.put((byte) 6);
         buf.put((byte) 0);
@@ -302,15 +266,6 @@ public class BinaryEncDecTest {
         ProfileClientSync pSync = sync.getProfileSync();
         Assert.assertEquals(MAGIC_NUMBER, pSync.getProfileBody().array()[MAGIC_INDEX]);
         Assert.assertEquals(MAGIC_NUMBER, pSync.getEndpointPublicKey().array()[MAGIC_INDEX]);
-        Assert.assertNotNull(pSync.getVersionInfo());
-        Assert.assertEquals(MAGIC_NUMBER + 1, pSync.getVersionInfo().getProfileVersion());
-        Assert.assertEquals(MAGIC_NUMBER + 2, pSync.getVersionInfo().getConfigVersion());
-        Assert.assertEquals(MAGIC_NUMBER + 3, pSync.getVersionInfo().getSystemNfVersion());
-        Assert.assertEquals(MAGIC_NUMBER + 4, pSync.getVersionInfo().getUserNfVersion());
-        Assert.assertEquals(MAGIC_NUMBER + 5, pSync.getVersionInfo().getLogSchemaVersion());
-        Assert.assertEquals(1, pSync.getVersionInfo().getEventFamilyVersions().size());
-        Assert.assertEquals("name", pSync.getVersionInfo().getEventFamilyVersions().get(0).getName());
-        Assert.assertEquals(MAGIC_NUMBER, pSync.getVersionInfo().getEventFamilyVersions().get(0).getVersion());
         Assert.assertEquals("token", pSync.getEndpointAccessToken());
     }
 

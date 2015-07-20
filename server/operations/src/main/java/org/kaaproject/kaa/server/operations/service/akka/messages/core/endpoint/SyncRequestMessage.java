@@ -147,6 +147,12 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
         ClientSync diff = new ClientSync();
         diff.setRequestId(other.getRequestId());
         diff.setClientSyncMetaData(other.getClientSyncMetaData());
+        if (request.getClientSyncMetaData().getApplicationToken() != null) {
+            LOG.debug("Setting application token, as it was null: {}", request.getClientSyncMetaData().getApplicationToken());
+            diff.getClientSyncMetaData().setApplicationToken(request.getClientSyncMetaData().getApplicationToken());
+        } else {
+            LOG.trace("[{}] Application token is null for request", request);
+        }
         boolean hasProfileSync = other.getProfileSync() != null;
         if (hasProfileSync) {
             diff.setProfileSync(other.getProfileSync());

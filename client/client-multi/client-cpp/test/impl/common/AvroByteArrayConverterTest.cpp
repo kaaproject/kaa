@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(SchemaAvroBinaryDecoding)
         decoder.fromByteArray(encodedData.first.get(), encodedData.second, decodedDatum);
 
         const std::string& decodedProfileBody = decodedDatum.value<avro::GenericRecord>()
-                                                    .field("profileBody").value<std::string>();
+                                                    .fieldAt(0).value<std::string>();
         BasicEndpointProfile decodedProfile2 = decodeBinaryData<BasicEndpointProfile>(
                                                 encodedData.first.get(), encodedData.second);
 
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(AvroJSONEncoding)
                                                         , jsonData.length(), decodedDatum);
 
         const std::string& decodedProfileBody = decodedDatum.value<avro::GenericRecord>()
-                                                    .field("profileBody").value<std::string>();
+                                                    .fieldAt(0).value<std::string>();
 
         BOOST_CHECK_MESSAGE(decodedProfileBody == std::string("dummy"), "Body aren't equal");
     } catch (std::exception& e) {

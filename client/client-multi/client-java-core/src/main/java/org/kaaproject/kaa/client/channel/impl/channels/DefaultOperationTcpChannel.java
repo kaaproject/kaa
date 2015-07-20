@@ -31,8 +31,10 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.FailoverDecision;
+import org.kaaproject.kaa.client.channel.FailoverManager;
+import org.kaaproject.kaa.client.channel.FailoverStatus;
 import org.kaaproject.kaa.client.channel.IPTransportInfo;
-import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
@@ -69,6 +71,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(DefaultOperationTcpChannel.class);
 
+    private static final int EXIT_FAILURE = 1;
     private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<TransportType, ChannelDirection>();
     static {
         SUPPORTED_TYPES.put(TransportType.PROFILE, ChannelDirection.BIDIRECTIONAL);
@@ -91,7 +94,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private volatile boolean isShutdown = false;
     private volatile boolean isPaused = false;
-    private boolean isFirstResponseReceived = false;
+    private volatile boolean isFirstResponseReceived = false;
 
     private KaaDataDemultiplexer demultiplexer;
     private KaaDataMultiplexer multiplexer;
@@ -99,9 +102,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     private volatile Socket socket;
     private MessageEncoderDecoder encDec;
 
-    private final KaaChannelManager channelManager;
+    private final FailoverManager failoverManager;
 
-    private final int RECONNECT_TIMEOUT = 5; // in sec
+    private final int SOCKET_OPENING_TIMEOUT = 2;  // in sec
     private ConnectivityChecker connectivityChecker;
 
     private final Runnable openConnectionTask = new Runnable() {
@@ -116,8 +119,13 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         @Override
         public void onMessage(ConnAck message) {
             LOG.info("ConnAck ({}) message received for channel [{}]", message.getReturnCode(), getId());
+
             if (message.getReturnCode() != ReturnCode.ACCEPTED) {
                 LOG.error("Connection for channel [{}] was rejected: {}", getId(), message.getReturnCode());
+                if (message.getReturnCode() == ReturnCode.REFUSE_BAD_CREDENTIALS) {
+                    LOG.info("Cleaning client state");
+                    state.clean();
+                }
                 onServerFailed();
             }
         }
@@ -161,6 +169,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     LOG.error("Failed to process response for channel [{}]", getId(), e);
                 }
                 isFirstResponseReceived = true;
+                failoverManager.onServerConnected(currentServer);
             }
         }
     };
@@ -187,13 +196,23 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     LOG.info("Channel [{}] is reading data from stream using [{}] byte buffer", getId(), buffer.length);
-                    int size = socket.getInputStream().read(buffer);
-                    LOG.info("Channel [{}] is read data {} bytes from stream", getId(), size);
+                    int size = 0;
+                    if (socket != null) {
+                        size = socket.getInputStream().read(buffer);
+                        LOG.info("Channel [{}] is read data {} bytes from stream", getId(), size);
+                    } else if (!isOpenConnectionScheduled) {
+                        LOG.debug("Socket is null, calling onServerFailed()");
+                        onServerFailed();
+                    }
                     if (size > 0) {
                         messageFactory.getFramer().pushBytes(Arrays.copyOf(buffer, size));
                     } else if (size == -1) {
                         LOG.info("Channel [{}] received end of stream", getId(), size);
-                        break;
+                        onServerFailed();
+                    } else {
+                        LOG.info("Socket is null, waiting for a new connection to be opened (sleeping for a {} s)",
+                                SOCKET_OPENING_TIMEOUT);
+                        TimeUnit.SECONDS.sleep(SOCKET_OPENING_TIMEOUT);
                     }
                 } catch (IOException | KaaTcpProtocolException e) {
                     if (!isShutdown && !isPaused) {
@@ -203,13 +222,16 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     }
                 } catch (RuntimeException e) {
                     if (!Thread.currentThread().isInterrupted() && !isShutdown && !isPaused) {
-                        LOG.error("Failed to read from the socket for channel [{}]: {}", getId());
+                        LOG.error("Failed to read from the socket for channel [{}]: {}", getId(), socket);
                         LOG.error("Stack trace: ", e);
                         onServerFailed();
                     } else {
                         LOG.warn("Socket connection for channel was interrupted", e);
                         LOG.info("Socket connection for channel [{}] was interrupted, shutdown [{}]", getId(), isShutdown);
                     }
+                } catch (InterruptedException e) {
+                    LOG.info("Interrupted while waiting for a socket connection", e);
+                    break;
                 }
             }
             LOG.info("Read Task is interrupted for channel [{}]", getId());
@@ -222,6 +244,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         public void run() {
             if (!Thread.currentThread().isInterrupted()) {
                 try {
+                    LOG.info("Executing ping task for channel [{}]", getId());
                     sendPingRequest();
                     if (!Thread.currentThread().isInterrupted()) {
                         schedulePingTask();
@@ -241,12 +264,14 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private final MessageFactory messageFactory = new MessageFactory();
 
-    private volatile Future<?> readTaskFuture;
     private volatile Future<?> pingTaskFuture;
 
-    public DefaultOperationTcpChannel(KaaClientState state, KaaChannelManager channelManager) {
+    private boolean isReadTaskScheduled;
+    private volatile boolean isOpenConnectionScheduled;
+
+    public DefaultOperationTcpChannel(KaaClientState state, FailoverManager failoverManager) {
         this.state = state;
-        this.channelManager = channelManager;
+        this.failoverManager = failoverManager;
         messageFactory.registerMessageListener(connAckListener);
         messageFactory.registerMessageListener(kaaSyncResponseListener);
         messageFactory.registerMessageListener(pingResponseListener);
@@ -288,16 +313,11 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     private synchronized void closeConnection() {
+        if (pingTaskFuture != null && !pingTaskFuture.isCancelled()) {
+            pingTaskFuture.cancel(true);
+        }
         if (socket != null) {
             LOG.info("Channel \"{}\": closing current connection", getId());
-            if (pingTaskFuture != null) {
-                pingTaskFuture.cancel(true);
-                pingTaskFuture = null;
-            }
-            if (readTaskFuture != null) {
-                readTaskFuture.cancel(true);
-                readTaskFuture = null;
-            }
             try {
                 sendDisconnect();
             } catch (IOException e) {
@@ -321,28 +341,58 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private synchronized void openConnection() {
         try {
-            LOG.info("Channel [{}]: openning connection to server {}", getId(), currentServer);
+            LOG.info("Channel [{}]: opening connection to server {}", getId(), currentServer);
             this.socket = createSocket(currentServer.getHost(), currentServer.getPort());
-            readTaskFuture = executor.submit(readTask);
             sendConnect();
+            if (!isReadTaskScheduled) {
+                executor.execute(readTask);
+                isReadTaskScheduled = true;
+            }
+            if (pingTaskFuture != null && !pingTaskFuture.isCancelled()) {
+                pingTaskFuture.cancel(true);
+            }
             schedulePingTask();
         } catch (Exception e) {
             LOG.error("Failed to create a socket for server {}:{}", currentServer.getHost(), currentServer.getPort());
             LOG.error("Stack trace: ", e);
+            isOpenConnectionScheduled = false;
             onServerFailed();
             socket = null;
+        } finally {
+            isOpenConnectionScheduled = false;
         }
     }
 
     private void onServerFailed() {
         closeConnection();
         if (connectivityChecker != null && !connectivityChecker.checkConnectivity()) {
-            LOG.warn("Loss of connectivity. Attempt to reconnect will be made in {} sec", RECONNECT_TIMEOUT);
-            executor.schedule(openConnectionTask, RECONNECT_TIMEOUT, TimeUnit.SECONDS);
-            return;
-        }
+            LOG.warn("Loss of connectivity detected");
 
-        channelManager.onServerFailed(currentServer);
+            FailoverDecision decision = failoverManager.onFailover(FailoverStatus.NO_CONNECTIVITY);
+            switch (decision.getAction()) {
+                case NOOP:
+                    LOG.warn("No operation is performed according to failover strategy decision");
+                    break;
+                case RETRY:
+                    long retryPeriod = decision.getRetryPeriod();
+                    synchronized (this) {
+                        if (!isOpenConnectionScheduled) {
+                            LOG.warn("Attempt to reconnect will be made in {} ms " +
+                                    "according to failover strategy decision", retryPeriod);
+                            executor.schedule(openConnectionTask, retryPeriod, TimeUnit.MILLISECONDS);
+                            isOpenConnectionScheduled = true;
+                        } else {
+                            LOG.info("Reconnect is already scheduled, ignoring the call");
+                        }
+                    }
+                break;
+                case STOP_APP:
+                    LOG.warn("Stopping application according to failover strategy decision!");
+                    System.exit(EXIT_FAILURE);
+            }
+        } else {
+            failoverManager.onServerFailed(currentServer);
+        }
     }
 
     private void schedulePingTask() {
@@ -452,6 +502,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             if (!isFirstResponseReceived) {
                 LOG.info("First KaaSync message received and processed for channel [{}]", getId());
                 isFirstResponseReceived = true;
+                failoverManager.onServerConnected(currentServer);
                 LOG.debug("There are pending requests for channel [{}] -> starting sync", getId());
                 syncAll();
             } else {
@@ -496,7 +547,10 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                 executor = createExecutor();
             }
             closeConnection();
-            executor.submit(openConnectionTask);
+            if (!isOpenConnectionScheduled) {
+                executor.submit(openConnectionTask);
+                isOpenConnectionScheduled = true;
+            }
         } else {
             LOG.info("Can't start new session. Channel [{}] is paused", getId());
         }
@@ -540,7 +594,10 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             if (executor == null) {
                 executor = createExecutor();
             }
-            executor.submit(openConnectionTask);
+            if (!isOpenConnectionScheduled) {
+                executor.submit(openConnectionTask);
+                isOpenConnectionScheduled = true;
+            }
         }
     }
 

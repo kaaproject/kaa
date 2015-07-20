@@ -41,8 +41,9 @@ public class DefaultBootstrapChannelTest {
 
         private final int wantedNumberOfInvocations;
 
-        public DefaultBootstrapChannelFake(AbstractKaaClient client, KaaClientState state, int wantedNumberOfInvocations) {
-            super(client, state);
+        public DefaultBootstrapChannelFake(AbstractKaaClient client, KaaClientState state,
+                                           FailoverManager failoverManager, int wantedNumberOfInvocations) {
+            super(client, state, failoverManager);
             this.wantedNumberOfInvocations = wantedNumberOfInvocations;
         }
 
@@ -63,8 +64,9 @@ public class DefaultBootstrapChannelTest {
     
     class DefaultBootstrapChannelMock extends DefaultBootstrapChannelFake {
         
-        public DefaultBootstrapChannelMock(AbstractKaaClient client, KaaClientState state, int wantedNumberOfInvocations) {
-            super(client, state, wantedNumberOfInvocations);
+        public DefaultBootstrapChannelMock(AbstractKaaClient client, KaaClientState state,
+                                           FailoverManager failoverManager, int wantedNumberOfInvocations) {
+            super(client, state, failoverManager, wantedNumberOfInvocations);
         }
         
         protected AbstractHttpClient getHttpClient() {
@@ -87,7 +89,8 @@ public class DefaultBootstrapChannelTest {
     public void testChannelGetters() {
         AbstractKaaClient client = Mockito.mock(AbstractKaaClient.class);
         KaaClientState state = Mockito.mock(KaaClientState.class);
-        KaaDataChannel channel = new DefaultBootstrapChannel(client, state);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
+        KaaDataChannel channel = new DefaultBootstrapChannel(client, state, failoverManager);
 
         Assert.assertEquals(ChannelDirection.BIDIRECTIONAL, channel.getSupportedTransportTypes().get(TransportType.BOOTSTRAP));
         Assert.assertEquals(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, channel.getTransportProtocolId());
@@ -98,6 +101,7 @@ public class DefaultBootstrapChannelTest {
     public void testChannelSync() throws Exception {
         KaaChannelManager manager = Mockito.mock(KaaChannelManager.class);
         AbstractHttpClient httpClient = Mockito.mock(AbstractHttpClient.class);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
         Mockito.when(httpClient.executeHttpRequest(Mockito.anyString(), Mockito.any(LinkedHashMap.class), Mockito.anyBoolean()))
                 .thenReturn(new byte[] { 5, 5, 5 });
 
@@ -111,7 +115,7 @@ public class DefaultBootstrapChannelTest {
         KaaClientState state = Mockito.mock(KaaClientState.class);
         KaaDataMultiplexer multiplexer = Mockito.mock(KaaDataMultiplexer.class);
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
-        DefaultBootstrapChannelMock channel = new DefaultBootstrapChannelMock(client, state, 2);
+        DefaultBootstrapChannelMock channel = new DefaultBootstrapChannelMock(client, state, failoverManager, 2);
 
         TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
                 "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
@@ -135,6 +139,7 @@ public class DefaultBootstrapChannelTest {
     public void testShutdown() throws Exception {
         KaaChannelManager manager = Mockito.mock(KaaChannelManager.class);
         AbstractHttpClient httpClient = Mockito.mock(AbstractHttpClient.class);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
         Mockito.when(httpClient.executeHttpRequest(Mockito.anyString(), Mockito.any(LinkedHashMap.class), Mockito.anyBoolean())).thenThrow(
                 new Exception());
 
@@ -148,7 +153,7 @@ public class DefaultBootstrapChannelTest {
         KaaClientState state = Mockito.mock(KaaClientState.class);
         KaaDataMultiplexer multiplexer = Mockito.mock(KaaDataMultiplexer.class);
         KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
-        DefaultBootstrapChannelFake channel = new DefaultBootstrapChannelFake(client, state, 0);
+        DefaultBootstrapChannelFake channel = new DefaultBootstrapChannelFake(client, state, failoverManager, 0);
         channel.setDemultiplexer(demultiplexer);
         channel.setMultiplexer(multiplexer);
         channel.shutdown();

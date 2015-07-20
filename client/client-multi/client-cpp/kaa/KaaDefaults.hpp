@@ -46,13 +46,7 @@ namespace kaa {
 extern const char * const BUILD_VERSION;
 extern const char * const BUILD_COMMIT_HASH;
 
-extern const char * const APPLICATION_TOKEN;
-
-extern const std::uint32_t PROFILE_VERSION;
-extern const std::uint32_t CONFIG_VERSION;
-extern const std::uint32_t SYSTEM_NF_VERSION;
-extern const std::uint32_t USER_NF_VERSION;
-extern const std::uint32_t LOG_SCHEMA_VERSION;
+extern const char * const SDK_TOKEN;
 
 extern const std::uint32_t POLLING_PERIOD_SECONDS;
 
@@ -68,9 +62,6 @@ typedef std::vector<ITransportConnectionInfoPtr> BootstrapServers;
 const BootstrapServers& getBootstrapServers();
 
 const Botan::SecureVector<std::uint8_t>& getDefaultConfigData();
-
-typedef std::map<std::string, std::int32_t> EventClassFamilyVersionInfos;
-const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo();
 
 HashDigest getPropertiesHash();
 

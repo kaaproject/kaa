@@ -179,7 +179,7 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
             LOG.trace("Adding {} to {}", opId, neigbors);
             neigbors.putIfAbsent(opId, new NeighborConnection<T, V>(opServer.getConnectionInfo(), maxNumberNeighborConnections, template));
             neigbors.get(opId).start();
-            LOG.info("Operations server {} added to {} Neighbors list. Now {} neighbors", opId, zkId, neigbors.size());
+            LOG.info("Operations server {} added/updated to {} Neighbors list. Now {} neighbors", opId, zkId, neigbors.size());
         }
     }
 }

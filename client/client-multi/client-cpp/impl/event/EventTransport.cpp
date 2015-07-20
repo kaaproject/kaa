@@ -53,7 +53,11 @@ std::shared_ptr<EventSyncRequest> EventTransport::createEventRequest(std::int32_
     }
     if (isEventSNSynchronized_) {
         auto releasedEvents(eventDataProcessor_.releasePendingEvents());
-        KAA_MUTEX_UNIQUE_DECLARE(lock, eventsGuard_);
+
+        KAA_MUTEX_LOCKING("eventsGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(eventsGuardLock, eventsGuard_);
+        KAA_MUTEX_LOCKED("eventsGuard_");
+
         if (releasedEvents.size() != 0) {
             auto sNum = clientStatus_->getEventSequenceNumber();
             for (auto& pair : releasedEvents) {
@@ -113,7 +117,10 @@ void EventTransport::onEventResponse(const EventSyncResponse& response)
 
 void EventTransport::onSyncResponseId(std::int32_t requestId)
 {
-    KAA_MUTEX_UNIQUE_DECLARE(lock, eventsGuard_);
+    KAA_MUTEX_LOCKING("eventsGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(eventsGuardLock, eventsGuard_);
+    KAA_MUTEX_LOCKED("eventsGuard_");
+
     events_.erase(requestId);
 }
 

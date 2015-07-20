@@ -88,7 +88,7 @@ private:
     size_t shrinkedSize_ = 0;
 
     std::list<LogRecordWrapper> logs_;
-    KAA_MUTEX_DECLARE(logsGuard_);
+    KAA_MUTEX_DECLARE(memoryLogStorageGuard_);
 
     BlockId recordBlockId_;
     static const BlockId NO_OWNER;

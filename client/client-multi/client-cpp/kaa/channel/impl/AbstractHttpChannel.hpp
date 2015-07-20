@@ -40,12 +40,13 @@
 #include "kaa/channel/IPTransportInfo.hpp"
 #include "kaa/channel/ITransportConnectionInfo.hpp"
 #include "kaa/channel/TransportProtocolIdConstants.hpp"
+#include "kaa/IKaaClientStateStorage.hpp"
 
 namespace kaa {
 
 class AbstractHttpChannel : public ImpermanentDataChannel {
 public:
-    AbstractHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys);
+    AbstractHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientStateStoragePtr clientState);
     virtual ~AbstractHttpChannel() { }
 
     virtual void sync(TransportType type);
@@ -83,6 +84,8 @@ private:
     virtual std::shared_ptr<IHttpRequest> createRequest(IPTransportInfoPtr server, const std::vector<std::uint8_t>& body) = 0;
     virtual std::string retrieveResponse(const IHttpResponse& response) = 0;
 
+    void onServerFailed();
+
 private:
     KeyPair clientKeys_;
 
@@ -95,6 +98,8 @@ private:
     HttpDataProcessor httpDataProcessor_;
     HttpClient httpClient_;
     KAA_MUTEX_DECLARE(channelGuard_);
+
+    IKaaClientStateStoragePtr clientState_;
 };
 
 }

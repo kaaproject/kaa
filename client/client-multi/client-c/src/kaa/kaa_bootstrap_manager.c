@@ -29,6 +29,7 @@
 #include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "kaa_channel_manager.h"
+#include "platform/ext_kaa_failover_strategy.h"
 
 
 
@@ -40,8 +41,11 @@ extern kaa_error_t kaa_channel_manager_on_new_access_point(kaa_channel_manager_t
                                                          , kaa_server_type_t server_type
                                                          , kaa_access_point_t *access_point);
 
+extern kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_t *self,
+                                                                   kaa_platform_message_writer_t* writer);
 
-
+extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
+                                                                                  , kaa_service_t service_type);
 typedef struct {
     kaa_transport_protocol_id_t    protocol_id;
     size_t                         index;
@@ -53,14 +57,24 @@ typedef struct {
     kaa_list_node_t                *current_access_points;
 } kaa_operations_access_points_t;
 
+typedef struct {
+    bool                        is_failover;
+    kaa_access_point_t          *acess_point;
+    kaa_server_type_t           server;
+    kaa_transport_protocol_id_t protocol_id;
+    kaa_time_t                  next_execution_time;
+    kaa_failover_reason         reason;
+} failover_meta_info;
+
 struct kaa_bootstrap_manager_t {
     kaa_channel_manager_t    *channel_manager;
     kaa_list_t               *operations_access_points;
     kaa_list_t               *bootstrap_access_points;
+    kaa_context_t            *kaa_context;
     kaa_logger_t             *logger;
+    kaa_time_t                next_operations_request_time;
+    failover_meta_info        failover_meta_info;
 };
-
-
 
 static kaa_service_t bootstrap_sync_services[1] = { KAA_SERVICE_BOOTSTRAP };
 
@@ -187,17 +201,16 @@ static kaa_error_t add_operations_access_point(kaa_bootstrap_manager_t *self
     return KAA_ERR_NONE;
 }
 
-kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p
-                                       , kaa_channel_manager_t *channel_manager
-                                       , kaa_logger_t *logger)
+kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p, kaa_context_t *kaa_context)
 {
-    KAA_RETURN_IF_NIL3(bootstrap_manager_p, channel_manager, logger, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL2(bootstrap_manager_p, kaa_context, KAA_ERR_BADPARAM);
 
     *bootstrap_manager_p = (kaa_bootstrap_manager_t*) KAA_MALLOC(sizeof(kaa_bootstrap_manager_t));
     KAA_RETURN_IF_NIL(*bootstrap_manager_p, KAA_ERR_NOMEM);
 
-    (*bootstrap_manager_p)->channel_manager = channel_manager;
-    (*bootstrap_manager_p)->logger = logger;
+    (*bootstrap_manager_p)->channel_manager = kaa_context->channel_manager;
+    (*bootstrap_manager_p)->logger = kaa_context->logger;
+    (*bootstrap_manager_p)->kaa_context = kaa_context;
 
     (*bootstrap_manager_p)->bootstrap_access_points = kaa_list_create();
     KAA_RETURN_IF_NIL((*bootstrap_manager_p)->bootstrap_access_points, KAA_ERR_NOMEM);
@@ -214,6 +227,39 @@ void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self)
     kaa_list_destroy(self->bootstrap_access_points, NULL);
     kaa_list_destroy(self->operations_access_points, destroy_operations_access_points);
     KAA_FREE(self);
+}
+
+
+void kaa_bootstrap_manager_schedule_failover(kaa_bootstrap_manager_t *self, kaa_access_point_t* current_access_point, kaa_access_point_t* next_access_point,
+                                             kaa_transport_protocol_id_t *protocol_id, kaa_server_type_t type, kaa_failover_reason reason)
+{
+    KAA_RETURN_IF_NIL(self, );
+    kaa_failover_decision_t decision = kaa_failover_strategy_on_failover(self->kaa_context->failover_strategy, reason);
+    switch (decision.action) {
+    case KAA_NOOP:
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Nothing to be done...");
+        return;
+    case KAA_RETRY:
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to retry in %u seconds...", decision.retry_period);
+        self->failover_meta_info.acess_point = current_access_point;
+        break;
+    case KAA_USE_NEXT_BOOTSTRAP:
+    case KAA_USE_NEXT_OPERATIONS:
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to retry with another access point in %u seconds...", decision.retry_period);
+        self->failover_meta_info.acess_point = next_access_point;
+        break;
+    case KAA_STOP_APP:
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Stopping application according to the failover strategy...");
+        exit(EXIT_FAILURE);
+    }
+    self->failover_meta_info.next_execution_time = KAA_TIME() + decision.retry_period;
+    self->failover_meta_info.server = type;
+    if (protocol_id) {
+        self->failover_meta_info.protocol_id = *protocol_id;
+    }
+    self->failover_meta_info.reason = reason;
+    self->failover_meta_info.is_failover = true;
+
 }
 
 kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa_bootstrap_manager_t *self
@@ -233,18 +279,26 @@ kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa_bootst
 
 static kaa_error_t get_next_bootstrap_access_point_index(kaa_transport_protocol_id_t *protocol_id
                                                        , size_t index_from
-                                                       , size_t *next_index)
+                                                       , size_t *next_index, bool *execute_failover)
 {
-    KAA_RETURN_IF_NIL2(protocol_id,next_index, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL4(protocol_id, next_index, execute_failover, KAA_BOOTSTRAP_ACCESS_POINT_COUNT, KAA_ERR_BADPARAM);
 
+    size_t i = index_from;
     if (index_from < KAA_BOOTSTRAP_ACCESS_POINT_COUNT) {
-        size_t i = index_from;
         for (; i < KAA_BOOTSTRAP_ACCESS_POINT_COUNT; ++i) {
             if (kaa_transport_protocol_id_equals(&(KAA_BOOTSTRAP_ACCESS_POINTS[i].protocol_id), protocol_id)) {
                 *next_index = i;
                 return KAA_ERR_NONE;
             }
         }
+    }
+    i = 0; // from the beginning
+    for (; i < KAA_BOOTSTRAP_ACCESS_POINT_COUNT; ++i) {
+         if (kaa_transport_protocol_id_equals(&(KAA_BOOTSTRAP_ACCESS_POINTS[i].protocol_id), protocol_id)) {
+             *next_index = i;
+             *execute_failover = true; //execute failover
+             return KAA_ERR_NONE;
+         }
     }
 
     return KAA_ERR_NOT_FOUND;
@@ -283,16 +337,15 @@ kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstr
                                                                    , protocol_id);
 
     size_t index;
+    bool execute_failover = false;
+
     if (bootstrap_access_points_it) {
         index = ((kaa_bootstrap_access_points_t *)kaa_list_get_data(bootstrap_access_points_it))->index;
     } else {
-        kaa_error_t error_code = get_next_bootstrap_access_point_index(protocol_id
-                                                                     , 0
-                                                                     , &index);
+        kaa_error_t error_code = get_next_bootstrap_access_point_index(protocol_id, 0, &index, &execute_failover);
         if (error_code) {
-            KAA_LOG_ERROR(self->logger, error_code, "Could not find Bootstrap access point "
-                            "(protocol: id=0x%08X, version=%u)", protocol_id->id, protocol_id->version);
-            return NULL;
+            KAA_LOG_FATAL(self->logger, error_code, "Error: No bootstrap servers's been found. Please regenerate SDK.");
+            exit(error_code);
         }
 
         error_code = add_bootstrap_access_point(self, index);
@@ -330,6 +383,27 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
 
     KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received %u access points (request_id %u)"
                                                         , access_point_count, request_id);
+
+    if (!access_point_count) {
+        kaa_transport_channel_interface_t *channel = kaa_channel_manager_get_transport_channel(self->channel_manager, KAA_SERVICE_BOOTSTRAP);
+        kaa_transport_protocol_id_t protocol_id  = {0, 0};
+        error_code = channel->get_protocol_id(channel->context, &protocol_id);
+        KAA_RETURN_IF_ERR(error_code);
+        kaa_access_point_t *acc_point = kaa_bootstrap_manager_get_bootstrap_access_point(self, &protocol_id);
+
+        kaa_list_node_t *bootstrap_access_points_it = kaa_list_find_next(kaa_list_begin(self->bootstrap_access_points)
+                                                                       , &find_bootstrap_access_points
+                                                                       , &protocol_id);
+        size_t next_index = 0;
+        bool execute_failover = false;
+        get_next_bootstrap_access_point_index(&protocol_id, ((kaa_bootstrap_access_points_t *)
+                                              kaa_list_get_data(bootstrap_access_points_it))->index + 1, &next_index, &execute_failover);
+
+        kaa_access_point_t *next_acc_point = (kaa_access_point_t *)&(KAA_BOOTSTRAP_ACCESS_POINTS[next_index].access_point);
+
+        kaa_bootstrap_manager_schedule_failover(self->kaa_context->bootstrap_manager, acc_point, next_acc_point, &protocol_id, KAA_SERVER_BOOTSTRAP, KAA_NO_OPERATION_SERVERS_RECEIVED);
+        return KAA_ERR_EVENT_NOT_ATTACHED;
+    }
 
     kaa_transport_protocol_id_t protocol_id;
 
@@ -382,6 +456,7 @@ kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *se
     }
 
     kaa_bootstrap_manager_on_server_sync(self);
+    self->next_operations_request_time = 0;
 
     return error_code;
 }
@@ -393,6 +468,8 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
     KAA_RETURN_IF_NIL2(self, protocol_id, KAA_ERR_BADPARAM);
 
     kaa_access_point_t *access_point = NULL;
+    kaa_access_point_t *prev_access_point = NULL;
+    bool execute_failover = false;
 
     if (type == KAA_SERVER_BOOTSTRAP) {
         kaa_list_node_t *bootstrap_access_points_it = kaa_list_find_next(kaa_list_begin(self->bootstrap_access_points)
@@ -400,24 +477,25 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
                                                                        , protocol_id);
 
         size_t index_from = 0;
-        if (bootstrap_access_points_it) {
+        if (bootstrap_access_points_it)
             index_from = ((kaa_bootstrap_access_points_t *)kaa_list_get_data(bootstrap_access_points_it))->index + 1;
+
+        prev_access_point = (kaa_access_point_t *)&(KAA_BOOTSTRAP_ACCESS_POINTS[index_from].access_point);
+        size_t next_index = 0;
+        kaa_error_t error_code = get_next_bootstrap_access_point_index(protocol_id, index_from, &next_index, &execute_failover);
+
+        if (error_code) {
+            KAA_LOG_FATAL(self->logger, error_code, "Error: No bootstrap servers's been found. Please regenerate SDK.");
+            exit(error_code);
         }
 
-        size_t next_index;
-        kaa_error_t error_code = get_next_bootstrap_access_point_index(protocol_id, index_from, &next_index);
-        if (error_code)
-            error_code = get_next_bootstrap_access_point_index(protocol_id, 0, &next_index); // Using the bootstrap server from the beginning of the list
+        access_point = (kaa_access_point_t *)&(KAA_BOOTSTRAP_ACCESS_POINTS[next_index].access_point);
 
-        if (!error_code) {
-            access_point = (kaa_access_point_t *)&(KAA_BOOTSTRAP_ACCESS_POINTS[next_index].access_point);
-
-            if (bootstrap_access_points_it) {
-                ((kaa_bootstrap_access_points_t *)kaa_list_get_data(bootstrap_access_points_it))->index = next_index;
-            } else {
-                error_code = add_bootstrap_access_point(self, next_index);
-                KAA_RETURN_IF_ERR(error_code);
-            }
+        if (bootstrap_access_points_it){
+            ((kaa_bootstrap_access_points_t *)kaa_list_get_data(bootstrap_access_points_it))->index = next_index;
+        } else {
+            error_code = add_bootstrap_access_point(self, next_index);
+            KAA_RETURN_IF_ERR(error_code);
         }
     } else {
         kaa_list_node_t *operations_access_points_it = kaa_list_find_next(kaa_list_begin(self->operations_access_points)
@@ -427,30 +505,102 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
 
         kaa_operations_access_points_t *operations_access_points =
                 (kaa_operations_access_points_t *)kaa_list_get_data(operations_access_points_it);
-
+        if (kaa_list_get_data(operations_access_points->current_access_points)) {
+            prev_access_point = (kaa_access_point_t *)kaa_list_get_data(operations_access_points->current_access_points);
+        }
         operations_access_points->current_access_points =
                 kaa_list_next(operations_access_points->current_access_points);
-        access_point = (kaa_access_point_t *)kaa_list_get_data(
-                            operations_access_points->current_access_points);
+
+        access_point = (kaa_access_point_t *)kaa_list_get_data(operations_access_points->current_access_points);
+
+        if (!access_point)
+            execute_failover = true;
+    }
+    if (execute_failover) {
+        kaa_bootstrap_manager_schedule_failover(self, prev_access_point, access_point, protocol_id, type,
+                                                type == KAA_SERVER_BOOTSTRAP ? KAA_BOOTSTRAP_SERVERS_NA : KAA_OPERATION_SERVERS_NA);
     }
 
-    if (access_point) {
+    if (access_point && !execute_failover) {
         kaa_channel_manager_on_new_access_point(self->channel_manager
                                               , protocol_id
                                               , type
                                               , access_point);
-        return KAA_ERR_NONE;
+        return KAA_ERR_EVENT_NOT_ATTACHED;
     } else if (type == KAA_SERVER_OPERATIONS) {
         KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Could not find next Operations access point "
-                "(protocol: id=0x%08X, version=%u). Going to sync..."
+                "(protocol: id=0x%08X, version=%u)"
                 , protocol_id->id, protocol_id->version);
-        do_sync(self);
     } else if (type == KAA_SERVER_BOOTSTRAP) {
         KAA_LOG_WARN(self->logger, KAA_ERR_NOT_FOUND, "Could not find next Bootstrap access point "
-                "(protocol: id=0x%08X, version=%u). Try to sync later..."
+                "(protocol: id=0x%08X, version=%u)"
                 , protocol_id->id, protocol_id->version);
     }
 
     return KAA_ERR_NOT_FOUND;
 }
 
+bool kaa_bootstrap_manager_process_failover(kaa_bootstrap_manager_t *self)
+{
+    KAA_RETURN_IF_NIL2(self, self->kaa_context->failover_strategy, false);
+
+    kaa_failover_decision_t decision = kaa_failover_strategy_on_failover(self->kaa_context->failover_strategy, self->failover_meta_info.reason);
+    if(decision.action == KAA_NOOP)
+       return false;
+    kaa_error_t error_code = KAA_ERR_NONE;
+    kaa_time_t current_time = KAA_TIME();
+    if (!self->failover_meta_info.is_failover) {
+        if (self->next_operations_request_time && current_time >= self->next_operations_request_time) {
+            KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Response bootstrap time expired.");
+            kaa_bootstrap_access_points_t * acc_point = (kaa_bootstrap_access_points_t *) kaa_list_get_data(kaa_list_begin(self->bootstrap_access_points));
+            error_code = kaa_bootstrap_manager_on_access_point_failed(self, &acc_point->protocol_id, KAA_SERVER_BOOTSTRAP);
+            self->next_operations_request_time = 0;
+            if (error_code == KAA_ERR_EVENT_NOT_ATTACHED) {
+                do_sync(self);
+                return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    if (current_time >= self->failover_meta_info.next_execution_time) {
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Executing failover strategy...");
+        switch (self->failover_meta_info.server) {
+        case KAA_SERVER_BOOTSTRAP:
+            KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Processing failover of bootstraps");
+            if (decision.action == KAA_RETRY) {
+                error_code = do_sync(self);
+            } else {
+                kaa_channel_manager_on_new_access_point(self->channel_manager, &self->failover_meta_info.protocol_id, self->failover_meta_info.server, self->failover_meta_info.acess_point);
+            }
+            break;
+        case KAA_SERVER_OPERATIONS: {
+            KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Processing failover of operations");
+            if (decision.action == KAA_RETRY) {
+                kaa_channel_manager_on_new_access_point(self->channel_manager, &self->failover_meta_info.protocol_id, self->failover_meta_info.server, self->failover_meta_info.acess_point);
+            } else {
+                error_code = do_sync(self);
+            }
+            if (error_code) {
+                KAA_LOG_WARN(self->logger, KAA_ERR_NONE, "Failed to connect to bootstrap");
+            }
+            break;
+        }
+        default:
+            KAA_LOG_ERROR(self->logger, KAA_ERR_BADDATA, "Failed to execute failover strategy: unknown server type");
+            break;
+        }
+        self->failover_meta_info.is_failover = false;
+    }
+
+    return true;
+}
+
+kaa_error_t kaa_bootstrap_manager_bootstrap_request_serialize(kaa_bootstrap_manager_t *self, kaa_platform_message_writer_t* writer)
+{
+    KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
+    self->next_operations_request_time = KAA_TIME() + KAA_BOOTSTRAP_RESPONSE_PERIOD;
+    return kaa_channel_manager_bootstrap_request_serialize(self->channel_manager, writer);
+}

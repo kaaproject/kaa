@@ -73,4 +73,6 @@ public interface KaaClientState {
     void persist();
 
     String refreshEndpointAccessToken();
+
+    void clean();
 }

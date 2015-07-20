@@ -127,7 +127,7 @@ public:
 private:
     IKaaClientStateStoragePtr                       status_;
     IBootstrapManagerPtr                            bootstrapManager_;
-    IFailoverStrategyPtr 							failoverStrategy_;
+    IFailoverStrategyPtr                            failoverStrategy_;
 
     std::unique_ptr<ProfileManager>                 profileManager_;
     std::unique_ptr<NotificationManager>            notificationManager_;

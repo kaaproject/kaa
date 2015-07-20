@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -32,7 +32,7 @@ public class ServletHelper {
 
     public static void downloadSdk(String key) {
         String getUrl = composeURL(KAA_SDK_SERVLET_PATH,
-        SdkKey.SDK_KEY_PARAMETER+"="+key);
+        SdkPropertiesDto.SDK_KEY_PARAMETER+"="+key);
         String url = GWT.getModuleBaseURL() + getUrl;
         Window.open( url, "_self", "enabled");
     }

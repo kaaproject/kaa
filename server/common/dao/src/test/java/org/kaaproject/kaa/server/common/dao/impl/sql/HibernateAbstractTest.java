@@ -36,7 +36,6 @@ import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.common.endpoint.gen.NotificationType;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationEventFamilyMapDao;
@@ -50,6 +49,7 @@ import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.SdkKeyDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicDao;
 import org.kaaproject.kaa.server.common.dao.impl.UserDao;
@@ -69,6 +69,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.NotificationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.SdkKey;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
 import org.kaaproject.kaa.server.common.dao.model.sql.User;
@@ -115,6 +116,8 @@ public abstract class HibernateAbstractTest {
     protected NotificationSchemaDao<NotificationSchema> notificationSchemaDao;
     @Autowired
     protected UserVerifierDao<UserVerifier> verifierDao;
+    @Autowired
+    protected SdkKeyDao<SdkKey> sdkKeyDao;
 
     protected Tenant generateTenant() {
         LOG.debug("Generate tenant...");
@@ -496,6 +499,23 @@ public abstract class HibernateAbstractTest {
         }
         verifier.setVerifierToken(verifierToken);
         return verifierDao.save(verifier);
+    }
+
+    protected SdkKey generateSdkKey(Application app, String token, byte[] key) {
+        SdkKey sdkKey = new SdkKey();
+        if (app == null) {
+            app = generateApplication(null);
+        }
+        sdkKey.setApplication(app);
+        if (token == null) {
+            token = "token";
+        }
+        sdkKey.setToken(token);
+        if (key == null) {
+            key = new byte[] {1, 2, 3, 4, 5};
+        }
+        sdkKey.setData(key);
+        return sdkKeyDao.save(sdkKey);
     }
 
 }

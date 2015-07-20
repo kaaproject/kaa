@@ -32,17 +32,7 @@ const char * const BUILD_VERSION = "%{build.version}";
 
 const char * const BUILD_COMMIT_HASH = "%{build.commit_hash}";
 
-const char * const APPLICATION_TOKEN = "%{application.token}";
-
-const std::uint32_t PROFILE_VERSION = %{application.profile_version};
-
-const std::uint32_t CONFIG_VERSION = %{application.config_version};
-
-const std::uint32_t SYSTEM_NF_VERSION = %{system_notification_version};
-
-const std::uint32_t USER_NF_VERSION = %{user_notification_version};
-
-const std::uint32_t LOG_SCHEMA_VERSION = %{log_schema_version};
+const char * const SDK_TOKEN = "%{application.sdk_token}";
 
 const std::uint32_t POLLING_PERIOD_SECONDS = %{application.polling_period_seconds};
 
@@ -85,22 +75,11 @@ const Botan::SecureVector<std::uint8_t>& getDefaultConfigData()
     return configData;
 }
 
-const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo() 
-{
-    static const EventClassFamilyVersionInfos versions %{event.family_version};/* {{"familyName1",1}, {"familyName2",3}};*/
-    return versions;
-}
-
-HashDigest getPropertiesHash() 
+HashDigest getPropertiesHash()
 {
     std::ostringstream ss;
 
-    ss << APPLICATION_TOKEN;
-    ss << PROFILE_VERSION;
-    ss << CONFIG_VERSION;
-    ss << SYSTEM_NF_VERSION;
-    ss << USER_NF_VERSION;
-    ss << LOG_SCHEMA_VERSION;
+    ss << SDK_TOKEN;
     ss << POLLING_PERIOD_SECONDS;
     ss << CLIENT_PUB_KEY_LOCATION;
     ss << CLIENT_PRIV_KEY_LOCATION;
@@ -113,10 +92,6 @@ HashDigest getPropertiesHash()
 
     ss.write(reinterpret_cast<const char*>(
             getDefaultConfigData().begin()), getDefaultConfigData().size());
-
-    for (const auto& eventFamily : getEventClassFamilyVersionInfo()) {
-        ss << eventFamily.first << eventFamily.second;
-    }
 
     return EndpointObjectHash(ss.str()).getHashDigest();
 }

@@ -38,7 +38,7 @@ public:
     {
         std::shared_ptr<SyncRequestMetaData> request(new SyncRequestMetaData);
 
-        request->applicationToken = APPLICATION_TOKEN;
+        request->sdkToken = SDK_TOKEN;
         request->endpointPublicKeyHash.set_bytes(publicKeyHash_);
         request->profileHash.set_bytes(clientStatus_->getProfileHash());
         request->timeout.set_long(timeout_);

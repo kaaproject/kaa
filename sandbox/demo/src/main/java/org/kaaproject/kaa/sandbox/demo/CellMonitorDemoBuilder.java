@@ -19,7 +19,6 @@ package org.kaaproject.kaa.sandbox.demo;
 import java.util.Arrays;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -48,12 +47,12 @@ public class CellMonitorDemoBuilder extends AbstractDemoBuilder {
         cellMonitorApplication.setName("Cell monitor");
         cellMonitorApplication = client.editApplication(cellMonitorApplication);
         
-        sdkKey.setApplicationId(cellMonitorApplication.getId());
-        sdkKey.setNotificationSchemaVersion(1);
-        sdkKey.setConfigurationSchemaVersion(1);
-        sdkKey.setProfileSchemaVersion(1);
-        sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
-        
+        sdkPropertiesDto.setApplicationId(cellMonitorApplication.getId());
+        sdkPropertiesDto.setApplicationToken(cellMonitorApplication.getApplicationToken());
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
+        sdkPropertiesDto.setConfigurationSchemaVersion(1);
+        sdkPropertiesDto.setProfileSchemaVersion(1);
+
         loginTenantDeveloper(client);
         
         LogSchemaDto logSchema = new LogSchemaDto();
@@ -61,7 +60,7 @@ public class CellMonitorDemoBuilder extends AbstractDemoBuilder {
         logSchema.setName("Cell monitor log schema");
         logSchema.setDescription("Log schema describing cell monitor record with information about current cell location, signal strength and phone gps location.");
         logSchema = client.createLogSchema(logSchema, getResourcePath("cell_monitor_log.avsc"));
-        sdkKey.setLogSchemaVersion(logSchema.getMajorVersion());
+        sdkPropertiesDto.setLogSchemaVersion(logSchema.getMajorVersion());
         
         LogAppenderDto cellMonitorLogAppender = new LogAppenderDto();
         cellMonitorLogAppender.setName("Cell monitor log appender");

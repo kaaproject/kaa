@@ -36,11 +36,11 @@ add_executable  (test_ext_log_storage_memory
                 )
 target_link_libraries(test_ext_log_storage_memory kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
-add_executable  (test_ext_log_upload_strategy_by_volume
-                    test/platform-impl/test_ext_log_upload_strategy_by_volume.c
-                    test/kaa_test_external.c
-                )
-target_link_libraries(test_ext_log_upload_strategy_by_volume kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+#add_executable  (test_ext_log_upload_strategy_by_volume
+#                    test/platform-impl/test_ext_log_upload_strategy_by_volume.c
+#                    test/kaa_test_external.c
+#                )
+#target_link_libraries(test_ext_log_upload_strategy_by_volume kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
 add_executable  (test_user_extension
                     test/test_kaa_user.c
@@ -77,11 +77,11 @@ add_executable  (test_status
                 )
 target_link_libraries(test_status kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
-add_executable  (test_bootstrap_manager
-                    test/test_kaa_bootstrap_manager.c
-                    test/kaa_test_external.c
-                )
-target_link_libraries(test_bootstrap_manager kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+#add_executable  (test_bootstrap_manager
+#                    test/test_kaa_bootstrap_manager.c
+#                    test/kaa_test_external.c
+#                )
+#target_link_libraries(test_bootstrap_manager kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
 add_executable  (test_profile
                     ${KAA_SRC_FOLDER}/gen/kaa_profile_gen.c
@@ -111,6 +111,7 @@ add_executable  (test_log
                     ${KAA_SRC_FOLDER}/kaa_common_schema.c
                     ${KAA_SRC_FOLDER}/kaa_logging.c
                     ${KAA_SRC_FOLDER}/kaa_status.c
+                    ${KAA_SRC_FOLDER}/platform-impl/posix/posix_kaa_failover_strategy.c
                 )
 target_link_libraries(test_log ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
@@ -131,11 +132,11 @@ add_executable  (test_list
                 )
 target_link_libraries(test_list kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
-add_executable  (test_channel_manager
-                    test/test_kaa_channel_manager.c
-                    test/kaa_test_external.c
-                )
-target_link_libraries(test_channel_manager kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+#add_executable  (test_channel_manager
+#                    test/test_kaa_channel_manager.c
+#                    test/kaa_test_external.c
+#                )
+#target_link_libraries(test_channel_manager kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
 add_executable  (test_kaatcp_parser
                     test/kaatcp/kaatcp_parser_test.c
@@ -155,11 +156,11 @@ add_executable  (test_kaa_tcp_channel_bootstrap
                 )
 target_link_libraries(test_kaa_tcp_channel_bootstrap kaac ${CUNIT_LIB_NAME})
 
-add_executable  (test_kaa_tcp_channel_operation
-                    test/kaa_tcp_channel/test_kaa_tcp_channel_operation.c
-                    test/kaa_test_external.c
-                )
-target_link_libraries(test_kaa_tcp_channel_operation kaac ${CUNIT_LIB_NAME})
+#add_executable  (test_kaa_tcp_channel_operation
+#                    test/kaa_tcp_channel/test_kaa_tcp_channel_operation.c
+#                    test/kaa_test_external.c
+#                )
+#target_link_libraries(test_kaa_tcp_channel_operation kaac ${CUNIT_LIB_NAME})
 
 add_executable  (test_kaa_configuration_manager
                     test/test_kaa_configuration.c

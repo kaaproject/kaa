@@ -24,9 +24,13 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.FailoverDecision;
+import org.kaaproject.kaa.client.channel.FailoverManager;
+import org.kaaproject.kaa.client.channel.FailoverStatus;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
@@ -37,6 +41,7 @@ import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.sync.SyncTask;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.common.TransportType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +51,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(DefaultChannelManager.class);
 
+    private static final int EXIT_FAILURE = 1;
     private final List<KaaDataChannel> channels = new LinkedList<>();
     private final Map<TransportType, KaaDataChannel> upChannels = new HashMap<TransportType, KaaDataChannel>();
     private final BootstrapManager bootstrapManager;
@@ -57,6 +63,9 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     private final Map<String, BlockingQueue<SyncTask>> syncTaskQueueMap = new ConcurrentHashMap<String, BlockingQueue<SyncTask>>();
     private final Map<String, SyncWorker> syncWorkers = new HashMap<String, DefaultChannelManager.SyncWorker>();
 
+    private FailoverManager failoverManager;
+    private ExecutorContext executorContext;
+
     private ConnectivityChecker connectivityChecker;
     private boolean isShutdown = false;
     private boolean isPaused = false;
@@ -66,12 +75,14 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
     private KaaDataMultiplexer bootstrapMultiplexer;
     private KaaDataDemultiplexer bootstrapDemultiplexer;
 
-    public DefaultChannelManager(BootstrapManager manager, Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers) {
+    public DefaultChannelManager(BootstrapManager manager, Map<TransportProtocolId,
+            List<TransportConnectionInfo>> bootststrapServers, ExecutorContext executorContext) {
         if (manager == null || bootststrapServers == null || bootststrapServers.isEmpty()) {
             throw new ChannelRuntimeException("Failed to create channel manager");
         }
         this.bootstrapManager = manager;
         this.bootststrapServers = bootststrapServers;
+        this.executorContext = executorContext;
     }
 
     private boolean useChannelForType(KaaDataChannel channel, TransportType type) {
@@ -123,6 +134,11 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             if (server != null) {
                 LOG.debug("Applying server {} for channel [{}] type {}", server, channel.getId(), channel.getTransportProtocolId());
                 channel.setServer(server);
+                if (failoverManager != null) {
+                    failoverManager.onServerChanged(server);
+                } else {
+                    LOG.warn("Failover manager isn't set: null");
+                }
             } else {
                 if (lastServers != null && lastServers.isEmpty()) {
                     if (channel.getServerType() == ServerType.BOOTSTRAP) {
@@ -256,18 +272,51 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             if (channel.getServerType() == newServer.getServerType() && channel.getTransportProtocolId().equals(newServer.getTransportId())) {
                 LOG.debug("Applying server {} for channel [{}] type {}", newServer, channel.getId(), channel.getTransportProtocolId());
                 channel.setServer(newServer);
+                if (failoverManager != null) {
+                    failoverManager.onServerChanged(newServer);
+                } else {
+                    LOG.warn("Failover manager isn't set: null");
+                }
             }
         }
     }
 
     @Override
-    public synchronized void onServerFailed(TransportConnectionInfo server) {
+    public synchronized void onServerFailed(final TransportConnectionInfo server) {
         if (isShutdown) {
             LOG.warn("Can't process server failure. Channel manager is down");
             return;
         }
+
         if (server.getServerType() == ServerType.BOOTSTRAP) {
-            onTransportConnectionInfoUpdated(getNextBootstrapServer(server));
+            TransportConnectionInfo nextConnectionInfo = getNextBootstrapServer(server);
+            if (nextConnectionInfo != null) {
+                LOG.trace("Using next bootstrap server");
+                onTransportConnectionInfoUpdated(nextConnectionInfo);
+            } else {
+                LOG.trace("Can't find next bootstrap server");
+                FailoverDecision decision = failoverManager.onFailover(FailoverStatus.BOOTSTRAP_SERVERS_NA);
+                switch (decision.getAction()) {
+                    case NOOP:
+                        LOG.warn("No operation is performed according to failover strategy decision");
+                        break;
+                    case RETRY:
+                        long retryPeriod = decision.getRetryPeriod();
+                        LOG.warn("Attempt to reconnect to first bootstrap server will be made in {} ms, " +
+                                 "according to failover strategy decision", retryPeriod);
+                        executorContext.getScheduledExecutor().schedule(new Runnable() {
+                            @Override
+                            public void run() {
+                                onTransportConnectionInfoUpdated(server);
+                            }
+                        }, retryPeriod, TimeUnit.MILLISECONDS);
+                        break;
+                    case STOP_APP:
+                        LOG.warn("Stopping application according to failover strategy decision!");
+                        System.exit(EXIT_FAILURE);
+                        break;
+                }
+            }
         } else {
             bootstrapManager.useNextOperationsServer(server.getTransportId());
         }
@@ -457,5 +506,9 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             this.stop = true;
             this.interrupt();
         }
+    }
+
+    public void setFailoverManager(FailoverManager failoverManager) {
+        this.failoverManager = failoverManager;
     }
 }

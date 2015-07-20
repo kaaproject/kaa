@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(checkConfigurationPersistence)
     KaaRootConfiguration configuration = converter.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size());
     EndpointObjectHash checkHash(getDefaultConfigData().begin(), getDefaultConfigData().size());
 
-    ConfigurationPersistenceManager cpm(IKaaClientStateStoragePtr(new ClientStatus(CLIENT_STATUS_FILE_LOCATION)));
+    ConfigurationPersistenceManager cpm(IKaaClientStateStoragePtr(new MockKaaClientStateStorage));
 
     try {
         ConfigurationProcessorStub cpstub;

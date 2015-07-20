@@ -33,6 +33,7 @@ import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.metrics.MeterClient;
 import org.kaaproject.kaa.server.operations.service.metrics.MetricsService;
 import org.kaaproject.kaa.server.sync.ClientSync;
+import org.kaaproject.kaa.server.sync.ClientSyncMetaData;
 import org.kaaproject.kaa.server.sync.RedirectServerSync;
 import org.kaaproject.kaa.server.sync.ServerSync;
 import org.kaaproject.kaa.server.sync.SyncStatus;
@@ -137,11 +138,11 @@ public class EncDecActorMessageProcessor {
             redirectMeter.mark();
             ClientSync request = decodeRequest(message);
             ServerSync response = buildRedirectionResponse(redirection, request);
-
             EndpointObjectHash key = getEndpointObjectHash(request);
-            String appToken = getAppToken(request);
+            String sdkToken = getSdkToken(request);
+            String appToken = getAppToken(sdkToken);
             SessionInfo sessionInfo = new SessionInfo(message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
-                    message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, message.getKeepAlive(), message.isEncrypted());
+                    message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, sdkToken, message.getKeepAlive(), message.isEncrypted());
             SessionResponse responseMessage = new NettySessionResponseMessage(sessionInfo, response, message.getMessageBuilder(),
                     message.getErrorBuilder());
             LOG.debug("Redirect Response: {}", response);
@@ -153,10 +154,10 @@ public class EncDecActorMessageProcessor {
 
     void redirect(RedirectionRule redirection, SessionAwareMessage message) {
         try {
+            LOG.trace("Redirecting {} SessionAwareMessage", message);
             redirectMeter.mark();
             ClientSync request = decodeRequest(message);
             ServerSync response = buildRedirectionResponse(redirection, request);
-
             SessionInfo sessionInfo = message.getSessionInfo();
             SessionResponse responseMessage = new NettySessionResponseMessage(sessionInfo, response, message.getMessageBuilder(),
                         message.getErrorBuilder());
@@ -180,8 +181,10 @@ public class EncDecActorMessageProcessor {
             PlatformEncDecException, InvalidApplicationTokenException {
         ClientSync request = decodeRequest(message);
         EndpointObjectHash key = getEndpointObjectHash(request);
+        String sdkToken = getSdkToken(request);
+        String appToken = getAppToken(sdkToken);
         SessionInfo session = new SessionInfo(message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
-                message.getChannelType(), crypt.getSessionCipherPair(), key, request.getClientSyncMetaData().getApplicationToken(),
+                message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, sdkToken,
                 message.getKeepAlive(), message.isEncrypted());
         message.onSessionCreated(session);
         if (isApplicationTokenValid(session.getApplicationToken())) {
@@ -236,7 +239,7 @@ public class EncDecActorMessageProcessor {
         } else if (supportUnencryptedConnection) {
             syncRequest = decodeUnencryptedRequest(message);
         } else {
-            LOG.warn("Received unencripted init message, but unencrypted connection forbidden by configuration.");
+            LOG.warn("Received unencrypted init message, but unencrypted connection forbidden by configuration.");
             throw new GeneralSecurityException("Unencrypted connection forbidden by configuration.");
         }
         return syncRequest;
@@ -308,7 +311,9 @@ public class EncDecActorMessageProcessor {
     private ClientSync decodePlatformLevelData(Integer platformID, byte[] requestRaw) throws PlatformEncDecException {
         PlatformEncDec encDec = platformEncDecMap.get(platformID);
         if (encDec != null) {
-            return platformEncDecMap.get(platformID).decode(requestRaw);
+            ClientSync syncRequest = platformEncDecMap.get(platformID).decode(requestRaw);
+            addAppTokenToClientSyncMetaData(syncRequest.getClientSyncMetaData());
+            return syncRequest;
         } else {
             throw new PlatformEncDecException(MessageFormat.format("Decoder for platform protocol [{0}] is not defined", platformID));
         }
@@ -353,8 +358,16 @@ public class EncDecActorMessageProcessor {
         }
     }
 
-    private String getAppToken(ClientSync request) {
-        return request.getClientSyncMetaData().getApplicationToken();
+    private void addAppTokenToClientSyncMetaData(ClientSyncMetaData clientSyncMetaData) {
+        clientSyncMetaData.setApplicationToken(getAppToken(clientSyncMetaData.getSdkToken()));
+    }
+
+    private String getSdkToken(ClientSync request) {
+        return request.getClientSyncMetaData().getSdkToken();
+    }
+
+    private String getAppToken(String sdkToken) {
+        return cacheService.getAppTokenBySdkToken(sdkToken);
     }
 
     private boolean isApplicationTokenValid(String applicationToken) {

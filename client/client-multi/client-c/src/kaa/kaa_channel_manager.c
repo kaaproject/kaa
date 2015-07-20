@@ -30,7 +30,7 @@
 #include "kaa_platform_common.h"
 #include "kaa_platform_protocol.h"
 #include "kaa_platform_utils.h"
-
+#include "platform-impl/posix/posix_kaa_failover_strategy.h"
 
 
 extern kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa_bootstrap_manager_t *self
@@ -38,8 +38,6 @@ extern kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa
 
 extern kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstrap_manager_t *self
                                                                           , kaa_transport_protocol_id_t *protocol_id);
-
-
 
 typedef struct {
     uint32_t                             channel_id;
@@ -259,11 +257,9 @@ static kaa_error_t init_channel(kaa_channel_manager_t *self
                                                                 server_type == KAA_SERVER_BOOTSTRAP;
 
         if (is_bootstrap_channel) {
-            access_point = kaa_bootstrap_manager_get_bootstrap_access_point(
-                                self->kaa_context->bootstrap_manager, &protocol_id);
+            access_point = kaa_bootstrap_manager_get_bootstrap_access_point(self->kaa_context->bootstrap_manager, &protocol_id);
         } else {
-            access_point = kaa_bootstrap_manager_get_operations_access_point(
-                                self->kaa_context->bootstrap_manager, &protocol_id);
+            access_point = kaa_bootstrap_manager_get_operations_access_point(self->kaa_context->bootstrap_manager, &protocol_id);
         }
 
         if (access_point) {
@@ -280,6 +276,7 @@ static kaa_error_t init_channel(kaa_channel_manager_t *self
                 KAA_LOG_INFO(self->kaa_context->logger, KAA_ERR_NOT_FOUND, "Could not find access point for Operations channel [0x%08X] "
                                     "(protocol: id=0x%08X, version=%u)", id, protocol_id.id, protocol_id.version);
             }
+            return KAA_ERR_BAD_STATE;
         }
     }
 
@@ -294,7 +291,7 @@ kaa_error_t kaa_channel_manager_add_transport_channel(kaa_channel_manager_t *sel
 
     kaa_error_t error_code = add_channel(self, channel, channel_id);
     if (!error_code) {
-        init_channel(self, channel);
+        error_code = init_channel(self, channel);
     }
 
     return error_code;
@@ -449,7 +446,6 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
 
     return error_code;
 }
-
 
 kaa_error_t kaa_channel_manager_on_new_access_point(kaa_channel_manager_t *self
                                                   , kaa_transport_protocol_id_t *protocol_id
