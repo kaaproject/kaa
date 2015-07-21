@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
@@ -166,7 +167,7 @@ public class DefaultChannelManagerTest {
 
     @Test
     public void testBootstrapServerFailed() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = new HashMap<>();
+        final Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = new HashMap<>();
         bootststrapServers.put(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, Arrays.asList(
                 IPTransportInfoTest.createTestServerInfo(
                         ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic()),
@@ -174,14 +175,16 @@ public class DefaultChannelManagerTest {
                         ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost2", 9889, KeyUtil.generateKeyPair().getPublic())));
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
 
-        KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
+        final KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
         Mockito.when(channel.getSupportedTransportTypes()).thenReturn(SUPPORTED_TYPES);
         Mockito.when(channel.getTransportProtocolId()).thenReturn(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
         Mockito.when(channel.getServerType()).thenReturn(ServerType.BOOTSTRAP);
         Mockito.when(channel.getId()).thenReturn("mock_channel");
 
-        KaaChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, null);
-        FailoverManager failoverManager = Mockito.spy(new DefaultFailoverManager(channelManager, CONTEXT));
+        ExecutorContext context = Mockito.mock(ExecutorContext.class);
+        Mockito.when(context.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
+        KaaChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, context);
+        FailoverManager failoverManager = Mockito.spy(new DefaultFailoverManager(channelManager, CONTEXT, 1, 1, 1, 1, TimeUnit.MILLISECONDS));
         channelManager.setFailoverManager(failoverManager);
 
         channelManager.addChannel(channel);
@@ -189,7 +192,13 @@ public class DefaultChannelManagerTest {
         Mockito.verify(failoverManager, Mockito.times(1)).onServerChanged(Mockito.any(TransportConnectionInfo.class));
 
         channelManager.onServerFailed(bootststrapServers.get(TransportProtocolIdConstants.HTTP_TRANSPORT_ID).get(0));
-        Mockito.verify(channel, Mockito.times(1)).setServer(bootststrapServers.get(TransportProtocolIdConstants.HTTP_TRANSPORT_ID).get(1));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Mockito.verify(channel, Mockito.timeout(100).times(1)).setServer(bootststrapServers.get(TransportProtocolIdConstants.HTTP_TRANSPORT_ID).get(1));
+            }
+        });
+        Mockito.verify(failoverManager, Mockito.times(1)).onFailover(FailoverStatus.CURRENT_BOOTSTRAP_SERVER_NA);
     }
 
     @Test
@@ -206,9 +215,7 @@ public class DefaultChannelManagerTest {
         Mockito.when(channel.getServerType()).thenReturn(ServerType.BOOTSTRAP);
         Mockito.when(channel.getId()).thenReturn("mock_channel");
 
-        ExecutorContext executorContext = Mockito.mock(ExecutorContext.class);
-        Mockito.when(executorContext.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
-        KaaChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, executorContext);
+        KaaChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, CONTEXT);
         FailoverManager failoverManager = Mockito.spy(new DefaultFailoverManager(channelManager, CONTEXT));
         channelManager.setFailoverManager(failoverManager);
 

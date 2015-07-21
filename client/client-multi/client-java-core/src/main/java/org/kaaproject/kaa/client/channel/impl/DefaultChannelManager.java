@@ -310,12 +310,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                         break;
                     case USE_NEXT_BOOTSTRAP:
                         retryPeriod = decision.getRetryPeriod();
-                        if (retryPeriod == 0) {
-                            LOG.warn("Attempting to reconnect to the next bootstrap server");
-                        } else {
-                            LOG.warn("Attempt to reconnect to the next bootstrap server will be made in {} ms, " +
+                        LOG.warn("Attempt to connect to the next bootstrap server will be made in {} ms, " +
                                     "according to failover strategy decision", retryPeriod);
-                        }
                         executorContext.getScheduledExecutor().schedule(new Runnable() {
                             @Override
                             public void run() {
@@ -328,6 +324,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                         System.exit(EXIT_FAILURE);
                         break;
                 }
+//                onTransportConnectionInfoUpdated(nextConnectionInfo);
             } else {
                 LOG.trace("Can't find next bootstrap server");
                 FailoverDecision decision = failoverManager.onFailover(FailoverStatus.BOOTSTRAP_SERVERS_NA);

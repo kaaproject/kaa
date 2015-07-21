@@ -187,7 +187,7 @@ public class DefaultFailoverManager implements FailoverManager {
                 if (bootstrapResolution != null) {
                     bootstrapResolution.setResolutionTime(System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(bootstrapServersRetryPeriod, timeUnit));
                 }
-                return new FailoverDecision(FailoverAction.RETRY, bootstrapServersRetryPeriod, timeUnit);
+                return new FailoverDecision(FailoverAction.USE_NEXT_BOOTSTRAP, bootstrapServersRetryPeriod, timeUnit);
             case NO_OPERATION_SERVERS_RECEIVED:
                 bootstrapResolution = resolutionProgressMap.get(ServerType.BOOTSTRAP);
                 if (bootstrapResolution != null) {
