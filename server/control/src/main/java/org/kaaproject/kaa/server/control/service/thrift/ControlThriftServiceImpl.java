@@ -31,6 +31,7 @@ import java.util.List;
 import org.apache.avro.Schema;
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
 import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
@@ -86,6 +87,7 @@ import org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftException;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.control.FileData;
+import org.kaaproject.kaa.server.common.thrift.gen.control.RecordFile;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
@@ -128,6 +130,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     private static final Logger LOG = LoggerFactory.getLogger(ControlThriftServiceImpl.class);
 
     private static final String SCHEMA_NAME_PATTERN = "kaa-record-schema-l{}.avsc";
+    private static final String DATA_NAME_PATTERN = "kaa-{}-schema-v{}.avsc";
 
     /** The control service. */
     @Autowired
@@ -1881,4 +1884,78 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
         }
     }
 
+    @Override
+    public FileData getRecordStructureData(String applicationId, int schemaVersion, RecordFile recordFile) throws ControlThriftException,
+            TException {
+
+        try {
+            ApplicationDto application = applicationService.findAppById(applicationId);
+            if (application == null) {
+                throw new TException("Application not found!");
+            }
+
+            FileData data = new FileData();
+            if (RecordFile.LOG_LIBRARY.equals(recordFile)) {
+                data = generateRecordStructureLibrary(applicationId, schemaVersion);
+            } else {
+                AbstractSchemaDto schemaDto = null;
+                String fileName = null;
+                String schema = null;
+                switch (recordFile) {
+                    case LOG_SCHEMA:
+                        schemaDto = logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, schemaVersion);
+                        checkSchema(schemaDto, RecordFile.LOG_SCHEMA);
+                        Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(schemaDto.getSchema());
+                        schema = recordWrapperSchema.toString(true);
+                        fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"log", schemaVersion}).getMessage();
+                        break;
+                    case CONFIGURATION_SCHEMA:
+                        schemaDto = configurationService.findConfSchemaByAppIdAndVersion(applicationId, schemaVersion);
+                        checkSchema(schemaDto, RecordFile.CONFIGURATION_SCHEMA);
+                        schema = schemaDto.getSchema();
+                        fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"configuration", schemaVersion}).getMessage();
+                        break;
+                    case CONFIGURATION_BASE_SCHEMA:
+                        schemaDto = configurationService.findConfSchemaByAppIdAndVersion(applicationId, schemaVersion);
+                        checkSchema(schemaDto, RecordFile.CONFIGURATION_BASE_SCHEMA);
+                        schema = ((ConfigurationSchemaDto)schemaDto).getBaseSchema();
+                        fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"configuration-base", schemaVersion}).getMessage();
+                        break;
+                    case CONFIGURATION_OVERRIDE_SCHEMA:
+                        schemaDto = configurationService.findConfSchemaByAppIdAndVersion(applicationId, schemaVersion);
+                        checkSchema(schemaDto, RecordFile.CONFIGURATION_OVERRIDE_SCHEMA);
+                        schema = ((ConfigurationSchemaDto)schemaDto).getOverrideSchema();
+                        fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"configuration-override", schemaVersion}).getMessage();
+                        break;
+                    case NOTIFICATION_SCHEMA:
+                        schemaDto = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(applicationId, NotificationTypeDto.USER, schemaVersion);
+                        checkSchema(schemaDto, RecordFile.NOTIFICATION_SCHEMA);
+                        schema = schemaDto.getSchema();
+                        fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"notification", schemaVersion}).getMessage();
+                        break;
+                    case PROFILE_SCHEMA:
+                        schemaDto = profileService.findProfileSchemaByAppIdAndVersion(applicationId, schemaVersion);
+                        checkSchema(schemaDto, RecordFile.PROFILE_SCHEMA);
+                        schema = schemaDto.getSchema();
+                        fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", schemaVersion}).getMessage();
+                        break;
+                    default:
+                        break;
+                }
+                byte[] schemaData = schema.getBytes(StandardCharsets.UTF_8);
+                data.setFileName(fileName);
+                data.setData(schemaData);
+            }
+            return data;
+        } catch (Exception e) {
+            LOG.error("Unable to get Record Structure Schema", e);
+            throw new TException(e);
+        }
+    }
+
+    private void checkSchema(AbstractSchemaDto schemaDto, RecordFile file) throws TException {
+        if(schemaDto == null) {
+            throw new TException("Schema " + file + " not found!");
+        }
+    }
 }

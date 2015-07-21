@@ -41,4 +41,6 @@ public interface CacheService {
 
     FileData getRecordSchema(RecordKey key) throws KaaAdminServiceException;
 
+    FileData getRecordData(RecordKey key) throws KaaAdminServiceException;
+
 }

@@ -16,13 +16,18 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
+import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
+import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.data.NotificationSchemasDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
+import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -63,4 +68,19 @@ public class NotificationSchemasActivity extends AbstractListActivity<Notificati
         callback.onSuccess((Void)null);
     }
 
+    @Override
+    protected void onCustomRowAction(RowActionEvent<String> event) {
+        Integer schemaVersion = Integer.valueOf(event.getClickedId());
+        AsyncCallback<String> callback = new AsyncCallback<String>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Utils.handleException(caught, listView);
+            }
+            @Override
+            public void onSuccess(String key) {
+                ServletHelper.downloadRecordLibrary(key);
+            }
+        };
+        KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.NOTIFICATION_SCHEMA, callback);
+    }
 }

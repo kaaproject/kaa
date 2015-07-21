@@ -281,6 +281,8 @@ public interface KaaAdminService extends RemoteService {
     public List<SchemaDto> getLogSchemasVersions(String applicationId) throws KaaAdminServiceException;
 
     public String getRecordLibraryByApplicationIdAndSchemaVersion(String applicationId, int logSchemaVersion, RecordKey.RecordFiles file) throws KaaAdminServiceException;
+
+    public String getRecordDataByApplicationIdAndSchemaVersion(String applicationId, int schemaVersion, RecordKey.RecordFiles file) throws KaaAdminServiceException;
     
     public List<UserVerifierDto> getUserVerifiersByApplicationId(String appId) throws KaaAdminServiceException;
 

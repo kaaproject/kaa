@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.struct;
 
+import com.google.gwt.user.cellview.client.Column;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.admin.StructureRecordKey;
@@ -40,7 +42,7 @@ public class BaseStructGrid<T extends AbstractStructureDto> extends AbstractKaaG
                 new StringValueProvider<StructureRecordDto<T>>() {
                     @Override
                     public String getValue(StructureRecordDto<T> item) {
-                        return item.getMajorVersion()+"."+item.getMinorVersion();
+                        return item.getMajorVersion() + "." + item.getMinorVersion();
                     }
                 }, 80);
 
@@ -58,7 +60,7 @@ public class BaseStructGrid<T extends AbstractStructureDto> extends AbstractKaaG
                 new StringValueProvider<StructureRecordDto<T>>() {
                     @Override
                     public String getValue(StructureRecordDto<T> item) {
-                        return item.getEndpointCount()+"";
+                        return item.getEndpointCount() + "";
                     }
                 }, 80);
 
@@ -87,8 +89,7 @@ public class BaseStructGrid<T extends AbstractStructureDto> extends AbstractKaaG
     protected StructureRecordKey getObjectId(StructureRecordDto<T> value) {
         if (value != null) {
             return new StructureRecordKey(value.getSchemaId(), value.getEndpointGroupId());
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -96,6 +97,28 @@ public class BaseStructGrid<T extends AbstractStructureDto> extends AbstractKaaG
     @Override
     protected boolean canDelete(StructureRecordDto<T> value) {
         return value.hasDraft() || !value.hasDeprecated();
+    }
+
+
+    private Column constructDownloadColumn(String text) {
+        final ActionButtonCell cell = new ActionButtonCell<T>(Utils.resources.remove(), text, this.embedded, new ActionButtonCell.ActionListener<T>() {
+            @Override
+            public void onItemAction(T o) {
+
+            }
+        }, new ActionButtonCell.ActionValidator<T>() {
+            @Override
+            public boolean canPerformAction(T o) {
+                return false;
+            }
+        });
+        return new Column<T, T>(cell) {
+
+            @Override
+            public T getValue(T object) {
+                return object;
+            }
+        };
     }
 
 }
