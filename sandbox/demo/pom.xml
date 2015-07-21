@@ -395,7 +395,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-        <dependency>
             <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>configurationdemo</artifactId>
             <version>${project.version}</version>
