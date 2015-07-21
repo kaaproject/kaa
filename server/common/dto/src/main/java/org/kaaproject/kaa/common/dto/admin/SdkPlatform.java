@@ -22,6 +22,7 @@ public enum SdkPlatform {
     ANDROID("android", "application/java-archive"),
     CPP("cpp", "application/x-compressed"),
     C("c", "application/x-compressed");
+    ESP8266("esp8266", "application/x-compressed");
 
     String key;
     String contentType;
