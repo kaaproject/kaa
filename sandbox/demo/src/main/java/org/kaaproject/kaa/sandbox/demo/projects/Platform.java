@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="JAVA"/>
  *     &lt;enumeration value="CPP"/>
  *     &lt;enumeration value="C"/>
+ *     &lt;enumeration value="ESP8266"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
@@ -36,7 +37,8 @@ public enum Platform {
     ANDROID,
     JAVA,
     CPP,
-    C;
+    C,
+    ESP8266;
 
     public String value() {
         return name();
