@@ -77,7 +77,7 @@ public class DefaultFailoverManager implements FailoverManager {
 
     @Override
     public synchronized void onServerFailed(final TransportConnectionInfo connectionInfo) {
-        LOG.trace("Server {} failed", connectionInfo);
+        LOG.info("Server {} failed", connectionInfo);
         if (connectionInfo == null) {
             LOG.warn("Server connection info is null, can't resolve");
             return;
@@ -178,6 +178,12 @@ public class DefaultFailoverManager implements FailoverManager {
         switch (failoverStatus) {
             case BOOTSTRAP_SERVERS_NA:
                 AccessPointIdResolution bootstrapResolution = resolutionProgressMap.get(ServerType.BOOTSTRAP);
+                if (bootstrapResolution != null) {
+                    bootstrapResolution.setResolutionTime(System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(bootstrapServersRetryPeriod, timeUnit));
+                }
+                return new FailoverDecision(FailoverAction.RETRY, bootstrapServersRetryPeriod, timeUnit);
+            case CURRENT_BOOTSTRAP_SERVER_NA:
+                bootstrapResolution = resolutionProgressMap.get(ServerType.BOOTSTRAP);
                 if (bootstrapResolution != null) {
                     bootstrapResolution.setResolutionTime(System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(bootstrapServersRetryPeriod, timeUnit));
                 }

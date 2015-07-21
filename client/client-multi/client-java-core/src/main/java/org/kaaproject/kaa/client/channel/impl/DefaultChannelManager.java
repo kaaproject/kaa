@@ -289,10 +289,45 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         }
 
         if (server.getServerType() == ServerType.BOOTSTRAP) {
-            TransportConnectionInfo nextConnectionInfo = getNextBootstrapServer(server);
+            final TransportConnectionInfo nextConnectionInfo = getNextBootstrapServer(server);
             if (nextConnectionInfo != null) {
                 LOG.trace("Using next bootstrap server");
-                onTransportConnectionInfoUpdated(nextConnectionInfo);
+                FailoverDecision decision = failoverManager.onFailover(FailoverStatus.CURRENT_BOOTSTRAP_SERVER_NA);
+                switch (decision.getAction()) {
+                    case NOOP:
+                        LOG.warn("No operation is performed according to failover strategy decision");
+                        break;
+                    case RETRY:
+                        long retryPeriod = decision.getRetryPeriod();
+                        LOG.warn("Attempt to reconnect to the current bootstrap server will be made in {} ms, " +
+                                "according to failover strategy decision", retryPeriod);
+                        executorContext.getScheduledExecutor().schedule(new Runnable() {
+                            @Override
+                            public void run() {
+                                onTransportConnectionInfoUpdated(server);
+                            }
+                        }, retryPeriod, TimeUnit.MILLISECONDS);
+                        break;
+                    case USE_NEXT_BOOTSTRAP:
+                        retryPeriod = decision.getRetryPeriod();
+                        if (retryPeriod == 0) {
+                            LOG.warn("Attempting to reconnect to the next bootstrap server");
+                        } else {
+                            LOG.warn("Attempt to reconnect to the next bootstrap server will be made in {} ms, " +
+                                    "according to failover strategy decision", retryPeriod);
+                        }
+                        executorContext.getScheduledExecutor().schedule(new Runnable() {
+                            @Override
+                            public void run() {
+                                onTransportConnectionInfoUpdated(nextConnectionInfo);
+                            }
+                        }, retryPeriod, TimeUnit.MILLISECONDS);
+                        break;
+                    case STOP_APP:
+                        LOG.warn("Stopping application according to failover strategy decision!");
+                        System.exit(EXIT_FAILURE);
+                        break;
+                }
             } else {
                 LOG.trace("Can't find next bootstrap server");
                 FailoverDecision decision = failoverManager.onFailover(FailoverStatus.BOOTSTRAP_SERVERS_NA);
