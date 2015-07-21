@@ -1905,7 +1905,8 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
                     case LOG_SCHEMA:
                         schemaDto = logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, schemaVersion);
                         checkSchema(schemaDto, RecordFile.LOG_SCHEMA);
-                        schema = schemaDto.getSchema();
+                        Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(schemaDto.getSchema());
+                        schema = recordWrapperSchema.toString(true);
                         fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"log", schemaVersion}).getMessage();
                         break;
                     case CONFIGURATION_SCHEMA:
@@ -1941,9 +1942,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
                     default:
                         break;
                 }
-                Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(schema);
-                String schemaInJson = recordWrapperSchema.toString(true);
-                byte[] schemaData = schemaInJson.getBytes(StandardCharsets.UTF_8);
+                byte[] schemaData = schema.getBytes(StandardCharsets.UTF_8);
                 data.setFileName(fileName);
                 data.setData(schemaData);
             }
