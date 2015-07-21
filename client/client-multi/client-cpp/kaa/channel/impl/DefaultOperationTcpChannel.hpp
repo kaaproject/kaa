@@ -36,6 +36,7 @@
 #include "kaa/channel/ITransportConnectionInfo.hpp"
 #include "kaa/channel/TransportProtocolIdConstants.hpp"
 #include "kaa/utils/KaaTimer.hpp"
+#include "kaa/IKaaClientStateStorage.hpp"
 
 
 namespace kaa {
@@ -45,7 +46,7 @@ class KeyPair;
 
 class DefaultOperationTcpChannel : public IDataChannel {
 public:
-    DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys);
+    DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientStateStoragePtr clientState);
     virtual ~DefaultOperationTcpChannel();
 
     virtual void sync(TransportType type);
@@ -77,9 +78,9 @@ public:
     virtual ServerType getServerType() const {
         return ServerType::OPERATIONS;
     }
-    
+
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) {
-    	failoverStrategy_ = strategy;
+        failoverStrategy_ = strategy;
     }
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {
@@ -162,6 +163,8 @@ private:
 
     ConnectivityCheckerPtr connectivityChecker_;
     IFailoverStrategyPtr failoverStrategy_;
+
+    IKaaClientStateStoragePtr clientState_;
 };
 
 }

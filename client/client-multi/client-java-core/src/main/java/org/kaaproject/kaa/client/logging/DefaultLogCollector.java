@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import javax.annotation.Generated;
 
+import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.context.ExecutorContext;
@@ -35,8 +36,9 @@ import org.slf4j.LoggerFactory;
 public class DefaultLogCollector extends AbstractLogCollector {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLogCollector.class);
 
-    public DefaultLogCollector(LogTransport transport, ExecutorContext executorContext, KaaChannelManager manager) {
-        super(transport, executorContext, manager);
+    public DefaultLogCollector(LogTransport transport, ExecutorContext executorContext,
+                               KaaChannelManager channelManager, FailoverManager failoverManager) {
+        super(transport, executorContext, channelManager, failoverManager);
     }
 
     @Override
@@ -50,9 +52,7 @@ public class DefaultLogCollector extends AbstractLogCollector {
                     LOG.warn("Can't serialize log record {}", record);
                 }
 
-                if (!isDeliveryTimeout()) {
-                    uploadIfNeeded();
-                }
+                uploadIfNeeded();
             }
         });
     }

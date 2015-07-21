@@ -65,7 +65,7 @@ public class LogRecord {
         return encodedRecord;
     }
 
-    long getSize() {
+    public long getSize() {
         return encodedRecord.length;
     }
 }

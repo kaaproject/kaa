@@ -23,7 +23,7 @@ import net.sf.ehcache.Ehcache;
 
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.thrift.ControlThriftClientProvider;
@@ -54,30 +54,30 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     @Cacheable(value = SDK_CACHE, key = "#key", unless="#result == null")
-    public FileData getSdk(SdkKey key) {
+    public FileData getSdk(SdkPropertiesDto key) {
         return null;
     }
     
     @Override
     @CachePut(value = SDK_CACHE, key = "#key")
-    public FileData putSdk(SdkKey key, FileData sdkFile) {
+    public FileData putSdk(SdkPropertiesDto key, FileData sdkFile) {
         return sdkFile;
     }
 
     @Override
     @CacheEvict(value = SDK_CACHE, key = "#key")
-    public void flushSdk(SdkKey key) {
+    public void flushSdk(SdkPropertiesDto key) {
     }
     
-    public List<SdkKey> getCachedSdkKeys(String applicationId) {
-        List<SdkKey> keys = new ArrayList<>();
+    public List<SdkPropertiesDto> getCachedSdkKeys(String applicationId) {
+        List<SdkPropertiesDto> keys = new ArrayList<>();
         Ehcache cache = (Ehcache) cacheManager.getCache(SDK_CACHE).getNativeCache();
         List<?> cachedKeys = cache.getKeysWithExpiryCheck();
         for (Object cachedKey : cachedKeys) {
-            if (cachedKey instanceof SdkKey) {
-                SdkKey cachedSdkKey = (SdkKey)cachedKey;
-                if (applicationId.equals(cachedSdkKey.getApplicationId())) {
-                    keys.add(cachedSdkKey);
+            if (cachedKey instanceof SdkPropertiesDto) {
+                SdkPropertiesDto cachedSdkPropertiesDto = (SdkPropertiesDto)cachedKey;
+                if (applicationId.equals(cachedSdkPropertiesDto.getApplicationId())) {
+                    keys.add(cachedSdkPropertiesDto);
                 }
             }
         }

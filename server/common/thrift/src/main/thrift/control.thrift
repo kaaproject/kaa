@@ -210,7 +210,7 @@ service ControlThriftService extends cli.CliThriftService{
 *   Client SDK
 */
 
-  Sdk generateSdk(1: SdkPlatform sdkPlatform, 2: id applicationId, 3: shared.Integer profileSchemaVersion, 4: shared.Integer configurationSchemaVersion, 5: shared.Integer notificationSchemaVersion, 6: list<id> aefMapIds, 7: shared.Integer logSchemaVersion, 8: string defaultVerifierToken) throws(1: ControlThriftException ControlException)
+  Sdk generateSdk(1: data sdkProperties) throws(1: ControlThriftException ControlException)
 
 /**
 *   Events

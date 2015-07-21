@@ -17,12 +17,13 @@
 #if defined(KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) || defined (KAA_DEFAULT_OPERATION_HTTP_CHANNEL)
 
 #include "kaa/channel/impl/AbstractHttpChannel.hpp"
+#include "kaa/common/exception/HttpTransportException.hpp"
 
 namespace kaa {
 
-AbstractHttpChannel::AbstractHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys)
+AbstractHttpChannel::AbstractHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientStateStoragePtr clientState)
     : clientKeys_(clientKeys), lastConnectionFailed_(false)
-    , multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager) {}
+    , multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager), clientState_(clientState) {}
 
 
 void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDirection>& types
@@ -60,23 +61,43 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
                     std::vector<std::uint8_t>(reinterpret_cast<const std::uint8_t *>(processedResponse.data()),
                                               reinterpret_cast<const std::uint8_t *>(processedResponse.data() + processedResponse.size())));
         }
+    } catch (HttpTransportException& e) {
+        switch (e.getHttpStatusCode()) {
+        case HttpStatusCode::UNAUTHORIZED:
+            KAA_LOG_WARN(boost::format("Connection failed, server %1%:%2%: bad credentials. Going to re-register...")
+                                                            % currentServer_->getHost() % currentServer_->getPort());
+            clientState_->setRegistered(false);
+            clientState_->save();
+            setServer(currentServer_);
+            break;
+        default:
+            KAA_LOG_ERROR(boost::format("Connection failed, server %1%:%2%: %3%")
+                    % currentServer_->getHost() % currentServer_->getPort() % e.what());
+            onServerFailed();
+            break;
+        }
     } catch (std::exception& e) {
-        KAA_LOG_ERROR(boost::format("Connection failed, server %1%:%2%: %3%") % currentServer_->getHost() % currentServer_->getPort() % e.what());
-
-        KAA_MUTEX_LOCKING("channelGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(lockInternal, channelGuard_);
-        KAA_MUTEX_LOCKED("channelGuard_");
-
-        lastConnectionFailed_ = true;
-
-        KAA_MUTEX_UNLOCKING("channelGuard_");
-        KAA_UNLOCK(lockInternal);
-        KAA_MUTEX_UNLOCKED("channelGuard_");
-
-        channelManager_->onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_));
+        KAA_LOG_ERROR(boost::format("Connection failed, server %1%:%2%: %3%")
+            % currentServer_->getHost() % currentServer_->getPort() % e.what());
+        onServerFailed();
     }
 }
 
+
+void AbstractHttpChannel::onServerFailed()
+{
+    KAA_MUTEX_LOCKING("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lockInternal, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
+
+    lastConnectionFailed_ = true;
+
+    KAA_MUTEX_UNLOCKING("channelGuard_");
+    KAA_UNLOCK(lockInternal);
+    KAA_MUTEX_UNLOCKED("channelGuard_");
+
+    channelManager_->onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_));
+}
 
 void AbstractHttpChannel::sync(TransportType type)
 {

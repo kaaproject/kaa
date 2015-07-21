@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.profile;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +26,9 @@ import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
@@ -33,8 +38,6 @@ import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFamilyIdKey;
-import org.kaaproject.kaa.server.sync.EndpointVersionInfo;
-import org.kaaproject.kaa.server.sync.EventClassFamilyVersionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +101,10 @@ public class DefaultProfileService implements ProfileService {
         AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(request.getAppToken());
         LOG.trace("Application by token: {} found: {}", request.getAppToken(), appSeqNumber);
 
-        String profileJson = decodeProfile(request.getProfile(), appSeqNumber.getAppToken(), request.getVersionInfo().getProfileVersion());
+        SdkPropertiesDto sdkProperties = cacheService.getSdkPropertiesBySdkToken(request.getSdkToken());
+        LOG.trace("Sdk properties by sdk token: {} found: {}", request.getSdkToken(), sdkProperties);
+
+        String profileJson = decodeProfile(request.getProfile(), appSeqNumber.getAppToken(), sdkProperties.getProfileSchemaVersion());
 
         EndpointObjectHash keyHash = EndpointObjectHash.fromSHA1(request.getEndpointKey());
 
@@ -111,7 +117,7 @@ public class DefaultProfileService implements ProfileService {
             dto.setProfile(profileJson);
             dto.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
 
-            populateVersionStates(appSeqNumber.getTenantId(), dto, request.getVersionInfo());
+            populateVersionStates(appSeqNumber.getTenantId(), dto, sdkProperties);
 
             if (request.getAccessToken() != null) {
                 dto.setAccessToken(request.getAccessToken());
@@ -121,10 +127,17 @@ public class DefaultProfileService implements ProfileService {
             dto.setNfSequenceNumber(0);
             dto.setChangedFlag(Boolean.FALSE);
 
+            try {
+                cacheService.putEndpointKey(keyHash, KeyUtil.getPublic(dto.getEndpointKey()));
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                LOG.error("Can't generate public key for endpoint key: {}. Reason: {}", dto.getEndpointKey(), e);
+                throw new RuntimeException(e);
+            }
+
             return endpointService.saveEndpointProfile(dto);
         } else {
             return updateProfile(new UpdateProfileRequest(request.getAppToken(), keyHash, request.getAccessToken(), request.getProfile(),
-                    request.getVersionInfo()));
+                    request.getSdkToken()));
         }
     }
 
@@ -143,7 +156,8 @@ public class DefaultProfileService implements ProfileService {
 
         AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(request.getApplicationToken());
 
-        String profileJson = decodeProfile(request.getProfile(), appSeqNumber.getAppToken(), request.getVersionInfo().getProfileVersion());
+        SdkPropertiesDto sdkProperties = cacheService.getSdkPropertiesBySdkToken(request.getSdkToken());
+        String profileJson = decodeProfile(request.getProfile(), appSeqNumber.getAppToken(), sdkProperties.getProfileSchemaVersion());
 
         if (request.getAccessToken() != null) {
             dto.setAccessToken(request.getAccessToken());
@@ -151,7 +165,7 @@ public class DefaultProfileService implements ProfileService {
         dto.setProfile(profileJson);
         dto.setProfileHash(EndpointObjectHash.fromSHA1(request.getProfile()).getData());
 
-        populateVersionStates(appSeqNumber.getTenantId(), dto, request.getVersionInfo());
+        populateVersionStates(appSeqNumber.getTenantId(), dto, sdkProperties);
 
         List<EndpointGroupStateDto> egsList = new ArrayList<>();
         dto.setCfGroupStates(egsList);
@@ -161,24 +175,24 @@ public class DefaultProfileService implements ProfileService {
         return endpointService.saveEndpointProfile(dto);
     }
 
-    protected void populateVersionStates(String tenantId, EndpointProfileDto dto, EndpointVersionInfo evInfo) {
-        dto.setProfileVersion(evInfo.getProfileVersion());
-        dto.setConfigurationVersion(evInfo.getConfigVersion());
-        dto.setSystemNfVersion(evInfo.getSystemNfVersion());
-        dto.setUserNfVersion(evInfo.getUserNfVersion());
-        dto.setLogSchemaVersion(evInfo.getLogSchemaVersion());
-        if (evInfo.getEventFamilyVersions() != null) {
-            List<EventClassFamilyVersionStateDto> ecfVersionStates = new ArrayList<>(evInfo.getEventFamilyVersions().size());
-            for (EventClassFamilyVersionInfo ecfVersionInfo : evInfo.getEventFamilyVersions()) {
+    protected void populateVersionStates(String tenantId, EndpointProfileDto dto, SdkPropertiesDto sdkProperties) {
+        dto.setProfileVersion(sdkProperties.getProfileSchemaVersion());
+        dto.setConfigurationVersion(sdkProperties.getConfigurationSchemaVersion());
+        dto.setUserNfVersion(sdkProperties.getNotificationSchemaVersion());
+        dto.setLogSchemaVersion(sdkProperties.getLogSchemaVersion());
+        if (sdkProperties.getAefMapIds() != null) {
+            List<ApplicationEventFamilyMapDto> aefMaps = cacheService.getApplicationEventFamilyMapsByIds(sdkProperties.getAefMapIds());
+            List<EventClassFamilyVersionStateDto> ecfVersionStates = new ArrayList<>(aefMaps.size());
+            for (ApplicationEventFamilyMapDto aefMap : aefMaps) {
                 EventClassFamilyVersionStateDto ecfVersionDto = new EventClassFamilyVersionStateDto();
-                String ecfId = cacheService.getEventClassFamilyIdByName(new EventClassFamilyIdKey(tenantId, ecfVersionInfo.getName()));
+                String ecfId = cacheService.getEventClassFamilyIdByName(new EventClassFamilyIdKey(tenantId, aefMap.getEcfName()));
                 if (ecfId != null) {
                     ecfVersionDto.setEcfId(ecfId);
-                    ecfVersionDto.setVersion(ecfVersionInfo.getVersion());
+                    ecfVersionDto.setVersion(aefMap.getVersion());
                     ecfVersionStates.add(ecfVersionDto);
                 } else {
-                    LOG.warn("Failed to add ecf version state for ecf name {} and version {}", ecfVersionInfo.getName(),
-                            ecfVersionInfo.getVersion());
+                    LOG.warn("Failed to add ecf version state for ecf name {} and version {}", aefMap.getEcfName(),
+                            aefMap.getVersion());
                 }
             }
             dto.setEcfVersionStates(ecfVersionStates);

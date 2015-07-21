@@ -24,8 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class AbstractLogStorageTest {
-    private void testAddHelper(int addedN, int blockSize, int expectedN) {
-        LogStorage storage = (LogStorage) getStorage(blockSize);
+    private void testAddHelper(int addedN, int blockSize, int batchSize, int expectedN) {
+        LogStorage storage = (LogStorage) getStorage(blockSize, batchSize);
         List<LogRecord> expectedList = new LinkedList<>();
         LogRecord record = new LogRecord();
 
@@ -37,7 +37,7 @@ public abstract class AbstractLogStorageTest {
             expectedList.add(record);
         }
 
-        LogBlock group = storage.getRecordBlock(blockSize);
+        LogBlock group = storage.getRecordBlock(blockSize, batchSize);
         List<LogRecord> actualList = group.getRecords();
 
         Assert.assertTrue("Expected: " + expectedList.size() + ", actual: " + actualList.size()
@@ -60,8 +60,9 @@ public abstract class AbstractLogStorageTest {
     @Test
     public void testEmptyLogRecord() {
         long bucketSize = 3;
-        LogStorage storage = (LogStorage) getStorage(bucketSize);
-        LogBlock group = storage.getRecordBlock(5);
+        int recordCount = 3;
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
+        LogBlock group = storage.getRecordBlock(5, 1);
         Assert.assertTrue(group == null);
         storage.close();
     }
@@ -69,7 +70,8 @@ public abstract class AbstractLogStorageTest {
     @Test
     public void testRecordCountAndConsumedBytes() {
         long bucketSize = 3;
-        LogStorage storage = (LogStorage) getStorage(bucketSize);
+        int recordCount = 3;
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
         LogRecord record = new LogRecord();
         int insertionCount = 3;
 
@@ -81,17 +83,16 @@ public abstract class AbstractLogStorageTest {
             storage.addLogRecord(record);
         }
 
-        LogStorageStatus logStorageStatus = (LogStorageStatus) storage;
-
-        Assert.assertTrue(logStorageStatus.getRecordCount() == insertionCount);
-        Assert.assertTrue(logStorageStatus.getConsumedVolume() == (insertionCount * record.getSize()));
+        Assert.assertTrue(storage.getStatus().getRecordCount() == insertionCount);
+        Assert.assertTrue(storage.getStatus().getConsumedVolume() == (insertionCount * record.getSize()));
         storage.close();
     }
 
     @Test
     public void testUniqueIdGeneration() {
         long bucketSize = 3;
-        LogStorage storage = (LogStorage) getStorage(bucketSize);
+        int recordCount = 3;
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
         LogRecord record = new LogRecord();
 
         int insertionCount = 3;
@@ -104,8 +105,8 @@ public abstract class AbstractLogStorageTest {
             storage.addLogRecord(record);
         }
 
-        LogBlock group1 = storage.getRecordBlock(6);
-        LogBlock group2 = storage.getRecordBlock(6);
+        LogBlock group1 = storage.getRecordBlock(6, 2);
+        LogBlock group2 = storage.getRecordBlock(6, 2);
 
         Assert.assertNotEquals(group1.getBlockId(), group2.getBlockId());
         storage.close();
@@ -116,16 +117,17 @@ public abstract class AbstractLogStorageTest {
         /*
          * Size of each record is 3B
          */
-        testAddHelper(1, 3, 1);
-        testAddHelper(4, 3, 1);
-        testAddHelper(3, 9, 3);
-        testAddHelper(5, 5, 1);
+        testAddHelper(1, 3, 1, 1);
+        testAddHelper(4, 3, 2, 1);
+        testAddHelper(3, 9, 4, 3);
+        testAddHelper(5, 5, 2, 1);
     }
 
     @Test
     public void testGetSameLogBlock() {
         long bucketSize = 3;
-        LogStorage storage = (LogStorage) getStorage(bucketSize);
+        int recordCount = 3;
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
         LogRecord record = new LogRecord();
 
         int insertionCount = 3;
@@ -138,11 +140,11 @@ public abstract class AbstractLogStorageTest {
             storage.addLogRecord(record);
         }
 
-        LogBlock group1 = storage.getRecordBlock(7);
+        LogBlock group1 = storage.getRecordBlock(7, 2);
 
         storage.notifyUploadFailed(group1.getBlockId());
 
-        LogBlock group2 = storage.getRecordBlock(7);
+        LogBlock group2 = storage.getRecordBlock(7, 2);
 
         Assert.assertTrue("Expected: " + group1.getRecords().size() + ", actual: " + group2.getRecords().size()
                 , group1.getRecords().size() == group2.getRecords().size());
@@ -162,8 +164,9 @@ public abstract class AbstractLogStorageTest {
 
     @Test
     public void testLogRecordRemoval() {
-        long bucketSize = 3;
-        LogStorage storage = (LogStorage) getStorage(bucketSize);
+        long bucketSize = 9;
+        int recordCount = 3;
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
         LogRecord record = new LogRecord();
 
         int insertionCount = 7;
@@ -176,25 +179,26 @@ public abstract class AbstractLogStorageTest {
             storage.addLogRecord(record);
         }
 
-        LogBlock removingBlock = storage.getRecordBlock(7);
+        LogBlock removingBlock = storage.getRecordBlock(7, 2);
 
         insertionCount -= removingBlock.getRecords().size();
         storage.removeRecordBlock(removingBlock.getBlockId());
 
-        removingBlock = storage.getRecordBlock(9);
+        removingBlock = storage.getRecordBlock(9, 3);
 
         insertionCount -= removingBlock.getRecords().size();
         storage.removeRecordBlock(removingBlock.getBlockId());
 
-        LogBlock leftBlock = storage.getRecordBlock(50);
+        LogBlock leftBlock = storage.getRecordBlock(50, 50);
         Assert.assertTrue(leftBlock.getRecords().size() == insertionCount);
         storage.close();
     }
 
     @Test
     public void testComplexLogRemoval() {
-        long bucketSize = 3;
-        LogStorage storage = (LogStorage) getStorage(bucketSize);
+        long bucketSize = 9;
+        int recordCount = 3;
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
         LogRecord record = new LogRecord();
 
         int insertionCount = 8;
@@ -207,24 +211,75 @@ public abstract class AbstractLogStorageTest {
             storage.addLogRecord(record);
         }
 
-        LogBlock removingBlock1 = storage.getRecordBlock(7);
+        LogBlock removingBlock1 = storage.getRecordBlock(7, 2);
         insertionCount -= removingBlock1.getRecords().size();
 
-        LogBlock removingBlock2 = storage.getRecordBlock(9);
+        LogBlock removingBlock2 = storage.getRecordBlock(9, 3);
         insertionCount -= removingBlock2.getRecords().size();
 
-        LogBlock removingBlock3 = storage.getRecordBlock(6);
+        LogBlock removingBlock3 = storage.getRecordBlock(6, 2);
         insertionCount -= removingBlock3.getRecords().size();
 
         storage.removeRecordBlock(removingBlock2.getBlockId());
         storage.notifyUploadFailed(removingBlock1.getBlockId());
         insertionCount += removingBlock1.getRecords().size();
 
-        LogBlock leftBlock = storage.getRecordBlock(50);
-        Assert.assertTrue("Ac: " + leftBlock.getRecords().size() + ", ex: " + insertionCount
-                , leftBlock.getRecords().size() == insertionCount);
+        LogBlock leftBlock1 = storage.getRecordBlock(50, 50);
+        LogBlock leftBlock2 = storage.getRecordBlock(50, 50);
+        int leftSize = leftBlock1.getRecords().size();
+        if (leftBlock2 != null) {
+            leftSize += leftBlock2.getRecords().size();
+        }
+        Assert.assertTrue("Ac: " + leftSize + ", ex: " + insertionCount
+                , leftSize == insertionCount);
         storage.close();
     }
 
-    protected abstract Object getStorage(long bucketSize);
+    @Test
+    public void testLogStoreCountAndVolume() {
+        long bucketSize = 9;
+        int recordCount = 3;
+        LogStorage storage = (LogStorage) getStorage(bucketSize, recordCount);
+        LogRecord record = new LogRecord();
+
+        int insertionCount = 9;
+        int receivedCount = 0;
+
+        /*
+         * Size of each record is 3B
+         */
+        int iter = insertionCount;
+        while (iter-- > 0) {
+            storage.addLogRecord(record);
+        }
+
+        LogBlock logBlock = storage.getRecordBlock(6, 2);
+        receivedCount = addIfNotEmpty(receivedCount, logBlock);
+        Assert.assertEquals(insertionCount - receivedCount, storage.getStatus().getRecordCount());
+        Assert.assertEquals((insertionCount - receivedCount) * 3, storage.getStatus().getConsumedVolume());
+
+        logBlock = storage.getRecordBlock(7, 3);
+        receivedCount = addIfNotEmpty(receivedCount, logBlock);
+        Assert.assertEquals(insertionCount - receivedCount, storage.getStatus().getRecordCount());
+        Assert.assertEquals((insertionCount - receivedCount) * 3, storage.getStatus().getConsumedVolume());
+
+        logBlock = storage.getRecordBlock(9, 2);
+        receivedCount = addIfNotEmpty(receivedCount, logBlock);
+        Assert.assertEquals(insertionCount - receivedCount, storage.getStatus().getRecordCount());
+        Assert.assertEquals((insertionCount - receivedCount) * 3, storage.getStatus().getConsumedVolume());
+
+        storage.notifyUploadFailed(logBlock.getBlockId());
+        receivedCount -= logBlock.getRecords().size();
+        Assert.assertEquals(insertionCount - receivedCount, storage.getStatus().getRecordCount());
+        Assert.assertEquals((insertionCount - receivedCount) * 3, storage.getStatus().getConsumedVolume());
+    }
+
+    private int addIfNotEmpty(int count, LogBlock logBlock) {
+        if (logBlock != null && logBlock.getRecords().size() > 0) {
+            count += logBlock.getRecords().size();
+        }
+        return count;
+    }
+
+    protected abstract Object getStorage(long bucketSize, int recordCount);
 }

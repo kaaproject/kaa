@@ -47,6 +47,8 @@ import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import de.greenrobot.event.EventBus;
 
+import java.lang.Override;
+
 /**
  * The implementation of the base {@link Application} class. Performs initialization of the
  * application resources including initialization of the Kaa client. Handles the Kaa client lifecycle.
@@ -139,6 +141,16 @@ public class CellMonitorApplication extends Application {
             @Override
             public long getBatchSize() {
                 return 8 * 1024;
+            }
+
+            @Override
+            public int getBatchCount() {
+                return 20;
+            }
+
+            @Override
+            public int getUploadCheckPeriod() {
+                return 30;
             }
         });
         

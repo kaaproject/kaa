@@ -21,6 +21,8 @@
 #include <memory>
 #include <sstream>
 #include <functional>
+#include <chrono>
+#include <thread>
 
 #include <boost/bind.hpp>
 
@@ -34,6 +36,7 @@
 #include "kaa/kaatcp/PingRequest.hpp"
 #include "kaa/kaatcp/DisconnectMessage.hpp"
 #include "kaa/http/HttpUtils.hpp"
+#include "kaa/IKaaClientStateStorage.hpp"
 
 namespace kaa {
 
@@ -55,10 +58,11 @@ const std::map<TransportType, ChannelDirection> DefaultOperationTcpChannel::SUPP
         };
 
 
-DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys)
+DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientStateStoragePtr clientState)
     : clientKeys_(clientKeys), work_(io_), socketWork_(socketIo_),/*sock_(io_), */pingTimer_(io_), connAckTimer_(io_)/*, reconnectTimer_(io_)*/, retryTimer_("DefaultOperationTcpChannel retryTimer")
     , firstStart_(true), isConnected_(false), isFirstResponseReceived_(false), isPendingSyncRequest_(false)
-    , isShutdown_(false), isPaused_(false), isFailoverInProgress_(false), multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager)
+    , isShutdown_(false), isPaused_(false), isFailoverInProgress_(false), multiplexer_(nullptr), demultiplexer_(nullptr)
+    , channelManager_(channelManager), clientState_(clientState)
 {
     responsePorcessor.registerConnackReceiver(std::bind(&DefaultOperationTcpChannel::onConnack, this, std::placeholders::_1));
     responsePorcessor.registerKaaSyncReceiver(std::bind(&DefaultOperationTcpChannel::onKaaSync, this, std::placeholders::_1));
@@ -76,9 +80,20 @@ DefaultOperationTcpChannel::~DefaultOperationTcpChannel()
 void DefaultOperationTcpChannel::onConnack(const ConnackMessage& message)
 {
     KAA_LOG_DEBUG(boost::format("Channel \"%1%\". Connack (result=%2%) response received") % getId() % message.getMessage());
-    if (message.getReturnCode() != ConnackReturnCode::SUCCESS) {
+
+    switch (message.getReturnCode()) {
+    case ConnackReturnCode::ACCEPTED:
+        break;
+    case ConnackReturnCode::REFUSE_BAD_CREDENTIALS:
+        KAA_LOG_WARN(boost::format("Channel \"%1%\". Connack result: bad credentials. Going to re-register... ") % getId());
+        clientState_->setRegistered(false);
+        clientState_->save();
+        setServer(currentServer_);
+        break;
+    default:
         KAA_LOG_ERROR(boost::format("Channel \"%1%\". Connack result failed: %2%. Closing connection") % getId() % message.getMessage());
         onServerFailed();
+        break;
     }
 }
 
@@ -244,29 +259,29 @@ void DefaultOperationTcpChannel::onServerFailed()
     closeConnection();
 
     if (connectivityChecker_ && !connectivityChecker_->checkConnectivity()) {
-    	KAA_LOG_TRACE("Loss of connectivity detected.");
-    	FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::NO_CONNECTIVITY);
+        KAA_LOG_TRACE("Loss of connectivity detected.");
+        FailoverStrategyDecision decision = failoverStrategy_->onFailover(Failover::NO_CONNECTIVITY);
         switch (decision.getAction()) {
-			case FailoverStrategyAction::NOOP:
-			    KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
-			    isFailoverInProgress_ = false;
-				return;
-			case FailoverStrategyAction::RETRY:
-			{
-				std::size_t period = decision.getRetryPeriod();
-				KAA_LOG_WARN(boost::format("Attempt to reconnect will be made in %1% secs "
-						"according to failover strategy decision.") % period);
-				retryTimer_.stop();
-				retryTimer_.start(period, [&] { isFailoverInProgress_ = false; openConnection(); });
-				break;
-			}
-			case FailoverStrategyAction::STOP_APP:
-			    KAA_LOG_WARN("Stopping application according to failover strategy decision!");
-				exit(EXIT_FAILURE);
-				break;
-	        default:
-	            break;
-		}
+            case FailoverStrategyAction::NOOP:
+                KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
+                isFailoverInProgress_ = false;
+                return;
+            case FailoverStrategyAction::RETRY:
+            {
+                std::size_t period = decision.getRetryPeriod();
+                KAA_LOG_WARN(boost::format("Attempt to reconnect will be made in %1% secs "
+                        "according to failover strategy decision.") % period);
+                retryTimer_.stop();
+                retryTimer_.start(period, [&] { isFailoverInProgress_ = false; openConnection(); });
+                break;
+            }
+            case FailoverStrategyAction::STOP_APP:
+                KAA_LOG_WARN("Stopping application according to failover strategy decision!");
+                exit(EXIT_FAILURE);
+                break;
+            default:
+                break;
+        }
 
         //KAA_LOG_TRACE(boost::format("Loss of connectivity. Attempt to reconnect will be made in {} sec") % RECONNECT_TIMEOUT);
         //reconnectTimer_.expires_from_now(boost::posix_time::seconds(RECONNECT_TIMEOUT));
@@ -344,10 +359,10 @@ void DefaultOperationTcpChannel::setConnAckTimer()
 
 void DefaultOperationTcpChannel::createThreads()
 {
-    for (std::uint16_t i = 0; i < TIMER_THREADPOOL_SIZE; ++i) {
+    for (std::size_t i = 0; i < TIMER_THREADPOOL_SIZE; ++i) {
         timerThreads_[i] = std::thread([this](){ io_.run(); });
     }
-    for (std::uint16_t i = 0; i < SOCKET_THREADPOOL_SIZE; ++i) {
+    for (std::size_t i = 0; i < SOCKET_THREADPOOL_SIZE; ++i) {
         channelThreads_[i] = std::thread([this](){ socketIo_.run(); });
     }
 }
@@ -364,7 +379,7 @@ void DefaultOperationTcpChannel::onReadEvent(const boost::system::error_code& er
         try {
             if (responseStr.empty()) {
                  KAA_LOG_ERROR(boost::format("Channel \"%1%\". No data read from socket.") % getId());
-                 usleep(50000);
+                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
                  //onServerFailed();
             } else {
                 responsePorcessor.processResponseBuffer(responseStr.data(), responseStr.size());
@@ -489,7 +504,7 @@ void DefaultOperationTcpChannel::setServer(ITransportConnectionInfoPtr server)
             KAA_UNLOCK(lock);
             KAA_MUTEX_UNLOCKED("channelGuard_");
             closeConnection();
-            sleep(1);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
             isFailoverInProgress_ = false;
             io_.post(std::bind(&DefaultOperationTcpChannel::openConnection, this));
         } else {
@@ -605,11 +620,15 @@ void DefaultOperationTcpChannel::doShutdown()
         closeConnection();
         io_.stop();
         socketIo_.stop();
-        for (std::uint16_t i = 0; i < SOCKET_THREADPOOL_SIZE; ++i) {
-            channelThreads_[i].join();
+        for (std::size_t i = 0; i < SOCKET_THREADPOOL_SIZE; ++i) {
+            if (channelThreads_[i].joinable()) {
+                channelThreads_[i].join();
+            }
         }
-        for (std::uint16_t i = 0; i < TIMER_THREADPOOL_SIZE; ++i) {
-            timerThreads_[i].join();
+        for (std::size_t i = 0; i < TIMER_THREADPOOL_SIZE; ++i) {
+            if (timerThreads_[i].joinable()) {
+                timerThreads_[i].join();
+            }
         }
     }
 }

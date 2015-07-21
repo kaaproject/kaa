@@ -405,7 +405,7 @@ kaa_error_t kaa_client_process_channel_disconnected(kaa_client_t *kaa_client)
 kaa_error_t kaa_client_start(kaa_client_t *kaa_client
                            , external_process_fn external_process
                            , void *external_process_context
-                           , time_t max_delay)
+                           , kaa_time_t max_delay)
 {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 

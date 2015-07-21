@@ -41,7 +41,6 @@ import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.TransportException;
 import org.kaaproject.kaa.client.util.CommonsBase64;
-import org.kaaproject.kaa.common.endpoint.gen.EndpointVersionInfo;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 import org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
@@ -71,7 +70,6 @@ public class KaaClientTest {
 
         Mockito.when(clientProperties.getBootstrapServers()).thenReturn(buildDummyConnectionInfo());
         Mockito.when(clientProperties.getPropertiesHash()).thenReturn("test".getBytes());
-        Mockito.when(clientProperties.getVersionInfo()).thenReturn(Mockito.mock(EndpointVersionInfo.class));
 
         initStorageMock(storage);
 

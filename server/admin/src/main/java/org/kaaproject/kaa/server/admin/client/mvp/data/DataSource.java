@@ -34,7 +34,7 @@ import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -266,7 +266,7 @@ public class DataSource {
         });
     }
 
-    public void generateSdk(SdkKey key, 
+    public void generateSdk(SdkPropertiesDto key,
             final AsyncCallback<String> callback) {
         rpcService.generateSdk(key,
                 new DataCallback<String>(callback) {

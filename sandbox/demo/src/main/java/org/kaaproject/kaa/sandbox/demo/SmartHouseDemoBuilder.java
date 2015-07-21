@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -73,13 +72,13 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
         smartHouseApplication.setName("Smart house");
         smartHouseApplication = client.editApplication(smartHouseApplication);
                
-        sdkKey.setApplicationId(smartHouseApplication.getId());
-        sdkKey.setProfileSchemaVersion(1);
-        sdkKey.setConfigurationSchemaVersion(1);
-        sdkKey.setNotificationSchemaVersion(1);
-        sdkKey.setLogSchemaVersion(1);
-        sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
-        
+        sdkPropertiesDto.setApplicationId(smartHouseApplication.getId());
+        sdkPropertiesDto.setApplicationToken(smartHouseApplication.getApplicationToken());
+        sdkPropertiesDto.setProfileSchemaVersion(1);
+        sdkPropertiesDto.setConfigurationSchemaVersion(1);
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
+        sdkPropertiesDto.setLogSchemaVersion(1);
+
         loginTenantDeveloper(client);
         
         ApplicationEventFamilyMapDto deviceAefMap = mapEventClassFamily(client, smartHouseApplication, deviceEventClassFamily);
@@ -90,7 +89,7 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
         aefMapIds.add(deviceAefMap.getId());
         aefMapIds.add(thermoAefMap.getId());
         aefMapIds.add(musicAefMap.getId());
-        sdkKey.setAefMapIds(aefMapIds);
+        sdkPropertiesDto.setAefMapIds(aefMapIds);
         
         TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();        
         UserVerifierDto trustfulUserVerifier = new UserVerifierDto();
@@ -104,7 +103,7 @@ public class SmartHouseDemoBuilder extends AbstractDemoBuilder {
         RawData rawData = algotithm.getRootData();
         trustfulUserVerifier.setJsonConfiguration(rawData.getRawData());        
         trustfulUserVerifier = client.editUserVerifierDto(trustfulUserVerifier);
-        sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
+        sdkPropertiesDto.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
         
         logger.info("Finished loading 'Smart House Demo Application' data.");
     }

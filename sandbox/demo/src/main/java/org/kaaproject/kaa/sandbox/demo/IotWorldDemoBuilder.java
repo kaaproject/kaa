@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
@@ -63,8 +64,8 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         defaultGeoFencingDeviceAefMap.put("org.kaaproject.kaa.demo.iotworld.geo.OperationModeUpdateRequest", ApplicationEventAction.SINK);
         defaultGeoFencingDeviceAefMap.put("org.kaaproject.kaa.demo.iotworld.geo.GeoFencingPositionUpdate", ApplicationEventAction.SINK);
     }
-        
-    private Map<String, SdkKey> projectsSdkMap = new HashMap<>();
+
+    private Map<String, SdkPropertiesDto> projectsSdkMap = new HashMap<>();
 
     protected IotWorldDemoBuilder() {
         super("demo/iotworld");
@@ -180,7 +181,7 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
     private void configureSmartHomeApp(AdminClient client, 
             String applicationId, 
             Map<String, EventClassFamilyDto> ecfMap) throws Exception {
-        SdkKey sdkKey = createSdkKey(client, applicationId, true);
+        SdkPropertiesDto sdkKey = createSdkProperties(client, applicationId, true);
         
         List<String> aefMapIds = new ArrayList<>();
         
@@ -276,7 +277,7 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
     private void configureThermostatApp(AdminClient client, 
             String applicationId, 
             Map<String, EventClassFamilyDto> ecfMap) throws Exception {
-        SdkKey sdkKey = createSdkKey(client, applicationId, true);
+        SdkPropertiesDto sdkProperties = createSdkProperties(client, applicationId, true);
         
         List<String> aefMapIds = new ArrayList<>();
         
@@ -315,17 +316,17 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         aefMapIds.add(createAefMap(client, 
                 applicationId, 
                 ecfMap.get(FAN_EVENT_CLASS_FAMILY),
-                actionsMap));  
+                actionsMap));
+
+        sdkProperties.setAefMapIds(aefMapIds);
         
-        sdkKey.setAefMapIds(aefMapIds);
-        
-        projectsSdkMap.put(CLIMATE_ANDROID_ID, sdkKey);
+        projectsSdkMap.put(CLIMATE_ANDROID_ID, sdkProperties);
     }
     
     private void configureFanControlApp(AdminClient client, 
             String applicationId, 
             Map<String, EventClassFamilyDto> ecfMap) throws Exception {
-        SdkKey sdkKey = createSdkKey(client, applicationId, true);
+        SdkPropertiesDto sdkProperties = createSdkProperties(client, applicationId, true);
         
         List<String> aefMapIds = new ArrayList<>();
 
@@ -343,17 +344,17 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         aefMapIds.add(createAefMap(client, 
                 applicationId, 
                 ecfMap.get(FAN_EVENT_CLASS_FAMILY),
-                actionsMap));  
+                actionsMap));
+
+        sdkProperties.setAefMapIds(aefMapIds);
         
-        sdkKey.setAefMapIds(aefMapIds);
-        
-        projectsSdkMap.put(FAN_CONTROL_C_ID, sdkKey);
+        projectsSdkMap.put(FAN_CONTROL_C_ID, sdkProperties);
     }
     
     private void configureMusicPlayerApp(AdminClient client, 
             String applicationId, 
             Map<String, EventClassFamilyDto> ecfMap) throws Exception {
-        SdkKey sdkKey = createSdkKey(client, applicationId, true);
+        SdkPropertiesDto sdkProperties = createSdkProperties(client, applicationId, true);
         
         List<String> aefMapIds = new ArrayList<>();
 
@@ -382,18 +383,18 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         aefMapIds.add(createAefMap(client, 
                 applicationId, 
                 ecfMap.get(MUSIC_EVENT_CLASS_FAMILY),
-                actionsMap)); 
+                actionsMap));
+
+        sdkProperties.setAefMapIds(aefMapIds);
         
-        sdkKey.setAefMapIds(aefMapIds);
-        
-        projectsSdkMap.put(MUSICPLAYER_JAVA_ID, sdkKey);
+        projectsSdkMap.put(MUSICPLAYER_JAVA_ID, sdkProperties);
         
     }
 
     private void configurePhotoPlayerApp(AdminClient client, 
             String applicationId, 
             Map<String, EventClassFamilyDto> ecfMap) throws Exception {
-        SdkKey sdkKey = createSdkKey(client, applicationId, true);
+        SdkPropertiesDto sdkProperties = createSdkProperties(client, applicationId, true);
         
         List<String> aefMapIds = new ArrayList<>();
 
@@ -421,18 +422,18 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         aefMapIds.add(createAefMap(client, 
                 applicationId, 
                 ecfMap.get(PHOTO_EVENT_CLASS_FAMILY),
-                actionsMap)); 
+                actionsMap));
+
+        sdkProperties.setAefMapIds(aefMapIds);
         
-        sdkKey.setAefMapIds(aefMapIds);
-        
-        projectsSdkMap.put(PHOTOPLAYER_JAVA_ID, sdkKey);
+        projectsSdkMap.put(PHOTOPLAYER_JAVA_ID, sdkProperties);
         
     }
     
     private void configureLightControlApp(AdminClient client, 
             String applicationId, 
             Map<String, EventClassFamilyDto> ecfMap) throws Exception {
-        SdkKey sdkKey = createSdkKey(client, applicationId, true);
+        SdkPropertiesDto sdkProperties = createSdkProperties(client, applicationId, true);
         
         List<String> aefMapIds = new ArrayList<>();
 
@@ -457,17 +458,17 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         aefMapIds.add(createAefMap(client, 
                 applicationId, 
                 ecfMap.get(LIGHT_EVENT_CLASS_FAMILY),
-                actionsMap));           
+                actionsMap));
+
+        sdkProperties.setAefMapIds(aefMapIds);
         
-        sdkKey.setAefMapIds(aefMapIds);
-        
-        projectsSdkMap.put(LIGHT_CONTROL_C_ID, sdkKey);
+        projectsSdkMap.put(LIGHT_CONTROL_C_ID, sdkProperties);
     }
     
     private void configureIrrigationSystemApp(AdminClient client, 
             String applicationId, 
             Map<String, EventClassFamilyDto> ecfMap) throws Exception {
-        SdkKey sdkKey = createSdkKey(client, applicationId, true);
+        SdkPropertiesDto sdkProperties = createSdkProperties(client, applicationId, true);
         
         List<String> aefMapIds = new ArrayList<>();
 
@@ -486,11 +487,11 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         aefMapIds.add(createAefMap(client, 
                 applicationId, 
                 ecfMap.get(IRRIGATION_EVENT_CLASS_FAMILY),
-                actionsMap));        
+                actionsMap));
+
+        sdkProperties.setAefMapIds(aefMapIds);
         
-        sdkKey.setAefMapIds(aefMapIds);
-        
-        projectsSdkMap.put(IRRIGATION_SYSTEM_JAVA_ID, sdkKey);
+        projectsSdkMap.put(IRRIGATION_SYSTEM_JAVA_ID, sdkProperties);
     }
 
     
@@ -504,11 +505,11 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
         client.addEventClassFamilySchema(eventClassFamily.getId(), getResourcePath(resource));
         return eventClassFamily;
     }
-    
-    private SdkKey createSdkKey(AdminClient client, 
-            String applicationId, 
-            boolean createVerifier) throws Exception {
-        SdkKey sdkKey = new SdkKey();
+
+    private SdkPropertiesDto createSdkProperties(AdminClient client,
+                                       String applicationId,
+                                       boolean createVerifier) throws Exception {
+        SdkPropertiesDto sdkKey = new SdkPropertiesDto();
         sdkKey.setApplicationId(applicationId);
         sdkKey.setProfileSchemaVersion(1);
         sdkKey.setConfigurationSchemaVersion(1);
@@ -565,12 +566,12 @@ public class IotWorldDemoBuilder extends AbstractDemoBuilder {
     }
     
     @Override
-    protected boolean isMiltiApplcationProject() {
+    protected boolean isMultiApplicationProject() {
         return true;
     }
     
     @Override
-    protected Map<String, SdkKey> getProjectsSdkMap() {
+    protected Map<String, SdkPropertiesDto> getProjectsSdkMap() {
         return projectsSdkMap;
     }
 

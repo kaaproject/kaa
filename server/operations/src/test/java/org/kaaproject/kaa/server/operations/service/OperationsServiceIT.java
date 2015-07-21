@@ -24,7 +24,9 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,6 +52,8 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -60,6 +64,7 @@ import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
+import org.kaaproject.kaa.server.common.dao.SdkKeyService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
@@ -81,6 +86,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.SdkKey;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
@@ -90,7 +96,6 @@ import org.kaaproject.kaa.server.sync.ClientSyncMetaData;
 import org.kaaproject.kaa.server.sync.ConfigurationClientSync;
 import org.kaaproject.kaa.server.sync.EndpointAttachRequest;
 import org.kaaproject.kaa.server.sync.EndpointDetachRequest;
-import org.kaaproject.kaa.server.sync.EndpointVersionInfo;
 import org.kaaproject.kaa.server.sync.EventClientSync;
 import org.kaaproject.kaa.server.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.sync.NotificationClientSync;
@@ -141,8 +146,11 @@ public class OperationsServiceIT extends AbstractTest {
     private static final BasicEndpointProfile ENDPOINT_PROFILE = new BasicEndpointProfile("dummy profile 1");
     private static final BasicEndpointProfile NEW_ENDPOINT_PROFILE = new BasicEndpointProfile("dummy profile 2");
     private static final BasicEndpointProfile FAKE_ENDPOINT_PROFILE = new BasicEndpointProfile("dummy profile 3");
-    private static final byte[] ENDPOINT_KEY = "Endpoint Super Secret Public Key".getBytes(UTF_8);
-    private static final byte[] ENDPOINT_KEY2 = "Endpoint Super Secret Public Key 2".getBytes(UTF_8);
+    private static final byte[] ENDPOINT_KEY = getRandEndpointKey();
+    private static final byte[] ENDPOINT_KEY2 = getRandEndpointKey();
+    private static final SdkPropertiesDto SDK_PROPERTIES = new SdkPropertiesDto(null, CONF_SCHEMA_VERSION,
+            PROFILE_SCHEMA_VERSION, 1, 1, SdkPlatform.JAVA, null, null, null);
+    private String SDK_TOKEN;
 
     public static final String NEW_COMPLEX_CONFIG = "service/delta/complexFieldsDeltaNew.json";
 
@@ -209,6 +217,9 @@ public class OperationsServiceIT extends AbstractTest {
 
     @Autowired
     protected ProfileFilterDao<ProfileFilter> profileFilterDao;
+
+    @Autowired
+    protected SdkKeyService sdkKeyService;
     
     private EndpointUserDto userDto;
 
@@ -227,7 +238,6 @@ public class OperationsServiceIT extends AbstractTest {
     @Before
     public void beforeTest() throws IOException, NoSuchAlgorithmException, SQLException {
         clearDBData();
-
         keyPair = KeyUtil.generateKeyPair();
         operationsService.setPublicKey(keyPair.getPublic());
 
@@ -251,6 +261,9 @@ public class OperationsServiceIT extends AbstractTest {
 
         application = applicationDao.findById(applicationDto.getId());
 
+        SDK_PROPERTIES.setApplicationId(applicationDto.getId());
+        SDK_TOKEN = new SdkKey(SDK_PROPERTIES).getToken();
+        sdkKeyService.saveSdkKey(SDK_PROPERTIES);
 
         EndpointGroup groupAll = endpointGroupDao.findByAppIdAndWeight(application.getStringId(), 0);
 
@@ -348,12 +361,11 @@ public class OperationsServiceIT extends AbstractTest {
         ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
+        md.setSdkToken(SDK_TOKEN);
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(ByteBuffer.wrap(ENDPOINT_KEY),
-                ByteBuffer.wrap(profile),
-                new EndpointVersionInfo(CONF_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
-                null);
+                ByteBuffer.wrap(profile), SDK_TOKEN, null);
         request.setProfileSync(profileSync);
 
         request.setConfigurationSync(new ConfigurationClientSync());
@@ -384,12 +396,11 @@ public class OperationsServiceIT extends AbstractTest {
         ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
+        md.setSdkToken(SDK_TOKEN);
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(ByteBuffer.wrap(ENDPOINT_KEY),
-                ByteBuffer.wrap(profile),
-                new EndpointVersionInfo(CONF_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
-                null);
+                ByteBuffer.wrap(profile), SDK_TOKEN, null);
         request.setProfileSync(profileSync);
 
         request.setConfigurationSync(new ConfigurationClientSync());
@@ -433,12 +444,11 @@ public class OperationsServiceIT extends AbstractTest {
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY).getData()));
         md.setProfileHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(oldProfile).getData()));
+        md.setSdkToken(SDK_TOKEN);
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(null,
-                ByteBuffer.wrap(profile),
-                new EndpointVersionInfo(CONF_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
-                null);
+                ByteBuffer.wrap(profile), SDK_TOKEN, null);
         request.setProfileSync(profileSync);
 
         ConfigurationClientSync confSyncRequest = new ConfigurationClientSync();
@@ -615,12 +625,11 @@ public class OperationsServiceIT extends AbstractTest {
         ClientSyncMetaData md = new ClientSyncMetaData();
         md.setApplicationToken(application.getApplicationToken());
         md.setEndpointPublicKeyHash(ByteBuffer.wrap(EndpointObjectHash.fromSHA1(ENDPOINT_KEY2).getData()));
+        md.setSdkToken(SDK_TOKEN);
         request.setClientSyncMetaData(md);
 
         ProfileClientSync profileSync = new ProfileClientSync(ByteBuffer.wrap(ENDPOINT_KEY2),
-                ByteBuffer.wrap(profile),
-                new EndpointVersionInfo(CONF_SCHEMA_VERSION, PROFILE_SCHEMA_VERSION, 1, 1, null, 1),
-                ENDPOINT_ACCESS_TOKEN);
+                ByteBuffer.wrap(profile), SDK_TOKEN, ENDPOINT_ACCESS_TOKEN);
         request.setProfileSync(profileSync);
 
         request.setConfigurationSync(new ConfigurationClientSync());
@@ -863,5 +872,14 @@ public class OperationsServiceIT extends AbstractTest {
         context.setStatus(SyncStatus.SUCCESS);
         context.setMetaData(request.getClientSyncMetaData());
         return context;
+    }
+
+    private static byte[] getRandEndpointKey() {
+        try {
+            return KeyPairGenerator.getInstance("RSA", "SunRsaSign").generateKeyPair().getPublic().getEncoded();
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

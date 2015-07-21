@@ -15,14 +15,14 @@
  */
 package org.kaaproject.kaa.sandbox.web.services.cache;
 
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.sandbox.web.shared.dto.ProjectDataKey;
 import org.kaaproject.kaa.sandbox.web.shared.services.SandboxServiceException;
 
 public interface CacheService {
 
-       FileData getSdk(SdkKey key) throws SandboxServiceException;
+       FileData getSdk(SdkPropertiesDto key) throws SandboxServiceException;
        
        FileData getProjectFile(ProjectDataKey key);
        

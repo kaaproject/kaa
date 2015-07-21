@@ -41,6 +41,7 @@ public class SyncRequestMessageTest {
                                                                null,
                                                                null,
                                                                "applicationToken",
+                                                               "sdkToken",
                                                                0,
                                                                true);
 
