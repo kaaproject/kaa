@@ -488,7 +488,8 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/openssl.framework/**</exclude>
                         <exclude>**/openssl/**</exclude>
                         <exclude>**/*xcodeproj/**</exclude>
-                        
+                        <exclude>**/*.plist</exclude>
+                        <exclude>**/*.cproject</exclude>
                     </excludes>
                 </configuration>
             </plugin>
