@@ -316,7 +316,6 @@
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>control</artifactId>
                                             <version>${project.version}</version>
-                                            <classifier>rpm</classifier>
                                             <type>rpm</type>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${distro.path}</outputDirectory>
@@ -326,7 +325,6 @@
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>operations</artifactId>
                                             <version>${project.version}</version>
-                                            <classifier>rpm</classifier>
                                             <type>rpm</type>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${distro.path}</outputDirectory>
@@ -336,7 +334,6 @@
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>bootstrap</artifactId>
                                             <version>${project.version}</version>
-                                            <classifier>rpm</classifier>
                                             <type>rpm</type>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${distro.path}</outputDirectory>
@@ -346,7 +343,6 @@
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>admin</artifactId>
                                             <version>${project.version}</version>
-                                            <classifier>rpm</classifier>
                                             <type>rpm</type>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${distro.path}</outputDirectory>
