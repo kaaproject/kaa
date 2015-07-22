@@ -26,6 +26,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.data.NotificationSchemasDataPr
 import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
@@ -81,6 +82,8 @@ public class NotificationSchemasActivity extends AbstractListActivity<Notificati
                 ServletHelper.downloadRecordLibrary(key);
             }
         };
-        KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.NOTIFICATION_SCHEMA, callback);
+        if (event.getAction() == KaaRowAction.DOWNLOAD_SCHEMA) {
+            KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.NOTIFICATION_SCHEMA, callback);
+        }
     }
 }
