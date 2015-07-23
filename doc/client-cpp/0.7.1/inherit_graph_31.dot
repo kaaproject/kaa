@@ -1,0 +1,15 @@
+digraph "Graphical Class Hierarchy"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="kaa::ILogStorage",height=0.2,width=0.4,color="black",URL="$classkaa_1_1ILogStorage.html",tooltip="The public interface to access to the log storage. "];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="kaa::MemoryLogStorage",height=0.2,width=0.4,color="black",URL="$classkaa_1_1MemoryLogStorage.html",tooltip="The default ILogStorage implementation. "];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="kaa::SQLiteDBLogStorage",height=0.2,width=0.4,color="black",URL="$classkaa_1_1SQLiteDBLogStorage.html"];
+  Node4 [label="kaa::ILogStorageStatus",height=0.2,width=0.4,color="black",URL="$classkaa_1_1ILogStorageStatus.html",tooltip="The public interface to represent the current log storage state. "];
+  Node4 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+}

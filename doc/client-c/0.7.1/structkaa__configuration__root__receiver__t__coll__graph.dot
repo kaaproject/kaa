@@ -1,0 +1,16 @@
+digraph "kaa_configuration_root_receiver_t"
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  Node1 [label="kaa_configuration_root\l_receiver_t",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" on_configuration_updated" ,fontname="FreeSans"];
+  Node2 [label="kaa_configuration_root\l_record_t",height=0.2,width=0.4,color="black",URL="$structkaa__configuration__root__record__t.html"];
+  Node3 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" serialize" ,fontname="FreeSans"];
+  Node3 [label="avro_writer_t_",height=0.2,width=0.4,color="black",URL="$structavro__writer__t__.html"];
+  Node4 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" data" ,fontname="FreeSans"];
+  Node4 [label="kaa_string_t",height=0.2,width=0.4,color="black",URL="$structkaa__string__t.html"];
+  Node5 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" __uuid" ,fontname="FreeSans"];
+  Node5 [label="kaa_union_t",height=0.2,width=0.4,color="black",URL="$structkaa__union__t.html"];
+  Node3 -> Node5 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" serialize" ,fontname="FreeSans"];
+}

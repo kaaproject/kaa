@@ -1,0 +1,27 @@
+var classkaa_1_1DefaultLogUploadStrategy =
+[
+    [ "getBatchSize", "classkaa_1_1DefaultLogUploadStrategy.html#ad342b15e04e67bbb8afcbcd9e8ff1359", null ],
+    [ "getLogUploadCheckPeriod", "classkaa_1_1DefaultLogUploadStrategy.html#acdaadc9f19f39224ae51280f0fc7f3a6", null ],
+    [ "getRecordsBatchCount", "classkaa_1_1DefaultLogUploadStrategy.html#ad5ef11a625ba75472de05a3c3675c8bb", null ],
+    [ "getTimeout", "classkaa_1_1DefaultLogUploadStrategy.html#a397fbd1ee606bd8ed9a9f946089f7de3", null ],
+    [ "getTimeoutCheckPeriod", "classkaa_1_1DefaultLogUploadStrategy.html#a78edea01f167905f619631fd195aafbb", null ],
+    [ "isUploadNeeded", "classkaa_1_1DefaultLogUploadStrategy.html#a390ad5ae6aee3a61027ce53605bb6e54", null ],
+    [ "onFailure", "classkaa_1_1DefaultLogUploadStrategy.html#ac07b57d11dc15e6eadb1c671562ae21a", null ],
+    [ "onTimeout", "classkaa_1_1DefaultLogUploadStrategy.html#a8b906aa80c3e452da63269b3c9767d4c", null ],
+    [ "setBatchSize", "classkaa_1_1DefaultLogUploadStrategy.html#a68d6a96550ebe32ffa9cde4d1d506e8f", null ],
+    [ "setCountThreshold", "classkaa_1_1DefaultLogUploadStrategy.html#a2b10e05ae989535ed1e92cd43452728a", null ],
+    [ "setLogUploadCheckPeriod", "classkaa_1_1DefaultLogUploadStrategy.html#ac48d78dd0122240f9f8d5522b8410b6b", null ],
+    [ "setRecordsBatchCount", "classkaa_1_1DefaultLogUploadStrategy.html#acf7acc63262c622c377cdab82a7fd205", null ],
+    [ "setRetryPeriod", "classkaa_1_1DefaultLogUploadStrategy.html#a3e8bc15b280e737cb3448f256a0a5b9d", null ],
+    [ "setUploadTimeout", "classkaa_1_1DefaultLogUploadStrategy.html#ad58441082c9baeca827fea4a541929ff", null ],
+    [ "setUploadTimeoutCheckPeriod", "classkaa_1_1DefaultLogUploadStrategy.html#a9b707ce77788838c2d73c17d2f91138a", null ],
+    [ "setVolumeThreshold", "classkaa_1_1DefaultLogUploadStrategy.html#ae5fa2f6aa25019472b77d62322b1ffb7", null ],
+    [ "DEFAULT_BATCH_SIZE", "classkaa_1_1DefaultLogUploadStrategy.html#ae38540bb4b9bdc2f8d24f0915474c5c3", null ],
+    [ "DEFAULT_LOG_UPLOAD_CHECK_PERIOD", "classkaa_1_1DefaultLogUploadStrategy.html#ac3c568a0801b75c333cf4763e331ef4a", null ],
+    [ "DEFAULT_RECORDS_BATCH_COUNT", "classkaa_1_1DefaultLogUploadStrategy.html#a04bd2389e74da9dcfd6ac11242473aff", null ],
+    [ "DEFAULT_RETRY_PERIOD", "classkaa_1_1DefaultLogUploadStrategy.html#abd65e62cfadfc635ed0309c2e59164d6", null ],
+    [ "DEFAULT_TIMEOUT_CHECK_PERIOD", "classkaa_1_1DefaultLogUploadStrategy.html#a80b5dcca380f07292330b45e9a444b6f", null ],
+    [ "DEFAULT_UPLOAD_COUNT_THRESHOLD", "classkaa_1_1DefaultLogUploadStrategy.html#adf9d14fafa99340eede1b21b42cf921f", null ],
+    [ "DEFAULT_UPLOAD_TIMEOUT", "classkaa_1_1DefaultLogUploadStrategy.html#a192bf8eefc6e8ca2c18f99a65a4c34b4", null ],
+    [ "DEFAULT_UPLOAD_VOLUME_THRESHOLD", "classkaa_1_1DefaultLogUploadStrategy.html#a5b8eb7ec51559640296d0d98e49d2d5a", null ]
+];

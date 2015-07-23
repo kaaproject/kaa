@@ -1,0 +1,21 @@
+digraph "/var/lib/jenkins/workspace/kaa_stable/client/client-multi/client-c/src/kaa/platform-impl" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_08cd018e1ae44a7fd9aa444acd113371 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="kaa" fontname="FreeSans", fontsize="10", URL="dir_08cd018e1ae44a7fd9aa444acd113371.html"]
+  subgraph clusterdir_ac945a678f77578aa2e77d1814e34588 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_ac945a678f77578aa2e77d1814e34588.html"];
+    dir_ac945a678f77578aa2e77d1814e34588 [shape=plaintext label="platform-impl"];
+    dir_a5885ebe7da5fc6ed1a7106e0c18e20b [shape=box label="Econais" color="red" fillcolor="white" style="filled" URL="dir_a5885ebe7da5fc6ed1a7106e0c18e20b.html"];
+    dir_d7219f6affb2950536525fd0bdc4ef34 [shape=box label="posix" color="black" fillcolor="white" style="filled" URL="dir_d7219f6affb2950536525fd0bdc4ef34.html"];
+    dir_bc5fe47fb73b07df470a7178fc17d2f3 [shape=box label="stm32" color="red" fillcolor="white" style="filled" URL="dir_bc5fe47fb73b07df470a7178fc17d2f3.html"];
+  }
+  }
+  dir_e23d472d76342075ad9c73af932db45b [shape=box label="platform" URL="dir_e23d472d76342075ad9c73af932db45b.html"];
+  dir_e23d472d76342075ad9c73af932db45b->dir_d7219f6affb2950536525fd0bdc4ef34 [headlabel="7", labeldistance=1.5 headhref="dir_000012_000020.html"];
+  dir_e23d472d76342075ad9c73af932db45b->dir_ac945a678f77578aa2e77d1814e34588 [headlabel="7", labeldistance=1.5 headhref="dir_000012_000017.html"];
+  dir_bc5fe47fb73b07df470a7178fc17d2f3->dir_e23d472d76342075ad9c73af932db45b [headlabel="6", labeldistance=1.5 headhref="dir_000021_000012.html"];
+  dir_d7219f6affb2950536525fd0bdc4ef34->dir_e23d472d76342075ad9c73af932db45b [headlabel="5", labeldistance=1.5 headhref="dir_000020_000012.html"];
+}
