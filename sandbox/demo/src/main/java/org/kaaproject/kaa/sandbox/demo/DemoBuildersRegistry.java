@@ -41,7 +41,7 @@ public class DemoBuildersRegistry {
 
     static {
         // Iot World demo
-/*
+        demoBuilders.add(new IotWorldDemoBuilder());
         demoBuilders.add(new IotWorldDemoBuilder());
 
         demoBuilders.add(new ConnectedCarDemo());
@@ -57,7 +57,7 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new VehicleTelemetryDemoBuider());
         demoBuilders.add(new PowerPlantAndroidDemoBuilder());
 
-*/
+
         //ANDROID DEMOS
         demoBuilders.add(new AndroidNotificationDemoBuilder());
         demoBuilders.add(new CellMonitorDemoBuilder());
@@ -70,6 +70,8 @@ public class DemoBuildersRegistry {
         demoBuilders.add(new EventDemoBuilder());
         demoBuilders.add(new DataCollectionDemoBuider());
         demoBuilders.add(new ConfigurationDemoBuilder());
+        demoBuilders.add(new NotificationDemoBuilder());
+        demoBuilders.add(new PowerPlantAndroidDemoBuilder());
         demoBuilders.add(new NotificationDemoBuilder());
     }
 

@@ -23,9 +23,12 @@
 #ifdef STM32_LEAF_PLATFORM
 #include "../platform-impl/stm32/leafMapleMini/leaf_mem.h"
 #else
+#ifdef ESP8266_PLATFORM
+#include "../platform-impl/esp8266/esp8266_mem.h"
+#else
 #include "../platform-impl/posix/posix_mem.h"
+#endif /* ESP8266_PLATOFRM */
 #endif //#ifdef STM32_LEAF_PLATFORM
-
 #endif //ifdef ECONAIS_PLATFORM
 
 #endif /* MEM_H_ */

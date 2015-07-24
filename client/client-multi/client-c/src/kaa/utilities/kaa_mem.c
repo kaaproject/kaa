@@ -29,7 +29,7 @@ void *kaa_trace_memory_allocs_malloc(size_t s, const char *file, int line) {
 #if KAA_LOG_LEVEL_TRACE_ENABLED
     void *ptr = __KAA_MALLOC(s);
     if (logger_)
-        kaa_log_write(logger_, file, line, KAA_LOG_LEVEL_TRACE, KAA_ERR_NONE, "Allocated (using malloc) %zu bytes at {%p}", s, ptr);
+        kaa_log_write(logger_, file, line, KAA_LOG_LEVEL_TRACE, KAA_ERR_NONE, "Allocated (using malloc) %d bytes at {%p}", s, ptr);
     return ptr;
 #else
     return malloc(s);
@@ -40,7 +40,7 @@ void *kaa_trace_memory_allocs_calloc(size_t n, size_t s, const char *file, int l
 #if KAA_LOG_LEVEL_TRACE_ENABLED
     void *ptr = __KAA_CALLOC(n, s);
     if (logger_)
-        kaa_log_write(logger_, file, line, KAA_LOG_LEVEL_TRACE, KAA_ERR_NONE, "Allocated (using calloc) %zu blocks of %zu bytes (total %zu) at {%p}", n, s, n*s, ptr);
+        kaa_log_write(logger_, file, line, KAA_LOG_LEVEL_TRACE, KAA_ERR_NONE, "Allocated (using calloc) %u blocks of %u bytes (total %u) at {%p}", n, s, n*s, ptr);
     return ptr;
 #else
     return calloc(n, s);

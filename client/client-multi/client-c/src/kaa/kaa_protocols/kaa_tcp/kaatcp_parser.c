@@ -74,10 +74,13 @@ static kaatcp_error_t kaatcp_parser_message_done(kaatcp_parser_t *parser)
             if (sync_header.protocol_version != PROTOCOL_VERSION) {
                 return KAATCP_ERR_INVALID_PROTOCOL;
             }
-
-            sync_header.message_id = KAA_NTOHS(*((uint16_t *) cursor));
-            cursor += sizeof(uint16_t);
-
+            
+            uint8_t c1 = *cursor;
+            cursor+=sizeof(uint8_t);
+            uint8_t c2 = *cursor;
+            uint16_t msg_id = ((uint16_t)c1<<8) | c2;
+            sync_header.message_id = KAA_NTOHS(msg_id);
+            cursor += sizeof(uint8_t);
             sync_header.flags = *(cursor++);
 
             if ((sync_header.flags & KAA_SYNC_SYNC_BIT) && parser->handlers.kaasync_handler) {

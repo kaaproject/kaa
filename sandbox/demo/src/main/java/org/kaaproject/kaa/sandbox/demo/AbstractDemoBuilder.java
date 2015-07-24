@@ -203,6 +203,9 @@ public abstract class AbstractDemoBuilder implements DemoBuilder {
             case JAVA:
                 sdkPropertiesDto.setTargetPlatform(SdkPlatform.JAVA);
                 break;
+            case ESP8266:
+                sdkPropertiesDto.setTargetPlatform(SdkPlatform.ESP8266);
+                break;
             default:
                 break;
         }

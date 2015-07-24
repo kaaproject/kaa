@@ -82,5 +82,9 @@ int ext_logger_sprintf(char * buffer, size_t buffer_size, const char * format, v
 }      /* extern "C" */
 #endif
 
+#ifdef ESP8266_PLATFORM
+#define ext_snpintf snprintf
+#endif /* ESP8266_PLATFORM */
+
 #endif /* EXT_SYSTEM_LOGGER_H_ */
 
