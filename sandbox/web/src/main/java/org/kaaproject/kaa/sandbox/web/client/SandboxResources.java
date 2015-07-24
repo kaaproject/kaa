@@ -59,6 +59,10 @@ public interface SandboxResources extends ClientBundle {
     @ImageOptions(width = 128, height = 128)
     @Source("images/c.png")
     ImageResource c();
+    
+    @ImageOptions(width = 128, height = 128)
+    @Source("images/c.png")
+    ImageResource esp8266();
 
     @ImageOptions(width = 114, height = 128)
     @Source("images/cpp.png")
@@ -103,6 +107,10 @@ public interface SandboxResources extends ClientBundle {
     @ImageOptions(width = 24, height = 24)
     @Source("images/c_platform.png")
     ImageResource cPlatform();
+    
+    @ImageOptions(width = 24, height = 24)
+    @Source("images/c_platform.png")
+    ImageResource esp8266Platform();
 
     @ImageOptions(width = 25, height = 28)
     @Source("images/cpp_platform.png")

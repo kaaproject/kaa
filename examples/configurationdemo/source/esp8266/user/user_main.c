@@ -15,9 +15,6 @@
 
 extern int main(void);
 
-static const char *office_ssid = "cyber9";
-static const char *office_pwd = "Cha5hk123";
-
 void main_task(void *pvParameters) {
     (void)pvParameters;
     printf("Stack highwater mark: %d\r\n",
@@ -25,9 +22,9 @@ void main_task(void *pvParameters) {
     system_print_meminfo();
     printf("Free heap: %d\r\n", system_get_free_heap_size());
     printf("main_task() started\r\n");
-    if(!wifi_connect(office_ssid,office_pwd)) {
+    if(!wifi_connect(SSID,PWD)) {
         printf("Couldn't connect to \"%s\" with password \"%s\"\r\n2",
-                office_ssid, office_pwd);
+                SSID, PWD);
         goto loop;     
     }
     int ret = main();
