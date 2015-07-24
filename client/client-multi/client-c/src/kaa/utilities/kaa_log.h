@@ -183,6 +183,12 @@ void kaa_log_write(kaa_logger_t *self, const char* source_file, int lineno, kaa_
 #define KAA_LOG_TRACE(...)
 #endif
 
+#if KAA_LOCAL_DBG
+#define KAA_LOG_TRACE_LDB(logger, err, ...) KAA_LOG_TRACE(logger, err, ...)
+#else
+#define KAA_LOG_TRACE_LDB(...)
+#endif
+
 /*
  * Shortcut macros for tracing through the program
  */

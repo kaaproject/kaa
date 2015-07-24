@@ -200,7 +200,7 @@ void KaaClient::initKaaTransport()
 #endif
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     if (options_ & KaaOption::USE_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) {
-        bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), *clientKeys_));
+        bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), *clientKeys_, status_));
         bootstrapChannel_->setDemultiplexer(syncProcessor_.get());
         bootstrapChannel_->setMultiplexer(syncProcessor_.get());
         KAA_LOG_INFO(boost::format("Going to set default bootstrap channel: %1%") % bootstrapChannel_.get());
@@ -209,7 +209,7 @@ void KaaClient::initKaaTransport()
 #endif
 #ifdef KAA_DEFAULT_OPERATION_HTTP_CHANNEL
     if (options_ & KaaOption::USE_DEFAULT_OPERATION_HTTP_CHANNEL) {
-        opsHttpChannel_.reset(new DefaultOperationHttpChannel(channelManager_.get(), *clientKeys_));
+        opsHttpChannel_.reset(new DefaultOperationHttpChannel(channelManager_.get(), *clientKeys_, status_));
         opsHttpChannel_->setMultiplexer(syncProcessor_.get());
         opsHttpChannel_->setDemultiplexer(syncProcessor_.get());
         KAA_LOG_INFO(boost::format("Going to set default operations Kaa HTTP channel: %1%") % opsHttpChannel_.get());
@@ -227,7 +227,7 @@ void KaaClient::initKaaTransport()
 #endif
 #ifdef KAA_DEFAULT_TCP_CHANNEL
     if (options_ & KaaOption::USE_DEFAULT_OPERATION_KAATCP_CHANNEL) {
-        opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), *clientKeys_));
+        opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), *clientKeys_, status_));
         opsTcpChannel_->setDemultiplexer(syncProcessor_.get());
         opsTcpChannel_->setMultiplexer(syncProcessor_.get());
         KAA_LOG_INFO(boost::format("Going to set default operations Kaa TCP channel: %1%") % opsTcpChannel_.get());

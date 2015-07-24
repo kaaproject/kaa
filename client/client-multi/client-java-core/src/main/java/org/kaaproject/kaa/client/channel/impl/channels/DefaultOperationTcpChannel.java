@@ -31,7 +31,9 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.FailoverDecision;
 import org.kaaproject.kaa.client.channel.FailoverManager;
+import org.kaaproject.kaa.client.channel.FailoverStatus;
 import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
@@ -69,6 +71,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(DefaultOperationTcpChannel.class);
 
+    private static final int EXIT_FAILURE = 1;
     private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<TransportType, ChannelDirection>();
     static {
         SUPPORTED_TYPES.put(TransportType.PROFILE, ChannelDirection.BIDIRECTIONAL);
@@ -101,7 +104,6 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private final FailoverManager failoverManager;
 
-    private final int RECONNECT_TIMEOUT = 5; // in sec
     private final int SOCKET_OPENING_TIMEOUT = 2;  // in sec
     private ConnectivityChecker connectivityChecker;
 
@@ -206,6 +208,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                         messageFactory.getFramer().pushBytes(Arrays.copyOf(buffer, size));
                     } else if (size == -1) {
                         LOG.info("Channel [{}] received end of stream", getId(), size);
+                        onServerFailed();
                     } else {
                         LOG.info("Socket is null, waiting for a new connection to be opened (sleeping for a {} s)",
                                 SOCKET_OPENING_TIMEOUT);
@@ -265,7 +268,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private boolean isReadTaskScheduled;
     private volatile boolean isOpenConnectionScheduled;
-    
+
     public DefaultOperationTcpChannel(KaaClientState state, FailoverManager failoverManager) {
         this.state = state;
         this.failoverManager = failoverManager;
@@ -352,6 +355,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         } catch (Exception e) {
             LOG.error("Failed to create a socket for server {}:{}", currentServer.getHost(), currentServer.getPort());
             LOG.error("Stack trace: ", e);
+            isOpenConnectionScheduled = false;
             onServerFailed();
             socket = null;
         } finally {
@@ -362,17 +366,33 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     private void onServerFailed() {
         closeConnection();
         if (connectivityChecker != null && !connectivityChecker.checkConnectivity()) {
-            LOG.warn("Loss of connectivity. Attempt to reconnect will be made in {} sec", RECONNECT_TIMEOUT);
-            synchronized (this) {
-                if (!isOpenConnectionScheduled) {
-                    executor.schedule(openConnectionTask, RECONNECT_TIMEOUT, TimeUnit.SECONDS);
-                    isOpenConnectionScheduled = true;
-                }
-            }
-            return;
-        }
+            LOG.warn("Loss of connectivity detected");
 
-        failoverManager.onServerFailed(currentServer);
+            FailoverDecision decision = failoverManager.onFailover(FailoverStatus.NO_CONNECTIVITY);
+            switch (decision.getAction()) {
+                case NOOP:
+                    LOG.warn("No operation is performed according to failover strategy decision");
+                    break;
+                case RETRY:
+                    long retryPeriod = decision.getRetryPeriod();
+                    synchronized (this) {
+                        if (!isOpenConnectionScheduled) {
+                            LOG.warn("Attempt to reconnect will be made in {} ms " +
+                                    "according to failover strategy decision", retryPeriod);
+                            executor.schedule(openConnectionTask, retryPeriod, TimeUnit.MILLISECONDS);
+                            isOpenConnectionScheduled = true;
+                        } else {
+                            LOG.info("Reconnect is already scheduled, ignoring the call");
+                        }
+                    }
+                break;
+                case STOP_APP:
+                    LOG.warn("Stopping application according to failover strategy decision!");
+                    System.exit(EXIT_FAILURE);
+            }
+        } else {
+            failoverManager.onServerFailed(currentServer);
+        }
     }
 
     private void schedulePingTask() {

@@ -24,6 +24,7 @@
 #include <utility>
 
 #include "kaa/KaaThread.hpp"
+#include "kaa/logging/Log.hpp"
 
 namespace kaa {
 
@@ -37,7 +38,9 @@ public:
     bool addCallback(const Key& key, const Function& f)
     {
         if (isNotifying_) {
-            KAA_MUTEX_UNIQUE_DECLARE(lock, modificationGuard_);
+            KAA_MUTEX_LOCKING("modificationGuard_");
+            KAA_MUTEX_UNIQUE_DECLARE(modificationGuardLock, modificationGuard_);
+            KAA_MUTEX_LOCKED("modificationGuard_");
             auto it = slots_.find(key);
             if (it != slots_.end() && !it->second.isRemoved()) {
                 return false;
@@ -46,7 +49,9 @@ public:
             slotsToAdd_.insert(std::make_pair(key, CallbackWrapper(f)));
             return true;
         } else {
-            KAA_MUTEX_UNIQUE_DECLARE(lock, mainGuard_);
+            KAA_MUTEX_LOCKING("mainGuard_");
+            KAA_MUTEX_UNIQUE_DECLARE(mainGuardLock, mainGuard_);
+            KAA_MUTEX_LOCKED("mainGuard_");
             return slots_.insert(std::make_pair(key, CallbackWrapper(f))).second;
         }
     }
@@ -54,7 +59,9 @@ public:
     void removeCallback(const Key& key)
     {
         if (isNotifying_) {
-            KAA_MUTEX_UNIQUE_DECLARE(lock, modificationGuard_);
+            KAA_MUTEX_LOCKING("modificationGuard_");
+            KAA_MUTEX_UNIQUE_DECLARE(modificationGuardLock, modificationGuard_);
+            KAA_MUTEX_LOCKED("modificationGuard_");
             slotsToAdd_.erase(key);
             slotsToRemove_.insert(key);
 
@@ -63,7 +70,9 @@ public:
                 it->second.remove();
             }
         } else {
-            KAA_MUTEX_UNIQUE_DECLARE(lock, mainGuard_);
+            KAA_MUTEX_LOCKING("mainGuard_");
+            KAA_MUTEX_UNIQUE_DECLARE(mainGuardLock, mainGuard_);
+            KAA_MUTEX_LOCKED("mainGuard_");
             slots_.erase(key);
         }
     }
@@ -72,12 +81,19 @@ public:
     void operator()(Args&&... args)
     {
         isNotifying_ = true;
-        KAA_MUTEX_UNIQUE_DECLARE(lock, mainGuard_);
+
+        KAA_MUTEX_LOCKING("mainGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(mainGuardLock, mainGuard_);
+        KAA_MUTEX_LOCKED("mainGuard_");
+
         for (auto& pair : slots_) {
             pair.second(std::forward<Args>(args)...);
         }
         isNotifying_ = false;
-        KAA_MUTEX_UNIQUE_DECLARE(modLock, modificationGuard_);
+
+        KAA_MUTEX_LOCKING("modificationGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(modificationGuardLock, modificationGuard_);
+        KAA_MUTEX_LOCKED("modificationGuard_");
 
         for (auto it = slotsToAdd_.begin(); it != slotsToAdd_.end(); ++it) {
             slots_[it->first] = it->second;
@@ -92,8 +108,14 @@ public:
 
     bool isEmpty()
     {
-        KAA_MUTEX_UNIQUE_DECLARE(lock, mainGuard_);
-        KAA_MUTEX_UNIQUE_DECLARE(modLock, modificationGuard_);
+        KAA_MUTEX_LOCKING("mainGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(mainGuardLock, mainGuard_);
+        KAA_MUTEX_LOCKED("mainGuard_");
+
+        KAA_MUTEX_LOCKING("modificationGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(modificationGuardLock, modificationGuard_);
+        KAA_MUTEX_LOCKED("modificationGuard_");
+
         return slots_.empty() && slotsToAdd_.empty();
     }
 

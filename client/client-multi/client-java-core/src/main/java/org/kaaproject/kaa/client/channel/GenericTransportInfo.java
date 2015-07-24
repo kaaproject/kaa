@@ -58,37 +58,33 @@ public class GenericTransportInfo implements TransportConnectionInfo {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((md == null) ? 0 : md.hashCode());
-        result = prime * result + ((serverType == null) ? 0 : serverType.hashCode());
-        result = prime * result + ((transportId == null) ? 0 : transportId.hashCode());
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GenericTransportInfo)) {
+            return false;
+        }
+
+        GenericTransportInfo that = (GenericTransportInfo) o;
+
+        if (md != null ? !md.equals(that.md) : that.md != null) {
+            return false;
+        }
+        if (serverType != that.serverType) {
+            return false;
+        }
+        if (transportId != null ? !transportId.equals(that.transportId) : that.transportId != null) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        GenericTransportInfo other = (GenericTransportInfo) obj;
-        if (md == null) {
-            if (other.md != null)
-                return false;
-        } else if (!md.equals(other.md))
-            return false;
-        if (serverType != other.serverType)
-            return false;
-        if (transportId == null) {
-            if (other.transportId != null)
-                return false;
-        } else if (!transportId.equals(other.transportId))
-            return false;
-        return true;
+    public int hashCode() {
+        int result = serverType != null ? serverType.hashCode() : 0;
+        result = 31 * result + (transportId != null ? transportId.hashCode() : 0);
+        result = 31 * result + (md != null ? md.hashCode() : 0);
+        return result;
     }
 
     @Override

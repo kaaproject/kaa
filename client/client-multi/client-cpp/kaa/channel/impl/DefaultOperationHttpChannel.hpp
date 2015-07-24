@@ -20,12 +20,14 @@
 #include "kaa/KaaDefaults.hpp"
 
 #include "kaa/channel/impl/AbstractHttpChannel.hpp"
+#include "kaa/common/exception/HttpTransportException.hpp"
 
 namespace kaa {
 
 class DefaultOperationHttpChannel : public AbstractHttpChannel {
 public:
-    DefaultOperationHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys) : AbstractHttpChannel(channelManager, clientKeys) { }
+    DefaultOperationHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientStateStoragePtr clientState)
+        : AbstractHttpChannel(channelManager, clientKeys, clientState) { }
     virtual ~DefaultOperationHttpChannel() { }
 
     virtual const std::string& getId() const { return CHANNEL_ID; }
@@ -39,8 +41,8 @@ private:
 
     virtual std::string retrieveResponse(const IHttpResponse& response)
     {
-        if (response.getStatusCode() != 200) {
-            throw TransportException(boost::format("Invalid response code %1%") % response.getStatusCode());
+        if (response.getStatusCode() != HttpStatusCode::OK) {
+            throw HttpTransportException(response.getStatusCode(), (boost::format("Invalid response code %1%") % response.getStatusCode()).str());
         }
         return getHttpDataProcessor()->retrieveOperationResponse(response);
     }

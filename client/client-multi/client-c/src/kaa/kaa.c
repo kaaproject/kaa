@@ -70,8 +70,8 @@ extern kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t 
 extern void kaa_configuration_manager_destroy(kaa_configuration_manager_t *self);
 #endif
 
-extern kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p,
-                                                kaa_channel_manager_t *channel_manager, kaa_logger_t *logger);
+extern kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_manager_p, kaa_context_t *kaa_context);
+
 extern void kaa_bootstrap_manager_destroy(kaa_bootstrap_manager_t *self);
 
 extern kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p, kaa_context_t *context,
@@ -82,12 +82,18 @@ struct kaa_status_holder_t {
     kaa_status_t *status_instance;
 };
 
+extern kaa_error_t kaa_status_set_registered(kaa_status_t *self, bool is_registered);
+
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
 extern kaa_error_t kaa_notification_manager_create(kaa_notification_manager_t **self, kaa_status_t *status
                                                  , kaa_channel_manager_t *channel_manager
                                                  , kaa_logger_t *logger);
 extern void kaa_notification_manager_destroy(kaa_notification_manager_t *self);
 #endif
+
+extern kaa_error_t kaa_failover_strategy_create(kaa_failover_strategy_t** strategy, kaa_logger_t *logger);
+extern void kaa_failover_strategy_destroy(kaa_failover_strategy_t* strategy);
+extern bool kaa_bootstrap_manager_process_failover(kaa_bootstrap_manager_t *self);
 
 /* Forward declaration */
 static kaa_error_t kaa_context_destroy(kaa_context_t *context);
@@ -110,19 +116,21 @@ static kaa_error_t kaa_context_create(kaa_context_t **context_p, kaa_logger_t *l
         error = kaa_status_create(&((*context_p)->status->status_instance));
 
     if (!error)
-        error = kaa_platform_protocol_create(&((*context_p)->platfrom_protocol), *context_p,
+        error = kaa_platform_protocol_create(&((*context_p)->platform_protocol), *context_p,
                                              (*context_p)->status->status_instance);
 
     if (!error)
         error = kaa_channel_manager_create(&((*context_p)->channel_manager), (*context_p));
 
     if (!error)
-        error = kaa_bootstrap_manager_create(&((*context_p)->bootstrap_manager), (*context_p)->channel_manager,
-                                             (*context_p)->logger);
+        error = kaa_bootstrap_manager_create(&((*context_p)->bootstrap_manager), (*context_p));
 
     if (!error)
         error = kaa_profile_manager_create(&((*context_p)->profile_manager), (*context_p)->status->status_instance,
                                            (*context_p)->channel_manager, (*context_p)->logger);
+
+    if (!error)
+        error = kaa_failover_strategy_create(&((*context_p)->failover_strategy), logger);
 
 #ifndef KAA_DISABLE_FEATURE_EVENTS
     if (!error)
@@ -181,6 +189,7 @@ static kaa_error_t kaa_context_destroy(kaa_context_t *context)
     kaa_bootstrap_manager_destroy(context->bootstrap_manager);
     kaa_channel_manager_destroy(context->channel_manager);
     kaa_status_destroy(context->status->status_instance);
+    kaa_failover_strategy_destroy(context->failover_strategy);
     KAA_FREE(context->status);
 #ifndef KAA_DISABLE_FEATURE_LOGGING
     kaa_log_collector_destroy(context->log_collector);
@@ -191,7 +200,7 @@ static kaa_error_t kaa_context_destroy(kaa_context_t *context)
 #ifndef KAA_DISABLE_FEATURE_NOTIFICATION
     kaa_notification_manager_destroy(context->notification_manager);
 #endif
-    kaa_platform_protocol_destroy(context->platfrom_protocol);
+    kaa_platform_protocol_destroy(context->platform_protocol);
     KAA_FREE(context);
     return KAA_ERR_NONE;
 }
@@ -284,4 +293,17 @@ kaa_error_t kaa_deinit(kaa_context_t *kaa_context)
         KAA_LOG_ERROR(logger, error, "Failed to destroy Kaa context");
     kaa_log_destroy(logger);
     return error;
+}
+
+bool kaa_process_failover(kaa_context_t *kaa_context)
+{
+    KAA_RETURN_IF_NIL(kaa_context, false);
+    return kaa_bootstrap_manager_process_failover(kaa_context->bootstrap_manager);
+}
+
+kaa_error_t kaa_context_set_status_registered(kaa_context_t *kaa_context, bool is_registered)
+{
+    KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
+
+    return kaa_status_set_registered(kaa_context->status->status_instance, is_registered);
 }

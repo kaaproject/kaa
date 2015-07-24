@@ -43,7 +43,7 @@ private:
     boost::asio::io_service io_;
     boost::asio::ip::tcp::socket sock_;
 
-    KAA_MUTEX_DECLARE(guard_);
+    KAA_MUTEX_DECLARE(httpClientGuard_);
 };
 
 }

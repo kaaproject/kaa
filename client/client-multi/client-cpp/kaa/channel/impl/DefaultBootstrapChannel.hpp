@@ -25,7 +25,8 @@ namespace kaa {
 
 class DefaultBootstrapChannel : public AbstractHttpChannel {
 public:
-    DefaultBootstrapChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys) : AbstractHttpChannel(channelManager, clientKeys) { }
+    DefaultBootstrapChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientStateStoragePtr clientState)
+        : AbstractHttpChannel(channelManager, clientKeys, clientState) { }
     virtual ~DefaultBootstrapChannel() { }
 
     virtual const std::string& getId() const { return CHANNEL_ID; }

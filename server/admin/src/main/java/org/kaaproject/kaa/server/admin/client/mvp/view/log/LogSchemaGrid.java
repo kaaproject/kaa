@@ -36,11 +36,10 @@ import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 public class LogSchemaGrid extends BaseSchemasGrid<LogSchemaDto>{
 
     private Column<LogSchemaDto,LogSchemaDto> downloadLibraryColumn;
-    private Column<LogSchemaDto,LogSchemaDto> downloadSchemaColumn;
-    
+
     @Override
     protected float constructActions(DataGrid<LogSchemaDto> table, float prefWidth) {
-        float result = 0;
+        float result = super.constructActions(table, prefWidth);
         if (!embedded && (downloadLibraryColumn == null || table.getColumnIndex(downloadLibraryColumn) == -1)) {
             Header<SafeHtml> downloadLibraryHeader = new SafeHtmlHeader(
                     SafeHtmlUtils.fromSafeConstant(Utils.constants.downloadRecordLibrary()));
@@ -48,15 +47,6 @@ public class LogSchemaGrid extends BaseSchemasGrid<LogSchemaDto>{
             downloadLibraryColumn = constructDownloadLibraryColumn("");
             table.addColumn(downloadLibraryColumn, downloadLibraryHeader);
             table.setColumnWidth(downloadLibraryColumn, ACTION_COLUMN_WIDTH, Unit.PX);
-            result+= ACTION_COLUMN_WIDTH;
-        }
-        if (!embedded && (downloadSchemaColumn == null || table.getColumnIndex(downloadSchemaColumn) == -1)) {
-            Header<SafeHtml> downloadRecordSchemaHeader = new SafeHtmlHeader(
-                    SafeHtmlUtils.fromSafeConstant(Utils.constants.downloadRecordSchema()));
-
-            downloadSchemaColumn = constructDownloadSchemaColumn("");
-            table.addColumn(downloadSchemaColumn, downloadRecordSchemaHeader);
-            table.setColumnWidth(downloadSchemaColumn, ACTION_COLUMN_WIDTH, Unit.PX);
             result+= ACTION_COLUMN_WIDTH;
         }
         if (enableActions) {
@@ -73,9 +63,9 @@ public class LogSchemaGrid extends BaseSchemasGrid<LogSchemaDto>{
         }
         return result;
     }
-    
+
     private Column<LogSchemaDto, LogSchemaDto> constructDownloadLibraryColumn(String text) {
-        ActionButtonCell<LogSchemaDto> cell = new ActionButtonCell<LogSchemaDto>(Utils.resources.download(), text, embedded,
+        ActionButtonCell<LogSchemaDto> cell = new ActionButtonCell<>(Utils.resources.download(), text, embedded,
                 new ActionListener<LogSchemaDto>() {
                     @Override
                     public void onItemAction(LogSchemaDto value) {
@@ -98,27 +88,5 @@ public class LogSchemaGrid extends BaseSchemasGrid<LogSchemaDto>{
         return column;
     }
 
-    private Column<LogSchemaDto, LogSchemaDto> constructDownloadSchemaColumn(String text) {
-        ActionButtonCell<LogSchemaDto> cell = new ActionButtonCell<LogSchemaDto>(Utils.resources.download(), text, embedded,
-                new ActionListener<LogSchemaDto>() {
-                    @Override
-                    public void onItemAction(LogSchemaDto value) {
-                        Integer logSchemaVersion = value.getMajorVersion();
-                        RowActionEvent<String> rowDownloadSchemaEvent = new RowActionEvent<>(String.valueOf(logSchemaVersion), KaaRowAction.DOWNLOAD_LOG_SCHEMA);
-                        fireEvent(rowDownloadSchemaEvent);
-                    }
-                }, new ActionValidator<LogSchemaDto>() {
-                    @Override
-                    public boolean canPerformAction(LogSchemaDto value) {
-                        return !embedded;
-                    }
-                });
-        Column<LogSchemaDto, LogSchemaDto> column = new Column<LogSchemaDto, LogSchemaDto>(cell) {
-            @Override
-            public LogSchemaDto getValue(LogSchemaDto item) {
-                return item;
-            }
-        };
-        return column;
-    }
+
 }

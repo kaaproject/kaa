@@ -29,18 +29,18 @@
     <url>http://kaaproject.org</url>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <main.dir>${basedir}/../../..</main.dir>
+         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+         <main.dir>${basedir}/../../..</main.dir>
     </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.kaaproject.kaa.common</groupId>
-			<artifactId>endpoint-shared</artifactId>
-			<classifier>avro</classifier>
-			<type>zip</type>
-		</dependency>
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.kaaproject.kaa.common</groupId>
+            <artifactId>endpoint-shared</artifactId>
+            <classifier>avro</classifier>
+            <type>zip</type>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -76,6 +76,7 @@
                         <exclude>**/*.json</exclude>
                         <exclude>**/.cproject</exclude>
                         <exclude>**/kaa_status.file</exclude>
+                        <exclude>**/FindSqlite3.cmake</exclude>
                     </excludes>
                 </configuration>
             </plugin>

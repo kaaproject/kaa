@@ -30,7 +30,7 @@
 #include "kaa_platform_common.h"
 #include "kaa_platform_protocol.h"
 #include "kaa_platform_utils.h"
-
+#include "platform-impl/posix/posix_kaa_failover_strategy.h"
 
 
 extern kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa_bootstrap_manager_t *self
@@ -38,8 +38,6 @@ extern kaa_access_point_t *kaa_bootstrap_manager_get_operations_access_point(kaa
 
 extern kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstrap_manager_t *self
                                                                           , kaa_transport_protocol_id_t *protocol_id);
-
-
 
 typedef struct {
     uint32_t                             channel_id;
@@ -59,6 +57,7 @@ typedef struct {
 struct kaa_channel_manager_t {
     kaa_list_t         *transport_channels;
     kaa_context_t      *kaa_context;
+    kaa_logger_t       *logger;
     kaa_sync_info_t    sync_info;
 };
 
@@ -111,6 +110,7 @@ kaa_error_t kaa_channel_manager_create(kaa_channel_manager_t **channel_manager_p
     (*channel_manager_p)->kaa_context             = context;
     (*channel_manager_p)->sync_info.request_id    = 0;
     (*channel_manager_p)->sync_info.is_up_to_date = false;
+    (*channel_manager_p)->logger                  = context->logger;
 
     return KAA_ERR_NONE;
 }
@@ -231,13 +231,10 @@ static kaa_error_t add_channel(kaa_channel_manager_t *self
 static kaa_error_t init_channel(kaa_channel_manager_t *self
                               , kaa_transport_channel_interface_t *channel)
 {
-    KAA_RETURN_IF_NIL2(self, channel, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(self, self->kaa_context, channel, KAA_ERR_BADPARAM);
 
-    static kaa_transport_context_t transport_context = { NULL, NULL };
-    if (!transport_context.platform_protocol) {
-        transport_context.platform_protocol = self->kaa_context->platfrom_protocol;
-        transport_context.bootstrap_manager = self->kaa_context->bootstrap_manager;
-    }
+    static kaa_transport_context_t transport_context = { NULL };
+    transport_context.kaa_context = self->kaa_context;
 
     channel->init(channel->context, &transport_context);
 
@@ -257,11 +254,9 @@ static kaa_error_t init_channel(kaa_channel_manager_t *self
                                                                 server_type == KAA_SERVER_BOOTSTRAP;
 
         if (is_bootstrap_channel) {
-            access_point = kaa_bootstrap_manager_get_bootstrap_access_point(
-                                self->kaa_context->bootstrap_manager, &protocol_id);
+            access_point = kaa_bootstrap_manager_get_bootstrap_access_point(self->kaa_context->bootstrap_manager, &protocol_id);
         } else {
-            access_point = kaa_bootstrap_manager_get_operations_access_point(
-                                self->kaa_context->bootstrap_manager, &protocol_id);
+            access_point = kaa_bootstrap_manager_get_operations_access_point(self->kaa_context->bootstrap_manager, &protocol_id);
         }
 
         if (access_point) {
@@ -278,6 +273,7 @@ static kaa_error_t init_channel(kaa_channel_manager_t *self
                 KAA_LOG_INFO(self->kaa_context->logger, KAA_ERR_NOT_FOUND, "Could not find access point for Operations channel [0x%08X] "
                                     "(protocol: id=0x%08X, version=%u)", id, protocol_id.id, protocol_id.version);
             }
+            return KAA_ERR_BAD_STATE;
         }
     }
 
@@ -292,7 +288,7 @@ kaa_error_t kaa_channel_manager_add_transport_channel(kaa_channel_manager_t *sel
 
     kaa_error_t error_code = add_channel(self, channel, channel_id);
     if (!error_code) {
-        init_channel(self, channel);
+        error_code = init_channel(self, channel);
     }
 
     return error_code;
@@ -394,6 +390,7 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
                                                           , kaa_platform_message_writer_t* writer)
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client bootstrap sync");
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
@@ -415,6 +412,7 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
         error_code = kaa_platform_message_write(writer, &network_order_16, sizeof(uint16_t));
         KAA_RETURN_IF_ERR(error_code);
 
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing %u supported protocol(s), request id %u", self->sync_info.channel_count, self->sync_info.request_id);
         kaa_transport_channel_wrapper_t *channel_wrapper;
         kaa_transport_protocol_id_t protocol_info;
 
@@ -438,13 +436,13 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
             error_code = kaa_platform_message_write(writer, &network_order_16, sizeof(uint16_t));
             KAA_RETURN_IF_ERR(error_code);
 
+            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serialized protocol: id '%u', version '%u'", protocol_info.id, protocol_info.version);
             it = kaa_list_next(it);
         }
     }
 
     return error_code;
 }
-
 
 kaa_error_t kaa_channel_manager_on_new_access_point(kaa_channel_manager_t *self
                                                   , kaa_transport_protocol_id_t *protocol_id
