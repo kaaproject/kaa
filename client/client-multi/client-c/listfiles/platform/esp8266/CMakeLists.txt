@@ -13,8 +13,10 @@ set(ESP8266_SRC
     ${ESP8266_SRC_FOLDER}/esp8266_status.c
     ${ESP8266_SRC_FOLDER}/esp8266_key_utils.c
     ${ESP8266_SRC_FOLDER}/esp8266_tcp_utils.c
+    ${ESP8266_SRC_FOLDER}/esp8266_kaa_failover_strategy.c
+    ${ESP8266_SRC_FOLDER}/exit.c
     ${ESP8266_SRC_FOLDER}/snprintf.c
-    ${ESP8266_SRC_FOLDER}/gmtime.c
+    #    ${ESP8266_SRC_FOLDER}/gmtime.c
     ${KAA_SRC_FOLDER}/platform-impl/sha.c
     ${KAA_SRC_FOLDER}/platform-impl/sha1.c
     ${KAA_SRC_FOLDER}/platform-impl/ext_log_storage_memory.c

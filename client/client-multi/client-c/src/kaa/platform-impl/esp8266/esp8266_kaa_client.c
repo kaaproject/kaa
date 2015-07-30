@@ -11,6 +11,7 @@
 #include <platform/time.h>
 #include <kaa_channel_manager.h>
 #include <platform-impl/kaa_tcp_channel.h>
+#include <platform/ext_kaa_failover_strategy.h>
 
 typedef enum {
     KAA_CLIENT_CHANNEL_STATE_CONNECTED = 0,
@@ -137,8 +138,13 @@ static uint16_t get_poll_timeout(kaa_client_t *kaa_client)
     uint16_t select_timeout;
     kaa_tcp_channel_get_max_timeout(&kaa_client->channel, &select_timeout);
 
+
     if ((kaa_client->external_process_max_delay > 0) && (select_timeout > kaa_client->external_process_max_delay)) {
         select_timeout = kaa_client->external_process_max_delay;
+    }
+
+    if ((KAA_BOOTSTRAP_RESPONSE_PERIOD > 0) && (select_timeout > KAA_BOOTSTRAP_RESPONSE_PERIOD)) {
+        select_timeout = KAA_BOOTSTRAP_RESPONSE_PERIOD;
     }
 
     return select_timeout;
@@ -159,7 +165,8 @@ kaa_error_t kaa_client_process_channel_connected(kaa_client_t *kaa_client)
     FD_ZERO(&write_fds);
     FD_ZERO(&except_fds);
 
-    kaa_tcp_channel_get_descriptor(&kaa_client->channel, &channel_fd);
+    error_code = kaa_tcp_channel_get_descriptor(&kaa_client->channel, &channel_fd);
+    if(error_code) KAA_LOG_ERROR(kaa_client->context->logger, error_code, "No descriptor provided!");
 
     if (kaa_tcp_channel_is_ready(&kaa_client->channel, FD_READ))
         FD_SET(channel_fd, &read_fds);
@@ -201,7 +208,9 @@ kaa_error_t kaa_client_process_channel_connected(kaa_client_t *kaa_client)
                 "Channel [0x%08X] connection terminated", kaa_client->channel_id);
 
         kaa_client->channel_state = KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED;
-        kaa_client_deinit_channel(kaa_client);
+        if (error_code != KAA_ERR_EVENT_NOT_ATTACHED) {
+            kaa_client_deinit_channel(kaa_client);
+        }
     }
 
     return error_code;
@@ -225,7 +234,7 @@ kaa_error_t kaa_client_process_channel_disconnected(kaa_client_t *kaa_client)
 kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
                              external_process_fn external_process,
                              void *external_process_context,
-                             time_t max_delay) {
+                             kaa_time_t max_delay) {
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
 
     kaa_error_t error_code = KAA_ERR_NONE; 
@@ -244,30 +253,39 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
             }
             kaa_client->external_process_last_call = KAA_TIME();
         }
-        if(kaa_client->channel_id>0) {
-            if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED) {
-                error_code = kaa_client_process_channel_disconnected(kaa_client);
-            } else  if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_CONNECTED) {
-                error_code = kaa_client_process_channel_connected(kaa_client);
-            }
+        if (kaa_process_failover(kaa_client->context)) {
+            kaa_client->bootstrap_complete = false;
         } else {
-            //No initialized channels
-            if (kaa_client->bootstrap_complete) {
-                KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE,
-                            "Channel [0x%08X] Boostrap complete, reinitializing to Operations ...", kaa_client->channel_id);
-                kaa_client->bootstrap_complete = false;
-                kaa_client_deinit_channel(kaa_client);
-                kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_OPERATIONS);
+            if(kaa_client->channel_id>0) {
+                if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_NOT_CONNECTED) {
+                    error_code = kaa_client_process_channel_disconnected(kaa_client);
+                } else  if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_CONNECTED) {
+                    error_code = kaa_client_process_channel_connected(kaa_client);
+                }
             } else {
-                KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE,
+                //No initialized channels
+                if (kaa_client->bootstrap_complete) {
+                    KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE,
+                            "Channel [0x%08X] Boostrap complete, reinitializing to Operations ...", kaa_client->channel_id);
+                    kaa_client->bootstrap_complete = false;
+                    kaa_client_deinit_channel(kaa_client);
+                    kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_OPERATIONS);
+                    if (error_code == KAA_ERR_BAD_STATE) {
+                        kaa_client_deinit_channel(kaa_client);
+                        kaa_client->bootstrap_complete = false;
+                    }
+                } else {
+                    KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE,
                             "Channel [0x%08X] Operations error, reinitializing to Bootstrap ...", kaa_client->channel_id);
-                kaa_client->bootstrap_complete = true;
-                kaa_client_deinit_channel(kaa_client);
+                    kaa_client->bootstrap_complete = true;
+                    kaa_client_deinit_channel(kaa_client);
 
-                kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_BOOTSTRAP);
+                    kaa_client_init_channel(kaa_client, KAA_CLIENT_CHANNEL_TYPE_BOOTSTRAP);
+                }
             }
         }
     }
+    KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE, "Kaa client stopped");
 
     return error_code;
 }
@@ -300,7 +318,7 @@ kaa_error_t kaa_client_init_channel(kaa_client_t *kaa_client, kaa_client_channel
         return error_code;
     }
 
-    error_code = kaa_tcp_channel_set_keepalive_timeout(&kaa_client->channel, 20);
+    error_code = kaa_tcp_channel_set_keepalive_timeout(&kaa_client->channel, 5);
 
     if(error_code) {
         KAA_LOG_ERROR(kaa_client->context->logger, error_code, "Filed to set channel keepalive timeout, type %d", channel_type);
