@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
+#ifndef CC32XX_MEM_H_
+#define CC32XX_MEM_H_
 
-#ifndef TIME_H_
-#define TIME_H_
+#include <stdlib.h>
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_time.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_time.h"
-#else
-#ifdef CC32XX_PLATFORM
-#include "../platform-impl/cc32xx/cc32xx_time.h"
-#else
-#include "../platform-impl/posix/posix_time.h"
+#ifndef __KAA_MALLOC
+#define __KAA_MALLOC(S)           malloc(S)
+#endif
 
-#endif //#ifdef STM32_LEAF_PLATFORM
+#ifndef __KAA_CALLOC
+#define __KAA_CALLOC(N,S)         calloc(N, S)
+#endif
 
-#endif //ifdef ECONAIS_PLATFORM
-#endif //ifdef CC32XX_PLATFORM
+#ifndef __KAA_FREE
+#define __KAA_FREE(P)             free(P)
+#endif
 
-#endif /* TIME_H_ */
+#endif /* CC32XX_MEM_H_ */

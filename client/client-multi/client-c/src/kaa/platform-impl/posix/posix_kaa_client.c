@@ -133,7 +133,7 @@ kaa_error_t kaa_client_create(kaa_client_t **kaa_client, kaa_client_props_t *pro
 
     error_code = kaa_init(&self->kaa_context);
     if (error_code) {
-        printf("Failed to init Kaa context, error %d\n", error_code);
+        KAA_LOG_ERROR(self->kaa_context->logger, error_code, "Failed to init Kaa context, error %d\n", error_code);
         kaa_client_destroy(self);
         return error_code;
     }

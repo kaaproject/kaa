@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
+#ifndef CC32XX_PLATFORM_H_
+#define CC32XX_PLATFORM_H_
 
-#ifndef TIME_H_
-#define TIME_H_
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_time.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_time.h"
-#else
-#ifdef CC32XX_PLATFORM
-#include "../platform-impl/cc32xx/cc32xx_time.h"
-#else
-#include "../platform-impl/posix/posix_time.h"
+typedef int ssize_t;
 
-#endif //#ifdef STM32_LEAF_PLATFORM
+#include <time.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <stdint.h>
 
-#endif //ifdef ECONAIS_PLATFORM
-#endif //ifdef CC32XX_PLATFORM
-
-#endif /* TIME_H_ */
+#endif /* CC32XX_PLATFORM_H_ */

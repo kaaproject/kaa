@@ -23,10 +23,15 @@
 #ifdef STM32_LEAF_PLATFORM
 #include "../platform-impl/stm32/leafMapleMini/leaf_mem.h"
 #else
+#ifdef CC32XX_PLATFORM
+#include "../platform-impl/cc32xx/cc32xx_mem.h"
+#else
 #include "../platform-impl/posix/posix_mem.h"
+
 #endif //#ifdef STM32_LEAF_PLATFORM
 
 #endif //ifdef ECONAIS_PLATFORM
+#endif //ifdef CC32XX_PLATFORM
 
 #endif /* MEM_H_ */
 

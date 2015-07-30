@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,23 +15,16 @@
  */
 
 
-#ifndef TIME_H_
-#define TIME_H_
+#ifndef CC32XX_TIME_H_
+#define CC32XX_TIME_H_
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_time.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_time.h"
-#else
-#ifdef CC32XX_PLATFORM
-#include "../platform-impl/cc32xx/cc32xx_time.h"
-#else
-#include "../platform-impl/posix/posix_time.h"
+#include <time.h>
 
-#endif //#ifdef STM32_LEAF_PLATFORM
+typedef long kaa_time_t;
 
-#endif //ifdef ECONAIS_PLATFORM
-#endif //ifdef CC32XX_PLATFORM
+#define KAA_TIME() (kaa_time_t)cc32xx_time()
 
-#endif /* TIME_H_ */
+long cc32xx_time();
+long long cc32xx_clock_getms();
+
+#endif /* CC32XX_TIME_H_ */

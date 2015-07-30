@@ -205,7 +205,7 @@ kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_man
 {
     KAA_RETURN_IF_NIL2(bootstrap_manager_p, kaa_context, KAA_ERR_BADPARAM);
 
-    *bootstrap_manager_p = (kaa_bootstrap_manager_t*) KAA_MALLOC(sizeof(kaa_bootstrap_manager_t));
+    *bootstrap_manager_p = (kaa_bootstrap_manager_t*) KAA_CALLOC(1, sizeof(kaa_bootstrap_manager_t));
     KAA_RETURN_IF_NIL(*bootstrap_manager_p, KAA_ERR_NOMEM);
 
     (*bootstrap_manager_p)->channel_manager = kaa_context->channel_manager;

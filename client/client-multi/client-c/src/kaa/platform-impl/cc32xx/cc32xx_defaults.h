@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,23 +15,13 @@
  */
 
 
-#ifndef TIME_H_
-#define TIME_H_
+#ifndef CC32XX_DEFAULTS_H_
+#define CC32XX_DEFAULTS_H_
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_time.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_time.h"
-#else
-#ifdef CC32XX_PLATFORM
-#include "../platform-impl/cc32xx/cc32xx_time.h"
-#else
-#include "../platform-impl/posix/posix_time.h"
+#define KAA_TCP_CHANNEL_IN_BUFFER_SIZE      2048
+#define KAA_TCP_CHANNEL_OUT_BUFFER_SIZE     8192
+#define KAA_TCP_CHANNEL_KEEPALIVE           300
+#define KAATCP_PARSER_MAX_MESSAGE_LENGTH    1024
+#define KAA_MAX_LOG_MESSAGE_LENGTH          512
 
-#endif //#ifdef STM32_LEAF_PLATFORM
-
-#endif //ifdef ECONAIS_PLATFORM
-#endif //ifdef CC32XX_PLATFORM
-
-#endif /* TIME_H_ */
+#endif /* CC32XX_DEFAULTS_H_ */
