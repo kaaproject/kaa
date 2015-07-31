@@ -34,8 +34,7 @@ void cc32xx_init_timer()
 {
     static int init = 0;
 
-    if (!init)
-    {
+    if (!init) {
         SysTickEnable();
         SysTickIntEnable();
         SysTickIntRegister(sysTickIntHandler);
@@ -46,6 +45,7 @@ void cc32xx_init_timer()
 
 long long cc32xx_clock_getms()
 {
+    cc32xx_init_timer();
     return milliTimer;
 }
 

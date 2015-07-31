@@ -34,27 +34,10 @@
 #include "common.h"
 #include "uart_if.h"
 
-#define MAX_FILE_SIZE        8L*1024L
+#define MAX_FILE_SIZE 8L*1024L
 
-char config_file[2*1024];
-char status_file[512];
-int config_file_size = 0;
-int status_file_size = 0;
-
-void init_fs_device() {
-    static int init_dev = 0;
-
-    if(!init_dev) {
-        //sl_Start(0, 0, 0);
-        init_dev = 1;
-
-        memset(config_file, 0, sizeof(config_file));
-        memset(status_file, 0, sizeof(status_file));
-    }
-}
-
-bool file_is_exist(const char *filename) {
-
+bool file_is_exist(const char *filename)
+{
     unsigned long ul_token;
     long l_file_handle;
     long l_ret_val = sl_FsOpen((unsigned char *)filename, FS_MODE_OPEN_WRITE, &ul_token, &l_file_handle);
@@ -68,8 +51,8 @@ bool file_is_exist(const char *filename) {
     return true;
 }
 
-bool create_file(const char *filename) {
-
+bool create_file(const char *filename)
+{
     unsigned long ul_token;
     long l_file_handle;
     long l_ret_val;
@@ -87,32 +70,11 @@ bool create_file(const char *filename) {
 }
 
 int cc32xx_binary_file_read(const char *file_name, char **buffer, size_t *buffer_size, bool *needs_deallocation)
-{    
-    init_fs_device();
-
-    UART_PRINT("cc32xx_binary_file_read enter %s\r\n", file_name);
+{
     KAA_RETURN_IF_NIL4(file_name, buffer, buffer_size, needs_deallocation, -1);
     *buffer = NULL;
     *buffer_size = 0;
     *needs_deallocation = true;
-
-    if(strcmp(file_name, "kaa_configuration.bin") == 0 && config_file_size)
-    {
-        char *tmp = (char*) KAA_MALLOC(config_file_size * sizeof(char));
-        memcpy(tmp, config_file, config_file_size);
-        *buffer = tmp;
-        *buffer_size = config_file_size;
-        return 0;
-    }
-    else if(strcmp(file_name, "kaa_status.bin") == 0)
-    {
-        char *tmp = (char*) KAA_MALLOC(status_file_size * sizeof(char));
-        memcpy(tmp, status_file, status_file_size);
-        *buffer = tmp;
-        *buffer_size = status_file_size;
-        return 0;
-    }
-    return -1;
 
     long ret = -1;
     unsigned long ul_token;
@@ -131,8 +93,6 @@ int cc32xx_binary_file_read(const char *file_name, char **buffer, size_t *buffer
 
     sl_FsGetInfo((unsigned char*)file_name, ul_token, &file_info);
 
-//    UART_PRINT("cc32xx_binary_file_read file info alloc %d size %d\r\n", file_info.AllocatedLen, file_info.FileLen);
-
     if (file_info.FileLen <= 0) {
         sl_FsClose(l_file_handle, 0, 0, 0);
         return -1;
@@ -144,22 +104,11 @@ int cc32xx_binary_file_read(const char *file_name, char **buffer, size_t *buffer
         return -1;
     }
 
-//    UART_PRINT("cc32xx_binary_file_read read\r\n");
     if ( (offset += sl_FsRead(l_file_handle, offset, result_buffer, file_info.FileLen)) == 0 ) {
-//        UART_PRINT("cc32xx_binary_file_read read fail\r\n");
         KAA_FREE(result_buffer);
         sl_FsClose(l_file_handle, 0, 0, 0);
         return -1;
     }
-
-//    UART_PRINT("cc32xx_binary_file_read readed %d\r\n", offset);
-//    for(int i = 0; i < offset; ++i)
-//    {
-//        if(!(i % 20))
-//            UART_PRINT("\r\n");
-//        UART_PRINT("%02X ", result_buffer[i]);
-//    }
-//    UART_PRINT("\r\n");
 
     *buffer = (char*) result_buffer;
     *buffer_size = file_info.FileLen;
@@ -170,23 +119,7 @@ int cc32xx_binary_file_read(const char *file_name, char **buffer, size_t *buffer
 
 int cc32xx_binary_file_store(const char *file_name, const char *buffer, size_t buffer_size)
 {
-    init_fs_device();
     KAA_RETURN_IF_NIL3(file_name, buffer, buffer_size, -1);
-    UART_PRINT("cc32xx_binary_file_store file_name %s\r\n", file_name);
-
-    if(strcmp(file_name, "kaa_configuration.bin") == 0 && config_file_size)
-    {
-        memcpy(config_file, buffer, buffer_size);
-        config_file_size = buffer_size;
-        return 0;
-    }
-    else if(strcmp(file_name, "kaa_status.bin") == 0)
-    {
-        memcpy(status_file, buffer, buffer_size);
-        status_file_size = buffer_size;
-        return 0;
-    }
-    return -1;
 
     long ret = -1;
     unsigned long ul_token;

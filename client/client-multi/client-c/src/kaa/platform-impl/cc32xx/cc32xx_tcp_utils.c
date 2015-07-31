@@ -41,11 +41,6 @@ kaa_error_t ext_tcp_utils_set_sockaddr_port(kaa_sockaddr_t *addr, uint16_t port)
             s_in->sin_port = KAA_HTONS(port);
             break;
         }
-        case AF_INET6: {
-            struct sockaddr_in6 *s_in6 = (struct sockaddr_in6 *) addr;
-            s_in6->sin6_port = KAA_HTONS(port);
-            break;
-        }
         default:
             return KAA_ERR_SOCKET_INVALID_FAMILY;
     }
@@ -54,7 +49,7 @@ kaa_error_t ext_tcp_utils_set_sockaddr_port(kaa_sockaddr_t *addr, uint16_t port)
 
 
 
-ext_tcp_utils_function_return_state_t ext_tcp_utils_getaddrbyhost(kaa_dns_resolve_listener_t *resolve_listener
+ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener
                                                                 , const kaa_dns_resolve_info_t *resolve_props
                                                                 , kaa_sockaddr_t *result
                                                                 , kaa_socklen_t *result_size)
@@ -75,14 +70,10 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_getaddrbyhost(kaa_dns_resolv
     memcpy(hostname_str, resolve_props->hostname, resolve_props->hostname_length);
     hostname_str[resolve_props->hostname_length] = '\0';
 
-    //UART_PRINT("ext_tcp_utils_getaddrbyhost[1] %s %d\r\n", hostname_str, resolve_props->port);
-
     if (strcmp(hostname_str, "localhost"))
         resolve_error = sl_NetAppDnsGetHostByName((signed char*)hostname_str, resolve_props->hostname_length, &out_ip, ai_family);
     else
-        out_ip = 0x7F000001;//hack!
-        //out_ip = 0x0A0202CB;//rmp!
-    //out_ip = 0xADC271C0;
+        out_ip = 0x7F000001;
 
     memset(&tmp_addr, 0, *result_size);
     tmp_addr.sin_family = ai_family;

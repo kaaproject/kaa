@@ -17,7 +17,7 @@
 #ifndef CC32XX_SOCK_H_
 #define CC32XX_SOCK_H_
 
-/* Avoid redifined warning */
+/* Avoid redefined warning */
 #undef EBADF
 #undef EAGAIN
 #undef EWOULDBLOCK
@@ -69,11 +69,6 @@ typedef int kaa_fd_t;
 typedef struct sockaddr kaa_sockaddr_t;
 typedef struct sockaddr_storage kaa_sockaddr_storage_t;
 typedef socklen_t kaa_socklen_t;
-
-int getaddrinfo(const char *node, const char *service,
-                const struct addrinfo *hints,
-                struct addrinfo **res);
-void freeaddrinfo(struct addrinfo *res);
 
 #define KAA_HTONS(hostshort)     htons((hostshort))
 #define KAA_HTONL(hostlong)      htonl((hostlong))
