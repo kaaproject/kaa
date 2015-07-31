@@ -728,7 +728,7 @@ ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd, const kaa_soc
     return KAA_TCP_SOCK_CONNECTED;
 }
 
-ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener, const kaa_dns_resolve_info_t *resolve_props, kaa_sockaddr_t *result, kaa_socklen_t *result_size)
+ext_tcp_utils_function_return_state_t ext_tcp_utils_getaddrbyhost(kaa_dns_resolve_listener_t *resolve_listener, const kaa_dns_resolve_info_t *resolve_props, kaa_sockaddr_t *result, kaa_socklen_t *result_size)
 {
     KAA_RETURN_IF_NIL4(resolve_props, resolve_props->hostname, result, result_size, RET_STATE_VALUE_ERROR);
     if (*result_size < sizeof(struct sockaddr_in))
@@ -739,7 +739,7 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolv
     memcpy(hostname_str, resolve_props->hostname, resolve_props->hostname_length);
     hostname_str[resolve_props->hostname_length] = '\0';
 
-    KAA_LOG_INFO(logger, KAA_ERR_NONE, "gethostbyaddr() Hostname=%s:%d", hostname_str, resolve_props->port);
+    KAA_LOG_INFO(logger, KAA_ERR_NONE, "getaddrbyhost() Hostname=%s:%d", hostname_str, resolve_props->port);
 
 
     struct addrinfo hints;
