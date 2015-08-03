@@ -30,13 +30,6 @@ set(CMAKE_MODULE_PATH
 # 
 # NOTE: Platform specific compilation flags should be set 
 # in the corresponding platform CMake script(s).
-# Sets the default build platform to POSIX.
-if(NOT DEFINED KAA_PLATFORM)
-  set(KAA_PLATFORM "x86-64")
-else()
-  include(${CMAKE_CURRENT_SOURCE_DIR}/toolchains/${KAA_PLATFORM}.cmake)
-endif()
-
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall")
 
@@ -70,6 +63,13 @@ if(KAA_DEBUG_ENABLED)
     set(CMAKE_BUILD_TYPE DEBUG)
 else()
     set(CMAKE_BUILD_TYPE RELEASE)
+endif()
+
+# Sets the default build platform to POSIX.
+if(NOT DEFINED KAA_PLATFORM)
+  set(KAA_PLATFORM "x86-64")
+else()
+  include(${CMAKE_CURRENT_SOURCE_DIR}/toolchains/${KAA_PLATFORM}.cmake)
 endif()
 
 #

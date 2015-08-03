@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,9 +38,9 @@
 
 bool file_is_exist(const char *filename)
 {
-    unsigned long ul_token;
-    long l_file_handle;
-    long l_ret_val = sl_FsOpen((unsigned char *)filename, FS_MODE_OPEN_WRITE, &ul_token, &l_file_handle);
+    uint32_t ul_token;
+    int32_t l_file_handle;
+    int32_t l_ret_val = sl_FsOpen((unsigned char *)filename, FS_MODE_OPEN_WRITE, &ul_token, &l_file_handle);
 
     if (l_ret_val < 0) {
         sl_FsClose(l_file_handle, 0, 0, 0);
@@ -53,9 +53,9 @@ bool file_is_exist(const char *filename)
 
 bool create_file(const char *filename)
 {
-    unsigned long ul_token;
-    long l_file_handle;
-    long l_ret_val;
+    uint32_t ul_token;
+    int32_t  l_file_handle;
+    int32_t  l_ret_val;
 
     l_ret_val = sl_FsOpen((unsigned char *)filename,FS_MODE_OPEN_CREATE(MAX_FILE_SIZE, _FS_FILE_OPEN_FLAG_COMMIT|_FS_FILE_PUBLIC_WRITE|_FS_FILE_PUBLIC_READ), &ul_token, &l_file_handle);
     if (l_ret_val < 0) {
@@ -74,12 +74,11 @@ int cc32xx_binary_file_read(const char *file_name, char **buffer, size_t *buffer
     KAA_RETURN_IF_NIL4(file_name, buffer, buffer_size, needs_deallocation, -1);
     *buffer = NULL;
     *buffer_size = 0;
-    *needs_deallocation = true;
 
-    long ret = -1;
-    unsigned long ul_token;
-    long l_file_handle;
-    long offset = 0;
+    int32_t ret = -1;
+    uint32_t ul_token;
+    int32_t l_file_handle;
+    int32_t offset = 0;
     SlFsFileInfo_t file_info;
 
     memset(&file_info, 0, sizeof(file_info));
@@ -98,7 +97,7 @@ int cc32xx_binary_file_read(const char *file_name, char **buffer, size_t *buffer
         return -1;
     }
 
-    unsigned char *result_buffer = (unsigned char *) KAA_MALLOC(file_info.FileLen * sizeof(unsigned char));
+    uint8_t *result_buffer = (uint8_t*) KAA_MALLOC(file_info.FileLen * sizeof(uint8_t));
     if (!result_buffer) {
         sl_FsClose(l_file_handle, 0, 0, 0);
         return -1;
@@ -112,6 +111,7 @@ int cc32xx_binary_file_read(const char *file_name, char **buffer, size_t *buffer
 
     *buffer = (char*) result_buffer;
     *buffer_size = file_info.FileLen;
+    *needs_deallocation = true;
 
     sl_FsClose(l_file_handle, 0, 0, 0);
     return 0;
@@ -121,9 +121,9 @@ int cc32xx_binary_file_store(const char *file_name, const char *buffer, size_t b
 {
     KAA_RETURN_IF_NIL3(file_name, buffer, buffer_size, -1);
 
-    long ret = -1;
-    unsigned long ul_token;
-    long l_file_handle;
+    int32_t ret = -1;
+    uint32_t ul_token;
+    int32_t l_file_handle;
 
     if (MAX_FILE_SIZE < buffer_size)
         return -1;
