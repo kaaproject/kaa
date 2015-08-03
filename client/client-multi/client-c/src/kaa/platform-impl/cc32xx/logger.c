@@ -29,8 +29,6 @@ void ext_write_log(FILE * sink, const char * buffer, size_t message_size)
     }
 
     Report("%s\r",buffer);
-    //fwrite(buffer, sizeof(char), message_size, sink);
-    //fflush(sink);
 }
 
 time_t ext_get_systime()
