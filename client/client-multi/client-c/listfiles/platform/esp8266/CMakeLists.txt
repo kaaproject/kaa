@@ -34,5 +34,5 @@ add_custom_target(rsa ALL DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/kaa/platform-i
 
 add_custom_command(TARGET rsa
                    PRE_BUILD
-                   COMMAND java -jar ${CMAKE_CURRENT_SOURCE_DIR}/pub_key_generator.jar
+                   COMMAND java -jar ${CMAKE_CURRENT_SOURCE_DIR}/tools/pub_key_generator.jar
                    ${CMAKE_CURRENT_SOURCE_DIR}/src/kaa/platform-impl/esp8266/rsa.h)
