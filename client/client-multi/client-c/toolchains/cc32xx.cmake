@@ -43,4 +43,4 @@ set(KAA_BUILD_STATIC kaac_s)
 set(CC32XX_RSA_KEY ../src/kaa/platform-impl/cc32xx/cc32xx_rsa_key.h)
 
 execute_process(COMMAND rm ${CC32XX_RSA_KEY})
-execute_process(COMMAND java -jar ../listfiles/platform/cc32xx/pub_key_generator.jar ${CC32XX_RSA_KEY})
+execute_process(COMMAND java -jar ../tools/pub_key_generator.jar ${CC32XX_RSA_KEY})
