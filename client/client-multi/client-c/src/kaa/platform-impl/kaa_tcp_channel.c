@@ -878,7 +878,7 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
             //Send ping request
 
             if (tcp_channel->keepalive.last_sent_keepalive > tcp_channel->keepalive.last_receive_keepalive) {
-                kaa_bootstrap_manager_on_access_point_failed(tcp_channel->transport_context.bootstrap_manager, &tcp_channel->protocol_id, tcp_channel->channel_operation_type);
+                kaa_bootstrap_manager_on_access_point_failed(tcp_channel->transport_context.kaa_context->bootstrap_manager, &tcp_channel->protocol_id, tcp_channel->channel_operation_type);
                 return KAA_ERR_TIMEOUT;
             }
 
