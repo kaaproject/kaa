@@ -20,18 +20,18 @@ set(CMAKE_C_FLAGS "-mthumb -mcpu=cortex-m4 -ffunction-sections -fdata-sections -
 set(CMAKE_A_FLAGS "-mthumb -mcpu=cortex-m4 -MD -static"  CACHE STRING "" FORCE)
 
 include_directories(${CC32XX_SDK}/inc)
-include_directories(${CC32XX_SDK}/lib/driverlib)
-include_directories(${CC32XX_SDK}/lib/oslib)
-include_directories(${CC32XX_SDK}/lib/simplelink)
-include_directories(${CC32XX_SDK}/lib/simplelink/include)
-include_directories(${CC32XX_SDK}/lib/simplelink/source)
+include_directories(${CC32XX_SDK}/driverlib)
+include_directories(${CC32XX_SDK}/oslib)
+include_directories(${CC32XX_SDK}/simplelink)
+include_directories(${CC32XX_SDK}/simplelink/include)
+include_directories(${CC32XX_SDK}/simplelink/source)
 include_directories(${CC32XX_SDK}/example/common)
 
 add_library(driver STATIC IMPORTED)
-set_property(TARGET driver PROPERTY IMPORTED_LOCATION ${CC32XX_SDK}/lib/driverlib/gcc/exe/libdriver.a)
+set_property(TARGET driver PROPERTY IMPORTED_LOCATION ${CC32XX_SDK}/driverlib/gcc/exe/libdriver.a)
 
 add_library(simplelink_nonos STATIC IMPORTED)
-set_property(TARGET simplelink_nonos PROPERTY IMPORTED_LOCATION ${CC32XX_SDK}/lib/simplelink/gcc/exe/libsimplelink_nonos.a)
+set_property(TARGET simplelink_nonos PROPERTY IMPORTED_LOCATION ${CC32XX_SDK}/simplelink/gcc/exe/libsimplelink_nonos.a)
 
 add_definitions(-DCC32XX_PLATFORM)
 
