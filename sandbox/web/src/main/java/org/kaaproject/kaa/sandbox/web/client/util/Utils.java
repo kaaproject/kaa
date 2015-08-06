@@ -135,8 +135,6 @@ public class Utils {
                 return constants.cpp();
             case JAVA:
                 return constants.java();
-            case ESP8266:
-                return constants.esp8266();
         }
         return null;
     }
@@ -151,8 +149,6 @@ public class Utils {
                 return resources.cppPlatform();
             case JAVA:
                 return resources.javaPlatform();
-            case ESP8266:
-                return resources.esp8266Platform();
         }
         return null;
     }
@@ -180,8 +176,6 @@ public class Utils {
                 return resources.cpp();
             case JAVA:
                 return resources.java();
-            case ESP8266:
-                return resources.esp8266();
         }
         return null;
     }

@@ -390,14 +390,6 @@
             <groupId>org.kaaproject.kaa.examples</groupId>
             <artifactId>configurationdemo</artifactId>
             <version>${project.version}</version>
-            <classifier>configuration-src-esp8266</classifier>
-            <type>tar.gz</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.kaaproject.kaa.examples</groupId>
-            <artifactId>configurationdemo</artifactId>
-            <version>${project.version}</version>
             <classifier>configuration-src-cpp</classifier>
             <type>tar.gz</type>
             <scope>provided</scope>
@@ -1125,16 +1117,6 @@
                                     <type>tar.gz</type>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/demo_projects/c</outputDirectory>
-                                    <destFileName>configuration_demo.tar.gz</destFileName>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.kaaproject.kaa.examples</groupId>
-                                    <artifactId>configurationdemo</artifactId>
-                                    <version>${project.version}</version>
-                                    <classifier>configuration-src-esp8266</classifier>
-                                    <type>tar.gz</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.directory}/demo_projects/esp8266</outputDirectory>
                                     <destFileName>configuration_demo.tar.gz</destFileName>
                                 </artifactItem>
                                 <artifactItem>
