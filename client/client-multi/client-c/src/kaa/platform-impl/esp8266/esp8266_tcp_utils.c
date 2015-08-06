@@ -18,10 +18,12 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <unistd.h>
-#include <platform/sock.h>
+
+#include "../../platform/sock.h"
+#include "../../platform/ext_tcp_utils.h"
+#include "../../kaa_common.h"
+
 #include <lwip/lwip/netdb.h>
-#include <platform/ext_tcp_utils.h>
-#include <kaa_common.h>
 
 kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd,
                                             const kaa_sockaddr_t *destination,

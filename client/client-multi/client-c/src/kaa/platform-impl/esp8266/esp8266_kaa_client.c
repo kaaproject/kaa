@@ -19,15 +19,15 @@
 
 #include <kaa.h>
 #include <kaa_context.h>
-#include <platform/kaa_client.h>
-#include <platform/ext_transport_channel.h>
-#include <utilities/kaa_mem.h>
-#include <utilities/kaa_log.h>
-#include <kaa_logging.h>
-#include <platform/time.h>
-#include <kaa_channel_manager.h>
-#include <platform-impl/kaa_tcp_channel.h>
-#include <platform/ext_kaa_failover_strategy.h>
+#include "../../platform/kaa_client.h"
+#include "../../platform/ext_transport_channel.h"
+#include "../../utilities/kaa_mem.h"
+#include "../../utilities/kaa_log.h"
+#include "../../kaa_logging.h"
+#include "../../platform/time.h"
+#include "../../kaa_channel_manager.h"
+#include "../../platform-impl/kaa_tcp_channel.h"
+#include "../../platform/ext_kaa_failover_strategy.h"
 
 typedef enum {
     KAA_CLIENT_CHANNEL_STATE_CONNECTED = 0,

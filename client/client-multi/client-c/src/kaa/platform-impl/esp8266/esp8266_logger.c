@@ -20,7 +20,6 @@
 #include "../../platform/ext_system_logger.h"
 
 #include <stdio.h>
-#include <time.h>
 
 kaa_time_t ext_get_systime() 
 {

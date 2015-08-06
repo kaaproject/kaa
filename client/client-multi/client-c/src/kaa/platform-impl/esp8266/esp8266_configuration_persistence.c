@@ -16,7 +16,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
-#include <platform/ext_configuration_persistence.h>
+#include "../../platform/ext_configuration_persistence.h"
 
 #define KAA_CONFIGURATION_STORAGE "" /* WTF?? no file system! */
 

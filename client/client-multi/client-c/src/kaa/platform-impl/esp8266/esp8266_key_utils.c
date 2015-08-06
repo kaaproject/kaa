@@ -16,7 +16,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
-#include <platform/ext_key_utils.h>
+#include "../../platform/ext_key_utils.h"
 #include "rsa.h"
 
 
