@@ -142,7 +142,8 @@ kaa_error_t kaa_client_create(kaa_client_t **client, kaa_client_props_t *props) 
     return error_code;
 }
 
-kaa_context_t *kaa_client_get_context(kaa_client_t *client) {
+kaa_context_t *kaa_client_get_context(kaa_client_t *client) 
+{
     KAA_RETURN_IF_NIL(client, NULL);
     return client->context;
 }
@@ -420,7 +421,8 @@ void kaa_client_destroy(kaa_client_t *self)
 
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
-kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client) {
+kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client) 
+{
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
     kaa_error_t error_code  = ext_unlimited_log_storage_create(&kaa_client->log_storage_context,
                                                                kaa_client->context->logger);
