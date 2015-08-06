@@ -18,6 +18,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DESP8266_PLATFORM")
 
 set(ESP8266_SRC_FOLDER ${KAA_SRC_FOLDER}/platform-impl/esp8266)
 
+set(ESP8266_NAME "esp8266")
+
 set(ESP8266_SRC
     ${ESP8266_SRC_FOLDER}/esp8266_logger.c
     ${ESP8266_SRC_FOLDER}/esp8266_kaa_client.c

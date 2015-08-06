@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+#include <stddef.h>
+
+void *pvPortMalloc(size_t xSize);
+void *pvPortZalloc(size_t xSize);
+
 #ifndef ESP8266_MEM_H
 #define ESP8266_MEM_H
 
