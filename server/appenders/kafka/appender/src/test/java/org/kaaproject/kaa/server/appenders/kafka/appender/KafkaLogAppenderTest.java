@@ -30,6 +30,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -134,7 +135,7 @@ public class KafkaLogAppenderTest {
         logAppender.setApplicationToken(appToken);
     }
 	
-	
+	@Ignore
     @Test
     public void doAppendTest() throws IOException, InterruptedException {
         DeliveryCallback callback = new DeliveryCallback();
