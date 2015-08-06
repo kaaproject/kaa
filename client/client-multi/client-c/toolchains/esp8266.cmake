@@ -32,5 +32,5 @@ set(ESP8266_INCDIRS
     ${ESP_TOOLCHAIN_BASE}/../lib/gcc/xtensa-lx106-elf/4.8.2/include/
     )
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-implicit-function-declaration -Os -Wpointer-arith  -Wl,-EL -fno-inline-functions -nostdlib -mlongcalls -mtext-section-literals -ffunction-sections")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-comment -fno-builtin -Wno-implicit-function-declaration -Os -Wpointer-arith  -Wl,-EL -fno-inline-functions -nostdlib -mlongcalls -mtext-section-literals -ffunction-sections")
 

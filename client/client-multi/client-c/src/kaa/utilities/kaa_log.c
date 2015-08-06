@@ -66,11 +66,7 @@ kaa_error_t kaa_log_create(kaa_logger_t **logger_p, size_t buffer_size, kaa_log_
 
     (*logger_p)->buffer_size = buffer_size;
 
-#ifdef ESP8266_PLATFORM
-    (*logger_p)->sink = sink ? sink : 0;
-#else
     (*logger_p)->sink = sink ? sink : stdout;
-#endif /* ESP8266_PLATFORM */
     (*logger_p)->max_log_level = max_log_level;
 #ifdef KAA_TRACE_MEMORY_ALLOCATIONS
     kaa_trace_memory_allocs_set_logger(*logger_p);

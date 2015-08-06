@@ -18,7 +18,8 @@
 #define ESP8266_STDIO_H
 
 #include <stdio.h>
-
+#undef stdout
+#define stdout 0
 
 
 #endif /* ESP8266_STDIO_H */
