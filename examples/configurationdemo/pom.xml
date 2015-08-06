@@ -16,7 +16,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.7.2-SNAPSHOT</version>
+        <version>0.7.1-SNAPSHOT</version>
         <artifactId>examples</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.examples</groupId>
@@ -73,7 +73,6 @@
                         <descriptor>${project.basedir}/assembly/src-c.xml</descriptor>
                         <descriptor>${project.basedir}/assembly/src-cpp.xml</descriptor>
                         <descriptor>${project.basedir}/assembly/src-java.xml</descriptor>
-                        <descriptor>${project.basedir}/assembly/src-esp8266.xml</descriptor>
                         <descriptor>${project.basedir}/assembly/resources.xml</descriptor>
                     </descriptors>
                 </configuration>

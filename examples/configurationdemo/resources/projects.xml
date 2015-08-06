@@ -108,33 +108,4 @@ For more background on Kaa Configuration subsystem please refer to the correspon
         <sdkLibDir>CppConfigurationDemo/libs/kaa</sdkLibDir>
         <destBinaryFile></destBinaryFile>
     </project>
-    <project id="configuration_demo_esp8266">
-        <name>Configuration demo</name>
-        <description>Kaa configuration subsystem demo app based on ESP8266 SDK</description>
-	    <details>
-            <![CDATA[
-This simple app demonstrates Kaa configuration subsystem capabilities on ESP8266 SDK.
-
-<h2>Installation</h2>
-Download the source code by clicking the "Source" button on the left. Build the source code using endpoint build and integration <a href="https://docs.kaaproject.org/display/KAA/Endpoint+build+and+integration+instructions#Endpointbuildandintegrationinstructions-BuildingESP8266endpointSDK"><b>TODO</b></a>.
-
-<h2>Playing around</h2>
-Make sure that the Kaa sandbox is up and running. Starting the "Configuration demo" app, you will get a latest configuration accessible to the endpoint. This configuration is a list of links to Kaa resources.<br/><br/>
-
-Now it's time to test things out: navigate to the Kaa server administrative interface by clicking on the "Administrative console" link from the Sandbox screen. Log in as a tenant developer (devuser / devuser123), and navigate to the "Configuration demo" application, then select "Endpoint groups". From here you can <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide#AdministrationUIguide-Addingendpointgroups">manage endpoint groups</a> and <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide#AdministrationUIguide-Addconfigurationtoendpointgroup">update endpoint configuration</a>. Do not forget to activate updated configuration - otherwise the endpoint will not be able to see it. Make sure you have tried updating configuration for endpoint group "All" and received it on your device!<br/><br/>
-
-Please note that all features of <a href="https://docs.kaaproject.org/display/KAA/Administration+UI+guide">Administrative UI</a> are also supported by <a href="https://docs.kaaproject.org/display/KAA/Admin+REST+API">REST API</a>.
-
-<h2>What's next?</h2>
-
-For more background on Kaa Configuration subsystem please refer to the corresponding <a href="https://docs.kaaproject.org/display/KAA/Distributing+data+to+endpoints">programming guide</a> and <a href="https://docs.kaaproject.org/display/KAA/Configuration">design reference</a> sections.
-            ]]>
-		</details>
-        <platform>ESP8266</platform>
-        <features>CONFIGURATION</features>
-        <sourceArchive>esp8266/configuration_demo.tar.gz</sourceArchive>
-        <projectFolder>ESP8266ConfigurationDemo</projectFolder>
-        <sdkLibDir>ESP8266ConfigurationDemo/libs/kaa</sdkLibDir>
-        <destBinaryFile></destBinaryFile>
-    </project>
 </projectsConfig>
