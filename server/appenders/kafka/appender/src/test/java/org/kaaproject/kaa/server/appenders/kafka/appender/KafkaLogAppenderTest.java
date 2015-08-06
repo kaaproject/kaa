@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kaaproject.kaa.server.appenders.kafka.appender;
 
 import java.io.IOException;
@@ -12,9 +27,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -50,7 +65,7 @@ public class KafkaLogAppenderTest {
 
     private AvroByteArrayConverter<LogData> logDataConverter = new AvroByteArrayConverter<>(LogData.class);
 	
-	private LogEventPack generateLogEventPack(int count) throws IOException {
+    private LogEventPack generateLogEventPack(int count) throws IOException {
         LogEventPack logEventPack = new LogEventPack();
         List<LogEvent> events = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
@@ -67,6 +82,7 @@ public class KafkaLogAppenderTest {
         logSchemaDto.setApplicationId(String.valueOf(RANDOM.nextInt()));
         logSchemaDto.setId(String.valueOf(RANDOM.nextInt()));
         logSchemaDto.setCreatedTime(System.currentTimeMillis());
+        logSchemaDto.setSchema(LogData.getClassSchema().toString());
 
         logEventPack.setLogSchema(new LogSchema(logSchemaDto));
         return logEventPack;
@@ -119,7 +135,6 @@ public class KafkaLogAppenderTest {
     }
 	
 	
-	@Ignore
     @Test
     public void doAppendTest() throws IOException, InterruptedException {
         DeliveryCallback callback = new DeliveryCallback();
@@ -127,14 +142,14 @@ public class KafkaLogAppenderTest {
         Thread.sleep(3000);
         
         Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092");
-        props.put("group.id", "test");
-        props.put("enable.auto.commit", "false");
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
         props.put("auto.commit.interval.ms", "1000");
         props.put("session.timeout.ms", "30000");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer");
-        props.put("partition.assignment.strategy", "range");
+        props.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY, "range");
         
         KafkaConsumer<String, byte[]> consumer = new KafkaConsumer<String, byte[]>(props);
         consumer.subscribe(TOPIC_NAME);
