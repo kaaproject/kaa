@@ -26,12 +26,12 @@ set(KAA_SDK_ROOT /usr/local/kaa-esp8266)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -Os -Wall -Wextra")
 
 if(NOT DEFINED ESPRESSIF_HOME)
-    set(ESP_TOOLCHAIN_DIR /opt/Espressif/crosstool-NG/builds/xtensa-lx106-elf/bin)
-else()
-    set(ESP_TOOLCHAIN_DIR ${ESPRESSIF_HOME})
+    set(ESP_TOOLCHAIN_DIR /opt/Espressif)
 endif()
+    
+set(ESP_TOOLCHAIN_DIR ${ESPRESSIF_HOME}/crosstool-NG/builds/xtensa-lx106-elf/bin)
 
-set(ESP_SDK_BASE /opt/Espressif/esp-rtos-sdk)
+set(ESP_SDK_BASE ${ESPRESSIF_HOME}/esp-rtos-sdk)
 
 set(ESP8266_SRC user/user_main.c driver/uart.c)
 

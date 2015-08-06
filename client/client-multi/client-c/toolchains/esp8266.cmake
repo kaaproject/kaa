@@ -16,14 +16,13 @@
 
 include(CMakeForceCompiler)
 
-#change this to path where you've installed xtensa toolchain
 if(NOT DEFINED ESPRESSIF_HOME)
-    set(ESP_TOOLCHAIN_BASE /opt/Espressif/crosstool-NG/builds/xtensa-lx106-elf/bin)
-else()
-    set(ESP_TOOLCHAIN_BASE ${ESPRESSIF_HOME})
+    set(ESPRESSIF_HOME /opt/Espressif)
 endif()
 
-set (ESP_SDK_BASE /opt/Espressif/esp-rtos-sdk)
+set(ESP_TOOLCHAIN_BASE ${ESPRESSIF_HOME}/crosstool-NG/builds/xtensa-lx106-elf/bin)
+
+set (ESP_SDK_BASE ${ESPRESSIF_HOME}/esp-rtos-sdk)
 
 CMAKE_FORCE_C_COMPILER(${ESP_TOOLCHAIN_BASE}/xtensa-lx106-elf-gcc GNU)
 
