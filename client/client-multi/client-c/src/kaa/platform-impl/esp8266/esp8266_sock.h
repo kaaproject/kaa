@@ -1,7 +1,7 @@
 #ifndef ESP8266_SOCK_H
 #define ESP8266_SOCK_H
 
-#include <sys/socket.h>
+#include <lwip/lwip/sockets.h>
 
 typedef int kaa_fd_t;
 
