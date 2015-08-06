@@ -42,7 +42,7 @@ public class DaoConstants {
     public static final String EVENT_CLASS_TYPE_PROPERTY = "type";
     public static final String FQN_PROPERTY = "fqn";
     public static final String CLASS_NAME_PROPERTY = "className";
-
+    public static final String SDK_TOKEN_PROPERTY = "token";
 
     public static final String TENANT_ALIAS = "tenant";
     public static final String PROFILE_SCHEMA_ALIAS = "profileSchema";
@@ -134,6 +134,7 @@ public class DaoConstants {
     public static final String ABSTRACT_STRUCTURE_STATUS = "status";
     public static final String ABSTRACT_STRUCTURE_APPLICATION_ID = APPLICATION_ID;
     public static final String ABSTRACT_STRUCTURE_ENDPOINT_GROUP_ID = ENDPOINT_GROUP_ID;
+    public static final String ABSTRACT_STRUCTURE_OPTIMISTIC_LOCK = "optimistic_lock";
 
     /**
      * Profile schema constants.
@@ -316,6 +317,15 @@ public class DaoConstants {
     public static final String LOG_APPENDER_MIN_LOG_SCHEMA_VERSION = "min_log_schema_version";
     public static final String LOG_APPENDER_MAX_LOG_SCHEMA_VERSION = "max_log_schema_version";
     public static final String LOG_APPENDER_CONFIRM_DELIVERY = "confirm_delivery";
+
+    /**
+     * SDK token constants
+     */
+    public static final String SDK_TOKEN_TABLE_NAME = "sdk_token";
+    public static final String SDK_TOKEN_APPLICATION_ID = "application_id";
+    public static final String SDK_TOKEN_TOKEN = "token";
+    public static final String SDK_TOKEN_RAW_DATA = "raw_data";
+
 
     private DaoConstants() {
         throw new UnsupportedOperationException("Not supported");

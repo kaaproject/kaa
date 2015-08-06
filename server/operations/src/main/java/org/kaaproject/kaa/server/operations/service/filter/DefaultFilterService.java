@@ -26,8 +26,8 @@ import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.EvaluationException;
 import org.springframework.stereotype.Service;
-
 
 /**
  * Default implementation of {@link FilterService FilterService}.
@@ -38,8 +38,7 @@ import org.springframework.stereotype.Service;
 public class DefaultFilterService implements FilterService {
 
     /** The Constant logger. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(DefaultFilterService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultFilterService.class);
 
     /** The cache service. */
     @Autowired
@@ -52,8 +51,13 @@ public class DefaultFilterService implements FilterService {
         super();
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.filter.FilterService#getAllMatchingFilters(org.kaaproject.kaa.server.operations.service.cache.AppVersionKey, java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.kaaproject.kaa.server.operations.service.filter.FilterService#
+     * getAllMatchingFilters
+     * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey,
+     * java.lang.String)
      */
     @Override
     public List<ProfileFilterDto> getAllMatchingFilters(AppVersionKey appProfileVersionKey, String profileBody) {
@@ -62,23 +66,33 @@ public class DefaultFilterService implements FilterService {
         LOG.trace("Found {} filters by {}", filters.size(), appProfileVersionKey);
         List<ProfileFilterDto> matchingFilters = new LinkedList<ProfileFilterDto>();
         Filter filter = null;
-        for(ProfileFilterDto filterBody : filters){
-            if(filter == null){
+        for (ProfileFilterDto filterBody : filters) {
+            if (filter == null) {
                 filter = new DefaultFilter(filterBody.getBody(), profileSchema.getSchema());
-            }else{
+            } else {
                 filter.updateFilterBody(filterBody.getBody());
             }
             LOG.trace("matching profile body with filter {}", filter);
-            if(filter.matches(profileBody)){
-                matchingFilters.add(filterBody);
-                LOG.trace("profile body matched");
+            try {
+                if (filter.matches(profileBody)) {
+                    matchingFilters.add(filterBody);
+                    LOG.trace("profile body matched");
+                }
+            } catch (EvaluationException ee) {
+                LOG.warn("Failed to process filter {} due to evaluate exception. Please check your filter body", filterBody.getBody(), ee);
+            } catch (Exception e) {
+                LOG.error("Failed to process filter {} due to exception", filterBody.getBody(), e);
             }
         }
         return matchingFilters;
     }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.filter.FilterService#matches(java.lang.String, java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.kaaproject.kaa.server.operations.service.filter.FilterService#matches
+     * (java.lang.String, java.lang.String)
      */
     @Override
     public boolean matches(String appToken, String profileFilterId, String profileBody) {

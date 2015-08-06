@@ -27,17 +27,23 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
 import org.kaaproject.kaa.client.channel.impl.DefaultChannelManager;
+import org.kaaproject.kaa.client.channel.impl.DefaultFailoverManager;
+import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.mockito.Mockito;
 
 public class DefaultChannelManagerTest {
+
+    private static final ExecutorContext CONTEXT = Mockito.mock(ExecutorContext.class);
 
     private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<TransportType, ChannelDirection>();
     static {
@@ -46,21 +52,23 @@ public class DefaultChannelManagerTest {
         SUPPORTED_TYPES.put(TransportType.NOTIFICATION, ChannelDirection.BIDIRECTIONAL);
         SUPPORTED_TYPES.put(TransportType.USER, ChannelDirection.BIDIRECTIONAL);
         SUPPORTED_TYPES.put(TransportType.EVENT, ChannelDirection.DOWN);
+
+        Mockito.when(CONTEXT.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
     }
 
     @Test(expected = ChannelRuntimeException.class)
     public void testNullBootstrapServer() {
-        new DefaultChannelManager(Mockito.mock(BootstrapManager.class), null);
+        new DefaultChannelManager(Mockito.mock(BootstrapManager.class), null, null);
     }
 
     @Test(expected = ChannelRuntimeException.class)
     public void testEmptyBootstrapServer() {
-        new DefaultChannelManager(Mockito.mock(BootstrapManager.class), new HashMap<TransportProtocolId, List<TransportConnectionInfo>>());
+        new DefaultChannelManager(Mockito.mock(BootstrapManager.class), new HashMap<TransportProtocolId, List<TransportConnectionInfo>>(), null);
     }
 
     @Test(expected = ChannelRuntimeException.class)
     public void testEmptyBootstrapManager() {
-        new DefaultChannelManager(null, null);
+        new DefaultChannelManager(null, null, null);
     }
 
     @Test
@@ -76,13 +84,16 @@ public class DefaultChannelManagerTest {
         Mockito.when(channel.getServerType()).thenReturn(ServerType.OPERATIONS);
         Mockito.when(channel.getId()).thenReturn("mock_channel");
 
-        KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+        KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, null);
+        FailoverManager failoverManager = Mockito.spy(new DefaultFailoverManager(channelManager, CONTEXT));
+        channelManager.setFailoverManager(failoverManager);
         channelManager.addChannel(channel);
         channelManager.addChannel(channel);
 
         TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(
                 ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9999, KeyUtil.generateKeyPair().getPublic());
         channelManager.onTransportConnectionInfoUpdated(server);
+        Mockito.verify(failoverManager, Mockito.times(1)).onServerChanged(Mockito.any(TransportConnectionInfo.class));
 
 //        assertEquals(channel, channelManager.getChannelByTransportType(TransportType.PROFILE));
         assertEquals(channel, channelManager.getChannel("mock_channel"));
@@ -93,6 +104,7 @@ public class DefaultChannelManagerTest {
         assertTrue(channelManager.getChannels().isEmpty());
 
         channelManager.addChannel(channel);
+        Mockito.verify(failoverManager, Mockito.times(2)).onServerChanged(Mockito.any(TransportConnectionInfo.class));
         Mockito.verify(channel, Mockito.times(2)).setServer(server);
         channelManager.clearChannelList();
         assertTrue(channelManager.getChannels().isEmpty());
@@ -113,9 +125,13 @@ public class DefaultChannelManagerTest {
         Mockito.when(channel.getServerType()).thenReturn(ServerType.BOOTSTRAP);
         Mockito.when(channel.getId()).thenReturn("mock_channel");
 
-        KaaChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+        KaaChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, null);
+        FailoverManager failoverManager = Mockito.spy(new DefaultFailoverManager(channelManager, CONTEXT));
+        channelManager.setFailoverManager(failoverManager);
+
         channelManager.addChannel(channel);
 
+        Mockito.verify(failoverManager, Mockito.times(1)).onServerChanged(Mockito.any(TransportConnectionInfo.class));
 //        assertEquals(channel, channelManager.getChannelByTransportType(TransportType.PROFILE));
         assertEquals(channel, channelManager.getChannel("mock_channel"));
         assertEquals(channel, channelManager.getChannels().get(0));
@@ -138,7 +154,7 @@ public class DefaultChannelManagerTest {
         Mockito.when(channel.getTransportProtocolId()).thenReturn(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
         Mockito.when(channel.getId()).thenReturn("mock_channel");
 
-        KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+        KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, null);
         channelManager.addChannel(channel);
 
         TransportConnectionInfo opServer = IPTransportInfoTest.createTestServerInfo(
@@ -151,12 +167,46 @@ public class DefaultChannelManagerTest {
 
     @Test
     public void testBootstrapServerFailed() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = new HashMap<>();
+        final Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = new HashMap<>();
         bootststrapServers.put(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, Arrays.asList(
                 IPTransportInfoTest.createTestServerInfo(
                         ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic()),
                 IPTransportInfoTest.createTestServerInfo(
                         ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost2", 9889, KeyUtil.generateKeyPair().getPublic())));
+        BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
+
+        final KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
+        Mockito.when(channel.getSupportedTransportTypes()).thenReturn(SUPPORTED_TYPES);
+        Mockito.when(channel.getTransportProtocolId()).thenReturn(TransportProtocolIdConstants.HTTP_TRANSPORT_ID);
+        Mockito.when(channel.getServerType()).thenReturn(ServerType.BOOTSTRAP);
+        Mockito.when(channel.getId()).thenReturn("mock_channel");
+
+        ExecutorContext context = Mockito.mock(ExecutorContext.class);
+        Mockito.when(context.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
+        KaaChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, context);
+        FailoverManager failoverManager = Mockito.spy(new DefaultFailoverManager(channelManager, CONTEXT, 1, 1, 1, 1, TimeUnit.MILLISECONDS));
+        channelManager.setFailoverManager(failoverManager);
+
+        channelManager.addChannel(channel);
+
+        Mockito.verify(failoverManager, Mockito.times(1)).onServerChanged(Mockito.any(TransportConnectionInfo.class));
+
+        channelManager.onServerFailed(bootststrapServers.get(TransportProtocolIdConstants.HTTP_TRANSPORT_ID).get(0));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Mockito.verify(channel, Mockito.timeout(100).times(1)).setServer(bootststrapServers.get(TransportProtocolIdConstants.HTTP_TRANSPORT_ID).get(1));
+            }
+        });
+        Mockito.verify(failoverManager, Mockito.times(1)).onFailover(FailoverStatus.CURRENT_BOOTSTRAP_SERVER_NA);
+    }
+
+    @Test
+    public void testSingleBootstrapServerFailed() throws NoSuchAlgorithmException, InvalidKeySpecException {
+        Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = new HashMap<>();
+        bootststrapServers.put(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, Arrays.asList(
+                IPTransportInfoTest.createTestServerInfo(
+                        ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
 
         KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
@@ -165,11 +215,15 @@ public class DefaultChannelManagerTest {
         Mockito.when(channel.getServerType()).thenReturn(ServerType.BOOTSTRAP);
         Mockito.when(channel.getId()).thenReturn("mock_channel");
 
-        KaaChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+        KaaChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, CONTEXT);
+        FailoverManager failoverManager = Mockito.spy(new DefaultFailoverManager(channelManager, CONTEXT));
+        channelManager.setFailoverManager(failoverManager);
+
         channelManager.addChannel(channel);
 
+        Mockito.verify(failoverManager, Mockito.times(1)).onServerChanged(Mockito.any(TransportConnectionInfo.class));
+
         channelManager.onServerFailed(bootststrapServers.get(TransportProtocolIdConstants.HTTP_TRANSPORT_ID).get(0));
-        Mockito.verify(channel, Mockito.times(1)).setServer(bootststrapServers.get(TransportProtocolIdConstants.HTTP_TRANSPORT_ID).get(1));
     }
 
     @Test
@@ -197,7 +251,12 @@ public class DefaultChannelManagerTest {
         Mockito.when(channel3.getServerType()).thenReturn(ServerType.OPERATIONS);
         Mockito.when(channel3.getId()).thenReturn("mock_tcp_channel3");
 
-        KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+
+        KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, null);
+
+        FailoverManager failoverManager = Mockito.spy(new DefaultFailoverManager(channelManager, CONTEXT));
+        channelManager.setFailoverManager(failoverManager);
+
         channelManager.addChannel(channel1);
         channelManager.addChannel(channel2);
 
@@ -233,7 +292,7 @@ public class DefaultChannelManagerTest {
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = getDefaultBootstrapServers();
 
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
-        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, null);
 
         TransportProtocolId type = TransportProtocolIdConstants.TCP_TRANSPORT_ID;
         KaaDataChannel channel1 = Mockito.mock(KaaDataChannel.class);
@@ -266,7 +325,7 @@ public class DefaultChannelManagerTest {
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = getDefaultBootstrapServers();
 
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
-        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, null);
 
         Map<TransportType, ChannelDirection> types = new HashMap<TransportType, ChannelDirection>();
         types.put(TransportType.CONFIGURATION, ChannelDirection.BIDIRECTIONAL);
@@ -301,7 +360,7 @@ public class DefaultChannelManagerTest {
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = getDefaultBootstrapServers();
         
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
-        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, null);
 
         Map<TransportType, ChannelDirection> types = new HashMap<TransportType, ChannelDirection>();
         types.put(TransportType.CONFIGURATION, ChannelDirection.DOWN);
@@ -318,7 +377,7 @@ public class DefaultChannelManagerTest {
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = getDefaultBootstrapServers();
 
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
-        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, null);
 
         Map<TransportType, ChannelDirection> types = new HashMap<TransportType, ChannelDirection>();
         types.put(TransportType.CONFIGURATION, ChannelDirection.BIDIRECTIONAL);
@@ -344,7 +403,7 @@ public class DefaultChannelManagerTest {
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = getDefaultBootstrapServers();
 
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
-        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, null);
 
         Map<TransportType, ChannelDirection> types = new HashMap<TransportType, ChannelDirection>();
         types.put(TransportType.CONFIGURATION, ChannelDirection.BIDIRECTIONAL);
@@ -365,7 +424,7 @@ public class DefaultChannelManagerTest {
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = getDefaultBootstrapServers();
 
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
-        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, null);
 
         Map<TransportType, ChannelDirection> types = new HashMap<TransportType, ChannelDirection>();
         types.put(TransportType.CONFIGURATION, ChannelDirection.BIDIRECTIONAL);
@@ -384,7 +443,7 @@ public class DefaultChannelManagerTest {
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = getDefaultBootstrapServers();
 
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
-        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, null);
 
         Map<TransportType, ChannelDirection> types = new HashMap<TransportType, ChannelDirection>();
         types.put(TransportType.CONFIGURATION, ChannelDirection.BIDIRECTIONAL);
@@ -403,7 +462,7 @@ public class DefaultChannelManagerTest {
         Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = getDefaultBootstrapServers();
 
         BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
-        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers);
+        DefaultChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, null);
 
         Map<TransportType, ChannelDirection> types = new HashMap<TransportType, ChannelDirection>();
         types.put(TransportType.CONFIGURATION, ChannelDirection.BIDIRECTIONAL);

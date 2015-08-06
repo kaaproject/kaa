@@ -135,8 +135,6 @@ public class MessageEncoderDecoder {
      *            the private key
      * @param publicKey
      *            the public key
-     * @param remotePublicKey
-     *            the remote public key
      */
     public MessageEncoderDecoder(PrivateKey privateKey, PublicKey publicKey) {
         this(privateKey, publicKey, null);
@@ -231,7 +229,7 @@ public class MessageEncoderDecoder {
      */
     public byte[] decodeData(byte[] message) throws GeneralSecurityException {
         if (sessionCipherPair == null) {
-            sessionCipherPair = new CipherPair(SESSION_CRYPT_ALGORITHM, sessionKey);
+            sessionCipherPair = new CipherPair(SESSION_CRYPT_ALGORITHM, getSessionKey());
         }
         return sessionCipherPair.decCipher.doFinal(message);
     }

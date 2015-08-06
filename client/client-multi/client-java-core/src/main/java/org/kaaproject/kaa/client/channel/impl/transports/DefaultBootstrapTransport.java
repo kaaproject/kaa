@@ -23,7 +23,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.bootstrap.BootstrapManager;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
+import org.kaaproject.kaa.client.channel.GenericTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.channel.ServerType;
 import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncRequest;
@@ -39,11 +41,11 @@ public class DefaultBootstrapTransport extends AbstractKaaTransport implements B
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaClient.class);
     
     private BootstrapManager manager;
-    private final String applicationToken;
+    private final String sdkToken;
     private final AtomicInteger increment = new AtomicInteger();
 
-    public DefaultBootstrapTransport(String applicationToken) {
-        this.applicationToken = applicationToken;
+    public DefaultBootstrapTransport(String sdkToken) {
+        this.sdkToken = sdkToken;
     }
 
     @Override
@@ -61,7 +63,7 @@ public class DefaultBootstrapTransport extends AbstractKaaTransport implements B
             }
             resolveRequest.setSupportedProtocols(pairs);
             resolveRequest.setRequestId(increment.get());
-            request.setSyncRequestMetaData(new SyncRequestMetaData(applicationToken, null, null, null));
+            request.setSyncRequestMetaData(new SyncRequestMetaData(sdkToken, null, null, null));
             request.setBootstrapSyncRequest(resolveRequest);
             return request;
         }

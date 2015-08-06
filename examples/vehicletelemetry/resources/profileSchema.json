@@ -1,0 +1,70 @@
+{
+  "type" : "record",
+  "name" : "vehicleinfo",
+  "namespace" : "org.kaaproject.kaa.demo.vehicletelemetry",
+  "fields" : [ {
+    "name" : "vehicle_id",
+    "type" : {
+      "type" : "string",
+      "avro.java.string" : "String"
+    },
+    "displayName" : "Vehicle ID"
+  }, {
+    "name" : "vehicle_nickname",
+    "type" : {
+      "type" : "string",
+      "avro.java.string" : "String"
+    },
+    "displayName" : "Vehicle Nickname"
+  }, {
+    "name" : "vehicle_brand",
+    "type" : {
+      "type" : "string",
+      "avro.java.string" : "String"
+    },
+    "displayName" : "Vehicle Brand"
+  }, {
+    "name" : "vehicle_color",
+    "type" : {
+      "type" : "string",
+      "avro.java.string" : "String"
+    },
+    "displayName" : "Vehicle Color"
+  }, {
+    "name" : "vin_Number",
+    "type" : {
+      "type" : "string",
+      "avro.java.string" : "String"
+    },
+    "displayName" : "VIN Number"
+  }, {
+    "name" : "tax_Class",
+    "type" : {
+      "type" : "string",
+      "avro.java.string" : "String"
+    },
+    "displayName" : "Tax Class"
+  }, {
+    "name" : "reg_Year",
+    "type" : "int",
+    "displayName" : "Registration Year"
+  }, {
+    "name" : "vehicle_model",
+    "type" : {
+      "type" : "string",
+      "avro.java.string" : "String"
+    },
+    "displayName" : "Vehicle Model"
+  }, {
+    "name" : "vehicle_maker",
+    "type" : {
+      "type" : "string",
+      "avro.java.string" : "String"
+    },
+    "displayName" : "Vehicle Maker"
+  }, {
+    "name" : "owner_id",
+    "type" : "int",
+    "displayName" : "Owner ID"
+  } ]
+}

@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright 2014 CyberVision, Inc.
+# Copyright 2014-2015 CyberVision, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ set -e
 if [ "$1" = "0" ]; then
    if [ -x "/etc/init.d/kaa-admin" ]; then
       if ! chkconfig_loc="$(type -p "chkconfig")" || [ -z "$chkconfig_loc" ]; then
-  	update-rc.d -f kaa-admin remove >/dev/null
+        update-rc.d -f kaa-admin remove >/dev/null
       else
- 	chkconfig --del kaa-admin >/dev/null
+        chkconfig --del kaa-admin >/dev/null
       fi
       rm -f /etc/init.d/kaa-admin
       rm -f /etc/default/kaa-admin

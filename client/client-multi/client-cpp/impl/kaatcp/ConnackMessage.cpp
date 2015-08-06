@@ -15,6 +15,7 @@
  */
 
 #include "kaa/kaatcp/ConnackMessage.hpp"
+#include "kaa/common/exception/KaaException.hpp"
 #include <boost/format.hpp>
 
 namespace kaa {
@@ -29,17 +30,17 @@ std::string ConnackMessage::returnCodeToString(ConnackReturnCode code)
     switch (code) {
         case ConnackReturnCode::UNKNOWN:
             return "Connack Unknown";
-        case ConnackReturnCode::SUCCESS:
+        case ConnackReturnCode::ACCEPTED:
             return "Connection Accepted";
-        case ConnackReturnCode::UNACCEPTABLE_VERSION:
+        case ConnackReturnCode::REFUSE_BAD_PROTOCOL:
             return "Connection Refused: unacceptable protocol version";
-        case ConnackReturnCode::IDENTIFIER_REJECTED:
+        case ConnackReturnCode::REFUSE_ID_REJECT:
             return "Connection Refused: identifier rejected";
-        case ConnackReturnCode::SERVER_UNAVAILABLE:
+        case ConnackReturnCode::REFUSE_SERVER_UNAVAILABLE:
             return "Connection Refused: server unavailable";
-        case ConnackReturnCode::BAD_USER_PASSWORD:
-            return "Connection Refused: bad user name or password";
-        case ConnackReturnCode::NOT_AUTHORIZED:
+        case ConnackReturnCode::REFUSE_BAD_CREDENTIALS:
+            return "Connection Refused: invalid authentication parameters";
+        case ConnackReturnCode::REFUSE_NO_AUTH:
             return "Connection Refused: not authorized";
         default:
             return (boost::format("Invalid response code %1%") % (std::uint8_t) code).str();
@@ -53,7 +54,15 @@ std::string ConnackMessage::getMessage() const
 
 void ConnackMessage::parseMessage(const char *payload, std::uint16_t size)
 {
-    returnCode_ = (ConnackReturnCode) *(payload + 1);
+    if (!payload || !size) {
+        throw KaaException("Bad Connack payload data");
+    }
+
+    int code = *(payload + 1);
+    if (code < (int)ConnackReturnCode::UNKNOWN || code > (int)ConnackReturnCode::REFUSE_NO_AUTH) {
+        throw KaaException(boost::format("Bad Connack return code: %1%") % code);
+    }
+    returnCode_ = (ConnackReturnCode) code;
 }
 
 }

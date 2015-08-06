@@ -286,6 +286,13 @@ public class HibernateConfigurationDao extends HibernateAbstractDao<Configuratio
     }
 
     @Override
+    public Configuration save(Configuration o) {
+        Configuration saved = super.save(o);
+        getSession().flush();
+        return saved;
+    }
+
+    @Override
     protected Class<Configuration> getEntityClass() {
         return Configuration.class;
     }

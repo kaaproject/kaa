@@ -43,6 +43,7 @@ import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.config.OperationsServerConfig;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
+import org.kaaproject.kaa.server.operations.service.loadbalance.LoadBalancingService;
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
 import org.kaaproject.kaa.server.operations.service.thrift.OperationsThriftServiceImpl;
 import org.kaaproject.kaa.server.operations.service.transport.OperationsTransportService;
@@ -102,6 +103,9 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
     /** The event service */
     @Autowired
     private EventService eventService;
+    
+    @Autowired
+    private LoadBalancingService loadBalancingService;
 
     /*
      * (non-Javadoc)
@@ -191,6 +195,8 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
 
         transportService.start();
 
+        loadBalancingService.start(operationsNode);
+
         try {
             thriftShutdownLatch.await();
         } catch (InterruptedException e) {
@@ -206,6 +212,9 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
      */
     @Override
     public void stop() {
+        if(loadBalancingService != null) {
+            loadBalancingService.stop();
+        }
         if (transportService != null) {
             transportService.stop();
         }
@@ -289,7 +298,7 @@ public class DefaultOperationsBootstrapService implements OperationsBootstrapSer
         OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
         ByteBuffer keyData = ByteBuffer.wrap(keyStoreService.getPublicKey().getEncoded());
         nodeInfo.setConnectionInfo(new ConnectionInfo(getConfig().getThriftHost(), getConfig().getThriftPort(), keyData));
-        nodeInfo.setLoadInfo(new LoadInfo(DEFAULT_LOAD_INDEX));
+        nodeInfo.setLoadInfo(new LoadInfo(DEFAULT_LOAD_INDEX, 1.0));
         nodeInfo.setTransports(new ArrayList<TransportMetaData>());
         operationsNode = new OperationsNode(nodeInfo, getConfig().getZkHostPortList(), new RetryUntilElapsed(getConfig()
                 .getZkMaxRetryTime(), getConfig().getZkSleepTime()));

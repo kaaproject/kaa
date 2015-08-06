@@ -25,6 +25,7 @@ import java.util.concurrent.Executors;
 
 import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
+import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.IPTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
@@ -43,9 +44,12 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     public static final Logger LOG = LoggerFactory // NOSONAR
             .getLogger(AbstractHttpChannel.class);
 
+    private static final int UNATHORIZED_HTTP_STATUS = 401;
+
     private IPTransportInfo currentServer;
     private final AbstractKaaClient client;
     private final KaaClientState state;
+    private final FailoverManager failoverManager;
 
     private volatile ExecutorService executor;
 
@@ -57,9 +61,10 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     private KaaDataDemultiplexer demultiplexer;
     private KaaDataMultiplexer multiplexer;
 
-    public AbstractHttpChannel(AbstractKaaClient client, KaaClientState state) {
+    public AbstractHttpChannel(AbstractKaaClient client, KaaClientState state, FailoverManager failoverManager) {
         this.client = client;
         this.state = state;
+        this.failoverManager = failoverManager;
     }
 
     protected ExecutorService createExecutor() {
@@ -232,9 +237,23 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     }
 
     protected void connectionFailed(boolean failed) {
+        connectionFailed(failed, -1);
+    }
+
+    protected void connectionFailed(boolean failed, int status) {
+        switch (status) {
+            case UNATHORIZED_HTTP_STATUS:
+                state.clean();
+                break;
+            default:
+                break;
+        }
+
         lastConnectionFailed = failed;
         if (failed) {
-            client.getChannelManager().onServerFailed(currentServer);
+            failoverManager.onServerFailed(currentServer);
+        } else {
+            failoverManager.onServerConnected(currentServer);
         }
     }
 

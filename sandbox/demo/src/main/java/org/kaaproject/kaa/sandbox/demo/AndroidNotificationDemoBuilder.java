@@ -1,4 +1,20 @@
 /*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
  * Copyright 2014 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,15 +41,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.common.admin.AdminClient;
-import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
-import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
-import org.kaaproject.kaa.server.common.core.configuration.RawData;
-import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
-import org.kaaproject.kaa.server.common.core.schema.RawSchema;
-import org.kaaproject.kaa.server.verifiers.trustful.config.TrustfulVerifierConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,12 +67,12 @@ public class AndroidNotificationDemoBuilder extends AbstractDemoBuilder {
         notificationApplication.setName("Android notification demo");
         notificationApplication = client.editApplication(notificationApplication);
 
-        sdkKey.setApplicationId(notificationApplication.getId());
-        sdkKey.setProfileSchemaVersion(1);
-        sdkKey.setConfigurationSchemaVersion(1);
-        sdkKey.setLogSchemaVersion(1);
-        sdkKey.setNotificationSchemaVersion(1);
-        sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
+        sdkPropertiesDto.setApplicationId(notificationApplication.getId());
+        sdkPropertiesDto.setApplicationToken(notificationApplication.getApplicationToken());
+        sdkPropertiesDto.setProfileSchemaVersion(1);
+        sdkPropertiesDto.setConfigurationSchemaVersion(1);
+        sdkPropertiesDto.setLogSchemaVersion(1);
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
 
         loginTenantDeveloper(client);
 
@@ -74,7 +82,7 @@ public class AndroidNotificationDemoBuilder extends AbstractDemoBuilder {
         notificationSchemaDto.setName("Notification schema");
         notificationSchemaDto.setDescription("Notification schema describing incoming notifications");
         notificationSchemaDto = client.createNotificationSchema(notificationSchemaDto, getResourcePath("notificationSchema.json"));
-        sdkKey.setNotificationSchemaVersion(notificationSchemaDto.getMajorVersion());
+        sdkPropertiesDto.setNotificationSchemaVersion(notificationSchemaDto.getMajorVersion());
         logger.info("Notification schema was created.");
 
         TopicDto optionalTopic = new TopicDto();

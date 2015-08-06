@@ -46,7 +46,6 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.transports.http</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>http</classifier>
         </dependency>
         <dependency>

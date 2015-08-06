@@ -1,4 +1,20 @@
 /*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
  * Copyright 2014 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -59,11 +75,12 @@ public class EventDemoBuilder extends AbstractDemoBuilder {
         eventApplication.setName("Event demo");
         eventApplication = client.editApplication(eventApplication);
 
-        sdkKey.setApplicationId(eventApplication.getId());
-        sdkKey.setProfileSchemaVersion(1);
-        sdkKey.setConfigurationSchemaVersion(1);
-        sdkKey.setNotificationSchemaVersion(1);
-        sdkKey.setLogSchemaVersion(1);
+        sdkPropertiesDto.setApplicationId(eventApplication.getId());
+        sdkPropertiesDto.setApplicationToken(eventApplication.getApplicationToken());
+        sdkPropertiesDto.setProfileSchemaVersion(1);
+        sdkPropertiesDto.setConfigurationSchemaVersion(1);
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
+        sdkPropertiesDto.setLogSchemaVersion(1);
 
         loginTenantDeveloper(client);
 
@@ -71,7 +88,7 @@ public class EventDemoBuilder extends AbstractDemoBuilder {
 
         List<String> aefMapIds = new ArrayList<>();
         aefMapIds.add(thermoAefMap.getId());
-        sdkKey.setAefMapIds(aefMapIds);
+        sdkPropertiesDto.setAefMapIds(aefMapIds);
 
         TrustfulVerifierConfig trustfulVerifierConfig = new TrustfulVerifierConfig();
         UserVerifierDto trustfulUserVerifier = new UserVerifierDto();
@@ -85,7 +102,7 @@ public class EventDemoBuilder extends AbstractDemoBuilder {
         RawData rawData = algotithm.getRootData();
         trustfulUserVerifier.setJsonConfiguration(rawData.getRawData());
         trustfulUserVerifier = client.editUserVerifierDto(trustfulUserVerifier);
-        sdkKey.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
+        sdkPropertiesDto.setDefaultVerifierToken(trustfulUserVerifier.getVerifierToken());
 
         logger.info("Finished loading 'Event Demo Application' data.");
     }

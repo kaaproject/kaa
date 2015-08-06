@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2014-2015 CyberVision, Inc.
+ 
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+       http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+	<RelativeLayout	    
+	    android:id="@+id/albumDetailsView"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/currentTrackLayout">
+        <FrameLayout
+            android:id="@+id/albumCoverLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+            <org.kaaproject.kaa.demo.iotworld.smarthome.layout.SquareLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/album_cover_border_color"
+                    app:sizingType="byHeight"/> 
+            <org.kaaproject.kaa.demo.iotworld.smarthome.layout.SquareLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="3dp"
+                app:sizingType="byHeight">
+                <ImageView
+                        android:id="@+id/albumCoverView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/ic_launcher"/>
+            </org.kaaproject.kaa.demo.iotworld.smarthome.layout.SquareLayout>
+        </FrameLayout>                
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:orientation="vertical"
+	        android:paddingLeft="10dp"
+	        android:layout_toRightOf="@id/albumCoverLayout"
+	        android:layout_toEndOf="@id/albumCoverLayout">
+	        <TextView
+	            android:id="@+id/albumTitleView"
+	            android:layout_width="wrap_content"
+	            android:layout_height="0dp"
+	            android:layout_weight="1"
+	            android:textSize="18sp"
+	            android:textStyle="bold"
+	            android:textColor="@android:color/white"
+	            android:ellipsize="marquee"
+	            android:fadingEdge="horizontal"
+	            android:singleLine="true"
+	            android:focusable="true"
+	            android:focusableInTouchMode="true"
+	            android:lines="1"
+	            android:marqueeRepeatLimit="marquee_forever"
+	            />
+	        <TextView
+	            android:id="@+id/artistTitleView"
+	            android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+	            android:textSize="18sp"
+	            android:textColor="@android:color/white"
+	            android:ellipsize="marquee"
+	            android:fadingEdge="horizontal"
+	            android:singleLine="true"
+	            android:focusable="true"
+	            android:focusableInTouchMode="true"
+	            android:lines="1"
+	            android:marqueeRepeatLimit="marquee_forever"
+	            android:gravity="center_vertical"	            
+	            />
+	        <TextView
+	            android:id="@+id/trackCountView"
+	            android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+	            android:textSize="18sp"
+	            android:textColor="@android:color/white"
+	            android:ellipsize="marquee"
+	            android:fadingEdge="horizontal"
+	            android:singleLine="true"
+	            android:focusable="true"
+	            android:focusableInTouchMode="true"
+	            android:lines="1"
+	            android:marqueeRepeatLimit="marquee_forever"
+	            android:gravity="center_vertical"              
+	            />
+	    </LinearLayout>
+	</RelativeLayout>
+    <FrameLayout 
+        android:id="@id/currentTrackLayout"
+        android:paddingTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true">
+        <TextView
+            android:id="@+id/noTrackSelectedView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="@string/no_track_selected"
+            android:visibility="gone">
+        </TextView>
+        <LinearLayout
+            android:id="@+id/currentTrackView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/trackTitleView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:singleLine="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:lines="1"
+                android:marqueeRepeatLimit="marquee_forever"
+                />        
+            <SeekBar 
+                android:id="@+id/trackProgressView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:progressDrawable="@drawable/seek_progress_album"                                                     
+                android:thumb="@drawable/seek_thumb_album"
+                android:paddingTop="5dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp"
+                android:disabledAlpha="1"
+                android:splitTrack="false"
+                android:thumbOffset="2dp"/>
+            <TextView
+                android:id="@+id/trackProgressTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:gravity="right"/>
+        </LinearLayout>    
+    </FrameLayout>	
+</RelativeLayout>

@@ -21,6 +21,7 @@
 #include <stdint.h>
 #include "platform/ext_sha.h"
 
+#include "kaa.h"
 #include "kaa_logging.h"
 #include "kaa_test.h"
 #include "kaa_context.h"
@@ -48,20 +49,12 @@ char* allocator(void *mock_context, size_t size)
     return (char *) KAA_MALLOC(size);
 }
 
-typedef struct {
-    size_t timeout;
-    size_t batch_size;
-    bool on_timeout_count;
-    bool on_failure_count;
-} mock_strategy_context_t;
+extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
+                                                  , kaa_logger_t *logger);
 
-typedef struct {
-    kaa_list_t *logs;
-    size_t record_count;
-    size_t total_size;
-    bool on_remove_by_id_count;
-    bool on_unmark_by_id_count;
-} mock_storage_context_t;
+extern kaa_error_t ext_log_upload_strategy_by_volume_create(void **strategy_p
+                                                          , kaa_channel_manager_t   *channel_manager
+                                                          , kaa_bootstrap_manager_t *bootstrap_manager);
 
 void test_empty_log_collector_extension_count(void)
 {
@@ -71,17 +64,25 @@ void test_empty_log_collector_extension_count(void)
     info->services_count = 1;
     info->allocator = &allocator;
     info->allocator_context = mock;
-    mock_strategy_context_t *strategy = (mock_strategy_context_t*) KAA_MALLOC(sizeof(mock_strategy_context_t));
-    ASSERT_NOT_NULL(strategy);
-    mock_storage_context_t *storage = (mock_storage_context_t*) KAA_MALLOC(sizeof(mock_storage_context_t));
-    ASSERT_NOT_NULL(storage);
-    memset(storage, 0, sizeof(mock_storage_context_t));
-    memset(strategy, 0, sizeof(mock_strategy_context_t));
-    kaa_error_t error_code = kaa_logging_init(kaa_context->log_collector, storage, strategy);
+
+    void *log_storage_context         = NULL;
+    void *log_upload_strategy_context = NULL;
+
+    kaa_error_t error_code = ext_unlimited_log_storage_create(&log_storage_context, kaa_context->logger);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    error_code = kaa_platform_protocol_serialize_client_sync(kaa_context->platfrom_protocol, info, &buffer, &buffer_size);
+
+    error_code = ext_log_upload_strategy_by_volume_create(&log_upload_strategy_context
+                                                        , kaa_context->channel_manager
+                                                        , kaa_context->bootstrap_manager);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_logging_init(kaa_context->log_collector, log_storage_context, log_upload_strategy_context);
+    ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
+    error_code = kaa_platform_protocol_serialize_client_sync(kaa_context->platform_protocol, info, &buffer, &buffer_size);
     KAA_FREE(info);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+
     char count_of_extensions = *(buffer + 7);
     KAA_LOG_DEBUG(kaa_context->logger, KAA_ERR_NONE, "count of extensions is %d, expected 1", count_of_extensions);
     ASSERT_EQUAL(count_of_extensions, 1);

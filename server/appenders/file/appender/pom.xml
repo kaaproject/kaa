@@ -51,13 +51,11 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>file</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.9.4</version>
         </dependency>        
         <dependency>
             <groupId>junit</groupId>

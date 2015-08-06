@@ -33,16 +33,19 @@
 #include "utilities/kaa_mem.h"
 #include "platform/ext_sha.h"
 #include "platform/sock.h"
-
+#include "kaa.h"
 
 extern kaa_error_t kaa_status_create(kaa_status_t **kaa_status_p);
 extern void        kaa_status_destroy(kaa_status_t *self);
 
 extern kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size);
-extern kaa_error_t kaa_meta_data_request_serialize(kaa_status_t *status
+extern kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *status
                                                  , kaa_platform_message_writer_t* writer
                                                  , uint32_t request_id);
 
+extern kaa_error_t kaa_platform_protocol_create(kaa_platform_protocol_t **platform_protocol_p
+                                       , kaa_context_t *context
+                                       , kaa_status_t *status);
 
 
 static kaa_logger_t *logger = NULL;
@@ -66,7 +69,7 @@ void test_meta_extension_get_size()
                                               + sizeof(uint32_t) /* timeout */
                                               + SHA_1_DIGEST_LENGTH
                                               + SHA_1_DIGEST_LENGTH
-                                              + KAA_APPLICATION_TOKEN_LENGTH;
+                                              + KAA_SDK_TOKEN_LENGTH;
 
     size_t meta_extension_size;
     kaa_error_t error_code = kaa_meta_data_request_get_size(&meta_extension_size);
@@ -117,8 +120,14 @@ void test_meta_extension_serialize()
     error_code = ext_copy_sha_hash(status->profile_hash, expected_profile_hash);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_meta_data_request_serialize(status, writer, 1);
+    kaa_context_t *context = NULL;
+    kaa_init(&context);
+    kaa_platform_protocol_t *protocol = NULL;
+    kaa_platform_protocol_create(&protocol, context, status);
+
+    error_code = kaa_meta_data_request_serialize(protocol, writer, 1);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
+    kaa_deinit(context);
 
     kaa_platform_message_reader_t *reader;
     error_code = kaa_platform_message_reader_create(&reader, buffer, meta_extension_size);
@@ -140,7 +149,7 @@ void test_meta_extension_serialize()
     uint32_t timeout;
     kaa_digest public_key_hash;
     kaa_digest profile_hash;
-    char application_token[KAA_APPLICATION_TOKEN_LENGTH];
+    char sdk_token[KAA_SDK_TOKEN_LENGTH];
 
     error_code = kaa_platform_message_read(reader, &request_id, sizeof(uint32_t));
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -160,9 +169,9 @@ void test_meta_extension_serialize()
     error_code = (memcmp(profile_hash, expected_profile_hash, SHA_1_DIGEST_LENGTH) == 0 ? KAA_ERR_NONE : KAA_ERR_READ_FAILED);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_platform_message_read_aligned(reader, application_token, KAA_APPLICATION_TOKEN_LENGTH);
+    error_code = kaa_platform_message_read_aligned(reader, sdk_token, KAA_SDK_TOKEN_LENGTH);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-    error_code = (memcmp(application_token, APPLICATION_TOKEN, KAA_APPLICATION_TOKEN_LENGTH) == 0 ? KAA_ERR_NONE : KAA_ERR_READ_FAILED);
+    error_code = (memcmp(sdk_token, KAA_SDK_TOKEN, KAA_SDK_TOKEN_LENGTH) == 0 ? KAA_ERR_NONE : KAA_ERR_READ_FAILED);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_platform_message_reader_destroy(reader);

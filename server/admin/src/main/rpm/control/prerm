@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright 2014 CyberVision, Inc.
+# Copyright 2014-2015 CyberVision, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ set -e
 if [ "$1" = "0" ]; then
   if [ -x "/etc/init.d/kaa-admin" ]; then
       if ! service_loc="$(type -p "service")" || [ -z "$service_loc" ]; then
-  	invoke-rc.d kaa-admin stop || exit $?
+        invoke-rc.d kaa-admin stop || exit $?
       else
-	service kaa-admin stop || exit $?
+        service kaa-admin stop || exit $?
       fi
   fi
 fi

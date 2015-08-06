@@ -57,7 +57,7 @@ public:
     virtual void addLogRecord(LogRecordPtr serializedRecord);
     virtual ILogStorageStatus& getStatus() { return *this; }
 
-    virtual RecordPack getRecordBlock(std::size_t blockSize);
+    virtual RecordPack getRecordBlock(std::size_t blockSize, std::size_t recordsBlockCount);
     virtual void removeRecordBlock(RecordBlockId blockId);
     virtual void notifyUploadFailed(RecordBlockId blockId);
 
@@ -88,7 +88,7 @@ private:
     size_t shrinkedSize_ = 0;
 
     std::list<LogRecordWrapper> logs_;
-    KAA_MUTEX_DECLARE(logsGuard_);
+    KAA_MUTEX_DECLARE(memoryLogStorageGuard_);
 
     BlockId recordBlockId_;
     static const BlockId NO_OWNER;

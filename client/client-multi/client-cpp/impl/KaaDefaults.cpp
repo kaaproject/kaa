@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,21 +28,11 @@
 
 namespace kaa {
 
-const char * const BUILD_VERSION = "0.6.3-SNAPSHOT";
+const char * const BUILD_VERSION = "0.7.1-SNAPSHOT";
 
-const char * const BUILD_COMMIT_HASH = "2";
+const char * const BUILD_COMMIT_HASH = "";
 
-const char * const APPLICATION_TOKEN = "31442896109454287616";
-
-const std::uint32_t PROFILE_VERSION = 2;
-
-const std::uint32_t CONFIG_VERSION = 2;
-
-const std::uint32_t SYSTEM_NF_VERSION = 1;
-
-const std::uint32_t USER_NF_VERSION = 2;
-
-const std::uint32_t LOG_SCHEMA_VERSION = 2;
+const char * const SDK_TOKEN = "48461193020513321075";
 
 const std::uint32_t POLLING_PERIOD_SECONDS = 5;
 
@@ -71,9 +61,13 @@ ITransportConnectionInfoPtr createTransportInfo(const std::int32_t& accessPointI
 
 const BootstrapServers& getBootstrapServers()
 {
-    static BootstrapServers listOfServers = { createTransportInfo(0x4c22e496, 0xfb9a3cf0, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJvTnE/W607EBl/4dA81Lo1HJcEbJRa24zIYqFxKRFCD5rhI35siAb9ZS5i8G0u3Kffz2YdB71WFut1q7c4xhvHf1LaMlu/hDz8G1vfqcHvV6VAsaJz7vcQ5oHqQhlIgv+1iI6A9z/4qNRe5sZ3h0kN3zdJk2rA/L/FVrfM36fNfK6cNDkXeD75mhGhgyXhrW0zkt8mHF9m1k9fBA5sarkwKNT0WP+TUY8oB6Rkr1dcdOYW4tuuR0dWxngtn1j2Oghm2DCHxx4FGse3IdQHIsIeMmcR5/JXPOCE1arqe0Pk6HYJ/jtSBqTvKqb8k+54RrvauyfD+V04/nWZulHpuNZMCAwEAAQAAAAwxOTIuMTY4Ljc3LjIAACah")
-                                          , createTransportInfo(0x4c22e496, 0x56c8ff92, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJvTnE/W607EBl/4dA81Lo1HJcEbJRa24zIYqFxKRFCD5rhI35siAb9ZS5i8G0u3Kffz2YdB71WFut1q7c4xhvHf1LaMlu/hDz8G1vfqcHvV6VAsaJz7vcQ5oHqQhlIgv+1iI6A9z/4qNRe5sZ3h0kN3zdJk2rA/L/FVrfM36fNfK6cNDkXeD75mhGhgyXhrW0zkt8mHF9m1k9fBA5sarkwKNT0WP+TUY8oB6Rkr1dcdOYW4tuuR0dWxngtn1j2Oghm2DCHxx4FGse3IdQHIsIeMmcR5/JXPOCE1arqe0Pk6HYJ/jtSBqTvKqb8k+54RrvauyfD+V04/nWZulHpuNZMCAwEAAQAAAAwxOTIuMTY4Ljc3LjIAACag") };
-    std::random_shuffle(listOfServers.begin(), listOfServers.end());
+    static BootstrapServers listOfServers;
+    if (listOfServers.empty()) {
+        listOfServers.push_back(createTransportInfo(0x95f7e40f, 0xfb9a3cf0, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAInAdYDtJzx02MWRJmAzyhcsOpGZv55tQ5gmNfRM/9LyJpy9vkuSsxn7bTzks9bkptBsV05i0ms0eaOeMdSElUMAuUQL5lfWgG/StUKBtBaxWZclNlkPkvHKwrMKUWSGEjuaBme4Qk23WrpRVmFMerR62DJ557pXZfIicJ8n3Fety0ox4Qs2WwgbudAY3qfs5Md7d7lXoWNq9hxL92SHNluTEtmgFkb/PQGrWYnGy73kyUSrz4iZURF47cPt0cazHySxHl/3gxcOk1SuXKu2Jv6HGaH+AjHwKYNFiW6hLWU0Q3vUkmlPaEDJsGdRfQ7b1SZM31+ivF1Q2xfgADTBiVsCAwEAAQAAAAkxMC4yLjMuOTMAACah"));
+listOfServers.push_back(createTransportInfo(0x95f7e40f, 0x56c8ff92, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAInAdYDtJzx02MWRJmAzyhcsOpGZv55tQ5gmNfRM/9LyJpy9vkuSsxn7bTzks9bkptBsV05i0ms0eaOeMdSElUMAuUQL5lfWgG/StUKBtBaxWZclNlkPkvHKwrMKUWSGEjuaBme4Qk23WrpRVmFMerR62DJ557pXZfIicJ8n3Fety0ox4Qs2WwgbudAY3qfs5Md7d7lXoWNq9hxL92SHNluTEtmgFkb/PQGrWYnGy73kyUSrz4iZURF47cPt0cazHySxHl/3gxcOk1SuXKu2Jv6HGaH+AjHwKYNFiW6hLWU0Q3vUkmlPaEDJsGdRfQ7b1SZM31+ivF1Q2xfgADTBiVsCAwEAAQAAAAkxMC4yLjMuOTMAACag"));
+;
+        std::random_shuffle(listOfServers.begin(), listOfServers.end());
+    }
     return listOfServers;
 }
 
@@ -83,22 +77,11 @@ const Botan::SecureVector<std::uint8_t>& getDefaultConfigData()
     return configData;
 }
 
-const EventClassFamilyVersionInfos& getEventClassFamilyVersionInfo()
-{
-    static const EventClassFamilyVersionInfos versions = { {"test_event_family",1} };/* = {{"familyName1",1}, {"familyName2",3}};*/
-    return versions;
-}
-
 HashDigest getPropertiesHash()
 {
     std::ostringstream ss;
 
-    ss << APPLICATION_TOKEN;
-    ss << PROFILE_VERSION;
-    ss << CONFIG_VERSION;
-    ss << SYSTEM_NF_VERSION;
-    ss << USER_NF_VERSION;
-    ss << LOG_SCHEMA_VERSION;
+    ss << SDK_TOKEN;
     ss << POLLING_PERIOD_SECONDS;
     ss << CLIENT_PUB_KEY_LOCATION;
     ss << CLIENT_PRIV_KEY_LOCATION;
@@ -111,10 +94,6 @@ HashDigest getPropertiesHash()
 
     ss.write(reinterpret_cast<const char*>(
             getDefaultConfigData().begin()), getDefaultConfigData().size());
-
-    for (const auto& eventFamily : getEventClassFamilyVersionInfo()) {
-        ss << eventFamily.first << eventFamily.second;
-    }
 
     return EndpointObjectHash(ss.str()).getHashDigest();
 }

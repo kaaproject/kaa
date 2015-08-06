@@ -1,0 +1,11 @@
+{
+    "name": "StreetLightsProfile",
+    "namespace": "org.kaaproject.kaa.demo.iotworld.lights.street",
+    "type": "record",
+    "fields": [
+        {
+            "name": "lightZones",
+            "type": { "type": "array", "items": "int" }
+        }
+    ]
+}

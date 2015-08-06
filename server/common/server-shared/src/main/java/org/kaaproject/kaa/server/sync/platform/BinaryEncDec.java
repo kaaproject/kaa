@@ -32,9 +32,7 @@ import org.kaaproject.kaa.server.sync.EndpointAttachRequest;
 import org.kaaproject.kaa.server.sync.EndpointAttachResponse;
 import org.kaaproject.kaa.server.sync.EndpointDetachRequest;
 import org.kaaproject.kaa.server.sync.EndpointDetachResponse;
-import org.kaaproject.kaa.server.sync.EndpointVersionInfo;
 import org.kaaproject.kaa.server.sync.Event;
-import org.kaaproject.kaa.server.sync.EventClassFamilyVersionInfo;
 import org.kaaproject.kaa.server.sync.EventClientSync;
 import org.kaaproject.kaa.server.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.sync.EventListenersResponse;
@@ -108,10 +106,11 @@ public class BinaryEncDec implements PlatformEncDec {
     private static final byte USER_SYNC_ENDPOINT_ID_OPTION = 0x01;
     private static final short EVENT_DATA_IS_EMPTY_OPTION = (short) 0x02;
     private static final int CLIENT_EVENT_DATA_IS_PRESENT_OPTION = 0x02;
-    private static final int CLIENT_META_SYNC_APP_TOKEN_OPTION = 0x08;
+    private static final int CLIENT_META_SYNC_SDK_TOKEN_OPTION = 0x08;
     private static final int CLIENT_META_SYNC_PROFILE_HASH_OPTION = 0x04;
     private static final int CLIENT_META_SYNC_KEY_HASH_OPTION = 0x02;
     private static final int CLIENT_META_SYNC_TIMEOUT_OPTION = 0x01;
+    private static final int CLIENT_METASYNC_NOTIFICATION_HAS_TOPIC_LIST_HASH = 0x02;
 
     // Notification types
     static final byte SYSTEM = 0x00;
@@ -173,8 +172,8 @@ public class BinaryEncDec implements PlatformEncDec {
     private static final byte NF_SUBSCRIPTION_REMOVE_FIELD_ID = 3;
 
     // Notification server sync fields
-    private static final byte NF_NOTIFICATIONS_FIELD_ID = 0;
-    private static final byte NF_TOPICS_FIELD_ID = 1;
+    private static final byte NF_TOPICS_FIELD_ID = 0;
+    private static final byte NF_NOTIFICATIONS_FIELD_ID = 1;
 
     /*
      * (non-Javadoc)
@@ -419,12 +418,36 @@ public class BinaryEncDec implements PlatformEncDec {
         int extPosition = buf.position();
 
         buf.putInt(notificationSync.getAppStateSeqNumber());
+        SyncResponseStatus status = notificationSync.getResponseStatus();
+        switch (status) {
+        case NO_DELTA:
+            buf.putInt(0);
+            break;
+        case DELTA:
+            buf.putInt(1);
+            break;
+        case RESYNC:
+            buf.putInt(2);
+            break;
+        }
+        if (notificationSync.getAvailableTopics() != null) {
+            buf.put(NF_TOPICS_FIELD_ID);
+            buf.put(NOTHING);
+            buf.putShort((short) notificationSync.getAvailableTopics().size());
+            for (Topic t : notificationSync.getAvailableTopics()) {
+                buf.putLong(Long.parseLong(t.getId()));
+                buf.put(t.getSubscriptionType() == SubscriptionType.MANDATORY ? MANDATORY : OPTIONAL);
+                buf.put(NOTHING);
+                buf.putShort((short) t.getName().getBytes(UTF8).length);
+                putUTF(buf, t.getName());
+            }
+        }
         if (notificationSync.getNotifications() != null) {
             buf.put(NF_NOTIFICATIONS_FIELD_ID);
             buf.put(NOTHING);
             buf.putShort((short) notificationSync.getNotifications().size());
             for (Notification nf : notificationSync.getNotifications()) {
-                buf.putInt(nf.getSeqNumber());
+                buf.putInt((nf.getSeqNumber() != null) ? nf.getSeqNumber() : 0);
                 buf.put(nf.getType() == NotificationType.SYSTEM ? SYSTEM : CUSTOM);
                 buf.put(NOTHING);
                 buf.putShort(nf.getUid() != null ? (short) nf.getUid().length() : (short) 0);
@@ -433,18 +456,6 @@ public class BinaryEncDec implements PlatformEncDec {
                 buf.putLong(topicId);
                 putUTF(buf, nf.getUid());
                 put(buf, nf.getBody().array());
-            }
-        }
-        if (notificationSync.getAvailableTopics() != null) {
-            buf.put(NF_TOPICS_FIELD_ID);
-            buf.put(NOTHING);
-            buf.putShort((short) notificationSync.getAvailableTopics().size());
-            for (Topic t : notificationSync.getAvailableTopics()) {
-                buf.putLong(Long.parseLong(t.getId()));
-                buf.putShort(t.getSubscriptionType() == SubscriptionType.MANDATORY ? MANDATORY : OPTIONAL);
-                buf.put(NOTHING);
-                buf.put((byte) t.getName().getBytes(UTF8).length);
-                putUTF(buf, t.getName());
             }
         }
 
@@ -512,7 +523,9 @@ public class BinaryEncDec implements PlatformEncDec {
     }
 
     public void putUTF(GrowingByteBuffer buf, String str) {
-        put(buf, str.getBytes(UTF8));
+        if (str != null) {
+            put(buf, str.getBytes(UTF8));
+        }
     }
 
     private void put(GrowingByteBuffer buf, byte[] data) {
@@ -586,8 +599,8 @@ public class BinaryEncDec implements PlatformEncDec {
         if (hasOption(options, CLIENT_META_SYNC_PROFILE_HASH_OPTION)) {
             md.setProfileHash(getNewByteBuffer(buf, PROFILE_HASH_SIZE));
         }
-        if (hasOption(options, CLIENT_META_SYNC_APP_TOKEN_OPTION)) {
-            md.setApplicationToken(getUTF8String(buf, Constants.APP_TOKEN_SIZE));
+        if (hasOption(options, CLIENT_META_SYNC_SDK_TOKEN_OPTION)) {
+            md.setSdkToken(getUTF8String(buf, Constants.SDK_TOKEN_SIZE));
         }
         sync.setClientSyncMetaData(md);
     }
@@ -608,30 +621,11 @@ public class BinaryEncDec implements PlatformEncDec {
         int payloadLimitPosition = buf.position() + payloadLength;
         ProfileClientSync profileSync = new ProfileClientSync();
         profileSync.setProfileBody(getNewByteBuffer(buf, buf.getInt()));
-        profileSync.setVersionInfo(new EndpointVersionInfo());
         while (buf.position() < payloadLimitPosition) {
             byte fieldId = buf.get();
             // reading unused reserved field
             buf.get();
             switch (fieldId) {
-            case CONF_SCHEMA_VERSION_FIELD_ID:
-                profileSync.getVersionInfo().setConfigVersion(getIntFromUnsignedShort(buf));
-                break;
-            case PROFILE_SCHEMA_VERSION_FIELD_ID:
-                profileSync.getVersionInfo().setProfileVersion(getIntFromUnsignedShort(buf));
-                break;
-            case SYSTEM_NOTIFICATION_SCHEMA_VERSION_FIELD_ID:
-                profileSync.getVersionInfo().setSystemNfVersion(getIntFromUnsignedShort(buf));
-                break;
-            case USER_NOTIFICATION_SCHEMA_VERSION_FIELD_ID:
-                profileSync.getVersionInfo().setUserNfVersion(getIntFromUnsignedShort(buf));
-                break;
-            case LOG_SCHEMA_VERSION_FIELD_ID:
-                profileSync.getVersionInfo().setLogSchemaVersion(getIntFromUnsignedShort(buf));
-                break;
-            case EVENT_FAMILY_VERSIONS_COUNT_FIELD_ID:
-                profileSync.getVersionInfo().setEventFamilyVersions(parseEventFamilyVersionList(buf, getIntFromUnsignedShort(buf)));
-                break;
             case PUBLIC_KEY_FIELD_ID:
                 profileSync.setEndpointPublicKey(getNewByteBuffer(buf, getIntFromUnsignedShort(buf)));
                 break;
@@ -710,8 +704,11 @@ public class BinaryEncDec implements PlatformEncDec {
         sync.setEventSync(eventSync);
     }
 
-    private void parseNotificationClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
-        int payloadLimitPosition = buf.position() + payloadLength - TOPIC_LIST_HASH_SIZE;
+    private void  parseNotificationClientSync(ClientSync sync, ByteBuffer buf, int options, int payloadLength) {
+        int payloadLimitPosition = buf.position() + payloadLength;
+        if (hasOption(options, CLIENT_METASYNC_NOTIFICATION_HAS_TOPIC_LIST_HASH)) {
+            payloadLimitPosition -= TOPIC_LIST_HASH_SIZE;
+        }
         NotificationClientSync nfSync = new NotificationClientSync();
         nfSync.setAppStateSeqNumber(buf.getInt());
         while (buf.position() < payloadLimitPosition) {
@@ -733,7 +730,9 @@ public class BinaryEncDec implements PlatformEncDec {
                 break;
             }
         }
-        nfSync.setTopicListHash(getNewByteBuffer(buf, TOPIC_LIST_HASH_SIZE));
+        if (hasOption(options, CLIENT_METASYNC_NOTIFICATION_HAS_TOPIC_LIST_HASH)) {
+            nfSync.setTopicListHash(getNewByteBuffer(buf, TOPIC_LIST_HASH_SIZE));
+        }
         sync.setNotificationSync(nfSync);
     }
 
@@ -853,15 +852,6 @@ public class BinaryEncDec implements PlatformEncDec {
         String userAccessToken = getUTF8String(buf, tokenLength);
         String userVerifierToken = getUTF8String(buf, verifierTokenLength);
         return new UserAttachRequest(userVerifierToken, userExternalId, userAccessToken);
-    }
-
-    private static List<EventClassFamilyVersionInfo> parseEventFamilyVersionList(ByteBuffer buf, int count) {
-        List<EventClassFamilyVersionInfo> result = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            int version = getIntFromUnsignedShort(buf);
-            result.add(new EventClassFamilyVersionInfo(getUTF8String(buf), version));
-        }
-        return result;
     }
 
     private static int getIntFromUnsignedShort(ByteBuffer buf) {

@@ -49,14 +49,14 @@ extern "C" {
 #define KAA_LOGGING_EXTENSION_TYPE          4
 #define KAA_CONFIGURATION_EXTENSION_TYPE    5
 #define KAA_EVENT_EXTENSION_TYPE            7
+#define KAA_NOTIFICATION_EXTENSION_TYPE     6
 /*
  * Not yet implemented
  */
-#define KAA_NOTIFICATION_EXTENSION_TYPE     6
 #define KAA_REDIRECT_EXTENSION_TYPE         8
 
 
-#define KAA_APPLICATION_TOKEN_LENGTH    20
+#define KAA_SDK_TOKEN_LENGTH    28
 
 /**
  * Constants used for a meta data extension.

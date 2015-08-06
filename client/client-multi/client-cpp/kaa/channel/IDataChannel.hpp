@@ -20,6 +20,7 @@
 #include <vector>
 #include <map>
 
+#include "kaa/failover/IFailoverStrategy.hpp"
 #include "kaa/channel/ServerType.hpp"
 #include "kaa/common/TransportType.hpp"
 #include "kaa/channel/ChannelDirection.hpp"
@@ -37,6 +38,9 @@ class IPingServerStorage;
  */
 class IDataChannel {
 public:
+
+
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) = 0;
 
     /**
      * Updates the channel's state of the specific service.

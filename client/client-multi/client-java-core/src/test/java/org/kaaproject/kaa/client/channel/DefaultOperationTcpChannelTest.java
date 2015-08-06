@@ -27,7 +27,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
@@ -58,8 +57,8 @@ public class DefaultOperationTcpChannelTest {
         public InputStream is;
 
         public TestOperationTcpChannel(KaaClientState state,
-                KaaChannelManager channelManager) throws IOException {
-            super(state, channelManager);
+                FailoverManager failoverManager) throws IOException {
+            super(state, failoverManager);
             PipedInputStream in = new PipedInputStream(4096);
             PipedOutputStream out = new PipedOutputStream(in);
             os = out;
@@ -83,8 +82,8 @@ public class DefaultOperationTcpChannelTest {
     @Test
     public void testDefaultOperationTcpChannel() {
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
-        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
-        KaaDataChannel tcpChannel = new DefaultOperationTcpChannel(clientState, channelManager);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
+        KaaDataChannel tcpChannel = new DefaultOperationTcpChannel(clientState, failoverManager);
         assertNotNull("New channel's id is null", tcpChannel.getId());
         assertNotNull("New channel does not support any of transport types", tcpChannel.getSupportedTransportTypes());
         assertNotEquals(0, tcpChannel.getSupportedTransportTypes().size());
@@ -96,8 +95,8 @@ public class DefaultOperationTcpChannelTest {
         Mockito.when(clientState.getPrivateKey()).thenReturn(clientKeys.getPrivate());
         Mockito.when(clientState.getPublicKey()).thenReturn(clientKeys.getPublic());
 
-        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
-        TestOperationTcpChannel tcpChannel = new TestOperationTcpChannel(clientState, channelManager);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
+        TestOperationTcpChannel tcpChannel = new TestOperationTcpChannel(clientState, failoverManager);
 
         AvroByteArrayConverter<SyncResponse> responseCreator = new AvroByteArrayConverter<SyncResponse>(SyncResponse.class);
         AvroByteArrayConverter<SyncRequest> requestCreator = new AvroByteArrayConverter<SyncRequest>(SyncRequest.class);
@@ -119,6 +118,7 @@ public class DefaultOperationTcpChannelTest {
         SyncResponse response = new SyncResponse();
         response.setStatus(SyncResponseResultType.SUCCESS);
         tcpChannel.os.write(new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse(responseCreator.toByteArray(response), false, false).getFrame().array());
+        Thread.sleep(1000);  // sleep a bit to let the message to be received
         tcpChannel.sync(TransportType.USER); // causes call to KaaDataMultiplexer.compileRequest(...) for "KAA_SYNC" messsage
         
         Mockito.verify(multiplexer, Mockito.times(2)).compileRequest(Mockito.anyMapOf(TransportType.class, ChannelDirection.class));
@@ -146,8 +146,8 @@ public class DefaultOperationTcpChannelTest {
         Mockito.when(clientState.getPrivateKey()).thenReturn(clientKeys.getPrivate());
         Mockito.when(clientState.getPublicKey()).thenReturn(clientKeys.getPublic());
 
-        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
-        DefaultOperationTcpChannel channel = new DefaultOperationTcpChannel(clientState, channelManager);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
+        DefaultOperationTcpChannel channel = new DefaultOperationTcpChannel(clientState, failoverManager);
 
         TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.TCP_TRANSPORT_ID,
                 "www.test.fake", 999, KeyUtil.generateKeyPair().getPublic());
@@ -156,8 +156,5 @@ public class DefaultOperationTcpChannelTest {
         Mockito.when(checker.checkConnectivity()).thenReturn(false);
 
         channel.setConnectivityChecker(checker);
-        channel.setServer(server);
-
-        Mockito.verify(channelManager, Mockito.times(0)).onServerFailed(Mockito.any(TransportConnectionInfo.class));
     }
 }

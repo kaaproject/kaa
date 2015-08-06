@@ -1,0 +1,66 @@
+<!--
+  Copyright 2014 CyberVision, Inc.
+ 
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+       http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+    <id>smarthome-src-android</id>
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}/../thirdparty/android/appcompat_v7</directory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <outputDirectory>smarthome/android/appcompat_v7</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../thirdparty/android/circleimageview</directory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <outputDirectory>smarthome/android/circleimageview</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../thirdparty/android/cardview</directory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <outputDirectory>smarthome/android/cardview</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../thirdparty/android/qrcode-lib</directory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <outputDirectory>smarthome/android/qrcode-lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../thirdparty/android/eventbus</directory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <outputDirectory>smarthome/android/SmartHome/libs</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../thirdparty/android/recyclerview</directory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <outputDirectory>smarthome/android/SmartHome/libs</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/source/smarthome/android</directory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <outputDirectory>smarthome/android/SmartHome</outputDirectory>
+            <excludes>
+                <exclude>bin/</exclude>
+                <exclude>gen/</exclude>
+            </excludes>
+        </fileSet>
+    </fileSets>
+</assembly>

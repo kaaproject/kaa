@@ -59,14 +59,7 @@ public class RecordServlet extends HttpServlet implements Servlet {
         String recordKeyBase64 = request.getParameter(RecordKey.RECORD_KEY_PARAMETER);
         try {
             RecordKey key = (RecordKey) Base64.decodeToObject(recordKeyBase64, Base64.URL_SAFE, null);
-            FileData recordLibrary = null;
-
-            if (RecordFiles.LIBRARY.equals(key.getRecordFiles())) {
-                recordLibrary = cacheService.getRecordLibrary(key);
-            } else {
-                recordLibrary = cacheService.getRecordSchema(key);
-            }
-
+            FileData recordLibrary = cacheService.getRecordData(key);
             ServletUtils.prepareDisposition(request, response, recordLibrary.getFileName());
             response.setContentLength(recordLibrary.getFileData().length);
             response.setBufferSize(BUFFER);

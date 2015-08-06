@@ -60,7 +60,7 @@ struct kaa_configuration_manager {
 };
 
 
-static kaa_root_configuration_t *kaa_configuration_manager_deserialize(char *buffer, size_t buffer_size)
+static kaa_root_configuration_t *kaa_configuration_manager_deserialize(const char *buffer, size_t buffer_size)
 {
     KAA_RETURN_IF_NIL2(buffer, buffer_size, NULL);
 
@@ -142,7 +142,7 @@ kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manage
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile configuration client sync");
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client configuration sync");
 
     uint32_t payload_size = sizeof(uint32_t) + SHA_1_DIGEST_LENGTH;
 
@@ -155,6 +155,8 @@ kaa_error_t kaa_configuration_manager_request_serialize(kaa_configuration_manage
 
     *((uint32_t *) tmp_writer.current) = KAA_HTONL(self->status->config_seq_n);
     tmp_writer.current += sizeof(uint32_t);
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Configuration state sequence number is '%d'", self->status->config_seq_n);
 
     error_code = kaa_platform_message_write_aligned(&tmp_writer, self->configuration_hash, SHA_1_DIGEST_LENGTH);
     if (error_code) {
@@ -176,21 +178,23 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received configuration server sync");
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received configuration server sync: options %u, payload size %u", extension_options, extension_length);
 
     if (extension_length >= sizeof(uint32_t)) {
         self->status->config_seq_n = KAA_NTOHL(*((uint32_t *) reader->current));
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Configuration state sequence number is '%d'", self->status->config_seq_n);
         reader->current += sizeof(uint32_t);
         if (extension_options & KAA_CONFIGURATION_BODY_PRESENT) {
             uint32_t body_size = KAA_NTOHL(*((uint32_t *) reader->current));
             reader->current += sizeof(uint32_t);
-
-            char body[body_size];
-            kaa_error_t error_code = kaa_platform_message_read_aligned(reader, body, body_size);
-            if (error_code) {
-                KAA_LOG_ERROR(self->logger, error_code, "Failed to read configuration body, size %u", body_size);
-                return KAA_ERR_READ_FAILED;
+            KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received configuration body, size '%u' ", body_size);
+            const char* body = reader->current;
+            kaa_error_t error = kaa_platform_message_skip(reader, kaa_aligned_size_get(body_size));
+            if (error) {
+                 KAA_LOG_ERROR(self->logger, error, "Failed to read configuration body, size %u", body_size);
+                 return error;
             }
+
 #if KAA_CONFIGURATION_DELTA_SUPPORT
 
 #else
@@ -203,7 +207,11 @@ kaa_error_t kaa_configuration_manager_handle_server_sync(kaa_configuration_manag
                 return KAA_ERR_READ_FAILED;
             }
 
-            ext_calculate_sha_hash(body, body_size, self->configuration_hash);
+            kaa_error_t err = ext_calculate_sha_hash(body, body_size, self->configuration_hash);
+            if (err) {
+                KAA_LOG_WARN(self->logger, err, "Failed to calculate configuration body hash");
+                return err;
+            }
             ext_configuration_store(body, body_size);
 #endif
             if (self->root_receiver.on_configuration_updated)

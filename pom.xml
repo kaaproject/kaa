@@ -33,7 +33,7 @@ Copyright 2014 CyberVision, Inc.
         <akka.version>2.3.1</akka.version>
         <spring.version>4.0.2.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
-        <spring.data.version>1.3.0.RELEASE</spring.data.version>
+        <spring.data.version>Fowler-RELEASE</spring.data.version>
         <ehcache.version>2.8.1</ehcache.version>
         <ehcache-spring.version>1.2.0</ehcache-spring.version>
         <hibernate.version>4.3.5.Final</hibernate.version>
@@ -42,6 +42,8 @@ Copyright 2014 CyberVision, Inc.
         <oracle-nosql-client.version>3.0.14</oracle-nosql-client.version>
         <oracle-kvstore.version>3.1.7</oracle-kvstore.version>
         <gwt.version>2.7.0</gwt.version>
+        <gwtchosen.version>1.2.0</gwtchosen.version>
+        <gwtquery.version>1.4.2</gwtquery.version>
         <aspectj.version>1.7.4</aspectj.version>
         <twitter.common.thrift.version>0.0.64</twitter.common.thrift.version>
 
@@ -60,20 +62,27 @@ Copyright 2014 CyberVision, Inc.
         <commons-compress.version>1.8</commons-compress.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-digester3.version>3.2</commons-digester3.version>
+        <commons-fileupload.version>1.3.1</commons-fileupload.version>
         <commons.dbcp.version>1.4</commons.dbcp.version>
         <commons.pool.version>1.5.4</commons.pool.version>
+        <commons-lang3.version>3.1</commons-lang3.version>
+        <commons-logging.version>1.1.1</commons-logging.version>
         <httpcomponents.version>4.3.2</httpcomponents.version>
         <jackson.version>2.4.1</jackson.version>
         <joda-time.version>2.2</joda-time.version>
         <junit.version>4.11</junit.version>
         <embed.mongo.version>1.42</embed.mongo.version>
+        <mongo-driver.version>3.0.1</mongo-driver.version>
         <mockito.version>1.9.5</mockito.version>
         <equalsverifier.version>1.4.1</equalsverifier.version>
         <jackson-jaxrs.version>1.9.13</jackson-jaxrs.version>
+        <jackson-mapper-asl.version>1.9.12</jackson-mapper-asl.version>
+        <jackson-core-asl.version>1.9.13</jackson-core-asl.version>
         <jline.version>2.11</jline.version>
-        <avro-ui.version>0.1.1</avro-ui.version>
+        <avro-ui.version>0.1.2-SNAPSHOT</avro-ui.version>
 
         <slf4j.version>1.7.7</slf4j.version>
+        <slf4j-android.version>1.7.7</slf4j-android.version>
         <logback.version>1.1.2</logback.version>
         <logback-ext-spring.version>0.1.2</logback-ext-spring.version>
 
@@ -88,6 +97,8 @@ Copyright 2014 CyberVision, Inc.
         <cassandra.driver.version>2.1.4</cassandra.driver.version>
         <cassandra.driver.mapping>2.1.4</cassandra.driver.mapping>
         <cassandra-unit.version>2.0.2.2</cassandra-unit.version>
+        
+        <couchbase.client.version>2.1.3</couchbase.client.version>
 
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -96,6 +107,20 @@ Copyright 2014 CyberVision, Inc.
         <sonar.skippedModules>admin,admin-rest-client,client-java-android,gwt-client</sonar.skippedModules>
         <sonar.jacoco.reportPath>${main.dir}/target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>${main.dir}/target/jacoco-it.exec</sonar.jacoco.itReportPath>
+
+        <android.version>2.2.1</android.version>
+
+        <javax.mail.version>1.4</javax.mail.version>
+        <javax.websocket.version>1.0</javax.websocket.version>
+
+        <iharder.version>2.3.8</iharder.version>
+        <hsqldb.version>2.3.2</hsqldb.version>
+        <versly-wsdoc.version>1.0-SNAPSHOT</versly-wsdoc.version>
+        <ant.version>1.9.4</ant.version>
+        <hibernate-jpa-2.1-api.version>1.0.0.Final</hibernate-jpa-2.1-api.version>
+        <cdap-stream-client.version>1.0.1</cdap-stream-client.version>
+        <jetty.version>9.2.2.v20140723</jetty.version>
+        <additionalparam>-Xdoclint:none</additionalparam>
     </properties>
 
     <modules>
@@ -402,6 +427,11 @@ Copyright 2014 CyberVision, Inc.
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>1.9.1</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -456,6 +486,11 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/*.cql</exclude>
                         <exclude>**/src/main/sh/bin/jetty.sh</exclude>
                         <exclude>**/src/main/resources/jetty/**</exclude>
+                        <exclude>**/openssl.framework/**</exclude>
+                        <exclude>**/openssl/**</exclude>
+                        <exclude>**/*xcodeproj/**</exclude>
+                        <exclude>**/*.plist</exclude>
+                        <exclude>**/*.cproject</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -505,9 +540,119 @@ Copyright 2014 CyberVision, Inc.
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+                <artifactId>gwt-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+                <artifactId>converter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+                <artifactId>shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+                <artifactId>shared</artifactId>
+                <version>${project.version}</version>
+                <classifier>sources</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common.avro-ui</groupId>
+                <artifactId>converter</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.common</groupId>
+                <artifactId>admin-rest-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.cdap</groupId>
+                <artifactId>config</artifactId>
+                <version>${project.version}</version>
+                <classifier>cdap</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.oracle-nosql</groupId>
+                <artifactId>config</artifactId>
+                <version>${project.version}</version>
+                <classifier>oracle-nosql</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
+                <artifactId>config</artifactId>
+                <version>${project.version}</version>
+                <classifier>file</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.file</groupId>
+                <artifactId>appender</artifactId>
+                <version>${project.version}</version>
+                <classifier>file</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.mongo</groupId>
+                <artifactId>config</artifactId>
+                <version>${project.version}</version>
+                <classifier>mongo</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.mongo</groupId>
+                <artifactId>appender</artifactId>
+                <version>${project.version}</version>
+                <classifier>mongo</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
+                <artifactId>config</artifactId>
+                <version>${project.version}</version>
+                <classifier>flume</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
+                <artifactId>appender</artifactId>
+                <version>${project.version}</version>
+                <classifier>flume</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.rest</groupId>
+                <artifactId>config</artifactId>
+                <version>${project.version}</version>
+                <classifier>rest</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.rest</groupId>
+                <artifactId>appender</artifactId>
+                <version>${project.version}</version>
+                <classifier>rest</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.couchbase</groupId>
+                <artifactId>config</artifactId>
+                <version>${project.version}</version>
+                <classifier>couchbase</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.appenders.couchbase</groupId>
+                <artifactId>appender</artifactId>
+                <version>${project.version}</version>
+                <classifier>couchbase</classifier>
+            </dependency>
+            <dependency>
                 <groupId>org.kaaproject.kaa.common</groupId>
                 <artifactId>core</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.common</groupId>
+                <artifactId>core</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
             </dependency>
             <dependency>
                 <groupId>org.kaaproject.kaa.server.common</groupId>
@@ -566,6 +711,24 @@ Copyright 2014 CyberVision, Inc.
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.twitter</groupId>
+                <artifactId>verifier</artifactId>
+                <classifier>twitter</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.facebook</groupId>
+                <artifactId>verifier</artifactId>
+                <classifier>facebook</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kaaproject.kaa.server.verifiers.gplus</groupId>
+                <artifactId>verifier</artifactId>
+                <classifier>gplus</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.kaaproject.kaa.server.verifiers.trustful</groupId>
                 <artifactId>config</artifactId>
                 <classifier>trustful</classifier>
@@ -610,6 +773,13 @@ Copyright 2014 CyberVision, Inc.
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.kaaproject.kaa.common</groupId>
+                <artifactId>endpoint-shared</artifactId>
+                <version>${project.version}</version>
+                <classifier>avro</classifier>
+                <type>zip</type>
+            </dependency>
+            <dependency>
                 <groupId>org.kaaproject.kaa.avrogenc</groupId>
                 <artifactId>avrogenc</artifactId>
                 <version>${project.version}</version>
@@ -634,6 +804,46 @@ Copyright 2014 CyberVision, Inc.
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-server</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-webapp</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-servlet</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-deploy</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-runner</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-start</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty.websocket</groupId>
+                <artifactId>javax-websocket-client-impl</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty.websocket</groupId>
+                <artifactId>javax-websocket-server-impl</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.typesafe.akka</groupId>
                 <artifactId>akka-actor_2.10</artifactId>
                 <version>${akka.version}</version>
@@ -646,6 +856,11 @@ Copyright 2014 CyberVision, Inc.
             <dependency>
                 <groupId>org.apache.flume</groupId>
                 <artifactId>flume-ng-core</artifactId>
+                <version>${flume.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flume.flume-ng-sinks</groupId>
+                <artifactId>flume-hdfs-sink</artifactId>
                 <version>${flume.version}</version>
             </dependency>
             <dependency>
@@ -670,6 +885,11 @@ Copyright 2014 CyberVision, Inc.
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>com.couchbase.client</groupId>
+                <artifactId>java-client</artifactId>
+                <version>${couchbase.client.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-digester3</artifactId>
                 <version>${commons-digester3.version}</version>
@@ -690,9 +910,24 @@ Copyright 2014 CyberVision, Inc.
                 <version>${commons-compress.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>commons-cli</groupId>
                 <artifactId>commons-cli</artifactId>
                 <version>${commons-cli.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>${commons-fileupload.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${commons-logging.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.avro</groupId>
@@ -705,9 +940,39 @@ Copyright 2014 CyberVision, Inc.
                 <version>${avro.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-mapred</artifactId>
+                <version>${avro.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.velocity</groupId>
                 <artifactId>velocity</artifactId>
                 <version>${apache.velocity}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-hdfs</artifactId>
+                <version>${hadoop.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-common</artifactId>
+                <version>${hadoop.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-minicluster</artifactId>
+                <version>${hadoop.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.thrift</groupId>
+                <artifactId>libthrift</artifactId>
+                <version>${libthrift.version}</version>
             </dependency>
             <dependency>
                 <groupId>jline</groupId>
@@ -730,6 +995,11 @@ Copyright 2014 CyberVision, Inc.
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
                 <version>${hibernate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.javax.persistence</groupId>
+                <artifactId>hibernate-jpa-2.1-api</artifactId>
+                <version>${hibernate-jpa-2.1-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.postgresql</groupId>
@@ -764,12 +1034,12 @@ Copyright 2014 CyberVision, Inc.
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
+                <artifactId>httpmime</artifactId>
                 <version>${httpcomponents.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpmime</artifactId>
+                <artifactId>httpcore</artifactId>
                 <version>${httpcomponents.version}</version>
             </dependency>
             <dependency>
@@ -781,6 +1051,16 @@ Copyright 2014 CyberVision, Inc.
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-jaxrs</artifactId>
                 <version>${jackson-jaxrs.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>${jackson-mapper-asl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <version>${jackson-core-asl.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.aspectj</groupId>
@@ -823,6 +1103,16 @@ Copyright 2014 CyberVision, Inc.
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-client</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-framework</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.flume</groupId>
                 <artifactId>flume-ng-clients</artifactId>
                 <version>${flume.version}</version>
@@ -854,6 +1144,11 @@ Copyright 2014 CyberVision, Inc.
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-android</artifactId>
+                <version>${slf4j-android.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
                 <version>${logback.version}</version>
@@ -880,9 +1175,117 @@ Copyright 2014 CyberVision, Inc.
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongo-java-driver</artifactId>
+                <version>${mongo-driver.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-core</artifactId>
                 <version>${metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.android</groupId>
+                <artifactId>android</artifactId>
+                <version>${android.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-servlet</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-user</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-dev</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-codeserver</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.jdramaix</groupId>
+                <artifactId>gwtchosen</artifactId>
+                <version>${gwtchosen.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.gwtquery</groupId>
+                <artifactId>gwtquery</artifactId>
+                <version>${gwtquery.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>${javax.mail.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.websocket</groupId>
+                <artifactId>javax.websocket-api</artifactId>
+                <version>${javax.websocket.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.iharder</groupId>
+                <artifactId>base64</artifactId>
+                <version>${iharder.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>${hsqldb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.versly</groupId>
+                <artifactId>versly-wsdoc</artifactId>
+                <version>${versly-wsdoc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant</artifactId>
+                <version>${ant.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.zookeeper</groupId>
+                <artifactId>zookeeper</artifactId>
+                <version>${zookeeper.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.jmx</groupId>
+                        <artifactId>jmxri</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.jdmk</groupId>
+                        <artifactId>jmxtools</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.jms</groupId>
+                        <artifactId>jms</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons-lang.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>co.cask.cdap</groupId>
+                <artifactId>cdap-stream-client</artifactId>
+                <version>${cdap-stream-client.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -961,6 +1364,10 @@ Copyright 2014 CyberVision, Inc.
         <repository>
             <id>central</id>
             <url>http://repo1.maven.org/maven2/</url>
+        </repository>
+    	<repository>
+            <id>twitter-twttr</id>
+            <url>http://maven.twttr.com/</url>
         </repository>
         <repository>
             <id>repository.kaaproject</id>

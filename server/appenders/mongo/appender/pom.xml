@@ -50,7 +50,6 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.mongo</groupId>
             <artifactId>config</artifactId>
-            <version>${project.version}</version>
             <classifier>mongo</classifier>
         </dependency>
         <dependency>

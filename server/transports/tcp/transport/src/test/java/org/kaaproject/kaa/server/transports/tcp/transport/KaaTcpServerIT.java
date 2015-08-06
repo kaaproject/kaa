@@ -61,7 +61,7 @@ public class KaaTcpServerIT {
                         @Override
                         public void process(SessionInitMessage message) {
                             message.onSessionCreated(new SessionInfo(UUID.randomUUID(), 1, Mockito.mock(ChannelContext.class),
-                                    ChannelType.ASYNC, null, null, null, 100, false));
+                                    ChannelType.ASYNC, null, null, null, null, 100, false));
                             handler.process(message);
                         }
 
@@ -105,6 +105,8 @@ public class KaaTcpServerIT {
         AvroTcpConfig config = new AvroTcpConfig();
         config.setBindInterface(TEST_HOST);
         config.setBindPort(TEST_PORT);
+        config.setPublicInterface(TEST_HOST);
+        config.setPublicPort(TEST_PORT);
 
         AvroByteArrayConverter<AvroTcpConfig> converter = new AvroByteArrayConverter<AvroTcpConfig>(AvroTcpConfig.class);
 

@@ -78,6 +78,14 @@
             <artifactId>ant-jsch</artifactId>
             <version>1.9.4</version>
         </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -308,7 +316,6 @@
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>control</artifactId>
                                             <version>${project.version}</version>
-                                            <classifier>rpm</classifier>
                                             <type>rpm</type>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${distro.path}</outputDirectory>
@@ -318,7 +325,6 @@
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>operations</artifactId>
                                             <version>${project.version}</version>
-                                            <classifier>rpm</classifier>
                                             <type>rpm</type>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${distro.path}</outputDirectory>
@@ -328,7 +334,6 @@
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>bootstrap</artifactId>
                                             <version>${project.version}</version>
-                                            <classifier>rpm</classifier>
                                             <type>rpm</type>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${distro.path}</outputDirectory>
@@ -338,7 +343,6 @@
                                             <groupId>org.kaaproject.kaa.server</groupId>
                                             <artifactId>admin</artifactId>
                                             <version>${project.version}</version>
-                                            <classifier>rpm</classifier>
                                             <type>rpm</type>
                                             <overWrite>true</overWrite>
                                             <outputDirectory>${distro.path}</outputDirectory>

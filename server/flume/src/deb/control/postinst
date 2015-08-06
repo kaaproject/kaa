@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright 2014 CyberVision, Inc.
+# Copyright 2014-2015 CyberVision, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,17 +16,31 @@
 
 set -e
 
-if [ -h /usr/bin/kaa-flume ]; then
-    rm -f /usr/bin/kaa-flume
-fi
+case "$1" in
+    configure)
+        if [ -h /usr/bin/kaa-flume ]; then
+            rm -f /usr/bin/kaa-flume
+        fi
+        
+        chown -R kaa:kaa /usr/lib/kaa-flume > /dev/null
+        chmod 755 /usr/lib/kaa-flume/bin/*
+        
+        ln -s /usr/lib/kaa-flume/bin/kaa-flume /usr/bin/kaa-flume
+        
+        if [ ! -d /flume ]; then
+            mkdir /flume
+        fi
+        
+        chown -R flume:flume /flume
+    ;;
 
-chown -R kaa:kaa /usr/lib/kaa-flume > /dev/null
-chmod 755 /usr/lib/kaa-flume/bin/*
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
 
-ln -s /usr/lib/kaa-flume/bin/kaa-flume /usr/bin/kaa-flume
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
 
-if [ ! -d /flume ]; then
-	mkdir /flume
-fi
-
-chown -R flume:flume /flume
+exit 0

@@ -37,6 +37,7 @@ import org.apache.commons.compress.compressors.CompressorOutputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.server.common.Version;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
 import org.kaaproject.kaa.server.common.zk.ServerNameUtil;
@@ -69,16 +70,7 @@ public class CppSdkGenerator extends SdkGenerator {
     private static final String CPP_SDK_NAME_PATTERN = CPP_SDK_PREFIX + "p{}-c{}-n{}-l{}.tar.gz";
 
     /** The Constant APPLICATION_TOKEN_VAR. */
-    private static final String APPLICATION_TOKEN_VAR = "%{application.token}";
-
-    /** The Constant PROFILE_VERSION_VAR. */
-    private static final String PROFILE_VERSION_VAR = "%{application.profile_version}";
-
-    /** The Constant CONFIG_VERSION_VAR. */
-    private static final String CONFIG_VERSION_VAR = "%{application.config_version}";
-
-    /** The Constant USER_NF_VERSION_VAR. */
-    private static final String USER_NF_VERSION_VAR = "%{user_notification_version}";
+    private static final String SDK_VAR = "%{application.sdk_token}";
 
     /** The Constant CLIENT_PUB_KEY_LOCATION_VAR. */
     private static final String CLIENT_PUB_KEY_LOCATION_VAR = "%{application.public_key_location}";
@@ -92,23 +84,11 @@ public class CppSdkGenerator extends SdkGenerator {
     /** The Constant POLLING_PERIOD_SECONDS_VAR. */
     private static final String POLLING_PERIOD_SECONDS_VAR = "%{application.polling_period_seconds}";
 
-    /** The Constant SYSTEM_NF_VERSION_VAR. */
-    private static final String SYSTEM_NF_VERSION_VAR = "%{system_notification_version}";
-
     /** The Constant BOOTSTRAP_SERVERS_INFO_VAR. */
     private static final String BOOTSTRAP_SERVERS_INFO_VAR = "%{bootstrap_servers_info}";
 
-    /** The Constant CONFIG_SCHEMA_DEFAULT_VAR. */
-    private static final String CONFIG_SCHEMA_DEFAULT_VAR = "%{config.schema.default}";
-
     /** The Constant CONFIG_DATA_DEFAULT_VAR. */
     private static final String CONFIG_DATA_DEFAULT_VAR = "%{config.data.default}";
-
-    /** The Constant EVENT_FAMILY_VERSION_VAR. */
-    private static final String EVENT_FAMILY_VERSION_VAR = "%{event.family_version}";
-
-    /** The Constant LOG_SCHEMA_VERSION_VAR. */
-    private static final String LOG_SCHEMA_VERSION_VAR = "%{log_schema_version}";
 
     /** The Constant BUILD_VERSION. */
     private static final String BUILD_VERSION = "%{build.version}";
@@ -145,17 +125,21 @@ public class CppSdkGenerator extends SdkGenerator {
      */
     @Override
     public Sdk generateSdk(String buildVersion,
-            List<BootstrapNodeInfo> bootstrapNodes, String appToken,
-            int profileSchemaVersion, int configurationSchemaVersion,
-            int notificationSchemaVersion, int logSchemaVersion,
+            List<BootstrapNodeInfo> bootstrapNodes, String sdkToken,
+            SdkPropertiesDto sdkProperties,
             String profileSchemaBody,
             String notificationSchemaBody,
             String configurationProtocolSchemaBody,
             String configurationBaseSchema,
             byte[] defaultConfigurationData,
             List<EventFamilyMetadata> eventFamilies,
-            String logSchemaBody,
-            String defaultVerifierToken) throws Exception {
+            String logSchemaBody) throws Exception {
+
+        Integer configurationSchemaVersion = sdkProperties.getConfigurationSchemaVersion();
+        Integer profileSchemaVersion = sdkProperties.getProfileSchemaVersion();
+        Integer notificationSchemaVersion = sdkProperties.getNotificationSchemaVersion();
+        Integer logSchemaVersion = sdkProperties.getLogSchemaVersion();
+        String defaultVerifierToken = sdkProperties.getDefaultVerifierToken();
 
         String sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + CPP_SDK_DIR + "/" + CPP_SDK_PREFIX + buildVersion + ".tar.gz";
 
@@ -177,9 +161,10 @@ public class CppSdkGenerator extends SdkGenerator {
 
         List<TarEntryData> cppSources = new ArrayList<>();
 
+        // TODO: remove all version fields and add single sdkToken field
         // create entry for default properties
         TarArchiveEntry entry = new TarArchiveEntry(SDK_DEFAULTS_PATH);
-        byte[] data = generateKaaDefaults(bootstrapNodes, appToken,
+        byte[] data = generateKaaDefaults(bootstrapNodes, sdkToken,
                                           configurationSchemaVersion, profileSchemaVersion,
                                           notificationSchemaVersion, logSchemaVersion,
                                           configurationProtocolSchemaBody,
@@ -277,9 +262,8 @@ public class CppSdkGenerator extends SdkGenerator {
     /**
      * Generate client properties.
      *
-     * @param kaaDefaultsStream the kaa defaults stream
      * @param bootstrapNodes the bootstrap nodes
-     * @param appToken the app token
+     * @param sdkToken the app token
      * @param configurationSchemaVersion the configuration schema version
      * @param profileSchemaVersion the profile schema version
      * @param notificationSchemaVersion the notification schema version
@@ -290,7 +274,7 @@ public class CppSdkGenerator extends SdkGenerator {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private byte[] generateKaaDefaults(List<BootstrapNodeInfo> bootstrapNodes,
-                                       String appToken,
+                                       String sdkToken,
                                        int configurationSchemaVersion,
                                        int profileSchemaVersion,
                                        int notificationSchemaVersion,
@@ -307,12 +291,7 @@ public class CppSdkGenerator extends SdkGenerator {
         kaaDefaultsString = replaceVar(kaaDefaultsString, BUILD_VERSION, Version.PROJECT_VERSION);
         kaaDefaultsString = replaceVar(kaaDefaultsString, BUILD_COMMIT_HASH, Version.COMMIT_HASH);
 
-        kaaDefaultsString = replaceVar(kaaDefaultsString, APPLICATION_TOKEN_VAR, appToken);
-        kaaDefaultsString = replaceVar(kaaDefaultsString, PROFILE_VERSION_VAR, profileSchemaVersion+"");
-        kaaDefaultsString = replaceVar(kaaDefaultsString, CONFIG_VERSION_VAR, configurationSchemaVersion+"");
-        kaaDefaultsString = replaceVar(kaaDefaultsString, SYSTEM_NF_VERSION_VAR, "1");
-        kaaDefaultsString = replaceVar(kaaDefaultsString, USER_NF_VERSION_VAR, notificationSchemaVersion+"");
-        kaaDefaultsString = replaceVar(kaaDefaultsString, LOG_SCHEMA_VERSION_VAR, logSchemaVersion+"");
+        kaaDefaultsString = replaceVar(kaaDefaultsString, SDK_VAR, sdkToken);
 
         kaaDefaultsString = replaceVar(kaaDefaultsString, POLLING_PERIOD_SECONDS_VAR, "5");
 
@@ -328,18 +307,13 @@ public class CppSdkGenerator extends SdkGenerator {
 
         LOG.debug("[sdk generateClientProperties] bootstrapNodes.size(): {}", bootstrapNodes.size());
 
-        int nodeCount = bootstrapNodes.size();
         for (BootstrapNodeInfo node : bootstrapNodes) {
             List<TransportMetaData> supportedChannels = node.getTransports();
 
             int accessPointId = ServerNameUtil.crc32(node.getConnectionInfo());
-            int transportCount = supportedChannels.size();
-
             for (TransportMetaData transport : supportedChannels) {
-                int supportedProtocolCount = transport.getConnectionInfo().size();
-
                 for(VersionConnectionInfoPair pair : transport.getConnectionInfo()) {
-                    String serverPattern = "createTransportInfo(";
+                    String serverPattern = "listOfServers.push_back(createTransportInfo(";
                     serverPattern += "0x" + Integer.toHexString(accessPointId);
                     serverPattern += ", ";
                     serverPattern += "0x" + Integer.toHexString(transport.getId());
@@ -348,42 +322,15 @@ public class CppSdkGenerator extends SdkGenerator {
                     serverPattern += ", \"";
                     serverPattern += Base64.encodeBase64String(pair.getConenctionInfo().array());
                     serverPattern += "\"";
-                    serverPattern += ")";
-
+                    serverPattern += "));\n";
                     bootstrapServers += serverPattern;
-
-                    if (--supportedProtocolCount > 0) {
-                        bootstrapServers += "\n                                            , ";
-                    }
                 }
-
-                if (--transportCount > 0) {
-                    bootstrapServers += "\n                                            , ";
-                }
-            }
-
-            if (--nodeCount > 0) {
-                bootstrapServers += "\n                                            , ";
             }
         }
 
         kaaDefaultsString = replaceVar(kaaDefaultsString, BOOTSTRAP_SERVERS_INFO_VAR, bootstrapServers);
-
-        kaaDefaultsString = replaceVar(kaaDefaultsString, CONFIG_SCHEMA_DEFAULT_VAR, configurationProtocolSchemaBody.replace("\"", "\\\""));
         kaaDefaultsString = replaceVar(kaaDefaultsString, CONFIG_DATA_DEFAULT_VAR, Base64.encodeBase64String(defaultConfigurationData));
 
-        String eventFamilyVersions = "";
-
-        for (int i=0;i<eventFamilies.size();i++) {
-            EventFamilyMetadata eventFamily = eventFamilies.get(i);
-            if (i>0) {
-                eventFamilyVersions += ", ";
-            }
-            eventFamilyVersions += "{\"" + eventFamily.getEcfName() + "\"," + eventFamily.getVersion() + "}";
-        }
-        eventFamilyVersions = "{ " + eventFamilyVersions + " }";
-
-        kaaDefaultsString = replaceVar(kaaDefaultsString, EVENT_FAMILY_VERSION_VAR, eventFamilyVersions);
         return kaaDefaultsString.getBytes();
     }
 

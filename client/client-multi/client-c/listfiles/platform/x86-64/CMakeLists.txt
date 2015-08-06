@@ -18,12 +18,14 @@ find_package(OpenSSL REQUIRED)
 
 set(KAA_SOURCE_FILES 
         ${KAA_SOURCE_FILES}
+        ${KAA_SRC_FOLDER}/platform-impl/posix/posix_kaa_client.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/sha.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/logger.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/posix_file_utils.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/posix_key_utils.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/posix_status.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/posix_configuration_persistence.c
+        ${KAA_SRC_FOLDER}/platform-impl/posix/posix_kaa_failover_strategy.c
         ${KAA_SRC_FOLDER}/platform-impl/ext_log_storage_memory.c
         ${KAA_SRC_FOLDER}/platform-impl/ext_log_upload_strategy_by_volume.c
     )

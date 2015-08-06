@@ -124,34 +124,6 @@ kaa_error_t kaa_profile_need_profile_resync(kaa_profile_manager_t *self, bool *r
     return KAA_ERR_NONE;
 }
 
-
-
-static size_t kaa_versions_info_get_size()
-{
-    static size_t size = 0;
-
-    if (!size) {
-        size += sizeof(uint32_t); // config schema version
-        size += sizeof(uint32_t); // profile schema version
-        size += sizeof(uint32_t); // system notification schema version
-        size += sizeof(uint32_t); // user notification schema version
-        size += sizeof(uint32_t); // log schema version
-
-        if (KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0) {
-            size += sizeof(uint32_t); // event family schema versions count
-
-            size_t i = 0;
-            for (; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
-                size += sizeof(uint16_t); // event family version
-                size += sizeof(uint16_t); // event family name length
-                size += kaa_aligned_size_get(strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name)); // event family name
-            }
-        }
-    }
-
-    return size;
-}
-
 kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *expected_size)
 {
     KAA_RETURN_IF_NIL2(self, expected_size, KAA_ERR_BADPARAM);
@@ -162,8 +134,6 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
     if (self->need_resync)
         *expected_size += kaa_aligned_size_get(self->profile_body.size); // profile data
 #endif
-
-    *expected_size += kaa_versions_info_get_size();
 
     if (!self->status->is_registered) {
         bool need_deallocation = false;
@@ -195,83 +165,6 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
     self->extension_data->payload_size = *expected_size - KAA_EXTENSION_HEADER_SIZE;
 
     return KAA_ERR_NONE;
-}
-
-#if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
-#define KAA_SCHEMA_VERSION_NUMBER    6
-#else
-#define KAA_SCHEMA_VERSION_NUMBER    5
-#endif
-
-
-static kaa_error_t kaa_version_info_serialize(kaa_platform_message_writer_t *writer)
-{
-    KAA_RETURN_IF_NIL(writer, KAA_ERR_BADPARAM);
-
-    kaa_error_t error_code = KAA_ERR_NONE;
-    static uint8_t fields_number[KAA_SCHEMA_VERSION_NUMBER] = {
-                                                                CONFIG_SCHEMA_VERSION_VALUE
-                                                              , PROFILE_SCHEMA_VERSION_VALUE
-                                                              , SYS_NF_VERSION_VALUE
-                                                              , USER_NF_VERSION_VALUE
-                                                              , LOG_SCHEMA_VERSION_VALUE
-#if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
-                                                              , EVENT_FAMILY_VERSIONS_COUNT_VALUE
-#endif
-                                                               };
-
-    static uint16_t schema_versions[KAA_SCHEMA_VERSION_NUMBER] = {
-                                                                   CONFIG_SCHEMA_VERSION
-                                                                 , PROFILE_SCHEMA_VERSION
-                                                                 , SYSTEM_NF_SCHEMA_VERSION
-                                                                 , USER_NF_SCHEMA_VERSION
-                                                                 , LOG_SCHEMA_VERSION
-#if KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0
-                                                                 , KAA_EVENT_SCHEMA_VERSIONS_SIZE
-#endif
-                                                                  };
-
-    uint16_t field_number_with_reserved = 0;
-    uint16_t network_order_schema_version = 0;
-
-    size_t i = 0;
-    for (; i < KAA_SCHEMA_VERSION_NUMBER; ++i) {
-        field_number_with_reserved = KAA_HTONS(fields_number[i] << 8);
-        error_code = kaa_platform_message_write(writer, &field_number_with_reserved, sizeof(uint16_t));
-        KAA_RETURN_IF_ERR(error_code);
-
-        network_order_schema_version = KAA_HTONS(schema_versions[i]);
-        error_code = kaa_platform_message_write(writer, &network_order_schema_version, sizeof(uint16_t));
-        KAA_RETURN_IF_ERR(error_code);
-    }
-
-    if (KAA_EVENT_SCHEMA_VERSIONS_SIZE > 0) {
-        uint16_t network_order_family_version = 0;
-        uint16_t network_order_family_name_len = 0;
-        size_t event_schema_name_length = 0;
-
-        for (i = 0; i < KAA_EVENT_SCHEMA_VERSIONS_SIZE; ++i) {
-            network_order_family_version = KAA_HTONS(KAA_EVENT_SCHEMA_VERSIONS[i].version);
-            error_code = kaa_platform_message_write(writer
-                                                  , &network_order_family_version
-                                                  , sizeof(uint16_t));
-            KAA_RETURN_IF_ERR(error_code);
-
-            event_schema_name_length = strlen(KAA_EVENT_SCHEMA_VERSIONS[i].name);
-            network_order_family_name_len = KAA_HTONS(event_schema_name_length);
-            error_code = kaa_platform_message_write(writer
-                                                  , &network_order_family_name_len
-                                                  , sizeof(uint16_t));
-            KAA_RETURN_IF_ERR(error_code);
-
-            error_code = kaa_platform_message_write_aligned(writer
-                                                          , KAA_EVENT_SCHEMA_VERSIONS[i].name
-                                                          , event_schema_name_length);
-            KAA_RETURN_IF_ERR(error_code);
-        }
-    }
-
-    return error_code;
 }
 
 kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platform_message_writer_t *writer)
@@ -308,13 +201,6 @@ kaa_error_t kaa_profile_request_serialize(kaa_profile_manager_t *self, kaa_platf
     error_code = kaa_platform_message_write(writer, &network_order_32, sizeof(uint32_t));
     KAA_RETURN_IF_ERR(error_code);
 #endif
-
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Writing version info...");
-    error_code = kaa_version_info_serialize(writer);
-    if (error_code) {
-        KAA_LOG_ERROR(self->logger, error_code, "Failed to write version info");
-        return error_code;
-    }
 
     uint16_t network_order_16 = 0;
     uint16_t field_number_with_reserved = 0;
@@ -373,13 +259,14 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received profile server sync");
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received profile server sync: options %u, payload size %zu", extension_options, extension_length);
 
     kaa_error_t error_code = KAA_ERR_NONE;
 
     self->need_resync = false;
     if (extension_options & KAA_PROFILE_RESYNC_OPTION) {
         self->need_resync = true;
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to resync profile...");
         kaa_transport_channel_interface_t *channel =
                 kaa_channel_manager_get_transport_channel(self->channel_manager, profile_sync_services[0]);
         if (channel)
@@ -387,8 +274,10 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
     }
 
 
-    if (!self->status->is_registered)
+    if (!self->status->is_registered) {
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Endpoint has been registered");
         self->status->is_registered = true;
+    }
 
     return error_code;
 }

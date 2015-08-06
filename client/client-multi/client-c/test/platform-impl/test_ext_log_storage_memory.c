@@ -292,6 +292,9 @@ void test_remove_by_bucket_id()
         ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     }
 
+    ASSERT_EQUAL(ext_log_storage_get_records_count(storage), record_count / 2);
+    ASSERT_EQUAL(ext_log_storage_get_total_size(storage), (record_count / 2) * data_size);
+
     size_t bucket_id_2 = 2;
     for (i = 0; i < record_count / 2; ++i) {
         error_code = ext_log_storage_write_next_record(storage, buffer, buffer_size, bucket_id_2, &record_len);
@@ -304,9 +307,6 @@ void test_remove_by_bucket_id()
 
     error_code = ext_log_storage_remove_by_bucket_id(storage, bucket_id_2);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
-
-    ASSERT_EQUAL(ext_log_storage_get_records_count(storage), record_count / 2);
-    ASSERT_EQUAL(ext_log_storage_get_total_size(storage), (record_count / 2) * data_size);
 
     error_code = ext_log_storage_remove_by_bucket_id(storage, bucket_id_1);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);

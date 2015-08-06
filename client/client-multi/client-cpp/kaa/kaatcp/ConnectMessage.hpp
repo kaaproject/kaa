@@ -21,7 +21,11 @@
 #include "kaa/kaatcp/IKaaTcpRequest.hpp"
 #include "kaa/common/EndpointObjectHash.hpp"
 #include <botan/botan.h>
+#ifdef _WIN32
+#include <Winsock2.h>
+#else
 #include <arpa/inet.h>
+#endif
 
 namespace kaa {
 

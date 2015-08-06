@@ -34,7 +34,7 @@ import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -98,9 +98,9 @@ public interface KaaAdminService extends RemoteService {
 
     public SchemaVersions getSchemaVersionsByApplicationId(String applicationId) throws KaaAdminServiceException;
 
-    public String generateSdk(SdkKey key) throws KaaAdminServiceException;
+    public String generateSdk(SdkPropertiesDto key) throws KaaAdminServiceException;
     
-    public FileData getSdk(SdkKey key) throws KaaAdminServiceException;
+    public FileData getSdk(SdkPropertiesDto key) throws KaaAdminServiceException;
     
     public void flushSdkCache() throws KaaAdminServiceException;
     
@@ -281,6 +281,8 @@ public interface KaaAdminService extends RemoteService {
     public List<SchemaDto> getLogSchemasVersions(String applicationId) throws KaaAdminServiceException;
 
     public String getRecordLibraryByApplicationIdAndSchemaVersion(String applicationId, int logSchemaVersion, RecordKey.RecordFiles file) throws KaaAdminServiceException;
+
+    public String getRecordDataByApplicationIdAndSchemaVersion(String applicationId, int schemaVersion, RecordKey.RecordFiles file) throws KaaAdminServiceException;
     
     public List<UserVerifierDto> getUserVerifiersByApplicationId(String appId) throws KaaAdminServiceException;
 

@@ -14,12 +14,27 @@
  * limitations under the License.
  */
 
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.sandbox.demo;
 
 import java.util.Arrays;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -48,12 +63,12 @@ public class CellMonitorDemoBuilder extends AbstractDemoBuilder {
         cellMonitorApplication.setName("Cell monitor");
         cellMonitorApplication = client.editApplication(cellMonitorApplication);
         
-        sdkKey.setApplicationId(cellMonitorApplication.getId());
-        sdkKey.setNotificationSchemaVersion(1);
-        sdkKey.setConfigurationSchemaVersion(1);
-        sdkKey.setProfileSchemaVersion(1);
-        sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
-        
+        sdkPropertiesDto.setApplicationId(cellMonitorApplication.getId());
+        sdkPropertiesDto.setApplicationToken(cellMonitorApplication.getApplicationToken());
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
+        sdkPropertiesDto.setConfigurationSchemaVersion(1);
+        sdkPropertiesDto.setProfileSchemaVersion(1);
+
         loginTenantDeveloper(client);
         
         LogSchemaDto logSchema = new LogSchemaDto();
@@ -61,7 +76,7 @@ public class CellMonitorDemoBuilder extends AbstractDemoBuilder {
         logSchema.setName("Cell monitor log schema");
         logSchema.setDescription("Log schema describing cell monitor record with information about current cell location, signal strength and phone gps location.");
         logSchema = client.createLogSchema(logSchema, getResourcePath("cell_monitor_log.avsc"));
-        sdkKey.setLogSchemaVersion(logSchema.getMajorVersion());
+        sdkPropertiesDto.setLogSchemaVersion(logSchema.getMajorVersion());
         
         LogAppenderDto cellMonitorLogAppender = new LogAppenderDto();
         cellMonitorLogAppender.setName("Cell monitor log appender");

@@ -65,8 +65,15 @@ endif( "${BOTAN_HOME}" STREQUAL "")
 message(STATUS "Looking for botan in ${BOTAN_HOME}")
 
 IF( NOT ${BOTAN_HOME} STREQUAL "" )
-    SET(_botan_INCLUDE_SEARCH_DIRS ${BOTAN_HOME}/include ${_botan_INCLUDE_SEARCH_DIRS})
-    SET(_botan_LIBRARIES_SEARCH_DIRS ${BOTAN_HOME}/lib ${_botan_LIBRARIES_SEARCH_DIRS})
+    SET(_botan_INCLUDE_SEARCH_DIRS 
+        ${BOTAN_HOME}/include 
+        ${_botan_INCLUDE_SEARCH_DIRS}
+    )
+    SET(_botan_LIBRARIES_SEARCH_DIRS 
+        ${BOTAN_HOME}
+        ${BOTAN_HOME}/lib 
+        ${_botan_LIBRARIES_SEARCH_DIRS}
+    )    
     SET(_botan_HOME ${BOTAN_HOME})
 ENDIF( NOT ${BOTAN_HOME} STREQUAL "" )
 
@@ -95,7 +102,7 @@ FIND_PATH(BOTAN_INCLUDE_DIR botan/version.h
 
 # locate the library
 IF(WIN32)
-  SET(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.lib)
+  SET(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.lib botan.lib)
 ELSE(WIN32)
   SET(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.a libbotan-1.10.a)
 ENDIF(WIN32)
@@ -120,3 +127,8 @@ MARK_AS_ADVANCED(
   BOTAN_LIBRARY
   BOTAN_INCLUDE_DIR
 )
+
+if (BOTAN_FOUND)
+    message (STATUS "Include directory: ${BOTAN_INCLUDE_DIR}")
+    message (STATUS "Library: ${BOTAN_LIBRARY}")
+endif ()

@@ -188,6 +188,8 @@ public class NettyHttpServerIT {
         AvroHttpConfig config = new AvroHttpConfig();
         config.setBindInterface(TEST_HOST);
         config.setBindPort(TEST_PORT);
+        config.setPublicInterface(TEST_HOST);
+        config.setPublicPort(TEST_PORT);
         config.setMaxBodySize(MAX_HTTP_REQUEST_SIZE);
         AvroByteArrayConverter<AvroHttpConfig> converter = new AvroByteArrayConverter<AvroHttpConfig>(AvroHttpConfig.class);
         return converter.toByteArray(config);

@@ -29,6 +29,7 @@
 #include "kaa/event/registration/IAttachStatusListener.hpp"
 #include "kaa/event/IFetchEventListeners.hpp"
 #include "kaa/log/ILogCollector.hpp"
+#include "kaa/failover/IFailoverStrategy.hpp"
 
 
 namespace kaa {
@@ -365,6 +366,9 @@ public:
      * @throw KaaException    The strategy is NULL.
      */
     virtual void setLogUploadStrategy(ILogUploadStrategyPtr strategy) = 0;
+
+
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) = 0;
 
     /**
      * @brief  Retrieves the Channel Manager

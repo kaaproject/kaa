@@ -16,9 +16,11 @@
 
 package org.kaaproject.kaa.server.control.service.loadmgmt;
 
+import org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt.Rebalancer;
 import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -53,10 +55,10 @@ public class LoadDistributionService extends Thread {
     /**  Time to live of Operations server load history, in sec. */
     @Value("#{properties[ops_server_history_ttl]}")
     private int opsServerHistoryTtl;
-
-    /**  Dynamic Rebalancer ClassName. */
-    @Value("#{properties[dynamic_mgmt_class]}")
-    private String dynamicMgmtClass;
+    
+    /** The dynamic_mgmt. */
+    @Autowired
+    private Rebalancer rebalancer;
 
     /* (non-Javadoc)
      * @see java.lang.Thread#toString()
@@ -66,7 +68,6 @@ public class LoadDistributionService extends Thread {
         StringBuffer sb = new StringBuffer();
         sb.append("\nLoad Distribution Service properties:\n");
         sb.append("\trecalculation_period: "+recalculationPeriod+"\n");
-        sb.append("\tdynamic_mgmt_class: "+dynamicMgmtClass+"\n");
         sb.append("\tops_server_history_ttl: "+opsServerHistoryTtl+"\n");
         return sb.toString();
     }
@@ -175,6 +176,10 @@ public class LoadDistributionService extends Thread {
         }
     }
 
+    public Rebalancer getRebalancer() {
+        return rebalancer;
+    }
+
     /**
      * Gets the zk service.
      *
@@ -191,15 +196,6 @@ public class LoadDistributionService extends Thread {
      */
     public void setZkService(ControlZkService zkService) {
         this.zkService = zkService;
-    }
-
-    /**
-     * Gets the dynamic_mgmt_class.
-     *
-     * @return the dynamic_mgmt_class
-     */
-    public String getDynamicMgmtClass() {
-        return dynamicMgmtClass;
     }
 
     /**

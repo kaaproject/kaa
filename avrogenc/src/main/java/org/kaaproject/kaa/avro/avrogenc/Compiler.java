@@ -25,7 +25,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.avro.Schema;
@@ -256,7 +258,11 @@ public class Compiler {
     private void processEnum(Schema schema) {
         VelocityContext context = new VelocityContext();
 
+        List<String> symbols = schema.getEnumSymbols();
+        Collections.sort(symbols);
+
         context.put("schema", schema);
+        context.put("symbols", symbols);
         context.put("StyleUtils", StyleUtils.class);
         context.put("namespacePrefix", namespacePrefix);
 

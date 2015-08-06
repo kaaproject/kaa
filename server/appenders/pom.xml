@@ -37,6 +37,8 @@
         <module>file</module>
         <module>mongo</module>
         <module>flume</module>
+        <module>rest</module>
+        <module>couchbase</module>
     </modules>
     <profiles>
         <profile>
@@ -55,6 +57,12 @@
             <id>cassandra</id>
             <modules>
                 <module>cassandra</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>couchbase</id>
+            <modules>
+                <module>couchbase</module>
             </modules>
         </profile>
     </profiles>

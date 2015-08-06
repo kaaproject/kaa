@@ -51,7 +51,7 @@ SERVER_SHUTDOWN_TIMEOUT=${SERVER_SHUTDOWN_TIMEOUT:-60}
 LOCKFILE="${SERVER_LOCK_DIR}/${NAME}"
 desc="$DESC daemon"
 EXEC_PATH=/usr/bin/$NAME
-JAVA_OPTIONS="-Xmx256m"
+JAVA_OPTIONS="#javaopts#"
 
 STATUS_RUNNING=0
 STATUS_DEAD=1
@@ -67,9 +67,14 @@ fi
 
 . /lib/lsb/init-functions
 
-
+# Load default options, if any
 if [ -f "$DEFAULT" ]; then
+    CURRENT_JAVA_OPTIONS=$JAVA_OPTIONS
     . "$DEFAULT"
+    # Current options are considered to be more specific,
+    # so they are overriding defaults
+    JAVA_OPTIONS="$JAVA_OPTIONS $CURRENT_JAVA_OPTIONS"
+    export JAVA_OPTIONS
 fi
 
 if [ -z $SERVER_LOG_SUFIX ]; then

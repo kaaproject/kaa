@@ -28,6 +28,17 @@
 
 namespace kaa {
 
+NotificationTransport::NotificationTransport(IKaaClientStateStoragePtr status, IKaaChannelManager& manager)
+    : AbstractKaaTransport(manager), notificationProcessor_(nullptr)
+{
+    setClientState(status);
+
+    const DetailedTopicStates& detailedStatesContainer = clientStatus_->getTopicStates();
+    for (const auto& state : detailedStatesContainer) {
+        notificationSubscriptions_.insert(std::make_pair(state.second.topicId, state.second.sequenceNumber));
+    }
+}
+
 NotificationSyncRequestPtr NotificationTransport::createEmptyNotificationRequest()
 {
     NotificationSyncRequestPtr request(new NotificationSyncRequest);

@@ -148,9 +148,11 @@ public class DefaultOperationsService implements OperationsService {
 
         if (!Arrays.equals(profile.getProfileHash(), toByteArray(metaData.getProfileHash()))) {
             LOG.debug("[{}] Profile hash mismatch. Profile resync needed", context.getEndpointKey());
-            if(LOG.isTraceEnabled()){
-                LOG.trace("[{}] persisted profile hash is {}", context.getEndpointKey(), MessageEncoderDecoder.bytesToHex(profile.getProfileHash()));
-                LOG.trace("[{}] client profile hash is {}", context.getEndpointKey(),  MessageEncoderDecoder.bytesToHex(toByteArray(metaData.getProfileHash())));
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("[{}] persisted profile hash is {}", context.getEndpointKey(),
+                        MessageEncoderDecoder.bytesToHex(profile.getProfileHash()));
+                LOG.trace("[{}] client profile hash is {}", context.getEndpointKey(),
+                        MessageEncoderDecoder.bytesToHex(toByteArray(metaData.getProfileHash())));
             }
             context.setStatus(SyncStatus.PROFILE_RESYNC);
         }
@@ -292,7 +294,7 @@ public class DefaultOperationsService implements OperationsService {
         byte[] profileBody = toByteArray(request.getProfileBody());
 
         RegisterProfileRequest registerProfileRequest = new RegisterProfileRequest(metaData.getApplicationToken(), endpointKey,
-                request.getVersionInfo(), profileBody, request.getEndpointAccessToken());
+                metaData.getSdkToken(), profileBody, request.getEndpointAccessToken());
         EndpointProfileDto endpointProfile = profileService.registerProfile(registerProfileRequest);
         LOG.debug("profile registered. id: {}, endpointKeyHash: {}", endpointProfile.getId(), endpointProfile.getEndpointKeyHash());
         return endpointProfile;
@@ -302,7 +304,7 @@ public class DefaultOperationsService implements OperationsService {
         LOG.debug("[{}][{}] update endpoint. request: {}", endpointId, requestHash, request);
         EndpointObjectHash endpointKeyHash = EndpointObjectHash.fromBytes(toByteArray(metaData.getEndpointPublicKeyHash()));
         UpdateProfileRequest updateRequest = new UpdateProfileRequest(metaData.getApplicationToken(), endpointKeyHash,
-                request.getEndpointAccessToken(), request.getProfileBody().array(), request.getVersionInfo());
+                request.getEndpointAccessToken(), request.getProfileBody().array(), metaData.getSdkToken());
         EndpointProfileDto endpointProfile = profileService.updateProfile(updateRequest);
         LOG.debug("profile updated. id: {}, endpointKeyHash: {}", endpointProfile.getId(), endpointProfile.getEndpointKeyHash());
         return endpointProfile;
@@ -577,9 +579,9 @@ public class DefaultOperationsService implements OperationsService {
      * @return true, if is first request
      */
     public static boolean isFirstRequest(EndpointProfileDto profile, HistorySubject subject) {
-        if(subject == HistorySubject.CONFIGURATION){
+        if (subject == HistorySubject.CONFIGURATION) {
             return profile.getCfGroupStates() == null || profile.getCfGroupStates().size() == 0;
-        }else{
+        } else {
             return profile.getNfGroupStates() == null || profile.getNfGroupStates().size() == 0;
         }
     }

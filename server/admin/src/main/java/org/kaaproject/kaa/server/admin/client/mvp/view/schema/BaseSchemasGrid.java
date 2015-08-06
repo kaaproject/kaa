@@ -16,14 +16,24 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.schema;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.Header;
+import com.google.gwt.user.cellview.client.SafeHtmlHeader;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 
 public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGrid<T, String> {
+
+    private Column<T, T> downloadSchemaColumn;
 
     public BaseSchemasGrid() {
         super(Unit.PX, false);
@@ -38,7 +48,7 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
                 new StringValueProvider<T>() {
                     @Override
                     public String getValue(T item) {
-                        return item.getMajorVersion()+"."+item.getMinorVersion();
+                        return item.getMajorVersion() + "." + item.getMinorVersion();
                     }
                 }, 80);
 
@@ -74,11 +84,49 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
                 new StringValueProvider<T>() {
                     @Override
                     public String getValue(T item) {
-                        return item.getEndpointCount()+"";
+                        return item.getEndpointCount() + "";
                     }
                 }, 80);
 
         return prefWidth;
+    }
+
+    @Override
+    protected float constructActions(DataGrid<T> table, float prefWidth) {
+        float result = 0;
+        if (!embedded && (downloadSchemaColumn == null || table.getColumnIndex(downloadSchemaColumn) == -1)) {
+            Header<SafeHtml> downloadRecordSchemaHeader = new SafeHtmlHeader(
+                    SafeHtmlUtils.fromSafeConstant(Utils.constants.downloadRecordSchema()));
+            downloadSchemaColumn = constructDownloadSchemaColumn("");
+            table.addColumn(downloadSchemaColumn, downloadRecordSchemaHeader);
+            table.setColumnWidth(downloadSchemaColumn, ACTION_COLUMN_WIDTH, Unit.PX);
+            result += ACTION_COLUMN_WIDTH;
+        }
+        return result;
+    }
+
+    protected Column<T, T> constructDownloadSchemaColumn(String text) {
+        ActionButtonCell<T> cell = new ActionButtonCell<T>(Utils.resources.download(), text, embedded,
+                new ActionButtonCell.ActionListener<T>() {
+                    @Override
+                    public void onItemAction(T value) {
+                        Integer schemaVersion = value.getMajorVersion();
+                        RowActionEvent<String> rowDownloadSchemaEvent = new RowActionEvent<>(String.valueOf(schemaVersion), KaaRowAction.DOWNLOAD_SCHEMA);
+                        fireEvent(rowDownloadSchemaEvent);
+                    }
+                }, new ActionButtonCell.ActionValidator<T>() {
+            @Override
+            public boolean canPerformAction(T value) {
+                return !embedded;
+            }
+        });
+        Column<T, T> column = new Column<T, T>(cell) {
+            @Override
+            public T getValue(T item) {
+                return item;
+            }
+        };
+        return column;
     }
 
 }

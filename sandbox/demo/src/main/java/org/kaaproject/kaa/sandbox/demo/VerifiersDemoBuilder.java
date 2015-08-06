@@ -14,10 +14,25 @@
  * limitations under the License.
  */
 
+/*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.sandbox.demo;
 
 import org.kaaproject.kaa.common.dto.*;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -70,11 +85,11 @@ public class VerifiersDemoBuilder extends AbstractDemoBuilder {
         verifiersApplication.setName("User verifiers demo");
         verifiersApplication = client.editApplication(verifiersApplication);
 
-        sdkKey.setApplicationId(verifiersApplication.getId());
-        sdkKey.setProfileSchemaVersion(1);
-        sdkKey.setNotificationSchemaVersion(1);
-        sdkKey.setLogSchemaVersion(1);
-        sdkKey.setTargetPlatform(SdkPlatform.ANDROID);
+        sdkPropertiesDto.setApplicationId(verifiersApplication.getId());
+        sdkPropertiesDto.setApplicationToken(verifiersApplication.getApplicationToken());
+        sdkPropertiesDto.setProfileSchemaVersion(1);
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
+        sdkPropertiesDto.setLogSchemaVersion(1);
 
         loginTenantDeveloper(client);
 
@@ -82,7 +97,7 @@ public class VerifiersDemoBuilder extends AbstractDemoBuilder {
                 verifiersDemoEventClassFamily);
         List<String> aefMapIds = new ArrayList<>();
         aefMapIds.add(verifiersDemoAefMap.getId());
-        sdkKey.setAefMapIds(aefMapIds);
+        sdkPropertiesDto.setAefMapIds(aefMapIds);
 
         logger.info("Creating configuration schema...");
         ConfigurationSchemaDto configurationSchema = new ConfigurationSchemaDto();
@@ -91,7 +106,7 @@ public class VerifiersDemoBuilder extends AbstractDemoBuilder {
         configurationSchema.setDescription("Configuration schema for the default Kaa verifiers tokens");
         configurationSchema = client.createConfigurationSchema(configurationSchema, getResourcePath("config_schema.avsc"));
         logger.info("Configuration schema version: {}", configurationSchema.getMajorVersion());
-        sdkKey.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
+        sdkPropertiesDto.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
         logger.info("Configuration schema was created.");
 
         TwitterVerifierConfig twitterVerifierConfig = new TwitterVerifierConfig();

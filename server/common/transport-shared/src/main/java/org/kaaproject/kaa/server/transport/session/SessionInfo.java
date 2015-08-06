@@ -37,11 +37,12 @@ public final class SessionInfo implements PlatformAware{
     private final CipherPair cipherPair;
     private final EndpointObjectHash key;
     private final String applicationToken;
+    private final String sdkToken;
     private final int keepAlive;
     private final boolean isEncrypted;
 
     public SessionInfo(UUID uuid, int platformId, ChannelContext ctx, ChannelType channelType, CipherPair cipherPair, EndpointObjectHash key,
-            String applicationToken, int keepAlive, boolean isEncrypted) {
+            String applicationToken, String sdkToken, int keepAlive, boolean isEncrypted) {
         super();
         this.uuid = uuid;
         this.platformId = platformId;
@@ -50,6 +51,7 @@ public final class SessionInfo implements PlatformAware{
         this.cipherPair = cipherPair;
         this.key = key;
         this.applicationToken = applicationToken;
+        this.sdkToken = sdkToken;
         this.keepAlive = keepAlive;
         this.isEncrypted = isEncrypted;
     }
@@ -80,6 +82,10 @@ public final class SessionInfo implements PlatformAware{
 
     public String getApplicationToken() {
         return applicationToken;
+    }
+
+    public String getSdkToken() {
+        return sdkToken;
     }
 
     public int getKeepAlive() {
@@ -129,6 +135,8 @@ public final class SessionInfo implements PlatformAware{
         builder.append(key);
         builder.append(", applicationToken=");
         builder.append(applicationToken);
+        builder.append(", sdkToken=");
+        builder.append(sdkToken);
         builder.append("]");
         return builder.toString();
     }

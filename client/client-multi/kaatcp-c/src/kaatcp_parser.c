@@ -172,6 +172,7 @@ static kaatcp_error_t kaatcp_parser_message_done(kaatcp_parser_t *parser)
                 if (kaasync->sync_request_size) {
                     kaasync->sync_request = (char *) malloc(kaasync->sync_request_size);
                     if (!kaasync->sync_request) {
+                        free(kaasync);
                         return KAATCP_ERR_NOMEM;
                     }
                     memcpy(kaasync->sync_request, cursor, kaasync->sync_request_size);
@@ -187,6 +188,7 @@ static kaatcp_error_t kaatcp_parser_message_done(kaatcp_parser_t *parser)
                 bootstrap->sync_header = sync_header;
                 kaatcp_error_t rval = kaatcp_parser_parse_bootstrap_message(bootstrap, cursor, parser->payload + parser->message_length);
                 if (rval) {
+                    free(bootstrap);
                     return rval;
                 }
                 parser->handlers.bootstrap_handler(bootstrap);

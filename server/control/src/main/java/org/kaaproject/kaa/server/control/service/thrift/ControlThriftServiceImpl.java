@@ -24,7 +24,6 @@ import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.to
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +31,7 @@ import java.util.List;
 import org.apache.avro.Schema;
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
 import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
@@ -54,6 +54,7 @@ import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
@@ -74,18 +75,20 @@ import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
+import org.kaaproject.kaa.server.common.dao.SdkKeyService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
 import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
 import org.kaaproject.kaa.server.common.dao.UserService;
 import org.kaaproject.kaa.server.common.dao.UserVerifierService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.model.sql.SdkKey;
 import org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator;
 import org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftException;
 import org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.control.FileData;
+import org.kaaproject.kaa.server.common.thrift.gen.control.RecordFile;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
-import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
@@ -127,6 +130,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     private static final Logger LOG = LoggerFactory.getLogger(ControlThriftServiceImpl.class);
 
     private static final String SCHEMA_NAME_PATTERN = "kaa-record-schema-l{}.avsc";
+    private static final String DATA_NAME_PATTERN = "kaa-{}-schema-v{}.avsc";
 
     /** The control service. */
     @Autowired
@@ -185,6 +189,9 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     @Autowired
     private UserVerifierService userVerifierService;
 
+    @Autowired
+    private SdkKeyService sdkKeyService;
+
     @Value("#{properties[max_number_neighbor_connections]}")
     private int neighborConnectionsSize = DEFAULT_NEIGHBOR_CONNECTIONS_SIZE;
 
@@ -234,7 +241,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     /* CLI method */
     @Override
     public DataStruct editTenant(DataStruct tenant) throws TException {
-        return toDataStruct(userService.saveTenant(ThriftDtoConverter.<TenantDto> toDto(tenant)));
+        return toDataStruct(userService.saveTenant(ThriftDtoConverter.<TenantDto>toDto(tenant)));
     }
 
     /*
@@ -315,7 +322,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     /* CLI method */
     @Override
     public DataStruct editUser(DataStruct user) throws TException {
-        return toDataStruct(userService.saveUser(ThriftDtoConverter.<UserDto> toDto(user)));
+        return toDataStruct(userService.saveUser(ThriftDtoConverter.<UserDto>toDto(user)));
     }
 
     /*
@@ -370,7 +377,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     /* GUI method */
     @Override
     public DataStruct editTenantAdmin(DataStruct tenantAdmin) throws TException {
-        return toDataStruct(userService.saveTenantAdmin(ThriftDtoConverter.<TenantAdminDto> toDto(tenantAdmin)));
+        return toDataStruct(userService.saveTenantAdmin(ThriftDtoConverter.<TenantAdminDto>toDto(tenantAdmin)));
     }
 
     /*
@@ -441,7 +448,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     /* CLI method */
     @Override
     public DataStruct editApplication(DataStruct application) throws TException {
-        return toDataStruct(applicationService.saveApp(ThriftDtoConverter.<ApplicationDto> toDto(application)));
+        return toDataStruct(applicationService.saveApp(ThriftDtoConverter.<ApplicationDto>toDto(application)));
     }
 
     /*
@@ -548,7 +555,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     /* CLI method */
     @Override
     public DataStruct editProfileSchema(DataStruct profileSchema) throws TException {
-        return toDataStruct(profileService.saveProfileSchema(ThriftDtoConverter.<ProfileSchemaDto> toDto(profileSchema)));
+        return toDataStruct(profileService.saveProfileSchema(ThriftDtoConverter.<ProfileSchemaDto>toDto(profileSchema)));
     }
 
     /*
@@ -591,7 +598,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     /* CLI method */
     @Override
     public DataStruct editEndpointGroup(DataStruct endpointGroup) throws TException {
-        return toDataStruct(endpointService.saveEndpointGroup(ThriftDtoConverter.<EndpointGroupDto> toDto(endpointGroup)));
+        return toDataStruct(endpointService.saveEndpointGroup(ThriftDtoConverter.<EndpointGroupDto>toDto(endpointGroup)));
     }
 
     /*
@@ -687,7 +694,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     /* CLI method */
     @Override
     public DataStruct editProfileFilter(DataStruct profileFilter) throws TException {
-        return toDataStruct(profileService.saveProfileFilter(ThriftDtoConverter.<ProfileFilterDto> toDto(profileFilter)));
+        return toDataStruct(profileService.saveProfileFilter(ThriftDtoConverter.<ProfileFilterDto>toDto(profileFilter)));
     }
 
     /* GUI method */
@@ -950,52 +957,57 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     /* GUI method */
     /* CLI method */
     @Override
-    public Sdk generateSdk(SdkPlatform sdkPlatform, String applicationId, int profileSchemaVersion, int configurationSchemaVersion,
-            int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion, String defaultVerifierToken) throws TException {
-
+    public Sdk generateSdk(DataStruct sdkProperties) throws TException {
+        /*
+        SdkPlatform sdkPlatform, String applicationId, int profileSchemaVersion, int configurationSchemaVersion,
+            int notificationSchemaVersion, List<String> aefMapIds, int logSchemaVersion, String defaultVerifierToken
+         */
+        SdkPropertiesDto sdkPropertiesDto = ThriftDtoConverter.toDto(sdkProperties);
         try {
-            ApplicationDto application = applicationService.findAppById(applicationId);
+            ApplicationDto application = applicationService.findAppById(sdkPropertiesDto.getApplicationId());
             if (application == null) {
                 throw new TException("Application not found!");
             }
-            ProfileSchemaDto profileSchema = profileService.findProfileSchemaByAppIdAndVersion(applicationId, profileSchemaVersion);
+            ProfileSchemaDto profileSchema = profileService.findProfileSchemaByAppIdAndVersion(sdkPropertiesDto.getApplicationId(),
+                    sdkPropertiesDto.getProfileSchemaVersion());
             if (profileSchema == null) {
                 throw new TException("Profile schema not found!");
             }
-            ConfigurationSchemaDto configurationShema = configurationService.findConfSchemaByAppIdAndVersion(applicationId,
-                    configurationSchemaVersion);
-            if (configurationShema == null) {
+            ConfigurationSchemaDto configurationSchema = configurationService.findConfSchemaByAppIdAndVersion(sdkPropertiesDto.getApplicationId(),
+                    sdkPropertiesDto.getConfigurationSchemaVersion());
+            if (configurationSchema == null) {
                 throw new TException("Configuration schema not found!");
             }
-            ConfigurationDto defaultConfiguration = configurationService.findDefaultConfigurationBySchemaId(configurationShema.getId());
+            ConfigurationDto defaultConfiguration = configurationService.findDefaultConfigurationBySchemaId(configurationSchema.getId());
             if (defaultConfiguration == null) {
                 throw new TException("Default configuration not found!");
             }
-            NotificationSchemaDto notificationSchema = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(applicationId,
-                    NotificationTypeDto.USER, notificationSchemaVersion);
+            NotificationSchemaDto notificationSchema = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(sdkPropertiesDto.getApplicationId(),
+                    NotificationTypeDto.USER, sdkPropertiesDto.getNotificationSchemaVersion());
             if (notificationSchema == null) {
                 throw new TException("Notification schema not found!");
             }
 
-            LogSchemaDto logSchema = logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, logSchemaVersion);
+            LogSchemaDto logSchema = logSchemaService.findLogSchemaByAppIdAndVersion(sdkPropertiesDto.getApplicationId(),
+                    sdkPropertiesDto.getLogSchemaVersion());
             if (logSchema == null) {
                 throw new TException("Log schema not found!");
             }
 
             DataSchema profileDataSchema = new DataSchema(profileSchema.getSchema());
             DataSchema notificationDataSchema = new DataSchema(notificationSchema.getSchema());
-            ProtocolSchema protocolSchema = new ProtocolSchema(configurationShema.getProtocolSchema());
+            ProtocolSchema protocolSchema = new ProtocolSchema(configurationSchema.getProtocolSchema());
             DataSchema logDataSchema = new DataSchema(logSchema.getSchema());
 
             String appToken = application.getApplicationToken();
             String profileSchemaBody = profileDataSchema.getRawSchema();
 
             byte[] defaultConfigurationData = GenericAvroConverter.toRawData(defaultConfiguration.getBody(),
-                    configurationShema.getBaseSchema());
+                    configurationSchema.getBaseSchema());
 
             List<EventFamilyMetadata> eventFamilies = new ArrayList<>();
-            if (aefMapIds != null) {
-                List<ApplicationEventFamilyMapDto> aefMaps = applicationEventMapService.findApplicationEventFamilyMapsByIds(aefMapIds);
+            if (sdkPropertiesDto.getAefMapIds() != null) {
+                List<ApplicationEventFamilyMapDto> aefMaps = applicationEventMapService.findApplicationEventFamilyMapsByIds(sdkPropertiesDto.getAefMapIds());
                 for (ApplicationEventFamilyMapDto aefMap : aefMaps) {
                     EventFamilyMetadata efm = new EventFamilyMetadata();
                     efm.setVersion(aefMap.getVersion());
@@ -1015,11 +1027,15 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
                 }
             }
 
-            SdkGenerator generator = SdkGeneratorFactory.createSdkGenerator(sdkPlatform);
-            return generator.generateSdk(Version.PROJECT_VERSION, controlZKService.getCurrentBootstrapNodes(), appToken,
-                    profileSchemaVersion, configurationSchemaVersion, notificationSchemaVersion, logSchemaVersion, profileSchemaBody,
-                    notificationDataSchema.getRawSchema(), protocolSchema.getRawSchema(), configurationShema.getBaseSchema(),
-                    defaultConfigurationData, eventFamilies, logDataSchema.getRawSchema(), defaultVerifierToken);
+            sdkPropertiesDto.setApplicationToken(appToken);
+            sdkPropertiesDto = sdkKeyService.saveSdkKey(sdkPropertiesDto);
+            String sdkToken = new SdkKey(sdkPropertiesDto).getToken();
+            LOG.debug("Sdk properties for sdk generation: {}", sdkPropertiesDto);
+
+            SdkGenerator generator = SdkGeneratorFactory.createSdkGenerator(sdkPropertiesDto.getTargetPlatform());
+            return generator.generateSdk(Version.PROJECT_VERSION, controlZKService.getCurrentBootstrapNodes(), sdkToken,
+                    sdkPropertiesDto, profileSchemaBody, notificationDataSchema.getRawSchema(), protocolSchema.getRawSchema(),
+                    configurationSchema.getBaseSchema(), defaultConfigurationData, eventFamilies, logDataSchema.getRawSchema());
         } catch (Exception e) {
             LOG.error("Unable to generate SDK", e);
             throw new TException(e);
@@ -1868,4 +1884,78 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
         }
     }
 
+    @Override
+    public FileData getRecordStructureData(String applicationId, int schemaVersion, RecordFile recordFile) throws ControlThriftException,
+            TException {
+
+        try {
+            ApplicationDto application = applicationService.findAppById(applicationId);
+            if (application == null) {
+                throw new TException("Application not found!");
+            }
+
+            FileData data = new FileData();
+            if (RecordFile.LOG_LIBRARY.equals(recordFile)) {
+                data = generateRecordStructureLibrary(applicationId, schemaVersion);
+            } else {
+                AbstractSchemaDto schemaDto = null;
+                String fileName = null;
+                String schema = null;
+                switch (recordFile) {
+                    case LOG_SCHEMA:
+                        schemaDto = logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, schemaVersion);
+                        checkSchema(schemaDto, RecordFile.LOG_SCHEMA);
+                        Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(schemaDto.getSchema());
+                        schema = recordWrapperSchema.toString(true);
+                        fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"log", schemaVersion}).getMessage();
+                        break;
+                    case CONFIGURATION_SCHEMA:
+                        schemaDto = configurationService.findConfSchemaByAppIdAndVersion(applicationId, schemaVersion);
+                        checkSchema(schemaDto, RecordFile.CONFIGURATION_SCHEMA);
+                        schema = schemaDto.getSchema();
+                        fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"configuration", schemaVersion}).getMessage();
+                        break;
+                    case CONFIGURATION_BASE_SCHEMA:
+                        schemaDto = configurationService.findConfSchemaByAppIdAndVersion(applicationId, schemaVersion);
+                        checkSchema(schemaDto, RecordFile.CONFIGURATION_BASE_SCHEMA);
+                        schema = ((ConfigurationSchemaDto)schemaDto).getBaseSchema();
+                        fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"configuration-base", schemaVersion}).getMessage();
+                        break;
+                    case CONFIGURATION_OVERRIDE_SCHEMA:
+                        schemaDto = configurationService.findConfSchemaByAppIdAndVersion(applicationId, schemaVersion);
+                        checkSchema(schemaDto, RecordFile.CONFIGURATION_OVERRIDE_SCHEMA);
+                        schema = ((ConfigurationSchemaDto)schemaDto).getOverrideSchema();
+                        fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"configuration-override", schemaVersion}).getMessage();
+                        break;
+                    case NOTIFICATION_SCHEMA:
+                        schemaDto = notificationService.findNotificationSchemaByAppIdAndTypeAndVersion(applicationId, NotificationTypeDto.USER, schemaVersion);
+                        checkSchema(schemaDto, RecordFile.NOTIFICATION_SCHEMA);
+                        schema = schemaDto.getSchema();
+                        fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"notification", schemaVersion}).getMessage();
+                        break;
+                    case PROFILE_SCHEMA:
+                        schemaDto = profileService.findProfileSchemaByAppIdAndVersion(applicationId, schemaVersion);
+                        checkSchema(schemaDto, RecordFile.PROFILE_SCHEMA);
+                        schema = schemaDto.getSchema();
+                        fileName = MessageFormatter.arrayFormat(DATA_NAME_PATTERN, new Object[]{"profile", schemaVersion}).getMessage();
+                        break;
+                    default:
+                        break;
+                }
+                byte[] schemaData = schema.getBytes(StandardCharsets.UTF_8);
+                data.setFileName(fileName);
+                data.setData(schemaData);
+            }
+            return data;
+        } catch (Exception e) {
+            LOG.error("Unable to get Record Structure Schema", e);
+            throw new TException(e);
+        }
+    }
+
+    private void checkSchema(AbstractSchemaDto schemaDto, RecordFile file) throws TException {
+        if(schemaDto == null) {
+            throw new TException("Schema " + file + " not found!");
+        }
+    }
 }

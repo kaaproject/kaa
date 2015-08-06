@@ -32,8 +32,7 @@ extern "C" {
  * transport context.
  */
 typedef struct {
-    kaa_platform_protocol_t    *platform_protocol;
-    kaa_bootstrap_manager_t    *bootstrap_manager;
+    kaa_context_t              *kaa_context;
 } kaa_transport_context_t;
 
 

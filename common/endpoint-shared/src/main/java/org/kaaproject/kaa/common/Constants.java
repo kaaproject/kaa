@@ -46,10 +46,15 @@ public interface Constants { //NOSONAR
     public static final int KAA_PLATFORM_PROTOCOL_BINARY_ID = 0x3553c66f;
 
     /**
+     * The size of sdk token
+     */
+    public static final int SDK_TOKEN_SIZE = 28;
+
+    /**
      * The size of application token
      */
     public static final int APP_TOKEN_SIZE = 20;
-    
+
     /**
      * The size of user verifier token
      */

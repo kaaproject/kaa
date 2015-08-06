@@ -1,4 +1,20 @@
 /*
+ * Copyright 2014-2015 CyberVision, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
  * Copyright 2014 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,9 +70,10 @@ public class RobotRunDemoBuilder extends AbstractDemoBuilder {
         robotRunApplication.setName("Robot Run");
         robotRunApplication = client.editApplication(robotRunApplication);
         
-        sdkKey.setApplicationId(robotRunApplication.getId());
-        sdkKey.setProfileSchemaVersion(1);
-        sdkKey.setNotificationSchemaVersion(1);
+        sdkPropertiesDto.setApplicationId(robotRunApplication.getId());
+        sdkPropertiesDto.setApplicationToken(robotRunApplication.getApplicationToken());
+        sdkPropertiesDto.setProfileSchemaVersion(1);
+        sdkPropertiesDto.setNotificationSchemaVersion(1);
 
         loginTenantDeveloper(client);
         
@@ -65,21 +82,21 @@ public class RobotRunDemoBuilder extends AbstractDemoBuilder {
         configurationSchema.setName("Labirynth schema");
         configurationSchema.setDescription("Configuration schema describing labirynth");
         configurationSchema = client.createConfigurationSchema(configurationSchema, getResourcePath("configSchema.json"));
-        sdkKey.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
+        sdkPropertiesDto.setConfigurationSchemaVersion(configurationSchema.getMajorVersion());
         
         LogSchemaDto logSchema = new LogSchemaDto();
         logSchema.setApplicationId(robotRunApplication.getId());
         logSchema.setName("Cell log schema");
         logSchema.setDescription("Log schema describing information about discovered cell");
         logSchema = client.createLogSchema(logSchema, getResourcePath("logSchema.json"));
-        sdkKey.setLogSchemaVersion(logSchema.getMajorVersion());
+        sdkPropertiesDto.setLogSchemaVersion(logSchema.getMajorVersion());
         
         ApplicationEventFamilyMapDto robotRunAefMap = mapEventClassFamily(client, robotRunApplication, robotRunEventClassFamily);
 
         List<String> aefMapIds = new ArrayList<>();
         aefMapIds.add(robotRunAefMap.getId());
 
-        sdkKey.setAefMapIds(aefMapIds);
+        sdkPropertiesDto.setAefMapIds(aefMapIds);
         
         logger.info("Finished loading 'Robot Run Demo Application' data.");
 

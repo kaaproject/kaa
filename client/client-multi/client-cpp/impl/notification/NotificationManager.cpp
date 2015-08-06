@@ -53,7 +53,7 @@ void NotificationManager::topicsListUpdated(const Topics& topicList)
     KAA_LOG_INFO(boost::format("New list of available topics received (topic_count=%1%)") % topicList.size());
 
     KAA_MUTEX_LOCKING("topicsGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_)
+    KAA_MUTEX_UNIQUE_DECLARE(topicsLock, topicsGuard_);
     KAA_MUTEX_LOCKED("topicsGuard_");
 
     std::unordered_map<std::string/*Topic ID*/, Topic> newTopics;
@@ -148,8 +148,13 @@ void NotificationManager::addNotificationListener(const std::string& topidId, IN
     KAA_MUTEX_UNIQUE_DECLARE(optionalListenersLock, optionalListenersGuard_);
     KAA_MUTEX_LOCKED("optionalListenersGuard_");
 
-    optionalListeners_[topidId].addCallback(&listener, std::bind(&INotificationListener::onNotification, &listener,
-                                                                 std::placeholders::_1, std::placeholders::_2));
+    auto it = optionalListeners_.find(topidId);
+    if (it == optionalListeners_.end()) {
+        it = optionalListeners_.insert(std::make_pair(topidId, std::make_shared<NotificationObservable>())).first;
+    }
+
+    it->second->addCallback(&listener, std::bind(&INotificationListener::onNotification, &listener,
+                            std::placeholders::_1, std::placeholders::_2));
 }
 
 void NotificationManager::removeNotificationListener(INotificationListener& listener)
@@ -167,8 +172,8 @@ void NotificationManager::removeNotificationListener(const std::string& topidId,
 
     auto it = optionalListeners_.find(topidId);
     if (it != optionalListeners_.end()) {
-        it->second.removeCallback(&listener);
-        if (it->second.isEmpty()) {
+        it->second->removeCallback(&listener);
+        if (it->second->isEmpty()) {
             optionalListeners_.erase(topidId);
         }
     }
@@ -176,7 +181,7 @@ void NotificationManager::removeNotificationListener(const std::string& topidId,
 
 void NotificationManager::subscribeToTopic(const std::string& id, bool forceSync)
 {
-    if (findTopic(id).subscriptionType != OPTIONAL) {
+    if (findTopic(id).subscriptionType != OPTIONAL_SUBSCRIPTION) {
         KAA_LOG_WARN(boost::format("Failed to subscribe: topic '%1%' isn't optional") % id);
         throw UnavailableTopicException(boost::format("Topic '%1%' isn't optional") % id);
     }
@@ -197,7 +202,7 @@ void NotificationManager::subscribeToTopics(const std::list<std::string>& idList
     SubscriptionCommands subscriptions;
 
     for (const auto& id : idList) {
-        if (findTopic(id).subscriptionType != OPTIONAL) {
+        if (findTopic(id).subscriptionType != OPTIONAL_SUBSCRIPTION) {
             KAA_LOG_WARN(boost::format("Failed to subscribe: topic '%1%' isn't optional") % id);
             throw UnavailableTopicException(boost::format("Topic '%1%' isn't optional") % id);
         }
@@ -221,7 +226,7 @@ void NotificationManager::subscribeToTopics(const std::list<std::string>& idList
 
 void NotificationManager::unsubscribeFromTopic(const std::string& id, bool forceSync)
 {
-    if (findTopic(id).subscriptionType != OPTIONAL) {
+    if (findTopic(id).subscriptionType != OPTIONAL_SUBSCRIPTION) {
         KAA_LOG_WARN(boost::format("Failed to unsubscribe: topic '%1%' isn't optional") % id);
         throw UnavailableTopicException(boost::format("Topic '%1%' isn't optional") % id);
     }
@@ -242,7 +247,7 @@ void NotificationManager::unsubscribeFromTopics(const std::list<std::string>& id
     SubscriptionCommands subscriptions;
 
     for (const auto& id : idList) {
-        if (findTopic(id).subscriptionType != OPTIONAL) {
+        if (findTopic(id).subscriptionType != OPTIONAL_SUBSCRIPTION) {
             KAA_LOG_WARN(boost::format("Failed to unsubscribe: topic '%1%' isn't optional") % id);
             throw UnavailableTopicException(boost::format("Topic '%1%' isn't optional") % id);
         }
@@ -342,14 +347,14 @@ bool NotificationManager::notifyOptionalNotificationSubscribers(const std::strin
 
     auto it = optionalListeners_.find(id);
     if (it != optionalListeners_.end()) {
-        auto& notifier = it->second;
+        auto notifier = it->second;
 
         KAA_MUTEX_UNLOCKING("optionalListenersGuard_");
         KAA_UNLOCK(optionalListenersLock);
         KAA_MUTEX_UNLOCKED("optionalListenersGuard_");
 
         notified = true;
-        notifier(id, notification);
+        (*notifier)(id, notification);
     }
 
     return notified;

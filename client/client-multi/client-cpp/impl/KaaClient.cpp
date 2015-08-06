@@ -34,6 +34,8 @@
 
 #include "kaa/channel/KaaChannelManager.hpp"
 
+#include "kaa/failover/DefaultFailoverStrategy.hpp"
+
 #include "kaa/logging/Log.hpp"
 
 namespace kaa {
@@ -60,6 +62,8 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 
     bootstrapManager_.reset(new BootstrapManager);
     channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getBootstrapServers()));
+    failoverStrategy_.reset(new DefaultFailoverStrategy);
+    channelManager_->setFailoverStrategy(failoverStrategy_);
 #ifdef KAA_USE_EVENTS
     registrationManager_.reset(new EndpointRegistrationManager(status_));
     eventManager_.reset(new EventManager(status_));
@@ -196,7 +200,7 @@ void KaaClient::initKaaTransport()
 #endif
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
     if (options_ & KaaOption::USE_DEFAULT_BOOTSTRAP_HTTP_CHANNEL) {
-        bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), *clientKeys_));
+        bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), *clientKeys_, status_));
         bootstrapChannel_->setDemultiplexer(syncProcessor_.get());
         bootstrapChannel_->setMultiplexer(syncProcessor_.get());
         KAA_LOG_INFO(boost::format("Going to set default bootstrap channel: %1%") % bootstrapChannel_.get());
@@ -205,7 +209,7 @@ void KaaClient::initKaaTransport()
 #endif
 #ifdef KAA_DEFAULT_OPERATION_HTTP_CHANNEL
     if (options_ & KaaOption::USE_DEFAULT_OPERATION_HTTP_CHANNEL) {
-        opsHttpChannel_.reset(new DefaultOperationHttpChannel(channelManager_.get(), *clientKeys_));
+        opsHttpChannel_.reset(new DefaultOperationHttpChannel(channelManager_.get(), *clientKeys_, status_));
         opsHttpChannel_->setMultiplexer(syncProcessor_.get());
         opsHttpChannel_->setDemultiplexer(syncProcessor_.get());
         KAA_LOG_INFO(boost::format("Going to set default operations Kaa HTTP channel: %1%") % opsHttpChannel_.get());
@@ -223,7 +227,7 @@ void KaaClient::initKaaTransport()
 #endif
 #ifdef KAA_DEFAULT_TCP_CHANNEL
     if (options_ & KaaOption::USE_DEFAULT_OPERATION_KAATCP_CHANNEL) {
-        opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), *clientKeys_));
+        opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), *clientKeys_, status_));
         opsTcpChannel_->setDemultiplexer(syncProcessor_.get());
         opsTcpChannel_->setMultiplexer(syncProcessor_.get());
         KAA_LOG_INFO(boost::format("Going to set default operations Kaa TCP channel: %1%") % opsTcpChannel_.get());
@@ -513,6 +517,18 @@ void KaaClient::setLogUploadStrategy(ILogUploadStrategyPtr strategy) {
         throw KaaException("Failed to set strategy. Logging subsystem is disabled");
 #endif
 }
+
+void KaaClient::setFailoverStrategy(IFailoverStrategyPtr strategy) {
+    if (!strategy) {
+        KAA_LOG_ERROR("Failed to set failover strategy: bad data");
+        throw KaaException("Bad failover strategy");
+    }
+
+    KAA_LOG_INFO("New failover strategy was set");
+    failoverStrategy_ = strategy;
+    channelManager_->setFailoverStrategy(failoverStrategy_);
+}
+
 IKaaDataMultiplexer& KaaClient::getOperationMultiplexer()
 {
     return *syncProcessor_;
