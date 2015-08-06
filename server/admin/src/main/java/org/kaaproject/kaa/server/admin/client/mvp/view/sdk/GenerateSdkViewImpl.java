@@ -50,7 +50,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.CheckBox;
 
 public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements GenerateSdkView, ValueChangeHandler<SchemaDto>  {
     
@@ -61,7 +60,6 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
     private SchemaListBox notificationSchemaVersion;
     private SchemaListBox logSchemaVersion;
     private ValueListBox<SdkPlatform> targetPlatform;
-    private CheckBox genReducedSdk;
 
     private List<AefMapInfoDto> aefMaps;
     private AefMapInfoDtoComparator aefMapComparator = new AefMapInfoDtoComparator();
@@ -148,17 +146,6 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         });
         detailsTable.setWidget(row, 0, label);
         detailsTable.setWidget(row, 1, targetPlatform);
-        
-        row++;
-        label = new Label(Utils.constants.generateReducedSdk());
-        label.addStyleName(REQUIRED);
-        genReducedSdk = new CheckBox(Utils.constants.generateReducedSdk());
-        genReducedSdk.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-        	@Override
-        	public void onValueChange(ValueChangeEvent evt) {
-        		fireChanged();
-        	}
-        });
         
         row++;
         FlexTable ecfsTable = new FlexTable();
@@ -261,7 +248,6 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         });
         detailsTable.setWidget(row, 0, label);
         detailsTable.setWidget(row, 1, defaultUserVerifier);
-        
     }
     
     @Override
