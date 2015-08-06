@@ -27,7 +27,7 @@ package org.kaaproject.kaa.server.admin.shared;
 public final class Version {
 
     /** The Constant PROJECT_VERSION. */
-    public static final String PROJECT_VERSION = "0.7.1-SNAPSHOT";
+    public static final String PROJECT_VERSION = "0.8.0-SNAPSHOT";
 
     /**
      * Instantiates a new version.

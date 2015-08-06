@@ -120,7 +120,6 @@ Copyright 2014 CyberVision, Inc.
         <hibernate-jpa-2.1-api.version>1.0.0.Final</hibernate-jpa-2.1-api.version>
         <cdap-stream-client.version>1.0.1</cdap-stream-client.version>
         <jetty.version>9.2.2.v20140723</jetty.version>
-        <additionalparam>-Xdoclint:none</additionalparam>
     </properties>
 
     <modules>
@@ -136,6 +135,16 @@ Copyright 2014 CyberVision, Inc.
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+        </profile>
+        <profile>
+            <id>jdk18</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <properties>
+                <!-- Temporary fix for javadoc issue in Java 8 -->
+                <additionalparam>-Xdoclint:none</additionalparam>
+            </properties>
         </profile>
         <profile>
             <id>examples</id>
