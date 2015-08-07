@@ -19,8 +19,8 @@
 
 #include "../kaa_test.h"
 
-#include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
+#include "utilities/kaa_buffer.h"
 
 #define BUFFER_SIZE 10
 
@@ -38,16 +38,16 @@ void test_reallocation()
     error_code = kaa_buffer_create_buffer(&buffer_ptr, BUFFER_SIZE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_buffer_lock_space(buffer_ptr, buffer, BUFFER_SIZE);
+    error_code = kaa_buffer_lock_space(buffer_ptr, BUFFER_SIZE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_buffer_lock_space(buffer_ptr, buffer, BUFFER_SIZE);
+    error_code = kaa_buffer_lock_space(buffer_ptr, BUFFER_SIZE);
     ASSERT_EQUAL(error_code, KAA_ERR_BUFFER_IS_NOT_ENOUGH);
 
     error_code = kaa_buffer_reallocate_space(buffer_ptr, BUFFER_SIZE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_buffer_lock_space(buffer_ptr, buffer, BUFFER_SIZE);
+    error_code = kaa_buffer_lock_space(buffer_ptr, BUFFER_SIZE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     kaa_buffer_destroy(buffer_ptr);
