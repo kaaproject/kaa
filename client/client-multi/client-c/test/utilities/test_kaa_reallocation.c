@@ -33,7 +33,6 @@ void test_reallocation()
 
     kaa_buffer_t *buffer_ptr;
     kaa_error_t error_code;
-    char *buffer;
 
     error_code = kaa_buffer_create_buffer(&buffer_ptr, BUFFER_SIZE);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
