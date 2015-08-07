@@ -140,9 +140,10 @@ static kaatcp_error_t kaatcp_parser_process_byte(kaatcp_parser_t *parser, uint8_
 
     if (parser->state == KAATCP_PARSER_STATE_PROCESSING_PAYLOAD && parser->message_length > parser->payload_buffer_size) {
         char *ptr = KAA_REALLOC(parser->payload, parser->message_length);
-        if (ptr)
+        if (ptr) {
             parser->payload = ptr;
-        else
+            parser->payload_buffer_size = parser->message_length;
+        } else
             return KAA_ERR_NOMEM;
     }
 
