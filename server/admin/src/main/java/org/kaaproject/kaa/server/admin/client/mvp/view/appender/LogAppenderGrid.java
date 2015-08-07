@@ -24,6 +24,8 @@ import com.google.gwt.user.cellview.client.DataGrid;
 
 public class LogAppenderGrid extends BasePluginGrid<LogAppenderDto> {
 
+
+
     public LogAppenderGrid(boolean embedded) {
         super(embedded);
     }
