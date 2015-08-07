@@ -177,7 +177,7 @@ kaatcp_error_t kaatcp_get_request_disconnect(const kaatcp_disconnect_t *message,
 {
     KAA_RETURN_IF_NIL3(message, buf, buf_size, KAATCP_ERR_BAD_PARAM);
 
-    if (*buf_size < 4) {
+    if (*buf_size < KAA_DISCONNECT_MESSAGE_SIZE) {
         return KAATCP_ERR_BUFFER_NOT_ENOUGH;
     }
     char *cursor = buf;
@@ -187,7 +187,7 @@ kaatcp_error_t kaatcp_get_request_disconnect(const kaatcp_disconnect_t *message,
     *(cursor++) = 0;
     *(cursor++) = (message->reason & 0xFF);
 
-    *buf_size = 4;
+    *buf_size = KAA_DISCONNECT_MESSAGE_SIZE;
     return KAATCP_ERR_NONE;
 }
 
@@ -291,11 +291,11 @@ kaatcp_error_t kaatcp_get_request_ping(char *buf, size_t *buf_size)
 {
     KAA_RETURN_IF_NIL2(buf, buf_size, KAATCP_ERR_BAD_PARAM);
 
-    if (*buf_size < 2) {
+    if (*buf_size < KAA_PING_MESSAGE_SIZE) {
         return KAATCP_ERR_BUFFER_NOT_ENOUGH;
     }
     create_basic_header(KAATCP_MESSAGE_PINGREQ, 0, buf);
-    *buf_size = 2;
+    *buf_size = KAA_PING_MESSAGE_SIZE;
     return KAATCP_ERR_NONE;
 }
 

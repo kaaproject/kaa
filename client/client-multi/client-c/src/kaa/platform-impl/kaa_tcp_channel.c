@@ -1642,8 +1642,8 @@ kaa_error_t kaa_tcp_channel_ping(kaa_tcp_channel_t * self)
     size_t buffer_size = 0;
 
     kaa_buffer_get_free_space(self->out_buffer, &buffer_size);
-    if(buffer_size < 2) /* Ping message size */
-        error_code = kaa_buffer_reallocate_space(self->out_buffer, 2);
+    if(buffer_size < KAA_PING_MESSAGE_SIZE)
+        error_code = kaa_buffer_reallocate_space(self->out_buffer, KAA_PING_MESSAGE_SIZE);
 
     error_code = kaa_buffer_allocate_space(self->out_buffer, &buffer, &buffer_size);
     KAA_RETURN_IF_ERR(error_code);
@@ -1682,8 +1682,8 @@ kaa_error_t kaa_tcp_channel_disconnect_internal(kaa_tcp_channel_t  *self
     size_t buffer_size = 0;
 
     kaa_buffer_get_free_space(self->out_buffer, &buffer_size);
-    if(buffer_size < 4) /* Disconnect message size */
-        error_code = kaa_buffer_reallocate_space(self->out_buffer, 4);
+    if(buffer_size < KAA_DISCONNECT_MESSAGE_SIZE)
+        error_code = kaa_buffer_reallocate_space(self->out_buffer, KAA_DISCONNECT_MESSAGE_SIZE);
 
     error_code = kaa_buffer_allocate_space(self->out_buffer, &buffer, &buffer_size);
     KAA_RETURN_IF_ERR(error_code);
