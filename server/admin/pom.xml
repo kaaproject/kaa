@@ -298,6 +298,12 @@
             <classifier>twitter</classifier>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+        	<groupId>org.kaaproject.kaa.server.appenders.kafka</groupId>
+        	<artifactId>config</artifactId>
+        	<scope>runtime</scope>
+        	<classifier>kafka</classifier>
+        </dependency>
     </dependencies>
 
     <build>
