@@ -18,6 +18,7 @@
 
 void *pvPortMalloc(size_t xSize);
 void *pvPortZalloc(size_t xSize);
+void *pvPortRealloc(void *pvPtr, size_t xSize);
 
 #ifndef ESP8266_MEM_H
 #define ESP8266_MEM_H
@@ -29,6 +30,10 @@ void *pvPortZalloc(size_t xSize);
 #ifndef __KAA_CALLOC
 #define __KAA_CALLOC(S, N) pvPortZalloc((S)*(N))
 #endif /* __KAA_CALLOC */
+
+#ifndef __KAA_REALLOC
+#define __KAA_REALLOC(P, S) pvPortRealloc(P, S)
+#endif /* __KAA_REALLOC */
 
 #ifndef __KAA_FREE
 #define __KAA_FREE(P) vPortFree(P)
