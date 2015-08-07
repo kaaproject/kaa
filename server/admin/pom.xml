@@ -262,12 +262,6 @@
             <classifier>mongo</classifier>
             <scope>runtime</scope>
         </dependency>
-		<dependency>
-            <groupId>org.kaaproject.kaa.server.appenders.kafka</groupId>
-            <artifactId>config</artifactId>
-            <classifier>kafka</classifier>
-            <scope>runtime</scope>
-        </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.appenders.flume</groupId>
             <artifactId>config</artifactId>
@@ -906,6 +900,18 @@
                     <artifactId>config</artifactId>
                     <version>${project.version}</version>
                     <classifier>cassandra</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>kafka</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.appenders.kafka</groupId>
+                    <artifactId>config</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>kafka</classifier>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
