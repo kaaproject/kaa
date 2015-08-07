@@ -74,20 +74,21 @@ kaa_error_t kaa_buffer_allocate_space(kaa_buffer_t *buffer_p, char **buffer, siz
 kaa_error_t kaa_buffer_reallocate_space(kaa_buffer_t *buffer_p, size_t size)
 {
     KAA_RETURN_IF_NIL(buffer_p, KAA_ERR_BADPARAM);
-    size_t current_pos;
-    size_t free_space = buffer_p->end - buffer_p->current;
+    size_t locked_space    = buffer_p->current - buffer_p->begin;
+    size_t free_space      = buffer_p->end     - buffer_p->current;
+    size_t total_space     = buffer_p->end     - buffer_p->begin;
+    size_t new_buffer_size = size - free_space + locked_space;
     char *ptr;
 
-    if ( (buffer_p->end - buffer_p->begin) > (free_space + size) )
+    if (total_space >= new_buffer_size)
         return KAA_ERR_BADPARAM;
 
-    current_pos = buffer_p->current - buffer_p->begin;
-    ptr = KAA_REALLOC(buffer_p->begin, (free_space + size) );
+    ptr = KAA_REALLOC(buffer_p->begin, new_buffer_size);
 
     if (ptr) {
         buffer_p->begin = ptr;
-        buffer_p->end = buffer_p->begin + (free_space + size);
-        buffer_p->current = buffer_p->begin + current_pos;
+        buffer_p->end = buffer_p->begin + new_buffer_size;
+        buffer_p->current = buffer_p->begin + locked_space;
         return KAA_ERR_NONE;
     }
 
