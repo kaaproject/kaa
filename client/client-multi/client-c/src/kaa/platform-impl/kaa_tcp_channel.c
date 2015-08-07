@@ -258,7 +258,7 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
      */
     kaa_tcp_channel->parser = (kaatcp_parser_t *) KAA_MALLOC(sizeof(kaatcp_parser_t));
 
-    if(kaa_tcp_channel->parser) {
+    if (kaa_tcp_channel->parser) {
         kaa_tcp_channel->parser->payload_buffer_size = KAATCP_PARSER_MAX_MESSAGE_LENGTH;
         kaa_tcp_channel->parser->payload = (char *) KAA_MALLOC(kaa_tcp_channel->parser->payload_buffer_size);
     }
@@ -1167,12 +1167,12 @@ kaa_error_t kaa_tcp_channel_authorize(kaa_tcp_channel_t *self)
     }
 
     kaa_buffer_get_free_space(self->out_buffer, &buffer_size);
-    kaatcp_get_request_size(&connect_message, &request_size);
+    kaatcp_get_request_size(&connect_message, KAATCP_MESSAGE_CONNECT, &request_size);
 
-    if(buffer_size < request_size)
+    if (buffer_size < request_size)
         error_code = kaa_buffer_reallocate_space(self->out_buffer, request_size);
 
-    if(!error_code)
+    if (!error_code)
         error_code = kaa_buffer_allocate_space(self->out_buffer, &buffer, &buffer_size);
 
     if (error_code) {
@@ -1642,7 +1642,7 @@ kaa_error_t kaa_tcp_channel_ping(kaa_tcp_channel_t * self)
     size_t buffer_size = 0;
 
     kaa_buffer_get_free_space(self->out_buffer, &buffer_size);
-    if(buffer_size < KAA_PING_MESSAGE_SIZE)
+    if (buffer_size < KAA_PING_MESSAGE_SIZE)
         error_code = kaa_buffer_reallocate_space(self->out_buffer, KAA_PING_MESSAGE_SIZE);
 
     error_code = kaa_buffer_allocate_space(self->out_buffer, &buffer, &buffer_size);
@@ -1682,7 +1682,7 @@ kaa_error_t kaa_tcp_channel_disconnect_internal(kaa_tcp_channel_t  *self
     size_t buffer_size = 0;
 
     kaa_buffer_get_free_space(self->out_buffer, &buffer_size);
-    if(buffer_size < KAA_DISCONNECT_MESSAGE_SIZE)
+    if (buffer_size < KAA_DISCONNECT_MESSAGE_SIZE)
         error_code = kaa_buffer_reallocate_space(self->out_buffer, KAA_DISCONNECT_MESSAGE_SIZE);
 
     error_code = kaa_buffer_allocate_space(self->out_buffer, &buffer, &buffer_size);

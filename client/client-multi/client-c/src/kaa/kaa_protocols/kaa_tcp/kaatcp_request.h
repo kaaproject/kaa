@@ -52,7 +52,7 @@ kaatcp_error_t kaatcp_get_request_kaasync(const kaatcp_kaasync_t *message
 
 kaatcp_error_t kaatcp_get_request_ping(char *buf, size_t *buf_size);
 
-kaatcp_error_t kaatcp_get_request_size(const kaatcp_connect_t *message, size_t *size);
+kaatcp_error_t kaatcp_get_request_size(const kaatcp_connect_t *message, kaatcp_message_type_t type, size_t *size);
 
 #ifdef __cplusplus
 }      /* extern "C" */

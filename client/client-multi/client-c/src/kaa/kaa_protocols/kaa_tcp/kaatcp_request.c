@@ -85,22 +85,28 @@ kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_pro
     return KAATCP_ERR_NONE;
 }
 
-kaatcp_error_t kaatcp_get_request_size(const kaatcp_connect_t *message, size_t *size)
+kaatcp_error_t kaatcp_get_request_size(const kaatcp_connect_t *message, kaatcp_message_type_t type, size_t *size)
 {
     KAA_RETURN_IF_NIL2(message, size, KAATCP_ERR_BAD_PARAM);
 
-    char header[6];
     size_t payload_size = message->sync_request_size
                         + message->session_key_size
                         + message->signature_size
                         + KAA_CONNECT_HEADER_LENGTH;
 
-    uint8_t header_size = create_basic_header(KAATCP_MESSAGE_CONNECT
-                                            , payload_size
-                                            , header);
+    if (payload_size <= MAX_MESSAGE_LENGTH && type <= MAX_MESSAGE_TYPE_LENGTH) {
+        uint8_t header_size = 1;
+        do {
+            payload_size /= FIRST_BIT;
+            ++header_size;
+        } while (payload_size);
 
-    *size = payload_size + header_size;
-    return KAA_ERR_NONE;
+        *size = payload_size + header_size;
+        return KAA_ERR_NONE;
+    }
+
+    return KAA_ERR_BADPARAM;
+
 }
 
 kaatcp_error_t kaatcp_get_request_connect(const kaatcp_connect_t *message
