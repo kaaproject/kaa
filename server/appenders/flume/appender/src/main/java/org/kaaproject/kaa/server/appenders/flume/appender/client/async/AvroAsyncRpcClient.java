@@ -42,9 +42,9 @@ public class AvroAsyncRpcClient implements AsyncRpcClient {
 
 	ListeningExecutorService executorService;
 
-	public AvroAsyncRpcClient(Properties starterProp) {
+	public AvroAsyncRpcClient(Properties starterProp, int numberOfClientThreads) {
 
-		int numberOfClientThreads = Integer.parseInt(starterProp.getProperty(ASYNC_MAX_THREADS));
+		//int numberOfClientThreads = Integer.parseInt(starterProp.getProperty(ASYNC_MAX_THREADS));
 
 		clientQueue = new ArrayBlockingQueue<RpcClient>(numberOfClientThreads);
 

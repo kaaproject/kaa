@@ -44,8 +44,8 @@ public class BalancingFlumeClientManager extends FlumeClientManager<FlumeNodes> 
     public AsyncRpcClient initManager(FlumeNodes parameters) {
         LOG.debug("Init manager...");
         Properties properties = generateProperties(parameters);
-        properties.put(AvroAsyncRpcClient.ASYNC_MAX_THREADS, maxClientThreads);
-        return new AvroAsyncRpcClient(properties);
+        //properties.put(AvroAsyncRpcClient.ASYNC_MAX_THREADS, maxClientThreads);
+        return new AvroAsyncRpcClient(properties, maxClientThreads);
     }
     
     @Override
@@ -53,8 +53,8 @@ public class BalancingFlumeClientManager extends FlumeClientManager<FlumeNodes> 
         LOG.debug("Init manager...");
         this.maxClientThreads = maxClientThreads;
         Properties properties = generateProperties(parameters);
-        properties.put(AvroAsyncRpcClient.ASYNC_MAX_THREADS, maxClientThreads);
-        return new AvroAsyncRpcClient(properties);
+        //properties.put(AvroAsyncRpcClient.ASYNC_MAX_THREADS, maxClientThreads);
+        return new AvroAsyncRpcClient(properties, maxClientThreads);
     }
 
     @Override
