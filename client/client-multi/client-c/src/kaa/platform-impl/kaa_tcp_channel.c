@@ -822,7 +822,7 @@ kaa_error_t kaa_tcp_channel_check_keepalive(kaa_transport_channel_interface_t *s
 
         tcp_channel->access_point.sockaddr_length = sizeof(kaa_sockaddr_storage_t);
         ext_tcp_utils_function_return_state_t resolve_state =
-                        ext_tcp_utils_gethostbyaddr(&resolve_listener
+                        ext_tcp_utils_getaddrbyhost(&resolve_listener
                                                   , &resolve_props
                                                   , (kaa_sockaddr_t *) &tcp_channel->access_point.sockaddr
                                                   , &tcp_channel->access_point.sockaddr_length);

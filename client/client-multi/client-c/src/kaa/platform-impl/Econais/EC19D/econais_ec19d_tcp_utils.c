@@ -50,7 +50,7 @@ static kaa_error_t get_sock_error(kaa_fd_t sockid, int *sockerror)
    return KAA_ERR_NONE;
 }
 
-ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener
+ext_tcp_utils_function_return_state_t ext_tcp_utils_getaddrbyhost(kaa_dns_resolve_listener_t *resolve_listener
                                                                 , const kaa_dns_resolve_info_t *resolve_props
                                                                 , kaa_sockaddr_t *result
                                                                 , kaa_socklen_t *result_size)
