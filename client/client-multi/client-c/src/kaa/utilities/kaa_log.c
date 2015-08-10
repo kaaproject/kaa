@@ -19,7 +19,7 @@
 #include "../platform/ext_system_logger.h"
 #include "kaa_mem.h"
 
-
+#include "../platform/stdio.h"
 
 #define KAA_LOG_PREFIX_FORMAT   "%04d/%02d/%02d %d:%02d:%02d [%s] [%s:%d] (%d) - "
 
