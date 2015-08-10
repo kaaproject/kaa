@@ -25,6 +25,7 @@ import java.util.Collections;
 
 import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -90,8 +91,7 @@ public class FlumeLogAppenderTest {
 
 		logAppender.setRawConfiguration(rawConfiguration);
 
-		appender.init(logAppender);
-		appender.close();
+		appender.init(logAppender);		
 	}
 
 	@Test
@@ -125,6 +125,11 @@ public class FlumeLogAppenderTest {
 		TestLogDeliveryCallback callback = new TestLogDeliveryCallback();
 		appender.doAppend(eventPack, callback);
 		Assert.assertTrue(callback.internallError);
+	}
+	
+	@After
+	public void aftertest(){
+		appender.close();
 	}
 
 	private static class TestLogDeliveryCallback implements LogDeliveryCallback {
