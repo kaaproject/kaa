@@ -20,6 +20,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SafeHtmlHeader;
+import com.google.gwt.user.client.Window;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
@@ -31,7 +32,6 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 
 public class BasePluginGrid<T extends PluginDto> extends AbstractKaaGrid<T, String> {
-
     private Column<T, T> downloadPropsColumn;
 
     public BasePluginGrid(boolean embedded) {
@@ -49,7 +49,7 @@ public class BasePluginGrid<T extends PluginDto> extends AbstractKaaGrid<T, Stri
                 return item.getName();
             }
         }, 80);
-        
+
         prefWidth += constructStringColumn(table, Utils.constants.type(),
                 new StringValueProvider<T>() {
             @Override
@@ -64,6 +64,7 @@ public class BasePluginGrid<T extends PluginDto> extends AbstractKaaGrid<T, Stri
 
     @Override
     protected float constructActions(DataGrid<T> table, float prefWidth) {
+
         float result = 0;
         if (!embedded && (downloadPropsColumn == null || table.getColumnIndex(downloadPropsColumn) == -1)) {
             Header<SafeHtml> downloadRecordSchemaHeader = new SafeHtmlHeader(
@@ -73,6 +74,7 @@ public class BasePluginGrid<T extends PluginDto> extends AbstractKaaGrid<T, Stri
             table.setColumnWidth(downloadPropsColumn, ACTION_COLUMN_WIDTH, Unit.PX);
             result += ACTION_COLUMN_WIDTH;
         }
+        result+=super.constructActions(table, prefWidth);
         return result;
     }
 
@@ -81,9 +83,8 @@ public class BasePluginGrid<T extends PluginDto> extends AbstractKaaGrid<T, Stri
                 new ActionButtonCell.ActionListener<T>() {
                     @Override
                     public void onItemAction(T value) {
-                        //Integer schemaVersion = value.();
-                        //RowActionEvent<String> rowDownloadSchemaEvent = new RowActionEvent<>(String.valueOf(schemaVersion), KaaRowAction.DOWNLOAD_SCHEMA);
-                        //fireEvent(rowDownloadSchemaEvent);
+                        RowActionEvent<String> rowDownloadSchemaEvent = new RowActionEvent<>(value.getId(), KaaRowAction.DOWNLOAD_SCHEMA);
+                        fireEvent(rowDownloadSchemaEvent);
                     }
                 }, new ActionButtonCell.ActionValidator<T>() {
             @Override
@@ -99,4 +100,6 @@ public class BasePluginGrid<T extends PluginDto> extends AbstractKaaGrid<T, Stri
         };
         return column;
     }
+
+
 }
