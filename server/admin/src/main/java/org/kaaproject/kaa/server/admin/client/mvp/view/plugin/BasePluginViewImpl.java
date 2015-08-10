@@ -28,6 +28,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BasePluginView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.PluginInfoListBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -48,7 +49,9 @@ public abstract class BasePluginViewImpl extends BaseDetailsViewImpl implements 
     private SizedTextBox createdUsername;
     private SizedTextBox createdDateTime;
     private RecordFieldWidget configuration;
-    
+
+    private RecordPanel schemaForm;
+
     public BasePluginViewImpl(boolean create) {
         super(create);
     }
@@ -117,6 +120,17 @@ public abstract class BasePluginViewImpl extends BaseDetailsViewImpl implements 
         configuration = new RecordFieldWidget(new AvroWidgetsConfig.Builder().createConfig());
         configuration.addValueChangeHandler(this);
         getFooter().add(configuration);
+
+        //TODO don't forget about this form
+        //last 2: !create, !create
+        schemaForm = new RecordPanel(new AvroWidgetsConfig.Builder().
+                recordPanelWidth(900).createConfig(),
+                Utils.constants.logAppender(), this, true, false);
+        if (create) {
+            schemaForm.addValueChangeHandler(this);
+        }
+        getFooter().setWidth("1000px");
+        getFooter().add(schemaForm);
         
         name.setFocus(true);
     }

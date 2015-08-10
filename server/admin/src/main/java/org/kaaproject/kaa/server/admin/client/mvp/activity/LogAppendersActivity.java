@@ -16,6 +16,11 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.user.client.Window;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
+import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -28,6 +33,14 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.MultiSelectionModel;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
+import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+import org.kaaproject.kaa.server.admin.controller.KaaAdminController;
+import org.kaaproject.kaa.server.admin.services.KaaAdminServiceImpl;
+import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
+
+import java.util.Arrays;
 
 public class LogAppendersActivity extends AbstractListActivity<LogAppenderDto, LogAppendersPlace> {
 
@@ -63,4 +76,57 @@ public class LogAppendersActivity extends AbstractListActivity<LogAppenderDto, L
         KaaAdmin.getDataSource().removeLogAppender(id, callback);
     }
 
+    @Override
+    protected void onCustomRowAction(final RowActionEvent<String> event) {
+        Integer appenderId = Integer.valueOf(event.getClickedId());
+        final int action = event.getAction();
+        AsyncCallback<LogAppenderDto> callback = new AsyncCallback<LogAppenderDto>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Utils.handleException(caught, listView);
+            }
+            @Override
+            public void onSuccess(LogAppenderDto key) {
+
+                //TODO move it on other layer and use AvroJsonConverter
+
+                StringBuilder jsonBuilder = new StringBuilder("{");
+
+                jsonBuilder.append("\"applicationToken\":\"").append(key.getApplicationToken()).append("\",")
+                        .append("\"tenantId\":\"").append(key.getTenantId()).append("\",")
+                        .append("\"minLogSchemaVersion\":\"").append(key.getMinLogSchemaVersion()).append("\",")
+                        .append("\"maxLogSchemaVersion\":\"").append(key.getMaxLogSchemaVersion()).append("\",")
+                        .append("\"applicationId\":\"").append(key.getApplicationId()).append("\",")
+                        .append("\"applicationToken\":\"").append(key.getApplicationToken()).append("\",")
+                        .append("\"pluginTypeName\":\"").append(key.getPluginTypeName()).append("\",")
+                        .append("\"pluginClassName\":\"").append(key.getPluginClassName()).append("\",")
+                        .append("\"jsonConfiguration\":\"").append(key.getJsonConfiguration().replace("\"", "\\\"")).append("\",")
+                        .append("\"headerStructure\":[],")
+                        .append("\"name\":\"").append(key.getPluginTypeName()).append("\",")
+                        .append("\"description\":\"\"")
+                        .append("}");
+                downloadPropertiesJson(jsonBuilder.toString());
+
+
+
+            }
+        };
+
+        switch (action) {
+            case KaaRowAction.DOWNLOAD_SCHEMA:
+                KaaAdmin.getDataSource().getLogAppender(String.valueOf(appenderId), callback);
+            default:
+                break;
+        }
+    }
+
+    protected native void downloadPropertiesJson(String json)/*-{
+
+        var win = $wnd.open("", "win",
+            "width=940,height=400,status=1,resizeable=1,scrollbars=1");
+        win.document.open("text/html", "replace");
+        win.document.write(json);
+        win.document.close();
+        win.focus();
+    }-*/;
 }
