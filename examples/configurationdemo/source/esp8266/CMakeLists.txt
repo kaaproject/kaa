@@ -35,7 +35,7 @@ set(ESP_SDK_BASE ${ESPRESSIF_HOME}/esp-rtos-sdk)
 
 set(ESP8266_SRC user/user_main.c driver/uart.c)
 
-set(ESP8266_LIBS "-lfreertos -lhal -lminic -lgcc -lpp -lphy -lnet80211 -lwpa -llwip -lmain -lssl")
+set(ESP8266_LIBS "-lfreertos -lhal -lgcc -lpp -lphy -lnet80211 -lwpa -llwip -lmain -lssl")
 
 set(ESP8266_INCDIRS ${ESP_SDK_BASE}/extra_include ${ESP_SDK_BASE}/include ${ESP_SDK_BASE}/include/lwip ${ESP_SDK_BASE}/include/lwip/ipv4 ${ESP_SDK_BASE}/include/lwip/ipv6 ${ESP_SDK_BASE}/include/espressif/ )
 

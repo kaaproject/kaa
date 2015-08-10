@@ -36,6 +36,16 @@ int ext_logger_sprintf(char *buffer,size_t buffer_size, const char *format, va_l
     return vsnprintf(buffer, buffer_size, format, args);
 }
 
+int ext_snpintf(char *buffer, size_t buffer_size, const char *format, ...) 
+{
+    va_list args;
+    va_start(args, format);
+    int res_len = vsnprintf(buffer, buffer_size, format, args);
+    va_end(args);
+    return res_len;
+       
+}
+
 int ext_format_sprintf(char * buffer, size_t buffer_size, const char * format,
         const char * log_level_name, const char * truncated_name, int lineno, 
         kaa_error_t error_code) 
