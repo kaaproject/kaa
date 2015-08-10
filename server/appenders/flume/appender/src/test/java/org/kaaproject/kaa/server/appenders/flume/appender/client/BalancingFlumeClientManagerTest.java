@@ -36,6 +36,9 @@ public class BalancingFlumeClientManagerTest extends FlumeClientManagerTest<Flum
                         Arrays.asList(new FlumeNode("localhost", 12121), 
                                       new FlumeNode("localhost", 12122))).build();
         configuration.setHostsBalancing(flumeNodes);
+        configuration.setCallbackThreadPoolSize(2);
+        configuration.setClientsThreadPoolSize(2);
+        configuration.setExecutorThreadPoolSize(2);
     }
 
     @Test
