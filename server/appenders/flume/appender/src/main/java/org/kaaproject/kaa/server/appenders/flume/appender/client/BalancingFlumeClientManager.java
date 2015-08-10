@@ -18,11 +18,14 @@ package org.kaaproject.kaa.server.appenders.flume.appender.client;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Future;
 
 import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
-import org.apache.flume.api.RpcClient;
-import org.apache.flume.api.RpcClientFactory;
+import org.kaaproject.kaa.server.appenders.flume.appender.client.async.AppendAsyncResultPojo;
+import org.kaaproject.kaa.server.appenders.flume.appender.client.async.AppendBatchAsyncResultPojo;
+import org.kaaproject.kaa.server.appenders.flume.appender.client.async.AsyncRpcClient;
+import org.kaaproject.kaa.server.appenders.flume.appender.client.async.AvroAsyncRpcClient;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes;
 import org.slf4j.Logger;
@@ -33,12 +36,24 @@ public class BalancingFlumeClientManager extends FlumeClientManager<FlumeNodes> 
     private static final Logger LOG = LoggerFactory.getLogger(BalancingFlumeClientManager.class);
     private static final String ROUND_ROBIN = "round_robin";
     private static final String H = "h";
+    
+    private int maxClientThreads = 1;
 
     @Override
-    public RpcClient initManager(FlumeNodes parameters) {
+    public AsyncRpcClient initManager(FlumeNodes parameters) {
         LOG.debug("Init manager...");
         Properties properties = generateProperties(parameters);
-        return RpcClientFactory.getInstance(properties);
+        properties.put(AvroAsyncRpcClient.ASYNC_MAX_THREADS, maxClientThreads);
+        return new AvroAsyncRpcClient(properties);
+    }
+    
+    @Override
+    public AsyncRpcClient initManager(FlumeNodes parameters, int maxClientThreads) {
+        LOG.debug("Init manager...");
+        this.maxClientThreads = maxClientThreads;
+        Properties properties = generateProperties(parameters);
+        properties.put(AvroAsyncRpcClient.ASYNC_MAX_THREADS, maxClientThreads);
+        return new AvroAsyncRpcClient(properties);
     }
 
     @Override
@@ -71,5 +86,15 @@ public class BalancingFlumeClientManager extends FlumeClientManager<FlumeNodes> 
 
         return props;
     }
+
+	@Override
+	public Future<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event) throws EventDeliveryException {
+		return currentClient.appendAsync(event);
+	}
+
+	@Override
+	public Future<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(List<Event> events) throws EventDeliveryException {
+		return currentClient.appendBatchAsync(events);
+	}
 
 }
