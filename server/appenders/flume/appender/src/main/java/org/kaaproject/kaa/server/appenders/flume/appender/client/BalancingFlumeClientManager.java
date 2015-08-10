@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.appenders.flume.appender.client;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.Future;
 
 import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
@@ -30,6 +29,8 @@ import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 public class BalancingFlumeClientManager extends FlumeClientManager<FlumeNodes> {
 
@@ -88,12 +89,12 @@ public class BalancingFlumeClientManager extends FlumeClientManager<FlumeNodes> 
     }
 
 	@Override
-	public Future<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event) throws EventDeliveryException {
+	public ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event) throws EventDeliveryException {
 		return currentClient.appendAsync(event);
 	}
 
 	@Override
-	public Future<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(List<Event> events) throws EventDeliveryException {
+	public ListenableFuture<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(List<Event> events) throws EventDeliveryException {
 		return currentClient.appendBatchAsync(events);
 	}
 
