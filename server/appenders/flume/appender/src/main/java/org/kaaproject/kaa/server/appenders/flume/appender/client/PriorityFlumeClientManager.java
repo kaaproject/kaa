@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.appenders.flume.appender.client;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
@@ -32,6 +31,8 @@ import org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNode
 import org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 public class PriorityFlumeClientManager extends FlumeClientManager<PrioritizedFlumeNodes> {
 
@@ -169,16 +170,16 @@ public class PriorityFlumeClientManager extends FlumeClientManager<PrioritizedFl
 	}
 
 	@Override
-	public Future<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event) throws EventDeliveryException {
+	public ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event) throws EventDeliveryException {
 		return sendEventToFlumeAsync(event, 1);
 	}
 
 	@Override
-	public Future<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(List<Event> events) throws EventDeliveryException {
+	public ListenableFuture<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(List<Event> events) throws EventDeliveryException {
 		return sendEventsToFlumeAsync(events, 1);
 	}
 
-	public Future<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event, int retryCount)
+	public ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event, int retryCount)
 			throws EventDeliveryException {
 		try {
 			LOG.debug("Sending flume event to flume agent {}", event);
@@ -197,7 +198,7 @@ public class PriorityFlumeClientManager extends FlumeClientManager<PrioritizedFl
 		}
 	}
 
-	public Future<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(List<Event> events, int retryCount)
+	public ListenableFuture<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(List<Event> events, int retryCount)
 			throws EventDeliveryException {
 		try {
 			LOG.debug("Sending flume events to flume agent {}", events);
