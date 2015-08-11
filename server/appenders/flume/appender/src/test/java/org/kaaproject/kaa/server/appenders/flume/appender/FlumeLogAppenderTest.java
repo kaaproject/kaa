@@ -67,9 +67,9 @@ public class FlumeLogAppenderTest {
 
         ReflectionTestUtils.setField(appender, "flumeEventBuilder", flumeEventBuilder);
         ReflectionTestUtils.setField(appender, "flumeClientManger", flumeClientManger);
+        initTest();
     }
 
-    @Test
     public void initTest() throws IOException {
         LOG.debug("Init test for appender name: {}, id: {}",
                 appender.getName(), appender.getAppenderId());
@@ -91,8 +91,7 @@ public class FlumeLogAppenderTest {
         
         logAppender.setRawConfiguration(rawConfiguration);
 
-        appender.init(logAppender);
-        appender.close();
+        appender.init(logAppender);     
     }
 
     @Test
