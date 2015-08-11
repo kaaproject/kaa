@@ -18,7 +18,7 @@ extern int main(void);
 void main_task(void *pvParameters) {
     (void)pvParameters;
     printf("main_task() started\r\n");
-    if(!wifi_connect(SSID,PWD)) {
+    if (!wifi_connect(SSID,PWD)) {
         printf("Couldn't connect to \"%s\" with password \"%s\"\r\n2",
                 SSID, PWD);
         goto loop;     
@@ -31,13 +31,13 @@ loop:
 
 void ICACHE_FLASH_ATTR user_init() {
     uart_init();
-    if(!wifi_init()) {
+    if (!wifi_init()) {
         printf("Error initialising wifi!\r\n");
         while(1);
     }
     portBASE_TYPE error = xTaskCreate(main_task, "main_task", 
                                       MAIN_STACK_SIZE, NULL, 2, NULL );
-    if(error<0)
+    if (error<0)
         printf("Error creating main_task! Error code: %d\r\n", error);
 }
 
@@ -51,7 +51,7 @@ bool wifi_init() {
     printf("\r\nInitialising wifi station\r\n");
     wifi_print_opmode();
     
-    if(!wifi_set_opmode_current(0x01)) {
+    if (!wifi_set_opmode_current(0x01)) {
         printf("Error setting wifi opmode to station mode!\r\n");
         return false;
     }
@@ -64,20 +64,20 @@ bool wifi_connect(const char *ssid, const char *pwd) {
     memset(&sta_cfg, 0, sizeof(sta_cfg));
     strcpy(sta_cfg.ssid, ssid);
     strcpy(sta_cfg.password, pwd);
-    if(!wifi_station_set_config_current(&sta_cfg)) {
+    if (!wifi_station_set_config_current(&sta_cfg)) {
         printf("Error setting wifi station config!\r\n");
         return false;
     }
     wifi_print_station_config();
     printf("Connecting to %s...\r\n ", ssid);
-    if(!wifi_station_connect()) {
+    if (!wifi_station_connect()) {
         printf("FAIL!\r\n");
         return false;
     }
     uint8 status = wifi_station_get_connect_status();
-    while(status==STATION_CONNECTING) {
+    while (status==STATION_CONNECTING) {
         status = wifi_station_get_connect_status();
-        switch(status) {
+        switch (status) {
             case STATION_WRONG_PASSWORD:
                 printf("Error connecting to \"%s\": wrong password!\r\n", ssid);
                 goto conn_error;
@@ -107,7 +107,7 @@ conn_error:
 
 void wifi_print_opmode() {
     uint8 opmode = wifi_get_opmode();
-    switch(opmode) {
+    switch (opmode) {
         case 0x01: /* Station mode */
             printf("Current wifi opmode is station\r\n");
             break;
@@ -124,7 +124,7 @@ void wifi_print_opmode() {
 
 void wifi_print_station_config() {
     struct station_config sta_cfg;
-    if(!wifi_station_get_config(&sta_cfg)) {
+    if (!wifi_station_get_config(&sta_cfg)) {
         printf("Error getting current wifi station config!\r\n");
         return;
     }
