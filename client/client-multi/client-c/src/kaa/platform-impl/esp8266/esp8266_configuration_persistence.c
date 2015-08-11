@@ -18,7 +18,7 @@
 #include <stdbool.h>
 #include "../../platform/ext_configuration_persistence.h"
 
-#define KAA_CONFIGURATION_STORAGE "" /* WTF?? no file system! */
+#define KAA_CONFIGURATION_STORAGE "" /* there is no filesystem on esp8266 */
 
 void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deallocation) {
 

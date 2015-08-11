@@ -263,8 +263,8 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client,
 
     KAA_LOG_INFO(kaa_client->context->logger, KAA_ERR_NONE, "Starting Kaa client...");
 
-    while(kaa_client->operate) {
-        if(kaa_client->external_process) {
+    while (kaa_client->operate) {
+        if (kaa_client->external_process) {
             if ((KAA_TIME() - kaa_client->external_process_last_call) >= kaa_client->external_process_max_delay) {
                 kaa_client->external_process(kaa_client->external_process_context);
             }
