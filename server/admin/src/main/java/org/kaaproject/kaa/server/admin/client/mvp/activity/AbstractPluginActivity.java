@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
+import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -51,6 +52,8 @@ public abstract class AbstractPluginActivity<T extends PluginDto, V extends Base
     
     protected abstract void loadPluginInfos(AsyncCallback<List<PluginInfoDto>> callback);
 
+    protected abstract void createEmptyPluginForm(AsyncCallback<RecordField> callback);
+
     @Override
     protected void onEntityRetrieved() {
         loadPluginInfos(new BusyAsyncCallback<List<PluginInfoDto>>() {
@@ -58,6 +61,7 @@ public abstract class AbstractPluginActivity<T extends PluginDto, V extends Base
             public void onSuccessImpl(List<PluginInfoDto> result) {
                 detailsView.getPluginInfo().setAcceptableValues(result);
             }
+
             @Override
             public void onFailureImpl(Throwable caught) {
                 Utils.handleException(caught, detailsView);
@@ -85,5 +89,7 @@ public abstract class AbstractPluginActivity<T extends PluginDto, V extends Base
         entity.setPluginClassName(appenderInfo.getPluginClassName());
         entity.setFieldConfiguration(detailsView.getConfiguration().getValue());
     }
+
+
 
 }

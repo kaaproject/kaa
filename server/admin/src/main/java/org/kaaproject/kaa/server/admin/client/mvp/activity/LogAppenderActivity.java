@@ -113,7 +113,12 @@ public class LogAppenderActivity extends AbstractPluginActivity<LogAppenderDto, 
     @Override
     public void loadFormData(String fileItemName, AsyncCallback<RecordField> callback) {
         //Todo implements upload config from file
-        Window.alert(fileItemName);
+        Window.alert("LogAppenderActivity in loadFormData : "+fileItemName);
         //KaaAdmin.getDataSource().generateSimpleSchemaForm(fileItemName, callback);
+    }
+
+    @Override
+    protected void createEmptyPluginForm(AsyncCallback<RecordField> callback) {
+        KaaAdmin.getDataSource().createSimpleEmptyAppenderForm(callback);
     }
 }

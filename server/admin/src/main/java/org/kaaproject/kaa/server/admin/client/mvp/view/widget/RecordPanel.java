@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
@@ -145,15 +147,18 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
 
     @Override
     public void setValue(RecordField value) {
+        Window.alert(getClass() + " setted value " + value.getDisplayString());
         recordFieldWidget.setValue(value);
     }
 
     @Override
     public void setValue(RecordField value, boolean fireEvents) {
+        Window.alert(getClass() + " setted value(2) " + value.getDisplayString());
         recordFieldWidget.setValue(value, fireEvents);
     }
     
     public void reset() {
+        Window.alert(getClass() + " reset call");
         recordFieldWidget.setValue(null);
         if (!readOnly) {
             recordFileUpload.reset();
@@ -187,6 +192,7 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
 
     @Override
     public void onChange(ChangeEvent event) {
+        Window.alert("RecordPanel: recordFieldWidget.getValue()!=null = "+(recordFieldWidget.getValue() != null) + "\nEvent: " + event.toString());
         boolean enabled = recordFileUpload.getFileName().length()>0 && 
                           recordFieldWidget.getValue() != null;
         uploadButton.setEnabled(enabled);

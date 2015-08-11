@@ -150,6 +150,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
 
     private PasswordEncoder passwordEncoder;
 
+    private FormAvroConverter formAvroConverter;
+
     private SchemaFormAvroConverter simpleSchemaFormAvroConverter;
 
     private SchemaFormAvroConverter commonSchemaFormAvroConverter;
@@ -1626,6 +1628,16 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             Utils.checkNotNull(logAppender);
             checkApplicationId(logAppender.getApplicationId());
             return logAppender;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public RecordField createSimpleEmptyAppenderForm() throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            return formAvroConverter.getEmptySchemaFormInstance();
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
