@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.plugin;
 
 import static org.kaaproject.kaa.server.admin.client.util.Utils.isNotBlank;
 
+import com.google.gwt.user.client.Window;
 import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
@@ -125,7 +126,7 @@ public abstract class BasePluginViewImpl extends BaseDetailsViewImpl implements 
         //last 2: !create, !create
         schemaForm = new RecordPanel(new AvroWidgetsConfig.Builder().
                 recordPanelWidth(900).createConfig(),
-                Utils.constants.logAppender(), this, true, false);
+                Utils.constants.logAppender(), this, !create, !create);
         if (create) {
             schemaForm.addValueChangeHandler(this);
         }
@@ -146,6 +147,7 @@ public abstract class BasePluginViewImpl extends BaseDetailsViewImpl implements 
         if (pluginInfo != null) {
             pluginInfo.setValue(null, true);
         }
+        schemaForm.reset();
     }
 
     @Override
@@ -160,6 +162,10 @@ public abstract class BasePluginViewImpl extends BaseDetailsViewImpl implements 
         return name;
     }
 
+    @Override
+    public RecordPanel getSchemaForm() {
+        return schemaForm;
+    }
     @Override
     public ValueListBox<PluginInfoDto> getPluginInfo() {
         return pluginInfo;

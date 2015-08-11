@@ -262,6 +262,8 @@ public interface KaaAdminService extends RemoteService {
 
     public LogAppenderDto getLogAppender(String appenderId) throws KaaAdminServiceException;
 
+    public RecordField createSimpleEmptyAppenderForm() throws KaaAdminServiceException;
+
     public LogAppenderDto editLogAppender(LogAppenderDto appender) throws KaaAdminServiceException;
 
     public void deleteLogAppender(String appenderId) throws KaaAdminServiceException;

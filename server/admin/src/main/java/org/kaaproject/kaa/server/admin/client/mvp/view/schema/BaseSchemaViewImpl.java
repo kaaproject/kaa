@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.schema;
 
+import com.google.gwt.user.client.Window;
 import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
@@ -107,7 +108,7 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
         detailsTable.getCellFormatter().setVerticalAlignment(5, 0, HasVerticalAlignment.ALIGN_TOP);
         
         getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
-        
+
         schemaForm = new RecordPanel(new AvroWidgetsConfig.Builder().
                 recordPanelWidth(900).createConfig(),
                 Utils.constants.schema(), this, !create, !create);
@@ -144,11 +145,13 @@ public abstract class BaseSchemaViewImpl extends BaseDetailsViewImpl implements 
         if (create) {
             result &= schemaForm.validate();
         }
+        Window.alert("Validate schema: " + result);
         return result;
     }
     
     @Override
     public void onValueChange(ValueChangeEvent<RecordField> event) {
+        Window.alert("BaseSchemaViewImpl: onValueChange");
         fireChanged();
     }
 

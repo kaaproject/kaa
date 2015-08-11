@@ -1035,12 +1035,20 @@ public class DataSource {
             final AsyncCallback<LogAppenderDto> callback) {
         rpcService.getLogAppenderForm(appenderId,
                 new DataCallback<LogAppenderDto>(callback) {
-            @Override
-            protected void onResult(LogAppenderDto result) {
-            }
-        });
+                    @Override
+                    protected void onResult(LogAppenderDto result) {
+                    }
+                });
     }
 
+    //TODO
+//    public void createSimpleEmptyAppenderForm(final AsyncCallback<RecordField> callback) {
+//        rpcService.createSimpleEmptyAppenderForm(new DataCallback<RecordField>(callback) {
+//            @Override
+//            protected void onResult(RecordField result) {
+//            }
+//        });
+//    }
 
     public void editLogAppenderForm(LogAppenderDto dto,
             final AsyncCallback<LogAppenderDto> callback) {

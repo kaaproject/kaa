@@ -20,10 +20,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.plugin.BasePluginViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.IntegerListBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -141,10 +144,14 @@ public class LogAppenderViewImpl extends BasePluginViewImpl implements LogAppend
     @Override
     protected boolean validate() {
         boolean result = super.validate();
+        Window.alert("Super.validate: " + result);
         result &= minSchemaVersion.getValue() != null;
         result &= maxSchemaVersion.getValue() != null;
+        Window.alert("Validate result: " + result);
         return result;
     }
+
+
 
     @Override
     public ValueListBox<Integer> getMinSchemaVersion() {
