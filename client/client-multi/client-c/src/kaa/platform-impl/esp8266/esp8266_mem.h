@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-#include <stddef.h>
-
-void *pvPortMalloc(size_t xSize);
-void *pvPortZalloc(size_t xSize);
-void *pvPortRealloc(void *pvPtr, size_t xSize);
-
 #ifndef ESP8266_MEM_H
 #define ESP8266_MEM_H
+
+#include <stddef.h>
+
+extern void *pvPortMalloc(size_t xSize);
+extern void *pvPortZalloc(size_t xSize);
+extern void *pvPortRealloc(void *pvPtr, size_t xSize);
+extern void vPortFree(void *pvPtr);
 
 #ifndef __KAA_MALLOC
 #define __KAA_MALLOC(S) pvPortMalloc(S)
