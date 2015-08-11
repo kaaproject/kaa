@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-#ifndef MEM_H_
-#define MEM_H_
+#ifndef ESP8266_SOCK_H
+#define ESP8266_SOCK_H
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_mem.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_mem.h"
-#else
-#ifdef ESP8266_PLATFORM
-#include "../platform-impl/esp8266/esp8266_mem.h"
-#else
-#include "../platform-impl/posix/posix_mem.h"
-#endif /* ESP8266_PLATOFRM */
-#endif //#ifdef STM32_LEAF_PLATFORM
-#endif //ifdef ECONAIS_PLATFORM
+#include <lwip/lwip/sockets.h>
 
-#endif /* MEM_H_ */
+typedef int kaa_fd_t;
 
+typedef struct sockaddr kaa_sockaddr_t;
+typedef struct sockaddr_in kaa_sockaddr_storage_t;
+typedef socklen_t kaa_socklen_t;
+
+
+#define KAA_HTONS(a)    htons((a))
+#define KAA_HTONL(a)    htonl((a))
+#define KAA_HTONLL(a)   htonll((a))
+
+#define KAA_NTOHS(a)    ntohs((a))
+#define KAA_NTOHL(a)    ntohl((a))
+#define KAA_NTOHLL(a)   ntohll((a))
+#endif /* ESP8266_SOCK_H */

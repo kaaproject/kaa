@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-#ifndef MEM_H_
-#define MEM_H_
+#include <stdbool.h>
+#include <stddef.h>
+#include "../../platform/ext_key_utils.h"
+#include "rsa.h"
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_mem.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_mem.h"
-#else
-#ifdef ESP8266_PLATFORM
-#include "../platform-impl/esp8266/esp8266_mem.h"
-#else
-#include "../platform-impl/posix/posix_mem.h"
-#endif /* ESP8266_PLATOFRM */
-#endif //#ifdef STM32_LEAF_PLATFORM
-#endif //ifdef ECONAIS_PLATFORM
 
-#endif /* MEM_H_ */
-
+void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, 
+                                            bool *needs_deallocation) 
+{
+    *buffer = (char*)KAA_PUBLIC_KEY_DATA;
+    *buffer_size = KAA_PUBLIC_KEY_LENGTH;
+    *needs_deallocation = false;
+}

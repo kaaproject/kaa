@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-#ifndef MEM_H_
-#define MEM_H_
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_mem.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_mem.h"
-#else
-#ifdef ESP8266_PLATFORM
-#include "../platform-impl/esp8266/esp8266_mem.h"
-#else
-#include "../platform-impl/posix/posix_mem.h"
-#endif /* ESP8266_PLATOFRM */
-#endif //#ifdef STM32_LEAF_PLATFORM
-#endif //ifdef ECONAIS_PLATFORM
-
-#endif /* MEM_H_ */
-
+void exit(int status) 
+{
+    vTaskDelete(NULL);
+}

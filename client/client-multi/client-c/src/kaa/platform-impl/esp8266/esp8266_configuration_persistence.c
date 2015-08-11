@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-#ifndef MEM_H_
-#define MEM_H_
+#include <stddef.h>
+#include <stdbool.h>
+#include "../../platform/ext_configuration_persistence.h"
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_mem.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_mem.h"
-#else
-#ifdef ESP8266_PLATFORM
-#include "../platform-impl/esp8266/esp8266_mem.h"
-#else
-#include "../platform-impl/posix/posix_mem.h"
-#endif /* ESP8266_PLATOFRM */
-#endif //#ifdef STM32_LEAF_PLATFORM
-#endif //ifdef ECONAIS_PLATFORM
+#define KAA_CONFIGURATION_STORAGE "" /* there is no filesystem on esp8266 */
 
-#endif /* MEM_H_ */
+void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deallocation) {
+
+}
+
+void ext_configuration_store(const char *buffer, size_t buffer_size) {
+
+}
 

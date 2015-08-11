@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-#ifndef MEM_H_
-#define MEM_H_
+#ifndef ESP8266_TIME_H
+#define ESP8266_TIME_H
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_mem.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_mem.h"
-#else
-#ifdef ESP8266_PLATFORM
-#include "../platform-impl/esp8266/esp8266_mem.h"
-#else
-#include "../platform-impl/posix/posix_mem.h"
-#endif /* ESP8266_PLATOFRM */
-#endif //#ifdef STM32_LEAF_PLATFORM
-#endif //ifdef ECONAIS_PLATFORM
+typedef unsigned int kaa_time_t;
 
-#endif /* MEM_H_ */
+#define KAA_TIME() (system_get_time() / 1000000)
 
+#endif /* ESP8266_TIME_H */

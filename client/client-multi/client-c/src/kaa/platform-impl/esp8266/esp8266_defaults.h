@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-#ifndef MEM_H_
-#define MEM_H_
+#ifndef ESP8266_DEFAULTS_H_
+#define ESP8266_DEFAULTS_H_
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_mem.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_mem.h"
-#else
-#ifdef ESP8266_PLATFORM
-#include "../platform-impl/esp8266/esp8266_mem.h"
-#else
-#include "../platform-impl/posix/posix_mem.h"
-#endif /* ESP8266_PLATOFRM */
-#endif //#ifdef STM32_LEAF_PLATFORM
-#endif //ifdef ECONAIS_PLATFORM
+#define KAA_TCP_CHANNEL_IN_BUFFER_SIZE      246
+#define KAA_TCP_CHANNEL_OUT_BUFFER_SIZE     1015
 
-#endif /* MEM_H_ */
+#define KAA_TCP_CHANNEL_KEEPALIVE           300
 
+#define KAATCP_PARSER_MAX_MESSAGE_LENGTH    999
+
+#define KAA_MAX_LOG_MESSAGE_LENGTH          247
+
+#endif /* ESP8266_DEFAULTS_H_ */

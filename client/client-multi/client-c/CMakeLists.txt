@@ -121,8 +121,14 @@ else()
 endif()
 
 message("==================================")
+
+
 # Sets path(s) to header files.
 set (KAA_SRC_FOLDER "src/kaa")
+
+#include platform-depended CMakeLists.txt
+include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/platform/${KAA_PLATFORM}/CMakeLists.txt)
+
 include_directories(KAA_INCLUDE_PATHS
                         ${KAA_INCLUDE_PATHS}
                         ${CMAKE_CURRENT_SOURCE_DIR}/${KAA_SRC_FOLDER}
@@ -154,26 +160,37 @@ set (KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/platform-impl/kaa_htonll.c
     )
 
-# Includes auto-generated and platform-dependent Cmake's scripts.
+# Includes auto-generated Cmake's scripts.
 include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/CMakeGen.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/platform/${KAA_PLATFORM}/CMakeLists.txt)
 
 # Builds Kaa libraries.
 add_library(kaac_o OBJECT ${KAA_SOURCE_FILES})
 add_library(kaac_s STATIC ./${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o>)
-add_library(kaac SHARED ./${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o>)
-target_link_libraries(kaac ${KAA_THIRDPARTY_LIBRARIES})
+if(KAA_PLATFORM STREQUAL ESP8266_NAME)
+    message("Omiting build of dynamic library for esp8266 platform")
+else()
+    add_library(kaac SHARED ./${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o>)
+    target_link_libraries(kaac ${KAA_THIRDPARTY_LIBRARIES})
+endif()
 
 # Sets paths Kaa libraries will be installed in.
 if(NOT KAA_INSTALL_PATH)
-	set(KAA_INSTALL_PATH "/usr/local")
+    if(KAA_PLATFORM STREQUAL ESP8266_NAME)
+        set(KAA_INSTALL_PATH "/usr/local/kaa-esp8266")
+    else()
+	    set(KAA_INSTALL_PATH "/usr/local")
+    endif()
 endif()
 
 message("KAA WILL BE INSTALLED TO  ${KAA_INSTALL_PATH} ")
 set(CMAKE_INSTALL_PREFIX ${KAA_INSTALL_PATH} ) 
 install (DIRECTORY ${KAA_SRC_FOLDER}/ DESTINATION ${KAA_INSTALL_PATH}/include/kaa
     FILES_MATCHING PATTERN *.h)
-install (TARGETS kaac kaac_s DESTINATION ${KAA_INSTALL_PATH}/lib)
+if(KAA_PLATFORM STREQUAL ESP8266_NAME)
+    install (TARGETS kaac_s DESTINATION ${KAA_INSTALL_PATH}/lib)
+else()
+    install (TARGETS kaac kaac_s DESTINATION ${KAA_INSTALL_PATH}/lib)
+endif()
 
 
 # Builds unit tests.

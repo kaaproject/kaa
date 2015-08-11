@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-#ifndef MEM_H_
-#define MEM_H_
+#include <stdbool.h>
+#include <stddef.h>
+#include "../../platform/ext_status.h"
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_mem.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_mem.h"
-#else
-#ifdef ESP8266_PLATFORM
-#include "../platform-impl/esp8266/esp8266_mem.h"
-#else
-#include "../platform-impl/posix/posix_mem.h"
-#endif /* ESP8266_PLATOFRM */
-#endif //#ifdef STM32_LEAF_PLATFORM
-#endif //ifdef ECONAIS_PLATFORM
+void ext_status_read(char **buffer, size_t *buffer_size, bool *needs_deallocation) 
+{
 
-#endif /* MEM_H_ */
+}
 
+void ext_status_store(const char *buffer, size_t buffer_size) 
+{
+
+}
