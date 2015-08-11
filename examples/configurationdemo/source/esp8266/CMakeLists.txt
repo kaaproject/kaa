@@ -21,7 +21,7 @@ enable_language(C)
 
 find_package (OpenSSL REQUIRED)
 
-set(KAA_SDK_ROOT /usr/local/kaa-esp8266)
+set(KAA_SDK_ROOT libs/kaa/src/)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -Os -Wall -Wextra")
 
@@ -60,11 +60,11 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DSSID='\"${SSID}\"' -DPWD='\"${PWD}\"'")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
                     ${CMAKE_CURRENT_SOURCE_DIR}/include
-                    ${KAA_SDK_ROOT}/include
+                    ${KAA_SDK_ROOT}
                     ${ESP8266_INCDIRS}
                    )
 
-link_directories(${KAA_SDK_ROOT}/lib
+link_directories(
                  ${ESP_SDK_BASE}/lib
                  ${CMAKE_CURRENT_SOURCE_DIR}/ld
                 
