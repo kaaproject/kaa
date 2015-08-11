@@ -17,10 +17,6 @@ extern int main(void);
 
 void main_task(void *pvParameters) {
     (void)pvParameters;
-    printf("Stack highwater mark: %d\r\n",
-            uxTaskGetStackHighWaterMark(xTaskGetCurrentTaskHandle()));
-    system_print_meminfo();
-    printf("Free heap: %d\r\n", system_get_free_heap_size());
     printf("main_task() started\r\n");
     if(!wifi_connect(SSID,PWD)) {
         printf("Couldn't connect to \"%s\" with password \"%s\"\r\n2",
@@ -141,3 +137,4 @@ void wifi_print_station_config() {
 void ets_putc(char c) {
     os_putc(c);
  }
+

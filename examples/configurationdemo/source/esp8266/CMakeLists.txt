@@ -56,7 +56,7 @@ set(CMAKE_C_LINK_EXECUTABLE "${ESP_TOOLCHAIN_DIR}/xtensa-lx106-elf-ld <LINK_FLAG
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DESP8266_PLATFORM -Os -Wpointer-arith -Wl,-EL -fno-inline-functions -nostdlib -mlongcalls -mtext-section-literals -D__ets__ -DICACHE_FLASH")
 
 #WiFi SSID and PASSWORD
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DSSID=${SSID} -DPWD=${PWD}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DSSID='\"${SSID}\"' -DPWD='\"${PWD}\"'")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
                     ${CMAKE_CURRENT_SOURCE_DIR}/include

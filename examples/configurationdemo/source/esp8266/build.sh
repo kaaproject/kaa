@@ -65,6 +65,8 @@ function build_thirdparty {
               -DKAA_MAX_LOG_LEVEL=4 \
               -DKAA_PLATFORM=esp8266 \
               -DCMAKE_TOOLCHAIN_FILE=../toolchains/esp8266.cmake \
+              -DKAA_WITHOUT_EVENTS=1 \
+              -DKAA_WITHOUT_NOTIFICATION=1 \
               ..
     fi
 
@@ -75,6 +77,10 @@ function build_thirdparty {
 }
 
 function build_app {
+    echo "Enter WiFi SSID:"
+    read SSID
+    echo "Enter WiFi Password:"
+    read PASSWORD
     cd $PROJECT_HOME &&
     mkdir -p "$PROJECT_HOME/$BUILD_DIR" &&
     cp "$KAA_LIB_PATH/$BUILD_DIR/"libkaa* "$PROJECT_HOME/$BUILD_DIR/" &&
