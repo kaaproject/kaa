@@ -82,7 +82,7 @@ public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
 
 	@Override
 	public void close() {
-		LOG.info("Try to stop cassandra log appender...");
+		LOG.info("Try to stop kafka log appender...");
 		if (!closed) {
 			closed = true;
 			if (logEventDao != null) {
@@ -95,7 +95,7 @@ public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
 				scheduler.shutdownNow();
 			}
 		}
-		LOG.info("Cassandra log appender stoped.");
+		LOG.info("Kafka log appender stoped.");
 
 	}
 
@@ -145,9 +145,9 @@ public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
             int executorPoolSize = Math.min(configuration.getExecutorThreadPoolSize(), MAX_CALLBACK_THREAD_POOL_SIZE);
             executor = Executors.newFixedThreadPool(executorPoolSize);
             topicName = configuration.getTopic();
-            LOG.info("Cassandra log appender initialized");
+            LOG.info("Kafka log appender initialized");
         } catch (Exception e) {
-            LOG.error("Failed to init cassandra log appender: ", e);
+            LOG.error("Failed to init kafka log appender: ", e);
         }
 
 	}

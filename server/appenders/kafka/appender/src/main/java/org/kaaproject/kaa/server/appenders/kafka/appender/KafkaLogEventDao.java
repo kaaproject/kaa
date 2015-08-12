@@ -60,7 +60,7 @@ public class KafkaLogEventDao implements LogEventDao {
 				serverList.append(server.getHost() + ":" + server.getPort() + ",");
 			}
 			LOG.info("Init kafka cluster with property {}={}", ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, serverList);
-			kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, serverList);
+			kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, serverList.toString());
 			LOG.info("Init kafka cluster with property {}={}", ProducerConfig.ACKS_CONFIG,
 					configuration.getKafkaAcknowledgement());
 			kafkaProperties.put(ProducerConfig.ACKS_CONFIG, parseAcknowledgement(configuration
