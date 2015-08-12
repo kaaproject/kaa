@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-#ifndef PLATFORM_H_
-#define PLATFORM_H_
+#ifndef CC32XX_MEM_H_
+#define CC32XX_MEM_H_
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_platform.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_platform.h"
-#else
-#ifdef CC32XX_PLATFORM
-#include "../platform-impl/cc32xx/cc32xx_platform.h"
-#else
-#include "../platform-impl/posix/posix_platform.h"
+#include <stdlib.h>
 
-#endif //#ifdef STM32_LEAF_PLATFORM
+#ifndef __KAA_MALLOC
+#define __KAA_MALLOC(S)           malloc(S)
+#endif
 
-#endif //ifdef ECONAIS_PLATFORM
-#endif //ifdef CC32XX_PLATFORM
+#ifndef __KAA_CALLOC
+#define __KAA_CALLOC(N,S)         calloc(N, S)
+#endif
 
-#endif /* PLATFORM_H_ */
+#ifndef __KAA_REALLOC
+#define __KAA_REALLOC(P, S)       realloc(P, S)
+#endif
 
+#ifndef __KAA_FREE
+#define __KAA_FREE(P)             free(P)
+#endif
+
+#endif /* CC32XX_MEM_H_ */

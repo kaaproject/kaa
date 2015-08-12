@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
+#include "hw_types.h"
+#include "device.h"
+#include "prcm.h"
 
-#ifndef TIME_H_
-#define TIME_H_
+void cc32xx_reboot()
+{
+    sl_Stop(30);
+    PRCMHibernateIntervalSet(330);
+    PRCMHibernateWakeupSourceEnable(PRCM_HIB_SLOW_CLK_CTR);
+    PRCMHibernateEnter();
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_time.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_time.h"
-#else
-#ifdef ESP8266_PLATFORM
-#include "../platform-impl/esp8266/esp8266_time.h"
-#else
-#ifdef CC32XX_PLATFORM
-#include "../platform-impl/cc32xx/cc32xx_time.h"
-#else
-#include "../platform-impl/posix/posix_time.h"
-#endif //#ifdef STM32_LEAF_PLATFORM
-#endif /* ESP8266_PLATFORM */
-#endif //ifdef CC32XX_PLATFORM
-#endif //ifdef ECONAIS_PLATFORM
-
-#endif /* TIME_H_ */
+    PRCMMCUReset(true);
+    PRCMSOCReset();
+}

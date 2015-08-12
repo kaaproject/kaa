@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-#ifndef PLATFORM_H_
-#define PLATFORM_H_
+#ifndef CC32XX_PLATFORM_H_
+#define CC32XX_PLATFORM_H_
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_platform.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_platform.h"
-#else
-#ifdef CC32XX_PLATFORM
-#include "../platform-impl/cc32xx/cc32xx_platform.h"
-#else
-#include "../platform-impl/posix/posix_platform.h"
 
-#endif //#ifdef STM32_LEAF_PLATFORM
+typedef int ssize_t;
 
-#endif //ifdef ECONAIS_PLATFORM
-#endif //ifdef CC32XX_PLATFORM
+#include <time.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <stdint.h>
 
-#endif /* PLATFORM_H_ */
-
+#endif /* CC32XX_PLATFORM_H_ */

@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef PLATFORM_H_
-#define PLATFORM_H_
 
-#ifdef ECONAIS_PLATFORM
-#include "../platform-impl/Econais/EC19D/econais_ec19d_platform.h"
-#else
-#ifdef STM32_LEAF_PLATFORM
-#include "../platform-impl/stm32/leafMapleMini/leaf_platform.h"
-#else
-#ifdef CC32XX_PLATFORM
-#include "../platform-impl/cc32xx/cc32xx_platform.h"
-#else
-#include "../platform-impl/posix/posix_platform.h"
+#ifndef CC32XX_DEFAULTS_H_
+#define CC32XX_DEFAULTS_H_
 
-#endif //#ifdef STM32_LEAF_PLATFORM
+#define KAA_TCP_CHANNEL_IN_BUFFER_SIZE      2048
+#define KAA_TCP_CHANNEL_OUT_BUFFER_SIZE     8192
+#define KAA_TCP_CHANNEL_KEEPALIVE           300
+#define KAATCP_PARSER_MAX_MESSAGE_LENGTH    8 * 1024
+#define KAA_MAX_LOG_MESSAGE_LENGTH          512
 
-#endif //ifdef ECONAIS_PLATFORM
-#endif //ifdef CC32XX_PLATFORM
-
-#endif /* PLATFORM_H_ */
-
+#endif /* CC32XX_DEFAULTS_H_ */

@@ -163,14 +163,15 @@ set (KAA_SOURCE_FILES
 # Includes auto-generated Cmake's scripts.
 include(${CMAKE_CURRENT_SOURCE_DIR}/listfiles/CMakeGen.cmake)
 
+
 # Builds Kaa libraries.
+set(KAA_BUILD_STATIC kaac_s)
 add_library(kaac_o OBJECT ${KAA_SOURCE_FILES})
-add_library(kaac_s STATIC ./${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o>)
-if(KAA_PLATFORM STREQUAL ESP8266_NAME)
-    message("Omiting build of dynamic library for esp8266 platform")
-else()
-    add_library(kaac SHARED ./${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o>)
-    target_link_libraries(kaac ${KAA_THIRDPARTY_LIBRARIES})
+add_library(${KAA_BUILD_STATIC} STATIC ./${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o>)
+if(NOT DEFINED KAA_BUILD_STAIC_ONLY)
+  set(KAA_BUILD_SHARED kaac)
+  add_library(${KAA_BUILD_SHARED} SHARED ./${KAA_SRC_FOLDER} $<TARGET_OBJECTS:kaac_o>)
+  target_link_libraries(${KAA_BUILD_SHARED} ${KAA_THIRDPARTY_LIBRARIES})
 endif()
 
 # Sets paths Kaa libraries will be installed in.
@@ -186,11 +187,8 @@ message("KAA WILL BE INSTALLED TO  ${KAA_INSTALL_PATH} ")
 set(CMAKE_INSTALL_PREFIX ${KAA_INSTALL_PATH} ) 
 install (DIRECTORY ${KAA_SRC_FOLDER}/ DESTINATION ${KAA_INSTALL_PATH}/include/kaa
     FILES_MATCHING PATTERN *.h)
-if(KAA_PLATFORM STREQUAL ESP8266_NAME)
-    install (TARGETS kaac_s DESTINATION ${KAA_INSTALL_PATH}/lib)
-else()
-    install (TARGETS kaac kaac_s DESTINATION ${KAA_INSTALL_PATH}/lib)
-endif()
+
+install (TARGETS ${KAA_BUILD_SHARED} ${KAA_BUILD_STATIC} DESTINATION ${KAA_INSTALL_PATH}/lib)
 
 
 # Builds unit tests.

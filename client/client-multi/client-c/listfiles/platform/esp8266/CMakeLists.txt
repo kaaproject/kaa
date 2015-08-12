@@ -43,6 +43,8 @@ set(KAA_SOURCE_FILES ${KAA_SOURCE_FILES} ${ESP8266_SRC})
 
 set(KAA_INCLUDE_PATHS ${KAA_INCLUDE_PATHS} ${ESP8266_INCDIRS})
 
+set(KAA_BUILD_STAIC_ONLY 1)
+
 add_custom_target(rsa ALL DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/kaa/platform-impl/esp8266/rsa.h)
 
 add_custom_command(TARGET rsa
