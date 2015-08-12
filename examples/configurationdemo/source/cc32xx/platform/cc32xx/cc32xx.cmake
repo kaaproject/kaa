@@ -17,8 +17,6 @@
 if(NOT DEFINED KAA_TOOLCHAIN_PATH)
   set(KAA_ARM_TOOLCHAIN "/opt/kaa/gcc-arm-none-eabi")
   set(CC32XX_SDK "/opt/kaa/cc3200-sdk")
-#  set(KAA_ARM_TOOLCHAIN "/home/karnil/work/arm-toolchain/gcc-arm-none-eabi-4_9-2015q2")#TMP!!!!
-#  set(CC32XX_SDK "/home/karnil/work/cc3200/sdk")#TMP!!!!
 else()
   set(KAA_ARM_TOOLCHAIN "${KAA_TOOLCHAIN_PATH}/gcc-arm-none-eabi")
   set(CC32XX_SDK "${KAA_TOOLCHAIN_PATH}/cc3200_sdk")
@@ -62,7 +60,7 @@ set(APP_LIBS ${LIB_KAA} ${LIB_SIMPLELINK_NONOS} ${LIB_DRIVER} ${LIB_M} ${LIB_C} 
 
 set (SAMPLE_SOURCE_FILES
             src/kaa_demo.c           
-            ../platforms/${KAA_PLATFORM}/${KAA_PLATFORM}_support.c
+            platforms/${KAA_PLATFORM}/${KAA_PLATFORM}_support.c
 	    ${CC32XX_SDK}/example/common/uart_if.c
 	    ${CC32XX_SDK}/example/common/udma_if.c
             ${CC32XX_SDK}/example/common/gpio_if.c
