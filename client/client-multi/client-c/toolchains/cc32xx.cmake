@@ -24,15 +24,6 @@ else()
   set(CC32XX_SDK "${KAA_TOOLCHAIN_PATH}/cc3200_sdk")
 endif()
 
-set(CMAKE_C_COMPILER   "${KAA_ARM_TOOLCHAIN}/bin/arm-none-eabi-gcc")
-#set(CMAKE_AR           "${KAA_ARM_TOOLCHAIN}/bin/arm-none-eabi-ar")
-#set(CMAKE_LINKER       "${KAA_ARM_TOOLCHAIN}/bin/arm-none-eabi-ld")
-#set(CMAKE_OBJCOPY      "${KAA_ARM_TOOLCHAIN}/bin/arm-none-eabi-objcopy")
-#set(CMAKE_OBJDUMP      "${KAA_ARM_TOOLCHAIN}/bin/arm-none-eabi-objdump")
-#set(CMAKE_NM           "${KAA_ARM_TOOLCHAIN}/bin/arm-none-eabi-nm")
-#set(CMAKE_RANLIB       "${KAA_ARM_TOOLCHAIN}/bin/arm-none-eabi-ranlib")
-#set(CMAKE_STRIP        "${KAA_ARM_TOOLCHAIN}/bin/arm-none-eabi-strip")
-
 CMAKE_FORCE_C_COMPILER(${KAA_ARM_TOOLCHAIN}/bin/arm-none-eabi-gcc GNU)
 
 set(CMAKE_C_FLAGS "-mthumb -mcpu=cortex-m4 -ffunction-sections -fdata-sections -MD -std=c99 -g -O0 -static"  CACHE STRING "" FORCE)
