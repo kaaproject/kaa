@@ -20,7 +20,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.examples.robotrun</groupId>
-        <version>0.7.1-SNAPSHOT</version>
+        <version>0.7.2-SNAPSHOT</version>
         <artifactId>android</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.examples.robotrun.android</groupId>

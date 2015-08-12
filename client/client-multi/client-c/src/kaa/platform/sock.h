@@ -23,15 +23,17 @@
 #ifdef STM32_LEAF_PLATFORM
 #include "../platform-impl/stm32/leafMapleMini/leaf_sock.h"
 #else
+#ifdef ESP8266_PLATFORM
+#include "../platform-impl/esp8266/esp8266_sock.h"
+#else
 #ifdef CC32XX_PLATFORM
 #include "../platform-impl/cc32xx/cc32xx_sock.h"
 #else
 #include "../platform-impl/posix/posix_sock.h"
-
 #endif //#ifdef STM32_LEAF_PLATFORM
-
-#endif //ifdef ECONAIS_PLATFORM
+#endif /* ESP8266_PLATFORM */
 #endif //ifdef CC32XX_PLATFORM
+#endif //ifdef ECONAIS_PLATFORM
 
 #endif /* SOCK_H_ */
 

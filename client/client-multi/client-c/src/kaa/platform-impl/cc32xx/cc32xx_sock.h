@@ -18,6 +18,13 @@
 #define CC32XX_SOCK_H_
 
 /* Avoid redefined warning */
+#undef __CONCAT
+#undef FD_SETSIZE
+#undef FD_SET
+#undef FD_CLR
+#undef FD_ISSET
+#undef FD_ZERO
+#undef fd_set
 #undef EBADF
 #undef EAGAIN
 #undef EWOULDBLOCK

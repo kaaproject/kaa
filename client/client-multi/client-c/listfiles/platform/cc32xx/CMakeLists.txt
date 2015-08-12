@@ -43,3 +43,21 @@ endif()
 set(KAA_THIRDPARTY_LIBRARIES
         ${KAA_THIRDPARTY_LIBRARIES}
     )
+
+
+add_library(driver STATIC IMPORTED)
+set_property(TARGET driver PROPERTY IMPORTED_LOCATION ${CC32XX_SDK}/driverlib/gcc/exe/libdriver.a)
+
+add_library(simplelink_nonos STATIC IMPORTED)
+set_property(TARGET simplelink_nonos PROPERTY IMPORTED_LOCATION ${CC32XX_SDK}/simplelink/gcc/exe/libsimplelink_nonos.a)
+
+add_definitions(-DCC32XX_PLATFORM)
+
+set(KAA_THIRDPARTY_LIBRARIES driver simplelink_nonos)
+
+set(KAA_BUILD_STAIC_ONLY 1)
+
+set(CC32XX_RSA_KEY ../src/kaa/platform-impl/cc32xx/cc32xx_rsa_key.h)
+
+execute_process(COMMAND rm ${CC32XX_RSA_KEY})
+execute_process(COMMAND java -jar ../tools/pub_key_generator.jar ${CC32XX_RSA_KEY})

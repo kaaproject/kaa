@@ -18,7 +18,6 @@
 #include "../../platform/stdio.h"
 #include "../../kaa_common.h"
 #include <errno.h>
-#include "cc32xx_sock.h"
 
 //Driverlib includes
 #include "hw_types.h"

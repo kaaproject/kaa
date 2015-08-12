@@ -95,7 +95,7 @@ public class VehicleTelemetryDemoBuider extends AbstractDemoBuilder {
         vehicleTelemetryLogAppender.setConfirmDelivery(true);
         vehicleTelemetryLogAppender.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.KEYHASH,
                 LogHeaderStructureDto.TIMESTAMP, LogHeaderStructureDto.TOKEN, LogHeaderStructureDto.VERSION));
-        vehicleTelemetryLogAppender.setPluginTypeName("Mongo");
+        vehicleTelemetryLogAppender.setPluginTypeName("MongoDB");
         vehicleTelemetryLogAppender.setPluginClassName("org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender");
         vehicleTelemetryLogAppender.setJsonConfiguration(FileUtils.readResource(getResourcePath("mongoAppender.json")));
         vehicleTelemetryLogAppender = client.editLogAppenderDto(vehicleTelemetryLogAppender);

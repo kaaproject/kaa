@@ -20,7 +20,7 @@
 #include "../../utilities/kaa_mem.h"
 #include "../../kaa_common.h"
 
-#include "simplelink.h"
+#include "cc32xx_sock.h"
 
 //Driverlib includes
 #include "hw_types.h"

@@ -215,7 +215,7 @@ kaa_error_t kaa_client_process_channel_connected(kaa_client_t *kaa_client)
 
     int poll_result = select(channel_fd + 1, &read_fds, &write_fds, NULL, &select_tv);
     if (poll_result == 0) {
-        kaa_tcp_channel_check_keepalive(&kaa_client->channel);
+        error_code = kaa_tcp_channel_check_keepalive(&kaa_client->channel);
     } else if (poll_result > 0) {
         if (channel_fd >= 0) {
             if (FD_ISSET(channel_fd, &read_fds)) {
@@ -304,6 +304,8 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
                     error_code = kaa_client_process_channel_disconnected(kaa_client);
                 } else  if (kaa_client->channel_state == KAA_CLIENT_CHANNEL_STATE_CONNECTED) {
                     error_code = kaa_client_process_channel_connected(kaa_client);
+                    if (error_code == KAA_ERR_TIMEOUT)
+                        kaa_client_deinit_channel(kaa_client);
                 }
             } else {
                 //No initialized channels
