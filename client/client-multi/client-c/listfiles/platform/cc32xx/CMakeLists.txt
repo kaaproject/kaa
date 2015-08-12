@@ -26,6 +26,7 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_status.c
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_configuration_persistence.c
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_time.c
+        ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_reboot.c
         ${KAA_SRC_FOLDER}/platform-impl/ext_log_storage_memory.c
         ${KAA_SRC_FOLDER}/platform-impl/ext_log_upload_strategy_by_volume.c
     )

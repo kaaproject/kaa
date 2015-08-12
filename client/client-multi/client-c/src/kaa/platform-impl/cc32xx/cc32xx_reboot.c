@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-#ifndef CC32XX_STDIO_H_
-#define CC32XX_STDIO_H_
+#include "hw_types.h"
+#include "device.h"
+#include "prcm.h"
 
-#include <stdio.h>
+void cc32xx_reboot()
+{
+    sl_Stop(30);
+    PRCMHibernateIntervalSet(330);
+    PRCMHibernateWakeupSourceEnable(PRCM_HIB_SLOW_CLK_CTR);
+    PRCMHibernateEnter();
 
-#define KAA_EXIT(e) cc32xx_reboot()
-void cc32xx_reboot();
-
-#endif /* CC32XX_STDIO_H_ */
+    PRCMMCUReset(true);
+    PRCMSOCReset();
+}
