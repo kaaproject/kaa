@@ -45,6 +45,18 @@ set(KAA_THIRDPARTY_LIBRARIES
     )
 
 
+set(CC32XX_INCDIRS ${CC32XX_SDK}/inc
+                   ${CC32XX_SDK}/driverlib
+                   ${CC32XX_SDK}/oslib
+                   ${CC32XX_SDK}/simplelink
+                   ${CC32XX_SDK}/simplelink/include
+                   ${CC32XX_SDK}/simplelink/source
+                   ${CC32XX_SDK}/example/common
+   )
+
+set(KAA_INCLUDE_PATHS ${KAA_INCLUDE_PATHS} ${CC32XX_INCDIRS})
+
+
 add_library(driver STATIC IMPORTED)
 set_property(TARGET driver PROPERTY IMPORTED_LOCATION ${CC32XX_SDK}/driverlib/gcc/exe/libdriver.a)
 

@@ -37,14 +37,3 @@ CMAKE_FORCE_C_COMPILER(${KAA_ARM_TOOLCHAIN}/bin/arm-none-eabi-gcc GNU)
 
 set(CMAKE_C_FLAGS "-mthumb -mcpu=cortex-m4 -ffunction-sections -fdata-sections -MD -std=c99 -g -O0 -static"  CACHE STRING "" FORCE)
 set(CMAKE_A_FLAGS "-mthumb -mcpu=cortex-m4 -MD -static"  CACHE STRING "" FORCE)
-
-set(CC32XX_INCDIRS ${CC32XX_SDK}/inc
-                   ${CC32XX_SDK}/driverlib
-                   ${CC32XX_SDK}/oslib
-                   ${CC32XX_SDK}/simplelink
-                   ${CC32XX_SDK}/simplelink/include
-                   ${CC32XX_SDK}/simplelink/source
-                   ${CC32XX_SDK}/example/common
-   )
-
-set(KAA_INCLUDE_PATHS ${KAA_INCLUDE_PATHS} ${CC32XX_INCDIRS})
