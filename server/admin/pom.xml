@@ -303,7 +303,7 @@
         	<artifactId>config</artifactId>
         	<scope>runtime</scope>
         	<classifier>kafka</classifier>
-        	<version>0.7.2-SNAPSHOT</version>
+        	<version>0.8.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
