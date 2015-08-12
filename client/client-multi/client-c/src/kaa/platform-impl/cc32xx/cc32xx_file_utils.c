@@ -78,7 +78,6 @@ int cc32xx_binary_file_read(const char *file_name, char **buffer, size_t *buffer
     int32_t ret = -1;
     uint32_t ul_token;
     int32_t l_file_handle;
-    int32_t offset = 0;
     SlFsFileInfo_t file_info;
 
     memset(&file_info, 0, sizeof(file_info));
@@ -103,7 +102,7 @@ int cc32xx_binary_file_read(const char *file_name, char **buffer, size_t *buffer
         return -1;
     }
 
-    if ( sl_FsRead(l_file_handle, offset, result_buffer, file_info.FileLen) == 0 ) {
+    if ( sl_FsRead(l_file_handle, 0, result_buffer, file_info.FileLen) == 0 ) {
         KAA_FREE(result_buffer);
         sl_FsClose(l_file_handle, 0, 0, 0);
         return -1;
