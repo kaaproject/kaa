@@ -18,7 +18,7 @@
 PREFACE
 ************************************
 
-This demo application illustrates logging, configuration and profiling features using the Kaa C SDK.
+This demo application illustrates configuration feature using the Kaa C SDK.
 To read more about the logging feature visit https://docs.kaaproject.org/display/KAA/Logging.
 To read more about the configuration feature visit https://docs.kaaproject.org/display/KAA/Configuration.
 To read more about the profiling feature visit https://docs.kaaproject.org/display/KAA/Endpoint+profiling.
@@ -27,7 +27,7 @@ To read more about the profiling feature visit https://docs.kaaproject.org/displ
 INSTALLATION
 ************************************
 
-# TODO
+*TODO*
 
 ************************************
 ABOUT
