@@ -132,7 +132,6 @@ public abstract class BasePluginViewImpl extends BaseDetailsViewImpl implements 
         }
         getFooter().setWidth("1000px");
         getFooter().add(schemaForm);
-        
         name.setFocus(true);
     }
     

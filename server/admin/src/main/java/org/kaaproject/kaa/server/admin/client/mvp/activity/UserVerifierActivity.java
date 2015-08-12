@@ -76,4 +76,9 @@ public class UserVerifierActivity extends AbstractPluginActivity<UserVerifierDto
     public void loadFormData(String fileItemName, AsyncCallback<RecordField> callback) {
         //TODO file upload configs
     }
+
+    @Override
+    protected void createEmptyPluginForm(AsyncCallback<RecordField> callback) {
+        //TODO for file upload config
+    }
 }

@@ -1633,15 +1633,20 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+
+
     @Override
     public RecordField createSimpleEmptyAppenderForm() throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-        try {
-            return formAvroConverter.getEmptySchemaFormInstance();
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
+        //TODO
+//        checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+//        try {
+//            return formAvroConverter.getEmptySchemaFormInstance();
+//        } catch (Exception e) {
+//            throw Utils.handleException(e);
+//        }
+        throw new UnsupportedOperationException();
     }
+
 
     @Override
     public LogAppenderDto editLogAppender(LogAppenderDto appender) throws KaaAdminServiceException {

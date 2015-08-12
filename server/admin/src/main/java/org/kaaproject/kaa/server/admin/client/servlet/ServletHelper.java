@@ -43,6 +43,13 @@ public class ServletHelper {
         Window.open( url, "_self", "enabled");
     }
 
+    /*
+    Some browsers may not use given filename.
+     */
+    public static void downloadJsonFile(String json, String filename){
+        Window.open("data:application/octet-stream;headers=Content-Disposition: attachment; filename=\""+filename+"\"," + json, "_self", "enabled");
+    }
+
     private static String composeURL(String servletPath, String... params) {
         String ret = servletPath;
         ret = ret.replaceAll("[\\?&]+$", "");

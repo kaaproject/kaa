@@ -119,6 +119,7 @@ public class LogAppenderActivity extends AbstractPluginActivity<LogAppenderDto, 
 
     @Override
     protected void createEmptyPluginForm(AsyncCallback<RecordField> callback) {
-        KaaAdmin.getDataSource().createSimpleEmptyAppenderForm(callback);
+        //TODO
+//        KaaAdmin.getDataSource().createSimpleEmptyAppenderForm(callback);
     }
 }

@@ -16,12 +16,10 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.json.client.*;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
-import org.kaaproject.kaa.common.avro.GenericAvroConverter;
-import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
@@ -36,11 +34,6 @@ import com.google.gwt.view.client.MultiSelectionModel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.kaa.server.admin.controller.KaaAdminController;
-import org.kaaproject.kaa.server.admin.services.KaaAdminServiceImpl;
-import org.kaaproject.kaa.server.admin.shared.services.KaaAdminService;
-
-import java.util.Arrays;
 
 public class LogAppendersActivity extends AbstractListActivity<LogAppenderDto, LogAppendersPlace> {
 
@@ -87,28 +80,19 @@ public class LogAppendersActivity extends AbstractListActivity<LogAppenderDto, L
             }
             @Override
             public void onSuccess(LogAppenderDto key) {
+                JSONObject json = new JSONObject();
+                json.put("jsonConfiguration", JSONParser.parseLenient(key.getJsonConfiguration()));
+                json.put("minLogSchemaVersion", new JSONNumber(key.getMinLogSchemaVersion()));
+                json.put("maxLogSchemaVersion", new JSONNumber(key.getMaxLogSchemaVersion()));
+                json.put("pluginTypeName", new JSONString(key.getPluginTypeName()));
+                json.put("pluginClassName", new JSONString(key.getPluginClassName()));
+                JSONArray headersStructure = new JSONArray();
+                for(LogHeaderStructureDto header : key.getHeaderStructure()){
+                    headersStructure.set(headersStructure.size(), new JSONString(header.getValue()));
+                }
+                json.put("headerStructure", headersStructure);
 
-                //TODO move it on other layer and use AvroJsonConverter
-
-                StringBuilder jsonBuilder = new StringBuilder("{");
-
-                jsonBuilder.append("\"applicationToken\":\"").append(key.getApplicationToken()).append("\",")
-                        .append("\"tenantId\":\"").append(key.getTenantId()).append("\",")
-                        .append("\"minLogSchemaVersion\":\"").append(key.getMinLogSchemaVersion()).append("\",")
-                        .append("\"maxLogSchemaVersion\":\"").append(key.getMaxLogSchemaVersion()).append("\",")
-                        .append("\"applicationId\":\"").append(key.getApplicationId()).append("\",")
-                        .append("\"applicationToken\":\"").append(key.getApplicationToken()).append("\",")
-                        .append("\"pluginTypeName\":\"").append(key.getPluginTypeName()).append("\",")
-                        .append("\"pluginClassName\":\"").append(key.getPluginClassName()).append("\",")
-                        .append("\"jsonConfiguration\":\"").append(key.getJsonConfiguration().replace("\"", "\\\"")).append("\",")
-                        .append("\"headerStructure\":[],")
-                        .append("\"name\":\"").append(key.getPluginTypeName()).append("\",")
-                        .append("\"description\":\"\"")
-                        .append("}");
-                downloadPropertiesJson(jsonBuilder.toString());
-
-
-
+                ServletHelper.downloadJsonFile(json.toString(), key.getPluginTypeName()+".json");
             }
         };
 
@@ -119,14 +103,4 @@ public class LogAppendersActivity extends AbstractListActivity<LogAppenderDto, L
                 break;
         }
     }
-
-    protected native void downloadPropertiesJson(String json)/*-{
-
-        var win = $wnd.open("", "win",
-            "width=940,height=400,status=1,resizeable=1,scrollbars=1");
-        win.document.open("text/html", "replace");
-        win.document.write(json);
-        win.document.close();
-        win.focus();
-    }-*/;
 }

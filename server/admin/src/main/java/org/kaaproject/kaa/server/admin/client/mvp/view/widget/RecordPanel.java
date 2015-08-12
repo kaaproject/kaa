@@ -158,7 +158,6 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
     }
     
     public void reset() {
-        Window.alert(getClass() + " reset call");
         recordFieldWidget.setValue(null);
         if (!readOnly) {
             recordFileUpload.reset();
@@ -192,7 +191,7 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
 
     @Override
     public void onChange(ChangeEvent event) {
-        Window.alert("RecordPanel: recordFieldWidget.getValue()!=null = "+(recordFieldWidget.getValue() != null) + "\nEvent: " + event.toString());
+        Window.alert("RecordPanel: recordFieldWidget.getValue()!=null = "+(recordFieldWidget.getValue() != null) + "\nEvent: " + event.toDebugString());
         boolean enabled = recordFileUpload.getFileName().length()>0 && 
                           recordFieldWidget.getValue() != null;
         uploadButton.setEnabled(enabled);
