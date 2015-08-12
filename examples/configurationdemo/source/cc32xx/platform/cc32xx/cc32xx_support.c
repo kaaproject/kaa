@@ -31,8 +31,7 @@ extern void (* const g_pfnVectors[])(void);
 void SimpleLinkWlanEventHandler(SlWlanEvent_t *pWlanEvent)
 {
     UART_PRINT("SimpleLinkWlanEventHandler\r\n");
-    switch(pWlanEvent->Event)
-    {
+    switch (pWlanEvent->Event) {
         case SL_WLAN_CONNECT_EVENT:
         {
             SET_STATUS_BIT(g_ulStatus, STATUS_BIT_CONNECTION);
@@ -86,8 +85,7 @@ void SimpleLinkWlanEventHandler(SlWlanEvent_t *pWlanEvent)
 
 void SimpleLinkNetAppEventHandler(SlNetAppEvent_t *pNetAppEvent)
 {
-    switch(pNetAppEvent->Event)
-    {
+    switch(pNetAppEvent->Event) {
         case SL_NETAPP_IPV4_IPACQUIRED_EVENT:
         {
             SlIpV4AcquiredAsync_t *pEventData = NULL;
@@ -175,8 +173,7 @@ void wlan_configure()
                     SL_CONNECTION_POLICY(0,0,0,0,0),
                     &ucpolicyVal,
                     1 /*PolicyValLen*/);
-    if(ret < 0)
-    {
+    if (ret < 0) {
         LOOP_FOREVER();
     }
 
@@ -212,11 +209,10 @@ void wlan_configure()
 void wlan_scan()
 {
     unsigned char ucpolicyOpt;
-    union
-    {
+    union {
         unsigned char ucPolicy[4];
         unsigned int uiPolicyLen;
-    }policyVal;
+    } policyVal;
 
     ucpolicyOpt = SL_CONNECTION_POLICY(0, 0, 0, 0,0);
     sl_WlanPolicySet(SL_POLICY_CONNECTION , ucpolicyOpt, NULL, 0);
@@ -227,7 +223,7 @@ void wlan_scan()
 
     Sl_WlanNetworkEntry_t netEntries[10];
     _i16 resultsCount = sl_WlanGetNetworkList(0,10,&netEntries[0]);
-    for(int i=0; i< resultsCount; i++)
+    for (int i=0; i< resultsCount; i++)
         UART_PRINT("ssid: %s\trssi: %d\tsec-t: %u\r\n",netEntries[i].ssid, netEntries[i].rssi, netEntries[i].sec_type);
 }
 
@@ -283,6 +279,6 @@ void net_ping(const char *host)
     pingParams.Ip = ulIpAddr;
     sl_NetAppPingStart((SlPingStartCommand_t*)&pingParams, SL_AF_INET, (SlPingReport_t*)&pingReport, SimpleLinkPingReport);
 
-    while(!IS_PING_DONE(g_ulStatus))
+    while (!IS_PING_DONE(g_ulStatus))
         _SlNonOsMainLoopTask();
 }

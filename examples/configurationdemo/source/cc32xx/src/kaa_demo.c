@@ -76,7 +76,7 @@ int main(/*int argc, char *argv[]*/)
     BoardInit();
     wlan_configure();
     sl_Start(0, 0, 0);
-    wlan_connect("<SSID>", "<PASSWORD>", SL_SEC_TYPE_WPA_WPA2);
+    wlan_connect("<SSID>", "<PASSWORD>", SL_SEC_TYPE_WPA_WPA2);//Into <SSID> and <PASSWORD> put your access point name and password
 #endif
     DEMO_LOG("Configuration demo started");
 
