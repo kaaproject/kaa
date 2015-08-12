@@ -15,35 +15,35 @@
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.kaaproject</groupId>
-		<version>0.7.2-SNAPSHOT</version>
-		<artifactId>kaa</artifactId>
-	</parent>
-	<groupId>org.kaaproject.kaa</groupId>
-	<artifactId>sandbox</artifactId>
- 	<packaging>pom</packaging>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.kaaproject</groupId>
+        <version>0.8.0-SNAPSHOT</version>
+        <artifactId>kaa</artifactId>
+    </parent>
+    <groupId>org.kaaproject.kaa</groupId>
+    <artifactId>sandbox</artifactId>
+    <packaging>pom</packaging>
 
-	<name>Kaa Sandbox</name>
-	<url>http://kaaproject.org</url>
+    <name>Kaa Sandbox</name>
+    <url>http://kaaproject.org</url>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<main.dir>${basedir}/..</main.dir>
-	</properties>
-	
-	<modules>
-		<module>demo</module>
-		<module>web</module>
-		<module>builder</module>
-	</modules>
-	
-	<dependencies>
-	</dependencies>
-	<dependencyManagement>
-		<dependencies>
-		</dependencies>
-	</dependencyManagement>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <main.dir>${basedir}/..</main.dir>
+    </properties>
+
+    <modules>
+        <module>demo</module>
+        <module>web</module>
+        <module>builder</module>
+    </modules>
+
+    <dependencies>
+    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+        </dependencies>
+    </dependencyManagement>
 </project>
