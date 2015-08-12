@@ -103,7 +103,7 @@ int cc32xx_binary_file_read(const char *file_name, char **buffer, size_t *buffer
         return -1;
     }
 
-    if ( (offset += sl_FsRead(l_file_handle, offset, result_buffer, file_info.FileLen)) == 0 ) {
+    if ( sl_FsRead(l_file_handle, offset, result_buffer, file_info.FileLen) == 0 ) {
         KAA_FREE(result_buffer);
         sl_FsClose(l_file_handle, 0, 0, 0);
         return -1;
@@ -126,16 +126,16 @@ int cc32xx_binary_file_store(const char *file_name, const char *buffer, size_t b
     int32_t l_file_handle;
 
     if (MAX_FILE_SIZE < buffer_size)
-        return -1;
+        return ret;
 
     if (!file_is_exist(file_name) && !create_file(file_name))
-        return -1;
+        return ret;
 
     ret = sl_FsOpen((unsigned char*)file_name, FS_MODE_OPEN_WRITE, &ul_token, &l_file_handle);
     if (ret == 0) {
-        sl_FsWrite(l_file_handle, 0, (unsigned char *)buffer, buffer_size);
+        if(sl_FsWrite(l_file_handle, 0, (unsigned char *)buffer, buffer_size))
+            ret = 0;
         sl_FsClose(l_file_handle, 0, 0, 0);
-        return 0;
     }
-    return -1;
+    return ret;
 }
