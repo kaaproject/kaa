@@ -7,7 +7,7 @@ package org.kaaproject.kaa.server.appenders.kafka.config.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public enum KafkaKeyType { 
-  APPTOKEN, HASH, UUID  ;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"KafkaKeyType\",\"namespace\":\"org.kaaproject.kaa.server.appenders.kafka.config.gen\",\"symbols\":[\"APPTOKEN\",\"HASH\",\"UUID\"]}");
+  ENDPOINTHASHKEY, HASH, UUID, NULL  ;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"KafkaKeyType\",\"namespace\":\"org.kaaproject.kaa.server.appenders.kafka.config.gen\",\"symbols\":[\"ENDPOINTHASHKEY\",\"HASH\",\"UUID\",\"NULL\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 }

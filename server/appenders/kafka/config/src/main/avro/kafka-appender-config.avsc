@@ -53,7 +53,7 @@
         {
             "namespace":"org.kaaproject.kaa.server.appenders.kafka.config.gen",
             "name":"kafkaKeyType",
-            "by_default":"APPTOKEN",
+            "by_default":"NULL",
             "optional":true,
             "displayName":"Key type",
             "type":[
@@ -61,9 +61,10 @@
                     "name":"KafkaKeyType",
                     "type":"enum",
                     "symbols":[
-                        "APPTOKEN",
+                        "ENDPOINTHASHKEY",
                         "HASH",
-                        "UUID"
+                        "UUID",
+                        "NULL"
                     ]
                 },
                 "null"

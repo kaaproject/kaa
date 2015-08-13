@@ -23,53 +23,53 @@ import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 
 public class KafkaLogEventDto implements Serializable {
 
-	private static final long serialVersionUID = 5708819593518595947L;
+    private static final long serialVersionUID = 5708819593518595947L;
 
-	private final RecordHeader header;
-	private final GenericRecord event;
+    private final RecordHeader header;
+    private final GenericRecord event;
 
-	public KafkaLogEventDto(RecordHeader header, GenericRecord event) {
-		super();
-		this.header = header;
-		this.event = event;
-	}
+    public KafkaLogEventDto(RecordHeader header, GenericRecord event) {
+        super();
+        this.header = header;
+        this.event = event;
+    }
 
-	public RecordHeader getHeader() {
-		return header;
-	}
+    public RecordHeader getHeader() {
+        return header;
+    }
 
-	public GenericRecord getEvent() {
-		return event;
-	}
+    public GenericRecord getEvent() {
+        return event;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((event == null) ? 0 : event.hashCode());
-		result = prime * result + ((header == null) ? 0 : header.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((event == null) ? 0 : event.hashCode());
+        result = prime * result + ((header == null) ? 0 : header.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		KafkaLogEventDto other = (KafkaLogEventDto) obj;
-		if (event == null) {
-			if (other.event != null)
-				return false;
-		} else if (!event.equals(other.event))
-			return false;
-		if (header == null) {
-			if (other.header != null)
-				return false;
-		} else if (!header.equals(other.header))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        KafkaLogEventDto other = (KafkaLogEventDto) obj;
+        if (event == null) {
+            if (other.event != null)
+                return false;
+        } else if (!event.equals(other.event))
+            return false;
+        if (header == null) {
+            if (other.header != null)
+                return false;
+        } else if (!header.equals(other.header))
+            return false;
+        return true;
+    }
 }

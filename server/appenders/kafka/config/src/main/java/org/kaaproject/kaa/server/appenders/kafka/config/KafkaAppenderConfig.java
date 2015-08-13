@@ -22,10 +22,11 @@ import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
 
 @KaaPluginConfig(pluginType = PluginType.LOG_APPENDER)
-public class KafkaAppenderConfig implements PluginConfig{
+public class KafkaAppenderConfig implements PluginConfig {
 
-    public KafkaAppenderConfig() {}
-    
+    public KafkaAppenderConfig() {
+    }
+
     @Override
     public String getPluginTypeName() {
         return "Kafka";

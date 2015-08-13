@@ -27,9 +27,9 @@ import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 
 public interface LogEventDao {
 
-	List<Future<RecordMetadata>> save(List<KafkaLogEventDto> logEventDtoList,
-			GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
-			Callback callback) throws IOException;
+    List<Future<RecordMetadata>> save(List<KafkaLogEventDto> logEventDtoList,
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
+            Callback callback) throws IOException;
 
-	void close();
+    void close();
 }

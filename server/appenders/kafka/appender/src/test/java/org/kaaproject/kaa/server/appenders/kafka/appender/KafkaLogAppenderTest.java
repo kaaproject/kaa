@@ -50,11 +50,11 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 
 public class KafkaLogAppenderTest {
-	
-	public static final String TOPIC_NAME = "kaa_test";
-	private static final Random RANDOM = new Random();
-	
-	private LogAppender logAppender;
+
+    public static final String TOPIC_NAME = "kaa_test";
+    private static final Random RANDOM = new Random();
+
+    private LogAppender logAppender;
     private LogAppenderDto appenderDto;
     private KafkaConfig configuration;
 
@@ -65,7 +65,7 @@ public class KafkaLogAppenderTest {
     private String endpointKeyHash;
 
     private AvroByteArrayConverter<LogData> logDataConverter = new AvroByteArrayConverter<>(LogData.class);
-	
+
     private LogEventPack generateLogEventPack(int count) throws IOException {
         LogEventPack logEventPack = new LogEventPack();
         List<LogEvent> events = new ArrayList<>(count);
@@ -88,8 +88,8 @@ public class KafkaLogAppenderTest {
         logEventPack.setLogSchema(new LogSchema(logSchemaDto));
         return logEventPack;
     }
-	
-	@Before
+
+    @Before
     public void beforeTest() throws IOException {
         endpointKeyHash = UUID.randomUUID().toString();
         appToken = String.valueOf(RANDOM.nextInt(Integer.MAX_VALUE));
@@ -111,10 +111,9 @@ public class KafkaLogAppenderTest {
         logEventPack = new LogEventPack();
         logEventPack.setDateCreated(System.currentTimeMillis());
         logEventPack.setEndpointKey(endpointKeyHash);
-        
-        
+
         configuration = new KafkaConfig();
-        List<KafkaServer>servers = new ArrayList<KafkaServer>();
+        List<KafkaServer> servers = new ArrayList<KafkaServer>();
         servers.add(new KafkaServer("localhost", 9092));
         configuration.setKafkaServers(servers);
         configuration.setKafkaAcknowledgement(KafkaAcknowledgement.ONE);
@@ -134,14 +133,14 @@ public class KafkaLogAppenderTest {
         logAppender.init(appenderDto);
         logAppender.setApplicationToken(appToken);
     }
-	
-	@Ignore
+
+    @Ignore
     @Test
     public void doAppendTest() throws IOException, InterruptedException {
         DeliveryCallback callback = new DeliveryCallback();
         logAppender.doAppend(generateLogEventPack(20), callback);
         Thread.sleep(3000);
-        
+
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
@@ -151,14 +150,14 @@ public class KafkaLogAppenderTest {
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer");
         props.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY, "range");
-        
+
         KafkaConsumer<String, byte[]> consumer = new KafkaConsumer<String, byte[]>(props);
         consumer.subscribe(TOPIC_NAME);
         Map<String, ConsumerRecords<String, byte[]>> records = consumer.poll(100);
         Assert.assertEquals(20, callback.getSuccessCount());
     }
-	
-	class DeliveryCallback implements LogDeliveryCallback {
+
+    class DeliveryCallback implements LogDeliveryCallback {
 
         private AtomicInteger successCount = new AtomicInteger();
 
