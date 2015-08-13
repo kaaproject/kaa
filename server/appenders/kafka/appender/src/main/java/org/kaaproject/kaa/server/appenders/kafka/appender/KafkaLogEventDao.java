@@ -39,9 +39,9 @@ public class KafkaLogEventDao implements LogEventDao {
 	private static final Logger LOG = LoggerFactory.getLogger(KafkaLogEventDao.class);
 
 	private static final String KEY_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
-	private static final String VALUE_SERIALIZER = "org.apache.kafka.common.serialization.ByteArraySerializer";
+	private static final String VALUE_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
 
-	private KafkaProducer<String, byte[]> producer;
+	private KafkaProducer<String, String> producer;
 	private KafkaConfig configuration;
 	private String topicName;
 	private String appToken;
@@ -70,7 +70,8 @@ public class KafkaLogEventDao implements LogEventDao {
 			kafkaProperties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, configuration.getBufferMemorySize());
 			LOG.info("Init kafka cluster with property {}={}", ProducerConfig.COMPRESSION_TYPE_CONFIG,
 					configuration.getKafkaCompression());
-			kafkaProperties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, configuration.getKafkaCompression().name().toLowerCase());
+			kafkaProperties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, configuration.getKafkaCompression().name()
+					.toLowerCase());
 			LOG.info("Init kafka cluster with property {}={}", ProducerConfig.RETRIES_CONFIG,
 					configuration.getRetries());
 			kafkaProperties.put(ProducerConfig.RETRIES_CONFIG, configuration.getRetries());
@@ -80,7 +81,7 @@ public class KafkaLogEventDao implements LogEventDao {
 			LOG.info("Init kafka cluster with property {}={}", ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
 					VALUE_SERIALIZER);
 			kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, VALUE_SERIALIZER);
-			producer = new KafkaProducer<String, byte[]>(kafkaProperties);
+			producer = new KafkaProducer<String, String>(kafkaProperties);
 		}
 	}
 
@@ -91,13 +92,13 @@ public class KafkaLogEventDao implements LogEventDao {
 		List<Future<RecordMetadata>> results = new ArrayList<Future<RecordMetadata>>();
 		for (int i = 0; i < logEventDtoList.size(); i++) {
 			KafkaLogEventDto dto = logEventDtoList.get(i);
-			ProducerRecord<String, byte[]> recordToWrite;
+			ProducerRecord<String, String> recordToWrite;
 			if (configuration.getUseDefaultPartitioner()) {
-				recordToWrite = new ProducerRecord<String, byte[]>(topicName, appToken,
-						eventConverter.encodeToJsonBytes(dto.getEvent()));
+				recordToWrite = new ProducerRecord<String, String>(topicName, appToken, formKafkaJSON(dto,
+						eventConverter, headerConverter));
 			} else {
-				recordToWrite = new ProducerRecord<String, byte[]>(topicName, calculatePartitionID(dto), appToken,
-						eventConverter.encodeToJsonBytes(dto.getEvent()));
+				recordToWrite = new ProducerRecord<String, String>(topicName, calculatePartitionID(dto), appToken,
+						formKafkaJSON(dto, eventConverter, headerConverter));
 			}
 			results.add(producer.send(recordToWrite, callback));
 		}
@@ -130,5 +131,17 @@ public class KafkaLogEventDao implements LogEventDao {
 		default:
 			return "";
 		}
+	}
+
+	private String formKafkaJSON(KafkaLogEventDto dto, GenericAvroConverter<GenericRecord> eventConverter,
+			GenericAvroConverter<GenericRecord> headerConverter) throws IOException {
+		String eventJSON = eventConverter.encodeToJson(dto.getEvent());
+		String headerJSON = headerConverter.encodeToJson(dto.getHeader());
+		StringBuilder result = new StringBuilder("{");
+		if (headerJSON != null && !headerJSON.isEmpty()) {
+			result.append("\"header\":" + headerJSON + ",");
+		}
+		result.append("\"event\":" + eventJSON + "}");
+		return result.toString();
 	}
 }

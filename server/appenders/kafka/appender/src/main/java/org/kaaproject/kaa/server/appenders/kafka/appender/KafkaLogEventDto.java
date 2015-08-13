@@ -16,10 +16,15 @@
 
 package org.kaaproject.kaa.server.appenders.kafka.appender;
 
+import java.io.Serializable;
+
 import org.apache.avro.generic.GenericRecord;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 
-public class KafkaLogEventDto {
+public class KafkaLogEventDto implements Serializable{
+
+	private static final long serialVersionUID = 5708819593518595947L;
+	
 	private final RecordHeader header;
     private final GenericRecord event;
 
@@ -28,6 +33,7 @@ public class KafkaLogEventDto {
         this.header = header;
         this.event = event;
     }
+    
 
     public RecordHeader getHeader() {
         return header;

@@ -35,11 +35,12 @@
         {
             "name":"topic",
             "displayName":"Topic name",
+            "by_default":"kaa",
             "type":"string"
         },
         {
             "name":"partitionCount",
-            "displayName":"partition count",
+            "displayName":"Partition count",
             "by_default":1,
             "type":"int"
         },
