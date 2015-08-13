@@ -117,10 +117,10 @@ public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
 						if (!dtoList.isEmpty()) {
 							int logCount = dtoList.size();
 							inputLogCount.getAndAdd(logCount);
-							logEventDao.save(dtoList, eventConverter, headerConverter,
-									new LogAppenderCallback(listener, kafkaSuccessLogCount, kafkaFailureLogCount));
-							LOG.debug("[{}] appended {} logs to kafka collection", topicName, logEventPack
-									.getEvents().size());
+							logEventDao.save(dtoList, eventConverter, headerConverter, new LogAppenderCallback(
+									listener, kafkaSuccessLogCount, kafkaFailureLogCount));
+							LOG.debug("[{}] appended {} logs to kafka collection", topicName, logEventPack.getEvents()
+									.size());
 						} else {
 							listener.onInternalError();
 						}
@@ -140,15 +140,15 @@ public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
 	@Override
 	protected void initFromConfiguration(LogAppenderDto appender, KafkaConfig configuration) {
 		LOG.info("Initializing new appender instance using {}", configuration);
-        try {
-            logEventDao = new KafkaLogEventDao(configuration, appender.getApplicationToken());
-            int executorPoolSize = Math.min(configuration.getExecutorThreadPoolSize(), MAX_CALLBACK_THREAD_POOL_SIZE);
-            executor = Executors.newFixedThreadPool(executorPoolSize);
-            topicName = configuration.getTopic();
-            LOG.info("Kafka log appender initialized");
-        } catch (Exception e) {
-            LOG.error("Failed to init kafka log appender: ", e);
-        }
+		try {
+			logEventDao = new KafkaLogEventDao(configuration, appender.getApplicationToken());
+			int executorPoolSize = Math.min(configuration.getExecutorThreadPoolSize(), MAX_CALLBACK_THREAD_POOL_SIZE);
+			executor = Executors.newFixedThreadPool(executorPoolSize);
+			topicName = configuration.getTopic();
+			LOG.info("Kafka log appender initialized");
+		} catch (Exception e) {
+			LOG.error("Failed to init kafka log appender: ", e);
+		}
 
 	}
 

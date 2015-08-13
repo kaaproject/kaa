@@ -7,17 +7,18 @@ package org.kaaproject.kaa.server.appenders.kafka.config.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"KafkaConfig\",\"namespace\":\"org.kaaproject.kaa.server.appenders.kafka.config.gen\",\"fields\":[{\"name\":\"kafkaServers\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"KafkaServer\",\"fields\":[{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Host\",\"weight\":0.75,\"by_default\":\"localhost\"},{\"name\":\"port\",\"type\":\"int\",\"displayName\":\"Port\",\"weight\":0.25,\"by_default\":9092}]}},\"displayName\":\"Kafka bootstrap servers\",\"minRowCount\":1},{\"name\":\"topic\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Topic name\",\"by_default\":\"kaa\"},{\"name\":\"partitionCount\",\"type\":\"int\",\"displayName\":\"Partition count\",\"by_default\":1},{\"name\":\"executorThreadPoolSize\",\"type\":\"int\",\"displayName\":\"Executor thread pool size\",\"by_default\":1},{\"name\":\"bufferMemorySize\",\"type\":\"long\",\"displayName\":\"Buffer memory size\",\"by_default\":33554432},{\"name\":\"kafkaCompression\",\"type\":[{\"type\":\"enum\",\"name\":\"KafkaCompression\",\"symbols\":[\"NONE\",\"SNAPPY\",\"GZIP\"]},\"null\"],\"namespace\":\"org.kaaproject.kaa.server.appenders.kafka.config.gen\",\"by_default\":\"NONE\",\"optional\":true,\"displayName\":\"Compression type\"},{\"name\":\"kafkaAcknowledgement\",\"type\":[{\"type\":\"enum\",\"name\":\"KafkaAcknowledgement\",\"symbols\":[\"ALL\",\"ZERO\",\"ONE\",\"TWO\"]},\"null\"],\"namespace\":\"org.kaaproject.kaa.server.appenders.kafka.config.gen\",\"by_default\":\"ONE\",\"optional\":true,\"displayName\":\"Acknowledgement type\"},{\"name\":\"retries\",\"type\":\"int\",\"displayName\":\"Retries\",\"by_default\":0},{\"name\":\"useDefaultPartitioner\",\"type\":\"boolean\",\"displayName\":\"Use default partitioner\",\"by_default\":true}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"KafkaConfig\",\"namespace\":\"org.kaaproject.kaa.server.appenders.kafka.config.gen\",\"fields\":[{\"name\":\"kafkaServers\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"KafkaServer\",\"fields\":[{\"name\":\"host\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Host\",\"weight\":0.75,\"by_default\":\"localhost\"},{\"name\":\"port\",\"type\":\"int\",\"displayName\":\"Port\",\"weight\":0.25,\"by_default\":9092}]}},\"displayName\":\"Kafka bootstrap servers\",\"minRowCount\":1},{\"name\":\"topic\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Topic name\",\"by_default\":\"kaa\"},{\"name\":\"useDefaultPartitioner\",\"type\":\"boolean\",\"displayName\":\"Use default partitioner\",\"by_default\":true},{\"name\":\"partitionCount\",\"type\":\"int\",\"displayName\":\"Partition count\",\"by_default\":1},{\"name\":\"kafkaKeyType\",\"type\":[{\"type\":\"enum\",\"name\":\"KafkaKeyType\",\"symbols\":[\"APPTOKEN\",\"HASH\",\"UUID\"]},\"null\"],\"namespace\":\"org.kaaproject.kaa.server.appenders.kafka.config.gen\",\"by_default\":\"APPID\",\"optional\":true,\"displayName\":\"Key type\"},{\"name\":\"executorThreadPoolSize\",\"type\":\"int\",\"displayName\":\"Executor thread pool size\",\"by_default\":1},{\"name\":\"bufferMemorySize\",\"type\":\"long\",\"displayName\":\"Buffer memory size\",\"by_default\":33554432},{\"name\":\"kafkaCompression\",\"type\":[{\"type\":\"enum\",\"name\":\"KafkaCompression\",\"symbols\":[\"NONE\",\"SNAPPY\",\"GZIP\"]},\"null\"],\"namespace\":\"org.kaaproject.kaa.server.appenders.kafka.config.gen\",\"by_default\":\"NONE\",\"optional\":true,\"displayName\":\"Compression type\"},{\"name\":\"kafkaAcknowledgement\",\"type\":[{\"type\":\"enum\",\"name\":\"KafkaAcknowledgement\",\"symbols\":[\"ALL\",\"ZERO\",\"ONE\",\"TWO\"]},\"null\"],\"namespace\":\"org.kaaproject.kaa.server.appenders.kafka.config.gen\",\"by_default\":\"ONE\",\"optional\":true,\"displayName\":\"Acknowledgement type\"},{\"name\":\"retries\",\"type\":\"int\",\"displayName\":\"Retries\",\"by_default\":0}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.util.List<org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaServer> kafkaServers;
    private java.lang.String topic;
+   private boolean useDefaultPartitioner;
    private int partitionCount;
+   private org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaKeyType kafkaKeyType;
    private int executorThreadPoolSize;
    private long bufferMemorySize;
    private org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaCompression kafkaCompression;
    private org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaAcknowledgement kafkaAcknowledgement;
    private int retries;
-   private boolean useDefaultPartitioner;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -29,16 +30,17 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
   /**
    * All-args constructor.
    */
-  public KafkaConfig(java.util.List<org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaServer> kafkaServers, java.lang.String topic, java.lang.Integer partitionCount, java.lang.Integer executorThreadPoolSize, java.lang.Long bufferMemorySize, org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaCompression kafkaCompression, org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaAcknowledgement kafkaAcknowledgement, java.lang.Integer retries, java.lang.Boolean useDefaultPartitioner) {
+  public KafkaConfig(java.util.List<org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaServer> kafkaServers, java.lang.String topic, java.lang.Boolean useDefaultPartitioner, java.lang.Integer partitionCount, org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaKeyType kafkaKeyType, java.lang.Integer executorThreadPoolSize, java.lang.Long bufferMemorySize, org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaCompression kafkaCompression, org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaAcknowledgement kafkaAcknowledgement, java.lang.Integer retries) {
     this.kafkaServers = kafkaServers;
     this.topic = topic;
+    this.useDefaultPartitioner = useDefaultPartitioner;
     this.partitionCount = partitionCount;
+    this.kafkaKeyType = kafkaKeyType;
     this.executorThreadPoolSize = executorThreadPoolSize;
     this.bufferMemorySize = bufferMemorySize;
     this.kafkaCompression = kafkaCompression;
     this.kafkaAcknowledgement = kafkaAcknowledgement;
     this.retries = retries;
-    this.useDefaultPartitioner = useDefaultPartitioner;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -47,13 +49,14 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
     switch (field$) {
     case 0: return kafkaServers;
     case 1: return topic;
-    case 2: return partitionCount;
-    case 3: return executorThreadPoolSize;
-    case 4: return bufferMemorySize;
-    case 5: return kafkaCompression;
-    case 6: return kafkaAcknowledgement;
-    case 7: return retries;
-    case 8: return useDefaultPartitioner;
+    case 2: return useDefaultPartitioner;
+    case 3: return partitionCount;
+    case 4: return kafkaKeyType;
+    case 5: return executorThreadPoolSize;
+    case 6: return bufferMemorySize;
+    case 7: return kafkaCompression;
+    case 8: return kafkaAcknowledgement;
+    case 9: return retries;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -63,13 +66,14 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
     switch (field$) {
     case 0: kafkaServers = (java.util.List<org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaServer>)value$; break;
     case 1: topic = (java.lang.String)value$; break;
-    case 2: partitionCount = (java.lang.Integer)value$; break;
-    case 3: executorThreadPoolSize = (java.lang.Integer)value$; break;
-    case 4: bufferMemorySize = (java.lang.Long)value$; break;
-    case 5: kafkaCompression = (org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaCompression)value$; break;
-    case 6: kafkaAcknowledgement = (org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaAcknowledgement)value$; break;
-    case 7: retries = (java.lang.Integer)value$; break;
-    case 8: useDefaultPartitioner = (java.lang.Boolean)value$; break;
+    case 2: useDefaultPartitioner = (java.lang.Boolean)value$; break;
+    case 3: partitionCount = (java.lang.Integer)value$; break;
+    case 4: kafkaKeyType = (org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaKeyType)value$; break;
+    case 5: executorThreadPoolSize = (java.lang.Integer)value$; break;
+    case 6: bufferMemorySize = (java.lang.Long)value$; break;
+    case 7: kafkaCompression = (org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaCompression)value$; break;
+    case 8: kafkaAcknowledgement = (org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaAcknowledgement)value$; break;
+    case 9: retries = (java.lang.Integer)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -105,6 +109,21 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   /**
+   * Gets the value of the 'useDefaultPartitioner' field.
+   */
+  public java.lang.Boolean getUseDefaultPartitioner() {
+    return useDefaultPartitioner;
+  }
+
+  /**
+   * Sets the value of the 'useDefaultPartitioner' field.
+   * @param value the value to set.
+   */
+  public void setUseDefaultPartitioner(java.lang.Boolean value) {
+    this.useDefaultPartitioner = value;
+  }
+
+  /**
    * Gets the value of the 'partitionCount' field.
    */
   public java.lang.Integer getPartitionCount() {
@@ -117,6 +136,21 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
    */
   public void setPartitionCount(java.lang.Integer value) {
     this.partitionCount = value;
+  }
+
+  /**
+   * Gets the value of the 'kafkaKeyType' field.
+   */
+  public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaKeyType getKafkaKeyType() {
+    return kafkaKeyType;
+  }
+
+  /**
+   * Sets the value of the 'kafkaKeyType' field.
+   * @param value the value to set.
+   */
+  public void setKafkaKeyType(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaKeyType value) {
+    this.kafkaKeyType = value;
   }
 
   /**
@@ -194,21 +228,6 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
     this.retries = value;
   }
 
-  /**
-   * Gets the value of the 'useDefaultPartitioner' field.
-   */
-  public java.lang.Boolean getUseDefaultPartitioner() {
-    return useDefaultPartitioner;
-  }
-
-  /**
-   * Sets the value of the 'useDefaultPartitioner' field.
-   * @param value the value to set.
-   */
-  public void setUseDefaultPartitioner(java.lang.Boolean value) {
-    this.useDefaultPartitioner = value;
-  }
-
   /** Creates a new KafkaConfig RecordBuilder */
   public static org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder newBuilder() {
     return new org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder();
@@ -232,13 +251,14 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
 
     private java.util.List<org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaServer> kafkaServers;
     private java.lang.String topic;
+    private boolean useDefaultPartitioner;
     private int partitionCount;
+    private org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaKeyType kafkaKeyType;
     private int executorThreadPoolSize;
     private long bufferMemorySize;
     private org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaCompression kafkaCompression;
     private org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaAcknowledgement kafkaAcknowledgement;
     private int retries;
-    private boolean useDefaultPartitioner;
 
     /** Creates a new Builder */
     private Builder() {
@@ -256,33 +276,37 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
         this.topic = data().deepCopy(fields()[1].schema(), other.topic);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.partitionCount)) {
-        this.partitionCount = data().deepCopy(fields()[2].schema(), other.partitionCount);
+      if (isValidValue(fields()[2], other.useDefaultPartitioner)) {
+        this.useDefaultPartitioner = data().deepCopy(fields()[2].schema(), other.useDefaultPartitioner);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.executorThreadPoolSize)) {
-        this.executorThreadPoolSize = data().deepCopy(fields()[3].schema(), other.executorThreadPoolSize);
+      if (isValidValue(fields()[3], other.partitionCount)) {
+        this.partitionCount = data().deepCopy(fields()[3].schema(), other.partitionCount);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.bufferMemorySize)) {
-        this.bufferMemorySize = data().deepCopy(fields()[4].schema(), other.bufferMemorySize);
+      if (isValidValue(fields()[4], other.kafkaKeyType)) {
+        this.kafkaKeyType = data().deepCopy(fields()[4].schema(), other.kafkaKeyType);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.kafkaCompression)) {
-        this.kafkaCompression = data().deepCopy(fields()[5].schema(), other.kafkaCompression);
+      if (isValidValue(fields()[5], other.executorThreadPoolSize)) {
+        this.executorThreadPoolSize = data().deepCopy(fields()[5].schema(), other.executorThreadPoolSize);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.kafkaAcknowledgement)) {
-        this.kafkaAcknowledgement = data().deepCopy(fields()[6].schema(), other.kafkaAcknowledgement);
+      if (isValidValue(fields()[6], other.bufferMemorySize)) {
+        this.bufferMemorySize = data().deepCopy(fields()[6].schema(), other.bufferMemorySize);
         fieldSetFlags()[6] = true;
       }
-      if (isValidValue(fields()[7], other.retries)) {
-        this.retries = data().deepCopy(fields()[7].schema(), other.retries);
+      if (isValidValue(fields()[7], other.kafkaCompression)) {
+        this.kafkaCompression = data().deepCopy(fields()[7].schema(), other.kafkaCompression);
         fieldSetFlags()[7] = true;
       }
-      if (isValidValue(fields()[8], other.useDefaultPartitioner)) {
-        this.useDefaultPartitioner = data().deepCopy(fields()[8].schema(), other.useDefaultPartitioner);
+      if (isValidValue(fields()[8], other.kafkaAcknowledgement)) {
+        this.kafkaAcknowledgement = data().deepCopy(fields()[8].schema(), other.kafkaAcknowledgement);
         fieldSetFlags()[8] = true;
+      }
+      if (isValidValue(fields()[9], other.retries)) {
+        this.retries = data().deepCopy(fields()[9].schema(), other.retries);
+        fieldSetFlags()[9] = true;
       }
     }
     
@@ -297,33 +321,37 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
         this.topic = data().deepCopy(fields()[1].schema(), other.topic);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.partitionCount)) {
-        this.partitionCount = data().deepCopy(fields()[2].schema(), other.partitionCount);
+      if (isValidValue(fields()[2], other.useDefaultPartitioner)) {
+        this.useDefaultPartitioner = data().deepCopy(fields()[2].schema(), other.useDefaultPartitioner);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.executorThreadPoolSize)) {
-        this.executorThreadPoolSize = data().deepCopy(fields()[3].schema(), other.executorThreadPoolSize);
+      if (isValidValue(fields()[3], other.partitionCount)) {
+        this.partitionCount = data().deepCopy(fields()[3].schema(), other.partitionCount);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.bufferMemorySize)) {
-        this.bufferMemorySize = data().deepCopy(fields()[4].schema(), other.bufferMemorySize);
+      if (isValidValue(fields()[4], other.kafkaKeyType)) {
+        this.kafkaKeyType = data().deepCopy(fields()[4].schema(), other.kafkaKeyType);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.kafkaCompression)) {
-        this.kafkaCompression = data().deepCopy(fields()[5].schema(), other.kafkaCompression);
+      if (isValidValue(fields()[5], other.executorThreadPoolSize)) {
+        this.executorThreadPoolSize = data().deepCopy(fields()[5].schema(), other.executorThreadPoolSize);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.kafkaAcknowledgement)) {
-        this.kafkaAcknowledgement = data().deepCopy(fields()[6].schema(), other.kafkaAcknowledgement);
+      if (isValidValue(fields()[6], other.bufferMemorySize)) {
+        this.bufferMemorySize = data().deepCopy(fields()[6].schema(), other.bufferMemorySize);
         fieldSetFlags()[6] = true;
       }
-      if (isValidValue(fields()[7], other.retries)) {
-        this.retries = data().deepCopy(fields()[7].schema(), other.retries);
+      if (isValidValue(fields()[7], other.kafkaCompression)) {
+        this.kafkaCompression = data().deepCopy(fields()[7].schema(), other.kafkaCompression);
         fieldSetFlags()[7] = true;
       }
-      if (isValidValue(fields()[8], other.useDefaultPartitioner)) {
-        this.useDefaultPartitioner = data().deepCopy(fields()[8].schema(), other.useDefaultPartitioner);
+      if (isValidValue(fields()[8], other.kafkaAcknowledgement)) {
+        this.kafkaAcknowledgement = data().deepCopy(fields()[8].schema(), other.kafkaAcknowledgement);
         fieldSetFlags()[8] = true;
+      }
+      if (isValidValue(fields()[9], other.retries)) {
+        this.retries = data().deepCopy(fields()[9].schema(), other.retries);
+        fieldSetFlags()[9] = true;
       }
     }
 
@@ -377,6 +405,30 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
       return this;
     }
 
+    /** Gets the value of the 'useDefaultPartitioner' field */
+    public java.lang.Boolean getUseDefaultPartitioner() {
+      return useDefaultPartitioner;
+    }
+    
+    /** Sets the value of the 'useDefaultPartitioner' field */
+    public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setUseDefaultPartitioner(boolean value) {
+      validate(fields()[2], value);
+      this.useDefaultPartitioner = value;
+      fieldSetFlags()[2] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'useDefaultPartitioner' field has been set */
+    public boolean hasUseDefaultPartitioner() {
+      return fieldSetFlags()[2];
+    }
+    
+    /** Clears the value of the 'useDefaultPartitioner' field */
+    public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearUseDefaultPartitioner() {
+      fieldSetFlags()[2] = false;
+      return this;
+    }
+
     /** Gets the value of the 'partitionCount' field */
     public java.lang.Integer getPartitionCount() {
       return partitionCount;
@@ -384,20 +436,45 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'partitionCount' field */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setPartitionCount(int value) {
-      validate(fields()[2], value);
+      validate(fields()[3], value);
       this.partitionCount = value;
-      fieldSetFlags()[2] = true;
+      fieldSetFlags()[3] = true;
       return this; 
     }
     
     /** Checks whether the 'partitionCount' field has been set */
     public boolean hasPartitionCount() {
-      return fieldSetFlags()[2];
+      return fieldSetFlags()[3];
     }
     
     /** Clears the value of the 'partitionCount' field */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearPartitionCount() {
-      fieldSetFlags()[2] = false;
+      fieldSetFlags()[3] = false;
+      return this;
+    }
+
+    /** Gets the value of the 'kafkaKeyType' field */
+    public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaKeyType getKafkaKeyType() {
+      return kafkaKeyType;
+    }
+    
+    /** Sets the value of the 'kafkaKeyType' field */
+    public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setKafkaKeyType(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaKeyType value) {
+      validate(fields()[4], value);
+      this.kafkaKeyType = value;
+      fieldSetFlags()[4] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'kafkaKeyType' field has been set */
+    public boolean hasKafkaKeyType() {
+      return fieldSetFlags()[4];
+    }
+    
+    /** Clears the value of the 'kafkaKeyType' field */
+    public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearKafkaKeyType() {
+      kafkaKeyType = null;
+      fieldSetFlags()[4] = false;
       return this;
     }
 
@@ -408,20 +485,20 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'executorThreadPoolSize' field */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setExecutorThreadPoolSize(int value) {
-      validate(fields()[3], value);
+      validate(fields()[5], value);
       this.executorThreadPoolSize = value;
-      fieldSetFlags()[3] = true;
+      fieldSetFlags()[5] = true;
       return this; 
     }
     
     /** Checks whether the 'executorThreadPoolSize' field has been set */
     public boolean hasExecutorThreadPoolSize() {
-      return fieldSetFlags()[3];
+      return fieldSetFlags()[5];
     }
     
     /** Clears the value of the 'executorThreadPoolSize' field */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearExecutorThreadPoolSize() {
-      fieldSetFlags()[3] = false;
+      fieldSetFlags()[5] = false;
       return this;
     }
 
@@ -432,20 +509,20 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'bufferMemorySize' field */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setBufferMemorySize(long value) {
-      validate(fields()[4], value);
+      validate(fields()[6], value);
       this.bufferMemorySize = value;
-      fieldSetFlags()[4] = true;
+      fieldSetFlags()[6] = true;
       return this; 
     }
     
     /** Checks whether the 'bufferMemorySize' field has been set */
     public boolean hasBufferMemorySize() {
-      return fieldSetFlags()[4];
+      return fieldSetFlags()[6];
     }
     
     /** Clears the value of the 'bufferMemorySize' field */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearBufferMemorySize() {
-      fieldSetFlags()[4] = false;
+      fieldSetFlags()[6] = false;
       return this;
     }
 
@@ -456,21 +533,21 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'kafkaCompression' field */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setKafkaCompression(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaCompression value) {
-      validate(fields()[5], value);
+      validate(fields()[7], value);
       this.kafkaCompression = value;
-      fieldSetFlags()[5] = true;
+      fieldSetFlags()[7] = true;
       return this; 
     }
     
     /** Checks whether the 'kafkaCompression' field has been set */
     public boolean hasKafkaCompression() {
-      return fieldSetFlags()[5];
+      return fieldSetFlags()[7];
     }
     
     /** Clears the value of the 'kafkaCompression' field */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearKafkaCompression() {
       kafkaCompression = null;
-      fieldSetFlags()[5] = false;
+      fieldSetFlags()[7] = false;
       return this;
     }
 
@@ -481,21 +558,21 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'kafkaAcknowledgement' field */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setKafkaAcknowledgement(org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaAcknowledgement value) {
-      validate(fields()[6], value);
+      validate(fields()[8], value);
       this.kafkaAcknowledgement = value;
-      fieldSetFlags()[6] = true;
+      fieldSetFlags()[8] = true;
       return this; 
     }
     
     /** Checks whether the 'kafkaAcknowledgement' field has been set */
     public boolean hasKafkaAcknowledgement() {
-      return fieldSetFlags()[6];
+      return fieldSetFlags()[8];
     }
     
     /** Clears the value of the 'kafkaAcknowledgement' field */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearKafkaAcknowledgement() {
       kafkaAcknowledgement = null;
-      fieldSetFlags()[6] = false;
+      fieldSetFlags()[8] = false;
       return this;
     }
 
@@ -506,44 +583,20 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
     
     /** Sets the value of the 'retries' field */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setRetries(int value) {
-      validate(fields()[7], value);
+      validate(fields()[9], value);
       this.retries = value;
-      fieldSetFlags()[7] = true;
+      fieldSetFlags()[9] = true;
       return this; 
     }
     
     /** Checks whether the 'retries' field has been set */
     public boolean hasRetries() {
-      return fieldSetFlags()[7];
+      return fieldSetFlags()[9];
     }
     
     /** Clears the value of the 'retries' field */
     public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearRetries() {
-      fieldSetFlags()[7] = false;
-      return this;
-    }
-
-    /** Gets the value of the 'useDefaultPartitioner' field */
-    public java.lang.Boolean getUseDefaultPartitioner() {
-      return useDefaultPartitioner;
-    }
-    
-    /** Sets the value of the 'useDefaultPartitioner' field */
-    public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder setUseDefaultPartitioner(boolean value) {
-      validate(fields()[8], value);
-      this.useDefaultPartitioner = value;
-      fieldSetFlags()[8] = true;
-      return this; 
-    }
-    
-    /** Checks whether the 'useDefaultPartitioner' field has been set */
-    public boolean hasUseDefaultPartitioner() {
-      return fieldSetFlags()[8];
-    }
-    
-    /** Clears the value of the 'useDefaultPartitioner' field */
-    public org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig.Builder clearUseDefaultPartitioner() {
-      fieldSetFlags()[8] = false;
+      fieldSetFlags()[9] = false;
       return this;
     }
 
@@ -553,13 +606,14 @@ public class KafkaConfig extends org.apache.avro.specific.SpecificRecordBase imp
         KafkaConfig record = new KafkaConfig();
         record.kafkaServers = fieldSetFlags()[0] ? this.kafkaServers : (java.util.List<org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaServer>) defaultValue(fields()[0]);
         record.topic = fieldSetFlags()[1] ? this.topic : (java.lang.String) defaultValue(fields()[1]);
-        record.partitionCount = fieldSetFlags()[2] ? this.partitionCount : (java.lang.Integer) defaultValue(fields()[2]);
-        record.executorThreadPoolSize = fieldSetFlags()[3] ? this.executorThreadPoolSize : (java.lang.Integer) defaultValue(fields()[3]);
-        record.bufferMemorySize = fieldSetFlags()[4] ? this.bufferMemorySize : (java.lang.Long) defaultValue(fields()[4]);
-        record.kafkaCompression = fieldSetFlags()[5] ? this.kafkaCompression : (org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaCompression) defaultValue(fields()[5]);
-        record.kafkaAcknowledgement = fieldSetFlags()[6] ? this.kafkaAcknowledgement : (org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaAcknowledgement) defaultValue(fields()[6]);
-        record.retries = fieldSetFlags()[7] ? this.retries : (java.lang.Integer) defaultValue(fields()[7]);
-        record.useDefaultPartitioner = fieldSetFlags()[8] ? this.useDefaultPartitioner : (java.lang.Boolean) defaultValue(fields()[8]);
+        record.useDefaultPartitioner = fieldSetFlags()[2] ? this.useDefaultPartitioner : (java.lang.Boolean) defaultValue(fields()[2]);
+        record.partitionCount = fieldSetFlags()[3] ? this.partitionCount : (java.lang.Integer) defaultValue(fields()[3]);
+        record.kafkaKeyType = fieldSetFlags()[4] ? this.kafkaKeyType : (org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaKeyType) defaultValue(fields()[4]);
+        record.executorThreadPoolSize = fieldSetFlags()[5] ? this.executorThreadPoolSize : (java.lang.Integer) defaultValue(fields()[5]);
+        record.bufferMemorySize = fieldSetFlags()[6] ? this.bufferMemorySize : (java.lang.Long) defaultValue(fields()[6]);
+        record.kafkaCompression = fieldSetFlags()[7] ? this.kafkaCompression : (org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaCompression) defaultValue(fields()[7]);
+        record.kafkaAcknowledgement = fieldSetFlags()[8] ? this.kafkaAcknowledgement : (org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaAcknowledgement) defaultValue(fields()[8]);
+        record.retries = fieldSetFlags()[9] ? this.retries : (java.lang.Integer) defaultValue(fields()[9]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

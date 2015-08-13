@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.Future;
 
 import org.apache.avro.generic.GenericRecord;
@@ -40,6 +42,8 @@ public class KafkaLogEventDao implements LogEventDao {
 
 	private static final String KEY_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
 	private static final String VALUE_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
+
+	private final Random RANDOM = new Random();
 
 	private KafkaProducer<String, String> producer;
 	private KafkaConfig configuration;
@@ -90,14 +94,16 @@ public class KafkaLogEventDao implements LogEventDao {
 			GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
 			Callback callback) throws IOException {
 		List<Future<RecordMetadata>> results = new ArrayList<Future<RecordMetadata>>();
+		LOG.info("[{}] Sending events to Kafka using {} key defining strategy", topicName, configuration
+				.getKafkaKeyType().toString());
 		for (int i = 0; i < logEventDtoList.size(); i++) {
 			KafkaLogEventDto dto = logEventDtoList.get(i);
 			ProducerRecord<String, String> recordToWrite;
 			if (configuration.getUseDefaultPartitioner()) {
-				recordToWrite = new ProducerRecord<String, String>(topicName, appToken, formKafkaJSON(dto,
+				recordToWrite = new ProducerRecord<String, String>(topicName, getKey(dto), formKafkaJSON(dto,
 						eventConverter, headerConverter));
 			} else {
-				recordToWrite = new ProducerRecord<String, String>(topicName, calculatePartitionID(dto), appToken,
+				recordToWrite = new ProducerRecord<String, String>(topicName, calculatePartitionID(dto), getKey(dto),
 						formKafkaJSON(dto, eventConverter, headerConverter));
 			}
 			results.add(producer.send(recordToWrite, callback));
@@ -143,5 +149,17 @@ public class KafkaLogEventDao implements LogEventDao {
 		}
 		result.append("\"event\":" + eventJSON + "}");
 		return result.toString();
+	}
+
+	private String getKey(KafkaLogEventDto dto) {
+		switch (configuration.getKafkaKeyType()) {
+		case APPTOKEN:
+			return appToken;
+		case UUID:
+			return new UUID(System.currentTimeMillis(), RANDOM.nextLong()).toString();
+		case HASH:
+			return "" + dto.hashCode();
+		}
+		return null;
 	}
 }

@@ -39,10 +39,35 @@
             "type":"string"
         },
         {
+            "name":"useDefaultPartitioner",
+            "displayName":"Use default partitioner",
+            "by_default":true,
+            "type":"boolean"
+        },
+        {
             "name":"partitionCount",
             "displayName":"Partition count",
             "by_default":1,
             "type":"int"
+        },
+        {
+            "namespace":"org.kaaproject.kaa.server.appenders.kafka.config.gen",
+            "name":"kafkaKeyType",
+            "by_default":"APPTOKEN",
+            "optional":true,
+            "displayName":"Key type",
+            "type":[
+                {
+                    "name":"KafkaKeyType",
+                    "type":"enum",
+                    "symbols":[
+                        "APPTOKEN",
+                        "HASH",
+                        "UUID"
+                    ]
+                },
+                "null"
+            ]
         },
         {
             "name":"executorThreadPoolSize",
@@ -100,12 +125,6 @@
             "displayName":"Retries",
             "by_default":0,
             "type":"int"
-        },
-        {
-            "name":"useDefaultPartitioner",
-            "displayName":"Use default partitioner",
-            "by_default":true,
-            "type":"boolean"
         }                   
     ]
 }
