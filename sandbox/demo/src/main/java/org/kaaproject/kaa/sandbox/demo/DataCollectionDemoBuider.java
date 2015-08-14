@@ -89,7 +89,7 @@ public class DataCollectionDemoBuider extends AbstractDemoBuilder {
         dataCollectionLogAppender.setConfirmDelivery(true);
         dataCollectionLogAppender.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.KEYHASH, 
                 LogHeaderStructureDto.TIMESTAMP, LogHeaderStructureDto.TOKEN, LogHeaderStructureDto.VERSION));
-        dataCollectionLogAppender.setPluginTypeName("MongoDB");
+        dataCollectionLogAppender.setPluginTypeName("Mongo");
         dataCollectionLogAppender.setPluginClassName("org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender");
         dataCollectionLogAppender.setJsonConfiguration(FileUtils.readResource(getResourcePath("mongo_appender.json")));
         dataCollectionLogAppender = client.editLogAppenderDto(dataCollectionLogAppender);
