@@ -58,7 +58,7 @@ typedef enum {
 
 
 /**
- * @brief The callback for successful DNS results. See @link ext_tcp_utils_gethostbyaddr @endlink.
+ * @brief The callback for successful DNS results. See @link ext_tcp_utils_getaddrbyhost @endlink.
  *
  * @param[in]   context     Callback's context.
  * @param[in]   addr        The sockaddr structure of the resolved target host.
@@ -74,7 +74,7 @@ typedef kaa_error_t (*on_dns_resolve_complete_fn)(void *context
 /**
  * @brief The callback for negative host resolve results.
  *
- * See @link ext_tcp_utils_gethostbyaddr @endlink.
+ * See @link ext_tcp_utils_getaddrbyhost @endlink.
  *
  * @param[in]   context     Callback's context.
  *
@@ -86,7 +86,7 @@ typedef kaa_error_t (*on_dns_resolve_failed_fn)(void *context);
 /**
  * @brief Interface for the deferred DNS results.
  *
- * See @link ext_tcp_utils_gethostbyaddr @endlink.
+ * See @link ext_tcp_utils_getaddrbyhost @endlink.
  */
 typedef struct {
     void                       *context;             /**< The context to pass to all functions below. */
@@ -98,7 +98,7 @@ typedef struct {
 /**
  * @brief The target host information which is used for the DNS resolve needs.
  *
- * See @link ext_tcp_utils_gethostbyaddr @endlink.
+ * See @link ext_tcp_utils_getaddrbyhost @endlink.
  */
 typedef struct {
     char    *hostname;               /**< The target's hostname. */
@@ -108,7 +108,7 @@ typedef struct {
 
 
 /**
- * @brief Resolves the hostname of the target host.
+ * @brief Resolves the address of the target host.
  *
  * @param[in]      resolve_listener    The listener properties. It is used
 *                                      in case when this function can't
@@ -127,7 +127,7 @@ typedef struct {
  *      RET_STATE_VALUE_ERROR - the resolve failed.
  *      RET_STATE_BUFFER_NOT_ENOUGH - the given buffer is not enough to store the result.
  */
-ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener
+ext_tcp_utils_function_return_state_t ext_tcp_utils_getaddrbyhost(kaa_dns_resolve_listener_t *resolve_listener
                                                                 , const kaa_dns_resolve_info_t *resolve_props
                                                                 , kaa_sockaddr_t *result
                                                                 , kaa_socklen_t *result_size);

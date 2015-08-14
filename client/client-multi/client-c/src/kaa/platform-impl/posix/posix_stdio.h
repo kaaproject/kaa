@@ -25,4 +25,6 @@ posix_stdio.h
 
 #include <stdio.h>
 
+#define KAA_EXIT(e) exit(e)
+
 #endif /* POSIX_STDIO_H_ */

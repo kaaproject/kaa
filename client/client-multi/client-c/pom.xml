@@ -80,6 +80,7 @@
 			<!-- SHA implementation from RFC 3174 -->
 			<exclude>**/platform-impl/sha1.h</exclude>
 			<exclude>**/sha1.c</exclude>
+			<exclude>**/snprintf.c</exclude>
                     </excludes>
                 </configuration>
             </plugin>
