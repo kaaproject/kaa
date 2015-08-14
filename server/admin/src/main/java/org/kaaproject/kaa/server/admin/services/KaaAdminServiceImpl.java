@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.*;
 
-import com.google.gwt.user.client.Window;
 import net.iharder.Base64;
 
 import org.apache.avro.Schema;
@@ -1630,20 +1629,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
-    }
-
-
-
-    @Override
-    public RecordField createSimpleEmptyAppenderForm() throws KaaAdminServiceException {
-        //TODO
-//        checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-//        try {
-//            return formAvroConverter.getEmptySchemaFormInstance();
-//        } catch (Exception e) {
-//            throw Utils.handleException(e);
-//        }
-        throw new UnsupportedOperationException();
     }
 
     @Override
