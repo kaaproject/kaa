@@ -37,14 +37,6 @@ kaa_error_t kaa_buffer_allocate_space(kaa_buffer_t *buffer_p
                                     , char **buffer
                                     , size_t *free_size);
 
-kaa_error_t kaa_buffer_reallocate_space(kaa_buffer_t *buffer_p, size_t size);
-
-kaa_error_t kaa_buffer_get_locked_space(kaa_buffer_t *buffer_p, size_t *size);
-
-kaa_error_t kaa_buffer_get_size(kaa_buffer_t *buffer_p, size_t *size);
-
-kaa_error_t kaa_buffer_get_free_space(kaa_buffer_t *buffer_p, size_t *size);
-
 kaa_error_t kaa_buffer_lock_space(kaa_buffer_t *buffer_p
                                 , size_t lock_size);
 

@@ -27,10 +27,6 @@
 #define __KAA_CALLOC(N,S)         calloc(N, S)
 #endif
 
-#ifndef __KAA_REALLOC
-#define __KAA_REALLOC(P, S)       realloc(P, S)
-#endif
-
 #ifndef __KAA_FREE
 #define __KAA_FREE(P)             free(P)
 #endif
