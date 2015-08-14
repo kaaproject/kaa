@@ -19,7 +19,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.plugin;
 import static org.kaaproject.kaa.server.admin.client.util.Utils.isNotBlank;
 
 import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
-import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.shared.RecordField;
