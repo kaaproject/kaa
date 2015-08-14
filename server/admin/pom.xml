@@ -1,18 +1,10 @@
-<!--
-  Copyright 2014-2015 CyberVision, Inc.
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
+<!-- Copyright 2014-2015 CyberVision, Inc. Licensed under the Apache License, 
+    Version 2.0 (the "License"); you may not use this file except in compliance 
+    with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+    Unless required by applicable law or agreed to in writing, software distributed 
+    under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+    OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+    the specific language governing permissions and limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -149,7 +141,7 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>org.logback-extensions</groupId>
             <artifactId>logback-ext-spring</artifactId>
         </dependency>
@@ -187,12 +179,12 @@
             <groupId>org.kaaproject.avro-ui</groupId>
             <artifactId>gwt-client</artifactId>
             <version>${avro-ui.version}</version>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>org.kaaproject.avro-ui</groupId>
             <artifactId>converter</artifactId>
             <version>${avro-ui.version}</version>
-        </dependency>           
+        </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.common</groupId>
             <artifactId>core</artifactId>
@@ -204,37 +196,37 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>verifier-shared</artifactId>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>org.versly</groupId>
             <artifactId>versly-wsdoc</artifactId>
             <scope>compile</scope>
         </dependency>
-		<dependency>
-		    <groupId>org.eclipse.jetty</groupId>
-		    <artifactId>jetty-server</artifactId>
-		    <scope>provided</scope>
-		</dependency>
-	    <dependency>
-	        <groupId>org.eclipse.jetty</groupId>
-	        <artifactId>jetty-servlet</artifactId>
-	        <scope>provided</scope>
-	    </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-deploy</artifactId>
             <scope>provided</scope>
         </dependency>
-		<dependency>
-		    <groupId>org.eclipse.jetty</groupId>
-		    <artifactId>jetty-runner</artifactId>
-		    <scope>provided</scope>
-		</dependency>
-		<dependency>
-		    <groupId>org.eclipse.jetty</groupId>
-		    <artifactId>jetty-start</artifactId>
-		    <scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-runner</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-start</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>javax-websocket-client-impl</artifactId>
@@ -299,11 +291,11 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-        	<groupId>org.kaaproject.kaa.server.appenders.kafka</groupId>
-        	<artifactId>config</artifactId>
-        	<scope>runtime</scope>
-        	<classifier>kafka</classifier>
-        	<version>0.8.0-SNAPSHOT</version>
+            <groupId>org.kaaproject.kaa.server.appenders.kafka</groupId>
+            <artifactId>config</artifactId>
+            <scope>runtime</scope>
+            <classifier>kafka</classifier>
+            <version>0.8.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -342,7 +334,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>            
+            </plugin>
             <plugin>
                 <groupId>org.bsc.maven</groupId>
                 <artifactId>maven-processor-plugin</artifactId>
@@ -434,7 +426,7 @@
                         </replacement>
                     </replacements>
                 </configuration>
-            </plugin>             
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
@@ -455,7 +447,7 @@
                         <goals>
                             <goal>generateAsync</goal>
                         </goals>
-                    </execution>                      
+                    </execution>
                     <execution>
                         <id>source-generation</id>
                         <goals>
@@ -463,10 +455,10 @@
                             <goal>css</goal>
                         </goals>
                         <configuration>
-                        </configuration>                        
+                        </configuration>
                     </execution>
                 </executions>
-            </plugin>           
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -530,25 +522,25 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                    
+                    </execution>
                 </executions>
             </plugin>
-			<plugin>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-					    <id>copy-jetty-libs</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
-							<includeScope>provided</includeScope>
-							<excludeArtifactIds>jetty-start</excludeArtifactIds>
-							<excludeGroupIds>javax.annotation,org.ow2.asm,org.eclipse.jetty.websocket,javax.websocket</excludeGroupIds>
-						</configuration>
-					</execution>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-jetty-libs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <includeScope>provided</includeScope>
+                            <excludeArtifactIds>jetty-start</excludeArtifactIds>
+                            <excludeGroupIds>javax.annotation,org.ow2.asm,org.eclipse.jetty.websocket,javax.websocket</excludeGroupIds>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>copy-jetty-libs-annotations</id>
                         <phase>package</phase>
@@ -561,7 +553,7 @@
                             <includeGroupIds>javax.annotation,org.ow2.asm</includeGroupIds>
                         </configuration>
                     </execution>
-					<execution>
+                    <execution>
                         <id>copy-jetty-libs-websocket</id>
                         <phase>package</phase>
                         <goals>
@@ -573,26 +565,26 @@
                             <includeGroupIds>org.eclipse.jetty.websocket,javax.websocket</includeGroupIds>
                         </configuration>
                     </execution>
-					<execution>
-						<id>copy-jetty-start</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>org.eclipse.jetty</groupId>
-									<artifactId>jetty-start</artifactId>
-									<type>jar</type>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<destFileName>start.jar</destFileName>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</execution>					
-				</executions>
-			</plugin>            
+                    <execution>
+                        <id>copy-jetty-start</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-start</artifactId>
+                                    <type>jar</type>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                    <destFileName>start.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>jdeb</artifactId>
                 <groupId>org.vafer</groupId>
@@ -634,7 +626,7 @@
                                         <filemode>755</filemode>
                                         <prefix>/usr/lib/kaa-admin</prefix>
                                     </mapper>
-                                </data>           
+                                </data>
                                 <data>
                                     <src>${project.build.directory}/jetty</src>
                                     <type>directory</type>
@@ -680,7 +672,7 @@
         </plugins>
         <pluginManagement>
             <plugins>
-                <!--This plugin's configuration is used to store Eclipse
+                <!--This plugin's configuration is used to store Eclipse 
                     m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
@@ -812,7 +804,7 @@
                                             <location>target/lib</location>
                                         </source>
                                     </sources>
-                                </mapping>                  
+                                </mapping>
                                 <mapping>
                                     <directory>/usr/lib/kaa-admin</directory>
                                     <filemode>755</filemode>
@@ -824,9 +816,9 @@
                                         </source>
                                         <source>
                                             <location>target/jetty</location>
-                                        </source>                                        
+                                        </source>
                                     </sources>
-                                </mapping>                                                        
+                                </mapping>
                                 <mapping>
                                     <directory>/usr/lib/kaa-admin/conf</directory>
                                     <configuration>true</configuration>

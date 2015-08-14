@@ -96,7 +96,6 @@ public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
             }
         }
         LOG.info("Kafka log appender stoped.");
-
     }
 
     @Override

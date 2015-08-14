@@ -51,40 +51,39 @@ public class KafkaLogEventDao implements LogEventDao {
     private int partitionCount;
 
     public KafkaLogEventDao(KafkaConfig configuration) {
-        if (configuration != null) {
-            LOG.info("Init kafka log event dao...");
-            this.configuration = configuration;
-            this.topicName = configuration.getTopic();
-            this.partitionCount = configuration.getPartitionCount();
-            Properties kafkaProperties = new Properties();
-            StringBuilder serverList = new StringBuilder();
-            for (KafkaServer server : configuration.getKafkaServers()) {
-                serverList.append(server.getHost() + ":" + server.getPort() + ",");
-            }
-            LOG.info("Init kafka cluster with property {}={}", ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, serverList);
-            kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, serverList.toString());
-            LOG.info("Init kafka cluster with property {}={}", ProducerConfig.ACKS_CONFIG,
-                    configuration.getKafkaAcknowledgement());
-            kafkaProperties.put(ProducerConfig.ACKS_CONFIG, parseAcknowledgement(configuration
-                    .getKafkaAcknowledgement().name()));
-            LOG.info("Init kafka cluster with property {}={}", ProducerConfig.BUFFER_MEMORY_CONFIG,
-                    configuration.getBufferMemorySize());
-            kafkaProperties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, configuration.getBufferMemorySize());
-            LOG.info("Init kafka cluster with property {}={}", ProducerConfig.COMPRESSION_TYPE_CONFIG,
-                    configuration.getKafkaCompression());
-            kafkaProperties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, configuration.getKafkaCompression().name()
-                    .toLowerCase());
-            LOG.info("Init kafka cluster with property {}={}", ProducerConfig.RETRIES_CONFIG,
-                    configuration.getRetries());
-            kafkaProperties.put(ProducerConfig.RETRIES_CONFIG, configuration.getRetries());
-            LOG.info("Init kafka cluster with property {}={}", ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-                    KEY_SERIALIZER);
-            kafkaProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KEY_SERIALIZER);
-            LOG.info("Init kafka cluster with property {}={}", ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                    VALUE_SERIALIZER);
-            kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, VALUE_SERIALIZER);
-            producer = new KafkaProducer<String, String>(kafkaProperties);
+        if (configuration == null)
+            throw new IllegalArgumentException("Configuration shouldn't be null");
+        LOG.info("Init kafka log event dao...");
+        this.configuration = configuration;
+        this.topicName = configuration.getTopic();
+        this.partitionCount = configuration.getPartitionCount();
+        Properties kafkaProperties = new Properties();
+        StringBuilder serverList = new StringBuilder();
+        for (KafkaServer server : configuration.getKafkaServers()) {
+            serverList.append(server.getHost() + ":" + server.getPort() + ",");
         }
+        serverList = serverList.deleteCharAt(serverList.length() - 1);
+        LOG.info("Init kafka cluster with property {}={}", ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, serverList);
+        kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, serverList.toString());
+        LOG.info("Init kafka cluster with property {}={}", ProducerConfig.ACKS_CONFIG,
+                configuration.getKafkaAcknowledgement());
+        kafkaProperties.put(ProducerConfig.ACKS_CONFIG, parseAcknowledgement(configuration.getKafkaAcknowledgement()
+                .name()));
+        LOG.info("Init kafka cluster with property {}={}", ProducerConfig.BUFFER_MEMORY_CONFIG,
+                configuration.getBufferMemorySize());
+        kafkaProperties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, configuration.getBufferMemorySize());
+        LOG.info("Init kafka cluster with property {}={}", ProducerConfig.COMPRESSION_TYPE_CONFIG,
+                configuration.getKafkaCompression());
+        kafkaProperties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, configuration.getKafkaCompression().name()
+                .toLowerCase());
+        LOG.info("Init kafka cluster with property {}={}", ProducerConfig.RETRIES_CONFIG, configuration.getRetries());
+        kafkaProperties.put(ProducerConfig.RETRIES_CONFIG, configuration.getRetries());
+        LOG.info("Init kafka cluster with property {}={}", ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KEY_SERIALIZER);
+        kafkaProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KEY_SERIALIZER);
+        LOG.info("Init kafka cluster with property {}={}", ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                VALUE_SERIALIZER);
+        kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, VALUE_SERIALIZER);
+        producer = new KafkaProducer<String, String>(kafkaProperties);
     }
 
     @Override
@@ -94,8 +93,7 @@ public class KafkaLogEventDao implements LogEventDao {
         List<Future<RecordMetadata>> results = new ArrayList<Future<RecordMetadata>>();
         LOG.info("[{}] Sending events to Kafka using {} key defining strategy", topicName, configuration
                 .getKafkaKeyType().toString());
-        for (int i = 0; i < logEventDtoList.size(); i++) {
-            KafkaLogEventDto dto = logEventDtoList.get(i);
+        for (KafkaLogEventDto dto : logEventDtoList) {
             ProducerRecord<String, String> recordToWrite;
             if (configuration.getUseDefaultPartitioner()) {
                 recordToWrite = new ProducerRecord<String, String>(topicName, getKey(dto), formKafkaJSON(dto,
@@ -118,7 +116,6 @@ public class KafkaLogEventDao implements LogEventDao {
     }
 
     private int calculatePartitionID(KafkaLogEventDto eventDto) {
-
         return eventDto.hashCode() % partitionCount;
     }
 
