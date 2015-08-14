@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <time.h>
