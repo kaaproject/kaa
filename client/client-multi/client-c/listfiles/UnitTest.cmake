@@ -178,8 +178,3 @@ add_executable  (test_kaa_notification_manager
                     test/test_kaa_notification.c
                 )
 target_link_libraries(test_kaa_notification_manager kaac ${CUNIT_LIB_NAME})
-
-add_executable  (test_kaa_reallocation
-                    test/utilities/test_kaa_reallocation.c
-                )
-target_link_libraries(test_kaa_reallocation kaac ${CUNIT_LIB_NAME})

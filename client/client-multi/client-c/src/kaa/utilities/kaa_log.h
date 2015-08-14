@@ -29,6 +29,7 @@
 #include "../kaa_error.h"
 #include "../platform/defaults.h"
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -17,10 +17,10 @@
 #include "sha1.h"
 #include <stdint.h>
 #include <stddef.h>
-#include <string.h>
 #include "../kaa_common.h"
 #include "../platform/ext_sha.h"
 #include "../platform/sock.h"
+#include <string.h>
 
 
 

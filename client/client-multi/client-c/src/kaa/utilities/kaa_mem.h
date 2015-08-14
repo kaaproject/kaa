@@ -43,10 +43,9 @@ void    kaa_trace_memory_allocs_set_logger(kaa_logger_t *logger);
 #else // defined KAA_TRACE_MEMORY_ALLOCATIONS
 
 
-#define KAA_MALLOC(S)    __KAA_MALLOC(S)
-#define KAA_CALLOC(N,S)  __KAA_CALLOC(N,S)
-#define KAA_REALLOC(P,S) __KAA_REALLOC(P,S)
-#define KAA_FREE(P)      __KAA_FREE(P)
+#define KAA_MALLOC(S)   __KAA_MALLOC(S)
+#define KAA_CALLOC(N,S) __KAA_CALLOC(N,S)
+#define KAA_FREE(P)     __KAA_FREE(P)
 
 
 #endif // defined KAA_TRACE_MEMORY_ALLOCATIONS

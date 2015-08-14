@@ -205,7 +205,7 @@ kaa_error_t kaa_bootstrap_manager_create(kaa_bootstrap_manager_t **bootstrap_man
 {
     KAA_RETURN_IF_NIL2(bootstrap_manager_p, kaa_context, KAA_ERR_BADPARAM);
 
-    *bootstrap_manager_p = (kaa_bootstrap_manager_t*) KAA_CALLOC(1, sizeof(kaa_bootstrap_manager_t));
+    *bootstrap_manager_p = (kaa_bootstrap_manager_t*) KAA_MALLOC(sizeof(kaa_bootstrap_manager_t));
     KAA_RETURN_IF_NIL(*bootstrap_manager_p, KAA_ERR_NOMEM);
 
     (*bootstrap_manager_p)->channel_manager = kaa_context->channel_manager;
@@ -250,7 +250,7 @@ void kaa_bootstrap_manager_schedule_failover(kaa_bootstrap_manager_t *self, kaa_
         break;
     case KAA_STOP_APP:
         KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Stopping application according to the failover strategy...");
-        KAA_EXIT(EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
     self->failover_meta_info.next_execution_time = KAA_TIME() + decision.retry_period;
     self->failover_meta_info.server = type;
@@ -345,7 +345,7 @@ kaa_access_point_t *kaa_bootstrap_manager_get_bootstrap_access_point(kaa_bootstr
         kaa_error_t error_code = get_next_bootstrap_access_point_index(protocol_id, 0, &index, &execute_failover);
         if (error_code) {
             KAA_LOG_FATAL(self->logger, error_code, "Error: No bootstrap servers's been found. Please regenerate SDK.");
-            KAA_EXIT(error_code);
+            exit(error_code);
         }
 
         error_code = add_bootstrap_access_point(self, index);
@@ -486,7 +486,7 @@ kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t
 
         if (error_code) {
             KAA_LOG_FATAL(self->logger, error_code, "Error: No bootstrap servers's been found. Please regenerate SDK.");
-            KAA_EXIT(error_code);
+            exit(error_code);
         }
 
         access_point = (kaa_access_point_t *)&(KAA_BOOTSTRAP_ACCESS_POINTS[next_index].access_point);

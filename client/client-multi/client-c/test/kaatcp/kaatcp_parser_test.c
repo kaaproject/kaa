@@ -20,7 +20,6 @@
 
 #include "../kaa_test.h"
 
-#include "utilities/kaa_mem.h"
 #include "utilities/kaa_log.h"
 #include "kaa_protocols/kaa_tcp/kaatcp_parser.h"
 
@@ -79,9 +78,6 @@ void test_kaatcp_parser()
     kaatcp_parser_handlers_t handlers = { NULL, &connack_listener, &disconnect_listener, &kaasync_listener, &ping_listener };
     kaatcp_parser_t parser;
 
-    parser.payload_buffer_size = 1;
-    parser.payload = KAA_CALLOC(parser.payload_buffer_size, sizeof(char));
-
     kaatcp_error_t rval = kaatcp_parser_init(&parser, &handlers);
     ASSERT_EQUAL(rval, KAATCP_ERR_NONE);
 
@@ -103,8 +99,6 @@ void test_kaatcp_parser()
     ASSERT_EQUAL(rval, KAATCP_ERR_NONE);
 
     ASSERT_NOT_EQUAL(disconnect_received, 0);
-
-    KAA_FREE(parser.payload);
 
     KAA_TRACE_OUT(logger);
 }

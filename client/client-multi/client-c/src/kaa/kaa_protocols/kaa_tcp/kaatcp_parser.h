@@ -51,8 +51,7 @@ typedef struct {
     uint32_t                 message_length;
     uint32_t                 processed_payload_length;
     uint32_t                 length_multiplier;
-    uint32_t                 payload_buffer_size;
-    char                    *payload;
+    char                     payload[KAATCP_PARSER_MAX_MESSAGE_LENGTH];
 
     kaatcp_parser_handlers_t handlers;
 } kaatcp_parser_t;
