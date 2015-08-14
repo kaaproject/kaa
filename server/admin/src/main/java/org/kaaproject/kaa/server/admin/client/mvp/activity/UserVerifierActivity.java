@@ -17,7 +17,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import java.util.List;
 
-import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -72,13 +71,5 @@ public class UserVerifierActivity extends AbstractPluginActivity<UserVerifierDto
         KaaAdmin.getDataSource().editUserVerifierForm(entity, callback);
     }
 
-    @Override
-    public void loadFormData(String fileItemName, AsyncCallback<RecordField> callback) {
-        //TODO file upload configs
-    }
 
-    @Override
-    protected void createEmptyPluginForm(AsyncCallback<RecordField> callback) {
-        //TODO for file upload config
-    }
 }

@@ -1041,35 +1041,26 @@ public class DataSource {
                 });
     }
 
-    //TODO
-//    public void createSimpleEmptyAppenderForm(final AsyncCallback<RecordField> callback) {
-//        rpcService.createSimpleEmptyAppenderForm(new DataCallback<RecordField>(callback) {
-//            @Override
-//            protected void onResult(RecordField result) {
-//            }
-//        });
-//    }
-
     public void editLogAppenderForm(LogAppenderDto dto,
             final AsyncCallback<LogAppenderDto> callback) {
         rpcService.editLogAppenderForm(dto,
                 new DataCallback<LogAppenderDto>(callback) {
-            @Override
-            protected void onResult(LogAppenderDto result) {
-            }
-        });
+                    @Override
+                    protected void onResult(LogAppenderDto result) {
+                    }
+                });
     }
 
     public void removeLogAppender(String appenderId,
             final AsyncCallback<Void> callback) {
         rpcService.deleteLogAppender(appenderId,
                 new DataCallback<Void>(callback) {
-            @Override
-            protected void onResult(Void result) {
-                eventBus.fireEvent(new DataEvent(
-                        LogAppenderDto.class));
-            }
-        });
+                    @Override
+                    protected void onResult(Void result) {
+                        eventBus.fireEvent(new DataEvent(
+                                LogAppenderDto.class));
+                    }
+                });
     }
     
     public void loadLogAppenderPluginInfos(
@@ -1103,10 +1094,19 @@ public class DataSource {
             final AsyncCallback<UserVerifierDto> callback) {
         rpcService.getUserVerifierForm(userVerifierId,
                 new DataCallback<UserVerifierDto>(callback) {
-            @Override
-            protected void onResult(UserVerifierDto result) {
-            }
-        });
+                    @Override
+                    protected void onResult(UserVerifierDto result) {
+                    }
+                });
+    }
+
+    public void getUserVerifier(String userVerifierId, final AsyncCallback<UserVerifierDto> callback){
+        rpcService.getRestUserVerifier(userVerifierId,
+                new DataCallback<UserVerifierDto>(callback) {
+                    @Override
+                    protected void onResult(UserVerifierDto result) {
+                    }
+                });
     }
 
     public void editUserVerifierForm(UserVerifierDto dto,

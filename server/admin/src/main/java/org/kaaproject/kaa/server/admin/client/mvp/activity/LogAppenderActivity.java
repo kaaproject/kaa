@@ -20,9 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.gwt.user.client.Window;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
-import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginInfoDto;
@@ -110,16 +108,5 @@ public class LogAppenderActivity extends AbstractPluginActivity<LogAppenderDto, 
         KaaAdmin.getDataSource().editLogAppenderForm(entity, callback);
     }
 
-    @Override
-    public void loadFormData(String fileItemName, AsyncCallback<RecordField> callback) {
-        //Todo implements upload config from file
-        Window.alert("LogAppenderActivity in loadFormData : "+fileItemName);
-        //KaaAdmin.getDataSource().generateSimpleSchemaForm(fileItemName, callback);
-    }
 
-    @Override
-    protected void createEmptyPluginForm(AsyncCallback<RecordField> callback) {
-        //TODO
-//        KaaAdmin.getDataSource().createSimpleEmptyAppenderForm(callback);
-    }
 }

@@ -42,6 +42,4 @@ public class LogAppendersViewImpl extends BaseListViewImpl<LogAppenderDto> {
         return Utils.constants.addNewLogAppender();
     }
 
-
-
 }

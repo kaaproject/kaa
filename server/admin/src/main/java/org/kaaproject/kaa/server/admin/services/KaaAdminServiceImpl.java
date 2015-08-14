@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.*;
 
+import com.google.gwt.user.client.Window;
 import net.iharder.Base64;
 
 import org.apache.avro.Schema;
@@ -149,8 +150,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     private String additionalPluginsScanPackage;
 
     private PasswordEncoder passwordEncoder;
-
-    private FormAvroConverter formAvroConverter;
 
     private SchemaFormAvroConverter simpleSchemaFormAvroConverter;
 

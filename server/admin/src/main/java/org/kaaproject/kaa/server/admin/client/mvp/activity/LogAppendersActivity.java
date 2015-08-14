@@ -80,8 +80,7 @@ public class LogAppendersActivity extends AbstractListActivity<LogAppenderDto, L
             }
             @Override
             public void onSuccess(LogAppenderDto key) {
-                JSONObject json = new JSONObject();
-                json.put("jsonConfiguration", JSONParser.parseLenient(key.getJsonConfiguration()));
+                JSONObject json = (JSONObject)JSONParser.parseLenient(key.getJsonConfiguration());
                 json.put("minLogSchemaVersion", new JSONNumber(key.getMinLogSchemaVersion()));
                 json.put("maxLogSchemaVersion", new JSONNumber(key.getMaxLogSchemaVersion()));
                 json.put("pluginTypeName", new JSONString(key.getPluginTypeName()));

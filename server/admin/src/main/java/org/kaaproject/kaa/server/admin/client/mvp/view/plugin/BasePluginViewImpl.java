@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.plugin;
 
 import static org.kaaproject.kaa.server.admin.client.util.Utils.isNotBlank;
 
-import com.google.gwt.user.client.Window;
 import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
@@ -49,9 +48,7 @@ public abstract class BasePluginViewImpl extends BaseDetailsViewImpl implements 
     private SizedTextArea description;
     private SizedTextBox createdUsername;
     private SizedTextBox createdDateTime;
-    private RecordFieldWidget configuration;
-
-    private RecordPanel schemaForm;
+    private RecordPanel configuration;
 
     public BasePluginViewImpl(boolean create) {
         super(create);
@@ -116,22 +113,13 @@ public abstract class BasePluginViewImpl extends BaseDetailsViewImpl implements 
         detailsTable.setWidget(idx, 1, pluginInfo);
 
         getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
-        getFooter().setWidth("700px");
-        
-        configuration = new RecordFieldWidget(new AvroWidgetsConfig.Builder().createConfig());
+        getFooter().setWidth("1000px");
+
+        configuration = new RecordPanel(new AvroWidgetsConfig.Builder().
+                recordPanelWidth(900).createConfig(),
+                Utils.constants.configuration(), this, !create, false);
         configuration.addValueChangeHandler(this);
         getFooter().add(configuration);
-
-        //TODO don't forget about this form
-        //last 2: !create, !create
-        schemaForm = new RecordPanel(new AvroWidgetsConfig.Builder().
-                recordPanelWidth(900).createConfig(),
-                Utils.constants.logAppender(), this, !create, !create);
-        if (create) {
-            schemaForm.addValueChangeHandler(this);
-        }
-        getFooter().setWidth("1000px");
-        getFooter().add(schemaForm);
         name.setFocus(true);
     }
     
@@ -146,7 +134,7 @@ public abstract class BasePluginViewImpl extends BaseDetailsViewImpl implements 
         if (pluginInfo != null) {
             pluginInfo.setValue(null, true);
         }
-        schemaForm.reset();
+        configuration.reset();
     }
 
     @Override
@@ -163,7 +151,7 @@ public abstract class BasePluginViewImpl extends BaseDetailsViewImpl implements 
 
     @Override
     public RecordPanel getSchemaForm() {
-        return schemaForm;
+        return configuration;
     }
     @Override
     public ValueListBox<PluginInfoDto> getPluginInfo() {

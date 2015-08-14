@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.base;
 
-import com.google.gwt.query.client.Console;
-import com.google.gwt.user.client.Window;
 import org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle;
 import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
 import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;

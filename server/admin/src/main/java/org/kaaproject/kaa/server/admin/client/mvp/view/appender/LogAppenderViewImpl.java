@@ -144,14 +144,10 @@ public class LogAppenderViewImpl extends BasePluginViewImpl implements LogAppend
     @Override
     protected boolean validate() {
         boolean result = super.validate();
-        Window.alert("Super.validate: " + result);
         result &= minSchemaVersion.getValue() != null;
         result &= maxSchemaVersion.getValue() != null;
-        Window.alert("Validate result: " + result);
         return result;
     }
-
-
 
     @Override
     public ValueListBox<Integer> getMinSchemaVersion() {

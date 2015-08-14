@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import com.google.gwt.user.client.Window;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -69,7 +68,6 @@ public class ProfileSchemaActivity
     @Override
     public void loadFormData(String fileItemName,
             AsyncCallback<RecordField> callback) {
-        Window.alert("ProfileSchemaActivity in loadFormData : "+fileItemName);
         KaaAdmin.getDataSource().generateSimpleSchemaForm(fileItemName, callback);
     }
 
