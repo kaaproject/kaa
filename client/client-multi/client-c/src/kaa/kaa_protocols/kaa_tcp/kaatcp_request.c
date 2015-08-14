@@ -85,6 +85,30 @@ kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_pro
     return KAATCP_ERR_NONE;
 }
 
+kaatcp_error_t kaatcp_get_request_size(const kaatcp_connect_t *message, kaatcp_message_type_t type, size_t *size)
+{
+    KAA_RETURN_IF_NIL2(message, size, KAATCP_ERR_BAD_PARAM);
+
+    size_t payload_size = message->sync_request_size
+                        + message->session_key_size
+                        + message->signature_size
+                        + KAA_CONNECT_HEADER_LENGTH;
+
+    if (payload_size <= MAX_MESSAGE_LENGTH && type <= MAX_MESSAGE_TYPE_LENGTH) {
+        uint8_t header_size = 1;
+        do {
+            payload_size /= FIRST_BIT;
+            ++header_size;
+        } while (payload_size);
+
+        *size = payload_size + header_size;
+        return KAA_ERR_NONE;
+    }
+
+    return KAA_ERR_BADPARAM;
+
+}
+
 kaatcp_error_t kaatcp_get_request_connect(const kaatcp_connect_t *message
                                         , char *buf
                                         , size_t *buf_size)
@@ -159,7 +183,7 @@ kaatcp_error_t kaatcp_get_request_disconnect(const kaatcp_disconnect_t *message,
 {
     KAA_RETURN_IF_NIL3(message, buf, buf_size, KAATCP_ERR_BAD_PARAM);
 
-    if (*buf_size < 4) {
+    if (*buf_size < KAA_DISCONNECT_MESSAGE_SIZE) {
         return KAATCP_ERR_BUFFER_NOT_ENOUGH;
     }
     char *cursor = buf;
@@ -169,7 +193,7 @@ kaatcp_error_t kaatcp_get_request_disconnect(const kaatcp_disconnect_t *message,
     *(cursor++) = 0;
     *(cursor++) = (message->reason & 0xFF);
 
-    *buf_size = 4;
+    *buf_size = KAA_DISCONNECT_MESSAGE_SIZE;
     return KAATCP_ERR_NONE;
 }
 
@@ -273,11 +297,11 @@ kaatcp_error_t kaatcp_get_request_ping(char *buf, size_t *buf_size)
 {
     KAA_RETURN_IF_NIL2(buf, buf_size, KAATCP_ERR_BAD_PARAM);
 
-    if (*buf_size < 2) {
+    if (*buf_size < KAA_PING_MESSAGE_SIZE) {
         return KAATCP_ERR_BUFFER_NOT_ENOUGH;
     }
     create_basic_header(KAATCP_MESSAGE_PINGREQ, 0, buf);
-    *buf_size = 2;
+    *buf_size = KAA_PING_MESSAGE_SIZE;
     return KAATCP_ERR_NONE;
 }
 

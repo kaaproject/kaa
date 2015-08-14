@@ -51,6 +51,9 @@ extern "C" {
 #define KAA_TCP_NAME        "Kaatcp"
 #define KAA_TCP_NAME_LENGTH 6
 
+#define KAA_PING_MESSAGE_SIZE 2
+#define KAA_DISCONNECT_MESSAGE_SIZE 4
+
 typedef enum {
     KAATCP_ERR_NONE              = 0,
     KAATCP_ERR_NOMEM             = -1,
