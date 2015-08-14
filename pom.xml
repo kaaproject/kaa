@@ -490,6 +490,10 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/*xcodeproj/**</exclude>
                         <exclude>**/*.plist</exclude>
                         <exclude>**/*.cproject</exclude>
+			<exclude>**/source/esp8266/ld/*.ld</exclude>
+			<exclude>**/source/esp8266/driver/uart.c</exclude>
+			<exclude>**/source/esp8266/include/driver/uart*.h</exclude>
+			<exclude>**/source/cc32xx/platform/cc32xx/app.ld</exclude>
                     </excludes>
                 </configuration>
             </plugin>

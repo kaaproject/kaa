@@ -89,7 +89,7 @@ public class CellMonitorDemoBuilder extends AbstractDemoBuilder {
         cellMonitorLogAppender.setConfirmDelivery(true);
         cellMonitorLogAppender.setHeaderStructure(Arrays.asList(LogHeaderStructureDto.KEYHASH, 
                 LogHeaderStructureDto.TIMESTAMP, LogHeaderStructureDto.TOKEN, LogHeaderStructureDto.VERSION));
-        cellMonitorLogAppender.setPluginTypeName("Mongo");
+        cellMonitorLogAppender.setPluginTypeName("MongoDB");
         cellMonitorLogAppender.setPluginClassName("org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender");
         cellMonitorLogAppender.setJsonConfiguration(FileUtils.readResource(getResourcePath("mongo_appender.json")));
         cellMonitorLogAppender = client.editLogAppenderDto(cellMonitorLogAppender);
