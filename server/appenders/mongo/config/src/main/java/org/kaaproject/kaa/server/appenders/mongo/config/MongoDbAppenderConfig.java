@@ -30,7 +30,7 @@ public class MongoDbAppenderConfig implements PluginConfig {
 
     @Override
     public String getPluginTypeName() {
-        return "MongoDB";
+        return "Mongo";
     }
 
     @Override
