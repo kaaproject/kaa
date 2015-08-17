@@ -67,7 +67,7 @@ public class BasePluginGrid<T extends PluginDto> extends AbstractKaaGrid<T, Stri
         float result = 0;
         if (!embedded && (downloadPropsColumn == null || table.getColumnIndex(downloadPropsColumn) == -1)) {
             Header<SafeHtml> downloadRecordSchemaHeader = new SafeHtmlHeader(
-                    SafeHtmlUtils.fromSafeConstant(Utils.constants.downloadRecordSchema()));
+                    SafeHtmlUtils.fromSafeConstant(Utils.constants.configuration()));
             downloadPropsColumn = constructDownloadSchemaColumn("");
             table.addColumn(downloadPropsColumn, downloadRecordSchemaHeader);
             table.setColumnWidth(downloadPropsColumn, ACTION_COLUMN_WIDTH, Unit.PX);
