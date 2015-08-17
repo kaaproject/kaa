@@ -39,6 +39,7 @@
         <module>flume</module>
         <module>rest</module>
         <module>couchbase</module>
+        <module>kafka</module>
     </modules>
     <profiles>
         <profile>

@@ -762,6 +762,18 @@
             </dependencies>
         </profile>
         <profile>
+            <id>kafka</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.kaaproject.kaa.server.appenders.kafka</groupId>
+                    <artifactId>appender</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>kafka</classifier>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>couchbase</id>
             <dependencies>
                 <dependency>

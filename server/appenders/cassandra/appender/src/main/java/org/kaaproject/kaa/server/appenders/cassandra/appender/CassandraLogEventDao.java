@@ -83,69 +83,69 @@ public class CassandraLogEventDao implements LogEventDao {
     private CassandraConfig configuration;
 
     public CassandraLogEventDao(CassandraConfig configuration) throws UnknownHostException {
-        if (configuration != null) {
-            LOG.info("Init cassandra log event dao...");
-            this.configuration = configuration;
-            keyspaceName = configuration.getKeySpace();
-            List<InetSocketAddress> clusterNodes = new ArrayList<>();
-            List<CassandraServer> nodes = configuration.getCassandraServers();
-            for (CassandraServer node : nodes) {
-                clusterNodes.add(new InetSocketAddress(InetAddress.getByName(node.getHost()), node.getPort()));
-            }
-
-            Cluster.Builder builder = Cluster.builder().addContactPointsWithPorts(clusterNodes);
-            LOG.info("Init cassandra cluster with nodes {}", Arrays.toString(clusterNodes.toArray()));
-
-            CassandraCredential cc = configuration.getCassandraCredential();
-            if (cc != null) {
-                builder.withCredentials(cc.getUser(), cc.getPassword());
-                LOG.trace("Init cassandra cluster with username {} and password {}", cc.getUser(), cc.getPassword());
-            }
-
-            CassandraSocketOption option = configuration.getCassandraSocketOption();
-            if (option != null) {
-                SocketOptions so = new SocketOptions();
-                if (option.getSoLinger() != null) {
-                    so.setSoLinger(option.getSoLinger());
-                }
-                if (option.getKeepAlive() != null) {
-                    so.setKeepAlive(option.getKeepAlive());
-                }
-                if (option.getReuseAddress()) {
-                    so.setReuseAddress(option.getReuseAddress());
-                }
-                if (option.getTcpNoDelay() != null) {
-                    so.setTcpNoDelay(option.getTcpNoDelay());
-                }
-                if (option.getConnectionTimeout() != null) {
-                    so.setConnectTimeoutMillis(option.getConnectionTimeout());
-                }
-                if (option.getReadTimeout() != null) {
-                    so.setReadTimeoutMillis(option.getReadTimeout());
-                }
-                if (option.getReceiveBufferSize() != null) {
-                    so.setReceiveBufferSize(option.getReceiveBufferSize());
-                }
-                if (option.getSendBufferSize() != null) {
-                    so.setSendBufferSize(option.getSendBufferSize());
-                }
-                builder.withSocketOptions(so);
-                LOG.trace("Init cassandra cluster with socket options {}", option);
-            }
-
-            CassandraWriteConsistencyLevel ccLevel = configuration.getCassandraWriteConsistencyLevel();
-            if (ccLevel != null) {
-                writeConsistencyLevel = ConsistencyLevel.valueOf(ccLevel.name());
-                LOG.trace("Init cassandra cluster with consistency level {}", ccLevel.name());
-            }
-            CassandraCompression cassandraCompression = configuration.getCassandraCompression();
-            if (cassandraCompression != null) {
-                builder.withCompression(ProtocolOptions.Compression.valueOf(cassandraCompression.name()));
-                LOG.trace("Init cassandra cluster with compression {}", cassandraCompression.name());
-            }
-            batchType = configuration.getCassandraBatchType();
-            cluster = builder.build();
+        if (configuration == null)
+            throw new IllegalArgumentException("Configuration shouldn't be null");
+        LOG.info("Init cassandra log event dao...");
+        this.configuration = configuration;
+        keyspaceName = configuration.getKeySpace();
+        List<InetSocketAddress> clusterNodes = new ArrayList<>();
+        List<CassandraServer> nodes = configuration.getCassandraServers();
+        for (CassandraServer node : nodes) {
+            clusterNodes.add(new InetSocketAddress(InetAddress.getByName(node.getHost()), node.getPort()));
         }
+
+        Cluster.Builder builder = Cluster.builder().addContactPointsWithPorts(clusterNodes);
+        LOG.info("Init cassandra cluster with nodes {}", Arrays.toString(clusterNodes.toArray()));
+
+        CassandraCredential cc = configuration.getCassandraCredential();
+        if (cc != null) {
+            builder.withCredentials(cc.getUser(), cc.getPassword());
+            LOG.trace("Init cassandra cluster with username {} and password {}", cc.getUser(), cc.getPassword());
+        }
+
+        CassandraSocketOption option = configuration.getCassandraSocketOption();
+        if (option != null) {
+            SocketOptions so = new SocketOptions();
+            if (option.getSoLinger() != null) {
+                so.setSoLinger(option.getSoLinger());
+            }
+            if (option.getKeepAlive() != null) {
+                so.setKeepAlive(option.getKeepAlive());
+            }
+            if (option.getReuseAddress()) {
+                so.setReuseAddress(option.getReuseAddress());
+            }
+            if (option.getTcpNoDelay() != null) {
+                so.setTcpNoDelay(option.getTcpNoDelay());
+            }
+            if (option.getConnectionTimeout() != null) {
+                so.setConnectTimeoutMillis(option.getConnectionTimeout());
+            }
+            if (option.getReadTimeout() != null) {
+                so.setReadTimeoutMillis(option.getReadTimeout());
+            }
+            if (option.getReceiveBufferSize() != null) {
+                so.setReceiveBufferSize(option.getReceiveBufferSize());
+            }
+            if (option.getSendBufferSize() != null) {
+                so.setSendBufferSize(option.getSendBufferSize());
+            }
+            builder.withSocketOptions(so);
+            LOG.trace("Init cassandra cluster with socket options {}", option);
+        }
+
+        CassandraWriteConsistencyLevel ccLevel = configuration.getCassandraWriteConsistencyLevel();
+        if (ccLevel != null) {
+            writeConsistencyLevel = ConsistencyLevel.valueOf(ccLevel.name());
+            LOG.trace("Init cassandra cluster with consistency level {}", ccLevel.name());
+        }
+        CassandraCompression cassandraCompression = configuration.getCassandraCompression();
+        if (cassandraCompression != null) {
+            builder.withCompression(ProtocolOptions.Compression.valueOf(cassandraCompression.name()));
+            LOG.trace("Init cassandra cluster with compression {}", cassandraCompression.name());
+        }
+        batchType = configuration.getCassandraBatchType();
+        cluster = builder.build();
     }
 
     @Override
@@ -231,7 +231,8 @@ public class CassandraLogEventDao implements LogEventDao {
 
     @Override
     public List<CassandraLogEventDto> save(List<CassandraLogEventDto> logEventDtoList, String tableName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter) throws IOException {
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
+            throws IOException {
         LOG.debug("Execute bath request for cassandra table {}", tableName);
         executeBatch(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter));
         return logEventDtoList;
@@ -239,7 +240,8 @@ public class CassandraLogEventDao implements LogEventDao {
 
     @Override
     public ListenableFuture<ResultSet> saveAsync(List<CassandraLogEventDto> logEventDtoList, String tableName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter) throws IOException {
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
+            throws IOException {
         LOG.debug("Execute async bath request for cassandra table {}", tableName);
         return executeBatchAsync(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter));
     }
@@ -292,7 +294,8 @@ public class CassandraLogEventDao implements LogEventDao {
     }
 
     private Insert[] prepareQuery(List<CassandraLogEventDto> logEventDtoList, String collectionName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter) throws IOException {
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
+            throws IOException {
         String reuseTsValue = null;
         Insert[] insertArray = new Insert[logEventDtoList.size()];
         for (int i = 0; i < logEventDtoList.size(); i++) {
@@ -327,10 +330,10 @@ public class CassandraLogEventDao implements LogEventDao {
                     break;
                 }
             }
-            
-            //Here we get ttl parameter from config and add it to insert query
+
+            // Here we get ttl parameter from config and add it to insert query
             insert.using(QueryBuilder.ttl(configuration.getDataTTL()));
-            
+
             insertArray[i] = insert;
 
         }
