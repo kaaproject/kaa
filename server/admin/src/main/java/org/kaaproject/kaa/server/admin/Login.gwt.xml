@@ -22,7 +22,7 @@
   <inherits name="com.google.gwt.i18n.I18N"/>
   <inherits name="com.google.gwt.i18n.CldrLocales"/>
   <inherits name="com.google.gwt.user.theme.clean.Clean"/>
-
+  <inherits name="com.google.gwt.json.JSON" />
   <inherits name="org.kaaproject.kaa.common.dto.Dto"/>
   <inherits name="org.kaaproject.avro.ui.gwt.client.AvroUIClient"/>
   

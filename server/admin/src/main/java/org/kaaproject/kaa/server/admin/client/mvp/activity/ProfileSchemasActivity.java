@@ -26,7 +26,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.data.ProfileSchemasDataProvide
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
