@@ -11,29 +11,28 @@ import org.slf4j.LoggerFactory;
  * Reference implementation for {@link LogUploadStrategy}.
  * Start log upload when there storage size is >= minStorageSize bytes.
  */
-public class CustomStorageSizeLogUploadStrategy extends DefaultLogUploadStrategy {
-    private static final Logger LOG = LoggerFactory.getLogger(CustomStorageSizeLogUploadStrategy.class);
+public class StorageSizeLogUploadStrategy extends DefaultLogUploadStrategy {
+    private static final Logger LOG = LoggerFactory.getLogger(StorageSizeLogUploadStrategy.class);
 
     protected long minStorageSize;
 
-    public CustomStorageSizeLogUploadStrategy() {
+    public StorageSizeLogUploadStrategy() {
         minStorageSize = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
     }
 
-    public CustomStorageSizeLogUploadStrategy(long minStorageSize){
+    public StorageSizeLogUploadStrategy(long minStorageSize){
         this.minStorageSize = minStorageSize;
     }
 
     @Override
-    public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
+    protected LogUploadStrategyDecision checkUploadNeeded(LogStorageStatus status) {
         LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
 
-        if(!UPLOAD_LOCKED) {
-            if(status.getConsumedVolume() >= minStorageSize){
-                LOG.info("Need to upload logs - current size: {}, threshold: {}", status.getConsumedVolume(), volumeThreshold);
-                decision = LogUploadStrategyDecision.UPLOAD;
-            }
+        if(status.getConsumedVolume() >= minStorageSize){
+            LOG.info("Need to upload logs - current size: {}, threshold: {}", status.getConsumedVolume(), volumeThreshold);
+            decision = LogUploadStrategyDecision.UPLOAD;
         }
+
         return decision;
     }
 

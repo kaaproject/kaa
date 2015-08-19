@@ -44,21 +44,30 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
     protected int countThreshold = DEFAULT_UPLOAD_COUNT_THRESHOLD;
     protected int batchSize = DEFAULT_BATCH_SIZE;
     protected int batchCount = DEFAULT_BATCH_COUNT;
-    protected boolean UPLOAD_LOCKED = DEFAULT_UPLOAD_LOCKED;
+    protected volatile boolean UPLOAD_LOCKED = DEFAULT_UPLOAD_LOCKED;
     
 
     @Override
     public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
-        LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
+        LogUploadStrategyDecision decision;
 
         if(!UPLOAD_LOCKED) {
-            if (status.getConsumedVolume() >= volumeThreshold) {
-                LOG.info("Need to upload logs - current size: {}, threshold: {}", status.getConsumedVolume(), volumeThreshold);
-                decision = LogUploadStrategyDecision.UPLOAD;
-            } else if (status.getRecordCount() >= countThreshold) {
-                LOG.info("Need to upload logs - current count: {}, threshold: {}", status.getRecordCount(), countThreshold);
-                decision = LogUploadStrategyDecision.UPLOAD;
-            }
+            decision = checkUploadNeeded(status);
+        }else{
+            decision = LogUploadStrategyDecision.NOOP;
+        }
+
+        return decision;
+    }
+
+    protected LogUploadStrategyDecision checkUploadNeeded(LogStorageStatus status){
+        LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
+        if (status.getConsumedVolume() >= volumeThreshold) {
+            LOG.info("Need to upload logs - current size: {}, threshold: {}", status.getConsumedVolume(), volumeThreshold);
+            decision = LogUploadStrategyDecision.UPLOAD;
+        } else if (status.getRecordCount() >= countThreshold) {
+            LOG.info("Need to upload logs - current count: {}, threshold: {}", status.getRecordCount(), countThreshold);
+            decision = LogUploadStrategyDecision.UPLOAD;
         }
         return decision;
     }
