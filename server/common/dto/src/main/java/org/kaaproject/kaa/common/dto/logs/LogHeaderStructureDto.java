@@ -18,7 +18,7 @@ package org.kaaproject.kaa.common.dto.logs;
 
 public enum LogHeaderStructureDto {
 
-    KEYHASH("Endpoint key hash"), VERSION("Header version"), TIMESTAMP("Timestamp"), TOKEN("Application token"), LSVERSION("log schema version");
+    KEYHASH("Endpoint key hash"), VERSION("Header version"), TIMESTAMP("Timestamp"), TOKEN("Application token"), LSVERSION("Log schema version");
 
     private String value;
 
