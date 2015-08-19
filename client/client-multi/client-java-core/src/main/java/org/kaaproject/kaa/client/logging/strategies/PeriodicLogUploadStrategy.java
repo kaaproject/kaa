@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Reference implementation for {@link LogUploadStrategy}.
- * Issue log upload each timeLimit seconds (or other time unit).
+ * Issue log upload each timeLimit seconds.
  */
 public class PeriodicLogUploadStrategy extends DefaultLogUploadStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(PeriodicLogUploadStrategy.class);
