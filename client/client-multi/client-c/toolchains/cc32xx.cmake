@@ -17,9 +17,9 @@
 include(CMakeForceCompiler)
 
 if(DEFINED WIN32)
-  set(WIN_EXE .exe)
+  set(EXECUTABLE_SUFFIX .exe)
 else()
-  set(WIN_EXE)
+  set(EXECUTABLE_SUFFIX)
 endif()
 
 if(NOT DEFINED KAA_TOOLCHAIN_PATH)
