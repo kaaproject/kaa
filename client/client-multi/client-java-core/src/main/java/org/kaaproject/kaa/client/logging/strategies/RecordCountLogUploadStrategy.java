@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Reference implementation for {@link LogUploadStrategy}.
- * Start log upload when there is recordsThreshold records in storage.
+ * Start log upload when there is countThreshold records in storage.
  */
 public class RecordCountLogUploadStrategy extends DefaultLogUploadStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(RecordCountLogUploadStrategy.class);

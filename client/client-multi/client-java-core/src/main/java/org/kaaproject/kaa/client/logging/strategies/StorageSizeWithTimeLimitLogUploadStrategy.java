@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Reference implementation for {@link LogUploadStrategy}.
- *  Start log upload when there storage size is >= minStorageSize bytes or records are stored for more then timeLimit TimeUnit units.
+ *  Start log upload when there storage size is >= volumeThreshold bytes or records are stored for more then timeLimit TimeUnit units.
  */
 public class StorageSizeWithTimeLimitLogUploadStrategy extends DefaultLogUploadStrategy{
     private static final Logger LOG = LoggerFactory.getLogger(StorageSizeWithTimeLimitLogUploadStrategy.class);

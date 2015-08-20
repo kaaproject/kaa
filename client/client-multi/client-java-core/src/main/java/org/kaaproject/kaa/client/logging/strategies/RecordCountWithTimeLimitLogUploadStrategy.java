@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Reference implementation for {@link LogUploadStrategy}.
- * Start log upload when there is recordsThreshold records in storage or records are stored for more then timeLimit TimeUnit units.
+ * Start log upload when there is countThreshold records in storage or records are stored for more then timeLimit TimeUnit units.
  */
 public class RecordCountWithTimeLimitLogUploadStrategy extends DefaultLogUploadStrategy {
 
