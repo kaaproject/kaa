@@ -16,15 +16,21 @@
 
 include(CMakeForceCompiler)
 
+if(DEFINED WIN32)
+  set(WIN_EXE .exe)
+else()
+  set(WIN_EXE)
+endif()
+
 if(NOT DEFINED KAA_TOOLCHAIN_PATH)
   set(KAA_ARM_TOOLCHAIN "/opt/kaa/gcc-arm-none-eabi")
   set(CC32XX_SDK "/opt/kaa/cc3200-sdk")
 else()
   set(KAA_ARM_TOOLCHAIN "${KAA_TOOLCHAIN_PATH}/gcc-arm-none-eabi")
-  set(CC32XX_SDK "${KAA_TOOLCHAIN_PATH}/cc3200_sdk")
+  set(CC32XX_SDK "${KAA_TOOLCHAIN_PATH}/cc3200-sdk")
 endif()
 
-CMAKE_FORCE_C_COMPILER(${KAA_ARM_TOOLCHAIN}/bin/arm-none-eabi-gcc GNU)
+CMAKE_FORCE_C_COMPILER(${KAA_ARM_TOOLCHAIN}/bin/arm-none-eabi-gcc${WIN_EXE} GNU)
 
 set(CMAKE_C_FLAGS "-mthumb -mcpu=cortex-m4 -ffunction-sections -fdata-sections -MD -std=c99 -g -O0 -static"  CACHE STRING "" FORCE)
 set(CMAKE_A_FLAGS "-mthumb -mcpu=cortex-m4 -MD -static"  CACHE STRING "" FORCE)
