@@ -15,13 +15,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class PeriodicLogUploadStrategy extends DefaultLogUploadStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(PeriodicLogUploadStrategy.class);
-    protected long timeLimit;
     protected long lastUploadTime;
     protected TimeUnit timeUnit;
 
     public PeriodicLogUploadStrategy() {
-        timeLimit = DEFAULT_TIME_LIMIT;
-        timeUnit = TimeUnit.MILLISECONDS;
+        timeUnit = TimeUnit.SECONDS;
     }
 
     public PeriodicLogUploadStrategy(long timeLimit, TimeUnit timeUnit) {

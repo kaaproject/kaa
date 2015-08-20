@@ -14,15 +14,10 @@ import org.slf4j.LoggerFactory;
 public class RecordCountLogUploadStrategy extends DefaultLogUploadStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(RecordCountLogUploadStrategy.class);
 
+    public RecordCountLogUploadStrategy() {}
 
-    protected long recordsThreshold;
-
-    public RecordCountLogUploadStrategy() {
-        recordsThreshold = DEFAULT_UPLOAD_COUNT_THRESHOLD;
-    }
-
-    public RecordCountLogUploadStrategy(long recordToGoCount){
-        this.recordsThreshold = recordToGoCount;
+    public RecordCountLogUploadStrategy(int countThreshold){
+        this.countThreshold = countThreshold;
     }
 
     @Override
@@ -30,7 +25,7 @@ public class RecordCountLogUploadStrategy extends DefaultLogUploadStrategy {
         LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
 
 
-        if(status.getRecordCount() == recordsThreshold){
+        if(status.getRecordCount() == countThreshold){
             LOG.info("Need to upload logs - current count: {}, threshold: {}", status.getRecordCount(), countThreshold);
             decision = LogUploadStrategyDecision.UPLOAD;
         }
@@ -39,10 +34,10 @@ public class RecordCountLogUploadStrategy extends DefaultLogUploadStrategy {
     }
 
     public long getRecordsThreshold() {
-        return recordsThreshold;
+        return countThreshold;
     }
 
-    public void setRecordsThreshold(long recordsThreshold) {
-        this.recordsThreshold = recordsThreshold;
+    public void setRecordsThreshold(int countThreshold) {
+        this.countThreshold = countThreshold;
     }
 }

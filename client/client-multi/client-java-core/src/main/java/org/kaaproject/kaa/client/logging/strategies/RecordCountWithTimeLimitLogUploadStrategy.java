@@ -16,19 +16,15 @@ import java.util.concurrent.TimeUnit;
 public class RecordCountWithTimeLimitLogUploadStrategy extends DefaultLogUploadStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(RecordCountWithTimeLimitLogUploadStrategy.class);
-    protected long recordsThreshold;
-    protected long timeLimit;
     protected long lastUploadTime;
     protected TimeUnit timeUnit;
 
     public RecordCountWithTimeLimitLogUploadStrategy() {
-        recordsThreshold = DEFAULT_UPLOAD_COUNT_THRESHOLD;
-        timeLimit = DEFAULT_TIME_LIMIT;
-        timeUnit = TimeUnit.MILLISECONDS;
+        timeUnit = TimeUnit.SECONDS;
     }
 
-    public RecordCountWithTimeLimitLogUploadStrategy(long recordsThreshold, long timeLimit, TimeUnit timeUnit) {
-        this.recordsThreshold = recordsThreshold;
+    public RecordCountWithTimeLimitLogUploadStrategy(int countThreshold, long timeLimit, TimeUnit timeUnit) {
+        this.countThreshold = countThreshold;
         this.timeLimit = timeLimit;
         this.timeUnit = timeUnit;
     }
@@ -39,7 +35,7 @@ public class RecordCountWithTimeLimitLogUploadStrategy extends DefaultLogUploadS
 
         long currentTime = System.currentTimeMillis();
 
-        if(status.getRecordCount() == recordsThreshold){
+        if(status.getRecordCount() == countThreshold){
             LOG.info("Need to upload logs - current count: {}, threshold: {}", status.getRecordCount(), countThreshold);
             decision = LogUploadStrategyDecision.UPLOAD;
             lastUploadTime = currentTime;
@@ -52,12 +48,12 @@ public class RecordCountWithTimeLimitLogUploadStrategy extends DefaultLogUploadS
         return decision;
     }
 
-    public long getRecordsThreshold() {
-        return recordsThreshold;
+    public long getCountThreshold() {
+        return countThreshold;
     }
 
-    public void setRecordsThreshold(long recordsThreshold) {
-        this.recordsThreshold = recordsThreshold;
+    public void setCountThreshold(int countThreshold) {
+        this.countThreshold = countThreshold;
     }
 
     public long getTimeLimit() {

@@ -16,20 +16,15 @@ import java.util.concurrent.TimeUnit;
 public class StorageSizeWithTimeLimitLogUploadStrategy extends DefaultLogUploadStrategy{
     private static final Logger LOG = LoggerFactory.getLogger(StorageSizeWithTimeLimitLogUploadStrategy.class);
 
-    protected long minStorageSize;
-    //seconds
-    protected long timeLimit;
     protected long lastUploadTime;
     protected TimeUnit timeUnit;
 
     public StorageSizeWithTimeLimitLogUploadStrategy() {
-        minStorageSize = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
-        timeLimit = DEFAULT_TIME_LIMIT;
-        timeUnit = TimeUnit.MILLISECONDS;
+        timeUnit = TimeUnit.SECONDS;
     }
 
-    public StorageSizeWithTimeLimitLogUploadStrategy(long minStorageSize, long timeLimit, TimeUnit timeUnit) {
-        this.minStorageSize = minStorageSize;
+    public StorageSizeWithTimeLimitLogUploadStrategy(int volumeThreshold, long timeLimit, TimeUnit timeUnit) {
+        this.volumeThreshold = volumeThreshold;
         this.timeLimit = timeLimit;
         this.timeUnit = timeUnit;
     }
@@ -40,7 +35,7 @@ public class StorageSizeWithTimeLimitLogUploadStrategy extends DefaultLogUploadS
 
         long currentTime = System.currentTimeMillis();
 
-        if(status.getConsumedVolume() >= minStorageSize){
+        if(status.getConsumedVolume() >= volumeThreshold){
             LOG.info("Need to upload logs - current size: {}, threshold: {}", status.getConsumedVolume(), volumeThreshold);
             decision = LogUploadStrategyDecision.UPLOAD;
             lastUploadTime = currentTime;
@@ -53,12 +48,12 @@ public class StorageSizeWithTimeLimitLogUploadStrategy extends DefaultLogUploadS
         return decision;
     }
 
-    public long getMinStorageSize() {
-        return minStorageSize;
+    public long getVolumeThreshold() {
+        return volumeThreshold;
     }
 
-    public void setMinStorageSize(long minStorageSize) {
-        this.minStorageSize = minStorageSize;
+    public void setVolumeThreshold(int volumeThreshold) {
+        this.volumeThreshold = volumeThreshold;
     }
 
     public long getTimeLimit() {

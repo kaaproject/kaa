@@ -14,21 +14,17 @@ import org.slf4j.LoggerFactory;
 public class StorageSizeLogUploadStrategy extends DefaultLogUploadStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(StorageSizeLogUploadStrategy.class);
 
-    protected long minStorageSize;
+    public StorageSizeLogUploadStrategy() { }
 
-    public StorageSizeLogUploadStrategy() {
-        minStorageSize = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
-    }
-
-    public StorageSizeLogUploadStrategy(long minStorageSize){
-        this.minStorageSize = minStorageSize;
+    public StorageSizeLogUploadStrategy(int volumeThreshold){
+        this.volumeThreshold = volumeThreshold;
     }
 
     @Override
     protected LogUploadStrategyDecision checkUploadNeeded(LogStorageStatus status) {
         LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
 
-        if(status.getConsumedVolume() >= minStorageSize){
+        if(status.getConsumedVolume() >= volumeThreshold){
             LOG.info("Need to upload logs - current size: {}, threshold: {}", status.getConsumedVolume(), volumeThreshold);
             decision = LogUploadStrategyDecision.UPLOAD;
         }
@@ -36,11 +32,11 @@ public class StorageSizeLogUploadStrategy extends DefaultLogUploadStrategy {
         return decision;
     }
 
-    public long getMinStorageSize() {
-        return minStorageSize;
+    public long getVolumeThreshold() {
+        return volumeThreshold;
     }
 
-    public void setMinStorageSize(long minStorageSize) {
-        this.minStorageSize = minStorageSize;
+    public void setVolumeThreshold(int volumeThreshold) {
+        this.volumeThreshold = volumeThreshold;
     }
 }

@@ -26,15 +26,15 @@ import org.slf4j.LoggerFactory;
 public class DefaultLogUploadStrategy implements LogUploadStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLogUploadStrategy.class);
 
-    protected static final int DEFAULT_UPLOAD_TIMEOUT = 2 * 60;
-    protected static final int DEFAULT_UPLOAD_CHECK_PERIOD = 30;
-    protected static final int DEFAULT_RETRY_PERIOD = 5 * 60;
-    protected static final int DEFAULT_UPLOAD_VOLUME_THRESHOLD = 8 * 1024;
-    protected static final int DEFAULT_UPLOAD_COUNT_THRESHOLD = 64;
-    protected static final int DEFAULT_BATCH_SIZE = 8 * 1024;
-    protected static final int DEFAULT_BATCH_COUNT = 256;
-    protected static final int DEFAULT_TIME_LIMIT = 5 * 60;
-    protected static final boolean DEFAULT_UPLOAD_LOCKED = false;
+    private static final int DEFAULT_UPLOAD_TIMEOUT = 2 * 60;
+    private static final int DEFAULT_UPLOAD_CHECK_PERIOD = 30;
+    private static final int DEFAULT_RETRY_PERIOD = 5 * 60;
+    private static final int DEFAULT_UPLOAD_VOLUME_THRESHOLD = 8 * 1024;
+    private static final int DEFAULT_UPLOAD_COUNT_THRESHOLD = 64;
+    private static final int DEFAULT_BATCH_SIZE = 8 * 1024;
+    private static final int DEFAULT_BATCH_COUNT = 256;
+    private static final int DEFAULT_TIME_LIMIT = 5 * 60;
+    private static final boolean DEFAULT_UPLOAD_LOCKED = false;
 
 
     protected int timeout = DEFAULT_UPLOAD_TIMEOUT;
@@ -44,14 +44,15 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
     protected int countThreshold = DEFAULT_UPLOAD_COUNT_THRESHOLD;
     protected int batchSize = DEFAULT_BATCH_SIZE;
     protected int batchCount = DEFAULT_BATCH_COUNT;
-    protected volatile boolean UPLOAD_LOCKED = DEFAULT_UPLOAD_LOCKED;
+    protected long timeLimit = DEFAULT_TIME_LIMIT;
+    protected volatile boolean isUploadLocked = DEFAULT_UPLOAD_LOCKED;
     
 
     @Override
     public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
         LogUploadStrategyDecision decision;
 
-        if(!UPLOAD_LOCKED) {
+        if(!isUploadLocked) {
             decision = checkUploadNeeded(status);
         }else{
             decision = LogUploadStrategyDecision.NOOP;
@@ -139,14 +140,14 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
     }
 
     public void lockUpload(){
-        UPLOAD_LOCKED = true;
+        isUploadLocked = true;
     }
 
     public void unlockUpload(){
-        UPLOAD_LOCKED = false;
+        isUploadLocked = false;
     }
 
     public boolean isUploadLocked(){
-        return UPLOAD_LOCKED;
+        return isUploadLocked;
     }
 }
