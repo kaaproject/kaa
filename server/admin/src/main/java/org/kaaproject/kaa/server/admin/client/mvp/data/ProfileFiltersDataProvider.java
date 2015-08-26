@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -25,19 +26,19 @@ import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProv
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class ProfileFiltersDataProvider extends AbstractDataProvider<StructureRecordDto<ProfileFilterDto>>{
 
     private String endpointGroupId;
     private boolean includeDeprecated = false;
 
-    public ProfileFiltersDataProvider(MultiSelectionModel<StructureRecordDto<ProfileFilterDto>> selectionModel,
+    public ProfileFiltersDataProvider(AbstractGrid<StructureRecordDto<ProfileFilterDto>,?> dataGrid,
                                       HasErrorMessage hasErrorMessage,
-                                      String endpointGroupId) {
-        super(selectionModel, hasErrorMessage);
+                                      String endpointGroupId, boolean includeDeprecated) {
+        super(dataGrid, hasErrorMessage, false);
         this.endpointGroupId = endpointGroupId;
+        this.includeDeprecated = includeDeprecated;
+        addDataDisplay();
     }
 
     public void setIncludeDeprecated(boolean includeDeprecated) {
@@ -45,7 +46,7 @@ public class ProfileFiltersDataProvider extends AbstractDataProvider<StructureRe
     }
 
     @Override
-    protected void loadData(final LoadCallback callback, final HasData<StructureRecordDto<ProfileFilterDto>> display) {
+    protected void loadData(final LoadCallback callback) {
         KaaAdmin.getDataSource().loadProfileFilterRecords(endpointGroupId, includeDeprecated, new AsyncCallback<List<StructureRecordDto<ProfileFilterDto>>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -54,7 +55,7 @@ public class ProfileFiltersDataProvider extends AbstractDataProvider<StructureRe
             }
             @Override
             public void onSuccess(List<StructureRecordDto<ProfileFilterDto>> result) {
-                callback.onSuccess(result, display);
+                callback.onSuccess(result);
             }
         });
     }

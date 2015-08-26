@@ -16,17 +16,21 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity.grid;
 
+import java.util.Collections;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
+import com.google.gwt.user.cellview.client.ColumnSortList;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.MultiSelectionModel;
 
-public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T>{
+public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T> implements ColumnSortEvent.Handler {
 
     protected List<T> data;
 
@@ -34,12 +38,25 @@ public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T>{
 
     private LoadCallback callback;
 
-    private MultiSelectionModel<T> selectionModel;
-
-    public AbstractDataProvider(MultiSelectionModel<T> selectionModel, HasErrorMessage hasErrorMessage)
+    private AbstractGrid<T,?> dataGrid;
+    
+    public AbstractDataProvider(AbstractGrid<T,?> dataGrid, HasErrorMessage hasErrorMessage)
     {
-        this.selectionModel = selectionModel;
+        this(dataGrid, hasErrorMessage, true);
+    }
+
+    public AbstractDataProvider(AbstractGrid<T,?> dataGrid, HasErrorMessage hasErrorMessage, boolean addDisplay)
+    {
+        this.dataGrid = dataGrid;
         callback = new LoadCallback(hasErrorMessage);
+        dataGrid.getDataGrid().addColumnSortHandler(this);
+        if (addDisplay) {
+            addDataDisplay(dataGrid.getDataGrid());
+        }
+    }
+    
+    protected void addDataDisplay() {
+        addDataDisplay(dataGrid.getDataGrid());
     }
 
     public void addRow(T row) {
@@ -61,30 +78,43 @@ public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T>{
         this.loaded = loaded;
     }
 
-    public void reload(HasData<T> display) {
+    public void reload() {
         this.loaded = false;
-        loadData(callback, display);
+        loadData(callback);
     }
 
     @Override
     protected void onRangeChanged(final HasData<T> display) {
       if (!loaded) {
-          loadData(callback, display);
+          loadData(callback);
       }
       else {
-          updateData(display);
+          updateData();
       }
     }
 
-    protected abstract void loadData(final LoadCallback callback, final HasData<T> display);
+    protected abstract void loadData(final LoadCallback callback);
+    
+    @Override
+    public void onColumnSort(ColumnSortEvent event) {
+        Column<?,?> column = event.getColumn();
+        boolean isSortAscending = event.isSortAscending();
+        if (column != null) {
+            dataGrid.sort(data, column, isSortAscending);
+        }
+        updateRowData(0, data);
+    }
 
-    private void updateData (HasData<T> display) {
-        selectionModel.clear();
-        int start = display.getVisibleRange().getStart();
-        int end = start + display.getVisibleRange().getLength();
-        end = end >= data.size() ? data.size() : end;
-        List<T> sub = data.subList(start, end);
-        updateRowData(start, sub);
+    private void updateData () {
+        ColumnSortList sortList = dataGrid.getDataGrid().getColumnSortList();
+        Column<?,?> column = (sortList == null || sortList.size() == 0) ? null
+                : sortList.get(0).getColumn();
+        boolean isSortAscending = (sortList == null || sortList.size() == 0) ? false
+                : sortList.get(0).isAscending();
+        if (column != null) {
+            dataGrid.sort(data, column, isSortAscending);
+        }        
+        updateRowData(0, data);
     }
 
     public class LoadCallback {
@@ -100,10 +130,14 @@ public abstract class AbstractDataProvider<T> extends AsyncDataProvider<T>{
             Utils.handleException(caught, hasErrorMessage);
         }
 
-        public void onSuccess(List<T> result, final HasData<T> display) {
+        public void onSuccess(List<T> result) {
+            dataGrid.getSelectionModel().clear();
             data = result;
+            if (data == null) {
+                data = Collections.<T>emptyList();
+            }
             updateRowCount(data.size(), true);
-            updateData(display);
+            updateData();
             loaded = true;
             hasErrorMessage.clearError();
         }
