@@ -119,7 +119,7 @@ public class ApplicationsPlace extends TreePlace {
             Collections.sort(result, new Comparator<TreePlace>() {
                 @Override
                 public int compare(TreePlace o1, TreePlace o2) {
-                    return o1.getName().compareTo(o2.getName());
+                    return o1.getName().compareToIgnoreCase(o2.getName());
                 }
             });
             return result;

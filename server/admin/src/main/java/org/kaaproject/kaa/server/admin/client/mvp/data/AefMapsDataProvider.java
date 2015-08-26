@@ -18,28 +18,28 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class AefMapsDataProvider extends AbstractDataProvider<ApplicationEventFamilyMapDto>{
 
     private String applicationId;
 
-    public AefMapsDataProvider(MultiSelectionModel<ApplicationEventFamilyMapDto> selectionModel,
+    public AefMapsDataProvider(AbstractGrid<ApplicationEventFamilyMapDto,?> dataGrid,
                                HasErrorMessage hasErrorMessage,
                                String applicationId) {
-        super(selectionModel, hasErrorMessage);
+        super(dataGrid, hasErrorMessage, false);
         this.applicationId = applicationId;
+        addDataDisplay();
     }
 
     @Override
-    protected void loadData(final LoadCallback callback, final HasData<ApplicationEventFamilyMapDto> display) {
+    protected void loadData(final LoadCallback callback) {
         KaaAdmin.getDataSource().loadApplicationEventFamilyMaps(applicationId, new AsyncCallback<List<ApplicationEventFamilyMapDto>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -48,7 +48,7 @@ public class AefMapsDataProvider extends AbstractDataProvider<ApplicationEventFa
             }
             @Override
             public void onSuccess(List<ApplicationEventFamilyMapDto> result) {
-                callback.onSuccess(result, display);
+                callback.onSuccess(result);
             }
         });
     }

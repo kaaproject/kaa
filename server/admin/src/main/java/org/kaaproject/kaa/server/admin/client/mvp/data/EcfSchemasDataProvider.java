@@ -21,20 +21,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
-
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class EcfSchemasDataProvider extends AbstractDataProvider<EventSchemaVersionDto>{
 
     private List<EventSchemaVersionDto> schemas = new ArrayList<>();
 
-    public EcfSchemasDataProvider(MultiSelectionModel<EventSchemaVersionDto> selectionModel,
+    public EcfSchemasDataProvider(AbstractGrid<EventSchemaVersionDto,?> dataGrid,
                                   HasErrorMessage hasErrorMessage) {
-        super(selectionModel, hasErrorMessage);
+        super(dataGrid, hasErrorMessage);
     }
 
     public void setSchemas(List<EventSchemaVersionDto> schemas) {
@@ -52,8 +50,8 @@ public class EcfSchemasDataProvider extends AbstractDataProvider<EventSchemaVers
     }
 
     @Override
-    protected void loadData(final LoadCallback callback, final HasData<EventSchemaVersionDto> display) {
-        callback.onSuccess(schemas, display);
+    protected void loadData(final LoadCallback callback) {
+        callback.onSuccess(schemas);
     }
 
 }

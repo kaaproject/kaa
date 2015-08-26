@@ -16,8 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.data.ApplicationsDataProvider;
@@ -27,7 +27,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class ApplicationsActivity extends AbstractListActivity<ApplicationDto, ApplicationsPlace> {
 
@@ -42,8 +41,8 @@ public class ApplicationsActivity extends AbstractListActivity<ApplicationDto, A
 
     @Override
     protected AbstractDataProvider<ApplicationDto> getDataProvider(
-            MultiSelectionModel<ApplicationDto> selectionModel) {
-        return new ApplicationsDataProvider(selectionModel, listView);
+            AbstractGrid<ApplicationDto,?> dataGrid) {
+        return new ApplicationsDataProvider(dataGrid, listView);
     }
 
     @Override

@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
@@ -32,7 +33,6 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class ConfigurationSchemasActivity extends AbstractListActivity<ConfigurationSchemaDto, ConfigurationSchemasPlace> {
 
@@ -50,8 +50,8 @@ public class ConfigurationSchemasActivity extends AbstractListActivity<Configura
 
     @Override
     protected AbstractDataProvider<ConfigurationSchemaDto> getDataProvider(
-            MultiSelectionModel<ConfigurationSchemaDto> selectionModel) {
-        return new ConfigurationSchemasDataProvider(selectionModel, listView, applicationId);
+            AbstractGrid<ConfigurationSchemaDto,?> dataGrid) {
+        return new ConfigurationSchemasDataProvider(dataGrid, listView, applicationId);
     }
 
     @Override

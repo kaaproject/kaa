@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
@@ -31,7 +32,6 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class NotificationSchemasActivity extends AbstractListActivity<NotificationSchemaDto, NotificationSchemasPlace> {
 
@@ -49,8 +49,8 @@ public class NotificationSchemasActivity extends AbstractListActivity<Notificati
 
     @Override
     protected AbstractDataProvider<NotificationSchemaDto> getDataProvider(
-            MultiSelectionModel<NotificationSchemaDto> selectionModel) {
-        return new NotificationSchemasDataProvider(selectionModel, listView, applicationId);
+            AbstractGrid<NotificationSchemaDto, ?> dataGrid) {
+        return new NotificationSchemasDataProvider(dataGrid, listView, applicationId);
     }
 
     @Override

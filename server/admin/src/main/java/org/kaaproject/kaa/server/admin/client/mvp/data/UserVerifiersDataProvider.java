@@ -19,27 +19,27 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class UserVerifiersDataProvider  extends AbstractDataProvider<UserVerifierDto>{
     private String applicationId;
 
-    public UserVerifiersDataProvider(MultiSelectionModel<UserVerifierDto> selectionModel,
+    public UserVerifiersDataProvider(AbstractGrid<UserVerifierDto,?> dataGrid,
                                  HasErrorMessage hasErrorMessage,
                                  String applicationId) {
-        super(selectionModel, hasErrorMessage);
+        super(dataGrid, hasErrorMessage, false);
         this.applicationId = applicationId;
+        addDataDisplay();
     }
 
     @Override
-    protected void loadData(final LoadCallback callback, final HasData<UserVerifierDto> display) {
+    protected void loadData(final LoadCallback callback) {
         if (!isEmpty(applicationId)) {
             KaaAdmin.getDataSource().loadUserVerifiers(applicationId, new AsyncCallback<List<UserVerifierDto>>() {
                 @Override
@@ -48,7 +48,7 @@ public class UserVerifiersDataProvider  extends AbstractDataProvider<UserVerifie
                 }
                 @Override
                 public void onSuccess(List<UserVerifierDto> result) {
-                    callback.onSuccess(result, display);
+                    callback.onSuccess(result);
                 }
             });
         }
