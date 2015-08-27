@@ -170,6 +170,7 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
     }
     
     private void loadRecordFromFile() {
+        hasErrorMessage.clearError();
         formDataLoader.loadFormData(recordFileItemName, new BusyAsyncCallback<RecordField>() {
                     @Override
                     public void onSuccessImpl(RecordField result) {
