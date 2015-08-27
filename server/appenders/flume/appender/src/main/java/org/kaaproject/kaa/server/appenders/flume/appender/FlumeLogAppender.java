@@ -81,8 +81,11 @@ public class FlumeLogAppender extends AbstractLogAppender<FlumeConfig> {
             if (executor == null || callbackExecutor == null || flumeClientManager == null) {
                 reinit();
             }
-            if (executor == null)
+            if (executor == null || callbackExecutor == null || flumeClientManager == null){
+                LOG.warn("Some of components haven't been initialized. Skipping append method");
+                listener.onInternalError();
                 return;
+            }                
             executor.submit(new Runnable() {
                 @Override
                 public void run() {
