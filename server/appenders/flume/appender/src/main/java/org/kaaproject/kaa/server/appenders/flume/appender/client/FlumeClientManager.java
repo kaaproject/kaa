@@ -45,16 +45,18 @@ public abstract class FlumeClientManager<T> {
     protected AsyncRpcClient currentClient = null;
 
     protected abstract AsyncRpcClient initManager(T parameters);
-    
+
     protected abstract AsyncRpcClient initManager(T parameters, int maxClientThreads);
 
     public abstract void sendEventToFlume(Event event) throws EventDeliveryException;
 
     public abstract void sendEventsToFlume(List<Event> events) throws EventDeliveryException;
-    
-    public abstract ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event) throws EventDeliveryException;
 
-    public abstract ListenableFuture<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(List<Event> events) throws EventDeliveryException;
+    public abstract ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event)
+            throws EventDeliveryException;
+
+    public abstract ListenableFuture<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(List<Event> events)
+            throws EventDeliveryException;
 
     public void init(T parameters) {
         if (parameters != null) {
@@ -67,7 +69,7 @@ public abstract class FlumeClientManager<T> {
             throw new RuntimeException("Can't initialize flume Rpc client.");
         }
     }
-    
+
     public void init(T parameters, int clientThreadPoolSize) {
         if (parameters != null) {
             currentClient = initManager(parameters, clientThreadPoolSize);
@@ -98,15 +100,13 @@ public abstract class FlumeClientManager<T> {
             PriorityFlumeClientManager priorityClientManager = new PriorityFlumeClientManager();
             priorityClientManager.init(flumeNodesConfig, configuration.getClientsThreadPoolSize());
             clientManager = priorityClientManager;
-        }
-        else if (hostsBalancing instanceof FlumeNodes) {
+        } else if (hostsBalancing instanceof FlumeNodes) {
             LOG.debug("Init round robin client manager");
             FlumeNodes flumeNodesConfig = (FlumeNodes) hostsBalancing;
             BalancingFlumeClientManager balancingClientManager = new BalancingFlumeClientManager();
             balancingClientManager.init(flumeNodesConfig, configuration.getClientsThreadPoolSize());
             clientManager = balancingClientManager;
-        }
-        else {
+        } else {
             LOG.error("Balancing type: {} does not supported.", hostsBalancing.getClass());
         }
         return (FlumeClientManager<T>) clientManager;

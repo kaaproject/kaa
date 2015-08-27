@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,148 +43,176 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 public class FlumeLogAppender extends AbstractLogAppender<FlumeConfig> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(FlumeLogAppender.class);
-	private static final int MAX_CALLBACK_THREAD_POOL_SIZE = 10;
+    private static final Logger LOG = LoggerFactory.getLogger(FlumeLogAppender.class);
+    private static final int MAX_CALLBACK_THREAD_POOL_SIZE = 10;
 
-	private ExecutorService executor;
-	private ExecutorService callbackExecutor;
+    private ExecutorService executor;
+    private ExecutorService callbackExecutor;
 
-	private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-	private AtomicInteger flumeSuccessLogCount = new AtomicInteger();
-	private AtomicInteger flumeFailureLogCount = new AtomicInteger();
-	private AtomicInteger inputLogCount = new AtomicInteger();
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private AtomicInteger flumeSuccessLogCount = new AtomicInteger();
+    private AtomicInteger flumeFailureLogCount = new AtomicInteger();
+    private AtomicInteger inputLogCount = new AtomicInteger();
 
-	private boolean closed = false;
+    private FlumeConfig configuration;
 
-	private FlumeEventBuilder flumeEventBuilder;
-	private FlumeClientManager<?> flumeClientManger;
+    private boolean closed = false;
 
-	public FlumeLogAppender() {
-		super(FlumeConfig.class);
-		scheduler.scheduleWithFixedDelay(new Runnable() {
-			@Override
-			public void run() {
-				long second = System.currentTimeMillis() / 1000;
-				LOG.info(
-						"[{}] Received {} log record count, {} success flume callbacks, {}  failure flume callbacks / second.",
-						second, inputLogCount.getAndSet(0), flumeSuccessLogCount.getAndSet(0),
-						flumeFailureLogCount.getAndSet(0));
-			}
-		}, 0L, 1L, TimeUnit.SECONDS);
-	}
+    private FlumeEventBuilder flumeEventBuilder;
+    private FlumeClientManager<?> flumeClientManager;
 
-	@Override
-	public void doAppend(final LogEventPack logEventPack, final RecordHeader header, final LogDeliveryCallback listener) {
-		if (!closed) {
-			executor.submit(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						List<Event> events = flumeEventBuilder.generateEvents(logEventPack, header,
-								getApplicationToken());
-						try {
-							if (events != null && !events.isEmpty()) {
-								if (flumeClientManger != null) {
-									int logCount = events.size();
-									inputLogCount.getAndAdd(logCount);
-									ListenableFuture<AppendBatchAsyncResultPojo> result = flumeClientManger
-											.sendEventsToFlumeAsync(events);
-									Futures.addCallback(result, new Callback(listener, flumeSuccessLogCount,
-											flumeFailureLogCount, logCount), callbackExecutor);
-									LOG.debug("Appended {} logs to flume", logEventPack.getEvents().size());
-								} else {
-									LOG.warn("Flume client wasn't initialized. Invoke method init before.");
-									listener.onInternalError();
-								}
-							} else {
-								LOG.warn("Unable to generate Flume events from log event pack!");
-								listener.onInternalError();
-							}
-						} catch (EventDeliveryException e) {
-							LOG.warn("Can't send flume event.");
-							listener.onConnectionError();
-						}
-					} catch (Exception e) {
-						LOG.warn("Got exception. Can't process log events", e);
-						listener.onInternalError();
-					}
-				}
-			});
-		} else {
-			LOG.info("Attempted to append to closed appender named [{}].", getName());
-			listener.onInternalError();
-		}
+    public FlumeLogAppender() {
+        super(FlumeConfig.class);
+        scheduler.scheduleWithFixedDelay(new Runnable() {
+            @Override
+            public void run() {
+                long second = System.currentTimeMillis() / 1000;
+                LOG.info(
+                        "[{}] Received {} log record count, {} success flume callbacks, {}  failure flume callbacks / second.",
+                        second, inputLogCount.getAndSet(0), flumeSuccessLogCount.getAndSet(0),
+                        flumeFailureLogCount.getAndSet(0));
+            }
+        }, 0L, 1L, TimeUnit.SECONDS);
+    }
 
-	}
+    @Override
+    public void doAppend(final LogEventPack logEventPack, final RecordHeader header, final LogDeliveryCallback listener) {
+        if (!closed) {
+            if (executor == null || callbackExecutor == null || flumeClientManager == null) {
+                try {
+                    reinit();
+                } catch (NullPointerException e) {
+                    LOG.warn("Flume configuration wasn't initialized. Invoke method init with configuration before.");
+                    listener.onInternalError();
+                    return;
+                }
+            }
+            executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        List<Event> events = flumeEventBuilder.generateEvents(logEventPack, header,
+                                getApplicationToken());
+                        try {
+                            if (events != null && !events.isEmpty()) {
+                                if (flumeClientManager != null) {
+                                    int logCount = events.size();
+                                    inputLogCount.getAndAdd(logCount);
+                                    ListenableFuture<AppendBatchAsyncResultPojo> result = flumeClientManager
+                                            .sendEventsToFlumeAsync(events);
+                                    Futures.addCallback(result, new Callback(listener, flumeSuccessLogCount,
+                                            flumeFailureLogCount, logCount), callbackExecutor);
+                                    LOG.debug("Appended {} logs to flume", logEventPack.getEvents().size());
+                                } else {
+                                    LOG.warn("Flume client wasn't initialized. Invoke method init before.");
+                                    listener.onInternalError();
+                                }
+                            } else {
+                                LOG.warn("Unable to generate Flume events from log event pack!");
+                                listener.onInternalError();
+                            }
+                        } catch (EventDeliveryException e) {
+                            LOG.warn("Can't send flume event.");
+                            listener.onConnectionError();
+                        }
+                    } catch (Exception e) {
+                        LOG.warn("Got exception. Can't process log events", e);
+                        listener.onInternalError();
+                    }
+                }
+            });
+        } else {
+            LOG.info("Attempted to append to closed appender named [{}].", getName());
+            listener.onInternalError();
+        }
+    }
 
-	@Override
-	protected void initFromConfiguration(LogAppenderDto appender, FlumeConfig configuration) {
-		LOG.debug("Initializing new instance of Flume log appender");
-		try {
-			flumeEventBuilder = new FlumeAvroEventBuilder();
-			flumeEventBuilder.init(configuration);
-			int executorPoolSize = Math.min(configuration.getExecutorThreadPoolSize(), MAX_CALLBACK_THREAD_POOL_SIZE);
-			int callbackPoolSize = Math.min(configuration.getCallbackThreadPoolSize(), MAX_CALLBACK_THREAD_POOL_SIZE);
-			executor = Executors.newFixedThreadPool(executorPoolSize);
-			callbackExecutor = Executors.newFixedThreadPool(callbackPoolSize);
-			flumeClientManger = FlumeClientManager.getInstance(configuration);
-		} catch (Exception e) {
-			LOG.error("Failed to init Flume log appender: ", e);
-		}
-	}
+    @Override
+    protected void initFromConfiguration(LogAppenderDto appender, FlumeConfig configuration) {
+        LOG.debug("Initializing new instance of Flume log appender");
+        try {
+            this.configuration = configuration;
+            flumeEventBuilder = new FlumeAvroEventBuilder();
+            flumeEventBuilder.init(configuration);
+            int executorPoolSize = Math.min(configuration.getExecutorThreadPoolSize(), MAX_CALLBACK_THREAD_POOL_SIZE);
+            int callbackPoolSize = Math.min(configuration.getCallbackThreadPoolSize(), MAX_CALLBACK_THREAD_POOL_SIZE);
+            executor = Executors.newFixedThreadPool(executorPoolSize);
+            callbackExecutor = Executors.newFixedThreadPool(callbackPoolSize);
+            flumeClientManager = FlumeClientManager.getInstance(configuration);
+        } catch (Exception e) {
+            LOG.error("Failed to init Flume log appender: ", e);
+        }
+    }
 
-	@Override
-	public void close() {
-		if (!closed) {
-			closed = true;
-			if (flumeClientManger != null) {
-				flumeClientManger.cleanUp();
-			}
-			if (executor != null) {
-				executor.shutdownNow();
-			}
-			if (callbackExecutor != null) {
-				callbackExecutor.shutdownNow();
-			}
-			if (scheduler != null) {
-				scheduler.shutdownNow();
-			}
-			flumeClientManger = null;
-		}
-		LOG.debug("Stoped Flume log appender.");
-	}
+    public void reinit() {
+        if (flumeEventBuilder == null) {
+            flumeEventBuilder = new FlumeAvroEventBuilder();
+            flumeEventBuilder.init(configuration);
+        }
+        if (executor == null) {
+            int executorPoolSize = Math.min(configuration.getExecutorThreadPoolSize(), MAX_CALLBACK_THREAD_POOL_SIZE);
+            executor = Executors.newFixedThreadPool(executorPoolSize);
+        }
+        if (callbackExecutor == null) {
+            int callbackPoolSize = Math.min(configuration.getCallbackThreadPoolSize(), MAX_CALLBACK_THREAD_POOL_SIZE);
+            callbackExecutor = Executors.newFixedThreadPool(callbackPoolSize);
+        }
+        if (flumeClientManager == null) {
+            flumeClientManager = FlumeClientManager.getInstance(configuration);
+        }
+    }
 
-	private static final class Callback implements FutureCallback<AppendBatchAsyncResultPojo> {
+    @Override
+    public void close() {
+        if (!closed) {
+            closed = true;
+            if (flumeClientManager != null) {
+                flumeClientManager.cleanUp();
+            }
+            if (executor != null) {
+                executor.shutdownNow();
+            }
+            if (callbackExecutor != null) {
+                callbackExecutor.shutdownNow();
+            }
+            if (scheduler != null) {
+                scheduler.shutdownNow();
+            }
+            flumeClientManager = null;
+        }
+        LOG.debug("Stoped Flume log appender.");
+    }
 
-		private final LogDeliveryCallback callback;
-		private final AtomicInteger flumeSuccessLogCount;
-		private final AtomicInteger flumeFailureLogCount;
-		private final int size;
+    private static final class Callback implements FutureCallback<AppendBatchAsyncResultPojo> {
 
-		private Callback(LogDeliveryCallback callback, AtomicInteger flumeSuccessLogCount,
-				AtomicInteger flumeFailureLogCount, int size) {
-			this.callback = callback;
-			this.flumeSuccessLogCount = flumeSuccessLogCount;
-			this.flumeFailureLogCount = flumeFailureLogCount;
-			this.size = size;
-		}
+        private final LogDeliveryCallback callback;
+        private final AtomicInteger flumeSuccessLogCount;
+        private final AtomicInteger flumeFailureLogCount;
+        private final int size;
 
-		@Override
-		public void onSuccess(AppendBatchAsyncResultPojo result) {
-			flumeSuccessLogCount.getAndAdd(size);
-			callback.onSuccess();
-		}
+        private Callback(LogDeliveryCallback callback, AtomicInteger flumeSuccessLogCount,
+                AtomicInteger flumeFailureLogCount, int size) {
+            this.callback = callback;
+            this.flumeSuccessLogCount = flumeSuccessLogCount;
+            this.flumeFailureLogCount = flumeFailureLogCount;
+            this.size = size;
+        }
 
-		@Override
-		public void onFailure(Throwable t) {
-			flumeFailureLogCount.getAndAdd(size);
-			LOG.warn("Failed to store record", t);
-			if (t instanceof IOException) {
-				callback.onConnectionError();
-			} else {
-				callback.onInternalError();
-			}
-		}
-	}
+        @Override
+        public void onSuccess(AppendBatchAsyncResultPojo result) {
+            flumeSuccessLogCount.getAndAdd(size);
+            callback.onSuccess();
+        }
 
+        @Override
+        public void onFailure(Throwable t) {
+            flumeFailureLogCount.getAndAdd(size);
+            LOG.warn("Failed to store record", t);
+            if (t instanceof IOException) {
+                callback.onConnectionError();
+            } else {
+                callback.onInternalError();
+            }
+        }
+    }
 }

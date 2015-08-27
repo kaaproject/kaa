@@ -36,104 +36,96 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 public class AvroAsyncRpcClient implements AsyncRpcClient {
 
-	ArrayBlockingQueue<RpcClient> clientQueue;
-	private static final Logger LOG = LoggerFactory.getLogger(AvroAsyncRpcClient.class);
-	public static final String ASYNC_MAX_THREADS = "async-mx-threads";
+    ArrayBlockingQueue<RpcClient> clientQueue;
+    private static final Logger LOG = LoggerFactory.getLogger(AvroAsyncRpcClient.class);
+    public static final String ASYNC_MAX_THREADS = "async-mx-threads";
 
-	ListeningExecutorService executorService;
+    ListeningExecutorService executorService;
 
-	public AvroAsyncRpcClient(Properties starterProp, int numberOfClientThreads) {
+    public AvroAsyncRpcClient(Properties starterProp, int numberOfClientThreads) {
+        clientQueue = new ArrayBlockingQueue<RpcClient>(numberOfClientThreads);
 
-		//int numberOfClientThreads = Integer.parseInt(starterProp.getProperty(ASYNC_MAX_THREADS));
+        for (int i = 0; i < numberOfClientThreads; i++) {
+            RpcClient client = RpcClientFactory.getInstance(starterProp);
+            clientQueue.add(client);
+        }
 
-		clientQueue = new ArrayBlockingQueue<RpcClient>(numberOfClientThreads);
+        LOG.info("Number of Threads:" + numberOfClientThreads);
+        executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(numberOfClientThreads));
+    }
 
-		for (int i = 0; i < numberOfClientThreads; i++) {
-			RpcClient client = RpcClientFactory.getInstance(starterProp);
-			clientQueue.add(client);
-		}
+    public AvroAsyncRpcClient(String hostname, Integer port, int numberOfThreads) {
+        int numberOfClientThreads = numberOfThreads;
 
-		LOG.info("Number of Threads:" + numberOfClientThreads);
-		executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(numberOfClientThreads));
-	}
+        clientQueue = new ArrayBlockingQueue<RpcClient>(numberOfClientThreads);
 
-	public AvroAsyncRpcClient(String hostname, Integer port, int numberOfThreads) {
+        for (int i = 0; i < numberOfClientThreads; i++) {
+            RpcClient client = RpcClientFactory.getDefaultInstance(hostname, port);
+            clientQueue.add(client);
+        }
 
-		int numberOfClientThreads = numberOfThreads;
+        LOG.info("Number of Threads:" + numberOfClientThreads);
+        executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(numberOfClientThreads));
+    }
 
-		clientQueue = new ArrayBlockingQueue<RpcClient>(numberOfClientThreads);
+    public ListenableFuture<AppendAsyncResultPojo> appendAsync(final Event event) throws EventDeliveryException {
+        ListenableFuture<AppendAsyncResultPojo> future = executorService.submit(new Callable<AppendAsyncResultPojo>() {
+            public AppendAsyncResultPojo call() throws Exception {
+                RpcClient client = clientQueue.poll();
+                client.append(event);
+                clientQueue.add(client);
+                return new AppendAsyncResultPojo(true, event);
+            }
+        });
+        return future;
+    }
 
-		for (int i = 0; i < numberOfClientThreads; i++) {
-			RpcClient client = RpcClientFactory.getDefaultInstance(hostname, port);
-			clientQueue.add(client);
-		}
+    public ListenableFuture<AppendBatchAsyncResultPojo> appendBatchAsync(final List<Event> events)
+            throws EventDeliveryException {
+        ListenableFuture<AppendBatchAsyncResultPojo> future = executorService
+                .submit(new Callable<AppendBatchAsyncResultPojo>() {
+                    public AppendBatchAsyncResultPojo call() throws Exception {
+                        RpcClient client = clientQueue.poll();
+                        client.appendBatch(events);
+                        clientQueue.add(client);
+                        return new AppendBatchAsyncResultPojo(true, events);
+                    }
+                });
 
-		LOG.info("Number of Threads:" + numberOfClientThreads);
-		executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(numberOfClientThreads));
-	}
+        return future;
+    }
 
-	public ListenableFuture<AppendAsyncResultPojo> appendAsync(final Event event) throws EventDeliveryException {
+    @Override
+    public int getBatchSize() {
+        return 0;
+    }
 
-		ListenableFuture<AppendAsyncResultPojo> future = executorService.submit(new Callable<AppendAsyncResultPojo>() {
-			public AppendAsyncResultPojo call() throws Exception {
-				RpcClient client = clientQueue.poll();
-				client.append(event);
-				clientQueue.add(client);
-				return new AppendAsyncResultPojo(true, event);
-			}
-		});
-		return future;
-	}
+    @Override
+    public void append(Event event) throws EventDeliveryException {
+        try {
+            this.appendAsync(event).get();
+        } catch (Exception e) {
+            throw new EventDeliveryException(e);
+        }
+    }
 
-	public ListenableFuture<AppendBatchAsyncResultPojo> appendBatchAsync(final List<Event> events)
-			throws EventDeliveryException {
-		ListenableFuture<AppendBatchAsyncResultPojo> future = executorService
-				.submit(new Callable<AppendBatchAsyncResultPojo>() {
-					public AppendBatchAsyncResultPojo call() throws Exception {
-						RpcClient client = clientQueue.poll();
-						client.appendBatch(events);
-						clientQueue.add(client);
-						return new AppendBatchAsyncResultPojo(true, events);
-					}
-				});
+    @Override
+    public void appendBatch(List<Event> events) throws EventDeliveryException {
+        try {
+            this.appendBatchAsync(events).get();
+        } catch (Exception e) {
+            throw new EventDeliveryException(e);
+        }
+    }
 
-		return future;
+    @Override
+    public boolean isActive() {
+        // TODO Auto-generated method stub
+        return true;
+    }
 
-	}
+    @Override
+    public void close() throws FlumeException {
 
-	@Override
-	public int getBatchSize() {
-
-		return 0;
-	}
-
-	@Override
-	public void append(Event event) throws EventDeliveryException {
-		try {
-			this.appendAsync(event).get();
-		} catch (Exception e) {
-			throw new EventDeliveryException(e);
-		}
-	}
-
-	@Override
-	public void appendBatch(List<Event> events) throws EventDeliveryException {
-		try {
-			this.appendBatchAsync(events).get();
-		} catch (Exception e) {
-			throw new EventDeliveryException(e);
-		}
-	}
-
-	@Override
-	public boolean isActive() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	@Override
-	public void close() throws FlumeException {
-
-	}
-
+    }
 }

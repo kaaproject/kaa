@@ -37,23 +37,21 @@ public class BalancingFlumeClientManager extends FlumeClientManager<FlumeNodes> 
     private static final Logger LOG = LoggerFactory.getLogger(BalancingFlumeClientManager.class);
     private static final String ROUND_ROBIN = "round_robin";
     private static final String H = "h";
-    
+
     private int maxClientThreads = 1;
 
     @Override
     public AsyncRpcClient initManager(FlumeNodes parameters) {
         LOG.debug("Init manager...");
         Properties properties = generateProperties(parameters);
-        //properties.put(AvroAsyncRpcClient.ASYNC_MAX_THREADS, maxClientThreads);
         return new AvroAsyncRpcClient(properties, maxClientThreads);
     }
-    
+
     @Override
     public AsyncRpcClient initManager(FlumeNodes parameters, int maxClientThreads) {
         LOG.debug("Init manager...");
         this.maxClientThreads = maxClientThreads;
         Properties properties = generateProperties(parameters);
-        //properties.put(AvroAsyncRpcClient.ASYNC_MAX_THREADS, maxClientThreads);
         return new AvroAsyncRpcClient(properties, maxClientThreads);
     }
 
@@ -61,6 +59,7 @@ public class BalancingFlumeClientManager extends FlumeClientManager<FlumeNodes> 
     public void sendEventToFlume(Event event) throws EventDeliveryException {
         currentClient.append(event);
     }
+
     @Override
     public void sendEventsToFlume(List<Event> events) throws EventDeliveryException {
         currentClient.appendBatch(events);
@@ -88,14 +87,14 @@ public class BalancingFlumeClientManager extends FlumeClientManager<FlumeNodes> 
         return props;
     }
 
-	@Override
-	public ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event) throws EventDeliveryException {
-		return currentClient.appendAsync(event);
-	}
+    @Override
+    public ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event) throws EventDeliveryException {
+        return currentClient.appendAsync(event);
+    }
 
-	@Override
-	public ListenableFuture<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(List<Event> events) throws EventDeliveryException {
-		return currentClient.appendBatchAsync(events);
-	}
-
+    @Override
+    public ListenableFuture<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(List<Event> events)
+            throws EventDeliveryException {
+        return currentClient.appendBatchAsync(events);
+    }
 }
