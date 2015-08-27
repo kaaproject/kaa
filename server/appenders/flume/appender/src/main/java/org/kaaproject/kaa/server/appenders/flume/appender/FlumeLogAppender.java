@@ -79,14 +79,10 @@ public class FlumeLogAppender extends AbstractLogAppender<FlumeConfig> {
     public void doAppend(final LogEventPack logEventPack, final RecordHeader header, final LogDeliveryCallback listener) {
         if (!closed) {
             if (executor == null || callbackExecutor == null || flumeClientManager == null) {
-                try {
-                    reinit();
-                } catch (NullPointerException e) {
-                    LOG.warn("Flume configuration wasn't initialized. Invoke method init with configuration before.");
-                    listener.onInternalError();
-                    return;
-                }
+                reinit();
             }
+            if (executor == null)
+                return;
             executor.submit(new Runnable() {
                 @Override
                 public void run() {
@@ -145,6 +141,10 @@ public class FlumeLogAppender extends AbstractLogAppender<FlumeConfig> {
     }
 
     public void reinit() {
+        if (configuration == null) {
+            LOG.warn("Flume configuration wasn't initialized. Invoke method init with configuration before.");
+            return;
+        }
         if (flumeEventBuilder == null) {
             flumeEventBuilder = new FlumeAvroEventBuilder();
             flumeEventBuilder.init(configuration);
@@ -210,6 +210,8 @@ public class FlumeLogAppender extends AbstractLogAppender<FlumeConfig> {
             LOG.warn("Failed to store record", t);
             if (t instanceof IOException) {
                 callback.onConnectionError();
+            } else if (t instanceof EventDeliveryException) {
+                callback.onRemoteError();
             } else {
                 callback.onInternalError();
             }
