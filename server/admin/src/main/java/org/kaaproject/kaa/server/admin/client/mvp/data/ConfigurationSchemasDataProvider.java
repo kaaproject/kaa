@@ -18,28 +18,28 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class ConfigurationSchemasDataProvider extends AbstractDataProvider<ConfigurationSchemaDto>{
 
     private String applicationId;
 
-    public ConfigurationSchemasDataProvider(MultiSelectionModel<ConfigurationSchemaDto> selectionModel,
+    public ConfigurationSchemasDataProvider(AbstractGrid<ConfigurationSchemaDto,?> dataGrid,
                                            HasErrorMessage hasErrorMessage,
                                            String applicationId) {
-        super(selectionModel, hasErrorMessage);
+        super(dataGrid, hasErrorMessage, false);
         this.applicationId = applicationId;
+        addDataDisplay();
     }
 
     @Override
-    protected void loadData(final LoadCallback callback, final HasData<ConfigurationSchemaDto> display) {
+    protected void loadData(final LoadCallback callback) {
         KaaAdmin.getDataSource().loadConfigurationSchemas(applicationId, new AsyncCallback<List<ConfigurationSchemaDto>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -48,7 +48,7 @@ public class ConfigurationSchemasDataProvider extends AbstractDataProvider<Confi
             }
             @Override
             public void onSuccess(List<ConfigurationSchemaDto> result) {
-                callback.onSuccess(result, display);
+                callback.onSuccess(result);
             }
         });
     }

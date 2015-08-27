@@ -37,7 +37,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.MultiSelectionModel;
 
 public abstract class BaseListViewImpl<T extends HasId> extends ResizeComposite implements BaseListView<T> {
@@ -100,8 +99,8 @@ public abstract class BaseListViewImpl<T extends HasId> extends ResizeComposite 
     }
 
     @Override
-    public HasData<T> getDisplay() {
-        return grid.getDisplay();
+    public AbstractGrid<T,?> getListWidget() {
+        return grid;
     }
 
     @Override

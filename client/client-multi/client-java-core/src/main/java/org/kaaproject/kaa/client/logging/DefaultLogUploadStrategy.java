@@ -33,23 +33,40 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
     private static final int DEFAULT_UPLOAD_COUNT_THRESHOLD = 64;
     private static final int DEFAULT_BATCH_SIZE = 8 * 1024;
     private static final int DEFAULT_BATCH_COUNT = 256;
+    private static final int DEFAULT_TIME_LIMIT = 5 * 60;
+    private static final boolean DEFAULT_UPLOAD_LOCKED = false;
 
-    private int timeout = DEFAULT_UPLOAD_TIMEOUT;
-    private int uploadCheckPeriod = DEFAULT_UPLOAD_CHECK_PERIOD;
-    private int retryPeriod = DEFAULT_RETRY_PERIOD;
-    private int volumeThreshold = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
-    private int countThreshold = DEFAULT_UPLOAD_COUNT_THRESHOLD;
-    private int batchSize = DEFAULT_BATCH_SIZE;
-    private int batchCount = DEFAULT_BATCH_COUNT;
+
+    protected int timeout = DEFAULT_UPLOAD_TIMEOUT;
+    protected int uploadCheckPeriod = DEFAULT_UPLOAD_CHECK_PERIOD;
+    protected int retryPeriod = DEFAULT_RETRY_PERIOD;
+    protected int volumeThreshold = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
+    protected int countThreshold = DEFAULT_UPLOAD_COUNT_THRESHOLD;
+    protected int batchSize = DEFAULT_BATCH_SIZE;
+    protected int batchCount = DEFAULT_BATCH_COUNT;
+    protected long timeLimit = DEFAULT_TIME_LIMIT;
+    protected volatile boolean isUploadLocked = DEFAULT_UPLOAD_LOCKED;
     
 
     @Override
     public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
+        LogUploadStrategyDecision decision;
+
+        if(!isUploadLocked) {
+            decision = checkUploadNeeded(status);
+        }else{
+            decision = LogUploadStrategyDecision.NOOP;
+        }
+
+        return decision;
+    }
+
+    protected LogUploadStrategyDecision checkUploadNeeded(LogStorageStatus status){
         LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
         if (status.getConsumedVolume() >= volumeThreshold) {
             LOG.info("Need to upload logs - current size: {}, threshold: {}", status.getConsumedVolume(), volumeThreshold);
             decision = LogUploadStrategyDecision.UPLOAD;
-        }else if (status.getRecordCount() >= countThreshold) {
+        } else if (status.getRecordCount() >= countThreshold) {
             LOG.info("Need to upload logs - current count: {}, threshold: {}", status.getRecordCount(), countThreshold);
             decision = LogUploadStrategyDecision.UPLOAD;
         }
@@ -120,5 +137,17 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
 
     public void setUploadCheckPeriod(int uploadCheckPeriod) {
         this.uploadCheckPeriod = uploadCheckPeriod;
+    }
+
+    public void lockUpload(){
+        isUploadLocked = true;
+    }
+
+    public void unlockUpload(){
+        isUploadLocked = false;
+    }
+
+    public boolean isUploadLocked(){
+        return isUploadLocked;
     }
 }

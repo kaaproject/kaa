@@ -165,10 +165,9 @@ public class LogAppenderViewImpl extends BasePluginViewImpl implements LogAppend
         }
         metadatalistBox.setPixelSize(300, 30);
         metadatalistBox.setPlaceholderText("Select metadata components");
-        metadatalistBox.addItem(LogHeaderStructureDto.KEYHASH.getValue());
-        metadatalistBox.addItem(LogHeaderStructureDto.TIMESTAMP.getValue());
-        metadatalistBox.addItem(LogHeaderStructureDto.TOKEN.getValue());
-        metadatalistBox.addItem(LogHeaderStructureDto.VERSION.getValue());
+        for(LogHeaderStructureDto headerDto: LogHeaderStructureDto.values()){
+            metadatalistBox.addItem(headerDto.getValue());
+        }
     }
 
     public void setMetadataListBox(List<LogHeaderStructureDto> header) {

@@ -1,1 +1,0 @@
-(area == null or area.equals("North America")) and (city == null or city.equals("Atlanta"))

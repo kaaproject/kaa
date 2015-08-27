@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
@@ -26,7 +27,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class AefMapsActivity extends AbstractListActivity<ApplicationEventFamilyMapDto, AefMapsPlace> {
 
@@ -44,8 +44,8 @@ public class AefMapsActivity extends AbstractListActivity<ApplicationEventFamily
 
     @Override
     protected AbstractDataProvider<ApplicationEventFamilyMapDto> getDataProvider(
-            MultiSelectionModel<ApplicationEventFamilyMapDto> selectionModel) {
-        return new AefMapsDataProvider(selectionModel, listView, applicationId);
+            AbstractGrid<ApplicationEventFamilyMapDto,?> dataGrid) {
+        return new AefMapsDataProvider(dataGrid, listView, applicationId);
     }
 
     @Override
