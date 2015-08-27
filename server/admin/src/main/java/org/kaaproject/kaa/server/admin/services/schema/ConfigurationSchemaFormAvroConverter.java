@@ -146,8 +146,8 @@ public class ConfigurationSchemaFormAvroConverter extends SchemaFormAvroConverte
      */
     @Override
     protected void customizeFieldSchema(Schema fieldSchema, GenericRecord fieldType) {
-        if (fieldType.getSchema().getName().equals(RECORD_FIELD_TYPE)) {
-            Boolean addressable = (Boolean)fieldType.get(ADDRESSABLE);
+        if (fieldType != null && fieldType.getSchema().getName().equals(RECORD_FIELD_TYPE)) {
+            Boolean addressable = (Boolean) fieldType.get(ADDRESSABLE);
             if (addressable != null && !addressable) {
                 fieldSchema.addProp(ADDRESSABLE, BooleanNode.getFalse());
             }
