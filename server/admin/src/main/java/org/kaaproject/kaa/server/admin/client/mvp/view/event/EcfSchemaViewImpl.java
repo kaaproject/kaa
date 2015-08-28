@@ -125,12 +125,16 @@ public class EcfSchemaViewImpl extends BaseDetailsViewImpl implements EcfSchemaV
     @Override
     protected boolean validate() {
         if (create) {
-            return ecfSchemaForm.validate();
+            return ecfSchemaForm.validate() && isEmpty(ecfSchemaForm);
         } else {
             return true;
         }
     }
-    
+
+    private boolean isEmpty(RecordPanel ecfSchemaForm) {
+        return !(ecfSchemaForm.getValue() != null && !ecfSchemaForm.getValue().getValue().isEmpty());
+    }
+
     @Override
     public void onValueChange(ValueChangeEvent<RecordField> event) {
         fireChanged();

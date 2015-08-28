@@ -162,9 +162,14 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
     }
     
     public boolean validate() {
-        return recordFieldWidget.validate();
+        return recordFieldWidget.validate() && isEmpty(recordFieldWidget);
     }
-    
+
+    private boolean isEmpty(RecordFieldWidget recordFieldWidget) {
+        return !(recordFieldWidget.getValue() != null && !recordFieldWidget.getValue().getValue().isEmpty());
+    }
+
+
     public void setFormDataLoader(FormDataLoader formDataLoader) {
         this.formDataLoader = formDataLoader;
     }
