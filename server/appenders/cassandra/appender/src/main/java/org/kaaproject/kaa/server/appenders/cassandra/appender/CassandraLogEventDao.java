@@ -304,23 +304,13 @@ public class CassandraLogEventDao implements LogEventDao {
             Insert insert = QueryBuilder.insertInto(keyspaceName, collectionName);
             for (ColumnMappingElement element : configuration.getColumnMapping()) {
                 switch (element.getType()) {
-                case HEADER_FIELD: {
-                    Object elementValue = dto.getHeader().get(element.getValue());
-                    if (element.getColumnType() == ColumnType.TEXT && elementValue != null) {
-                        insert.value(element.getColumnName(), elementValue.toString());
-                    } else {
-                        insert.value(element.getColumnName(), elementValue);
-                    }
-                }
+                case HEADER_FIELD:
+                    insert.value(element.getColumnName(),
+                            formatField(element.getColumnType(), dto.getHeader().get(element.getValue())));
                     break;
-                case EVENT_FIELD: {
-                    Object elementValue = dto.getEvent().get(element.getValue());
-                    if (element.getColumnType() == ColumnType.TEXT && elementValue != null) {
-                        insert.value(element.getColumnName(), elementValue.toString());
-                    } else {
-                        insert.value(element.getColumnName(), elementValue);
-                    }
-                }
+                case EVENT_FIELD:
+                    insert.value(element.getColumnName(),
+                            formatField(element.getColumnType(), dto.getEvent().get(element.getValue())));
                     break;
                 case HEADER_JSON:
                     insert.value(element.getColumnName(), headerConverter.encodeToJson(dto.getHeader()));
@@ -379,5 +369,13 @@ public class CassandraLogEventDao implements LogEventDao {
             }
         }
         return tsValue;
+    }
+
+    private Object formatField(ColumnType type, Object elementValue) {
+        if (type == ColumnType.TEXT && elementValue != null) {
+            return elementValue.toString();
+        } else {
+            return elementValue;
+        }
     }
 }
