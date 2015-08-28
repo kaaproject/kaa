@@ -41,6 +41,7 @@ import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketO
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement;
+import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -231,7 +232,8 @@ public class CassandraLogEventDao implements LogEventDao {
 
     @Override
     public List<CassandraLogEventDto> save(List<CassandraLogEventDto> logEventDtoList, String tableName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter) throws IOException {
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
+            throws IOException {
         LOG.debug("Execute bath request for cassandra table {}", tableName);
         executeBatch(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter));
         return logEventDtoList;
@@ -239,7 +241,8 @@ public class CassandraLogEventDao implements LogEventDao {
 
     @Override
     public ListenableFuture<ResultSet> saveAsync(List<CassandraLogEventDto> logEventDtoList, String tableName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter) throws IOException {
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
+            throws IOException {
         LOG.debug("Execute async bath request for cassandra table {}", tableName);
         return executeBatchAsync(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter));
     }
@@ -292,7 +295,8 @@ public class CassandraLogEventDao implements LogEventDao {
     }
 
     private Insert[] prepareQuery(List<CassandraLogEventDto> logEventDtoList, String collectionName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter) throws IOException {
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
+            throws IOException {
         String reuseTsValue = null;
         Insert[] insertArray = new Insert[logEventDtoList.size()];
         for (int i = 0; i < logEventDtoList.size(); i++) {
@@ -301,10 +305,12 @@ public class CassandraLogEventDao implements LogEventDao {
             for (ColumnMappingElement element : configuration.getColumnMapping()) {
                 switch (element.getType()) {
                 case HEADER_FIELD:
-                    insert.value(element.getColumnName(), dto.getHeader().get(element.getValue()));
+                    insert.value(element.getColumnName(),
+                            formatField(element.getColumnType(), dto.getHeader().get(element.getValue())));
                     break;
                 case EVENT_FIELD:
-                    insert.value(element.getColumnName(), dto.getEvent().get(element.getValue()));
+                    insert.value(element.getColumnName(),
+                            formatField(element.getColumnType(), dto.getEvent().get(element.getValue())));
                     break;
                 case HEADER_JSON:
                     insert.value(element.getColumnName(), headerConverter.encodeToJson(dto.getHeader()));
@@ -327,10 +333,10 @@ public class CassandraLogEventDao implements LogEventDao {
                     break;
                 }
             }
-            
-            //Here we get ttl parameter from config and add it to insert query
+
+            // Here we get ttl parameter from config and add it to insert query
             insert.using(QueryBuilder.ttl(configuration.getDataTTL()));
-            
+
             insertArray[i] = insert;
 
         }
@@ -363,5 +369,13 @@ public class CassandraLogEventDao implements LogEventDao {
             }
         }
         return tsValue;
+    }
+
+    private Object formatField(ColumnType type, Object elementValue) {
+        if (type == ColumnType.TEXT && elementValue != null) {
+            return elementValue.toString();
+        } else {
+            return elementValue;
+        }
     }
 }
