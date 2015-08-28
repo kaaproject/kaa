@@ -25,8 +25,8 @@
 
   <inherits name="org.kaaproject.kaa.common.dto.Dto"/>
   <inherits name="org.kaaproject.avro.ui.gwt.client.AvroUIClient"/>
-  
-  <!--  Need for SuperDev mode-->
+
+    <!--  Need for SuperDev mode-->
   <add-linker name="xsiframe"/>
   <set-configuration-property name="devModeRedirectEnabled" value="true"/>
   <!-- enable source maps -->
