@@ -177,7 +177,7 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDt
         onSave();
 
         if (!entity.getAefMapIds().isEmpty() && entity.getDefaultVerifierToken() == null) {
-            detailsView.setErrorMessage("Specify default user verifier.");
+            detailsView.setErrorMessage(Utils.constants.specifyVerifier());
         } else {
 
             KaaAdmin.getDataSource().generateSdk(entity,new BusyAsyncCallback<String>() {
