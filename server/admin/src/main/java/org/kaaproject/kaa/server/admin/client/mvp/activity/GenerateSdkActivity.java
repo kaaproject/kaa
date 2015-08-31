@@ -175,19 +175,25 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDt
     @Override
     protected void doSave(final EventBus eventBus) {
         onSave();
-        KaaAdmin.getDataSource().generateSdk(entity,new BusyAsyncCallback<String>() {
 
-            @Override
-            public void onFailureImpl(Throwable caught) {
-                Utils.handleException(caught, detailsView);
-            }
+        if (!entity.getAefMapIds().isEmpty() && entity.getDefaultVerifierToken() == null) {
+            detailsView.setErrorMessage("Specify default user verifier.");
+        } else {
 
-            @Override
-            public void onSuccessImpl(String key) {
-                detailsView.clearError();
-                ServletHelper.downloadSdk(key);
-            }
-        });
+            KaaAdmin.getDataSource().generateSdk(entity,new BusyAsyncCallback<String>() {
+
+                @Override
+                public void onFailureImpl(Throwable caught) {
+                    Utils.handleException(caught, detailsView);
+                }
+
+                @Override
+                public void onSuccessImpl(String key) {
+                    detailsView.clearError();
+                    ServletHelper.downloadSdk(key);
+                }
+            });
+        }
     }
     
     @Override
