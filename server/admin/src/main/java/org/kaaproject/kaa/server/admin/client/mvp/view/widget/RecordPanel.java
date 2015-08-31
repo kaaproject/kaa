@@ -16,9 +16,11 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
+import com.google.gwt.core.client.GWT;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
+import org.kaaproject.avro.ui.shared.FormField;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
@@ -42,6 +44,8 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
+
+import java.util.List;
 
 public class RecordPanel extends SimplePanel implements HasValue<RecordField>, ChangeHandler {
 
@@ -162,13 +166,22 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
     }
     
     public boolean validate() {
-        return recordFieldWidget.validate() && isEmpty(recordFieldWidget);
+        return recordFieldWidget.validate();
     }
 
-    private boolean isEmpty(RecordFieldWidget recordFieldWidget) {
-        return !(recordFieldWidget.getValue() != null && !recordFieldWidget.getValue().getValue().isEmpty());
+    public boolean isEmpty() {
+        return recordFieldWidget.getValue() == null || recordFieldWidget.getValue().getValue().isEmpty()
+                || hasEmptyFields();
     }
 
+    private boolean hasEmptyFields() {
+        boolean empty = false;
+        for (FormField field: recordFieldWidget.getValue().getValue()) {
+            GWT.log("display string: " + field.getDisplayString());
+            if (field.getDisplayString().contains("(0 rows)")) empty = true;
+        }
+        return empty;
+    }
 
     public void setFormDataLoader(FormDataLoader formDataLoader) {
         this.formDataLoader = formDataLoader;
