@@ -33,7 +33,6 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
     private static final int DEFAULT_UPLOAD_COUNT_THRESHOLD = 64;
     private static final int DEFAULT_BATCH_SIZE = 8 * 1024;
     private static final int DEFAULT_BATCH_COUNT = 256;
-    private static final int DEFAULT_TIME_LIMIT = 5 * 60;
     private static final boolean DEFAULT_UPLOAD_LOCKED = false;
 
 
@@ -44,9 +43,8 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
     protected int countThreshold = DEFAULT_UPLOAD_COUNT_THRESHOLD;
     protected int batchSize = DEFAULT_BATCH_SIZE;
     protected int batchCount = DEFAULT_BATCH_COUNT;
-    protected long timeLimit = DEFAULT_TIME_LIMIT;
     protected volatile boolean isUploadLocked = DEFAULT_UPLOAD_LOCKED;
-    
+
 
     @Override
     public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
@@ -72,7 +70,7 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
         }
         return decision;
     }
-    
+
     @Override
     public long getBatchSize() {
         return batchSize;
@@ -115,8 +113,16 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
         this.retryPeriod = retryPeriod;
     }
 
+    public int getVolumeThreshold() {
+        return volumeThreshold;
+    }
+
     public void setVolumeThreshold(int volumeThreshold) {
         this.volumeThreshold = volumeThreshold;
+    }
+
+    public int getCountThreshold() {
+        return countThreshold;
     }
 
     public void setCountThreshold(int countThreshold) {
@@ -131,6 +137,7 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
         this.batchCount = batchCount;
     }
 
+    @Override
     public int getUploadCheckPeriod() {
         return uploadCheckPeriod;
     }

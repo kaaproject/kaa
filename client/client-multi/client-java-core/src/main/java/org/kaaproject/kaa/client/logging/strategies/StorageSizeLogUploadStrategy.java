@@ -30,29 +30,20 @@ import org.slf4j.LoggerFactory;
 public class StorageSizeLogUploadStrategy extends DefaultLogUploadStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(StorageSizeLogUploadStrategy.class);
 
-    public StorageSizeLogUploadStrategy() { }
-
     public StorageSizeLogUploadStrategy(int volumeThreshold){
-        this.volumeThreshold = volumeThreshold;
+        setVolumeThreshold(volumeThreshold);
     }
 
     @Override
     protected LogUploadStrategyDecision checkUploadNeeded(LogStorageStatus status) {
+        long currentConsumedVolume = status.getConsumedVolume();
         LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
 
-        if(status.getConsumedVolume() >= volumeThreshold){
-            LOG.info("Need to upload logs - current size: {}, threshold: {}", status.getConsumedVolume(), volumeThreshold);
+        if (currentConsumedVolume >= volumeThreshold){
+            LOG.info("Need to upload logs - current size: {}, threshold: {}", currentConsumedVolume, volumeThreshold);
             decision = LogUploadStrategyDecision.UPLOAD;
         }
 
         return decision;
-    }
-
-    public long getVolumeThreshold() {
-        return volumeThreshold;
-    }
-
-    public void setVolumeThreshold(int volumeThreshold) {
-        this.volumeThreshold = volumeThreshold;
     }
 }

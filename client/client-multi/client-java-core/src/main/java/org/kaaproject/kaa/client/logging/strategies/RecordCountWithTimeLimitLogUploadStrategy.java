@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.client.logging.strategies;
 
+import java.util.concurrent.TimeUnit;
+
 import org.kaaproject.kaa.client.logging.DefaultLogUploadStrategy;
 import org.kaaproject.kaa.client.logging.LogStorageStatus;
 import org.kaaproject.kaa.client.logging.LogUploadStrategy;
@@ -23,26 +25,18 @@ import org.kaaproject.kaa.client.logging.LogUploadStrategyDecision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Reference implementation for {@link LogUploadStrategy}.
  * Start log upload when there is countThreshold records in storage or records are stored for more then timeLimit TimeUnit units.
  */
 public class RecordCountWithTimeLimitLogUploadStrategy extends DefaultLogUploadStrategy {
-
     private static final Logger LOG = LoggerFactory.getLogger(RecordCountWithTimeLimitLogUploadStrategy.class);
-    protected long lastUploadTime;
-    protected TimeUnit timeUnit;
 
-    public RecordCountWithTimeLimitLogUploadStrategy() {
-        timeUnit = TimeUnit.SECONDS;
-    }
+    protected long lastUploadTime = System.currentTimeMillis();
 
     public RecordCountWithTimeLimitLogUploadStrategy(int countThreshold, long timeLimit, TimeUnit timeUnit) {
-        this.countThreshold = countThreshold;
-        this.timeLimit = timeLimit;
-        this.timeUnit = timeUnit;
+        setUploadCheckPeriod((int)timeUnit.toSeconds(timeLimit));
+        setCountThreshold(countThreshold);
     }
 
     @Override
@@ -50,33 +44,19 @@ public class RecordCountWithTimeLimitLogUploadStrategy extends DefaultLogUploadS
         LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
 
         long currentTime = System.currentTimeMillis();
+        long currentRecordCount = status.getRecordCount();
 
-        if(status.getRecordCount() == countThreshold){
-            LOG.info("Need to upload logs - current count: {}, threshold: {}", status.getRecordCount(), countThreshold);
+        if (currentRecordCount >= countThreshold) {
+            LOG.info("Need to upload logs - current count: {}, threshold: {}", currentRecordCount, countThreshold);
             decision = LogUploadStrategyDecision.UPLOAD;
             lastUploadTime = currentTime;
-        }else if(lastUploadTime != 0 && (currentTime - lastUploadTime) >= timeUnit.toMillis(timeLimit)){
-            LOG.info("Need to upload logs - current count: {}, lastUploadedTime: {}, timeLimit: {}", status.getRecordCount(), lastUploadTime, timeLimit);
+        } else if (((currentTime - lastUploadTime) / 1000) >= uploadCheckPeriod) {
+            LOG.info("Need to upload logs - current count: {}, lastUploadedTime: {}, timeLimit: {}"
+                                                , currentRecordCount, lastUploadTime, uploadCheckPeriod);
             decision = LogUploadStrategyDecision.UPLOAD;
-            lastUploadTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+            lastUploadTime = currentTime;
         }
 
         return decision;
-    }
-
-    public long getCountThreshold() {
-        return countThreshold;
-    }
-
-    public void setCountThreshold(int countThreshold) {
-        this.countThreshold = countThreshold;
-    }
-
-    public long getTimeLimit() {
-        return timeLimit;
-    }
-
-    public void setTimeLimit(long timeLimit) {
-        this.timeLimit = timeLimit;
     }
 }
