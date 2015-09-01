@@ -26,12 +26,6 @@ import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.to
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.*;
 
 import net.iharder.Base64;
@@ -114,6 +108,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -1876,15 +1872,19 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
-
+    
+    private void checkExpiredDate(NotificationDto notification) throws KaaAdminServiceException {
+        if (null != notification.getExpiredAt() && notification.getExpiredAt().before(new Date())) {
+            throw new IllegalArgumentException("Overdue expiry time for notification!");
+        }
+    }
+    
     @Override
     public void sendNotification(NotificationDto notification,
                                  RecordField notificationData) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            if (null != notification.getExpiredAt() && notification.getExpiredAt().before(new Date())) {
-                throw new IllegalArgumentException("Overdue expiry time for notification");
-            }
+        	checkExpiredDate(notification);
             GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(notificationData);
             GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
             byte[] body = converter.encodeToJsonBytes(record);
@@ -1904,12 +1904,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            if (null != notification.getExpiredAt() && notification.getExpiredAt().before(new Date())) {
-                throw new IllegalArgumentException("Overdue expiry time for notification");
-            }
+        	checkExpiredDate(notification);
             notification.setBody(body);
             checkApplicationId(notification.getApplicationId());
             TopicDto topic = toDto(clientProvider.getClient().getTopic(notification.getTopicId()));
+            
             Utils.checkNotNull(topic);
             checkApplicationId(topic.getApplicationId());
             return toDto(clientProvider.getClient().editNotification(toDataStruct(notification)));
@@ -1924,6 +1923,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+        	checkExpiredDate(notification);
             notification.setBody(body);
             checkApplicationId(notification.getApplicationId());
             TopicDto topic = toDto(clientProvider.getClient().getTopic(notification.getTopicId()));

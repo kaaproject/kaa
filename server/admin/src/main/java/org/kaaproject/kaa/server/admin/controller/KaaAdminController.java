@@ -140,6 +140,9 @@ public class KaaAdminController {
         case ITEM_NOT_FOUND:
             entity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
             break;
+        case BAD_REQUEST_PARAMS:
+            entity = new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+            break;
         case GENERAL_ERROR:
             entity = new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             break;
