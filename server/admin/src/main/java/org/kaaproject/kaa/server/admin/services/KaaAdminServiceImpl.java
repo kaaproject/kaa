@@ -23,13 +23,10 @@ import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.to
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDataStruct;
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDto;
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDtoList;
-
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.*;
-
 import net.iharder.Base64;
-
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
 import org.apache.avro.generic.GenericRecord;
@@ -99,7 +96,6 @@ import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
 import org.kaaproject.kaa.server.common.thrift.gen.control.Sdk;
-import org.kaaproject.kaa.server.common.thrift.gen.control.SdkPlatform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -108,14 +104,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.google.common.base.Charsets;
 
 @Service("kaaAdminService")
@@ -319,10 +312,25 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    private void checkUserProfile(org.kaaproject.kaa.common.dto.admin.UserDto userDto) throws KaaAdminServiceException {
+        if (isEmpty(userDto.getUsername())) {
+            throw new IllegalArgumentException("Username is not valid.");
+        } else if (isEmpty(userDto.getFirstName())) {
+            throw new IllegalArgumentException("First name is not valid.");
+        } else if (isEmpty(userDto.getLastName())) {
+            throw new IllegalArgumentException("Last name is not valid.");
+        } else if (isEmpty(userDto.getMail())) {
+            throw new IllegalArgumentException("Mail is not valid.");
+        } else if (userDto.getAuthority() == null) {
+            throw new IllegalArgumentException("Authority is not valid.");
+        }
+    }
+    
     @Override
     public org.kaaproject.kaa.common.dto.admin.UserDto editUserProfile(org.kaaproject.kaa.common.dto.admin.UserDto userDto)
             throws KaaAdminServiceException {
         try {
+            checkUserProfile(userDto);
             userDto.setExternalUid(getCurrentUser().getExternalUid());
             Long userId = saveUser(userDto);
             User user = userFacade.findById(userId);
@@ -1908,7 +1916,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             notification.setBody(body);
             checkApplicationId(notification.getApplicationId());
             TopicDto topic = toDto(clientProvider.getClient().getTopic(notification.getTopicId()));
-            
             Utils.checkNotNull(topic);
             checkApplicationId(topic.getApplicationId());
             return toDto(clientProvider.getClient().editNotification(toDataStruct(notification)));
