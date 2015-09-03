@@ -27,6 +27,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.data.ProfileSchemasDataProvide
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
@@ -71,17 +72,18 @@ public class ProfileSchemasActivity extends AbstractListActivity<ProfileSchemaDt
     @Override
     protected void onCustomRowAction(RowActionEvent<String> event) {
         Integer schemaVersion = Integer.valueOf(event.getClickedId());
-        AsyncCallback<String> callback = new AsyncCallback<String>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                Utils.handleException(caught, listView);
-            }
-            @Override
-            public void onSuccess(String key) {
-                ServletHelper.downloadRecordLibrary(key);
-            }
-        };
-        KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.PROFILE_SCHEMA, callback);
+        if (event.getAction() == KaaRowAction.DOWNLOAD_SCHEMA) {
+            KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.PROFILE_SCHEMA, new AsyncCallback<String>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    Utils.handleException(caught, listView);
+                }
+                @Override
+                public void onSuccess(String key) {
+                    ServletHelper.downloadRecordLibrary(key);
+                }
+            });
+        }
     }
 
 }
