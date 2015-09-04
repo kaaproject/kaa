@@ -47,6 +47,13 @@ public class BalancingFlumeClientManagerTest extends FlumeClientManagerTest<Flum
         clientManager = FlumeClientManager.getInstance(configuration);
         clientManager.sendEventToFlume(EventBuilder.withBody(testEventBody));
     }
+    
+    @Test
+    public void initFlumeClientWithFlumeAgentAsyncTest() throws Exception {
+        flumeSourceRunner.startFlumeSource("agent", "localhost", 12121);
+        clientManager = FlumeClientManager.getInstance(configuration);
+        clientManager.sendEventToFlumeAsync(EventBuilder.withBody(testEventBody));
+    }
 
     @Test(expected = EventDeliveryException.class)
     public void initFlumeClientWithFlumeAgentAndEmptyEventTest() throws Exception {
