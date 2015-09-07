@@ -45,7 +45,7 @@ class ConfigurationDeserializer {
     }
 
     ${configuration_class} fromByteArray(byte[] data) throws IOException {
-        synchronized(converter){
+        synchronized(converter) {
             return converter.fromByteArray(data);
         }
     }
