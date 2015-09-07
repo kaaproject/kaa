@@ -1561,6 +1561,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public void deleteTopic(String topicId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkTopicId(topicId);
             TopicDto topic = toDto(clientProvider.getClient().getTopic(topicId));
             Utils.checkNotNull(topic);
             checkApplicationId(topic.getApplicationId());
@@ -1836,12 +1837,19 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         return new ArrayList<PluginInfoDto>(pluginsInfo.get(PluginType.USER_VERIFIER).values());
     }
 
+    private void checkTopicId(String topicId) throws IllegalArgumentException {
+        if (isEmpty(topicId)) {
+            throw new IllegalArgumentException("The topicId parameter is empty.");
+        }
+    }
+
     @Override
     public void addTopicToEndpointGroup(String endpointGroupId, String topicId)
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             checkEndpointGroupId(endpointGroupId);
+            checkTopicId(topicId);
             TopicDto topic = toDto(clientProvider.getClient().getTopic(topicId));
             Utils.checkNotNull(topic);
             checkApplicationId(topic.getApplicationId());
@@ -1857,6 +1865,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             checkEndpointGroupId(endpointGroupId);
+            checkTopicId(topicId);
             TopicDto topic = toDto(clientProvider.getClient().getTopic(topicId));
             Utils.checkNotNull(topic);
             checkApplicationId(topic.getApplicationId());
@@ -1892,7 +1901,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                                  RecordField notificationData) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-        	checkExpiredDate(notification);
+            checkExpiredDate(notification);
             GenericRecord record = FormAvroConverter.createGenericRecordFromRecordField(notificationData);
             GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(record.getSchema());
             byte[] body = converter.encodeToJsonBytes(record);
@@ -1912,7 +1921,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-        	checkExpiredDate(notification);
+            checkExpiredDate(notification);
             notification.setBody(body);
             checkApplicationId(notification.getApplicationId());
             TopicDto topic = toDto(clientProvider.getClient().getTopic(notification.getTopicId()));
@@ -1923,14 +1932,14 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw Utils.handleException(e);
         }
     }
-    
+
     @Override
     public EndpointNotificationDto sendUnicastNotification(
             NotificationDto notification, String clientKeyHash, byte[] body)
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-        	checkExpiredDate(notification);
+            checkExpiredDate(notification);
             notification.setBody(body);
             checkApplicationId(notification.getApplicationId());
             TopicDto topic = toDto(clientProvider.getClient().getTopic(notification.getTopicId()));
@@ -2244,7 +2253,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     private ApplicationDto checkApplicationId(String applicationId) throws KaaAdminServiceException {
         try {
             if (isEmpty(applicationId)) {
-                throw new KaaAdminServiceException(ServiceErrorCode.INVALID_ARGUMENTS);
+                throw new IllegalArgumentException("The applicationId parameter is empty.");
             }
             ApplicationDto application = toDto(clientProvider.getClient().getApplication(applicationId));
             checkApplication(application);
@@ -2275,7 +2284,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     private EndpointGroupDto checkEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException {
         try {
             if (isEmpty(endpointGroupId)) {
-                throw new KaaAdminServiceException(ServiceErrorCode.INVALID_ARGUMENTS);
+                throw new IllegalArgumentException("The endpointGroupId parameter is empty.");
             }
             EndpointGroupDto endpointGroup = toDto(clientProvider.getClient().getEndpointGroup(endpointGroupId));
             Utils.checkNotNull(endpointGroup);
