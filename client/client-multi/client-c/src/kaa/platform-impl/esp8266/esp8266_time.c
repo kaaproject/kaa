@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-#ifndef ESP8266_TIME_H
-#define ESP8266_TIME_H
+#include "esp8266_time.h"
 
-typedef unsigned int kaa_time_t;
+#include <esp_system.h>
 
-kaa_time_t kaa_esp8266_get_time();
-
-#define KAA_TIME() kaa_esp8266_get_time()
-
-#endif /* ESP8266_TIME_H */
+kaa_time_t kaa_esp8266_get_time()
+{
+    return (system_get_time() / 1000000);
+}

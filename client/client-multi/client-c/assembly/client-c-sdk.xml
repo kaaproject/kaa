@@ -15,12 +15,12 @@
 -->
 
 <assembly>
-	<id>c-sdk</id>
-	<formats>
-		<format>tar.gz</format>
-	</formats>
-	<includeBaseDirectory>false</includeBaseDirectory>
-	<fileSets>
+    <id>c-sdk</id>
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
         <fileSet>
             <directory>${project.basedir}/test</directory>
             <outputDirectory>test</outputDirectory>
@@ -40,6 +40,10 @@
         <fileSet>
             <directory>${project.basedir}/Modules</directory>
             <outputDirectory>Modules</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/tools</directory>
+            <outputDirectory>tools</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}</directory>

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <unistd.h>
+
+#include <esp_libc.h>
 
 #include "../../platform/sock.h"
 #include "../../platform/ext_tcp_utils.h"
@@ -27,18 +28,18 @@
 
 kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd,
                                             const kaa_sockaddr_t *destination,
-                                            kaa_socklen_t destination_size) 
+                                            kaa_socklen_t destination_size)
 {
     KAA_RETURN_IF_NIL3(fd, destination, destination_size, KAA_ERR_BADPARAM);
     kaa_fd_t sock = socket(destination->sa_family, SOCK_STREAM, 0);
-    
+
     int flags = lwip_fcntl(sock, F_GETFL, 0);
     if (flags < 0) {
         ext_tcp_utils_tcp_socket_close(sock);
         printf("Error getting sicket access flags\n");
         return KAA_ERR_SOCKET_ERROR;
     }
-    
+
     if (lwip_fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0) {
         ext_tcp_utils_tcp_socket_close(sock);
         printf("Error setting socket flags. fcntl(F_GETFL): %d\n", lwip_fcntl(sock, F_GETFL, 0));
@@ -59,7 +60,7 @@ kaa_error_t ext_tcp_utils_open_tcp_socket(kaa_fd_t *fd,
 ext_tcp_utils_function_return_state_t ext_tcp_utils_getaddrbyhost(kaa_dns_resolve_listener_t *resolve_listener
                                                                 , const kaa_dns_resolve_info_t *resolve_props
                                                                 , kaa_sockaddr_t *result
-                                                                , kaa_socklen_t *result_size) 
+                                                                , kaa_socklen_t *result_size)
 {
     KAA_RETURN_IF_NIL4(resolve_props, resolve_props->hostname, result, result_size, RET_STATE_VALUE_ERROR);
     if (*result_size < sizeof(struct sockaddr_in))
@@ -103,7 +104,7 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_getaddrbyhost(kaa_dns_resolv
 
 ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd
                                                     , const kaa_sockaddr_t *destination
-                                                    , kaa_socklen_t destination_size) 
+                                                    , kaa_socklen_t destination_size)
 {
     if (connect(fd, destination, destination_size) < 0 ) {
         switch (errno) {
@@ -122,7 +123,7 @@ ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd
 ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd
                                                         , const char *buffer
                                                         , size_t buffer_size
-                                                        , size_t *bytes_written) 
+                                                        , size_t *bytes_written)
 {
     KAA_RETURN_IF_NIL2(buffer, buffer_size, KAA_TCP_SOCK_IO_ERROR);
     ssize_t write_result = write(fd, buffer, buffer_size);
@@ -138,7 +139,7 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd
 ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd
                                                        , char *buffer
                                                        , size_t buffer_size
-                                                       , size_t *bytes_read) 
+                                                       , size_t *bytes_read)
 {
     KAA_RETURN_IF_NIL2(buffer, buffer_size, KAA_TCP_SOCK_IO_ERROR);
     ssize_t read_result = read(fd, buffer, buffer_size);
@@ -151,7 +152,7 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_read(kaa_fd_t fd
     return KAA_TCP_SOCK_IO_OK;
 }
 
-kaa_error_t ext_tcp_utils_tcp_socket_close(kaa_fd_t fd) 
+kaa_error_t ext_tcp_utils_tcp_socket_close(kaa_fd_t fd)
 {
     return (close(fd) < 0) ? KAA_ERR_SOCKET_ERROR : KAA_ERR_NONE;
 }
