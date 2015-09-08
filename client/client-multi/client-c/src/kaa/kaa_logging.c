@@ -44,6 +44,8 @@
 extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
                                                                                   , kaa_service_t service_type);
 
+extern bool ext_log_upload_strategy_is_timeout_strategy(void *strategy);
+
 
 
 typedef enum {
@@ -439,6 +441,15 @@ kaa_error_t kaa_logging_handle_server_sync(kaa_log_collector_t *self
 
     return error_code;
 
+}
+
+
+extern void ext_log_upload_timeout(kaa_log_collector_t *self)
+{
+    if (!is_timeout(self))
+        update_storage(self);
+    else if (ext_log_upload_strategy_is_timeout_strategy(self->log_upload_strategy_context))
+        update_storage(self);
 }
 
 #endif

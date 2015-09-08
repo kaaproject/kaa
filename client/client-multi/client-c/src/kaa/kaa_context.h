@@ -94,7 +94,7 @@ typedef struct kaa_status_holder_t                  kaa_status_holder_t;
  * General Kaa endpoint context. Contains private structures of all Kaa endpoint SDK subsystems that can be used
  * independently to perform API calls to specific subsystems.
  */
-typedef struct {
+typedef struct kaa_context_s {
     kaa_status_holder_t         *status;                 /**< See @link kaa_status.h @endlink. */
     kaa_platform_protocol_t     *platform_protocol;      /**< See @link kaa_platform_protocol.h @endlink. */
     kaa_bootstrap_manager_t     *bootstrap_manager;      /**< See @link kaa_bootstrap.h @endlink. */

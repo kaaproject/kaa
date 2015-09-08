@@ -26,7 +26,8 @@
 #include "../../kaa_logging.h"
 #include "../../platform/time.h"
 #include "../../kaa_channel_manager.h"
-#include "../../platform-impl/kaa_tcp_channel.h"
+#include "../../platform-impl/common/kaa_tcp_channel.h"
+#include "../../platform-impl/common/ext_log_upload_strategies.h"
 #include "../../platform/ext_kaa_failover_strategy.h"
 
 typedef enum {
@@ -90,9 +91,6 @@ static kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event
 extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
                                                   , kaa_logger_t *logger);
 
-extern kaa_error_t ext_log_upload_strategy_by_volume_create(void **strategy_p
-                                                          , kaa_channel_manager_t *channel_manager
-                                                          , kaa_bootstrap_manager_t *bootstrap_manager);
 kaa_error_t kaa_log_collector_init(kaa_client_t *client);
 #endif
 
@@ -434,9 +432,9 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
        return error_code;
     }
 
-    error_code = ext_log_upload_strategy_by_volume_create(&kaa_client->log_upload_strategy_context
-                                                                , kaa_client->context->channel_manager
-                                                                , kaa_client->context->bootstrap_manager);
+    error_code = ext_log_upload_strategy_create(kaa_client->context
+                                              ,&kaa_client->log_upload_strategy_context
+                                              , KAA_LOG_UPLOAD_VOLUME_STRATEGY);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->context->logger, error_code, "Failed to create log upload strategy");
         return error_code;

@@ -50,7 +50,16 @@ typedef enum {
     REMOTE_INTERNAL_ERROR   = 0x03
 } logging_delivery_error_code_t;
 
-
+/**
+ * @brief Creates the new instance of the log upload strategy based on volume and count of collected logs.
+ *
+ * @param   context       The Kaa context.
+ * @param   strategy_p    The pointer to a new strategy instance.
+ * @param   type          The strategy type.
+ * @return Error code.
+ */
+struct kaa_context_s;
+kaa_error_t ext_log_upload_strategy_create(struct kaa_context_s *context, void **strategy_p, uint8_t type);
 
 /**
  * @brief Makes a decision whether to upload logs or cleanup the storage.
@@ -61,8 +70,6 @@ typedef enum {
  * @return Log upload decision.
  */
 ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const void *log_storage_context);
-
-
 
 /**
  * @brief Retrieves the maximum size of a report pack that will be delivered in a single request to the Operations server.

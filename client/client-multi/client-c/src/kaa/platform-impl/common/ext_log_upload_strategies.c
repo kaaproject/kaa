@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-/**
- * @file ext_log_upload_strategy_by_volume.h
- * @brief Simple sample implementation of the log upload strategy interface defined in ext_log_upload_strategy.h.
- * Makes decisions purely based on the amount of logs collected in the storage.
- */
-
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
-#include "../platform/platform.h"
-
-#include "../platform/time.h"
-#include <stdbool.h>
-
-#include "../platform/ext_log_upload_strategy.h"
-#include "../kaa_common.h"
-#include "../utilities/kaa_mem.h"
-#include "../kaa_bootstrap_manager.h"
-
-
+#include "ext_log_upload_strategies.h"
+#include "../../platform/ext_log_upload_strategy.h"
+#include "../../platform/ext_transport_channel.h"
+#include "../../platform/time.h"
+#include "../../utilities/kaa_mem.h"
+#include "../../kaa_context.h"
 
 /**
  * @brief The default value (in seconds) for time to wait a log delivery response.
@@ -60,18 +49,14 @@
  */
 #define KAA_DEFAULT_BATCH_SIZE                 8 * 1024
 
-
-
-extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
-                                                                                  , kaa_service_t service_type);
-
-
-
 typedef struct {
+    uint8_t   type;
     size_t    threshold_volume;
     size_t    threshold_count;
-    size_t    log_batch_size;
     size_t    upload_timeout;
+    size_t    timeout;
+
+    size_t    log_batch_size;
     size_t    upload_retry_period;
 
     time_t    upload_retry_ts;
@@ -80,107 +65,32 @@ typedef struct {
     kaa_bootstrap_manager_t *bootstrap_manager;
 } ext_log_upload_strategy_t;
 
-
-
-/**
- * @brief Creates the new instance of the log upload strategy based on volume and count of collected logs.
- *
- * @param   strategy_p           The pointer to a new strategy instance.
- * @param   channel_manager      The Kaa channel manager.
- * @param   bootstrap_manager    The Kaa bootstrap manager.
- * @return Error code.
- */
-kaa_error_t ext_log_upload_strategy_by_volume_create(void **strategy_p
-                                                   , kaa_channel_manager_t   *channel_manager
-                                                   , kaa_bootstrap_manager_t *bootstrap_manager);
-
-
-
-/**
- * @brief Sets the new threshold log volume to the strategy.
- *
- * @param   strategy            The strategy instance.
- * @param   threshold_volume    The new threshold volume value in bytes.
- * @return Error code.
- */
-kaa_error_t ext_log_upload_strategy_by_volume_set_threshold_volume(void *strategy, size_t threshold_volume);
-
-
-
-/**
- * @brief Sets the new threshold log count to the strategy.
- *
- * @param   strategy           The strategy instance.
- * @param   threshold_count    The new threshold log count value in bytes.
- * @return Error code.
- */
-kaa_error_t ext_log_upload_strategy_by_volume_set_threshold_count(void *strategy, size_t threshold_count);
-
-
-
-/**
- * @brief Sets the new log batch size to the strategy.
- *
- * @param   strategy          The strategy instance.
- * @param   log_batch_size    The new log batch size in bytes.
- * @return Error code.
- */
-kaa_error_t ext_log_upload_strategy_by_volume_set_batch_size(void *strategy, size_t log_batch_size);
-
-
-
-/**
- * @brief Sets the new upload timeout to the strategy.
- *
- * @param   strategy          The strategy instance.
- * @param   upload_timeout    The new upload timeout in bytes.
- * @return Error code.
- */
-kaa_error_t ext_log_upload_strategy_by_volume_set_upload_timeout(void *strategy, size_t upload_timeout);
-
-
-
-/**
- * @brief Sets the new upload retry period to the strategy.
- *
- * @param   strategy               The strategy instance.
- * @param   upload_retry_period    The new upload retry period value in bytes.
- * @return Error code.
- */
-kaa_error_t ext_log_upload_strategy_by_volume_set_upload_retry_period(void *strategy, size_t upload_retry_period);
-
-
+extern kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self
+                                                                                  , kaa_service_t service_type);
 
 /*
  * Strategy implementation.
  */
 
-kaa_error_t ext_log_upload_strategy_by_volume_create(void **strategy_p
-                                                   , kaa_channel_manager_t   *channel_manager
-                                                   , kaa_bootstrap_manager_t *bootstrap_manager)
+kaa_error_t ext_log_upload_strategy_create(struct kaa_context_s *context, void **strategy_p, uint8_t type)
 {
-    KAA_RETURN_IF_NIL3(strategy_p, channel_manager, bootstrap_manager, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL5(strategy_p, context, context->channel_manager, context->bootstrap_manager, type, KAA_ERR_BADPARAM);
 
     ext_log_upload_strategy_t *strategy = (ext_log_upload_strategy_t *) KAA_MALLOC(sizeof(ext_log_upload_strategy_t));
     KAA_RETURN_IF_NIL(strategy, KAA_ERR_NOMEM);
 
-    kaa_error_t error_code = KAA_ERR_NONE;
+    KAA_RETURN_IF_ERR( ext_log_upload_strategy_set_threshold_volume(strategy, KAA_DEFAULT_UPLOAD_VOLUME_THRESHOLD) );
+    KAA_RETURN_IF_ERR( ext_log_upload_strategy_set_threshold_count(strategy, KAA_DEFAULT_UPLOAD_COUNT_THRESHOLD) );
+    KAA_RETURN_IF_ERR( ext_log_upload_strategy_set_upload_timeout(strategy, KAA_DEFAULT_UPLOAD_TIMEOUT) );
+    KAA_RETURN_IF_ERR( ext_log_upload_strategy_set_upload_retry_period(strategy, KAA_DEFAULT_RETRY_PERIOD) );
+    KAA_RETURN_IF_ERR( ext_log_upload_strategy_set_batch_size(strategy, KAA_DEFAULT_BATCH_SIZE) );
 
-    error_code = ext_log_upload_strategy_by_volume_set_threshold_volume(strategy, KAA_DEFAULT_UPLOAD_VOLUME_THRESHOLD);
-    KAA_RETURN_IF_ERR(error_code);
-    error_code = ext_log_upload_strategy_by_volume_set_threshold_count(strategy, KAA_DEFAULT_UPLOAD_COUNT_THRESHOLD);
-    KAA_RETURN_IF_ERR(error_code);
-    error_code = ext_log_upload_strategy_by_volume_set_batch_size(strategy, KAA_DEFAULT_BATCH_SIZE);
-    KAA_RETURN_IF_ERR(error_code);
-    error_code = ext_log_upload_strategy_by_volume_set_upload_timeout(strategy, KAA_DEFAULT_UPLOAD_TIMEOUT);
-    KAA_RETURN_IF_ERR(error_code);
-    error_code = ext_log_upload_strategy_by_volume_set_upload_retry_period(strategy, KAA_DEFAULT_RETRY_PERIOD);
-    KAA_RETURN_IF_ERR(error_code);
-
+    strategy->type = type;
     strategy->upload_retry_ts = 0;
+    strategy->timeout = KAA_TIME() + strategy->upload_timeout;
 
-    strategy->bootstrap_manager = bootstrap_manager;
-    strategy->channel_manager   = channel_manager;
+    strategy->bootstrap_manager = context->bootstrap_manager;
+    strategy->channel_manager   = context->channel_manager;
 
     *strategy_p = strategy;
 
@@ -213,9 +123,12 @@ ext_log_upload_decision_t ext_log_upload_strategy_decide(void *context, const vo
         return decision;
     }
 
-    if (ext_log_storage_get_total_size(log_storage_context) >= self->threshold_volume) {
+    if (self->type & 0x04 && KAA_TIME() >= self->timeout) {
         decision = UPLOAD;
-    } else if (ext_log_storage_get_records_count(log_storage_context) >= self->threshold_count) {
+        self->timeout = KAA_TIME() + self->upload_timeout;
+    } else if (self->type & 0x01 && ext_log_storage_get_total_size(log_storage_context) >= self->threshold_volume) {
+        decision = UPLOAD;
+    } else if (self->type & 0x02 && ext_log_storage_get_records_count(log_storage_context) >= self->threshold_count) {
         decision = UPLOAD;
     }
 
@@ -284,7 +197,23 @@ kaa_error_t ext_log_upload_strategy_on_failure(void *context, logging_delivery_e
 
 
 
-kaa_error_t ext_log_upload_strategy_by_volume_set_threshold_volume(void *strategy, size_t threshold_volume)
+kaa_error_t ext_log_upload_strategy_change_strategy(void *strategy, uint8_t type)
+{
+    KAA_RETURN_IF_NIL2(strategy, type, KAA_ERR_BADPARAM);
+    ((ext_log_upload_strategy_t *)strategy)->type = type;
+    return KAA_ERR_NONE;
+}
+
+extern bool ext_log_upload_strategy_is_timeout_strategy(void *strategy)
+{
+    KAA_RETURN_IF_NIL(strategy, KAA_ERR_BADPARAM);
+    ext_log_upload_strategy_t *self = (ext_log_upload_strategy_t *)strategy;
+    if (self->type & TIMEOUT_FLAG)
+        return true;
+    return false;
+}
+
+kaa_error_t ext_log_upload_strategy_set_threshold_volume(void *strategy, size_t threshold_volume)
 {
     KAA_RETURN_IF_NIL2(strategy, threshold_volume, KAA_ERR_BADPARAM);
     ((ext_log_upload_strategy_t *)strategy)->threshold_volume = threshold_volume;
@@ -293,7 +222,7 @@ kaa_error_t ext_log_upload_strategy_by_volume_set_threshold_volume(void *strateg
 
 
 
-kaa_error_t ext_log_upload_strategy_by_volume_set_threshold_count(void *strategy, size_t threshold_count)
+kaa_error_t ext_log_upload_strategy_set_threshold_count(void *strategy, size_t threshold_count)
 {
     KAA_RETURN_IF_NIL2(strategy, threshold_count, KAA_ERR_BADPARAM);
     ((ext_log_upload_strategy_t *)strategy)->threshold_count = threshold_count;
@@ -302,7 +231,7 @@ kaa_error_t ext_log_upload_strategy_by_volume_set_threshold_count(void *strategy
 
 
 
-kaa_error_t ext_log_upload_strategy_by_volume_set_batch_size(void *strategy, size_t log_batch_size)
+kaa_error_t ext_log_upload_strategy_set_batch_size(void *strategy, size_t log_batch_size)
 {
     KAA_RETURN_IF_NIL2(strategy, log_batch_size, KAA_ERR_BADPARAM);
     ((ext_log_upload_strategy_t *)strategy)->log_batch_size = log_batch_size;
@@ -311,16 +240,17 @@ kaa_error_t ext_log_upload_strategy_by_volume_set_batch_size(void *strategy, siz
 
 
 
-kaa_error_t ext_log_upload_strategy_by_volume_set_upload_timeout(void *strategy, size_t upload_timeout)
+kaa_error_t ext_log_upload_strategy_set_upload_timeout(void *strategy, size_t upload_timeout)
 {
     KAA_RETURN_IF_NIL2(strategy, upload_timeout, KAA_ERR_BADPARAM);
     ((ext_log_upload_strategy_t *)strategy)->upload_timeout = upload_timeout;
+    ((ext_log_upload_strategy_t *)strategy)->timeout = KAA_TIME() + upload_timeout;
     return KAA_ERR_NONE;
 }
 
 
 
-kaa_error_t ext_log_upload_strategy_by_volume_set_upload_retry_period(void *strategy, size_t upload_retry_period)
+kaa_error_t ext_log_upload_strategy_set_upload_retry_period(void *strategy, size_t upload_retry_period)
 {
     KAA_RETURN_IF_NIL2(strategy, upload_retry_period, KAA_ERR_BADPARAM);
     ((ext_log_upload_strategy_t *)strategy)->upload_retry_period = upload_retry_period;
