@@ -209,10 +209,6 @@ public abstract class AbstractHttpSyncCommand extends AbstractCommand {
         return httpResponse;
     }
 
-    public static String getCommandName() {
-        return COMMAND_NAME;
-    }
-
     @Override
     public int getNextProtocol() {
         return nextProtocol;

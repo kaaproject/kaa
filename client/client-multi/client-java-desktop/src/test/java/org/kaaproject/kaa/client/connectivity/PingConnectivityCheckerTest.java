@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2014-2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.transports.tcp.transport.commands;
+
+package org.kaaproject.kaa.client.connectivity;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-public class KaaTcpCommandTest {
-
-
+public class PingConnectivityCheckerTest {
     @Test
-    public void testKaaTcpCommand(){
-        KaaTcpCommandFactory commandFactory = new KaaTcpCommandFactory();
-        KaaTcpCommand command = (KaaTcpCommand)commandFactory.createCommandProcessor();
-        Assert.assertNotNull(command);
-        Assert.assertEquals(KaaTcpCommand.KAA_TCP, command.getName());
+    public void checkConnectivityToWrongHostTest() {
+        PingConnectivityChecker pingConnectivityChecker = new PingConnectivityChecker("some-wrong-host=with-dashes-in-name");
+        Assert.assertFalse(pingConnectivityChecker.checkConnectivity());
     }
 
+    @Test
+    public void checkConnectivityForLocalHostTest() {
+        PingConnectivityChecker pingConnectivityChecker = new PingConnectivityChecker("localhost");
+        Assert.assertTrue(pingConnectivityChecker.checkConnectivity());
+    }
 }

@@ -13,8 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
-public class UserConnectMessage {
+import org.junit.Assert;
+import org.junit.Test;
+import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+
+public class EndpointUserActionRouteMessageTest {
+
+    @Test
+    public void getSetTest(){
+        EndpointObjectHash hash = EndpointObjectHash.fromString("str");
+        EndpointUserActionMessage actionMessage = new EndpointUserAttachMessage(hash, "id", "originator");
+        String token = "token";
+        EndpointUserActionRouteMessage routeMessage = new EndpointUserActionRouteMessage(actionMessage, token);
+        Assert.assertEquals(actionMessage, routeMessage.getMessage());
+        Assert.assertEquals(token, routeMessage.getOriginalApplicationToken());
+    }
 
 }

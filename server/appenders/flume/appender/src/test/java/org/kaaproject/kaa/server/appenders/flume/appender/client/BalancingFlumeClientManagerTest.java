@@ -64,4 +64,8 @@ public class BalancingFlumeClientManagerTest extends FlumeClientManagerTest<Flum
         clientManager.sendEventToFlume(EventBuilder.withBody(testEventBody));
     }
 
+    @Test(expected = RuntimeException.class)
+    public void currentClientNullTest() {
+        clientManager.init(null);
+    }
 }

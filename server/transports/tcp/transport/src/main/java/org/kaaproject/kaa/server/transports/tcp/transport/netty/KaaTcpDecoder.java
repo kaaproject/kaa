@@ -36,8 +36,6 @@ import org.slf4j.LoggerFactory;
 public class KaaTcpDecoder extends SimpleChannelInboundHandler<byte[]> {
     private static final Logger LOG = LoggerFactory.getLogger(KaaTcpDecoder.class);
 
-    public static final String KAA_TCP_COMMAND_NAME = "KaaTcp";
-
     private ChannelHandlerContext currentCtx;
     private KaaCommandProcessorFactory<MqttFrame, MqttFrame> commandFactory;
 
@@ -62,10 +60,6 @@ public class KaaTcpDecoder extends SimpleChannelInboundHandler<byte[]> {
     private void processFrame(MqttFrame frame, KaaCommandProcessor<MqttFrame, MqttFrame> processor) throws Exception {
         processor.setRequest(frame);
         currentCtx.fireChannelRead(processor);
-    }
-
-    public void channelReadCompete(ChannelHandlerContext ctx) throws Exception { // NOSONAR
-        ctx.flush();
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.common.channels.communication;
 
-/**
- * @author Andrey Panasenko
- *
- */
-public class HttpParameters extends IPParameters {
+package org.kaaproject.kaa.client.configuration.delta;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class DefaultDeltaTypeTest {
+
+    @Test
+    public void defaultDeltaTypeTest(){
+        Assert.assertTrue(new DefaultDeltaType().isDefault());
+    }
+
 }

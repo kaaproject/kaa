@@ -13,12 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.common.channels.communication;
 
-/**
- * @author Andrey Panasenko
- *
- */
-public class HttpLongPollParameters extends IPParameters {
+package org.kaaproject.kaa.server.operations.service.akka.messages.core.session;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.UUID;
+
+public class ChannelTimeoutMessageTest {
+
+    @Test
+    public void channelTimeoutMessageTest(){
+        UUID uuid = UUID.randomUUID();
+        long lastActivity = 13221;
+        ChannelTimeoutMessage timeoutMessage = new ChannelTimeoutMessage(uuid, lastActivity);
+        Assert.assertEquals(uuid, timeoutMessage.getChannelUuid());
+        Assert.assertEquals(lastActivity, timeoutMessage.getLastActivityTime());
+    }
 
 }

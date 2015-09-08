@@ -35,7 +35,6 @@ import org.kaaproject.kaa.common.endpoint.gen.Topic;
  *
  * @see AbstractNotificationListener
  * @see NotificationTopicListListener
- * @see NotificationListenerInfo
  *
  */
 public interface NotificationManager {

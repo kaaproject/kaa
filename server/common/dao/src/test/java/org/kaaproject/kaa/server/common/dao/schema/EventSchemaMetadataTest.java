@@ -19,11 +19,12 @@ package org.kaaproject.kaa.server.common.dao.schema;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class EventSchemaMetadataTest {
     @Test
-    public void hashCodeEqualsTest(){
+    public void hashCodeEqualsTest() {
         EqualsVerifier.forClass(EventSchemaMetadata.class).suppress(Warning.NONFINAL_FIELDS).withRedefinedSuperclass().verify();
     }
 }

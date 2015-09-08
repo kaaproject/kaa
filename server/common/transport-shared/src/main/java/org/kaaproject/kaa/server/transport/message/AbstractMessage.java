@@ -34,18 +34,18 @@ public abstract class AbstractMessage implements PlatformAware {
     private final int platformId;
     private final ChannelContext channelContext;
     private final ChannelType channelType;
-    private final MessageBuilder responseConverter;
-    private final ErrorBuilder errorConverter;
+    private final MessageBuilder messageBuilder;
+    private final ErrorBuilder errorBuilder;
 
     protected AbstractMessage(UUID uuid, Integer platformId, ChannelContext channelContext, ChannelType channelType,
-            MessageBuilder responseConverter, ErrorBuilder errorConverter) {
+            MessageBuilder messageBuilder, ErrorBuilder errorBuilder) {
         super();
         this.uuid = uuid;
         this.platformId = platformId;
         this.channelContext = channelContext;
         this.channelType = channelType;
-        this.responseConverter = responseConverter;
-        this.errorConverter = errorConverter;
+        this.messageBuilder = messageBuilder;
+        this.errorBuilder = errorBuilder;
     }
 
     public UUID getChannelUuid() {
@@ -61,11 +61,11 @@ public abstract class AbstractMessage implements PlatformAware {
     }
 
     public MessageBuilder getMessageBuilder() {
-        return responseConverter;
+        return messageBuilder;
     }
 
     public ErrorBuilder getErrorBuilder() {
-        return errorConverter;
+        return errorBuilder;
     }
 
     @Override
@@ -83,9 +83,9 @@ public abstract class AbstractMessage implements PlatformAware {
         builder.append(", channelType=");
         builder.append(channelType);
         builder.append(", responseConverter=");
-        builder.append(responseConverter);
-        builder.append(", errorConverter=");
-        builder.append(errorConverter);
+        builder.append(messageBuilder);
+        builder.append(", errorBuilder=");
+        builder.append(errorBuilder);
         builder.append("]");
         return builder.toString();
     }

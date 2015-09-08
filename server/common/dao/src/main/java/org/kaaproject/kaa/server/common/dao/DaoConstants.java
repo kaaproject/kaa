@@ -314,8 +314,8 @@ public class DaoConstants {
      * Log appender constants.
      */
     public static final String LOG_APPENDER_TABLE_NAME = "log_appender";
-    public static final String LOG_APPENDER_MIN_LOG_SCHEMA_VERSION = "min_log_schema_version";
-    public static final String LOG_APPENDER_MAX_LOG_SCHEMA_VERSION = "max_log_schema_version";
+    public static final String LOG_APPENDER_MIN_LOG_SCHEMA_VERSION = "minLogSchemaVersion";
+    public static final String LOG_APPENDER_MAX_LOG_SCHEMA_VERSION = "maxLogSchemaVersion";
     public static final String LOG_APPENDER_CONFIRM_DELIVERY = "confirm_delivery";
 
     /**

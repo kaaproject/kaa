@@ -20,7 +20,14 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.Constants;
+import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
+import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.transport.channel.ChannelContext;
+import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
+
+import static org.mockito.Matchers.endsWith;
+import static org.mockito.Mockito.mock;
 
 /**
  * 
@@ -29,7 +36,7 @@ import org.kaaproject.kaa.server.transport.session.SessionInfo;
  */
 public class SessionInfoTest {
     @Test
-    public void equalsHashCode() {
+    public void equalsHashCodeTest() {
         UUID uuid1 = UUID.randomUUID();
         UUID uuid2 = UUID.randomUUID();
         SessionInfo info1 = new SessionInfo(uuid1, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, null, null, null, null, null, null, 0, false);
@@ -44,5 +51,29 @@ public class SessionInfoTest {
         Assert.assertNotEquals(info1, null);
         Assert.assertNotEquals(info1, new Object());
         Assert.assertNotEquals(info4, info1);
+    }
+
+    @Test
+    public void getSetTest() {
+        UUID uuid = UUID.randomUUID();
+        int platformId = 1;
+        ChannelContext channelContext = mock(ChannelContext.class);
+        ChannelType channelType = ChannelType.ASYNC;
+        MessageEncoderDecoder.CipherPair cipherPair = mock(MessageEncoderDecoder.CipherPair.class);
+        EndpointObjectHash objectHash = EndpointObjectHash.fromString("Some str");
+        String appToken = "12423521";
+        int keepAlive = 100;
+        boolean isEncrypted = true;
+        SessionInfo info = new SessionInfo(uuid, platformId, channelContext, channelType, cipherPair, objectHash, appToken, keepAlive, isEncrypted);
+        Assert.assertEquals(uuid, info.getUuid());
+        Assert.assertEquals(platformId, info.getPlatformId());
+        Assert.assertEquals(channelContext, info.getCtx());
+        Assert.assertEquals(channelType, info.getChannelType());
+        Assert.assertEquals(cipherPair, info.getCipherPair());
+        Assert.assertEquals(objectHash, info.getKey());
+        Assert.assertEquals(appToken, info.getApplicationToken());
+        Assert.assertEquals(keepAlive, info.getKeepAlive());
+        Assert.assertEquals(isEncrypted, info.isEncrypted());
+        Assert.assertNotNull(info.toString());
     }
 }

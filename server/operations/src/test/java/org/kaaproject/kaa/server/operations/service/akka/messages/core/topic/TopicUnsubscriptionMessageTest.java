@@ -14,9 +14,19 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.common.channels.communication;
+package org.kaaproject.kaa.server.operations.service.akka.messages.core.topic;
 
-public class KaaTcpParameters extends IPParameters {
+import org.junit.Assert;
+import org.junit.Test;
 
+public class TopicUnsubscriptionMessageTest {
+
+    @Test
+    public void topicUnsubscriptionMessageTest(){
+        String topicId = "id";
+        TopicUnsubscriptionMessage unsubscriptionMessage = new TopicUnsubscriptionMessage(topicId, "token", null, null);
+        Assert.assertEquals(topicId, unsubscriptionMessage.getTopicId());
+        Assert.assertNotNull(unsubscriptionMessage.toString());
+    }
 
 }

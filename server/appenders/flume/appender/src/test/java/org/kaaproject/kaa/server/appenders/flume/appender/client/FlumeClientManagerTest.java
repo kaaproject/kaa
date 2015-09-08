@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.appenders.flume.appender.client;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
 
 public abstract class FlumeClientManagerTest<T> {
@@ -45,5 +46,4 @@ public abstract class FlumeClientManagerTest<T> {
             flumeSourceRunner.stopFlumeSource();
         }
     }
-
 }

@@ -18,14 +18,19 @@ package org.kaaproject.kaa.server.appenders.file.appender;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
+
+import javax.swing.filechooser.FileSystemView;
 
 public class FileSystemLogEventServiceImplTest {
 
@@ -86,6 +91,33 @@ public class FileSystemLogEventServiceImplTest {
             Mockito.verify(testLogger, Mockito.atLeast(2)).debug(Mockito.anyString(), Mockito.eq(tempDir));
 
             logEventService.removeAll(tempDir);
+        }
+    }
+
+    @Test
+    public void executeCommandNullWorkingDirTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {
+        String homeDir = System.getProperty("user.home");
+        String testDir = "testdir";
+        FileSystemLogEventServiceImpl service = new FileSystemLogEventServiceImpl();
+        Method executeCommand = FileSystemLogEventServiceImpl.class.getDeclaredMethod("executeCommand", File.class, String[].class);
+        executeCommand.setAccessible(true);
+        executeCommand.invoke(service, null, new String[]{"mkdir", testDir});
+        File created = new File(homeDir, testDir);
+        Assert.assertTrue(created.exists());
+        created.delete();
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void executeCommandFailureTest() throws Throwable {
+        String testDir = "testdir";
+        File rootDir = FileSystemView.getFileSystemView().getRoots()[0];
+        FileSystemLogEventServiceImpl service = new FileSystemLogEventServiceImpl();
+        Method executeCommand = FileSystemLogEventServiceImpl.class.getDeclaredMethod("executeCommand", File.class, String[].class);
+        executeCommand.setAccessible(true);
+        try {
+            executeCommand.invoke(service, rootDir, new String[]{"mkdir", testDir});
+        } catch (InvocationTargetException e){
+            throw e.getCause();
         }
     }
 }
