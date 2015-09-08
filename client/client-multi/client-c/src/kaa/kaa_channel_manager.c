@@ -404,7 +404,8 @@ kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_
         uint16_t network_order_16;
         uint32_t network_order_32;
 
-        network_order_16 = KAA_HTONS(++self->sync_info.request_id);
+        ++self->sync_info.request_id;
+        network_order_16 = KAA_HTONS(self->sync_info.request_id);
         error_code = kaa_platform_message_write(writer, &network_order_16, sizeof(uint16_t));
         KAA_RETURN_IF_ERR(error_code);
 

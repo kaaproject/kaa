@@ -22,7 +22,7 @@ endif()
 
 set(ESP_TOOLCHAIN_BASE ${ESPRESSIF_HOME}/crosstool-NG/builds/xtensa-lx106-elf/bin)
 
-set (ESP_SDK_BASE ${ESPRESSIF_HOME}/esp-rtos-sdk)
+set(ESP_SDK_BASE ${ESPRESSIF_HOME}/esp-rtos-sdk)
 
 CMAKE_FORCE_C_COMPILER(${ESP_TOOLCHAIN_BASE}/xtensa-lx106-elf-gcc GNU)
 
