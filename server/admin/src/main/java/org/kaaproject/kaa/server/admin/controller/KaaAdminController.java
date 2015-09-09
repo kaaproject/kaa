@@ -525,7 +525,7 @@ public class KaaAdminController {
     }
 
     /**
-     * Gets the log schema by its id.
+     * Gets the log schema by application token and schema version.
      *
      */
     @RequestMapping(value="logSchema/{applicationToken}/{schemaVersion}", method=RequestMethod.GET)

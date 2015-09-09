@@ -325,7 +325,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throw new IllegalArgumentException("Authority is not valid.");
         }
     }
-    
+
     @Override
     public org.kaaproject.kaa.common.dto.admin.UserDto editUserProfile(org.kaaproject.kaa.common.dto.admin.UserDto userDto)
             throws KaaAdminServiceException {
@@ -1133,12 +1133,19 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    private void checkSchemaId(String schemaId) throws IllegalArgumentException{
+        if (isEmpty(schemaId)) {
+            throw new IllegalArgumentException("The schemaId parameter is empty.");
+        }
+    }
+
     @Override
     public StructureRecordDto<ProfileFilterDto> getProfileFilterRecord(
             String schemaId, String endpointGroupId)
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkSchemaId(schemaId);
             checkEndpointGroupId(endpointGroupId);
             StructureRecordDto<ProfileFilterDto> record = toGenericDto(clientProvider.getClient().getProfileFilterRecord(schemaId, endpointGroupId));
             Utils.checkNotNull(record);
@@ -1216,6 +1223,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkSchemaId(schemaId);
             StructureRecordDto<ProfileFilterDto> record = toGenericDto(clientProvider.getClient().getProfileFilterRecord(schemaId, endpointGroupId));
             Utils.checkNotNull(record);
             checkEndpointGroupId(record.getEndpointGroupId());
@@ -1259,6 +1267,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkSchemaId(schemaId);
             StructureRecordDto<ConfigurationDto> record = getConfigurationRecord(schemaId, endpointGroupId);
             return toConfigurationRecordFormStructure(record);
         } catch (Exception e) {
@@ -1658,6 +1667,9 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public void deleteLogAppender(String appenderId) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            if (isEmpty(appenderId)) {
+                throw new IllegalArgumentException("The appenderId parameter is empty.");
+            }
             LogAppenderDto logAppender = toDto(clientProvider.getClient().getLogAppender(appenderId));
             Utils.checkNotNull(logAppender);
             checkApplicationId(logAppender.getApplicationId());
@@ -1746,6 +1758,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+
     @Override
     public UserVerifierDto editUserVerifier(UserVerifierDto userVerifier)
             throws KaaAdminServiceException {
@@ -1770,6 +1783,9 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            if (isEmpty(userVerifierId)) {
+                throw new IllegalArgumentException("The userVerifierId parameter is empty.");
+            }
             UserVerifierDto userVerifier = toDto(clientProvider.getClient().getUserVerifier(userVerifierId));
             Utils.checkNotNull(userVerifier);
             checkApplicationId(userVerifier.getApplicationId());
@@ -2025,11 +2041,18 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    private void checkEventClassFamilyId(String eventClassFamilyId) throws IllegalArgumentException {
+        if (isEmpty(eventClassFamilyId)) {
+            throw new IllegalArgumentException("The eventClassFamilyId parameter is empty.");
+        }
+    }
+
     @Override
     public void addEventClassFamilySchema(String eventClassFamilyId, byte[] data)
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
         try {
+            checkEventClassFamilyId(eventClassFamilyId);
             String schema = new String(data);
             validateSchema(schema);
 
@@ -2049,6 +2072,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             String eventClassFamilyId, int version, EventClassType type) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkEventClassFamilyId(eventClassFamilyId);
             EventClassFamilyDto storedEventClassFamily = toDto(clientProvider.getClient().getEventClassFamily(eventClassFamilyId));
             Utils.checkNotNull(storedEventClassFamily);
             checkTenantId(storedEventClassFamily.getTenantId());
@@ -2239,7 +2263,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             }
         }
         if (!matched) {
-            throw new KaaAdminServiceException(ServiceErrorCode.PERMISSION_DENIED);
+            throw new KaaAdminServiceException("You do not have permission to perform this operation!", ServiceErrorCode.PERMISSION_DENIED);
         }
     }
 
@@ -2305,7 +2329,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         if (authentication.getPrincipal() instanceof AuthUserDto) {
             return (AuthUserDto) authentication.getPrincipal();
         } else {
-            throw new KaaAdminServiceException(ServiceErrorCode.NOT_AUTHORIZED);
+            throw new KaaAdminServiceException("You are not authorized to perform this operation!", ServiceErrorCode.NOT_AUTHORIZED);
         }
     }
 
