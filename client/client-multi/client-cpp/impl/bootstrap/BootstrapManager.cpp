@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <algorithm>
+#include <random>
 
 #include "kaa/KaaDefaults.hpp"
 #include "kaa/logging/Log.hpp"
