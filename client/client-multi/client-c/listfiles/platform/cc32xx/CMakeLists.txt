@@ -18,8 +18,8 @@ set(KAA_SOURCE_FILES
         ${KAA_SOURCE_FILES}
         ${KAA_SRC_FOLDER}/platform-impl/posix/posix_kaa_client.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/posix_kaa_failover_strategy.c
-        ${KAA_SRC_FOLDER}/platform-impl/sha.c
-        ${KAA_SRC_FOLDER}/platform-impl/sha1.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/sha.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/sha1.c
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/logger.c
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_file_utils.c
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_key_utils.c
@@ -27,8 +27,8 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_configuration_persistence.c
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_time.c
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_reboot.c
-        ${KAA_SRC_FOLDER}/platform-impl/ext_log_storage_memory.c
-        ${KAA_SRC_FOLDER}/platform-impl/ext_log_upload_strategy_by_volume.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_storage_memory.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_upload_strategy_by_volume.c
     )
 
 if(NOT KAA_WITHOUT_TCP_CHANNEL)
@@ -37,7 +37,7 @@ if(NOT KAA_WITHOUT_TCP_CHANNEL)
             ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_parser.c
             ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_request.c
             ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_tcp_utils.c
-            ${KAA_SRC_FOLDER}/platform-impl/kaa_tcp_channel.c
+            ${KAA_SRC_FOLDER}/platform-impl/common/kaa_tcp_channel.c
         )
 endif()
 

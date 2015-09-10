@@ -33,7 +33,7 @@
 #include "utilities/kaa_mem.h"
 #include "platform/ext_transport_channel.h"
 #include "platform/ext_tcp_utils.h"
-#include "platform-impl/kaa_tcp_channel.h"
+#include "platform-impl/common/kaa_tcp_channel.h"
 #include "kaa_protocols/kaa_tcp/kaatcp_request.h"
 
 #define ACCESS_POINT_SOCKET_FD 5

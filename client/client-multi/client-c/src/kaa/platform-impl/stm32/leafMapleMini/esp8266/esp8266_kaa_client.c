@@ -650,9 +650,9 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
        return error_code;
     }
 
-    error_code = ext_log_upload_strategy_by_volume_create(&kaa_client->log_upload_strategy_context
-                                                                , kaa_client->kaa_context->channel_manager
-                                                                , kaa_client->kaa_context->bootstrap_manager);
+    error_code = ext_log_upload_strategy_create(kaa_client->kaa_context
+                                              ,&kaa_client->log_upload_strategy_context
+                                              , KAA_LOG_UPLOAD_VOLUME_STRATEGY);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Failed to create log upload strategy");
         return error_code;
@@ -660,7 +660,7 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
 
     // Due to unknown problems with networking via ESP8266, some server responses are lost.
     // It leads to log delivery timeouts.
-    error_code = ext_log_upload_strategy_by_volume_set_upload_timeout(kaa_client->log_upload_strategy_context
+    error_code = ext_log_upload_strategy_set_upload_timeout(kaa_client->log_upload_strategy_context
                                                                     , KAA_DEMO_TWO_DAYS_UPLOAD_TIMEOUT);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger,
@@ -670,7 +670,7 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
         return error_code;
     }
 
-    error_code = ext_log_upload_strategy_by_volume_set_threshold_count(kaa_client->log_upload_strategy_context
+    error_code = ext_log_upload_strategy_et_threshold_count(kaa_client->log_upload_strategy_context
                                                 , KAA_DEMO_UPLOAD_COUNT_THRESHOLD);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger,

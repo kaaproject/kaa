@@ -157,7 +157,7 @@ set (KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/kaa_user.c
         ${KAA_SRC_FOLDER}/kaa.c
         ${KAA_SRC_FOLDER}/kaa_notification_manager.c
-        ${KAA_SRC_FOLDER}/platform-impl/kaa_htonll.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/kaa_htonll.c
     )
 
 # Includes auto-generated Cmake's scripts.

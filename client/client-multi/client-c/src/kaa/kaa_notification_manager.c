@@ -28,7 +28,7 @@
 #include "utilities/kaa_log.h"
 #include "kaa_platform_utils.h"
 #include "kaa_channel_manager.h"
-#include "platform-impl/kaa_htonll.h"
+#include "platform-impl/common/kaa_htonll.h"
 
 #include "platform/sock.h"
 

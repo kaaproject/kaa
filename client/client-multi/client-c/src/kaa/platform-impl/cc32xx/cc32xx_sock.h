@@ -49,7 +49,7 @@
 
 #include "simplelink.h"
 #include "socket.h"
-#include "../kaa_htonll.h"
+#include "../common/kaa_htonll.h"
 
 struct addrinfo
 {

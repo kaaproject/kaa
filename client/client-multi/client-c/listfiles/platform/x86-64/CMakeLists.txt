@@ -26,8 +26,8 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/platform-impl/posix/posix_status.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/posix_configuration_persistence.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/posix_kaa_failover_strategy.c
-        ${KAA_SRC_FOLDER}/platform-impl/ext_log_storage_memory.c
-        ${KAA_SRC_FOLDER}/platform-impl/ext_log_upload_strategy_by_volume.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_storage_memory.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_upload_strategies.c
     )
 
 if(NOT KAA_WITHOUT_TCP_CHANNEL)
@@ -36,7 +36,7 @@ if(NOT KAA_WITHOUT_TCP_CHANNEL)
             ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_parser.c
             ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_request.c
             ${KAA_SRC_FOLDER}/platform-impl/posix/posix_tcp_utils.c
-            ${KAA_SRC_FOLDER}/platform-impl/kaa_tcp_channel.c
+            ${KAA_SRC_FOLDER}/platform-impl/common/kaa_tcp_channel.c
         )
 endif()
 

@@ -31,11 +31,11 @@ set(ESP8266_SRC
     ${KAA_SRC_FOLDER}/platform-impl/posix/posix_kaa_failover_strategy.c
     ${ESP8266_SRC_FOLDER}/exit.c
     ${ESP8266_SRC_FOLDER}/snprintf.c
-    ${KAA_SRC_FOLDER}/platform-impl/sha.c
-    ${KAA_SRC_FOLDER}/platform-impl/sha1.c
-    ${KAA_SRC_FOLDER}/platform-impl/ext_log_storage_memory.c
-    ${KAA_SRC_FOLDER}/platform-impl/ext_log_upload_strategy_by_volume.c
-    ${KAA_SRC_FOLDER}/platform-impl/kaa_tcp_channel.c
+    ${KAA_SRC_FOLDER}/platform-impl/common/sha.c
+    ${KAA_SRC_FOLDER}/platform-impl/common/sha1.c
+    ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_storage_memory.c
+    ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_upload_strategy_by_volume.c
+    ${KAA_SRC_FOLDER}/platform-impl/common/kaa_tcp_channel.c
     ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_parser.c
     ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_request.c
     )
