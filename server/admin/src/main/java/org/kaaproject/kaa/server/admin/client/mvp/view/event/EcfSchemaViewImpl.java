@@ -125,7 +125,7 @@ public class EcfSchemaViewImpl extends BaseDetailsViewImpl implements EcfSchemaV
     @Override
     protected boolean validate() {
         if (create) {
-            return ecfSchemaForm.validate() && !ecfSchemaForm.isEmpty();
+            return ecfSchemaForm.validate() && !ecfSchemaForm.hasEmptyArrayFields();
         } else {
             return true;
         }

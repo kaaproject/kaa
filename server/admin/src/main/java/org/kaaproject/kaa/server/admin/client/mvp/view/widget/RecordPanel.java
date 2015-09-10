@@ -16,15 +16,16 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
-import com.google.gwt.core.client.GWT;
+
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
-import org.kaaproject.avro.ui.shared.FormField;
+import org.kaaproject.avro.ui.shared.ArrayField;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.SpanElement;
@@ -34,18 +35,16 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CaptionPanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
-
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 
 public class RecordPanel extends SimplePanel implements HasValue<RecordField>, ChangeHandler {
 
@@ -169,18 +168,9 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
         return recordFieldWidget.validate();
     }
 
-    public boolean isEmpty() {
+    public boolean hasEmptyArrayFields() {
         return recordFieldWidget.getValue() == null || recordFieldWidget.getValue().getValue().isEmpty()
-                || hasEmptyFields();
-    }
-
-    private boolean hasEmptyFields() {
-        boolean empty = false;
-        for (FormField field: recordFieldWidget.getValue().getValue()) {
-            GWT.log("display string: " + field.getDisplayString());
-            if (field.getDisplayString().contains("(0 rows)")) empty = true;
-        }
-        return empty;
+                || ((ArrayField) recordFieldWidget.getValue().getValue().get(0)).getValue().isEmpty();
     }
 
     public void setFormDataLoader(FormDataLoader formDataLoader) {
