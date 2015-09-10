@@ -45,10 +45,12 @@ public class SimpleConfigurationStorage implements ConfigurationStorage {
     @Override
     public void saveConfiguration(ByteBuffer buffer) throws IOException {
         PersistentStorage storage = context.createPersistentStorage();
+        byte[] sdkToken = getSdkToken();
         BufferedOutputStream os = new BufferedOutputStream(storage.openForWrite(path));
         byte[] data = new byte[buffer.remaining()];
         buffer.get(data);
-        LOG.trace("Writing {} bytes to output stream", data.length);
+        LOG.trace("Writing {} sdkToken bytes and {} data bytes to output stream", sdkToken.length, data.length);
+        os.write(sdkToken);
         os.write(data);
         os.close();
     }
@@ -61,7 +63,7 @@ public class SimpleConfigurationStorage implements ConfigurationStorage {
             return null;
         }
         BufferedInputStream is = new BufferedInputStream(storage.openForRead(path));
-        List<byte[]> chunks = new ArrayList<byte[]>();
+        List<byte[]> chunks = new ArrayList<>();
         byte[] tmp = new byte[_8KB];
         int size = 0;
         while (true) {
@@ -75,17 +77,39 @@ public class SimpleConfigurationStorage implements ConfigurationStorage {
                 break;
             }
         }
+
+        byte[] propertiesSdkToken = getSdkToken();
+        int sdkTokenLength = propertiesSdkToken.length;
         ByteBuffer data;
-        if (size > 0) {
-            data = ByteBuffer.wrap(new byte[size]);
-            for (byte[] chunk : chunks) {
-                data.put(chunk);
+        if (size > sdkTokenLength) {
+            int dataSize = size - sdkTokenLength;
+            data = ByteBuffer.wrap(new byte[dataSize]);
+
+            byte[] firstChunk = chunks.get(0);
+            byte[] savedSdkToken = Arrays.copyOfRange(firstChunk, 0, sdkTokenLength);
+
+            // make sure that the same sdk is used
+            if (!Arrays.equals(propertiesSdkToken, savedSdkToken)) {
+                data = null;
+            } else {
+                // put the first chunk's data
+                int firstChunkDataLength = firstChunk.length - sdkTokenLength;
+                data.put(firstChunk, sdkTokenLength, firstChunkDataLength);
+
+                // put remaining data chunks
+                for (int i = 1; i < chunks.size(); i++) {
+                    data.put(chunks.get(i));
+                }
+                data.rewind();
             }
-            data.rewind();
         } else {
             data = null;
         }
         is.close();
         return data;
+    }
+
+    private byte[] getSdkToken() {
+        return context.getProperties().getSdkToken().getBytes();
     }
 }

@@ -83,9 +83,9 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
                         LOG.trace("Received configuration data {}", Arrays.toString(configurationData));
                     }
                     if (storage != null) {
-                        LOG.debug("Persisting configuration data from storage {}", storage);
+                        LOG.debug("Persisting configuration data to storage {}", storage);
                         storage.saveConfiguration(ByteBuffer.wrap(configurationData));
-                        LOG.debug("Persisted configuration data from storage {}", storage);
+                        LOG.debug("Persisted configuration data to storage {}", storage);
                     }
                     deserializer.notify(Collections.unmodifiableCollection(listeners), configurationData);
                 } else {
