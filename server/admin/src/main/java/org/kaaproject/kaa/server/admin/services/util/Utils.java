@@ -62,7 +62,7 @@ public class Utils {
     
     public static <T> T checkNotNull(T reference) throws KaaAdminServiceException {
         if (reference == null) {
-          throw new KaaAdminServiceException(ServiceErrorCode.ITEM_NOT_FOUND);
+            throw new KaaAdminServiceException("Requested item was not found!", ServiceErrorCode.ITEM_NOT_FOUND);
         }
         return reference;
     }

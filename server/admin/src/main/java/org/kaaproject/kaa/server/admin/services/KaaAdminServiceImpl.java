@@ -23,10 +23,13 @@ import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.to
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDataStruct;
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDto;
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDtoList;
+
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.*;
+
 import net.iharder.Base64;
+
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
 import org.apache.avro.generic.GenericRecord;
@@ -109,6 +112,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import com.google.common.base.Charsets;
 
 @Service("kaaAdminService")
@@ -204,7 +208,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 }
             }
             return tenantUsers;
-
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -223,11 +226,29 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    private void checkTenantName(TenantUserDto tenantUser) throws KaaAdminServiceException {
+        String name = tenantUser.getTenantName();
+        if (isEmpty(name)) {
+            throw new IllegalArgumentException("Parameter tenantName is empty.");
+        }
+        List<TenantUserDto> tenants = new ArrayList<>();
+        tenants.addAll(getTenants());
+        for (TenantUserDto t : tenants) {
+            if (t.getTenantName().equals(name)) {
+                if (t.getId().equals(tenantUser.getId())) {
+                    break;
+                } else
+                throw new IllegalArgumentException("Parameter tenantName is already exist.");
+            }
+        }
+    }
+
     @Override
     public TenantUserDto editTenant(TenantUserDto tenantUser)
             throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.KAA_ADMIN);
         try {
+            checkTenantName(tenantUser);
             Long userId = saveUser(tenantUser);
             tenantUser.setExternalUid(userId.toString());
             TenantAdminDto tenantAdmin = new TenantAdminDto();
@@ -240,7 +261,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             tenantAdmin.setExternalUid(userId.toString());
             TenantAdminDto savedTenantAdmin = toDto(clientProvider.getClient().editTenantAdmin(toDataStruct(tenantAdmin)));
             return toTenantUser(savedTenantAdmin);
-
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -273,7 +293,6 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 tenantUsers.add(tenantUser);
             }
             return tenantUsers;
-
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -1094,10 +1113,21 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         }
     }
 
+    private void checkEndpointGroupParams(EndpointGroupDto endpointGroup) throws KaaAdminServiceException {
+        List<EndpointGroupDto> endpointGroupDtoList = new ArrayList<>();
+        endpointGroupDtoList.addAll(getEndpointGroupsByApplicationId(endpointGroup.getApplicationId()));
+        for (EndpointGroupDto eg : endpointGroupDtoList) {
+            if (eg.getName().equals(endpointGroup.getName()) || eg.getWeight() == endpointGroup.getWeight()) {
+                throw new IllegalArgumentException("Parameter name or weight is already exist for this application.");
+            }
+        }
+    }
+
     @Override
     public EndpointGroupDto editEndpointGroup(EndpointGroupDto endpointGroup) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            checkEndpointGroupParams(endpointGroup);
             if (isEmpty(endpointGroup.getId())) {
                 endpointGroup.setCreatedUsername(getCurrentUser().getUsername());
                 checkApplicationId(endpointGroup.getApplicationId());
