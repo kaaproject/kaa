@@ -21,7 +21,7 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/platform-impl/ios/sha.c
         ${KAA_SRC_FOLDER}/platform-impl/posix/logger.c
         ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_storage_memory.c
-        ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_upload_strategy_by_volume.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_upload_strategies.c
     )
 
 if(NOT KAA_WITHOUT_TCP_CHANNEL)
