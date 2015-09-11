@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.admin.controller;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -958,27 +957,9 @@ public class KaaAdminController {
     @ResponseBody
     public NotificationDto sendNotification(
             @RequestPart("notification") NotificationDto notification,
-            @RequestPart("ttl") String ttl,
             @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
-        notification.setExpiredAt(getExpiredDate(ttl));
         byte[] data = getFileContent(file);
         return kaaAdminService.sendNotification(notification, data);
-    }
-
-    /**
-     * Gets the expired date of notification.
-     */
-    private Date getExpiredDate(String ttl) throws KaaAdminServiceException {
-        try {
-            int seconds = Integer.valueOf(ttl);
-            if (seconds < 1) {
-                throw new NumberFormatException();
-            }
-            long time = System.currentTimeMillis() + seconds * 1000L;
-            return new Date(time);
-        } catch (NumberFormatException e) {
-            throw Utils.handleException(new NumberFormatException("Current ttl is invalid"));
-        }
     }
 
     /**
@@ -990,9 +971,7 @@ public class KaaAdminController {
     public EndpointNotificationDto sendUnicastNotification(
             @RequestPart("notification") NotificationDto notification,
             @RequestPart("clientKeyHash") String clientKeyHash,
-            @RequestPart("ttl") String ttl,
             @RequestPart("file") MultipartFile file) throws KaaAdminServiceException {
-        notification.setExpiredAt(getExpiredDate(ttl));
         byte[] data = getFileContent(file);
         return kaaAdminService.sendUnicastNotification(notification, clientKeyHash, data);
     }

@@ -51,8 +51,9 @@ public class Utils {
 
         if (exceptionWithCause instanceof KaaAdminServiceException) {
             return (KaaAdminServiceException) exceptionWithCause;
-        } else if (exceptionWithCause instanceof IllegalArgumentException) {
-        	return new KaaAdminServiceException(exceptionWithCause.getMessage(), ServiceErrorCode.BAD_REQUEST_PARAMS);
+        } else if (exceptionWithCause instanceof IllegalArgumentException || 
+                cause.equals("org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException")) {
+            return new KaaAdminServiceException(exceptionWithCause.getMessage(), ServiceErrorCode.BAD_REQUEST_PARAMS);
         } else if (StringUtils.isNotBlank(cause) && cause.equals(expectedCauseClass.getCanonicalName())) {
             return new KaaAdminServiceException(errorMessage, ServiceErrorCode.GENERAL_ERROR);
         } else {
