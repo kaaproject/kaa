@@ -64,6 +64,9 @@ public class MemBucketTest {
         Assert.assertEquals(2, bucket.getCount());
         Assert.assertEquals(6, bucket.getSize());
         Assert.assertEquals(8, overSize.size());
+
+        overSize = bucket.shrinkToSize(400, 400);
+        Assert.assertEquals(0, overSize.size());
     }
 
     private void addNRecordsToBucket(MemBucket bucket, int n) {
