@@ -34,7 +34,7 @@ set(ESP8266_SRC
     ${KAA_SRC_FOLDER}/platform-impl/common/sha.c
     ${KAA_SRC_FOLDER}/platform-impl/common/sha1.c
     ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_storage_memory.c
-    ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_upload_strategy_by_volume.c
+    ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_upload_strategies.c
     ${KAA_SRC_FOLDER}/platform-impl/common/kaa_tcp_channel.c
     ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_parser.c
     ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_request.c
