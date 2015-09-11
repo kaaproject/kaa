@@ -31,6 +31,7 @@ public:
 
     virtual void saveConfiguration(std::vector<std::uint8_t>&& bytes);
     virtual std::vector<std::uint8_t> loadConfiguration();
+    virtual void clearConfiguration();
 
 private:
     std::string filename_;

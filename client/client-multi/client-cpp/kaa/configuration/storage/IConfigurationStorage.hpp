@@ -46,6 +46,11 @@ public:
      * @return Configuration binary data.
      */
     virtual std::vector<std::uint8_t> loadConfiguration() = 0;
+
+    /**
+     * Clear configuration data (file).
+     */
+    virtual void clearConfiguration() = 0;
 };
 
 typedef std::shared_ptr<IConfigurationStorage> IConfigurationStoragePtr;
