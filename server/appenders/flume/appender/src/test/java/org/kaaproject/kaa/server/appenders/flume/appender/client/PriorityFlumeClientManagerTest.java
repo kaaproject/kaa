@@ -37,6 +37,9 @@ public class PriorityFlumeClientManagerTest extends FlumeClientManagerTest<Prior
                         Arrays.asList(new PrioritizedFlumeNode("localhost", 12121, 1),
                                       new PrioritizedFlumeNode("localhost", 12122, 2))).build();
         configuration.setHostsBalancing(flumeNodes);
+        configuration.setCallbackThreadPoolSize(2);
+        configuration.setClientsThreadPoolSize(2);
+        configuration.setExecutorThreadPoolSize(2);
     }
 
     @After
@@ -53,6 +56,13 @@ public class PriorityFlumeClientManagerTest extends FlumeClientManagerTest<Prior
         flumeSourceRunner.startFlumeSource("agent", "localhost", 12121);
         clientManager = FlumeClientManager.getInstance(configuration);
         clientManager.sendEventToFlume(EventBuilder.withBody(testEventBody));
+    }
+    
+    @Test
+    public void initFlumeClientWithFlumeAgentAsyncTest() throws Exception {
+        flumeSourceRunner.startFlumeSource("agent", "localhost", 12121);
+        clientManager = FlumeClientManager.getInstance(configuration);
+        clientManager.sendEventToFlumeAsync(EventBuilder.withBody(testEventBody));
     }
 
     @Test(expected = EventDeliveryException.class)
