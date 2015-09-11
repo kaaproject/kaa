@@ -18,6 +18,8 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
 import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.avro.ui.shared.ArrayField;
+import org.kaaproject.avro.ui.shared.FormField;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
@@ -125,7 +127,22 @@ public class EcfSchemaViewImpl extends BaseDetailsViewImpl implements EcfSchemaV
     @Override
     protected boolean validate() {
         if (create) {
-            return ecfSchemaForm.validate() && !ecfSchemaForm.hasEmptyArrayFields();
+            if (!ecfSchemaForm.validate()) {
+                return false;
+            }
+            RecordField value = ecfSchemaForm.getValue();
+            if (value == null) {
+                return false;
+            }
+            if (value.getValue().isEmpty()) {
+                return false;
+            }
+            FormField field = value.getValue().get(0);
+            if (field instanceof ArrayField) {
+                return !((ArrayField)field).getValue().isEmpty();
+            } else {
+                return false;
+            }
         } else {
             return true;
         }

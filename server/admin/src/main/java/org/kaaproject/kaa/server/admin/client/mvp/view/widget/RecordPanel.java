@@ -168,11 +168,6 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
         return recordFieldWidget.validate();
     }
 
-    public boolean hasEmptyArrayFields() {
-        return recordFieldWidget.getValue() == null || recordFieldWidget.getValue().getValue().isEmpty()
-                || ((ArrayField) recordFieldWidget.getValue().getValue().get(0)).getValue().isEmpty();
-    }
-
     public void setFormDataLoader(FormDataLoader formDataLoader) {
         this.formDataLoader = formDataLoader;
     }
