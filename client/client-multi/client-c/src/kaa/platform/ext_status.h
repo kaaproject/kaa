@@ -51,12 +51,6 @@ void ext_status_read(char **buffer, size_t *buffer_size, bool *needs_deallocatio
  */
 void ext_status_store(const char *buffer, size_t buffer_size);
 
-/**
- * @brief Called when Kaa need to remove state.
- *
- */
-void ext_status_delete();
-
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif
