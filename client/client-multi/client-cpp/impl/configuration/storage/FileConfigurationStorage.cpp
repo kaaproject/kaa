@@ -18,6 +18,7 @@
 
 #include <fstream>
 #include <iterator>
+#include <cstdio>
 
 namespace kaa {
 
@@ -45,6 +46,11 @@ std::vector<std::uint8_t> FileConfigurationStorage::loadConfiguration()
         return result;
     }
     return std::vector<std::uint8_t>();
+}
+
+void FileConfigurationStorage::clearConfiguration()
+{
+    std::remove(filename_.c_str());
 }
 
 }
