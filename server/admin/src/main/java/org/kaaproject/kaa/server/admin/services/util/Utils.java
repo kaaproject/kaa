@@ -51,18 +51,18 @@ public class Utils {
 
         if (exceptionWithCause instanceof KaaAdminServiceException) {
             return (KaaAdminServiceException) exceptionWithCause;
-        } else if (exceptionWithCause instanceof IllegalArgumentException) {
-        	return new KaaAdminServiceException(exceptionWithCause.getMessage(), ServiceErrorCode.BAD_REQUEST_PARAMS);
+        } else if (exceptionWithCause instanceof IllegalArgumentException || cause.contains("IncorrectParameterException")) {
+            return new KaaAdminServiceException(exceptionWithCause.getMessage(), ServiceErrorCode.BAD_REQUEST_PARAMS);
         } else if (StringUtils.isNotBlank(cause) && cause.equals(expectedCauseClass.getCanonicalName())) {
             return new KaaAdminServiceException(errorMessage, ServiceErrorCode.GENERAL_ERROR);
         } else {
             return new KaaAdminServiceException(exceptionWithCause.getMessage(), ServiceErrorCode.GENERAL_ERROR);
         }
     }
-    
+
     public static <T> T checkNotNull(T reference) throws KaaAdminServiceException {
         if (reference == null) {
-          throw new KaaAdminServiceException(ServiceErrorCode.ITEM_NOT_FOUND);
+            throw new KaaAdminServiceException("Requested item was not found!", ServiceErrorCode.ITEM_NOT_FOUND);
         }
         return reference;
     }
