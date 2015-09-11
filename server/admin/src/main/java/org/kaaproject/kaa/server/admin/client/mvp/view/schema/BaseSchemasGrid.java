@@ -16,11 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.schema;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.Header;
-import com.google.gwt.user.cellview.client.SafeHtmlHeader;
+import java.util.Comparator;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
@@ -29,7 +26,12 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.Header;
+import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 
 public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGrid<T, String> {
 
@@ -50,7 +52,15 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
                     public String getValue(T item) {
                         return item.getMajorVersion() + "." + item.getMinorVersion();
                     }
-                }, 80);
+                }, 
+                new Comparator<T>() {
+                    @Override
+                    public int compare(T o1, T o2) {
+                        return o1.compareTo(o2);
+                    }
+                },
+                Boolean.FALSE, 
+                80);
 
         prefWidth += constructStringColumn(table,
                 Utils.constants.name(),
@@ -59,7 +69,15 @@ public class BaseSchemasGrid<T extends AbstractSchemaDto> extends AbstractKaaGri
                     public String getValue(T item) {
                         return item.getName();
                     }
-                }, 80);
+                }, 
+                new Comparator<T>() {
+                    @Override
+                    public int compare(T o1, T o2) {
+                        return o1.getName().compareToIgnoreCase(o2.getName());
+                    }
+                },
+                null, 
+                80);
 
         prefWidth += constructStringColumn(table,
                 Utils.constants.author(),
