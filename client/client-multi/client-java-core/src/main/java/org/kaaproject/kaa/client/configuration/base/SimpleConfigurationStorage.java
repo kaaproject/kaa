@@ -41,6 +41,16 @@ public class SimpleConfigurationStorage implements ConfigurationStorage {
         this.context = context;
         this.path = path;
     }
+    
+    @Override
+    public void clearConfiguration() throws IOException {
+        PersistentStorage storage = context.createPersistentStorage();
+        if (storage.exists(path)) {
+            storage.delete(path);
+        }else{
+            LOG.trace("There is no configuration in clear yet");
+        }
+    }
 
     @Override
     public void saveConfiguration(ByteBuffer buffer) throws IOException {

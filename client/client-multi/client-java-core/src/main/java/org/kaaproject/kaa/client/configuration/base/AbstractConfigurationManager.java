@@ -26,6 +26,7 @@ import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.configuration.ConfigurationHashContainer;
 import org.kaaproject.kaa.client.configuration.ConfigurationProcessor;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
+import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +41,12 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
     private volatile byte[] configurationData;
     private ConfigurationStorage storage;
     private ConfigurationHashContainer container;
+    private KaaClientState state;
 
-    public AbstractConfigurationManager(KaaClientProperties properties) {
+    public AbstractConfigurationManager(KaaClientProperties properties, KaaClientState state) {
         super();
         this.properties = properties;
+        this.state = state;
         container = new HashContainer();
     }
 
@@ -114,11 +117,20 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
 
     private byte[] loadConfigurationData() {
         if (storage != null) {
-            LOG.debug("Loading configuration data from storage {}", storage);
-            try {
-                configurationData = toByteArray(storage.loadConfiguration());
-            } catch (IOException e) {
-                LOG.error("Failed to load configuration from storage", e);
+            if(state.isConfigurationVersionUpdated()){
+                LOG.debug("Clearing old configuration data from storage {}", storage);
+                try {
+                    storage.clearConfiguration();
+                } catch (IOException e) {
+                    LOG.error("Failed to clear configuration from storage", e);
+                }
+            }else{
+                LOG.debug("Loading configuration data from storage {}", storage);
+                try {
+                    configurationData = toByteArray(storage.loadConfiguration());
+                } catch (IOException e) {
+                    LOG.error("Failed to load configuration from storage", e);
+                }
             }
         }
         if (configurationData == null) {
