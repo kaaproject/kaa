@@ -86,7 +86,8 @@ kaa_error_t kaa_configuration_manager_create(kaa_configuration_manager_t **confi
     char *buffer = NULL;
     size_t buffer_size = 0;
     bool need_deallocation = false;
-    ext_configuration_read(&buffer, &buffer_size, &need_deallocation);
+    if (status->is_updated)
+        ext_configuration_read(&buffer, &buffer_size, &need_deallocation);
     if (!buffer || !buffer_size) {
         need_deallocation = false;
 #if KAA_CONFIGURATION_DATA_LENGTH > 0
