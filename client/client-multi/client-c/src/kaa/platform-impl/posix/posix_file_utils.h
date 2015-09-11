@@ -30,6 +30,8 @@ int posix_binary_file_read(const char *file_name, char **buffer, size_t *buffer_
 int posix_binary_file_store(const char *file_name, const char *buffer, size_t buffer_size);
 
 
+int posix_binary_file_delete(const char *file_name);
+
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif

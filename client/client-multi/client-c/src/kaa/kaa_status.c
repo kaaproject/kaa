@@ -91,8 +91,11 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
         }
 
         READ_BUFFER(read_buf, token_buf, sizeof(token_buf));
-        if (strcmp(token_buf, KAA_SDK_TOKEN) == 0)
+        if (strcmp(token_buf, KAA_SDK_TOKEN) == 0) {
             kaa_status->is_updated = true;
+            kaa_status->is_registered = false;
+            ext_status_delete();
+        }
     }
 
     if (needs_deallocation)

@@ -27,3 +27,8 @@ void ext_status_store(const char *buffer, size_t buffer_size)
 {
 
 }
+
+void ext_status_delete()
+{
+
+}

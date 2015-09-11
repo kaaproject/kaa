@@ -138,3 +138,21 @@ int cc32xx_binary_file_store(const char *file_name, const char *buffer, size_t b
     }
     return ret;
 }
+
+int cc32xx_binary_file_delete(const char *file_name)
+{
+    int32_t ret = 0;
+    uint32_t ul_token;
+    int32_t l_file_handle;
+
+    ret = sl_FsOpen((unsigned char*)file_name, FS_MODE_OPEN_READ, &ul_token, &l_file_handle);
+    sl_FsClose(l_file_handle, 0, 0, 0);
+    if (ret < 0)
+        return -1;
+
+    ret = sl_FsDel(file_name, 0);
+    if (ret < 0)
+        return -1;
+
+    return 0;
+}

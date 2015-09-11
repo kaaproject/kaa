@@ -36,6 +36,11 @@ void ext_status_store(const char *buffer, size_t buffer_size)
 
 }
 
+void ext_status_delete()
+{
+
+}
+
 void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
     *buffer = (char *) KAA_MALLOC(20 * sizeof(char));

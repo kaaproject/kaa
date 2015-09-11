@@ -82,6 +82,15 @@ void ext_status_store(const char *buffer, size_t buffer_size)
     }
 }
 
+void ext_status_delete()
+{
+    FILE *file = fopen(KAA_STATUS_STORAGE, "r");
+    if (file) {
+        fclose(file);
+        remove(KAA_STATUS_STORAGE);
+    }
+}
+
 void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
     *buffer = NULL;
