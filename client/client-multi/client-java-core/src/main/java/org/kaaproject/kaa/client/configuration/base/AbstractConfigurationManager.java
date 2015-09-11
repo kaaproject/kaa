@@ -40,14 +40,13 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
 
     private volatile byte[] configurationData;
     private ConfigurationStorage storage;
-    private ConfigurationHashContainer container;
+    private ConfigurationHashContainer container = new HashContainer();
     private KaaClientState state;
 
     public AbstractConfigurationManager(KaaClientProperties properties, KaaClientState state) {
         super();
         this.properties = properties;
         this.state = state;
-        container = new HashContainer();
     }
 
     @Override
@@ -117,14 +116,14 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
 
     private byte[] loadConfigurationData() {
         if (storage != null) {
-            if(state.isConfigurationVersionUpdated()){
-                LOG.debug("Clearing old configuration data from storage {}", storage);
+            if(state.isConfigurationVersionUpdated()) {
+                LOG.info("Clearing old configuration data from storage {}", storage);
                 try {
                     storage.clearConfiguration();
                 } catch (IOException e) {
                     LOG.error("Failed to clear configuration from storage", e);
                 }
-            }else{
+            } else {
                 LOG.debug("Loading configuration data from storage {}", storage);
                 try {
                     configurationData = toByteArray(storage.loadConfiguration());

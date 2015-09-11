@@ -47,8 +47,8 @@ public class SimpleConfigurationStorage implements ConfigurationStorage {
         PersistentStorage storage = context.createPersistentStorage();
         if (storage.exists(path)) {
             storage.delete(path);
-        }else{
-            LOG.trace("There is no configuration in clear yet");
+        } else {
+            LOG.trace("There is no configuration to clear yet");
         }
     }
 

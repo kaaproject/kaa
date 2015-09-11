@@ -489,7 +489,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                 LOG.info("Task skipped due to worker shutdown: {}", task);
             }
         }
-        SyncWorker worker = syncWorkers.remove(channel);
+        SyncWorker worker = syncWorkers.remove(channel.getId());
         if (worker != null) {
             LOG.debug("[{}] stopping worker", channel.getId());
             worker.shutdown();
