@@ -326,7 +326,9 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
             }
         }
       }
+#ifndef KAA_DISABLE_FEATURE_LOGGING
       ext_log_upload_timeout(kaa_client->kaa_context->log_collector);
+#endif
     }
     KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Kaa client stopped");
 
