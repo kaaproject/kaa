@@ -33,6 +33,7 @@
 
 namespace kaa {
 
+class IExecutorContext;
 class LoggingTransport;
 
 typedef std::chrono::system_clock clock_t;
@@ -61,7 +62,7 @@ private:
  */
 class LogCollector : public ILogCollector, public ILogProcessor, public ILogFailoverCommand {
 public:
-    LogCollector(IKaaChannelManagerPtr manager);
+    LogCollector(IKaaChannelManagerPtr manager, IExecutorContext& executorContext);
 
     virtual void addLogRecord(const KaaUserLogRecord& record);
 
@@ -86,9 +87,12 @@ private:
     void addDeliveryTimeout(std::int32_t requestId);
     bool removeDeliveryTimeout(std::int32_t requestId);
 
-    void startTimeoutCheckTimer();
+    void startTimeoutTimer();
+    void startLogUploadCheckTimer();
 
     void processTimeout();
+
+    void rescheduleTimers();
 
 private:
     ILogStoragePtr    storage_;
@@ -106,8 +110,10 @@ private:
     KAA_MUTEX_DECLARE(timeoutsGuard_);
 
     KaaTimer<void ()>        logUploadCheckTimer_;
-    KaaTimer<void ()>        uploadTimer_;
+    KaaTimer<void ()>        scheduledUploadTimer_;
     KaaTimer<void ()>        timeoutTimer_;
+
+    IExecutorContext& executorContext_;
 };
 
 }  // namespace kaa

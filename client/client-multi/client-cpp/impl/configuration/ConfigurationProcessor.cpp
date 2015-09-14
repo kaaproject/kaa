@@ -37,8 +37,8 @@ void ConfigurationProcessor::processConfigurationData(const std::uint8_t *data, 
     KAA_LOG_TRACE(boost::format("Received configuration data: %1%") % LoggingUtils::ByteArrayToString(data, dataLength));
 
     AvroByteArrayConverter<KaaRootConfiguration> converter;
-    KaaRootConfiguration rootConfiguration;
-    converter.fromByteArray(data, dataLength, rootConfiguration);
+    auto rootConfiguration = std::make_shared<KaaRootConfiguration>();
+    converter.fromByteArray(data, dataLength, *rootConfiguration);
 
     deltaReceivers_(0, rootConfiguration, fullResync);
     onProcessedObservers_();

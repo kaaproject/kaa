@@ -37,6 +37,7 @@
 #include "kaa/failover/DefaultFailoverStrategy.hpp"
 
 #include "kaa/logging/Log.hpp"
+#include "kaa/context/SimpleExecutorContext.hpp"
 
 namespace kaa {
 
@@ -55,9 +56,12 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 
     initClientKeys();
 
+    executorContext_.reset(new SimpleExecutorContext);
+    executorContext_->init();
+
 #ifdef KAA_USE_CONFIGURATION
     configurationProcessor_.reset(new ConfigurationProcessor);
-    configurationManager_.reset(new ConfigurationManager);
+    configurationManager_.reset(new ConfigurationManager(*executorContext_));
 #endif
 
     bootstrapManager_.reset(new BootstrapManager);
@@ -65,18 +69,18 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
     failoverStrategy_.reset(new DefaultFailoverStrategy);
     channelManager_->setFailoverStrategy(failoverStrategy_);
 #ifdef KAA_USE_EVENTS
-    registrationManager_.reset(new EndpointRegistrationManager(status_));
-    eventManager_.reset(new EventManager(status_));
-    eventFamilyFactory_.reset(new EventFamilyFactory(*eventManager_, *eventManager_));
+    registrationManager_.reset(new EndpointRegistrationManager(status_, *executorContext_));
+    eventManager_.reset(new EventManager(status_, *executorContext_));
+    eventFamilyFactory_.reset(new EventFamilyFactory(*eventManager_, *eventManager_, *executorContext_));
 #endif
 
 #ifdef KAA_USE_NOTIFICATIONS
-    notificationManager_.reset(new NotificationManager(status_));
+    notificationManager_.reset(new NotificationManager(status_, *executorContext_));
 #endif
     profileManager_.reset(new ProfileManager());
 
 #ifdef KAA_USE_LOGGING
-    logCollector_.reset(new LogCollector(channelManager_.get()));
+    logCollector_.reset(new LogCollector(channelManager_.get(), *executorContext_));
 #endif
 
     initKaaConfiguration();
@@ -85,30 +89,44 @@ void KaaClient::init(int options /*= KAA_DEFAULT_OPTIONS*/)
 
 void KaaClient::start()
 {
+    executorContext_->getLifeCycleExecutor().add([this]
+    {
 #ifdef KAA_USE_CONFIGURATION
-    auto configHash = configurationPersistenceManager_->getConfigurationHash().getHashDigest();
-    if (configHash.empty()) {
-        SequenceNumber sn = { 0, 0, 1 };
-        status_->setAppSeqNumber(sn);
-        setDefaultConfiguration();
-    }
+        auto configHash = configurationPersistenceManager_->getConfigurationHash().getHashDigest();
+        if (configHash.empty()) {
+            SequenceNumber sn = { 0, 0, 1 };
+            status_->setAppSeqNumber(sn);
+            setDefaultConfiguration();
+        }
 #endif
-    bootstrapManager_->receiveOperationsServerList();
+        bootstrapManager_->receiveOperationsServerList();
+    });
 }
 
 void KaaClient::stop()
 {
-    channelManager_->shutdown();
+    executorContext_->getLifeCycleExecutor().add([this]
+                                                {
+                                                    channelManager_->shutdown();
+                                                });
+    executorContext_->stop();
 }
 
 void KaaClient::pause()
 {
-    channelManager_->pause();
+    executorContext_->getLifeCycleExecutor().add([this]
+                                                {
+                                                    status_->save();
+                                                    channelManager_->pause();
+                                                });
 }
 
 void KaaClient::resume()
 {
-    channelManager_->resume();
+    executorContext_->getLifeCycleExecutor().add([this]
+                                                {
+                                                    channelManager_->resume();
+                                                });
 }
 
 void KaaClient::initKaaConfiguration()

@@ -27,6 +27,9 @@
 #include "kaa/event/IEventFamily.hpp"
 #include "kaa/event/IFetchEventListeners.hpp"
 #include "kaa/common/exception/KaaException.hpp"
+#include "kaa/context/IExecutorContext.hpp"
+#include "kaa/utils/IThreadPool.hpp"
+#include "kaa/common/exception/TransportNotFoundException.hpp"
 
 namespace kaa {
 
@@ -67,23 +70,26 @@ void EventManager::produceEvent(const std::string& fqn, const std::vector<std::u
         getContainerByTrxId(trxId).push_back(event);
         return;
     }
+
     KAA_LOG_TRACE(boost::format("New event %1% is produced for %2%") % fqn % target);
 
     {
-        KAA_MUTEX_UNIQUE_DECLARE(internalLock, pendingEventsGuard_);
+        KAA_MUTEX_LOCKING("pendingEventsGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(eventsLock, pendingEventsGuard_);
+        KAA_MUTEX_LOCKED("pendingEventsGuard_");
         pendingEvents_.insert(std::make_pair(currentEventIndex_++, event));
+        KAA_MUTEX_UNLOCKED("pendingEventsGuard_");
     }
 
-    if (eventTransport_) {
-        eventTransport_->sync();
-    } else {
-        KAA_LOG_WARN("Event postponed: transport was not set");
-    }
+    doSync();
 }
 
 std::map<std::int32_t, Event> EventManager::releasePendingEvents()
 {
-    KAA_MUTEX_UNIQUE_DECLARE(lock, pendingEventsGuard_);
+    KAA_MUTEX_LOCKING("pendingEventsGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(eventsLock, pendingEventsGuard_);
+    KAA_MUTEX_LOCKED("pendingEventsGuard_");
+
     std::map<std::int32_t, Event> result(std::move(pendingEvents_));
     pendingEvents_ = std::map<std::int32_t, Event>();
     currentEventIndex_ = 0;
@@ -92,13 +98,18 @@ std::map<std::int32_t, Event> EventManager::releasePendingEvents()
 
 bool EventManager::hasPendingEvents() const
 {
-    KAA_MUTEX_UNIQUE_DECLARE(lock, pendingEventsGuard_);
+    KAA_MUTEX_LOCKING("pendingEventsGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(eventsLock, pendingEventsGuard_);
+    KAA_MUTEX_LOCKED("pendingEventsGuard_");
     return !pendingEvents_.empty();
 }
 
 std::map<std::int32_t, std::list<std::string> > EventManager::getPendingListenerRequests()
 {
-    KAA_MUTEX_UNIQUE_DECLARE(lock, eventListenersGuard_);
+    KAA_MUTEX_LOCKING("eventListenersGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(eventListenersLock, eventListenersGuard_);
+    KAA_MUTEX_LOCKED("eventListenersGuard_");
+
     std::map<std::int32_t, std::list<std::string> > result;
     for (const auto& idToFqnList : eventListenersRequests_) {
         result.insert(std::make_pair(idToFqnList.first, idToFqnList.second->eventFQNs_));
@@ -108,7 +119,10 @@ std::map<std::int32_t, std::list<std::string> > EventManager::getPendingListener
 
 bool EventManager::hasPendingListenerRequests() const
 {
-    KAA_MUTEX_UNIQUE_DECLARE(lock, eventListenersGuard_);
+    KAA_MUTEX_LOCKING("eventListenersGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(eventListenersLock, eventListenersGuard_);
+    KAA_MUTEX_LOCKED("eventListenersGuard_");
+
     return !eventListenersRequests_.empty();
 }
 
@@ -133,17 +147,16 @@ void EventManager::onEventFromServer(const std::string& eventClassFQN, const std
     }
 
     if (!isProcessed) {
-        KAA_LOG_WARN(boost::format("Event '%1%' wasn't processed: could not find appropriate family")
-                     % eventClassFQN);
+        KAA_LOG_WARN(boost::format("Event '%1%' wasn't processed: could not find appropriate family") % eventClassFQN);
     }
 }
 
-void EventManager::onEventsReceived(const EventSyncResponse::events_t& events)
+void EventManager::onEventsReceived(const EventSyncResponse::events_t& eventResponse)
 {
-    auto eventContainer = events.get_array();
-    std::sort(eventContainer.begin(), eventContainer.end(),
-              [&](const Event& l, const Event& r) -> bool {return l.seqNum < r.seqNum;});
-    for (const auto& event : eventContainer) {
+    auto events = eventResponse.get_array();
+    std::sort(events.begin(), events.end(),
+              [&events](const Event& l, const Event& r) -> bool {return l.seqNum < r.seqNum;});
+    for (const auto& event : events) {
         std::string source;
         if (!event.source.is_null()) {
             source = event.source.get_string();
@@ -157,26 +170,29 @@ void EventManager::onEventListenersReceived(const EventSyncResponse::eventListen
     if (!listenersResponses.is_null()) {
         const auto& container = listenersResponses.get_array();
 
-        KAA_MUTEX_UNIQUE_DECLARE(lock, eventListenersGuard_);
+        KAA_MUTEX_LOCKING("eventListenersGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(eventListenersLock, eventListenersGuard_);
+        KAA_MUTEX_LOCKED("eventListenersGuard_");
 
         for (const auto& response : container) {
             auto it = eventListenersRequests_.find(response.requestId);
 
             if (it != eventListenersRequests_.end()) {
-                auto callback = *it;
+                auto callback = it->second->listener_;
                 eventListenersRequests_.erase(it);
-                KAA_UNLOCK(lock);
 
                 if (response.result == SyncResponseResultType::SUCCESS) {
                     std::vector<std::string> listeners;
                     if (!response.listeners.is_null()) {
-                        const auto& result = response.listeners.get_array();
-                        listeners.assign(result.begin(), result.end());
+                        listeners = response.listeners.get_array();
                     }
 
-                    callback.second->listener_->onEventListenersReceived(listeners);
+                    executorContext_.getCallbackExecutor().add([callback, listeners]
+                                                                {
+                                                                    callback->onEventListenersReceived(listeners);
+                                                                });
                 } else {
-                    callback.second->listener_->onRequestFailed();
+                    executorContext_.getCallbackExecutor().add([callback] { callback->onRequestFailed(); });
                 }
 
             } else {
@@ -200,17 +216,18 @@ std::int32_t EventManager::findEventListeners(const std::list<std::string>& even
     info->eventFQNs_ = eventFQNs;
     info->listener_ = listener;
 
-    KAA_MUTEX_UNIQUE_DECLARE(lock, eventListenersGuard_);
-    eventListenersRequests_.insert(std::make_pair(requestId, info));
-    KAA_UNLOCK(lock);
+    {
+        KAA_MUTEX_LOCKING("eventListenersGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(eventListenersLock, eventListenersGuard_);
+        KAA_MUTEX_LOCKED("eventListenersGuard_");
+
+        eventListenersRequests_.insert(std::make_pair(requestId, info));
+        KAA_MUTEX_UNLOCKED("eventListenersGuard_");
+    }
 
     KAA_LOG_TRACE("Added event listeners resolving request");
 
-    if (eventTransport_) {
-        eventTransport_->sync();
-    } else {
-        KAA_LOG_WARN("Event listener resolve request postponed: transport was not set");
-    }
+    doSync();
 
     return requestId;
 }
@@ -218,17 +235,27 @@ std::int32_t EventManager::findEventListeners(const std::list<std::string>& even
 void EventManager::setTransport(EventTransport *transport)
 {
     eventTransport_ = transport;
+
     if (eventTransport_) {
         bool needSync = false;
-        KAA_MUTEX_UNIQUE_DECLARE(eventsLock, pendingEventsGuard_);
-        needSync = !pendingEvents_.empty();
-        KAA_UNLOCK(eventsLock);
-        if (!needSync) {
-            KAA_MUTEX_UNIQUE_DECLARE(listenersLock, eventListenersGuard_);
-            needSync = !eventListenersRequests_.empty();
+        {
+            KAA_MUTEX_LOCKING("pendingEventsGuard_");
+            KAA_MUTEX_UNIQUE_DECLARE(eventsLock, pendingEventsGuard_);
+            KAA_MUTEX_LOCKED("pendingEventsGuard_");
+            needSync = !pendingEvents_.empty();
+            KAA_MUTEX_UNLOCKED("pendingEventsGuard_");
         }
+
+        if (!needSync) {
+            KAA_MUTEX_LOCKING("eventListenersGuard_");
+            KAA_MUTEX_UNIQUE_DECLARE(eventListenersLock, eventListenersGuard_);
+            KAA_MUTEX_LOCKED("eventListenersGuard_");
+            needSync = !eventListenersRequests_.empty();
+            KAA_MUTEX_UNLOCKED("eventListenersGuard_");
+        }
+
         if (needSync) {
-            eventTransport_->sync();
+            doSync();
         }
     }
 }
@@ -237,16 +264,31 @@ void EventManager::commit(TransactionIdPtr trxId)
 {
     auto it = transactions_.find(trxId);
     if (it != transactions_.end()) {
-        KAA_MUTEX_UNIQUE_DECLARE(lock, pendingEventsGuard_);
+        KAA_MUTEX_LOCKING("pendingEventsGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(eventsLock, pendingEventsGuard_);
+        KAA_MUTEX_LOCKED("pendingEventsGuard_");
+
         std::list<Event> & events = it->second;
         for (Event &e : events) {
             pendingEvents_.insert(std::make_pair(currentEventIndex_++, std::move(e)));
         }
         transactions_.erase(it);
-        KAA_UNLOCK(lock);
-        if (eventTransport_) {
-            eventTransport_->sync();
-        }
+
+        KAA_MUTEX_UNLOCKING("pendingEventsGuard_");
+        KAA_UNLOCK(eventsLock);
+        KAA_MUTEX_UNLOCKED("pendingEventsGuard_");
+
+        doSync();
+    }
+}
+
+void EventManager::doSync()
+{
+    if (eventTransport_) {
+        eventTransport_->sync();
+    } else {
+        KAA_LOG_ERROR("Failed to sync: event transport is not set");
+        throw TransportNotFoundException("Event transport not found");
     }
 }
 

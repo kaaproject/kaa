@@ -110,6 +110,8 @@ set ( KAA_TEST_SOURCES
         ../impl/channel/TransportProtocolIdConstants.cpp
         ../impl/channel/IPTransportInfo.cpp
         ../impl/failover/DefaultFailoverStrategy.cpp
+        ../impl/utils/ThreadPool.cpp
+        ../impl/context/SimpleExecutorContext.cpp
         TestRunner.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp
@@ -134,6 +136,7 @@ set ( KAA_TEST_SOURCES
         impl/log/LogCollectorTest.cpp
         impl/log/SQLiteDBLogStorageTest.cpp
         impl/utils/KaaTimerTest.cpp
+        impl/utils/ThreadPoolTest.cpp
         impl/log/strategies/RecordCountLogUploadStrategyTest.cpp
         impl/log/strategies/StorageSizeLogUploadStrategyTest.cpp
         impl/log/strategies/PeriodicLogUploadStrategyTest.cpp
