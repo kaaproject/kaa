@@ -34,6 +34,7 @@
 #include "utilities/kaa_log.h"
 #include "platform/ext_log_storage.h"
 #include "platform/ext_log_upload_strategy.h"
+#include "platform-impl/common/ext_log_upload_strategies.h"
 
 #ifndef KAA_DISABLE_FEATURE_LOGGING
 
@@ -52,10 +53,6 @@ char* allocator(void *mock_context, size_t size)
 extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
                                                   , kaa_logger_t *logger);
 
-extern kaa_error_t ext_log_upload_strategy_by_volume_create(void **strategy_p
-                                                          , kaa_channel_manager_t   *channel_manager
-                                                          , kaa_bootstrap_manager_t *bootstrap_manager);
-
 void test_empty_log_collector_extension_count(void)
 {
     kaa_service_t service = KAA_SERVICE_LOGGING;
@@ -71,15 +68,15 @@ void test_empty_log_collector_extension_count(void)
     kaa_error_t error_code = ext_unlimited_log_storage_create(&log_storage_context, kaa_context->logger);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = ext_log_upload_strategy_by_volume_create(&log_upload_strategy_context
-                                                        , kaa_context->channel_manager
-                                                        , kaa_context->bootstrap_manager);
+    error_code = ext_log_upload_strategy_create(kaa_context
+                                              , &log_upload_strategy_context
+                                              , KAA_LOG_UPLOAD_VOLUME_STRATEGY);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
     error_code = kaa_logging_init(kaa_context->log_collector, log_storage_context, log_upload_strategy_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 
-    error_code = kaa_platform_protocol_serialize_client_sync(kaa_context->platfrom_protocol, info, &buffer, &buffer_size);
+    error_code = kaa_platform_protocol_serialize_client_sync(kaa_context->platform_protocol, info, &buffer, &buffer_size);
     KAA_FREE(info);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
 

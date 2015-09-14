@@ -98,7 +98,8 @@
                                     "EVENT_JSON",
                                     "HEADER_BINARY",
                                     "EVENT_BINARY",
-                                    "UUID"
+                                    "UUID",
+                                    "TS"
                                 ]
                             }
                         },
@@ -316,6 +317,12 @@
             "name":"callbackThreadPoolSize",
             "displayName":"Callback thread pool size",
             "by_default":2,
+            "type":"int"
+        },
+        {
+            "name":"dataTTL",
+            "displayName":"TTL",
+            "by_default":0,
             "type":"int"
         },
         {

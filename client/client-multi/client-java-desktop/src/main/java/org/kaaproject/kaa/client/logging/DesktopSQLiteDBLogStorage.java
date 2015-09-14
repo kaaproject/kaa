@@ -41,9 +41,11 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
     private PreparedStatement deleteByRecordIdStatement;
     private PreparedStatement deleteByBucketIdStatement;
     private PreparedStatement resetBucketIdStatement;
+    private PreparedStatement selectUnmarkedStatement;
 
-    private long recordCount;
-    private long consumedSize;
+    private long totalRecordCount;
+    private long unmarkedRecordCount;
+    private long unmarkedConsumedSize;
     private int currentBucketId = 1;
 
     private Map<Integer, Long> consumedMemoryStorage = new HashMap<>();
@@ -63,7 +65,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             LOG.debug("SQLite connection was successfully established");
             initTable();
             retrieveConsumedSizeAndVolume();
-            if (recordCount > 0) {
+            if (totalRecordCount > 0) {
                 resetBucketIDs();
             }
         } catch (ClassNotFoundException e) {
@@ -92,9 +94,11 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 insertStatement.setBytes(1, record.getData());
                 int affectedRows = insertStatement.executeUpdate();
                 if (affectedRows == 1) {
-                    consumedSize += record.getSize();
-                    recordCount++;
-                    LOG.trace("Added a new log record, records count: {}, data: {}", recordCount, record.getData());
+                    unmarkedConsumedSize += record.getSize();
+                    unmarkedRecordCount++;
+                    totalRecordCount++;
+                    LOG.trace("Added a new log record, total record count: {}, data: {}, unmarked record count: {}",
+                            totalRecordCount, record.getData(), unmarkedRecordCount);
                 } else {
                     LOG.warn("No log record was added");
                 }
@@ -109,19 +113,30 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
         return this;
     }
 
+
+
+
     @Override
-    public LogBlock getRecordBlock(long blockSize) {
+    public LogBlock getRecordBlock(long blockSize, int batchCount) {
         synchronized (connection) {
-            LOG.trace("Creating a new record block, needed size: {}", blockSize);
-            Statement statement = null;
+            LOG.trace("Creating a new record block, needed size: {}, batch count: {}", blockSize, batchCount);
+            if (selectUnmarkedStatement == null) {
+                try {
+                    selectUnmarkedStatement = connection.prepareStatement(PersistentLogStorageConstants.KAA_SELECT_UNMARKED_RECORDS);
+                } catch (SQLException e) {
+                    LOG.error("Can't create select unmarked statement", e);
+                    throw new RuntimeException(e);
+                }
+            }
+
             ResultSet rs = null;
             LogBlock logBlock = null;
             List<String> unmarkedRecordIds = new LinkedList<>();
             List<LogRecord> logRecords = new LinkedList<>();
             try {
                 long leftBlockSize = blockSize;
-                statement = connection.createStatement();
-                rs = statement.executeQuery(PersistentLogStorageConstants.KAA_SELECT_UNMARKED_RECORDS);
+                selectUnmarkedStatement.setInt(1, batchCount);
+                rs = selectUnmarkedStatement.executeQuery();
                 while (rs.next()) {
                     int recordId = rs.getInt(1);
                     byte[] recordData = rs.getBytes(2);
@@ -144,11 +159,13 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                     logBlock = new LogBlock(currentBucketId++, logRecords);
 
                     long logBlockSize = blockSize - leftBlockSize;
-                    consumedSize -= logBlockSize;
+                    unmarkedConsumedSize -= logBlockSize;
+                    unmarkedRecordCount -= logRecords.size();
                     consumedMemoryStorage.put(logBlock.getBlockId(), logBlockSize);
 
-                    LOG.info("Created log block: id [{}], size {}. Log block record count: {}, Total record count: {}",
-                            logBlock.getBlockId(), logBlockSize, logBlock.getRecords().size(), recordCount);
+                    LOG.info("Created log block: id [{}], size {}. Log block record count: {}, total record count: {}," +
+                                    " unmarked record count: {}",
+                            logBlock.getBlockId(), logBlockSize, logBlock.getRecords().size(), totalRecordCount, unmarkedRecordCount);
                 } else {
                     LOG.info("No unmarked log records found");
                 }
@@ -158,7 +175,6 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             } finally {
                 try {
                     tryCloseResultSet(rs);
-                    tryCloseStatement(statement);
                 } catch (SQLException e) {
                     LOG.error("Can't close result set", e);
                 }
@@ -182,7 +198,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             try {
                 deleteByRecordIdStatement.setInt(1, recordId);
                 if (deleteByRecordIdStatement.executeUpdate() > 0) {
-                    recordCount--;
+                    totalRecordCount--;
                     LOG.info("Removed log record with id [{}]", recordId);
                 } else {
                     LOG.warn("No log record was removed");
@@ -248,8 +264,8 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 deleteByBucketIdStatement.setInt(1, recordBlockId);
                 int removedRecordsCount = deleteByBucketIdStatement.executeUpdate();
                 if (removedRecordsCount > 0) {
-                    recordCount -= removedRecordsCount;
-                    LOG.info("Removed {} records from storage. Total log record count: {}", removedRecordsCount, recordCount);
+                    totalRecordCount -= removedRecordsCount;
+                    LOG.info("Removed {} records from storage. Total log record count: {}", removedRecordsCount, totalRecordCount);
                 } else {
                     LOG.warn("No records were removed from storage");
                 }
@@ -278,7 +294,8 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 if (affectedRows > 0) {
                     LOG.info("Total {} log records reset for bucket id: [{}]", affectedRows, bucketId);
                     long previouslyConsumedSize = consumedMemoryStorage.remove(bucketId);
-                    consumedSize += previouslyConsumedSize;
+                    unmarkedConsumedSize += previouslyConsumedSize;
+                    unmarkedRecordCount += affectedRows;
                 } else {
                     LOG.info("No log records for bucket with id: [{}]", bucketId);
                 }
@@ -291,12 +308,12 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
 
     @Override
     public long getConsumedVolume() {
-        return consumedSize;
+        return unmarkedConsumedSize;
     }
 
     @Override
     public long getRecordCount() {
-        return recordCount;
+        return unmarkedRecordCount;
     }
 
     private void initTable() throws SQLException {
@@ -318,9 +335,9 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
                 statement = connection.createStatement();
                 rs = statement.executeQuery(PersistentLogStorageConstants.KAA_HOW_MANY_LOGS_IN_DB);
                 if (rs.next()) {
-                    recordCount = rs.getLong(1);
-                    consumedSize = rs.getLong(2);
-                    LOG.trace("Retrieved record count: {}, consumed size: {}", recordCount, consumedSize);
+                    unmarkedRecordCount = totalRecordCount = rs.getLong(1);
+                    unmarkedConsumedSize = rs.getLong(2);
+                    LOG.trace("Retrieved record count: {}, consumed size: {}", totalRecordCount, unmarkedConsumedSize);
                 } else {
                     LOG.error("Unable to retrieve consumed size and volume");
                     throw new RuntimeException("Unable to retrieve consumed size and volume");
@@ -338,6 +355,7 @@ public class DesktopSQLiteDBLogStorage implements LogStorage, LogStorageStatus {
             tryCloseStatement(deleteByRecordIdStatement);
             tryCloseStatement(deleteByBucketIdStatement);
             tryCloseStatement(resetBucketIdStatement);
+            tryCloseStatement(selectUnmarkedStatement);
 
             if (connection != null) {
                 connection.close();

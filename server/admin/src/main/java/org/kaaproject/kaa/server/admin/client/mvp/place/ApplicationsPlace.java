@@ -17,6 +17,8 @@
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -114,6 +116,12 @@ public class ApplicationsPlace extends TreePlace {
                 place.setApplicationName(application.getName());
                 result.add(place);
             }
+            Collections.sort(result, new Comparator<TreePlace>() {
+                @Override
+                public int compare(TreePlace o1, TreePlace o2) {
+                    return o1.getName().compareToIgnoreCase(o2.getName());
+                }
+            });
             return result;
         }
 

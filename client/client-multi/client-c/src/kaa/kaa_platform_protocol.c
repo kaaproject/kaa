@@ -39,8 +39,8 @@
 /** External channel manager API */
 extern kaa_error_t kaa_channel_manager_bootstrap_request_get_size(kaa_channel_manager_t *self
                                                                 , size_t *expected_size);
-extern kaa_error_t kaa_channel_manager_bootstrap_request_serialize(kaa_channel_manager_t *self
-                                                                 , kaa_platform_message_writer_t* writer);
+
+extern kaa_error_t kaa_bootstrap_manager_bootstrap_request_serialize(kaa_bootstrap_manager_t *self, kaa_platform_message_writer_t* writer);
 
 /** External bootstrap manager API */
 extern kaa_error_t kaa_bootstrap_manager_handle_server_sync(kaa_bootstrap_manager_t *self
@@ -114,7 +114,7 @@ kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size)
         size += sizeof(uint32_t); // timeout value
         size += kaa_aligned_size_get(SHA_1_DIGEST_LENGTH); // public key hash length
         size += kaa_aligned_size_get(SHA_1_DIGEST_LENGTH); // profile hash length
-        size += kaa_aligned_size_get(KAA_APPLICATION_TOKEN_LENGTH); // token length
+        size += kaa_aligned_size_get(KAA_SDK_TOKEN_LENGTH); // sdk token length
     }
 
     *expected_size = size;
@@ -124,9 +124,11 @@ kaa_error_t kaa_meta_data_request_get_size(size_t *expected_size)
 
 
 
-kaa_error_t kaa_meta_data_request_serialize(kaa_status_t *status, kaa_platform_message_writer_t* writer, uint32_t request_id)
+kaa_error_t kaa_meta_data_request_serialize(kaa_platform_protocol_t *self, kaa_platform_message_writer_t* writer, uint32_t request_id)
 {
-    KAA_RETURN_IF_NIL2(status, writer, KAA_ERR_BADPARAM);
+    KAA_RETURN_IF_NIL3(self, self->status, writer, KAA_ERR_BADPARAM);
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client meta sync");
 
     uint32_t options = TIMEOUT_VALUE | PUBLIC_KEY_HASH_VALUE | PROFILE_HASH_VALUE | APP_TOKEN_VALUE;
 
@@ -149,13 +151,15 @@ kaa_error_t kaa_meta_data_request_serialize(kaa_status_t *status, kaa_platform_m
     err_code = kaa_platform_message_write(writer, &timeout, sizeof(timeout));
     KAA_RETURN_IF_ERR(err_code);
 
-    err_code = kaa_platform_message_write_aligned(writer, status->endpoint_public_key_hash, SHA_1_DIGEST_LENGTH);
+    err_code = kaa_platform_message_write_aligned(writer, self->status->endpoint_public_key_hash, SHA_1_DIGEST_LENGTH);
     KAA_RETURN_IF_ERR(err_code);
 
-    err_code = kaa_platform_message_write_aligned(writer, status->profile_hash, SHA_1_DIGEST_LENGTH);
+    err_code = kaa_platform_message_write_aligned(writer, self->status->profile_hash, SHA_1_DIGEST_LENGTH);
     KAA_RETURN_IF_ERR(err_code);
 
-    err_code = kaa_platform_message_write_aligned(writer, APPLICATION_TOKEN, KAA_APPLICATION_TOKEN_LENGTH);
+    err_code = kaa_platform_message_write_aligned(writer, KAA_SDK_TOKEN, KAA_SDK_TOKEN_LENGTH);
+
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Meta sync: payload length '%u', request id '%u'", payload_length, request_id);
 
     return err_code;
 }
@@ -313,13 +317,12 @@ static kaa_error_t kaa_client_sync_serialize(kaa_platform_protocol_t *self
     char *extension_count_p = writer->current;
     writer->current += KAA_PROTOCOL_EXTENSIONS_COUNT_SIZE;
 
-    error_code = kaa_meta_data_request_serialize(self->status, writer, self->request_id);
+    error_code = kaa_meta_data_request_serialize(self, writer, self->request_id);
 
     while (!error_code && services_count--) {
         switch (services[services_count]) {
         case KAA_SERVICE_BOOTSTRAP: {
-            error_code = kaa_channel_manager_bootstrap_request_serialize(self->kaa_context->channel_manager
-                                                                       , writer);
+            error_code = kaa_bootstrap_manager_bootstrap_request_serialize(self->kaa_context->bootstrap_manager, writer);
             if (error_code)
                 KAA_LOG_ERROR(self->logger, error_code, "Failed to serialize the bootstrap extension");
             break;
@@ -437,7 +440,7 @@ kaa_error_t kaa_platform_protocol_serialize_client_sync(kaa_platform_protocol_t 
     if (error) {
         self->request_id--;
     } else {
-        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Client sync successfully serialized");
+        KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Client sync serialized: request id '%u', payload size '%zu'", self->request_id, *buffer_size);
     }
 
     return error;
@@ -451,7 +454,7 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
 {
     KAA_RETURN_IF_NIL3(self, buffer, buffer_size, KAA_ERR_BADPARAM);
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Processing server sync...");
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Server sync received: payload size '%zu'", buffer_size);
 
     kaa_platform_message_reader_t *reader = NULL;
     kaa_error_t error_code = kaa_platform_message_reader_create(&reader, buffer, buffer_size);
@@ -495,8 +498,10 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
             break;
         }
         case KAA_META_DATA_EXTENSION_TYPE: {
+            KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received meta server sync: options 0, payload size %u", sizeof(uint32_t));
             error_code = kaa_platform_message_read(reader, &request_id, sizeof(uint32_t));
             request_id = KAA_NTOHL(request_id);
+            KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Server sync request id %u", request_id);
             break;
         }
         case KAA_PROFILE_EXTENSION_TYPE: {

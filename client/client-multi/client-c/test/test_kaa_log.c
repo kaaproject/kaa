@@ -125,6 +125,11 @@ void ext_log_upload_strategy_destroy(void *context)
 
 }
 
+bool ext_log_upload_strategy_is_timeout_strategy(void *strategy)
+{
+    return false;
+}
+
 
 /*
  * STORAGE INTERFACE

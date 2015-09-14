@@ -4,6 +4,24 @@
     "name": "FlumeConfig",
     "fields": 
     [
+    	{
+            "name":"executorThreadPoolSize",
+            "displayName":"Executor thread pool size",
+            "by_default":1,
+            "type":"int"
+        },
+        {
+            "name":"callbackThreadPoolSize",
+            "displayName":"Callback thread pool size",
+            "by_default":2,
+            "type":"int"
+        },
+        {
+            "name":"clientsThreadPoolSize",
+            "displayName":"RPC client max thread pool size",
+            "by_default":2,
+            "type":"int"
+        },
         {"name": "flumeEventFormat",
          "displayName": "Flume event format",
          "by_default": "RECORDS_CONTAINER",

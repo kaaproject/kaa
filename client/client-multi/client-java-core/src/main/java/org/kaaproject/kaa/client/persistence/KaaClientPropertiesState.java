@@ -17,6 +17,8 @@
 package org.kaaproject.kaa.client.persistence;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,6 +42,7 @@ import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.commons.compress.utils.Charsets;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
@@ -67,7 +70,7 @@ public class KaaClientPropertiesState implements KaaClientState {
     private static final String NF_SUBSCRIPTIONS = "nf_subscriptions";
     private static final String IS_REGISTERED = "is_registered";
     private static final String IS_ATTACHED = "is_attached";
-    private static final String CONFIGURATION_VERSION = "conf_schema_version";
+
     public static final String STATE_FILE_LOCATION = "state.file_location";
     public static final String CLIENT_PRIVATE_KEY_FILE_LOCATION = "keys.private";
     public static final String CLIENT_PUBLIC_KEY_FILE_LOCATION = "keys.public";
@@ -119,6 +122,8 @@ public class KaaClientPropertiesState implements KaaClientState {
                     LOG.info("SDK properties were updated");
                     setRegistered(false);
                     setPropertiesHash(properties.getPropertiesHash());
+                    //TODO: add more intelligent check by comparing part of SDK token.
+                    isConfigVersionUpdated = true;
                 } else {
                     LOG.info("SDK properties are up to date");
                 }
@@ -156,8 +161,6 @@ public class KaaClientPropertiesState implements KaaClientState {
             LOG.info("First SDK start");
             setPropertiesHash(properties.getPropertiesHash());
         }
-
-        checkConfigVersionForUpdates(properties);
     }
 
     private void parseNfSubscriptions() {
@@ -180,18 +183,6 @@ public class KaaClientPropertiesState implements KaaClientState {
             }
         }else{
             LOG.info("No subscription info found in state");
-        }
-    }
-
-    private void checkConfigVersionForUpdates(KaaClientProperties sdkProperties) {
-        int configVersionFromProperties = sdkProperties.getVersionInfo().getConfigVersion();
-        String loadedConfigVersionStr = state.getProperty(CONFIGURATION_VERSION);
-
-        isConfigVersionUpdated = (loadedConfigVersionStr != null ? (configVersionFromProperties != Integer.parseInt(loadedConfigVersionStr))
-                : false);
-
-        if (isConfigVersionUpdated || (loadedConfigVersionStr == null)) {
-            state.setProperty(CONFIGURATION_VERSION, Integer.toString(configVersionFromProperties));
         }
     }
 
@@ -314,7 +305,7 @@ public class KaaClientPropertiesState implements KaaClientState {
             }
         }
         return kp;
-    };
+    }
     
     @Override
     public EndpointKeyHash getEndpointKeyHash() {
@@ -465,4 +456,20 @@ public class KaaClientPropertiesState implements KaaClientState {
         state.setProperty(IS_ATTACHED, Boolean.toString(isAttached));
     }
 
+    @Override
+    public void clean() {
+        state.setProperty(IS_REGISTERED, "false");
+        saveFileDelete(stateFileLocation);
+        saveFileDelete(stateFileLocation + "_bckp");
+    }
+
+    private void saveFileDelete(String fileName) {
+        try {
+            FileUtils.forceDelete(new File(fileName));
+        } catch (FileNotFoundException e) {
+            LOG.trace("File {} wasn't deleted, as it hadn't existed :", fileName, e);
+        } catch (IOException e) {
+            LOG.debug("An error occurred during deletion of the file [{}] :", fileName, e);
+        }
+    }
 }

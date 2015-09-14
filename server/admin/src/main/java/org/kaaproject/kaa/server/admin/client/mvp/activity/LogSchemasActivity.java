@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -32,7 +33,6 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSchemasPlace> {
 
@@ -50,8 +50,8 @@ public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSc
 
     @Override
     protected AbstractDataProvider<LogSchemaDto> getDataProvider(
-            MultiSelectionModel<LogSchemaDto> selectionModel) {
-        return new LogSchemasDataProvider(selectionModel, listView, applicationId);
+            AbstractGrid<LogSchemaDto,?> dataGrid) {
+        return new LogSchemasDataProvider(dataGrid, listView, applicationId);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSc
 
     @Override
     protected void onCustomRowAction(RowActionEvent<String> event) {
-        Integer logSchemaVersion = Integer.valueOf(event.getClickedId());
+        Integer schemaVersion = Integer.valueOf(event.getClickedId());
         final int action = event.getAction();
 
         AsyncCallback<String> callback = new AsyncCallback<String>() {
@@ -87,10 +87,10 @@ public class LogSchemasActivity extends AbstractListActivity<LogSchemaDto, LogSc
 
         switch (action) {
             case KaaRowAction.DOWNLOAD_LOG_SCHEMA_LIBRARY:
-                KaaAdmin.getDataSource().getRecordLibrary(applicationId, logSchemaVersion, RecordFiles.LIBRARY, callback);
+                KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.LOG_LIBRARY, callback);
                 break;
-            case KaaRowAction.DOWNLOAD_LOG_SCHEMA:
-                KaaAdmin.getDataSource().getRecordLibrary(applicationId, logSchemaVersion, RecordFiles.SCHEMA, callback);
+            case KaaRowAction.DOWNLOAD_SCHEMA:
+                KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.LOG_SCHEMA, callback);
                 break;
             default:
                 break;

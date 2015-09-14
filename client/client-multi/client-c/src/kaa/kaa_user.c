@@ -235,7 +235,7 @@ kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_me
 {
     KAA_RETURN_IF_NIL2(self, writer, KAA_ERR_BADPARAM);
 
-    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to compile user client sync");
+    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Going to serialize client user sync");
 
     size_t size = kaa_user_request_get_size_no_header(self);
     if (kaa_platform_message_write_extension_header(writer, KAA_USER_EXTENSION_TYPE, KAA_USER_RECEIVE_UPDATES_FLAG, size)) {
@@ -250,6 +250,8 @@ kaa_error_t kaa_user_request_serialize(kaa_user_manager_t *self, kaa_platform_me
         writer->current += sizeof(uint16_t);
         *((uint16_t *) writer->current) = KAA_HTONS((uint16_t) self->user_info->user_verifier_token_len);
         writer->current += sizeof(uint32_t); /* verifier token length + reserved */
+        KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Serializing external system authentication parameters: user external id '%s', access token '%s', verifier token '%s'"
+                    , self->user_info->user_external_id, self->user_info->user_access_token, self->user_info->user_verifier_token);
 
         if (self->user_info->user_external_id_len) {
             if (kaa_platform_message_write_aligned(writer
@@ -295,7 +297,7 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
 {
     KAA_RETURN_IF_NIL2(self, reader, KAA_ERR_BADPARAM);
 
-    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received user server sync");
+    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received user server sync: options %u, payload size %u", extension_options, extension_length);
 
     size_t remaining_length = extension_length;
     uint32_t field_header = 0;
@@ -315,12 +317,11 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                 self->is_waiting_user_attach_response = false;
 
                 if (result == USER_RESULT_SUCCESS) {
-                    KAA_LOG_TRACE(self->logger, KAA_ERR_NONE, "Endpoint was successfully attached to user");
+                    KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Endpoint was successfully attached to user");
                     self->status->is_attached = true;
                     if (self->attachment_listeners.on_attach_success)
                         (self->attachment_listeners.on_attach_success)(self->attachment_listeners.context);
                 } else {
-                    KAA_LOG_ERROR(self->logger, KAA_ERR_BAD_STATE, "Failed to attach endpoint to user");
 
                     uint16_t user_verifier_error_code;
                     if (kaa_platform_message_read(reader, &user_verifier_error_code, sizeof(uint16_t))) {
@@ -350,17 +351,21 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                         reason[reason_length] = '\0';
                         remaining_length -= kaa_aligned_size_get(reason_length);
 
+                        KAA_LOG_ERROR(self->logger, KAA_ERR_EVENT_NOT_ATTACHED, "Failed to attach to user: error %d, reason '%s'", user_verifier_error_code, reason);
+
                         if (self->attachment_listeners.on_attach_failed) {
                             (self->attachment_listeners.on_attach_failed)(self->attachment_listeners.context
                                                                         , (user_verifier_error_code_t)user_verifier_error_code
                                                                         , reason);
                         }
                     } else {
+                        KAA_LOG_ERROR(self->logger, KAA_ERR_EVENT_NOT_ATTACHED, "Failed to attach to user: error %d, reason 'unknown'", user_verifier_error_code);
                         if (self->attachment_listeners.on_attach_failed) {
                             (self->attachment_listeners.on_attach_failed)(self->attachment_listeners.context
                                                                         , (user_verifier_error_code_t)user_verifier_error_code
                                                                         , NULL);
                         }
+
                     }
                 }
                 break;
@@ -388,6 +393,8 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                     return KAA_ERR_READ_FAILED;
                 }
                 access_token[access_token_length] = '\0';
+                KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received user attach notification: endpoint external id '%s' (length %u), access token '%s' (length %u)"
+                           , external_id, external_id_length, access_token, access_token_length);
                 remaining_length -= kaa_aligned_size_get(access_token_length);
 
                 self->status->is_attached = true;
@@ -409,6 +416,8 @@ kaa_error_t kaa_user_handle_server_sync(kaa_user_manager_t *self
                     return KAA_ERR_READ_FAILED;
                 }
                 access_token[access_token_length] = '\0';
+                KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Received user detach notification: endpoint access token '%s' (length %u)"
+                           , access_token, access_token_length);
                 remaining_length -= kaa_aligned_size_get(access_token_length);
 
                 self->status->is_attached = false;

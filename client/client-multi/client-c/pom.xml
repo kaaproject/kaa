@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.client</groupId>
-        <version>0.7.1-SNAPSHOT</version>
+        <version>0.7.2-SNAPSHOT</version>
         <artifactId>client-multi</artifactId>
     </parent>
     <artifactId>client-c</artifactId>
@@ -78,8 +78,9 @@
                         <exclude>**/build/**</exclude>
                         <exclude>**/gcovr</exclude>
 			<!-- SHA implementation from RFC 3174 -->
-			<exclude>**/platform-impl/sha1.h</exclude>
+			<exclude>**/platform-impl/common/sha1.h</exclude>
 			<exclude>**/sha1.c</exclude>
+			<exclude>**/snprintf.c</exclude>
                     </excludes>
                 </configuration>
             </plugin>

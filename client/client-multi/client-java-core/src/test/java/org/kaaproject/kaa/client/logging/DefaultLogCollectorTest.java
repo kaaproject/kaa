@@ -16,22 +16,25 @@
 
 package org.kaaproject.kaa.client.logging;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kaaproject.kaa.client.channel.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.context.ExecutorContext;
@@ -47,12 +50,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class DefaultLogCollectorTest {
 
     private static ExecutorContext executorContext;
-    private static ExecutorService executor;
+    private static ScheduledExecutorService executor;
 
     @BeforeClass
     public static void beforeSuite() {
         executorContext = Mockito.mock(ExecutorContext.class);
-        executor = Executors.newSingleThreadExecutor();
+        executor = Executors.newSingleThreadScheduledExecutor();
         Mockito.when(executorContext.getApiExecutor()).thenReturn(new AbstractExecutorService() {
 
             @Override
@@ -91,6 +94,7 @@ public class DefaultLogCollectorTest {
             }
         });
         Mockito.when(executorContext.getCallbackExecutor()).thenReturn(executor);
+        Mockito.when(executorContext.getScheduledExecutor()).thenReturn(executor);
     }
 
     @AfterClass
@@ -101,9 +105,10 @@ public class DefaultLogCollectorTest {
     @Test
     public void testDefaultUploadConfiguration() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
 
-        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager, failoverManager);
         DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy();
         strategy.setCountThreshold(5);
         logCollector.setStrategy(strategy);
@@ -126,8 +131,9 @@ public class DefaultLogCollectorTest {
     @Test
     public void testStorageStatusAffect() {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
-        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager, failoverManager);
         LogStorage storage = Mockito.mock(LogStorage.class);
         logCollector.setStorage(storage);
         Log record = new Log();
@@ -170,9 +176,10 @@ public class DefaultLogCollectorTest {
     @Test
     public void testLogUploadRequestAndSuccessResponse() throws Exception {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
 
-        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager, failoverManager);
         DefaultLogUploadStrategy strategy = new DefaultLogUploadStrategy();
         logCollector.setStrategy(strategy);
         LogStorage storage = Mockito.mock(LogStorage.class);
@@ -210,7 +217,7 @@ public class DefaultLogCollectorTest {
         });
         logCollector.addLogRecord(record);
 
-        Mockito.when(storage.getRecordBlock(Mockito.anyLong())).thenReturn(
+        Mockito.when(storage.getRecordBlock(Mockito.anyLong(), Mockito.anyInt())).thenReturn(
                 new LogBlock(1, Arrays.asList(new LogRecord(record), new LogRecord(record), new LogRecord(record))));
 
         LogSyncRequest request1 = new LogSyncRequest();
@@ -228,9 +235,10 @@ public class DefaultLogCollectorTest {
     @Test
     public void testLogUploadAndFailureResponse() throws IOException, InterruptedException {
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
 
-        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager, failoverManager);
         DefaultLogUploadStrategy strategy = Mockito.spy(new DefaultLogUploadStrategy());
         strategy.setRetryPeriod(0);
         logCollector.setStrategy(strategy);
@@ -269,7 +277,7 @@ public class DefaultLogCollectorTest {
         });
         logCollector.addLogRecord(record);
 
-        Mockito.when(storage.getRecordBlock(Mockito.anyLong())).thenReturn(
+        Mockito.when(storage.getRecordBlock(Mockito.anyLong(), Mockito.anyInt())).thenReturn(
                 new LogBlock(1, Arrays.asList(new LogRecord(record), new LogRecord(record), new LogRecord(record))));
 
         LogSyncRequest request1 = new LogSyncRequest();
@@ -293,15 +301,16 @@ public class DefaultLogCollectorTest {
 
     @Test
     public void testTimeout() throws Exception {
-        long timeout = 2; // in seconds
+        int timeout = 2; // in seconds
 
         KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+        FailoverManager failoverManager = Mockito.mock(FailoverManager.class);
         LogTransport transport = Mockito.mock(LogTransport.class);
 
-        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager);
+        AbstractLogCollector logCollector = new DefaultLogCollector(transport, executorContext, channelManager, failoverManager);
 
         DefaultLogUploadStrategy tmp = new DefaultLogUploadStrategy();
-        tmp.setTimeout(1);
+        tmp.setTimeout(timeout);
         LogUploadStrategy strategy = Mockito.spy(tmp);
         logCollector.setStrategy(strategy);
 

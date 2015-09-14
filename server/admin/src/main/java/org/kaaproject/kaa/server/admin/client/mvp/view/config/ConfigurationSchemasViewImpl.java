@@ -30,7 +30,7 @@ public class ConfigurationSchemasViewImpl extends BaseListViewImpl<Configuration
 
     @Override
     protected AbstractGrid<ConfigurationSchemaDto, String> createGrid() {
-        return new BaseSchemasGrid<ConfigurationSchemaDto>();
+        return new ConfigSchemaGrid();
     }
 
     @Override

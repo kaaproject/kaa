@@ -29,7 +29,6 @@
 #include "../kaa_error.h"
 #include "../platform/defaults.h"
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -181,6 +180,12 @@ void kaa_log_write(kaa_logger_t *self, const char* source_file, int lineno, kaa_
 #define KAA_LOG_TRACE(logger, err, ...) kaa_log_write(logger, __FILE__, __LINE__, KAA_LOG_LEVEL_TRACE, err, __VA_ARGS__);
 #else
 #define KAA_LOG_TRACE(...)
+#endif
+
+#if KAA_LOCAL_DBG
+#define KAA_LOG_TRACE_LDB(logger, err, ...) KAA_LOG_TRACE(logger, err, ...)
+#else
+#define KAA_LOG_TRACE_LDB(...)
 #endif
 
 /*

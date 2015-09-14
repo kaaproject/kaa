@@ -137,6 +137,12 @@ set ( KAA_TEST_SOURCES
         impl/log/SQLiteDBLogStorageTest.cpp
         impl/utils/KaaTimerTest.cpp
         impl/utils/ThreadPoolTest.cpp
+        impl/log/strategies/RecordCountLogUploadStrategyTest.cpp
+        impl/log/strategies/StorageSizeLogUploadStrategyTest.cpp
+        impl/log/strategies/PeriodicLogUploadStrategyTest.cpp
+        impl/log/strategies/PeriodicLogUploadStrategyTest.cpp
+        impl/log/strategies/RecordCountWithTimeLimitLogUploadStrategyTest.cpp
+        impl/log/strategies/StorageSizeWithTimeLimitLogUploadStrategyTest.cpp
     )
 
 add_executable ( kaatest  ${KAA_TEST_SOURCES})

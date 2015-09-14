@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.HasId;
@@ -39,7 +40,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public abstract class AbstractListActivity<T extends HasId, P extends TreePlace> extends AbstractActivity implements BaseListView.Presenter {
 
@@ -62,16 +62,15 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
     @Override
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
         listView = getView();
-        this.dataProvider = getDataProvider(listView.getSelectionModel());
+        this.dataProvider = getDataProvider(listView.getListWidget());
         listView.setPresenter(this);
         bind(eventBus);
         containerWidget.setWidget(listView.asWidget());
-        dataProvider.addDataDisplay(listView.getDisplay());
     }
 
     protected abstract BaseListView<T> getView();
 
-    protected abstract AbstractDataProvider<T> getDataProvider(MultiSelectionModel<T> selectionModel);
+    protected abstract AbstractDataProvider<T> getDataProvider(AbstractGrid<T,?> dataGrid);
 
     protected abstract Place newEntityPlace();
 
@@ -138,7 +137,7 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
             @Override
             public void onDataChanged(DataEvent event) {
                 if (event.checkClass(dataClass)) {
-                    dataProvider.reload(listView.getDisplay());
+                    dataProvider.reload();
                     onCustomDataChangedEvent(event);
                 }
             }

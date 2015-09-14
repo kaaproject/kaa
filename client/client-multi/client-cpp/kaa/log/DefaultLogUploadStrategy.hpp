@@ -57,22 +57,27 @@ public:
     virtual void onFailure(ILogFailoverCommand& controller, LogDeliveryErrorCode code);
 
     virtual std::size_t getBatchSize() { return batchSize_; }
+    void setBatchSize(std::size_t size) { batchSize_ = size; }
+
     virtual std::size_t getRecordsBatchCount() { return recordsBatchCount_; }
+    void setRecordsBatchCount(std::size_t count)  { recordsBatchCount_ = count; }
 
     virtual std::size_t getTimeout() { return uploadTimeout_; }
+    void setUploadTimeout(std::size_t timeout) { uploadTimeout_ = timeout; }
 
     virtual std::size_t getTimeoutCheckPeriod() { return timeoutCheckPeriod_; }
+    void setTimeoutCheckPeriod(std::size_t period) { timeoutCheckPeriod_ = period; }
 
     virtual std::size_t getLogUploadCheckPeriod() { return logUploadCheckReriod_;  };
-
-    void setBatchSize(std::size_t size) { batchSize_ = size; }
-    void setRecordsBatchCount(std::size_t count)  { recordsBatchCount_ = count; }
-    void setUploadTimeout(std::size_t timeout) { uploadTimeout_ = timeout; }
-    void setUploadTimeoutCheckPeriod(std::size_t period) { timeoutCheckPeriod_ = period; }
     void setLogUploadCheckPeriod(std::size_t period) { logUploadCheckReriod_ = period; }
 
+    std::size_t getRetryPeriod() { return retryReriod_; }
     void setRetryPeriod(std::size_t period) { retryReriod_ = period; }
+
+    std::size_t getVolumeThreshold() const { return uploadVolumeThreshold_; }
     void setVolumeThreshold(std::size_t maxVolume) { uploadVolumeThreshold_ = maxVolume; }
+
+    std::size_t getCountThreshold() const { return uploadCountThreshold_; }
     void setCountThreshold(std::size_t maxCount) { uploadCountThreshold_ = maxCount; }
 
 public:
@@ -98,7 +103,7 @@ public:
     static const std::size_t DEFAULT_UPLOAD_COUNT_THRESHOLD = 64; /*!< The default value for the log count to initiate
                                                                        the log upload. */
 
-private:
+protected:
     std::size_t batchSize_ = DEFAULT_BATCH_SIZE;
 
     std::size_t recordsBatchCount_ = DEFAULT_RECORDS_BATCH_COUNT;
@@ -113,6 +118,7 @@ private:
     std::size_t uploadVolumeThreshold_ = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
     std::size_t uploadCountThreshold_ = DEFAULT_UPLOAD_COUNT_THRESHOLD;
 
+private:
     typedef std::chrono::system_clock Clock;
     std::chrono::time_point<Clock> nextUploadAttemptTS_;
 };

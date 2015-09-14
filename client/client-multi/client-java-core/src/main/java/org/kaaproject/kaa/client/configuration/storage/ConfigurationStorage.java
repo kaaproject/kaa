@@ -67,5 +67,12 @@ public interface ConfigurationStorage {
      *
      */
     ByteBuffer loadConfiguration() throws IOException;
+    
+    /**
+     * Clear configuration data (file)
+     *
+     */
+    void clearConfiguration() throws IOException;
+
 
 }

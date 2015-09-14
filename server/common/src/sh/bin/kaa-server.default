@@ -13,6 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Extra options to pass to the JVM
+# Default options to pass to the JVM
 JAVA_OPTIONS="-Xms256M -Xmx4G -XX:+UseG1GC"
 SERVER_LOG_SUFIX=

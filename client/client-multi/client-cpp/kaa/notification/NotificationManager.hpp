@@ -92,7 +92,7 @@ private:
 
     KaaObservable<void (const Topics& list), INotificationTopicListListener*>    topicListeners_;
     NotificationObservable                                                       mandatoryListeners_;
-    std::unordered_map<std::string/*Topic ID*/, NotificationObservable>          optionalListeners_;
+    std::unordered_map<std::string/*Topic ID*/, NotificationObservablePtr>       optionalListeners_;
     KAA_MUTEX_DECLARE(optionalListenersGuard_);
 
     SubscriptionCommands    subscriptions_;

@@ -52,8 +52,7 @@ public class EcfActivity
         super.start(containerWidget, eventBus);
         if (!create) {
             AbstractGrid<EventSchemaVersionDto, Integer> ecfSchemasGrid = detailsView.getEcfSchemasGrid();
-            ecfSchemasDataProvider = new EcfSchemasDataProvider(ecfSchemasGrid.getSelectionModel(), detailsView);
-            ecfSchemasDataProvider.addDataDisplay(ecfSchemasGrid.getDisplay());
+            ecfSchemasDataProvider = new EcfSchemasDataProvider(ecfSchemasGrid, detailsView);
         }
     }
 
@@ -109,7 +108,7 @@ public class EcfActivity
         detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
         if (!create) {
             ecfSchemasDataProvider.setSchemas(entity.getSchemas());
-            ecfSchemasDataProvider.reload(detailsView.getEcfSchemasGrid().getDisplay());
+            ecfSchemasDataProvider.reload();
         }
     }
 

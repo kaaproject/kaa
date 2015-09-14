@@ -20,27 +20,27 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.MultiSelectionModel;
 
-public class AppendersDataProvider  extends AbstractDataProvider<LogAppenderDto>{
+public class AppendersDataProvider extends AbstractDataProvider<LogAppenderDto>{
     private String applicationId;
 
-    public AppendersDataProvider(MultiSelectionModel<LogAppenderDto> selectionModel,
+    public AppendersDataProvider(AbstractGrid<LogAppenderDto, ?> dataGrid,
                                  HasErrorMessage hasErrorMessage,
                                  String applicationId) {
-        super(selectionModel, hasErrorMessage);
+        super(dataGrid, hasErrorMessage, false);
         this.applicationId = applicationId;
+        addDataDisplay();
     }
 
     @Override
-    protected void loadData(final LoadCallback callback, final HasData<LogAppenderDto> display) {
+    protected void loadData(final LoadCallback callback) {
         if (!isEmpty(applicationId)) {
             KaaAdmin.getDataSource().loadLogAppenders(applicationId, new AsyncCallback<List<LogAppenderDto>>() {
                 @Override
@@ -49,7 +49,7 @@ public class AppendersDataProvider  extends AbstractDataProvider<LogAppenderDto>
                 }
                 @Override
                 public void onSuccess(List<LogAppenderDto> result) {
-                    callback.onSuccess(result, display);
+                    callback.onSuccess(result);
                 }
             });
         }

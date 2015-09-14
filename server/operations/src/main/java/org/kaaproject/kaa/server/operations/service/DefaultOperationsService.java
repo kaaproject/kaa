@@ -294,7 +294,7 @@ public class DefaultOperationsService implements OperationsService {
         byte[] profileBody = toByteArray(request.getProfileBody());
 
         RegisterProfileRequest registerProfileRequest = new RegisterProfileRequest(metaData.getApplicationToken(), endpointKey,
-                request.getVersionInfo(), profileBody, request.getEndpointAccessToken());
+                metaData.getSdkToken(), profileBody, request.getEndpointAccessToken());
         EndpointProfileDto endpointProfile = profileService.registerProfile(registerProfileRequest);
         LOG.debug("profile registered. id: {}, endpointKeyHash: {}", endpointProfile.getId(), endpointProfile.getEndpointKeyHash());
         return endpointProfile;
@@ -304,7 +304,7 @@ public class DefaultOperationsService implements OperationsService {
         LOG.debug("[{}][{}] update endpoint. request: {}", endpointId, requestHash, request);
         EndpointObjectHash endpointKeyHash = EndpointObjectHash.fromBytes(toByteArray(metaData.getEndpointPublicKeyHash()));
         UpdateProfileRequest updateRequest = new UpdateProfileRequest(metaData.getApplicationToken(), endpointKeyHash,
-                request.getEndpointAccessToken(), request.getProfileBody().array(), request.getVersionInfo());
+                request.getEndpointAccessToken(), request.getProfileBody().array(), metaData.getSdkToken());
         EndpointProfileDto endpointProfile = profileService.updateProfile(updateRequest);
         LOG.debug("profile updated. id: {}, endpointKeyHash: {}", endpointProfile.getId(), endpointProfile.getEndpointKeyHash());
         return endpointProfile;

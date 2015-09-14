@@ -24,12 +24,13 @@
 #ifndef EXT_LOG_STORAGE_H_
 #define EXT_LOG_STORAGE_H_
 
-#include "../kaa_error.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include <stddef.h>
+
+#include "../kaa_error.h"
 
 
 /**

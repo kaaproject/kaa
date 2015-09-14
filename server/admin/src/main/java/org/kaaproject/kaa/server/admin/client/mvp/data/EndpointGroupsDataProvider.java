@@ -18,28 +18,28 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class EndpointGroupsDataProvider extends AbstractDataProvider<EndpointGroupDto>{
 
     private String applicationId;
 
-    public EndpointGroupsDataProvider(MultiSelectionModel<EndpointGroupDto> selectionModel,
+    public EndpointGroupsDataProvider(AbstractGrid<EndpointGroupDto,?> dataGrid,
                                       HasErrorMessage hasErrorMessage,
                                       String applicationId) {
-        super(selectionModel, hasErrorMessage);
+        super(dataGrid, hasErrorMessage, false);
         this.applicationId = applicationId;
+        addDataDisplay();
     }
 
     @Override
-    protected void loadData(final LoadCallback callback, final HasData<EndpointGroupDto> display) {
+    protected void loadData(final LoadCallback callback) {
         KaaAdmin.getDataSource().loadEndpointGroups(applicationId, new AsyncCallback<List<EndpointGroupDto>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -48,7 +48,7 @@ public class EndpointGroupsDataProvider extends AbstractDataProvider<EndpointGro
             }
             @Override
             public void onSuccess(List<EndpointGroupDto> result) {
-                callback.onSuccess(result, display);
+                callback.onSuccess(result);
             }
         });
     }

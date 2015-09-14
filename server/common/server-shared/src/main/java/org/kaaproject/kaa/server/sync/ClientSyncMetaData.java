@@ -19,6 +19,7 @@ import java.nio.ByteBuffer;
 
 public class ClientSyncMetaData {
     private String applicationToken;
+    private String sdkToken;
     private ByteBuffer endpointPublicKeyHash;
     private ByteBuffer profileHash;
     private long timeout;
@@ -29,8 +30,9 @@ public class ClientSyncMetaData {
     /**
      * All-args constructor.
      */
-    public ClientSyncMetaData(String applicationToken, ByteBuffer endpointPublicKeyHash, ByteBuffer profileHash, Long timeout) {
+    public ClientSyncMetaData(String applicationToken, String sdkToken, ByteBuffer endpointPublicKeyHash, ByteBuffer profileHash, Long timeout) {
         this.applicationToken = applicationToken;
+        this.sdkToken = sdkToken;
         this.endpointPublicKeyHash = endpointPublicKeyHash;
         this.profileHash = profileHash;
         this.timeout = timeout == null ? 0 : timeout.longValue();
@@ -104,54 +106,50 @@ public class ClientSyncMetaData {
         this.timeout = value;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((applicationToken == null) ? 0 : applicationToken.hashCode());
-        result = prime * result + ((endpointPublicKeyHash == null) ? 0 : endpointPublicKeyHash.hashCode());
-        result = prime * result + ((profileHash == null) ? 0 : profileHash.hashCode());
-        result = prime * result + (int) (timeout ^ (timeout >>> 32));
-        return result;
+    public String getSdkToken() {
+        return sdkToken;
+    }
+
+    public void setSdkToken(String sdkToken) {
+        this.sdkToken = sdkToken;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+
+        ClientSyncMetaData that = (ClientSyncMetaData) o;
+
+        if (timeout != that.timeout) {
             return false;
         }
-        ClientSyncMetaData other = (ClientSyncMetaData) obj;
-        if (applicationToken == null) {
-            if (other.applicationToken != null) {
-                return false;
-            }
-        } else if (!applicationToken.equals(other.applicationToken)) {
+        if (applicationToken != null ? !applicationToken.equals(that.applicationToken) : that.applicationToken != null) {
             return false;
         }
-        if (endpointPublicKeyHash == null) {
-            if (other.endpointPublicKeyHash != null) {
-                return false;
-            }
-        } else if (!endpointPublicKeyHash.equals(other.endpointPublicKeyHash)) {
+        if (endpointPublicKeyHash != null ? !endpointPublicKeyHash.equals(that.endpointPublicKeyHash) : that.endpointPublicKeyHash != null) {
             return false;
         }
-        if (profileHash == null) {
-            if (other.profileHash != null) {
-                return false;
-            }
-        } else if (!profileHash.equals(other.profileHash)) {
+        if (profileHash != null ? !profileHash.equals(that.profileHash) : that.profileHash != null) {
             return false;
         }
-        if (timeout != other.timeout) {
+        if (sdkToken != null ? !sdkToken.equals(that.sdkToken) : that.sdkToken != null) {
             return false;
         }
+
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = applicationToken != null ? applicationToken.hashCode() : 0;
+        result = 31 * result + (sdkToken != null ? sdkToken.hashCode() : 0);
+        result = 31 * result + (endpointPublicKeyHash != null ? endpointPublicKeyHash.hashCode() : 0);
+        result = 31 * result + (profileHash != null ? profileHash.hashCode() : 0);
+        result = 31 * result + (int) (timeout ^ (timeout >>> 32));
+        return result;
     }
 
     @Override
@@ -159,6 +157,8 @@ public class ClientSyncMetaData {
         StringBuilder builder = new StringBuilder();
         builder.append("ClientSyncMetaData [applicationToken=");
         builder.append(applicationToken);
+        builder.append(", sdkToken=");
+        builder.append(sdkToken);
         builder.append(", endpointPublicKeyHash=");
         builder.append(endpointPublicKeyHash);
         builder.append(", profileHash=");

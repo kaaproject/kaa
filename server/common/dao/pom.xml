@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.server</groupId>
-        <version>0.7.1-SNAPSHOT</version>
+        <version>0.7.2-SNAPSHOT</version>
         <artifactId>common</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server.common</groupId>
@@ -232,7 +232,7 @@
                                 <configuration>
                                     <tasks>
                                         <copy file="src/main/resources/dao.properties.template"
-                                              tofile="src/main/resources/dao.properties" />
+                                              tofile="src/main/resources/dao.properties" overwrite="true"/>
                                         <replace file="src/main/resources/dao.properties"
                                                  token="#nosql_provider_name#" value="mongodb" />
                                     </tasks>
@@ -260,7 +260,7 @@
                                 <configuration>
                                     <tasks>
                                         <copy file="src/main/resources/dao.properties.template"
-                                              tofile="src/main/resources/dao.properties" />
+                                              tofile="src/main/resources/dao.properties" overwrite="true"/>
                                         <replace file="src/main/resources/dao.properties"
                                                  token="#nosql_provider_name#" value="cassandra" />
                                     </tasks>

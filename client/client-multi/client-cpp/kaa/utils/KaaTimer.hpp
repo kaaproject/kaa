@@ -40,8 +40,11 @@ public:
 
     ~KaaTimer()
     {
+        /*
+         * Do not add the mutex logging it may cause crashes.
+         */
         if (isThreadRun_ && timerThread_.joinable()) {
-            std::unique_lock<std::mutex>timerLock (timerGuard_);
+            std::unique_lock<std::mutex> timerLock(timerGuard_);
 
             isThreadRun_ = false;
             condition_.notify_one();
@@ -62,7 +65,7 @@ public:
         KAA_LOG_TRACE(boost::format("Timer[%1%] scheduling for %2% sec ...") % timerName_ % seconds );
 
         KAA_MUTEX_LOCKING("timerGuard_");
-        std::unique_lock<std::mutex>timerLock (timerGuard_);
+        std::unique_lock<std::mutex> timerLock(timerGuard_);
         KAA_MUTEX_LOCKED("timerGuard_");
 
         if (!isThreadRun_) {
@@ -83,7 +86,7 @@ public:
         KAA_LOG_TRACE(boost::format("Timer[%1%] stopping ...") % timerName_);
 
         KAA_MUTEX_LOCKING("timerGuard_");
-        std::unique_lock<std::mutex>timerLock (timerGuard_);
+        std::unique_lock<std::mutex> timerLock(timerGuard_);
         KAA_MUTEX_LOCKED("timerGuard_");
 
         if (isTimerRun_) {
@@ -98,7 +101,7 @@ private:
         KAA_LOG_TRACE(boost::format("Timer[%1%] starting thread ...") % timerName_);
 
         KAA_MUTEX_LOCKING("timerGuard_");
-        std::unique_lock<std::mutex>timerLock (timerGuard_);
+        std::unique_lock<std::mutex> timerLock(timerGuard_);
         KAA_MUTEX_LOCKED("timerGuard_");
 
         while (isThreadRun_) {
@@ -122,18 +125,17 @@ private:
                 } else {
                     KAA_MUTEX_UNLOCKING("timerGuard_");
                     condition_.wait_for(timerLock, (endTS_ - now));
-                    KAA_MUTEX_UNLOCKED("timerGuard_");
+                    KAA_MUTEX_LOCKED("timerGuard_");
                 }
             } else {
                 KAA_MUTEX_UNLOCKING("timerGuard_");
                 condition_.wait(timerLock);
-                KAA_MUTEX_UNLOCKED("timerGuard_");
+                KAA_MUTEX_LOCKED("timerGuard_");
             }
         }
     }
 
 private:
-
     const std::string timerName_;
 
     bool isThreadRun_;

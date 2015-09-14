@@ -51,6 +51,9 @@ extern "C" {
 #define KAA_TCP_NAME        "Kaatcp"
 #define KAA_TCP_NAME_LENGTH 6
 
+#define KAA_PING_MESSAGE_SIZE 2
+#define KAA_DISCONNECT_MESSAGE_SIZE 4
+
 typedef enum {
     KAATCP_ERR_NONE              = 0,
     KAATCP_ERR_NOMEM             = -1,
@@ -97,13 +100,13 @@ typedef struct {
 } kaatcp_connect_t;
 
 typedef enum {
-    KAATCP_CONNACK_UNKNOWN              = 0x00,
-    KAATCP_CONNACK_SUCCESS              = 0x01,
-    KAATCP_CONNACK_UNACCEPTABLE_VERSION = 0x02,
-    KAATCP_CONNACK_IDENTIFIER_REJECTED  = 0x03,
-    KAATCP_CONNACK_SERVER_UNAVAILABLE   = 0x04,
-    KAATCP_CONNACK_BAD_USER_PASSWORD    = 0x05,
-    KAATCP_CONNACK_NOT_AUTHORIZED       = 0x06
+    KAATCP_CONNACK_UNKNOWN                = 0x00,
+    KAATCP_CONNACK_SUCCESS                = 0x01,
+    KAATCP_CONNACK_UNACCEPTABLE_VERSION   = 0x02,
+    KAATCP_CONNACK_IDENTIFIER_REJECTED    = 0x03,
+    KAATCP_CONNACK_SERVER_UNAVAILABLE     = 0x04,
+    KAATCP_CONNACK_REFUSE_BAD_CREDENTIALS = 0x05,
+    KAATCP_CONNACK_NOT_AUTHORIZED         = 0x06
 } kaatcp_connack_code_t;
 
 typedef struct {

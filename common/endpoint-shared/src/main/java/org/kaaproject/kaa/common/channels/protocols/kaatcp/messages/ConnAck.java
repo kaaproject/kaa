@@ -34,7 +34,7 @@ public class ConnAck extends MqttFrame {
      *  REFUSE_BAD_PROTOCOL         0x02    Connection Refused: unacceptable protocol version
      *  REFUSE_ID_REJECT            0x03    Connection Refused: identifier rejected
      *  REFUSE_SERVER_UNAVAILABLE   0x04    Connection Refused: server unavailable
-     *  REFUSE_BAD_CREDENTIALS       0x05    Connection Refused: bad user name or password
+     *  REFUSE_BAD_CREDENTIALS       0x05    Connection Refused: invalid authentication parameters
      *  REFUSE_NO_AUTH              0x06    Connection Refused: not authorized
      */
     public enum ReturnCode {

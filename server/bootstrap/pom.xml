@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.7.1-SNAPSHOT</version>
+        <version>0.7.2-SNAPSHOT</version>
         <artifactId>server</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server</groupId>
@@ -36,6 +36,7 @@
         <server.confname>bootstrap-server.properties</server.confname>
         <script.server.name>kaa-bootstrap</script.server.name>
         <script.server.desc>Kaa Bootstrap Server</script.server.desc>
+        <script.java.options></script.java.options>
     </properties>
 
     <dependencies>
@@ -318,11 +319,18 @@
                                     file="tmp_sh/init.d/deb/${script.server.name}.init.d"
                                     token="#serverdesc#" value="${script.server.desc}" />
                                 <replace
+                                    file="tmp_sh/init.d/deb/${script.server.name}.init.d"
+                                    token="#javaopts#" value="${script.java.options}"  />
+                                <replace
                                     file="tmp_sh/init.d/rpm/${script.server.name}.init.d"
                                     token="#servername#" value="${script.server.name}" />
                                 <replace
                                     file="tmp_sh/init.d/rpm/${script.server.name}.init.d"
                                     token="#serverdesc#" value="${script.server.desc}" />
+                                <replace
+                                    file="tmp_sh/init.d/rpm/${script.server.name}.init.d"
+                                    token="#javaopts#" value="${script.java.options}"  />
+
 
                             </tasks>
                         </configuration>

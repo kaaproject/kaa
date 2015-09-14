@@ -51,8 +51,7 @@ public class AefMapActivity
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
         super.start(containerWidget, eventBus);
         AbstractGrid<ApplicationEventMapDto, String> eventMapGrid = detailsView.getEventMapGrid();
-        eventMapDataProvider = new EventMapDataProvider(eventMapGrid.getSelectionModel(), detailsView);
-        eventMapDataProvider.addDataDisplay(eventMapGrid.getDisplay());
+        eventMapDataProvider = new EventMapDataProvider(eventMapGrid, detailsView);
     }
 
     protected void bind(final EventBus eventBus) {
@@ -63,7 +62,7 @@ public class AefMapActivity
                 public void onValueChange(ValueChangeEvent<EcfInfoDto> event) {
                     EcfInfoDto ecf = detailsView.getEcf().getValue();
                     eventMapDataProvider.setEcf(ecf);
-                    eventMapDataProvider.reload(detailsView.getEventMapGrid().getDisplay());
+                    eventMapDataProvider.reload();
                 }
             }));
         }
@@ -111,7 +110,7 @@ public class AefMapActivity
             detailsView.getEcfName().setValue(entity.getEcfName());
             detailsView.getEcfVersion().setValue(entity.getVersion()+"");
             eventMapDataProvider.setEventMaps(entity.getEventMaps());
-            eventMapDataProvider.reload(detailsView.getEventMapGrid().getDisplay());
+            eventMapDataProvider.reload();
         }
     }
 

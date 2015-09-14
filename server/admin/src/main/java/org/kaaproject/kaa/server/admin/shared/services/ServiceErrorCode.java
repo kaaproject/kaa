@@ -22,6 +22,7 @@ public enum ServiceErrorCode {
     NOT_AUTHORIZED("notAuthorized", false),
     PERMISSION_DENIED("permissionDenied", false),
     INVALID_ARGUMENTS("invalidArguments", false),
+    BAD_REQUEST_PARAMS("badRequestParams", true),
     INVALID_SCHEMA("invalidSchema", true),
     FILE_NOT_FOUND("fileNotFound", true),
     ITEM_NOT_FOUND("itemNotFound", false);

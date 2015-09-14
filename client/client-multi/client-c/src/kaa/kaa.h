@@ -24,6 +24,7 @@
 #ifndef KAA_H_
 #define KAA_H_
 
+#include <stdbool.h>
 #include "kaa_context.h"
 #include "kaa_error.h"
 
@@ -69,6 +70,17 @@ kaa_error_t kaa_start(kaa_context_t *kaa_context);
  * @return Error code.
  */
 kaa_error_t kaa_deinit(kaa_context_t *kaa_context);
+
+
+
+/**
+ * @brief Processes failovers.
+ *
+ * @param[in]   self           Bootstrap manager.
+ * @return                     if failover is scheduled returns true, otherwise - false.
+ *
+ */
+bool kaa_process_failover(kaa_context_t *kaa_context);
 
 #ifdef __cplusplus
 }      /* extern "C" */

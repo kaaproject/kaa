@@ -27,8 +27,7 @@ public class FilePersistentStorage implements PersistentStorage {
 
     @Override
     public InputStream openForRead(String path) throws IOException {
-        File f = new File(path);
-        return new FileInputStream(f);
+        return new FileInputStream(new File(path));
     }
 
     @Override
@@ -42,8 +41,12 @@ public class FilePersistentStorage implements PersistentStorage {
 
     @Override
     public boolean exists(String path) {
-        File f = new File(path);
-        return f.exists();
+        return new File(path).exists();
+    }
+    
+    @Override
+    public void delete(String path) throws IOException {
+        new File(path).delete();
     }
 
     @Override

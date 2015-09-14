@@ -69,23 +69,16 @@ public class EndpointGroupActivity
         super.start(containerWidget, eventBus);
         if (!create) {
             AbstractGrid<StructureRecordDto<ProfileFilterDto>, StructureRecordKey> profileFiltersGrid = detailsView.getProfileFiltersGrid();
-            profileFiltersDataProvider = new ProfileFiltersDataProvider(profileFiltersGrid.getSelectionModel(),
-                    detailsView, entityId);
-            profileFiltersDataProvider.setIncludeDeprecated(place.isIncludeDeprecatedProfileFilters());
-
-            profileFiltersDataProvider.addDataDisplay(profileFiltersGrid.getDisplay());
+            profileFiltersDataProvider = new ProfileFiltersDataProvider(profileFiltersGrid,
+                    detailsView, entityId, place.isIncludeDeprecatedProfileFilters());
 
             AbstractGrid<StructureRecordDto<ConfigurationDto>, StructureRecordKey> configurationsGrid = detailsView.getConfigurationsGrid();
-            configurationsDataProvider = new ConfigurationsDataProvider(configurationsGrid.getSelectionModel(),
-                    detailsView, entityId);
-            configurationsDataProvider.setIncludeDeprecated(place.isIncludeDeprecatedConfigurations());
-
-            configurationsDataProvider.addDataDisplay(configurationsGrid.getDisplay());
+            configurationsDataProvider = new ConfigurationsDataProvider(configurationsGrid,
+                    detailsView, entityId, place.isIncludeDeprecatedConfigurations());
 
             AbstractGrid<TopicDto, String> topicsGrid = detailsView.getTopicsGrid();
-            topicsDataProvider = new TopicsDataProvider(topicsGrid.getSelectionModel(),
+            topicsDataProvider = new TopicsDataProvider(topicsGrid,
                     detailsView, null, entityId);
-            topicsDataProvider.addDataDisplay(topicsGrid.getDisplay());
         }
     }
 
@@ -131,7 +124,7 @@ public class EndpointGroupActivity
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 place.setIncludeDeprecatedProfileFilters(detailsView.getIncludeDeprecatedProfileFilters().getValue());
                 profileFiltersDataProvider.setIncludeDeprecated(detailsView.getIncludeDeprecatedProfileFilters().getValue());
-                profileFiltersDataProvider.reload(detailsView.getProfileFiltersGrid().getDisplay());
+                profileFiltersDataProvider.reload();
             }
         }));
 
@@ -174,7 +167,7 @@ public class EndpointGroupActivity
              public void onValueChange(ValueChangeEvent<Boolean> event) {
                  place.setIncludeDeprecatedConfigurations(detailsView.getIncludeDeprecatedConfigurations().getValue());
                  configurationsDataProvider.setIncludeDeprecated(detailsView.getIncludeDeprecatedConfigurations().getValue());
-                 configurationsDataProvider.reload(detailsView.getConfigurationsGrid().getDisplay());
+                 configurationsDataProvider.reload();
              }
          }));
 
@@ -211,13 +204,13 @@ public class EndpointGroupActivity
              public void onDataChanged(DataEvent event) {
                  if (detailsView != null) {
                      if (event.checkClass(ProfileFilterDto.class) && profileFiltersDataProvider != null) {
-                         profileFiltersDataProvider.reload(detailsView.getProfileFiltersGrid().getDisplay());
+                         profileFiltersDataProvider.reload();
                      }
                      else if (event.checkClass(ConfigurationDto.class) && configurationsDataProvider != null) {
-                         configurationsDataProvider.reload(detailsView.getConfigurationsGrid().getDisplay());
+                         configurationsDataProvider.reload();
                      }
                      else if (event.checkClass(TopicDto.class) && topicsDataProvider != null) {
-                         topicsDataProvider.reload(detailsView.getTopicsGrid().getDisplay());
+                         topicsDataProvider.reload();
                      }
                  }
              }

@@ -18,6 +18,8 @@ package org.kaaproject.kaa.client.transport;
 
 public class TransportException extends Exception {
 
+    private int status;
+
     /**
      *
      */
@@ -29,5 +31,14 @@ public class TransportException extends Exception {
 
     public TransportException(Exception e) {
         super(e);
+    }
+
+    public TransportException(int status) {
+        super("Invalid response code from server: " + status);
+        this.status = status;
+    }
+
+    public int getStatus() {
+        return status;
     }
 }

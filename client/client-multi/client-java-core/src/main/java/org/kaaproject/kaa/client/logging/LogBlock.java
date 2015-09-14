@@ -51,7 +51,7 @@ public class LogBlock {
      *
      * @return Unique log block id
      */
-    int getBlockId() {
+    public int getBlockId() {
         return id;
     }
 

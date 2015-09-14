@@ -23,12 +23,13 @@ import net.sf.ehcache.Ehcache;
 
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
-import org.kaaproject.kaa.common.dto.admin.SdkKey;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.thrift.ControlThriftClientProvider;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
+import org.kaaproject.kaa.server.common.thrift.gen.control.RecordFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
@@ -42,6 +43,7 @@ public class CacheServiceImpl implements CacheService {
     private static final String SDK_CACHE = "sdkCache";
     private static final String RECORD_LIBRARY_CACHE = "recordLibraryCache";
     private static final String RECORD_SCHEMA_CACHE = "recordSchemaCache";
+    private static final String RECORD_DATA_CACHE = "recordDataCache";
     private static final String FILE_UPLOAD_CACHE = "fileUploadCache";
 
     @Autowired
@@ -52,30 +54,30 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     @Cacheable(value = SDK_CACHE, key = "#key", unless="#result == null")
-    public FileData getSdk(SdkKey key) {
+    public FileData getSdk(SdkPropertiesDto key) {
         return null;
     }
     
     @Override
     @CachePut(value = SDK_CACHE, key = "#key")
-    public FileData putSdk(SdkKey key, FileData sdkFile) {
+    public FileData putSdk(SdkPropertiesDto key, FileData sdkFile) {
         return sdkFile;
     }
 
     @Override
     @CacheEvict(value = SDK_CACHE, key = "#key")
-    public void flushSdk(SdkKey key) {
+    public void flushSdk(SdkPropertiesDto key) {
     }
     
-    public List<SdkKey> getCachedSdkKeys(String applicationId) {
-        List<SdkKey> keys = new ArrayList<>();
+    public List<SdkPropertiesDto> getCachedSdkKeys(String applicationId) {
+        List<SdkPropertiesDto> keys = new ArrayList<>();
         Ehcache cache = (Ehcache) cacheManager.getCache(SDK_CACHE).getNativeCache();
         List<?> cachedKeys = cache.getKeysWithExpiryCheck();
         for (Object cachedKey : cachedKeys) {
-            if (cachedKey instanceof SdkKey) {
-                SdkKey cachedSdkKey = (SdkKey)cachedKey;
-                if (applicationId.equals(cachedSdkKey.getApplicationId())) {
-                    keys.add(cachedSdkKey);
+            if (cachedKey instanceof SdkPropertiesDto) {
+                SdkPropertiesDto cachedSdkPropertiesDto = (SdkPropertiesDto)cachedKey;
+                if (applicationId.equals(cachedSdkPropertiesDto.getApplicationId())) {
+                    keys.add(cachedSdkPropertiesDto);
                 }
             }
         }
@@ -87,7 +89,7 @@ public class CacheServiceImpl implements CacheService {
     public FileData getRecordLibrary(RecordKey key) throws KaaAdminServiceException {
         try {
             org.kaaproject.kaa.server.common.thrift.gen.control.FileData 
-                   thriftFileData = clientProvider.getClient().generateRecordStructureLibrary(key.getApplicationId(), key.getLogSchemaVersion());
+                   thriftFileData = clientProvider.getClient().generateRecordStructureLibrary(key.getApplicationId(), key.getSchemaVersion());
             FileData fileData = new FileData();
             fileData.setFileName(thriftFileData.getFileName());
             fileData.setFileData(thriftFileData.getData());
@@ -102,7 +104,23 @@ public class CacheServiceImpl implements CacheService {
     public FileData getRecordSchema(RecordKey key) throws KaaAdminServiceException {
         try {
             org.kaaproject.kaa.server.common.thrift.gen.control.FileData 
-                    thriftFileData = clientProvider.getClient().getRecordStructureSchema(key.getApplicationId(), key.getLogSchemaVersion());
+                    thriftFileData = clientProvider.getClient().getRecordStructureSchema(key.getApplicationId(), key.getSchemaVersion());
+            FileData fileData = new FileData();
+            fileData.setFileName(thriftFileData.getFileName());
+            fileData.setFileData(thriftFileData.getData());
+            return fileData;
+        } catch (TException e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    @Cacheable(RECORD_DATA_CACHE)
+    public FileData getRecordData(RecordKey key) throws KaaAdminServiceException {
+        try {
+            org.kaaproject.kaa.server.common.thrift.gen.control.FileData
+                    thriftFileData = clientProvider.getClient().getRecordStructureData(key.getApplicationId(),
+                    key.getSchemaVersion(), covertRecordFile(key.getRecordFiles()));
             FileData fileData = new FileData();
             fileData.setFileName(thriftFileData.getFileName());
             fileData.setFileData(thriftFileData.getData());
@@ -122,5 +140,33 @@ public class CacheServiceImpl implements CacheService {
     @CacheEvict(value = FILE_UPLOAD_CACHE, key = "#key")
     public void removeUploadedFile(String key) {
     }
-    
+
+    private RecordFile covertRecordFile(RecordKey.RecordFiles recordFiles) {
+        RecordFile recordFile = null;
+        switch (recordFiles) {
+            case LOG_SCHEMA:
+                recordFile = RecordFile.LOG_SCHEMA;
+                break;
+            case LOG_LIBRARY:
+                recordFile = RecordFile.LOG_LIBRARY;
+                break;
+            case CONFIGURATION_SCHEMA:
+                recordFile = RecordFile.CONFIGURATION_SCHEMA;
+                break;
+            case CONFIGURATION_BASE_SCHEMA:
+                recordFile = RecordFile.CONFIGURATION_BASE_SCHEMA;
+                break;
+            case CONFIGURATION_OVERRIDE_SCHEMA:
+                recordFile = RecordFile.CONFIGURATION_OVERRIDE_SCHEMA;
+                break;
+            case NOTIFICATION_SCHEMA:
+                recordFile = RecordFile.NOTIFICATION_SCHEMA;
+                break;
+            case PROFILE_SCHEMA:
+                recordFile = RecordFile.PROFILE_SCHEMA;
+                break;
+            default:break;
+        }
+        return recordFile;
+    }
 }

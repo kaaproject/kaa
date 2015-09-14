@@ -57,8 +57,12 @@ public class AndroidInternalPersistentStorage implements PersistentStorage {
 
     @Override
     public boolean exists(String path) {
-        File f = new File(context.getFilesDir(), path);
-        return f.exists();
+        return new File(context.getFilesDir(), path).exists();
+    }
+
+    @Override
+    public void delete(String path) throws IOException {
+        new File(context.getFilesDir(), path).delete();
     }
 
 }

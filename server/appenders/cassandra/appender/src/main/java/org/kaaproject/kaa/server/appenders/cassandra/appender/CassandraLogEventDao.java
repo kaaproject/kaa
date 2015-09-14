@@ -21,10 +21,14 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.avro.generic.GenericRecord;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
@@ -37,6 +41,7 @@ import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketO
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement;
+import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +60,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 public class CassandraLogEventDao implements LogEventDao {
 
-
     private static final String $CONFIG_HASH = "$config_hash";
 
     private static final String $APP_TOKEN = "$app_token";
@@ -69,6 +73,8 @@ public class CassandraLogEventDao implements LogEventDao {
     private static final String CLUSTERING_DEFINITION = "$clustering_definition";
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS $keyspace_name.$table_name ("
             + "$columns_definition PRIMARY KEY ( $primary_key_definition )) $clustering_definition;";
+
+    private final ConcurrentMap<String, ThreadLocal<SimpleDateFormat>> dateFormatMap = new ConcurrentHashMap<String, ThreadLocal<SimpleDateFormat>>();
 
     private Cluster cluster;
     private Session session;
@@ -226,7 +232,8 @@ public class CassandraLogEventDao implements LogEventDao {
 
     @Override
     public List<CassandraLogEventDto> save(List<CassandraLogEventDto> logEventDtoList, String tableName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter) throws IOException {
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
+            throws IOException {
         LOG.debug("Execute bath request for cassandra table {}", tableName);
         executeBatch(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter));
         return logEventDtoList;
@@ -234,7 +241,8 @@ public class CassandraLogEventDao implements LogEventDao {
 
     @Override
     public ListenableFuture<ResultSet> saveAsync(List<CassandraLogEventDto> logEventDtoList, String tableName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter) throws IOException {
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
+            throws IOException {
         LOG.debug("Execute async bath request for cassandra table {}", tableName);
         return executeBatchAsync(prepareQuery(logEventDtoList, tableName, eventConverter, headerConverter));
     }
@@ -287,7 +295,9 @@ public class CassandraLogEventDao implements LogEventDao {
     }
 
     private Insert[] prepareQuery(List<CassandraLogEventDto> logEventDtoList, String collectionName,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter) throws IOException {
+            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter)
+            throws IOException {
+        String reuseTsValue = null;
         Insert[] insertArray = new Insert[logEventDtoList.size()];
         for (int i = 0; i < logEventDtoList.size(); i++) {
             CassandraLogEventDto dto = logEventDtoList.get(i);
@@ -295,10 +305,12 @@ public class CassandraLogEventDao implements LogEventDao {
             for (ColumnMappingElement element : configuration.getColumnMapping()) {
                 switch (element.getType()) {
                 case HEADER_FIELD:
-                    insert.value(element.getColumnName(), dto.getHeader().get(element.getValue()));
+                    insert.value(element.getColumnName(),
+                            formatField(element.getColumnType(), dto.getHeader().get(element.getValue())));
                     break;
                 case EVENT_FIELD:
-                    insert.value(element.getColumnName(), dto.getEvent().get(element.getValue()));
+                    insert.value(element.getColumnName(),
+                            formatField(element.getColumnType(), dto.getEvent().get(element.getValue())));
                     break;
                 case HEADER_JSON:
                     insert.value(element.getColumnName(), headerConverter.encodeToJson(dto.getHeader()));
@@ -315,11 +327,55 @@ public class CassandraLogEventDao implements LogEventDao {
                 case UUID:
                     insert.value(element.getColumnName(), UUID.randomUUID());
                     break;
+                case TS:
+                    reuseTsValue = formatTs(reuseTsValue, element);
+                    insert.value(element.getColumnName(), reuseTsValue);
+                    break;
                 }
             }
+
+            // Here we get ttl parameter from config and add it to insert query
+            insert.using(QueryBuilder.ttl(configuration.getDataTTL()));
+
             insertArray[i] = insert;
 
         }
         return insertArray;
+    }
+
+    private String formatTs(String tsValue, ColumnMappingElement element) {
+        if (tsValue == null) {
+            long ts = System.currentTimeMillis();
+            final String pattern = element.getValue();
+            if (pattern == null || pattern.isEmpty()) {
+                tsValue = ts + "";
+            } else {
+                ThreadLocal<SimpleDateFormat> formatterTL = dateFormatMap.get(pattern);
+                if (formatterTL == null) {
+                    formatterTL = new ThreadLocal<SimpleDateFormat>() {
+                        @Override
+                        protected SimpleDateFormat initialValue() {
+                            return new SimpleDateFormat(pattern);
+                        }
+                    };
+                    dateFormatMap.putIfAbsent(pattern, formatterTL);
+                }
+                SimpleDateFormat formatter = formatterTL.get();
+                if (formatter == null) {
+                    formatter = new SimpleDateFormat(pattern);
+                    formatterTL.set(formatter);
+                }
+                tsValue = formatter.format(new Date(ts));
+            }
+        }
+        return tsValue;
+    }
+
+    private Object formatField(ColumnType type, Object elementValue) {
+        if (type == ColumnType.TEXT && elementValue != null) {
+            return elementValue.toString();
+        } else {
+            return elementValue;
+        }
     }
 }

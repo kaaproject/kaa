@@ -27,33 +27,58 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLogUploadStrategy.class);
 
     private static final int DEFAULT_UPLOAD_TIMEOUT = 2 * 60;
+    private static final int DEFAULT_UPLOAD_CHECK_PERIOD = 30;
     private static final int DEFAULT_RETRY_PERIOD = 5 * 60;
     private static final int DEFAULT_UPLOAD_VOLUME_THRESHOLD = 8 * 1024;
     private static final int DEFAULT_UPLOAD_COUNT_THRESHOLD = 64;
     private static final int DEFAULT_BATCH_SIZE = 8 * 1024;
+    private static final int DEFAULT_BATCH_COUNT = 256;
+    private static final boolean DEFAULT_UPLOAD_LOCKED = false;
 
-    private int timeout = DEFAULT_UPLOAD_TIMEOUT;
-    private int retryPeriod = DEFAULT_RETRY_PERIOD;
-    private int volumeThreshold = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
-    private int countThreshold = DEFAULT_UPLOAD_COUNT_THRESHOLD;
-    private int batch = DEFAULT_BATCH_SIZE;
+
+    protected int timeout = DEFAULT_UPLOAD_TIMEOUT;
+    protected int uploadCheckPeriod = DEFAULT_UPLOAD_CHECK_PERIOD;
+    protected int retryPeriod = DEFAULT_RETRY_PERIOD;
+    protected int volumeThreshold = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
+    protected int countThreshold = DEFAULT_UPLOAD_COUNT_THRESHOLD;
+    protected int batchSize = DEFAULT_BATCH_SIZE;
+    protected int batchCount = DEFAULT_BATCH_COUNT;
+    protected volatile boolean isUploadLocked = DEFAULT_UPLOAD_LOCKED;
+
 
     @Override
     public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
+        LogUploadStrategyDecision decision;
+
+        if(!isUploadLocked) {
+            decision = checkUploadNeeded(status);
+        }else{
+            decision = LogUploadStrategyDecision.NOOP;
+        }
+
+        return decision;
+    }
+
+    protected LogUploadStrategyDecision checkUploadNeeded(LogStorageStatus status){
         LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
         if (status.getConsumedVolume() >= volumeThreshold) {
-            LOG.info("Need to upload logs - current size: {}, max: {}", status.getConsumedVolume(), volumeThreshold);
+            LOG.info("Need to upload logs - current size: {}, threshold: {}", status.getConsumedVolume(), volumeThreshold);
             decision = LogUploadStrategyDecision.UPLOAD;
-        }else if (status.getRecordCount() >= countThreshold) {
-            LOG.info("Need to upload logs - current size: {}, max: {}", status.getRecordCount(), countThreshold);
+        } else if (status.getRecordCount() >= countThreshold) {
+            LOG.info("Need to upload logs - current count: {}, threshold: {}", status.getRecordCount(), countThreshold);
             decision = LogUploadStrategyDecision.UPLOAD;
         }
         return decision;
     }
-    
+
     @Override
     public long getBatchSize() {
-        return batch;
+        return batchSize;
+    }
+
+    @Override
+    public int getBatchCount() {
+        return batchCount;
     }
 
     @Override
@@ -88,8 +113,16 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
         this.retryPeriod = retryPeriod;
     }
 
+    public int getVolumeThreshold() {
+        return volumeThreshold;
+    }
+
     public void setVolumeThreshold(int volumeThreshold) {
         this.volumeThreshold = volumeThreshold;
+    }
+
+    public int getCountThreshold() {
+        return countThreshold;
     }
 
     public void setCountThreshold(int countThreshold) {
@@ -97,6 +130,31 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
     }
 
     public void setBatch(int batch) {
-        this.batch = batch;
+        this.batchSize = batch;
+    }
+
+    public void setBatchCount(int batchCount) {
+        this.batchCount = batchCount;
+    }
+
+    @Override
+    public int getUploadCheckPeriod() {
+        return uploadCheckPeriod;
+    }
+
+    public void setUploadCheckPeriod(int uploadCheckPeriod) {
+        this.uploadCheckPeriod = uploadCheckPeriod;
+    }
+
+    public void lockUpload(){
+        isUploadLocked = true;
+    }
+
+    public void unlockUpload(){
+        isUploadLocked = false;
+    }
+
+    public boolean isUploadLocked(){
+        return isUploadLocked;
     }
 }

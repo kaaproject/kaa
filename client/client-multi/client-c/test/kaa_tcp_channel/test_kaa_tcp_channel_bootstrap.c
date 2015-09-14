@@ -19,6 +19,7 @@
  *
  */
 
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <netdb.h>
@@ -32,7 +33,7 @@
 #include "utilities/kaa_mem.h"
 #include "platform/ext_transport_channel.h"
 #include "platform/ext_tcp_utils.h"
-#include "platform-impl/kaa_tcp_channel.h"
+#include "platform-impl/common/kaa_tcp_channel.h"
 #include "kaa_protocols/kaa_tcp/kaatcp_request.h"
 
 #define ACCESS_POINT_SOCKET_FD 5
@@ -450,8 +451,9 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
     ASSERT_NOT_NULL(channel);
     //Fill with fake pointers, just for non null
     kaa_transport_context_t transport_context;
-    transport_context.platform_protocol = (kaa_platform_protocol_t *)CONNECTION_DATA;
-    transport_context.bootstrap_manager = (kaa_bootstrap_manager_t *)CONNECTION_DATA;
+    transport_context.kaa_context = (kaa_context_t*)calloc(1, sizeof(kaa_context_t));
+    transport_context.kaa_context->platform_protocol = (kaa_platform_protocol_t *)CONNECTION_DATA;
+    transport_context.kaa_context->bootstrap_manager = (kaa_bootstrap_manager_t *)CONNECTION_DATA;
 
     kaa_error_t error_code = channel->init(channel->context, &transport_context);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -727,7 +729,7 @@ ext_tcp_socket_state_t ext_tcp_utils_tcp_socket_check(kaa_fd_t fd, const kaa_soc
     return KAA_TCP_SOCK_CONNECTED;
 }
 
-ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolve_listener_t *resolve_listener, const kaa_dns_resolve_info_t *resolve_props, kaa_sockaddr_t *result, kaa_socklen_t *result_size)
+ext_tcp_utils_function_return_state_t ext_tcp_utils_getaddrbyhost(kaa_dns_resolve_listener_t *resolve_listener, const kaa_dns_resolve_info_t *resolve_props, kaa_sockaddr_t *result, kaa_socklen_t *result_size)
 {
     KAA_RETURN_IF_NIL4(resolve_props, resolve_props->hostname, result, result_size, RET_STATE_VALUE_ERROR);
     if (*result_size < sizeof(struct sockaddr_in))
@@ -738,7 +740,7 @@ ext_tcp_utils_function_return_state_t ext_tcp_utils_gethostbyaddr(kaa_dns_resolv
     memcpy(hostname_str, resolve_props->hostname, resolve_props->hostname_length);
     hostname_str[resolve_props->hostname_length] = '\0';
 
-    KAA_LOG_INFO(logger, KAA_ERR_NONE, "gethostbyaddr() Hostname=%s:%d", hostname_str, resolve_props->port);
+    KAA_LOG_INFO(logger, KAA_ERR_NONE, "getaddrbyhost() Hostname=%s:%d", hostname_str, resolve_props->port);
 
 
     struct addrinfo hints;
