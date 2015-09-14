@@ -74,8 +74,14 @@ public:
         return configuration_;
     }
 
+    virtual void clearConfiguration()
+    {
+
+    }
+
     bool isSaveCalled() { return configurationSaveCalled_; }
     bool isLoadCalled() { return configurationLoadCalled_; }
+
 private:
     bool configurationSaveCalled_;
     bool configurationLoadCalled_;

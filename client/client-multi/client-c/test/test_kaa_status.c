@@ -113,12 +113,14 @@ void test_status_persistense()
     ASSERT_EQUAL(status->event_seq_n, 0);
     ASSERT_FALSE(status->is_attached);
     ASSERT_FALSE(status->is_registered);
+    ASSERT_FALSE(status->is_updated);
 
     ASSERT_EQUAL(kaa_status_set_endpoint_access_token(status, "my_token"), KAA_ERR_NONE);
     ASSERT_EQUAL(ext_copy_sha_hash(status->endpoint_public_key_hash, test_ep_key_hash), KAA_ERR_NONE);
     ASSERT_EQUAL(ext_copy_sha_hash(status->profile_hash, test_profile_hash), KAA_ERR_NONE);
     status->is_attached = true;
     status->is_registered = true;
+    status->is_updated = true;
     status->event_seq_n = 10;
 
     err_code = kaa_status_save(status);
@@ -136,6 +138,7 @@ void test_status_persistense()
     ASSERT_EQUAL(status->event_seq_n, 10);
     ASSERT_TRUE(status->is_attached);
     ASSERT_TRUE(status->is_registered);
+    ASSERT_TRUE(status->is_updated);
 
     ASSERT_EQUAL(memcmp(test_ep_key_hash, status->endpoint_public_key_hash, SHA_1_DIGEST_LENGTH), 0);
     ASSERT_EQUAL(memcmp(test_profile_hash, status->profile_hash, SHA_1_DIGEST_LENGTH), 0);

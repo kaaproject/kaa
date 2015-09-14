@@ -41,11 +41,12 @@ typedef struct
     uint16_t        log_bucket_id;
     bool            is_registered;
     bool            is_attached;
+    bool            is_updated;
     kaa_digest      endpoint_public_key_hash;
     kaa_digest      profile_hash;
 
     kaa_list_t      *topic_states;
-    char *          endpoint_access_token;
+    char            *endpoint_access_token;
 } kaa_status_t;
 
 #endif
