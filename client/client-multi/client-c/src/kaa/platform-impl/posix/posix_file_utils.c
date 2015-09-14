@@ -20,6 +20,7 @@
 #include "../../utilities/kaa_mem.h"
 #include "../../kaa_common.h"
 
+
 int posix_binary_file_read(const char *file_name, char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
     KAA_RETURN_IF_NIL4(file_name, buffer, buffer_size, needs_deallocation, -1);
@@ -65,6 +66,16 @@ int posix_binary_file_store(const char *file_name, const char *buffer, size_t bu
         fwrite(buffer, buffer_size, 1, status_file);
         fclose(status_file);
         return 0;
+    }
+    return -1;
+}
+
+int posix_binary_file_delete(const char *file_name)
+{
+    FILE *file = fopen(file_name, "r");
+    if (file) {
+        fclose(file);
+        return remove(file_name);
     }
     return -1;
 }

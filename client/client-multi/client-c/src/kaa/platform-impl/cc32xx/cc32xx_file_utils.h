@@ -28,6 +28,7 @@ int cc32xx_binary_file_read(const char *file_name, char **buffer, size_t *buffer
 
 int cc32xx_binary_file_store(const char *file_name, const char *buffer, size_t buffer_size);
 
+int cc32xx_binary_file_delete(const char *file_name);
 
 #ifdef __cplusplus
 }      /* extern "C" */
