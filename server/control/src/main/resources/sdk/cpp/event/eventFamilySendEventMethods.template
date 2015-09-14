@@ -15,11 +15,8 @@
 
     void addEventToBlock(TransactionIdPtr trxId, const ns${event_family_class_name} :: ${event_class_name}& e, const std::string& target = "")
     {
-        executorContext_.getApiExecutor().add([=]
-               {
-                    std::vector<std::uint8_t> buffer;
-                    AvroByteArrayConverter< ns${event_family_class_name} :: ${event_class_name} > converter;
-                    converter.toByteArray(e, buffer);
-                    eventManager_.produceEvent("${event_class_fqn}", buffer, target, trxId);
-               });
+        std::vector<std::uint8_t> buffer;
+        AvroByteArrayConverter< ns${event_family_class_name} :: ${event_class_name} > converter;
+        converter.toByteArray(e, buffer);
+        eventManager_.produceEvent("${event_class_fqn}", buffer, target, trxId);
     }
