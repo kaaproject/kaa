@@ -89,6 +89,12 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
             <artifactId>mongo-dao</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+            <artifactId>mongo-dao</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
