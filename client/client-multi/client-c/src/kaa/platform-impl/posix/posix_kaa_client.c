@@ -22,7 +22,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include <sys/select.h>
 
 #include "../../kaa.h"
 #include "../../kaa_error.h"
