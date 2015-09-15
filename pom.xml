@@ -54,7 +54,7 @@ Copyright 2014-2015 CyberVision, Inc.
         <avro.version>1.7.5</avro.version>
         <apache.velocity>1.7</apache.velocity>
         <zookeeper.version>3.4.6</zookeeper.version>
-        <curator.version>2.3.0</curator.version>
+        <curator.version>2.9.0</curator.version>
         <libthrift.version>0.9.1</libthrift.version>
         <commons-cli.version>1.2</commons-cli.version>
         <commons-io.version>2.4</commons-io.version>
