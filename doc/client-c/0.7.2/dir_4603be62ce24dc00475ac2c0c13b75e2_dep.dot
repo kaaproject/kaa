@@ -1,0 +1,16 @@
+digraph "/var/lib/jenkins/workspace/kaa_stable/client/client-multi/client-c/src/kaa/kaa_protocols" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_08cd018e1ae44a7fd9aa444acd113371 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="kaa" fontname="FreeSans", fontsize="10", URL="dir_08cd018e1ae44a7fd9aa444acd113371.html"]
+  subgraph clusterdir_4603be62ce24dc00475ac2c0c13b75e2 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_4603be62ce24dc00475ac2c0c13b75e2.html"];
+    dir_4603be62ce24dc00475ac2c0c13b75e2 [shape=plaintext label="kaa_protocols"];
+    dir_2665661dd4c406b07d6bc9ec074818ec [shape=box label="kaa_tcp" color="black" fillcolor="white" style="filled" URL="dir_2665661dd4c406b07d6bc9ec074818ec.html"];
+  }
+  }
+  dir_e23d472d76342075ad9c73af932db45b [shape=box label="platform" URL="dir_e23d472d76342075ad9c73af932db45b.html"];
+  dir_2665661dd4c406b07d6bc9ec074818ec->dir_e23d472d76342075ad9c73af932db45b [headlabel="1", labeldistance=1.5 headhref="dir_000016_000012.html"];
+}

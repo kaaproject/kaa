@@ -1,0 +1,12 @@
+digraph "/var/lib/jenkins/workspace/kaa_stable/client/client-multi/client-c/src/kaa/platform-impl/stm32/leafMapleMini/esp8266" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_48b936f6bd7648c40a48c5d065821250 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="leafMapleMini" fontname="FreeSans", fontsize="10", URL="dir_48b936f6bd7648c40a48c5d065821250.html"]
+  dir_80f3b67ff834a1708fd7f404f995bf46 [shape=box, label="esp8266", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_80f3b67ff834a1708fd7f404f995bf46.html"];
+  }
+  dir_e23d472d76342075ad9c73af932db45b [shape=box label="platform" URL="dir_e23d472d76342075ad9c73af932db45b.html"];
+  dir_80f3b67ff834a1708fd7f404f995bf46->dir_e23d472d76342075ad9c73af932db45b [headlabel="2", labeldistance=1.5 headhref="dir_000026_000012.html"];
+}

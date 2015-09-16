@@ -1,0 +1,24 @@
+digraph "/var/lib/jenkins/workspace/kaa_stable/client/client-multi/client-cpp/kaa/configuration" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_83f90e4da98ad448748a0c1293854263 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="kaa" fontname="FreeSans", fontsize="10", URL="dir_83f90e4da98ad448748a0c1293854263.html"]
+  subgraph clusterdir_230b36af7c735be2433e119c1ba09e4d {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_230b36af7c735be2433e119c1ba09e4d.html"];
+    dir_230b36af7c735be2433e119c1ba09e4d [shape=plaintext label="configuration"];
+    dir_db9855e7ea4e98026ae0a99bce318bb3 [shape=box label="manager" color="black" fillcolor="white" style="filled" URL="dir_db9855e7ea4e98026ae0a99bce318bb3.html"];
+    dir_c95e949ecd71a1c616ccdbbcce2699ce [shape=box label="storage" color="black" fillcolor="white" style="filled" URL="dir_c95e949ecd71a1c616ccdbbcce2699ce.html"];
+  }
+  }
+  dir_1ce304b01336447395af3637d7d1b29f [shape=box label="common" color="red" URL="dir_1ce304b01336447395af3637d7d1b29f.html"];
+  dir_8cfba5d75a6eafa0a0a3cbd7ad99f3cc [shape=box label="observer" URL="dir_8cfba5d75a6eafa0a0a3cbd7ad99f3cc.html"];
+  dir_e0d3c5e08d2a34b96d39e895ad0bbab8 [shape=box label="channel" color="red" URL="dir_e0d3c5e08d2a34b96d39e895ad0bbab8.html"];
+  dir_230b36af7c735be2433e119c1ba09e4d->dir_1ce304b01336447395af3637d7d1b29f [headlabel="1", labeldistance=1.5 headhref="dir_000016_000014.html"];
+  dir_230b36af7c735be2433e119c1ba09e4d->dir_8cfba5d75a6eafa0a0a3cbd7ad99f3cc [headlabel="2", labeldistance=1.5 headhref="dir_000016_000029.html"];
+  dir_230b36af7c735be2433e119c1ba09e4d->dir_e0d3c5e08d2a34b96d39e895ad0bbab8 [headlabel="2", labeldistance=1.5 headhref="dir_000016_000010.html"];
+  dir_c95e949ecd71a1c616ccdbbcce2699ce->dir_db9855e7ea4e98026ae0a99bce318bb3 [headlabel="1", labeldistance=1.5 headhref="dir_000018_000017.html"];
+  dir_e0d3c5e08d2a34b96d39e895ad0bbab8->dir_1ce304b01336447395af3637d7d1b29f [headlabel="8", labeldistance=1.5 headhref="dir_000010_000014.html"];
+  dir_db9855e7ea4e98026ae0a99bce318bb3->dir_8cfba5d75a6eafa0a0a3cbd7ad99f3cc [headlabel="1", labeldistance=1.5 headhref="dir_000017_000029.html"];
+}
