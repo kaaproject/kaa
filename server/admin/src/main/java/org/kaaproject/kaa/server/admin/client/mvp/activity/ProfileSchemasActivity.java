@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey.RecordFiles;
@@ -26,12 +27,12 @@ import org.kaaproject.kaa.server.admin.client.mvp.data.ProfileSchemasDataProvide
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class ProfileSchemasActivity extends AbstractListActivity<ProfileSchemaDto, ProfileSchemasPlace> {
 
@@ -49,8 +50,8 @@ public class ProfileSchemasActivity extends AbstractListActivity<ProfileSchemaDt
 
     @Override
     protected AbstractDataProvider<ProfileSchemaDto> getDataProvider(
-            MultiSelectionModel<ProfileSchemaDto> selectionModel) {
-        return new ProfileSchemasDataProvider(selectionModel, listView, applicationId);
+            AbstractGrid<ProfileSchemaDto,?> dataGrid) {
+        return new ProfileSchemasDataProvider(dataGrid, listView, applicationId);
     }
 
     @Override
@@ -71,17 +72,18 @@ public class ProfileSchemasActivity extends AbstractListActivity<ProfileSchemaDt
     @Override
     protected void onCustomRowAction(RowActionEvent<String> event) {
         Integer schemaVersion = Integer.valueOf(event.getClickedId());
-        AsyncCallback<String> callback = new AsyncCallback<String>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                Utils.handleException(caught, listView);
-            }
-            @Override
-            public void onSuccess(String key) {
-                ServletHelper.downloadRecordLibrary(key);
-            }
-        };
-        KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.PROFILE_SCHEMA, callback);
+        if (event.getAction() == KaaRowAction.DOWNLOAD_SCHEMA) {
+            KaaAdmin.getDataSource().getRecordData(applicationId, schemaVersion, RecordFiles.PROFILE_SCHEMA, new AsyncCallback<String>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    Utils.handleException(caught, listView);
+                }
+                @Override
+                public void onSuccess(String key) {
+                    ServletHelper.downloadRecordLibrary(key);
+                }
+            });
+        }
     }
 
 }

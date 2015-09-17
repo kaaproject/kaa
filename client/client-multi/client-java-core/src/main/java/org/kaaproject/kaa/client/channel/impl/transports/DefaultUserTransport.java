@@ -76,39 +76,35 @@ public class DefaultUserTransport extends AbstractKaaTransport implements
             boolean hasChanges = false;
             Map<Integer, EndpointAccessToken> attachEndpointRequests = processor.getAttachEndpointRequests();
             if (response.getEndpointAttachResponses() != null && !response.getEndpointAttachResponses().isEmpty()) {
-                synchronized (attachEndpointRequests) {
-                    for (EndpointAttachResponse attached : response.getEndpointAttachResponses()) {
-                        EndpointAccessToken attachedToken = attachEndpointRequests.remove(attached.getRequestId());
-                        if (attached.getResult() == SyncResponseResultType.SUCCESS) {
-                            LOG.info("Token {}", attachedToken);
-                            attachedEndpoints.put(attachedToken, new EndpointKeyHash(attached.getEndpointKeyHash()));
-                            hasChanges = true;
-                        } else {
-                            LOG.error("Failed to attach endpoint. Attach endpoint request id: {}", attached.getRequestId());
-                        }
+                for (EndpointAttachResponse attached : response.getEndpointAttachResponses()) {
+                    EndpointAccessToken attachedToken = attachEndpointRequests.remove(attached.getRequestId());
+                    if (attached.getResult() == SyncResponseResultType.SUCCESS) {
+                        LOG.info("Token {}", attachedToken);
+                        attachedEndpoints.put(attachedToken, new EndpointKeyHash(attached.getEndpointKeyHash()));
+                        hasChanges = true;
+                    } else {
+                        LOG.error("Failed to attach endpoint. Attach endpoint request id: {}", attached.getRequestId());
                     }
                 }
             }
             Map<Integer, EndpointKeyHash> detachEndpointRequests = processor.getDetachEndpointRequests();
             if (response.getEndpointDetachResponses() != null && !response.getEndpointDetachResponses().isEmpty()) {
-                synchronized (detachEndpointRequests) {
-                    for (EndpointDetachResponse detached : response.getEndpointDetachResponses()) {
-                        EndpointKeyHash detachedEndpointKeyHash = detachEndpointRequests.remove(detached.getRequestId());
-                        if (detached.getResult() == SyncResponseResultType.SUCCESS) {
-                            if (detachedEndpointKeyHash != null) {
-                                for (Map.Entry<EndpointAccessToken, EndpointKeyHash> entry : attachedEndpoints.entrySet()) {
-                                    if (detachedEndpointKeyHash.equals(entry.getValue())) {
-                                        EndpointKeyHash removed = attachedEndpoints.remove(entry.getKey());
-                                        if (!hasChanges) {
-                                            hasChanges = (removed != null);
-                                        }
-                                        break;
+                for (EndpointDetachResponse detached : response.getEndpointDetachResponses()) {
+                    EndpointKeyHash detachedEndpointKeyHash = detachEndpointRequests.remove(detached.getRequestId());
+                    if (detached.getResult() == SyncResponseResultType.SUCCESS) {
+                        if (detachedEndpointKeyHash != null) {
+                            for (Map.Entry<EndpointAccessToken, EndpointKeyHash> entry : attachedEndpoints.entrySet()) {
+                                if (detachedEndpointKeyHash.equals(entry.getValue())) {
+                                    EndpointKeyHash removed = attachedEndpoints.remove(entry.getKey());
+                                    if (!hasChanges) {
+                                        hasChanges = (removed != null);
                                     }
+                                    break;
                                 }
                             }
-                        } else {
-                            LOG.error("Failed to detach endpoint. Detach endpoint request id: {}", detached.getRequestId());
                         }
+                    } else {
+                        LOG.error("Failed to detach endpoint. Detach endpoint request id: {}", detached.getRequestId());
                     }
                 }
             }

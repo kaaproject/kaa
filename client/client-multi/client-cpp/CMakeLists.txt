@@ -217,6 +217,9 @@ endif()
 if ( NOT KAA_WITHOUT_THREADSAFE OR NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL OR NOT KAA_WITHOUT_OPERATION_TCP_CHANNEL)
     message("KAA_THREADSAFE ENABLED")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_THREADSAFE")
+    set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
+            impl/utils/ThreadPool.cpp
+    )
 endif()
 message("==================================")
 
@@ -279,6 +282,7 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
         impl/channel/TransportProtocolIdConstants.cpp
         impl/channel/IPTransportInfo.cpp
         impl/failover/DefaultFailoverStrategy.cpp
+        impl/context/SimpleExecutorContext.cpp
     )
 
 # Builds Kaa libraries.

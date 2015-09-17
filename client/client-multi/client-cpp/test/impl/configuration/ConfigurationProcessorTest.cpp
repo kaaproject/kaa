@@ -38,7 +38,7 @@ public:
         configurationProcessedCalled_ = true;
     }
 
-    void onDeltaReceived(int index, const KaaRootConfiguration& data, bool full_resync)
+    void onDeltaReceived(int index, const std::shared_ptr<KaaRootConfiguration>& data, bool full_resync)
     {
         deltasCount_++;
     }

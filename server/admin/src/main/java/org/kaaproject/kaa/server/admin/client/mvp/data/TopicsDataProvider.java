@@ -20,30 +20,30 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class TopicsDataProvider extends AbstractDataProvider<TopicDto>{
 
     private String applicationId;
     private String endpointGroupId;
 
-    public TopicsDataProvider(MultiSelectionModel<TopicDto> selectionModel,
+    public TopicsDataProvider(AbstractGrid<TopicDto,?> dataGrid,
                               HasErrorMessage hasErrorMessage,
                               String applicationId, String endpointGroupId) {
-        super(selectionModel, hasErrorMessage);
+        super(dataGrid, hasErrorMessage, false);
         this.applicationId = applicationId;
         this.endpointGroupId = endpointGroupId;
+        addDataDisplay();
     }
 
     @Override
-    protected void loadData(final LoadCallback callback, final HasData<TopicDto> display) {
+    protected void loadData(final LoadCallback callback) {
         if (!isEmpty(applicationId)) {
             KaaAdmin.getDataSource().loadTopics(applicationId, new AsyncCallback<List<TopicDto>>() {
                 @Override
@@ -53,7 +53,7 @@ public class TopicsDataProvider extends AbstractDataProvider<TopicDto>{
                 }
                 @Override
                 public void onSuccess(List<TopicDto> result) {
-                    callback.onSuccess(result, display);
+                    callback.onSuccess(result);
                 }
             });
         }
@@ -66,7 +66,7 @@ public class TopicsDataProvider extends AbstractDataProvider<TopicDto>{
                 }
                 @Override
                 public void onSuccess(List<TopicDto> result) {
-                    callback.onSuccess(result, display);
+                    callback.onSuccess(result);
                 }
             });
         }

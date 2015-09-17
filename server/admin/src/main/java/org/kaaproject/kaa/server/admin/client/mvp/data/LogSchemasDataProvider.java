@@ -18,28 +18,28 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class LogSchemasDataProvider extends AbstractDataProvider<LogSchemaDto>{
 
     private String applicationId;
 
-    public LogSchemasDataProvider(MultiSelectionModel<LogSchemaDto> selectionModel,
+    public LogSchemasDataProvider(AbstractGrid<LogSchemaDto,?> dataGrid,
                                   HasErrorMessage hasErrorMessage,
                                   String applicationId) {
-        super(selectionModel, hasErrorMessage);
+        super(dataGrid, hasErrorMessage, false);
         this.applicationId = applicationId;
+        addDataDisplay();
     }
 
     @Override
-    protected void loadData(final LoadCallback callback, final HasData<LogSchemaDto> display) {
+    protected void loadData(final LoadCallback callback) {
         KaaAdmin.getDataSource().loadLogSchemas(applicationId, new AsyncCallback<List<LogSchemaDto>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -48,7 +48,7 @@ public class LogSchemasDataProvider extends AbstractDataProvider<LogSchemaDto>{
             }
             @Override
             public void onSuccess(List<LogSchemaDto> result) {
-                callback.onSuccess(result, display);
+                callback.onSuccess(result);
             }
         });
     }

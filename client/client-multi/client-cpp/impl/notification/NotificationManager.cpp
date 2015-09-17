@@ -22,6 +22,8 @@
 
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
+#include "kaa/utils/IThreadPool.hpp"
+#include "kaa/context/IExecutorContext.hpp"
 #include "kaa/IKaaClientStateStorage.hpp"
 #include "kaa/common/AvroByteArrayConverter.hpp"
 #include "kaa/common/exception/KaaException.hpp"
@@ -30,8 +32,8 @@
 
 namespace kaa {
 
-NotificationManager::NotificationManager(IKaaClientStateStoragePtr status)
-    : clientStatus_(status)
+NotificationManager::NotificationManager(IKaaClientStateStoragePtr status, IExecutorContext& executorContext)
+    : executorContext_(executorContext), clientStatus_(status)
 {
     const DetailedTopicStates& topicStates = clientStatus_->getTopicStates();
 
@@ -89,14 +91,14 @@ void NotificationManager::topicsListUpdated(const Topics& topicList)
 
 void NotificationManager::notificationReceived(const Notifications& notifications)
 {
-    KaaNotification deserializedNotification;
     AvroByteArrayConverter<KaaNotification> deserializer;
 
     for (const Notification& notification : notifications) {
         try {
             findTopic(notification.topicId);
 
-            deserializer.fromByteArray(notification.body.data(), notification.body.size(), deserializedNotification);
+            auto deserializedNotification = std::make_shared<KaaNotification>();
+            deserializer.fromByteArray(notification.body.data(), notification.body.size(), *deserializedNotification);
 
             if (!notifyOptionalNotificationSubscribers(notification.topicId, deserializedNotification)) {
                 notifyMandatoryNotificationSubscribers(notification.topicId, deserializedNotification);
@@ -327,17 +329,15 @@ const Topic& NotificationManager::findTopic(const std::string& id)
 
 void NotificationManager::notifyTopicUpdateSubscribers(const Topics& topics)
 {
-    if (!topics.empty()) {
-        topicListeners_(topics);
-    }
+    executorContext_.getCallbackExecutor().add([this, topics] () { topicListeners_(topics); });
 }
 
-void NotificationManager::notifyMandatoryNotificationSubscribers(const std::string& id, const KaaNotification& notification)
+void NotificationManager::notifyMandatoryNotificationSubscribers(const std::string& id, KaaNotificationPtr notification)
 {
-    mandatoryListeners_(id, notification);
+    executorContext_.getCallbackExecutor().add([this, id, notification] () { mandatoryListeners_(id, *notification); });
 }
 
-bool NotificationManager::notifyOptionalNotificationSubscribers(const std::string& id, const KaaNotification& notification)
+bool NotificationManager::notifyOptionalNotificationSubscribers(const std::string& id, KaaNotificationPtr notification)
 {
     bool notified = false;
 
@@ -354,13 +354,15 @@ bool NotificationManager::notifyOptionalNotificationSubscribers(const std::strin
         KAA_MUTEX_UNLOCKED("optionalListenersGuard_");
 
         notified = true;
-        (*notifier)(id, notification);
+
+        executorContext_.getCallbackExecutor().add([notifier, id, notification] () { (*notifier)(id, *notification); });
     }
 
     return notified;
 }
 
-void NotificationManager::setTransport(std::shared_ptr<NotificationTransport> transport) {
+void NotificationManager::setTransport(std::shared_ptr<NotificationTransport> transport)
+{
        if (transport) {
            transport_ = transport;
            transport_->setNotificationProcessor(this);

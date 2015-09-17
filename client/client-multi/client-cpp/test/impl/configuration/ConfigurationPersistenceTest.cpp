@@ -74,8 +74,14 @@ public:
         return configuration_;
     }
 
+    virtual void clearConfiguration()
+    {
+
+    }
+
     bool isSaveCalled() { return configurationSaveCalled_; }
     bool isLoadCalled() { return configurationLoadCalled_; }
+
 private:
     bool configurationSaveCalled_;
     bool configurationLoadCalled_;
@@ -89,7 +95,8 @@ BOOST_AUTO_TEST_SUITE(ConfigurationPersistenceSuite)
 BOOST_AUTO_TEST_CASE(checkConfigurationPersistence)
 {
     AvroByteArrayConverter<KaaRootConfiguration> converter;
-    KaaRootConfiguration configuration = converter.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size());
+    KaaRootConfiguration configuration;
+    converter.fromByteArray(getDefaultConfigData().begin(), getDefaultConfigData().size(), configuration);
     EndpointObjectHash checkHash(getDefaultConfigData().begin(), getDefaultConfigData().size());
 
     ConfigurationPersistenceManager cpm(IKaaClientStateStoragePtr(new MockKaaClientStateStorage));

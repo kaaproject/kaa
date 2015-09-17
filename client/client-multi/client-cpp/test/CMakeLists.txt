@@ -36,7 +36,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_OPERATION_HTTP_CHANNEL")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_CONNECTIVITY_CHECKER")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_THREADSAFE")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_MAX_LOG_LEVEL=0")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_MAX_LOG_LEVEL=6")
 
 set ( CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../Modules/)
 
@@ -110,6 +110,8 @@ set ( KAA_TEST_SOURCES
         ../impl/channel/TransportProtocolIdConstants.cpp
         ../impl/channel/IPTransportInfo.cpp
         ../impl/failover/DefaultFailoverStrategy.cpp
+        ../impl/utils/ThreadPool.cpp
+        ../impl/context/SimpleExecutorContext.cpp
         TestRunner.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp
@@ -134,6 +136,13 @@ set ( KAA_TEST_SOURCES
         impl/log/LogCollectorTest.cpp
         impl/log/SQLiteDBLogStorageTest.cpp
         impl/utils/KaaTimerTest.cpp
+        impl/utils/ThreadPoolTest.cpp
+        impl/log/strategies/RecordCountLogUploadStrategyTest.cpp
+        impl/log/strategies/StorageSizeLogUploadStrategyTest.cpp
+        impl/log/strategies/PeriodicLogUploadStrategyTest.cpp
+        impl/log/strategies/PeriodicLogUploadStrategyTest.cpp
+        impl/log/strategies/RecordCountWithTimeLimitLogUploadStrategyTest.cpp
+        impl/log/strategies/StorageSizeWithTimeLimitLogUploadStrategyTest.cpp
     )
 
 add_executable ( kaatest  ${KAA_TEST_SOURCES})

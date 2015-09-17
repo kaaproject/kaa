@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import com.google.gwt.json.client.*;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -50,8 +51,8 @@ public class LogAppendersActivity extends AbstractListActivity<LogAppenderDto, L
     }
 
     @Override
-    protected AbstractDataProvider<LogAppenderDto> getDataProvider(MultiSelectionModel<LogAppenderDto> selectionModel) {
-        return new AppendersDataProvider(selectionModel, listView, applicationId);
+    protected AbstractDataProvider<LogAppenderDto> getDataProvider(AbstractGrid<LogAppenderDto,?> dataGrid) {
+        return new AppendersDataProvider(dataGrid, listView, applicationId);
     }
 
     @Override

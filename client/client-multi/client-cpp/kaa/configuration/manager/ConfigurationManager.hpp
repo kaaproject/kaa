@@ -26,6 +26,8 @@
 
 namespace kaa {
 
+class IExecutorContext;
+
 /**
  * \class ConfigurationManager
  *
@@ -38,10 +40,10 @@ class ConfigurationManager : public IConfigurationManager,
                              public IConfigurationProcessedObserver,
                              public IGenericDeltaReceiver {
 public:
-    ConfigurationManager() {}
+    ConfigurationManager(IExecutorContext& executorContext) : executorContext_(executorContext) {}
     ~ConfigurationManager() {}
 
-    void onDeltaReceived(int index, const KaaRootConfiguration& datum, bool fullResync);
+    void onDeltaReceived(int index, const std::shared_ptr<KaaRootConfiguration>& datum, bool fullResync);
 
     /**
      * @link IConfigurationManager @endlink implementation
@@ -56,7 +58,8 @@ public:
     void onConfigurationProcessed();
 
 private:
-    KaaRootConfiguration root_;
+    IExecutorContext& executorContext_;
+    std::shared_ptr<KaaRootConfiguration> root_;
 
     KAA_MUTEX_DECLARE(configurationGuard_);
     KaaObservable<void (const KaaRootConfiguration &), IConfigurationReceiver *> configurationReceivers_;

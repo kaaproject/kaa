@@ -18,10 +18,8 @@ package org.kaaproject.kaa.server.admin.controller;
 
 import java.io.IOException;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
@@ -70,7 +68,6 @@ import org.spring4gwt.server.SpringGwtRemoteServiceServlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -118,33 +115,38 @@ public class KaaAdminController {
     private CacheService cacheService;
 
     @ExceptionHandler(KaaAdminServiceException.class)
-    public ResponseEntity<String> handleKaaAdminServiceException(KaaAdminServiceException ex) {
-        ResponseEntity<String> entity = null;
+    public void handleKaaAdminServiceException(KaaAdminServiceException ex, HttpServletResponse response) {
+        try {
         ServiceErrorCode errorCode = ex.getErrorCode();
         switch (errorCode) {
         case NOT_AUTHORIZED:
-            entity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
             break;
         case PERMISSION_DENIED:
-            entity = new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, ex.getMessage());
             break;
         case INVALID_ARGUMENTS:
-            entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
             break;
         case INVALID_SCHEMA:
-            entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
             break;
         case FILE_NOT_FOUND:
-            entity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, ex.getMessage());
             break;
         case ITEM_NOT_FOUND:
-            entity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, ex.getMessage());
+            break;
+        case BAD_REQUEST_PARAMS:
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, ex.getMessage());
             break;
         case GENERAL_ERROR:
-            entity = new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
             break;
         }
-        return entity;
+        } catch (IOException e) {
+            logger.error("Can't handle exception", e);
+        }
     }
 
     /**
@@ -187,7 +189,15 @@ public class KaaAdminController {
             @RequestParam(value="username") String username,
             @RequestParam(value="oldPassword") String oldPassword,
             @RequestParam(value="newPassword") String newPassword) throws Exception {
-        return kaaAuthService.changePassword(username, oldPassword, newPassword);
+        ResultCode resultCode = kaaAuthService.changePassword(username, oldPassword, newPassword);
+        if (resultCode == ResultCode.USER_NOT_FOUND) {
+            throw Utils.handleException(new IllegalArgumentException("User with specified username was not found."));
+        } else if (resultCode == ResultCode.OLD_PASSWORD_MISMATCH) {
+            throw Utils.handleException(new IllegalArgumentException("Current password is invalid."));
+        } else if (resultCode == ResultCode.BAD_PASSWORD_STRENGTH) {
+            throw Utils.handleException(new IllegalArgumentException("Password strength is insufficient."));
+        }
+        return resultCode;
     }
 
     /**
@@ -514,7 +524,7 @@ public class KaaAdminController {
     }
 
     /**
-     * Gets the log schema by its id.
+     * Gets the log schema by application token and schema version.
      *
      */
     @RequestMapping(value="logSchema/{applicationToken}/{schemaVersion}", method=RequestMethod.GET)
@@ -951,7 +961,7 @@ public class KaaAdminController {
         byte[] data = getFileContent(file);
         return kaaAdminService.sendNotification(notification, data);
     }
-    
+
     /**
      * Send unicast notification, with information from specific file, to the client identified by clientKeyHash.
      *

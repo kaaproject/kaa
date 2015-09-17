@@ -98,7 +98,7 @@ public class MemBucket {
         }
 
         if (newSize >= size && newCount >= getCount()) {
-            return getRecords();
+            return Collections.emptyList();
         }
 
         List<LogRecord> overSize = new ArrayList<>();

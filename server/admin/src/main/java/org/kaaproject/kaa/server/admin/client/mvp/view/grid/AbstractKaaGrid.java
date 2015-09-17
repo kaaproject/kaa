@@ -24,20 +24,22 @@ import com.google.gwt.dom.client.Style.Unit;
 
 public abstract class AbstractKaaGrid<T,K> extends AbstractGrid<T,K> {
 
+    private static final int DEFAULT_PAGE_SIZE = 14;
+    
     public AbstractKaaGrid(Unit unit) {
-        super(unit);
+        super(unit, DEFAULT_PAGE_SIZE);
     }
     
     public AbstractKaaGrid(Style.Unit unit, boolean enableActions) {
-        super(unit, enableActions, false);
+        super(unit, enableActions, false, DEFAULT_PAGE_SIZE);
     }
 
     public AbstractKaaGrid(Style.Unit unit, boolean enableActions, boolean embedded) {
-        super(unit, enableActions, embedded, true);
+        super(unit, enableActions, embedded, DEFAULT_PAGE_SIZE, true);
     }
 
     public AbstractKaaGrid(Style.Unit unit, boolean enableActions, boolean embedded, boolean init) {
-        super(unit, enableActions, embedded, init);
+        super(unit, enableActions, embedded, DEFAULT_PAGE_SIZE, init);
     }
     
     @SuppressWarnings("unchecked")

@@ -87,7 +87,10 @@ public:
         KAA_MUTEX_LOCKED("mainGuard_");
 
         for (auto& pair : slots_) {
-            pair.second(std::forward<Args>(args)...);
+            try {
+                pair.second(std::forward<Args>(args)...);
+            } catch (...) {
+            }
         }
         isNotifying_ = false;
 

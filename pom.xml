@@ -1,5 +1,5 @@
 <!--
-Copyright 2014 CyberVision, Inc.
+Copyright 2014-2015 CyberVision, Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ Copyright 2014 CyberVision, Inc.
         <avro.version>1.7.5</avro.version>
         <apache.velocity>1.7</apache.velocity>
         <zookeeper.version>3.4.6</zookeeper.version>
-        <curator.version>2.3.0</curator.version>
+        <curator.version>2.9.0</curator.version>
         <libthrift.version>0.9.1</libthrift.version>
         <commons-cli.version>1.2</commons-cli.version>
         <commons-io.version>2.4</commons-io.version>
@@ -148,17 +148,6 @@ Copyright 2014 CyberVision, Inc.
             </properties>
         </profile>
         <profile>
-            <id>examples</id>
-            <modules>
-                <module>avrogenc</module>
-                <module>common</module>
-                <module>client</module>
-                <module>server</module>
-                <module>examples</module>
-                <module>sandbox</module>
-            </modules>
-        </profile>
-        <profile>
             <id>jenkins</id>
             <modules>
                 <module>avrogenc</module>
@@ -166,7 +155,6 @@ Copyright 2014 CyberVision, Inc.
                 <module>client</module>
                 <module>server</module>
                 <module>it</module>
-                <module>sandbox</module>
             </modules>
             <build>
                 <plugins>
@@ -228,7 +216,6 @@ Copyright 2014 CyberVision, Inc.
                                 <exclude>**/*.html</exclude>
                                 <exclude>**/*_bckp</exclude>
                                 <exclude>**/*.log</exclude>
-                                <exclude>**/sandboxBuilder.log.*</exclude>
                                 <exclude>**/*.template</exclude>
                                 <exclude>**/kaa-it.log.*</exclude>
                                 <exclude>**/_remote.repositories</exclude>
@@ -467,7 +454,6 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/*.html</exclude>
                         <exclude>**/*_bckp</exclude>
                         <exclude>**/*.log</exclude>
-                        <exclude>**/sandboxBuilder.log.*</exclude>
                         <exclude>**/*.template</exclude>
                         <exclude>**/kaa-it.log.*</exclude>
                         <exclude>**/_remote.repositories</exclude>
@@ -501,6 +487,10 @@ Copyright 2014 CyberVision, Inc.
                         <exclude>**/*xcodeproj/**</exclude>
                         <exclude>**/*.plist</exclude>
                         <exclude>**/*.cproject</exclude>
+			<exclude>**/source/esp8266/ld/*.ld</exclude>
+			<exclude>**/source/esp8266/driver/uart.c</exclude>
+			<exclude>**/source/esp8266/include/driver/uart*.h</exclude>
+			<exclude>**/source/cc32xx/platform/cc32xx/app.ld</exclude>
                     </excludes>
                 </configuration>
             </plugin>

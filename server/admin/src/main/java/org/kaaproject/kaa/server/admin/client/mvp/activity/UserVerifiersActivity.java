@@ -17,6 +17,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import com.google.gwt.json.client.*;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -48,8 +49,8 @@ public class UserVerifiersActivity extends AbstractListActivity<UserVerifierDto,
     }
 
     @Override
-    protected AbstractDataProvider<UserVerifierDto> getDataProvider(MultiSelectionModel<UserVerifierDto> selectionModel) {
-        return new UserVerifiersDataProvider(selectionModel, listView, applicationId);
+    protected AbstractDataProvider<UserVerifierDto> getDataProvider(AbstractGrid<UserVerifierDto,?> dataGrid) {
+        return new UserVerifiersDataProvider(dataGrid, listView, applicationId);
     }
 
     @Override

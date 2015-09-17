@@ -17,6 +17,8 @@
 #ifndef I_GENERIC_DELTA_RECEIVER_HPP_
 #define I_GENERIC_DELTA_RECEIVER_HPP_
 
+#include <memory>
+
 #include "kaa/KaaDefaults.hpp"
 
 #include "kaa/configuration/gen/ConfigurationDefinitions.hpp"
@@ -36,7 +38,7 @@ public:
      * @param fullResync signals if delta contains full configuration resync or partial update
      *
      */
-    virtual void onDeltaReceived(int index, const KaaRootConfiguration& data, bool fullResync) = 0;
+    virtual void onDeltaReceived(int index, const std::shared_ptr<KaaRootConfiguration>& data, bool fullResync) = 0;
 
     virtual ~IGenericDeltaReceiver() {}
 };

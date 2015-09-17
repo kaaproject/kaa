@@ -18,28 +18,28 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 
 import java.util.List;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.MultiSelectionModel;
 
 public class ProfileSchemasDataProvider extends AbstractDataProvider<ProfileSchemaDto>{
 
     private String applicationId;
 
-    public ProfileSchemasDataProvider(MultiSelectionModel<ProfileSchemaDto> selectionModel,
+    public ProfileSchemasDataProvider(AbstractGrid<ProfileSchemaDto,?> dataGrid,
                                       HasErrorMessage hasErrorMessage,
                                       String applicationId) {
-        super(selectionModel, hasErrorMessage);
+        super(dataGrid, hasErrorMessage, false);
         this.applicationId = applicationId;
+        addDataDisplay();
     }
 
     @Override
-    protected void loadData(final LoadCallback callback, final HasData<ProfileSchemaDto> display) {
+    protected void loadData(final LoadCallback callback) {
         KaaAdmin.getDataSource().loadProfileSchemas(applicationId, new AsyncCallback<List<ProfileSchemaDto>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -48,7 +48,7 @@ public class ProfileSchemasDataProvider extends AbstractDataProvider<ProfileSche
             }
             @Override
             public void onSuccess(List<ProfileSchemaDto> result) {
-                callback.onSuccess(result, display);
+                callback.onSuccess(result);
             }
         });
     }

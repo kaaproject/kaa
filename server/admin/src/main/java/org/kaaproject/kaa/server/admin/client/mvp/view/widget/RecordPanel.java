@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
+
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
 import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
@@ -164,12 +165,13 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
     public boolean validate() {
         return recordFieldWidget.validate();
     }
-    
+
     public void setFormDataLoader(FormDataLoader formDataLoader) {
         this.formDataLoader = formDataLoader;
     }
     
     private void loadRecordFromFile() {
+        hasErrorMessage.clearError();
         formDataLoader.loadFormData(recordFileItemName, new BusyAsyncCallback<RecordField>() {
                     @Override
                     public void onSuccessImpl(RecordField result) {

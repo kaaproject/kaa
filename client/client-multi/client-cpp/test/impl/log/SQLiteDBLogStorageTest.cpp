@@ -93,7 +93,8 @@ BOOST_AUTO_TEST_CASE(RestoreAfterRestartTest)
 
     for (auto& encodedLog : logs.second) {
         AvroByteArrayConverter<KaaUserLogRecord> decoder;
-        auto decodedLog = decoder.fromByteArray(encodedLog->getData().data(), encodedLog->getSize());
+        KaaUserLogRecord decodedLog;
+        decoder.fromByteArray(encodedLog->getData().data(), encodedLog->getSize(), decodedLog);
 
         BOOST_CHECK_EQUAL(decodedLog.logdata, testLogData);
     }

@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.application;
 
+import java.util.Comparator;
+
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
@@ -40,7 +42,15 @@ public class ApplicationsGrid extends AbstractKaaGrid<ApplicationDto, String> {
                     public String getValue(ApplicationDto item) {
                         return item.getName();
                     }
-                }, 160);
+                }, 
+                new Comparator<ApplicationDto>() {
+                    @Override
+                    public int compare(ApplicationDto o1, ApplicationDto o2) {
+                        return o1.getName().compareToIgnoreCase(o2.getName());
+                    }
+                },
+                Boolean.TRUE,
+                160);
 
         return prefWidth;
     }

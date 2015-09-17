@@ -44,8 +44,8 @@ import org.kaaproject.kaa.client.channel.TransportProtocolId;
 import org.kaaproject.kaa.client.channel.UserTransport;
 import org.kaaproject.kaa.client.channel.impl.DefaultBootstrapDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.DefaultChannelManager;
-import org.kaaproject.kaa.client.channel.impl.DefaultOperationDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.DefaultFailoverManager;
+import org.kaaproject.kaa.client.channel.impl.DefaultOperationDataProcessor;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
 import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationTcpChannel;
 import org.kaaproject.kaa.client.channel.impl.transports.DefaultBootstrapTransport;
@@ -61,7 +61,6 @@ import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
 import org.kaaproject.kaa.client.configuration.base.ConfigurationManager;
 import org.kaaproject.kaa.client.configuration.base.ResyncConfigurationManager;
 import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
-import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.context.TransportContext;
 import org.kaaproject.kaa.client.event.DefaultEventManager;
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
@@ -567,7 +566,7 @@ public abstract class AbstractKaaClient implements GenericKaaClient {
     }
 
     protected ResyncConfigurationManager buildConfigurationManager(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {
-        return new ResyncConfigurationManager(properties);
+        return new ResyncConfigurationManager(properties, kaaClientState);
     }
 
     protected DefaultLogCollector buildLogCollector(KaaClientProperties properties, KaaClientState kaaClientState, TransportContext transportContext) {

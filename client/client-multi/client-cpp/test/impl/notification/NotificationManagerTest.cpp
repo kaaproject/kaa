@@ -21,6 +21,7 @@
 #include <vector>
 #include <memory>
 #include <utility>
+#include <thread>
 
 #include "kaa/ClientStatus.hpp"
 #include "kaa/notification/NotificationTransport.hpp"
@@ -28,18 +29,26 @@
 #include "kaa/common/exception/UnavailableTopicException.hpp"
 #include "kaa/common/exception/TransportNotFoundException.hpp"
 #include "kaa/notification/NotificationManager.hpp"
+#include "kaa/context/SimpleExecutorContext.hpp"
 
 #include "headers/MockKaaClientStateStorage.hpp"
 #include "headers/channel/MockChannelManager.hpp"
 #include "headers/notification/MockNotificationListener.hpp"
 #include "headers/notification/MockNotificationTopicListListener.hpp"
+#include "headers/context/MockExecutorContext.hpp"
 
 namespace kaa {
+
+void testSleep(std::size_t seconds)
+{
+    std::this_thread::sleep_for(std::chrono::seconds(seconds));
+}
 
 class TestNotificationTransport : public NotificationTransport
 {
 public:
-    TestNotificationTransport(MockChannelManager &channelManager, IKaaClientStateStoragePtr status) : NotificationTransport(status, channelManager) {}
+    TestNotificationTransport(MockChannelManager &channelManager, IKaaClientStateStoragePtr status)
+        : NotificationTransport(status, channelManager) {}
 
     virtual void setNotificationProcessor(INotificationProcessor* processor) {
         ++onSetNotificationProcessor_;
@@ -57,7 +66,8 @@ BOOST_AUTO_TEST_SUITE(NotificationTestSuite)
 BOOST_AUTO_TEST_CASE(SyncWithoutTransportTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
-    NotificationManager notificationManager(status);
+    MockExecutorContext executorContext;
+    NotificationManager notificationManager(status, executorContext);
 
     BOOST_CHECK_THROW(notificationManager.sync(), TransportNotFoundException);
 }
@@ -65,7 +75,8 @@ BOOST_AUTO_TEST_CASE(SyncWithoutTransportTest)
 BOOST_AUTO_TEST_CASE(SyncWithTransportTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
-    NotificationManager notificationManager(status);
+    MockExecutorContext executorContext;
+    NotificationManager notificationManager(status, executorContext);
 
     MockChannelManager manager;
     std::shared_ptr<TestNotificationTransport> notificationTransport(new TestNotificationTransport(manager, status));
@@ -79,7 +90,8 @@ BOOST_AUTO_TEST_CASE(SyncWithTransportTest)
 BOOST_AUTO_TEST_CASE(GetEmptyTopicListTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
-    NotificationManager notificationManager(status);
+    MockExecutorContext executorContext;
+    NotificationManager notificationManager(status, executorContext);
 
     BOOST_CHECK(notificationManager.getTopics().empty());
 }
@@ -117,7 +129,8 @@ BOOST_AUTO_TEST_CASE(GetTopicsTest)
     clientStatus1.reset();
 
     IKaaClientStateStoragePtr clientStatus2(new ClientStatus(STATUS_FILE_PATH));
-    NotificationManager notificationManager(clientStatus2);
+    MockExecutorContext executorContext;
+    NotificationManager notificationManager(clientStatus2, executorContext);
 
     auto topics = notificationManager.getTopics();
 
@@ -152,10 +165,36 @@ static Topics createTopics(std::size_t topicCount, bool isOptional = true)
     return topics;
 }
 
+static bool isTopicsEqual(const Topics& actualTopics, const Topics& expectedTopics)
+{
+    if (actualTopics.size() != expectedTopics.size()) {
+        return false;
+    }
+
+    for (const auto& actualTopic : actualTopics) {
+        bool found = false;
+        for (const auto& expectedTopic : expectedTopics) {
+            if (actualTopic.id == expectedTopic.id && actualTopic.name == expectedTopic.name &&
+                    actualTopic.subscriptionType == expectedTopic.subscriptionType)
+            {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            return false;
+        }
+    }
+
+   return true;
+}
+
 BOOST_AUTO_TEST_CASE(AddRemoveTopicListListenerTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
-    NotificationManager notificationManager(status);
+    SimpleExecutorContext executorContext;
+    executorContext.init();
+    NotificationManager notificationManager(status, executorContext);
 
     MockNotificationTopicListListener topicListListener1;
     MockNotificationTopicListListener topicListListener2;
@@ -167,11 +206,13 @@ BOOST_AUTO_TEST_CASE(AddRemoveTopicListListenerTest)
     auto topics1 = createTopics(topicCount1);
 
     notificationManager.topicsListUpdated(topics1);
+    testSleep(1);
 
     BOOST_CHECK_EQUAL(topicListListener1.onListUpdated_, 1);
     BOOST_CHECK_EQUAL(topicListListener2.onListUpdated_, 1);
-    BOOST_CHECK_EQUAL(topicListListener1.topics_.size(), topics1.size());
-    BOOST_CHECK_EQUAL(topicListListener2.topics_.size(), topics1.size());
+
+    BOOST_CHECK(isTopicsEqual(topicListListener1.topics_, topics1));
+    BOOST_CHECK(isTopicsEqual(topicListListener2.topics_, topics1));
 
     notificationManager.removeTopicListListener(topicListListener2);
 
@@ -179,11 +220,13 @@ BOOST_AUTO_TEST_CASE(AddRemoveTopicListListenerTest)
     auto topics2 = createTopics(topicCount2);
 
     notificationManager.topicsListUpdated(topics2);
+    testSleep(1);
 
     BOOST_CHECK_EQUAL(topicListListener1.onListUpdated_, 2);
     BOOST_CHECK_EQUAL(topicListListener2.onListUpdated_, 1);
-    BOOST_CHECK_EQUAL(topicListListener1.topics_.size(), topics2.size());
-    BOOST_CHECK_EQUAL(topicListListener2.topics_.size(), topics1.size());
+
+    BOOST_CHECK(isTopicsEqual(topicListListener1.topics_, topics2));
+    BOOST_CHECK(isTopicsEqual(topicListListener2.topics_, topics1));
 }
 
 static Notification createNotification(const std::string& topicId)
@@ -216,7 +259,9 @@ static std::vector<Notification> createNotifications(std::size_t notificationCou
 BOOST_AUTO_TEST_CASE(AddRemoveGlobalNotificationListenerTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
-    NotificationManager notificationManager(status);
+    SimpleExecutorContext executorContext;
+    executorContext.init();
+    NotificationManager notificationManager(status, executorContext);
 
     MockNotificationListener notificationListener1;
     MockNotificationListener notificationListener2;
@@ -233,6 +278,7 @@ BOOST_AUTO_TEST_CASE(AddRemoveGlobalNotificationListenerTest)
     auto notifications1 = createNotifications(notificationCount1, topics.front().id);
 
     notificationManager.notificationReceived(notifications1);
+    testSleep(1);
 
     BOOST_CHECK_EQUAL(notificationListener1.onNotification_, notificationCount1);
     BOOST_CHECK_EQUAL(notificationListener2.onNotification_, notificationCount1);
@@ -242,6 +288,7 @@ BOOST_AUTO_TEST_CASE(AddRemoveGlobalNotificationListenerTest)
 
     notificationManager.removeNotificationListener(notificationListener2);
     notificationManager.notificationReceived(notifications2);
+    testSleep(1);
 
     BOOST_CHECK_EQUAL(notificationListener1.onNotification_, notificationCount2 + notificationCount1);
     BOOST_CHECK_EQUAL(notificationListener2.onNotification_, notificationCount1);
@@ -250,7 +297,8 @@ BOOST_AUTO_TEST_CASE(AddRemoveGlobalNotificationListenerTest)
 BOOST_AUTO_TEST_CASE(NotificationListenerForUnknownTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
-    NotificationManager notificationManager(status);
+    MockExecutorContext executorContext;
+    NotificationManager notificationManager(status, executorContext);
     MockNotificationListener topicSpecificNotificationListener;
 
     std::size_t topicCount = 1 + rand() % 10;
@@ -268,7 +316,9 @@ BOOST_AUTO_TEST_CASE(NotificationListenerForUnknownTopicTest)
 BOOST_AUTO_TEST_CASE(AddRemoveTopicSpecificNotificationListenerTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
-    NotificationManager notificationManager(status);
+    SimpleExecutorContext executorContext;
+    executorContext.init();
+    NotificationManager notificationManager(status, executorContext);
 
     std::size_t topicCount = 2;
     auto topics = createTopics(topicCount);
@@ -284,10 +334,12 @@ BOOST_AUTO_TEST_CASE(AddRemoveTopicSpecificNotificationListenerTest)
     std::size_t topic1NotificationCount1 = rand() % 10;
     auto topic1Notification1 = createNotifications(topic1NotificationCount1, topics[0].id);
     notificationManager.notificationReceived(topic1Notification1);
+    testSleep(1);
 
     std::size_t topic2NotificationCount1 = rand() % 10;
     auto topic2Notification1 = createNotifications(topic2NotificationCount1, topics[1].id);
     notificationManager.notificationReceived(topic2Notification1);
+    testSleep(1);
 
     BOOST_CHECK_EQUAL(globalNotificationListener.onNotification_, topic1NotificationCount1);
     BOOST_CHECK_EQUAL(topicSpecificNotificationListener.onNotification_, topic2NotificationCount1);
@@ -297,10 +349,12 @@ BOOST_AUTO_TEST_CASE(AddRemoveTopicSpecificNotificationListenerTest)
     std::size_t topic1NotificationCount2 = rand() % 10;
     auto topic1Notification2 = createNotifications(topic1NotificationCount2, topics[0].id);
     notificationManager.notificationReceived(topic1Notification2);
+    testSleep(1);
 
     std::size_t topic2NotificationCount2 = rand() % 10;
     auto topic2Notification2 = createNotifications(topic2NotificationCount2, topics[1].id);
     notificationManager.notificationReceived(topic2Notification2);
+    testSleep(1);
 
     BOOST_CHECK_EQUAL(globalNotificationListener.onNotification_, topic1NotificationCount1 + topic1NotificationCount2 + topic2NotificationCount2);
     BOOST_CHECK_EQUAL(topicSpecificNotificationListener.onNotification_, topic2NotificationCount1);
@@ -309,7 +363,8 @@ BOOST_AUTO_TEST_CASE(AddRemoveTopicSpecificNotificationListenerTest)
 BOOST_AUTO_TEST_CASE(SubscribeToUnknownTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
-    NotificationManager notificationManager(status);
+    MockExecutorContext executorContext;
+    NotificationManager notificationManager(status, executorContext);
     MockNotificationListener topicSpecificNotificationListener;
 
     std::size_t topicCount = 1 + rand() % 10;
@@ -327,7 +382,8 @@ BOOST_AUTO_TEST_CASE(SubscribeToUnknownTopicTest)
 BOOST_AUTO_TEST_CASE(UnsubscribeToUnknownTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
-    NotificationManager notificationManager(status);
+    MockExecutorContext executorContext;
+    NotificationManager notificationManager(status, executorContext);
     MockNotificationListener topicSpecificNotificationListener;
 
     std::size_t topicCount = 1 + rand() % 10;
@@ -345,7 +401,8 @@ BOOST_AUTO_TEST_CASE(UnsubscribeToUnknownTopicTest)
 BOOST_AUTO_TEST_CASE(SubscribeToMandatoryTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
-    NotificationManager notificationManager(status);
+    MockExecutorContext executorContext;
+    NotificationManager notificationManager(status, executorContext);
     MockNotificationListener topicSpecificNotificationListener;
 
     std::size_t topicCount = 1 + rand() % 10;
@@ -371,7 +428,8 @@ BOOST_AUTO_TEST_CASE(SubscribeToMandatoryTopicTest)
 BOOST_AUTO_TEST_CASE(UnsubscribeFromMandatoryTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
-    NotificationManager notificationManager(status);
+    MockExecutorContext executorContext;
+    NotificationManager notificationManager(status, executorContext);
     MockNotificationListener topicSpecificNotificationListener;
 
     std::size_t topicCount = 1 + rand() % 10;
@@ -397,7 +455,8 @@ BOOST_AUTO_TEST_CASE(UnsubscribeFromMandatoryTopicTest)
 BOOST_AUTO_TEST_CASE(SubscribeToOptionalTopicTest)
 {
     IKaaClientStateStoragePtr status(new MockKaaClientStateStorage);
-    NotificationManager notificationManager(status);
+    MockExecutorContext executorContext;
+    NotificationManager notificationManager(status, executorContext);
     MockNotificationListener topicSpecificNotificationListener;
     MockChannelManager manager;
     std::shared_ptr<TestNotificationTransport> notificationTransport(new TestNotificationTransport(manager, status));

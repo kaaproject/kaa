@@ -122,6 +122,8 @@ public class KaaClientPropertiesState implements KaaClientState {
                     LOG.info("SDK properties were updated");
                     setRegistered(false);
                     setPropertiesHash(properties.getPropertiesHash());
+                    //TODO: add more intelligent check by comparing part of SDK token.
+                    isConfigVersionUpdated = true;
                 } else {
                     LOG.info("SDK properties are up to date");
                 }

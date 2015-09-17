@@ -20,12 +20,16 @@ import java.util.List;
 
 import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
-import org.apache.flume.api.RpcClient;
+import org.kaaproject.kaa.server.appenders.flume.appender.client.async.AppendAsyncResultPojo;
+import org.kaaproject.kaa.server.appenders.flume.appender.client.async.AppendBatchAsyncResultPojo;
+import org.kaaproject.kaa.server.appenders.flume.appender.client.async.AsyncRpcClient;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 public abstract class FlumeClientManager<T> {
 
@@ -38,17 +42,37 @@ public abstract class FlumeClientManager<T> {
     protected static final String HOSTS = "hosts";
     protected static final int MAX_RETRY_COUNT = 3;
 
-    protected RpcClient currentClient = null;
+    protected AsyncRpcClient currentClient = null;
 
-    protected abstract RpcClient initManager(T parameters);
+    protected abstract AsyncRpcClient initManager(T parameters);
+
+    protected abstract AsyncRpcClient initManager(T parameters, int maxClientThreads);
 
     public abstract void sendEventToFlume(Event event) throws EventDeliveryException;
 
     public abstract void sendEventsToFlume(List<Event> events) throws EventDeliveryException;
 
+    public abstract ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event)
+            throws EventDeliveryException;
+
+    public abstract ListenableFuture<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(List<Event> events)
+            throws EventDeliveryException;
+
     public void init(T parameters) {
         if (parameters != null) {
             currentClient = initManager(parameters);
+            LOG.debug("Initialized rpc client {}", currentClient.getClass());
+        } else {
+            LOG.warn("Flume parameters is empty.");
+        }
+        if (currentClient == null) {
+            throw new RuntimeException("Can't initialize flume Rpc client.");
+        }
+    }
+
+    public void init(T parameters, int clientThreadPoolSize) {
+        if (parameters != null) {
+            currentClient = initManager(parameters, clientThreadPoolSize);
             LOG.debug("Initialized rpc client {}", currentClient.getClass());
         } else {
             LOG.warn("Flume parameters is empty.");
@@ -74,17 +98,15 @@ public abstract class FlumeClientManager<T> {
             LOG.debug("Init priority client manager");
             PrioritizedFlumeNodes flumeNodesConfig = (PrioritizedFlumeNodes) hostsBalancing;
             PriorityFlumeClientManager priorityClientManager = new PriorityFlumeClientManager();
-            priorityClientManager.init(flumeNodesConfig);
+            priorityClientManager.init(flumeNodesConfig, configuration.getClientsThreadPoolSize());
             clientManager = priorityClientManager;
-        }
-        else if (hostsBalancing instanceof FlumeNodes) {
+        } else if (hostsBalancing instanceof FlumeNodes) {
             LOG.debug("Init round robin client manager");
             FlumeNodes flumeNodesConfig = (FlumeNodes) hostsBalancing;
             BalancingFlumeClientManager balancingClientManager = new BalancingFlumeClientManager();
-            balancingClientManager.init(flumeNodesConfig);
+            balancingClientManager.init(flumeNodesConfig, configuration.getClientsThreadPoolSize());
             clientManager = balancingClientManager;
-        }
-        else {
+        } else {
             LOG.error("Balancing type: {} does not supported.", hostsBalancing.getClass());
         }
         return (FlumeClientManager<T>) clientManager;

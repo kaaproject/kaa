@@ -46,6 +46,15 @@
                                 },
                                 "null"
                             ]
+                        },
+                        {
+                            "name":"logSchemaVersion",
+                            "type":[
+                                {
+                                    "type":"int"
+                                },
+                                "null"
+                            ]
                         }
                     ]
                 },

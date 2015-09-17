@@ -36,11 +36,11 @@ add_executable  (test_ext_log_storage_memory
                 )
 target_link_libraries(test_ext_log_storage_memory kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
-#add_executable  (test_ext_log_upload_strategy_by_volume
-#                    test/platform-impl/test_ext_log_upload_strategy_by_volume.c
-#                    test/kaa_test_external.c
-#                )
-#target_link_libraries(test_ext_log_upload_strategy_by_volume kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
+add_executable  (test_ext_log_upload_strategy_by_volume
+                    test/platform-impl/test_ext_log_upload_strategies.c
+                    test/kaa_test_external.c
+                )
+target_link_libraries(test_ext_log_upload_strategy_by_volume kaac ${OPENSSL_LIBRARIES} ${CUNIT_LIB_NAME})
 
 add_executable  (test_user_extension
                     test/test_kaa_user.c
@@ -178,3 +178,8 @@ add_executable  (test_kaa_notification_manager
                     test/test_kaa_notification.c
                 )
 target_link_libraries(test_kaa_notification_manager kaac ${CUNIT_LIB_NAME})
+
+add_executable  (test_kaa_reallocation
+                    test/utilities/test_kaa_reallocation.c
+                )
+target_link_libraries(test_kaa_reallocation kaac ${CUNIT_LIB_NAME})

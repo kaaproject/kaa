@@ -19,6 +19,9 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <fcntl.h>
 
 #include "../../kaa.h"
 #include "../../kaa_error.h"
@@ -29,7 +32,8 @@
 #include "../../kaa_context.h"
 #include "../../platform/kaa_client.h"
 #include "../../platform/ext_transport_channel.h"
-#include "../../platform-impl/kaa_tcp_channel.h"
+#include "../../platform-impl/common/kaa_tcp_channel.h"
+#include "../../platform-impl/common/ext_log_upload_strategies.h"
 #include "../../platform-impl/posix/posix_kaa_failover_strategy.h"
 #include "../../kaa_logging.h"
 #include "../../kaa_channel_manager.h"
@@ -39,9 +43,7 @@
 extern kaa_error_t ext_unlimited_log_storage_create(void **log_storage_context_p
                                                   , kaa_logger_t *logger);
 
-extern kaa_error_t ext_log_upload_strategy_by_volume_create(void **strategy_p
-                                                          , kaa_channel_manager_t *channel_manager
-                                                          , kaa_bootstrap_manager_t *bootstrap_manager);
+extern void ext_log_upload_timeout(kaa_log_collector_t *self);
 
 
 static kaa_service_t BOOTSTRAP_SERVICE[] = { KAA_SERVICE_BOOTSTRAP };
@@ -133,7 +135,6 @@ kaa_error_t kaa_client_create(kaa_client_t **kaa_client, kaa_client_props_t *pro
 
     error_code = kaa_init(&self->kaa_context);
     if (error_code) {
-        printf("Failed to init Kaa context, error %d\n", error_code);
         kaa_client_destroy(self);
         return error_code;
     }
@@ -328,6 +329,9 @@ kaa_error_t kaa_client_start(kaa_client_t *kaa_client
             }
         }
       }
+#ifndef KAA_DISABLE_FEATURE_LOGGING
+      ext_log_upload_timeout(kaa_client->kaa_context->log_collector);
+#endif
     }
     KAA_LOG_INFO(kaa_client->kaa_context->logger, KAA_ERR_NONE, "Kaa client stopped");
 
@@ -439,9 +443,7 @@ kaa_error_t kaa_log_collector_init(kaa_client_t *kaa_client)
        return error_code;
     }
 
-    error_code = ext_log_upload_strategy_by_volume_create(&kaa_client->log_upload_strategy_context
-                                                                , kaa_client->kaa_context->channel_manager
-                                                                , kaa_client->kaa_context->bootstrap_manager);
+    error_code = ext_log_upload_strategy_create(kaa_client->kaa_context, &kaa_client->log_upload_strategy_context, KAA_LOG_UPLOAD_VOLUME_STRATEGY);
     if (error_code) {
         KAA_LOG_ERROR(kaa_client->kaa_context->logger, error_code, "Failed to create log upload strategy");
         return error_code;

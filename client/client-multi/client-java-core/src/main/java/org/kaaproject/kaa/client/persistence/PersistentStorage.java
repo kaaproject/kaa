@@ -29,4 +29,6 @@ public interface PersistentStorage {
     boolean renameTo(String oldPath, String newPath) throws IOException;
 
     boolean exists(String path);
+
+    void delete(String path) throws IOException;
 }

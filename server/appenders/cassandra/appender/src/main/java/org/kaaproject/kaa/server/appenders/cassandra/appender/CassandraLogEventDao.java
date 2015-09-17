@@ -41,6 +41,7 @@ import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraSocketO
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ClusteringElement;
 import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnMappingElement;
+import org.kaaproject.kaa.server.appenders.cassandra.config.gen.ColumnType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -304,10 +305,12 @@ public class CassandraLogEventDao implements LogEventDao {
             for (ColumnMappingElement element : configuration.getColumnMapping()) {
                 switch (element.getType()) {
                 case HEADER_FIELD:
-                    insert.value(element.getColumnName(), dto.getHeader().get(element.getValue()));
+                    insert.value(element.getColumnName(),
+                            formatField(element.getColumnType(), dto.getHeader().get(element.getValue())));
                     break;
                 case EVENT_FIELD:
-                    insert.value(element.getColumnName(), dto.getEvent().get(element.getValue()));
+                    insert.value(element.getColumnName(),
+                            formatField(element.getColumnType(), dto.getEvent().get(element.getValue())));
                     break;
                 case HEADER_JSON:
                     insert.value(element.getColumnName(), headerConverter.encodeToJson(dto.getHeader()));
@@ -366,5 +369,13 @@ public class CassandraLogEventDao implements LogEventDao {
             }
         }
         return tsValue;
+    }
+
+    private Object formatField(ColumnType type, Object elementValue) {
+        if (type == ColumnType.TEXT && elementValue != null) {
+            return elementValue.toString();
+        } else {
+            return elementValue;
+        }
     }
 }

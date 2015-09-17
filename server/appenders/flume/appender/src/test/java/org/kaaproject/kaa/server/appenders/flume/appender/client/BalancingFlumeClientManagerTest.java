@@ -36,6 +36,9 @@ public class BalancingFlumeClientManagerTest extends FlumeClientManagerTest<Flum
                         Arrays.asList(new FlumeNode("localhost", 12121), 
                                       new FlumeNode("localhost", 12122))).build();
         configuration.setHostsBalancing(flumeNodes);
+        configuration.setCallbackThreadPoolSize(2);
+        configuration.setClientsThreadPoolSize(2);
+        configuration.setExecutorThreadPoolSize(2);
     }
 
     @Test
@@ -43,6 +46,13 @@ public class BalancingFlumeClientManagerTest extends FlumeClientManagerTest<Flum
         flumeSourceRunner.startFlumeSource("agent", "localhost", 12121);
         clientManager = FlumeClientManager.getInstance(configuration);
         clientManager.sendEventToFlume(EventBuilder.withBody(testEventBody));
+    }
+    
+    @Test
+    public void initFlumeClientWithFlumeAgentAsyncTest() throws Exception {
+        flumeSourceRunner.startFlumeSource("agent", "localhost", 12121);
+        clientManager = FlumeClientManager.getInstance(configuration);
+        clientManager.sendEventToFlumeAsync(EventBuilder.withBody(testEventBody));
     }
 
     @Test(expected = EventDeliveryException.class)

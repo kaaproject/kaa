@@ -25,6 +25,7 @@
 
 #include "kaa/KaaThread.hpp"
 #include "kaa/logging/Log.hpp"
+#include "kaa/common/exception/KaaException.hpp"
 
 namespace kaa {
 
@@ -35,8 +36,8 @@ public:
     KaaTimer(const std::string& timerName) :
         timerName_(timerName), isThreadRun_(false), isTimerRun_(false), callback_([]{})
     {
-
     }
+
     ~KaaTimer()
     {
         /*
@@ -56,6 +57,10 @@ public:
 
     void start(std::size_t seconds, const Function& callback)
     {
+        if (!callback) {
+            KAA_LOG_WARN("Failed to start timer: bad callback");
+            throw KaaException("Bad timer callback");
+        }
 
         KAA_LOG_TRACE(boost::format("Timer[%1%] scheduling for %2% sec ...") % timerName_ % seconds );
 
@@ -100,7 +105,6 @@ private:
         KAA_MUTEX_LOCKED("timerGuard_");
 
         while (isThreadRun_) {
-
             if (isTimerRun_) {
                 auto now = TimerClock::now();
                 if (now >= endTS_) {

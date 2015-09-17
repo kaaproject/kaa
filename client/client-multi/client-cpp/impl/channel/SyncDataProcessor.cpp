@@ -214,12 +214,15 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
 
 DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std::uint8_t> &response)
 {
-    DemultiplexerReturnCode returnCode = DemultiplexerReturnCode::SUCCESS;
     if (response.empty()) {
         return DemultiplexerReturnCode::FAILURE;
     }
+
+    DemultiplexerReturnCode returnCode = DemultiplexerReturnCode::SUCCESS;
+
     try {
-        SyncResponse syncResponse = responseConverter_.fromByteArray(response.data(), response.size());
+        SyncResponse syncResponse;
+        responseConverter_.fromByteArray(response.data(), response.size(), syncResponse);
 
         KAA_LOG_INFO(boost::format("Got SyncResponse: requestId: %1%, result: %2%")
             % syncResponse.requestId % LoggingUtils::SyncResponseResultTypeToString(syncResponse.status));
