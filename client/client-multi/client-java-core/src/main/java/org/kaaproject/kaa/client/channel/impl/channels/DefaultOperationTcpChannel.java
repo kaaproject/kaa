@@ -582,6 +582,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             closeConnection();
             if (executor != null) {
                 executor.shutdownNow();
+                isReadTaskScheduled = false;
                 executor = null;
             }
         }
