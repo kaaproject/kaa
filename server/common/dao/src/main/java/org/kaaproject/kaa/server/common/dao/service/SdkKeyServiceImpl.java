@@ -16,9 +16,12 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.server.common.dao.SdkKeyService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.impl.SdkKeyDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.SdkKey;
 import org.slf4j.Logger;
@@ -76,5 +79,18 @@ public class SdkKeyServiceImpl implements SdkKeyService {
             }
         }
         return savedSdkPropertiesDto;
+    }
+
+    @Override
+    public List<SdkPropertiesDto> findSdkKeysByApplicationId(String applicationId) {
+        Validator.validateId(applicationId, "Unable to find SDK profiles. Invalid application ID: " + applicationId);
+        return DaoUtil.convertDtoList(sdkKeyDao.findSdkKeysByApplicationId(applicationId));
+    }
+
+    @Override
+    public void removeSdkProfileById(String id) {
+        Validator.validateId(id, "Unable to remove SDK profile. Invalid SDK profile ID: " + id);
+        sdkKeyDao.removeById(id);
+        LOG.debug("Removed SDK profile [{}]", id);
     }
 }

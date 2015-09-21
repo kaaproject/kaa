@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.common.dao;
 
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 
 /**
@@ -40,4 +42,19 @@ public interface SdkKeyService {
      * @return the saved application dto object
      */
     SdkPropertiesDto saveSdkKey(SdkPropertiesDto sdkPropertiesDto);
+
+    /**
+     * Returns a list of SDK profiles for an application with the given identifier
+     *
+     * @param applicationId An application identifier
+     * @return A list of SDK profiles for an application with the given identifier
+     */
+    List<SdkPropertiesDto> findSdkKeysByApplicationId(String applicationId);
+
+    /**
+     * Removes an SDK profile from the database by its identifier
+     *
+     * @param id The identifier of the SDK profile to remove
+     */
+    void removeSdkProfileById(String id);
 }
