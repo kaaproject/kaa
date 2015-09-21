@@ -16,6 +16,12 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.kaaproject.kaa.server.common.dao.impl.SdkKeyDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.SdkKey;
@@ -50,5 +56,21 @@ public class HibernateSdkKeyDao extends HibernateAbstractDao<SdkKey> implements 
             LOG.debug("[{}] Search result: {}.", token, sdkKey != null);
         }
         return sdkKey;
+    }
+
+    @Override
+    public List<SdkKey> findSdkKeysByApplicationId(String applicationId) {
+        LOG.debug("Searching for SDK profiles by application ID: [{}]", applicationId);
+        List<SdkKey> sdkProfiles = Collections.emptyList();
+        if (StringUtils.isNotBlank(applicationId)) {
+            Criterion criterion = Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId));
+            sdkProfiles = this.findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, criterion);
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("[{}] Search result: {}.", applicationId, Arrays.toString(sdkProfiles.toArray()));
+        } else {
+            LOG.debug("[{}] Search result: {}.", applicationId, sdkProfiles.size());
+        }
+        return sdkProfiles;
     }
 }
