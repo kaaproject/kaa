@@ -16,12 +16,25 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import org.apache.commons.codec.binary.Base64;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.DtoByteMarshaller;
-import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
-import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_APPLICATION_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_CONFIGURATION_SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_CREATED_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_CREATED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_DEFAULT_VERIFIER_TOKEN;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_ENDPOINT_COUNT;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_LOG_SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_NOTIFICATION_SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_PROFILE_SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_TARGET_PLATFORM;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_TOKEN;
+
+import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -32,14 +45,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import java.io.Serializable;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.*;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+import org.apache.commons.codec.binary.Base64;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.DtoByteMarshaller;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 
 @Entity
 @Table(name = SDK_PROFILE_TABLE_NAME)
@@ -50,9 +61,6 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
 
     @Column(name = SDK_PROFILE_TOKEN)
     private String token;
-
-    @Column(name = SDK_PROFILE_DATA, length = 1000)
-    private byte[] data;
 
     @ManyToOne
     @JoinColumn(name = SDK_PROFILE_APPLICATION_ID, nullable = false)
@@ -103,33 +111,44 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
     public SdkKey(SdkPropertiesDto dto) {
         if (dto != null) {
             try {
-                this.id = getLongId(dto.getId());
-                dto.setId(null);                // dto's id doesn't have to influence sdk token value
-                List<String> aefMapIds = dto.getAefMapIds();
-                // result token value for empty list and for null field should be identical
-                if (aefMapIds != null && aefMapIds.isEmpty()) {
-                    dto.setAefMapIds(null);
+                this.id = ModelUtils.getLongId(dto.getId());
+
+                String token = dto.getToken();
+                if (token == null || token.isEmpty()) {
+                    // An empty list is no different than a null field
+                    if (this.aefMapIds != null && this.aefMapIds.isEmpty()) {
+                        dto.setAefMapIds(null);
+                    }
+
+                    // Must not use these fields for token generation
+                    dto.setId(null);
+                    dto.setEndpointCount(null);
+
+                    MessageDigest messageDigest = MessageDigest.getInstance(HASH_ALGORITHM);
+                    messageDigest.update(DtoByteMarshaller.toBytes(dto));
+                    this.token = Base64.encodeBase64String(messageDigest.digest());
+
+                    dto.setId(this.getStringId());
+                    dto.setEndpointCount(this.endpointCount);
+                    dto.setAefMapIds(this.aefMapIds);
+                } else {
+                    this.token = token;
                 }
+
+                Long applicationId = ModelUtils.getLongId(dto.getApplicationId());
+                this.application = (applicationId != null) ? new Application(applicationId) : null;
+
                 this.name = dto.getName();
                 this.configurationSchemaVersion = dto.getConfigurationSchemaVersion();
                 this.profileSchemaVersion = dto.getProfileSchemaVersion();
                 this.notificationSchemaVersion = dto.getProfileSchemaVersion();
                 this.logSchemaVersion = dto.getNotificationSchemaVersion();
                 this.targetPlatform = dto.getTargetPlatform();
-                this.aefMapIds = aefMapIds;
+                this.aefMapIds = dto.getAefMapIds();
                 this.defaultVerifierToken = dto.getDefaultVerifierToken();
                 this.createdUsername = dto.getCreatedUsername();
                 this.createdTime = dto.getCreatedTime();
                 this.endpointCount = dto.getEndpointCount();
-                this.data = DtoByteMarshaller.toBytes(dto);
-                dto.setAefMapIds(aefMapIds);
-                dto.setId(this.id == null ? null : String.valueOf(this.id));
-
-                MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
-                digest.update(this.data);
-                this.token = Base64.encodeBase64String(digest.digest());
-                Long appId = getLongId(dto.getApplicationId());
-                this.application = appId != null ? new Application(appId) : null;
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }
@@ -142,14 +161,6 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
     }
 
     public Application getApplication() {
@@ -255,7 +266,28 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
 
     @Override
     public SdkPropertiesDto toDto() {
-        return DtoByteMarshaller.fromBytes(data);
+        SdkPropertiesDto dto = this.createDto();
+
+        dto.setId(this.getStringId());
+        dto.setToken(this.token);
+        if (this.application != null) {
+            dto.setApplicationId(this.application.getStringId());
+            dto.setApplicationToken(this.application.getApplicationToken());
+        }
+
+        dto.setName(this.name);
+        dto.setConfigurationSchemaVersion(this.configurationSchemaVersion);
+        dto.setProfileSchemaVersion(this.profileSchemaVersion);
+        dto.setNotificationSchemaVersion(this.notificationSchemaVersion);
+        dto.setLogSchemaVersion(this.logSchemaVersion);
+        dto.setTargetPlatform(this.targetPlatform);
+        dto.setAefMapIds(this.aefMapIds);
+        dto.setDefaultVerifierToken(this.defaultVerifierToken);
+        dto.setCreatedUsername(this.createdUsername);
+        dto.setCreatedTime(this.createdTime);
+        dto.setEndpointCount(this.endpointCount);
+
+        return dto;
     }
 
     @Override
@@ -267,48 +299,45 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
             return false;
         }
 
-        SdkKey sdkKey = (SdkKey) o;
+        SdkKey entity = (SdkKey) o;
 
-        if (application != null ? !application.equals(sdkKey.application) : sdkKey.application != null) {
+        if (application != null ? !application.equals(entity.application) : entity.application != null) {
             return false;
         }
-        if (!Arrays.equals(data, sdkKey.data)) {
+        if (token != null ? !token.equals(entity.token) : entity.token != null) {
             return false;
         }
-        if (token != null ? !token.equals(sdkKey.token) : sdkKey.token != null) {
+        if (name != null ? !name.equals(entity.name) : entity.name != null) {
             return false;
         }
-        if (name != null ? !name.equals(sdkKey.name) : sdkKey.name != null) {
+        if (configurationSchemaVersion != null ? !configurationSchemaVersion.equals(entity.configurationSchemaVersion) : entity.configurationSchemaVersion != null) {
             return false;
         }
-        if (configurationSchemaVersion != null ? !configurationSchemaVersion.equals(sdkKey.configurationSchemaVersion) : sdkKey.configurationSchemaVersion != null) {
+        if (profileSchemaVersion != null ? !profileSchemaVersion.equals(entity.profileSchemaVersion) : entity.profileSchemaVersion != null) {
             return false;
         }
-        if (profileSchemaVersion != null ? !profileSchemaVersion.equals(sdkKey.profileSchemaVersion) : sdkKey.profileSchemaVersion != null) {
+        if (notificationSchemaVersion != null ? !notificationSchemaVersion.equals(entity.notificationSchemaVersion) : entity.notificationSchemaVersion != null) {
             return false;
         }
-        if (notificationSchemaVersion != null ? !notificationSchemaVersion.equals(sdkKey.notificationSchemaVersion) : sdkKey.notificationSchemaVersion != null) {
+        if (logSchemaVersion != null ? !logSchemaVersion.equals(entity.logSchemaVersion) : entity.logSchemaVersion != null) {
             return false;
         }
-        if (logSchemaVersion != null ? !logSchemaVersion.equals(sdkKey.logSchemaVersion) : sdkKey.logSchemaVersion != null) {
+        if (targetPlatform != null ? !targetPlatform.equals(entity.targetPlatform) : entity.targetPlatform != null) {
             return false;
         }
-        if (targetPlatform != null ? !targetPlatform.equals(sdkKey.targetPlatform) : sdkKey.targetPlatform != null) {
+        if (!Arrays.equals(aefMapIds.toArray(), entity.aefMapIds.toArray())) {
             return false;
         }
-        if (!Arrays.equals(aefMapIds.toArray(), sdkKey.aefMapIds.toArray())) {
+        if (defaultVerifierToken != null ? !defaultVerifierToken.equals(entity.defaultVerifierToken) : entity.defaultVerifierToken != null) {
             return false;
         }
-        if (defaultVerifierToken != null ? !defaultVerifierToken.equals(sdkKey.defaultVerifierToken) : sdkKey.defaultVerifierToken != null) {
+        if (createdUsername != null ? !createdUsername.equals(entity.createdUsername) : entity.createdUsername != null) {
             return false;
         }
-        if (createdUsername != null ? !createdUsername.equals(sdkKey.createdUsername) : sdkKey.createdUsername != null) {
+        if (createdTime != null ? !createdTime.equals(entity.createdTime) : entity.createdTime != null) {
             return false;
         }
-        if (createdTime != null ? !createdTime.equals(sdkKey.createdTime) : sdkKey.createdTime != null) {
-            return false;
-        }
-        if (endpointCount != null ? !endpointCount.equals(sdkKey.endpointCount) : sdkKey.endpointCount != null) {
+        if (endpointCount != null ? !endpointCount.equals(entity.endpointCount) : entity.endpointCount != null) {
             return false;
         }
 
@@ -319,7 +348,6 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
     @Override
     public int hashCode() {
         int result = token != null ? token.hashCode() : 0;
-        result = 31 * result + (data != null ? Arrays.hashCode(data) : 0);
         result = 31 * result + (application != null ? application.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (configurationSchemaVersion != null ? configurationSchemaVersion.hashCode() : 0);
@@ -340,7 +368,6 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
     public String toString() {
         return "SdkToken{" +
                 "token='" + token + '\'' +
-                ", data=" + Arrays.toString(data) +
                 ", application=" + application +
                 ", name=" + name +
                 ", configurationSchemaVersion=" + configurationSchemaVersion +

@@ -21,9 +21,11 @@ import java.util.List;
 public interface SdkKeyDao<T> extends Dao<T, String> {
 
     /**
-     * Find Sdk key object by its token
-     * @param token     token of an SDK
-     * @return the found sdk token
+     * Returns an SDK profile with the given token.
+     *
+     * @param token An SDK profile token
+     *
+     * @return An SDK profile with the given token
      */
     public T findSdkKeyByToken(String token);
 
@@ -31,6 +33,7 @@ public interface SdkKeyDao<T> extends Dao<T, String> {
      * Returns a list of SDK profiles for an application with the given identifier.
      *
      * @param applicationId An application identifier
+     *
      * @return A list of SDK profiles for an application with the given identifier
      */
     public List<T> findSdkKeysByApplicationId(String applicationId);

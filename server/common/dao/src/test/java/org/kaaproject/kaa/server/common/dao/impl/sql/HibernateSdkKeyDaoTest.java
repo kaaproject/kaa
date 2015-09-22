@@ -32,23 +32,24 @@ import org.springframework.transaction.annotation.Transactional;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Transactional
 public class HibernateSdkKeyDaoTest extends HibernateAbstractTest {
+
     @Test
-    public void saveSdkTokenTest() {
-        SdkKey sdkKey = generateSdkKey(null, null, null);
-        Assert.assertNotNull(sdkKey.getId());
+    public void saveTest() {
+        SdkKey saved = this.generateSdkKey(null, null);
+        Assert.assertNotNull(saved.getId());
     }
 
     @Test
     public void findSdkKeyByTokenTest() {
-        String token = "someSdkToken";
-        SdkKey sdkKeyToPersist = generateSdkKey(null, token, new byte[]{10, 2, 3, 4, 2, 3, 3, 4, 100, 3, 4});
-        SdkKey sdkKeyLoaded = sdkKeyDao.findSdkKeyByToken(token);
-        Assert.assertEquals(sdkKeyToPersist, sdkKeyLoaded);
+        String token = HibernateSdkKeyDaoTest.class.getName();
+        SdkKey saved = this.generateSdkKey(null, token);
+        SdkKey loaded = sdkKeyDao.findSdkKeyByToken(token);
+        Assert.assertEquals(saved, loaded);
     }
 
     @Test
     public void findSdkKeysByApplicationIdTest() {
-        SdkKey saved = generateSdkKey(null, "token", new byte[] { 35, 16, 94, 60, 11, 52, 22, 78, 81, 97 });
+        SdkKey saved = this.generateSdkKey(null, null);
         List<SdkKey> loaded = sdkKeyDao.findSdkKeysByApplicationId(saved.getApplication().getId().toString());
         Assert.assertEquals(1, loaded.size());
         Assert.assertEquals(saved, loaded.get(0));

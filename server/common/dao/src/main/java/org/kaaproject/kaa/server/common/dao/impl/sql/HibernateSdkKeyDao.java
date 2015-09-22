@@ -16,6 +16,11 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_TOKEN_PROPERTY;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -29,10 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.*;
-
 @Repository
 public class HibernateSdkKeyDao extends HibernateAbstractDao<SdkKey> implements SdkKeyDao<SdkKey> {
 
@@ -45,32 +46,37 @@ public class HibernateSdkKeyDao extends HibernateAbstractDao<SdkKey> implements 
 
     @Override
     public SdkKey findSdkKeyByToken(String token) {
-        SdkKey sdkKey = null;
-        LOG.debug("Searching SDK token object by SDK token [{}]", token);
-        if (isNotBlank(token)) {
-            sdkKey = findOneByCriterion(Restrictions.eq(SDK_TOKEN_PROPERTY, token));
+        LOG.debug("Searching for an SDK profile by token: [{}]", token);
+
+        SdkKey found = null;
+        if (StringUtils.isNotBlank(token)) {
+            found = this.findOneByCriterion(Restrictions.eq(SDK_TOKEN_PROPERTY, token));
         }
+
         if (LOG.isTraceEnabled()) {
-            LOG.trace("[{}] Search result: {}.", token, sdkKey);
+            LOG.trace("[{}] Search result: {}.", token, found);
         } else {
-            LOG.debug("[{}] Search result: {}.", token, sdkKey != null);
+            LOG.debug("[{}] Search result: {}.", token, found != null);
         }
-        return sdkKey;
+        return found;
     }
 
     @Override
     public List<SdkKey> findSdkKeysByApplicationId(String applicationId) {
         LOG.debug("Searching for SDK profiles by application ID: [{}]", applicationId);
-        List<SdkKey> sdkProfiles = Collections.emptyList();
+
+        List<SdkKey> found = Collections.emptyList();
         if (StringUtils.isNotBlank(applicationId)) {
             Criterion criterion = Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId));
-            sdkProfiles = this.findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, criterion);
+            found = this.findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, criterion);
         }
+
         if (LOG.isTraceEnabled()) {
-            LOG.trace("[{}] Search result: {}.", applicationId, Arrays.toString(sdkProfiles.toArray()));
+            LOG.trace("[{}] Search result: {}.", applicationId, Arrays.toString(found.toArray()));
         } else {
-            LOG.debug("[{}] Search result: {}.", applicationId, sdkProfiles.size());
+            LOG.debug("[{}] Search result: {}.", applicationId, found.size());
         }
-        return sdkProfiles;
+
+        return found;
     }
 }

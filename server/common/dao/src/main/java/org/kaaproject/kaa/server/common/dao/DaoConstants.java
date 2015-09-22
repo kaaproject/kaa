@@ -325,7 +325,6 @@ public class DaoConstants {
     public static final String SDK_PROFILE_CONFIGURATION_SCHEMA_VERSION = "configuration_schema_version";
     public static final String SDK_PROFILE_CREATED_TIME = CREATED_TIME;
     public static final String SDK_PROFILE_CREATED_USERNAME = CREATED_USERNAME;
-    public static final String SDK_PROFILE_DATA = "raw_data";
     public static final String SDK_PROFILE_DEFAULT_VERIFIER_TOKEN = "default_verifier_token";
     public static final String SDK_PROFILE_ENDPOINT_COUNT = ENDPOINT_COUNT;
     public static final String SDK_PROFILE_LOG_SCHEMA_VERSION = "log_schema_version";
