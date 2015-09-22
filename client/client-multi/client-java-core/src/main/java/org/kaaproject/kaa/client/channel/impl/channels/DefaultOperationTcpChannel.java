@@ -207,7 +207,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     if (size > 0) {
                         messageFactory.getFramer().pushBytes(Arrays.copyOf(buffer, size));
                     } else if (size == -1) {
-                        LOG.info("Channel [{}] received end of stream", getId(), size);
+                        LOG.info("Channel [{}] received end of stream: {}", getId(), size);
                         onServerFailed();
                     } else {
                         LOG.info("Socket is null, waiting for a new connection to be opened (sleeping for a {} s)",
@@ -216,7 +216,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     }
                 } catch (IOException | KaaTcpProtocolException e) {
                     if (!isShutdown && !isPaused) {
-                        LOG.error("Failed to read from the socket for channel [{}]: {}", getId());
+                        LOG.error("Failed to read from the socket for channel [{}]", getId());
                         LOG.error("Stack trace: ", e);
                         onServerFailed();
                     }
@@ -364,6 +364,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     private void onServerFailed() {
+        LOG.debug("[{}] has failed", getId());
         closeConnection();
         if (connectivityChecker != null && !connectivityChecker.checkConnectivity()) {
             LOG.warn("Loss of connectivity detected");
@@ -532,6 +533,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     @Override
     public synchronized void setServer(TransportConnectionInfo server) {
+        LOG.info("Setting server [{}] for channel [{}]", getId());
         if (server == null) {
             LOG.warn("Server is null for Channel [{}].", getId());
             return;
@@ -568,6 +570,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     @Override
     public void shutdown() {
+        LOG.info("Shutting down...");
         isShutdown = true;
         closeConnection();
         if (executor != null) {
@@ -577,6 +580,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     @Override
     public synchronized void pause() {
+        LOG.info("Pausing...");
         if (!isPaused) {
             isPaused = true;
             closeConnection();
@@ -590,6 +594,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     @Override
     public synchronized void resume() {
+        LOG.info("Resuming...");
         if (isPaused) {
             isPaused = false;
             if (executor == null) {

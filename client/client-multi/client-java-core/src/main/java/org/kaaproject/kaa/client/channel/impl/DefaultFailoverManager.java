@@ -77,10 +77,11 @@ public class DefaultFailoverManager implements FailoverManager {
 
     @Override
     public synchronized void onServerFailed(final TransportConnectionInfo connectionInfo) {
-        LOG.info("Server {} failed", connectionInfo);
         if (connectionInfo == null) {
-            LOG.warn("Server connection info is null, can't resolve");
+            LOG.warn("Server failed, but connection info is null, can't resolve");
             return;
+        } else {
+            LOG.info("Server [{}, {}] failed", connectionInfo.getServerType(), connectionInfo.getAccessPointId());
         }
 
         long currentResolutionTime = -1;
@@ -126,10 +127,11 @@ public class DefaultFailoverManager implements FailoverManager {
 
     @Override
     public synchronized void onServerChanged(TransportConnectionInfo connectionInfo) {
-        LOG.trace("Server {} has changed", connectionInfo);
         if (connectionInfo == null) {
-            LOG.warn("Server connection info is null, can't resolve");
+            LOG.warn("Server has changed, but its connection info is null, can't resolve");
             return;
+        } else {
+            LOG.trace("Server [{}, {}] has changed", connectionInfo.getServerType(), connectionInfo.getAccessPointId());
         }
 
         AccessPointIdResolution currentAccessPointIdResolution = resolutionProgressMap.get(connectionInfo.getServerType());
@@ -138,7 +140,7 @@ public class DefaultFailoverManager implements FailoverManager {
             resolutionProgressMap.put(connectionInfo.getServerType(), newResolution);
         } else if (currentAccessPointIdResolution.getAccessPointId() != connectionInfo.getAccessPointId()) {
             if (currentAccessPointIdResolution.getCurResolution() != null) {
-                LOG.trace("Cancelling fail resolution: {}", currentAccessPointIdResolution);
+                LOG.trace("Cancelling fail resolution, as server [{}] has changed: {}", connectionInfo, currentAccessPointIdResolution);
                 cancelCurrentFailResolution(currentAccessPointIdResolution);
             }
             AccessPointIdResolution newResolution = new AccessPointIdResolution(connectionInfo.getAccessPointId(), null);
@@ -279,7 +281,7 @@ public class DefaultFailoverManager implements FailoverManager {
         public String toString() {
             return "AccessPointIdResolution{" +
                     "accessPointId=" + accessPointId +
-                    "resolutionTIme=" + resolutionTime +
+                    ", resolutionTime=" + resolutionTime +
                     ", curResolution=" + curResolution +
                     '}';
         }
