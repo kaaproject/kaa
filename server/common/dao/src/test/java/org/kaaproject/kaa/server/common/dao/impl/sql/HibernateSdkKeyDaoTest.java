@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,5 +44,13 @@ public class HibernateSdkKeyDaoTest extends HibernateAbstractTest {
         SdkKey sdkKeyToPersist = generateSdkKey(null, token, new byte[]{10, 2, 3, 4, 2, 3, 3, 4, 100, 3, 4});
         SdkKey sdkKeyLoaded = sdkKeyDao.findSdkKeyByToken(token);
         Assert.assertEquals(sdkKeyToPersist, sdkKeyLoaded);
+    }
+
+    @Test
+    public void findSdkKeysByApplicationIdTest() {
+        SdkKey saved = generateSdkKey(null, "token", new byte[] { 35, 16, 94, 60, 11, 52, 22, 78, 81, 97 });
+        List<SdkKey> loaded = sdkKeyDao.findSdkKeysByApplicationId(saved.getApplication().getId().toString());
+        Assert.assertEquals(1, loaded.size());
+        Assert.assertEquals(saved, loaded.get(0));
     }
 }
