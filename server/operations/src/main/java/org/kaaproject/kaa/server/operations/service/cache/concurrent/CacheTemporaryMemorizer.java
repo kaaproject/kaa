@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.cache.concurrent;
 
+import java.security.InvalidParameterException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentMap;
@@ -46,6 +47,9 @@ public class CacheTemporaryMemorizer<K, V> {
      * @return the v
      */
     public V compute(final K key, final Computable<K, V> worker){
+        if(key == null){
+            throw new InvalidParameterException("Cache key can't be null");
+        }
         while (true) {
             Future<V> f = cache.get(key);
             if (f == null) {

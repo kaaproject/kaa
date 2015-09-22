@@ -679,7 +679,6 @@ public class ConcurrentCacheService implements CacheService {
     @Override
     @Cacheable("appTokens")
     public String getAppTokenBySdkToken(String key) {
-        // TODO: throw an exception instead of returning null
         return appTokenMemorizer.compute(key, new Computable<String, String>() {
 
             @Override

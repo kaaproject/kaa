@@ -21,14 +21,13 @@ import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaServi
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
-import org.kaaproject.kaa.server.operations.service.akka.AkkaServiceStatus;
-import org.kaaproject.kaa.server.operations.service.akka.AkkaStatusListener;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.GlobalUserActor;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.LocalUserActor;
+import org.kaaproject.kaa.server.operations.service.akka.actors.supervision.SupervisionStrategyFactory;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
@@ -51,6 +50,7 @@ import org.slf4j.LoggerFactory;
 import akka.actor.ActorRef;
 import akka.actor.LocalActorRef;
 import akka.actor.Props;
+import akka.actor.SupervisorStrategy;
 import akka.actor.Terminated;
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
@@ -84,6 +84,11 @@ public class TenantActor extends UntypedActor {
         this.localUsers = new HashMap<>();
         this.globalUsers = new HashMap<>();
         this.statusRequestStatesMap = new HashMap<UUID, StatusRequestState>();
+    }
+
+    @Override
+    public SupervisorStrategy supervisorStrategy() {
+      return SupervisionStrategyFactory.createTenantActorStrategy(context);
     }
 
     /**

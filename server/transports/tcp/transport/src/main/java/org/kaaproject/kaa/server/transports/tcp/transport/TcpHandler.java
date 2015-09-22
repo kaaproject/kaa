@@ -36,7 +36,7 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MessageType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
 import org.kaaproject.kaa.server.common.server.NettyChannelContext;
-import org.kaaproject.kaa.server.transport.InvalidApplicationTokenException;
+import org.kaaproject.kaa.server.transport.InvalidSDKTokenException;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
 import org.kaaproject.kaa.server.transport.message.MessageBuilder;
@@ -68,7 +68,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
         public Object[] build(Exception e) {
             Object[] responses = new Object[1];
             if (e instanceof GeneralSecurityException || e instanceof IOException ||
-                    e instanceof IllegalArgumentException || e instanceof InvalidApplicationTokenException) {
+                    e instanceof IllegalArgumentException || e instanceof InvalidSDKTokenException) {
                 responses[0] = new ConnAck(ReturnCode.REFUSE_BAD_CREDENTIALS);
             } else {
                 responses[0] = new ConnAck(ReturnCode.REFUSE_SERVER_UNAVAILABLE);
@@ -98,7 +98,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
         public Object[] build(Exception e) {
             Object[] responses = new Object[1];
             if (e instanceof GeneralSecurityException || e instanceof IOException ||
-                    e instanceof IllegalArgumentException || e instanceof InvalidApplicationTokenException) {
+                    e instanceof IllegalArgumentException || e instanceof InvalidSDKTokenException) {
                 responses[0] = new Disconnect(DisconnectReason.BAD_REQUEST);
             } else {
                 responses[0] = new Disconnect(DisconnectReason.INTERNAL_ERROR);
@@ -167,7 +167,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
                 handler.process(new NettyTcpConnectMessage(uuid, new NettyChannelContext(ctx), (Connect) frame, ChannelType.ASYNC, this,
                         connectResponseConverter, connectErrorConverter));
             } else {
-                LOG.warn("[{}] Ignoring duplicate {} message ", uuid, MessageType.CONNECT);
+                LOG.info("[{}] Ignoring duplicate {} message ", uuid, MessageType.CONNECT);
             }
         } else {
             if (session != null) {
@@ -188,7 +188,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
                     break;
                 }
             } else {
-                LOG.warn("[{}] Ignoring {} message due to incomplete CONNECT sequence", uuid, frame.getMessageType());
+                LOG.info("[{}] Ignoring {} message due to incomplete CONNECT sequence", uuid, frame.getMessageType());
                 ctx.writeAndFlush(new ConnAck(ReturnCode.REFUSE_BAD_PROTOCOL));
             }
         }
