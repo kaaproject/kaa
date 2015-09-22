@@ -27,6 +27,10 @@
 #define __KAA_CALLOC(N,S)         sndc_mem_calloc(N, S)
 #endif
 
+#ifndef __KAA_REALLOC
+#define __KAA_REALLOC(P, S)       sndc_mem_realloc(P, S)
+#endif
+
 #ifndef __KAA_FREE
 #define __KAA_FREE(P)             sndc_mem_free(P)
 #endif

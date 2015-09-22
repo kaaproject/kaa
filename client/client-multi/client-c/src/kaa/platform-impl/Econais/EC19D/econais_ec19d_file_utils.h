@@ -34,6 +34,8 @@ int econais_ec19d_binary_file_read(const char *file_name, char **buffer, size_t 
 int econais_ec19d_binary_file_store(const char *file_name, const char *buffer, size_t buffer_size);
 
 
+int econais_ec19d_binary_file_delete(const char *file_name);
+
 #ifdef __cplusplus
 }      /* extern "C" */
 #endif
