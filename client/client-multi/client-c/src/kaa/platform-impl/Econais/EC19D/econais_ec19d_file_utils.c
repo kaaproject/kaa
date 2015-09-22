@@ -61,3 +61,8 @@ int econais_ec19d_binary_file_store(const char *file_name, const char *buffer, s
     }
     return -1;
 }
+
+int econais_ec19d_binary_file_delete(const char *file_name)
+{
+    return sndc_file_delete(file_name);
+}
