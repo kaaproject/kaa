@@ -28,11 +28,11 @@ set(ESP8266_SRC
     ${ESP8266_SRC_FOLDER}/esp8266_key_utils.c
     ${ESP8266_SRC_FOLDER}/esp8266_tcp_utils.c
     ${ESP8266_SRC_FOLDER}/esp8266_time.c
-    ${KAA_SRC_FOLDER}/platform-impl/posix/posix_kaa_failover_strategy.c
     ${ESP8266_SRC_FOLDER}/exit.c
     ${ESP8266_SRC_FOLDER}/snprintf.c
     ${KAA_SRC_FOLDER}/platform-impl/common/sha.c
     ${KAA_SRC_FOLDER}/platform-impl/common/sha1.c
+    ${KAA_SRC_FOLDER}/platform-impl/common/kaa_failover_strategy.c
     ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_storage_memory.c
     ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_upload_strategies.c
     ${KAA_SRC_FOLDER}/platform-impl/common/kaa_tcp_channel.c
