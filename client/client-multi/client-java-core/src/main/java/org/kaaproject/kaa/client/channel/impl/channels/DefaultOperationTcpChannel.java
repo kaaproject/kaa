@@ -197,12 +197,14 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                 try {
                     LOG.info("Channel [{}] is reading data from stream using [{}] byte buffer", getId(), buffer.length);
                     int size = 0;
-                    if (socket != null) {
-                        size = socket.getInputStream().read(buffer);
-                        LOG.info("Channel [{}] is read data {} bytes from stream", getId(), size);
-                    } else if (!isOpenConnectionScheduled) {
-                        LOG.debug("Socket is null, calling onServerFailed()");
-                        onServerFailed();
+                    synchronized (DefaultOperationTcpChannel.this) {
+                        if (socket != null) {
+                            size = socket.getInputStream().read(buffer);
+                            LOG.info("Channel [{}] is read data {} bytes from stream", getId(), size);
+                        } else if (!isOpenConnectionScheduled) {
+                            LOG.info("Socket is null, calling onServerFailed()");
+                            onServerFailed();
+                        }
                     }
                     if (size > 0) {
                         messageFactory.getFramer().pushBytes(Arrays.copyOf(buffer, size));
@@ -342,6 +344,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     private synchronized void openConnection() {
         try {
             LOG.info("Channel [{}]: opening connection to server {}", getId(), currentServer);
+            isOpenConnectionScheduled = false;
             this.socket = createSocket(currentServer.getHost(), currentServer.getPort());
             sendConnect();
             if (!isReadTaskScheduled) {
@@ -355,16 +358,13 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         } catch (Exception e) {
             LOG.error("Failed to create a socket for server {}:{}", currentServer.getHost(), currentServer.getPort());
             LOG.error("Stack trace: ", e);
-            isOpenConnectionScheduled = false;
             onServerFailed();
             socket = null;
-        } finally {
-            isOpenConnectionScheduled = false;
         }
     }
 
     private void onServerFailed() {
-        LOG.debug("[{}] has failed", getId());
+        LOG.info("[{}] has failed", getId());
         closeConnection();
         if (connectivityChecker != null && !connectivityChecker.checkConnectivity()) {
             LOG.warn("Loss of connectivity detected");
@@ -376,7 +376,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     break;
                 case RETRY:
                     long retryPeriod = decision.getRetryPeriod();
-                    synchronized (this) {
+                    synchronized (DefaultOperationTcpChannel.this) {
                         if (!isOpenConnectionScheduled) {
                             LOG.warn("Attempt to reconnect will be made in {} ms " +
                                     "according to failover strategy decision", retryPeriod);
@@ -542,16 +542,23 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             LOG.info("Can't set server. Channel [{}] is down", getId());
             return;
         }
+        IPTransportInfo oldServer = currentServer;
         this.currentServer = new IPTransportInfo(server);
         this.encDec = new MessageEncoderDecoder(state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
         if (!isPaused) {
             if (executor == null) {
                 executor = createExecutor();
             }
-            closeConnection();
-            if (!isOpenConnectionScheduled) {
-                executor.submit(openConnectionTask);
-                isOpenConnectionScheduled = true;
+            if (oldServer == null
+                        || socket == null
+                        || !oldServer.getHost().equals(currentServer.getHost())
+                        || oldServer.getPort() != currentServer.getPort()) {
+                LOG.info("New server's: {} host or ip is different from the old {}, reconnecting", oldServer, oldServer);
+                closeConnection();
+                if (!isOpenConnectionScheduled) {
+                    executor.submit(openConnectionTask);
+                    isOpenConnectionScheduled = true;
+                }
             }
         } else {
             LOG.info("Can't start new session. Channel [{}] is paused", getId());
@@ -587,6 +594,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             if (executor != null) {
                 executor.shutdownNow();
                 isReadTaskScheduled = false;
+                isOpenConnectionScheduled = false;
                 executor = null;
             }
         }
@@ -601,8 +609,11 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                 executor = createExecutor();
             }
             if (!isOpenConnectionScheduled) {
+                LOG.info("Opening a new connection after resume");
                 executor.submit(openConnectionTask);
                 isOpenConnectionScheduled = true;
+            } else {
+                LOG.info("Don't need to open a new connection after resume, as connection opening was already scheduled");
             }
         }
     }
