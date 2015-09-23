@@ -115,7 +115,7 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
 
                 String token = dto.getToken();
                 if (token == null || token.isEmpty()) {
-                    // An empty list is no different than a null field
+                    // An empty list is no different from a null field
                     if (this.aefMapIds != null && this.aefMapIds.isEmpty()) {
                         dto.setAefMapIds(null);
                     }

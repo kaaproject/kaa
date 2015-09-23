@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.common.dao.service;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.server.common.dao.SdkKeyService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
@@ -29,11 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlObject;
 
 @Service
 @Transactional
@@ -47,38 +43,41 @@ public class SdkKeyServiceImpl implements SdkKeyService {
     @Override
     public SdkPropertiesDto findSdkKeyByToken(String token) {
         SdkPropertiesDto sdkPropertiesDto = null;
-        if (isValidId(token)) {
-            sdkPropertiesDto = getDto(sdkKeyDao.findSdkKeyByToken(token));
+        if (Validator.isValidId(token)) {
+            sdkPropertiesDto = DaoUtil.getDto(sdkKeyDao.findSdkKeyByToken(token));
         }
         return sdkPropertiesDto;
     }
 
     @Override
     public SdkPropertiesDto saveSdkKey(SdkPropertiesDto sdkPropertiesDto) {
-        SdkPropertiesDto savedSdkPropertiesDto = null;
-        if (isValidSqlObject(sdkPropertiesDto)) {
-            if (isNotBlank(sdkPropertiesDto.getId())) {
-                SdkKey sdkKeyToSave = new SdkKey(sdkPropertiesDto);
-                LOG.debug("Update application with id [{}] for token [{}]", sdkPropertiesDto.getApplicationId(),
-                        sdkKeyToSave.getToken());
-                SdkKey checkSdkKey = sdkKeyDao.findSdkKeyByToken(sdkKeyToSave.getToken());
-                if (checkSdkKey == null || String.valueOf(sdkKeyToSave.getId()).equals(String.valueOf(checkSdkKey.getId()))) {
-                    savedSdkPropertiesDto = getDto(sdkKeyDao.save(sdkKeyToSave));
+        SdkPropertiesDto saved = null;
+
+        if (Validator.isValidSqlObject(sdkPropertiesDto)) {
+            if (StringUtils.isNotBlank(sdkPropertiesDto.getId())) {
+                SdkKey entity = new SdkKey(sdkPropertiesDto);
+                SdkKey loaded = sdkKeyDao.findSdkKeyByToken(entity.getToken());
+
+                LOG.debug("Saving SDK profile [{}] for application [{}]", entity.getToken(), sdkPropertiesDto.getApplicationId());
+
+                if (loaded == null || loaded.getStringId().equals(entity.getStringId())) {
+                    saved = DaoUtil.getDto(sdkKeyDao.save(entity));
                 } else {
-                    throw new IncorrectParameterException("Can't add two sdk keys with the same token values: " + sdkKeyToSave.getToken());
+                    throw new IncorrectParameterException("An SDK profile with token [" + entity.getToken() + "] already exists.");
                 }
-                return savedSdkPropertiesDto;
             } else {
-                SdkKey sdkKeyToSave = new SdkKey(sdkPropertiesDto);
-                SdkKey checkSdkKey = sdkKeyDao.findSdkKeyByToken(sdkKeyToSave.getToken());
-                if (checkSdkKey == null) {
-                    savedSdkPropertiesDto = getDto(sdkKeyDao.save(new SdkKey(sdkPropertiesDto)));
+                SdkKey entity = new SdkKey(sdkPropertiesDto);
+                SdkKey loaded = sdkKeyDao.findSdkKeyByToken(entity.getToken());
+
+                if (loaded == null) {
+                    saved = DaoUtil.getDto(sdkKeyDao.save(entity));
                 } else {
-                    savedSdkPropertiesDto = getDto(checkSdkKey);
+                    saved = DaoUtil.getDto(loaded);
                 }
             }
         }
-        return savedSdkPropertiesDto;
+
+        return saved;
     }
 
     @Override
