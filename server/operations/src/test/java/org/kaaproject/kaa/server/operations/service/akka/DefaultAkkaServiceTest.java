@@ -109,11 +109,13 @@ import org.kaaproject.kaa.server.sync.ServerSync;
 import org.kaaproject.kaa.server.sync.UserClientSync;
 import org.kaaproject.kaa.server.sync.UserServerSync;
 import org.kaaproject.kaa.server.sync.platform.AvroEncDec;
+import org.kaaproject.kaa.server.transport.InvalidSDKTokenException;
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
 import org.kaaproject.kaa.server.transport.message.MessageBuilder;
 import org.kaaproject.kaa.server.transport.message.SessionAwareMessage;
+import org.kaaproject.kaa.server.transport.message.SessionControlMessage;
 import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
 import org.mockito.Mockito;
@@ -136,6 +138,7 @@ public class DefaultAkkaServiceTest {
     private static final String USER_ID = "USER_ID";
     private static final String APP_TOKEN = "APP_TOKEN";
     private static final String SDK_TOKEN = "SDK_TOKEN";
+    private static final String INVALID_SDK_TOKEN = "INVALID_SDK_TOKEN";
     private static final String APP_ID = "APP_ID";
     private static final String PROFILE_BODY = "ProfileBody";
 
@@ -217,6 +220,7 @@ public class DefaultAkkaServiceTest {
 
         Mockito.when(cacheService.getTenantIdByAppToken(APP_TOKEN)).thenReturn(TENANT_ID);
         Mockito.when(cacheService.getAppTokenBySdkToken(SDK_TOKEN)).thenReturn(APP_TOKEN);
+        Mockito.when(cacheService.getAppTokenBySdkToken(INVALID_SDK_TOKEN)).thenReturn(null);
         Mockito.when(cacheService.getEndpointKey(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()))).thenReturn(
                 clientPair.getPublic());
         Mockito.when(cacheService.getEndpointKey(EndpointObjectHash.fromBytes(targetPublicKeyHash.array()))).thenReturn(
@@ -270,7 +274,7 @@ public class DefaultAkkaServiceTest {
         when(applicationService.findAppById(APP_ID)).thenReturn(applicationDto);
 
         when(endpointUserService.findUserVerifiers(APP_ID)).thenReturn(new ArrayList<UserVerifierDto>());
-        
+
         when(eventService.isMainUserNode(Mockito.anyString())).thenReturn(true);
     }
 
@@ -392,6 +396,36 @@ public class DefaultAkkaServiceTest {
         Mockito.when(message.isEncrypted()).thenReturn(true);
         akkaService.process(message);
         Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT * 10).atLeastOnce()).build(Mockito.any(Exception.class));
+    }
+
+    @Test
+    public void testInvalidSDKTokenException() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(REQUEST_ID);
+        SyncRequestMetaData md = new SyncRequestMetaData();
+        md.setSdkToken(INVALID_SDK_TOKEN);
+        md.setEndpointPublicKeyHash(clientPublicKeyHash);
+        md.setProfileHash(clientPublicKeyHash);
+        request.setSyncRequestMetaData(md);
+
+        ProfileSyncRequest profileSync = new ProfileSyncRequest();
+        profileSync.setEndpointPublicKey(clientPublicKey);
+        profileSync.setProfileBody(ByteBuffer.wrap(PROFILE_BODY.getBytes()));
+        request.setProfileSyncRequest(profileSync);
+
+        whenSync(simpleResponse);
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC, channelContextMock, request, responseBuilder,
+                errorBuilder);
+
+        Assert.assertNotNull(akkaService.getActorSystem());
+        akkaService.process(message);
+        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.isA(InvalidSDKTokenException.class));
     }
 
     @Test
@@ -1375,7 +1409,6 @@ public class DefaultAkkaServiceTest {
 
         akkaService.process(targetMessage);
 
-        
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
                 Mockito.any(ProfileClientSync.class));
         Mockito.verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID));
@@ -1479,7 +1512,6 @@ public class DefaultAkkaServiceTest {
                 targetRequest, targetResponseBuilder, targetErrorBuilder, targetCrypt);
         akkaService.process(targetMessage);
 
-        
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncProfile(Mockito.any(SyncContext.class),
                 Mockito.any(ProfileClientSync.class));
         Mockito.verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID));
