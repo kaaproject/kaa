@@ -63,7 +63,7 @@ public class DefaultOperationTcpChannelTest {
         public TestOperationTcpChannel(KaaClientState state,
                 FailoverManager failoverManager) throws IOException {
             super(state, failoverManager);
-            PipedInputStream in = new PipedInputStream(1024);
+            PipedInputStream in = new PipedInputStream(4096);
             PipedOutputStream out = new PipedOutputStream(in);
             os = out;
             is = in;
@@ -94,7 +94,7 @@ public class DefaultOperationTcpChannelTest {
     }
 
     @Test
-    public synchronized void testSync() throws Exception {
+    public void testSync() throws Exception {
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         Mockito.when(clientState.getPrivateKey()).thenReturn(clientKeys.getPrivate());
         Mockito.when(clientState.getPublicKey()).thenReturn(clientKeys.getPublic());
