@@ -166,7 +166,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     LOG.error("Failed to process response for channel [{}]", getId(), e);
                 }
 
-                synchronized (this) {
+                synchronized (DefaultOperationTcpChannel.this) {
                     channelState = State.OPENED;
                 }
                 failoverManager.onServerConnected(currentServer);
