@@ -109,7 +109,7 @@ public class ApplicationActor extends UntypedActor {
 
     @Override
     public SupervisorStrategy supervisorStrategy() {
-      return SupervisionStrategyFactory.createApplicationActorStrategy(context);
+        return SupervisionStrategyFactory.createApplicationActorStrategy(context);
     }
 
     /**

@@ -74,7 +74,7 @@ public class OperationsServerActor extends UntypedActor {
 
     @Override
     public SupervisorStrategy supervisorStrategy() {
-      return SupervisionStrategyFactory.createOpsActorStrategy(context);
+        return SupervisionStrategyFactory.createOpsActorStrategy(context);
     }
     
     /**

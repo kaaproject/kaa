@@ -47,7 +47,7 @@ public class CacheTemporaryMemorizer<K, V> {
      * @return the v
      */
     public V compute(final K key, final Computable<K, V> worker){
-        if(key == null){
+        if(key == null) {
             throw new InvalidParameterException("Cache key can't be null");
         }
         while (true) {

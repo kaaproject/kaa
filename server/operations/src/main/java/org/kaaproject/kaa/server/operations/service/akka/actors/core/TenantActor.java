@@ -88,7 +88,7 @@ public class TenantActor extends UntypedActor {
 
     @Override
     public SupervisorStrategy supervisorStrategy() {
-      return SupervisionStrategyFactory.createTenantActorStrategy(context);
+        return SupervisionStrategyFactory.createTenantActorStrategy(context);
     }
 
     /**
