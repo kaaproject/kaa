@@ -34,6 +34,9 @@ import org.kaaproject.kaa.client.channel.impl.channels.DefaultOperationTcpChanne
 import org.kaaproject.kaa.client.persistence.KaaClientState;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.ConnAckListener;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.SyncResponseListener;
+import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect.DisconnectReason;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
@@ -42,6 +45,7 @@ import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class DefaultOperationTcpChannelTest {
 
@@ -59,7 +63,7 @@ public class DefaultOperationTcpChannelTest {
         public TestOperationTcpChannel(KaaClientState state,
                 FailoverManager failoverManager) throws IOException {
             super(state, failoverManager);
-            PipedInputStream in = new PipedInputStream(4096);
+            PipedInputStream in = new PipedInputStream(1024);
             PipedOutputStream out = new PipedOutputStream(in);
             os = out;
             is = in;
@@ -90,7 +94,7 @@ public class DefaultOperationTcpChannelTest {
     }
 
     @Test
-    public void testSync() throws Exception {
+    public synchronized void testSync() throws Exception {
         KaaClientState clientState = Mockito.mock(KaaClientState.class);
         Mockito.when(clientState.getPrivateKey()).thenReturn(clientKeys.getPrivate());
         Mockito.when(clientState.getPublicKey()).thenReturn(clientKeys.getPublic());
@@ -118,9 +122,9 @@ public class DefaultOperationTcpChannelTest {
         SyncResponse response = new SyncResponse();
         response.setStatus(SyncResponseResultType.SUCCESS);
         tcpChannel.os.write(new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse(responseCreator.toByteArray(response), false, false).getFrame().array());
-        Thread.sleep(1000);  // sleep a bit to let the message to be received
+        Thread.sleep(200);  // sleep a bit to let the message to be received
         tcpChannel.sync(TransportType.USER); // causes call to KaaDataMultiplexer.compileRequest(...) for "KAA_SYNC" messsage
-        
+
         Mockito.verify(multiplexer, Mockito.times(2)).compileRequest(Mockito.anyMapOf(TransportType.class, ChannelDirection.class));
 
         tcpChannel.sync(TransportType.EVENT);

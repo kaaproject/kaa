@@ -197,14 +197,13 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                 try {
                     LOG.info("Channel [{}] is reading data from stream using [{}] byte buffer", getId(), buffer.length);
                     int size = 0;
-                    synchronized (DefaultOperationTcpChannel.this) {
-                        if (socket != null) {
-                            size = socket.getInputStream().read(buffer);
-                            LOG.info("Channel [{}] is read data {} bytes from stream", getId(), size);
-                        } else if (!isOpenConnectionScheduled) {
-                            LOG.info("Socket is null, calling onServerFailed()");
-                            onServerFailed();
-                        }
+                    LOG.trace("Trying to read from socket");
+                    if (socket != null) {
+                        size = socket.getInputStream().read(buffer);
+                        LOG.info("Channel [{}] is read data {} bytes from stream", getId(), size);
+                    } else if (!isOpenConnectionScheduled) {
+                        LOG.info("Socket is null, calling onServerFailed()");
+                        onServerFailed();
                     }
                     if (size > 0) {
                         messageFactory.getFramer().pushBytes(Arrays.copyOf(buffer, size));
