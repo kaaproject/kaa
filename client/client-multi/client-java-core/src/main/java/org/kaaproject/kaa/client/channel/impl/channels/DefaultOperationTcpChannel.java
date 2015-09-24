@@ -92,7 +92,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     private ScheduledExecutorService executor;
 
-    private volatile State channelState = State.CONNACK_WAIT;
+    private volatile State channelState = State.CLOSED;
 
     private KaaDataDemultiplexer demultiplexer;
     private KaaDataMultiplexer multiplexer;
@@ -167,7 +167,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                 }
 
                 synchronized (this) {
-                    channelState = State.READY_TO_SYNC;
+                    channelState = State.OPENED;
                 }
                 failoverManager.onServerConnected(currentServer);
             }
@@ -326,7 +326,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                 }
                 socket = null;
                 messageFactory.getFramer().flush();
-                channelState = State.CONNACK_WAIT;
+                channelState = State.CLOSED;
             }
         }
     }
@@ -366,16 +366,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                     break;
                 case RETRY:
                     long retryPeriod = decision.getRetryPeriod();
-                    synchronized (DefaultOperationTcpChannel.this) {
-                        if (!isOpenConnectionScheduled) {
-                            LOG.warn("Attempt to reconnect will be made in {} ms " +
-                                    "according to failover strategy decision", retryPeriod);
-                            scheduleOpenConnectionTask(retryPeriod, TimeUnit.MILLISECONDS);
-                            isOpenConnectionScheduled = true;
-                        } else {
-                            LOG.info("Reconnect is already scheduled, ignoring the call");
-                        }
-                    }
+                    LOG.warn("Attempt to reconnect will be made in {} ms " +
+                            "according to failover strategy decision", retryPeriod);
+                    scheduleOpenConnectionTask(retryPeriod);
                 break;
                 case STOP_APP:
                     LOG.warn("Stopping application according to failover strategy decision!");
@@ -386,11 +379,17 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         }
     }
 
-    private void scheduleOpenConnectionTask(long retryPeriod, TimeUnit timeUnit) {
-        if (executor != null) {
-            executor.schedule(openConnectionTask, retryPeriod, TimeUnit.MILLISECONDS);
+    private synchronized void scheduleOpenConnectionTask(long retryPeriod) {
+        if (!isOpenConnectionScheduled) {
+            if (executor != null) {
+                LOG.info("Scheduling open connection task");
+                executor.schedule(openConnectionTask, retryPeriod, TimeUnit.MILLISECONDS);
+                isOpenConnectionScheduled = true;
+            } else {
+                LOG.info("Executor is null, can't schedule open connection task");
+            }
         } else {
-            LOG.warn("Executor is null, can't schedule open connection task");
+            LOG.info("Reconnect is already scheduled, ignoring the call");
         }
     }
 
@@ -432,7 +431,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             LOG.info("Can't sync. Channel [{}] is paused", getId());
             return;
         }
-        if (channelState != State.READY_TO_SYNC) {
+        if (channelState != State.OPENED) {
             LOG.info("Can't sync. Channel [{}] is waiting for CONNACK message + KAASYNC message", getId());
             return;
         }
@@ -481,7 +480,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             LOG.info("Can't sync. Channel [{}] is paused", getId());
             return;
         }
-        if (channelState != State.READY_TO_SYNC) {
+        if (channelState != State.OPENED) {
             LOG.info("Can't sync. Channel [{}] is waiting for CONNACK + KAASYNC message", getId());
             return;
         }
@@ -509,9 +508,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     @Override
     public void syncAck(Set<TransportType> types) {
         synchronized (this) {
-            if (channelState != State.READY_TO_SYNC) {
+            if (channelState != State.OPENED) {
                 LOG.info("First KaaSync message received and processed for channel [{}]", getId());
-                channelState = State.READY_TO_SYNC;
+                channelState = State.OPENED;
                 failoverManager.onServerConnected(currentServer);
                 LOG.debug("There are pending requests for channel [{}] -> starting sync", getId());
                 syncAll();
@@ -564,10 +563,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                         || oldServer.getPort() != currentServer.getPort()) {
                 LOG.info("New server's: {} host or ip is different from the old {}, reconnecting", oldServer, oldServer);
                 closeConnection();
-                if (!isOpenConnectionScheduled) {
-                    executor.submit(openConnectionTask);
-                    isOpenConnectionScheduled = true;
-                }
+                scheduleOpenConnectionTask(0);
             }
         } else {
             LOG.info("Can't start new session. Channel [{}] is paused", getId());
@@ -602,7 +598,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         }
     }
 
-    private void destroyExecutor() {
+    private synchronized void destroyExecutor() {
         if (executor != null) {
             executor.shutdownNow();
             isOpenConnectionScheduled = false;
@@ -614,17 +610,11 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     public synchronized void resume() {
         if (channelState == State.PAUSE) {
             LOG.info("Resuming...");
-            channelState = State.CONNACK_WAIT;
+            channelState = State.CLOSED;
             if (executor == null) {
                 executor = createExecutor();
             }
-            if (!isOpenConnectionScheduled) {
-                LOG.info("Scheduling a new connection opening after resume");
-                executor.submit(openConnectionTask);
-                isOpenConnectionScheduled = true;
-            } else {
-                LOG.info("Don't need to open a new connection after resume, as the connection opening has already been scheduled");
-            }
+            scheduleOpenConnectionTask(0);
         }
     }
 
@@ -649,6 +639,6 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     private enum State {
-        SHUTDOWN, PAUSE, CONNACK_WAIT, READY_TO_SYNC
+        SHUTDOWN, PAUSE, CLOSED, OPENED
     }
 }
