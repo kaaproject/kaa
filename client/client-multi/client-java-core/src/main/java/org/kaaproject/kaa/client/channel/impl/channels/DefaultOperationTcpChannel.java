@@ -542,7 +542,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     @Override
     public synchronized void setServer(TransportConnectionInfo server) {
-        LOG.info("Setting server [{}] for channel [{}]", getId());
+        LOG.info("Setting server [{}] for channel [{}]", server, getId());
         if (server == null) {
             LOG.warn("Server is null for Channel [{}].", getId());
             return;
