@@ -336,6 +336,10 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
 
     private synchronized void openConnection() {
+        if (channelState == State.PAUSE || channelState == State.SHUTDOWN) {
+            LOG.info("Can't open connection, as channel is in the {} state", channelState);
+            return;
+        }
         try {
             LOG.info("Channel [{}]: opening connection to server {}", getId(), currentServer);
             isOpenConnectionScheduled = false;
@@ -366,7 +370,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                         if (!isOpenConnectionScheduled) {
                             LOG.warn("Attempt to reconnect will be made in {} ms " +
                                     "according to failover strategy decision", retryPeriod);
-                            executor.schedule(openConnectionTask, retryPeriod, TimeUnit.MILLISECONDS);
+                            scheduleOpenConnectionTask(retryPeriod, TimeUnit.MILLISECONDS);
                             isOpenConnectionScheduled = true;
                         } else {
                             LOG.info("Reconnect is already scheduled, ignoring the call");
@@ -379,6 +383,14 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             }
         } else {
             failoverManager.onServerFailed(currentServer);
+        }
+    }
+
+    private void scheduleOpenConnectionTask(long retryPeriod, TimeUnit timeUnit) {
+        if (executor != null) {
+            executor.schedule(openConnectionTask, retryPeriod, TimeUnit.MILLISECONDS);
+        } else {
+            LOG.warn("Executor is null, can't schedule open connection task");
         }
     }
 
