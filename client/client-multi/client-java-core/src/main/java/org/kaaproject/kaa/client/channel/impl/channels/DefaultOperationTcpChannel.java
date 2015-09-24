@@ -600,8 +600,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     @Override
     public synchronized void resume() {
-        LOG.info("Resuming...");
         if (channelState == State.PAUSE) {
+            LOG.info("Resuming...");
             channelState = State.CONNACK_WAIT;
             if (executor == null) {
                 executor = createExecutor();

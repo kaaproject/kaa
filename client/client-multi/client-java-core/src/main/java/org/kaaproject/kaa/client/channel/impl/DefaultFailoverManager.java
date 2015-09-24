@@ -160,7 +160,7 @@ public class DefaultFailoverManager implements FailoverManager {
 
         AccessPointIdResolution accessPointIdResolution = resolutionProgressMap.get(connectionInfo.getServerType());
         if (accessPointIdResolution == null) {
-            LOG.warn("Server hasn't been set yet, so a new server: {} can't be connected", connectionInfo);
+            LOG.info("Server hasn't been set yet, so a new server: {} can't be connected", connectionInfo);
         } else if (accessPointIdResolution.getCurResolution() != null
                    && connectionInfo.getAccessPointId() == accessPointIdResolution.getAccessPointId()) {
 
