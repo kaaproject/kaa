@@ -249,8 +249,15 @@ kaa_error_t kaa_tcp_channel_create(kaa_transport_channel_interface_t *self
     /*
      * Creates Kaa TCP parser.
      */
+
     kaa_tcp_channel->parser = (kaatcp_parser_t *) KAA_MALLOC(sizeof(kaatcp_parser_t));
-    if (!kaa_tcp_channel->parser) {
+
+    if (kaa_tcp_channel->parser) {
+        kaa_tcp_channel->parser->payload_buffer_size = KAATCP_PARSER_MAX_MESSAGE_LENGTH;
+        kaa_tcp_channel->parser->payload = (char *) KAA_MALLOC(kaa_tcp_channel->parser->payload_buffer_size);
+    }
+
+    if (!kaa_tcp_channel->parser || !kaa_tcp_channel->parser->payload) {
         KAA_LOG_ERROR(logger, KAA_ERR_NOMEM, "Failed to create Kaa TCP parser");
         kaa_tcp_channel_destroy_context(kaa_tcp_channel);
         return KAA_ERR_NOMEM;
