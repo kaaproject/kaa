@@ -53,6 +53,8 @@ typedef unsigned int uint32;
 #define __attr_flash __attribute__((section (".USER_FLASH")))
 #define __FLASH__ __attr_flash
 
+/* AT commands and success/error responses - ESP8266 firmware ver.0020000903 */
+
 static const char AT_RST[]                      __FLASH__ = "AT+RST";
 static const char AT_RST_SUCCESS[]              __FLASH__ = "ready";
 static const char AT_CWLAP[]                    __FLASH__ = "AT+CWLAP";
@@ -67,10 +69,10 @@ static const char AT_CIPMUX[]                   __FLASH__ = "AT+CIPMUX";
 static const char AT_CWJAP[]                    __FLASH__ = "AT+CWJAP";
 static const char AT_CWQAP[]                    __FLASH__ = "AT+CWQAP";
 static const char AT_CIPSTART[]                 __FLASH__ = "AT+CIPSTART";
-static const char AT_OK_LINKED[]                __FLASH__ = "Linked";
+static const char AT_OK_LINKED[]                __FLASH__ = "CONNECT\r\n\r\nOK";
 static const char AT_DNS_FAIL[]                 __FLASH__ = "DNS Fail";
 static const char AT_CIPCLOSE[]                 __FLASH__ = "AT+CIPCLOSE";
-static const char AT_UNLINKED[]                 __FLASH__ = "OK\r\nUnlink";
+static const char AT_UNLINKED[]                 __FLASH__ = "CLOSED\r\n\r\nOK";
 static const char AT_LINK_IS_NOT[]              __FLASH__ = "link is not";
 static const char AT_CIPSEND[]                  __FLASH__ = "AT+CIPSEND";
 static const char AT_CIPSEND_TERM               __FLASH__ = '>';
