@@ -61,6 +61,7 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
     }
 
     private void processTypes(Map<TransportType, ChannelDirection> types) throws Exception {
+        LOG.trace("Processing types for [{}]", getId());
         byte[] requestBodyRaw = getMultiplexer().compileRequest(types);
         byte[] decodedResponse = null;
         synchronized (this) {

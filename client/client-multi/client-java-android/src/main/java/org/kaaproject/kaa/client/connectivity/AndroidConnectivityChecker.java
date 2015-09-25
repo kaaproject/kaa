@@ -18,7 +18,6 @@
 package org.kaaproject.kaa.client.connectivity;
 
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
-import org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,7 @@ import android.net.NetworkInfo;
 
 public class AndroidConnectivityChecker implements ConnectivityChecker {
     public static final Logger LOG = LoggerFactory //NOSONAR
-            .getLogger(DefaultBootstrapChannel.class);
+            .getLogger(AndroidConnectivityChecker.class);
 
     private final Context context;
 
