@@ -31,6 +31,14 @@ import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 public interface EndpointService {
 
     /**
+     * Find endpoint profile by endpoint group id.
+     *
+     * @param endpointGroupId the endpoint group id
+     * @return the endpoint profile dto
+     */
+    List<EndpointProfileDto> findEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset);
+
+    /**
      * Find endpoint groups by application id.
      *
      * @param applicationId the application id

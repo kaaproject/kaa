@@ -18,8 +18,10 @@ package org.kaaproject.kaa.server.admin.controller;
 
 import java.io.IOException;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
@@ -27,6 +29,8 @@ import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.WrapperEndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -147,6 +151,30 @@ public class KaaAdminController {
         } catch (IOException e) {
             logger.error("Can't handle exception", e);
         }
+    }
+
+    /**
+     * Gets the endpoint profile by endpoint group id.
+     *
+    */
+    @RequestMapping(value="endpointProfileByGroupId", method=RequestMethod.GET, produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public WrapperEndpointProfileDto getEndpointProfileByEndpointGroupId(
+        @RequestParam(value="endpointGroupId") String endpointGroupId,
+        @RequestParam(value="limit") String limit,
+        @RequestParam(value="offset") String offset) throws KaaAdminServiceException {
+        List<EndpointProfileDto> endpointProfiles = kaaAdminService.getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset);
+        return new WrapperEndpointProfileDto(endpointProfiles, endpointGroupId, Integer.valueOf(limit), offset);
+    }
+
+    /**
+     * Gets the endpoint profile by endpoint key.
+     *
+     */
+    @RequestMapping(value="endpointProfile/{endpointProfileKey}", method=RequestMethod.GET)
+    @ResponseBody
+    public EndpointProfileDto getEndpointProfileByKeyHash(@PathVariable String endpointProfileKey) throws KaaAdminServiceException {
+        return kaaAdminService.getEndpointProfileByKeyHash(endpointProfileKey);
     }
 
     /**

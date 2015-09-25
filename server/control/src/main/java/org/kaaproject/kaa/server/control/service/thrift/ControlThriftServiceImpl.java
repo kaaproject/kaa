@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.avro.Schema;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
@@ -203,6 +204,30 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     private volatile OperationsServerResolver resolver;
 
     private Object zkLock = new Object();
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+     * .Iface#getEndpointProfileByEndpointGroupId(java.lang.String)
+     */
+    /* CLI method */
+    @Override
+    public List<DataStruct> getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws TException {
+        return toDataStructList(endpointService.findEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset));
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
+     * .Iface#getEndpointProfileByKeyHash(java.lang.String)
+     */
+    /* CLI method */
+    @Override
+    public DataStruct getEndpointProfileByKeyHash(String endpointProfileKeyHash) throws TException {
+        return toDataStruct(endpointService.findEndpointProfileByKeyHash(Base64.decodeBase64(endpointProfileKeyHash)));
+    }
 
     /*
      * (non-Javadoc)

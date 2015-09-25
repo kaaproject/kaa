@@ -16,8 +16,8 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
-
 import com.mongodb.DBObject;
+
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
@@ -33,6 +33,8 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_APPLICATION_ID;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_GROUP_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CF_GROUP_STATE;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -49,6 +51,13 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     @Override
     protected Class<MongoEndpointProfile> getDocumentClass() {
         return MongoEndpointProfile.class;
+    }
+
+    @Override
+    public List<MongoEndpointProfile> findByEndpointGroupId(String endpointGroupId, String limit, String offset) {
+        LOG.debug("Find endpoint profile by endpoint group id [{}] ", endpointGroupId);
+        return  find(query(where(EP_CF_GROUP_STATE + "." + ENDPOINT_GROUP_ID).is(endpointGroupId))
+                .skip(Integer.parseInt(offset)).limit(Integer.parseInt(limit) + 1));
     }
 
     @Override

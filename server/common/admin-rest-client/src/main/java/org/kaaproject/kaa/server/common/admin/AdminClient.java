@@ -80,6 +80,22 @@ public class AdminClient {
         url = "http://"+host+":"+port + "/kaaAdmin/rest/api/";
     }
 
+    public List<EndpointProfileDto> getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+        params.add("endpointGroupId", endpointGroupId);
+        params.add("limit", limit);
+        params.add("offset", offset);
+        ParameterizedTypeReference<List<EndpointProfileDto>> typeRef = new ParameterizedTypeReference<List<EndpointProfileDto>>() {};
+        ResponseEntity<List<EndpointProfileDto>> entity = restTemplate.exchange(url + "endpointProfileByGroupId/" + params, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
+    public EndpointProfileDto getEndpointProfileByKeyHash(String endpointProfileKeyHash) throws Exception {
+        ParameterizedTypeReference<EndpointProfileDto> typeRef = new ParameterizedTypeReference<EndpointProfileDto>() {};
+        ResponseEntity<EndpointProfileDto> entity = restTemplate.exchange(url + "endpointProfile/" + endpointProfileKeyHash, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public AuthResultDto checkAuth() throws Exception {
         return restTemplate.getForObject(url + "auth/checkAuth", AuthResultDto.class);
     }
@@ -321,7 +337,7 @@ public class AdminClient {
     public UserVerifierDto editUserVerifierDto(UserVerifierDto userVerifierDto) throws Exception {
         return restTemplate.postForObject(url + "userVerifier", userVerifierDto, UserVerifierDto.class);
     }
-    
+
     public void downloadSdk(SdkPropertiesDto key, String destination) throws Exception {
         FileResponseExtractor extractor = new FileResponseExtractor( new File(destination));
         final List<MediaType> mediaTypes = Arrays.asList(MediaType.APPLICATION_JSON,
@@ -354,7 +370,7 @@ public class AdminClient {
         restTemplate.execute(url + "sdk", HttpMethod.POST, request, extractor);
         logger.info("Downloaded sdk to file '{}'", extractor.getDestFile());
     }
-    
+
     public FileData downloadSdk(SdkPropertiesDto key) throws Exception {
         FileDataResponseExtractor extractor = new FileDataResponseExtractor();
         final List<MediaType> mediaTypes = Arrays.asList(MediaType.APPLICATION_JSON,

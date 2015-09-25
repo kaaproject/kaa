@@ -204,6 +204,12 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    public List<EndpointProfileDto> findEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) {
+        validateSqlId(endpointGroupId, "Can't find endpoint group by id. Incorrect id " + endpointGroupId);
+        return convertDtoList(endpointProfileDao.findByEndpointGroupId(endpointGroupId, limit, offset));
+    }
+
+    @Override
     public EndpointConfigurationDto findEndpointConfigurationByHash(byte[] hash) {
         validateHash(hash, "Can't find endpoint configuration by hash. Invalid configuration hash " + hash);
         return getDto(endpointConfigurationDao.findByHash(hash));

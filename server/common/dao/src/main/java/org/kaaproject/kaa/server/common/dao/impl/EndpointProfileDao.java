@@ -40,6 +40,14 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
     T findByKeyHash(byte[] endpointKeyHash);
 
     /**
+     * Find endpoint profile by endpoint group id.
+     *
+     * @param endpointGroupId the endpoint group id
+     * @return the endpoint profile object
+     */
+    List<T> findByEndpointGroupId(String endpointGroupId, String limit, String offset);
+
+    /**
      * Gets the count of endpoint profile by key hash.
      *
      * @param endpointKeyHash the endpoint key hash

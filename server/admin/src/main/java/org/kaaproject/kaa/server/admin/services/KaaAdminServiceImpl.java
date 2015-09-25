@@ -23,10 +23,13 @@ import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.to
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDataStruct;
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDto;
 import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDtoList;
+
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.*;
+
 import net.iharder.Base64;
+
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
 import org.apache.avro.generic.GenericRecord;
@@ -41,6 +44,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -109,6 +113,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import com.google.common.base.Charsets;
 
 @Service("kaaAdminService")
@@ -157,6 +162,42 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     {
         for (PluginType type : PluginType.values()) {
             pluginsInfo.put(type, new HashMap<String, PluginInfoDto>());
+        }
+    }
+
+    @Override
+    public List<EndpointProfileDto> getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            List<EndpointProfileDto> endpointProfiles = toDtoList(clientProvider.getClient().getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset));
+            if (endpointProfiles == null) {
+                throw new KaaAdminServiceException(
+                        "Requested item was not found!",
+                        ServiceErrorCode.ITEM_NOT_FOUND);
+            }
+            for (EndpointProfileDto endpointProfile : endpointProfiles) {
+                checkApplicationId(endpointProfile.getApplicationId());
+            }
+            return endpointProfiles;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
+    public EndpointProfileDto getEndpointProfileByKeyHash(String endpointProfileKeyHash) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            EndpointProfileDto profileDto = toDto(clientProvider.getClient().getEndpointProfileByKeyHash(endpointProfileKeyHash));
+            if (profileDto == null) {
+                throw new KaaAdminServiceException(
+                        "Requested item was not found!",
+                        ServiceErrorCode.ITEM_NOT_FOUND);
+            }
+            checkApplicationId(profileDto.getApplicationId());
+            return profileDto;
+        } catch (Exception e) {
+            throw Utils.handleException(e);
         }
     }
 

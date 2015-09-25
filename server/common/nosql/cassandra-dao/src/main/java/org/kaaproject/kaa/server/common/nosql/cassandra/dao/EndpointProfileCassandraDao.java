@@ -20,6 +20,7 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
+
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAccessTokenDao;
@@ -147,6 +148,13 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         }
         LOG.trace("Found endpoint profile {} by access token [{}]", endpointProfile, endpointAccessToken);
         return endpointProfile;
+    }
+
+    @Override
+    public List<CassandraEndpointProfile> findByEndpointGroupId(String endpointGroupId, String limit, String offset) {
+        LOG.debug("Try to find endpoint profile by endoint group id [{}]", endpointGroupId);
+        
+        return null;
     }
 
     @Override
