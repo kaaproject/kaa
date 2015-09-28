@@ -25,8 +25,10 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAccessTokenDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByAppIdDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEPByEndpointGroupIdDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAccessToken;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByAppId;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEPByEndpointGroupId;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
 import org.slf4j.Logger;
@@ -62,6 +64,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     private CassandraEPByAccessTokenDao cassandraEPByAccessTokenDao;
 
     private EndpointUserCassandraDao endpointUserDao;
+    private CassandraEPByEndpointGroupIdDao cassandraEPByEndpointGroupIdDao;
 
     @Override
     protected Class<CassandraEndpointProfile> getColumnFamilyClass() {
@@ -92,10 +95,13 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
             saveByAccessToken = cassandraEPByAccessTokenDao.getSaveQuery(new CassandraEPByAccessToken(accessToken, epKeyHash));
         }
         Statement saveProfile = getSaveQuery(profile);
+        String endpointGroupId  = profile.getCfGroupState().get(0).getEndpointGroupId();
+        Statement saveByEndpointGroupId = null;
+        saveByEndpointGroupId = cassandraEPByEndpointGroupIdDao.getSaveQuery(new CassandraEPByEndpointGroupId(endpointGroupId, epKeyHash));
         if (saveByAccessToken != null) {
-            executeBatch(saveProfile, saveByAppId, saveByAccessToken);
+            executeBatch(saveProfile, saveByAppId, saveByAccessToken, saveByEndpointGroupId);
         } else {
-            executeBatch(saveProfile, saveByAppId);
+            executeBatch(saveProfile, saveByAppId, saveByEndpointGroupId);
         }
         LOG.debug("[{}] Endpoint profile saved", profile.getId());
         return profile;
@@ -153,8 +159,19 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     @Override
     public List<CassandraEndpointProfile> findByEndpointGroupId(String endpointGroupId, String limit, String offset) {
         LOG.debug("Try to find endpoint profile by endoint group id [{}]", endpointGroupId);
-        
-        return null;
+        List<CassandraEndpointProfile> profileList = Collections.emptyList();
+        if (offset.equals(0)) {
+            ByteBuffer[] keyHashList = cassandraEPByEndpointGroupIdDao.findFirstPageEPByEndpointGroupId(endpointGroupId, limit);
+            for (ByteBuffer keyHash : keyHashList) {
+                profileList.add(findById(keyHash));
+            }
+        } else {
+            ByteBuffer[] keyHashList = cassandraEPByEndpointGroupIdDao.findFirstPageEPByEndpointGroupId(endpointGroupId, limit);
+            for (ByteBuffer keyHash : keyHashList) {
+                profileList.add(findById(keyHash));
+            }
+        }
+        return profileList;
     }
 
     @Override
