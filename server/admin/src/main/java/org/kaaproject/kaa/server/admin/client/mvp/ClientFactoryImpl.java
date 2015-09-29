@@ -42,6 +42,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.GenerateSdkView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
@@ -62,6 +63,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationSchem
 import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointProfilesViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.enduser.UpdateUserConfigViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.AefMapViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.AefMapsViewImpl;
@@ -144,6 +146,8 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseListView<EndpointGroupDto> endpointGroupsView = new EndpointGroupsViewImpl();
     private final EndpointGroupView endpointGroupView = new EndpointGroupViewImpl(false);
     private final EndpointGroupView createEndpointGroupView = new EndpointGroupViewImpl(true);
+
+    private final EndpointProfilesView endpointProfilesView = new EndpointProfilesViewImpl();
 
     private final BaseRecordView<ProfileFilterDto, String> profileFilterView = new ProfileFilterViewImpl(false);
     private final BaseRecordView<ProfileFilterDto, String> createProfileFilterView = new ProfileFilterViewImpl(true);
@@ -338,6 +342,11 @@ public class ClientFactoryImpl implements ClientFactory {
     @Override
     public EndpointGroupView getCreateEndpointGroupView() {
         return createEndpointGroupView;
+    }
+
+    @Override
+    public EndpointProfilesView getEndpointProfilesView() {
+        return endpointProfilesView;
     }
 
     @Override

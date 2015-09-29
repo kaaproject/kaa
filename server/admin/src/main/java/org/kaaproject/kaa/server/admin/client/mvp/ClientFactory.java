@@ -40,6 +40,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.GenerateSdkView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
@@ -103,6 +104,8 @@ public interface ClientFactory {
     BaseListView<EndpointGroupDto> getEndpointGroupsView();
     EndpointGroupView getEndpointGroupView();
     EndpointGroupView getCreateEndpointGroupView();
+
+    EndpointProfilesView getEndpointProfilesView();
 
     BaseRecordView<ProfileFilterDto, String> getProfileFilterView();
     BaseRecordView<ProfileFilterDto, String> getCreateProfileFilterView();
