@@ -210,6 +210,9 @@ service ControlThriftService extends cli.CliThriftService{
 *   Client SDK
 */
 
+  void addSdkProfile(1: data sdkProfile) throws(1: ControlThriftException ControlException)
+  void deleteSdkProfile(1: id sdkProfileId) throws(1: ControlThriftException ControlException)
+  list<data> getSdkProfilesByApplicationId(1: id applicationId) throws(1: ControlThriftException ControlException)
   Sdk generateSdk(1: data sdkProperties) throws(1: ControlThriftException ControlException)
 
 /**

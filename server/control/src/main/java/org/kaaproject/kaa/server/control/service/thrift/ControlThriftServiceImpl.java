@@ -206,7 +206,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getTenants()
@@ -219,7 +219,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getTenant(java.lang.String)
@@ -232,7 +232,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * . Iface#editTenant(org.kaaproject.kaa.server.common.thrift.gen.shared
@@ -246,7 +246,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deleteTenant(java.lang.String)
@@ -259,7 +259,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getUsers()
@@ -272,7 +272,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getTenantUsers(java.lang.String)
@@ -285,7 +285,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getUser(java.lang.String)
@@ -299,7 +299,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getUserByExternalUid(java.lang.String, java.lang.String)
@@ -312,7 +312,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#editUser(org.kaaproject.kaa.server.common.thrift.gen.shared.
@@ -327,7 +327,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deleteUser(java.lang.String)
@@ -341,7 +341,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getTenantAdmins()
@@ -354,7 +354,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getTenantAdmin(java.lang.String)
@@ -367,7 +367,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface
@@ -382,7 +382,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deleteTenantAdmin(java.lang.String)
@@ -395,7 +395,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getApplication(java.lang.String)
@@ -409,7 +409,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getApplicationByApplicationToken(java.lang.String)
@@ -423,7 +423,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getApplicationsByTenantId(java.lang.String)
@@ -437,7 +437,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .
@@ -453,7 +453,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deleteApplication(java.lang.String)
@@ -467,7 +467,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getConfigurationSchemasByApplicationId(java.lang.String)
@@ -481,7 +481,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getConfigurationSchema(java.lang.String)
@@ -495,7 +495,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * . Iface#editConfigurationSchema(org.kaaproject.kaa.server.common.thrift
@@ -517,7 +517,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getProfileSchemasByApplicationId(java.lang.String)
@@ -531,7 +531,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getProfileSchema(java.lang.String)
@@ -545,7 +545,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * . Iface#editProfileSchema(org.kaaproject.kaa.server.common.thrift.gen.
@@ -560,7 +560,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getEndpointGroupsByApplicationId(java.lang.String)
@@ -574,7 +574,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getEndpointGroup(java.lang.String)
@@ -588,7 +588,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * . Iface#editEndpointGroup(org.kaaproject.kaa.server.common.thrift.gen.
@@ -603,7 +603,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deleteEndpointGroup(java.lang.String)
@@ -653,7 +653,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getProfileFilter(java.lang.String)
@@ -684,7 +684,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * . Iface#editProfileFilter(org.kaaproject.kaa.server.common.thrift.gen.
@@ -718,7 +718,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getConfiguration(java.lang.String)
@@ -731,7 +731,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * . Iface#editConfiguration(org.kaaproject.kaa.server.common.thrift.gen.
@@ -830,7 +830,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#activateConfiguration(java.lang.String, java.lang.String)
@@ -849,7 +849,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deactivateConfiguration(java.lang.String, java.lang.String)
@@ -868,7 +868,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deleteConfigurationRecord(java.lang.String, java.lang.String,
@@ -889,7 +889,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#activateProfileFilter(java.lang.String, java.lang.String)
@@ -908,7 +908,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deactivateProfileFilter(java.lang.String, java.lang.String)
@@ -926,7 +926,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deleteProfileFilterRecord(java.lang.String, java.lang.String,
@@ -947,7 +947,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface
@@ -1045,7 +1045,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#generateRecordStructureLibrary(java.lang.String, int)
@@ -1070,7 +1070,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface
@@ -1087,7 +1087,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getNotificationSchema(java.lang.String)
@@ -1101,7 +1101,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getNotificationSchemasByAppId(java.lang.String)
@@ -1114,7 +1114,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getUserNotificationSchemasByAppId(java.lang.String)
@@ -1127,7 +1127,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#findNotificationSchemasByAppIdAndType(java.lang.String,
@@ -1142,7 +1142,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#editLogSchema(java.lang.String)
@@ -1155,7 +1155,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getLogSchemasByApplicationId(java.lang.String)
@@ -1168,7 +1168,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getLogSchema(java.lang.String)
@@ -1181,7 +1181,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getLogSchemaByApplicationIdAndVersion(java.lang.String,
@@ -1195,7 +1195,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface
@@ -1211,7 +1211,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getNotification(java.lang.String)
@@ -1224,7 +1224,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getNotificationsByTopicId(java.lang.String)
@@ -1237,7 +1237,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface
@@ -1252,7 +1252,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getTopic(java.lang.String)
@@ -1266,7 +1266,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getTopicByAppId(java.lang.String)
@@ -1280,7 +1280,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getTopicByEndpointGroupId(java.lang.String)
@@ -1293,7 +1293,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getVacantTopicByEndpointGroupId(java.lang.String)
@@ -1306,7 +1306,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deleteTopicById(java.lang.String)
@@ -1322,7 +1322,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getUnicastNotification(java.lang.String)
@@ -1335,7 +1335,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface
@@ -1351,7 +1351,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getUnicastNotificationsByKeyHash(java.nio.ByteBuffer)
@@ -1367,7 +1367,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getConfigurationSchemaVersionsByApplicationId(java.lang.String)
@@ -1380,7 +1380,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getProfileSchemaVersionsByApplicationId(java.lang.String)
@@ -1393,7 +1393,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getNotificationSchemaVersionsByApplicationId(java.lang.String)
@@ -1406,7 +1406,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getLogSchemaVersionsByApplicationId(java.lang.String)
@@ -1419,7 +1419,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface
@@ -1433,7 +1433,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getEventClassFamiliesByTenantId(java.lang.String)
@@ -1445,7 +1445,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getEventClassFamily(java.lang.String)
@@ -1457,7 +1457,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#addEventClassFamilySchema(java.lang.String, java.lang.String,
@@ -1471,7 +1471,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getEventClassesByFamilyIdAndVersion(java.lang.String, int,
@@ -1486,7 +1486,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface
@@ -1501,7 +1501,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getApplicationEventFamilyMap(java.lang.String)
@@ -1513,7 +1513,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getApplicationEventFamilyMapsByApplicationId(java.lang.String)
@@ -1525,7 +1525,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getVacantEventClassFamiliesByApplicationId(java.lang.String)
@@ -1537,7 +1537,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getEventClassFamiliesByApplicationId(java.lang.String)
@@ -1549,7 +1549,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService
      * #getServerShortName()
@@ -1561,7 +1561,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.cli.server.BaseCliThriftService
      * #initServiceCommands()
@@ -1573,7 +1573,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.common.thrift.gen.cli.CliThriftService
      * .Iface#shutdown()
      */
@@ -1692,7 +1692,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getEndpointUsers()
@@ -1705,7 +1705,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#getEndpointUser(java.lang.String)
@@ -1718,7 +1718,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .
@@ -1733,7 +1733,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#deleteEndpointUser(java.lang.String)
@@ -1746,7 +1746,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
      * .Iface#generateEndpointUserAccessToken(java.lang.String)
@@ -1956,6 +1956,36 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     private void checkSchema(AbstractSchemaDto schemaDto, RecordFile file) throws TException {
         if(schemaDto == null) {
             throw new TException("Schema " + file + " not found!");
+        }
+    }
+
+    @Override
+    public void addSdkProfile(DataStruct sdkProfile) throws ControlThriftException, TException {
+        try {
+            sdkKeyService.saveSdkKey((SdkPropertiesDto) ThriftDtoConverter.toDto(sdkProfile));
+        } catch (Exception cause) {
+            LOG.error("Unable to save SDK profile", cause);
+            throw new TException(cause);
+        }
+    }
+
+    @Override
+    public void deleteSdkProfile(String sdkProfileId) throws ControlThriftException, TException {
+        try {
+            sdkKeyService.removeSdkProfileById(sdkProfileId);
+        } catch (Exception cause) {
+            LOG.error("Unable to delete SDK profile", cause);
+            throw new TException(cause);
+        }
+    }
+
+    @Override
+    public List<DataStruct> getSdkProfilesByApplicationId(String applicationId) throws ControlThriftException, TException {
+        try {
+            return ThriftDtoConverter.toDataStructList(sdkKeyService.findSdkKeysByApplicationId(applicationId));
+        } catch (Exception cause) {
+            LOG.error("Unable to get SDK profiles", cause);
+            throw new TException(cause);
         }
     }
 }

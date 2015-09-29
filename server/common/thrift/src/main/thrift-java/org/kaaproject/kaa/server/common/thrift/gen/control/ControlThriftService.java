@@ -252,8 +252,14 @@ public class ControlThriftService {
     /**
      * Client SDK
      * 
-     * @param sdkProperties
+     * @param sdkProfile
      */
+    public void addSdkProfile(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile) throws ControlThriftException, org.apache.thrift.TException;
+
+    public void deleteSdkProfile(String sdkProfileId) throws ControlThriftException, org.apache.thrift.TException;
+
+    public List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getSdkProfilesByApplicationId(String applicationId) throws ControlThriftException, org.apache.thrift.TException;
+
     public Sdk generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties) throws ControlThriftException, org.apache.thrift.TException;
 
     /**
@@ -475,6 +481,12 @@ public class ControlThriftService {
     public void editUnicastNotification(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct notification, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void getUnicastNotificationsByKeyHash(ByteBuffer keyhash, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void addSdkProfile(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void deleteSdkProfile(String sdkProfileId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void getSdkProfilesByApplicationId(String applicationId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -2434,6 +2446,78 @@ public class ControlThriftService {
         throw result.ControlException;
       }
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getUnicastNotificationsByKeyHash failed: unknown result");
+    }
+
+    public void addSdkProfile(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile) throws ControlThriftException, org.apache.thrift.TException
+    {
+      send_addSdkProfile(sdkProfile);
+      recv_addSdkProfile();
+    }
+
+    public void send_addSdkProfile(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile) throws org.apache.thrift.TException
+    {
+      addSdkProfile_args args = new addSdkProfile_args();
+      args.setSdkProfile(sdkProfile);
+      sendBase("addSdkProfile", args);
+    }
+
+    public void recv_addSdkProfile() throws ControlThriftException, org.apache.thrift.TException
+    {
+      addSdkProfile_result result = new addSdkProfile_result();
+      receiveBase(result, "addSdkProfile");
+      if (result.ControlException != null) {
+        throw result.ControlException;
+      }
+      return;
+    }
+
+    public void deleteSdkProfile(String sdkProfileId) throws ControlThriftException, org.apache.thrift.TException
+    {
+      send_deleteSdkProfile(sdkProfileId);
+      recv_deleteSdkProfile();
+    }
+
+    public void send_deleteSdkProfile(String sdkProfileId) throws org.apache.thrift.TException
+    {
+      deleteSdkProfile_args args = new deleteSdkProfile_args();
+      args.setSdkProfileId(sdkProfileId);
+      sendBase("deleteSdkProfile", args);
+    }
+
+    public void recv_deleteSdkProfile() throws ControlThriftException, org.apache.thrift.TException
+    {
+      deleteSdkProfile_result result = new deleteSdkProfile_result();
+      receiveBase(result, "deleteSdkProfile");
+      if (result.ControlException != null) {
+        throw result.ControlException;
+      }
+      return;
+    }
+
+    public List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getSdkProfilesByApplicationId(String applicationId) throws ControlThriftException, org.apache.thrift.TException
+    {
+      send_getSdkProfilesByApplicationId(applicationId);
+      return recv_getSdkProfilesByApplicationId();
+    }
+
+    public void send_getSdkProfilesByApplicationId(String applicationId) throws org.apache.thrift.TException
+    {
+      getSdkProfilesByApplicationId_args args = new getSdkProfilesByApplicationId_args();
+      args.setApplicationId(applicationId);
+      sendBase("getSdkProfilesByApplicationId", args);
+    }
+
+    public List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> recv_getSdkProfilesByApplicationId() throws ControlThriftException, org.apache.thrift.TException
+    {
+      getSdkProfilesByApplicationId_result result = new getSdkProfilesByApplicationId_result();
+      receiveBase(result, "getSdkProfilesByApplicationId");
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
+      if (result.ControlException != null) {
+        throw result.ControlException;
+      }
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getSdkProfilesByApplicationId failed: unknown result");
     }
 
     public Sdk generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties) throws ControlThriftException, org.apache.thrift.TException
@@ -5527,6 +5611,102 @@ public class ControlThriftService {
       }
     }
 
+    public void addSdkProfile(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      addSdkProfile_call method_call = new addSdkProfile_call(sdkProfile, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class addSdkProfile_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile;
+      public addSdkProfile_call(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.sdkProfile = sdkProfile;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("addSdkProfile", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        addSdkProfile_args args = new addSdkProfile_args();
+        args.setSdkProfile(sdkProfile);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws ControlThriftException, org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_addSdkProfile();
+      }
+    }
+
+    public void deleteSdkProfile(String sdkProfileId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      deleteSdkProfile_call method_call = new deleteSdkProfile_call(sdkProfileId, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class deleteSdkProfile_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private String sdkProfileId;
+      public deleteSdkProfile_call(String sdkProfileId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.sdkProfileId = sdkProfileId;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("deleteSdkProfile", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        deleteSdkProfile_args args = new deleteSdkProfile_args();
+        args.setSdkProfileId(sdkProfileId);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws ControlThriftException, org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_deleteSdkProfile();
+      }
+    }
+
+    public void getSdkProfilesByApplicationId(String applicationId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      getSdkProfilesByApplicationId_call method_call = new getSdkProfilesByApplicationId_call(applicationId, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class getSdkProfilesByApplicationId_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private String applicationId;
+      public getSdkProfilesByApplicationId_call(String applicationId, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.applicationId = applicationId;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("getSdkProfilesByApplicationId", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        getSdkProfilesByApplicationId_args args = new getSdkProfilesByApplicationId_args();
+        args.setApplicationId(applicationId);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getResult() throws ControlThriftException, org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        return (new Client(prot)).recv_getSdkProfilesByApplicationId();
+      }
+    }
+
     public void generateSdk(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProperties, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       generateSdk_call method_call = new generateSdk_call(sdkProperties, resultHandler, this, ___protocolFactory, ___transport);
@@ -6501,6 +6681,9 @@ public class ControlThriftService {
       processMap.put("getUnicastNotification", new getUnicastNotification());
       processMap.put("editUnicastNotification", new editUnicastNotification());
       processMap.put("getUnicastNotificationsByKeyHash", new getUnicastNotificationsByKeyHash());
+      processMap.put("addSdkProfile", new addSdkProfile());
+      processMap.put("deleteSdkProfile", new deleteSdkProfile());
+      processMap.put("getSdkProfilesByApplicationId", new getSdkProfilesByApplicationId());
       processMap.put("generateSdk", new generateSdk());
       processMap.put("editEventClassFamily", new editEventClassFamily());
       processMap.put("getEventClassFamiliesByTenantId", new getEventClassFamiliesByTenantId());
@@ -8283,6 +8466,78 @@ public class ControlThriftService {
       }
     }
 
+    public static class addSdkProfile<I extends Iface> extends org.apache.thrift.ProcessFunction<I, addSdkProfile_args> {
+      public addSdkProfile() {
+        super("addSdkProfile");
+      }
+
+      public addSdkProfile_args getEmptyArgsInstance() {
+        return new addSdkProfile_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public addSdkProfile_result getResult(I iface, addSdkProfile_args args) throws org.apache.thrift.TException {
+        addSdkProfile_result result = new addSdkProfile_result();
+        try {
+          iface.addSdkProfile(args.sdkProfile);
+        } catch (ControlThriftException ControlException) {
+          result.ControlException = ControlException;
+        }
+        return result;
+      }
+    }
+
+    public static class deleteSdkProfile<I extends Iface> extends org.apache.thrift.ProcessFunction<I, deleteSdkProfile_args> {
+      public deleteSdkProfile() {
+        super("deleteSdkProfile");
+      }
+
+      public deleteSdkProfile_args getEmptyArgsInstance() {
+        return new deleteSdkProfile_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public deleteSdkProfile_result getResult(I iface, deleteSdkProfile_args args) throws org.apache.thrift.TException {
+        deleteSdkProfile_result result = new deleteSdkProfile_result();
+        try {
+          iface.deleteSdkProfile(args.sdkProfileId);
+        } catch (ControlThriftException ControlException) {
+          result.ControlException = ControlException;
+        }
+        return result;
+      }
+    }
+
+    public static class getSdkProfilesByApplicationId<I extends Iface> extends org.apache.thrift.ProcessFunction<I, getSdkProfilesByApplicationId_args> {
+      public getSdkProfilesByApplicationId() {
+        super("getSdkProfilesByApplicationId");
+      }
+
+      public getSdkProfilesByApplicationId_args getEmptyArgsInstance() {
+        return new getSdkProfilesByApplicationId_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public getSdkProfilesByApplicationId_result getResult(I iface, getSdkProfilesByApplicationId_args args) throws org.apache.thrift.TException {
+        getSdkProfilesByApplicationId_result result = new getSdkProfilesByApplicationId_result();
+        try {
+          result.success = iface.getSdkProfilesByApplicationId(args.applicationId);
+        } catch (ControlThriftException ControlException) {
+          result.ControlException = ControlException;
+        }
+        return result;
+      }
+    }
+
     public static class generateSdk<I extends Iface> extends org.apache.thrift.ProcessFunction<I, generateSdk_args> {
       public generateSdk() {
         super("generateSdk");
@@ -9017,6 +9272,9 @@ public class ControlThriftService {
       processMap.put("getUnicastNotification", new getUnicastNotification());
       processMap.put("editUnicastNotification", new editUnicastNotification());
       processMap.put("getUnicastNotificationsByKeyHash", new getUnicastNotificationsByKeyHash());
+      processMap.put("addSdkProfile", new addSdkProfile());
+      processMap.put("deleteSdkProfile", new deleteSdkProfile());
+      processMap.put("getSdkProfilesByApplicationId", new getSdkProfilesByApplicationId());
       processMap.put("generateSdk", new generateSdk());
       processMap.put("editEventClassFamily", new editEventClassFamily());
       processMap.put("getEventClassFamiliesByTenantId", new getEventClassFamiliesByTenantId());
@@ -13196,6 +13454,175 @@ public class ControlThriftService {
 
       public void start(I iface, getUnicastNotificationsByKeyHash_args args, org.apache.thrift.async.AsyncMethodCallback<List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>> resultHandler) throws TException {
         iface.getUnicastNotificationsByKeyHash(args.keyhash,resultHandler);
+      }
+    }
+
+    public static class addSdkProfile<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, addSdkProfile_args, Void> {
+      public addSdkProfile() {
+        super("addSdkProfile");
+      }
+
+      public addSdkProfile_args getEmptyArgsInstance() {
+        return new addSdkProfile_args();
+      }
+
+      public AsyncMethodCallback<Void> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<Void>() { 
+          public void onComplete(Void o) {
+            addSdkProfile_result result = new addSdkProfile_result();
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            addSdkProfile_result result = new addSdkProfile_result();
+            if (e instanceof ControlThriftException) {
+                        result.ControlException = (ControlThriftException) e;
+                        result.setControlExceptionIsSet(true);
+                        msg = result;
+            }
+             else 
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, addSdkProfile_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws TException {
+        iface.addSdkProfile(args.sdkProfile,resultHandler);
+      }
+    }
+
+    public static class deleteSdkProfile<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, deleteSdkProfile_args, Void> {
+      public deleteSdkProfile() {
+        super("deleteSdkProfile");
+      }
+
+      public deleteSdkProfile_args getEmptyArgsInstance() {
+        return new deleteSdkProfile_args();
+      }
+
+      public AsyncMethodCallback<Void> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<Void>() { 
+          public void onComplete(Void o) {
+            deleteSdkProfile_result result = new deleteSdkProfile_result();
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            deleteSdkProfile_result result = new deleteSdkProfile_result();
+            if (e instanceof ControlThriftException) {
+                        result.ControlException = (ControlThriftException) e;
+                        result.setControlExceptionIsSet(true);
+                        msg = result;
+            }
+             else 
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, deleteSdkProfile_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws TException {
+        iface.deleteSdkProfile(args.sdkProfileId,resultHandler);
+      }
+    }
+
+    public static class getSdkProfilesByApplicationId<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, getSdkProfilesByApplicationId_args, List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>> {
+      public getSdkProfilesByApplicationId() {
+        super("getSdkProfilesByApplicationId");
+      }
+
+      public getSdkProfilesByApplicationId_args getEmptyArgsInstance() {
+        return new getSdkProfilesByApplicationId_args();
+      }
+
+      public AsyncMethodCallback<List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>>() { 
+          public void onComplete(List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> o) {
+            getSdkProfilesByApplicationId_result result = new getSdkProfilesByApplicationId_result();
+            result.success = o;
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            getSdkProfilesByApplicationId_result result = new getSdkProfilesByApplicationId_result();
+            if (e instanceof ControlThriftException) {
+                        result.ControlException = (ControlThriftException) e;
+                        result.setControlExceptionIsSet(true);
+                        msg = result;
+            }
+             else 
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, getSdkProfilesByApplicationId_args args, org.apache.thrift.async.AsyncMethodCallback<List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>> resultHandler) throws TException {
+        iface.getSdkProfilesByApplicationId(args.applicationId,resultHandler);
       }
     }
 
@@ -77114,6 +77541,2339 @@ public class ControlThriftService {
 
   }
 
+  public static class addSdkProfile_args implements org.apache.thrift.TBase<addSdkProfile_args, addSdkProfile_args._Fields>, java.io.Serializable, Cloneable, Comparable<addSdkProfile_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("addSdkProfile_args");
+
+    private static final org.apache.thrift.protocol.TField SDK_PROFILE_FIELD_DESC = new org.apache.thrift.protocol.TField("sdkProfile", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new addSdkProfile_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new addSdkProfile_argsTupleSchemeFactory());
+    }
+
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      SDK_PROFILE((short)1, "sdkProfile");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // SDK_PROFILE
+            return SDK_PROFILE;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SDK_PROFILE, new org.apache.thrift.meta_data.FieldMetaData("sdkProfile", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT          , "data")));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(addSdkProfile_args.class, metaDataMap);
+    }
+
+    public addSdkProfile_args() {
+    }
+
+    public addSdkProfile_args(
+      org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile)
+    {
+      this();
+      this.sdkProfile = sdkProfile;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public addSdkProfile_args(addSdkProfile_args other) {
+      if (other.isSetSdkProfile()) {
+        this.sdkProfile = other.sdkProfile;
+      }
+    }
+
+    public addSdkProfile_args deepCopy() {
+      return new addSdkProfile_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.sdkProfile = null;
+    }
+
+    public org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct getSdkProfile() {
+      return this.sdkProfile;
+    }
+
+    public addSdkProfile_args setSdkProfile(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct sdkProfile) {
+      this.sdkProfile = sdkProfile;
+      return this;
+    }
+
+    public void unsetSdkProfile() {
+      this.sdkProfile = null;
+    }
+
+    /** Returns true if field sdkProfile is set (has been assigned a value) and false otherwise */
+    public boolean isSetSdkProfile() {
+      return this.sdkProfile != null;
+    }
+
+    public void setSdkProfileIsSet(boolean value) {
+      if (!value) {
+        this.sdkProfile = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SDK_PROFILE:
+        if (value == null) {
+          unsetSdkProfile();
+        } else {
+          setSdkProfile((org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SDK_PROFILE:
+        return getSdkProfile();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case SDK_PROFILE:
+        return isSetSdkProfile();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof addSdkProfile_args)
+        return this.equals((addSdkProfile_args)that);
+      return false;
+    }
+
+    public boolean equals(addSdkProfile_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_sdkProfile = true && this.isSetSdkProfile();
+      boolean that_present_sdkProfile = true && that.isSetSdkProfile();
+      if (this_present_sdkProfile || that_present_sdkProfile) {
+        if (!(this_present_sdkProfile && that_present_sdkProfile))
+          return false;
+        if (!this.sdkProfile.equals(that.sdkProfile))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_sdkProfile = true && (isSetSdkProfile());
+      builder.append(present_sdkProfile);
+      if (present_sdkProfile)
+        builder.append(sdkProfile);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(addSdkProfile_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetSdkProfile()).compareTo(other.isSetSdkProfile());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSdkProfile()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.sdkProfile, other.sdkProfile);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("addSdkProfile_args(");
+      boolean first = true;
+
+      sb.append("sdkProfile:");
+      if (this.sdkProfile == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.sdkProfile);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class addSdkProfile_argsStandardSchemeFactory implements SchemeFactory {
+      public addSdkProfile_argsStandardScheme getScheme() {
+        return new addSdkProfile_argsStandardScheme();
+      }
+    }
+
+    private static class addSdkProfile_argsStandardScheme extends StandardScheme<addSdkProfile_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, addSdkProfile_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // SDK_PROFILE
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.sdkProfile = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+                struct.sdkProfile.read(iprot);
+                struct.setSdkProfileIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, addSdkProfile_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.sdkProfile != null) {
+          oprot.writeFieldBegin(SDK_PROFILE_FIELD_DESC);
+          struct.sdkProfile.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class addSdkProfile_argsTupleSchemeFactory implements SchemeFactory {
+      public addSdkProfile_argsTupleScheme getScheme() {
+        return new addSdkProfile_argsTupleScheme();
+      }
+    }
+
+    private static class addSdkProfile_argsTupleScheme extends TupleScheme<addSdkProfile_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, addSdkProfile_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetSdkProfile()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetSdkProfile()) {
+          struct.sdkProfile.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, addSdkProfile_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.sdkProfile = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+          struct.sdkProfile.read(iprot);
+          struct.setSdkProfileIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class addSdkProfile_result implements org.apache.thrift.TBase<addSdkProfile_result, addSdkProfile_result._Fields>, java.io.Serializable, Cloneable, Comparable<addSdkProfile_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("addSdkProfile_result");
+
+    private static final org.apache.thrift.protocol.TField CONTROL_EXCEPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("ControlException", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new addSdkProfile_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new addSdkProfile_resultTupleSchemeFactory());
+    }
+
+    public ControlThriftException ControlException; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      CONTROL_EXCEPTION((short)1, "ControlException");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // CONTROL_EXCEPTION
+            return CONTROL_EXCEPTION;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.CONTROL_EXCEPTION, new org.apache.thrift.meta_data.FieldMetaData("ControlException", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(addSdkProfile_result.class, metaDataMap);
+    }
+
+    public addSdkProfile_result() {
+    }
+
+    public addSdkProfile_result(
+      ControlThriftException ControlException)
+    {
+      this();
+      this.ControlException = ControlException;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public addSdkProfile_result(addSdkProfile_result other) {
+      if (other.isSetControlException()) {
+        this.ControlException = new ControlThriftException(other.ControlException);
+      }
+    }
+
+    public addSdkProfile_result deepCopy() {
+      return new addSdkProfile_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.ControlException = null;
+    }
+
+    public ControlThriftException getControlException() {
+      return this.ControlException;
+    }
+
+    public addSdkProfile_result setControlException(ControlThriftException ControlException) {
+      this.ControlException = ControlException;
+      return this;
+    }
+
+    public void unsetControlException() {
+      this.ControlException = null;
+    }
+
+    /** Returns true if field ControlException is set (has been assigned a value) and false otherwise */
+    public boolean isSetControlException() {
+      return this.ControlException != null;
+    }
+
+    public void setControlExceptionIsSet(boolean value) {
+      if (!value) {
+        this.ControlException = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case CONTROL_EXCEPTION:
+        if (value == null) {
+          unsetControlException();
+        } else {
+          setControlException((ControlThriftException)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case CONTROL_EXCEPTION:
+        return getControlException();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case CONTROL_EXCEPTION:
+        return isSetControlException();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof addSdkProfile_result)
+        return this.equals((addSdkProfile_result)that);
+      return false;
+    }
+
+    public boolean equals(addSdkProfile_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_ControlException = true && this.isSetControlException();
+      boolean that_present_ControlException = true && that.isSetControlException();
+      if (this_present_ControlException || that_present_ControlException) {
+        if (!(this_present_ControlException && that_present_ControlException))
+          return false;
+        if (!this.ControlException.equals(that.ControlException))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_ControlException = true && (isSetControlException());
+      builder.append(present_ControlException);
+      if (present_ControlException)
+        builder.append(ControlException);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(addSdkProfile_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetControlException()).compareTo(other.isSetControlException());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetControlException()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.ControlException, other.ControlException);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("addSdkProfile_result(");
+      boolean first = true;
+
+      sb.append("ControlException:");
+      if (this.ControlException == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.ControlException);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class addSdkProfile_resultStandardSchemeFactory implements SchemeFactory {
+      public addSdkProfile_resultStandardScheme getScheme() {
+        return new addSdkProfile_resultStandardScheme();
+      }
+    }
+
+    private static class addSdkProfile_resultStandardScheme extends StandardScheme<addSdkProfile_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, addSdkProfile_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // CONTROL_EXCEPTION
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.ControlException = new ControlThriftException();
+                struct.ControlException.read(iprot);
+                struct.setControlExceptionIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, addSdkProfile_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.ControlException != null) {
+          oprot.writeFieldBegin(CONTROL_EXCEPTION_FIELD_DESC);
+          struct.ControlException.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class addSdkProfile_resultTupleSchemeFactory implements SchemeFactory {
+      public addSdkProfile_resultTupleScheme getScheme() {
+        return new addSdkProfile_resultTupleScheme();
+      }
+    }
+
+    private static class addSdkProfile_resultTupleScheme extends TupleScheme<addSdkProfile_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, addSdkProfile_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetControlException()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetControlException()) {
+          struct.ControlException.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, addSdkProfile_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.ControlException = new ControlThriftException();
+          struct.ControlException.read(iprot);
+          struct.setControlExceptionIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class deleteSdkProfile_args implements org.apache.thrift.TBase<deleteSdkProfile_args, deleteSdkProfile_args._Fields>, java.io.Serializable, Cloneable, Comparable<deleteSdkProfile_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("deleteSdkProfile_args");
+
+    private static final org.apache.thrift.protocol.TField SDK_PROFILE_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("sdkProfileId", org.apache.thrift.protocol.TType.STRING, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new deleteSdkProfile_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new deleteSdkProfile_argsTupleSchemeFactory());
+    }
+
+    public String sdkProfileId; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      SDK_PROFILE_ID((short)1, "sdkProfileId");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // SDK_PROFILE_ID
+            return SDK_PROFILE_ID;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SDK_PROFILE_ID, new org.apache.thrift.meta_data.FieldMetaData("sdkProfileId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING          , "id")));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(deleteSdkProfile_args.class, metaDataMap);
+    }
+
+    public deleteSdkProfile_args() {
+    }
+
+    public deleteSdkProfile_args(
+      String sdkProfileId)
+    {
+      this();
+      this.sdkProfileId = sdkProfileId;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public deleteSdkProfile_args(deleteSdkProfile_args other) {
+      if (other.isSetSdkProfileId()) {
+        this.sdkProfileId = other.sdkProfileId;
+      }
+    }
+
+    public deleteSdkProfile_args deepCopy() {
+      return new deleteSdkProfile_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.sdkProfileId = null;
+    }
+
+    public String getSdkProfileId() {
+      return this.sdkProfileId;
+    }
+
+    public deleteSdkProfile_args setSdkProfileId(String sdkProfileId) {
+      this.sdkProfileId = sdkProfileId;
+      return this;
+    }
+
+    public void unsetSdkProfileId() {
+      this.sdkProfileId = null;
+    }
+
+    /** Returns true if field sdkProfileId is set (has been assigned a value) and false otherwise */
+    public boolean isSetSdkProfileId() {
+      return this.sdkProfileId != null;
+    }
+
+    public void setSdkProfileIdIsSet(boolean value) {
+      if (!value) {
+        this.sdkProfileId = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SDK_PROFILE_ID:
+        if (value == null) {
+          unsetSdkProfileId();
+        } else {
+          setSdkProfileId((String)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SDK_PROFILE_ID:
+        return getSdkProfileId();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case SDK_PROFILE_ID:
+        return isSetSdkProfileId();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof deleteSdkProfile_args)
+        return this.equals((deleteSdkProfile_args)that);
+      return false;
+    }
+
+    public boolean equals(deleteSdkProfile_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_sdkProfileId = true && this.isSetSdkProfileId();
+      boolean that_present_sdkProfileId = true && that.isSetSdkProfileId();
+      if (this_present_sdkProfileId || that_present_sdkProfileId) {
+        if (!(this_present_sdkProfileId && that_present_sdkProfileId))
+          return false;
+        if (!this.sdkProfileId.equals(that.sdkProfileId))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_sdkProfileId = true && (isSetSdkProfileId());
+      builder.append(present_sdkProfileId);
+      if (present_sdkProfileId)
+        builder.append(sdkProfileId);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(deleteSdkProfile_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetSdkProfileId()).compareTo(other.isSetSdkProfileId());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSdkProfileId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.sdkProfileId, other.sdkProfileId);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("deleteSdkProfile_args(");
+      boolean first = true;
+
+      sb.append("sdkProfileId:");
+      if (this.sdkProfileId == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.sdkProfileId);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class deleteSdkProfile_argsStandardSchemeFactory implements SchemeFactory {
+      public deleteSdkProfile_argsStandardScheme getScheme() {
+        return new deleteSdkProfile_argsStandardScheme();
+      }
+    }
+
+    private static class deleteSdkProfile_argsStandardScheme extends StandardScheme<deleteSdkProfile_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, deleteSdkProfile_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // SDK_PROFILE_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.sdkProfileId = iprot.readString();
+                struct.setSdkProfileIdIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, deleteSdkProfile_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.sdkProfileId != null) {
+          oprot.writeFieldBegin(SDK_PROFILE_ID_FIELD_DESC);
+          oprot.writeString(struct.sdkProfileId);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class deleteSdkProfile_argsTupleSchemeFactory implements SchemeFactory {
+      public deleteSdkProfile_argsTupleScheme getScheme() {
+        return new deleteSdkProfile_argsTupleScheme();
+      }
+    }
+
+    private static class deleteSdkProfile_argsTupleScheme extends TupleScheme<deleteSdkProfile_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, deleteSdkProfile_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetSdkProfileId()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetSdkProfileId()) {
+          oprot.writeString(struct.sdkProfileId);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, deleteSdkProfile_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.sdkProfileId = iprot.readString();
+          struct.setSdkProfileIdIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class deleteSdkProfile_result implements org.apache.thrift.TBase<deleteSdkProfile_result, deleteSdkProfile_result._Fields>, java.io.Serializable, Cloneable, Comparable<deleteSdkProfile_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("deleteSdkProfile_result");
+
+    private static final org.apache.thrift.protocol.TField CONTROL_EXCEPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("ControlException", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new deleteSdkProfile_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new deleteSdkProfile_resultTupleSchemeFactory());
+    }
+
+    public ControlThriftException ControlException; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      CONTROL_EXCEPTION((short)1, "ControlException");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // CONTROL_EXCEPTION
+            return CONTROL_EXCEPTION;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.CONTROL_EXCEPTION, new org.apache.thrift.meta_data.FieldMetaData("ControlException", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(deleteSdkProfile_result.class, metaDataMap);
+    }
+
+    public deleteSdkProfile_result() {
+    }
+
+    public deleteSdkProfile_result(
+      ControlThriftException ControlException)
+    {
+      this();
+      this.ControlException = ControlException;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public deleteSdkProfile_result(deleteSdkProfile_result other) {
+      if (other.isSetControlException()) {
+        this.ControlException = new ControlThriftException(other.ControlException);
+      }
+    }
+
+    public deleteSdkProfile_result deepCopy() {
+      return new deleteSdkProfile_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.ControlException = null;
+    }
+
+    public ControlThriftException getControlException() {
+      return this.ControlException;
+    }
+
+    public deleteSdkProfile_result setControlException(ControlThriftException ControlException) {
+      this.ControlException = ControlException;
+      return this;
+    }
+
+    public void unsetControlException() {
+      this.ControlException = null;
+    }
+
+    /** Returns true if field ControlException is set (has been assigned a value) and false otherwise */
+    public boolean isSetControlException() {
+      return this.ControlException != null;
+    }
+
+    public void setControlExceptionIsSet(boolean value) {
+      if (!value) {
+        this.ControlException = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case CONTROL_EXCEPTION:
+        if (value == null) {
+          unsetControlException();
+        } else {
+          setControlException((ControlThriftException)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case CONTROL_EXCEPTION:
+        return getControlException();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case CONTROL_EXCEPTION:
+        return isSetControlException();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof deleteSdkProfile_result)
+        return this.equals((deleteSdkProfile_result)that);
+      return false;
+    }
+
+    public boolean equals(deleteSdkProfile_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_ControlException = true && this.isSetControlException();
+      boolean that_present_ControlException = true && that.isSetControlException();
+      if (this_present_ControlException || that_present_ControlException) {
+        if (!(this_present_ControlException && that_present_ControlException))
+          return false;
+        if (!this.ControlException.equals(that.ControlException))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_ControlException = true && (isSetControlException());
+      builder.append(present_ControlException);
+      if (present_ControlException)
+        builder.append(ControlException);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(deleteSdkProfile_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetControlException()).compareTo(other.isSetControlException());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetControlException()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.ControlException, other.ControlException);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("deleteSdkProfile_result(");
+      boolean first = true;
+
+      sb.append("ControlException:");
+      if (this.ControlException == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.ControlException);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class deleteSdkProfile_resultStandardSchemeFactory implements SchemeFactory {
+      public deleteSdkProfile_resultStandardScheme getScheme() {
+        return new deleteSdkProfile_resultStandardScheme();
+      }
+    }
+
+    private static class deleteSdkProfile_resultStandardScheme extends StandardScheme<deleteSdkProfile_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, deleteSdkProfile_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // CONTROL_EXCEPTION
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.ControlException = new ControlThriftException();
+                struct.ControlException.read(iprot);
+                struct.setControlExceptionIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, deleteSdkProfile_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.ControlException != null) {
+          oprot.writeFieldBegin(CONTROL_EXCEPTION_FIELD_DESC);
+          struct.ControlException.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class deleteSdkProfile_resultTupleSchemeFactory implements SchemeFactory {
+      public deleteSdkProfile_resultTupleScheme getScheme() {
+        return new deleteSdkProfile_resultTupleScheme();
+      }
+    }
+
+    private static class deleteSdkProfile_resultTupleScheme extends TupleScheme<deleteSdkProfile_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, deleteSdkProfile_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetControlException()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetControlException()) {
+          struct.ControlException.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, deleteSdkProfile_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.ControlException = new ControlThriftException();
+          struct.ControlException.read(iprot);
+          struct.setControlExceptionIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class getSdkProfilesByApplicationId_args implements org.apache.thrift.TBase<getSdkProfilesByApplicationId_args, getSdkProfilesByApplicationId_args._Fields>, java.io.Serializable, Cloneable, Comparable<getSdkProfilesByApplicationId_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getSdkProfilesByApplicationId_args");
+
+    private static final org.apache.thrift.protocol.TField APPLICATION_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("applicationId", org.apache.thrift.protocol.TType.STRING, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new getSdkProfilesByApplicationId_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getSdkProfilesByApplicationId_argsTupleSchemeFactory());
+    }
+
+    public String applicationId; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      APPLICATION_ID((short)1, "applicationId");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // APPLICATION_ID
+            return APPLICATION_ID;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.APPLICATION_ID, new org.apache.thrift.meta_data.FieldMetaData("applicationId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING          , "id")));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getSdkProfilesByApplicationId_args.class, metaDataMap);
+    }
+
+    public getSdkProfilesByApplicationId_args() {
+    }
+
+    public getSdkProfilesByApplicationId_args(
+      String applicationId)
+    {
+      this();
+      this.applicationId = applicationId;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public getSdkProfilesByApplicationId_args(getSdkProfilesByApplicationId_args other) {
+      if (other.isSetApplicationId()) {
+        this.applicationId = other.applicationId;
+      }
+    }
+
+    public getSdkProfilesByApplicationId_args deepCopy() {
+      return new getSdkProfilesByApplicationId_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.applicationId = null;
+    }
+
+    public String getApplicationId() {
+      return this.applicationId;
+    }
+
+    public getSdkProfilesByApplicationId_args setApplicationId(String applicationId) {
+      this.applicationId = applicationId;
+      return this;
+    }
+
+    public void unsetApplicationId() {
+      this.applicationId = null;
+    }
+
+    /** Returns true if field applicationId is set (has been assigned a value) and false otherwise */
+    public boolean isSetApplicationId() {
+      return this.applicationId != null;
+    }
+
+    public void setApplicationIdIsSet(boolean value) {
+      if (!value) {
+        this.applicationId = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case APPLICATION_ID:
+        if (value == null) {
+          unsetApplicationId();
+        } else {
+          setApplicationId((String)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case APPLICATION_ID:
+        return getApplicationId();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case APPLICATION_ID:
+        return isSetApplicationId();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof getSdkProfilesByApplicationId_args)
+        return this.equals((getSdkProfilesByApplicationId_args)that);
+      return false;
+    }
+
+    public boolean equals(getSdkProfilesByApplicationId_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_applicationId = true && this.isSetApplicationId();
+      boolean that_present_applicationId = true && that.isSetApplicationId();
+      if (this_present_applicationId || that_present_applicationId) {
+        if (!(this_present_applicationId && that_present_applicationId))
+          return false;
+        if (!this.applicationId.equals(that.applicationId))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_applicationId = true && (isSetApplicationId());
+      builder.append(present_applicationId);
+      if (present_applicationId)
+        builder.append(applicationId);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(getSdkProfilesByApplicationId_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetApplicationId()).compareTo(other.isSetApplicationId());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetApplicationId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.applicationId, other.applicationId);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("getSdkProfilesByApplicationId_args(");
+      boolean first = true;
+
+      sb.append("applicationId:");
+      if (this.applicationId == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.applicationId);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class getSdkProfilesByApplicationId_argsStandardSchemeFactory implements SchemeFactory {
+      public getSdkProfilesByApplicationId_argsStandardScheme getScheme() {
+        return new getSdkProfilesByApplicationId_argsStandardScheme();
+      }
+    }
+
+    private static class getSdkProfilesByApplicationId_argsStandardScheme extends StandardScheme<getSdkProfilesByApplicationId_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getSdkProfilesByApplicationId_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // APPLICATION_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.applicationId = iprot.readString();
+                struct.setApplicationIdIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getSdkProfilesByApplicationId_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.applicationId != null) {
+          oprot.writeFieldBegin(APPLICATION_ID_FIELD_DESC);
+          oprot.writeString(struct.applicationId);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class getSdkProfilesByApplicationId_argsTupleSchemeFactory implements SchemeFactory {
+      public getSdkProfilesByApplicationId_argsTupleScheme getScheme() {
+        return new getSdkProfilesByApplicationId_argsTupleScheme();
+      }
+    }
+
+    private static class getSdkProfilesByApplicationId_argsTupleScheme extends TupleScheme<getSdkProfilesByApplicationId_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, getSdkProfilesByApplicationId_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetApplicationId()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetApplicationId()) {
+          oprot.writeString(struct.applicationId);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, getSdkProfilesByApplicationId_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.applicationId = iprot.readString();
+          struct.setApplicationIdIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class getSdkProfilesByApplicationId_result implements org.apache.thrift.TBase<getSdkProfilesByApplicationId_result, getSdkProfilesByApplicationId_result._Fields>, java.io.Serializable, Cloneable, Comparable<getSdkProfilesByApplicationId_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("getSdkProfilesByApplicationId_result");
+
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.LIST, (short)0);
+    private static final org.apache.thrift.protocol.TField CONTROL_EXCEPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("ControlException", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new getSdkProfilesByApplicationId_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new getSdkProfilesByApplicationId_resultTupleSchemeFactory());
+    }
+
+    public List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> success; // required
+    public ControlThriftException ControlException; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      SUCCESS((short)0, "success"),
+      CONTROL_EXCEPTION((short)1, "ControlException");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
+          case 1: // CONTROL_EXCEPTION
+            return CONTROL_EXCEPTION;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
+              new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT              , "data"))));
+      tmpMap.put(_Fields.CONTROL_EXCEPTION, new org.apache.thrift.meta_data.FieldMetaData("ControlException", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(getSdkProfilesByApplicationId_result.class, metaDataMap);
+    }
+
+    public getSdkProfilesByApplicationId_result() {
+    }
+
+    public getSdkProfilesByApplicationId_result(
+      List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> success,
+      ControlThriftException ControlException)
+    {
+      this();
+      this.success = success;
+      this.ControlException = ControlException;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public getSdkProfilesByApplicationId_result(getSdkProfilesByApplicationId_result other) {
+      if (other.isSetSuccess()) {
+        List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> __this__success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(other.success.size());
+        for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct other_element : other.success) {
+          __this__success.add(other_element);
+        }
+        this.success = __this__success;
+      }
+      if (other.isSetControlException()) {
+        this.ControlException = new ControlThriftException(other.ControlException);
+      }
+    }
+
+    public getSdkProfilesByApplicationId_result deepCopy() {
+      return new getSdkProfilesByApplicationId_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.success = null;
+      this.ControlException = null;
+    }
+
+    public int getSuccessSize() {
+      return (this.success == null) ? 0 : this.success.size();
+    }
+
+    public java.util.Iterator<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getSuccessIterator() {
+      return (this.success == null) ? null : this.success.iterator();
+    }
+
+    public void addToSuccess(org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct elem) {
+      if (this.success == null) {
+        this.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>();
+      }
+      this.success.add(elem);
+    }
+
+    public List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> getSuccess() {
+      return this.success;
+    }
+
+    public getSdkProfilesByApplicationId_result setSuccess(List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct> success) {
+      this.success = success;
+      return this;
+    }
+
+    public void unsetSuccess() {
+      this.success = null;
+    }
+
+    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return this.success != null;
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      if (!value) {
+        this.success = null;
+      }
+    }
+
+    public ControlThriftException getControlException() {
+      return this.ControlException;
+    }
+
+    public getSdkProfilesByApplicationId_result setControlException(ControlThriftException ControlException) {
+      this.ControlException = ControlException;
+      return this;
+    }
+
+    public void unsetControlException() {
+      this.ControlException = null;
+    }
+
+    /** Returns true if field ControlException is set (has been assigned a value) and false otherwise */
+    public boolean isSetControlException() {
+      return this.ControlException != null;
+    }
+
+    public void setControlExceptionIsSet(boolean value) {
+      if (!value) {
+        this.ControlException = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((List<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>)value);
+        }
+        break;
+
+      case CONTROL_EXCEPTION:
+        if (value == null) {
+          unsetControlException();
+        } else {
+          setControlException((ControlThriftException)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return getSuccess();
+
+      case CONTROL_EXCEPTION:
+        return getControlException();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
+      case CONTROL_EXCEPTION:
+        return isSetControlException();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof getSdkProfilesByApplicationId_result)
+        return this.equals((getSdkProfilesByApplicationId_result)that);
+      return false;
+    }
+
+    public boolean equals(getSdkProfilesByApplicationId_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_success = true && this.isSetSuccess();
+      boolean that_present_success = true && that.isSetSuccess();
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (!this.success.equals(that.success))
+          return false;
+      }
+
+      boolean this_present_ControlException = true && this.isSetControlException();
+      boolean that_present_ControlException = true && that.isSetControlException();
+      if (this_present_ControlException || that_present_ControlException) {
+        if (!(this_present_ControlException && that_present_ControlException))
+          return false;
+        if (!this.ControlException.equals(that.ControlException))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      HashCodeBuilder builder = new HashCodeBuilder();
+
+      boolean present_success = true && (isSetSuccess());
+      builder.append(present_success);
+      if (present_success)
+        builder.append(success);
+
+      boolean present_ControlException = true && (isSetControlException());
+      builder.append(present_ControlException);
+      if (present_ControlException)
+        builder.append(ControlException);
+
+      return builder.toHashCode();
+    }
+
+    @Override
+    public int compareTo(getSdkProfilesByApplicationId_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetControlException()).compareTo(other.isSetControlException());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetControlException()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.ControlException, other.ControlException);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("getSdkProfilesByApplicationId_result(");
+      boolean first = true;
+
+      sb.append("success:");
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.success);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("ControlException:");
+      if (this.ControlException == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.ControlException);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class getSdkProfilesByApplicationId_resultStandardSchemeFactory implements SchemeFactory {
+      public getSdkProfilesByApplicationId_resultStandardScheme getScheme() {
+        return new getSdkProfilesByApplicationId_resultStandardScheme();
+      }
+    }
+
+    private static class getSdkProfilesByApplicationId_resultStandardScheme extends StandardScheme<getSdkProfilesByApplicationId_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, getSdkProfilesByApplicationId_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 0: // SUCCESS
+              if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
+                {
+                  org.apache.thrift.protocol.TList _list200 = iprot.readListBegin();
+                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list200.size);
+                  for (int _i201 = 0; _i201 < _list200.size; ++_i201)
+                  {
+                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem202;
+                    _elem202 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+                    _elem202.read(iprot);
+                    struct.success.add(_elem202);
+                  }
+                  iprot.readListEnd();
+                }
+                struct.setSuccessIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 1: // CONTROL_EXCEPTION
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                struct.ControlException = new ControlThriftException();
+                struct.ControlException.read(iprot);
+                struct.setControlExceptionIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, getSdkProfilesByApplicationId_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.success != null) {
+          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+          {
+            oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter203 : struct.success)
+            {
+              _iter203.write(oprot);
+            }
+            oprot.writeListEnd();
+          }
+          oprot.writeFieldEnd();
+        }
+        if (struct.ControlException != null) {
+          oprot.writeFieldBegin(CONTROL_EXCEPTION_FIELD_DESC);
+          struct.ControlException.write(oprot);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class getSdkProfilesByApplicationId_resultTupleSchemeFactory implements SchemeFactory {
+      public getSdkProfilesByApplicationId_resultTupleScheme getScheme() {
+        return new getSdkProfilesByApplicationId_resultTupleScheme();
+      }
+    }
+
+    private static class getSdkProfilesByApplicationId_resultTupleScheme extends TupleScheme<getSdkProfilesByApplicationId_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, getSdkProfilesByApplicationId_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetSuccess()) {
+          optionals.set(0);
+        }
+        if (struct.isSetControlException()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetSuccess()) {
+          {
+            oprot.writeI32(struct.success.size());
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter204 : struct.success)
+            {
+              _iter204.write(oprot);
+            }
+          }
+        }
+        if (struct.isSetControlException()) {
+          struct.ControlException.write(oprot);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, getSdkProfilesByApplicationId_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(2);
+        if (incoming.get(0)) {
+          {
+            org.apache.thrift.protocol.TList _list205 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list205.size);
+            for (int _i206 = 0; _i206 < _list205.size; ++_i206)
+            {
+              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem207;
+              _elem207 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+              _elem207.read(iprot);
+              struct.success.add(_elem207);
+            }
+          }
+          struct.setSuccessIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.ControlException = new ControlThriftException();
+          struct.ControlException.read(iprot);
+          struct.setControlExceptionIsSet(true);
+        }
+      }
+    }
+
+  }
+
   public static class generateSdk_args implements org.apache.thrift.TBase<generateSdk_args, generateSdk_args._Fields>, java.io.Serializable, Cloneable, Comparable<generateSdk_args>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("generateSdk_args");
 
@@ -79542,14 +82302,14 @@ public class ControlThriftService {
             case 0: // SUCCESS
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TList _list200 = iprot.readListBegin();
-                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list200.size);
-                  for (int _i201 = 0; _i201 < _list200.size; ++_i201)
+                  org.apache.thrift.protocol.TList _list208 = iprot.readListBegin();
+                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list208.size);
+                  for (int _i209 = 0; _i209 < _list208.size; ++_i209)
                   {
-                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem202;
-                    _elem202 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-                    _elem202.read(iprot);
-                    struct.success.add(_elem202);
+                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem210;
+                    _elem210 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+                    _elem210.read(iprot);
+                    struct.success.add(_elem210);
                   }
                   iprot.readListEnd();
                 }
@@ -79586,9 +82346,9 @@ public class ControlThriftService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter203 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter211 : struct.success)
             {
-              _iter203.write(oprot);
+              _iter211.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -79627,9 +82387,9 @@ public class ControlThriftService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter204 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter212 : struct.success)
             {
-              _iter204.write(oprot);
+              _iter212.write(oprot);
             }
           }
         }
@@ -79644,14 +82404,14 @@ public class ControlThriftService {
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TList _list205 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list205.size);
-            for (int _i206 = 0; _i206 < _list205.size; ++_i206)
+            org.apache.thrift.protocol.TList _list213 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list213.size);
+            for (int _i214 = 0; _i214 < _list213.size; ++_i214)
             {
-              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem207;
-              _elem207 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-              _elem207.read(iprot);
-              struct.success.add(_elem207);
+              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem215;
+              _elem215 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+              _elem215.read(iprot);
+              struct.success.add(_elem215);
             }
           }
           struct.setSuccessIsSet(true);
@@ -82400,14 +85160,14 @@ public class ControlThriftService {
             case 0: // SUCCESS
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TList _list208 = iprot.readListBegin();
-                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list208.size);
-                  for (int _i209 = 0; _i209 < _list208.size; ++_i209)
+                  org.apache.thrift.protocol.TList _list216 = iprot.readListBegin();
+                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list216.size);
+                  for (int _i217 = 0; _i217 < _list216.size; ++_i217)
                   {
-                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem210;
-                    _elem210 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-                    _elem210.read(iprot);
-                    struct.success.add(_elem210);
+                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem218;
+                    _elem218 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+                    _elem218.read(iprot);
+                    struct.success.add(_elem218);
                   }
                   iprot.readListEnd();
                 }
@@ -82444,9 +85204,9 @@ public class ControlThriftService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter211 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter219 : struct.success)
             {
-              _iter211.write(oprot);
+              _iter219.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -82485,9 +85245,9 @@ public class ControlThriftService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter212 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter220 : struct.success)
             {
-              _iter212.write(oprot);
+              _iter220.write(oprot);
             }
           }
         }
@@ -82502,14 +85262,14 @@ public class ControlThriftService {
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TList _list213 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list213.size);
-            for (int _i214 = 0; _i214 < _list213.size; ++_i214)
+            org.apache.thrift.protocol.TList _list221 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list221.size);
+            for (int _i222 = 0; _i222 < _list221.size; ++_i222)
             {
-              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem215;
-              _elem215 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-              _elem215.read(iprot);
-              struct.success.add(_elem215);
+              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem223;
+              _elem223 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+              _elem223.read(iprot);
+              struct.success.add(_elem223);
             }
           }
           struct.setSuccessIsSet(true);
@@ -84947,14 +87707,14 @@ public class ControlThriftService {
             case 0: // SUCCESS
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TList _list216 = iprot.readListBegin();
-                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list216.size);
-                  for (int _i217 = 0; _i217 < _list216.size; ++_i217)
+                  org.apache.thrift.protocol.TList _list224 = iprot.readListBegin();
+                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list224.size);
+                  for (int _i225 = 0; _i225 < _list224.size; ++_i225)
                   {
-                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem218;
-                    _elem218 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-                    _elem218.read(iprot);
-                    struct.success.add(_elem218);
+                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem226;
+                    _elem226 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+                    _elem226.read(iprot);
+                    struct.success.add(_elem226);
                   }
                   iprot.readListEnd();
                 }
@@ -84991,9 +87751,9 @@ public class ControlThriftService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter219 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter227 : struct.success)
             {
-              _iter219.write(oprot);
+              _iter227.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -85032,9 +87792,9 @@ public class ControlThriftService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter220 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter228 : struct.success)
             {
-              _iter220.write(oprot);
+              _iter228.write(oprot);
             }
           }
         }
@@ -85049,14 +87809,14 @@ public class ControlThriftService {
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TList _list221 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list221.size);
-            for (int _i222 = 0; _i222 < _list221.size; ++_i222)
+            org.apache.thrift.protocol.TList _list229 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list229.size);
+            for (int _i230 = 0; _i230 < _list229.size; ++_i230)
             {
-              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem223;
-              _elem223 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-              _elem223.read(iprot);
-              struct.success.add(_elem223);
+              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem231;
+              _elem231 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+              _elem231.read(iprot);
+              struct.success.add(_elem231);
             }
           }
           struct.setSuccessIsSet(true);
@@ -85830,14 +88590,14 @@ public class ControlThriftService {
             case 0: // SUCCESS
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TList _list224 = iprot.readListBegin();
-                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list224.size);
-                  for (int _i225 = 0; _i225 < _list224.size; ++_i225)
+                  org.apache.thrift.protocol.TList _list232 = iprot.readListBegin();
+                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list232.size);
+                  for (int _i233 = 0; _i233 < _list232.size; ++_i233)
                   {
-                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem226;
-                    _elem226 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-                    _elem226.read(iprot);
-                    struct.success.add(_elem226);
+                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem234;
+                    _elem234 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+                    _elem234.read(iprot);
+                    struct.success.add(_elem234);
                   }
                   iprot.readListEnd();
                 }
@@ -85874,9 +88634,9 @@ public class ControlThriftService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter227 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter235 : struct.success)
             {
-              _iter227.write(oprot);
+              _iter235.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -85915,9 +88675,9 @@ public class ControlThriftService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter228 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter236 : struct.success)
             {
-              _iter228.write(oprot);
+              _iter236.write(oprot);
             }
           }
         }
@@ -85932,14 +88692,14 @@ public class ControlThriftService {
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TList _list229 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list229.size);
-            for (int _i230 = 0; _i230 < _list229.size; ++_i230)
+            org.apache.thrift.protocol.TList _list237 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list237.size);
+            for (int _i238 = 0; _i238 < _list237.size; ++_i238)
             {
-              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem231;
-              _elem231 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-              _elem231.read(iprot);
-              struct.success.add(_elem231);
+              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem239;
+              _elem239 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+              _elem239.read(iprot);
+              struct.success.add(_elem239);
             }
           }
           struct.setSuccessIsSet(true);
@@ -86713,14 +89473,14 @@ public class ControlThriftService {
             case 0: // SUCCESS
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TList _list232 = iprot.readListBegin();
-                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list232.size);
-                  for (int _i233 = 0; _i233 < _list232.size; ++_i233)
+                  org.apache.thrift.protocol.TList _list240 = iprot.readListBegin();
+                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list240.size);
+                  for (int _i241 = 0; _i241 < _list240.size; ++_i241)
                   {
-                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem234;
-                    _elem234 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-                    _elem234.read(iprot);
-                    struct.success.add(_elem234);
+                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem242;
+                    _elem242 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+                    _elem242.read(iprot);
+                    struct.success.add(_elem242);
                   }
                   iprot.readListEnd();
                 }
@@ -86757,9 +89517,9 @@ public class ControlThriftService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter235 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter243 : struct.success)
             {
-              _iter235.write(oprot);
+              _iter243.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -86798,9 +89558,9 @@ public class ControlThriftService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter236 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter244 : struct.success)
             {
-              _iter236.write(oprot);
+              _iter244.write(oprot);
             }
           }
         }
@@ -86815,14 +89575,14 @@ public class ControlThriftService {
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TList _list237 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list237.size);
-            for (int _i238 = 0; _i238 < _list237.size; ++_i238)
+            org.apache.thrift.protocol.TList _list245 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list245.size);
+            for (int _i246 = 0; _i246 < _list245.size; ++_i246)
             {
-              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem239;
-              _elem239 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-              _elem239.read(iprot);
-              struct.success.add(_elem239);
+              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem247;
+              _elem247 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+              _elem247.read(iprot);
+              struct.success.add(_elem247);
             }
           }
           struct.setSuccessIsSet(true);
@@ -87483,14 +90243,14 @@ public class ControlThriftService {
             case 0: // SUCCESS
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TList _list240 = iprot.readListBegin();
-                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list240.size);
-                  for (int _i241 = 0; _i241 < _list240.size; ++_i241)
+                  org.apache.thrift.protocol.TList _list248 = iprot.readListBegin();
+                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list248.size);
+                  for (int _i249 = 0; _i249 < _list248.size; ++_i249)
                   {
-                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem242;
-                    _elem242 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-                    _elem242.read(iprot);
-                    struct.success.add(_elem242);
+                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem250;
+                    _elem250 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+                    _elem250.read(iprot);
+                    struct.success.add(_elem250);
                   }
                   iprot.readListEnd();
                 }
@@ -87527,9 +90287,9 @@ public class ControlThriftService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter243 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter251 : struct.success)
             {
-              _iter243.write(oprot);
+              _iter251.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -87568,9 +90328,9 @@ public class ControlThriftService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter244 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter252 : struct.success)
             {
-              _iter244.write(oprot);
+              _iter252.write(oprot);
             }
           }
         }
@@ -87585,14 +90345,14 @@ public class ControlThriftService {
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TList _list245 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list245.size);
-            for (int _i246 = 0; _i246 < _list245.size; ++_i246)
+            org.apache.thrift.protocol.TList _list253 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list253.size);
+            for (int _i254 = 0; _i254 < _list253.size; ++_i254)
             {
-              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem247;
-              _elem247 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-              _elem247.read(iprot);
-              struct.success.add(_elem247);
+              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem255;
+              _elem255 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+              _elem255.read(iprot);
+              struct.success.add(_elem255);
             }
           }
           struct.setSuccessIsSet(true);
@@ -91688,14 +94448,14 @@ public class ControlThriftService {
             case 0: // SUCCESS
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TList _list248 = iprot.readListBegin();
-                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list248.size);
-                  for (int _i249 = 0; _i249 < _list248.size; ++_i249)
+                  org.apache.thrift.protocol.TList _list256 = iprot.readListBegin();
+                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list256.size);
+                  for (int _i257 = 0; _i257 < _list256.size; ++_i257)
                   {
-                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem250;
-                    _elem250 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-                    _elem250.read(iprot);
-                    struct.success.add(_elem250);
+                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem258;
+                    _elem258 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+                    _elem258.read(iprot);
+                    struct.success.add(_elem258);
                   }
                   iprot.readListEnd();
                 }
@@ -91732,9 +94492,9 @@ public class ControlThriftService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter251 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter259 : struct.success)
             {
-              _iter251.write(oprot);
+              _iter259.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -91773,9 +94533,9 @@ public class ControlThriftService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter252 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter260 : struct.success)
             {
-              _iter252.write(oprot);
+              _iter260.write(oprot);
             }
           }
         }
@@ -91790,14 +94550,14 @@ public class ControlThriftService {
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TList _list253 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list253.size);
-            for (int _i254 = 0; _i254 < _list253.size; ++_i254)
+            org.apache.thrift.protocol.TList _list261 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list261.size);
+            for (int _i262 = 0; _i262 < _list261.size; ++_i262)
             {
-              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem255;
-              _elem255 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-              _elem255.read(iprot);
-              struct.success.add(_elem255);
+              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem263;
+              _elem263 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+              _elem263.read(iprot);
+              struct.success.add(_elem263);
             }
           }
           struct.setSuccessIsSet(true);
@@ -97891,14 +100651,14 @@ public class ControlThriftService {
             case 0: // SUCCESS
               if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                 {
-                  org.apache.thrift.protocol.TList _list256 = iprot.readListBegin();
-                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list256.size);
-                  for (int _i257 = 0; _i257 < _list256.size; ++_i257)
+                  org.apache.thrift.protocol.TList _list264 = iprot.readListBegin();
+                  struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list264.size);
+                  for (int _i265 = 0; _i265 < _list264.size; ++_i265)
                   {
-                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem258;
-                    _elem258 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-                    _elem258.read(iprot);
-                    struct.success.add(_elem258);
+                    org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem266;
+                    _elem266 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+                    _elem266.read(iprot);
+                    struct.success.add(_elem266);
                   }
                   iprot.readListEnd();
                 }
@@ -97935,9 +100695,9 @@ public class ControlThriftService {
           oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
           {
             oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter259 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter267 : struct.success)
             {
-              _iter259.write(oprot);
+              _iter267.write(oprot);
             }
             oprot.writeListEnd();
           }
@@ -97976,9 +100736,9 @@ public class ControlThriftService {
         if (struct.isSetSuccess()) {
           {
             oprot.writeI32(struct.success.size());
-            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter260 : struct.success)
+            for (org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _iter268 : struct.success)
             {
-              _iter260.write(oprot);
+              _iter268.write(oprot);
             }
           }
         }
@@ -97993,14 +100753,14 @@ public class ControlThriftService {
         BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           {
-            org.apache.thrift.protocol.TList _list261 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list261.size);
-            for (int _i262 = 0; _i262 < _list261.size; ++_i262)
+            org.apache.thrift.protocol.TList _list269 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+            struct.success = new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct>(_list269.size);
+            for (int _i270 = 0; _i270 < _list269.size; ++_i270)
             {
-              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem263;
-              _elem263 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
-              _elem263.read(iprot);
-              struct.success.add(_elem263);
+              org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct _elem271;
+              _elem271 = new org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct();
+              _elem271.read(iprot);
+              struct.success.add(_elem271);
             }
           }
           struct.setSuccessIsSet(true);
