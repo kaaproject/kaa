@@ -46,11 +46,11 @@ public class CassandraEPByEndpointGroupId implements Serializable {
         this.endpointKeyHash = endpointKeyHash;
     }
 
-    public String getAccessToken() {
+    public String getEpGroupId() {
         return epGroupId;
     }
 
-    public void setAccessToken(String epGroupId) {
+    public void setEpGroupId(String epGroupId) {
         this.epGroupId = epGroupId;
     }
 
