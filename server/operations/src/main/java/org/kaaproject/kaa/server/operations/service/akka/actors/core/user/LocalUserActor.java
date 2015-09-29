@@ -48,7 +48,7 @@ public class LocalUserActor extends UntypedActor {
      *            the operations service
      */
     private LocalUserActor(AkkaContext context, String userId, String tenantId) {
-        this.messageProcessor = new LocalUserActorMessageProcessor(context.getCacheService(), context.getEventService(), userId, tenantId);
+        this.messageProcessor = new LocalUserActorMessageProcessor(context, userId, tenantId);
         this.userId = userId;
     }
 
