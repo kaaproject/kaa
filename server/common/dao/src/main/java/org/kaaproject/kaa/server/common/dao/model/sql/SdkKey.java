@@ -33,6 +33,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_PROFILE_TOKE
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -113,42 +114,52 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
             try {
                 this.id = ModelUtils.getLongId(dto.getId());
 
-                String token = dto.getToken();
-                if (token == null || token.isEmpty()) {
-                    // An empty list is no different from a null field
-                    if (this.aefMapIds != null && this.aefMapIds.isEmpty()) {
-                        dto.setAefMapIds(null);
-                    }
-
-                    // Must not use these fields for token generation
-                    dto.setId(null);
-                    dto.setEndpointCount(null);
-
-                    MessageDigest messageDigest = MessageDigest.getInstance(HASH_ALGORITHM);
-                    messageDigest.update(DtoByteMarshaller.toBytes(dto));
-                    this.token = Base64.encodeBase64String(messageDigest.digest());
-
-                    dto.setId(this.getStringId());
-                    dto.setEndpointCount(this.endpointCount);
-                    dto.setAefMapIds(this.aefMapIds);
-                } else {
-                    this.token = token;
-                }
-
-                Long applicationId = ModelUtils.getLongId(dto.getApplicationId());
-                this.application = (applicationId != null) ? new Application(applicationId) : null;
-
                 this.name = dto.getName();
                 this.configurationSchemaVersion = dto.getConfigurationSchemaVersion();
                 this.profileSchemaVersion = dto.getProfileSchemaVersion();
                 this.notificationSchemaVersion = dto.getProfileSchemaVersion();
                 this.logSchemaVersion = dto.getNotificationSchemaVersion();
                 this.targetPlatform = dto.getTargetPlatform();
-                this.aefMapIds = dto.getAefMapIds();
+
+                if (dto.getAefMapIds() != null) {
+                    this.aefMapIds = new ArrayList<>(dto.getAefMapIds().size());
+                    for (String id : dto.getAefMapIds()) {
+                        this.aefMapIds.add(id);
+                    }
+                }
+
                 this.defaultVerifierToken = dto.getDefaultVerifierToken();
                 this.createdUsername = dto.getCreatedUsername();
                 this.createdTime = dto.getCreatedTime();
                 this.endpointCount = dto.getEndpointCount();
+
+                Long applicationId = ModelUtils.getLongId(dto.getApplicationId());
+                this.application = (applicationId != null) ? new Application(applicationId) : null;
+
+                // An empty list is no different from a null field
+                if (this.aefMapIds != null && this.aefMapIds.isEmpty()) {
+                    dto.setAefMapIds(null);
+                }
+
+                // Must not use these fields for token generation
+                dto.setId(null);
+                dto.setCreatedTime(null);
+                dto.setEndpointCount(null);
+
+                MessageDigest messageDigest = MessageDigest.getInstance(HASH_ALGORITHM);
+                messageDigest.update(DtoByteMarshaller.toBytes(dto));
+                this.token = Base64.encodeBase64String(messageDigest.digest());
+
+                dto.setId(this.getStringId());
+                dto.setCreatedTime(this.createdTime);
+                dto.setEndpointCount(this.endpointCount);
+
+                if (this.aefMapIds != null) {
+                    dto.setAefMapIds(new ArrayList<String>(this.aefMapIds.size()));
+                    for (String id : this.aefMapIds) {
+                        dto.getAefMapIds().add(id);
+                    }
+                }
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }
@@ -270,6 +281,7 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
 
         dto.setId(this.getStringId());
         dto.setToken(this.token);
+
         if (this.application != null) {
             dto.setApplicationId(this.application.getStringId());
             dto.setApplicationToken(this.application.getApplicationToken());
@@ -281,7 +293,14 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
         dto.setNotificationSchemaVersion(this.notificationSchemaVersion);
         dto.setLogSchemaVersion(this.logSchemaVersion);
         dto.setTargetPlatform(this.targetPlatform);
-        dto.setAefMapIds(this.aefMapIds);
+
+        if (this.aefMapIds != null) {
+            dto.setAefMapIds(new ArrayList<String>(this.aefMapIds.size()));
+            for (String id : this.aefMapIds) {
+                dto.getAefMapIds().add(id);
+            }
+        }
+
         dto.setDefaultVerifierToken(this.defaultVerifierToken);
         dto.setCreatedUsername(this.createdUsername);
         dto.setCreatedTime(this.createdTime);
@@ -299,45 +318,42 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
             return false;
         }
 
-        SdkKey entity = (SdkKey) o;
+        SdkKey other = (SdkKey) o;
 
-        if (application != null ? !application.equals(entity.application) : entity.application != null) {
+        if (application != null ? !application.equals(other.application) : other.application != null) {
             return false;
         }
-        if (token != null ? !token.equals(entity.token) : entity.token != null) {
+        if (token != null ? !token.equals(other.token) : other.token != null) {
             return false;
         }
-        if (name != null ? !name.equals(entity.name) : entity.name != null) {
+        if (name != null ? !name.equals(other.name) : other.name != null) {
             return false;
         }
-        if (configurationSchemaVersion != null ? !configurationSchemaVersion.equals(entity.configurationSchemaVersion) : entity.configurationSchemaVersion != null) {
+        if (configurationSchemaVersion != null ? !configurationSchemaVersion.equals(other.configurationSchemaVersion) : other.configurationSchemaVersion != null) {
             return false;
         }
-        if (profileSchemaVersion != null ? !profileSchemaVersion.equals(entity.profileSchemaVersion) : entity.profileSchemaVersion != null) {
+        if (profileSchemaVersion != null ? !profileSchemaVersion.equals(other.profileSchemaVersion) : other.profileSchemaVersion != null) {
             return false;
         }
-        if (notificationSchemaVersion != null ? !notificationSchemaVersion.equals(entity.notificationSchemaVersion) : entity.notificationSchemaVersion != null) {
+        if (notificationSchemaVersion != null ? !notificationSchemaVersion.equals(other.notificationSchemaVersion) : other.notificationSchemaVersion != null) {
             return false;
         }
-        if (logSchemaVersion != null ? !logSchemaVersion.equals(entity.logSchemaVersion) : entity.logSchemaVersion != null) {
+        if (logSchemaVersion != null ? !logSchemaVersion.equals(other.logSchemaVersion) : other.logSchemaVersion != null) {
             return false;
         }
-        if (targetPlatform != null ? !targetPlatform.equals(entity.targetPlatform) : entity.targetPlatform != null) {
+        if (targetPlatform != null ? !targetPlatform.equals(other.targetPlatform) : other.targetPlatform != null) {
             return false;
         }
-        if (!Arrays.equals(aefMapIds.toArray(), entity.aefMapIds.toArray())) {
+        if (aefMapIds != null ? !aefMapIds.equals(other.aefMapIds) : other.aefMapIds != null) {
             return false;
         }
-        if (defaultVerifierToken != null ? !defaultVerifierToken.equals(entity.defaultVerifierToken) : entity.defaultVerifierToken != null) {
+        if (defaultVerifierToken != null ? !defaultVerifierToken.equals(other.defaultVerifierToken) : other.defaultVerifierToken != null) {
             return false;
         }
-        if (createdUsername != null ? !createdUsername.equals(entity.createdUsername) : entity.createdUsername != null) {
+        if (createdUsername != null ? !createdUsername.equals(other.createdUsername) : other.createdUsername != null) {
             return false;
         }
-        if (createdTime != null ? !createdTime.equals(entity.createdTime) : entity.createdTime != null) {
-            return false;
-        }
-        if (endpointCount != null ? !endpointCount.equals(entity.endpointCount) : entity.endpointCount != null) {
+        if (createdTime != null ? !createdTime.equals(other.createdTime) : other.createdTime != null) {
             return false;
         }
 
@@ -355,11 +371,10 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
         result = 31 * result + (notificationSchemaVersion != null ? notificationSchemaVersion.hashCode() : 0);
         result = 31 * result + (logSchemaVersion != null ? logSchemaVersion.hashCode() : 0);
         result = 31 * result + (targetPlatform != null ? targetPlatform.hashCode() : 0);
-        result = 31 * result + (aefMapIds != null ? Arrays.hashCode(aefMapIds.toArray()) : 0);
+        result = 31 * result + (aefMapIds != null ? aefMapIds.hashCode() : 0);
         result = 31 * result + (defaultVerifierToken != null ? defaultVerifierToken.hashCode() : 0);
         result = 31 * result + (createdUsername != null ? createdUsername.hashCode() : 0);
         result = 31 * result + (createdTime != null ? createdTime.hashCode() : 0);
-        result = 31 * result + (endpointCount != null ? endpointCount.hashCode() : 0);
 
         return result;
     }
@@ -375,7 +390,7 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
                 ", notificationSchemaVersion=" + notificationSchemaVersion +
                 ", logSchemaVersion=" + logSchemaVersion +
                 ", targetPlatform=" + targetPlatform +
-                ", aefMapIds=" + Arrays.toString(aefMapIds.toArray()) +
+                ", aefMapIds=" + aefMapIds != null ? Arrays.toString(aefMapIds.toArray()) : null +
                 ", defaultVerifierToken=" + defaultVerifierToken +
                 ", createdUsername=" + createdUsername +
                 ", createdTime=" + createdTime +
