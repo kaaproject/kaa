@@ -1209,6 +1209,7 @@ public class DataSource {
         rpcService.deleteSdkProfile(sdkProfileId, new DataCallback<Void>(callback) {
             @Override
             protected void onResult(Void result) {
+                eventBus.fireEvent(new DataEvent(SdkPropertiesDto.class));
             }
         });
     }
