@@ -100,7 +100,7 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
     private Long createdTime;
 
     @Column(name = SDK_PROFILE_ENDPOINT_COUNT)
-    private Integer endpointCount;
+    private Integer endpointCount = 0;
 
     public SdkKey() {
     }
@@ -117,8 +117,8 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
                 this.name = dto.getName();
                 this.configurationSchemaVersion = dto.getConfigurationSchemaVersion();
                 this.profileSchemaVersion = dto.getProfileSchemaVersion();
-                this.notificationSchemaVersion = dto.getProfileSchemaVersion();
-                this.logSchemaVersion = dto.getNotificationSchemaVersion();
+                this.notificationSchemaVersion = dto.getNotificationSchemaVersion();
+                this.logSchemaVersion = dto.getLogSchemaVersion();
                 this.targetPlatform = dto.getTargetPlatform();
 
                 if (dto.getAefMapIds() != null) {

@@ -524,6 +524,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public void addSdkProfile(SdkPropertiesDto sdkProfile) throws KaaAdminServiceException {
         this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            sdkProfile.setCreatedUsername(this.getCurrentUser().getUsername());
+            sdkProfile.setCreatedTime(System.currentTimeMillis());
             clientProvider.getClient().addSdkProfile(ThriftDtoConverter.toDataStruct(sdkProfile));
         } catch (Exception cause) {
             throw Utils.handleException(cause);

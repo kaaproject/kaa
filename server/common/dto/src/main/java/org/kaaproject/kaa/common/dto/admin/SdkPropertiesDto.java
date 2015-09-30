@@ -41,7 +41,7 @@ public class SdkPropertiesDto implements HasId, Serializable {
     private String token;
     private String createdUsername;
     private Long createdTime;
-    private Integer endpointCount;
+    private Integer endpointCount = 0;
 
     public SdkPropertiesDto() {
     }
