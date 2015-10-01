@@ -129,6 +129,7 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
                 }
 
                 this.defaultVerifierToken = dto.getDefaultVerifierToken();
+
                 this.createdUsername = dto.getCreatedUsername();
                 this.createdTime = dto.getCreatedTime();
                 this.endpointCount = dto.getEndpointCount();
@@ -143,6 +144,7 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
 
                 // Must not use these fields for token generation
                 dto.setId(null);
+                dto.setCreatedUsername(null);
                 dto.setCreatedTime(null);
                 dto.setEndpointCount(null);
 
@@ -151,6 +153,7 @@ public final class SdkKey extends GenericModel<SdkPropertiesDto> implements Seri
                 this.token = Base64.encodeBase64String(messageDigest.digest());
 
                 dto.setId(this.getStringId());
+                dto.setCreatedUsername(this.createdUsername);
                 dto.setCreatedTime(this.createdTime);
                 dto.setEndpointCount(this.endpointCount);
 

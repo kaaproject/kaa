@@ -19,8 +19,10 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.sdk;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell.ActionListener;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.cell.ActionButtonCell.ActionValidator;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.dom.client.Style.Unit;
@@ -171,7 +173,7 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkPropertiesDto, String> {
         ActionListener<SdkPropertiesDto> actionListener = new ActionListener<SdkPropertiesDto>() {
             @Override
             public void onItemAction(SdkPropertiesDto value) {
-                // Add SDK generation
+                SdkProfilesGrid.this.generateSdk(value);
             }
         };
 
@@ -191,6 +193,11 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkPropertiesDto, String> {
                 return item;
             }
         };
+    }
+
+    private void generateSdk(SdkPropertiesDto value) {
+        RowActionEvent<String> rowGenerateSdkEvent = new RowActionEvent<>(value.getId(), KaaRowAction.GENERATE_SDK);
+        this.fireEvent(rowGenerateSdkEvent);
     }
 
     @Override

@@ -1221,4 +1221,12 @@ public class DataSource {
             }
         });
     }
+
+    public void retrieveSdk(String sdkProfileId, final AsyncCallback<String> callback) {
+        rpcService.retrieveSdk(sdkProfileId, new DataCallback<String>(callback) {
+            @Override
+            protected void onResult(String result) {
+            }
+        });
+    }
 }

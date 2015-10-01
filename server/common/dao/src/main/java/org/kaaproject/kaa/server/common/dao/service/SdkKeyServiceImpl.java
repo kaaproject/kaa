@@ -41,15 +41,6 @@ public class SdkKeyServiceImpl implements SdkKeyService {
     private SdkKeyDao<SdkKey> sdkKeyDao;
 
     @Override
-    public SdkPropertiesDto findSdkKeyByToken(String token) {
-        SdkPropertiesDto sdkPropertiesDto = null;
-        if (Validator.isValidId(token)) {
-            sdkPropertiesDto = DaoUtil.getDto(sdkKeyDao.findSdkKeyByToken(token));
-        }
-        return sdkPropertiesDto;
-    }
-
-    @Override
     public SdkPropertiesDto saveSdkKey(SdkPropertiesDto sdkPropertiesDto) {
         SdkPropertiesDto saved = null;
 
@@ -78,6 +69,24 @@ public class SdkKeyServiceImpl implements SdkKeyService {
         }
 
         return saved;
+    }
+
+    @Override
+    public SdkPropertiesDto findSdkKeyById(String id) {
+        SdkPropertiesDto sdkPropertiesDto = null;
+        if (Validator.isValidId(id)) {
+            sdkPropertiesDto = DaoUtil.getDto(sdkKeyDao.findById(id));
+        }
+        return sdkPropertiesDto;
+    }
+
+    @Override
+    public SdkPropertiesDto findSdkKeyByToken(String token) {
+        SdkPropertiesDto sdkPropertiesDto = null;
+        if (Validator.isValidId(token)) {
+            sdkPropertiesDto = DaoUtil.getDto(sdkKeyDao.findSdkKeyByToken(token));
+        }
+        return sdkPropertiesDto;
     }
 
     @Override

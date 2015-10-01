@@ -106,6 +106,8 @@ public interface KaaAdminService extends RemoteService {
 
     public String generateSdk(SdkPropertiesDto key) throws KaaAdminServiceException;
 
+    public String retrieveSdk(String sdkProfileId) throws KaaAdminServiceException;
+
     public FileData getSdk(SdkPropertiesDto key) throws KaaAdminServiceException;
 
     public void flushSdkCache() throws KaaAdminServiceException;

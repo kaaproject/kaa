@@ -567,6 +567,16 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
+    public String retrieveSdk(String sdkProfileId) throws KaaAdminServiceException {
+        try {
+            SdkPropertiesDto key = ThriftDtoConverter.toDto(clientProvider.getClient().getSdkProfile(sdkProfileId));
+            return this.generateSdk(key);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
+    }
+
+    @Override
     public FileData getSdk(SdkPropertiesDto key) throws KaaAdminServiceException {
         try {
             return doGenerateSdk(key);

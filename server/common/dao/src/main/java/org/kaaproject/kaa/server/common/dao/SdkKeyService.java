@@ -26,13 +26,6 @@ import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 public interface SdkKeyService {
 
     /**
-     * Find sdk properties by theirs token
-     * @param token token of an SDK
-     * @return the sdk properties dto object
-     */
-    SdkPropertiesDto findSdkKeyByToken(String token);
-
-    /**
      * Save sdk properties. If sdk properties object has id, then sdk key
      * will be updated, otherwise if there is no other sdk key object
      * with the same token, it will be inserted as a new sdk key object,
@@ -42,6 +35,24 @@ public interface SdkKeyService {
      * @return the saved application dto object
      */
     SdkPropertiesDto saveSdkKey(SdkPropertiesDto sdkPropertiesDto);
+
+    /**
+     * Returns an SDK profile with the given identifier.
+     *
+     * @param id An SDK profile identifier
+     *
+     * @return An SDK profile with the given identifier
+     */
+    SdkPropertiesDto findSdkKeyById(String id);
+
+    /**
+     * Returns an SDK profile with the given token.
+     *
+     * @param token An SDK profile token
+     *
+     * @return An SDK profile with the given token
+     */
+    SdkPropertiesDto findSdkKeyByToken(String token);
 
     /**
      * Returns a list of SDK profiles for an application with the given identifier

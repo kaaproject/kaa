@@ -16,7 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -25,6 +27,9 @@ import org.kaaproject.kaa.server.admin.client.mvp.data.SdkProfilesDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.place.GenerateSdkPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
+import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -68,5 +73,27 @@ public class SdkProfilesActivity extends AbstractListActivity<SdkPropertiesDto, 
     @Override
     protected void deleteEntity(String id, AsyncCallback<Void> callback) {
         KaaAdmin.getDataSource().deleteSdkProfile(id, callback);
+    }
+
+    @Override
+    protected void onCustomRowAction(RowActionEvent<String> event) {
+        if (event.getAction() == KaaRowAction.GENERATE_SDK) {
+            BusyPopup.showPopup();
+            KaaAdmin.getDataSource().retrieveSdk(event.getClickedId(), new AsyncCallback<String>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    BusyPopup.hidePopup();
+                    Utils.handleException(caught, SdkProfilesActivity.this.getView());
+                }
+
+                @Override
+                public void onSuccess(String key) {
+                    BusyPopup.hidePopup();
+                    SdkProfilesActivity.this.getView().clearError();
+                    ServletHelper.downloadSdk(key);
+                }
+            });
+        }
     }
 }

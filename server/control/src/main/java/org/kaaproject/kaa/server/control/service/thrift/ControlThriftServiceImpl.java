@@ -1028,7 +1028,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
             }
 
             sdkPropertiesDto.setApplicationToken(appToken);
-            sdkPropertiesDto = sdkKeyService.saveSdkKey(sdkPropertiesDto);
+//            sdkPropertiesDto = sdkKeyService.saveSdkKey(sdkPropertiesDto);
             String sdkToken = new SdkKey(sdkPropertiesDto).getToken();
             LOG.debug("Sdk properties for sdk generation: {}", sdkPropertiesDto);
 
@@ -1975,6 +1975,16 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
             sdkKeyService.removeSdkProfileById(sdkProfileId);
         } catch (Exception cause) {
             LOG.error("Unable to delete SDK profile", cause);
+            throw new TException(cause);
+        }
+    }
+
+    @Override
+    public DataStruct getSdkProfile(String sdkProfileId) throws ControlThriftException, TException {
+        try {
+            return ThriftDtoConverter.toDataStruct(sdkKeyService.findSdkKeyById(sdkProfileId));
+        } catch (Exception cause) {
+            LOG.error("Unable to get SDK profile", cause);
             throw new TException(cause);
         }
     }
