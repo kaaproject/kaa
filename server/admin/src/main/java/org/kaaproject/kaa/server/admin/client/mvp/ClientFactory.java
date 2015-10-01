@@ -24,6 +24,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -65,9 +66,10 @@ public interface ClientFactory {
     NavigationView getNavigationView();
 
     UserProfileView getUserProfileView();
-    
+
+    BaseListView<SdkPropertiesDto> getSdkProfilesView();
     BasePropertiesView getGeneralPropertiesView();
-    
+
     BasePropertiesView getMailPropertiesView();
 
     BaseListView<TenantUserDto> getTenantsView();
@@ -77,7 +79,7 @@ public interface ClientFactory {
     BaseListView<ApplicationDto> getApplicationsView();
     ApplicationView getCreateApplicationView();
     ApplicationView getApplicationView();
-    
+
     GenerateSdkView getGenerateSdkView();
 
     BaseListView<UserDto> getUsersView();
@@ -113,7 +115,7 @@ public interface ClientFactory {
     BaseListView<TopicDto> getTopicsView();
     TopicView getTopicView();
     TopicView getCreateTopicView();
-    
+
     SendNotificationView getSendNotificationView();
 
     BaseListView<EventClassFamilyDto> getEcfsView();
@@ -137,7 +139,7 @@ public interface ClientFactory {
     BaseListView<UserVerifierDto> getUserVerifiersView();
     UserVerifierView getUserVerifierView();
     UserVerifierView getCreateUserVerifierView();
-    
+
     UpdateUserConfigView getUpdateUserConfigView();
 
 }

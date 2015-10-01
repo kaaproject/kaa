@@ -84,7 +84,7 @@ public class GenerateSdkPlace extends TreePlace {
 
     @Override
     public TreePlace createDefaultPreviousPlace() {
-        return new ApplicationPlace(applicationId);
+        return new SdkProfilesPlace(applicationId);
     }
 
 }

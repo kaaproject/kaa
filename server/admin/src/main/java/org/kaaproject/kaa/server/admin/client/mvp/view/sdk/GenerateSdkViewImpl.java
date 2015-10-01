@@ -25,12 +25,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.kaa.common.dto.SchemaDto;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.GenerateSdkView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiAefMapListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiValueListBox;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.SchemaListBox;
@@ -45,6 +47,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueListBox;
@@ -52,8 +55,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements GenerateSdkView, ValueChangeHandler<SchemaDto>  {
-    
+
     private static final String REQUIRED = Utils.avroUiStyle.requiredField();
+
+    private SizedTextBox name;
 
     private SchemaListBox configurationSchemaVersion;
     private SchemaListBox profileSchemaVersion;
@@ -69,29 +74,37 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
 
     private Button addAefMapButton;
     private Button removeAefMapButton;
-    
+
     private ValueListBox<UserVerifierDto> defaultUserVerifier;
 
-    
+
     public GenerateSdkViewImpl() {
         super(true);
     }
-    
+
     @Override
     protected void initDetailsTable() {
-        
+
         detailsTable.getColumnFormatter().setWidth(0, "250px");
         detailsTable.getColumnFormatter().setWidth(1, "500px");
-        
+
         int row = 0;
-        Widget label = new Label(Utils.constants.configurationSchemaVersion());
+        Widget label = new Label(Utils.constants.name());
+        label.addStyleName(REQUIRED);
+        name = new KaaAdminSizedTextBox(15);
+        name.addInputHandler(this);
+        detailsTable.setWidget(row, 0, label);
+        detailsTable.setWidget(row, 1, name);
+
+        row++;
+        label = new Label(Utils.constants.configurationSchemaVersion());
         label.addStyleName(REQUIRED);
         configurationSchemaVersion = new SchemaListBox();
         configurationSchemaVersion.setWidth("80px");
         configurationSchemaVersion.addValueChangeHandler(this);
         detailsTable.setWidget(row, 0, label);
         detailsTable.setWidget(row, 1, configurationSchemaVersion);
-        
+
         row++;
         label = new Label(Utils.constants.profileSchemaVersion());
         label.addStyleName(REQUIRED);
@@ -100,7 +113,7 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         profileSchemaVersion.addValueChangeHandler(this);
         detailsTable.setWidget(row, 0, label);
         detailsTable.setWidget(row, 1, profileSchemaVersion);
-        
+
         row++;
         label = new Label(Utils.constants.notificationSchemaVersion());
         label.addStyleName(REQUIRED);
@@ -109,7 +122,7 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         notificationSchemaVersion.addValueChangeHandler(this);
         detailsTable.setWidget(row, 0, label);
         detailsTable.setWidget(row, 1, notificationSchemaVersion);
-        
+
         row++;
         label = new Label(Utils.constants.logSchemaVersion());
         label.addStyleName(REQUIRED);
@@ -118,7 +131,7 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         logSchemaVersion.addValueChangeHandler(this);
         detailsTable.setWidget(row, 0, label);
         detailsTable.setWidget(row, 1, logSchemaVersion);
-        
+
         row++;
         label = new Label(Utils.constants.targetPlatform());
         label.addStyleName(REQUIRED);
@@ -146,7 +159,7 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         });
         detailsTable.setWidget(row, 0, label);
         detailsTable.setWidget(row, 1, targetPlatform);
-        
+
         row++;
         FlexTable ecfsTable = new FlexTable();
         ecfsTable.setCellSpacing(6);
@@ -179,13 +192,13 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         ecfsTable.setWidget(0, 0, availableEcfsPanel);
         ecfsTable.setWidget(0, 1, ecfButtonsPanel);
         ecfsTable.setWidget(0, 2, selectedEcfsPanel);
-        
+
         ecfsTable.getFlexCellFormatter().setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_MIDDLE);
 
         DisclosurePanel ecfsDisclosure = new DisclosurePanel(Utils.constants.ecfs());
         ecfsDisclosure.setAnimationEnabled(true);
         ecfsDisclosure.setContent(ecfsTable);
-        
+
         addAefMapButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
         removeAefMapButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
 
@@ -221,7 +234,7 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         });
         detailsTable.setWidget(row, 0, ecfsDisclosure);
         detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
-        
+
         row++;
         label = new Label(Utils.constants.defaultUserVerifier());
         Renderer<UserVerifierDto> userVerifierRenderer = new Renderer<UserVerifierDto>() {
@@ -249,25 +262,30 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         detailsTable.setWidget(row, 0, label);
         detailsTable.setWidget(row, 1, defaultUserVerifier);
     }
-    
+
     @Override
     public void onValueChange(ValueChangeEvent<SchemaDto> event) {
         fireChanged();
     }
-    
+
     @Override
     protected String getCreateTitle() {
-        return Utils.constants.generateSdk();
+        return Utils.constants.sdkProfiles();
     }
 
     @Override
     protected String getViewTitle() {
-        return Utils.constants.generateSdk();
+        return Utils.constants.sdkProfiles();
     }
 
     @Override
     protected String getSubTitle() {
         return Utils.constants.sdkDetails();
+    }
+
+    @Override
+    public HasValue<String> getName() {
+        return name;
     }
 
     @Override
@@ -304,17 +322,18 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
     public ValueListBox<UserVerifierDto> getDefaultUserVerifier() {
         return defaultUserVerifier;
     }
-    
+
     @Override
     public void setAefMaps(List<AefMapInfoDto> aefMaps) {
         this.aefMaps = aefMaps;
         Collections.sort(this.aefMaps, aefMapComparator);
         availableAefMaps.setAcceptableValues(aefMaps);
-        
+
     }
 
     @Override
     protected void resetImpl() {
+        name.setValue("");
         configurationSchemaVersion.reset();
         profileSchemaVersion.reset();
         notificationSchemaVersion.reset();
@@ -336,9 +355,10 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         result &= notificationSchemaVersion.getValue() != null;
         result &= logSchemaVersion.getValue() != null;
         result &= targetPlatform.getValue() != null;
+        result &= name.getValue().length() > 0;
         return result;
     }
-    
+
     private void addAefMap() {
         List<AefMapInfoDto> selected = availableAefMaps.getValue();
         availableAefMaps.setValue(null, true);
@@ -384,7 +404,7 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
         availableAefMaps.setAcceptableValues(available);
         selectedAefMaps.setAcceptableValues(totalSelected);
     }
-    
+
     private void updateAefMapButtons() {
         boolean availableSelected = availableAefMaps.getValue() != null && !availableAefMaps.getValue().isEmpty();
         boolean selectedSelected = selectedAefMaps.getValue() != null && !selectedAefMaps.getValue().isEmpty();
@@ -405,7 +425,7 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
 
     @Override
     protected void updateSaveButton(boolean enabled, boolean invalid) {
-        saveButton.setText(Utils.constants.generateSdk());
+        saveButton.setText(Utils.constants.addSdkProfile());
         saveButton.setEnabled(!invalid);
     }
 

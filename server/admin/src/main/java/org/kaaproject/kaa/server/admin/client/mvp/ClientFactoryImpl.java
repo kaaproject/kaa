@@ -25,6 +25,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -78,6 +79,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileFilterView
 import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.profile.ProfileSchemasViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.sdk.GenerateSdkViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.sdk.SdkProfilesViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.settings.GeneralPropertiesViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.settings.MailPropertiesViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.tenant.TenantViewImpl;
@@ -106,9 +108,9 @@ public class ClientFactoryImpl implements ClientFactory {
     private final NavigationView navigationView = new NavigationViewImpl();
 
     private final UserProfileView userProfileView = new UserProfileViewImpl();
-    
+
     private final BasePropertiesView generalPropertiesView = new GeneralPropertiesViewImpl();
-    
+
     private final BasePropertiesView mailPropertiesView = new MailPropertiesViewImpl();
 
     private final BaseListView<TenantUserDto> tenantsView = new TenantsViewImpl();
@@ -119,8 +121,9 @@ public class ClientFactoryImpl implements ClientFactory {
     private final ApplicationView createApplicationView = new ApplicationViewImpl(true, KaaAdmin.checkAuthorities(KaaAuthorityDto.TENANT_ADMIN));
     private final ApplicationView applicationView = new ApplicationViewImpl(false, KaaAdmin.checkAuthorities(KaaAuthorityDto.TENANT_ADMIN));
 
+    private final BaseListView<SdkPropertiesDto> sdkProfilesView = new SdkProfilesViewImpl();
     private final GenerateSdkView generateSdkView = new GenerateSdkViewImpl();
-    
+
     private final BaseListView<UserDto> usersView = new UsersViewImpl();
     private final UserView createUserView = new UserViewImpl(true);
     private final UserView userView = new UserViewImpl(false);
@@ -154,7 +157,7 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseListView<TopicDto> topicsView = new TopicsViewImpl();
     private final TopicView topicView = new TopicViewImpl(false);
     private final TopicView createTopicView = new TopicViewImpl(true);
-    
+
     private final SendNotificationView sendNotificationView = new SendNotificationViewImpl();
 
     private final BaseListView<LogAppenderDto> appendersView = new LogAppendersViewImpl();
@@ -175,7 +178,7 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseListView<ApplicationEventFamilyMapDto> aefMapsView = new AefMapsViewImpl();
     private final AefMapView aefMapView = new AefMapViewImpl(false);
     private final AefMapView createAefMapView = new AefMapViewImpl(true);
-    
+
     private final UpdateUserConfigView updateUserConfigView = new UpdateUserConfigViewImpl();
 
     private Place homePlace;
@@ -204,12 +207,12 @@ public class ClientFactoryImpl implements ClientFactory {
     public UserProfileView getUserProfileView() {
         return userProfileView;
     }
-    
+
     @Override
     public BasePropertiesView getGeneralPropertiesView() {
         return generalPropertiesView;
     }
-    
+
     @Override
     public BasePropertiesView getMailPropertiesView() {
         return mailPropertiesView;
@@ -244,7 +247,12 @@ public class ClientFactoryImpl implements ClientFactory {
     public ApplicationView getApplicationView() {
         return applicationView;
     }
-    
+
+    @Override
+    public BaseListView<SdkPropertiesDto> getSdkProfilesView() {
+        return sdkProfilesView;
+    }
+
     @Override
     public GenerateSdkView getGenerateSdkView() {
         return generateSdkView;
@@ -399,7 +407,7 @@ public class ClientFactoryImpl implements ClientFactory {
     public EcfSchemaView getEcfSchemaView() {
         return ecfSchemaView;
     }
-    
+
     @Override
     public EcfSchemaView getCreateEcfSchemaView() {
         return createEcfSchemaView;

@@ -110,7 +110,8 @@ public class SdkProfilesGrid extends AbstractKaaGrid<SdkPropertiesDto, String> {
                 new StringValueProvider<SdkPropertiesDto>() {
                     @Override
                     public String getValue(SdkPropertiesDto item) {
-                        return item.getToken();
+                        // Limit to six characters and add ellipsis
+                        return item.getToken().substring(0, 6) + "\u2026";
                     }
                 }, 40);
 

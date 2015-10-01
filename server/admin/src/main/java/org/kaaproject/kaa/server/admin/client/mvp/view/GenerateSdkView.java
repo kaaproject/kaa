@@ -24,10 +24,13 @@ import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiValueListBox;
 
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ValueListBox;
 
 public interface GenerateSdkView extends BaseDetailsView {
-    
+
+    HasValue<String> getName();
+
     ValueListBox<SchemaDto> getConfigurationSchemaVersion();
     ValueListBox<SchemaDto> getProfileSchemaVersion();
     ValueListBox<SchemaDto> getNotificationSchemaVersion();
@@ -37,5 +40,5 @@ public interface GenerateSdkView extends BaseDetailsView {
     ValueListBox<UserVerifierDto> getDefaultUserVerifier();
 
     void setAefMaps(List<AefMapInfoDto> aefMaps);
-    
+
 }
