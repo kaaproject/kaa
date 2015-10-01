@@ -17,14 +17,7 @@
 package org.kaaproject.kaa.server.admin.client.mvp;
 
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -147,7 +140,7 @@ public class ClientFactoryImpl implements ClientFactory {
     private final EndpointGroupView endpointGroupView = new EndpointGroupViewImpl(false);
     private final EndpointGroupView createEndpointGroupView = new EndpointGroupViewImpl(true);
 
-    private final EndpointProfilesView endpointProfilesView = new EndpointProfilesViewImpl();
+    private final BaseListView<EndpointProfileDto> endpointProfilesView = new EndpointProfilesViewImpl();
 
     private final BaseRecordView<ProfileFilterDto, String> profileFilterView = new ProfileFilterViewImpl(false);
     private final BaseRecordView<ProfileFilterDto, String> createProfileFilterView = new ProfileFilterViewImpl(true);
@@ -345,7 +338,7 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public EndpointProfilesView getEndpointProfilesView() {
+    public BaseListView<EndpointProfileDto> getEndpointProfilesView() {
         return endpointProfilesView;
     }
 

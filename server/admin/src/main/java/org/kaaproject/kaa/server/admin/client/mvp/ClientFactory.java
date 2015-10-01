@@ -17,13 +17,7 @@
 package org.kaaproject.kaa.server.admin.client.mvp;
 
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -105,7 +99,7 @@ public interface ClientFactory {
     EndpointGroupView getEndpointGroupView();
     EndpointGroupView getCreateEndpointGroupView();
 
-    EndpointProfilesView getEndpointProfilesView();
+    BaseListView<EndpointProfileDto> getEndpointProfilesView();
 
     BaseRecordView<ProfileFilterDto, String> getProfileFilterView();
     BaseRecordView<ProfileFilterDto, String> getCreateProfileFilterView();

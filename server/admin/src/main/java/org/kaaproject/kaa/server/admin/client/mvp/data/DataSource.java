@@ -24,6 +24,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -730,6 +731,11 @@ public class DataSource {
                     protected void onResult(EndpointGroupDto result) {
                     }
                 });
+    }
+
+    public void getEndpointProfileByGroupID(String groupID,
+            AsyncCallback<List<EndpointProfileDto>> callback) {
+        rpcService.getEndpointProfileByEndpointGroupId(groupID, "10000", "100", callback);
     }
 
     public void loadProfileFilterRecords(String endpointGroupId, boolean includeDeprecated,

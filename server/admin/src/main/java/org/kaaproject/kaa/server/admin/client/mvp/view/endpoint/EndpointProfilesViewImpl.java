@@ -16,26 +16,29 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class EndpointProfilesViewImpl implements EndpointProfilesView {
-
-    private Presenter presenter;
-    private Label label;
+public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDto> {
 
     public EndpointProfilesViewImpl() {
-        label = new Label("Hi!#2");
+        super(true);
     }
 
     @Override
-    public void setPresenter(Presenter presenter) {
-        this.presenter = presenter;
+    protected AbstractGrid<EndpointProfileDto, String> createGrid() {
+        return new EndpointProfileGrid();
     }
 
     @Override
-    public Widget asWidget() {
-        return label;
+    protected String titleString() {
+        return Utils.constants.endpointProfiles();
+    }
+
+    @Override
+    protected String addButtonString() {
+        return "Try to add new Endpoint))))";
     }
 }

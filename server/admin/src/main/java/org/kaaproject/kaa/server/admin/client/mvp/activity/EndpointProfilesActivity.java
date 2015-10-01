@@ -16,42 +16,42 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
+import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
+import org.kaaproject.kaa.server.admin.client.mvp.data.EndpointProfilesDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
 
-public class EndpointProfilesActivity extends AbstractActivity implements EndpointProfilesView.Presenter{
-
-    private final ClientFactory clientFactory;
+public class EndpointProfilesActivity extends AbstractListActivity<EndpointProfileDto, EndpointProfilesPlace> {
 
     private String applicationId;
-    private EndpointProfilesPlace place;
-    private EndpointProfilesView view;
 
     public EndpointProfilesActivity(EndpointProfilesPlace place, ClientFactory clientFactory) {
-        this.place = place;
-        this.applicationId  = place.getApplicationId();
-        this.clientFactory = clientFactory;
+        super(place, EndpointProfileDto.class, clientFactory);
+        this.applicationId = place.getApplicationId();
     }
 
     @Override
-    public void start(AcceptsOneWidget panel, EventBus eventBus) {
-        view = getView();
-        view.setPresenter(this);
-        panel.setWidget(view.asWidget());
-    }
-
-    @Override
-    public void goTo(Place place) {
-        clientFactory.getPlaceController().goTo(place);
-    }
-
-    private EndpointProfilesView getView() {
+    protected BaseListView<EndpointProfileDto> getView() {
         return clientFactory.getEndpointProfilesView();
     }
+
+    @Override
+    protected AbstractDataProvider<EndpointProfileDto> getDataProvider(
+            AbstractGrid<EndpointProfileDto, ?> dataGrid) {
+        return new EndpointProfilesDataProvider(dataGrid, listView, applicationId);
+    }
+
+    @Override
+    protected Place newEntityPlace() { return null; }
+
+    @Override
+    protected Place existingEntityPlace(String id) { return null; }
+
+    @Override
+    protected void deleteEntity(String id, AsyncCallback<Void> callback) {}
 }
