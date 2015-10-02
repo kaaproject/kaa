@@ -22,6 +22,7 @@ import java.util.List;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 
@@ -36,7 +37,7 @@ public interface EndpointService {
      * @param endpointGroupId the endpoint group id
      * @return the endpoint profile dto
      */
-    List<EndpointProfileDto> findEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset);
+    EndpointProfilesPageDto findEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset);
 
     /**
      * Find endpoint groups by application id.

@@ -20,6 +20,7 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 
 /**
@@ -45,7 +46,7 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
      * @param endpointGroupId the endpoint group id
      * @return the endpoint profile object
      */
-    List<T> findByEndpointGroupId(String endpointGroupId, String limit, String offset);
+    EndpointProfilesPageDto findByEndpointGroupId(String endpointGroupId, String limit, String offset);
 
     /**
      * Gets the count of endpoint profile by key hash.

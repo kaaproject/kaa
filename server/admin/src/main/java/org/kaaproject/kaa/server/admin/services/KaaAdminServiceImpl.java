@@ -45,6 +45,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -166,19 +167,19 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public List<EndpointProfileDto> getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws KaaAdminServiceException {
+    public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            List<EndpointProfileDto> endpointProfiles = toDtoList(clientProvider.getClient().getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset));
-            if (endpointProfiles == null) {
+            EndpointProfilesPageDto endpointProfilesPage = toDto(clientProvider.getClient().getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset));
+            if (endpointProfilesPage.getEndpointProfiles().isEmpty() || endpointProfilesPage == null) {
                 throw new KaaAdminServiceException(
                         "Requested item was not found!",
                         ServiceErrorCode.ITEM_NOT_FOUND);
             }
-            for (EndpointProfileDto endpointProfile : endpointProfiles) {
+            for (EndpointProfileDto endpointProfile : endpointProfilesPage.getEndpointProfiles()) {
                 checkApplicationId(endpointProfile.getApplicationId());
             }
-            return endpointProfiles;
+            return endpointProfilesPage;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }

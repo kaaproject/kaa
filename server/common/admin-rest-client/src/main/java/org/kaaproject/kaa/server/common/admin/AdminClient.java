@@ -80,13 +80,13 @@ public class AdminClient {
         url = "http://"+host+":"+port + "/kaaAdmin/rest/api/";
     }
 
-    public List<EndpointProfileDto> getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws Exception {
+    public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
         params.add("endpointGroupId", endpointGroupId);
         params.add("limit", limit);
         params.add("offset", offset);
-        ParameterizedTypeReference<List<EndpointProfileDto>> typeRef = new ParameterizedTypeReference<List<EndpointProfileDto>>() {};
-        ResponseEntity<List<EndpointProfileDto>> entity = restTemplate.exchange(url + "endpointProfileByGroupId/" + params, HttpMethod.GET, null, typeRef);
+        ParameterizedTypeReference<EndpointProfilesPageDto> typeRef = new ParameterizedTypeReference<EndpointProfilesPageDto>() {};
+        ResponseEntity<EndpointProfilesPageDto> entity = restTemplate.exchange(url + "endpointProfileByGroupId/" + params, HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
 

@@ -37,6 +37,7 @@ import org.kaaproject.kaa.common.dto.ChangeType;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
@@ -204,9 +205,9 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
-    public List<EndpointProfileDto> findEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) {
+    public EndpointProfilesPageDto findEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) {
         validateSqlId(endpointGroupId, "Can't find endpoint group by id. Incorrect id " + endpointGroupId);
-        return convertDtoList(endpointProfileDao.findByEndpointGroupId(endpointGroupId, limit, offset));
+        return endpointProfileDao.findByEndpointGroupId(endpointGroupId, limit, offset);
     }
 
     @Override

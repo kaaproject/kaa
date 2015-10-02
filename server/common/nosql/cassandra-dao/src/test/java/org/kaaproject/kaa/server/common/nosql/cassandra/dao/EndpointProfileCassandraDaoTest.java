@@ -19,7 +19,9 @@ package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
@@ -27,6 +29,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,6 +37,23 @@ import java.util.List;
 @ContextConfiguration(locations = "/cassandra-client-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
+
+    @Test
+    public void testFindByEndpointGroupId() throws Exception {
+        List<EndpointProfileDto> endpointProfileList = new ArrayList<>();
+        List<EndpointGroupStateDto> cfGroupState = new ArrayList<>();
+        List<String> id = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(null, null, null));
+            cfGroupState.addAll(endpointProfileList.get(i).getCfGroupStates());
+            id.add(cfGroupState.get(0).getEndpointGroupId());
+        }
+        String limit = "3";
+        int lim = Integer.valueOf(limit);
+        EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(id.get(0), limit, "0");
+        Assert.assertFalse(found.getEndpointProfiles().isEmpty());
+        Assert.assertEquals(lim, found.getEndpointProfiles().size());
+    }
 
     @Test
     public void testSave() throws Exception {

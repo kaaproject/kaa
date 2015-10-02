@@ -31,10 +31,10 @@ public class CassandraEPByEndpointGroupIdDao extends AbstractCassandraDao<Cassan
     }
 
     public ByteBuffer[] findFirstPageEPByEndpointGroupId(String endpointGroupId, String limit) {
-        LOG.debug("Try to find first page of endpoint key hash by endpoint group id {}", endpointGroupId);
+        LOG.debug("Try to find first page of endpoint key hash by group id {} with limit {}", endpointGroupId, limit);
         List<CassandraEPByEndpointGroupId> filter = findListByStatement(select().from(getColumnFamilyName())
                 .where(eq(EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_GROUP_ID_PROPERTY, endpointGroupId))
-                .limit(Integer.valueOf(limit + 1)));
+                .limit(Integer.valueOf(limit) + 1));
         ByteBuffer[] endpointKeyHash = new ByteBuffer[filter.size()];
         int i = 0;
         for (CassandraEPByEndpointGroupId ep : filter) {

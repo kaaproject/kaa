@@ -30,7 +30,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.WrapperEndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -159,12 +159,11 @@ public class KaaAdminController {
     */
     @RequestMapping(value="endpointProfileByGroupId", method=RequestMethod.GET, produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public WrapperEndpointProfileDto getEndpointProfileByEndpointGroupId(
+    public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(
         @RequestParam(value="endpointGroupId") String endpointGroupId,
         @RequestParam(value="limit") String limit,
         @RequestParam(value="offset") String offset) throws KaaAdminServiceException {
-        List<EndpointProfileDto> endpointProfiles = kaaAdminService.getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset);
-        return new WrapperEndpointProfileDto(endpointProfiles, endpointGroupId, Integer.valueOf(limit), offset);
+        return kaaAdminService.getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset);
     }
 
     /**

@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.junit.ClassRule;
+import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -125,6 +126,26 @@ public class AbstractCassandraTest {
         profileDto.setSubscriptions(topicIds);
         profileDto.setEndpointKeyHash(keyHash);
         profileDto.setAccessToken(accessToken);
+        return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
+    }
+
+    protected EndpointProfileDto generateEndpointProfileWithEndpointGroupId(String appId, String accessToken, List<String> topicIds) {
+        byte[] keyHash = generateBytes();
+        if (appId == null) {
+            appId = generateStringId();
+        }
+        if (accessToken == null) {
+            accessToken = generateStringId();
+        }
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        profileDto.setApplicationId(appId);
+        profileDto.setSubscriptions(topicIds);
+        profileDto.setEndpointKeyHash(keyHash);
+        profileDto.setAccessToken(accessToken);
+        List<EndpointGroupStateDto> cfGroupState = new ArrayList<>();
+        EndpointGroupStateDto cf = new EndpointGroupStateDto("124", "25", "35");
+        cfGroupState.add(cf);
+        profileDto.setCfGroupStates(cfGroupState);
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }
 

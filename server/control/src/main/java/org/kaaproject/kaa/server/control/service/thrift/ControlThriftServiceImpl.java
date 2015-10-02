@@ -213,8 +213,8 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
      */
     /* CLI method */
     @Override
-    public List<DataStruct> getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws TException {
-        return toDataStructList(endpointService.findEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset));
+    public DataStruct getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws TException {
+        return toDataStruct(endpointService.findEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset));
     }
 
     /*
