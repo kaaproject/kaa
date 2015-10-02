@@ -733,9 +733,9 @@ public class DataSource {
                 });
     }
 
-    public void getEndpointProfileByGroupID(String groupID,
+    public void getEndpointProfileByGroupID(String groupID, String limit, String offset,
             AsyncCallback<List<EndpointProfileDto>> callback) {
-        rpcService.getEndpointProfileByEndpointGroupId(groupID, "10000", "100", callback);
+        rpcService.getEndpointProfileByEndpointGroupId(groupID, limit, offset, callback);
     }
 
     public void loadProfileFilterRecords(String endpointGroupId, boolean includeDeprecated,

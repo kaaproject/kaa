@@ -16,14 +16,12 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import java.util.List;
@@ -52,9 +50,11 @@ public class EndpointProfilesDataProvider extends AbstractDataProvider<EndpointP
             public void onSuccess(List<EndpointGroupDto> result) {
                 String groupID = null;
                 for (EndpointGroupDto endGroup: result) {
-                    if (endGroup.getWeight() == 0) groupID = endGroup.getId();
+                    if (endGroup.getWeight() == 0) {
+                        groupID = endGroup.getId();
+                    }
                 }
-                KaaAdmin.getDataSource().getEndpointProfileByGroupID(groupID, new AsyncCallback<List<EndpointProfileDto>>() {
+                KaaAdmin.getDataSource().getEndpointProfileByGroupID(groupID, "10", "0", new AsyncCallback<List<EndpointProfileDto>>() {
                     @Override
                     public void onFailure(Throwable caught) {
                         callback.onFailure(caught);
