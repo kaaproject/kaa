@@ -64,13 +64,13 @@ public class UpdateUserConfigActivity extends AbstractDetailsActivity<EndpointUs
 
     @Override
     protected void onEntityRetrieved() {
-        KaaAdmin.getDataSource().getUserConfigurationSchemaInfosByApplicationId(applicationId, 
+        KaaAdmin.getDataSource().getUserConfigurationSchemaInfosByApplicationId(applicationId,
                 new BusyAsyncCallback<List<SchemaInfoDto>>() {
             @Override
             public void onSuccessImpl(List<SchemaInfoDto> result) {
                 Collections.sort(result);
                 SchemaInfoDto schemaInfo = result.get(result.size()-1);
-                detailsView.getConfigurationSchemaInfo().setValue(schemaInfo, true);
+                detailsView.getConfigurationSchemaInfo().setValue(schemaInfo);
                 detailsView.getConfigurationSchemaInfo().setAcceptableValues(result);
             }
             @Override
@@ -79,7 +79,7 @@ public class UpdateUserConfigActivity extends AbstractDetailsActivity<EndpointUs
             }
         });
     }
- 
+
     @Override
     protected void onSave() {
         entity.setUserId(detailsView.getUserId().getValue());
@@ -93,14 +93,14 @@ public class UpdateUserConfigActivity extends AbstractDetailsActivity<EndpointUs
 
     @Override
     protected void editEntity(EndpointUserConfigurationDto entity, final AsyncCallback<EndpointUserConfigurationDto> callback) {
-        KaaAdmin.getDataSource().editUserConfiguration(entity, applicationId, 
-                detailsView.getConfigurationData().getValue(), 
+        KaaAdmin.getDataSource().editUserConfiguration(entity, applicationId,
+                detailsView.getConfigurationData().getValue(),
                     new AsyncCallback<Void>() {
                         @Override
                         public void onSuccess(Void result) {
                             callback.onSuccess(null);
                         }
-                        
+
                         @Override
                         public void onFailure(Throwable caught) {
                             callback.onFailure(caught);

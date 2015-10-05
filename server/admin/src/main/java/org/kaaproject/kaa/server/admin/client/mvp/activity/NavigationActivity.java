@@ -117,6 +117,11 @@ public class NavigationActivity extends AbstractActivity implements NavigationVi
                    TreePlace place = navigationView.getSelectionModel().getSelectedObject();
                    if (place != null) {
                        goTo(place);
+
+                       TreePlace current = (TreePlace) clientFactory.getPlaceController().getWhere();
+                       if (!current.equals(place)) {
+                           navigationView.getSelectionModel().setSelected(current, true);
+                       }
                    }
                 }
             }
