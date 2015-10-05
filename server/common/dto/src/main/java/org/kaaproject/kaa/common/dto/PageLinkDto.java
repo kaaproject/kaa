@@ -2,24 +2,33 @@ package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
 
-public class PageLinkDto implements Serializable{
+public class PageLinkDto implements Serializable, HasId {
 
-    private static final long serialVersionUID = -6521135212595518900L;
+    private static final long serialVersionUID = 3270625120957514502L;
 
+    private String id;
+    private String endpointGroupId;
     private String limit;
     private String offset;
-    private String endpointKeyHash;
-    private String previous;
     private String next;
 
     public PageLinkDto() {}
 
-    PageLinkDto(String limit, String offset, String previous, String next) {
+    public PageLinkDto(String endpointGroupId, String limit, String offset) {
+        this.endpointGroupId = endpointGroupId;
         this.limit = limit;
         this.offset = offset;
-        this.previous = previous;
-        this.next = next;
-        this.endpointKeyHash = null;
+        this.next = null;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getLimit() {
@@ -38,22 +47,6 @@ public class PageLinkDto implements Serializable{
         this.offset = offset;
     }
 
-    public String getEndpointKeyHash() {
-        return endpointKeyHash;
-    }
-
-    public void setEndpointKeyHash(String endpointKeyHash) {
-        this.endpointKeyHash = endpointKeyHash;
-    }
-
-    public String getPrevious() {
-        return previous;
-    }
-
-    public void setPrevious(String previous) {
-        this.previous = previous;
-    }
-
     public String getNext() {
         return next;
     }
@@ -62,15 +55,22 @@ public class PageLinkDto implements Serializable{
         this.next = next;
     }
 
+    public String getEndpointGroupId() {
+        return endpointGroupId;
+    }
+
+    public void setEndpointGroupId(String endpointGroupId) {
+        this.endpointGroupId = endpointGroupId;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((endpointKeyHash == null) ? 0 : endpointKeyHash.hashCode());
+        result = prime * result + ((endpointGroupId == null) ? 0 : endpointGroupId.hashCode());
         result = prime * result + ((limit == null) ? 0 : limit.hashCode());
         result = prime * result + ((next == null) ? 0 : next.hashCode());
         result = prime * result + ((offset == null) ? 0 : offset.hashCode());
-        result = prime * result + ((previous == null) ? 0 : previous.hashCode());
         return result;
     }
 
@@ -83,10 +83,10 @@ public class PageLinkDto implements Serializable{
         if (getClass() != obj.getClass())
             return false;
         PageLinkDto other = (PageLinkDto) obj;
-        if (endpointKeyHash == null) {
-            if (other.endpointKeyHash != null)
+        if (endpointGroupId == null) {
+            if (other.endpointGroupId != null)
                 return false;
-        } else if (!endpointKeyHash.equals(other.endpointKeyHash))
+        } else if (!endpointGroupId.equals(other.endpointGroupId))
             return false;
         if (limit == null) {
             if (other.limit != null)
@@ -102,11 +102,6 @@ public class PageLinkDto implements Serializable{
             if (other.offset != null)
                 return false;
         } else if (!offset.equals(other.offset))
-            return false;
-        if (previous == null) {
-            if (other.previous != null)
-                return false;
-        } else if (!previous.equals(other.previous))
             return false;
         return true;
     }

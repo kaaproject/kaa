@@ -51,6 +51,7 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
@@ -170,8 +171,9 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            EndpointProfilesPageDto endpointProfilesPage = toDto(clientProvider.getClient().getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset));
-            if (endpointProfilesPage.getEndpointProfiles().isEmpty() || endpointProfilesPage == null) {
+            PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, limit, offset);
+            EndpointProfilesPageDto endpointProfilesPage = toDto(clientProvider.getClient().getEndpointProfileByEndpointGroupId(toDataStruct(pageLinkDto)));
+            if (endpointProfilesPage.getEndpointProfiles().isEmpty() || endpointProfilesPage.getEndpointProfiles() == null) {
                 throw new KaaAdminServiceException(
                         "Requested item was not found!",
                         ServiceErrorCode.ITEM_NOT_FOUND);

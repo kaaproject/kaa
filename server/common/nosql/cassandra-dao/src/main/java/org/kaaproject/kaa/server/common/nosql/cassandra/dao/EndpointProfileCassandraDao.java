@@ -166,16 +166,16 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     }
 
     @Override
-    public EndpointProfilesPageDto findByEndpointGroupId(String endpointGroupId, String limit, String offset) {
-        LOG.debug("Try to find endpoint profile by endpoint group id [{}]", endpointGroupId);
+    public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink) {
+        LOG.debug("Try to find endpoint profile by endpoint group id [{}]", pageLink.getEndpointGroupId());
         EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
         CassandraEndpointProfile profile = null;
-        int lim = Integer.valueOf(limit);
+        int lim = Integer.valueOf(pageLink.getLimit());
         byte[] endpointKey = null;
         List<EndpointProfileDto> cassandraEndpointProfileList = new ArrayList<>();
-        if ("0".equals(offset) || offset == null) {
-            ByteBuffer[] keyHashList = cassandraEPByEndpointGroupIdDao.findFirstPageEPByEndpointGroupId(endpointGroupId, limit);
-            LOG.debug("Found {} endpoint profiles by group id {}", keyHashList != null ? keyHashList.length : 0, endpointGroupId);
+        if ("0".equals(pageLink.getOffset()) || pageLink.getOffset() == null) {
+            ByteBuffer[] keyHashList = cassandraEPByEndpointGroupIdDao.findFirstPageEPByEndpointGroupId(pageLink.getEndpointGroupId(), pageLink.getLimit());
+            LOG.debug("Found {} endpoint profiles by group id {}", keyHashList != null ? keyHashList.length : 0, pageLink.getEndpointGroupId());
             for (ByteBuffer keyHash : keyHashList) {
                 profile = findByKeyHash(getBytes(keyHash));
                 if (profile != null) {
@@ -185,7 +185,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
                 }
             }
         } else {
-            ByteBuffer[] keyHashList = cassandraEPByEndpointGroupIdDao.findEPByEndpointGroupId(endpointGroupId, endpointKey, limit);
+            ByteBuffer[] keyHashList = cassandraEPByEndpointGroupIdDao.findEPByEndpointGroupId(pageLink.getEndpointGroupId(), endpointKey, pageLink.getLimit());
             for (ByteBuffer keyHash : keyHashList) {
                 profile = findByKeyHash(getBytes(keyHash));
                 cassandraEndpointProfileList.add(getDto(profile));
@@ -194,7 +194,7 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         String next = "";
         if (cassandraEndpointProfileList.size() == (lim + 1)) {
             next = "http://localhost:8080/kaaAdmin/rest/api/endpointProfileByGroupId?endpointGroupId="
-            + endpointGroupId + "&limit=" + limit + "&offset=" + cassandraEndpointProfileList.get(lim);
+            + pageLink.getEndpointGroupId() + "&limit=" + pageLink.getLimit() + "&offset=" + cassandraEndpointProfileList.get(lim);
             cassandraEndpointProfileList = cassandraEndpointProfileList.subList(0, lim);
         } else {
             next = "It is the last page";

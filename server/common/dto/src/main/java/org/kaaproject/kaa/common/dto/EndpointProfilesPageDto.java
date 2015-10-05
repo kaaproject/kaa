@@ -21,7 +21,7 @@ import java.util.List;
 
 public class EndpointProfilesPageDto implements HasId, Serializable {
 
-    private static final long serialVersionUID = -7461716477116042286L;
+    private static final long serialVersionUID = 6368165337840879484L;
 
     private String id;
     private List<EndpointProfileDto> endpointProfiles;

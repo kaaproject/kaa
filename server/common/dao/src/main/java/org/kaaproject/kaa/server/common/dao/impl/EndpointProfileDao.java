@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 
 /**
@@ -43,10 +44,10 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
     /**
      * Find endpoint profile by endpoint group id.
      *
-     * @param endpointGroupId the endpoint group id
-     * @return the endpoint profile object
+     * @param pageLink the page link dto
+     * @return the endpoint profiles page dto
      */
-    EndpointProfilesPageDto findByEndpointGroupId(String endpointGroupId, String limit, String offset);
+    EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink);
 
     /**
      * Gets the count of endpoint profile by key hash.

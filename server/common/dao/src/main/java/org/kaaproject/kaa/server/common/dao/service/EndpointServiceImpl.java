@@ -40,6 +40,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
@@ -79,7 +80,7 @@ public class EndpointServiceImpl implements EndpointService {
     private ProfileFilterDao<ProfileFilter> verifierDao;
     @Autowired
     private HistoryService historyService;
-    
+
     private EndpointProfileDao<EndpointProfile> endpointProfileDao;
     private EndpointConfigurationDao<EndpointConfiguration> endpointConfigurationDao;
     private EndpointUserDao<EndpointUser> endpointUserDao;
@@ -205,9 +206,9 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
-    public EndpointProfilesPageDto findEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) {
-        validateSqlId(endpointGroupId, "Can't find endpoint group by id. Incorrect id " + endpointGroupId);
-        return endpointProfileDao.findByEndpointGroupId(endpointGroupId, limit, offset);
+    public EndpointProfilesPageDto findEndpointProfileByEndpointGroupId(PageLinkDto pageLink) {
+        validateSqlId(pageLink.getEndpointGroupId(), "Can't find endpoint group by id. Incorrect id " + pageLink.getEndpointGroupId());
+        return endpointProfileDao.findByEndpointGroupId(pageLink);
     }
 
     @Override

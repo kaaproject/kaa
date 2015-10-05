@@ -19,8 +19,10 @@ package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 import com.mongodb.DBObject;
 
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
 import org.slf4j.Logger;
@@ -56,16 +58,17 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     }
 
     @Override
-    public EndpointProfilesPageDto findByEndpointGroupId(String endpointGroupId, String limit, String offset) {
-        LOG.debug("Find endpoint profile by endpoint group id [{}] ", endpointGroupId);
+    public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink) {
+        LOG.debug("Find endpoint profile by endpoint group id [{}] ", pageLink.getEndpointGroupId());
         EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
         String next = "";
-        int lim = Integer.valueOf(limit);
-        List<MongoEndpointProfile> mongoEndpointProfileList = find(query(where(EP_CF_GROUP_STATE + "." + ENDPOINT_GROUP_ID).is(endpointGroupId))
-                .skip(Integer.parseInt(offset)).limit(Integer.parseInt(limit) + 1));
+        int lim = Integer.valueOf(pageLink.getLimit());
+        List<MongoEndpointProfile> mongoEndpointProfileList = find(query(where(EP_CF_GROUP_STATE + "." + ENDPOINT_GROUP_ID)
+                .is(pageLink.getEndpointGroupId())).skip(Integer.parseInt(pageLink.getOffset()))
+                .limit(Integer.parseInt(pageLink.getLimit()) + 1));
         if (mongoEndpointProfileList.size() == (lim + 1)) {
             next = "http://localhost:8080/kaaAdmin/rest/api/endpointProfileByGroupId?endpointGroupId="
-                    + endpointGroupId + "&limit=" + limit + "&offset=" + (limit + Integer.valueOf(offset));
+                    + pageLink.getEndpointGroupId() + "&limit=" + pageLink.getLimit()+ "&offset=" + (pageLink.getLimit() + Integer.valueOf(pageLink.getOffset()));
             mongoEndpointProfileList = mongoEndpointProfileList.subList(0, lim);
         } else {
             next = "It is the last page";

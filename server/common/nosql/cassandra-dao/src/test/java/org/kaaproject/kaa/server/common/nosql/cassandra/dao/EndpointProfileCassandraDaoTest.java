@@ -23,6 +23,7 @@ import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.springframework.test.annotation.DirtiesContext;
@@ -49,8 +50,10 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
             id.add(cfGroupState.get(0).getEndpointGroupId());
         }
         String limit = "3";
+        String offset = "0";
         int lim = Integer.valueOf(limit);
-        EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(id.get(0), limit, "0");
+        PageLinkDto pageLink = new PageLinkDto(id.get(0), limit, offset);
+        EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(pageLink);
         Assert.assertFalse(found.getEndpointProfiles().isEmpty());
         Assert.assertEquals(lim, found.getEndpointProfiles().size());
     }
