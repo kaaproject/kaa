@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.activity.shared.Activity;
+import com.google.gwt.activity.shared.ActivityMapper;
+import com.google.gwt.place.shared.Place;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AefMapPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AefMapsPlace;
@@ -29,6 +32,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.EcfSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupsPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.GeneralPropertiesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.GenerateSdkPlace;
@@ -49,14 +53,10 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.TopicPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TopicsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UpdateUserConfigPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.UserProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserVerifierPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserVerifiersPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UsersPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.UserProfilePlace;
-
-import com.google.gwt.activity.shared.Activity;
-import com.google.gwt.activity.shared.ActivityMapper;
-import com.google.gwt.place.shared.Place;
 
 public class AppActivityMapper implements ActivityMapper {
 
@@ -120,6 +120,8 @@ public class AppActivityMapper implements ActivityMapper {
                 return new EndpointGroupActivity((EndpointGroupPlace) place, clientFactory);
             } else if (clazz ==  EndpointProfilesPlace.class) {
                 return new EndpointProfilesActivity((EndpointProfilesPlace) place, clientFactory);
+            } else if (clazz ==  EndpointProfilePlace.class) {
+                return new EndpointProfileActivity((EndpointProfilePlace) place, clientFactory);
             } else if (clazz == ProfileFilterPlace.class) {
                 return new ProfileFilterActivity((ProfileFilterPlace) place, clientFactory);
             } else if (clazz == ConfigurationPlace.class) {

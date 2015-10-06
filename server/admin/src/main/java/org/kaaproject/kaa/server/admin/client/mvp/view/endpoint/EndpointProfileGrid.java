@@ -45,6 +45,15 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
                 }, 80);
 
         prefWidth += constructStringColumn(table,
+                "Endpoint ID",
+                new StringValueProvider<EndpointProfileDto>() {
+                    @Override
+                    public String getValue(EndpointProfileDto item) {
+                        return item.getId();
+                    }
+                }, 80);
+
+        prefWidth += constructStringColumn(table,
                 Utils.constants.profileSchemaVersion(),
                 new StringValueProvider<EndpointProfileDto>() {
                     @Override
@@ -62,11 +71,34 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
                     }
                 }, 80);
 
+        prefWidth += constructStringColumn(table,
+                "Notification schema version",
+                new StringValueProvider<EndpointProfileDto>() {
+                    @Override
+                    public String getValue(EndpointProfileDto item) {
+                        return item.getNotificationVersion() + "";
+                    }
+                }, 80);
+
+        prefWidth += constructStringColumn(table,
+                "Log schema version",
+                new StringValueProvider<EndpointProfileDto>() {
+                    @Override
+                    public String getValue(EndpointProfileDto item) {
+                        return item.getLogSchemaVersion() + "";
+                    }
+                }, 80);
+
         return prefWidth;
     }
 
     @Override
     protected boolean canDelete(EndpointProfileDto value) {
         return false;
+    }
+
+    @Override
+    protected float constructActions(DataGrid<EndpointProfileDto> table, float prefWidth) {
+        return 0.0F;
     }
 }

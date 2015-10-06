@@ -16,17 +16,5 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ValueListBox;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-
-public interface EndpointProfilesView extends BaseListView<EndpointProfileDto>{
-
-    ValueListBox<EndpointGroupDto> getEndpointGroupsInfo();
-
-    Button getFindEndpointButton();
-    TextBox getEndpointKeyHashTextBox();
-
+public interface EndpointProfileView extends BaseDetailsView {
 }

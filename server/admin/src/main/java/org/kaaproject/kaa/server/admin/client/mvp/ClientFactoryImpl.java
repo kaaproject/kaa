@@ -16,8 +16,19 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp;
 
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.place.shared.PlaceController;
+import com.google.web.bindery.event.shared.EventBus;
+import com.google.web.bindery.event.shared.SimpleEventBus;
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.*;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
+import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -35,6 +46,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.GenerateSdkView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
@@ -56,6 +68,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationSchem
 import org.kaaproject.kaa.server.admin.client.mvp.view.config.ConfigurationViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointProfileViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointProfilesViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.enduser.UpdateUserConfigViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.AefMapViewImpl;
@@ -86,11 +99,6 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.user.UsersViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.verifier.UserVerifierViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.verifier.UserVerifiersViewImpl;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
-
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceController;
-import com.google.web.bindery.event.shared.EventBus;
-import com.google.web.bindery.event.shared.SimpleEventBus;
 
 public class ClientFactoryImpl implements ClientFactory {
 
@@ -140,7 +148,8 @@ public class ClientFactoryImpl implements ClientFactory {
     private final EndpointGroupView endpointGroupView = new EndpointGroupViewImpl(false);
     private final EndpointGroupView createEndpointGroupView = new EndpointGroupViewImpl(true);
 
-    private final BaseListView<EndpointProfileDto> endpointProfilesView = new EndpointProfilesViewImpl();
+    private final EndpointProfilesView endpointProfilesView = new EndpointProfilesViewImpl();
+    private final EndpointProfileView endpointProfileView = new EndpointProfileViewImpl();
 
     private final BaseRecordView<ProfileFilterDto, String> profileFilterView = new ProfileFilterViewImpl(false);
     private final BaseRecordView<ProfileFilterDto, String> createProfileFilterView = new ProfileFilterViewImpl(true);
@@ -338,8 +347,13 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseListView<EndpointProfileDto> getEndpointProfilesView() {
+    public EndpointProfilesView getEndpointProfilesView() {
         return endpointProfilesView;
+    }
+
+    @Override
+    public EndpointProfileView getEndpointProfileView() {
+        return endpointProfileView;
     }
 
     @Override

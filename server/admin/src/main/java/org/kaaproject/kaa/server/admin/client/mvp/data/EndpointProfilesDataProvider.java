@@ -18,7 +18,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
@@ -28,33 +27,23 @@ import java.util.List;
 
 public class EndpointProfilesDataProvider extends AbstractDataProvider<EndpointProfileDto> {
 
-    private String applicationId;
+    private String groupID = "";
+    private String limit = "10";
+    private String offset = "0";
+
 
     public EndpointProfilesDataProvider(AbstractGrid<EndpointProfileDto, ?> dataGrid,
                                         HasErrorMessage hasErrorMessage,
-                                        String applicationId) {
+                                        String groupID) {
         super(dataGrid, hasErrorMessage, false);
-        this.applicationId = applicationId;
+        this.groupID = groupID;
         addDataDisplay();
     }
 
     @Override
     protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().loadEndpointGroups(applicationId, new AsyncCallback<List<EndpointGroupDto>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-
-            }
-            @Override
-            public void onSuccess(List<EndpointGroupDto> result) {
-                String groupID = null;
-                for (EndpointGroupDto endGroup: result) {
-                    if (endGroup.getWeight() == 0) {
-                        groupID = endGroup.getId();
-                    }
-                }
-                KaaAdmin.getDataSource().getEndpointProfileByGroupID(groupID, "10", "0", new AsyncCallback<List<EndpointProfileDto>>() {
+        KaaAdmin.getDataSource().getEndpointProfileByGroupID(groupID, limit, offset,
+                new AsyncCallback<List<EndpointProfileDto>>() {
                     @Override
                     public void onFailure(Throwable caught) {
                         callback.onFailure(caught);
@@ -65,7 +54,17 @@ public class EndpointProfilesDataProvider extends AbstractDataProvider<EndpointP
                         callback.onSuccess(result);
                     }
                 });
-            }
-        });
+    }
+
+    public void setGroupID(String groupID) {
+        this.groupID = groupID;
+    }
+
+    public void setLimit(String limit) {
+        this.limit = limit;
+    }
+
+    public void setOffset(String offset) {
+        this.offset = offset;
     }
 }

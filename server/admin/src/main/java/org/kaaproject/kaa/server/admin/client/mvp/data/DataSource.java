@@ -16,9 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
@@ -55,8 +54,8 @@ import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceAsync;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.EventBus;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataSource {
 
@@ -736,6 +735,11 @@ public class DataSource {
     public void getEndpointProfileByGroupID(String groupID, String limit, String offset,
             AsyncCallback<List<EndpointProfileDto>> callback) {
         rpcService.getEndpointProfileByEndpointGroupId(groupID, limit, offset, callback);
+    }
+
+    public void getEndpointProfileByKeyHash(String endpointKeyHash,
+            AsyncCallback<EndpointProfileDto> callback) {
+        rpcService.getEndpointProfileByKeyHash(endpointKeyHash, callback);
     }
 
     public void loadProfileFilterRecords(String endpointGroupId, boolean includeDeprecated,

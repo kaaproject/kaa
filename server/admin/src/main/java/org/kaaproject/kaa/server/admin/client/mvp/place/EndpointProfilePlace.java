@@ -16,42 +16,39 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-public class EndpointProfilesPlace extends TreePlace {
+public class EndpointProfilePlace extends EndpointProfilesPlace {
 
-    protected String applicationId;
+    private String endpointID;
 
-    public EndpointProfilesPlace(String applicationId) {
-        this.applicationId = applicationId;
-    }
-
-    public String getApplicationId() {
-        return applicationId;
+    public EndpointProfilePlace(String applicationId, String endpointID) {
+        super(applicationId);
+        this.endpointID = endpointID;
     }
 
     @Override
     public String getName() {
-        return Utils.constants.endpointProfiles();
+        return "Endpoint profile";
     }
 
-    @Prefix(value = "endProfile")
-    public static class Tokenizer implements PlaceTokenizer<EndpointProfilesPlace>, PlaceConstants {
+    @Prefix(value = "endProfId")
+    public static class Tokenizer implements PlaceTokenizer<EndpointProfilePlace>, PlaceConstants {
 
         @Override
-        public String getToken(EndpointProfilesPlace place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            return PlaceParams.generateToken();
+        public EndpointProfilePlace getPlace(String token) {
+            PlaceParams.paramsFromToken(token);
+            return new EndpointProfilePlace(PlaceParams.getParam(APPLICATION_ID),
+                    PlaceParams.getParam(ENDPOINT_PROFILE_ID));
         }
 
         @Override
-        public EndpointProfilesPlace getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return new EndpointProfilesPlace(PlaceParams.getParam(APPLICATION_ID));
+        public String getToken(EndpointProfilePlace place) {
+            PlaceParams.clear();
+            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
+            PlaceParams.putParam(ENDPOINT_PROFILE_ID, place.getEndpointID());
+            return PlaceParams.generateToken();
         }
     }
 
@@ -63,11 +60,11 @@ public class EndpointProfilesPlace extends TreePlace {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        EndpointProfilesPlace other = (EndpointProfilesPlace) obj;
-        if (applicationId == null) {
-            if (other.applicationId != null)
+        EndpointProfilePlace other = (EndpointProfilePlace) obj;
+        if (endpointID == null) {
+            if (other.endpointID != null)
                 return false;
-        } else if (!applicationId.equals(other.applicationId))
+        } else if (!endpointID.equals(other.endpointID))
             return false;
         return true;
     }
@@ -79,6 +76,10 @@ public class EndpointProfilesPlace extends TreePlace {
 
     @Override
     public TreePlace createDefaultPreviousPlace() {
-        return new ApplicationPlace(applicationId);
+        return new EndpointProfilesPlace(applicationId);
+    }
+
+    public String getEndpointID() {
+        return endpointID;
     }
 }
