@@ -133,6 +133,13 @@ public class CassandraModelConstants {
     public static final String EP_BY_APP_ID_ENDPOINT_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
 
     /**
+     * CassandraEPByEndpointGroupId constants
+     */
+    public static final String EP_BY_ENDPOINT_GROUP_ID_COLUMN_FAMILY_NAME = "endpoint_group_id_eps";
+    public static final String EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_GROUP_ID_PROPERTY = "ep_group_id";
+    public static final String EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
+
+    /**
      * CassandraTopicLastSecNum constants
      */
     public static final String TOPIC_ID_SEQ_NUMBER_COLUMN_FAMILY_NAME = "topic_seq";

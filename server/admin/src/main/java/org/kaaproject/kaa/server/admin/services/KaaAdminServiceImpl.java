@@ -45,11 +45,13 @@ import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.SchemaDto;
@@ -166,19 +168,24 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     }
 
     @Override
-    public List<EndpointProfileDto> getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws KaaAdminServiceException {
+    public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            List<EndpointProfileDto> endpointProfiles = toDtoList(clientProvider.getClient().getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset));
-            if (endpointProfiles == null) {
+            final int MAX_VALUE = 500;
+            if (Integer.valueOf(limit) > MAX_VALUE) {
+                throw new IllegalArgumentException("Incorrect limit parameter. You must enter value less than 500.");
+            }
+            PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, limit, offset);
+            EndpointProfilesPageDto endpointProfilesPage = toGenericDto(clientProvider.getClient().getEndpointProfileByEndpointGroupId(toGenericDataStruct(pageLinkDto)));
+            if (endpointProfilesPage.getEndpointProfiles().isEmpty() || endpointProfilesPage.getEndpointProfiles() == null) {
                 throw new KaaAdminServiceException(
                         "Requested item was not found!",
                         ServiceErrorCode.ITEM_NOT_FOUND);
             }
-            for (EndpointProfileDto endpointProfile : endpointProfiles) {
+            for (EndpointProfileDto endpointProfile : endpointProfilesPage.getEndpointProfiles()) {
                 checkApplicationId(endpointProfile.getApplicationId());
             }
-            return endpointProfiles;
+            return endpointProfilesPage;
         } catch (Exception e) {
             throw Utils.handleException(e);
         }

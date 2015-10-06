@@ -48,6 +48,7 @@ import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TenantAdminDto;
@@ -209,12 +210,12 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
      * (non-Javadoc)
      * @see
      * org.kaaproject.kaa.server.common.thrift.gen.control.ControlThriftService
-     * .Iface#getEndpointProfileByEndpointGroupId(java.lang.String)
+     * .Iface#getEndpointProfileByEndpointGroupId()
      */
     /* CLI method */
     @Override
-    public List<DataStruct> getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws TException {
-        return toDataStructList(endpointService.findEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset));
+    public DataStruct getEndpointProfileByEndpointGroupId(DataStruct pageLink) throws TException {
+        return toGenericDataStruct(endpointService.findEndpointProfileByEndpointGroupId(ThriftDtoConverter.<PageLinkDto>toGenericDto(pageLink)));
     }
 
     /*
