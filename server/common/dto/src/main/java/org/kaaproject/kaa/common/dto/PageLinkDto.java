@@ -2,11 +2,10 @@ package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
 
-public class PageLinkDto implements Serializable, HasId {
+public class PageLinkDto implements Serializable {
 
     private static final long serialVersionUID = 3270625120957514502L;
 
-    private String id;
     private String endpointGroupId;
     private String limit;
     private String offset;
@@ -19,16 +18,6 @@ public class PageLinkDto implements Serializable, HasId {
         this.limit = limit;
         this.offset = offset;
         this.next = null;
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getLimit() {

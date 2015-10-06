@@ -16,11 +16,15 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
+import org.apache.commons.codec.binary.Base64;
+
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
+
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
+
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
@@ -165,44 +169,56 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         return endpointProfile;
     }
 
-    @Override
-    public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink) {
-        LOG.debug("Try to find endpoint profile by endpoint group id [{}]", pageLink.getEndpointGroupId());
-        EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
-        CassandraEndpointProfile profile = null;
-        int lim = Integer.valueOf(pageLink.getLimit());
-        byte[] endpointKey = null;
+    private List<EndpointProfileDto> findEndpointProfilesList(ByteBuffer[] keyHashList, String endpointGroupId) {
         List<EndpointProfileDto> cassandraEndpointProfileList = new ArrayList<>();
-        if ("0".equals(pageLink.getOffset()) || pageLink.getOffset() == null) {
-            ByteBuffer[] keyHashList = cassandraEPByEndpointGroupIdDao.findFirstPageEPByEndpointGroupId(pageLink.getEndpointGroupId(), pageLink.getLimit());
-            LOG.debug("Found {} endpoint profiles by group id {}", keyHashList != null ? keyHashList.length : 0, pageLink.getEndpointGroupId());
-            for (ByteBuffer keyHash : keyHashList) {
-                profile = findByKeyHash(getBytes(keyHash));
-                if (profile != null) {
-                    cassandraEndpointProfileList.add(getDto(profile));
-                } else {
-                    LOG.debug("Can't find endpoint profile by id {}", keyHash);
-                }
-            }
-        } else {
-            ByteBuffer[] keyHashList = cassandraEPByEndpointGroupIdDao.findEPByEndpointGroupId(pageLink.getEndpointGroupId(), endpointKey, pageLink.getLimit());
-            for (ByteBuffer keyHash : keyHashList) {
-                profile = findByKeyHash(getBytes(keyHash));
+        CassandraEndpointProfile profile = null;
+        LOG.debug("Found {} endpoint profiles by group id {}", keyHashList != null ? keyHashList.length : 0, endpointGroupId);
+        for (ByteBuffer keyHash : keyHashList) {
+            profile = findByKeyHash(getBytes(keyHash));
+            if (profile != null) {
                 cassandraEndpointProfileList.add(getDto(profile));
+            } else {
+                LOG.debug("Can't find endpoint profile by id {}", keyHash);
             }
         }
-        String next = "";
+        return cassandraEndpointProfileList;
+    }
+
+    private EndpointProfilesPageDto createNextPage(List<EndpointProfileDto> cassandraEndpointProfileList, String endpointGroupId, String limit) {
+        EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
+        PageLinkDto pageLinkDto = new PageLinkDto();
+        String next;
+        int lim = Integer.valueOf(limit);
         if (cassandraEndpointProfileList.size() == (lim + 1)) {
-            next = "http://localhost:8080/kaaAdmin/rest/api/endpointProfileByGroupId?endpointGroupId="
-            + pageLink.getEndpointGroupId() + "&limit=" + pageLink.getLimit() + "&offset=" + cassandraEndpointProfileList.get(lim);
-            cassandraEndpointProfileList = cassandraEndpointProfileList.subList(0, lim);
+            pageLinkDto.setEndpointGroupId(endpointGroupId);
+            pageLinkDto.setLimit(limit);
+            pageLinkDto.setOffset(Base64.encodeBase64String(cassandraEndpointProfileList.get(lim).getEndpointKeyHash()));
+            cassandraEndpointProfileList.remove(lim);
+            next = null;
         } else {
             next = "It is the last page";
         }
-        PageLinkDto pageLinkDto = new PageLinkDto();
         pageLinkDto.setNext(next);
         endpointProfilesPageDto.setPageLinkDto(pageLinkDto);
         endpointProfilesPageDto.setEndpointProfiles(cassandraEndpointProfileList);
+        return endpointProfilesPageDto;
+    }
+
+    @Override
+    public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink) {
+        LOG.debug("Try to find endpoint profile by endpoint group id [{}]", pageLink.getEndpointGroupId());
+        EndpointProfilesPageDto endpointProfilesPageDto;
+        List<EndpointProfileDto> cassandraEndpointProfileList;
+        ByteBuffer[] keyHashList;
+        if ("0".equals(pageLink.getOffset())) {
+            keyHashList = cassandraEPByEndpointGroupIdDao.findFirstPageEPByEndpointGroupId(pageLink.getEndpointGroupId(), pageLink.getLimit());
+            cassandraEndpointProfileList = findEndpointProfilesList(keyHashList, pageLink.getEndpointGroupId());
+        } else {
+            keyHashList = cassandraEPByEndpointGroupIdDao.findEPByEndpointGroupId(pageLink.getEndpointGroupId(),
+                    pageLink.getLimit(), Base64.decodeBase64(pageLink.getOffset()));
+            cassandraEndpointProfileList = findEndpointProfilesList(keyHashList, pageLink.getEndpointGroupId());
+        }
+        endpointProfilesPageDto = createNextPage(cassandraEndpointProfileList, pageLink.getEndpointGroupId(), pageLink.getLimit());
         return endpointProfilesPageDto;
     }
 

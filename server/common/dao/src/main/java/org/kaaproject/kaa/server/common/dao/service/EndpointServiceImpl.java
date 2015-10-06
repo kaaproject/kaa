@@ -208,6 +208,8 @@ public class EndpointServiceImpl implements EndpointService {
     @Override
     public EndpointProfilesPageDto findEndpointProfileByEndpointGroupId(PageLinkDto pageLink) {
         validateSqlId(pageLink.getEndpointGroupId(), "Can't find endpoint group by id. Incorrect id " + pageLink.getEndpointGroupId());
+        validateSqlId(pageLink.getLimit(), "Can't find endpoint group by id. Incorrect limit parameter " + pageLink.getLimit());
+        validateString(pageLink.getOffset(), "Can't find endpoint group by id. Incorrect offset parameter " + pageLink.getOffset());
         return endpointProfileDao.findByEndpointGroupId(pageLink);
     }
 

@@ -171,8 +171,12 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            final int MAX_VALUE = 500;
+            if (Integer.valueOf(limit) > MAX_VALUE) {
+                throw new IllegalArgumentException("Incorrect limit parameter. You must enter value less than 500.");
+            }
             PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, limit, offset);
-            EndpointProfilesPageDto endpointProfilesPage = toDto(clientProvider.getClient().getEndpointProfileByEndpointGroupId(toDataStruct(pageLinkDto)));
+            EndpointProfilesPageDto endpointProfilesPage = toGenericDto(clientProvider.getClient().getEndpointProfileByEndpointGroupId(toGenericDataStruct(pageLinkDto)));
             if (endpointProfilesPage.getEndpointProfiles().isEmpty() || endpointProfilesPage.getEndpointProfiles() == null) {
                 throw new KaaAdminServiceException(
                         "Requested item was not found!",

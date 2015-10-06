@@ -35,6 +35,7 @@ import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.common.dto.ProfileSchemaDto;
@@ -161,9 +162,27 @@ public class KaaAdminController {
     @ResponseBody
     public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(
         @RequestParam(value="endpointGroupId") String endpointGroupId,
-        @RequestParam(value="limit") String limit,
-        @RequestParam(value="offset") String offset) throws KaaAdminServiceException {
-        return kaaAdminService.getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset);
+        @RequestParam(value="limit", defaultValue="20") String limit,
+        @RequestParam(value="offset", defaultValue="0") String offset,
+        HttpServletRequest request) throws KaaAdminServiceException {
+        EndpointProfilesPageDto endpointProfilesPageDto;
+        PageLinkDto pageLinkDto;
+        endpointProfilesPageDto = kaaAdminService.getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset);
+        pageLinkDto = endpointProfilesPageDto.getPageLinkDto();
+        pageLinkDto = createNext(pageLinkDto, request.getLocalAddr(), request.getLocalPort());
+        endpointProfilesPageDto.setPageLinkDto(pageLinkDto);
+        return endpointProfilesPageDto;
+    }
+
+    private PageLinkDto createNext(PageLinkDto pageLink, String address, int port) {
+        String next = "";
+        if (pageLink.getNext() == null) {
+            next = "http://" + address +":" + port + "/kaaAdmin/rest/api/endpointProfileByGroupId?endpointGroupId="
+                    + pageLink.getEndpointGroupId() + "&limit=" + pageLink.getLimit() + "&offset=" +
+                            pageLink.getOffset();
+            pageLink.setNext(next);
+        }
+        return pageLink;
     }
 
     /**

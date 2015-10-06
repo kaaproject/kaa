@@ -215,7 +215,7 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     /* CLI method */
     @Override
     public DataStruct getEndpointProfileByEndpointGroupId(DataStruct pageLink) throws TException {
-        return toDataStruct(endpointService.findEndpointProfileByEndpointGroupId(ThriftDtoConverter.<PageLinkDto>toDto(pageLink)));
+        return toGenericDataStruct(endpointService.findEndpointProfileByEndpointGroupId(ThriftDtoConverter.<PageLinkDto>toGenericDto(pageLink)));
     }
 
     /*

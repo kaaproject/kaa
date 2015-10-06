@@ -19,23 +19,12 @@ package org.kaaproject.kaa.common.dto;
 import java.io.Serializable;
 import java.util.List;
 
-public class EndpointProfilesPageDto implements HasId, Serializable {
+public class EndpointProfilesPageDto implements Serializable {
 
     private static final long serialVersionUID = 6368165337840879484L;
 
-    private String id;
     private List<EndpointProfileDto> endpointProfiles;
     private PageLinkDto pageLinkDto;
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public EndpointProfilesPageDto() {}
 
@@ -93,14 +82,5 @@ public class EndpointProfilesPageDto implements HasId, Serializable {
         } else if (!pageLinkDto.equals(other.pageLinkDto))
             return false;
         return true;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(pageLinkDto.getNext());
-        builder.append(", endpointProfiles=");
-        builder.append(endpointProfiles);
-        return builder.toString();
     }
 }

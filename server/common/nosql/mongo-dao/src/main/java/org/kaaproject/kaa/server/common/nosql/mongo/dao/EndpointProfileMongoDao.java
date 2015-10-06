@@ -20,6 +20,7 @@ import com.mongodb.DBObject;
 
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 
+import org.apache.commons.codec.binary.Base64;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
@@ -67,14 +68,15 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
                 .is(pageLink.getEndpointGroupId())).skip(Integer.parseInt(pageLink.getOffset()))
                 .limit(Integer.parseInt(pageLink.getLimit()) + 1));
         if (mongoEndpointProfileList.size() == (lim + 1)) {
-            next = "http://localhost:8080/kaaAdmin/rest/api/endpointProfileByGroupId?endpointGroupId="
-                    + pageLink.getEndpointGroupId() + "&limit=" + pageLink.getLimit()+ "&offset=" + (pageLink.getLimit() + Integer.valueOf(pageLink.getOffset()));
-            mongoEndpointProfileList = mongoEndpointProfileList.subList(0, lim);
+            pageLink.setOffset(pageLink.getLimit() + Integer.valueOf(pageLink.getOffset()));
+            mongoEndpointProfileList.remove(lim);
+            next = null;
         } else {
             next = "It is the last page";
         }
+        pageLink.setNext(next);
+        endpointProfilesPageDto.setPageLinkDto(pageLink);
         endpointProfilesPageDto.setEndpointProfiles(convertDtoList(mongoEndpointProfileList));
-        endpointProfilesPageDto.getPageLinkDto().setNext(next);
         return endpointProfilesPageDto;
     }
 
