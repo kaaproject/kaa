@@ -68,7 +68,8 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
                 .is(pageLink.getEndpointGroupId())).skip(Integer.parseInt(pageLink.getOffset()))
                 .limit(Integer.parseInt(pageLink.getLimit()) + 1));
         if (mongoEndpointProfileList.size() == (lim + 1)) {
-            pageLink.setOffset(pageLink.getLimit() + Integer.valueOf(pageLink.getOffset()));
+            String offset = Integer.toString(lim + Integer.valueOf(pageLink.getOffset()));
+            pageLink.setOffset(offset);
             mongoEndpointProfileList.remove(lim);
             next = null;
         } else {
