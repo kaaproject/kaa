@@ -19,11 +19,14 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
+import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
+import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class EndpointProfilesDataProvider extends AbstractDataProvider<EndpointProfileDto> {
 
@@ -43,15 +46,23 @@ public class EndpointProfilesDataProvider extends AbstractDataProvider<EndpointP
     @Override
     protected void loadData(final LoadCallback callback) {
         KaaAdmin.getDataSource().getEndpointProfileByGroupID(groupID, limit, offset,
-                new AsyncCallback<List<EndpointProfileDto>>() {
+                new AsyncCallback<EndpointProfilesPageDto>() {
                     @Override
                     public void onFailure(Throwable caught) {
-                        callback.onFailure(caught);
+                        /*
+                            dirty hack because of exception throwing on empty list in
+                            KaaAdminServiceImpl#getEndpointProfileByEndpointGroupId()
+                         */
+                        if (caught instanceof KaaAdminServiceException) {
+                            if (((KaaAdminServiceException) caught).getErrorCode() == ServiceErrorCode.ITEM_NOT_FOUND) {
+                                callback.onSuccess(new ArrayList<EndpointProfileDto>());
+                            }
+                        } else callback.onFailure(caught);
                     }
 
                     @Override
-                    public void onSuccess(List<EndpointProfileDto> result) {
-                        callback.onSuccess(result);
+                    public void onSuccess(EndpointProfilesPageDto result) {
+                        callback.onSuccess(result.getEndpointProfiles());
                     }
                 });
     }

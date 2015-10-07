@@ -42,7 +42,7 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
                     public String getValue(EndpointProfileDto item) {
                         return BaseEncoding.base64().encode(item.getEndpointKeyHash());
                     }
-                }, 80);
+                }, 160);
 
         prefWidth += constructStringColumn(table,
                 "Endpoint ID",
@@ -51,7 +51,7 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
                     public String getValue(EndpointProfileDto item) {
                         return item.getId();
                     }
-                }, 80);
+                }, 160);
 
         prefWidth += constructStringColumn(table,
                 Utils.constants.profileSchemaVersion(),
@@ -100,5 +100,10 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
     @Override
     protected float constructActions(DataGrid<EndpointProfileDto> table, float prefWidth) {
         return 0.0F;
+    }
+
+    @Override
+    protected String getObjectId(EndpointProfileDto value) {
+        return value.getId();
     }
 }

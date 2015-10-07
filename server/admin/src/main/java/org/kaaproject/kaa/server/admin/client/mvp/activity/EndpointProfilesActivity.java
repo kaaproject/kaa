@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -36,8 +35,6 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.data.EndpointProfilesDataProvider;
-import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
-import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEventHandler;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
@@ -123,6 +120,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
                 String id = event.getClickedId();
                 if (event.getAction()==RowActionEvent.CLICK) {
                     goTo(existingEntityPlace(id));
+                    BusyPopup.hidePopup();
                 }
             }
         }));
@@ -149,7 +147,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             @Override
             public void onClick(ClickEvent clickEvent) {
                 findEndpointByKeyHash(listView.getEndpointKeyHashTextBox().getValue());
-//                listView.getEndpointKeyHashTextBox().setValue("", false);
+                listView.getEndpointKeyHashTextBox().setValue("", false);
             }
         });
     }

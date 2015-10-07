@@ -66,7 +66,7 @@ public abstract class BaseListViewImpl<T extends HasId> extends ResizeComposite 
         kaaAdminStyle = Utils.kaaAdminStyle;
         avroUiStyle = Utils.avroUiStyle;
 
-        initWidget(uiBinder.createAndBindUi(this));
+        initWidget(createAndBindUi());
 
         grid = createGrid();
 
@@ -76,6 +76,10 @@ public abstract class BaseListViewImpl<T extends HasId> extends ResizeComposite 
         addButton.setVisible(editable);
 
         clearError();
+    }
+
+    protected Widget createAndBindUi() {
+        return uiBinder.createAndBindUi(this);
     }
 
     @Override
