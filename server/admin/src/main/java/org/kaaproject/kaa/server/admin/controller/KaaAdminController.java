@@ -99,6 +99,12 @@ public class KaaAdminController {
     /** The Constant BUFFER. */
     private static final int BUFFER = 1024 * 100;
 
+    /** The Constant DEFAULT_LIMIT. */
+    private static final String DEFAULT_LIMIT = "20";
+
+    /** The Constant DEFAULT_OFFSET. */
+    private static final String DEFAULT_OFFSET = "0";
+
     /** The kaa admin service. */
     @Autowired
     KaaAdminService kaaAdminService;
@@ -162,8 +168,8 @@ public class KaaAdminController {
     @ResponseBody
     public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(
         @RequestParam(value="endpointGroupId") String endpointGroupId,
-        @RequestParam(value="limit", defaultValue="20") String limit,
-        @RequestParam(value="offset", defaultValue="0") String offset,
+        @RequestParam(value="limit", defaultValue=DEFAULT_LIMIT) String limit,
+        @RequestParam(value="offset", defaultValue=DEFAULT_OFFSET) String offset,
         HttpServletRequest request) throws KaaAdminServiceException {
         EndpointProfilesPageDto endpointProfilesPageDto;
         PageLinkDto pageLinkDto;

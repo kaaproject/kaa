@@ -126,6 +126,11 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
      */
     private static final Logger LOG = LoggerFactory.getLogger(KaaAdminServiceImpl.class);
 
+    /**
+     * The Constant MAX_LIMIT.
+     */
+    private static final int MAX_LIMIT = 500;
+
     @Autowired
     private ControlThriftClientProvider clientProvider;
 
@@ -171,9 +176,8 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
     public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(String endpointGroupId, String limit, String offset) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
-            final int MAX_VALUE = 500;
-            if (Integer.valueOf(limit) > MAX_VALUE) {
-                throw new IllegalArgumentException("Incorrect limit parameter. You must enter value less than 500.");
+            if (Integer.valueOf(limit) > MAX_LIMIT) {
+                throw new IllegalArgumentException("Incorrect limit parameter. You must enter value not more than 500.");
             }
             PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, limit, offset);
             EndpointProfilesPageDto endpointProfilesPage = toGenericDto(clientProvider.getClient().getEndpointProfileByEndpointGroupId(toGenericDataStruct(pageLinkDto)));
