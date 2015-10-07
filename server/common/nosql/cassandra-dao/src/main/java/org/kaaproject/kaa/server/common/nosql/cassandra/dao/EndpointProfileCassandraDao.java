@@ -23,6 +23,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
 
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
@@ -47,7 +48,12 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Sets;
 
 import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
@@ -61,6 +67,9 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_APP_ID_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_ENDPOINT_GROUP_ID_COLUMN_FAMILY_NAME;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_GROUP_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_KEY_HASH_PROPERTY;
 
 @Repository(value = "endpointProfileDao")
 public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraEndpointProfile, ByteBuffer> implements EndpointProfileDao<CassandraEndpointProfile> {
@@ -88,7 +97,11 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
 
     @Override
     public CassandraEndpointProfile save(EndpointProfileDto dto) {
-        return save(new CassandraEndpointProfile(dto));
+        if (isBlank(dto.getId())) {
+            return save(new CassandraEndpointProfile(dto));
+        } else {
+            return update(new CassandraEndpointProfile(dto));
+        }
     }
 
     @Override
@@ -117,6 +130,46 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
             executeBatch(sl);
         }
         LOG.debug("[{}] Endpoint profile saved", profile.getId());
+        return profile;
+    }
+
+    private CassandraEndpointProfile update(CassandraEndpointProfile profile) {
+        LOG.debug("Updating endpoint profile with id {}", profile.getId());
+        ByteBuffer epKeyHash = profile.getEndpointKeyHash();
+        CassandraEndpointProfile storedProfile = findByKeyHash(getBytes(epKeyHash));
+        List<CassandraEndpointGroupState> oldCfGroupState = new ArrayList<>();
+        List<CassandraEndpointGroupState> newCfGroupState = new ArrayList<>();
+        Set<String> oldEndpointGroupIds = new HashSet<String>();
+        Set<String> newEndpointGroupIds = new HashSet<String>();
+        Set<String> removeEndpointGroupIds = Sets.filter(oldEndpointGroupIds, Predicates.not(Predicates.in(newEndpointGroupIds)));
+        Set<String> addEndpointGroupIds = Sets.filter(newEndpointGroupIds, Predicates.not(Predicates.in(oldEndpointGroupIds)));
+        List<Statement> statementList = new ArrayList<>();
+        statementList.add(getSaveQuery(profile));
+        oldCfGroupState = storedProfile.getCfGroupState();
+        for (CassandraEndpointGroupState cf : oldCfGroupState) {
+            oldEndpointGroupIds.add(cf.getEndpointGroupId());
+        }
+        newCfGroupState = profile.getCfGroupState();
+        for (CassandraEndpointGroupState cf : newCfGroupState) {
+            newEndpointGroupIds.add(cf.getEndpointGroupId());
+        }
+        if (addEndpointGroupIds != null) {
+            for (String id : addEndpointGroupIds) {
+                statementList.add(cassandraEPByEndpointGroupIdDao.getSaveQuery(
+                        new CassandraEPByEndpointGroupId(id, epKeyHash)));
+            }
+        }
+        if (removeEndpointGroupIds != null) {
+            for (String id : removeEndpointGroupIds) {
+                statementList.add(delete().from(EP_BY_ENDPOINT_GROUP_ID_COLUMN_FAMILY_NAME)
+                        .where(eq(EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_GROUP_ID_PROPERTY, id))
+                        .and(eq(EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_KEY_HASH_PROPERTY, epKeyHash)));
+            }
+        }
+        for (Statement sl : statementList) {
+            executeBatch(sl);
+        }
+        LOG.debug("[{}] Endpoint profile updated", profile.getId());
         return profile;
     }
 

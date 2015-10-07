@@ -59,6 +59,27 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
     }
 
     @Test
+    public void testUpdate() throws Exception {
+        List<EndpointGroupStateDto> cfGroupState = new ArrayList<EndpointGroupStateDto>();
+        List<EndpointGroupStateDto> cfGroupState2 = new ArrayList<EndpointGroupStateDto>();
+        cfGroupState.add(new EndpointGroupStateDto("555", "0", "0"));
+        cfGroupState.add(new EndpointGroupStateDto("777", "0", "0"));
+        cfGroupState.add(new EndpointGroupStateDto("333", "0", "0"));
+        EndpointProfileDto endpointProfile = generateEndpointProfileForTestUpdate("17", cfGroupState);
+        endpointProfileDao.save(endpointProfile);
+        cfGroupState2.add(new EndpointGroupStateDto("555", "1", "1"));
+        cfGroupState2.add(new EndpointGroupStateDto("789", "1", "1"));
+        EndpointProfileDto endpointProfile2 = generateEndpointProfileForTestUpdate("17", cfGroupState2);
+        endpointProfileDao.save(endpointProfile2);
+        String limit = "10";
+        String offset = "0";
+        PageLinkDto pageLink = new PageLinkDto("777", limit, offset);
+        EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(pageLink);
+        ArrayList<EndpointProfileDto> expected = new ArrayList<>();
+        Assert.assertEquals(expected, found.getEndpointProfiles());
+    }
+
+    @Test
     public void testSave() throws Exception {
         EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null);
         EndpointProfile found = endpointProfileDao.findByKeyHash(endpointProfile.getEndpointKeyHash());

@@ -33,6 +33,7 @@ import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpo
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraNotification;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.ByteBuffer;
@@ -129,6 +130,19 @@ public class AbstractCassandraTest {
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }
 
+    protected EndpointProfileDto generateEndpointProfileForTestUpdate(String id, List<EndpointGroupStateDto> cfGroupState) {
+        byte[] keyHash = {4, 14, 42, -116, -63, -25, 53, -8, 53, -71, -92, -50, 56, -8, 66, 125, -9, -23, -63, 55};
+        String appId = "11";
+        String accessToken = "22";
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        profileDto.setId(id);
+        profileDto.setApplicationId(appId);
+        profileDto.setEndpointKeyHash(keyHash);
+        profileDto.setAccessToken(accessToken);
+        profileDto.setCfGroupStates(cfGroupState);
+        return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
+    }
+
     protected EndpointProfileDto generateEndpointProfileWithEndpointGroupId(String appId, String accessToken, List<String> topicIds) {
         byte[] keyHash = generateBytes();
         if (appId == null) {
@@ -148,7 +162,6 @@ public class AbstractCassandraTest {
         profileDto.setCfGroupStates(cfGroupState);
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }
-
     protected EndpointUserDto generateEndpointUser() {
         return generateEndpointUser(null);
     }
