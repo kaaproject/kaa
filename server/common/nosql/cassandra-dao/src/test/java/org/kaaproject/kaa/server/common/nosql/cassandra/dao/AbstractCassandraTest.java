@@ -140,7 +140,7 @@ public class AbstractCassandraTest {
         profileDto.setEndpointKeyHash(keyHash);
         profileDto.setAccessToken(accessToken);
         profileDto.setCfGroupStates(cfGroupState);
-        return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
+        return profileDto;
     }
 
     protected EndpointProfileDto generateEndpointProfileWithEndpointGroupId(String appId, String accessToken, List<String> topicIds) {

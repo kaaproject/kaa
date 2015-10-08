@@ -60,23 +60,32 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testUpdate() throws Exception {
-        List<EndpointGroupStateDto> cfGroupState = new ArrayList<EndpointGroupStateDto>();
-        List<EndpointGroupStateDto> cfGroupState2 = new ArrayList<EndpointGroupStateDto>();
-        cfGroupState.add(new EndpointGroupStateDto("555", "0", "0"));
-        cfGroupState.add(new EndpointGroupStateDto("777", "0", "0"));
-        cfGroupState.add(new EndpointGroupStateDto("333", "0", "0"));
-        EndpointProfileDto endpointProfile = generateEndpointProfileForTestUpdate("17", cfGroupState);
-        endpointProfileDao.save(endpointProfile);
-        cfGroupState2.add(new EndpointGroupStateDto("555", "1", "1"));
-        cfGroupState2.add(new EndpointGroupStateDto("789", "1", "1"));
-        EndpointProfileDto endpointProfile2 = generateEndpointProfileForTestUpdate("17", cfGroupState2);
-        endpointProfileDao.save(endpointProfile2);
+        List<EndpointGroupStateDto> cfGroupStateSave = new ArrayList<EndpointGroupStateDto>();
+        List<EndpointGroupStateDto> cfGroupStateUpdate = new ArrayList<EndpointGroupStateDto>();
+        PageLinkDto pageLink;
+        EndpointProfilesPageDto found;
+        cfGroupStateSave.add(new EndpointGroupStateDto("111", null, null));
+        cfGroupStateSave.add(new EndpointGroupStateDto("222", null, null));
+        cfGroupStateSave.add(new EndpointGroupStateDto("333", null, null));
+        EndpointProfileDto endpointProfileSave = generateEndpointProfileForTestUpdate(null, cfGroupStateSave);
+        endpointProfileDao.save(endpointProfileSave);
+        cfGroupStateUpdate.add(new EndpointGroupStateDto("111", null, null));
+        cfGroupStateUpdate.add(new EndpointGroupStateDto("444", null, null));
+        EndpointProfileDto endpointProfileUpdate = generateEndpointProfileForTestUpdate("11", cfGroupStateUpdate);
+        endpointProfileDao.save(endpointProfileUpdate);
         String limit = "10";
         String offset = "0";
-        PageLinkDto pageLink = new PageLinkDto("777", limit, offset);
-        EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(pageLink);
-        ArrayList<EndpointProfileDto> expected = new ArrayList<>();
-        Assert.assertEquals(expected, found.getEndpointProfiles());
+        String[] endpointGroupId = {"111", "444", "222", "333"};
+        for (int i = 0; i < 2; i++) {
+            pageLink = new PageLinkDto(endpointGroupId[i], limit, offset);
+            found = endpointProfileDao.findByEndpointGroupId(pageLink);
+            Assert.assertFalse(found.getEndpointProfiles().isEmpty());
+        }
+        for (int i = 2; i < 4; i++) {
+            pageLink = new PageLinkDto(endpointGroupId[i], limit, offset);
+            found = endpointProfileDao.findByEndpointGroupId(pageLink);
+            Assert.assertTrue(found.getEndpointProfiles().isEmpty());
+        }
     }
 
     @Test

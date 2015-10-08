@@ -126,9 +126,9 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
                         new CassandraEPByEndpointGroupId(cf.getEndpointGroupId(), epKeyHash)));
             }
         }
-        for (Statement sl : statementList) {
-            executeBatch(sl);
-        }
+        Statement[] st = new Statement[statementList.size()];
+        statementList.toArray(st);
+        executeBatch(st);
         LOG.debug("[{}] Endpoint profile saved", profile.getId());
         return profile;
     }
@@ -141,8 +141,6 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         List<CassandraEndpointGroupState> newCfGroupState = new ArrayList<>();
         Set<String> oldEndpointGroupIds = new HashSet<String>();
         Set<String> newEndpointGroupIds = new HashSet<String>();
-        Set<String> removeEndpointGroupIds = Sets.filter(oldEndpointGroupIds, Predicates.not(Predicates.in(newEndpointGroupIds)));
-        Set<String> addEndpointGroupIds = Sets.filter(newEndpointGroupIds, Predicates.not(Predicates.in(oldEndpointGroupIds)));
         List<Statement> statementList = new ArrayList<>();
         statementList.add(getSaveQuery(profile));
         oldCfGroupState = storedProfile.getCfGroupState();
@@ -153,6 +151,8 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         for (CassandraEndpointGroupState cf : newCfGroupState) {
             newEndpointGroupIds.add(cf.getEndpointGroupId());
         }
+        Set<String> removeEndpointGroupIds = Sets.filter(oldEndpointGroupIds, Predicates.not(Predicates.in(newEndpointGroupIds)));
+        Set<String> addEndpointGroupIds = Sets.filter(newEndpointGroupIds, Predicates.not(Predicates.in(oldEndpointGroupIds)));
         if (addEndpointGroupIds != null) {
             for (String id : addEndpointGroupIds) {
                 statementList.add(cassandraEPByEndpointGroupIdDao.getSaveQuery(
@@ -166,9 +166,9 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
                         .and(eq(EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_KEY_HASH_PROPERTY, epKeyHash)));
             }
         }
-        for (Statement sl : statementList) {
-            executeBatch(sl);
-        }
+        Statement[] st = new Statement[statementList.size()];
+        statementList.toArray(st);
+        executeBatch(st);
         LOG.debug("[{}] Endpoint profile updated", profile.getId());
         return profile;
     }
