@@ -27,6 +27,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +71,17 @@ public class EndpointProfileMongoDaoTest extends AbstractMongoTest {
         MongoEndpointProfile found = endpointProfileDao.findByKeyHash(endpointProfile.getEndpointKeyHash());
         Assert.assertNotNull(found);
         Assert.assertEquals(endpointProfile, found.toDto());
+    }
+
+    @Test
+    public void findByEndpointGroupIdTest() {
+        String endpointGroupId = "111";
+        EndpointProfilesPageDto found;
+        EndpointProfileDto endpointProfile = generateEndpointProfileWithGroupId(endpointGroupId);
+        String limit = "1";
+        String offset = "0";
+        found = endpointProfileDao.findByEndpointGroupId(new PageLinkDto(endpointGroupId, limit, offset));
+        Assert.assertEquals(endpointProfile, found.getEndpointProfiles().get(0));
     }
 
     @Test

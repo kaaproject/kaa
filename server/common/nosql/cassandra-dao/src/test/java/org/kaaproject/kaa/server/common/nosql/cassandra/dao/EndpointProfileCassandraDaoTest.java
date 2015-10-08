@@ -111,7 +111,7 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testRemoveByKeyHash() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        EndpointProfileDto expected = generateEndpointProfileWithEndpointGroupId(null, null, null);
         endpointProfileDao.removeByKeyHash(expected.getEndpointKeyHash());
         EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
         Assert.assertNull(found);

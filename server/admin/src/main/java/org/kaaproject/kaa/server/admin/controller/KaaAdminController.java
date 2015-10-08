@@ -175,15 +175,15 @@ public class KaaAdminController {
         PageLinkDto pageLinkDto;
         endpointProfilesPageDto = kaaAdminService.getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset);
         pageLinkDto = endpointProfilesPageDto.getPageLinkDto();
-        pageLinkDto = createNext(pageLinkDto, request.getLocalAddr(), request.getLocalPort());
+        pageLinkDto = createNext(pageLinkDto, request.getScheme(), request.getLocalAddr(), request.getLocalPort());
         endpointProfilesPageDto.setPageLinkDto(pageLinkDto);
         return endpointProfilesPageDto;
     }
 
-    private PageLinkDto createNext(PageLinkDto pageLink, String address, int port) {
+    private PageLinkDto createNext(PageLinkDto pageLink, String scheme, String address, int port) {
         String next = "";
         if (pageLink.getNext() == null) {
-            next = "http://" + address +":" + port + "/kaaAdmin/rest/api/endpointProfileByGroupId?endpointGroupId="
+            next = scheme + "://" + address + ":" + port + "/kaaAdmin/rest/api/endpointProfileByGroupId?endpointGroupId="
                     + pageLink.getEndpointGroupId() + "&limit=" + pageLink.getLimit() + "&offset=" +
                             pageLink.getOffset();
             pageLink.setNext(next);

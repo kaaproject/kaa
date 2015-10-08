@@ -20,7 +20,6 @@ import com.mongodb.DBObject;
 
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 
-import org.apache.commons.codec.binary.Base64;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
