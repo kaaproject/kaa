@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
@@ -37,6 +38,7 @@ public class EndpointProfileActivity extends
     @Override
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
         super.start(containerWidget, eventBus);
+        BusyPopup.hidePopup();
     }
 
     protected void bind(final EventBus eventBus) {
