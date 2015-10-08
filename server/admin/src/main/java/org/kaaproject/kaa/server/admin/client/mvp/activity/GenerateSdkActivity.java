@@ -33,10 +33,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.GenerateSdkPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.GenerateSdkView;
-import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
@@ -119,19 +117,19 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDt
             List<UserVerifierDto> userVerifiers) {
 
         List<SchemaDto> confSchemaVersions = schemaVersions.getConfigurationSchemaVersions();
-        detailsView.getConfigurationSchemaVersion().setValue(getMaxSchemaVersions(confSchemaVersions), true);
+        detailsView.getConfigurationSchemaVersion().setValue(getMaxSchemaVersions(confSchemaVersions));
         detailsView.getConfigurationSchemaVersion().setAcceptableValues(confSchemaVersions);
 
         List<SchemaDto> pfSchemaVersions = schemaVersions.getProfileSchemaVersions();
-        detailsView.getProfileSchemaVersion().setValue(getMaxSchemaVersions(pfSchemaVersions), true);
+        detailsView.getProfileSchemaVersion().setValue(getMaxSchemaVersions(pfSchemaVersions));
         detailsView.getProfileSchemaVersion().setAcceptableValues(pfSchemaVersions);
 
         List<SchemaDto> notSchemaVersions = schemaVersions.getNotificationSchemaVersions();
-        detailsView.getNotificationSchemaVersion().setValue(getMaxSchemaVersions(notSchemaVersions), true);
+        detailsView.getNotificationSchemaVersion().setValue(getMaxSchemaVersions(notSchemaVersions));
         detailsView.getNotificationSchemaVersion().setAcceptableValues(notSchemaVersions);
 
         List<SchemaDto> logSchemaVersions = schemaVersions.getLogSchemaVersions();
-        detailsView.getLogSchemaVersion().setValue(getMaxSchemaVersions(logSchemaVersions), true);
+        detailsView.getLogSchemaVersion().setValue(getMaxSchemaVersions(logSchemaVersions));
         detailsView.getLogSchemaVersion().setAcceptableValues(logSchemaVersions);
 
         detailsView.setAefMaps(aefMaps);
@@ -183,20 +181,6 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDt
         if (!entity.getAefMapIds().isEmpty() && entity.getDefaultVerifierToken() == null) {
             detailsView.setErrorMessage(Utils.constants.specifyVerifier());
         } else {
-
-//            KaaAdmin.getDataSource().generateSdk(entity,new BusyAsyncCallback<String>() {
-//
-//                @Override
-//                public void onFailureImpl(Throwable caught) {
-//                    Utils.handleException(caught, detailsView);
-//                }
-//
-//                @Override
-//                public void onSuccessImpl(String key) {
-//                    detailsView.clearError();
-//                    ServletHelper.downloadSdk(key);
-//                }
-//            });
 
             KaaAdmin.getDataSource().addSdkProfile(entity, new BusyAsyncCallback<Void>() {
 

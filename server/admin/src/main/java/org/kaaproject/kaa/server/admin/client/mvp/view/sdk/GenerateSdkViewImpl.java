@@ -426,7 +426,7 @@ public class GenerateSdkViewImpl extends BaseDetailsViewImpl implements Generate
     @Override
     protected void updateSaveButton(boolean enabled, boolean invalid) {
         saveButton.setText(Utils.constants.add());
-        saveButton.setEnabled(!invalid);
+        saveButton.setEnabled(enabled);
     }
 
 }
