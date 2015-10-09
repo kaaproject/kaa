@@ -16,5 +16,22 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
+
 public interface EndpointProfileView extends BaseDetailsView {
+
+    SizedTextBox getKeyHash();
+    SizedTextBox getId();
+    SizedTextBox getAppId();
+    SizedTextBox getProfileVersion();
+    SizedTextBox getConfigurationHash();
+    SizedTextBox getConfigurationVersion();
+    SizedTextBox getNotificationVersion();
+    SizedTextBox getSystemNfVersion();
+    SizedTextBox getUserNfVersion();
+    SizedTextBox getLogSchemaVer();
+    SizedTextBox getServerHash();
+
+//    BaseStructGrid<ProfileFilterDto> getProfileFiltersGrid();
+//    BaseStructGrid<ConfigurationDto> getConfigurationsGrid();
 }

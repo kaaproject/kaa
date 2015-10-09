@@ -104,6 +104,6 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
 
     @Override
     protected String getObjectId(EndpointProfileDto value) {
-        return value.getId();
+        return BaseEncoding.base64().encode(value.getEndpointKeyHash());
     }
 }

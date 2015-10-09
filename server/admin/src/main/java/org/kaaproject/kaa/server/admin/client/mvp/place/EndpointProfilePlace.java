@@ -21,11 +21,11 @@ import com.google.gwt.place.shared.Prefix;
 
 public class EndpointProfilePlace extends EndpointProfilesPlace {
 
-    private String endpointID;
+    private String endpointKeyHash;
 
-    public EndpointProfilePlace(String applicationId, String endpointID) {
+    public EndpointProfilePlace(String applicationId, String endpointKeyHash) {
         super(applicationId);
-        this.endpointID = endpointID;
+        this.endpointKeyHash = endpointKeyHash;
     }
 
     @Override
@@ -33,21 +33,21 @@ public class EndpointProfilePlace extends EndpointProfilesPlace {
         return "Endpoint profile";
     }
 
-    @Prefix(value = "endProfId")
+    @Prefix(value = "endProfKeyHash")
     public static class Tokenizer implements PlaceTokenizer<EndpointProfilePlace>, PlaceConstants {
 
         @Override
         public EndpointProfilePlace getPlace(String token) {
             PlaceParams.paramsFromToken(token);
             return new EndpointProfilePlace(PlaceParams.getParam(APPLICATION_ID),
-                    PlaceParams.getParam(ENDPOINT_PROFILE_ID));
+                    PlaceParams.getParam(ENDPOINT_PROFILE_KEY_HASH));
         }
 
         @Override
         public String getToken(EndpointProfilePlace place) {
             PlaceParams.clear();
             PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            PlaceParams.putParam(ENDPOINT_PROFILE_ID, place.getEndpointID());
+            PlaceParams.putParam(ENDPOINT_PROFILE_KEY_HASH, place.getEndpointKeyHash());
             return PlaceParams.generateToken();
         }
     }
@@ -61,10 +61,10 @@ public class EndpointProfilePlace extends EndpointProfilesPlace {
         if (getClass() != obj.getClass())
             return false;
         EndpointProfilePlace other = (EndpointProfilePlace) obj;
-        if (endpointID == null) {
-            if (other.endpointID != null)
+        if (endpointKeyHash == null) {
+            if (other.endpointKeyHash != null)
                 return false;
-        } else if (!endpointID.equals(other.endpointID))
+        } else if (!endpointKeyHash.equals(other.endpointKeyHash))
             return false;
         return true;
     }
@@ -79,7 +79,7 @@ public class EndpointProfilePlace extends EndpointProfilesPlace {
         return new EndpointProfilesPlace(applicationId);
     }
 
-    public String getEndpointID() {
-        return endpointID;
+    public String getEndpointKeyHash() {
+        return endpointKeyHash;
     }
 }

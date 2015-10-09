@@ -16,11 +16,14 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.common.io.BaseEncoding;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
@@ -47,7 +50,7 @@ public class EndpointProfileActivity extends
 
     @Override
     protected String getEntityId(EndpointProfilePlace place) {
-        return place.getEndpointID();
+        return place.getEndpointKeyHash();
     }
 
     @Override
@@ -63,6 +66,17 @@ public class EndpointProfileActivity extends
     @Override
     protected void onEntityRetrieved() {
 
+        detailsView.getKeyHash().setValue(BaseEncoding.base64().encode(entity.getEndpointKeyHash()));
+        detailsView.getId().setValue(entity.getId());
+        detailsView.getAppId().setValue(entity.getApplicationId());
+        detailsView.getProfileVersion().setValue(entity.getProfileVersion() + "");
+        detailsView.getConfigurationHash().setValue(BaseEncoding.base64().encode(entity.getConfigurationHash()));
+        detailsView.getConfigurationVersion().setValue(entity.getConfigurationVersion() + "");
+        detailsView.getNotificationVersion().setValue(entity.getNotificationVersion() + "");
+        detailsView.getSystemNfVersion().setValue(entity.getSystemNfVersion() + "");
+        detailsView.getUserNfVersion().setValue(entity.getUserNfVersion() + "");
+        detailsView.getLogSchemaVer().setValue(entity.getLogSchemaVersion() + "");
+        detailsView.getServerHash().setValue(entity.getServerHash());
     }
 
     @Override
@@ -71,8 +85,8 @@ public class EndpointProfileActivity extends
     }
 
     @Override
-    protected void getEntity(String id, AsyncCallback<EndpointProfileDto> callback) {
-
+    protected void getEntity(String id, final AsyncCallback<EndpointProfileDto> callback) {
+        KaaAdmin.getDataSource().getEndpointProfileByKeyHash(id, callback);
     }
 
     @Override

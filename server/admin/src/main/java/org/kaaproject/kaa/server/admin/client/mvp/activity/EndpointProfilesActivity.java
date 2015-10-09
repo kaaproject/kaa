@@ -63,8 +63,9 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
 
     @Override
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
-        listView = getView();
+        listView = clientFactory.getEndpointProfilesView();
         getGroupsList();
+//        listView.getListWidget().remove(listView.getListWidget().getWidget(0)); //Removes redundant default pager
         listView.setPresenter(this);
         bind();
         containerWidget.setWidget(listView.asWidget());
@@ -139,20 +140,10 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             public void onRowAction(RowActionEvent<String> event) {
                 String id = event.getClickedId();
                 if (event.getAction()==RowActionEvent.CLICK) {
-                    goTo(existingEntityPlace(id));
+                    goTo(new EndpointProfilePlace(applicationId, id));
                 }
             }
         }));
-
-        final Place previousPlace = place.getPreviousPlace();
-        if (previousPlace != null) {
-            listView.setBackEnabled(true);
-            registrations.add(listView.getBackButton().addClickHandler(new ClickHandler() {
-                public void onClick(ClickEvent event) {
-                    goTo(previousPlace);
-                }
-            }));
-        }
 
         listView.getEndpointGroupsInfo().addValueChangeHandler(new ValueChangeHandler<EndpointGroupDto>() {
             @Override
@@ -168,14 +159,16 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
                 listView.getEndpointKeyHashTextBox().setValue("", false);
             }
         });
-    }
 
-    private Place existingEntityPlace(String id) {
-        return new EndpointProfilePlace(applicationId, id);
-    }
-
-    private EndpointProfilesView getView() {
-        return clientFactory.getEndpointProfilesView();
+        final Place previousPlace = place.getPreviousPlace();
+        if (previousPlace != null) {
+            listView.setBackEnabled(true);
+            registrations.add(listView.getBackButton().addClickHandler(new ClickHandler() {
+                public void onClick(ClickEvent event) {
+                    goTo(previousPlace);
+                }
+            }));
+        }
     }
 
     @Override
