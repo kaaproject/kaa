@@ -70,6 +70,7 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_ENDPOINT_GROUP_ID_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_GROUP_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_KEY_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_BY_APP_ID_ENDPOINT_KEY_HASH_PROPERTY;
 
 @Repository(value = "endpointProfileDao")
 public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraEndpointProfile, ByteBuffer> implements EndpointProfileDao<CassandraEndpointProfile> {
@@ -195,24 +196,56 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
         return count;
     }
 
+    private void removeByKeyHashFromEpByEndpointGroupId(byte[] endpointKeyHash) {
+        CassandraEndpointProfile storedProfile = findByKeyHash(endpointKeyHash);
+        List<CassandraEndpointGroupState> cfGroupState = new ArrayList<>();
+        List<String> endpointGroupIds = new ArrayList<>();
+        List<Statement> statementList = new ArrayList<>();
+        cfGroupState.addAll(storedProfile.getCfGroupState());
+        if (cfGroupState != null) {
+            for (CassandraEndpointGroupState cf : cfGroupState) {
+                endpointGroupIds.add(cf.getEndpointGroupId());
+            }
+        }
+        if (endpointGroupIds != null) {
+            for (String id : endpointGroupIds) {
+                statementList.add(delete().from(EP_BY_ENDPOINT_GROUP_ID_COLUMN_FAMILY_NAME)
+                        .where(eq(EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_GROUP_ID_PROPERTY, id))
+                        .and(eq(EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash))));
+            }
+        }
+        Statement[] st = new Statement[statementList.size()];
+        statementList.toArray(st);
+        executeBatch(st);
+    }
+
     @Override
     public void removeByKeyHash(byte[] endpointKeyHash) {
         LOG.debug("Remove endpoint profile by key hash [{}]", endpointKeyHash);
+        CassandraEndpointProfile storedProfile = findByKeyHash(endpointKeyHash);
+        removeByKeyHashFromEpByEndpointGroupId(endpointKeyHash);
+        String appId = storedProfile.getApplicationId();
+        if (!appId.isEmpty()) {
+            Statement deleteEp = delete().from(EP_BY_APP_ID_COLUMN_FAMILY_NAME).where(eq(EP_BY_APP_ID_APPLICATION_ID_PROPERTY, appId))
+                    .and(eq(EP_BY_APP_ID_ENDPOINT_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash)));
+            executeBatch(deleteEp);
+        }
         getMapper().delete(getByteBuffer(endpointKeyHash));
-        Statement deleteEpFromEndpointGroupIds= delete().from(EP_BY_ENDPOINT_GROUP_ID_COLUMN_FAMILY_NAME)
-                .where(eq(EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash)));
-        executeBatch(deleteEpFromEndpointGroupIds);
      }
 
     @Override
     public void removeByAppId(String appId) {
         LOG.debug("Remove endpoint profile by application id [{}]", appId);
         Statement deleteEps = delete().from(getColumnFamilyName()).where(in(EP_EP_KEY_HASH_PROPERTY, cassandraEPByAppIdDao.getEPIdsListByAppId(appId)));
-        Statement deleteEpsFromEndpointGroupIds = delete().from(EP_BY_ENDPOINT_GROUP_ID_COLUMN_FAMILY_NAME)
-                .where(in(EP_BY_ENDPOINT_GROUP_ID_ENDPOINT_KEY_HASH_PROPERTY, cassandraEPByAppIdDao.getEPIdsListByAppId(appId)));
+        ByteBuffer[] epKeyHashList =  cassandraEPByAppIdDao.getEPIdsListByAppId(appId);
+        if (epKeyHashList != null) {
+            for (ByteBuffer epKeyHash : epKeyHashList) {
+                removeByKeyHashFromEpByEndpointGroupId(getBytes(epKeyHash));
+            }
+        }
         Statement deleteEpsByAppId = delete().from(EP_BY_APP_ID_COLUMN_FAMILY_NAME).where(eq(EP_BY_APP_ID_APPLICATION_ID_PROPERTY, appId));
-        executeBatch(deleteEps,deleteEpsFromEndpointGroupIds, deleteEpsByAppId);
-        LOG.trace("Execute statements {}, {}, {} like batch", deleteEps, deleteEpsFromEndpointGroupIds, deleteEpsByAppId);
+        executeBatch(deleteEps, deleteEpsByAppId);
+        LOG.trace("Execute statements {}, {}, {} like batch", deleteEps, deleteEpsByAppId);
     }
 
     @Override
