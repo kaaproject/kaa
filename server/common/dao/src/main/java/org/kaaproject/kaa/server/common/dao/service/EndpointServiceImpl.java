@@ -166,7 +166,7 @@ public class EndpointServiceImpl implements EndpointService {
         UpdateNotificationDto<EndpointGroupDto> dto = null;
         EndpointGroup endpointGroup = endpointGroupDao.removeTopicFromEndpointGroup(id, topicId);
         if (endpointGroup != null) {
-            dto = new UpdateNotificationDto<EndpointGroupDto>();
+            dto = new UpdateNotificationDto<>();
             HistoryDto history = addHistory(endpointGroup.toDto(), ChangeType.REMOVE_TOPIC, topicId);
             if (history != null) {
                 dto.setAppId(history.getApplicationId());
@@ -189,7 +189,7 @@ public class EndpointServiceImpl implements EndpointService {
         UpdateNotificationDto<EndpointGroupDto> dto = null;
         EndpointGroup endpointGroup = endpointGroupDao.addTopicToEndpointGroup(id, topicId);
         if (endpointGroup != null) {
-            dto = new UpdateNotificationDto<EndpointGroupDto>();
+            dto = new UpdateNotificationDto<>();
             HistoryDto history = addHistory(endpointGroup.toDto(), ChangeType.ADD_TOPIC, topicId);
             if (history != null) {
                 dto.setAppId(history.getApplicationId());

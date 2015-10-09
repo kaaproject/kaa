@@ -6,12 +6,19 @@ public class PageLinkDto implements Serializable {
 
     private static final long serialVersionUID = 3270625120957514502L;
 
+    public static final String ENDPOINT_GROUP_ID = "endpointGroupId";
+    public static final String LIMIT = "limit";
+    public static final String EQ = "=";
+    public static final String AMP = "&";
+    public static final String OFFSET = "offset";
+
     private String endpointGroupId;
     private String limit;
     private String offset;
     private String next;
 
-    public PageLinkDto() {}
+    public PageLinkDto() {
+    }
 
     public PageLinkDto(String endpointGroupId, String limit, String offset) {
         this.endpointGroupId = endpointGroupId;
@@ -50,6 +57,18 @@ public class PageLinkDto implements Serializable {
 
     public void setEndpointGroupId(String endpointGroupId) {
         this.endpointGroupId = endpointGroupId;
+    }
+
+    public String getNextUrlPart() {
+        if (next == null || !next.isEmpty()) {
+            if (limit != null && offset != null) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(ENDPOINT_GROUP_ID).append(EQ).append(endpointGroupId).append(AMP).append(LIMIT).append(EQ).append(limit)
+                        .append(AMP).append(OFFSET).append(EQ).append(offset);
+                next = sb.toString();
+            }
+        }
+        return next;
     }
 
     @Override

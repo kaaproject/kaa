@@ -104,6 +104,8 @@ public class KaaAdminController {
 
     /** The Constant DEFAULT_OFFSET. */
     private static final String DEFAULT_OFFSET = "0";
+    public static final int HTTPS_PORT = 443;
+    public static final int HTTP_PORT = 80;
 
     /** The kaa admin service. */
     @Autowired
@@ -162,31 +164,33 @@ public class KaaAdminController {
 
     /**
      * Gets the endpoint profile by endpoint group id.
-     *
-    */
-    @RequestMapping(value="endpointProfileByGroupId", method=RequestMethod.GET, produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+     */
+    @RequestMapping(value = "endpointProfileByGroupId", method = RequestMethod.GET, produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(
-        @RequestParam(value="endpointGroupId") String endpointGroupId,
-        @RequestParam(value="limit", defaultValue=DEFAULT_LIMIT) String limit,
-        @RequestParam(value="offset", defaultValue=DEFAULT_OFFSET) String offset,
-        HttpServletRequest request) throws KaaAdminServiceException {
-        EndpointProfilesPageDto endpointProfilesPageDto;
-        PageLinkDto pageLinkDto;
-        endpointProfilesPageDto = kaaAdminService.getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset);
-        pageLinkDto = endpointProfilesPageDto.getPageLinkDto();
-        pageLinkDto = createNext(pageLinkDto, request.getLocalAddr(), request.getLocalPort());
-        endpointProfilesPageDto.setPageLinkDto(pageLinkDto);
+            @RequestParam(value = "endpointGroupId") String endpointGroupId,
+            @RequestParam(value = "limit", defaultValue = DEFAULT_LIMIT) String limit,
+            @RequestParam(value = "offset", defaultValue = DEFAULT_OFFSET) String offset,
+            HttpServletRequest request) throws KaaAdminServiceException {
+        EndpointProfilesPageDto endpointProfilesPageDto = kaaAdminService.getEndpointProfileByEndpointGroupId(endpointGroupId, limit, offset);
+        if (endpointProfilesPageDto.hasEndpointProfiles()) {
+            PageLinkDto pageLinkDto = createNext(endpointProfilesPageDto.getPageLinkDto(), request);
+            endpointProfilesPageDto.setPageLinkDto(pageLinkDto);
+        }
         return endpointProfilesPageDto;
     }
 
-    private PageLinkDto createNext(PageLinkDto pageLink, String address, int port) {
-        String next = "";
-        if (pageLink.getNext() == null) {
-            next = "http://" + address +":" + port + "/kaaAdmin/rest/api/endpointProfileByGroupId?endpointGroupId="
-                    + pageLink.getEndpointGroupId() + "&limit=" + pageLink.getLimit() + "&offset=" +
-                            pageLink.getOffset();
+    private PageLinkDto createNext(PageLinkDto pageLink, HttpServletRequest request) {
+        if (pageLink != null && pageLink.getNext() == null) {
+            StringBuilder nextUrl = new StringBuilder();
+            nextUrl.append(request.getScheme()).append("://").append(request.getServerName());
+            int port = request.getServerPort();
+            if (HTTP_PORT != port && HTTPS_PORT != port) {
+                nextUrl.append(":").append(port);
+            }
+            String next = nextUrl.append("/kaaAdmin/rest/api/endpointProfileByGroupId?").append(pageLink.getNextUrlPart()).toString();
             pageLink.setNext(next);
+            logger.debug("Generated next url {}", next);
         }
         return pageLink;
     }

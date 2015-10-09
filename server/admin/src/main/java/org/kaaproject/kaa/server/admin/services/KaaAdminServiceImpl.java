@@ -163,8 +163,7 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         this.passwordEncoder = passwordEncoder;
     }
 
-    private Map<PluginType, Map<String, PluginInfoDto>> pluginsInfo =
-            new HashMap<>();
+    private Map<PluginType, Map<String, PluginInfoDto>> pluginsInfo = new HashMap<>();
 
     {
         for (PluginType type : PluginType.values()) {
@@ -177,17 +176,14 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             if (Integer.valueOf(limit) > MAX_LIMIT) {
-                throw new IllegalArgumentException("Incorrect limit parameter. You must enter value not more than 500.");
+                throw new IllegalArgumentException("Incorrect limit parameter. You must enter value not more than " + MAX_LIMIT);
             }
             PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, limit, offset);
             EndpointProfilesPageDto endpointProfilesPage = toGenericDto(clientProvider.getClient().getEndpointProfileByEndpointGroupId(toGenericDataStruct(pageLinkDto)));
-            if (endpointProfilesPage.getEndpointProfiles().isEmpty() || endpointProfilesPage.getEndpointProfiles() == null) {
+            if (endpointProfilesPage.getEndpointProfiles() == null || !endpointProfilesPage.hasEndpointProfiles()) {
                 throw new KaaAdminServiceException(
                         "Requested item was not found!",
                         ServiceErrorCode.ITEM_NOT_FOUND);
-            }
-            for (EndpointProfileDto endpointProfile : endpointProfilesPage.getEndpointProfiles()) {
-                checkApplicationId(endpointProfile.getApplicationId());
             }
             return endpointProfilesPage;
         } catch (Exception e) {

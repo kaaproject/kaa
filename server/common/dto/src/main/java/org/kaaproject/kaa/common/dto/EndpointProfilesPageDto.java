@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,12 @@ public class EndpointProfilesPageDto implements Serializable {
         this.pageLinkDto = pageLinkDto;
     }
 
-    public static long getSerialversionuid() {
-        return serialVersionUID;
+    public boolean hasEndpointProfiles() {
+        boolean result = false;
+        if (endpointProfiles != null) {
+            result = !endpointProfiles.isEmpty();
+        }
+        return result;
     }
 
     @Override
