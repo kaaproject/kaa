@@ -111,7 +111,10 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testRemoveByKeyHash() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null);
+        List<EndpointGroupStateDto> cfGroupState = new ArrayList<EndpointGroupStateDto>();
+        cfGroupState.add(new EndpointGroupStateDto("111", null, null));
+        EndpointProfileDto expected = generateEndpointProfileForTestUpdate(null, cfGroupState);
+        endpointProfileDao.save(expected);
         endpointProfileDao.removeByKeyHash(expected.getEndpointKeyHash());
         EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
         Assert.assertNull(found);
@@ -119,7 +122,13 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
     @Test
     public void testRemoveByAppId() throws Exception {
-
+        List<EndpointGroupStateDto> cfGroupState = new ArrayList<EndpointGroupStateDto>();
+        cfGroupState.add(new EndpointGroupStateDto("111", null, null));
+        EndpointProfileDto expected = generateEndpointProfileForTestUpdate(null, cfGroupState);
+        endpointProfileDao.save(expected);
+        endpointProfileDao.removeByAppId(expected.getApplicationId());
+        EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
+        Assert.assertNull(found);
     }
 
     @Test
