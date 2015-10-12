@@ -60,15 +60,14 @@ public class PageLinkDto implements Serializable {
     }
 
     public String getNextUrlPart() {
-        if (next == null || !next.isEmpty()) {
-            if (limit != null && offset != null) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(ENDPOINT_GROUP_ID).append(EQ).append(endpointGroupId).append(AMP).append(LIMIT).append(EQ).append(limit)
-                        .append(AMP).append(OFFSET).append(EQ).append(offset);
-                next = sb.toString();
-            }
+        String nextUrlPart = null;
+        if (limit != null && offset != null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(ENDPOINT_GROUP_ID).append(EQ).append(endpointGroupId).append(AMP).append(LIMIT).append(EQ).append(limit)
+                    .append(AMP).append(OFFSET).append(EQ).append(offset);
+            nextUrlPart = sb.toString();
         }
-        return next;
+        return nextUrlPart;
     }
 
     @Override

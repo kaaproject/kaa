@@ -23,6 +23,7 @@ import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.server.common.dao.DaoConstants;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfile;
 import org.slf4j.Logger;
@@ -61,7 +62,7 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink) {
         LOG.debug("Find endpoint profile by endpoint group id [{}] ", pageLink.getEndpointGroupId());
         EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
-        String next = "";
+        String next = null;
         int lim = Integer.valueOf(pageLink.getLimit());
         List<MongoEndpointProfile> mongoEndpointProfileList = find(query(where(EP_CF_GROUP_STATE + "." + ENDPOINT_GROUP_ID)
                 .is(pageLink.getEndpointGroupId())).skip(Integer.parseInt(pageLink.getOffset()))
@@ -70,9 +71,8 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
             String offset = Integer.toString(lim + Integer.valueOf(pageLink.getOffset()));
             pageLink.setOffset(offset);
             mongoEndpointProfileList.remove(lim);
-            next = null;
         } else {
-            next = "It is the last page";
+            next = DaoConstants.LAST_PAGE_MESSAGE;
         }
         pageLink.setNext(next);
         endpointProfilesPageDto.setPageLinkDto(pageLink);

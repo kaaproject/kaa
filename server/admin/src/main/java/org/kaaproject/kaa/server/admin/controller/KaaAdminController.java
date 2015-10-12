@@ -86,6 +86,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 /**
  * The Class KaaAdminController.
  */
@@ -104,7 +106,11 @@ public class KaaAdminController {
 
     /** The Constant DEFAULT_OFFSET. */
     private static final String DEFAULT_OFFSET = "0";
+
+    /** The Constant HTTPS_PORT. */
     public static final int HTTPS_PORT = 443;
+
+    /** The Constant HTTP_PORT. */
     public static final int HTTP_PORT = 80;
 
     /** The kaa admin service. */
@@ -165,7 +171,7 @@ public class KaaAdminController {
     /**
      * Gets the endpoint profile by endpoint group id.
      */
-    @RequestMapping(value = "endpointProfileByGroupId", method = RequestMethod.GET, produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "endpointProfileByGroupId", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(
             @RequestParam(value = "endpointGroupId") String endpointGroupId,
