@@ -207,17 +207,20 @@ public class EndpointServiceImpl implements EndpointService {
 
     @Override
     public EndpointProfilesPageDto findEndpointProfileByEndpointGroupId(PageLinkDto pageLink) {
-        validateSqlId(pageLink.getEndpointGroupId(), "Can't find endpoint group by id. Incorrect id " + pageLink.getEndpointGroupId());
+        EndpointGroupDto endpointGroupDto = findEndpointGroupById(pageLink.getEndpointGroupId());
+        if (endpointGroupDto == null) {
+            LOG.warn("Endpoint group with id {} is not present in db.", pageLink.getEndpointGroupId());
+            throw new DatabaseProcessingException("Endpoint group is not present in db.");
+        }
         validateSqlId(pageLink.getLimit(), "Can't find endpoint group by id. Incorrect limit parameter " + pageLink.getLimit());
         validateString(pageLink.getOffset(), "Can't find endpoint group by id. Incorrect offset parameter " + pageLink.getOffset());
-        return endpointProfileDao.findByEndpointGroupId(pageLink);
+        return endpointProfileDao.findByEndpointGroupId(pageLink, endpointGroupDto);
     }
 
     @Override
     public EndpointConfigurationDto findEndpointConfigurationByHash(byte[] hash) {
         validateHash(hash, "Can't find endpoint configuration by hash. Invalid configuration hash " + hash);
         return getDto(endpointConfigurationDao.findByHash(hash));
-
     }
 
     @Override

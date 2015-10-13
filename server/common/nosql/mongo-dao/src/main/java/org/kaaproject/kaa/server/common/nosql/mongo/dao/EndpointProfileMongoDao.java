@@ -20,6 +20,7 @@ import com.mongodb.DBObject;
 
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
 
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
@@ -59,7 +60,7 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     }
 
     @Override
-    public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink) {
+    public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink, EndpointGroupDto endpointGroupDto) {
         LOG.debug("Find endpoint profile by endpoint group id [{}] ", pageLink.getEndpointGroupId());
         EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
         String next = null;

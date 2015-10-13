@@ -22,7 +22,9 @@ import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
+
 import org.apache.commons.codec.binary.Base64;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
@@ -278,19 +280,17 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     }
 
     @Override
-    public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink) {
+    public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink, EndpointGroupDto endpointGroupDto) {
         LOG.debug("Try to find endpoint profile by endpoint group id [{}]", pageLink.getEndpointGroupId());
         EndpointProfilesPageDto endpointProfilesPageDto;
         List<EndpointProfileDto> cassandraEndpointProfileList;
         ByteBuffer[] keyHashList;
-        if ("0".equals(pageLink.getOffset())) {
-            keyHashList = cassandraEPByEndpointGroupIdDao.findFirstPageEPByEndpointGroupId(pageLink.getEndpointGroupId(), pageLink.getLimit());
-            cassandraEndpointProfileList = findEndpointProfilesList(keyHashList, pageLink.getEndpointGroupId());
+        if (endpointGroupDto.isGroupAll()) {
+            keyHashList = cassandraEPByAppIdDao.findEPByAppId(pageLink, endpointGroupDto.getApplicationId());
         } else {
-            keyHashList = cassandraEPByEndpointGroupIdDao.findEPByEndpointGroupId(pageLink.getEndpointGroupId(),
-                    pageLink.getLimit(), Base64.decodeBase64(pageLink.getOffset()));
-            cassandraEndpointProfileList = findEndpointProfilesList(keyHashList, pageLink.getEndpointGroupId());
+            keyHashList = cassandraEPByEndpointGroupIdDao.findEPByEndpointGroupId(pageLink);
         }
+        cassandraEndpointProfileList = findEndpointProfilesList(keyHashList, pageLink.getEndpointGroupId());
         endpointProfilesPageDto = createNextPage(cassandraEndpointProfileList, pageLink.getEndpointGroupId(), pageLink.getLimit());
         return endpointProfilesPageDto;
     }
