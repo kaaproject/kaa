@@ -24,7 +24,7 @@
         <ui:with field='avroUiStyle' type='org.kaaproject.avro.ui.gwt.client.AvroUiResources.AvroUiStyle'/>
 
         <gwt:DockLayoutPanel unit="PX" ui:field="dockPanel" styleName="DockPanel" visible="true">
-            <gwt:north size="160">
+            <gwt:north size="220">
                 <gwt:VerticalPanel ui:field="vListPanel" width="100%" height="100%">
                     <gwt:cell>
                         <gwt:HorizontalPanel width="100%" height="80px" spacing="5">
@@ -53,11 +53,11 @@
                             </gwt:cell>
                         </gwt:HorizontalPanel>
                     </gwt:cell>
-                    <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-                        <avroUi:AlertPanel ui:field="errorPanel"/>
-                    </gwt:cell>
                     <gwt:cell>
                         <gwt:HorizontalPanel ui:field="filterPanel" height="100%" spacing="15"/>
+                    </gwt:cell>
+                    <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+                        <avroUi:AlertPanel ui:field="errorPanel"/>
                     </gwt:cell>
                 </gwt:VerticalPanel>
             </gwt:north>

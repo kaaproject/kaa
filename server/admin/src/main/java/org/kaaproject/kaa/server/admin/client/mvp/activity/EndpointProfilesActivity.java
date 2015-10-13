@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import com.google.gwt.activity.shared.AbstractActivity;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -24,8 +25,11 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Widget;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
@@ -47,6 +51,8 @@ import java.util.List;
 public class EndpointProfilesActivity extends AbstractActivity implements BaseListView.Presenter {
 
     private String applicationId;
+    public static final String DEFAULT_LIMIT = "10";   // ten per page is optimal
+    public static final String DEFAULT_OFFSET = "0";
 
     protected final ClientFactory clientFactory;
 
@@ -54,6 +60,9 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
 
     private EndpointProfilesView listView;
     private EndpointProfilesPlace place;
+//    private boolean pagerRemoved;
+//
+//    private SimplePager pager;
 
     public EndpointProfilesActivity(EndpointProfilesPlace place, ClientFactory clientFactory) {
         this.place = place;
@@ -65,7 +74,9 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
         listView = clientFactory.getEndpointProfilesView();
         getGroupsList();
-//        listView.getListWidget().remove(listView.getListWidget().getWidget(0)); //Removes redundant default pager
+          /*
+              Replace default pager with custom
+           */
         listView.setPresenter(this);
         bind();
         containerWidget.setWidget(listView.asWidget());
@@ -94,20 +105,6 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
                 });
     }
 
-    private void findEndpointByKeyHash(String endpointKeyHash) {
-        KaaAdmin.getDataSource().getEndpointProfileByKeyHash(endpointKeyHash, new AsyncCallback<EndpointProfileDto>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-
-            }
-
-            @Override
-            public void onSuccess(EndpointProfileDto endpointProfileDto) {
-                goTo(new EndpointProfilePlace(applicationId, endpointProfileDto.getId()));
-            }
-        });
-    }
-
     private void getGroupsList() {
         KaaAdmin.getDataSource().loadEndpointGroups(applicationId, new AsyncCallback<List<EndpointGroupDto>>() {
             @Override
@@ -124,7 +121,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
     private void populateListBox(List<EndpointGroupDto> result) {
         for (EndpointGroupDto endGroup: result) {
             if (endGroup.getWeight() == 0) {
-                loadDataDirectly(endGroup.getId(), "10", "0");
+                loadDataDirectly(endGroup.getId(), DEFAULT_LIMIT, DEFAULT_OFFSET);
                 listView.getEndpointGroupsInfo().setValue(endGroup);
             }
         }
@@ -145,20 +142,19 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             }
         }));
 
-        listView.getEndpointGroupsInfo().addValueChangeHandler(new ValueChangeHandler<EndpointGroupDto>() {
+        registrations.add(listView.getEndpointGroupsInfo().addValueChangeHandler(new ValueChangeHandler<EndpointGroupDto>() {
             @Override
             public void onValueChange(ValueChangeEvent<EndpointGroupDto> valueChangeEvent) {
-                loadDataDirectly(valueChangeEvent.getValue().getId(), "10", "0");
+                loadDataDirectly(valueChangeEvent.getValue().getId(), DEFAULT_LIMIT, DEFAULT_OFFSET);
             }
-        });
+        }));
 
-        listView.getFindEndpointButton().addClickHandler(new ClickHandler() {
+        registrations.add(listView.getFindEndpointButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                findEndpointByKeyHash(listView.getEndpointKeyHashTextBox().getValue());
-                listView.getEndpointKeyHashTextBox().setValue("", false);
+                findEndpointFromThisApplication(listView.getEndpointKeyHashTextBox().getValue());
             }
-        });
+        }));
 
         final Place previousPlace = place.getPreviousPlace();
         if (previousPlace != null) {
@@ -169,6 +165,24 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
                 }
             }));
         }
+    }
+
+    private void findEndpointFromThisApplication(String endpointKeyHash) {
+        KaaAdmin.getDataSource().getEndpointProfileByKeyHash(endpointKeyHash, new AsyncCallback<EndpointProfileDto>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Utils.handleException(caught, listView);
+            }
+
+            @Override
+            public void onSuccess(EndpointProfileDto endpointProfileDto) {
+                List<EndpointProfileDto> result = new ArrayList<>();
+                if (endpointProfileDto.getApplicationId().equals(applicationId)) {
+                    result.add(endpointProfileDto);
+                }
+                listView.getListWidget().getDataGrid().setRowData(result);
+            }
+        });
     }
 
     @Override

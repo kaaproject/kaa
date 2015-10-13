@@ -33,6 +33,10 @@ public class EndpointProfilePlace extends EndpointProfilesPlace {
         return "Endpoint profile";
     }
 
+    public String getEndpointKeyHash() {
+        return endpointKeyHash;
+    }
+
     @Prefix(value = "endProfKeyHash")
     public static class Tokenizer implements PlaceTokenizer<EndpointProfilePlace>, PlaceConstants {
 
@@ -42,7 +46,6 @@ public class EndpointProfilePlace extends EndpointProfilesPlace {
             return new EndpointProfilePlace(PlaceParams.getParam(APPLICATION_ID),
                     PlaceParams.getParam(ENDPOINT_PROFILE_KEY_HASH));
         }
-
         @Override
         public String getToken(EndpointProfilePlace place) {
             PlaceParams.clear();
@@ -50,6 +53,7 @@ public class EndpointProfilePlace extends EndpointProfilesPlace {
             PlaceParams.putParam(ENDPOINT_PROFILE_KEY_HASH, place.getEndpointKeyHash());
             return PlaceParams.generateToken();
         }
+
     }
 
     @Override
@@ -79,7 +83,5 @@ public class EndpointProfilePlace extends EndpointProfilesPlace {
         return new EndpointProfilesPlace(applicationId);
     }
 
-    public String getEndpointKeyHash() {
-        return endpointKeyHash;
-    }
+
 }

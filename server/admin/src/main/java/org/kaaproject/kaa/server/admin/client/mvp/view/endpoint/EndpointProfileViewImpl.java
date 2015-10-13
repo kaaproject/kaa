@@ -16,11 +16,20 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
+import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.ui.Label;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
+import java.util.List;
 
 public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements EndpointProfileView {
 
@@ -28,9 +37,7 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     private SizedTextBox endpointKeyHash;
     private SizedTextBox id;
     private SizedTextBox applicationId;
-//    private List<EndpointGroupStateDto> cfGroupState;
-//    private List<EndpointGroupStateDto> nfGroupState;
-//    private List<String> subscriptions;
+    private List<EndpointGroupStateDto> nfGroupState;
     private SizedTextBox profileVersion;
     private SizedTextBox configurationHash;
     private SizedTextBox configurationVersion;
@@ -41,8 +48,8 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
 //    private List<EventClassFamilyVersionStateDto> ecfVersionStates;
     private SizedTextBox serverHash;
 
-//    private BaseStructGrid<ProfileFilterDto> profileFiltersGrid;
-//    private BaseStructGrid<ConfigurationDto> configurationsGrid;
+//    private AbstractGrid<ConfigurationSchemaDto, String> configurationsGrid;
+    private TopicGrid topicsGrid;
 
     public EndpointProfileViewImpl() {
         super(true);
@@ -135,12 +142,52 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         detailsTable.setWidget(10, 0, serverHashLabel);
         detailsTable.setWidget(10, 1, serverHash);
 
+//        configurationsGrid = new ConfigurationGrid();
+//        configurationsGrid.setSize("700px", "200px");
+//        Label configurationsLabel = new Label(Utils.constants.configurations());
+//        configurationsLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
+//        detailsTable.setWidget(11, 0, configurationsGrid);
+//        detailsTable.getFlexCellFormatter().setColSpan(11, 0, 3);
+
+        topicsGrid = new TopicGrid(true) {
+            /*
+                override this method to avoid modification side effects
+             */
+            @Override
+            protected float constructActions(DataGrid<TopicDto> table, float prefWidth) {
+                return 0f;
+            }
+        };
+        topicsGrid.setSize("700px", "200px");
+        Label topicsLabel = new Label(Utils.constants.notificationTopics());
+        topicsLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
+        Label topicLabel = new Label(Utils.constants.notificationTopics());
+        topicLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
+        detailsTable.setWidget(12, 0, topicLabel);
+        detailsTable.setWidget(13, 0, topicsGrid);
+        detailsTable.getFlexCellFormatter().setColSpan(13, 0, 3);
+    }
+
+    protected AbstractGrid<EndpointGroupDto, String> createGrid() {
+        return new EndpointGroupGrid();
     }
 
     @Override
     protected void resetImpl() {
-
+        endpointKeyHash.setValue("");
+        id.setValue("");
+        applicationId.setValue("");
+        profileVersion.setValue("");
+        configurationHash.setValue("");
+        configurationVersion.setValue("");
+        notificationVersion.setValue("");
+        systemNfVersion.setValue("");
+        userNfVersion.setValue("");
+        logSchemaVersion.setValue("");
+        serverHash.setValue("");
     }
+
+
 
     @Override
     protected boolean validate() {
@@ -200,5 +247,15 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     @Override
     public SizedTextBox getServerHash() {
         return serverHash;
+    }
+
+//    @Override
+//    public AbstractGrid<ConfigurationSchemaDto, ?> getConfigurationsGrid() {
+//        return configurationsGrid;
+//    }
+
+    @Override
+    public TopicGrid getTopicsGrid() {
+        return topicsGrid;
     }
 }

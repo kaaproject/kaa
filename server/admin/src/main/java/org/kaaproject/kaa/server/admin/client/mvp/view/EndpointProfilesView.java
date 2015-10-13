@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 CyberVision, Inc.
+ * Copyright 2015 CyberVision, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueListBox;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
@@ -28,5 +29,5 @@ public interface EndpointProfilesView extends BaseListView<EndpointProfileDto>{
 
     Button getFindEndpointButton();
     TextBox getEndpointKeyHashTextBox();
-
+    HTMLPanel getCustomPager();
 }

@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
 
 public interface EndpointProfileView extends BaseDetailsView {
 
@@ -33,5 +34,6 @@ public interface EndpointProfileView extends BaseDetailsView {
     SizedTextBox getServerHash();
 
 //    BaseStructGrid<ProfileFilterDto> getProfileFiltersGrid();
-//    BaseStructGrid<ConfigurationDto> getConfigurationsGrid();
+//    AbstractGrid<ConfigurationSchemaDto, ?> getConfigurationsGrid();
+    TopicGrid getTopicsGrid();
 }
