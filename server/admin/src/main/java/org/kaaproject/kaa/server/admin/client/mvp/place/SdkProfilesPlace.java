@@ -25,7 +25,7 @@ import com.google.gwt.place.shared.Prefix;
  *
  * @author Bohdan Khablenko
  *
- * @since 0.8.0
+ * @since v0.8.0
  *
  */
 public class SdkProfilesPlace extends TreePlace {

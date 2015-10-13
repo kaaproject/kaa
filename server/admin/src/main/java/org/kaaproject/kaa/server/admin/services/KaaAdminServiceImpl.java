@@ -59,6 +59,7 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -540,6 +541,19 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
                 throw new IllegalArgumentException("SDK profile ID is empty!");
             }
             clientProvider.getClient().deleteSdkProfile(sdkProfileId);
+        } catch (Exception cause) {
+            throw Utils.handleException(cause);
+        }
+    }
+
+    @Override
+    public SdkPropertiesDto getSdkProfile(String sdkProfileId) throws KaaAdminServiceException {
+        this.checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            if (isEmpty(sdkProfileId)) {
+                throw new IllegalArgumentException("SDK profile ID is empty!");
+            }
+            return ThriftDtoConverter.toDto(clientProvider.getClient().getSdkProfile(sdkProfileId));
         } catch (Exception cause) {
             throw Utils.handleException(cause);
         }

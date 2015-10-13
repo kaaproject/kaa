@@ -149,7 +149,7 @@ public class GenerateSdkActivity extends AbstractDetailsActivity<SdkPropertiesDt
                 getValue().getMajorVersion());
         entity.setLogSchemaVersion(detailsView.getLogSchemaVersion().
                 getValue().getMajorVersion());
-        entity.setTargetPlatform(detailsView.getTargetPlatform().getValue());
+//        entity.setTargetPlatform(detailsView.getTargetPlatform().getValue());
 
         List<String> aefMapIds = new ArrayList<>();
         List<AefMapInfoDto> aefMaps = detailsView.getSelectedAefMaps().getValues();

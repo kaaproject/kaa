@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
+import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkPropertiesDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -28,6 +29,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.GenerateSdkPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
+import org.kaaproject.kaa.server.admin.client.mvp.view.sdk.TargetPlatformPopup;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
@@ -38,10 +40,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  *
  * @author Bohdan Khablenko
  *
- * @since 0.8.0
+ * @since v0.8.0
  *
  */
-public class SdkProfilesActivity extends AbstractListActivity<SdkPropertiesDto, SdkProfilesPlace> {
+public class SdkProfilesActivity extends AbstractListActivity<SdkPropertiesDto, SdkProfilesPlace> implements TargetPlatformPopup.Caller {
 
     private final String applicationId;
 
@@ -75,25 +77,53 @@ public class SdkProfilesActivity extends AbstractListActivity<SdkPropertiesDto, 
         KaaAdmin.getDataSource().deleteSdkProfile(id, callback);
     }
 
+    /*
+     * An SDK profile loaded from the database. A target platform must be set
+     * before the object can be used to generate an actual SDK.
+     */
+    private SdkPropertiesDto loaded;
+
+    private TargetPlatformPopup targetPlatformPopup = new TargetPlatformPopup(this);
+
     @Override
     protected void onCustomRowAction(RowActionEvent<String> event) {
         if (event.getAction() == KaaRowAction.GENERATE_SDK) {
-            BusyPopup.showPopup();
-            KaaAdmin.getDataSource().retrieveSdk(event.getClickedId(), new AsyncCallback<String>() {
+
+            KaaAdmin.getDataSource().getSdkProfile(event.getClickedId(), new AsyncCallback<SdkPropertiesDto>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    BusyPopup.hidePopup();
                     Utils.handleException(caught, SdkProfilesActivity.this.getView());
                 }
 
                 @Override
-                public void onSuccess(String key) {
-                    BusyPopup.hidePopup();
-                    SdkProfilesActivity.this.getView().clearError();
-                    ServletHelper.downloadSdk(key);
+                public void onSuccess(SdkPropertiesDto loaded) {
+                    SdkProfilesActivity.this.loaded = loaded;
+                    SdkProfilesActivity.this.targetPlatformPopup.show();
                 }
             });
         }
+    }
+
+    @Override
+    public void processValue(SdkPlatform targetPlatform) {
+        this.loaded.setTargetPlatform(targetPlatform);
+
+        BusyPopup.showPopup();
+        KaaAdmin.getDataSource().generateSdk(this.loaded, new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                BusyPopup.hidePopup();
+                Utils.handleException(caught, SdkProfilesActivity.this.getView());
+            }
+
+            @Override
+            public void onSuccess(String key) {
+                BusyPopup.hidePopup();
+                SdkProfilesActivity.this.getView().clearError();
+                ServletHelper.downloadSdk(key);
+            }
+        });
     }
 }

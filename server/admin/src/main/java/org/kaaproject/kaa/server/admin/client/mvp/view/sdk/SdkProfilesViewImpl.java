@@ -25,7 +25,7 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
  *
  * @author Bohdan Khablenko
  *
- * @since 0.8.0
+ * @since v0.8.0
  *
  */
 public class SdkProfilesViewImpl extends BaseListViewImpl<SdkPropertiesDto> {

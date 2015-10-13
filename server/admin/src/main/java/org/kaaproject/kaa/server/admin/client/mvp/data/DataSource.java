@@ -1214,6 +1214,14 @@ public class DataSource {
         });
     }
 
+    public void getSdkProfile(String sdkProfileId, final AsyncCallback<SdkPropertiesDto> callback) {
+        rpcService.getSdkProfile(sdkProfileId, new DataCallback<SdkPropertiesDto>(callback) {
+            @Override
+            protected void onResult(SdkPropertiesDto result) {
+            }
+        });
+    }
+
     public void loadSdkProfiles(String applicationId, final AsyncCallback<List<SdkPropertiesDto>> callback) {
         rpcService.getSdkProfilesByApplicationId(applicationId, new DataCallback<List<SdkPropertiesDto>>(callback) {
             @Override

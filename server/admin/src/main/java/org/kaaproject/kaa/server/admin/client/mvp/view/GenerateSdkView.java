@@ -35,7 +35,7 @@ public interface GenerateSdkView extends BaseDetailsView {
     ValueListBox<SchemaDto> getProfileSchemaVersion();
     ValueListBox<SchemaDto> getNotificationSchemaVersion();
     ValueListBox<SchemaDto> getLogSchemaVersion();
-    ValueListBox<SdkPlatform> getTargetPlatform();
+//    ValueListBox<SdkPlatform> getTargetPlatform();
     MultiValueListBox<AefMapInfoDto> getSelectedAefMaps();
     ValueListBox<UserVerifierDto> getDefaultUserVerifier();
 
