@@ -17,8 +17,8 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.sdk;
 
 import java.io.IOException;
-import java.util.Arrays;
 
+import org.kaaproject.avro.ui.gwt.client.widget.dialog.AvroUiDialog;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
@@ -26,74 +26,56 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
- * An object of this class is used to select a target platform during SDK
- * generation.
- *
- * @see org.kaaproject.kaa.server.admin.client.mvp.activity.SdkProfilesActivity
  *
  * @author Bohdan Khablenko
  *
  * @since v0.8.0
  *
  */
-public class TargetPlatformPopup extends PopupPanel {
-
-    {
-        VerticalPanel root = new VerticalPanel();
-
-        root.add(this.getFields());
-        root.add(this.getButtons());
-
-        this.add(root);
-        this.setGlassEnabled(true);
-        this.center();
-        this.hide();
-    }
-
-    /**
-     * An object that handles the value selected.
-     *
-     * @author Bohdan Khablenko
-     *
-     * @since 0.8.0
-     *
-     */
-    public interface Caller {
-
-        void processValue(SdkPlatform targetPlatform);
-    }
-
-    private final Caller caller;
-
-    public TargetPlatformPopup(Caller caller) {
-        this.caller = caller;
-    }
+public class GenerateSdkDialog extends AvroUiDialog {
 
     private ValueListBox<SdkPlatform> targetPlatform;
 
-    private HorizontalPanel getFields() {
-        HorizontalPanel fields = new HorizontalPanel();
+    public static GenerateSdkDialog show(Listener listener) {
+        GenerateSdkDialog instance = new GenerateSdkDialog(listener);
+
+        instance.center();
+        instance.show();
+
+        return instance;
+    }
+
+    public GenerateSdkDialog(Listener listener) {
+        super(false, true);
+
+        this.listener = listener;
+
+        this.setText(Utils.constants.generateSdk());
+
+        VerticalPanel root = new VerticalPanel();
+        this.setWidget(root);
+
+        FlexTable grid = new FlexTable();
+        grid.setCellSpacing(15);
+        grid.getColumnFormatter().setWidth(0, "115px");
+        grid.getColumnFormatter().setWidth(1, "115px");
 
         Label label = new Label(Utils.constants.targetPlatform());
-        label.setStyleName(Utils.avroUiStyle.requiredField());
 
-        fields.add(label);
-
-        targetPlatform = new ValueListBox<SdkPlatform>(new Renderer<SdkPlatform>() {
+        this.targetPlatform = new ValueListBox<>(new Renderer<SdkPlatform>() {
 
             @Override
             public String render(SdkPlatform object) {
                 if (object != null) {
                     return Utils.constants.getString(object.getResourceKey());
                 } else {
-                    return "";
+                    return null;
                 }
             }
 
@@ -105,6 +87,7 @@ public class TargetPlatformPopup extends PopupPanel {
 
         // For some reason this adds a null value to the list box
         // targetPlatform.setAcceptableValues(Arrays.asList(SdkPlatform.values()));
+        targetPlatform.setWidth("100%");
 
         // TODO: Do something with this workaround
         for (SdkPlatform value : SdkPlatform.values()) {
@@ -113,38 +96,44 @@ public class TargetPlatformPopup extends PopupPanel {
 
         targetPlatform.setValue(SdkPlatform.ANDROID);
 
-        fields.add(targetPlatform);
+        grid.setWidget(0, 0, label);
+        grid.setWidget(0, 1, targetPlatform);
+        root.add(grid);
 
-        return fields;
-    }
-
-    private HorizontalPanel getButtons() {
-        HorizontalPanel buttons = new HorizontalPanel();
-
-        Button generateSdk = new Button(Utils.constants.generateSdk());
-        generateSdk.addClickHandler(new ClickHandler() {
+        Button generateSdk = new Button(Utils.constants.generateSdk(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                SdkPlatform targetPlatform = TargetPlatformPopup.this.targetPlatform.getValue();
-                TargetPlatformPopup.this.caller.processValue(targetPlatform);
-                TargetPlatformPopup.this.hide();
+                GenerateSdkDialog.this.hide();
+
+                if (GenerateSdkDialog.this.listener != null) {
+                    SdkPlatform targetPlatform = GenerateSdkDialog.this.targetPlatform.getValue();
+                    GenerateSdkDialog.this.listener.onGenerateSdk(targetPlatform);
+                }
             }
         });
 
-        buttons.add(generateSdk);
-
-        Button cancel = new Button(Utils.constants.cancel());
-        cancel.addClickHandler(new ClickHandler() {
-
+        Button cancel = new Button(Utils.constants.cancel(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                TargetPlatformPopup.this.hide();
+                GenerateSdkDialog.this.hide();
+
+                if (GenerateSdkDialog.this.listener != null) {
+                    GenerateSdkDialog.this.listener.onCancel();
+                }
             }
         });
 
-        buttons.add(cancel);
-
-        return buttons;
+        this.addButton(generateSdk);
+        this.addButton(cancel);
     }
+
+    public interface Listener {
+
+        void onGenerateSdk(final SdkPlatform targetPlatform);
+
+        void onCancel();
+    }
+
+    private Listener listener;
 }
