@@ -206,6 +206,7 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
+    @Transactional
     public EndpointProfilesPageDto findEndpointProfileByEndpointGroupId(PageLinkDto pageLink) {
         EndpointGroupDto endpointGroupDto = findEndpointGroupById(pageLink.getEndpointGroupId());
         if (endpointGroupDto == null) {

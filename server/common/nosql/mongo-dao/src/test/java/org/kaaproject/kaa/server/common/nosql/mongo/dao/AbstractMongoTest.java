@@ -16,8 +16,6 @@
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
@@ -27,8 +25,6 @@ import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointProfi
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointUserConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class AbstractMongoTest extends AbstractTest {
@@ -36,26 +32,9 @@ public class AbstractMongoTest extends AbstractTest {
     @Autowired
     protected EndpointConfigurationDao<MongoEndpointConfiguration> endpointConfigurationDao;
     @Autowired
-    protected EndpointProfileDao<MongoEndpointProfile> endpointProfileDao;
-    @Autowired
     protected EndpointUserConfigurationDao<MongoEndpointUserConfiguration> endpointUserConfigurationDao;
-
-    protected EndpointProfileDto generateEndpointProfile(String appId, List<String> topicIds) {
-        EndpointProfileDto profileDto = new EndpointProfileDto();
-        profileDto.setApplicationId(appId);
-        profileDto.setSubscriptions(topicIds);
-        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
-        return endpointProfileDao.save(new MongoEndpointProfile(profileDto)).toDto();
-    }
-
-    protected EndpointProfileDto generateEndpointProfileWithGroupId(String endpointGroupId) {
-        EndpointProfileDto profileDto = new EndpointProfileDto();
-        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
-        List<EndpointGroupStateDto> cfGroupState = new ArrayList<>();
-        cfGroupState.add(new EndpointGroupStateDto(endpointGroupId, null, null));
-        profileDto.setCfGroupStates(cfGroupState);
-        return endpointProfileDao.save(new MongoEndpointProfile(profileDto)).toDto();
-    }
+    @Autowired
+    protected EndpointProfileDao<MongoEndpointProfile> endpointProfileDao;
 
     protected EndpointConfigurationDto generateEndpointConfiguration() {
         EndpointConfigurationDto configurationDto = new EndpointConfigurationDto();
@@ -63,6 +42,4 @@ public class AbstractMongoTest extends AbstractTest {
         configurationDto.setConfiguration(UUID.randomUUID().toString().getBytes());
         return endpointConfigurationDao.save(new MongoEndpointConfiguration(configurationDto)).toDto();
     }
-
-
 }

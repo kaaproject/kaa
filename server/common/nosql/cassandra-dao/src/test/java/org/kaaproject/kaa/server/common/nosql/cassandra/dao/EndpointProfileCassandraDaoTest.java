@@ -73,6 +73,7 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
         List<EndpointGroupStateDto> cfGroupStateUpdate = new ArrayList<EndpointGroupStateDto>();
         PageLinkDto pageLink;
         EndpointProfilesPageDto found;
+        String endpointProfileId = "11";
         EndpointGroupDto endpointGroupDto = new EndpointGroupDto();
         endpointGroupDto.setWeight(1);
         cfGroupStateSave.add(new EndpointGroupStateDto("111", null, null));
@@ -82,7 +83,7 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
         endpointProfileDao.save(endpointProfileSave);
         cfGroupStateUpdate.add(new EndpointGroupStateDto("111", null, null));
         cfGroupStateUpdate.add(new EndpointGroupStateDto("444", null, null));
-        EndpointProfileDto endpointProfileUpdate = generateEndpointProfileForTestUpdate("11", cfGroupStateUpdate);
+        EndpointProfileDto endpointProfileUpdate = generateEndpointProfileForTestUpdate(endpointProfileId, cfGroupStateUpdate);
         endpointProfileDao.save(endpointProfileUpdate);
         String limit = "10";
         String offset = "0";

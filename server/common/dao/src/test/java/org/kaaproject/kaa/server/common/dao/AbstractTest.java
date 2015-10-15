@@ -52,7 +52,9 @@ import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
@@ -80,6 +82,7 @@ import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
 import org.kaaproject.kaa.server.common.dao.impl.LogSchemaDao;
@@ -87,6 +90,7 @@ import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.sql.H2DBTestRunner;
 import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
@@ -617,5 +621,24 @@ public class AbstractTest {
         configurationDto.setBody(body);
         configurationDto.setAppToken(applicationDto.getApplicationToken());
         return userConfigurationService.saveUserConfiguration(configurationDto);
+    }
+
+    protected EndpointProfileDto generateEndpointProfile(String appId, List<String> topicIds) {
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        profileDto.setApplicationId(appId);
+        profileDto.setSubscriptions(topicIds);
+        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
+        return endpointService.saveEndpointProfile(profileDto);
+    }
+
+    protected EndpointProfileDto generateEndpointProfileWithGroupId(String endpointGroupId) {
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
+        String appId = generateApplication().getId();
+        profileDto.setApplicationId(appId);
+        List<EndpointGroupStateDto> cfGroupState = new ArrayList<>();
+        cfGroupState.add(new EndpointGroupStateDto(endpointGroupId, null, null));
+        profileDto.setCfGroupStates(cfGroupState);
+        return endpointService.saveEndpointProfile(profileDto);
     }
 }

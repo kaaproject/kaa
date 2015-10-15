@@ -45,6 +45,7 @@ import java.util.UUID;
 public class AbstractCassandraTest {
 
     private static final Random RANDOM = new Random();
+    private static final String TEST_ENDPOINT_GROUP_ID = "124";
 
     @ClassRule
     public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", "kaa"));
@@ -130,13 +131,11 @@ public class AbstractCassandraTest {
     }
 
     protected EndpointProfileDto generateEndpointProfileForTestUpdate(String id, List<EndpointGroupStateDto> cfGroupState) {
-        String appId = "11";
-        String accessToken = "22";
         EndpointProfileDto profileDto = new EndpointProfileDto();
         profileDto.setId(id);
-        profileDto.setApplicationId(appId);
+        profileDto.setApplicationId(generateStringId());
         profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
-        profileDto.setAccessToken(accessToken);
+        profileDto.setAccessToken(generateStringId());
         profileDto.setCfGroupStates(cfGroupState);
         return profileDto;
     }
@@ -155,11 +154,12 @@ public class AbstractCassandraTest {
         profileDto.setEndpointKeyHash(keyHash);
         profileDto.setAccessToken(accessToken);
         List<EndpointGroupStateDto> cfGroupState = new ArrayList<>();
-        EndpointGroupStateDto cf = new EndpointGroupStateDto("124", "25", "35");
+        EndpointGroupStateDto cf = new EndpointGroupStateDto(TEST_ENDPOINT_GROUP_ID, null, null);
         cfGroupState.add(cf);
         profileDto.setCfGroupStates(cfGroupState);
         return endpointProfileDao.save(new CassandraEndpointProfile(profileDto)).toDto();
     }
+
     protected EndpointUserDto generateEndpointUser() {
         return generateEndpointUser(null);
     }
