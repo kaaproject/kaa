@@ -16,24 +16,30 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
+import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
 
 public interface EndpointProfileView extends BaseDetailsView {
 
     SizedTextBox getKeyHash();
     SizedTextBox getId();
-    SizedTextBox getAppId();
-    SizedTextBox getProfileVersion();
-    SizedTextBox getConfigurationHash();
-    SizedTextBox getConfigurationVersion();
     SizedTextBox getNotificationVersion();
     SizedTextBox getSystemNfVersion();
     SizedTextBox getUserNfVersion();
     SizedTextBox getLogSchemaVer();
-    SizedTextBox getServerHash();
 
-//    BaseStructGrid<ProfileFilterDto> getProfileFiltersGrid();
-//    AbstractGrid<ConfigurationSchemaDto, ?> getConfigurationsGrid();
+    SizedTextBox getUserID();
+    SizedTextBox getUserName();
+    SizedTextBox getUserExternalID();
+
+    SizedTextBox getSchemaName();
+    SizedTextBox getDescription();
+
     TopicGrid getTopicsGrid();
+    AbstractGrid<EndpointGroupDto, String> getGroupsGrid();
+    RecordFieldWidget getSchemaForm();
+//    RecordPanel getSchemaForm();
 }

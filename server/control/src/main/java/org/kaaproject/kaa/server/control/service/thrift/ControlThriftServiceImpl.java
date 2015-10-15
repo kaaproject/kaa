@@ -16,18 +16,6 @@
 
 package org.kaaproject.kaa.server.control.service.thrift;
 
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDataStruct;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDataStructList;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDataStruct;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDataStructList;
-import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDto;
-
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.avro.Schema;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
@@ -118,6 +106,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDataStruct;
+import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toDataStructList;
+import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDataStruct;
+import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDataStructList;
+import static org.kaaproject.kaa.server.common.thrift.util.ThriftDtoConverter.toGenericDto;
+
 /**
  * The Class ControlThriftServiceImpl.<br>
  * Implementation of Control Service Thrift Interface.
@@ -205,6 +205,16 @@ public class ControlThriftServiceImpl extends BaseCliThriftService implements Co
     private volatile OperationsServerResolver resolver;
 
     private Object zkLock = new Object();
+
+    @Override
+    public DataStruct findProfileSchemaByAppIdAndVersion(String appId, int schemaVersion) throws ControlThriftException, TException {
+        return toGenericDataStruct(profileService.findProfileSchemaByAppIdAndVersion(appId, schemaVersion));
+    }
+
+    @Override
+    public DataStruct findEndpointUserByExternalIdAndTenantId(String externalId, String tenantId) throws ControlThriftException, TException {
+        return toGenericDataStruct(endpointService.findEndpointUserByExternalIdAndTenantId(externalId, tenantId));
+    }
 
     /*
      * (non-Javadoc)

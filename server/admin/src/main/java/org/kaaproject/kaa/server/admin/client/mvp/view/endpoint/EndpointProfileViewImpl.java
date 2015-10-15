@@ -18,10 +18,11 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.ui.Label;
+import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
+import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
@@ -29,27 +30,27 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import java.util.List;
-
 public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements EndpointProfileView {
 
 
     private SizedTextBox endpointKeyHash;
-    private SizedTextBox id;
-    private SizedTextBox applicationId;
-    private List<EndpointGroupStateDto> nfGroupState;
-    private SizedTextBox profileVersion;
-    private SizedTextBox configurationHash;
-    private SizedTextBox configurationVersion;
     private SizedTextBox notificationVersion;
     private SizedTextBox systemNfVersion;
     private SizedTextBox userNfVersion;
     private SizedTextBox logSchemaVersion;
-//    private List<EventClassFamilyVersionStateDto> ecfVersionStates;
-    private SizedTextBox serverHash;
 
-//    private AbstractGrid<ConfigurationSchemaDto, String> configurationsGrid;
+    private SizedTextBox userID;
+    private SizedTextBox userName;
+    private SizedTextBox userExternalID;
+
+    private SizedTextBox schemaName;
+    private SizedTextBox description;
+
     private TopicGrid topicsGrid;
+    private AbstractGrid<EndpointGroupDto, String> groupsGrid;
+
+//    private RecordPanel schemaForm;
+    private RecordFieldWidget schemaForm;
 
     public EndpointProfileViewImpl() {
         super(true);
@@ -82,72 +83,86 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
         detailsTable.setWidget(0, 0, keyHashLabel);
         detailsTable.setWidget(0, 1, endpointKeyHash);
 
-        Label idLabel = new Label("Endpoint id");
-        id = new KaaAdminSizedTextBox(-1, false);
-        id.setWidth("100%");
-        detailsTable.setWidget(1, 0, idLabel);
-        detailsTable.setWidget(1, 1, id);
+        Label userIDLabel = new Label("User id");
+        userID = new KaaAdminSizedTextBox(-1, false);
+        userID.setWidth("100%");
+        detailsTable.setWidget(1, 0, userIDLabel);
+        detailsTable.setWidget(1, 1, userID);
 
-        Label applicationIdLabel = new Label("Application id");
-        applicationId = new KaaAdminSizedTextBox(-1, false);
-        applicationId.setWidth("100%");
-        detailsTable.setWidget(2, 0, applicationIdLabel);
-        detailsTable.setWidget(2, 1, applicationId);
+        Label userNameLabel = new Label("User name");
+        userName = new KaaAdminSizedTextBox(-1, false);
+        userName.setWidth("100%");
+        detailsTable.setWidget(2, 0, userNameLabel);
+        detailsTable.setWidget(2, 1, userName);
 
-        Label profileVersionLabel = new Label("Profile version");
-        profileVersion = new KaaAdminSizedTextBox(-1, false);
-        profileVersion.setWidth("100%");
-        detailsTable.setWidget(3, 0, profileVersionLabel);
-        detailsTable.setWidget(3, 1, profileVersion);
-
-        Label configurationHashLabel = new Label("Configuration hash");
-        configurationHash = new KaaAdminSizedTextBox(-1, false);
-        configurationHash.setWidth("100%");
-        detailsTable.setWidget(4, 0, configurationHashLabel);
-        detailsTable.setWidget(4, 1, configurationHash);
-
-        Label configurationVersionLabel = new Label("Configuration version");
-        configurationVersion = new KaaAdminSizedTextBox(-1, false);
-        configurationVersion.setWidth("100%");
-        detailsTable.setWidget(5, 0, configurationVersionLabel);
-        detailsTable.setWidget(5, 1, configurationVersion);
+        Label userExternalIDLabel = new Label("User external ID");
+        userExternalID = new KaaAdminSizedTextBox(-1, false);
+        userExternalID.setWidth("100%");
+        detailsTable.setWidget(3, 0, userExternalIDLabel);
+        detailsTable.setWidget(3, 1, userExternalID);
 
         Label notificationVersionLabel = new Label("Notification version");
         notificationVersion = new KaaAdminSizedTextBox(-1, false);
         notificationVersion.setWidth("100%");
-        detailsTable.setWidget(6, 0, notificationVersionLabel);
-        detailsTable.setWidget(6, 1, notificationVersion);
+        detailsTable.setWidget(4, 0, notificationVersionLabel);
+        detailsTable.setWidget(4, 1, notificationVersion);
 
         Label systemNfVersionLabel = new Label("SystemNf version");
         systemNfVersion = new KaaAdminSizedTextBox(-1, false);
         systemNfVersion.setWidth("100%");
-        detailsTable.setWidget(7, 0, systemNfVersionLabel);
-        detailsTable.setWidget(7, 1, systemNfVersion);
+        detailsTable.setWidget(5, 0, systemNfVersionLabel);
+        detailsTable.setWidget(5, 1, systemNfVersion);
 
         Label userNfVersionLabel = new Label("UserNf Version");
         userNfVersion = new KaaAdminSizedTextBox(-1, false);
         userNfVersion.setWidth("100%");
-        detailsTable.setWidget(8, 0, userNfVersionLabel);
-        detailsTable.setWidget(8, 1, userNfVersion);
+        detailsTable.setWidget(6, 0, userNfVersionLabel);
+        detailsTable.setWidget(6, 1, userNfVersion);
 
         Label logSchemaVersionLabel = new Label("LogSchema version");
         logSchemaVersion = new KaaAdminSizedTextBox(-1, false);
         logSchemaVersion.setWidth("100%");
-        detailsTable.setWidget(9, 0, logSchemaVersionLabel);
-        detailsTable.setWidget(9, 1, logSchemaVersion);
+        detailsTable.setWidget(7, 0, logSchemaVersionLabel);
+        detailsTable.setWidget(7, 1, logSchemaVersion);
 
-        Label serverHashLabel = new Label("Server hash");
-        serverHash = new KaaAdminSizedTextBox(-1, false);
-        serverHash.setWidth("100%");
-        detailsTable.setWidget(10, 0, serverHashLabel);
-        detailsTable.setWidget(10, 1, serverHash);
+        Label profileRecordLabel = new Label("Profile Record");
+        detailsTable.setWidget(8, 0, profileRecordLabel);
 
-//        configurationsGrid = new ConfigurationGrid();
-//        configurationsGrid.setSize("700px", "200px");
-//        Label configurationsLabel = new Label(Utils.constants.configurations());
-//        configurationsLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
-//        detailsTable.setWidget(11, 0, configurationsGrid);
-//        detailsTable.getFlexCellFormatter().setColSpan(11, 0, 3);
+
+        Label schemaNameLabel = new Label("Schema name");
+        schemaName = new KaaAdminSizedTextBox(-1, false);
+        schemaName.setWidth("100%");
+        detailsTable.setWidget(9, 0, schemaNameLabel);
+        detailsTable.setWidget(9, 1, schemaName);
+
+        Label descriptionLabel = new Label("Schema description");
+        description = new KaaAdminSizedTextBox(-1, false);
+        description.setWidth("100%");
+        detailsTable.setWidget(10, 0, descriptionLabel);
+        detailsTable.setWidget(10, 1, description);
+
+        schemaForm = new RecordFieldWidget(new AvroWidgetsConfig.Builder().createConfig());
+//        schemaForm = new RecordPanel(new AvroWidgetsConfig.Builder().
+//                recordPanelWidth(700)
+////                .gridHeight(400)
+////                .tableHeight(400)
+//                .createConfig(),
+//                Utils.constants.schema(), this, !create, !create);
+        detailsTable.setWidget(11, 0, schemaForm);
+        detailsTable.getFlexCellFormatter().setColSpan(11, 0, 3);
+
+        groupsGrid = new EndpointGroupGrid(true) {
+
+            @Override
+            protected float constructActions(DataGrid<EndpointGroupDto> table, float prefWidth) {
+                return 0F;
+            }
+        };
+        groupsGrid.setSize("700px", "200px");
+        Label groupsLabel = new Label("Endpoint groups");
+        detailsTable.setWidget(12, 0, groupsLabel);
+        detailsTable.setWidget(13, 0, groupsGrid);
+        detailsTable.getFlexCellFormatter().setColSpan(13, 0, 3);
 
         topicsGrid = new TopicGrid(true) {
             /*
@@ -159,13 +174,11 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
             }
         };
         topicsGrid.setSize("700px", "200px");
-        Label topicsLabel = new Label(Utils.constants.notificationTopics());
-        topicsLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
         Label topicLabel = new Label(Utils.constants.notificationTopics());
         topicLabel.addStyleName(Utils.kaaAdminStyle.bAppContentTitleLabel());
-        detailsTable.setWidget(12, 0, topicLabel);
-        detailsTable.setWidget(13, 0, topicsGrid);
-        detailsTable.getFlexCellFormatter().setColSpan(13, 0, 3);
+        detailsTable.setWidget(14, 0, topicLabel);
+        detailsTable.setWidget(15, 0, topicsGrid);
+        detailsTable.getFlexCellFormatter().setColSpan(15, 0, 3);
     }
 
     protected AbstractGrid<EndpointGroupDto, String> createGrid() {
@@ -175,16 +188,14 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     @Override
     protected void resetImpl() {
         endpointKeyHash.setValue("");
-        id.setValue("");
-        applicationId.setValue("");
-        profileVersion.setValue("");
-        configurationHash.setValue("");
-        configurationVersion.setValue("");
         notificationVersion.setValue("");
         systemNfVersion.setValue("");
         userNfVersion.setValue("");
         logSchemaVersion.setValue("");
-        serverHash.setValue("");
+
+        userID.setValue("");
+        userName.setValue("");
+        userExternalID.setValue("");
     }
 
 
@@ -201,27 +212,7 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
 
     @Override
     public SizedTextBox getId() {
-        return id;
-    }
-
-    @Override
-    public SizedTextBox getAppId() {
-        return applicationId;
-    }
-
-    @Override
-    public SizedTextBox getProfileVersion() {
-        return profileVersion;
-    }
-
-    @Override
-    public SizedTextBox getConfigurationHash() {
-        return configurationHash;
-    }
-
-    @Override
-    public SizedTextBox getConfigurationVersion() {
-        return configurationVersion;
+        return null;
     }
 
     @Override
@@ -245,17 +236,46 @@ public class EndpointProfileViewImpl extends BaseDetailsViewImpl implements Endp
     }
 
     @Override
-    public SizedTextBox getServerHash() {
-        return serverHash;
+    public TopicGrid getTopicsGrid() {
+        return topicsGrid;
+    }
+
+    @Override
+    public AbstractGrid<EndpointGroupDto, String> getGroupsGrid() {
+        return groupsGrid;
+    }
+
+    @Override
+    public SizedTextBox getUserID() {
+        return userID;
+    }
+
+    @Override
+    public SizedTextBox getUserName() {
+        return userName;
+    }
+
+    @Override
+    public SizedTextBox getSchemaName() {
+        return schemaName;
+    }
+
+    @Override
+    public SizedTextBox getDescription() {
+        return description;
+    }
+
+    @Override
+    public SizedTextBox getUserExternalID() {
+        return userExternalID;
     }
 
 //    @Override
-//    public AbstractGrid<ConfigurationSchemaDto, ?> getConfigurationsGrid() {
-//        return configurationsGrid;
+//    public RecordPanel getSchemaForm() {
+//        return schemaForm;
 //    }
-
     @Override
-    public TopicGrid getTopicsGrid() {
-        return topicsGrid;
+    public RecordFieldWidget getSchemaForm() {
+        return schemaForm;
     }
 }

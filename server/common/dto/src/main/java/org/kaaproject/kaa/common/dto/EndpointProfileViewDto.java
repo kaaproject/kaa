@@ -16,45 +16,69 @@
 
 package org.kaaproject.kaa.common.dto;
 
+import org.kaaproject.avro.ui.shared.RecordField;
+
 import java.io.Serializable;
+import java.util.List;
 
 public class EndpointProfileViewDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String endpointKeyHash;
+    private EndpointProfileDto endpointProfileDto;
+    private EndpointUserDto endpointUserDto;
+    private ProfileSchemaDto profileSchemaDto;
+    private List<EndpointGroupDto> groupDtoList;
+    private RecordField endpointProfileRecord;
+    private List<TopicDto> endpointNotificationTopics;
 
     public EndpointProfileViewDto() {}
 
-    public String getEndpointKeyHash() {
-        return endpointKeyHash;
+    public EndpointProfileDto getEndpointProfileDto() {
+        return endpointProfileDto;
     }
 
-    public void setEndpointKeyHash(String endpointKeyHash) {
-        this.endpointKeyHash = endpointKeyHash;
+    public void setEndpointProfileDto(EndpointProfileDto endpointProfileDto) {
+        this.endpointProfileDto = endpointProfileDto;
     }
 
-    @Override
-    public boolean equals(Object o) {
-
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        EndpointProfileViewDto that = (EndpointProfileViewDto) o;
-
-        return !(endpointKeyHash != null ? !endpointKeyHash.equals(that.endpointKeyHash) : that.endpointKeyHash != null);
-
+    public EndpointUserDto getEndpointUserDto() {
+        return endpointUserDto;
     }
 
-    @Override
-    public int hashCode() {
-        return endpointKeyHash != null ? endpointKeyHash.hashCode() : 0;
+    public void setEndpointUserDto(EndpointUserDto endpointUserDto) {
+        this.endpointUserDto = endpointUserDto;
     }
 
-    @Override
-    public String toString() {
-        return "EndpointProfileViewDto{" +
-                "endpointKeyHash='" + endpointKeyHash + '\'' +
-                '}';
+    public ProfileSchemaDto getProfileSchemaDto() {
+        return profileSchemaDto;
+    }
+
+    public void setProfileSchemaDto(ProfileSchemaDto profileSchemaDto) {
+        this.profileSchemaDto = profileSchemaDto;
+    }
+
+    public List<EndpointGroupDto> getGroupDtoList() {
+        return groupDtoList;
+    }
+
+    public void setGroupDtoList(List<EndpointGroupDto> groupDtoList) {
+        this.groupDtoList = groupDtoList;
+    }
+
+    public RecordField getEndpointProfileRecord() {
+        return endpointProfileRecord;
+    }
+
+    public void setEndpointProfileRecord(RecordField endpointProfileRecord) {
+        this.endpointProfileRecord = endpointProfileRecord;
+    }
+
+    public List<TopicDto> getEndpointNotificationTopics() {
+        return endpointNotificationTopics;
+    }
+
+    public void setEndpointNotificationTopics(List<TopicDto> endpointNotificationTopics) {
+        this.endpointNotificationTopics = endpointNotificationTopics;
     }
 }
