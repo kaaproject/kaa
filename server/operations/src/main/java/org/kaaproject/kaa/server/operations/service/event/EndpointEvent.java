@@ -23,8 +23,6 @@ import org.kaaproject.kaa.server.sync.Event;
 
 public final class EndpointEvent {
 
-    private static final long DEFAULT_TIMEOUT = 60 * 1000L;
-
     private final UUID uuid;
     private final EndpointObjectHash sender;
     private final Event event;
@@ -70,10 +68,6 @@ public final class EndpointEvent {
 
     public long getCreateTime() {
         return createTime;
-    }
-
-    public long getTTL(){
-        return Math.max(DEFAULT_TIMEOUT - (System.currentTimeMillis() - createTime), 0L);
     }
 
     public int getVersion() {
