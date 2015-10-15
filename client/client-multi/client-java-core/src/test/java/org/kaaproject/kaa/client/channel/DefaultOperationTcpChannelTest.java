@@ -122,7 +122,7 @@ public class DefaultOperationTcpChannelTest {
         SyncResponse response = new SyncResponse();
         response.setStatus(SyncResponseResultType.SUCCESS);
         tcpChannel.os.write(new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse(responseCreator.toByteArray(response), false, false).getFrame().array());
-        Thread.sleep(200);  // sleep a bit to let the message to be received
+        Thread.sleep(1000);  // sleep a bit to let the message to be received
         tcpChannel.sync(TransportType.USER); // causes call to KaaDataMultiplexer.compileRequest(...) for "KAA_SYNC" messsage
 
         Mockito.verify(multiplexer, Mockito.times(2)).compileRequest(Mockito.anyMapOf(TransportType.class, ChannelDirection.class));
