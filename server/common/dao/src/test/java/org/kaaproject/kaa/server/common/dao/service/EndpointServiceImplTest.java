@@ -56,7 +56,7 @@ public class EndpointServiceImplTest extends AbstractTest {
         group = endpointService.findEndpointGroupById(INCORRECT_ID);
     }
 
-    @Test(expected = IncorrectParameterException.class)
+    @Test
     public void findEndpointProfileByEndpointGroupIdTest() {
         EndpointGroupDto group = generateEndpointGroup(null);
         String endpointGroupId = group.getId();
@@ -65,8 +65,6 @@ public class EndpointServiceImplTest extends AbstractTest {
         EndpointProfilesPageDto endpointProfilesPage = endpointService.findEndpointProfileByEndpointGroupId(pageLinkDto);
         EndpointProfileDto endpointProfileDto = endpointProfilesPage.getEndpointProfiles().get(0);
         Assert.assertEquals(savedEndpointProfileDto, endpointProfileDto);
-        pageLinkDto.setEndpointGroupId(INCORRECT_ID);
-        endpointProfilesPage = endpointService.findEndpointProfileByEndpointGroupId(pageLinkDto);
     }
 
     @Test

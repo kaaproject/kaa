@@ -60,7 +60,7 @@ public class EndpointProfileMongoDao extends AbstractMongoDao<MongoEndpointProfi
     }
 
     @Override
-    public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink, EndpointGroupDto endpointGroupDto) {
+    public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink) {
         LOG.debug("Find endpoint profile by endpoint group id [{}] ", pageLink.getEndpointGroupId());
         EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
         String next = null;

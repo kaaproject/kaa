@@ -178,7 +178,9 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
             if (Integer.valueOf(limit) > MAX_LIMIT) {
                 throw new IllegalArgumentException("Incorrect limit parameter. You must enter value not more than " + MAX_LIMIT);
             }
+            String applicationId = getApplicationIdByEndpointGroupId(endpointGroupId);
             PageLinkDto pageLinkDto = new PageLinkDto(endpointGroupId, limit, offset);
+            pageLinkDto.setApplicationId(applicationId);
             EndpointProfilesPageDto endpointProfilesPage = toGenericDto(clientProvider.getClient().getEndpointProfileByEndpointGroupId(toGenericDataStruct(pageLinkDto)));
             if (endpointProfilesPage.getEndpointProfiles() == null || !endpointProfilesPage.hasEndpointProfiles()) {
                 throw new KaaAdminServiceException(
@@ -189,6 +191,22 @@ public class KaaAdminServiceImpl implements KaaAdminService, InitializingBean {
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
+    }
+
+    private String getApplicationIdByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException {
+        EndpointGroupDto endpointGroupDto = getEndpointGroup(endpointGroupId);
+        if (endpointGroupDto == null) {
+            LOG.warn("Endpoint group with id {} is not present in db.", endpointGroupId);
+            throw new IllegalArgumentException("Endpoint group is not present in db.");
+        }
+        String applicationId = endpointGroupDto.getApplicationId();
+        checkApplicationId(applicationId);
+        ApplicationDto applicationDto = getApplication(applicationId);
+        checkTenantId(applicationDto.getTenantId());
+        if (!endpointGroupDto.isGroupAll()) {
+            applicationId = null;
+        }
+        return applicationId;
     }
 
     @Override

@@ -58,11 +58,11 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
         EndpointGroupDto endpointGroupDto = new EndpointGroupDto();
         endpointGroupDto.setWeight(1);
         endpointGroupDto.setApplicationId(endpointProfileList.get(0).getApplicationId());
-        EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(pageLink, endpointGroupDto);
+        EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(pageLink);
         Assert.assertFalse(found.getEndpointProfiles().isEmpty());
         Assert.assertEquals(lim, found.getEndpointProfiles().size());
         endpointGroupDto.setWeight(0);
-        EndpointProfilesPageDto foundbyAppId = endpointProfileDao.findByEndpointGroupId(pageLink, endpointGroupDto);
+        EndpointProfilesPageDto foundbyAppId = endpointProfileDao.findByEndpointGroupId(pageLink);
         Assert.assertFalse(foundbyAppId.getEndpointProfiles().isEmpty());
         Assert.assertEquals(lim, foundbyAppId.getEndpointProfiles().size());
     }
@@ -90,12 +90,12 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
         String[] endpointGroupId = {"111", "444", "222", "333"};
         for (int i = 0; i < 2; i++) {
             pageLink = new PageLinkDto(endpointGroupId[i], limit, offset);
-            found = endpointProfileDao.findByEndpointGroupId(pageLink, endpointGroupDto);
+            found = endpointProfileDao.findByEndpointGroupId(pageLink);
             Assert.assertFalse(found.getEndpointProfiles().isEmpty());
         }
         for (int i = 2; i < 4; i++) {
             pageLink = new PageLinkDto(endpointGroupId[i], limit, offset);
-            found = endpointProfileDao.findByEndpointGroupId(pageLink, endpointGroupDto);
+            found = endpointProfileDao.findByEndpointGroupId(pageLink);
             Assert.assertTrue(found.getEndpointProfiles().isEmpty());
         }
     }

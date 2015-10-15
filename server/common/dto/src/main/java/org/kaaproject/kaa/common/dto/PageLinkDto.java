@@ -16,6 +16,7 @@ public class PageLinkDto implements Serializable {
     private String limit;
     private String offset;
     private String next;
+    private String applicationId;
 
     public PageLinkDto() {
     }
@@ -25,6 +26,7 @@ public class PageLinkDto implements Serializable {
         this.limit = limit;
         this.offset = offset;
         this.next = null;
+        this.applicationId = null;
     }
 
     public String getLimit() {
@@ -59,6 +61,14 @@ public class PageLinkDto implements Serializable {
         this.endpointGroupId = endpointGroupId;
     }
 
+    public String getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
+    }
+
     public String getNextUrlPart() {
         String nextUrlPart = null;
         if (limit != null && offset != null) {
@@ -74,6 +84,7 @@ public class PageLinkDto implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((applicationId == null) ? 0 : applicationId.hashCode());
         result = prime * result + ((endpointGroupId == null) ? 0 : endpointGroupId.hashCode());
         result = prime * result + ((limit == null) ? 0 : limit.hashCode());
         result = prime * result + ((next == null) ? 0 : next.hashCode());
@@ -90,6 +101,11 @@ public class PageLinkDto implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         PageLinkDto other = (PageLinkDto) obj;
+        if (applicationId == null) {
+            if (other.applicationId != null)
+                return false;
+        } else if (!applicationId.equals(other.applicationId))
+            return false;
         if (endpointGroupId == null) {
             if (other.endpointGroupId != null)
                 return false;

@@ -49,7 +49,7 @@ public interface EndpointProfileDao<T extends EndpointProfile> extends Dao<T, By
      * @param endpointGroupDto the endpoint group dto
      * @return the endpoint profiles page dto
      */
-    EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink, EndpointGroupDto endpointGroupDto);
+    EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink);
 
     /**
      * Gets the count of endpoint profile by key hash.

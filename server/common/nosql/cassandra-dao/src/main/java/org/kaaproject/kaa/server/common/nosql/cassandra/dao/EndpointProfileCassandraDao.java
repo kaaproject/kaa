@@ -24,7 +24,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 
 import org.apache.commons.codec.binary.Base64;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
@@ -280,13 +279,13 @@ public class EndpointProfileCassandraDao extends AbstractCassandraDao<CassandraE
     }
 
     @Override
-    public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink, EndpointGroupDto endpointGroupDto) {
+    public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink) {
         LOG.debug("Try to find endpoint profile by endpoint group id [{}]", pageLink.getEndpointGroupId());
         EndpointProfilesPageDto endpointProfilesPageDto;
         List<EndpointProfileDto> cassandraEndpointProfileList;
         ByteBuffer[] keyHashList;
-        if (endpointGroupDto.isGroupAll()) {
-            keyHashList = cassandraEPByAppIdDao.findEPByAppId(pageLink, endpointGroupDto.getApplicationId());
+        if (pageLink.getApplicationId() != null) {
+            keyHashList = cassandraEPByAppIdDao.findEPByAppId(pageLink, pageLink.getApplicationId());
         } else {
             keyHashList = cassandraEPByEndpointGroupIdDao.findEPByEndpointGroupId(pageLink);
         }
