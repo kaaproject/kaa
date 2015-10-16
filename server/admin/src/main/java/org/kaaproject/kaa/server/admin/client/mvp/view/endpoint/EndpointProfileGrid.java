@@ -28,7 +28,7 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String> {
 
     public EndpointProfileGrid() {
-        super(Style.Unit.PX, true);
+        super(Style.Unit.PX, false, 10);
     }
 
     @Override
@@ -92,15 +92,10 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
         return prefWidth;
     }
 
-    @Override
-    protected boolean canDelete(EndpointProfileDto value) {
-        return false;
-    }
-
-    @Override
-    protected float constructActions(DataGrid<EndpointProfileDto> table, float prefWidth) {
-        return 0.0F;
-    }
+//    @Override
+//    protected boolean canDelete(EndpointProfileDto value) {
+//        return false;
+//    }
 
     @Override
     protected String getObjectId(EndpointProfileDto value) {

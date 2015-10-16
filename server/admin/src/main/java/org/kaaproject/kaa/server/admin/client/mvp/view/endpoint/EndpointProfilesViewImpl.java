@@ -21,7 +21,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -99,11 +98,6 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
     }
 
     @Override
-    public HTMLPanel getCustomPager() {
-        return null;
-    }
-
-    @Override
     protected AbstractGrid<EndpointProfileDto, String> createGrid() {
         return new EndpointProfileGrid();
     }
@@ -117,6 +111,4 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
     protected String addButtonString() {
         return "";
     }
-
-
 }
