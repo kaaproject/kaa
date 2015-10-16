@@ -40,8 +40,7 @@ class ConfigurationManager : public IConfigurationManager,
                              public IConfigurationProcessedObserver,
                              public IGenericDeltaReceiver {
 public:
-    ConfigurationManager(IExecutorContext& executorContext) : executorContext_(executorContext) {}
-    ~ConfigurationManager() {}
+    ConfigurationManager(IExecutorContext& executorContext);
 
     void onDeltaReceived(int index, const std::shared_ptr<KaaRootConfiguration>& datum, bool fullResync);
 

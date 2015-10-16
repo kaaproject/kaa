@@ -91,14 +91,6 @@ void KaaClient::start()
 {
     executorContext_->getLifeCycleExecutor().add([this]
     {
-#ifdef KAA_USE_CONFIGURATION
-        auto configHash = configurationPersistenceManager_->getConfigurationHash().getHashDigest();
-        if (configHash.empty()) {
-            SequenceNumber sn = { 0, 0, 1 };
-            status_->setAppSeqNumber(sn);
-            setDefaultConfiguration();
-        }
-#endif
         bootstrapManager_->receiveOperationsServerList();
     });
 }
@@ -139,6 +131,10 @@ void KaaClient::initKaaConfiguration()
     configurationProcessor_->addOnProcessedObserver(*configurationManager_);
     configurationProcessor_->subscribeForUpdates(*configurationManager_);
     configurationManager_->subscribeForConfigurationChanges(*configurationPersistenceManager_);
+
+    SequenceNumber sn = { 0, 0, 1 };
+    status_->setAppSeqNumber(sn);
+    setDefaultConfiguration();
 #endif
 }
 
